@@ -31,6 +31,7 @@ import java.net.URL;
 import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 public class LocationHandler {
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void handleLocation(WebView view, String location) {
         // todo try the JavaFX based jpedalfx viewer instead...
         /*if (location.endsWith(".pdf")) {

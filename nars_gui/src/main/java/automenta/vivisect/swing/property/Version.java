@@ -43,6 +43,7 @@ public class Version {
 
 
    /** buildTimestamp (set during build process to "11/10/2012 10:56 AM"). */
+   @SuppressWarnings("HardcodedFileSeparator")
    private static String buildTimestamp = new String("11/10/2012 10:56 AM");
 
    /**

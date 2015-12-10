@@ -179,6 +179,7 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 	/**
 	 * Empty Surface Model
 	 */
+	@SuppressWarnings("ConstructorNotProtectedInAbstractClass")
 	public AbstractSurfaceModel() {
 		property = new SwingPropertyChangeSupport(this);
 		setColorModel(new ColorModelSet());
@@ -239,6 +240,7 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		}
 	}
 
+	@SuppressWarnings("HardcodedFileSeparator")
 	public void exportCSV(File file) throws IOException {
 		 SurfaceVertex[][] surfaceVertex = getSurfaceVertex();
 		if (file == null)

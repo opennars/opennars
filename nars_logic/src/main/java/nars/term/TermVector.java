@@ -284,30 +284,29 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     @Override
     public boolean equals(Object that) {
 
-        if (this == that)
-            return true;
-        if (!(that instanceof TermVector)) return false;
+        if (this == that) return true;
+
+        if (!(that instanceof TermContainer)) return false;
 
         TermVector c = (TermVector) that;
-        if (contentHash != c.contentHash ||
-            structureHash != c.structureHash ||
-            volume != c.volume)
-                return false;
+        return (contentHash == c.contentHash) &&
+                (structureHash == c.structureHash) &&
+                (volume == c.volume) &&
+                equalTerms(c);
+    }
 
+    private final boolean equalTerms(TermContainer c) {
         int s = size();
         if (s!=c.size())
             return false;
 
         for (int i = 0; i < s; i++) {
-            Term a = term(i);
-            Term b = c.term(i);
-            if (!a.equals(b)) return false;
+            if (!term[i].equals(c.term(i)))
+                return false;
         }
 
         return true;
     }
-
-
 
 
     @Override

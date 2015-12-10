@@ -148,6 +148,7 @@ public abstract class SpaceNet extends Group {
 
 
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public SpaceNet() {
 
         getChildren().add(world);

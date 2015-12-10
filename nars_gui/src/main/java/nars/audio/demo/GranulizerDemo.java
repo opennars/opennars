@@ -30,6 +30,7 @@ public class GranulizerDemo {
 
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void main(String[] args) throws IOException, LineUnavailableException, UnsupportedAudioFileException {
 
 

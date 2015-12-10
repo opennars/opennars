@@ -5,7 +5,7 @@ import nars.$;
 import nars.Global;
 import nars.Narsese;
 import nars.Op;
-import nars.nal.TaskRule;
+import nars.nal.PremiseRule;
 import nars.nal.meta.match.*;
 import nars.term.Term;
 import nars.term.Terms;
@@ -51,24 +51,24 @@ public class DerivationRuleTest extends TestCase {
         assertEquals(1, p.term("<%A --> %B>").complexity());
 
         {
-            TaskRule x = p.termRaw("< A, A |- A, (Truth:Revision, Desire:Weak)>");
+            PremiseRule x = p.termRaw("< A, A |- A, (Truth:Revision, Desire:Weak)>");
             assertEquals("((A, A), (A, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
             // assertEquals(12, x.getVolume());
         }
 
         {
-            TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B>, (Truth:Revision, Desire:Weak)>");
+            PremiseRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B>, (Truth:Revision, Desire:Weak)>");
             assertEquals(19, x.volume());
             assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> %B>, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
         }
         {
-            TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> nonvar>, (Truth:Revision, Desire:Weak)>");
+            PremiseRule x = p.term("< <A --> B>, <B --> A> |- <A <-> nonvar>, (Truth:Revision, Desire:Weak)>");
             assertEquals(19, x.volume()); //same volume as previous block
             assertEquals("((<%A --> %B>, <%B --> %A>), (<nonvar <-> %A>, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
         }
 
         {
-            TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B>, (<Nonsense --> Test>)>");
+            PremiseRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B>, (<Nonsense --> Test>)>");
             assertEquals(16, x.volume());
             assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> %B>, (<%Nonsense --> %Test>)))", x.toString());
         }
@@ -81,7 +81,7 @@ public class DerivationRuleTest extends TestCase {
 
         {
             //and the first complete rule:
-            TaskRule x = p.term("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
+            PremiseRule x = p.term("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
             assertEquals("((<%S --> %M>, <%P --> %M>), (<%P <-> %S>, (%TruthComparison, %DesireStrong)))", x.toString());
             assertEquals(15, x.volume());
         }
@@ -94,7 +94,7 @@ public class DerivationRuleTest extends TestCase {
         //tests an exceptional case that should now be fixed
 
         String l = "<((B,P) --> ?X) ,(B --> A), task(\"?\") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)>";
-        Compound x = ((TaskRule)p.term(l)).normalizeRule();
+        Compound x = ((PremiseRule)p.term(l)).normalizeRule();
         assertTrue(!x.toString().contains("%B"));
     }
 
@@ -111,7 +111,7 @@ public class DerivationRuleTest extends TestCase {
 
 
         Compound y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion)>");
-        y = ((TaskRule)y).normalizeRule();
+        y = ((PremiseRule)y).normalizeRule();
         Terms.printRecursive(y);
 
         assertEquals("((<%1 --> %2>, (--,%1)), (<%2 --> %1>, (<Conversion --> Truth>)))", y.toString());
@@ -155,7 +155,7 @@ public class DerivationRuleTest extends TestCase {
         assertEquals($("%B"), t.from);
         assertEquals($("C"), t.to);
 
-        Term u = new TaskRule.TaskRuleVariableNormalization($.p(t)).get();
+        Term u = new PremiseRule.TaskRuleVariableNormalization($.p(t)).get();
         t = (EllipsisTransform)((Compound)u).term(0);
         assertEquals("(%1..%2=C..+)", u.toString());
         assertEquals($("%2"), t.from);
@@ -171,7 +171,7 @@ public class DerivationRuleTest extends TestCase {
         String rule = "(%S ==> %M), ((&&,%S,%A..+) ==> %M) |- ((&&,%A,..) ==> %M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromBelief)";
         Compound x = p.term('<' + rule + '>');
         //System.out.println(x);
-        x = ((TaskRule)x).normalizeRule();
+        x = ((PremiseRule)x).normalizeRule();
         //System.out.println(x);
 
         assertEquals(
@@ -221,7 +221,7 @@ public class DerivationRuleTest extends TestCase {
 
                 //2. test substitution
                 Term s = r.apply(f, false);
-                System.out.println(s);
+                //System.out.println(s);
 
                 selectedFixed.add(s);
 

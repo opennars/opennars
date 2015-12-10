@@ -40,9 +40,9 @@ public class GreaterThan extends Comparison {
         if (thisClassOrder > expr2.printLevelLeft()) expr2Parens = true;
 
         String string = "";
-        string = string.concat((expr1Parens?"(":"") + expr1.pretty() + (expr1Parens?")":""));
-        string = string.concat(">");
-        string = string.concat((expr2Parens?"(":"") + expr2.pretty() + (expr2Parens?")":""));
+        string = string + (expr1Parens ? "(" : "") + expr1.pretty() + (expr1Parens ? ")" : "");
+        string = string + ">";
+        string = string + (expr2Parens ? "(" : "") + expr2.pretty() + (expr2Parens ? ")" : "");
         
         return string;
     }

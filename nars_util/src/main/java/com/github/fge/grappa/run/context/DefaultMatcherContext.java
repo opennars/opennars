@@ -71,6 +71,7 @@ import java.util.Objects;
 public final class DefaultMatcherContext<V>
     implements MatcherContext<V>
 {
+    @SuppressWarnings("HardcodedFileSeparator")
     private static final Joiner JOINER = Joiner.on('/');
 
     private final InputBuffer inputBuffer;

@@ -34,6 +34,7 @@ public class BooleanEditor extends AbstractPropertyEditor {
 		checkbox.setFocusable(false);
 		checkbox.setBackground(UIManager.getColor("Table.selectionBackground"));
 		checkbox.setForeground(UIManager.getColor("Table.selectionForeground"));
+		//noinspection CloneableClassWithoutClone
 		checkbox.setAction(new AbstractAction() {
 
 			private static final long serialVersionUID = 1L;

@@ -2,10 +2,7 @@ package nars.task.in;
 
 import nars.$;
 import nars.NAR;
-import nars.nal.nal1.Negation;
-import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
-import nars.nal.nal5.Equivalence;
 import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
 import nars.task.Task;
@@ -258,7 +255,7 @@ public abstract class NQuadsRDF {
 
         //http://www.w3.org/TR/owl-ref/
 
-        Compound belief = null;
+        Term belief = null;
 
         //noinspection IfStatementWithTooManyBranches
         if (predicate.equals(parentOf) || predicate.equals(type)
@@ -279,11 +276,11 @@ public abstract class NQuadsRDF {
         }
         else if (predicate.equals(equivalentClass)) {
 
-            belief = (Compound) Equivalence.make(subject, object);
+            belief = $.equiv(subject, object);
         }
         else if (predicate.equals(sameAs)) {
 
-            belief = (Compound) Similarity.make(subject, object);
+            belief = $.simi(subject, object);
             //belief = (Equivalence.make(subject, object));
         }
         else if (predicate.equals(domain)) {
@@ -292,7 +289,7 @@ public abstract class NQuadsRDF {
 
             Term a = $.$("<{(#subj,#obj)} --> [" + subject + "]>");
             Term b = $.$("<{#subj} --> [" +  object + "]>");
-            belief = $.impl(a,b);
+            belief = $.conj(a,b);
         }
         else if (predicate.equals(range)) {
             // PROPERTY range CLASS
@@ -300,7 +297,7 @@ public abstract class NQuadsRDF {
 
             Term a = $.$("<{(#subj,#obj)} --> [" + subject + "]>");
             Term b = $.$("<{#obj} --> [" +  object + "]>");
-            belief = $.impl(a,b);
+            belief = $.conj(a,b);
 
 //            belief = nar.term(
 //                    //"<" + subject + "($subj,$obj) ==> <$obj {-- " + object + ">>"
@@ -310,7 +307,7 @@ public abstract class NQuadsRDF {
         }
         else if (predicate.equals(equivalentProperty)) {
 
-            belief = (Compound) Equivalence.make(subject, object);
+            belief = $.equiv(subject, object);
         }
         else if (predicate.equals(inverseOf)) {
 
@@ -319,7 +316,7 @@ public abstract class NQuadsRDF {
         else if (predicate.equals(disjointWith)) {
             //System.out.println(subject + " " + predicate + " " + object);
 
-            belief = (Compound) Negation.negation(Similarity.make(subject, object));
+            belief = $.neg($.simi(subject, object));
         }
         else {
             //System.out.println(subject + " " + predicate + " " + object);
@@ -331,8 +328,8 @@ public abstract class NQuadsRDF {
             }
         }
 
-        if (belief!=null) {
-            return new MutableTask().term(belief).
+        if (belief instanceof Compound) {
+            return new MutableTask().term((Compound)belief).
                     belief().truth(1.0f,0.9f)
                     .time(nar.time(),
                     Tense.ETERNAL //TODO Tense parameter

@@ -5,11 +5,58 @@ import nars.Op;
 import nars.Symbols;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Set;
 
-public interface SetTensional<T extends Term> extends Compound<T> {
+public interface SetTensional {
+
+
+    Logger logger = LoggerFactory.getLogger(SetTensional.class);
+
+    public static void append(Compound set, Appendable p, boolean pretty) {
+
+        int len = set.size();
+
+        //duplicated from above, dont want to store this as a field in the class
+        char opener, closer;
+        if (set.op(Op.SET_EXT)) {
+            opener = Op.SET_EXT_OPENER.ch;
+            closer = Symbols.SET_EXT_CLOSER;
+        } else {
+            opener = Op.SET_INT_OPENER.ch;
+            closer = Symbols.SET_INT_CLOSER;
+        }
+
+        try {
+            p.append(opener);
+            for (int i = 0; i < len; i++) {
+                Term tt = set.term(i);
+                if (i != 0) p.append(Symbols.ARGUMENT_SEPARATOR);
+                tt.append(p, pretty);
+            }
+            p.append(closer);
+        } catch (IOException e) {
+            logger.error("append", e);
+        }
+    };
+
+
+
+
+
+    static Set<Term> subtract(Compound a, Compound b) {
+        Set<Term> set = a.toSet();
+        b.forEach(set::remove);
+        return set;
+    }
+
+
+//    default boolean showsTermOpenerAndCloser() {
+//        return false;
+//    }
 
     /**
      * Check if the compound is communitative.
@@ -21,12 +68,6 @@ public interface SetTensional<T extends Term> extends Compound<T> {
 //        return true;
 //    }
 
-    @Override
-    Op op();
-
-
-    @Override
-    T term(int subterm);
 
 
 //    default byte[] init() {
@@ -67,44 +108,5 @@ public interface SetTensional<T extends Term> extends Compound<T> {
 //
 //    }
 
-
-    @Override
-    default void append(Appendable p, boolean pretty) throws IOException {
-
-        int len = size();
-
-        //duplicated from above, dont want to store this as a field in the class
-        char opener, closer;
-        if (this instanceof SetExt) {
-            opener = Op.SET_EXT_OPENER.ch;
-            closer = Symbols.SET_EXT_CLOSER;
-        } else {
-            opener = Op.SET_INT_OPENER.ch;
-            closer = Symbols.SET_INT_CLOSER;
-        }
-
-        p.append(opener);
-        for (int i = 0; i < len; i++) {
-            Term tt = term(i);
-            if (i != 0) p.append(Symbols.ARGUMENT_SEPARATOR);
-            tt.append(p, pretty);
-        }
-        p.append(closer);
-    }
-
-
-
-
-
-    static Set<Term> subtract(Compound a, Compound b) {
-        Set<Term> set = a.toSet();
-        b.forEach(set::remove);
-        return set;
-    }
-
-
-//    default boolean showsTermOpenerAndCloser() {
-//        return false;
-//    }
 
 }

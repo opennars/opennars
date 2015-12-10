@@ -51,9 +51,11 @@ class MJCellUI extends Frame {
 	private final MenuItem itmExit = new MenuItem("Exit");
 
 	// Animation
+	@SuppressWarnings("HardcodedFileSeparator")
 	public final MenuItem itmRunStop = new MenuItem("Start / Stop  (Enter)");
 	private final MenuItem itmStep = new MenuItem("Single step  (Space)");
 	public final MenuItem itmRewind = new MenuItem("Rewind  (Backspace)");
+	@SuppressWarnings("HardcodedFileSeparator")
 	public final MenuItem itmSlower = new MenuItem("Run slower  (/)");
 	public final MenuItem itmFaster = new MenuItem("Run faster  (*)");
 	private final Menu mnuRefreshStep = new Menu("Refresh step");
@@ -132,6 +134,7 @@ class MJCellUI extends Frame {
 	private final Button btnRand = new Button("Rand");
 	private final Button btnSeed = new Button("Seed");
 	private final Button btnClear = new Button("Clear");
+	@SuppressWarnings("HardcodedFileSeparator")
 	public final Button btnRunStop = new Button("Start / Stop");
 	private final Button btnStep = new Button("Step");
 	public final Button btnSlower = new Button("Slower");
@@ -148,10 +151,12 @@ class MJCellUI extends Frame {
 	public final Checkbox chkUni = new Checkbox("Uni", false); // Uniform colors
 	private final Choice cmbRand = new Choice();
 	private final Choice cmbSeed = new Choice();
+	@SuppressWarnings("HardcodedFileSeparator")
 	private final Label lblStates = new Label("1/2");
 	private final Label lblRule = new Label("???");
 	private final Label lblCycle = new Label("Cycle: 0");
 	private final Label lblPopul = new Label("Population: 0    ");
+	@SuppressWarnings("HardcodedFileSeparator")
 	private final Label lblBoard = new Label("Board: 000x000/00");
 
 	// ----------------------------------------------------------------
@@ -163,6 +168,7 @@ class MJCellUI extends Frame {
 
 	// ----------------------------------------------------------------
 	// Build UI elements
+	@SuppressWarnings("HardcodedFileSeparator")
 	public void build() {
 		sBaseURL = mjc.sBaseURL;
 
@@ -660,6 +666,7 @@ class MJCellUI extends Frame {
 
 	// ----------------------------------------------------------------
 	// Hot keys handling
+	@SuppressWarnings("HardcodedFileSeparator")
 	public boolean keyDown(Event evt, int key) {
 		boolean retVal = false; // event handled?
 		switch (key) {
@@ -931,6 +938,7 @@ class MJCellUI extends Frame {
 
 	// ----------------------------------------------------------------
 	// Update the states/colors UI logic
+	@SuppressWarnings("HardcodedFileSeparator")
 	public void UpdateColorsUI() {
 		itmCloMtdStd.setState(mjb.ColoringMethod == 1); // standard coloring
 		itmCloMtdAlt.setState(mjb.ColoringMethod == 2); // alternate coloring
@@ -1205,6 +1213,7 @@ class MJCellUI extends Frame {
 
 	// ----------------------------------------------------------------
 	// update dynamic elements of the UI
+	@SuppressWarnings("HardcodedFileSeparator")
 	public void UpdateUI() {
 		lblCycle.setText("Cycle: " + Integer.toString(mjb.Cycle));
 		lblPopul.setText("Population: " + Integer.toString(mjb.Population)

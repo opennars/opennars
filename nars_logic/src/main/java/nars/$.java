@@ -1,13 +1,17 @@
 package nars;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.ConsoleAppender;
 import nars.java.AtomObject;
 import nars.nal.meta.match.VarPattern;
-import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
-import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
+import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
@@ -16,12 +20,14 @@ import nars.task.MutableTask;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
+
+import static nars.term.compound.GenericCompound.COMPOUND;
 
 /**
  * core utility class for:
@@ -73,7 +79,12 @@ public abstract class $  {
      *  returns a Term if the two inputs are equal to each other
      */
     public static <T extends Term> T inh(Term subj, Term pred) {
-        return (T) Inheritance.inheritance(subj, pred);
+
+//        if ((predicate instanceof Operator) && if (subject instanceof Product))
+//            return new GenericCompound(Op.INHERITANCE, (Operator)predicate, (Product)subject);
+//        else
+
+        return (T) COMPOUND(Op.INHERIT, subj, pred);
     }
 
 
@@ -83,7 +94,7 @@ public abstract class $  {
 
 
     public static Term simi(Term subj, Term pred) {
-        return Similarity.make(subj, pred);
+        return COMPOUND(Op.SIMILAR, subj, pred);
     }
 
     public static Compound oper(String operator, String... args) {
@@ -100,19 +111,19 @@ public abstract class $  {
     }
 
     public static Compound oper(Operator opTerm, Compound arg) {
-        return new GenericCompound(
-                Op.INHERITANCE,
+        return (Compound) COMPOUND(
+                Op.INHERIT,
                 arg == null ? Product.Empty : arg,
                 opTerm
         );
     }
 
 
-    public static Compound impl(Term a, Term b) {
-        return Implication.make(a, b);
+    public static Term impl(Term a, Term b) {
+        return Implication.implication(a, b);
     }
 
-    public static <X extends Term> X not(Term x) {
+    public static <X extends Term> X neg(Term x) {
         return (X) Negation.negation(x);
     }
 
@@ -131,7 +142,7 @@ public abstract class $  {
         if (l == 0) //length 0 product are allowd and shared
             return Product.Empty;
 
-        return new GenericCompound(Op.PRODUCT, t);
+        return (Compound) COMPOUND(Op.PRODUCT, t);
     }
 
     /** creates from a sublist of a list */
@@ -154,19 +165,19 @@ public abstract class $  {
 
 
     public static Variable varDep(int i) {
-        return v(Op.VAR_DEPENDENT, i);
+        return v(Op.VAR_DEP, i);
     }
 
     public static Variable varDep(String s) {
-        return v(Op.VAR_DEPENDENT, s);
+        return v(Op.VAR_DEP, s);
     }
 
     public static Variable varIndep(int i) {
-        return v(Op.VAR_INDEPENDENT, i);
+        return v(Op.VAR_INDEP, i);
     }
 
     public static Variable varIndep(String s) {
-        return v(Op.VAR_INDEPENDENT, s);
+        return v(Op.VAR_INDEP, s);
     }
 
     public static Variable varQuery(int i) {
@@ -226,28 +237,28 @@ public abstract class $  {
         return new MutableTask(term).goal().truth(freq, conf);
     }
 
-    public static Implication implForward(Term condition, Term consequence) {
-        return Implication.make(condition, consequence, Tense.ORDER_FORWARD);
+    public static Compound implForward(Term condition, Term consequence) {
+        return Implication.implication(condition, consequence, Tense.ORDER_FORWARD);
     }
 
-    public static <T extends Term> Compound<T> extset(Collection<T> t) {
+    public static Compound set(Collection<Term> t) {
         return SetExt.make(t);
     }
 
-    public static <T extends Term> Compound<T> intset(Collection<T> t) {
+    public static Compound setInt(Collection<Term> t) {
         return SetInt.make(t);
     }
 
-    public static Compound extset(Term... t) {
+    public static Compound set(Term... t) {
         return SetExt.make(t);
     }
 
     /** shorthand for extensional set */
     public static Compound s(Term... t) {
-        return extset(t);
+        return set(t);
     }
 
-    public static Compound intset(Term... t) {
+    public static Compound setInt(Term... t) {
         return SetInt.make(t);
     }
 
@@ -260,7 +271,7 @@ public abstract class $  {
      * @return A compound generated or null
      */
     public static Term property(Term subject, Term predicate) {
-        return inh(subject, $.intset(predicate));
+        return inh(subject, $.setInt(predicate));
     }
 
     public static Variable v(char ch, String name) {
@@ -296,5 +307,104 @@ public abstract class $  {
         }
 
         return v(type.ch, String.valueOf(counter));
+    }
+
+    public static Term conj(Term a, Term b) {
+        return Conjunction.conjunction(a,b);
+    }
+
+    static {
+//        // assume SLF4J is bound to logback in the current environment
+//        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+//
+//        try {
+//            JoranConfigurator configurator = new JoranConfigurator();
+//            configurator.setContext(context);
+//            // Call context.reset() to clear any previous configuration, e.g. default
+//            // configuration. For multi-step configuration, omit calling context.reset().
+//            context.reset();
+//            //configurator.doConfigure(args[0]);
+//        } catch (Exception je) {
+//            // StatusPrinter will handle this
+//        }
+//        StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+//
+//        Logger logger = LoggerFactory.getLogger($.class);
+//        logger.info("Entering application.");
+//
+//
+//
+//        logger.info("Exiting application.");
+//
+//        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+//        // print logback's internal status
+//        StatusPrinter.print(lc);
+//
+//        // assume SLF4J is bound to logback-classic in the current environment
+//        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+//        loggerContext.start();
+//        //loggerContext.stop();
+    }
+
+    static {
+        Thread.currentThread().setName("$");
+
+        //http://logback.qos.ch/manual/layouts.html
+
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        LoggerContext loggerContext = rootLogger.getLoggerContext();
+        // we are not interested in auto-configuration
+        loggerContext.reset();
+
+        PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setContext(loggerContext);
+        encoder.setPattern("%highlight(%-5level) %green(%thread) %message%n");
+        encoder.start();
+
+        ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<ILoggingEvent>();
+        appender.setContext(loggerContext);
+        appender.setEncoder(encoder);
+        appender.start();
+
+        rootLogger.addAppender(appender);
+
+//        rootLogger.debug("Message 1");
+//        rootLogger.info("Message 1");
+//        rootLogger.warn("Message 2");
+//        rootLogger.error("Message 2");
+    }
+    public static void main(String[] args) {
+
+    }
+
+    public static Term equiv(Term subject, Term pred) {
+        return COMPOUND(Op.EQUIV, subject, pred);
+    }
+    public static Term equivAfter(Term subject, Term pred) {
+        return COMPOUND(Op.EQUIV_AFTER, subject, pred);
+    }
+    public static Term equivWhen(Term subject, Term pred) {
+        return COMPOUND(Op.EQUIV_WHEN, subject, pred);
+    }
+
+    public static Term diffInt(Term a, Term b) {
+        return COMPOUND(Op.DIFF_INT, a, b);
+    }
+
+    public static Term diffExt(Term a, Term b) {
+        return COMPOUND(Op.DIFF_EXT, a, b);
+    }
+
+    public static Term imageExt(Term... x) {
+        return COMPOUND(Op.IMAGE_EXT, x);
+    }
+    public static Term imageInt(Term... x) {
+        return COMPOUND(Op.IMAGE_INT, x);
+    }
+    public static Term sect(Term... x) {
+        return COMPOUND(Op.INTERSECT_EXT, x);
+    }
+    public static Term sectInt(Term... x) {
+        return COMPOUND(Op.INTERSECT_INT, x);
     }
 }

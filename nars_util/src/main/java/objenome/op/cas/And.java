@@ -58,9 +58,9 @@ public class And extends Operation {
             
             String exprString = expr.pretty();
             
-            if (i != 0) { string = string.concat(" and "); }
+            if (i != 0) { string = string + " and "; }
             
-            string = string.concat((parens?"(":"") + exprString + (parens?")":""));
+            string = string + (parens ? "(" : "") + exprString + (parens ? ")" : "");
         }
         
         return string;

@@ -1,7 +1,7 @@
 package nars.nal.meta.match;
 
-import nars.nal.nal4.Image;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 
 import java.util.Collection;
@@ -14,9 +14,9 @@ import java.util.Collection;
 public class ImagePutMatch extends ArrayEllipsisMatch<Term> {
 
     private final Term to;
-    private final Image origin;
+    private final Compound origin;
 
-    public ImagePutMatch(Term[] t, Term relationTerm, Image y) {
+    public ImagePutMatch(Term[] t, Term relationTerm, Compound y) {
         super(t);
         to = relationTerm;
         origin = y;
@@ -33,9 +33,9 @@ public class ImagePutMatch extends ArrayEllipsisMatch<Term> {
         }
 
         Term[] t = origin.terms();
-        Image origin = this.origin;
+        Compound origin = this.origin;
 
-        int ri = origin.relationIndex;
+        int ri = origin.relation();
 
         int ot = t.length;
         //int j = (ri == ot) ? 1 : 0; //shift

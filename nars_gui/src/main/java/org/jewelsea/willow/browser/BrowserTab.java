@@ -21,11 +21,6 @@
 
 package org.jewelsea.willow.browser;
 
-import java.util.HashMap;
-import java.util.Map;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -34,6 +29,9 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tab associated with a browser window.
@@ -96,7 +94,7 @@ public class BrowserTab extends UITab<WebView> {
         engine.titleProperty().addListener((observableValue, oldValue, newTitle) -> {
             // todo we already have a listener for the title, might want to repurpose it...
             // todo I wonder if the title would be reset correctly if the page has no title.
-            if (newTitle != null && !"".equals(newTitle)) {
+            if (newTitle != null && !newTitle.isEmpty()) {
                 setText(newTitle);
             }
         });

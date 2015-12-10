@@ -16,56 +16,62 @@ public class Equals extends Comparison {
     }
     
     public Expr make(List<Expr> exprs) {
-        if (exprs.size() <= 2) return make(exprs.get(0), exprs.get(1));
+        if (exprs.size() <= 2) return Equals.make(exprs.get(0), exprs.get(1));
         throw new UnsupportedOperationException("Equals chaining");
     }
     
     public Expr makeDefined(ArrayList<Expr> exprs) {
-        return make(exprs);
+        return this.make(exprs);
     }
     
+    @Override
     public Expr simplify() {
-        Expr conditioned = conditioned();
+        Expr conditioned = this.conditioned();
         if (conditioned != null) return conditioned;
         
-        if (expr1.equalsExpr(expr2)) return yep();
-        if (expr1.notEqualsExpr(expr2)) return nope();
+        if (this.expr1.equalsExpr(this.expr2)) return Expr.yep();
+        if (this.expr1.notEqualsExpr(this.expr2)) return Expr.nope();
         
-        int sign = Sum.make(expr1, Product.negative(expr2)).sign();
-        if (sign == 0) return yep();
-        if (sign == 2) return this;
-        return nope();
+        int sign = Sum.make(this.expr1, Product.negative(this.expr2)).sign();
+        switch (sign) {
+            case 0:
+                return Expr.yep();
+            case 2:
+                return this;
+            default:
+                return Expr.nope();
+        }
     }
     
+    @Override
     public String pretty() {
 
-        Integer thisClassOrder = classOrder();
+        Integer thisClassOrder = this.classOrder();
         
         boolean expr1Parens = false;
-        if (thisClassOrder > expr1.printLevelRight()) expr1Parens = true;
+        if (thisClassOrder > this.expr1.printLevelRight()) expr1Parens = true;
         // if (debug) System.err.println("Division toString(): for expr=" + expr1 + ", printLevelRight=" + expr1.printLevelRight());
         boolean expr2Parens = false;
-        if (thisClassOrder > expr2.printLevelLeft()) expr2Parens = true;
+        if (thisClassOrder > this.expr2.printLevelLeft()) expr2Parens = true;
         // if (debug) System.err.println("Division toString(): for expr=" + expr2 + ", printLevelLeft=" + expr2.printLevelLeft());
 
-        String string = "";
-        string = string.concat((expr1Parens?"(":"") + expr1.pretty() + (expr1Parens?")":""));
-        string = string.concat("=");
-        string = string.concat((expr2Parens?"(":"") + expr2.pretty() + (expr2Parens?")":""));
-        
-        return string;
-    }
+        return new StringBuilder().append(expr1Parens ? "(" : "").append(this.expr1.pretty()).append(expr1Parens ? ")" : "").append("=").append(expr2Parens ? "(" : "").append(this.expr2.pretty()).append(expr2Parens ? ")" : "").toString();
+
+     }
     
+    @Override
     public int sign() {
         return 2;
     }
     
+    @Override
     public Expr copyPass(HashMap<Expr, Expr> subs) {
-        return make(expr1.copy(subs), expr2.copy(subs));
+        return Equals.make(this.expr1.copy(subs), this.expr2.copy(subs));
     }
     
+    @Override
     public Expr deriv(Var respected) {
-        return Conditional.make(Not.make(this), nope());
+        return Conditional.make(Not.make(this), Expr.nope());
     }
     
 }

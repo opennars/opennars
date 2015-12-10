@@ -243,6 +243,7 @@ public class Formula implements Comparable {
      * Return the LISP 'car' of the formula - the first element of the list.
      * Note that this operation has no side effect on the Formula.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public String car() {
         try {
             //System.out.println("INFO in formula.car(): theFormula: " + theFormula);
@@ -332,6 +333,7 @@ public class Formula implements Comparable {
      * Return the LISP 'cdr' of the formula - the rest of a list minus its first
      * element. Note that this operation has no side effect on the Formula.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public String cdr() {
 
         //System.out.println("INFO in formula.cdr(): theFormula: " + theFormula);
@@ -620,7 +622,7 @@ public class Formula implements Comparable {
     private String validArgsRecurse(Formula f, String filename, Integer lineNo) {
 
         //System.out.println("INFO in Formula.validArgsRecurse(): Formula: " + f.theFormula);
-        if ("".equals(f.theFormula) || !f.listP() || f.atom() || f.empty()) {
+        if (f.theFormula != null && f.theFormula.isEmpty() || !f.listP() || f.atom() || f.empty()) {
             return "";
         }
         String pred = f.car();
@@ -634,7 +636,7 @@ public class Formula implements Comparable {
             Formula argF = new Formula();
             argF.read(arg);
             String result = validArgsRecurse(argF, filename, lineNo);
-            if (!"".equals(result)) {
+            if (result != null && !result.isEmpty()) {
                 return result;
             }
             restF.theFormula = restF.cdr();
@@ -699,7 +701,7 @@ public class Formula implements Comparable {
      */
     public String validArgs(String filename, Integer lineNo) {
 
-        if (theFormula == null || "".equals(theFormula)) {
+        if (theFormula == null || theFormula.isEmpty()) {
             return "";
         }
         Formula f = new Formula();
@@ -929,7 +931,7 @@ public class Formula implements Comparable {
         int index = start;
         ArrayList<String> result = new ArrayList();
         String arg = getArgument(index);
-        while (arg != null && !"".equals(arg) && !arg.isEmpty()) {
+        while (arg != null && !arg.isEmpty() && !arg.isEmpty()) {
             result.add(arg.intern());
             index++;
             arg = getArgument(index);
@@ -950,6 +952,7 @@ public class Formula implements Comparable {
      * significant known bug that variables whose names are a subset of one
      * another will cause problems, for example (foo ?VAR ?VAR1)
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private static String normalizeVariables(String s) {
 
         int i = 0;
@@ -1267,6 +1270,7 @@ public class Formula implements Comparable {
      *
      * @return an ArrayList of Formulas, or an empty ArrayList.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     protected ArrayList expandRowVars(KB kb) {
 
         // System.out.println("INFO in Formula.expandRowVars(" + this + " ...)");
@@ -2614,7 +2618,7 @@ public class Formula implements Comparable {
         ArrayList comparisonOperators = new ArrayList(Arrays.asList(compOps));
 
         StringBuilder result = new StringBuilder();
-        if ("".equals(f.theFormula) || !f.listP() || f.atom() || f.empty()) {
+        if (f.theFormula != null && f.theFormula.isEmpty() || !f.listP() || f.atom() || f.empty()) {
             return "";
         }
 
@@ -2980,7 +2984,7 @@ public class Formula implements Comparable {
                 }
                 if (!(Character.isJavaIdentifierPart(theFormula.charAt(i)) || theFormula.charAt(i) == '-') && inToken) {
                     inToken = false;
-                    formatted = !"".equals(hyperlink) ? formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>") : formatted.append(token);
+                    formatted = hyperlink != null && !hyperlink.isEmpty() ? formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>") : formatted.append(token);
                     token = new StringBuilder();
                 }
                 if (!inToken && i > 0 && !(Character.isWhitespace(theFormula.charAt(i)) && theFormula.charAt(i - 1) == '(')) {
@@ -3000,7 +3004,7 @@ public class Formula implements Comparable {
             }
         }
         if (inToken) {    // A term which is outside of parenthesis, typically, a binding.
-            formatted = !"".equals(hyperlink) ? formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>") : formatted.append(token);
+            formatted = hyperlink != null && !hyperlink.isEmpty() ? formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>") : formatted.append(token);
         }
         return formatted.toString();
     }
@@ -3039,6 +3043,7 @@ public class Formula implements Comparable {
      * ***************************************************************
      * Format a formula for HTML presentation.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public String htmlFormat(KB kb) {
         String hostname = KBmanager.getMgr().getPref("hostname");
         if (!isNonEmptyString(hostname)) {
@@ -3548,6 +3553,7 @@ public class Formula implements Comparable {
      * @return An ArrayList of Formulas, or an empty ArrayList if no
      * instantiations can be generated.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public ArrayList instantiatePredVars(KB kb) {
 
         // System.out.println("ENTER instantiatePredVars(" + this + ")");

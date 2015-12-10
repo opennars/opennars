@@ -85,7 +85,7 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
    */
   public int getDefaultPropertyIndex() {
     String defName = "";
-    if ("".equals(defName)) { return -1; }
+    if (defName != null && defName.isEmpty()) { return -1; }
     PropertyDescriptor[] pd = getPropertyDescriptors();
     for (int i = 0; i < pd.length; i++) {
       if (pd[i].getName().equals(defName)) { return i; }

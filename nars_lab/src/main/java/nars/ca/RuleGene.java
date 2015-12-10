@@ -28,6 +28,7 @@ public class RuleGene {
 	// ----------------------------------------------------------------
 	// Parse the rule string
 	// Example: '345/2/4'
+	@SuppressWarnings("HardcodedFileSeparator")
 	public void InitFromString(String sStr) {
 		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
@@ -83,6 +84,7 @@ public class RuleGene {
 	// ----------------------------------------------------------------
 	// Create the rule string
 	// Example: '345/2/4'
+	@SuppressWarnings("HardcodedFileSeparator")
 	public String GetAsString() {
 		String sBff = "";
 		int i;

@@ -13,6 +13,7 @@ import java.util.List;
  * normalized each step Scatter Spectral Event Bubble
  *
  */
+@SuppressWarnings({"AbstractClassWithoutAbstractMethods", "AbstractClassNeverImplemented"})
 public abstract class AxisPlot {
     protected float plotHeight = 1.0f;
     protected float plotWidth = 1.0f;
@@ -24,6 +25,7 @@ public abstract class AxisPlot {
         List<SignalData> getData();
     }
     
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public AxisPlot() {
         plotHeight = 1.0f;
     }

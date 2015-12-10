@@ -1,6 +1,6 @@
 package nars.nal.meta.match;
 
-import nars.nal.TaskRule;
+import nars.nal.PremiseRule;
 import nars.nal.nal4.Image;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -31,7 +31,7 @@ public class EllipsisTransform extends EllipsisOneOrMore {
     @Override
     public Variable clone(Variable v, VariableNormalization normalizer) {
         //normalizes any variable parameter terms of an EllipsisTransform
-        TaskRule.TaskRuleVariableNormalization vnn = (TaskRule.TaskRuleVariableNormalization) normalizer;
+        PremiseRule.TaskRuleVariableNormalization vnn = (PremiseRule.TaskRuleVariableNormalization) normalizer;
         return new EllipsisTransform(v,
                 from instanceof Variable ? vnn.applyAfter((Variable)from) : from,
                 to instanceof Variable ? vnn.applyAfter((Variable)to) : to);
@@ -39,8 +39,8 @@ public class EllipsisTransform extends EllipsisOneOrMore {
 
     public ArrayEllipsisMatch collect(Compound y, int a, int b, FindSubst subst) {
         if (from.equals(Image.Index) && (y instanceof Image)) {
-            Image ii = (Image)y;
-            int rel = ii.relationIndex;
+
+            int rel = y.relation();
             int n = (b-a)+1;
             int i = 0;
             int ab = 0;

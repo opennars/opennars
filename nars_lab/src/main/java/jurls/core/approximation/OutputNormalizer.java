@@ -57,7 +57,7 @@ public class OutputNormalizer implements ParameterizedFunction {
     }
 
     @Override
-    public void parameterGradient(double[] output, double[] xs) {
+    public void parameterGradient(double[] output, double... xs) {
         parameterizedFunction.parameterGradient(output, xs);
         Utils.multiplySelf(output, maxOutput - minOutput);
     }

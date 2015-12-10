@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
+@SuppressWarnings("AbstractClassNeverImplemented")
 public abstract class TimeControl extends NPanel implements ActionListener {
 
     protected int GUIUpdatePeriodMS = 75;
@@ -34,6 +35,7 @@ public abstract class TimeControl extends NPanel implements ActionListener {
     protected float currentSpeed = 0.0f;
     //protected float lastSpeed = 0f;
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public TimeControl(LayoutManager l) {
         super(l);
     }

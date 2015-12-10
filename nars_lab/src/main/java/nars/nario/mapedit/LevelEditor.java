@@ -109,6 +109,7 @@ public class LevelEditor extends JFrame implements ActionListener
         return panel;
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public void actionPerformed(ActionEvent e)
     {
         try

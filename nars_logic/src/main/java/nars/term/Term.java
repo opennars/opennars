@@ -22,7 +22,7 @@ package nars.term;
 
 
 import nars.Op;
-import nars.nal.nal7.Tense;
+import nars.nal.nal7.Order;
 import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
@@ -41,6 +41,11 @@ public interface Term extends Termed, Comparable, Termlike {
     }
 
     Op op();
+
+    /** syntactic help */
+    default boolean op(Op equalTo) {
+        return op() == equalTo;
+    }
 
     /** volume = total number of terms = complexity + # total variables */
     @Override
@@ -103,8 +108,8 @@ public interface Term extends Termed, Comparable, Termlike {
         return vars() > 0;
     }
 
-    default int getTemporalOrder() {
-        return Tense.ORDER_NONE;
+    default Order getTemporalOrder() {
+        return op().getTemporalOrder();
     }
 
     //boolean hasVar(final Op type);
@@ -116,8 +121,11 @@ public interface Term extends Termed, Comparable, Termlike {
     default boolean hasAny(Op op) {
 //        if (op == Op.VAR_PATTERN)
 //            return Variable.hasPatternVariable(this);
-        return hasAny((1<<op.ordinal()));
+        return hasAny(op.bit());
     }
+
+
+
 
 //    default boolean hasAll(int structuralVector) {
 //        final int s = structure();
@@ -127,9 +135,16 @@ public interface Term extends Termed, Comparable, Termlike {
 
     default boolean hasAny(int structuralVector) {
         int s = structure();
-        return (s & structuralVector) != 0;
+        return (s & structuralVector) == s;
     }
-
+    default boolean isAny(int structuralVector) {
+        int s = op().bit();
+        return (s & structuralVector) == s;
+    }
+    /** for multiple Op comparsions, use Op.or */
+    default boolean isAny(Op op) {
+        return isAny(op.bit());
+    }
 
     /** # of contained independent variables */
     int varIndep();
@@ -241,16 +256,12 @@ public interface Term extends Termed, Comparable, Termlike {
 //        return this;
 //    }
 //
-
-
-
-
-
-
-
-
     default boolean levelValid(int nal) {
-        return op().levelValid(nal);
+
+        if (nal >= 8) return true;
+
+        int mask = Op.NALLevelEqualAndAbove[nal];
+        return (structure() | mask) == mask;
     }
 
 
@@ -271,7 +282,7 @@ public interface Term extends Termed, Comparable, Termlike {
     default boolean containsTemporal() {
         //TODO construct bit vector for one comparison
         return hasAny(Op.PARALLEL) || hasAny(Op.SEQUENCE) ||
-                hasAny(Op.EQUIVALENCE_AFTER) || hasAny(Op.EQUIVALENCE_WHEN) ||
+                hasAny(Op.EQUIV_AFTER) || hasAny(Op.EQUIV_WHEN) ||
                 hasAny(Op.IMPLICATION_AFTER) || hasAny(Op.IMPLICATION_WHEN) || hasAny(Op.IMPLICATION_BEFORE);
     }
 

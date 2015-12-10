@@ -45,6 +45,7 @@ public class MJFavourities extends Dialog implements ActionListener {
 
 	// ----------------------------------------------------------------
 	// Fill the list with patterns from the current rule
+	@SuppressWarnings("HardcodedFileSeparator")
 	public void InitList() {
 		MJTools mjT;
 		Vector vLines;
@@ -64,6 +65,7 @@ public class MJFavourities extends Dialog implements ActionListener {
 
 	// ----------------------------------------------------------------
 	// Load the currently selected pattern
+	@SuppressWarnings("HardcodedFileSeparator")
 	private void LoadCurrentPattern() {
 		String sGameName = "";
 		String sRuleName = "";

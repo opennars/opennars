@@ -2,7 +2,7 @@ package nars.nal.meta;
 
 import com.google.common.collect.Sets;
 import nars.nal.Deriver;
-import nars.nal.TaskRule;
+import nars.nal.PremiseRule;
 import org.apache.commons.math3.stat.Frequency;
 import org.junit.Test;
 
@@ -27,7 +27,7 @@ public class RuleDerivationGraphTest {
     public void testRuleStatistics() {
         //SimpleDeriver d = new SimpleDeriver(Deriver.standard);
 
-        List<TaskRule> R = Deriver.standard;
+        List<PremiseRule> R = Deriver.standard;
         int registeredRules = R.size();
 
 
@@ -42,13 +42,13 @@ public class RuleDerivationGraphTest {
         }
         System.out.println("total: " + f.getSumFreq() + ", unique=" + f.getUniqueCount());
 
-        HashSet<TaskRule> setRules = Sets.newHashSet(R);
+        HashSet<PremiseRule> setRules = Sets.newHashSet(R);
 
         assertEquals("no duplicates", registeredRules, setRules.size());
 
         Set<PreCondition> preconds = new HashSet();
         int totalPrecond = 0;
-        for (TaskRule t : R) {
+        for (PremiseRule t : R) {
             for (PreCondition p : t.postPreconditions) {
                 totalPrecond++;
                 preconds.add(p);

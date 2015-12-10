@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 
             //output
             assertEquals(
-                    "<a --> b> <?1 --> b> -?> true",
+                    "<a-->b> <?1-->b> -?> true",
                     a + " " + b + " -?> " + r /*+ " remaining power"*/);
         }
 

@@ -88,10 +88,10 @@ public class KBmanager {
             String sep = File.separator;
             String base = System.getenv("SIGMA_HOME");
             String tptpHome = System.getenv("TPTP_HOME");
-            if (base == null || "".equals(base)) {
+            if (base == null || base.isEmpty()) {
                 base = System.getProperty("user.dir");
             }
-            if (tptpHome == null || "".equals(tptpHome)) {
+            if (tptpHome == null || tptpHome.isEmpty()) {
                 tptpHome = System.getProperty("user.dir");
             }
             System.out.println("INFO in KBmanager.setDefaultAttributes(): base == " + base);
@@ -185,6 +185,7 @@ public class KBmanager {
      * Double the backslash in a filename so that it can be saved to a text file
      * and read back properly.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public static String escapeFilename(String fname) {
 
         StringBuilder newstring = new StringBuilder("");

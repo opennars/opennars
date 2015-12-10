@@ -10,14 +10,14 @@ import com.github.fge.grappa.run.ListeningParseRunner3;
 import com.github.fge.grappa.run.ParseRunner;
 import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
+import com.github.fge.grappa.stack.DefaultValueStack;
 import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
-import nars.nal.TaskRule;
+import nars.nal.PremiseRule;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.match.EllipsisOneOrMore;
 import nars.nal.meta.match.EllipsisTransform;
 import nars.nal.meta.match.EllipsisZeroOrMore;
-import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperator;
@@ -34,6 +34,7 @@ import nars.term.variable.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.Texts;
+import nars.util.data.list.FasterList;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -134,14 +135,14 @@ public class Narsese extends BaseParser<Object>  {
         //use a var to count how many rule conditions so that they can be pulled off the stack without reallocating an arraylist
         return sequence(
                 STATEMENT_OPENER, s(),
-                push(TaskRule.class),
+                push(PremiseRule.class),
 
                 Term(), //cause
 
                 zeroOrMore( sepArgSep(), Term() ),
                 s(), TASK_RULE_FWD, s(),
 
-                push(TaskRule.class), //stack marker
+                push(PremiseRule.class), //stack marker
 
                 Term(), //effect
 
@@ -153,18 +154,18 @@ public class Narsese extends BaseParser<Object>  {
     }
 
 
-    public TaskRule popTaskRule() {
+    public PremiseRule popTaskRule() {
         //(Term)pop(), (Term)pop()
 
         List<Term> r = Global.newArrayList(1);
         List<Term> l = Global.newArrayList(1);
 
         Object popped;
-        while ( (popped = pop()) != TaskRule.class) { //lets go back till to the start now
+        while ( (popped = pop()) != PremiseRule.class) { //lets go back till to the start now
             r.add((Term)popped);
         }
 
-        while ( (popped = pop()) != TaskRule.class) {
+        while ( (popped = pop()) != PremiseRule.class) {
             l.add((Term)popped);
         }
 
@@ -189,7 +190,7 @@ public class Narsese extends BaseParser<Object>  {
             return null;
         }
 
-        return new TaskRule(premise, conclusion);
+        return new PremiseRule(premise, conclusion);
     }
 
     public Rule LineComment() {
@@ -447,9 +448,9 @@ public class Narsese extends BaseParser<Object>  {
 
 
 //                        //negation shorthand
-                        seq(Op.NEGATION.str, s(), Term(), push(
+                        seq(Op.NEGATE.str, s(), Term(), push(
                             //Negation.make(popTerm(null, true)))),
-                            $.not(Atom.the(pop())))),
+                            $.neg(Atom.the(pop())))),
 
 
                         seq(
@@ -493,8 +494,7 @@ public class Narsese extends BaseParser<Object>  {
 
                         //BacktickReverseInstance(),
 
-                        Atom(),
-                        ImageIndex()
+                        Atom()
 
                 ),
 
@@ -637,9 +637,6 @@ public class Narsese extends BaseParser<Object>  {
 //        return newParser((Memory)null);
 //    }
 
-    Rule ImageIndex() {
-        return sequence('_', push(Image.Index));
-    }
 
     Rule QuotedLiteral() {
         return sequence(dquote(), AnyString(), push('\"' + match() + '\"'), dquote());
@@ -754,27 +751,27 @@ public class Narsese extends BaseParser<Object>  {
     Rule Op() {
         return sequence(
                 trie(
-                        INTERSECTION_EXT.str, INTERSECTION_INT.str,
-                        DIFFERENCE_EXT.str, DIFFERENCE_INT.str,
+                        INTERSECT_EXT.str, INTERSECT_INT.str,
+                        DIFF_EXT.str, DIFF_INT.str,
                         PRODUCT.str,
                         IMAGE_EXT.str, IMAGE_INT.str,
 
-                        INHERITANCE.str,
+                        INHERIT.str,
 
-                        SIMILARITY.str,
+                        SIMILAR.str,
 
                         PROPERTY.str,
                         INSTANCE.str,
                         INSTANCE_PROPERTY.str,
 
-                        NEGATION.str,
+                        NEGATE.str,
 
                         IMPLICATION.str,
-                        EQUIVALENCE.str,
+                        EQUIV.str,
                         IMPLICATION_AFTER.str, IMPLICATION_BEFORE.str, IMPLICATION_WHEN.str,
-                        EQUIVALENCE_AFTER.str, EQUIVALENCE_WHEN.str,
-                        DISJUNCTION.str,
-                        CONJUNCTION.str,
+                        EQUIV_AFTER.str, EQUIV_WHEN.str,
+                        DISJUNCT.str,
+                        CONJUNCT.str,
                         SEQUENCE.str,
                         PARALLEL.str
                 ),
@@ -965,7 +962,7 @@ public class Narsese extends BaseParser<Object>  {
         }
         else {
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
-            return new GenericCompound(op, va);
+            return GenericCompound.COMPOUND(op, va);
         }
     }
 
@@ -1103,34 +1100,40 @@ public class Narsese extends BaseParser<Object>  {
 
 
     public <T extends Term> T termRaw(String input) throws NarseseException {
-        return termRaw(input, singleTermParser);
-    }
+
+        ParsingResult r = singleTermParser.run(input);
+
+        DefaultValueStack stack = (DefaultValueStack) r.getValueStack();
+        FasterList sstack = stack.stack;
+
+        switch (sstack.size()) {
+            case 1:
 
 
-    /**
-     * parse one term. it is more efficient to use parseTermNormalized if possible
-     */
-    public static <T extends Term> T termRaw(String input, ParseRunner p) throws NarseseException {
+                Object x = sstack.get(0);
 
-        ParsingResult r = p.run(input);
+                if (x instanceof String)
+                    x = $.$((String) x);
 
-        if (!r.getValueStack().isEmpty()) {
+                if (x != null) {
 
-            Object x = r.getValueStack().iterator().next();
-            if (x instanceof String)
-                x = Atom.the((String) x);
-
-            if (x != null) {
-                try {
-                    return (T) x;
-                } catch (ClassCastException cce) {
-                    throw new NarseseException("Term type mismatch: " + x.getClass(), cce);
+                    try {
+                        return (T) x;
+                    } catch (ClassCastException cce) {
+                        throw new NarseseException("Term mismatch: " + x.getClass(), cce);
+                    }
                 }
-            }
+                break;
+            case 0:
+                return null;
+            default:
+                throw new RuntimeException("Invalid parse stack: " + sstack);
         }
 
-        throw newParseException(input, r, null);
+        return null;
     }
+
+
     public <T extends Compound> T compound(String s) throws NarseseException {
         return term(s);
         /*if (t instanceof Compound)

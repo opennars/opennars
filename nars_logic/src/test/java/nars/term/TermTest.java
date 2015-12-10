@@ -18,9 +18,6 @@ package nars.term;
 
 import nars.*;
 import nars.concept.Concept;
-import nars.nal.nal1.Inheritance;
-import nars.nal.nal3.DifferenceExt;
-import nars.nal.nal3.DifferenceInt;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Image;
@@ -31,6 +28,7 @@ import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 import org.junit.Test;
 
 import java.util.TreeSet;
@@ -38,7 +36,7 @@ import java.util.TreeSet;
 import static java.lang.Long.toBinaryString;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
-import static nars.$.$;
+import static nars.$.*;
 import static org.junit.Assert.*;
 
 /**
@@ -50,7 +48,7 @@ public class TermTest {
     }
 
     NAR n = new Terminal();
-    NAR n2 = new Terminal();
+
 
     protected void assertEquivalent(String term1String, String term2String) {
         try {
@@ -112,8 +110,7 @@ public class TermTest {
         assertTrue(term1.complexity() > 1);
         assertTrue(term1.complexity() == term2.complexity());
 
-        assertTrue(term1.getClass().equals(Inheritance.class));
-        assertTrue(term1.getClass().equals(Inheritance.class));
+        assertTrue(term1.op(Op.INHERIT));
 
 
         //System.out.println("t1: " + term1 + ", complexity=" + term1.getComplexity());
@@ -252,23 +249,22 @@ public class TermTest {
         }
 
 
-        Term s = $.inh(subj, pred);
+        Term s = inh(subj, pred);
         assertEquals(null, s);
 
 
-        Term i = $.inh(subj, pred);
+        Term i = inh(subj, pred);
         assertEquals(null, i);
 
 
 //        try {
-            Compound forced = n.term("<a --> b>");
-            assertNotNull(forced);
+        Compound forced = n.term("<a --> b>");
+        assertNotNull(forced);
 
-            forced.terms()[0] = subj;
-            forced.terms()[1] = pred;
+        forced.terms()[0] = subj;
+        forced.terms()[1] = pred;
 
-            assertEquals(t, forced.toStringCompact());
-
+        assertEquals(t, forced.toStringCompact());
 
 
 //        } catch (Throwable ex) {
@@ -284,8 +280,9 @@ public class TermTest {
 
         try {
             Term x = n.term("wonder(a,b)");
-            assertEquals(Operation.class, x.getClass());
-            assertEquals("wonder(a, b)", x.toString());
+            assertEquals(Op.INHERIT, x.op());
+            assertTrue(Operation.isOperation(x));
+            assertEquals("wonder(a,b)", x.toString());
 
         } catch (Narsese.NarseseException ex) {
             ex.printStackTrace();
@@ -300,7 +297,7 @@ public class TermTest {
 
         Compound a = SetInt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
         Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
-        Term d = DifferenceInt.make(a, b);
+        Term d = diffInt(a, b);
         assertEquals(Op.SET_INT, d.op());
         assertEquals(d.toString(), 2, d.size());
         assertEquals("[a,c]", d.toString());
@@ -312,7 +309,7 @@ public class TermTest {
 
         Compound a = SetExt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
         Compound b = SetExt.make(Atom.the("d"), Atom.the("b"));
-        Term d = DifferenceExt.make(a, b);
+        Term d = diffExt(a, b);
         assertEquals(Op.SET_EXT, d.op());
         assertEquals(d.toString(), 2, d.size());
         assertEquals("{a,c}", d.toString());
@@ -344,6 +341,10 @@ public class TermTest {
 //        nullCachedName("{x}");
 //    }
 
+    @Test public void testPatternVar() {
+        assertTrue($("%x").op(Op.VAR_PATTERN));
+    }
+
     @Test
     public void termEqualityWithQueryVariables() {
         NAR n = new Terminal();
@@ -356,17 +357,22 @@ public class TermTest {
     protected void testTermEquality(String s) {
 
         Term a = n.term(s);
-        Term b = n2.term(s);
 
-        assertTrue(a!=b);
+        //NAR n2 = new Terminal();
+        Term b = n.term(s);
 
-        assertEquals(0, a.compareTo(b));
-        assertEquals(0, b.compareTo(a));
+        //assertTrue(a != b);
 
+        if (a instanceof Compound) {
+            assertEquals(((Compound)a).subterms(), ((Compound)b).subterms());
+        }
         assertEquals(a.hashCode(), b.hashCode());
         assertEquals(a.toString(), b.toString());
 
         assertEquals(a, b);
+
+        assertEquals(a.compareTo(a), a.compareTo(b));
+        assertEquals(0, b.compareTo(a));
 
         assertEquals(a.normalized().toString(), b.toString());
         assertEquals(a.normalized().hashCode(), b.hashCode());
@@ -374,43 +380,68 @@ public class TermTest {
 
     }
 
-    @Test public void termEqualityOfVariables1() { testTermEquality("#1"); }
-    @Test public void termEqualityOfVariables2() { testTermEquality("$1"); }
-    @Test public void termEqualityOfVariables3() { testTermEquality("?1"); }
-    @Test public void termEqualityOfVariables4() { testTermEquality("%1"); }
+    @Test
+    public void termEqualityOfVariables1() {
+        testTermEquality("#1");
+    }
+
+    @Test
+    public void termEqualityOfVariables2() {
+        testTermEquality("$1");
+    }
+
+    @Test
+    public void termEqualityOfVariables3() {
+        testTermEquality("?1");
+    }
+
+    @Test
+    public void termEqualityOfVariables4() {
+        testTermEquality("%1");
+    }
 
 
-    @Test public void termEqualityWithVariables1() {
+    @Test
+    public void termEqualityWithVariables1() {
         testTermEquality("<#2 --> lock>");
     }
 
-    @Test public void termEqualityWithVariables2() {
+    @Test
+    public void termEqualityWithVariables2() {
         testTermEquality("<<#2 --> lock> --> x>");
     }
-    @Test public void termEqualityWithVariables3() {
+
+    @Test
+    public void termEqualityWithVariables3() {
         testTermEquality("(&&, x, <#2 --> lock>)");
         testTermEquality("(&&, x, <#1 --> lock>)");
     }
-    @Test public void termEqualityWithVariables4() {
+
+    @Test
+    public void termEqualityWithVariables4() {
         testTermEquality("(&&, <<$1 --> key> ==> <#2 --> (/, open, $1, _)>>, <#2 --> lock>)");
     }
 
-    @Test public void termEqualityWithMixedVariables() {
+    @Test
+    public void termEqualityWithMixedVariables() {
 
         String s = "(&&, <<$1 --> key> ==> <#2 --> (/, open, $1, _)>>, <#2 --> lock>)";
         Term a = n.term(s);
+
+        NAR n2 = new Terminal();
         Term b = n2.term(s);
 
-        assertTrue(a!=b);
+        assertTrue(a != b);
         assertEquals(a, b);
 
         //todo: method results ignored ?
         b.equals(a.normalized());
 
         assertEquals("re-normalizing doesn't affect: " + a.normalized(), b,
-                a.normalized() );
+                a.normalized());
 
     }
+
     @Test
     public void validStatement() {
         NAR n = new Terminal();
@@ -448,7 +479,6 @@ public class TermTest {
     }
 
     public void statementHash(String a, String b) {
-
 
 
         Term ta = $(a);
@@ -516,70 +546,167 @@ public class TermTest {
 
         Term a3 = n.term("c");
 
-        Compound a = testStructure( "<c </> <a --> b>>",  "100000000000000000001000001");
-        Compound a0 = testStructure( "<<a --> b> </> c>",  "100000000000000000001000001");
+        Compound a = testStructure("<c </> <a --> b>>", "100000000000000000001000001");
+        Compound a0 = testStructure("<<a --> b> </> c>", "100000000000000000001000001");
 
         Compound a1 = testStructure("<c <|> <a --> b>>", "1000000000000000000001000001");
-        Compound a2 = testStructure("<c <=> <a --> b>>",   "10000000000000000001000001");
+        Compound a2 = testStructure("<c <=> <a --> b>>", "10000000000000000001000001");
 
         Compound b = testStructure("<?1 </> <$2 --> #3>>", "100000000000000000001001110");
         Compound b2 = testStructure("<<$1 --> #2> </> ?3>", "100000000000000000001001110");
 
 
-        assertTrue( a.impossibleStructureMatch(b.structure()) );
-        assertFalse( a.impossibleStructureMatch(a3.structure()));
+        assertTrue(a.impossibleStructureMatch(b.structure()));
+        assertFalse(a.impossibleStructureMatch(a3.structure()));
 
 
         assertEquals("no additional structure code in upper bits",
-                 a.structure(), a.structure());
+                a.structure(), a.structure());
         assertEquals("no additional structure code in upper bits",
                 b.structure(), b.structure());
 
 
     }
 
-    @Test public void testImageConstruction() {
-        Image e1 = (Image) Image.makeExt($("X"), $("Y"), $("_"));
-        Term e2 = Image.makeExt($("X"), $("Y"), Image.Index);
+    @Test
+    public void testImageConstruction() {
+        Term e1 = imageExt($("X"), $("Y"), $("_"));
+        Term e2 = imageExt($("X"), $("Y"), Image.Index);
         assertEquals(e1, e2);
 
-        Image f1 = (Image) Image.makeInt($("X"), $("Y"), $("_"));
-        Term f2 = Image.makeInt($("X"), $("Y"), Image.Index);
+        Term f1 = imageInt($("X"), $("Y"), $("_"));
+        Term f2 = imageInt($("X"), $("Y"), Image.Index);
         assertEquals(f1, f2);
 
         assertNotEquals(e1, f1);
-        assertEquals(e1.subterms(), f1.subterms());
+        assertEquals(((Compound) e1).subterms(), ((Compound) f1).subterms());
     }
 
-    @Test public void testImageConstruction2() {
-        assertEquals("(/, X, _, Y)", Image.makeExt($("X"), $("_"), $("Y")).toString());
-        assertEquals("(/, X, Y, _)", Image.makeExt($("X"), $("Y")).toString());
-        assertEquals("(/, _, X, Y)", Image.makeExt($("_"), $("X"), $("Y")).toString());
+    @Test
+    public void testImageConstruction2() {
+        assertTrue( $("(/,_,X,Y)").op().isImage() );
+        assertFalse( $("(X,Y)").op().isImage() );
 
-        assertEquals("(\\, X, _, Y)", Image.makeInt($("X"), $("_"), $("Y")).toString());
-        assertEquals("(\\, X, Y, _)", Image.makeInt($("X"), $("Y")).toString());
-        assertEquals("(\\, _, X, Y)", Image.makeInt($("_"), $("X"), $("Y")).toString());
+        assertEquals(null, imageExt($("X"), $("Y")));
+        assertEquals(null, imageInt($("X"), $("Y")));
+
+        assertEquals("(/,X,_)", $("(/,X,_)").toString());
+        assertEquals("(/,X,_)", imageExt($("X"), $("_")).toString());
+
+        assertEquals("(/,X,Y,_)", imageExt($("X"), $("Y"), $("_")).toString());
+        assertEquals("(/,X,_,Y)", imageExt($("X"), $("_"), $("Y")).toString());
+        assertEquals("(/,_,X,Y)", imageExt($("_"), $("X"), $("Y")).toString());
+
+        assertEquals("(\\,X,Y,_)", imageInt($("X"), $("Y"), $("_")).toString());
+        assertEquals("(\\,X,_,Y)", imageInt($("X"), $("_"), $("Y")).toString());
+        assertEquals("(\\,_,X,Y)", imageInt($("_"), $("X"), $("Y")).toString());
 
     }
 
-    @Test public void testImageConstruction3() {
+    final Term p = $("P"), q = $("Q"), r = $("R"), s = $("S");
+
+    @Test public void testIntersectExtReduction1() {
+        // (&,R,(&,P,Q)) = (&,P,Q,R)
+        assertEquals("(&,P,Q,R)", sect(r, sect(p, q)).toString());
+        assertEquals("(&,P,Q,R)", $("(&,R,(&,P,Q))").toString());
+    }
+    @Test public void testIntersectExtReduction2() {
+        // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+        assertEquals("(&,P,Q,R,S)", sect(sect(p, q), sect(r, s)).toString());
+        assertEquals("(&,P,Q,R,S)", $("(&,(&,P,Q),(&,R,S))").toString());
+    }
+    @Test public void testIntersectExtReduction3() {
+        // (&,R,(&,P,Q)) = (&,P,Q,R)
+        assertEquals("(&,P,Q,R)", $("(&,R,(&,P,Q))").toString());
+    }
+    @Test public void testIntersectExtReduction4() {
+        //UNION if (term1.op(Op.SET_INT) && term2.op(Op.SET_INT)) {
+        assertEquals("{P,Q,R,S}", sect($.set(p, q), $.set(r, s)).toString());
+        assertEquals("{P,Q,R,S}", $("(&,{P,Q},{R,S})").toString());
+        assertEquals(null, sect($.setInt(p, q), $.setInt(r, s)));
+
+    }
+
+    @Test public void testIntersectIntReduction1() {
+        // (|,R,(|,P,Q)) = (|,P,Q,R)
+        assertEquals("(|,P,Q,R)", sectInt(r, sectInt(p, q)).toString());
+        assertEquals("(|,P,Q,R)", $("(|,R,(|,P,Q))").toString());
+    }
+    @Test public void testIntersectIntReduction2() {
+        // (|,(|,P,Q),(|,R,S)) = (|,P,Q,R,S)
+        assertEquals("(|,P,Q,R,S)", sectInt(sectInt(p, q), sectInt(r, s)).toString());
+        assertEquals("(|,P,Q,R,S)", $("(|,(|,P,Q),(|,R,S))").toString());
+    }
+    @Test public void testIntersectIntReduction3() {
+        // (|,R,(|,P,Q)) = (|,P,Q,R)
+        assertEquals("(|,P,Q,R)", $("(|,R,(|,P,Q))").toString());
+    }
+    @Test public void testIntersectIntReduction4() {
+        //UNION if (term1.op(Op.SET_INT) || term2.op(Op.SET_INT)) {
+        assertEquals("[P,Q,R,S]", sectInt($.setInt(p, q), $.setInt(r, s)).toString());
+        assertEquals("[P,Q,R,S]", $("(|,[P,Q],[R,S])").toString());
+        assertEquals(null, $("(|,{P,Q},{R,S})"));
+    }
+
+
+
+    //TODO:
+        /*
+            (&,(&,P,Q),R) = (&,P,Q,R)
+            (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+
+            // set union
+            if (term1.op(Op.SET_INT) && term2.op(Op.SET_INT)) {
+
+            // set intersection
+            if (term1.op(Op.SET_EXT) && term2.op(Op.SET_EXT)) {
+
+         */
+
+    @Test public void testStatemntString() {
+        assertTrue( inh("a", "b").op().isStatement() );
+        Term aInhB = $("<a-->b>");
+        assertEquals(GenericCompound.class, aInhB.getClass());
+        assertEquals("<a-->b>",
+                     aInhB.toString());
+    }
+
+    @Test
+    public void testImageConstructionExt() {
+
+
+
+
         assertEquals(
-            Image.makeExt($("X"), $("_"), $("Y")), $("(/, X, _, Y)")
+            "<A-->(/,%X,_)>", $("<A --> (/, %X, _)>").toString()
         );
         assertEquals(
-            Image.makeExt($("_"), $("X"), $("Y")), $("(/, _, X, Y)")
+            "<A-->(/,_,%X)>", $("<A --> (/, _, %X)>").toString()
+        );
+//        assertEquals(
+//                "(/,_,%X)", $("(/, _, %X)").toString()
+//        );
+
+        assertEquals(
+                imageExt($("X"), $("_"), $("Y")), $("(/, X, _, Y)")
         );
         assertEquals(
-            Image.makeExt($("X"), $("Y"), $("_")), $("(/, X, Y, _)")
+                imageExt($("_"), $("X"), $("Y")), $("(/, _, X, Y)")
         );
         assertEquals(
-            Image.makeInt($("X"), $("_"), $("Y")), $("(\\, X, _, Y)")
+                imageExt($("X"), $("Y"), $("_")), $("(/, X, Y, _)")
+        );
+    }
+    @Test
+    public void testImageConstructionInt() {
+        assertEquals(
+                imageInt($("X"), $("_"), $("Y")), $("(\\, X, _, Y)")
         );
         assertEquals(
-            Image.makeInt($("_"), $("X"), $("Y")), $("(\\, _, X, Y)")
+                imageInt($("_"), $("X"), $("Y")), $("(\\, _, X, Y)")
         );
         assertEquals(
-            Image.makeInt($("X"), $("Y"), $("_")), $("(\\, X, Y, _)")
+                imageInt($("X"), $("Y"), $("_")), $("(\\, X, Y, _)")
         );
     }
 
@@ -587,6 +714,7 @@ public class TermTest {
     public void testImageOrdering1() {
         testImageOrdering('/');
     }
+
     @Test
     public void testImageOrdering2() {
         testImageOrdering('\\');
@@ -594,11 +722,11 @@ public class TermTest {
 
     void testImageOrdering(char v) {
 
-        Image a = n.term("(" + v + ",x, y, _)");
-        Image b = n.term("(" + v + ",x, _, y)");
-        Image c = n.term("(" + v + ",_, x, y)");
-        assertNotEquals(a.relationIndex, b.relationIndex);
-        assertNotEquals(b.relationIndex, c.relationIndex);
+        Compound a = n.term("(" + v + ",x, y, _)");
+        Compound b = n.term("(" + v + ",x, _, y)");
+        Compound c = n.term("(" + v + ",_, x, y)");
+        assertNotEquals(a.relation(), b.relation());
+        assertNotEquals(b.relation(), c.relation());
 
         assertNotEquals(a, b);
         assertNotEquals(b, c);
@@ -608,14 +736,14 @@ public class TermTest {
         assertNotEquals(b.hashCode(), c.hashCode());
         assertNotEquals(a.hashCode(), c.hashCode());
 
-        assertEquals(-1, a.compareTo(b));
-        assertEquals(+1, b.compareTo(a));
+        assertEquals(+1, a.compareTo(b));
+        assertEquals(-1, b.compareTo(a));
 
-        assertEquals(-1, a.compareTo(c));
-        assertEquals(+1, c.compareTo(a));
+        assertEquals(+1, a.compareTo(c));
+        assertEquals(-1, c.compareTo(a));
 
-        assertEquals(-1, b.compareTo(c));
-        assertEquals(+1, c.compareTo(b));
+        assertEquals(+1, b.compareTo(c));
+        assertEquals(-1, c.compareTo(b));
 
 
     }
@@ -625,12 +753,12 @@ public class TermTest {
 
         String i1 = "(/, x, y, _)";
         String i2 = "(/, x, _, y)";
-        Image a = testStructure(i1,  "10000000000001");
-        Image b = testStructure(i2,  "10000000000001");
+        Compound a = testStructure(i1, "10000000000001");
+        Compound b = testStructure(i2, "10000000000001");
 
         /*assertNotEquals("additional structure code in upper bits",
                 a.structure2(), b.structure2());*/
-        assertNotEquals(a.relationIndex, b.relationIndex);
+        assertNotEquals(a.relation(), b.relation());
         assertNotEquals("structure code influenced contentHash",
                 b.hashCode(), a.hashCode());
 
@@ -647,7 +775,8 @@ public class TermTest {
     }
 
 
-    @Test public void testSubTermStructure() {
+    @Test
+    public void testSubTermStructure() {
 
         assertTrue(
                 n.term("<a --> b>").impossibleSubterm(
@@ -662,7 +791,8 @@ public class TermTest {
 
     }
 
-    @Test public void testCommutativeWithVariableEquality() {
+    @Test
+    public void testCommutativeWithVariableEquality() {
         Term a = n.term("<(&&, <#1 --> M>, <#2 --> M>) ==> <#2 --> nonsense>>");
         Term b = n.term("<(&&, <#2 --> M>, <#1 --> M>) ==> <#2 --> nonsense>>");
         assertEquals(a, b);
@@ -670,7 +800,7 @@ public class TermTest {
         Term c = n.term("<(&&, <#1 --> M>, <#2 --> M>) ==> <#1 --> nonsense>>");
         assertNotEquals(a, c);
 
-        Compound x= n.term("(&&, <#1 --> M>, <#2 --> M>)");
+        Compound x = n.term("(&&, <#1 --> M>, <#2 --> M>)");
         Term xa = x.term(0);
         Term xb = x.term(1);
         int o1 = xa.compareTo(xb);
@@ -680,14 +810,15 @@ public class TermTest {
         assertNotEquals(xa, xb);
     }
 
-    @Test public void testHash1() {
-        testUniqueHash("<A --> B>","<A <-> B>");
-        testUniqueHash("<A --> B>","<A ==> B>");
-        testUniqueHash("A","B");
-        testUniqueHash("%1","%2");
-        testUniqueHash("%A","A");
-        testUniqueHash("$1","A");
-        testUniqueHash("$1","#1");
+    @Test
+    public void testHash1() {
+        testUniqueHash("<A --> B>", "<A <-> B>");
+        testUniqueHash("<A --> B>", "<A ==> B>");
+        testUniqueHash("A", "B");
+        testUniqueHash("%1", "%2");
+        testUniqueHash("%A", "A");
+        testUniqueHash("$1", "A");
+        testUniqueHash("$1", "#1");
     }
 
     public void testUniqueHash(String a, String b) {

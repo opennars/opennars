@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import static nars.Symbols.*;
 import static nars.util.data.Util.hashCombine;
@@ -83,14 +84,11 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     static byte[] newCompound1Key(Op op, Term singleTerm) {
 
-        byte[] opBytes = op.bytes;
-        if (opBytes.length > 1)
-            throw new RuntimeException("Compound1 operators must have a 1 char representation; invalid: " + op);
-        byte opByte = opBytes[0];
+        byte opByte = (byte) op.ordinal();
 
         byte[] termBytes = singleTerm.bytes();
 
-        return ByteBuf.create(opBytes.length + termBytes.length)
+        return ByteBuf.create(1 + termBytes.length)
                 .add(opByte)
                 .add(termBytes)
                 .toBytes();
@@ -237,6 +235,12 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return Compound.unwrap(x, unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);
     }
 
+
+    default String toString(BiConsumer<Compound, Appendable> a) {
+        StringBuilder sb = new StringBuilder();
+        a.accept(this, sb);
+        return sb.toString();
+    }
 
     @Override
     default StringBuilder toStringBuilder(boolean pretty) {
@@ -386,20 +390,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
 
-    @Override
-    default boolean levelValid(int nal) {
-        if (!op().levelValid(nal))
-            return false;
-
-        //TODO use structural hash
-        int n = size();
-        for (int i = 0; i < n; i++) {
-            Term sub = term(i);
-            if (!sub.levelValid(nal))
-                return false;
-        }
-        return true;
-    }
 
     //boolean transform(CompoundTransform<Compound<T>, T> trans, int depth);
 
@@ -550,7 +540,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
                 //&&
                 // ?? && ( y.volume() >= volume() )
                 //same size
-                (size()==y.size());
+                (size()==y.size()) && (relation()==y.relation());
     }
 
     default boolean matchCompoundExEllipsis(Compound y, Ellipsis e) {
@@ -565,6 +555,12 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     default Term last() {
         return term(size()-1);
     }
+
+    default int relation() {
+        return -1; //by default, not relation present except for Images
+    }
+
+
 
 
 //    public int countOccurrences(final Term t) {

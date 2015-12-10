@@ -5,9 +5,7 @@ import nars.Op;
 import nars.Symbols;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.term.compound.Compound;
-import nars.term.compound.CompoundN;
-import nars.util.utf8.ByteBuf;
+import nars.term.compound.GenericCompound;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,112 +17,22 @@ import static nars.Symbols.*;
  */
 
 
-public abstract class Image<T extends Term> extends CompoundN<T> {
-
-    public static Term makeInt(Term... argList) {
-        return make(argList, (a, r) -> new ImageInt(a, (short)r));
-    }
-    public static Term makeExt(Term... argList) {
-        return make(argList, (a, r) -> new ImageExt(a, (short) r));
-    }
+public interface Image {
 
         /** Image index ("imdex") symbol */
-        public static final Atom Index = Atom.the(String.valueOf(IMAGE_PLACE_HOLDER));
+    Atom Index = Atom.the("_");
 
-    /**
-     * "Imdex": subterm index of relation in the component list
-     */
-    public final short relationIndex;
+    static void appendImage(GenericCompound image, Appendable p, boolean pretty) throws IOException {
 
-
-    protected Image(T[] components, int relationIndex) {
-        super(relationIndex+1 /* non-zero */,
-                components);
-
-        this.relationIndex = ((short) relationIndex);
-    }
-
-
-    @Override
-    public final boolean equals(Object o) {
-        if (o == this) return true;
-        if (super.equals(o)) {
-            return ((Image)o).relationIndex == relationIndex;
-        }
-        return false;
-    }
-
-    @Override
-    public final int compareTo(Object o) {
-        if (o == this) return 0;
-        int d = super.compareTo(o);
-        if (d == 0) {
-            return Integer.compare(((Image)o).relationIndex, relationIndex);
-        }
-        return d;
-    }
-
-    //    /**
-//     * apply the relation index as the additional structure code to differnetiate
-//     * images with different relations
-//     */
-//    @Override
-//    public final int structure2() {
-//        return relationIndex+1;
-//    }
-
-    @Override public final boolean isCommutative() {
-        return false;
-    }
-
-    //TODO replace with a special Term type
-    static boolean isPlaceHolder(Term t) {
-//        if (t instanceof Compound) return false;
-//        byte[] n = t.bytes();
-//        if (n.length != 1) return false;
-        return t.equals(Index);
-    }
-
-    @Override
-    public int bytesLength() {
-        return super.bytesLength() + 1;
-    }
-
-    @Override
-    public byte[] bytes() {
-
-        ByteBuf b = ByteBuf.create(bytesLength());
-
-        b.add((byte) op().ordinal()); //header
-
-        b.add((byte)relationIndex); //relation index
-
-        appendSubtermBytes(b);
-
-        b.add(COMPOUND_TERM_CLOSERbyte); //closer
-
-        return b.toBytes();
-    }
-
-    @Override public boolean matchCompoundEx(Compound y) {
-        /** if they are images, they must have same relationIndex */
-        return super.matchCompoundEx(y)
-                && (relationIndex == ((Image) y).relationIndex);
-    }
-
-
-    @Override
-    public void append(Appendable p, boolean pretty) throws IOException {
-
-        int len = size();
+        int len = image.size();
 
         p.append(COMPOUND_TERM_OPENER);
-        p.append(op().str);
+        p.append(image.op().str);
 
-        int relationIndex = this.relationIndex;
+        int relationIndex = image.relation();
         int i;
         for (i = 0; i < len; i++) {
-            Term tt = term(i);
+            Term tt = image.term(i);
 
             p.append(ARGUMENT_SEPARATOR);
             if (pretty) p.append(' ');
@@ -147,17 +55,20 @@ public abstract class Image<T extends Term> extends CompoundN<T> {
 
     }
 
-    public Term relation() {
-        return term(relationIndex);
+    //TODO replace with a special Term type
+    static boolean isPlaceHolder(Term t) {
+//        if (t instanceof Compound) return false;
+//        byte[] n = t.bytes();
+//        if (n.length != 1) return false;
+        return t.equals(Index);
     }
-
 
     /**
      * Try to make a new ImageInt/ImageExt.
      * @return the Term generated from the arguments
      * @param argList The list of term
      */
-    public static Term make(Term[] argList, ObjectIntToObjectFunction<Term[], Term> build) {
+    static Term make(Term[] argList, ObjectIntToObjectFunction<Term[], Term> build) {
         int l = argList.length;
         if (l < 2) {
             return argList[0];
@@ -168,7 +79,7 @@ public abstract class Image<T extends Term> extends CompoundN<T> {
         Term[] argument = new Term[l];
         int index = 0, n = 0;
         for (int j = 0; j < l; j++) {
-            if (isPlaceHolder(argList[j])) {
+            if (Image.isPlaceHolder(argList[j])) {
                 index = j;
                 if (n == l-1)
                     break;
@@ -185,15 +96,7 @@ public abstract class Image<T extends Term> extends CompoundN<T> {
         return build.valueOf(argument, index);
     }
 
-
-    /**
-     *
-     * @param ext - true if ext, false if int
-     * @param terms - terms to form the Image, extracting 0 or 1 index placeholders that override defaultIndex
-     * @return
-     */
-    public static Image build(Op o, Term[] res) {
-
+    static Term build(Op o, Term[] res) {
 
         int index = 0, j = 0;
         for (Term x : res) {
@@ -204,7 +107,8 @@ public abstract class Image<T extends Term> extends CompoundN<T> {
         }
 
         if (index == -1) {
-            index = 0;
+            //index = 0;
+            return null;
         } else {
             int serN = res.length-1;
             Term[] ser = new Term[serN];
@@ -213,11 +117,12 @@ public abstract class Image<T extends Term> extends CompoundN<T> {
             res = ser;
         }
 
-        boolean ext = (o == Op.IMAGE_EXT);
-        return ext ? new ImageExt(res, index) : new ImageInt(res, index);
+        return GenericCompound.COMPOUND(
+                o,
+                res, index);
     }
 
-    public static boolean hasPlaceHolder(Term[] r) {
+    static boolean hasPlaceHolder(Term[] r) {
         for (Term x : r) {
             if (isPlaceHolder(x)) return true;
         }
@@ -306,6 +211,149 @@ public abstract class Image<T extends Term> extends CompoundN<T> {
 //
 //        return b.toBytes();
 //
+//    }
+
+//    /**
+//     * constructor with partial values, called by make
+//     * @param arg The component list of the term
+//     * @param index The index of relation in the component list
+//     */
+//    public ImageInt(Term[] arg, int index) {
+//        super(arg, index);
+//    }
+//
+//
+//    /**
+//     * Clone an object
+//     * @return A new object, to be casted into an ImageInt
+//     */
+//    @Override
+//    public ImageInt clone() {
+//        return new ImageInt(terms.term, relationIndex);
+//    }
+//
+//    @Override
+//    public Term clone(Term[] replaced) {
+//        if ((replaced.length != size())
+//                || Image.hasPlaceHolder(replaced)) //TODO indexOfPlaceHolder
+//            return Image.makeInt(replaced);
+//
+////        if (replaced.length != size())
+////            //return null;
+////            throw new RuntimeException("Replaced terms not the same amount as existing terms (" + terms().length + "): " + Arrays.toString(replaced));
+//
+//
+//        return new ImageInt(replaced, relationIndex);
+//    }
+//
+//    /**
+//     * Try to make an Image from a Product and a relation. Called by the logic rules.
+//     * @param product The product
+//     * @param relation The relation
+//     * @param index The index of the place-holder
+//     * @return A compound generated or a term it reduced to
+//     */
+//    public static Term make(Product product, Term relation, short index) {
+//        if (relation instanceof Product) {
+//            Product p2 = (Product) relation;
+//            if ((product.size() == 2) && (p2.size() == 2)) {
+//                if ((index == 0) && product.term(1).equals(p2.term(1))) {// (\,_,(*,a,b),b) is reduced to a
+//                    return p2.term(0);
+//                }
+//                if ((index == 1) && product.term(0).equals(p2.term(0))) {// (\,(*,a,b),a,_) is reduced to b
+//                    return p2.term(1);
+//                }
+//            }
+//        }
+//
+//        Term[] argument = product.termsCopy(); //shallow clone necessary because the index argument is replaced
+//        argument[index] = relation;
+//        return make(argument, index);
+//    }
+//
+//    /**
+//     * Try to make an Image from an existing Image and a component. Called by the logic rules.
+//     * @param oldImage The existing Image
+//     * @param component The component to be added into the component list
+//     * @param index The index of the place-holder in the new Image
+//     * @return A compound generated or a term it reduced to
+//     */
+//    public static Term make(ImageInt oldImage, Term component, short index) {
+//        Term[] argList = oldImage.termsCopy();
+//        int oldIndex = oldImage.relationIndex;
+//        Term relation = argList[oldIndex];
+//        argList[oldIndex] = component;
+//        argList[index] = relation;
+//        return make(argList, index);
+//    }
+//
+//    /**
+//     * Try to make a new compound from a set of term. Called by the public make methods.
+//     * @param argument The argument list
+//     * @param index The index of the place-holder in the new Image
+//     * @return the Term generated from the arguments
+//     */
+//    public static ImageInt make(Term[] argument, int index) {
+//        return new ImageInt(argument, index);
+//    }
+//
+//
+//    /**
+//     * Get the operate of the term.
+//     * @return the operate of the term
+//     */
+//    @Override
+//    public Op op() {
+//        return Op.IMAGE_INT;
+//    }
+//    /**
+//     * Clone an object
+//     * @return A new object, to be casted into an ImageExt
+//     */
+//    @Override
+//    public ImageExt clone() {
+//        return new ImageExt(terms.term, relationIndex);
+//    }
+//    @Override
+//    public Term clone(Term[] replaced) {
+//        if ((replaced.length != size())
+//                || Image.hasPlaceHolder(replaced)) //TODO indexOfPlaceHolder
+//            return Image.makeExt(replaced);
+//
+////        if (replaced.length != size())
+////            //return null;
+////            throw new RuntimeException("Replaced terms not the same amount as existing terms (" + terms().length + "): " + Arrays.toString(replaced));
+//
+//        return new ImageExt(replaced, relationIndex);
+//    }
+//
+//
+//
+//    /**
+//     * Try to make an Image from an existing Image and a component. Called by the logic rules.
+//     * @param oldImage The existing Image
+//     * @param component The component to be added into the component list
+//     * @param index The index of the place-holder in the new Image
+//     * @return A compound generated or a term it reduced to
+//     */
+//    public static Term make(ImageExt oldImage, Term component, short index) {
+//        Term[] argList = oldImage.termsCopy();
+//        int oldIndex = oldImage.relationIndex;
+//        Term relation = argList[oldIndex];
+//        argList[oldIndex] = component;
+//        argList[index] = relation;
+//        return new ImageExt(argList, index);
+//    }
+//
+//
+//
+//    /**
+//     * get the operate of the term.
+//     * @return the operate of the term
+//     */
+//    @Override
+//    public final Op op() {
+//        return Op.IMAGE_EXT;
 //    }
 
 }

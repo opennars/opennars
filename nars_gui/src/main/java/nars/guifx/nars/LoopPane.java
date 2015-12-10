@@ -37,6 +37,7 @@ public class LoopPane extends VBox {
 
     final ChangeListener<Number> updateLoopOnChange = (s, p, c) -> updateLoop();
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public LoopPane(NARLoop loop) {
 
         this.loop = loop;

@@ -12,6 +12,7 @@ import nars.nal.nal4.Image;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 import nars.term.variable.CommonVariable;
 import nars.term.variable.Variable;
 import nars.util.version.VersionMap;
@@ -378,7 +379,7 @@ public class FindSubst extends Versioning implements Subst {
 
         @Override
         public boolean match(Term t) {
-            return ((Image) t).relationIndex == index;
+            return ((Compound) t).relation() == index;
         }
 
         @Override
@@ -759,7 +760,7 @@ public class FindSubst extends Versioning implements Subst {
                     if (matchEllipsedLinear(X, e, Y)) {
                         ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
                         putXY(e, new ImagePutMatch(
-                                raw.term, et.to, (Image)Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
+                                raw.term, et.to, Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
                         return true;
                     }
                 } else {
@@ -790,13 +791,13 @@ public class FindSubst extends Versioning implements Subst {
             }
 
             /** if they are images, they must have same relationIndex */
-            if (X instanceof Image) { //PRECOMPUTABLE
+            if (X.op().isImage()) { //PRECOMPUTABLE
 
                 //if the ellipsis is normal, then interpret the relationIndex as it is
 
                 int xEllipseIndex = X.indexOf(e);
-                int xRelationIndex = ((Image) X).relationIndex;
-                int yRelationIndex = ((Image) Y).relationIndex;
+                int xRelationIndex = ((GenericCompound) X).relation();
+                int yRelationIndex = ((GenericCompound) Y).relation();
 
                 if (xEllipseIndex >= xRelationIndex) {
                     //compare relation from beginning as in non-ellipsis case

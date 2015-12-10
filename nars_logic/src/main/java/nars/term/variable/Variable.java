@@ -80,9 +80,9 @@ public abstract class Variable extends AbstractStringAtom {
             case '%':
                 return Op.VAR_PATTERN;
             case '#':
-                return Op.VAR_DEPENDENT;
+                return Op.VAR_DEP;
             case '$':
-                return Op.VAR_INDEPENDENT;
+                return Op.VAR_INDEP;
             case '?':
                 return Op.VAR_QUERY;
         }
@@ -93,9 +93,9 @@ public abstract class Variable extends AbstractStringAtom {
         switch (o) {
             case VAR_PATTERN:
                 return 0;
-            case VAR_DEPENDENT:
+            case VAR_DEP:
                 return 1;
-            case VAR_INDEPENDENT:
+            case VAR_INDEP:
                 return 2;
             case VAR_QUERY:
                 return 3;
@@ -172,12 +172,12 @@ public abstract class Variable extends AbstractStringAtom {
 
         @Override
         public int structure() {
-            return Op.VAR_DEPENDENT.bit();
+            return Op.VAR_DEP.bit();
         }
 
         @Override
         public Op op() {
-            return Op.VAR_DEPENDENT;
+            return Op.VAR_DEP;
         }
 
         @Override
@@ -210,12 +210,12 @@ public abstract class Variable extends AbstractStringAtom {
 
         @Override
         public int structure() {
-            return Op.VAR_INDEPENDENT.bit();
+            return Op.VAR_INDEP.bit();
         }
 
         @Override
         public Op op() {
-            return Op.VAR_INDEPENDENT;
+            return Op.VAR_INDEP;
         }
 
         @Override

@@ -34,6 +34,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
         protected transient double minValue;
         protected transient double maxValue;
 
+        @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
         public Series(String name) {
             this.name = name;
             color = NARfx.hashColor(name, ca);

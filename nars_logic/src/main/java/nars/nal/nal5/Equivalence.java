@@ -22,62 +22,29 @@ package nars.nal.nal5;
 
 import nars.Op;
 import nars.nal.nal7.CyclesInterval;
+import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
 import nars.term.Statement;
 import nars.term.Term;
-import nars.term.TermSet;
-import nars.term.TermVector;
 import nars.term.compound.GenericCompound;
 
 /**
  * A Statement about an Equivalence relation.
  */
-public class Equivalence extends Statement {
+public interface Equivalence  {
 
-    @Deprecated private final int temporalOrder; //TODO use subclasses
-
-
-    @Deprecated static Op op(int order) {
+    @Deprecated static Op equivOp(Order order) {
         switch (order) {
-            case Tense.ORDER_FORWARD:
-                return Op.EQUIVALENCE_AFTER;
-            case Tense.ORDER_CONCURRENT:
-                return Op.EQUIVALENCE_WHEN;
+            case Forward:
+                return Op.EQUIV_AFTER;
+            case Concurrent:
+                return Op.EQUIV_WHEN;
+            case Backward:
+                throw new RuntimeException("invalid order");
         }
-        return Op.EQUIVALENCE;
+        return Op.EQUIV;
     }
 
-    /**
-     * Constructor with partial values, called by make
-     *
-     */
-    private Equivalence(Term subject, Term predicate, int order) {
-        super( op(order),
-                order!=Tense.ORDER_FORWARD ?
-                    new TermSet(subject, predicate) :
-                        new TermVector(subject, predicate)
-        );
-
-        if ((order == Tense.ORDER_BACKWARD) ||
-                (order == Tense.ORDER_INVALID)) {
-            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + subject + " , " + predicate);
-        }
-
-        temporalOrder = order;
-    }
-
-
-    /** alternate version of Inheritance.make that allows equivalent subject and predicate
-     * to be reduced to the common term.      */
-    public static Term makeTerm(Term subject, Term predicate, int temporalOrder) {
-        if (subject.equals(predicate))
-            return subject;                
-        return make(subject, predicate, temporalOrder);        
-    }
-
-    public static Term makeTerm(Term subject, Term predicate) {
-        return makeTerm(subject, predicate, Tense.ORDER_NONE);
-    }
 
 
     /**
@@ -92,7 +59,7 @@ public class Equivalence extends Statement {
         return make(subject, predicate, Tense.ORDER_NONE);
     }
 
-    public static Term make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
+    public static Term make(Term subject, Term predicate, Order temporalOrder) {  // to be extended to check if subject is Conjunction
 
         if ((subject instanceof Implication) || (subject instanceof Equivalence)
                 || (predicate instanceof Implication) || (predicate instanceof Equivalence) ||
@@ -100,7 +67,7 @@ public class Equivalence extends Statement {
             return null;
         }
 
-        if (invalidStatement(subject, predicate)) {
+        if (Statement.invalidStatement(subject, predicate)) {
             return null;
         }
 
@@ -122,34 +89,10 @@ public class Equivalence extends Statement {
             predicate = interm;
         }
 
-        return new GenericCompound(
-            op(temporalOrder),
+        return GenericCompound.COMPOUND(
+            equivOp(temporalOrder),
             subject, predicate
         );
     }
 
-    /**
-     * Get the operate of the term.
-     *
-     * @return the operate of the term
-     */
-    @Override
-    public final Op op() {
-        return op(temporalOrder);
-    }
-
-    /**
-     * Check if the compound is commutative.
-     *
-     * @return true for commutative
-     */
-    @Override
-    public final boolean isCommutative() {
-        return (temporalOrder != Tense.ORDER_FORWARD);
-    }
-
-    @Override
-    public final int getTemporalOrder() {
-        return temporalOrder;
-    }
 }

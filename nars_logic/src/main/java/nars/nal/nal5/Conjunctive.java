@@ -1,73 +1,56 @@
 package nars.nal.nal5;
 
 import nars.Global;
+import nars.Op;
+import nars.nal.nal7.Order;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
-import nars.nal.nal7.Tense;
 import nars.term.Term;
-import nars.term.Terms;
 import nars.term.compound.Compound;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static nars.nal.nal7.Order.Backward;
+import static nars.nal.nal7.Order.Forward;
+
 /**
  * Created by me on 10/20/15.
  */
-public abstract class Conjunctive<T extends Term> extends Junction<T> {
+public interface Conjunctive<T extends Term>  {
 
 
-    @SafeVarargs
-    protected Conjunctive(T... arg) {
-        super(arg);
-    }
+    int conjunctiveBits = Op.or(Op.CONJUNCT, Op.SEQUENCE, Op.PARALLEL);
 
-//    public Conjunctive(Term[] arg) {
-//        super();
-//
-////        if (Global.DEBUG) {
-////            if (isCommutative()) {
-////                if (!Arrays.equals(Terms.toSortedSetArray(this.term), this.term))
-////                    throw new RuntimeException("should have been sorted prior to construction");
-////            }
-////        }
-//    }
-
-    /**
-     * returns null if not conjunction with same order
-     */
-    public static Conjunctive isConjunction(Term t, int order) {
-        if (t instanceof Conjunctive) {
-            Conjunctive c = (Conjunctive) t;
-            if (c.getTemporalOrder() == order) {
-                return c;
-            }
+    /** null if not conjunction with same order */
+    public static boolean isConjunction(Term t, Order order) {
+        if (t.isAny(conjunctiveBits)) {
+            return t.getTemporalOrder() == order;// ? (Compound) t : null;
         }
-        return null;
+        return false;
     }
 
     /**
      * recursively flatten a embedded conjunction subterms if they are of a specific order
      */
-    public static Term[] flattenAndSort(Term[] args, int order) {
+    public static Term[] flatten(Term[] args, Order order) {
         //determine how many there are with same order
 
         int expandedSize;
         while ((expandedSize = getFlattenedLength(args, order)) != args.length) {
             args = _flatten(args, order, expandedSize);
         }
-        return Terms.toSortedSetArray(args);
+        return args;
     }
 
-    private static Term[] _flatten(Term[] args, int order, int expandedSize) {
+    static Term[] _flatten(Term[] args, Order order, int expandedSize) {
         Term[] ret = new Term[expandedSize];
         int k = 0;
         for (Term a : args) {
-            Conjunctive c = isConjunction(a, order);
-            if (c != null) {
+            if (isConjunction(a, order)) {
                 //arraycopy?
-                for (Term t : c.terms()) {
+                for (Term t : ((Compound)a).terms()) {
                     ret[k++] = t;
                 }
             } else {
@@ -78,11 +61,13 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
         return ret;
     }
 
-    protected static int getFlattenedLength(Term[] args, int order) {
+    static int getFlattenedLength(Term[] args, Order order) {
         int sz = 0;
         for (Term a : args) {
-            Conjunctive c = isConjunction(a, order);
-            sz += c != null ? c.size() : 1;
+            if (isConjunction(a, order))
+                sz += a.size();
+            else
+                sz++;
         }
         return sz;
     }
@@ -92,7 +77,7 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
      * @param c a set of Term as term
      * @return the Term generated from the arguments
      */
-    public static final Term make(Collection<Term> c, int temporalOrder) {
+    public static Term make(Collection<Term> c, Order temporalOrder) {
         Term[] argument = c.toArray(new Term[c.size()]);
         return make(argument, temporalOrder);
     }
@@ -103,22 +88,23 @@ public abstract class Conjunctive<T extends Term> extends Junction<T> {
      * @param argList the list of arguments
      * @return the Term generated from the arguments
      */
-    public static Term make(Term[] argList, int temporalOrder) {
+    public static Term make(Term[] argList, Order temporalOrder) {
         switch (temporalOrder) {
-            case Tense.ORDER_NONE:
-                return Conjunction.make(argList);
-            case Tense.ORDER_FORWARD:
+            case None:
+                return Conjunction.conjunction(argList);
+            case Forward:
                 return Sequence.makeSequence(argList);
-            case Tense.ORDER_CONCURRENT:
+            case Concurrent:
                 return Parallel.makeParallel(argList);
+            default:
+                throw new RuntimeException("invalid: " + Arrays.toString(argList) + ' ' + temporalOrder);
         }
-        throw new RuntimeException("invalid: " + Arrays.toString(argList) + ' ' + temporalOrder);
     }
 
-    public static final Term make(Term term1, Term term2, int temporalOrder) {
-        if (temporalOrder == Tense.ORDER_FORWARD) {
+    static Term make(Term term1, Term term2, Order temporalOrder) {
+        if (temporalOrder == Forward) {
             return Sequence.makeSequence(term1, term2);
-        } else if (temporalOrder == Tense.ORDER_BACKWARD) {
+        } else if (temporalOrder == Backward) {
             //throw new RuntimeException("Conjunction does not allow reverse order; args=" + term1 + ", " + term2);
             return Sequence.makeSequence(term2, term1);
             //return null;

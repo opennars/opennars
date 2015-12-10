@@ -7,9 +7,10 @@ import nars.Narsese;
 import nars.nal.nal7.Tense;
 import nars.task.AbstractTask;
 import nars.task.Task;
+import nars.term.Terms;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
-import nars.util.Texts;
+import org.slf4j.Logger;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -52,12 +53,12 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     //public Tense tense = Tense.Eternal;
 
 
-    public List<Task> valid;
+    public List<Task> valid = Global.newArrayList();
 
 
     transient int maxSimilars = 3;
 
-    protected TreeMap<Float,Task> similar;
+    protected final TreeMap<Float,Task> similar = new TreeMap();
 
     @Override
     public final Truth getTruth() {
@@ -225,7 +226,6 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 
         if (match) {
             //TODO record a different score for fine-tune optimization?
-            ensureExact();
             valid.add(task);
             /*if (exact==null || (exact.size() < maxExact)) {
                 ensureExact();
@@ -250,53 +250,44 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         float difference = 0;
         difference +=
                 task.getTerm()==getTerm() ? 0 : (getTerm().volume());
-        if (difference > worstDiff)
+        if (difference >= worstDiff)
             return;
 
         float freqDiff = Math.min(
                 Math.abs(task.getFrequency() - freqMin),
                 Math.abs(task.getFrequency() - freqMax));
         difference += 2 * freqDiff;
-        if (difference > worstDiff)
+        if (difference >= worstDiff)
             return;
 
         float confDiff = Math.min(
                 Math.abs(task.getConfidence() - confMin),
                 Math.abs(task.getConfidence() - confMax));
         difference += 1 * confDiff;
-        if (difference > worstDiff)
+        if (difference >= worstDiff)
             return;
 
         float termDifference =
-                Texts.levenshteinDistancePercent(
-                    task.getTerm().toString(),
-                    getTerm().toString());
+                Terms.termDistance(task.getTerm(), getTerm());
         difference += 3 * termDifference;
-        if (difference > worstDiff)
+
+        if (difference >= worstDiff)
             return;
 
         {
-            ensureSimilar();
+
 
             //TODO more efficient way than this
 
             this.similar.put(difference, task);
 
 
-//            if (similar.size() > maxSimilars) {
-//                similar.remove(similar.lastEntry().getKey());
-//            }
+            if (similar.size() > maxSimilars) {
+                similar.remove(similar.lastEntry().getKey());
+            }
         }
     }
 
-    private void ensureExact() {
-        if (valid == null) valid = Global.newArrayList(1);
-    }
-    private void ensureSimilar() {
-        if (similar == null) {
-            similar = new TreeMap();
-        }
-    }
 
 
 //    public String getFalseReason() {
@@ -424,6 +415,27 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         }
         if (similar!=null) {
             similar.values().forEach(s -> printer.accept("SIMILAR", s));
+        }
+    }
+
+    @Override
+    public void toLogger(Logger logger) {
+        String msg = isTrue() ? " OK" : "ERR" + '\t' + toString() + ' ' + toConditionString();
+        if (isTrue())
+            logger.info(msg);
+        else
+            logger.warn(msg);
+
+        BiConsumer<String,Task> printer = (label,s) -> {
+            logger.info("{}: {}", label, s);
+            //logger.debug(s.getExplanation().replace("\n", "\n\t\t"));
+        };
+
+        if (valid!=null) {
+            valid.forEach(s -> printer.accept("\t OK", s));
+        }
+        if (similar!=null) {
+            similar.values().forEach(s -> printer.accept("\tERR", s));
         }
     }
 }

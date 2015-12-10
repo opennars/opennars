@@ -114,6 +114,7 @@ public class NeuroMap {
         }
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public String getDebugString() {
         return "iter : " + iterations
                 + " (" + iterationsPerSecond + "/s); "

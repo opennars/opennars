@@ -3,10 +3,10 @@ package nars.nal.meta;
 import com.google.common.base.Joiner;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.Global;
-import nars.nal.DerivationRules;
 import nars.nal.Deriver;
+import nars.nal.PremiseRule;
+import nars.nal.PremiseRuleSet;
 import nars.nal.RuleMatch;
-import nars.nal.TaskRule;
 import org.magnos.trie.Trie;
 import org.magnos.trie.TrieNode;
 import org.magnos.trie.TrieSequencer;
@@ -19,7 +19,7 @@ import static com.sun.org.apache.xerces.internal.impl.xs.opti.SchemaDOM.indent;
 
 public class RuleTrie extends Deriver {
 
-    private final Trie<List<PreCondition>, TaskRule> trie;
+    private final Trie<List<PreCondition>, PremiseRule> trie;
 
     @Override
     protected void run(RuleMatch match) {
@@ -55,7 +55,7 @@ public class RuleTrie extends Deriver {
 
     public final RuleBranch[] root;
 
-    public RuleTrie(DerivationRules R) {
+    public RuleTrie(PremiseRuleSet R) {
         super(R);
 
         //SimpleDeriver d = new SimpleDeriver(SimpleDeriver.standard);
@@ -95,12 +95,12 @@ public class RuleTrie extends Deriver {
             }
         });
 
-        R.forEach((Consumer<? super TaskRule>) s -> {
+        R.forEach((Consumer<? super PremiseRule>) s -> {
             //List<PreCondition> ll = s.getConditions();
             //System.out.println(ll);
             for (PostCondition p : s.postconditions) {
 
-                TaskRule existing = trie.put(s.getConditions(p), s);
+                PremiseRule existing = trie.put(s.getConditions(p), s);
                 if (existing != null) {
 
                     if (s!=existing && existing.equals(s)) {
@@ -140,7 +140,7 @@ public class RuleTrie extends Deriver {
 
     }
 
-    public static void printSummary(TrieNode<List<PreCondition>,TaskRule> node) {
+    public static void printSummary(TrieNode<List<PreCondition>,PremiseRule> node) {
 
         node.forEach(n -> {
             List<PreCondition> seq = n.getSequence();
@@ -161,7 +161,7 @@ public class RuleTrie extends Deriver {
     }
 
 
-    private static RuleBranch[] compile(TrieNode<List<PreCondition>, TaskRule> node) {
+    private static RuleBranch[] compile(TrieNode<List<PreCondition>, PremiseRule> node) {
 
         List<RuleBranch> bb = Global.newArrayList(node.getChildCount());
 

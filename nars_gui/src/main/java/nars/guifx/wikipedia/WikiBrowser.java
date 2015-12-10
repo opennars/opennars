@@ -41,6 +41,7 @@ public abstract class WikiBrowser extends BorderPane {
     private final WebEngine webEngine;
     private final WikiOntology wikiOntology;
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public WikiBrowser(String startWikiPage) {
 
         wikiOntology = new WikiOntology();
@@ -95,6 +96,7 @@ public abstract class WikiBrowser extends BorderPane {
 //        }
 //    }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     protected synchronized void processPage() {
         boolean wikiFilter = false;
 
@@ -267,6 +269,7 @@ public abstract class WikiBrowser extends BorderPane {
         webEngine.load("http://en.m.wikipedia.org/w/index.php?search=" + URLEncoder.encode(query));
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public void loadWikiPage(String urlOrTag) {
         webview.setVisible(false);
         if (!urlOrTag.contains("/"))
@@ -274,6 +277,7 @@ public abstract class WikiBrowser extends BorderPane {
         webEngine.load(urlOrTag);
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public String getWikiTag(String url) {
         if (url.contains(".wikipedia.org/wiki/")) {
             int p = url.lastIndexOf('/');
@@ -292,6 +296,7 @@ public abstract class WikiBrowser extends BorderPane {
         return getWikiTag(webEngine.getLocation());
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public void tagAdd(String url) {
 
         String wikiPrefix = "/wiki/";

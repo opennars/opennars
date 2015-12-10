@@ -36,6 +36,7 @@ public class HumanAgent extends AbstractAgent {
      *    sequentially, e.g. frame_000000.png, frame_000001.png, etc.
      *  @see MovieGenerator
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     protected String exportFrameBasename = "frames/frame_";
 
     /** The object used to save frames to the disk */
@@ -209,6 +210,7 @@ public class HumanAgent extends AbstractAgent {
     /** Prints out command-line usage text.
      *
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void printUsage() {
         System.err.println ("Invalid argument.");
         System.err.println ("Usage: java HumanAgent [-nogui] [-named_pipes filename] [-export_frames]\n");

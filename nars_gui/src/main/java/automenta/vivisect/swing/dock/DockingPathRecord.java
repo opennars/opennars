@@ -19,14 +19,17 @@ package automenta.vivisect.swing.dock;
  *
  * @author kitfox
  */
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class DockingPathRecord {
 
     final DockingPathRecord next;
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public DockingPathRecord() {
         next = null;
     }
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public DockingPathRecord(DockingPathRecord next) {
         this.next = next;
     }

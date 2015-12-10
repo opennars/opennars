@@ -31,6 +31,7 @@ public class RuleCyclic {
 
 	// ----------------------------------------------------------------
 	// Parse the rule string
+	@SuppressWarnings("HardcodedFileSeparator")
 	public void InitFromString(String sStr) {
 		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
@@ -73,6 +74,7 @@ public class RuleCyclic {
 	// ----------------------------------------------------------------
 	// Create the Cyclic CA table string
 	// Example: 'R1/T3/C5/NM'
+	@SuppressWarnings("HardcodedFileSeparator")
 	public String GetAsString() {
 		String sBff;
 

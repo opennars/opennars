@@ -18,7 +18,7 @@ public class TermVectorTest {
     public void testSubtermsEquality() {
 
         Compound a = $.inh("a", "b");
-        Implication b = Implication.make(Atom.the("a"), Atom.the("b"));
+        Compound b = (Compound) Implication.implication(Atom.the("a"), Atom.the("b"));
 
         assertEquals(a.subterms(), b.subterms());
         assertEquals(a.subterms().hashCode(), b.subterms().hashCode());

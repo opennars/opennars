@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class WaveToText {
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void writeTxt(Wave w) {
         List<String> l = w.getData();
 

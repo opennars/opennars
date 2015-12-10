@@ -23,7 +23,7 @@ public class VariableTransformationTest {
     @Test
     public void testDestructiveNormalization() {
         String t = "<$x --> y>";
-        String n = "<$1 --> y>";
+        String n = "<$1-->y>";
         NAR nar = new Terminal();
         Term x = nar.term(t);
         assertEquals(n, x.toString());

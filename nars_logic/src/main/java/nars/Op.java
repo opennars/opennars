@@ -1,15 +1,21 @@
 package nars;
 
 
+import com.gs.collections.api.tuple.primitive.IntIntPair;
+import nars.nal.nal7.Order;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
 import java.io.Serializable;
 
+import static com.gs.collections.impl.tuple.primitive.PrimitiveTuples.pair;
+
 /**
  * NAL symbol table
  */
 public enum Op implements Serializable {
+
+
 
 
     //TODO include min/max arity for each operate, if applicable
@@ -22,73 +28,70 @@ public enum Op implements Serializable {
 //            return Atom.the(i);
 //        }}
 //
-    VAR_INDEPENDENT(Symbols.VAR_INDEPENDENT, 6 /*NAL6 for Indep Vars */, OpType.Variable),
-
-    VAR_DEPENDENT(Symbols.VAR_DEPENDENT, Op.ANY, OpType.Variable),
+    VAR_INDEP(Symbols.VAR_INDEPENDENT, 6 /*NAL6 for Indep Vars */, OpType.Variable),
+    VAR_DEP(Symbols.VAR_DEPENDENT, Op.ANY, OpType.Variable),
     VAR_QUERY(Symbols.VAR_QUERY, Op.ANY, OpType.Variable),
 
-    OPERATOR("^", 8),
+    OPERATOR("^", 8, Args.One),
 
-    NEGATION("--", 5, 1) {
+    NEGATE("--", 5, Args.One) {
 
     },
 
     /* Relations */
-    INHERITANCE("-->", 1, OpType.Relation, 2),
-    SIMILARITY("<->", true, 2, OpType.Relation, 3),
+    INHERIT("-->", 1, OpType.Relation, Args.Two),
+    SIMILAR("<->", true, 2, OpType.Relation, Args.Two),
 
 
-    /* CompountTerm operators, length = 1 */
-    INTERSECTION_EXT("&", true, 3),
-    INTERSECTION_INT("|", true, 3),
+    /* CompountTerm operators */
+    INTERSECT_EXT("&", true, 3, Args.GTETwo),
+    INTERSECT_INT("|", true, 3, Args.GTETwo),
 
-    DIFFERENCE_EXT("-", 3),
-    DIFFERENCE_INT("~", 3),
+    DIFF_EXT("-", 3, Args.Two),
+    DIFF_INT("~", 3, Args.Two),
 
-    PRODUCT("*", 4),
+    PRODUCT("*", 4, Args.GTEZero),
 
-    IMAGE_EXT("/", 4),
-    IMAGE_INT("\\", 4),
+    IMAGE_EXT("/", 4, Args.GTEOne),
+    IMAGE_INT("\\", 4, Args.GTEOne),
 
     /* CompoundStatement operators, length = 2 */
-    DISJUNCTION("||", true, 5, 4),
-    CONJUNCTION("&&", true, 5, 5),
+    DISJUNCT("||", true, 5, Args.GTEOne),
+    CONJUNCT("&&", true, 5, Args.GTEOne),
 
-    SEQUENCE("&/", 7, 6),
-    PARALLEL("&|", true, 7, 7),
+    SEQUENCE("&/", 7, Args.GTEOne),
+    PARALLEL("&|", true, 7, Args.GTEOne),
 
 
     /* CompountTerm delimiters, must use 4 different pairs */
-    SET_INT_OPENER("[", true, 3), //OPENER also functions as the symbol for the entire compound
-    SET_EXT_OPENER("{", true, 3), //OPENER also functions as the symbol for the entire compound
+    SET_INT_OPENER("[", true, 3, Args.GTEOne), //OPENER also functions as the symbol for the entire compound
+    SET_EXT_OPENER("{", true, 3, Args.GTEOne), //OPENER also functions as the symbol for the entire compound
 
 
-    IMPLICATION("==>", 5, OpType.Relation, 8),
+    IMPLICATION("==>", 5, OpType.Relation, Args.Two),
 
     /* Temporal Relations */
-    IMPLICATION_AFTER("=/>", 7, OpType.Relation, 9),
-    IMPLICATION_WHEN("=|>", true, 7, OpType.Relation, 10),
-    IMPLICATION_BEFORE("=\\>", 7, OpType.Relation, 11),
+    IMPLICATION_AFTER("=/>", 7, OpType.Relation, Args.Two),
+    IMPLICATION_WHEN("=|>", true, 7, OpType.Relation, Args.Two),
+    IMPLICATION_BEFORE("=\\>", 7, OpType.Relation, Args.Two),
 
-    EQUIVALENCE("<=>", true, 5, OpType.Relation, 12),
-    EQUIVALENCE_AFTER("</>", 7, OpType.Relation, 13),
-    EQUIVALENCE_WHEN("<|>", true, 7, OpType.Relation, 14),
+    EQUIV("<=>", true, 5, OpType.Relation, Args.Two),
+    EQUIV_AFTER("</>", 7, OpType.Relation, Args.Two),
+    EQUIV_WHEN("<|>", true, 7, OpType.Relation, Args.Two),
 
 
     // keep all items which are invlved in the lower 32 bit structuralHash above this line
     // so that any of their ordinal values will not exceed 31
     //-------------
-    NONE('\u2205', Op.ANY),
-
+    NONE('\u2205', Op.ANY, null),
 
     VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, OpType.Variable),
-
 
     INTERVAL(
             //TODO decide what this value should be, it overrides with IMAGE_EXT
             //but otherwise it's not used
             String.valueOf(Symbols.INTERVAL_PREFIX) + '/',
-            Op.ANY),
+            Op.ANY, Args.None),
 
     INSTANCE("{--", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
     PROPERTY("--]", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
@@ -96,6 +99,7 @@ public enum Op implements Serializable {
 
 
     //-----------------------------------------------------
+
 
 
     /**
@@ -110,6 +114,9 @@ public enum Op implements Serializable {
 
     public final OpType type;
 
+    /** arity limits, range is inclusive >= <=
+     *  -1 for unlimited */
+    public final int minSize, maxSize;
 
     /**
      * opener?
@@ -131,63 +138,45 @@ public enum Op implements Serializable {
      */
     public final byte[] bytes;
 
-    /**
-     * 1-character representation, or 0 if a multibyte must be used
-     */
-    public final byte byt;
     private final boolean commutative;
+    private Order temporalOrder;
 
 
-    Op(char c, int minLevel, int... bytes) {
-        this(c, minLevel, OpType.Other, bytes);
+//    Op(char c, int minLevel) {
+//        this(c, minLevel, Args.NoArgs);
+//    }
+
+    Op(char c, int minLevel, OpType type) {
+        this(c, minLevel, type, Args.None);
     }
 
     Op(String s, boolean commutative, int minLevel) {
-        this(s, commutative, minLevel, OpType.Other);
+        this(s, minLevel, OpType.Other, Args.None);
+    }
+    Op(String s, boolean commutative, int minLevel, IntIntPair size) {
+        this(s, commutative, minLevel, OpType.Other, size);
     }
 
-
-    Op(char c, int minLevel, OpType type, int... bytes) {
-        this(Character.toString(c), minLevel, type, bytes);
+    Op(char c, int minLevel, OpType type, IntIntPair size) {
+        this(Character.toString(c), minLevel, type, size);
     }
 
-    Op(String string, boolean commutative, int minLevel, int... ibytes) {
-        this(string, commutative, minLevel, OpType.Other, ibytes);
+    Op(String string, int minLevel, IntIntPair size) {
+        this(string, minLevel, OpType.Other, size);
     }
 
-    Op(String string, int minLevel, int... ibytes) {
-        this(string, minLevel, OpType.Other, ibytes);
+    Op(String string, int minLevel, OpType type) {
+        this(string, false, minLevel, type, Args.None);
+    }
+    Op(String string, int minLevel, OpType type, IntIntPair size) {
+        this(string, false, minLevel, type, size);
     }
 
-    Op(String string, int minLevel, OpType type, int... ibytes) {
-        this(string, false, minLevel, type, ibytes);
-    }
-
-    Op(String string, boolean commutative, int minLevel, OpType type, int... ibytes) {
-
+    Op(String string, boolean commutative, int minLevel, OpType type, IntIntPair size) {
         str = string;
         this.commutative = commutative;
 
-        byte[] bb;
-
-        boolean hasCompact = (ibytes.length == 1);
-        if (!hasCompact) {
-            bb = Utf8.toUtf8(string);
-        } else {
-            bb = new byte[ibytes.length];
-            for (int i = 0; i < ibytes.length; i++)
-                bb[i] = (byte) ibytes[i];
-        }
-
-        bytes = bb;
-
-        if (hasCompact) {
-            int p = bb[0];
-            byt = p < 31 ? (byte) (p) : 0;
-        } else {
-            //multiple ibytes, use the provided array
-            byt = 0;
-        }
+        bytes = Utf8.toUtf8(string);
 
         this.minLevel = minLevel;
         this.type = type;
@@ -197,6 +186,8 @@ public enum Op implements Serializable {
         opener = name().endsWith("_OPENER");
         closer = name().endsWith("_CLOSER");
 
+        this.minSize= size.getOne();
+        this.maxSize = size.getTwo();
 
     }
 
@@ -217,17 +208,12 @@ public enum Op implements Serializable {
     /**
      * writes this operator to a Writer in (human-readable) expanded UTF16 mode
      */
-    public final void expand(Appendable w) throws IOException {
+    public final void append(Appendable w) throws IOException {
         if (ch == 0)
             w.append(str);
         else
             w.append(ch);
     }
-
-    public final boolean has8BitRepresentation() {
-        return byt != 0;
-    }
-
 
     public static final int or(Op... o) {
         int bits = 0;
@@ -262,6 +248,27 @@ public enum Op implements Serializable {
         return commutative;
     }
 
+    public Order getTemporalOrder() {
+        return temporalOrder;
+    }
+
+    public boolean validSize(int length) {
+        if (minSize!=-1 && length < minSize) return false;
+        if (maxSize!=-1 && length > maxSize) return false;
+        return true;
+    }
+
+    public boolean isImage() {
+        return isA(bit(), ImageBits);
+    }
+    public boolean isStatement() {
+        return isA(bit(), StatementBits);
+    }
+
+    static boolean isA(int needle, int haystack) {
+        return (needle & haystack) == needle;
+    }
+
     /** top-level Op categories */
     public enum OpType {
         Relation,
@@ -269,8 +276,39 @@ public enum Op implements Serializable {
         Other
     }
 
+    public static int StatementBits =
+        Op.or(Op.INHERIT, Op.SIMILAR,
+              Op.EQUIV,
+                    Op.EQUIV_AFTER, Op.EQUIV_WHEN,
+              Op.IMPLICATION,
+                Op.IMPLICATION_AFTER, Op.IMPLICATION_BEFORE, Op.IMPLICATION_WHEN
+        );
 
-    public static final int VARIABLE_BITS =
-        Op.or(Op.VAR_PATTERN,Op.VAR_INDEPENDENT,Op.VAR_DEPENDENT,Op.VAR_QUERY);
+    public static final int ImageBits =
+        Op.or(Op.IMAGE_EXT,Op.IMAGE_INT);
 
+    public static final int VariableBits =
+        Op.or(Op.VAR_PATTERN,Op.VAR_INDEP,Op.VAR_DEP,Op.VAR_QUERY);
+
+    static class Args {
+        static final IntIntPair None = pair(0,0);
+        static final IntIntPair One = pair(1,1);
+        static final IntIntPair Two = pair(2,2);
+
+        static final IntIntPair GTEZero = pair(0,-1);
+        static final IntIntPair GTEOne = pair(1,-1);
+        static final IntIntPair GTETwo = pair(2,-1);
+
+    }
+
+    public static int[] NALLevelEqualAndAbove = new int[8+1]; //indexed from 0..7, meaning index 7 is NAL8, index 0 is NAL1
+    static {
+        for (Op o : Op.values()) {
+            int l = o.minLevel;
+            if (l < 0) l = 0; //count special ops as level 0, so they can be detected there
+            for (int i = l; i <= 8; i++) {
+                NALLevelEqualAndAbove[i] |= o.bit();
+            }
+        }
+    }
 }

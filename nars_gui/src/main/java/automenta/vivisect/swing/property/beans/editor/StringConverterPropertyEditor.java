@@ -31,6 +31,7 @@ public abstract class StringConverterPropertyEditor extends AbstractPropertyEdit
 
 	private Object oldValue;
 
+	@SuppressWarnings("ConstructorNotProtectedInAbstractClass")
 	public StringConverterPropertyEditor() {
 
 		JTextField text = new JTextField();

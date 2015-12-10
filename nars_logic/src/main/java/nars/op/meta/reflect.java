@@ -5,7 +5,6 @@
 package nars.op.meta;
 
 import nars.$;
-import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
@@ -60,8 +59,8 @@ public class reflect extends TermFunction {
         }
         Compound t = (Compound)node;
         switch (t.op()) {
-            case INHERITANCE: return sop((Compound)t, "inheritance");
-            case SIMILARITY:  return sop((Similarity)t, "similarity");
+            case INHERIT: return sop(t, "inheritance");
+            case SIMILAR:  return sop(t, "similarity");
             default: return sop(t.op().toString(), t);
         }
         

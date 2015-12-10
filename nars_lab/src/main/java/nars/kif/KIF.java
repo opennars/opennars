@@ -272,10 +272,10 @@ public class KIF {
                         if (mode == NORMAL_PARSE_MODE) {
                             String validArgs = f.validArgs((file != null ? file.getName() : null),
                                     (file != null ? f.startLine : null));
-                            if (validArgs == null || "".equals(validArgs)) {
+                            if (validArgs == null || validArgs.isEmpty()) {
                                 validArgs = f.badQuantification();
                             }
-                            if (validArgs != null && !"".equals(validArgs)) {
+                            if (validArgs != null && !validArgs.isEmpty()) {
                                 throw new ParseException("Parsing error in " + filename + ".\n Invalid number of arguments. " + validArgs, f.startLine);
                             }
                         }
@@ -442,24 +442,24 @@ public class KIF {
         }
         String key = "";
         if (inAntecedent) {
-            key = key.concat("ant-");
-            key = key.concat(sval);
+            key = key + "ant-";
+            key = key + sval;
         }
 
         if (inConsequent) {
-            key = key.concat("cons-");
-            key = key.concat(sval);
+            key = key + "cons-";
+            key = key + sval;
         }
 
         if (!inAntecedent && !inConsequent && (parenLevel == 1)) {
-            key = key.concat("arg-");
-            key = key.concat(String.valueOf(argumentNum));
-            key = key.concat("-");
-            key = key.concat(sval);
+            key = key + "arg-";
+            key = key + String.valueOf(argumentNum);
+            key = key + "-";
+            key = key + sval;
         }
         if (!inAntecedent && !inConsequent && (parenLevel > 1)) {
-            key = key.concat("stmt-");
-            key = key.concat(sval);
+            key = key + "stmt-";
+            key = key + sval;
         }
         return (key);
     }

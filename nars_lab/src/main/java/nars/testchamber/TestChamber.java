@@ -112,7 +112,7 @@ public class TestChamber {
         for (GridObject gridi : space.objects) {
             if (gridi instanceof LocalGridObject) { //Key && ((Key)gridi).doorname.equals(goal)) {
                 LocalGridObject gridu = (LocalGridObject) gridi;
-                if (gridu.x == x && gridu.y == y && !"".equals(gridu.doorname))
+                if (gridu.x == x && gridu.y == y && gridu.doorname != null && !gridu.doorname.isEmpty())
                     return gridu.doorname;
             }
         }
@@ -266,10 +266,10 @@ public class TestChamber {
                             active = true;
                             executed_going = false;
                             //System.out.println("at destination; didnt need to find path");
-                            if (!"".equals(goal) && space.current.equals(space.target)) {
+                            if (goal != null && !goal.isEmpty() && space.current.equals(space.target)) {
                                 //--nar.step(6);
                                 GridObject obi = null;
-                                if (!"".equals(opname)) {
+                                if (opname != null && !opname.isEmpty()) {
                                     for (GridObject gridi : space.objects) {
                                         if (gridi instanceof LocalGridObject && ((LocalGridObject) gridi).doorname.equals(goal) &&
                                                 ((LocalGridObject) gridi).x == (int) space.current.x &&

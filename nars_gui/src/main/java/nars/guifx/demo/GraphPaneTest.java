@@ -12,7 +12,6 @@ import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.JGraphSource;
 import nars.guifx.graph2.source.SpaceGrapher;
-import nars.nal.nal1.Inheritance;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.term.Termed;
@@ -84,8 +83,8 @@ public class GraphPaneTest {
         return g;
     }
 
-    private static DirectedGraph<Term, Inheritance> newExampleGraph() {
-        DirectedGraph<Term, Inheritance> g = new SimpleDirectedGraph<>((EdgeFactory<Term, Inheritance>) $::inh);
+    private static DirectedGraph<Term, Compound> newExampleGraph() {
+        DirectedGraph<Term, Compound> g = new SimpleDirectedGraph((EdgeFactory<Term, Compound>) $::inh);
 
 
         int n = 16;

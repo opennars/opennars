@@ -3,19 +3,16 @@ package nars.term;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Global;
 import nars.Op;
-import nars.nal.nal1.Inheritance;
-import nars.nal.nal2.Similarity;
-import nars.nal.nal4.Image;
-import nars.nal.nal4.ImageExt;
-import nars.nal.nal4.ImageInt;
-import nars.nal.nal4.Product;
 import nars.term.compound.Compound;
+import nars.util.Texts;
 import nars.util.data.sorted.SortedList;
 
 import java.util.*;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
+
+import static nars.Op.*;
 
 /**
  * Static utility class for static methods related to Terms
@@ -36,14 +33,17 @@ public class Terms {
             return a.equals(b);
         }
 
-        boolean equalOps = a.op() == b.op();
+        Op o = a.op();
+        boolean equalOps = o == b.op();
 
         if (equalOps) {
-            if (a instanceof Inheritance) {
-                return equalSubjectPredicateInRespectToImageAndProduct(a, b);
-            } else if (a instanceof Similarity) {
-                return equalSubjectPredicateInRespectToImageAndProduct(a, b)
-                        || equalSubjectPredicateInRespectToImageAndProduct(b, a);
+            switch (o) {
+                case INHERIT:
+                    return equalSubjectPredicateInRespectToImageAndProduct((Compound)a, (Compound)b);
+
+                case SIMILAR:
+                    return equalSubjectPredicateInRespectToImageAndProduct((Compound)a,(Compound)b)
+                            || equalSubjectPredicateInRespectToImageAndProduct((Compound)b, (Compound)a);
             }
         }
 
@@ -63,58 +63,58 @@ public class Terms {
     }
 
 
-    public static boolean equalSubjectPredicateInRespectToImageAndProduct(Term a, Term b) {
-        return equalSubjectPredicateInRespectToImageAndProduct((Statement) a, (Statement) b, true);
+    public static boolean equalSubjectPredicateInRespectToImageAndProduct(Compound a, Compound b) {
+        return equalSubjectPredicateInRespectToImageAndProduct(a, b, true);
     }
 
-    static boolean equalSubjectPredicateInRespectToImageAndProduct(Statement A, Statement B, boolean requireEqualImageRelation) {
+    static boolean equalSubjectPredicateInRespectToImageAndProduct(Compound A, Compound B, boolean requireEqualImageRelation) {
 
 
         if (A.equals(B)) {
             return true;
         }
 
-        Term subjA = A.getSubject();
-        Term predA = A.getPredicate();
-        Term subjB = B.getSubject();
-        Term predB = B.getPredicate();
+        Term subjA = Statement.subj(A);
+        Term predA = Statement.pred(A);
+        Term subjB = Statement.subj(B);
+        Term predB = Statement.pred(B);
 
         Term ta = null, tb = null; //the compound term to put itself in the comparison set
         Term sa = null, sb = null; //the compound term to put its components in the comparison set
 
-        if ((subjA instanceof Product) && (predB instanceof ImageExt)) {
+        if ((subjA.op(PRODUCT)) && (predB.op(IMAGE_EXT))) {
             ta = predA;
             sa = subjA;
             tb = subjB;
             sb = predB;
         }
-        if ((subjB instanceof Product) && (predA instanceof ImageExt)) {
+        if ((subjB.op(PRODUCT)) && (predA.op(IMAGE_EXT))) {
             ta = subjA;
             sa = predA;
             tb = predB;
             sb = subjB;
         }
-        if ((predA instanceof ImageExt) && (predB instanceof ImageExt)) {
+        if ((predA.op(IMAGE_EXT)) && (predB.op(IMAGE_EXT))) {
             ta = subjA;
             sa = predA;
             tb = subjB;
             sb = predB;
         }
 
-        if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
+        if ((subjA.op(IMAGE_INT)) && (subjB.op(IMAGE_INT))) {
             ta = predA;
             sa = subjA;
             tb = predB;
             sb = subjB;
         }
 
-        if ((predA instanceof Product) && (subjB instanceof ImageInt)) {
+        if ((predA.op(PRODUCT)) && (subjB.op(IMAGE_INT))) {
             ta = subjA;
             sa = predA;
             tb = predB;
             sb = subjB;
         }
-        if ((predB instanceof Product) && (subjA instanceof ImageInt)) {
+        if ((predB.op(PRODUCT)) && (subjA.op(IMAGE_INT))) {
             ta = predA;
             sa = subjA;
             tb = subjB;
@@ -128,8 +128,8 @@ public class Terms {
         //original code did not check relation index equality
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/language/CompoundTerm.java
         if (requireEqualImageRelation) {
-            if (sa instanceof Image && sb instanceof Image) {
-                if (((Image) sa).relationIndex != ((Image) sb).relationIndex) {
+            if (sa.op().isImage() && sb.op().isImage()) {
+                if (((Compound)sa).relation() != ((Compound)sb).relation()) {
                     return false;
                 }
             }
@@ -180,7 +180,8 @@ public class Terms {
         switch (arg.length) {
 
             case 0:
-                throw new RuntimeException("empty"); //return EmptyTermArray;
+                throw new RuntimeException("empty"); //catch these conditions as early as possible, so use an exception here to catch
+                //return null;
 
             case 1:
                 return arg; //new Term[] { arg[0] };
@@ -254,11 +255,12 @@ public class Terms {
         return t;
     }
 
-    public static List<Term> toList(Term... t) {
-        return Arrays.asList((Term[]) t);
+    public static List<Term> toList(Term[] t) {
+        return Arrays.asList(t);
     }
 
-    public static Set<Term> toSet(Term... t) {
+    /** makes a set from the array of terms */
+    public static Set<Term> toSet(Term[] t) {
         if (t.length == 1)
             return Collections.singleton(t[0]);
         Set<Term> l = Global.newHashSet(t.length);
@@ -296,7 +298,7 @@ public class Terms {
 
         t.forEach(a -> {
             if (a.size() == 2) {
-                if ((a.op() == Op.PRODUCT) || (a.op() == Op.INHERITANCE)) {
+                if ((a.op() == PRODUCT) || (a.op() == Op.INHERIT)) {
                     Compound ii = (Compound) a;
                     result.put(ii.term(0), ii.term(1));
                 }
@@ -376,5 +378,18 @@ public class Terms {
             y[i++] = x;
         }
         return y;
+    }
+
+    /** a heuristic for measuring the difference between terms
+     *  in range of 0..100%, 0 meaning equal
+     * */
+    public static float termDistance(Term a, Term b) {
+        if (a.equals(b)) return 0;
+        //TODO handle TermMetadata terms
+
+        //HACK use toString for now
+        return Texts.levenshteinDistancePercent(
+                a.toString(false),
+                b.toString(false));
     }
 }

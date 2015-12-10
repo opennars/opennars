@@ -205,7 +205,7 @@ public class SequenceParallelTest {
     @Test public void testDefaultParallelReduction() {
         //these all should have the same duration (DEFAULT)
         String par1 = "(&|, <a --> b> )";
-        assertEquals(Op.INHERITANCE, t.term(par1).op());
+        assertEquals(Op.INHERIT, t.term(par1).op());
     }
 
     @Test public void testDefaultParallelDuration() {

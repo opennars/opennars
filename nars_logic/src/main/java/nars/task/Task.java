@@ -26,6 +26,7 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.concept.Concept;
+import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
@@ -40,8 +41,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static nars.Global.dereference;
-import static nars.nal.nal7.Tense.ORDER_BACKWARD;
-import static nars.nal.nal7.Tense.ORDER_FORWARD;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue.
@@ -51,8 +50,7 @@ import static nars.nal.nal7.Tense.ORDER_FORWARD;
  * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public interface Task extends Sentence,
-        Itemized<Sentence>, Truthed, Comparable {
+public interface Task extends Sentence, Itemized<Sentence>, Truthed, Comparable {
 
 
     static void getExplanation(Task task, int indent, StringBuilder sb) {
@@ -77,14 +75,6 @@ public interface Task extends Sentence,
 
         Task pt = task.getParentTask();
         Task pb = task.getParentBelief();
-//        if (pb != null) {
-//            if (pt != null && pb.equals(pt)) {
-//
-//            } else {
-//                sb.append(" parentBelief=");
-//                task.getParentBelief().appendTo(sb);
-//            }
-//        }
         sb.append('\n');
 
         if (pt != null) {
@@ -335,52 +325,6 @@ public interface Task extends Sentence,
         return temporary;
     }
 
-
-//    /**
-//     * Get a String representation of the Task
-//     *
-//     * @return The Task as a String
-//     */
-//    @Override
-//    public String toStringLong() {
-//        final StringBuilder s = new StringBuilder();
-//        s.append(super.toString()).append(' ').append(sentence.stamp.name());
-//
-//        Task pt = getParentTask();
-//        if (pt != null) {
-//            s.append("  \n from task: ").append(pt.toStringExternal());
-//            if (parentBelief != null) {
-//                s.append("  \n from belief: ").append(parentBelief.toString());
-//            }
-//        }
-//        if (bestSolution != null) {
-//            s.append("  \n solution: ").append(bestSolution.toString());
-//        }
-//        return s.toString();
-//    }
-
-
-//    /** returns the goal term for this task, which may be either the predicate of a forward implication,
-//     * an operation.  if neither, returns null      */
-//    public Term getGoalTerm() {
-//        Term t = getContent();
-//        if (t instanceof Implication) {
-//            Implication i = (Implication)t;
-//            if (i.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
-//                return i.getPredicate();
-//            else if (i.getTemporalOrder() == TemporalRules.ORDER_BACKWARD) {
-//                throw new RuntimeException("Term getGoal reversed");
-//            }
-//        }
-//        else if (t instanceof Operation)
-//            return t;
-//        else if (Executive.isSequenceConjunction(t))
-//            return t;
-//        
-//        return null;
-//    }
-//
-
     default Truth getDesire() {
         return getTruth();
     }
@@ -392,12 +336,6 @@ public interface Task extends Sentence,
     @Override
     boolean delete();
 
-//    default void logUnrepeated(String reason) {
-//        if (getLog()!=null &&
-//                getLog().get(getLog().size()-1).equals(reason))
-//            return;
-//        log(reason);
-//    }
 
     /** append a log entry */
     void log(Object entry);
@@ -445,21 +383,8 @@ public interface Task extends Sentence,
             throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
     }
 
-
-
-//    default Task projectTask(final long targetTime, final long currentTime) {
-//
-//        final ProjectedTruth t = projection(targetTime, currentTime);
-//
-//        return clone(getTerm(), t, t.getTargetTime());
-//    }
-
-
-
-
-
     @Override
-    default int getTemporalOrder() {
+    default Order getTemporalOrder() {
         return getTerm().getTemporalOrder();
     }
 
@@ -554,9 +479,9 @@ public interface Task extends Sentence,
         }
 
         switch (Tense.order(currentTime, getOccurrenceTime(), duration)) {
-            case ORDER_FORWARD:
+            case Forward:
                 return Symbols.TENSE_FUTURE;
-            case ORDER_BACKWARD:
+            case Backward:
                 return Symbols.TENSE_PAST;
             default:
                 return Symbols.TENSE_PRESENT;

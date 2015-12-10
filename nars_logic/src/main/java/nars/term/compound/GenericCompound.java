@@ -1,19 +1,36 @@
 package nars.term.compound;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
+import nars.$;
 import nars.Op;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal3.SetInt;
+import nars.nal.nal3.SetTensional;
+import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.Order;
+import nars.nal.nal7.Parallel;
+import nars.nal.nal7.Sequence;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.term.*;
 import nars.term.visit.SubtermVisitor;
 import nars.util.utf8.ByteBuf;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static com.google.common.collect.ObjectArrays.concat;
+import static nars.Op.SET_EXT;
+import static nars.Op.SET_INT;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
+import static nars.nal.nal5.Conjunctive.flatten;
 
 
 public class GenericCompound<T extends Term> implements Compound<T> {
@@ -22,29 +39,209 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     protected final transient int hash;
     protected final Op op;
-    protected final int relation;
+    public final int relation;
     private boolean normalized = false;
 
-    public GenericCompound(Op op, Term a) {
-        this(op, (T[]) new Term[] { a });
-    }
-    public GenericCompound(Op op, Term a, Term b) {
-        this(op, (T[]) new Term[] { a, b });
-    }
-    public GenericCompound(Op op, Term a, Term b, Term c) {
-        this(op, (T[]) new Term[] { a, b, c });
+    public static Term COMPOUND(Op op, Term a) {
+        return COMPOUND(op, new Term[] { a });
     }
 
-    public GenericCompound(Op op, T[] subterms) {
+    public static Term COMPOUND(Op op, Term a, Term b) {
+        return COMPOUND(op, new Term[] { a, b });
+    }
+    public static Term COMPOUND(Op op, Term a, Term b, Term c) {
+        return COMPOUND(op, new Term[] { a, b, c });
+    }
+
+    public static Term COMPOUND(Op op, Term... subterms) {
+
+        //if no relation was specified and it's an Image,
+        if (op.isImage()) {
+            //it must contain a _ placeholder
+            if (Image.hasPlaceHolder(subterms)) {
+                return Image.build(op, subterms);
+            }
+            return null;
+        }
+
+        return COMPOUND(op, subterms, -1);
+    }
+
+    public static Term COMPOUND(Op op, Term[] t, int relation) {
+
+        /* special handling */
+        switch (op) {
+            case SEQUENCE:
+                return Sequence.makeSequence(t);
+            case PARALLEL:
+                return Parallel.makeParallel(t);
+            case INTERSECT_EXT:
+                return newIntersectEXT(t);
+        }
+
+
+        //REDUCTIONS
+        if (op.isStatement()) {
+            return newStatement(op, t);
+        } else {
+            switch (op) {
+                case IMAGE_INT:
+                case IMAGE_EXT:
+                    if ((relation == -1) || (relation > t.length))
+                        throw new RuntimeException("invalid index relation: " + relation + " for args " + Arrays.toString(t));
+                    break;
+                case CONJUNCT:
+                    t = flatten(t, Order.None);
+                    break;
+                case DIFF_EXT:
+                    Term t0 = t[0], t1 = t[1];
+                    if ((t0.op(SET_EXT) && t1.op(SET_EXT) )) {
+                        return SetExt.subtractExt((Compound)t0, (Compound)t1);
+                    }
+                    break;
+                case DIFF_INT:
+                    Term it0 = t[0], it1 = t[1];
+                    if ((it0.op(SET_INT) && it1.op(SET_INT) )) {
+                        return SetInt.subtractInt((Compound)it0, (Compound)it1);
+                    }
+                    break;
+                case INTERSECT_EXT: return newIntersectEXT(t);
+                case INTERSECT_INT: return newIntersectINT(t);
+                /*case DISJUNCT:
+                    break;*/
+            }
+        }
+
+
+        return newCompound(op, t, relation, op.isCommutative());
+    }
+
+    @Nullable
+    public static Term newStatement(Op op, Term[] t) {
+        if (op.isCommutative())
+            t = Terms.toSortedSetArray(t);
+        switch (t.length) {
+            case 1: return t[0];
+            case 2:
+                if (!Statement.invalidStatement(t[0], t[1]))
+                    return newCompound(op, t, -1, false); //already sorted
+        }
+        return null;
+    }
+
+
+    private static Term newCompound(Op op, Term[] t, int relation, boolean sort) {
+        if (sort && op.isCommutative())
+            t = Terms.toSortedSetArray(t);
+
+        int numSubs = t.length;
+        if (op.minSize == 2 && numSubs == 1) {
+            return t[0]; //reduction
+        }
+
+        if (!op.validSize(numSubs)) {
+            //throw new RuntimeException(Arrays.toString(t) + " invalid size for " + op);
+            return null;
+        }
+
+        return new GenericCompound(op, t, relation);
+    }
+
+    private static Term newIntersectINT(Term[] t) {
+        return newIntersection(t,
+                Op.INTERSECT_INT,
+                Op.SET_INT,
+                Op.SET_EXT);
+    }
+    private static Term newIntersectEXT(Term[] t) {
+        return newIntersection(t,
+                Op.INTERSECT_EXT,
+                Op.SET_EXT,
+                Op.SET_INT);
+    }
+
+    private static Term newIntersection(Term[] t, Op intersection, Op setUnion, Op setIntersection) {
+        if (t.length == 2) {
+
+            Term term1 = t[0], term2 = t[1];
+
+            if (term2.op(intersection) && !term1.op(intersection)) {
+                //put them in the right order so everything fits in the switch:
+                Term x = term1;
+                term1 = term2;
+                term2 = x;
+            }
+
+            Op o1 = term1.op();
+
+            if (o1 == setUnion) {
+                //set union
+                if (term2.op(setUnion)) {
+                    Term[] ss = concat(
+                            ((Compound) term1).terms(),
+                            ((Compound) term2).terms(), Term.class);
+
+                    return setUnion == SET_EXT ? $.set(ss) : $.setInt(ss);
+                }
+
+            } else {
+                // set intersection
+                if (o1 == setIntersection) {
+                    if (term2.op(setIntersection)) {
+                        Set<Term> ss = ((Compound) term1).toSet();
+                        ss.retainAll(((Compound) term2).toSet());
+                        if (ss.isEmpty()) return null;
+                        return setIntersection == SET_EXT ? $.set(ss) : $.setInt(ss);
+                    }
+
+
+                } else {
+
+                    if (o1 == intersection) {
+                        Term[] suffix;
+
+                        if (term2.op(intersection)) {
+                            // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+                            suffix = ((Compound) term2).terms();
+
+                        } else {
+                            // (&,(&,P,Q),R) = (&,P,Q,R)
+
+                            if (term2.op(intersection)) {
+                                // (&,R,(&,P,Q)) = (&,P,Q,R)
+                                throw new RuntimeException("should have been swapped into another condition");
+                            }
+
+                            suffix = new Term[]{term2};
+                        }
+
+                        t = concat(
+                                ((Compound) term1).terms(), suffix, Term.class
+                        );
+
+                    }
+                }
+            }
+
+
+        }
+
+        return newCompound(intersection, t, -1, true);
+    }
+
+
+    protected GenericCompound(Op op, T... subterms) {
         this(op, subterms, 0);
     }
 
     protected GenericCompound(Op op, T[] subterms, int relation) {
+
         this.op = op;
+
         TermVector<T> terms = this.terms = op.isCommutative() ?
-                new TermSet(subterms) :
+                TermSet.newTermSetPresorted(subterms) :
                 new TermVector(subterms);
-        hash = Compound.hash(terms, op, relation);
+        hash = Compound.hash(terms, op, relation+1);
         this.relation = relation;
     }
 
@@ -59,24 +256,38 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return op.isCommutative();
     }
 
+    public void append(Appendable p, boolean pretty) throws IOException {
 
-    @Override
-    public String toString(boolean pretty) {
-        //noinspection IfStatementWithTooManyBranches
-        if (Operation.isOperation(this)) {
-            return Operation.toString((Compound) term(0), term(1), pretty);
-        }
-        else if (op == Op.PRODUCT) {
-            return Product.toString(this);
-        }
-        else if (op.type == Op.OpType.Relation) {
-            return Statement.toString(term(0), op(), term(1), pretty);
+        switch (op) {
+            case SET_INT_OPENER:
+            case SET_EXT_OPENER:
+                SetTensional.append(this, p, pretty);
+                break;
+            case PRODUCT:
+                Product.append(this, p, pretty);
+                break;
+            case IMAGE_INT:
+            case IMAGE_EXT:
+                Image.appendImage(this, p, pretty);
+                break;
+            default:
+                if (op.isStatement()) {
+                    if (Operation.isOperation(this)) {
+                        Operation.appendOperation((Compound) term(0), (Operator) term(1), p, pretty); //TODO Appender
+                    }
+                    else {
+                        Statement.append(this, p, pretty);
+                    }
+                } else {
+                    Compound.appendCompound(this, p, pretty);
+                }
+                break;
         }
 
-        else {
-            return toStringBuilder(pretty).toString();
-        }
+
+
     }
+
 
     @Override
     public String toStringCompact() {
@@ -94,7 +305,12 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         //int diff = op().compareTo(t.op());
         if (diff != 0) return diff;
 
-        return subterms().compareTo( ((Compound)o).subterms() );
+        Compound c = (Compound)t;
+        diff = Integer.compare(relation(), c.relation());
+        //int diff = op().compareTo(t.op());
+        if (diff != 0) return diff;
+
+        return subterms().compareTo( c.subterms() );
     }
 
 
@@ -122,12 +338,11 @@ public class GenericCompound<T extends Term> implements Compound<T> {
             return false;
 
         GenericCompound c = (GenericCompound)that;
-        if (hash != c.hash||
-            (op != c.op) || (relation!=c.relation)
-            )
-            return false;
-
-        return subterms().equals(c.subterms());
+        return
+            (hash == c.hash) &&
+            (op == c.op) &&
+            (relation == c.relation) &&
+            (terms.equals(c.subterms()));
     }
 
 
@@ -277,7 +492,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final int bytesLength() {
+    public int bytesLength() {
         int len = /* opener byte */1 + 1;
 
         int n = size();
@@ -290,9 +505,13 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public String toString() {
-        return toString(true); //TODO make this default to false
+        return toString(false); //TODO make this default to false
     }
 
+    @Override
+    public int relation() {
+        return relation;
+    }
 
     @Override
     public final byte[] bytes() {
@@ -311,7 +530,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
 
     @Override
-    public final void appendSubtermBytes(ByteBuf b) {
+    public void appendSubtermBytes(ByteBuf b) {
         terms.appendSubtermBytes(b);
     }
 

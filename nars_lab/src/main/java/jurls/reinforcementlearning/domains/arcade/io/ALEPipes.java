@@ -110,6 +110,7 @@ public class ALEPipes {
      *   documentation for protocol details.
      * 
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public void initPipes() throws IOException {
         // Read in the width and height of the screen
         // Format: <width>-<height>\n

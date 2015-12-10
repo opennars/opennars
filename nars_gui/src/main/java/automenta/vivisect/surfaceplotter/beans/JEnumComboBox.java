@@ -40,6 +40,7 @@ public abstract class JEnumComboBox<T extends Enum<T>> extends JComboBox {
 	/**
 	 * 
 	 */
+	@SuppressWarnings("ConstructorNotProtectedInAbstractClass")
 	public JEnumComboBox(T[] values, String property) {
 		super(values);
 		this.property.setPropertyName(property);

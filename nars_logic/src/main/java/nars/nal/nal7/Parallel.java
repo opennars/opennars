@@ -1,10 +1,9 @@
 package nars.nal.nal7;
 
 import nars.Op;
-import nars.nal.nal5.Conjunctive;
 import nars.term.Term;
-import nars.term.TermMetadata;
 import nars.term.Terms;
+import nars.term.compound.GenericCompound;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -14,7 +13,7 @@ import static nars.Symbols.ARGUMENT_SEPARATOR;
 /**
  * Parallel Conjunction (&|)
  */
-public class Parallel extends Conjunctive<Term> implements Interval, TermMetadata {
+public class Parallel extends GenericCompound implements Intermval {
 
     //total duration (cached), the maximum duration of all included temporal terms
     transient int totalDuration = -1;
@@ -23,33 +22,39 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
     private int eventDuration;
 
 
+    public static Term makeParallel(Term[] a) {
+
+        //count how many intervals so we know how to resize the final arrays
+        int intervalsPresent = Interval.intervalCount(a);
+        int subterms = a.length - intervalsPresent;
+
+        if (subterms == 0)
+            return null;
+
+        if (subterms == 1)
+            return Interval.firstNonIntervalIn(a); //unwrap the only non-interval subterm
+
+        if (intervalsPresent == 0)
+            return new Parallel(a); //no intervals need to be removed
+
+        //otherwise, intervals are present:
+
+        Term[] b = new Term[subterms];
+
+        int p = 0;
+        for (Term x : a) {
+            if (!(x instanceof CyclesInterval))
+                b[p++] = x;
+        }
+
+        return new Parallel(b);
+
+    }
+
     protected Parallel(Term[] arg) {
-        super(Terms.toSortedSetArray(arg));
+        super(Op.PARALLEL, Terms.toSortedSetArray(arg));
     }
 
-    @Override
-    public final boolean isCommutative() {
-        return true;
-    }
-
-    @Override
-    public final Op op() {
-        return Op.PARALLEL;
-    }
-
-    @Override
-    public final int getTemporalOrder() {
-        return Tense.ORDER_CONCURRENT;
-    }
-
-    @Deprecated public static final Term make(Term[] argList) {
-        throw new RuntimeException("Use Parallel.makeParallel");
-    }
-
-    @Override
-    public Term clone() {
-        return new Parallel(terms());
-    }
 
     @Override
     public Term clone(Term[] replaced) {
@@ -88,7 +93,6 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
         }
     }
 
-    @Override
     public final int duration() {
         int totalDuration = this.totalDuration;
         if (totalDuration == -1) {
@@ -97,7 +101,7 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
         return totalDuration;
     }
 
-    @Override public final int duration(int eventDuration) {
+    public final int duration(int eventDuration) {
         if (totalDuration < 0 || eventDuration!=this.eventDuration) {
             return calculateTotalDuration(eventDuration);
         }
@@ -124,33 +128,9 @@ public class Parallel extends Conjunctive<Term> implements Interval, TermMetadat
         return totalDuration;
     }
 
-    public static Term makeParallel(Term[] a) {
 
-        //count how many intervals so we know how to resize the final arrays
-        int intervalsPresent = Interval.intervalCount(a);
-        int subterms = a.length - intervalsPresent;
-
-        if (subterms == 0)
-            return null;
-
-        if (subterms == 1)
-            return Interval.firstNonIntervalIn(a); //unwrap the only non-interval subterm
-
-        if (intervalsPresent == 0)
-            return new Parallel(a); //no intervals need to be removed
-
-        //otherwise, intervals are present:
-
-        Term[] b = new Term[subterms];
-
-        int p = 0;
-        for (Term x : a) {
-            if (!(x instanceof CyclesInterval))
-                b[p++] = x;
-        }
-
-        return new Parallel(b);
-
+    @Override
+    public int[] intervals() {
+        return null;
     }
-
 }

@@ -8,7 +8,6 @@ import javassist.util.proxy.ProxyObject;
 import nars.$;
 import nars.Global;
 import nars.NAR;
-import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.task.Task;
@@ -112,9 +111,9 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     @Override
     protected void onInstanceChange(Term oterm, Term prevOterm) {
 
-        Compound c = (Compound) Similarity.make(oterm, prevOterm);
-        if (c!=null)
-            nar.believe(metadataPriority, c,
+        Term s = $.simi(oterm, prevOterm);
+        if (s instanceof Compound)
+            nar.believe(metadataPriority, ((Compound)s),
                 Tense.ETERNAL,
                 metadataBeliefFreq, metadataBeliefConf);
 

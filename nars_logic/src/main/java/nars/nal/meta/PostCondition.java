@@ -1,10 +1,10 @@
 package nars.nal.meta;
 
+import nars.Op;
 import nars.Symbols;
 import nars.nal.Level;
-import nars.nal.TaskRule;
+import nars.nal.PremiseRule;
 import nars.nal.meta.op.Solve;
-import nars.nal.nal1.Inheritance;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.atom.Atom;
@@ -93,7 +93,7 @@ public class PostCondition implements Serializable, Level //since there can be m
      * @param modifiers
      * @throws RuntimeException
      */
-    public static PostCondition make(TaskRule rule, Term term,
+    public static PostCondition make(PremiseRule rule, Term term,
                                      PreCondition[] afterConclusions,
                                      Term... modifiers) throws RuntimeException {
 
@@ -104,7 +104,7 @@ public class PostCondition implements Serializable, Level //since there can be m
         char puncOverride = 0;
 
         for (Term m : modifiers) {
-            if (!(m instanceof Inheritance)) {
+            if (m.op() != Op.INHERIT) {
                 throw new RuntimeException("Unknown postcondition format: " + m);
             }
 
@@ -211,7 +211,7 @@ public class PostCondition implements Serializable, Level //since there can be m
 
 
 
-    boolean valid(TaskRule rule) {
+    boolean valid(PremiseRule rule) {
         Term term = this.term;
 
         if (!modifiesPunctuation() && term instanceof Compound) {

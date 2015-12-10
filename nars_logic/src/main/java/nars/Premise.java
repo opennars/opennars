@@ -77,7 +77,7 @@ public interface Premise extends Level, Tasked {
             if (aa == null) return false;
 
             Op aaop = aa.op();
-            if (a.op() == Op.VAR_QUERY && (aaop == Op.VAR_INDEPENDENT || aaop == Op.VAR_DEPENDENT))
+            if (a.op() == Op.VAR_QUERY && (aaop == Op.VAR_INDEP || aaop == Op.VAR_DEP))
                 return false;
 
         }
@@ -95,7 +95,7 @@ public interface Premise extends Level, Tasked {
             if (bb == null) return false;
 
             Op bbop = bb.op();
-            if (b.op() == Op.VAR_QUERY && (bbop == Op.VAR_INDEPENDENT || bbop == Op.VAR_DEPENDENT))
+            if (b.op() == Op.VAR_QUERY && (bbop == Op.VAR_INDEP || bbop == Op.VAR_DEP))
                 return false;
         }
 

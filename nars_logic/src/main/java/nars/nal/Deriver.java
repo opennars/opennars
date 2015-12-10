@@ -18,8 +18,8 @@ public abstract class Deriver  {
     /**
      * default set of rules, statically available
      */
-    public static DerivationRules standard;
-    public final DerivationRules rules;
+    public static PremiseRuleSet standard;
+    public final PremiseRuleSet rules;
 
 
     static {
@@ -28,7 +28,7 @@ public abstract class Deriver  {
         standardDeriver = new TrieDeriver(Deriver.standard);
     }
 
-    public Deriver(DerivationRules rules) {
+    public Deriver(PremiseRuleSet rules) {
         this.rules = rules;
     }
 
@@ -59,7 +59,7 @@ public abstract class Deriver  {
 
     static void loadRules() {
         try {
-            Deriver.standard = new DerivationRules();
+            Deriver.standard = new PremiseRuleSet();
         } catch (Exception e) {
             e.printStackTrace();
         }

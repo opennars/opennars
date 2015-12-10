@@ -61,6 +61,7 @@ public class FaceGUI extends BaseClass {
     private float pupilSize = 8;
 
     
+    @SuppressWarnings("HardcodedFileSeparator")
     public FaceGUI() {
         firstVertices = true;
         isVectors = false;

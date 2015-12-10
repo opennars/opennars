@@ -53,10 +53,10 @@ public class Conditional extends Operation {
         // if (debug) System.err.println("Division toString(): for expr=" + ifIs + ", printLevelLeft=" + ifIs.printLevelLeft());
 
         String string = "";
-        string = string.concat((thenParens?"(":"") + then.pretty() + (thenParens?")":""));
-        string = string.concat(" if ");
-        string = string.concat((ifIsParens?"(":"") + ifIs.pretty() + (ifIsParens?")":""));
-        
+        string = string + (thenParens ? "(" : "") + then.pretty() + (thenParens ? ")" : "");
+        string = string + " if ";
+        string = string + (ifIsParens ? "(" : "") + ifIs.pretty() + (ifIsParens ? ")" : "");
+
         return string;
     }
     
@@ -82,5 +82,4 @@ public class Conditional extends Operation {
         arrayList.add(ifIs);
         return arrayList;
     }
-    
 }

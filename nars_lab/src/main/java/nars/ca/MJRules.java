@@ -79,6 +79,7 @@ public class MJRules {
 
 	// ----------------------------------------------------------------
 	// Fill the vector with all available rules
+	@SuppressWarnings("HardcodedFileSeparator")
 	private void AddRules() {
 		MJTools mjT;
 		Vector vLines;

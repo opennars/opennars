@@ -26,15 +26,11 @@ public enum Tense  {
 
     public static final Tense Unknown = null;
 
-    /** none=eternal*/
-    public static final int ORDER_NONE = 2;
-    /** forward = sequential */
-    public static final int ORDER_FORWARD = 1;
-    /** concurrent = parallel */
-    public static final int ORDER_CONCURRENT = 0;
-    public static final int ORDER_BACKWARD = -1;
+    @Deprecated public static final Order ORDER_NONE = Order.None;
+    @Deprecated public static final Order ORDER_FORWARD = Order.Forward;
+    @Deprecated public static final Order ORDER_CONCURRENT = Order.Concurrent;
+    @Deprecated public static final Order ORDER_BACKWARD = Order.Backward;
 
-    @Deprecated public static final int ORDER_INVALID = -2;
     /**
      * default for atemporal events
      * means "always" in Judgment/Question, but "current" in Goal/Quest
@@ -54,10 +50,12 @@ public enum Tense  {
     }
 
     public static boolean matchingOrder(Termed a, Termed b) {
-        return matchingOrder(a.getTerm().getTemporalOrder(), b.getTerm().getTemporalOrder());
+        return matchingOrder(
+                a.getTerm().getTemporalOrder(),
+                b.getTerm().getTemporalOrder());
     }
 
-    public static boolean matchingOrder(int order1, int order2) {
+    public static boolean matchingOrder(Order order1, Order order2) {
 
         return (order1 == order2) || (order1 == ORDER_NONE) || (order2 == ORDER_NONE);
     }
@@ -175,7 +173,7 @@ public enum Tense  {
         return budget;
     }
 
-    public static int order(float timeDiff, int durationCycles) {
+    public static Order order(float timeDiff, int durationCycles) {
         float halfDuration = durationCycles / 2.0f;
         if (timeDiff >= halfDuration) {
             return ORDER_FORWARD;
@@ -191,7 +189,7 @@ public enum Tense  {
      * event B before       then order=backward
      * occur at the same time, relative to duration: order = concurrent
      */
-    public static int order(long a, long b, int durationCycles) {
+    public static Order order(long a, long b, int durationCycles) {
         if ((a == ETERNAL) || (b == ETERNAL))
             throw new RuntimeException("order() does not compare ETERNAL times");
 

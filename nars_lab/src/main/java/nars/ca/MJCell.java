@@ -86,6 +86,7 @@ public class MJCell extends Applet {
 
 	// ----------------------------------------------------------------
 	// The main initialization
+	@SuppressWarnings("HardcodedFileSeparator")
 	public void init() {
 		boolean isApplet = true; // applet or application?
 
@@ -197,6 +198,7 @@ public class MJCell extends Applet {
 	}
 
 	// ----------------------------------------------------------------
+	@SuppressWarnings("HardcodedFileSeparator")
 	public String getAppletInfo() {
 		return getAppletName() + "\n\n"
 				+ "Copyright (C) Mirek Wojtowicz, 1999..2005\n"

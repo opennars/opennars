@@ -15,6 +15,7 @@ public abstract class DaisychainExample extends IOMatrixExample  {
     final Daisychain daisy;
     double[] output;
     
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public DaisychainExample(Daisychain z) {
 
         daisy = z;

@@ -184,7 +184,7 @@ public class LocalRules {
 
             Term[] u = {question.getTerm(), solTerm};
 
-            if ( Premise.unify(Op.VAR_INDEPENDENT, u, nal.getRandom()) ) {
+            if ( Premise.unify(Op.VAR_INDEP, u, nal.getRandom()) ) {
 
                 sol = sol.solution((Compound)u[1],
                         sol.getPunctuation(),

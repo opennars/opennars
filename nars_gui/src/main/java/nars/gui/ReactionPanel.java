@@ -7,14 +7,17 @@ import nars.util.event.Reaction;
 
 import java.awt.*;
 
+@SuppressWarnings("AbstractClassNeverImplemented")
 public abstract class ReactionPanel extends NPanel implements Reaction<Class,Object[]> {
 
     public final NAR nar;
     private EventEmitter.Registrations reg;
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public ReactionPanel(NAR n) {
         nar = n;
     }
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public ReactionPanel(NAR n, LayoutManager l) {
         this(n);
         setLayout(l);

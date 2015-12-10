@@ -23,6 +23,7 @@ import java.awt.*;
  *
  * @author Marc G. Bellemare <mgbellemare@ualberta.ca>
  */
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class ColorPalette {
     /** 256 colors in this palette */
     public static final int MAX_ENTRIES = 256;
@@ -35,6 +36,7 @@ public abstract class ColorPalette {
     /** Create a new map, with entry #0 being black.
      * 
      */
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public ColorPalette() {
         map = new Color[MAX_ENTRIES];
         // 0 is always black

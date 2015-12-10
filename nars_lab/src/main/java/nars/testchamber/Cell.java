@@ -286,7 +286,7 @@ public class Cell {
                     break;
             }
         }
-        if(!"".equals(name))
+        if(name != null && !name.isEmpty())
         {
             s.textSize(0.2f);
             s.fill(255,0,0);

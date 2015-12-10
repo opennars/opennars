@@ -4,8 +4,8 @@ import nars.Global;
 import nars.Premise;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.nal.PremiseRule;
 import nars.nal.RuleMatch;
-import nars.nal.TaskRule;
 import nars.nal.meta.PreCondition;
 import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
@@ -24,13 +24,13 @@ import static nars.truth.TruthFunctions.eternalizedConfidence;
  */
 public final class Derive extends PreCondition {
 
-    @Deprecated final TaskRule rule;
+    @Deprecated final PremiseRule rule;
     final boolean anticipate;
     final boolean eternalize;
 
     private final transient String id;
 
-    public Derive(TaskRule rule, boolean anticipate, boolean eternalize) {
+    public Derive(PremiseRule rule, boolean anticipate, boolean eternalize) {
         this.rule = rule;
         this.anticipate = anticipate;
         this.eternalize = eternalize;

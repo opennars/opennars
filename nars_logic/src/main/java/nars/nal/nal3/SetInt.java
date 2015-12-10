@@ -12,18 +12,21 @@ import java.util.Collection;
  */
 public interface SetInt  {
 
-    static <T extends Term> Compound<T> make(Collection<T> c) {
-        return SetInt.make(c.toArray((T[]) new Term[c.size()]));
+    static Compound make(Collection<Term> c) {
+        return SetInt.make(c.toArray(new Term[c.size()]));
     }
 
     @SafeVarargs
-    static <T extends Term> Compound<T> make(T... t) {
-        switch (t.length) {
-            case 0: throw new RuntimeException("empty set");
-            default:
-                return new GenericCompound(Op.SET_INT, t);
-        }
+    static Compound make(Term... t) {
+        return (Compound)GenericCompound.COMPOUND(Op.SET_INT, t);
     }
+
+    static Compound subtractInt(Compound A, Compound B) {
+        if (A.equals(B)) return null; //empty set
+        return SetInt.make(SetTensional.subtract(A,B));
+    }
+
+
 //    static Compound make(List<Term> t) {
 //        switch (t.size()) {
 //            case 0: throw new RuntimeException("empty set");
@@ -42,10 +45,6 @@ public interface SetInt  {
 //        }
 //    }
 
-    static Compound subtractInt(Compound A, Compound B) {
-        if (A.equals(B)) return null; //empty set
-        return SetInt.make(SetTensional.subtract(A,B));
-    }
 
 
 //    default void appendCloser(Writer p) throws IOException {

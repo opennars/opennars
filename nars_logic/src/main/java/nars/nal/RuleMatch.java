@@ -28,7 +28,7 @@ public class RuleMatch extends FindSubst {
 
 
     @Deprecated //reference to the rule should not be necessary when complete
-    public TaskRule rule;
+    public PremiseRule rule;
 
     /** current Premise */
     public Premise premise;

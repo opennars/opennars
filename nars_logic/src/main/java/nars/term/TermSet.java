@@ -3,9 +3,15 @@ package nars.term;
 
 public class TermSet extends TermVector {
 
-    public TermSet(Term... t) {
-        super(
-            Terms.toSortedSetArray(t)
-        );
+    public static TermSet newTermSet(Term... unsorted) {
+        return new TermSet(Terms.toSortedSetArray(unsorted));
+    }
+
+    public static TermSet newTermSetPresorted(Term... presorted) {
+        return new TermSet(presorted);
+    }
+
+    protected TermSet(Term... sortedAndUnduplicated) {
+        super(sortedAndUnduplicated);
     }
 }

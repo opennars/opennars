@@ -50,6 +50,7 @@ public class MJPatternsList extends Dialog implements ActionListener {
 
 	// ----------------------------------------------------------------
 	// Fill the vector with all available patterns
+	@SuppressWarnings("HardcodedFileSeparator")
 	private void AddPatterns() {
 		MJTools mjT;
 		Vector vLines;
@@ -79,6 +80,7 @@ public class MJPatternsList extends Dialog implements ActionListener {
 
 	// ----------------------------------------------------------------
 	// Fill the list with patterns only from the current rule
+	@SuppressWarnings("HardcodedFileSeparator")
 	public void InitList() {
 		int i, iGame;
 		sRuleName = mjUI.cmbRules.getSelectedItem();
@@ -96,6 +98,7 @@ public class MJPatternsList extends Dialog implements ActionListener {
 
 	// ----------------------------------------------------------------
 	// Load the currently selected pattern
+	@SuppressWarnings("HardcodedFileSeparator")
 	private void LoadCurrentPattern() {
 		if (LstFiles.getSelectedIndex() >= 0) {
 			String sItem = LstFiles.getSelectedItem();

@@ -38,6 +38,7 @@ public abstract class LearnerAndActor {
         }
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public String getDebugString(int indent) {
         String ind = Utils.makeIndent(indent);
         stringBuilder.setLength(0);

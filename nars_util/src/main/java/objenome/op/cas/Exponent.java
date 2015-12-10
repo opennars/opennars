@@ -97,9 +97,9 @@ public class Exponent extends Operation {
         if (thisClassOrder > exponent.printLevelLeft()) exponentParens = true;
 
         String string = "";
-        string = string.concat((baseParens?"(":"") + base.pretty() + (baseParens?")":""));
-        string = string.concat("^");
-        string = string.concat((exponentParens?"(":"") + exponent.pretty() + (exponentParens?")":""));
+        string = string + (baseParens ? "(" : "") + base.pretty() + (baseParens ? ")" : "");
+        string = string + "^";
+        string = string + (exponentParens ? "(" : "") + exponent.pretty() + (exponentParens ? ")" : "");
         
         return string;
     }

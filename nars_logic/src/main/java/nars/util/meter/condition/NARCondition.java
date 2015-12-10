@@ -1,5 +1,7 @@
 package nars.util.meter.condition;
 
+import org.slf4j.Logger;
+
 import java.io.PrintStream;
 import java.io.Serializable;
 
@@ -25,4 +27,12 @@ public interface NARCondition extends Serializable {
     long getFinalCycle();
 
     void report();
+
+    default void toLogger(Logger logger) {
+        String s = toConditionString();
+        if (isTrue())
+            logger.info(s);
+        else
+            logger.warn(s);
+    }
 }

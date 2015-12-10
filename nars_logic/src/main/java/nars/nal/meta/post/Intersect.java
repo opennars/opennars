@@ -2,9 +2,9 @@ package nars.nal.meta.post;
 
 import nars.nal.RuleMatch;
 import nars.nal.meta.pre.PreCondition3Output;
-import nars.nal.nal3.SetTensional;
 import nars.term.Term;
 import nars.term.TermContainer;
+import nars.term.compound.Compound;
 
 /**
  * Created by me on 8/15/15.
@@ -24,7 +24,7 @@ public class Intersect extends PreCondition3Output {
         //ok both are extensional sets or intensional sets, build intersection, not difference
         return Unite.createSetAndAddToSubstitutes(m, a, c,
             TermContainer.intersect(
-                (SetTensional) a,(SetTensional) b
+                (Compound) a, (Compound) b
             )
         );
     }

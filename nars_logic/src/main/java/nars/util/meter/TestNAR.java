@@ -13,6 +13,8 @@ import nars.util.meter.condition.ExecutionCondition;
 import nars.util.meter.condition.NARCondition;
 import nars.util.meter.condition.TemporalTaskCondition;
 import nars.util.meter.event.HitMeter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -34,7 +36,7 @@ public class TestNAR  {
     final boolean showOutput = false;
 
 
-
+    static final Logger logger = LoggerFactory.getLogger(TestNAR.class);
 
     /** "must" requirement conditions specification */
     public final List<NARCondition> requires = new ArrayList();
@@ -58,6 +60,13 @@ public class TestNAR  {
 
 
     public TestNAR(NAR nar) {
+
+        this.outputEvents = new Topic[] {
+            //nar.memory.eventDerived,
+            nar.memory.eventInput,
+            nar.memory.eventTaskRemoved,
+            nar.memory.eventRevision
+        };
 
         this.nar = nar;
 
@@ -171,19 +180,13 @@ public class TestNAR  {
     //TODO initialize this once in constructor
     Topic<Task>[] outputEvents;
 
-
     public TestNAR mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long occTimeAbsolute) throws Narsese.NarseseException {
-        if (outputEvents == null) outputEvents = new Topic[] {
-            nar.memory.eventDerived, nar.memory.eventTaskRemoved, nar.memory.eventRevision
-        };
         mustEmit(outputEvents, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, occTimeAbsolute);
         return this;
     }
 
 
     public TestNAR mustOutput(long withinCycles, String task) throws Narsese.NarseseException {
-        if (outputEvents == null) outputEvents = new Topic[] {
-                nar.memory.eventDerived, nar.memory.eventTaskRemoved, nar.memory.eventRevision };
         return mustEmit(outputEvents, withinCycles, task);
     }
 
@@ -408,8 +411,9 @@ public class TestNAR  {
         public void toString(PrintStream out) {
 
             if (error!=null) {
-                out.println(error);
+                out.print(error.toString());
             }
+
             out.print("@" + time + ' ');
             out.print(Arrays.toString(eventMeters) + '\n');
 
@@ -421,6 +425,25 @@ public class TestNAR  {
                 c.toString(out)
             );
         }
+
+        public void toLogger() {
+
+            if (error!=null) {
+                logger.error(error.toString());
+            }
+
+            logger.info("@" + time + ' ');
+            logger.debug(Arrays.toString(eventMeters) + '\n');
+
+            for (Task t : inputs) {
+                logger.info("IN " + t);
+            }
+
+            cond.forEach(c ->
+                c.toLogger(logger)
+            );
+        }
+
     }
 
     public TestNAR run2() {
@@ -484,18 +507,17 @@ public class TestNAR  {
 
 
         if (success) {
-            report.toString(System.out);
+            report.toLogger();
         }
         else if (!success) {
 
-            report.toString(System.out);
+            report.toLogger();
             if (collectTrace)
-                System.err.println(trace.getBuffer());
+                logger.debug(trace.getBuffer().toString());
 
             assert(false);
         }
 
-        //System.out.println(s);
     }
 
     public TestNAR run(long extraCycles) {

@@ -215,6 +215,7 @@ public class RLAgent extends AbstractAgent {
     /** Prints out command-line usage text.
      *
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void printUsage() {
         System.err.println ("Invalid argument.");
         System.err.println ("Usage: java RLAgent [-nogui] [-named_pipes filename]\n");

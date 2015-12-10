@@ -43,9 +43,9 @@ public class NotEqual extends Comparison {
         // if (debug) System.err.println("Division toString(): for expr=" + expr2 + ", printLevelLeft=" + expr2.printLevelLeft());
 
         String string = "";
-        string = string.concat((expr1Parens?"(":"") + expr1.pretty() + (expr1Parens?")":""));
-        string = string.concat("!=");
-        string = string.concat((expr2Parens?"(":"") + expr2.pretty() + (expr2Parens?")":""));
+        string = string + (expr1Parens ? "(" : "") + expr1.pretty() + (expr1Parens ? ")" : "");
+        string = string + "!=";
+        string = string + (expr2Parens ? "(" : "") + expr2.pretty() + (expr2Parens ? ")" : "");
         
         return string;
     }

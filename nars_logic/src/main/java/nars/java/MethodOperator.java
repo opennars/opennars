@@ -2,12 +2,13 @@ package nars.java;
 
 import com.github.drapostolos.typeparser.TypeParser;
 import nars.$;
-import nars.nal.nal4.Product;
+import nars.Op;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -100,10 +101,10 @@ public class MethodOperator extends TermFunction {
 
 
             Term xv = x[paramOffset];
-            if (!(xv instanceof Product))
+            if (!xv.op(Op.PRODUCT))
                 throw new RuntimeException("method parameters must be a product but is " + xv);
 
-            Product pxv = (Product)xv;
+            Compound pxv = (Compound)xv;
             if (pxv.size()!=pc) {
                 throw new RuntimeException("invalid # method parameters; requires " + pc + " but " + pxv.size() + " given");
             }

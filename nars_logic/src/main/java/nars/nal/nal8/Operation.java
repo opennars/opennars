@@ -24,12 +24,11 @@ import nars.$;
 import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.nal4.ImageExt;
-import nars.nal.nal4.Product;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
 
@@ -234,8 +233,8 @@ public interface Operation  {
      */
     static Term makeImageExt(Compound product, Term relation, short index) {
         int pl = product.size();
-        if (relation instanceof Product) {
-            Product p2 = (Product) relation;
+        if (relation.op(Op.PRODUCT)) {
+            Compound p2 = (Compound) relation;
             if ((pl == 2) && (p2.size() == 2)) {
                 if ((index == 0) && product.term(1).equals(p2.term(1))) { // (/,_,(*,a,b),b) is reduced to a
                     return p2.term(0);
@@ -252,7 +251,7 @@ public interface Operation  {
         argument[0] = relation;
         System.arraycopy(product.terms(), 0, argument, 1, pl - 1);
 
-        return new ImageExt(argument, index+1);
+        return GenericCompound.COMPOUND(Op.IMAGE_EXT, argument, index+1);
     }
 
     /** applies certain data to a feedback task relating to its causing operation's task */
@@ -265,7 +264,7 @@ public interface Operation  {
     static boolean isOperation(Term t) {
         if (!(t instanceof Compound)) return false;
         Compound c = (Compound)t;
-        return c.op() == Op.INHERITANCE &&
+        return c.op() == Op.INHERIT &&
             c.size() == 2 &&
             c.term(1).op() == Op.OPERATOR
             && c.term(0).op() == Op.PRODUCT;
