@@ -71,7 +71,7 @@ public class ItemAccumulatorTest {
         List<Task> two = new ArrayList();
         two.add(ii.pop());
         two.add(ii.pop());
-        assertEquals("[$0.20;0.80;0.95$ <c-->x>. :0: %1.00;0.90%, $0.10;0.80;0.95$ <b --> x>. :0: %1.00;0.90%]", two.toString());
+        assertEquals("[$0.20;0.80;0.95$ <c-->x>. :0: %1.00;0.90%, $0.10;0.80;0.95$ <b-->x>. :0: %1.00;0.90%]", two.toString());
 
         assertEquals(1, ii.size());
 

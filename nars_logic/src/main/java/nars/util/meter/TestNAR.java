@@ -5,6 +5,7 @@ import nars.NAR;
 import nars.Narsese;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
+import nars.task.Tasked;
 import nars.term.atom.Atom;
 import nars.util.event.CycleReaction;
 import nars.util.event.Topic;
@@ -20,7 +21,6 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.*;
-
 
 
 /**
@@ -63,8 +63,9 @@ public class TestNAR  {
 
         this.outputEvents = new Topic[] {
             //nar.memory.eventDerived,
-            nar.memory.eventInput,
-            nar.memory.eventTaskRemoved,
+            //nar.memory.eventInput,
+            nar.memory.eventTaskProcess,
+            //nar.memory.eventTaskRemoved,
             nar.memory.eventRevision
         };
 
@@ -178,7 +179,7 @@ public class TestNAR  {
     }
 
     //TODO initialize this once in constructor
-    Topic<Task>[] outputEvents;
+    Topic<Tasked>[] outputEvents;
 
     public TestNAR mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long occTimeAbsolute) throws Narsese.NarseseException {
         mustEmit(outputEvents, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, occTimeAbsolute);
@@ -206,19 +207,19 @@ public class TestNAR  {
 //
 //    }
 
-//    public TestNAR mustOutput(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {
+//    public TestNAR mustOutput(Topic<Tasked> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {
 //        return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, ocRelative );
 //    }
 
-    public TestNAR mustEmit(Topic<Task>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.NarseseException {
+    public TestNAR mustEmit(Topic<Tasked>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.NarseseException {
         return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, Tense.ETERNAL );
     }
 
-    public TestNAR mustEmit(Topic<Task>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, Tense t) throws Narsese.NarseseException {
+    public TestNAR mustEmit(Topic<Tasked>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, Tense t) throws Narsese.NarseseException {
         return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, nar.time(t));
     }
 
-    public TestNAR mustEmit(Topic<Task>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long occTimeAbsolute) throws Narsese.NarseseException {
+    public TestNAR mustEmit(Topic<Tasked>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long occTimeAbsolute) throws Narsese.NarseseException {
 
         float h = (freqMin!=-1) ? truthTolerance / 2.0f : 0;
 
@@ -237,7 +238,7 @@ public class TestNAR  {
                 occTimeAbsolute, occTimeAbsolute,
                 sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
 
-        for (Topic<Task> cc : c) {
+        for (Topic<Tasked> cc : c) {
             cc.on(tc);
         }
 
@@ -275,7 +276,7 @@ public class TestNAR  {
 
     public final long time() { return nar.time(); }
 
-    public TestNAR mustEmit(Topic<Task>[] c, long withinCycles, String task) throws Narsese.NarseseException {
+    public TestNAR mustEmit(Topic<Tasked>[] c, long withinCycles, String task) throws Narsese.NarseseException {
         Task t = nar.task(task);
         //TODO avoid reparsing term from string
 

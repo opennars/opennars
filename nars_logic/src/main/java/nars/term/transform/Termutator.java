@@ -117,11 +117,15 @@ public final class Termutator extends ShuffledPermutations implements TermContai
 
     @Override
     public boolean isNormalized() {
-        return false;
+        return compound.isNormalized();
     }
 
     @Override
     public Term[] terms() {
-        throw new RuntimeException("only termsCopy available and its not efficient");
+        int s = size();
+        Term[] x = new Term[s];
+        for (int i = 0; i < s; i++)
+            x[i] = term(i);
+        return x;
     }
 }

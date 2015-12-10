@@ -290,6 +290,13 @@ public enum Op implements Serializable {
     public static final int VariableBits =
         Op.or(Op.VAR_PATTERN,Op.VAR_INDEP,Op.VAR_DEP,Op.VAR_QUERY);
 
+    public static final int TemporalBits =  Op.or(
+        Op.PARALLEL, Op.SEQUENCE,
+        Op.EQUIV_AFTER, Op.EQUIV_WHEN,
+        Op.IMPLICATION_AFTER, Op.IMPLICATION_WHEN, Op.IMPLICATION_BEFORE
+    );
+
+
     static class Args {
         static final IntIntPair None = pair(0,0);
         static final IntIntPair One = pair(1,1);

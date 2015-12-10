@@ -150,13 +150,19 @@ public class CompiledUnificationTest extends UnificationTest {
         TermPattern tp = new TermPattern(Op.VAR_PATTERN, t1);
 
         Set<String> found = Global.newHashSet(expectedPermutations);
+        int success = 0, tries = 0;
 
-        for (int p = 1; p < t1.volume()*t1.volume()*8; p+=1) {
-            int success = 0, tries = 0;
+        int v = t1.volume()+1;
+        for (int p = 100; p < v * v * 8; p+=1) {
             for (int s = 1; s<16; s++) {
                 FindSubst r = permuteTest(s, tp, t2, p);
                 if (r!=null) {
-                    found.add(r.xy.toString());
+
+                    String res = r.xy.toString();
+
+                    //System.out.println(s + " " + p + " " + res);
+                    found.add(res);
+
                     success++;
                 }
                 tries++;
@@ -164,7 +170,7 @@ public class CompiledUnificationTest extends UnificationTest {
             //System.out.println(p + ":\t" + ( ((double)success)/tries) );
         }
 
-        System.out.println(found);
+        System.out.println(found + " " + success + " " + tries);
         assertEquals(expectedPermutations, found.size());
         return found;
     }
@@ -176,7 +182,19 @@ public class CompiledUnificationTest extends UnificationTest {
         assertEquals("[{%1=d, %2=c}, {%1=c, %2=d}]", r.toString());
     }
 
-    @Test public void testPermutationPowerB() {
+    @Test public void testPermutationPower3() {
+        //combination of 4
+        permuteTest(
+                "<{%1,%2,%3} <-> {a,%1,%2,%3}>",
+                "<{b,d,e} <-> {a,b,d,e}>", 6);
+    }
+    @Test public void testPermutationPower4() {
+        //combination of 4
+        permuteTest(
+                "<{%1,%2,%3,%4} <-> {%1,%4,%2,%3}>",
+                "<{b,d,e,c} <-> {b,c,d,e}>", 24);
+    }
+    @Test public void testPermutationPower4fixed1() {
         //combination of 4
         permuteTest(
                 "<{%1,%2,%3,%4} <-> {a,%1,%4,%2,%3}>",

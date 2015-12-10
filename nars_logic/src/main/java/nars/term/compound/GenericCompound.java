@@ -42,16 +42,6 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     public final int relation;
     private boolean normalized = false;
 
-    public static Term COMPOUND(Op op, Term a) {
-        return COMPOUND(op, new Term[] { a });
-    }
-
-    public static Term COMPOUND(Op op, Term a, Term b) {
-        return COMPOUND(op, new Term[] { a, b });
-    }
-    public static Term COMPOUND(Op op, Term a, Term b, Term c) {
-        return COMPOUND(op, new Term[] { a, b, c });
-    }
 
     public static Term COMPOUND(Op op, Term... subterms) {
 
@@ -493,7 +483,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public int bytesLength() {
-        int len = /* opener byte */1 + 1;
+        int len = /* opener byte */1 + (op.isImage() ? 1 : 0);
 
         int n = size();
         for (int i = 0; i < n; i++) {
@@ -519,11 +509,16 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         ByteBuf b = ByteBuf.create(bytesLength());
 
         b.add((byte) op().ordinal()); //header
-        b.add((byte) relation); //header
+
+        if (op().isImage()) {
+            b.add((byte) relation); //header
+        }
 
         appendSubtermBytes(b);
 
-        b.add(COMPOUND_TERM_CLOSERbyte); //closer
+        if (op().maxSize != 1) {
+            b.add(COMPOUND_TERM_CLOSERbyte); //closer
+        }
 
         return b.toBytes();
     }

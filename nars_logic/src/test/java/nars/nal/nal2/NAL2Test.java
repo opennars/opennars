@@ -141,8 +141,10 @@ public class NAL2Test extends AbstractNALTester {
     @Test
     public void setDefinition() throws Narsese.NarseseException {
         TestNAR tester = test();
+
         tester.believe("<{Tweety} --> {Birdie}>");//Tweety is Birdie.");
         tester.mustBelieve(cycles,"<{Tweety} <-> {Birdie}>",1.0f,0.9f);//Birdie is similar to Tweety.");
+
 
     }
 

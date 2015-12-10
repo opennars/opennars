@@ -25,7 +25,7 @@ public class DeductiveChainTest extends TestNAR {
     final static public IndexedStatementBuilder inh = (int x, int y) ->
             (Compound)$.inh(a(x), a(y));
     final static public IndexedStatementBuilder sim = (int x, int y) ->
-            (Compound)$.simi(a(x), a(y));
+            (Compound)$.sim(a(x), a(y));
     final static public IndexedStatementBuilder impl = (int x, int y) ->
             (Compound)$.impl(a(x), a(y));
     final static public IndexedStatementBuilder equiv = (int x, int y) ->

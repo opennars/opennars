@@ -111,7 +111,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
     @Override
     protected void onInstanceChange(Term oterm, Term prevOterm) {
 
-        Term s = $.simi(oterm, prevOterm);
+        Term s = $.sim(oterm, prevOterm);
         if (s instanceof Compound)
             nar.believe(metadataPriority, ((Compound)s),
                 Tense.ETERNAL,

@@ -28,9 +28,10 @@ public class ZoomFX extends AnchorPane {
 //    private static final double SCROLL_UNIT_INC = 0.1;
 
     // Properties
-    public final LerpDoubleProperty zoomFactor = new LerpDoubleProperty(1.0);
-    public final LerpDoubleProperty panX = new LerpDoubleProperty(0);
-    public final LerpDoubleProperty panY = new LerpDoubleProperty(0);
+    //must be private to avoid POJONode from bindign to it
+    private final LerpDoubleProperty zoomFactor = new LerpDoubleProperty(1.0);
+    private final LerpDoubleProperty panX = new LerpDoubleProperty(0);
+    private final LerpDoubleProperty panY = new LerpDoubleProperty(0);
 
     //Sub-controls
     /*private final ScrollBar hscroll = new ScrollBar();
@@ -89,12 +90,22 @@ public class ZoomFX extends AnchorPane {
         else stop();
     }
 
+    public double getPanX() {
+        return panX.getValue();
+    }
+    public double getPanY() {
+        return panY.getValue();
+    }
+
+
     private void start() {
         synchronized (content) {
             if (positionAnimation == null) {
                 positionAnimation = new Animate(0, a -> {
                     zoomFactor.update();
+
                     panX.update();
+
                     panY.update();
                 });
                 positionAnimation.start();
@@ -174,7 +185,7 @@ public class ZoomFX extends AnchorPane {
      */
     public void pan(double sceneX, double sceneY) {
         if (panStart == null) {
-            //startPan(sceneX, sceneY);
+            startPan(sceneX, sceneY);
         } else {
             ArrayRealVector panStart = this.panStart;
 

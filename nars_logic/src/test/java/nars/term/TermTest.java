@@ -77,6 +77,15 @@ public class TermTest {
 
         assertEquivalent("(&,a,b)", "(&,b,a)");
         assertEquivalent("{a,c,b}", "{b,a,c}");
+
+        assertEquivalent("<{Birdie}<->{Tweety}>",
+                        "<{Tweety}<->{Birdie}>");
+
+        //test ordering after derivation
+        assertEquals("<{Tweety}<->{Birdie}>",
+            (((Compound)$("<{Birdie}<->{Tweety}>")).clone(
+                new Term[] { $("{Tweety}"), $("{Birdie}") }).toString())
+        );
     }
 
     @Test
@@ -647,6 +656,11 @@ public class TermTest {
         assertEquals("[P,Q,R,S]", $("(|,[P,Q],[R,S])").toString());
         assertEquals(null, $("(|,{P,Q},{R,S})"));
     }
+    @Test public void testIntersectIntReduction_to_one() {
+        assertEquals("<robin-->bird>", $("<robin-->(|,bird)>").toString());
+        assertEquals("<robin-->bird>", $("<(|,robin)-->(|,bird)>").toString());
+    }
+
 
 
 
@@ -763,8 +777,8 @@ public class TermTest {
                 b.hashCode(), a.hashCode());
 
         NAR n = new Terminal();
-        Compound x3 = n.term('<' + i1 + " --> y>");
-        Compound x4 = n.term('<' + i1 + " --> y>");
+        Compound x3 = n.term('<' + i1 + " --> z>");
+        Compound x4 = n.term('<' + i1 + " --> z>");
 
         assertFalse("i2 is a possible subterm of x3, structurally, even if the upper bits differ",
                 x3.impossibleSubTermOrEquality(n.term(i2)));

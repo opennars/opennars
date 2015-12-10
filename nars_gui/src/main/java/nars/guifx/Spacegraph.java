@@ -108,7 +108,7 @@ public class Spacegraph extends ZoomFX {
             gc.setStroke(c);
             gc.strokeRect(0, 0, w, h);
 
-            double x = panX.doubleValue(), y = panY.doubleValue();
+            double x = getPanX(), y = getPanY();
             double scale = getZoomFactor() * 10.0f;
 
             while (scale < minScale)
@@ -168,6 +168,7 @@ public class Spacegraph extends ZoomFX {
 
 
     public Spacegraph() {
+        super();
 
         //setCacheShape(false);
         //getChildren().add(0, new GridCanvas(true));

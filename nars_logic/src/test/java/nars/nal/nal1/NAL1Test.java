@@ -97,7 +97,7 @@ public class NAL1Test extends AbstractNALTester {
 
     @Test
     public void induction() throws Narsese.NarseseException {
-        int withinCycles = 4;
+        int withinCycles = 16;
         test().believe("<swan --> swimmer>", 0.90f, 0.9f)
                 //.en("Swan is a type of swimmer.");
                 .believe("<swan --> bird>")
@@ -122,7 +122,7 @@ public class NAL1Test extends AbstractNALTester {
     @Test
     public void conversion() throws Narsese.NarseseException {
 
-        long time = 4;
+        long time = 16;
         TestNAR test = test();
         test.believe("<bird --> swimmer>")
             .ask("<swimmer --> bird>") //.en("Is swimmer a type of bird?");

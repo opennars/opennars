@@ -7,6 +7,7 @@ import nars.Narsese;
 import nars.nal.nal7.Tense;
 import nars.task.AbstractTask;
 import nars.task.Task;
+import nars.task.Tasked;
 import nars.term.Terms;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -19,7 +20,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class EternalTaskCondition extends AbstractTask implements NARCondition, Predicate<Task>, Consumer<Task> {
+public class EternalTaskCondition extends AbstractTask implements NARCondition, Predicate<Task>, Consumer<Tasked> {
 
     protected final NAR nar;
     boolean succeeded = false;
@@ -66,7 +67,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     }
 
     public EternalTaskCondition(NAR n, long creationStart, long creationEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.NarseseException {
-        super(n.task(sentenceTerm + punc));
+        super(n.task(sentenceTerm + punc).normalize(n.memory));
 
         nar = n;
 
@@ -191,19 +192,13 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     @Override
     public boolean test(Task task) {
 
+        if (succeeded) return false;
+
         /** how many errors accumulated while testing it  */
         double distance = 0;
 
         if (!matches(task))
             distance = 1;
-
-
-
-
-
-
-
-
 
 
         //TODO use range of acceptable occurrenceTime's for non-eternal tests
@@ -331,8 +326,15 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 //        return succeeded  +": "  + JSONOutput.stringFromFields(this);
 //    }
 
+
     @Override
+    public final void accept(Tasked tasked) {
+        Task task = tasked.getTask();
+        accept(task);
+    }
+
     public final void accept(Task task) {
+
         if (!succeeded && test(task)) {
             succeeded = true;
             successTime = nar.time();
@@ -426,16 +428,16 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         else
             logger.warn(msg);
 
-        BiConsumer<String,Task> printer = (label,s) -> {
-            logger.info("{}: {}", label, s);
+        Consumer<Task> printer = (s) -> {
+            logger.info("\t{}", s);
             //logger.debug(s.getExplanation().replace("\n", "\n\t\t"));
         };
 
         if (valid!=null) {
-            valid.forEach(s -> printer.accept("\t OK", s));
+            valid.forEach(s -> printer.accept(s));
         }
         if (similar!=null) {
-            similar.values().forEach(s -> printer.accept("\tERR", s));
+            similar.values().forEach(s -> printer.accept(s));
         }
     }
 }

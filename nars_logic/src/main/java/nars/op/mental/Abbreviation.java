@@ -99,7 +99,7 @@ public class Abbreviation implements Consumer<Task> {
 
                 concept.put(Abbreviation.class, atomic);
 
-                Compound c = (Compound) $.simi(termAbbreviating, atomic);
+                Compound c = (Compound) $.sim(termAbbreviating, atomic);
                 if (c!=null) {
 
                     Memory m = nar.memory;

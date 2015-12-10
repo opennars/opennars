@@ -135,7 +135,7 @@ public interface Term extends Termed, Comparable, Termlike {
 
     default boolean hasAny(int structuralVector) {
         int s = structure();
-        return (s & structuralVector) == s;
+        return (s | structuralVector) == s;
     }
     default boolean isAny(int structuralVector) {
         int s = op().bit();
@@ -279,11 +279,10 @@ public interface Term extends Termed, Comparable, Termlike {
 //                    hasAny(Op.EQUIVALENCE_AFTER) || hasAny(Op.EQUIVALENCE_WHEN) ||
 //                    hasAny(Op.IMPLICATION_AFTER) || hasAny(Op.IMPLICATION_WHEN) || hasAny(Op.IMPLICATION_BEFORE);
 
+
     default boolean containsTemporal() {
         //TODO construct bit vector for one comparison
-        return hasAny(Op.PARALLEL) || hasAny(Op.SEQUENCE) ||
-                hasAny(Op.EQUIV_AFTER) || hasAny(Op.EQUIV_WHEN) ||
-                hasAny(Op.IMPLICATION_AFTER) || hasAny(Op.IMPLICATION_WHEN) || hasAny(Op.IMPLICATION_BEFORE);
+        return isAny(Op.TemporalBits);
     }
 
 

@@ -93,7 +93,7 @@ public abstract class $  {
     }
 
 
-    public static Term simi(Term subj, Term pred) {
+    public static Term sim(Term subj, Term pred) {
         return COMPOUND(Op.SIMILAR, subj, pred);
     }
 

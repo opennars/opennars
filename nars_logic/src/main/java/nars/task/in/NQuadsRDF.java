@@ -280,7 +280,7 @@ public abstract class NQuadsRDF {
         }
         else if (predicate.equals(sameAs)) {
 
-            belief = $.simi(subject, object);
+            belief = $.sim(subject, object);
             //belief = (Equivalence.make(subject, object));
         }
         else if (predicate.equals(domain)) {
@@ -316,7 +316,7 @@ public abstract class NQuadsRDF {
         else if (predicate.equals(disjointWith)) {
             //System.out.println(subject + " " + predicate + " " + object);
 
-            belief = $.neg($.simi(subject, object));
+            belief = $.neg($.sim(subject, object));
         }
         else {
             //System.out.println(subject + " " + predicate + " " + object);

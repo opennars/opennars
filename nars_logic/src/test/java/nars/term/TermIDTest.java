@@ -22,7 +22,7 @@ public class TermIDTest {
     // '&&' 'a' ',' 'b' ')'
     @Test
     public void testInternalRepresentation28() {
-        testBytesRepresentation("(&&, a, b)", 5);
+        testBytesRepresentation("(&&,a,b)", 5);
     }
 
     // '--', 'a'
@@ -34,7 +34,7 @@ public class TermIDTest {
     // '*' 'a' ',' 'b' ')'
     @Test
     public void testInternalRepresentation2z() {
-        testBytesRepresentation("(a, b)", 5);
+        testBytesRepresentation("(a,b)", 5);
     }
 
 
@@ -67,15 +67,15 @@ public class TermIDTest {
     //  '-->' 'a' ','  'b' ')' == 5
     @Test
     public void testInternalRepresentation27() {
-        testBytesRepresentation("<a --> b>", 5);
+        testBytesRepresentation("<a-->b>", 5);
     }
 
     @Test public void testInternalRepresentationImage1() {
         for (char t : new char[] { '/', '\\'}) {
-            testBytesRepresentation("("+t+", _, a)", 3 + 1);
-            testBytesRepresentation("("+t+", _, a, b)", 5 + 1);
-            testBytesRepresentation("("+t+", a, _, b)", 5 + 1);
-            testBytesRepresentation("("+t+", a, b, _)", 5 + 1);
+            testBytesRepresentation("("+t+",_,a)", 3 + 1);
+            testBytesRepresentation("("+t+",_,a,b)", 5 + 1);
+            testBytesRepresentation("("+t+",a,_,b)", 5 + 1);
+            testBytesRepresentation("("+t+",a,b,_)", 5 + 1);
         }
     }
 
@@ -83,10 +83,10 @@ public class TermIDTest {
     //@Test public void testInternalRepresentation2() { testInternalRepresentation("<a && b>", 5); }
 
 
-    public Term testBytesRepresentation(String expectedPrettyOutput, int expectedLength) {
+    public Term testBytesRepresentation(String expectedCompactOutput, int expectedLength) {
         return testBytesRepresentation(
             null,
-            expectedPrettyOutput,
+            expectedCompactOutput,
             expectedLength);
     }
 

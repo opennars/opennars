@@ -86,11 +86,11 @@ public class Tangible {
         if (parent!=null) {
             double w = currentBounds.getWidth();
             double h = currentBounds.getHeight();
-            parent.panX.set(currentBounds.getMinX()+w/2);
-            parent.panY.set(currentBounds.getMinY()+h/2);
+            //parent.panX.set(currentBounds.getMinX()+w/2);
+            //parent.panY.set(currentBounds.getMinY()+h/2);
 
             double z =  w/500;
-            parent.zoomFactor.set(z);
+            //parent.zoomFactor.set(z);
         }
     }
 

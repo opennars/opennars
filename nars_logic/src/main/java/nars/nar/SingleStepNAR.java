@@ -4,7 +4,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import nars.Global;
 import nars.nal.PremiseRule;
-import nars.task.Task;
+import nars.process.TaskProcess;
 import nars.task.flow.FIFOTaskPerception;
 import nars.time.FrameClock;
 import nars.util.meter.DerivationGraph;
@@ -48,7 +48,15 @@ public class SingleStepNAR extends AbstractNAR {
     @Override
     public FIFOTaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
-                Task::isInput /* allow only input tasks*/,
+                (t) -> { /* allow only input tasks*/
+                    if (t.isInput()) return true;
+                    else {
+                        //fire a fake TaskProcess event
+                        memory.eventTaskProcess.emit(
+                            new TaskProcess(this, t));
+                       return false;
+                    }
+                },
                 this::process
         );
         return input;

@@ -18,7 +18,6 @@ import nars.term.TermMetadata;
 import nars.term.Termed;
 import nars.util.meter.LogicMeter;
 
-import java.io.Serializable;
 import java.util.List;
 
 import static nars.budget.BudgetFunctions.clonePriorityMultiplied;
@@ -27,7 +26,7 @@ import static nars.budget.BudgetFunctions.clonePriorityMultiplied;
  * "Direct" processing of a new task, in constant time Local processing,
  * involving one concept only
  */
-public class TaskProcess extends AbstractPremise implements Serializable {
+public class TaskProcess extends AbstractPremise  {
 
     private static final Procedure2<Budget, Budget> PENDING_TERMLINK_BUDGET_MERGE = Budget.plus;
 

@@ -101,13 +101,15 @@ public class PatternIndex extends MapIndex {
 
         @Override
         public boolean match(Compound y, FindSubst subst) {
+            int yStructure = y.structure();
+            if ((yStructure | structureCachedWithoutVars) != yStructure)
+                return false;
+
             if (y.size() != sizeCached)
                 return false;
             if (y.volume() < volCached)
                 return false;
-            int yStructure = y.structure();
-            if ((yStructure | structureCachedWithoutVars) != yStructure)
-                return false;
+
             if (relation != y.relation())
                 return false;
 
@@ -118,10 +120,12 @@ public class PatternIndex extends MapIndex {
         public boolean matchLinear(TermContainer y, FindSubst subst) {
 
             //int[] o = this.heuristicOrder;
-            int[] o = shuffle(shuffleOrder, subst.random);
+            int[] o =
+                    //shuffle(shuffleOrder, subst.random);
+                    shuffle(shuffleOrder, subst.random);
 
             Term[] x = termsCached;
-            for (int i = 0; i < o.length; i++) {
+            for (int i = 0; i < x.length; i++) {
                 if (!subst.match(x[i], y.term(i)))
                     return false;
             }
@@ -130,7 +134,8 @@ public class PatternIndex extends MapIndex {
 
         static int[] shuffle(int[] shuffleOrder, Random random) {
             nars.util.data.array.Arrays.shuffle(
-                    shuffleOrder, random
+                shuffleOrder,
+                random
             );
             return shuffleOrder;
         }

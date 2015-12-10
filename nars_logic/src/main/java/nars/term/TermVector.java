@@ -214,11 +214,11 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     }
 
 
-    static int nextContentHash(int hash, int subtermHash) {
-        return Util.PRIME2 * hash + subtermHash;
-        //return (hash << 4) +  subtermHash;
-        //(Util.PRIME2 * contentHash)
-    }
+//    static int nextContentHash(int hash, int subtermHash) {
+//        return Util.PRIME2 * hash + subtermHash;
+//        //return (hash << 4) +  subtermHash;
+//        //(Util.PRIME2 * contentHash)
+//    }
 
 
     /** returns hashcode */
@@ -234,10 +234,8 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
             if (t == this)
                 throw new RuntimeException("term can not contain itself");
-            if (t == null)
-                throw new RuntimeException("null subterm");
 
-            contentHash = nextContentHash(contentHash, t.hashCode());
+            contentHash = Util.hashCombine(contentHash, t.hashCode());
 
             compl += t.complexity();
             vol += t.volume();
@@ -252,13 +250,12 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         hasVarDeps = (byte) deps;
         hasVarIndeps = (byte) indeps;
         hasVarQueries = (byte) queries;
-        varTotal = (short) (deps + indeps + queries);
         structureHash = subt;
+        normalized =
+                (varTotal = (short) (deps + indeps + queries)) == 0;
 
         complexity = (short) compl;
         volume = (short) vol;
-
-        normalized = varTotal == 0;
 
         if (contentHash == 0) contentHash = 1; //nonzero to indicate hash calculated
         this.contentHash = contentHash;
