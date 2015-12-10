@@ -134,7 +134,7 @@ public class Anticipate {
 
     protected void mayHaveHappenedAsExpected(Task c) {
 
-        if(!c.isInput() || c.isEternal()) {
+        if(!c.isInput() || c.isEternal() || !c.isJudgment()) {
             return; //it's not a input task, the system is not allowed to convince itself about the state of affairs ^^
         }
 
