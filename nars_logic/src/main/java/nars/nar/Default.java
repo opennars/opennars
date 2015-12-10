@@ -34,7 +34,7 @@ import nars.op.software.js;
 import nars.op.software.scheme.scheme;
 import nars.process.ConceptProcess;
 import nars.task.Task;
-import nars.task.flow.FIFOTaskPerception;
+import nars.task.flow.ImmediateTaskPerception;
 import nars.task.flow.TaskPerception;
 import nars.term.Atom;
 import nars.term.Term;
@@ -146,7 +146,7 @@ public class Default extends NAR {
     }
 
     public TaskPerception initInput() {
-        FIFOTaskPerception input = new FIFOTaskPerception(this,
+        ImmediateTaskPerception input = new ImmediateTaskPerception(this,
             task -> true /* allow everything */,
             task -> process(task)
         );

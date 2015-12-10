@@ -5,7 +5,7 @@ import com.google.common.collect.Multimaps;
 import nars.Global;
 import nars.nal.Deriver;
 import nars.nal.TaskRule;
-import nars.task.flow.FIFOTaskPerception;
+import nars.task.flow.ImmediateTaskPerception;
 import nars.time.FrameClock;
 import nars.util.db.InfiniPeer;
 import nars.util.meter.DerivationGraph;
@@ -87,8 +87,8 @@ public class SingleStepNAR extends Default {
     }
 
     @Override
-    public FIFOTaskPerception initInput() {
-        FIFOTaskPerception input = new FIFOTaskPerception(this,
+    public ImmediateTaskPerception initInput() {
+        ImmediateTaskPerception input = new ImmediateTaskPerception(this,
                 task -> task.isInput() /* allow only input tasks*/,
                 task -> process(task)
         );

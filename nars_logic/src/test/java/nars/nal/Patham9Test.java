@@ -198,6 +198,7 @@ import nars.NAR;
 import nars.Narsese;
 import nars.concept.Concept;
 import nars.nal.nal8.operator.TermFunction;
+import nars.nar.Default;
 import nars.nar.Default2;
 import nars.op.mental.Anticipate;
 import nars.term.Term;
@@ -360,11 +361,11 @@ public class Patham9Test extends AbstractNALTester {
         float priority_imp_c = priority_safe(c_c);
     }*/
 
-    @Test
+   /* @Test
     public void repeated_sequence_learn_implication() throws Narsese.NarseseException {
         NAR nar = new Default2(1000, 1, 1, 3);
 
-        for(int i=0;i<1000;i++) {
+        for(int i=0;i<100;i++) {
             nar.input("<a --> A>. :|:");
             nar.frame(20);
             nar.input("<b --> B>. :|:");
@@ -373,7 +374,7 @@ public class Patham9Test extends AbstractNALTester {
             nar.frame(100);
         }
 
-        nar.frame(10000);
+        nar.frame(1000);
 
         Concept seq_a_b = nar.concept("(&/,<a --> A>,<b --> B>)");
         Concept seq_b_c = nar.concept("(&/,<b --> B>,<c --> C>)");
@@ -383,7 +384,7 @@ public class Patham9Test extends AbstractNALTester {
         Concept imp_a_b = nar.concept("<(&/,<a --> A>,/1) =/> <b --> B>>");
         Concept imp_a_c = nar.concept("<(&/,<a --> A>,/1) =/> <c --> C>>");
         Concept imp_b_c = nar.concept("<(&/,<b --> B>,/1) =/> <c --> C>>");
-        Concept imp_s = nar.concept("<(&/,<a --> A>,<b --> B>) =/> <c --> C>>");
+        Concept imp_s = nar.concept("<(&/,<a --> A>,/1,<b --> B>,/1) =/> <c --> C>>");
 
         Concept c_a = nar.concept("<a --> A>");
         Concept c_b = nar.concept("<b --> B>");
@@ -405,6 +406,19 @@ public class Patham9Test extends AbstractNALTester {
         //Expectation: imp_s should not be null!
         //Expectation: The priority of imp_s is less than the one for imp_a_c, but by far not zero, its highly observable in the input data
         //Expectation: A lot of successful anticipations happening, while at the end a handful of failed ones might occur
+    }*/
+
+    @Test
+    public void seq_event() throws Narsese.NarseseException {
+        NAR nar = new Default();
+
+        nar.input("<a --> A>. :|:");
+        nar.frame(10);
+
+        nar.input( "<b --> B>. :|:");
+        nar.frame(100);
+        //  tester.mustBelieve(cycles, "<(&/,<a --> A>,<b --> B>) =/> <c --> C>>", 1.0f, 0.81f, 0); // :|:
+        //   tester.run2();
     }
 /*
     @Test

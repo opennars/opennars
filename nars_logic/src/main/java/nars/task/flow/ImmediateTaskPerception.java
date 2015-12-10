@@ -26,21 +26,17 @@ import java.util.function.Predicate;
  * <p>
  * Delivery (procedure for cyclical input policy
  */
-public class FIFOTaskPerception extends TaskPerception {
+public class ImmediateTaskPerception extends TaskPerception {
 
     /**
      * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
      */
-    public final AtomicInteger inputsPerCycleMax = new AtomicInteger(1);
-
-    /* ?? public interface Storage { void put(Task t); }*/
-
-    //public final ItemAccumulator<Task> newTasks;
+    public final AtomicInteger inputsPerCycleMax = new AtomicInteger(1000);
 
     public final Deque<Task> buffer = new ArrayDeque();
 
 
-    public FIFOTaskPerception(NAR nar, Predicate<Task> filter, Consumer<Task> receiver) {
+    public ImmediateTaskPerception(NAR nar, Predicate<Task> filter, Consumer<Task> receiver) {
         super(nar.memory, filter, receiver);
     }
 
@@ -62,19 +58,6 @@ public class FIFOTaskPerception extends TaskPerception {
     }
 
 
-
-    //        @Override
-//        public void accept(Task t) {
-//            if (t.isInput())
-//                percepts.add(t);
-//            else {
-////                if (t.getParentTask() != null && t.getParentTask().getTerm().equals(t.getTerm())) {
-////                } else {
-//                    newTasks.add(t);
-//                }
-//            }
-//        }
-
     /** sends the next batch of tasks to the receiver */
     @Override
     public void send() {
@@ -84,9 +67,13 @@ public class FIFOTaskPerception extends TaskPerception {
         int n = Math.min(s, inputsPerCycleMax.get()); //counts down successful sends
         int r = n; //actual cycles counted
 
+        for(Task t: buffer) {
+            receiver.accept(t);
+        }
+
 
         //n will be equal to or greater than r
-        for (; n > 0 && r > 0; r--) {
+    /*   for (; n > 0 && r > 0; r--) {
             final Task t = buffer.removeFirst();
 
             if (t.isDeleted()) {
@@ -97,29 +84,6 @@ public class FIFOTaskPerception extends TaskPerception {
             receiver.accept(t);
             n--;
         }
-
+*/
     }
-
-//        protected void runNewTasks() {
-//            runNewTasks(newTasks.size()); //all
-//        }
-//
-//        protected void runNewTasks(int max) {
-//
-//            int numNewTasks = Math.min(max, newTasks.size());
-//            if (numNewTasks == 0) return;
-//
-//            //queueNewTasks();
-//
-//            for (int n = newTasks.size() - 1; n >= 0; n--) {
-//                Task highest = newTasks.removeHighest();
-//                if (highest == null) break;
-//                if (highest.isDeleted()) continue;
-//
-//                run(highest);
-//            }
-//            //commitNewTasks();
-//        }
-
-
 }
