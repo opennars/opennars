@@ -115,6 +115,7 @@ public class Tetris implements RLEnvironment {
         return TetrisVisualizer.class.getName();
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public URL getImageURL() {
         URL imageURL = Tetris.class.getResource("/images/tetris.png");
         return imageURL;

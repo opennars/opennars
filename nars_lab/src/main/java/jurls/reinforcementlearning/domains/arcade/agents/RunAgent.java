@@ -9,6 +9,7 @@ import java.io.IOException;
 public class RunAgent {
 
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void main(String[] args) throws IOException, InterruptedException {
 
 

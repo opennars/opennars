@@ -6,9 +6,11 @@ import javafx.scene.canvas.Canvas;
 /**
  * autosizing and other functions
  */
+@SuppressWarnings("AbstractClassNeverImplemented")
 public abstract class AutoCanvas extends Canvas {
 
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public AutoCanvas() {
         // Redraw canvas when size changes.
         widthProperty().addListener(evt -> render());

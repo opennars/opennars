@@ -19,6 +19,7 @@ public class NControlSensor extends ControlSensor {
         this(a, a.doubleValue() - radius, a.doubleValue() + radius, quantization);
     }
 
+    @SuppressWarnings("RedundantMethodOverride")
     @Override
     public void update() {
     }

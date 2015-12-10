@@ -23,6 +23,7 @@ public class InputPane extends TabPane {
 
     private final NAR nar;
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public InputPane(NAR n) {
 
         nar = n;

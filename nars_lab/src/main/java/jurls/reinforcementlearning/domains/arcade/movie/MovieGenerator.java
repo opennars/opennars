@@ -40,6 +40,7 @@ public class MovieGenerator {
     /** Create a new MovieGenerator that saves images to /tmp/frames/atari_xxxxxx.png
      * 
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public MovieGenerator() {
         this("/tmp/frames/atari_");
     }

@@ -185,6 +185,7 @@ public class KBmanager {
      * Double the backslash in a filename so that it can be saved to a text file
      * and read back properly.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public static String escapeFilename(String fname) {
 
         StringBuilder newstring = new StringBuilder("");

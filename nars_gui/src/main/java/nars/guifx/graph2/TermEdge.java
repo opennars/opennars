@@ -16,6 +16,7 @@ public abstract class TermEdge<N extends TermNode> /*implements ChangeListener*/
 
 
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public TermEdge(N aSrc, N bSrc) {
 
 

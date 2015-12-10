@@ -86,6 +86,7 @@ public class WebBrowser extends BorderPane {
         public final String url;
         public final String name;
 
+        @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
         public Route(String url, String name) {
             this.url = url;
             this.name = name;
@@ -119,6 +120,7 @@ public class WebBrowser extends BorderPane {
     public static final String DEFAULT_HOME_LOCATION =
             "about:";
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public static final String STYLESHEET =
             "/resources/browser.css";
 

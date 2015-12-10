@@ -1038,6 +1038,7 @@ public class LanguageFormatter {
     /**
      * **************************************************************
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void main(String[] args) {
 
         readKeywordMap("C:\\Program Files\\Apache Software Foundation\\Tomcat 5.5\\KBs");

@@ -340,7 +340,8 @@ public class Sokoban extends Applet {
 	Font font = new Font("Helvetica", Font.PLAIN, 12);
 	Font fontb = new Font("Helvetica", Font.BOLD, 12);
 
-        public Sokoban() throws HeadlessException, IOException {
+        @SuppressWarnings("HardcodedFileSeparator")
+		public Sokoban() throws HeadlessException, IOException {
                     //buzz = getAudioClip(getDocumentBase(), "buzz.au");
                     //wow = getAudioClip(getDocumentBase(), "wow.au");
                     MediaTracker tracker = new MediaTracker(this);

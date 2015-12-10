@@ -19,6 +19,7 @@ public abstract class NControl extends StackPane {
 
     protected final Canvas canvas;
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public NControl(double w, double h) {
 
         Canvas canvas = this.canvas = new Canvas(w, h);

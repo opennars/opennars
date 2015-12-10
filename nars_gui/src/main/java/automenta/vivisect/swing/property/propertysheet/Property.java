@@ -52,6 +52,7 @@ public interface Property extends Serializable, Cloneable {
 
 	void removePropertyChangeListener(PropertyChangeListener listener);
 
+	@SuppressWarnings("CloneReturnsClassType")
 	Object clone();
 
 	Property getParentProperty();

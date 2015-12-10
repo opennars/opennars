@@ -105,6 +105,7 @@ public class WordNet {
      * This array contains all of the regular expression strings that will be
      * compiled to Pattern objects for use in the methods in this file.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private static final String[] regexPatternStrings
             = {
                 // 0: WordNet.processPointers()
@@ -1375,6 +1376,7 @@ public class WordNet {
      * capability for adjectives and adverbs.
      * @param
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private String sumoDisplay(String synsetBlock, String word, String type, String sumokbname, String synsetNum) {
 
         StringBuilder result = new StringBuilder();
@@ -1961,6 +1963,7 @@ public class WordNet {
      * Replace underscores with commas, wrap hyphenatid and apostrophed words in
      * single quotes, and wrap the whole phrase in brackets.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private static String processMultiWord(String word) {
 
         word = word.replace('_', ',');
@@ -1990,6 +1993,7 @@ public class WordNet {
      * [intransitive, no, ditransitive]}, singular, {simple, prepositional,
      * compound, phrasal}, {event, state}, SUMOMapping., Synset_ID).
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private void writeVerbsProlog(PrintWriter pw, KB kb) {
 
         for (Object o : verbSynsetHash.keySet()) {
@@ -2037,6 +2041,7 @@ public class WordNet {
      * adjective_in_lexicon(Adj, CELT_form, {normal, two_place}, {positive,
      * ungraded, comparative, superlative}, SUMOMapping).
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private void writeAdjectivesProlog(PrintWriter pw, KB kb) {
 
         for (Object o : adjectiveSynsetHash.keySet()) {
@@ -2075,6 +2080,7 @@ public class WordNet {
      * adverb_in_lexicon(Adv, {location, direction, time, duration, frequency,
      * manner}, SUMOMapping).
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private void writeAdverbsProlog(PrintWriter pw, KB kb) {
 
         for (Object o : verbSynsetHash.keySet()) {
@@ -2112,6 +2118,7 @@ public class WordNet {
      * noun_in_lexicon(Noun,{object, person, time}, neuter, {count, mass},
      * singular, SUMOMapping, Synset_ID).
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private void writeNounsProlog(PrintWriter pw, KB kb) {
 
         for (Object o : nounSynsetHash.keySet()) {
@@ -2272,6 +2279,7 @@ public class WordNet {
     /**
      * ***************************************************************
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private String processWordForProlog(String word) {
 
         String result = word;

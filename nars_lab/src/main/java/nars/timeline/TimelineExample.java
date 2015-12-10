@@ -16,6 +16,7 @@
  */
 package nars.timeline;
 
+@SuppressWarnings({"AbstractClassWithoutAbstractMethods", "AbstractClassNeverImplemented"})
 public abstract class TimelineExample {
  
     

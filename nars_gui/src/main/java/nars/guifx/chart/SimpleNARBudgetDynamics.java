@@ -47,7 +47,8 @@ public class SimpleNARBudgetDynamics {
     static final BorderPane x = new BorderPane();
     static final MemoryBudget mb = new MemoryBudget(); //one thread at a time
 
-    static final BiConsumer<NAR,Consumer<NAR>> update = (d,execution) -> new NARui(d)
+    @SuppressWarnings("HardcodedFileSeparator")
+    static final BiConsumer<NAR,Consumer<NAR>> update = (d, execution) -> new NARui(d)
 
 //            .then(n -> {
 //                //n.frame(preCycles);

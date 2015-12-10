@@ -497,6 +497,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 
 	class ToggleModeAction extends AbstractAction {
 
+		@SuppressWarnings("HardcodedFileSeparator")
 		public ToggleModeAction() {
 			super("toggle", IconPool.shared().get(
 			PropertySheet.class.getResource("icons/category.gif")));
@@ -517,6 +518,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 
 	class ToggleDescriptionAction extends AbstractAction {
 
+		@SuppressWarnings("HardcodedFileSeparator")
 		public ToggleDescriptionAction() {
 			super("toggleDescription", IconPool.shared().get(
 			PropertySheet.class.getResource("icons/description.gif")));
@@ -533,6 +535,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 
 	class ToggleSortingAction extends AbstractAction {
 
+		@SuppressWarnings("HardcodedFileSeparator")
 		public ToggleSortingAction() {
 			super("toggleSorting", IconPool.shared().get(
 			PropertySheet.class.getResource("icons/sorted.gif")));

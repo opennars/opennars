@@ -26,6 +26,7 @@ public class RuleLife {
 	// ----------------------------------------------------------------
 	// Parse the rule string
 	// Example: '23/3'
+	@SuppressWarnings("HardcodedFileSeparator")
 	public void InitFromString(String sStr) {
 		//noinspection UseOfStringTokenizer
 		StringTokenizer st;
@@ -79,6 +80,7 @@ public class RuleLife {
 	// ----------------------------------------------------------------
 	// Create the rule string
 	// Example: '23/3'
+	@SuppressWarnings("HardcodedFileSeparator")
 	public String GetAsString() {
 		String sBff = "";
 		int i;

@@ -67,6 +67,7 @@ class PropertyDescriptorAdapter extends AbstractProperty {
 		return descriptor.getPropertyType();
 	}
 
+	@SuppressWarnings("CloneReturnsClassType")
 	@Override
 	public Object clone() {
 		PropertyDescriptorAdapter clone = new PropertyDescriptorAdapter(descriptor);

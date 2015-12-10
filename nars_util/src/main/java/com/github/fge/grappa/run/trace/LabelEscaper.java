@@ -11,6 +11,7 @@ public final class LabelEscaper
      * ASCII control, except DEL: 0x00 to 0x1f
      */
     private static final int ASCII_CTL_MAX = 0x1f;
+    @SuppressWarnings("HardcodedFileSeparator")
     private static final String[] ASCII_CTL_ESCAPES = {
         "<NUL>",        /* 0x00 */
         "<STH>",

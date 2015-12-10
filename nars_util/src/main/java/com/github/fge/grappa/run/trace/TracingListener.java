@@ -28,9 +28,13 @@ public final class TracingListener<V>
 {
     private static final Map<String, ?> ENV
         = Collections.singletonMap("create", "true");
+    @SuppressWarnings("HardcodedFileSeparator")
     private static final String NODE_PATH = "/nodes.csv";
+    @SuppressWarnings("HardcodedFileSeparator")
     private static final String MATCHERS_PATH = "/matchers.csv";
+    @SuppressWarnings("HardcodedFileSeparator")
     private static final String INPUT_TEXT_PATH = "/input.txt";
+    @SuppressWarnings("HardcodedFileSeparator")
     private static final String INFO_PATH = "/info.csv";
 
     private InputBuffer inputBuffer = null;

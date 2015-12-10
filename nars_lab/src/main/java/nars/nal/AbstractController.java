@@ -5,6 +5,7 @@ import nars.util.event.CycleReaction;
 import nars.util.event.EventEmitter;
 
 
+@SuppressWarnings("AbstractClassNeverImplemented")
 public abstract class AbstractController extends CycleReaction {
 
     public final NAR nar;
@@ -13,6 +14,7 @@ public abstract class AbstractController extends CycleReaction {
     private EventEmitter.Registrations reg;
 
     /** how many cycles to wait before action, then wait again.. */
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public AbstractController(NAR n, int period) {
         super(n);
         nar = n;

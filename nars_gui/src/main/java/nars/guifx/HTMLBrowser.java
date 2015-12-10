@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class HTMLBrowser extends Application {
     
     int minTextLength = 3;
+    @SuppressWarnings("HardcodedFileSeparator")
     @Override
     public void start(Stage stage) throws Exception {
         StackPane root = new StackPane();

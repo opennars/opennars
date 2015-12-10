@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@SuppressWarnings("AbstractClassNeverImplemented")
 public abstract class IRCBot {
 
     private final String server;
@@ -22,10 +23,12 @@ public abstract class IRCBot {
         this.outputting = outputting;
     }
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public IRCBot(String server, String nick, String channel) throws Exception {
         this(server, nick, nick.toLowerCase(), channel);
     }
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public IRCBot(String server, String nick, String login, String channel) throws Exception {
 
         this.server = server;

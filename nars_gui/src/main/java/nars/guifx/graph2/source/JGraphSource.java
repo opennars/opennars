@@ -16,6 +16,7 @@ public abstract class JGraphSource<V extends Termed, E> extends GraphSource<V, T
     DirectedGraph<V, E> graph;
 
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public JGraphSource(DirectedGraph<V, E> initialGraph) {
         graph = initialGraph;
     }

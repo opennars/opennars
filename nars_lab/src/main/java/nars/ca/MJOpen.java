@@ -35,6 +35,7 @@ public class MJOpen {
 
 	// ----------------------------------------------------------------
 	// Main function opening a file
+	@SuppressWarnings("HardcodedFileSeparator")
 	public boolean OpenFile(String sFileName) {
 		String sBff, sFilePath;
 		MJTools mjT;
@@ -243,6 +244,7 @@ public class MJOpen {
 	int iRow105;
 	int iBlkX, iBlkY; // block left-top corner
 
+	@SuppressWarnings("HardcodedFileSeparator")
 	boolean ProcessOneLIF105Line(String bff) {
 		boolean fOk = false;
 		int iPos;
@@ -376,6 +378,7 @@ public class MJOpen {
 	// *.MCL files line parser
 	// Return True if at least one cell was added or any important
 	// MCL file keyword was found
+	@SuppressWarnings("HardcodedFileSeparator")
 	private boolean ProcessOneMCLLine(String bff) {
 		boolean fOk = false;
 		int i, j;
@@ -685,6 +688,7 @@ public class MJOpen {
 	// ----------------------------------------------------------------
 	// DOS Life 1.06 files line parser
 	// Return true if at least one cell was added
+	@SuppressWarnings("HardcodedFileSeparator")
 	boolean ProcessOneLIF106Line(String bff) {
 		int iCol, iRow;
 		int iPos;

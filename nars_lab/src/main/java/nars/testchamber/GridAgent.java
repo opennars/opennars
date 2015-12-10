@@ -18,6 +18,7 @@ public abstract class GridAgent extends LocalGridObject {
     public final Set<Object> inventory = new HashSet();
     public NAR nar;
     
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public GridAgent(int x, int y, NAR nar) {
         super(x, y);
         this.nar=nar;
@@ -43,6 +44,7 @@ public abstract class GridAgent extends LocalGridObject {
     public void forward(int steps) {     act(new Forward(steps));    }
     public void turn(int angle) {   act(new Turn(angle(angle)));  }
 
+    @SuppressWarnings("AbstractMethodOverridesAbstractMethod")
     @Override
     public abstract void update(Effect nextEffect);
     

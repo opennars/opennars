@@ -161,6 +161,7 @@ public class NARWebServer extends PathHandler {
         }
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public NARWebServer(NAR nar, int httpPort) throws IOException {
 
         this.nar = nar;

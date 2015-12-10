@@ -104,6 +104,7 @@ public class ScreenMatrix implements Cloneable {
      * 
      * @return
      */
+    @SuppressWarnings("CloneReturnsClassType")
     @Override
     public Object clone() {
         try {

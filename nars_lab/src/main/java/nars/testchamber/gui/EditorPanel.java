@@ -27,10 +27,12 @@ import java.util.ArrayList;
 */
 public class EditorPanel extends JPanel {
 
+    @SuppressWarnings("HardcodedFileSeparator")
     final String levelPath = "./src/main/java/nars/grid2d/level/";
 
     public abstract static class EditorMode extends DefaultMutableTreeNode {
 
+        @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
         public EditorMode(String label) {
             super(label);
         }
@@ -38,6 +40,7 @@ public class EditorPanel extends JPanel {
         public abstract void run();
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public EditorPanel(Grid2DSpace s) {
         super(new BorderLayout());
 
@@ -89,6 +92,7 @@ public class EditorPanel extends JPanel {
         });
         */
 
+        //noinspection CloneableClassWithoutClone
         mindSettings.add(new EditorMode("Allow joy in action") {
             @Override
             public void run() {
@@ -96,6 +100,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         mindSettings.add(new EditorMode("Don't allow joy") {
             @Override
             public void run() {
@@ -103,6 +108,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         mindSettings.add(new EditorMode("Tell object categories") {
             @Override
             public void run() {
@@ -110,20 +116,23 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         mindSettings.add(new EditorMode("Don't tell object categories") {
             @Override
             public void run() {
                 TestChamber.staticInformation=false;
             }
         });
-        
-         mindSettings.add(new EditorMode("Use complex feedback") {
+
+        //noinspection CloneableClassWithoutClone
+        mindSettings.add(new EditorMode("Use complex feedback") {
             @Override
             public void run() {
                 TestChamber.ComplexFeedback=true;
             }
         });
-        
+
+        //noinspection CloneableClassWithoutClone
         mindSettings.add(new EditorMode("Don't use complex feedback") {
             @Override
             public void run() {
@@ -151,6 +160,7 @@ public class EditorPanel extends JPanel {
                             String path = file.getCanonicalPath();
                             String name = file.getName();
 
+                            //noinspection CloneableClassWithoutClone
                             load.add(new EditorMode(name) {
                                 @Override
                                 public void run() {
@@ -318,6 +328,7 @@ public class EditorPanel extends JPanel {
             }
         } catch(Exception ex) {}
 
+        //noinspection CloneableClassWithoutClone
         save.add(new EditorMode("Save") {
             @Override
             public void run() {
@@ -406,18 +417,21 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         structMenu.add(new EditorMode("Stone Wall") {
             @Override
             public void run() {
                 s.cells.click("StoneWall", "", "");
             }
         });
+        //noinspection CloneableClassWithoutClone
         structMenu.add(new EditorMode("Dirt Floor") {
             @Override
             public void run() {
                 s.cells.click("DirtFloor", "", "");
             }
         });
+        //noinspection CloneableClassWithoutClone
         structMenu.add(new EditorMode("Grass Floor") {
             @Override
             public void run() {
@@ -425,6 +439,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         structMenu.add(new EditorMode("Water") {
             @Override
             public void run() {
@@ -432,60 +447,70 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         logicMenu.add(new EditorMode("On Wire") {
             @Override
             public void run() {
                 s.cells.click("OnWire", "", "");
             }
         });
+        //noinspection CloneableClassWithoutClone
         logicMenu.add(new EditorMode("Off Wire") {
             @Override
             public void run() {
                 s.cells.click("OffWire", "", "");
             }
         });
+        //noinspection CloneableClassWithoutClone
         logicMenu.add(new EditorMode("And") {
             @Override
             public void run() {
                 s.cells.click("AND", "", "");
             }
         });
+        //noinspection CloneableClassWithoutClone
         logicMenu.add(new EditorMode("Or") {
             @Override
             public void run() {
                 s.cells.click("OR", "", "");
             }
         });
+        //noinspection CloneableClassWithoutClone
         logicMenu.add(new EditorMode("Xor") {
             @Override
             public void run() {
                 s.cells.click("XOR", "", "");
             }
         });
+        //noinspection CloneableClassWithoutClone
         logicMenu.add(new EditorMode("Not") {
             @Override
             public void run() {
                 s.cells.click("NOT", "", "");
             }
         });
+        //noinspection CloneableClassWithoutClone
         logicMenu.add(new EditorMode("Bridge") {
             @Override
             public void run() {
                 s.cells.click("bridge", "", "");
             }
         });
+        //noinspection CloneableClassWithoutClone
         logicMenu.add(new EditorMode("Uncertain50PercentBridge") {
             @Override
             public void run() {
                 s.cells.click("uncertainbridge", "", "");
             }
         });
+        //noinspection CloneableClassWithoutClone
         logicMenu.add(new EditorMode("Off Switch") {
             @Override
             public void run() {
                 s.cells.click("offswitch", "", "");
             }
         });
+        //noinspection CloneableClassWithoutClone
         logicMenu.add(new EditorMode("On Switch") {
             @Override
             public void run() {
@@ -493,6 +518,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         machineMenu.add(new EditorMode("Light") {
             @Override
             public void run() {
@@ -500,10 +526,12 @@ public class EditorPanel extends JPanel {
             }
         });
         //since firework doesnt serve a special functionality yet
+        //noinspection CloneableClassWithoutClone
         machineMenu.add(new EditorMode("Firework") {
             @Override public void run() { s.cells.click("Turret","",""); }
         });
 
+        //noinspection CloneableClassWithoutClone
         machineMenu.add(new EditorMode("Door and Key") {
             @Override
             public void run() {
@@ -511,6 +539,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         actionMenu.add(new EditorMode("Go-To named") {
 
             @Override
@@ -520,6 +549,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         actionMenu.add(new EditorMode("Pick named") {
             @Override
             public void run() {
@@ -528,6 +558,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         actionMenu.add(new EditorMode("activate switch") {
             @Override
             public void run() {
@@ -536,6 +567,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         actionMenu.add(new EditorMode("deactivate switch") {
             @Override
             public void run() {
@@ -544,6 +576,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         actionMenu.add(new EditorMode("perceive/name") {
             @Override
             public void run() {
@@ -551,9 +584,10 @@ public class EditorPanel extends JPanel {
             }
         });
 
-        //noinspection OverlyComplexAnonymousInnerClass
+        //noinspection OverlyComplexAnonymousInnerClass,CloneableClassWithoutClone
         EditorMode wu=new EditorMode("try things") {
 
+            @SuppressWarnings("HardcodedFileSeparator")
             @Override
             public void run() {
                 TestChamber.curiousity=true;
@@ -597,6 +631,7 @@ public class EditorPanel extends JPanel {
         };
         goalMenu.add(wu);
 
+        //noinspection CloneableClassWithoutClone
         goalMenu.add(new EditorMode("be somewhere") {
             @Override
             public void run() {
@@ -605,6 +640,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         goalMenu.add(new EditorMode("hold something") {
             @Override
             public void run() {
@@ -613,6 +649,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         goalMenu.add(new EditorMode("make switched on") {
             @Override
             public void run() {
@@ -621,6 +658,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         goalMenu.add(new EditorMode("make switched off") {
             @Override
             public void run() {
@@ -629,6 +667,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         goalMenu.add(new EditorMode("make opened") {
             @Override
             public void run() {
@@ -637,6 +676,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         goalMenu.add(new EditorMode("make closed") {
             @Override
             public void run() {
@@ -645,6 +685,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         goalMenu.add(new EditorMode("be chatty") {
             @Override
             public void run() {
@@ -669,6 +710,7 @@ public class EditorPanel extends JPanel {
         });
 
 
+        //noinspection CloneableClassWithoutClone
         knowMenu.add(new EditorMode("common sense") {
             @Override
             public void run() {
@@ -681,6 +723,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         knowMenu.add(new EditorMode("if you go to somewhere you will be there") {
             @Override
             public void run() {
@@ -688,7 +731,9 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        //noinspection CloneableClassWithoutClone
         knowMenu.add(new EditorMode("if you are somewhere and you pick whats there, you will hold it") {
+            @SuppressWarnings("HardcodedFileSeparator")
             @Override
             public void run() { /*s.nar.input("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>."); */
 
@@ -705,6 +750,7 @@ public class EditorPanel extends JPanel {
             }
         });  //s.nar.input("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
 
+        //noinspection CloneableClassWithoutClone
         resourceMenu.add(new EditorMode("need pizza") {
             @Override
             public void run() {
@@ -714,6 +760,7 @@ public class EditorPanel extends JPanel {
                 TestChamber.needpizza=true;
             }
         });
+        //noinspection CloneableClassWithoutClone
         resourceMenu.add(new EditorMode("pizza") {
             @Override
             public void run() {

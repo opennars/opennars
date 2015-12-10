@@ -243,6 +243,7 @@ public class Formula implements Comparable {
      * Return the LISP 'car' of the formula - the first element of the list.
      * Note that this operation has no side effect on the Formula.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public String car() {
         try {
             //System.out.println("INFO in formula.car(): theFormula: " + theFormula);
@@ -332,6 +333,7 @@ public class Formula implements Comparable {
      * Return the LISP 'cdr' of the formula - the rest of a list minus its first
      * element. Note that this operation has no side effect on the Formula.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public String cdr() {
 
         //System.out.println("INFO in formula.cdr(): theFormula: " + theFormula);
@@ -950,6 +952,7 @@ public class Formula implements Comparable {
      * significant known bug that variables whose names are a subset of one
      * another will cause problems, for example (foo ?VAR ?VAR1)
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private static String normalizeVariables(String s) {
 
         int i = 0;
@@ -1267,6 +1270,7 @@ public class Formula implements Comparable {
      *
      * @return an ArrayList of Formulas, or an empty ArrayList.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     protected ArrayList expandRowVars(KB kb) {
 
         // System.out.println("INFO in Formula.expandRowVars(" + this + " ...)");
@@ -3039,6 +3043,7 @@ public class Formula implements Comparable {
      * ***************************************************************
      * Format a formula for HTML presentation.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public String htmlFormat(KB kb) {
         String hostname = KBmanager.getMgr().getPref("hostname");
         if (!isNonEmptyString(hostname)) {
@@ -3548,6 +3553,7 @@ public class Formula implements Comparable {
      * @return An ArrayList of Formulas, or an empty ArrayList if no
      * instantiations can be generated.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public ArrayList instantiatePredVars(KB kb) {
 
         // System.out.println("ENTER instantiatePredVars(" + this + ")");

@@ -67,6 +67,7 @@ public class Art
             //return silentSample;
         }
     }
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void init(GraphicsConfiguration gc)
     {
         try
@@ -126,6 +127,7 @@ public class Art
         }
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     private static Image getImage(GraphicsConfiguration gc, String imageName) throws IOException
     {
         BufferedImage source = ImageIO.read(new File("nars_lab/src/main/java/nars/nario/res/" + imageName));

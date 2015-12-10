@@ -84,6 +84,7 @@ public class WordNetUtilities {
     /**
      * ***************************************************************
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public static String convertWordNetPointer(String ptr) {
 
         if ("!".equals(ptr)) {
@@ -526,6 +527,7 @@ public class WordNetUtilities {
      * synset, replace the old term. This is a utility that is not normally
      * called from the interactive Sigma system.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void mergeUpdates() throws IOException {
 
         HashMap hm = new HashMap();
@@ -663,6 +665,7 @@ public class WordNetUtilities {
      * term that has not yet been manually linked. This is a utility routine
      * that should not be called during normal Sigma operation.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void deduceMissingLinks() throws IOException {
 
         String fileName = "WordNetMappings-nouns";
@@ -801,6 +804,7 @@ public class WordNetUtilities {
      * http://www.lsi.upc.edu/~nlp/web/ and go to Resources and then an item on
      * WordNet mappings.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public void updateWNversion() throws IOException {
 
         String fileName = "wn30-21.noun";

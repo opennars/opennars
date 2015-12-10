@@ -38,6 +38,7 @@ public abstract class AbstractProperty implements Property {
     return value;
   }
 
+  @SuppressWarnings("CloneReturnsClassType")
   public Object clone() {
     AbstractProperty clone = null;
     try {

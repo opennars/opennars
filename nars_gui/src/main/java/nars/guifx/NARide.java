@@ -66,6 +66,7 @@ public class NARide extends BorderPane {
     private Map<Term, Supplier<? extends Node>> tools = new HashMap();
 
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void show(NARLoop loop, Consumer<NARide> ide) {
 
         //SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));

@@ -15,6 +15,7 @@ public abstract class AutoLabel<T> extends Label implements ChangeListener {
     public final SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
     protected String text;
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public AutoLabel(T obj) {
 
         this.obj = obj;

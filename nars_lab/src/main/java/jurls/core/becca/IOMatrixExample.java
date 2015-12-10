@@ -23,6 +23,7 @@ abstract class IOMatrixExample extends JPanel implements Runnable {
     private double[] output;
     
     static final int padding = 4;
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public IOMatrixExample() {
         super(new GridLayout(0, 1, padding, padding));
         

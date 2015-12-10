@@ -15,6 +15,7 @@ public abstract class LocalGridObject implements GridObject {
     public int heading; //in degrees
     public Grid2DSpace space;
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public LocalGridObject(int x, int y) {
         setPosition(x, y);
     }

@@ -18,6 +18,7 @@ public class PropsTestAuto implements PropertyChangeListener {
     @Property
     Rectangle r = new Rectangle(10, 20);
 
+    @SuppressWarnings("HardcodedFileSeparator")
     @Property(category = "Advanced stuff!", name = "A file", editable = false)
     File f = new File("/home/zp/Destop/x.tdt");
 

@@ -30,6 +30,7 @@ public class FileEditor extends AbstractPropertyEditor {
 		private JButton button = null;
 		private JButton cancelButton = null;
 
+		@SuppressWarnings("HardcodedFileSeparator")
 		public FileEditorComponent() {
 
 			setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -58,6 +59,7 @@ public class FileEditor extends AbstractPropertyEditor {
 			button.setSize(size);
 			button.setMaximumSize(size);
 			button.setMinimumSize(size);
+			//noinspection CloneableClassWithoutClone
 			button.setAction(new AbstractAction("", new ImageIcon(file)) {
 
 				private static final long serialVersionUID = 1L;
@@ -73,6 +75,7 @@ public class FileEditor extends AbstractPropertyEditor {
 			cancelButton.setSize(size);
 			cancelButton.setMaximumSize(size);
 			cancelButton.setMinimumSize(size);
+			//noinspection CloneableClassWithoutClone
 			cancelButton.setAction(new AbstractAction("", new ImageIcon(reset)) {
 
 				private static final long serialVersionUID = 1L;

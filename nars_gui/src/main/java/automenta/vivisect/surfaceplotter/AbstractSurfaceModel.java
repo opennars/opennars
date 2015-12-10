@@ -388,6 +388,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		}
 	}
 
+	@SuppressWarnings("HardcodedFileSeparator")
 	public void exportCSV(File file) throws IOException {
 
 		if (file == null)

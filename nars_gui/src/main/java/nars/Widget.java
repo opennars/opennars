@@ -9,6 +9,7 @@ package nars;
  *
  * @author me
  */
+@SuppressWarnings({"AbstractClassWithoutAbstractMethods", "AbstractClassNeverImplemented"})
 public abstract class Widget {
     
 }

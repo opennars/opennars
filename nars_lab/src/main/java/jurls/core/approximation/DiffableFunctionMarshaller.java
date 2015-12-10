@@ -150,7 +150,7 @@ public class DiffableFunctionMarshaller implements ParameterizedFunction {
     }
 
     @Override
-    public void parameterGradient(double[] output, double[] xs) {
+    public void parameterGradient(double[] output, double...xs) {
         for (int i = 0; i < xs.length; ++i) {
             inputScalars[i].setValue(inputValues, xs[i]);
         }

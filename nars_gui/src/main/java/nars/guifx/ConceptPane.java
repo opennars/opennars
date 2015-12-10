@@ -52,6 +52,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
         final ColorArray ca = new ColorArray(32, Color.BLUE, Color.RED);
 
+        @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
         public Scatter3D() {
 
 

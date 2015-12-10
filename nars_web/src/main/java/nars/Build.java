@@ -7,6 +7,7 @@ import org.apache.maven.cli.MavenCli;
  */
 public class Build {
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void main(String[] args) {
 
         MavenCli cli = new MavenCli();

@@ -1879,6 +1879,7 @@ public class KB {
      * ***************************************************************
      * Repopulates the format maps for lang.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private void reloadFormatMaps(String lang) {
         try {
 
@@ -2340,6 +2341,7 @@ public class KB {
      *
      * @return void
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private static void compilePatterns() {
         if (REGEX_PATTERNS == null) {
             REGEX_PATTERNS = new HashMap();
@@ -3349,10 +3351,11 @@ public class KB {
     /**
      * *************************************************************
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public String writeTPTPFile(String fileName,
-            Formula conjecture,
-            boolean onlyPlainFOL,
-            String reasoner) {
+                                Formula conjecture,
+                                boolean onlyPlainFOL,
+                                String reasoner) {
 
         String result = null;
         String sanitizedKBName;
@@ -3570,6 +3573,7 @@ public class KB {
             valueArgument = valueArg;
         }
 
+        @SuppressWarnings("CloneReturnsClassType")
         @Override
         public Object clone() {
             return super.clone(); //To change body of generated methods, choose Tools | Templates.

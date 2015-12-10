@@ -564,54 +564,10 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
 
         content.setTop(titleBar);
 
-
-
-
-
-        //this.prefHeightProperty().addListener(new MinimizeHeightListener(this, titleBar));
-
         initMouseEventHandlers();
 
 
 
-
-//        titleBar.setStyle(this.getStyle());
-//
-//        this.styleProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-//            titleBar.setStyle(t1);
-//        });
-
-//        titleBar.getStyleClass().setAll(this.getTitleBarStyleClass());
-//        titleBar.getLabel().getStyleClass().setAll(this.getTitleBarStyleClass());
-
-//        this.titleBarStyleClassProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-//            titleBar.getStyleClass().setAll(t1);
-//            titleBar.getLabel().getStyleClass().setAll(t1);
-//        });
-//
-//        titleBar.getStylesheets().setAll(this.getStylesheets());
-
-//        this.getStylesheets().addListener((Change<? extends String> change) -> {
-//            while (change.next()) {
-//                if (change.wasPermutated()) {
-//                    for (int i = change.getFrom(); i < change.getTo(); ++i) {
-//                        //permutate
-//                    }
-//                } else if (change.wasUpdated()) {
-//                    //update item
-//                } else {
-//                    if (change.wasRemoved()) {
-//                        for (String i : change.getRemoved()) {
-//                            titleBar.getStylesheets().remove(i);
-//                        }
-//                    } else if (change.wasAdded()) {
-//                        for (String i : change.getAddedSubList()) {
-//                            titleBar.getStylesheets().add(i);
-//                        }
-//                    }
-//                }
-//            }
-//        });
 
         selectedProperty().addListener(
                 (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
