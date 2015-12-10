@@ -310,7 +310,7 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
                     AcceptRule(ur, rFwd, s);
                 }
                 else {
-                    throw new RuntimeException("unnormalizable task: " + r);
+                    throw new RuntimeException("unnormalizable task: " + s);
 
                 }
 

@@ -11,7 +11,7 @@ import nars.task.Task;
  */
 public class Concurrent extends PreCondition {
 
-    public static Concurrent the = new Concurrent();
+    public static final Concurrent the = new Concurrent();
 
     protected Concurrent() {
     }

@@ -30,9 +30,11 @@ public final class PostSolve extends PreCondition {
         if (!secondary.isEmpty()) {
             Term rederivedTerm = dt.apply(secondary, true);
 
+
             //its possible that the substitution produces an invalid term, ex: an invalid statement
             dt = rederivedTerm;
         }
+        if (dt == null) return false;
 
         m.derived.set(dt);
         return true;

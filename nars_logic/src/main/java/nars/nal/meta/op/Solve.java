@@ -203,9 +203,10 @@ public final class Solve extends PreCondition {
             String desireLabel = desire==null ? "_" :
                     desireTerm.toString();
 
+            String sn = getClass().getSimpleName();
             id = puncOverride == 0 ?
-                    getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ')' :
-                    getClass().getSimpleName() + ":(" + beliefLabel + ", " + desireLabel + ", \"" + puncOverride + "\")";
+                    sn + ":(" + beliefLabel + ", " + desireLabel + ')' :
+                    sn + ":(" + beliefLabel + ", " + desireLabel + ", \"" + puncOverride + "\")";
         }
 
         @Override
@@ -213,7 +214,7 @@ public final class Solve extends PreCondition {
             return id;
         }
 
-        TruthOperator getTruth(char punc) {
+        final TruthOperator getTruth(char punc) {
 
             switch (punc) {
 
@@ -238,17 +239,12 @@ public final class Solve extends PreCondition {
 
             Premise premise = m.premise;
 
-            Task task = premise.getTask();
 
             /** calculate derived task truth value */
 
 
-            Task belief = premise.getBelief();
 
-
-            nars.truth.Truth T = task.getTruth();
-            nars.truth.Truth B = belief == null ? null : belief.getTruth();
-
+            Task task = premise.getTask();
 
             /** calculate derived task punctuation */
             char punct = puncOverride;
@@ -259,35 +255,39 @@ public final class Solve extends PreCondition {
 
 
             nars.truth.Truth truth;
-            TruthOperator tf;
 
             if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
-                tf = getTruth(punct);
+
+                TruthOperator tf = getTruth(punct);
                 if (tf == null)
                     return false;
 
-                truth = tf.apply(T, B, premise.memory());
+                Task belief = premise.getBelief();
+                nars.truth.Truth T = task.getTruth();
+                nars.truth.Truth B = belief == null ? null : belief.getTruth();
 
-                if (truth == null) {
+                truth = tf.apply(T, B, premise.memory());
+                if (truth == null)
                     //no truth value function was applicable but it was necessary, abort
                     return false;
+
+
+                /** filter cyclic double-premise results  */
+                if (!(tf instanceof CanCycle)) {
+                    if (premise.isCyclic()) {
+                        //                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
+                        //                    match.removeCyclic(outcome, premise, truth, punct);
+                        //                }
+                        return false;
+                    }
                 }
             } else {
                 //question or quest, no truth is involved
                 truth = null;
-                tf = null;
             }
 
 
-            /** filter cyclic double-premise results  */
-            if (tf != null && !(tf instanceof CanCycle)) {
-                if (m.premise.isCyclic()) {
-                    //                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
-                    //                    match.removeCyclic(outcome, premise, truth, punct);
-                    //                }
-                    return false;
-                }
-            }
+
 
             m.truth.set(truth);
             m.punct.thenSet(punct);

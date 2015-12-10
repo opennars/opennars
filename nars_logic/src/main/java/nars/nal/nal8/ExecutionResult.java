@@ -30,7 +30,7 @@ public class ExecutionResult implements Serializable, Tasked {
 
     @Override
     public String toString() {
-        Task t = getTask();
+        Task t = operation;
         //if (t == null) return "";
 
         /*if (operation instanceof ImmediateOperation) {

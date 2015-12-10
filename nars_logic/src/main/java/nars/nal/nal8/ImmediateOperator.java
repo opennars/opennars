@@ -35,9 +35,8 @@ public abstract class ImmediateOperator extends NullOperator implements Consumer
     static Term[] termized(Object... args) {
         Term[] x = new Term[args.length];
         for (int i = 0; i < args.length; i++) {
-            Term y;
             Term xx = x[i];
-            y = !(args[i] instanceof Term) ? Atom.quote(args[i].toString()) : xx;
+            Term y = !(args[i] instanceof Term) ? Atom.quote(args[i].toString()) : xx;
             x[i] = y;
         }
         return x;
@@ -68,7 +67,7 @@ public abstract class ImmediateOperator extends NullOperator implements Consumer
 //    }
     public static Compound operation(Class<? extends ImmediateOperator> opClass, Compound args) {
         return $.oper(
-                (Atom)$.$(opClass.getSimpleName().toString()),
+                (Atom)$.$(opClass.getSimpleName()),
                 args);
     }
 

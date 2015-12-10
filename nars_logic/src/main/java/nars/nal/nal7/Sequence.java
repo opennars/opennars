@@ -4,7 +4,6 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.$;
 import nars.Global;
 import nars.Op;
-import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Conjunctive;
 import nars.term.Term;
 import nars.term.Terms;
@@ -293,7 +292,7 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
     public static Term makeSequence(Term term1, Term term2) {
         Term[] components;
 
-        if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == Tense.ORDER_FORWARD)) {
+        if (Conjunctive.isConjunction(term1, Tense.ORDER_FORWARD)) {
 
             Compound cterm1 = (Compound) term1;
 

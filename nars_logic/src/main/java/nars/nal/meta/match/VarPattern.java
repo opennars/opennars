@@ -52,6 +52,7 @@ public class VarPattern extends Variable {
         return 0;
     }
 
+    @Override
     public Term apply(Subst f, boolean fullMatch) {
         Term y = f.getXY(this);
         if (y == null) {

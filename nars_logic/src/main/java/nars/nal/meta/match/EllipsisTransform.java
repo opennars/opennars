@@ -11,8 +11,8 @@ import nars.term.variable.Variable;
 /** ellipsis that transforms one of its elements, which it is required to match within */
 public class EllipsisTransform extends EllipsisOneOrMore {
 
-    public Term from;
-    public Term to;
+    public final Term from;
+    public final Term to;
 
     public EllipsisTransform(Variable name, Term from, Term to) {
         super(name, ".." + from + '=' + to + "..+");

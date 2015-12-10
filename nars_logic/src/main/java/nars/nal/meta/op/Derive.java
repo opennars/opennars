@@ -65,8 +65,7 @@ public final class Derive extends PreCondition {
             return false;
 
         Truth truth = m.truth.get();
-        Budget budget;
-        budget = truth != null ? BudgetFunctions.compoundForward(truth, derivedTerm, premise) : BudgetFunctions.compoundBackward(derivedTerm, premise);
+        Budget budget = truth != null ? BudgetFunctions.compoundForward(truth, derivedTerm, premise) : BudgetFunctions.compoundBackward(derivedTerm, premise);
 
         if (!premise.validateDerivedBudget(budget)) {
             if (false) {
@@ -81,16 +80,15 @@ public final class Derive extends PreCondition {
         Task belief = premise.getBelief();
 
 
-        char punct = m.punct.get();
+        char punct = m.punct.get().charValue();
 
         MutableTask deriving = new MutableTask((Compound) derivedTerm);
 
         long now = premise.time();
-        long occ;
 
         int occurence_shift = m.occurrenceShift.getIfAbsent(Tense.TIMELESS);
         long taskOcc = task.getOccurrenceTime();
-        occ = occurence_shift > Tense.TIMELESS ? taskOcc + occurence_shift : taskOcc;
+        long occ = occurence_shift > Tense.TIMELESS ? taskOcc + occurence_shift : taskOcc;
 
         //just not able to measure it, closed world assumption gone wild.
 

@@ -23,7 +23,10 @@ public class ShadowAtom extends AbstractStringAtom {
         return this == obj;
     }
 
-
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 
     @Override
     public int varIndep() {

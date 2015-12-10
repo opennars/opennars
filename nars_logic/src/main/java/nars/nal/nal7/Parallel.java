@@ -93,6 +93,7 @@ public class Parallel extends GenericCompound implements Intermval {
         }
     }
 
+    @Override
     public final int duration() {
         int totalDuration = this.totalDuration;
         if (totalDuration == -1) {
@@ -101,6 +102,7 @@ public class Parallel extends GenericCompound implements Intermval {
         return totalDuration;
     }
 
+    @Override
     public final int duration(int eventDuration) {
         if (totalDuration < 0 || eventDuration!=this.eventDuration) {
             return calculateTotalDuration(eventDuration);

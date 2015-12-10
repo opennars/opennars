@@ -8,7 +8,7 @@ import nars.term.compound.GenericCompound;
 /**
  * just holds two terms, not really necessary
  */
-public class TaskBeliefPair extends GenericCompound {
+public final class TaskBeliefPair extends GenericCompound {
 
     public int volA, volB;
     public int structureA, structureB; //should use the long stuctureHash?

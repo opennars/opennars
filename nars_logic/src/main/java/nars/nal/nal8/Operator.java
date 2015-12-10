@@ -11,7 +11,6 @@ import java.io.IOException;
 /**
  * Wraps a term to represent an operator that can be used as the predicate
  * of an Operation
- * TODO inherit AbstractAtomic
  */
 public final class Operator<T extends Term> extends Atomic { //implements Term {
 

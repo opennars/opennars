@@ -25,12 +25,13 @@ public class PatternIndex extends MapIndex {
     @Override
     protected <T extends Term> Compound<T> compileCompound(Compound<T> c) {
         Compound x = super.compileCompound(c);
-        if (x instanceof Compound) {
+        if (x != null) {
             if (!x.isCommutative() && !Ellipsis.hasEllipsis(x)) {
                 x = new LinearCompoundPattern(x);
             }
+            return x;
         }
-        return x;
+        throw new RuntimeException("pattern compile error: " + c);
     }
 
     /** non-commutive simple compound which can match subterms in any order, but this order is prearranged optimally */
@@ -126,6 +127,7 @@ public class PatternIndex extends MapIndex {
 
             Term[] x = termsCached;
             for (int i = 0; i < x.length; i++) {
+                i = o[i]; //remap to the specific sequence
                 if (!subst.match(x[i], y.term(i)))
                     return false;
             }

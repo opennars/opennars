@@ -55,11 +55,11 @@ public interface Equivalence  {
      * @param predicate The second component
      * @return A compound generated or null
      */
-    public static Term make(Term subject, Term predicate) {  // to be extended to check if subject is Conjunction
+    static Term make(Term subject, Term predicate) {  // to be extended to check if subject is Conjunction
         return make(subject, predicate, Tense.ORDER_NONE);
     }
 
-    public static Term make(Term subject, Term predicate, Order temporalOrder) {  // to be extended to check if subject is Conjunction
+    static Term make(Term subject, Term predicate, Order temporalOrder) {  // to be extended to check if subject is Conjunction
 
         if ((subject instanceof Implication) || (subject instanceof Equivalence)
                 || (predicate instanceof Implication) || (predicate instanceof Equivalence) ||

@@ -116,9 +116,8 @@ public enum Tense  {
             throw new RuntimeException("problem or solution is null");
         }*/
 
-        Truth truth;
         long poc = problem.getOccurrenceTime();
-        truth = poc != solution.getOccurrenceTime() ? solution.projection(poc, time) : solution.getTruth();
+        Truth truth = poc != solution.getOccurrenceTime() ? solution.projection(poc, time) : solution.getTruth();
 
         //if (problem.hasQueryVar()) {
         return hasQueryVar ? truth.getExpectation() / solution.getTerm().complexity() : truth.getConfidence();

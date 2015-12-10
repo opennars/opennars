@@ -16,7 +16,7 @@ public interface SetTensional {
 
     Logger logger = LoggerFactory.getLogger(SetTensional.class);
 
-    public static void append(Compound set, Appendable p, boolean pretty) {
+    static void append(Compound set, Appendable p, boolean pretty) {
 
         int len = set.size();
 
@@ -41,10 +41,7 @@ public interface SetTensional {
         } catch (IOException e) {
             logger.error("append", e);
         }
-    };
-
-
-
+    }
 
 
     static Set<Term> subtract(Compound a, Compound b) {

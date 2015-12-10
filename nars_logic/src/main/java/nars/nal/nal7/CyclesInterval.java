@@ -42,6 +42,10 @@ public final class CyclesInterval extends ShadowAtom implements Interval {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return cyc;
+    }
 
     @Override
     public void append(Appendable output, boolean pretty) throws IOException {
