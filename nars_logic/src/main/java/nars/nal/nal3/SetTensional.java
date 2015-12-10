@@ -10,14 +10,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 public interface SetTensional {
 
 
     Logger logger = LoggerFactory.getLogger(SetTensional.class);
 
-    BiConsumer<Compound,Appendable> Appender = (Compound set, Appendable p) -> {
+    public static void append(Compound set, Appendable p, boolean pretty) {
 
         int len = set.size();
 
@@ -30,8 +29,6 @@ public interface SetTensional {
             opener = Op.SET_INT_OPENER.ch;
             closer = Symbols.SET_INT_CLOSER;
         }
-
-        final boolean pretty = false;
 
         try {
             p.append(opener);

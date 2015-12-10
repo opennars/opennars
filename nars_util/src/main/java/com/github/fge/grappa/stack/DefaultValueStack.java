@@ -28,7 +28,8 @@ import java.util.Iterator;
 @ParametersAreNonnullByDefault
 public final class DefaultValueStack<V>
         extends ValueStackBase<V> {
-    private FasterList<V> stack = new FasterList<>();
+
+    public final FasterList<V> stack = new FasterList<>();
 
     @Override
     public boolean isEmpty() {
@@ -61,7 +62,12 @@ public final class DefaultValueStack<V>
         else {
             //Objects.requireNonNull(snapshot);
             //Preconditions.checkState(snapshot.getClass() == ArrayList.class);
-            stack = (FasterList<V>) snapshot;
+
+            //stack = (FasterList<V>) snapshot;
+            if (stack!=snapshot) {
+                stack.clear();
+                stack.addAll((FasterList)snapshot);
+            }
         }
     }
 

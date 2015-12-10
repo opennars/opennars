@@ -6,7 +6,6 @@ import nars.nal.nal7.Order;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.term.Term;
-import nars.term.Terms;
 import nars.term.compound.Compound;
 
 import java.util.Arrays;
@@ -35,14 +34,14 @@ public interface Conjunctive<T extends Term>  {
     /**
      * recursively flatten a embedded conjunction subterms if they are of a specific order
      */
-    public static Term[] flattenAndSort(Term[] args, Order order) {
+    public static Term[] flatten(Term[] args, Order order) {
         //determine how many there are with same order
 
         int expandedSize;
         while ((expandedSize = getFlattenedLength(args, order)) != args.length) {
             args = _flatten(args, order, expandedSize);
         }
-        return Terms.toSortedSetArray(args);
+        return args;
     }
 
     static Term[] _flatten(Term[] args, Order order, int expandedSize) {

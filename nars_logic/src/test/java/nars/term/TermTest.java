@@ -249,11 +249,11 @@ public class TermTest {
         }
 
 
-        Term s = $.inh(subj, pred);
+        Term s = inh(subj, pred);
         assertEquals(null, s);
 
 
-        Term i = $.inh(subj, pred);
+        Term i = inh(subj, pred);
         assertEquals(null, i);
 
 
@@ -282,7 +282,7 @@ public class TermTest {
             Term x = n.term("wonder(a,b)");
             assertEquals(Op.INHERIT, x.op());
             assertTrue(Operation.isOperation(x));
-            assertEquals("wonder(a, b)", x.toString());
+            assertEquals("wonder(a,b)", x.toString());
 
         } catch (Narsese.NarseseException ex) {
             ex.printStackTrace();
@@ -297,7 +297,7 @@ public class TermTest {
 
         Compound a = SetInt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
         Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
-        Term d = $.diffInt(a, b);
+        Term d = diffInt(a, b);
         assertEquals(Op.SET_INT, d.op());
         assertEquals(d.toString(), 2, d.size());
         assertEquals("[a,c]", d.toString());
@@ -309,7 +309,7 @@ public class TermTest {
 
         Compound a = SetExt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
         Compound b = SetExt.make(Atom.the("d"), Atom.the("b"));
-        Term d = $.diffExt(a, b);
+        Term d = diffExt(a, b);
         assertEquals(Op.SET_EXT, d.op());
         assertEquals(d.toString(), 2, d.size());
         assertEquals("{a,c}", d.toString());
@@ -358,18 +358,21 @@ public class TermTest {
 
         Term a = n.term(s);
 
-        NAR n2 = new Terminal();
-        Term b = n2.term(s);
+        //NAR n2 = new Terminal();
+        Term b = n.term(s);
 
-        assertTrue(a != b);
+        //assertTrue(a != b);
 
-        assertEquals(0, a.compareTo(b));
-        assertEquals(0, b.compareTo(a));
-
+        if (a instanceof Compound) {
+            assertEquals(((Compound)a).subterms(), ((Compound)b).subterms());
+        }
         assertEquals(a.hashCode(), b.hashCode());
         assertEquals(a.toString(), b.toString());
 
         assertEquals(a, b);
+
+        assertEquals(a.compareTo(a), a.compareTo(b));
+        assertEquals(0, b.compareTo(a));
 
         assertEquals(a.normalized().toString(), b.toString());
         assertEquals(a.normalized().hashCode(), b.hashCode());
@@ -581,18 +584,77 @@ public class TermTest {
 
     @Test
     public void testImageConstruction2() {
-        assertEquals("(/, X, _, Y)", imageExt($("X"), $("_"), $("Y")).toString());
-        assertEquals("(/, X, Y, _)", imageExt($("X"), $("Y")).toString());
-        assertEquals("(/, _, X, Y)", imageExt($("_"), $("X"), $("Y")).toString());
+        assertEquals("(/,X,_,Y)", imageExt($("X"), $("_"), $("Y")).toString());
+        assertEquals("(/,X,Y,_)", imageExt($("X"), $("Y")).toString());
+        assertEquals("(/,_,X,Y)", imageExt($("_"), $("X"), $("Y")).toString());
 
-        assertEquals("(\\, X, _, Y)", imageInt($("X"), $("_"), $("Y")).toString());
-        assertEquals("(\\, X, Y, _)", imageInt($("X"), $("Y")).toString());
-        assertEquals("(\\, _, X, Y)", imageInt($("_"), $("X"), $("Y")).toString());
+        assertEquals("(\\,X,_,Y)", imageInt($("X"), $("_"), $("Y")).toString());
+        assertEquals("(\\,X,Y,_)", imageInt($("X"), $("Y")).toString());
+        assertEquals("(\\,_,X,Y)", imageInt($("_"), $("X"), $("Y")).toString());
 
     }
 
+    final Term p = $("P"), q = $("Q"), r = $("R"), s = $("S");
+
+    @Test public void testIntersectExtReduction1() {
+        // (&,R,(&,P,Q)) = (&,P,Q,R)
+        assertEquals("(&,P,Q,R)", sect(r, sect(p, q)).toString());
+        assertEquals("(&,P,Q,R)", $("(&,R,(&,P,Q))").toString());
+    }
+    @Test public void testIntersectExtReduction2() {
+        // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+        assertEquals("(&,P,Q,R,S)", sect(sect(p, q), sect(r, s)).toString());
+        assertEquals("(&,P,Q,R,S)", $("(&,(&,P,Q),(&,R,S))").toString());
+    }
+    @Test public void testIntersectExtReduction3() {
+        // (&,R,(&,P,Q)) = (&,P,Q,R)
+        assertEquals("(&,P,Q,R)", $("(&,R,(&,P,Q))").toString());
+    }
+    @Test public void testIntersectExtReduction4() {
+        //UNION if (term1.op(Op.SET_INT) && term2.op(Op.SET_INT)) {
+        assertEquals("{P,Q,R,S}", sect($.set(p, q), $.set(r, s)).toString());
+        assertEquals("{P,Q,R,S}", $("(&,{P,Q},{R,S})").toString());
+        assertEquals(null, sect($.setInt(p, q), $.setInt(r, s)));
+
+    }
+
+    @Test public void testIntersectIntReduction1() {
+        // (|,R,(|,P,Q)) = (|,P,Q,R)
+        assertEquals("(|,P,Q,R)", sectInt(r, sectInt(p, q)).toString());
+        assertEquals("(|,P,Q,R)", $("(|,R,(|,P,Q))").toString());
+    }
+    @Test public void testIntersectIntReduction2() {
+        // (|,(|,P,Q),(|,R,S)) = (|,P,Q,R,S)
+        assertEquals("(|,P,Q,R,S)", sectInt(sectInt(p, q), sectInt(r, s)).toString());
+        assertEquals("(|,P,Q,R,S)", $("(|,(|,P,Q),(|,R,S))").toString());
+    }
+    @Test public void testIntersectIntReduction3() {
+        // (|,R,(|,P,Q)) = (|,P,Q,R)
+        assertEquals("(|,P,Q,R)", $("(|,R,(|,P,Q))").toString());
+    }
+    @Test public void testIntersectIntReduction4() {
+        //UNION if (term1.op(Op.SET_INT) || term2.op(Op.SET_INT)) {
+        assertEquals("[P,Q,R,S]", sectInt($.setInt(p, q), $.setInt(r, s)).toString());
+        assertEquals("[P,Q,R,S]", $("(|,[P,Q],[R,S])").toString());
+        assertEquals(null, $("(|,{P,Q},{R,S})"));
+    }
+
+
+    //TODO:
+        /*
+            (&,(&,P,Q),R) = (&,P,Q,R)
+            (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+
+            // set union
+            if (term1.op(Op.SET_INT) && term2.op(Op.SET_INT)) {
+
+            // set intersection
+            if (term1.op(Op.SET_EXT) && term2.op(Op.SET_EXT)) {
+
+         */
+
     @Test public void testStatemntString() {
-        assertTrue( $.inh("a", "b").op().isStatement() );
+        assertTrue( inh("a", "b").op().isStatement() );
         Term aInhB = $("<a-->b>");
         assertEquals(GenericCompound.class, aInhB.getClass());
         assertEquals("<a-->b>",

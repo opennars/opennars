@@ -107,7 +107,7 @@ public class NALObjectsTest  {
         }
         else {
             //INVOKE VOLITIONALLY
-            n.input("TestClass_multiply(" + instance + ", (2, 3), #x)! :|:");
+            n.input("TestClass_multiply(" + instance + ",(2, 3),#x)! :|:");
 
         }
 
@@ -153,7 +153,7 @@ public class NALObjectsTest  {
 
         System.out.println(bs);
 
-        String invocationGoal = "TestClass_multiply(obj, (2, 3), #1)! :|: %1.00;0.90%";
+        String invocationGoal = "TestClass_multiply(obj,(2,3),#1)! :|: %1.00;0.90%";
         assertEquals(1, countMatches(bs, invocationGoal));
 
         if (external) {
@@ -163,8 +163,8 @@ public class NALObjectsTest  {
             assertEquals(1, countMatches(bs, invocationGoal + " Input"));
         }
 
-        String execution = "Execute: $0.60;0.90;0.95$ TestClass_multiply(obj, (2, 3), #1)! 0+0 %1.00;0.90%";
-        String feedback = "TaskProcess: $0.50;0.80;0.95$ <6 --> (/, ^TestClass_multiply, obj, (2, 3), _)>.";
+        String execution = "Execute: $0.60;0.90;0.95$ TestClass_multiply(obj,(2,3),#1)! 0+0 %1.00;0.90%";
+        String feedback = "TaskProcess: $0.60;0.90;0.95$ <6-->(/,^TestClass_multiply,obj,(2,3),_)>.";
 
         assertEquals(1, countMatches(bs, execution));
         assertEquals(1, countMatches(bs, feedback));
@@ -225,8 +225,8 @@ public class NALObjectsTest  {
         Map map = new HashMap();
         map.put("k1", "v1");
         map.put("k2", "v2");
-        testTermizer(map, "{<{\"v1\"}-->\"k1\">,<{\"v2\"}-->\"k2\">}");
-
+        //testTermizer(map, "{<{\"v1\"}-->\"k1\">,<{\"v2\"}-->\"k2\">}");
+        testTermizer(map, "{<\"v1\"-->\"k1\">,<\"v2\"-->\"k2\">}");
     }
 
     static void testTermizer(Object o, String termtoString) {
