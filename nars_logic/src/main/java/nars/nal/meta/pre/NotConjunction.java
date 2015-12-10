@@ -12,23 +12,10 @@ public final class NotConjunction extends PreCondition1 {
     }
 
     @Override
-    public boolean test(RuleMatch m, Term arg1) {
+    public final boolean test(RuleMatch m, Term arg1) {
 
-        if (arg1 == null) return false;
-
-        //TODO use a bitvector to test Op membership in this set
-        //  and then abstract this to a generic Precondition
-        //  that can be used for allowing (+) or denying (-)
-        //  other sets of Ops
-
-        Op o = arg1.op();
-        switch (o) {
-            case CONJUNCTION:
-            case SEQUENCE:
-            case PARALLEL:
-                return false;
-        }
-        return true;
+        return (arg1!=null) &&
+               !arg1.op().isA(Op.ConjunctivesBits);
     }
 
 }

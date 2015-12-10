@@ -5,6 +5,7 @@ import nars.Op;
 import nars.nal.meta.match.Ellipsis;
 import nars.term.Term;
 import nars.term.TermContainer;
+import nars.term.TermVector;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.term.transform.FindSubst;
@@ -22,40 +23,65 @@ public class PatternIndex extends MapIndex {
         super(new HashMap(1024));
     }
 
+
     @Override
-    protected <T extends Term> Compound<T> compileCompound(Compound<T> c) {
-        Compound x = super.compileCompound(c);
-        if (x != null) {
-            if (!x.isCommutative() && !Ellipsis.hasEllipsis(x)) {
-                x = new LinearCompoundPattern(x);
+    protected <T extends Term> Compound<T> compileCompound(Compound<T> x, TermContainer subs) {
+
+        if (!Ellipsis.hasEllipsis(x)) {
+
+            if (!x.isCommutative()) {
+                return new LinearCompoundPattern(x, (TermVector) subs);
+            } else {
+                return new CommutiveCompoundPattern(x, (TermVector) subs);
             }
-            return x;
+
         }
-        throw new RuntimeException("pattern compile error: " + c);
+        return super.compileCompound(x, subs);
+    }
+
+    abstract static class AbstractCompoundPattern extends GenericCompound {
+
+
+        public final int sizeCached;
+        public final int volCached;
+        public final int structureCachedWithoutVars;
+        public final Term[] termsCached;
+
+        public AbstractCompoundPattern(Compound seed, TermVector subterms) {
+            super(seed.op(), subterms, seed.relation());
+
+            sizeCached = seed.size();
+            structureCachedWithoutVars =
+                    seed.structure() & ~(Op.VariableBits);
+            volCached = seed.volume();
+            this.termsCached = subterms.terms();
+        }
+
+        final public boolean prematch(Compound y) {
+            int yStructure = y.structure();
+            if ((yStructure | structureCachedWithoutVars) != yStructure)
+                return false;
+
+            if (sizeCached != y.size())
+                return false;
+            if (volCached > y.volume())
+                return false;
+
+            if (relation != y.relation())
+                return false;
+            return true;
+        }
+
     }
 
     /** non-commutive simple compound which can match subterms in any order, but this order is prearranged optimally */
-    static final class LinearCompoundPattern extends GenericCompound {
+    static final class LinearCompoundPattern extends AbstractCompoundPattern {
 
-
-        private final Op op;
-        private final int sizeCached;
-        private final int volCached;
-        private final int structureCachedWithoutVars;
         private final int[] heuristicOrder;
         private final int[] shuffleOrder;
-        private final Term[] termsCached;
 
-        public LinearCompoundPattern(Compound seed) {
-            super(seed.op(), seed.terms(), seed.relation()
-            );
-            op = seed.op();
-            structureCachedWithoutVars =
-                seed.structure() & ~(Op.VariableBits);
-
-            termsCached = terms();
-            sizeCached = seed.size();
-            volCached = seed.volume();
+        public LinearCompoundPattern(Compound seed, TermVector subterms) {
+            super(seed, subterms);
             heuristicOrder = getSubtermOrder(terms());
             shuffleOrder = heuristicOrder.clone();
         }
@@ -98,24 +124,12 @@ public class PatternIndex extends MapIndex {
             return y;
         }
 
-
-
         @Override
         public boolean match(Compound y, FindSubst subst) {
-            int yStructure = y.structure();
-            if ((yStructure | structureCachedWithoutVars) != yStructure)
-                return false;
-
-            if (y.size() != sizeCached)
-                return false;
-            if (y.volume() < volCached)
-                return false;
-
-            if (relation != y.relation())
-                return false;
-
+            if (!prematch(y)) return false;
             return matchLinear(y, subst);
         }
+
 
         @Override
         public boolean matchLinear(TermContainer y, FindSubst subst) {
@@ -142,32 +156,22 @@ public class PatternIndex extends MapIndex {
             return shuffleOrder;
         }
 
-
-//        @Override public int size() {
-//            return sizeCached;
-//        }
-//
-//        @Override
-//        public int structure() {
-//            return structureCached;
-//        }
-
-
-//
-//        @Override
-//        public Op op() {
-//            return op;
-//        }
-//
-//        @Override
-//        public boolean isCommutative() {
-//            return false;
-//        }
-
-//
-//        @Override
-//        public Term clone(Term[] replaced) {
-//            return seed.clone(replaced);
-//        }
     }
+
+    /** commutive simple compound which can match subterms in any order, but this order is prearranged optimally */
+    static final class CommutiveCompoundPattern extends AbstractCompoundPattern {
+
+        public CommutiveCompoundPattern(Compound seed, TermVector subterms) {
+            super(seed, subterms );
+        }
+
+        @Override
+        public boolean match(Compound y, FindSubst subst) {
+            if (!prematch(y)) return false;
+            return subst.matchPermute(this, y);
+        }
+
+    }
+
+
 }

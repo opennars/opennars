@@ -1,7 +1,7 @@
 package nars.nal.nal7;
 
 import nars.NAR;
-import nars.nar.Terminal;
+import nars.nar.Default;
 import nars.task.Task;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class TemporalTest {
     }
 
     @Test public void parsedCorrectOccurrenceTime() {
-        NAR n = new Terminal();
+        NAR n = new Default(); //for cycle/frame clock, not realtime like Terminal
         Task t = n.inputTask("<a --> b>. :\\:");
         Assert.assertEquals(0, t.getCreationTime());
         Assert.assertEquals(-(n.memory.duration()), t.getOccurrenceTime());

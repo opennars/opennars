@@ -9,9 +9,6 @@ import nars.budget.Itemized;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -44,25 +41,6 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
         index = new ArrayMapping(map, items);
     }
 
-//    public static <E extends Itemized> SortedIndex<E> defaultIndex(int capacity) {
-//        //if (capacity < 50)
-//        return new ArraySortedIndex(capacity);
-//        //else
-//        //    return new FractalSortedItemList<E>();
-//    }
-
-
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(capacity());
-        super.writeExternal(out);
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        setCapacity( in.readInt() );
-        super.readExternal(in);
-    }
 
     public boolean isSorted() {
         return items.isSorted();

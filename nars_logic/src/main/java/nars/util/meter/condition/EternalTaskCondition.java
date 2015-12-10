@@ -410,16 +410,23 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         else
             logger.warn(msg);
 
-        Consumer<Task> printer = (s) -> {
-            logger.info("\t{}", s);
-            //logger.debug(s.getExplanation().replace("\n", "\n\t\t"));
-        };
+
+
 
         if (valid!=null) {
-            valid.forEach(s -> printer.accept(s));
+            valid.forEach( s -> {
+                logger.trace("\t{}", s);
+                //logger.debug("\t\t{}", s.getLog());
+                //logger.debug(s.getExplanation().replace("\n", "\n\t\t"));
+            });
         }
         if (similar!=null) {
-            similar.values().forEach(s -> printer.accept(s));
+            similar.values().forEach(s -> {
+                logger.info("\t{}", s);
+                logger.debug("\t\t{}", s.getParentTask() + " , " + s.getParentBelief());
+                logger.debug("\t\t{}", s.getLog());
+                //logger.debug(s.getExplanation().replace("\n", "\n\t\t"));
+            });
         }
     }
 }

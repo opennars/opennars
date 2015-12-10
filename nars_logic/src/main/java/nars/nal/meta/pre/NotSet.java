@@ -1,7 +1,6 @@
 package nars.nal.meta.pre;
 
 import nars.nal.RuleMatch;
-import nars.nal.nal3.SetTensional;
 import nars.term.Term;
 
 /**
@@ -15,7 +14,7 @@ public class NotSet extends PreCondition1 {
 
     @Override
     public final boolean test(RuleMatch m, Term a) {
-        return !(a instanceof SetTensional);
+        return !a.op().isSet();
     }
 
 }

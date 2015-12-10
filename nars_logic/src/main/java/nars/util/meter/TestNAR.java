@@ -4,6 +4,7 @@ import nars.Global;
 import nars.NAR;
 import nars.Narsese;
 import nars.nal.nal7.Tense;
+import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.task.Tasked;
 import nars.term.atom.Atom;
@@ -55,7 +56,6 @@ public class TestNAR  {
      * both successful and unsuccessful tests
      *
      */
-    private static final boolean reportPrintIfSuccess = false;
     static final boolean collectTrace = false;
 
 
@@ -65,7 +65,7 @@ public class TestNAR  {
             //nar.memory.eventDerived,
             //nar.memory.eventInput,
             nar.memory.eventTaskProcess,
-            //nar.memory.eventTaskRemoved,
+            nar.memory.eventTaskRemoved,
             nar.memory.eventRevision
         };
 
@@ -75,7 +75,7 @@ public class TestNAR  {
         nar.memory.eventAnswer.on(tt -> {
             Task t = tt.getTwo();
             t.log("Answer via Derived");
-            nar.memory.eventDerived.emit(t);
+            nar.memory.eventTaskProcess.emit(new TaskProcess(nar,t) /* dummy */);
         });
 
         if (exitOnAllSuccess) {
@@ -505,9 +505,9 @@ public class TestNAR  {
             //report.toString();
 
         //explain all validated conditions
-        if (requires!=null) {
-            requires.forEach(NARCondition::report);
-        }
+//        if (requires!=null) {
+//            requires.forEach(NARCondition::report);
+//        }
 
 
         if (success) {

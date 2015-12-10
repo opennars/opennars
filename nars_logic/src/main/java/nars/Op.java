@@ -264,14 +264,22 @@ public enum Op implements Serializable {
     }
 
     public boolean isImage() {
-        return isA(bit(), ImageBits);
+        return isA(ImageBits);
     }
     public boolean isStatement() {
-        return isA(bit(), StatementBits);
+        return isA(StatementBits);
+    }
+
+    public boolean isA(int vector) {
+        return isA(bit(), vector);
     }
 
     static boolean isA(int needle, int haystack) {
         return (needle & haystack) == needle;
+    }
+
+    public boolean isSet() {
+        return isA(Op.SetsBits);
     }
 
     /** top-level Op categories */
@@ -282,19 +290,22 @@ public enum Op implements Serializable {
     }
 
 
-    public static final int Implications =
+    public static final int ImplicationsBits =
             Op.or(Op.IMPLICATION, Op.IMPLICATION_BEFORE, Op.IMPLICATION_WHEN, Op.IMPLICATION_AFTER);
 
-    public static final int Conjunctives =
+    public static final int ConjunctivesBits =
             Op.or(Op.CONJUNCTION, Op.PARALLEL, Op.SEQUENCE);
 
-    public static final int Equivalences =
+    public static final int EquivalencesBits =
             Op.or(Op.EQUIV, Op.EQUIV_WHEN, Op.EQUIV_AFTER);
+
+    public static final int SetsBits =
+            Op.or(Op.SET_EXT, Op.SET_INT);
 
     public static int StatementBits =
             Op.or(Op.INHERIT.bit(), Op.SIMILAR.bit(),
-                    Equivalences,
-                    Implications
+                    EquivalencesBits,
+                    ImplicationsBits
             );
 
     public static final int ImageBits =

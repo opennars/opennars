@@ -151,9 +151,9 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                         if (subject.isAny(InvalidEquivalenceTerm)) return null;
                         if (predicate.isAny(InvalidImplicationPredicate)) return null;
 
-                        if (predicate.isAny(Op.Implications)) {
+                        if (predicate.isAny(Op.ImplicationsBits)) {
                             Term oldCondition = subj(predicate);
-                            if ((oldCondition.isAny(Op.Conjunctives)) && oldCondition.containsTerm(subject))
+                            if ((oldCondition.isAny(Op.ConjunctivesBits)) && oldCondition.containsTerm(subject))
                                 return null;
 
                             return impl2Conj(op, subject, predicate, oldCondition);
@@ -341,10 +341,16 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         TermVector<T> terms = this.terms = op.isCommutative() ?
                 TermSet.newTermSetPresorted(subterms) :
                 new TermVector(subterms);
-        hash = Compound.hash(terms, op, relation+1);
+        this.hash = Compound.hash(terms, op, relation+1);
         this.relation = relation;
     }
 
+    protected GenericCompound(Op op, TermVector subterms, int relation) {
+        this.op = op;
+        this.terms = subterms;
+        this.hash = Compound.hash(terms, op, relation+1);
+        this.relation = relation;
+    }
 
     @Override
     public final Op op() {

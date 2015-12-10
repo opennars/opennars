@@ -46,17 +46,16 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
 
     protected <T extends Term> T compile(T t) {
         T compiled;
+
+        compiled = t instanceof Compound ? (T) compileCompound((Compound) t) : t;
         if (t instanceof TermMetadata) {
 
             //the term instance will remain unique
             // as determined by TermData's index method
             // however we can potentially index its subterms
-            compileSubterms((TermVector) ((Compound)t).subterms());
-            return t;
+        } else {
+            data.put(t, compiled);
         }
-        compiled = t instanceof Compound ? (T) compileCompound((Compound) t) : t;
-
-        data.put(t, compiled);
         return compiled;
     }
 
@@ -76,7 +75,11 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
             st.put(subs, subs);
         }
 
-        return existing == subs ? c : (Compound<T>) c.clone(subs);
+        return existing == subs ? c : compileCompound(c, subs);
+    }
+
+    protected <T extends Term> Compound<T> compileCompound(Compound<T> c, TermContainer subs) {
+        return (Compound<T>) c.clone(subs);
     }
 
     private TermContainer compileSubterms(TermVector subs) {

@@ -1,10 +1,11 @@
 package nars.task.flow;
 
-import nars.Global;
+import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Memory;
+import nars.budget.Budget;
 import nars.task.Task;
+import nars.util.data.map.UnifriedMap;
 
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -17,30 +18,39 @@ import java.util.function.Consumer;
  */
 public final class SetTaskPerception extends TaskPerception {
 
-    final Set<Task> task = Global.newHashSet(1);
+    final UnifriedMap<Task,Task> table = new UnifriedMap<Task,Task>();
+    final Procedure2<Budget, Budget> merge;
 
     public SetTaskPerception(Memory m, Consumer<Task> receiver) {
+        this(m, receiver, Budget.plus);
+    }
+
+    public SetTaskPerception(Memory m, Consumer<Task> receiver, Procedure2<Budget, Budget> merge) {
         super(m, receiver);
+        this.merge = merge;
     }
 
     @Override
     public void forEach(Consumer<? super Task> each) {
-        task.forEach(each);
+        table.forEach(each);
     }
 
     @Override
     public void accept(Task t) {
-        task.add(t);
+        Task existing = table.put(t, t);
+        if (existing!=null) {
+            merge.value(t.getBudget(), existing.getBudget());
+        }
     }
 
     @Override
     public void nextFrame(Consumer<Task> receiver) {
-        task.forEach(receiver);
-        task.clear();
+        table.forEach((k, v)->receiver.accept(v));
+        table.clear();
     }
 
     @Override
     public void clear() {
-        task.clear();
+        table.clear();
     }
 }

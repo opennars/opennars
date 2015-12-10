@@ -5,6 +5,7 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
+import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.util.ConceptActivator;
 import nars.nal.Deriver;
@@ -163,17 +164,16 @@ public class Default extends AbstractNAR {
     @Override
     public TaskPerception initInput() {
 
+        return new SetTaskPerception(
+            memory, this::process, Budget.plus);
 
-        SetTaskPerception input = new SetTaskPerception(
-            memory, this::process
-        );/* {
+        /* {
             @Override
             protected void onOverflow(Task t) {
                 memory.eventError.emit("Overflow: " + t + " " + getStatistics());
             }
         };*/
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
-        return input;
     }
 
     public SortedTaskPerception getInput() {
