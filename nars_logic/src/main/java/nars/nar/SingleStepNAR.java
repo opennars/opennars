@@ -88,7 +88,7 @@ public class SingleStepNAR extends Default {
 
     @Override
     public ImmediateTaskPerception initInput() {
-        ImmediateTaskPerception input = new ImmediateTaskPerception(this,
+        ImmediateTaskPerception input = new ImmediateTaskPerception(true, this,
                 task -> task.isInput() /* allow only input tasks*/,
                 task -> process(task)
         );

@@ -146,7 +146,7 @@ public class Default extends NAR {
     }
 
     public TaskPerception initInput() {
-        ImmediateTaskPerception input = new ImmediateTaskPerception(this,
+        ImmediateTaskPerception input = new ImmediateTaskPerception(false, this,
             task -> true /* allow everything */,
             task -> process(task)
         );

@@ -80,7 +80,7 @@ public final class MakeTasks extends PreCondition {
 
         final Task belief = premise.getBelief();
 
-        if(derivedTerm.complexity()>17) {
+        if(derivedTerm.complexity()>8) { //17
             return false;
         }
 

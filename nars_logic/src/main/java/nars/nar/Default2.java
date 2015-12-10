@@ -8,6 +8,7 @@ import nars.concept.Concept;
 import nars.concept.util.ConceptActivator;
 import nars.nal.Deriver;
 import nars.task.Task;
+import nars.task.flow.ImmediateTaskPerception;
 import nars.task.flow.SortedTaskPerception;
 import nars.term.Term;
 import nars.time.FrameClock;
@@ -110,15 +111,13 @@ public class Default2 extends Default {
 
 
     @Override
-    public SortedTaskPerception initInput() {
+    public ImmediateTaskPerception initInput() {
         int perceptionCapacity = 64;
 
-        SortedTaskPerception input = new SortedTaskPerception(
+        ImmediateTaskPerception input = new ImmediateTaskPerception( false,
                 this,
                 task -> true /* allow everything */,
-                task -> process(task),
-                perceptionCapacity,
-                1
+                task -> process(task)
         );
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
         return input;

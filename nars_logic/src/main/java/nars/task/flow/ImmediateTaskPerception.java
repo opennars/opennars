@@ -1,6 +1,8 @@
 package nars.task.flow;
 
 import nars.NAR;
+import nars.bag.impl.CurveBag;
+import nars.bag.impl.LevelBag;
 import nars.task.Task;
 
 import java.util.ArrayDeque;
@@ -36,8 +38,12 @@ public class ImmediateTaskPerception extends TaskPerception {
     public final Deque<Task> buffer = new ArrayDeque();
 
 
-    public ImmediateTaskPerception(NAR nar, Predicate<Task> filter, Consumer<Task> receiver) {
+    boolean SingleStep = false;
+    NAR nar=null;
+    public ImmediateTaskPerception(boolean singleStep, NAR nar, Predicate<Task> filter, Consumer<Task> receiver) {
         super(nar.memory, filter, receiver);
+        this.SingleStep = singleStep;
+        this.nar=nar;
     }
 
     @Override
@@ -61,29 +67,33 @@ public class ImmediateTaskPerception extends TaskPerception {
     /** sends the next batch of tasks to the receiver */
     @Override
     public void send() {
+        if(!SingleStep) {
+            CurveBag bag = new CurveBag(buffer.size(),nar.memory.random); //new LevelBag(10,buffer.size());//new CurveBag(buffer.size(),nar.memory.random);
+            bag.mergeMax();
+            for (Task t : buffer) {
+                if(t!=null && t.getBudget()!=null && !t.isInput())
+                    bag.put(t);
+            }
+            Task t = (Task) bag.pop();
 
-
-        int s = buffer.size();
-        int n = Math.min(s, inputsPerCycleMax.get()); //counts down successful sends
-        int r = n; //actual cycles counted
-
-        for(Task t: buffer) {
-            receiver.accept(t);
-        }
-
-
-        //n will be equal to or greater than r
-    /*   for (; n > 0 && r > 0; r--) {
-            final Task t = buffer.removeFirst();
-
-            if (t.isDeleted()) {
-                //the task became deleted while this was in the buffer. no need to repeat Memory.removed
-                continue;
+            //todo create a bag of the buffer, sample one element with probability determmined by budget priority, and then clear the buffer
+            if (t!=null && !(t.isJudgment() && t.getTruth().getExpectation() < 0.5)) {
+                receiver.accept(t);
             }
 
-            receiver.accept(t);
-            n--;
+            for(Task tt: buffer) {
+                if(tt.isInput()) {
+                    receiver.accept(tt);
+                }
+            }
+            buffer.clear();
+        } else {
+            for(Task t: buffer) {
+                if (!(t.isJudgment() && t.getTruth().getExpectation() < 0.5)) {
+                    receiver.accept(t);
+                }
+            }
+            buffer.clear();
         }
-*/
     }
 }
