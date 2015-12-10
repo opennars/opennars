@@ -28,7 +28,6 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.UtilityFunctions;
 import nars.process.ConceptProcess;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.truth.Truth;
@@ -456,7 +455,7 @@ public final class BudgetFunctions extends UtilityFunctions {
          */
     }
 
-    @Deprecated static Budget solutionEval(Sentence problem, Sentence solution, Task task, Memory memory) {
+    @Deprecated static Budget solutionEval(Task problem, Task solution, Task task, Memory memory) {
         throw new RuntimeException("Moved to TemporalRules.java");
     }    
 

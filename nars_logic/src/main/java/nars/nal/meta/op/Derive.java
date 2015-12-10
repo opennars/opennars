@@ -10,7 +10,6 @@ import nars.nal.meta.PreCondition;
 import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
 import nars.task.PreTask;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -61,7 +60,7 @@ public final class Derive extends PreCondition {
         if (t==null || Variable.hasPatternVariable(t))
             return false;
 
-        Compound c = Sentence.validTaskTerm(t);
+        Compound c = Task.validTaskTerm(t);
         if (c == null)
             return false;
 

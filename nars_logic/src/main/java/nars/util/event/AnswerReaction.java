@@ -8,7 +8,6 @@ import com.gs.collections.api.tuple.Twin;
 import nars.NAR;
 import nars.Narsese;
 import nars.concept.Concept;
-import nars.task.Sentence;
 import nars.task.Task;
 
 import java.util.function.Consumer;
@@ -91,7 +90,7 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
     public abstract void onSolution(Task belief);
     
     /** called when a subtask of the question has been solved */
-    public void onChildSolution(Task question, Sentence belief) {
+    public void onChildSolution(Task question, Task belief) {
 
     }
     

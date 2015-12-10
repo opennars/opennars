@@ -22,20 +22,25 @@ package nars.task;
 
 import nars.Global;
 import nars.Memory;
+import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.concept.Concept;
+import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
+import nars.term.Statement;
+import nars.term.Term;
+import nars.term.Termed;
 import nars.term.compound.Compound;
-import nars.truth.DefaultTruth;
-import nars.truth.Truth;
-import nars.truth.TruthFunctions;
-import nars.truth.Truthed;
+import nars.truth.*;
+import nars.util.data.id.Named;
 
+import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -50,7 +55,7 @@ import static nars.Global.dereference;
  * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public interface Task extends Sentence, Itemized<Sentence>, Truthed, Comparable {
+public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<Task>,Termed {
 
 
     static void getExplanation(Task task, int indent, StringBuilder sb) {
@@ -98,6 +103,33 @@ public interface Task extends Sentence, Itemized<Sentence>, Truthed, Comparable 
         for (Task t : tasks)
             s.add(t);
         return s;
+    }
+
+    /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content
+     * returns the compound valid for a Task if so,
+     * otherwise returns null
+     * */
+    static Compound validTaskTerm(Term t) {
+        if (invalidTaskTerm(t))
+            return null;
+        return ((Compound)t);
+    }
+
+    /** only need the positive version of it which calls this */
+    @Deprecated static boolean invalidTaskTerm(Term t) {
+        if (t.op().isStatement()) {
+            Compound st = (Compound) t;
+
+            /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
+            if (Statement.subjectOrPredicateIsIndependentVar(st))
+                return true;
+
+            return Statement.invalidStatement(st);
+
+        }
+        else {
+            return (!(t instanceof Compound));//(t instanceof CyclesInterval) || (t instanceof Variable)
+        }
     }
 
     default Task getTask() { return this; }
@@ -165,6 +197,87 @@ public interface Task extends Sentence, Itemized<Sentence>, Truthed, Comparable 
         return tt;
     }
 
+    char getPunctuation();
+
+    @Override
+    long[] getEvidence();
+
+    @Override
+    long getCreationTime();
+
+    @Override
+    Task setCreationTime(long c);
+
+    /**
+     * Recognize a Question
+     *
+     * @return Whether the object is a Question
+     */
+    default boolean isQuestion() {
+        return (getPunctuation() == Symbols.QUESTION);
+    }
+
+    /**
+     * Recognize a Judgment
+     *
+     * @return Whether the object is a Judgment
+     */
+    default boolean isJudgment() {
+        return (getPunctuation() == Symbols.JUDGMENT);
+    }
+
+    default boolean isGoal() {
+        return (getPunctuation() == Symbols.GOAL);
+    }
+
+    default boolean isQuest() {
+        return (getPunctuation() == Symbols.QUEST);
+    }
+
+    default boolean isCommand()  {
+        return (getPunctuation() == Symbols.COMMAND);
+    }
+
+    default boolean hasQueryVar() {
+        return getTerm().hasVarQuery();
+    }
+
+    default boolean isRevisible() {
+        Term t = getTerm();
+        return !(t instanceof Conjunction && t.hasVarDep());
+    }
+
+    default StringBuilder appendTo(StringBuilder sb) {
+        return appendTo(sb, null);
+    }
+
+    @Override
+    default Task name() {
+        return this;
+    }
+
+    default CharSequence toString(NAR nar, boolean showStamp) {
+        return toString(nar.memory, showStamp);
+    }
+
+    default CharSequence toString(Memory memory, boolean showStamp) {
+        return appendTo(new StringBuilder(), memory, showStamp);
+    }
+
+    @Override
+    Compound getTerm();
+
+    @Override
+    Truth getTruth();
+
+    default boolean isQuestOrQuestion() {
+        return isQuestion() || isQuest();
+    }
+
+    default boolean isJudgmentOrGoal() {
+        return isJudgment() || isGoal();
+    }
+
 
     final class Solution extends AtomicReference<Task> {
         Solution(Task referent) {
@@ -188,13 +301,12 @@ public interface Task extends Sentence, Itemized<Sentence>, Truthed, Comparable 
         return appendTo(null, memory);
     }
 
-    @Override
     default StringBuilder appendTo(StringBuilder sb, /**@Nullable*/ Memory memory) {
         if (sb == null) sb = new StringBuilder();
         return appendTo(sb, memory, false);
     }
 
-    @Override @Deprecated
+    @Deprecated
     default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ Memory memory, boolean showStamp) {
         boolean notCommand = getPunctuation()!=Symbols.COMMAND;
         return appendTo(buffer, memory, true, showStamp && notCommand,
@@ -203,7 +315,6 @@ public interface Task extends Sentence, Itemized<Sentence>, Truthed, Comparable 
         );
     }
 
-    @Override
     default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ Memory memory, boolean term, boolean showStamp, boolean showBudget, boolean showLog) {
 
 
@@ -383,7 +494,6 @@ public interface Task extends Sentence, Itemized<Sentence>, Truthed, Comparable 
             throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
     }
 
-    @Override
     default Order getTemporalOrder() {
         return getTerm().getTemporalOrder();
     }
@@ -579,4 +689,17 @@ public interface Task extends Sentence, Itemized<Sentence>, Truthed, Comparable 
         return t.projectionQuality(this, targetTime, currentTime, problemHasQueryVar);
     }
 
+    final class ExpectationComparator implements Comparator<Task>, Serializable {
+        static final Comparator the = new ExpectationComparator();
+        @Override public int compare(Task b, Task a) {
+            return Float.compare(a.getExpectation(), b.getExpectation());
+        }
+    }
+
+    final class ConfidenceComparator implements Comparator<Task>, Serializable {
+        static final Comparator the = new ExpectationComparator();
+        @Override public int compare(Task b, Task a) {
+            return Float.compare(a.getConfidence(), b.getConfidence());
+        }
+    }
 }

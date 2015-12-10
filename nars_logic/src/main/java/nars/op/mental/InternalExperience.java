@@ -8,7 +8,6 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -142,11 +141,11 @@ public class InternalExperience {
         });
     }
 
-    public static Compound toTerm(Sentence s, Premise mem, float conceptCreationExpectation) {
+    public static Compound toTerm(Task s, Premise mem, float conceptCreationExpectation) {
         return toTerm(s, mem, conceptCreationExpectation, enableWantBelieve);
     }
 
-    public static Compound toTerm(Sentence s, Premise nal, float conceptCreationExpectation, boolean enableWantBelieve) {
+    public static Compound toTerm(Task s, Premise nal, float conceptCreationExpectation, boolean enableWantBelieve) {
         Operator opTerm;
         switch (s.getPunctuation()) {
             case Symbols.JUDGMENT:
@@ -295,7 +294,7 @@ public class InternalExperience {
         }
     }
 
-    private void nonInnate(Sentence belief, Task task, Premise nal, Operator op) {
+    private void nonInnate(Task belief, Task task, Premise nal, Operator op) {
         //the operators which dont have a innate belief
         //also get a chance to reveal its effects to the system this way
 
@@ -327,7 +326,7 @@ public class InternalExperience {
 
 
     //TODO
-    public static void experienceFromBelief(Memory memory, Task task, Sentence belief) {
+    public static void experienceFromBelief(Memory memory, Task task, Task belief) {
         //Task T=new Task(belief.clone(),new Budget(task),null);
         ///InternalExperienceFromTask(memory,T,false);
     }
