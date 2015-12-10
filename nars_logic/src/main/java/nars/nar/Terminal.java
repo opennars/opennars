@@ -6,7 +6,7 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.task.Task;
-import nars.task.flow.FIFOTaskPerception;
+import nars.task.flow.ImmediateTaskPerception;
 import nars.term.Term;
 import nars.time.RealtimeMSClock;
 
@@ -61,8 +61,8 @@ public class Terminal extends Default {
 
 
     @Override
-    public FIFOTaskPerception initInput() {
-        FIFOTaskPerception input = new FIFOTaskPerception(this,
+    public ImmediateTaskPerception initInput() {
+        ImmediateTaskPerception input = new ImmediateTaskPerception(this,
                 taskFilter,
                 task -> process(task)
         );

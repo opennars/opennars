@@ -410,14 +410,12 @@ public class Patham9Test extends AbstractNALTester {
 
     @Test
     public void seq_event() throws Narsese.NarseseException {
-        NAR nar = new Default();
+        TestNAR tester = test();
 
-        nar.input("<a --> A>. :|:");
-        nar.frame(10);
+        tester.input("<a --> A>. :|:");
 
-        nar.input( "<b --> B>. :|:");
-        nar.frame(100);
-        //  tester.mustBelieve(cycles, "<(&/,<a --> A>,<b --> B>) =/> <c --> C>>", 1.0f, 0.81f, 0); // :|:
+        tester.inputAt(10, "<b --> B>. :|:");
+        tester.mustBelieve(cycles, "<(&/,<a --> A>,/1) =/> <b --> B>>", 1.0f, 0.81f, 0); // :|:
         //   tester.run2();
     }
 /*
