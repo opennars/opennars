@@ -21,10 +21,6 @@ public interface SetInt  {
         return (Compound)GenericCompound.COMPOUND(Op.SET_INT, t);
     }
 
-    static Compound subtractInt(Compound A, Compound B) {
-        if (A.equals(B)) return null; //empty set
-        return SetInt.make(SetTensional.subtract(A,B));
-    }
 
 
 //    static Compound make(List<Term> t) {

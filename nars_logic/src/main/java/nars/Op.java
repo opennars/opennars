@@ -69,10 +69,8 @@ public enum Op implements Serializable {
 
 
     IMPLICATION("==>", 5, OpType.Relation, Args.Two),
-
-    /* Temporal Relations */
     IMPLICATION_AFTER("=/>", 7, OpType.Relation, Args.Two),
-    IMPLICATION_WHEN("=|>", false, 7, OpType.Relation, Args.Two),
+    IMPLICATION_WHEN("=|>", 7, OpType.Relation, Args.Two),
     IMPLICATION_BEFORE("=\\>", 7, OpType.Relation, Args.Two),
 
     EQUIV("<=>", true, 5, OpType.Relation, Args.Two),
@@ -166,10 +164,10 @@ public enum Op implements Serializable {
     }
 
     Op(String string, int minLevel, OpType type) {
-        this(string, false, minLevel, type, Args.None);
+        this(string, false /* non-commutive */, minLevel, type, Args.None);
     }
     Op(String string, int minLevel, OpType type, IntIntPair size) {
-        this(string, false, minLevel, type, size);
+        this(string, false /* non-commutive */, minLevel, type, size);
     }
 
     Op(String string, boolean commutative, int minLevel, OpType type, IntIntPair size) {

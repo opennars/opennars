@@ -162,15 +162,31 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         if (task.getPunctuation() != getPunctuation())
             return false;
 
-        if (!timeMatches(task))
+        if (!truthMatches(task))
             return false;
 
-
-
+        if (!timeMatches(task))
+            return false;
 
         //require exact term
         return true;
 
+    }
+
+    private boolean truthMatches(Task task) {
+        char punc = getPunctuation();
+        if ((punc == '.') || (punc == '!')) {
+            if (task.getTruth() == null) {
+                return false;
+            }
+            float fr = task.getFrequency();
+            float co = task.getConfidence();
+
+            if ((co > confMax) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean timeMatches(Task t) {
@@ -187,51 +203,17 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         return (t.isEternal());
     }
 
-
-
     @Override
     public boolean test(Task task) {
 
-        if (succeeded) return false;
-
-        /** how many errors accumulated while testing it  */
-        double distance = 0;
-
-        if (!matches(task))
-            distance = 1;
-
-
-        //TODO use range of acceptable occurrenceTime's for non-eternal tests
-
-
-        char punc = getPunctuation();
-        if ((punc == '.') || (punc == '!')) {
-            if(task.getTruth() == null) {
-                return false;
-            }
-            float fr = task.getFrequency();
-            float co = task.getConfidence();
-
-            if ((co > confMax) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
-                distance ++;
-            }
-        }
-
-        boolean match = (distance == 0);
-
-        if (match) {
-            //TODO record a different score for fine-tune optimization?
+        if (matches(task)) {
             valid.add(task);
-            /*if (exact==null || (exact.size() < maxExact)) {
-                ensureExact();
-                exact.add(task);
-                return true;
-            }*/
+            succeeded = true;
+            return true;
         }
-        else {
-            recordSimilar(task);
-        }
-        return match;
+
+        recordSimilar(task);
+        return false;
     }
 
     public void recordSimilar(Task task) {
@@ -263,7 +245,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
             return;
 
         float termDifference =
-                Terms.termDistance(task.getTerm(), getTerm());
+                Terms.termDistance(task.getTerm(), getTerm(), worstDiff);
         difference += 3 * termDifference;
 
         if (difference >= worstDiff)

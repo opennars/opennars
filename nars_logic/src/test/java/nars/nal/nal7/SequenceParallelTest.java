@@ -44,21 +44,21 @@ public class SequenceParallelTest {
         assertEqualTerms("(&|, x, /0)", "x");
     }
     @Test public void testParalllelReduction2() {
-        assertEqualTerms("(&|, x, y, /10)", "(&|, x, y)");
+        assertEqualTerms("(&|, x, y, /10)", "(&|,x,y)");
     }
 
 
     @Test public void testSequenceReductionComplex() {
         assertEqualTerms(
             "<(&/, <$1 --> (/, open, _, door)>) </> <$1 --> (/, enter, _, room)>>",
-            "<<$1 --> (/, open, _, door)> </> <$1 --> (/, enter, _, room)>>");
+            "<<$1-->(/,open,_,door)></><$1-->(/,enter,_,room)>>");
     }
 
     @Test public void testSequenceReductionComplex2() {
         //should not be reduced
         assertEqualTerms(
-                "<(&/, <($1, key) --> hold>, /5) =/> <($1, room) --> enter>>",
-                "<(&/, <($1, key) --> hold>, /5) =/> <($1, room) --> enter>>");
+                "<(&/,<($1,key)-->hold>,/5)=/><($1,room)-->enter>>",
+                "<(&/,<($1,key)-->hold>,/5)=/><($1,room)-->enter>>");
     }
 
 
@@ -68,7 +68,7 @@ public class SequenceParallelTest {
         //than the effective duration of '(&/,x,/1)',
         //anything less than the supplied eventDuration
         //is meaningless
-        assertEqualTerms("(&|, (&/, x, /1), /1)", "(&/, x, /1)");
+        assertEqualTerms("(&|, (&/, x, /1), /1)", "(&/,x,/1)");
     }
 
     @Test public void testSequenceReduction2() {
@@ -84,7 +84,7 @@ public class SequenceParallelTest {
 
     @Test public void testEmbeddedSequenceAndTotalDuration() {
 
-        String es = "(&/, b, /10, c)";
+        String es = "(&/,b,/10,c)";
         Sequence e = t.term(es);
         //System.out.println(es + "\n" + e);
 
@@ -92,7 +92,7 @@ public class SequenceParallelTest {
         assertEquals( esDuration, e.duration() );
         assertEquals( es, e.toString() );
 
-        String ts = "(&/, a, " + es + ", /1, d)";
+        String ts = "(&/,a," + es + ",/1,d)";
         Sequence s = t.term(ts);
 
         assertEquals( ts, s.toString() );
@@ -102,10 +102,10 @@ public class SequenceParallelTest {
 
     @Test public void testEmbeddedParallel() {
 
-        String fs = "(&|, b, c)";
+        String fs = "(&|,b,c)";
         Parallel f = t.term(fs);
 
-        String es = "(&|, c, b)";
+        String es = "(&|,c,b)";
         Parallel e = t.term(es);
 
         assertEquals(e, f); //commutative
@@ -114,7 +114,7 @@ public class SequenceParallelTest {
         assertEquals(DURATION, e.duration());
 
 
-        String ts = "(&|, a, " + fs + ')';
+        String ts = "(&|,a," + fs + ')';
         Parallel s = t.term(ts);
 
         assertEquals(ts, s.toString());
@@ -159,7 +159,7 @@ public class SequenceParallelTest {
     @Test public void testParallelWithoutSlashZero() {
 
         assertEquals(
-                    "$0.50;0.80;0.95$ (&|, <hold --> (/, _, John, key)>, <John --> (/, hold, _, key)>). :0: %1.00;0.90%",
+                    "$.50;.80;.95$ (&|,<hold-->(/,_,John,key)>,<John-->(/,hold,_,key)>). :0: %1.0;.90%",
         t.inputTask("(&|, <John --> (/, hold, _, key)>, <hold --> (/, _, John, key)>, /0).").toString());
     }
 
@@ -182,9 +182,9 @@ public class SequenceParallelTest {
 
 
     @Test public void testSequenceOfCycleIntervals() {
-        assertEqualTerms("(&/, x, /1, /2)", "(&/, x, /3)");
-        assertEqualTerms("(&/, /1, /2, x)", "(&/, /3, x)");
-        assertEqualTerms("(&/, /1, /2, x, /3, /4)", "(&/, /3, x, /7)");
+        assertEqualTerms("(&/, x, /1, /2)", "(&/,x,/3)");
+        assertEqualTerms("(&/, /1, /2, x)", "(&/,/3,x)");
+        assertEqualTerms("(&/, /1, /2, x, /3, /4)", "(&/,/3,x,/7)");
     }
 
     private static void assertEqualTerms(String abnormal, String normalized) {
@@ -229,7 +229,7 @@ public class SequenceParallelTest {
 
     @Test public void testConstruction() {
 
-        String seq = "(&/, /1, a, /2, b)";
+        String seq = "(&/,/1,a,/2,b)";
         Sequence s = t.term(seq);
         assertNotNull(s);
         assertNotNull(s.intervals());
@@ -256,8 +256,8 @@ public class SequenceParallelTest {
     @Test public void testSequenceToString() {
         NAR nar = new Terminal();
 
-        testSeqTermString(nar, "(&/, a, /1, b)");
-        testSeqTermString(nar, "(&/, a, /3, b, /5, c, /10, d)");
+        testSeqTermString(nar, "(&/,a,/1,b)");
+        testSeqTermString(nar, "(&/,a,/3,b,/5,c,/10,d)");
     }
 
     static void testSeqTermString(NAR nar, String s) {
@@ -266,12 +266,12 @@ public class SequenceParallelTest {
 
     @Test public void testTrailingSequenceInterval() {
         //trailing suffix interval not removed ordinarily
-        assertEquals("$0.50;0.80;0.95$ <(&/, x, /1) =/> y>. :0: %1.00;0.90%",
+        assertEquals("$.00;.00;.00$ <(&/,x,/1)=/>y>. :0: %1.0;.90%",
               t.task("<(&/, x, /1) =/> y>.").toString());
     }
     @Test public void testTrailingSequenceIntervalRemovedIfTaskTerm() {
         //trailing suffix removed as the top-level term
-        assertEquals("$0.50;0.80;0.95$ <a --> b>. :0: %1.00;0.90%",
+        assertEquals("$.50;.80;.95$ <a-->b>. :0: %1.0;.90%",
               t.inputTask("(&/, <a --> b>, /1).").toString());
     }
     @Test public void testInvalidSequenceAsTask() {

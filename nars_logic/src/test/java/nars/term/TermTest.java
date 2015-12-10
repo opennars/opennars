@@ -101,7 +101,7 @@ public class TermTest {
         );
 
         //test ordering after derivation
-        assertEquals("<{Tweety}<->{Birdie}>",
+        assertEquals("<{Birdie}<->{Tweety}>",
             (((Compound)$("<{Birdie}<->{Tweety}>")).clone(
                 new Term[] { $("{Tweety}"), $("{Birdie}") }).toString())
         );
@@ -472,9 +472,15 @@ public class TermTest {
 
     @Test
     public void validStatement() {
-        NAR n = new Terminal();
-        Compound t = $.$("<(*,{tom},{vienna}) --> livingIn>");
+        Compound t = $.$("<({tom},{vienna}) --> livingIn>");
         assertFalse(Statement.invalidStatement(t.term(0), t.term(1)));
+
+    }
+
+    @Test public void invalidStatement() {
+        assertNull($("<b-->(&,a,b)>"));
+        assertNull($("<(&,a,b)-->b>"));
+        assertNotNull($("<c-->(&,a,b)>"));
     }
 
     @Test

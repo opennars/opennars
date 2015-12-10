@@ -44,7 +44,7 @@ public class TestNAR  {
     private Exception error;
     private final transient boolean exitOnAllSuccess = true;
     public List<Task> inputs = new ArrayList();
-    private int temporalTolerance = 0;
+    private int temporalTolerance = 500;
     protected static final float truthTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
     private StringWriter trace;
 
@@ -231,9 +231,11 @@ public class TestNAR  {
         cycleEnd += tt;
 
         EternalTaskCondition tc;
-        tc = occTimeAbsolute == Tense.ETERNAL ? new EternalTaskCondition(nar,
+        tc = occTimeAbsolute == Tense.ETERNAL ?
+                new EternalTaskCondition(nar,
                 cycleStart, cycleEnd,
-                sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h) : new TemporalTaskCondition(nar,
+                sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h) :
+                new TemporalTaskCondition(nar,
                 cycleStart, cycleEnd,
                 occTimeAbsolute, occTimeAbsolute,
                 sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);

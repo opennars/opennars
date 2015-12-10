@@ -23,10 +23,6 @@ public interface SetExt {
     }
 
 
-    static Term subtractExt(Compound A, Compound B) {
-        if (A.equals(B)) return null; //empty set
-        return SetExt.make(SetTensional.subtract(A,B));
-    }
 
 
 //    default void appendCloser(Appendable p) throws IOException {

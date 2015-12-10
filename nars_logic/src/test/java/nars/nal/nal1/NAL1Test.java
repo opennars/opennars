@@ -83,7 +83,7 @@ public class NAL1Test extends AbstractNALTester {
     @Test
     public void abduction() throws Narsese.NarseseException {
 
-        int time = 8;
+        int time = 132;
         test().mustBelieve(time, "<sport --> chess>", 1.0f, 0.42f)
               /*  .en("I guess sport is a type of chess.")
                 .en("sport is possibly a type of chess.")
@@ -115,7 +115,7 @@ public class NAL1Test extends AbstractNALTester {
             //.debug()
             .believe("<robin --> bird>")
             .believe("<bird --> animal>")
-            .mustOutput(4, "<animal --> robin>. %1.00;0.4475%");
+            .mustOutput(8, "<animal --> robin>. %1.00;0.4475%");
     }
 
 

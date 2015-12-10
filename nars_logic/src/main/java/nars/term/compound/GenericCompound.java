@@ -3,8 +3,6 @@ package nars.term.compound;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.$;
 import nars.Op;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
 import nars.nal.nal3.SetTensional;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
@@ -102,15 +100,15 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                     t = flatten(t, Order.None);
                     break;
                 case DIFF_EXT:
-                    Term t0 = t[0], t1 = t[1];
-                    if ((t0.op(SET_EXT) && t1.op(SET_EXT) )) {
-                        return SetExt.subtractExt((Compound)t0, (Compound)t1);
+                    Term et0 = t[0], et1 = t[1];
+                    if ((et0.op(SET_EXT) && et1.op(SET_EXT) )) {
+                        return subtractSet(Op.SET_EXT, (Compound)et0, (Compound)et1);
                     }
                     break;
                 case DIFF_INT:
                     Term it0 = t[0], it1 = t[1];
                     if ((it0.op(SET_INT) && it1.op(SET_INT) )) {
-                        return SetInt.subtractInt((Compound)it0, (Compound)it1);
+                        return subtractSet(Op.SET_INT, (Compound)it0, (Compound)it1);
                     }
                     break;
                 case INTERSECT_EXT: return newIntersectEXT(t);
@@ -166,6 +164,8 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                 if (op.isCommutative())
                     t = Terms.toSortedSetArray(t);
 
+                if (t.length == 1) return t[0]; //reduced to one
+
                 if (!Statement.invalidStatement(t[0], t[1]))
                     return newCompound(op, t, -1, false); //already sorted
 
@@ -176,7 +176,14 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return null;
     }
 
-
+    static Term subtractSet(Op setType, Compound A, Compound B) {
+        if (A.equals(B))
+            return null; //empty set
+        Set<Term> x = SetTensional.subtract(A, B);
+        if (x.isEmpty())
+            return null;
+        return newCompound(setType, Terms.toArray(x), -1, false /* already sorted here via the Set */);
+    }
 
     /** implications, equivalences, and interval */
     final static int InvalidEquivalenceTerm =
@@ -414,7 +421,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public Term clone(Term[] replaced) {
-        return new GenericCompound(op(), replaced, relation);
+        return COMPOUND(op(), replaced, relation);
     }
 
     @Override

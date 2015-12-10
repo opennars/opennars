@@ -141,7 +141,7 @@ public interface Term extends Termed, Comparable, Termlike {
         int s = op().bit();
         return (s & structuralVector) == s;
     }
-    /** for multiple Op comparsions, use Op.or */
+    /** for multiple Op comparsions, use Op.or to produce an int and call isAny(int vector) */
     default boolean isAny(Op op) {
         return isAny(op.bit());
     }

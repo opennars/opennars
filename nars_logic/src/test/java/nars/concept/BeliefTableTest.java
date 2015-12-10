@@ -161,7 +161,6 @@ public class BeliefTableTest extends TestCase {
 
         int maxBeliefs = 16;
         NAR n = newNAR(maxBeliefs);
-        n.log();
 
         n.memory.duration.set(1);
 

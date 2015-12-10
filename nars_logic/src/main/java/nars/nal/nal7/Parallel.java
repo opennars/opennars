@@ -120,12 +120,12 @@ public class Parallel extends GenericCompound implements Intermval {
             Term t = term(i);
             if (t instanceof Interval) {
                 totalDuration = Math.max(totalDuration,
-                        ((Interval)t).duration());
+                        ((Interval)t).duration(eventDuration));
             }
         }
 
         if (totalDuration <= 0)
-            throw new RuntimeException("cycles must be > 0");
+            throw new RuntimeException("cycles must be > 0: " + this);
 
         return totalDuration;
     }
