@@ -3,8 +3,10 @@ package nars.time;
 import nars.Memory;
 import nars.util.event.On;
 
+import java.util.function.Consumer;
+
 /** increments time on each frame */
-public class CycleClock implements Clock {
+public class CycleClock implements Clock, Consumer<Memory> {
 
 
     long t;
@@ -24,9 +26,7 @@ public class CycleClock implements Clock {
         this.memory = m;
 
         if (m!=null) {
-            handler = m.eventCycleEnd.on(mm -> {
-                t++;
-            });
+            handler = m.eventCycleEnd.on(this);
         }
     }
 
@@ -52,4 +52,8 @@ public class CycleClock implements Clock {
         return Long.toString(t);
     }
 
+    /** called per-cycle */
+    @Override public void accept(Memory memory) {
+        t++;
+    }
 }
