@@ -2,6 +2,7 @@ package nars.nal.meta.op;
 
 import nars.Global;
 import nars.Premise;
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.RuleMatch;
@@ -90,6 +91,11 @@ public final class MakeTasks extends PreCondition {
 
 
         final char punct = post.punct;
+
+        if(punct == Symbols.JUDGMENT && truth.getExpectation()<0.3) {
+            return false;
+        }
+
         /*if (punct == 0)
             throw new RuntimeException("invalid punctuation");*/
 
@@ -133,7 +139,8 @@ public final class MakeTasks extends PreCondition {
                 receiver.accept(derived);
 
                 if (truth != null && rule.immediate_eternalize && !derived.isEternal()) {
-                    Truth et = TruthFunctions.eternalize(new DefaultTruth(truth.getFrequency(), truth.getConfidence()));
+                    //Truth et = TruthFunctions.eternalize(new DefaultTruth(truth.getFrequency(), truth.getConfidence()));
+                    Truth et = TruthFunctions.eternalize(new DefaultTruth(1.0f, 0.9f));
                     FluentTask deriving2 = premise.newTask((Compound) derivedTerm);
                     Budget budget2 = BudgetFunctions.compoundForward(et, derivedTerm, premise);
 

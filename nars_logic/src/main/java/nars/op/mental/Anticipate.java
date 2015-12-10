@@ -145,7 +145,7 @@ public class Anticipate {
         for(TaskTime tt : anticipations.get(c.getTerm())) {
 
             if(tt.inTime(cOccurr) && !c.equals(tt.task) &&
-                    tt.task.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION) {
+                    c.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION) {
 
                 toRemove.add(tt);
 
