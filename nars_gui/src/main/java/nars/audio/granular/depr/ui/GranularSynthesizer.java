@@ -405,6 +405,7 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    @SuppressWarnings("HardcodedFileSeparator")
     private void openFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileActionPerformed
         fileChooser
                 .setCurrentDirectory(new File(

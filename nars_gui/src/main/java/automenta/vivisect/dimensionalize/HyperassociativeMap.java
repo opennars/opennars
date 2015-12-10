@@ -157,6 +157,7 @@ public abstract class HyperassociativeMap<K,V>  {
 
     protected abstract V[] getVertices();
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public HyperassociativeMap(int dimensions, double equilibriumDistance, DistanceMetric distance) {
         if (dimensions <= 0) {
             throw new IllegalArgumentException("dimensions must be 1 or more");

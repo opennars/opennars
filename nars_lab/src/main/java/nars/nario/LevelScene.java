@@ -54,6 +54,7 @@ public class LevelScene extends Scene implements SpriteContext
         levelType = type;
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public void init()
     {
         try

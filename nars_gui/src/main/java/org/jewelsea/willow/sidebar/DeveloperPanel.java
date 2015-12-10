@@ -33,6 +33,7 @@ import static org.jewelsea.willow.util.ResourceUtil.getString;
  * Sidebar panel for development tools
  */
 public class DeveloperPanel extends TitledPane {
+    @SuppressWarnings("HardcodedFileSeparator")
     public DeveloperPanel(BrowserTab b) {
         // create a firebug button.
         Button firebugButton = new IconButton(

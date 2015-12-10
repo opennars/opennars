@@ -55,6 +55,7 @@ public class DateRenderer extends DefaultCellRenderer {
     if (value == null) {
       setText("");
     } else {
+      //noinspection UseOfObsoleteDateTimeApi
       setText(dateFormat.format((Date)value));
     }
   }

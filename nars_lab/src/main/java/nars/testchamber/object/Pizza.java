@@ -37,7 +37,7 @@ public class Pizza extends LocalGridObject {
         space.ellipse(0, 0, 0.8f, 0.8f);
         
         space.popMatrix();
-        if (!"".equals(doorname)) {
+        if (doorname != null && !doorname.isEmpty()) {
             space.textSize(0.2f);
             space.fill(255, 0, 0);
             space.pushMatrix();

@@ -7,6 +7,7 @@ import java.util.ArrayList;
  * @author Arjen Hoogesteger
  * @version 0.2
  */
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class Player
 {
 	private String name;
@@ -18,6 +19,7 @@ public abstract class Player
 	 * Creates a new Player object.
 	 * @param name the player's name
 	 */
+	@SuppressWarnings("ConstructorNotProtectedInAbstractClass")
 	public Player(String name)
 	{
 		this.name = name;

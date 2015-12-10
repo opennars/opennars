@@ -26,6 +26,7 @@ public class ColorEditor extends AbstractPropertyEditor {
 		private JButton button = null;
 		private JButton cancelButton = null;
 
+		@SuppressWarnings("HardcodedFileSeparator")
 		public ColorEditorComponent() {
 
 			setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -52,6 +53,7 @@ public class ColorEditor extends AbstractPropertyEditor {
 			button.setSize(size);
 			button.setMaximumSize(size);
 			button.setMinimumSize(size);
+			//noinspection CloneableClassWithoutClone
 			button.setAction(new AbstractAction("", new ImageIcon(pencil)) {
 
 				private static final long serialVersionUID = 1L;
@@ -67,6 +69,7 @@ public class ColorEditor extends AbstractPropertyEditor {
 			cancelButton.setSize(size);
 			cancelButton.setMaximumSize(size);
 			cancelButton.setMinimumSize(size);
+			//noinspection CloneableClassWithoutClone
 			cancelButton.setAction(new AbstractAction("", new ImageIcon(reset)) {
 
 				private static final long serialVersionUID = 1L;

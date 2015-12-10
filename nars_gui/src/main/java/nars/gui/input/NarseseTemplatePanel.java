@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 public class NarseseTemplatePanel {
 
     
+    @SuppressWarnings("AbstractClassWithoutAbstractMethods")
     abstract static class TemplateElement {        }
     static class Budget extends TemplateElement {        }
     static class Text extends TemplateElement {

@@ -223,6 +223,7 @@ public class JSurfacePanel extends JPanel {
 		surface = new JSurface();
 		scrollpane = new JGridBagScrollPane();
 		configurationPanel = new VerticalConfigurationPanel();
+		//noinspection CloneableClassWithoutClone
 		configurationToggler = new AbstractAction(){public void actionPerformed(ActionEvent e){toggleConfiguration();}};
 
 		//======== this ========

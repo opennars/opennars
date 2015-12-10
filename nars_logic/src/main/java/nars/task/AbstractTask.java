@@ -29,7 +29,7 @@ import static nars.Global.reference;
  * Default Task implementation
  * TODO move all mutable methods to MutableTask and call this ImmutableTask
  */
-public abstract class AbstractTask extends Item<Sentence>
+public abstract class AbstractTask extends Item<Task>
         implements Task, Temporal {
 
     /** content term of this task */
@@ -168,7 +168,7 @@ public abstract class AbstractTask extends Item<Sentence>
         Term tNorm = t.normalized();
         if (tNorm == null)
             throw new RuntimeException("term not normalized");
-        t = Sentence.validTaskTerm(tNorm);
+        t = Task.validTaskTerm(tNorm);
         if (t == null) {
             throw new RuntimeException("invalid sentence term: " + tNorm);
         }
@@ -197,7 +197,7 @@ public abstract class AbstractTask extends Item<Sentence>
         if (t instanceof Sequence)  {
             long[] offset = new long[1];
             Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
-            if ((st == null) || (Sentence.invalidTaskTerm(st)))
+            if ((st == null) || (Task.invalidTaskTerm(st)))
                 return null; //it reduced to an invalid sentence term so return null
             t = (Compound)st;
             if (!isEternal())
@@ -408,7 +408,7 @@ public abstract class AbstractTask extends Item<Sentence>
     }
 
     @Override
-    public final Sentence setCreationTime(long creationTime) {
+    public final Task setCreationTime(long creationTime) {
         if ((this.creationTime <= Tense.TIMELESS) && (occurrenceTime > Tense.TIMELESS)) {
             //use the occurrence time as the delta, now that this has a "finite" creationTime
             setOccurrenceTime(occurrenceTime + creationTime);
@@ -679,7 +679,7 @@ public abstract class AbstractTask extends Item<Sentence>
 
 
     @Override
-    public final Sentence name() {
+    public final Task name() {
         return this;
     }
 

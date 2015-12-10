@@ -37,6 +37,7 @@ public class MartialArts implements RLEnvironment {
     };
     private PseudoAIState pseudoAIState = PseudoAIState.START;
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public MartialArts() {
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -114,6 +115,7 @@ public class MartialArts implements RLEnvironment {
         }
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     private void loadImages(String prefix, Player player) {
         int i = 0;
 

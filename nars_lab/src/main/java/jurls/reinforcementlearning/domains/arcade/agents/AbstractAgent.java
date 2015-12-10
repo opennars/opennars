@@ -62,9 +62,11 @@ public abstract class AbstractAgent {
      * @param namedPipesBasename If non-null, the base filename for the two FIFO
      *   files used to communicate with ALE.
      */
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public AbstractAgent(boolean useGUI, String namedPipesBasename) {
         init(useGUI, namedPipesBasename);
     }
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public AbstractAgent() {
     }
 

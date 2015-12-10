@@ -12,6 +12,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
+@SuppressWarnings("AbstractClassNeverImplemented")
 public abstract class LinePlotJFX extends Application {
 
 

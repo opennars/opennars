@@ -210,18 +210,18 @@ public class Product extends Operation {
             if (i != 0) {
                 if (lastMinus || parens || lastParens || exprString.charAt(0) == '(' || lastExpr.isNumberPrinted() && (expr instanceof Var || expr instanceof Constant || expr.isFunction() || !(expr.firstAtom() instanceof Num)) && !(expr instanceof Num)) {}
                 else {
-                    string = string.concat("*");
+                    string = string + "*";
                 }
             }
             
             if (i == 0 && expr instanceof Num && ((Num) expr).val() == -1) {
                 nowMinus = true;
-                string = string.concat("-");
+                string = string + "-";
             }
             else {
                 // if (debug) System.err.println("debug: Product.toString(): expr " + expr);
             
-                string = string.concat((parens?"(":"") + exprString + (parens?")":""));
+                string = string + (parens ? "(" : "") + exprString + (parens ? ")" : "");
             }
             
             lastExpr = expr;

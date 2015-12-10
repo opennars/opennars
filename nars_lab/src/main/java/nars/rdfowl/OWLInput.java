@@ -316,6 +316,7 @@ public class OWLInput  {
         }
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public static Term atom(String uri) {
         int lastSlash = uri.lastIndexOf('/');
         if (lastSlash!=-1)

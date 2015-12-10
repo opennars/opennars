@@ -66,7 +66,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         clearCanvas.setBackground(backColor);
         tempContainer.setForeground(Color.WHITE);
         clearCanvas.setForeground(Color.WHITE);
-        
+
         addInput.addActionListener(this);
         
         tempContainer.add(clearCanvas, BorderLayout.EAST);
@@ -132,18 +132,18 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
             return;
         }
         
-        if(e.getSource() == addInput && !"".equals(drawing)) {
+        if(e.getSource() == addInput && drawing != null && !drawing.isEmpty()) {
             nar.input('<' + drawing.replace(" ", "-") + " --> drawn>. :|:");
-            if(lastdrawing!=null && !"".equals(lastdrawing)) {
+            if(lastdrawing!=null && !lastdrawing.isEmpty()) {
                 if(Math.abs(coordx-lastcoordx)>10) {
-                    String direction=coordx-lastcoordx > 0 ? "left" : "right"; 
-                    String opdirection=coordx-lastcoordx > 0 ? "right" : "left"; 
+                    String direction=coordx-lastcoordx > 0 ? "left" : "right";
+                    String opdirection=coordx-lastcoordx > 0 ? "right" : "left";
                     nar.input("<(*," + drawing.replace(" ", "-") + ',' + lastdrawing.replace(" ", "-") + ") --> " + direction + ">. :|:");
                     nar.input("<(*," + lastdrawing.replace(" ", "-") + ',' + drawing.replace(" ", "-") + ") --> " + opdirection + ">. :|:");
                 }
                 if(Math.abs(coordy-lastcoordy)>10) {
-                    String direction=coordy-lastcoordy > 0 ? "up" : "down"; 
-                    String opdirection=coordy-lastcoordy > 0 ? "down" : "up"; 
+                    String direction=coordy-lastcoordy > 0 ? "up" : "down";
+                    String opdirection=coordy-lastcoordy > 0 ? "down" : "up";
                     nar.input("<(*," + drawing.replace(" ", "-") + ',' + lastdrawing.replace(" ", "-") + ") --> " + direction + ">. :|:");
                     nar.input("<(*," + lastdrawing.replace(" ", "-") + ',' + drawing.replace(" ", "-") + ") --> " + opdirection + ">. :|:");
                 }
@@ -250,7 +250,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
                 if (state != STROKE_COMPLETE) {
                     return;
                 }
-                 
+
                 PointCloud c = new PointCloud("input gesture", _currentGesture);
                 ArrayList<PointCloudPoint> pts = c.getPoints();
                 PointCloudMatchResult r = _library.originalRecognize(c);

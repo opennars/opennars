@@ -3,7 +3,6 @@ package nars.util.graph;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import org.jgrapht.DirectedGraph;
@@ -105,7 +104,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
         List<Task> getQuestions();
 
-        List<Sentence> getBeliefs();
+        List<Task> getBeliefs();
 
         List<TermLink> getTermLinks();
 

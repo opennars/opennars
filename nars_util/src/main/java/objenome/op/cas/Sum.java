@@ -77,9 +77,9 @@ public class Sum extends Operation {
             
             String exprString = expr.pretty();
             
-            if (i != 0 && exprString.charAt(0) != '-') { string = string.concat("+"); }
+            if (i != 0 && exprString.charAt(0) != '-') { string = string + "+"; }
             
-            string = string.concat((parens?"(":"") + exprString + (parens?")":""));
+            string = string + (parens ? "(" : "") + exprString + (parens ? ")" : "");
         }
         
         return string;

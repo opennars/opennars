@@ -64,6 +64,7 @@ public class Simulation {
         this(agentClass.newInstance(), world, cycleDelayMS);
     }
     
+    @SuppressWarnings("HardcodedFileSeparator")
     public Simulation(Agent agent, World world, long cycleDelayMS) throws Exception {
         this.agent = agent;
         this.cycleDelayMS = cycleDelayMS;

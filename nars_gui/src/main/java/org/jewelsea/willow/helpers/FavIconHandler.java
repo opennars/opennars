@@ -113,6 +113,7 @@ public class FavIconHandler {
 
         // lazily fetch the real favicon.
         Task<Image> task = new Task<Image>() {
+            @SuppressWarnings("HardcodedFileSeparator")
             @Override
             protected Image call() throws Exception {
                 // fetch the favicon from the server if we can.
@@ -149,6 +150,7 @@ public class FavIconHandler {
      * @param browserLoc the location string of a browser window.
      * @return the computed server root url or null if the browser location does not represent a server.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private String findRootLoc(String browserLoc) {
         int protocolSepLoc = browserLoc.indexOf("://");
         if (protocolSepLoc > 0) {

@@ -10,6 +10,7 @@ import javafx.scene.canvas.Canvas;
 public abstract class SummaryIcon extends Canvas implements ChangeListener<Number> {
 
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public SummaryIcon() {
     }
 

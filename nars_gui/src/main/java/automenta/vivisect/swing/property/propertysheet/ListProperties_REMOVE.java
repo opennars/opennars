@@ -185,10 +185,11 @@ class TableSorter extends TableMap implements TableModelListener {
 				return 1;
 			else
 				return 0;
-		} else if (type == java.util.Date.class) {
-			Date d1 = (Date) data.getValueAt(row1, column);
+		} else //noinspection UseOfObsoleteDateTimeApi
+			if (type == java.util.Date.class) {
+			@SuppressWarnings("UseOfObsoleteDateTimeApi") Date d1 = (Date) data.getValueAt(row1, column);
 			long n1 = d1.getTime();
-			Date d2 = (Date) data.getValueAt(row2, column);
+			@SuppressWarnings("UseOfObsoleteDateTimeApi") Date d2 = (Date) data.getValueAt(row2, column);
 			long n2 = d2.getTime();
 
 			if (n1 < n2)

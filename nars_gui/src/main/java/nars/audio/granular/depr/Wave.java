@@ -14,6 +14,7 @@ import java.util.List;
  *
  * @author David Nadeau
  */
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class Wave {
 
     private int sampleCount,
@@ -24,6 +25,7 @@ public abstract class Wave {
     private List<String> data;
     private final String name;
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public Wave(int sc, int bps, int c, int sr, int f, String n) {
         data = new ArrayList();
         sampleCount = sc;

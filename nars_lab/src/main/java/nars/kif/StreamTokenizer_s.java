@@ -179,6 +179,7 @@ public class StreamTokenizer_s {
     /**
      * Private constructor that initializes everything except the streams.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     private StreamTokenizer_s() {
         wordChars('a', 'z');
         wordChars('A', 'Z');
@@ -511,6 +512,7 @@ public class StreamTokenizer_s {
      * @see java.io.StreamTokenizer_s#sval
      * @see java.io.StreamTokenizer_s#ttype
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public int nextToken() throws IOException {
         while (true) {
             if (pushedBack) {

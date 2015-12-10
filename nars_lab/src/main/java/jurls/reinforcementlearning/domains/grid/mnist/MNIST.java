@@ -67,6 +67,7 @@ public class MNIST {
      * @param args args[0]: label file; args[1]: data file.
      * @throws IOException
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public MNIST(String path, int maxImages, int maxDigit) throws IOException {
         
         images = new ArrayList(maxImages);

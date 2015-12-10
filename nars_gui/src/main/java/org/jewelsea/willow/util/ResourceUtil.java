@@ -65,6 +65,7 @@ public class ResourceUtil {
     /**
      * Get a resource relative to the application class.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     static InputStream getResource(String path) {
         
             //System.out.println( ResourceUtil.class.getResource("../../../../../") );;
@@ -77,6 +78,7 @@ public class ResourceUtil {
     /**
      * Get a image resource in an images/ path relative to the application class.
      */
+    @SuppressWarnings("HardcodedFileSeparator")
     public static Image getImage(String imageFilename) {
         InputStream i = ResourceUtil.getResource("icon/" + imageFilename);
         if (i == null) return new WritableImage(1,1);

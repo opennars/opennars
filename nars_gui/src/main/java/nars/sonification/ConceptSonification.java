@@ -74,6 +74,7 @@ public class ConceptSonification extends FrameReaction {
         updateConceptsPlaying();
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void main(String[] args) throws IOException, LineUnavailableException {
         Default d = new Default();
         Audio a = new Audio(32);
@@ -98,6 +99,7 @@ public class ConceptSonification extends FrameReaction {
 
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     protected void updateSamples() throws IOException {
 
 //        {

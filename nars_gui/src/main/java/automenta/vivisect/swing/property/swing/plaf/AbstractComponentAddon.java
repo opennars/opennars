@@ -34,6 +34,7 @@ import java.util.ResourceBundle;
  * 
  * @author Frederic Lavigne
  */
+@SuppressWarnings({"AbstractClassWithoutAbstractMethods", "AbstractClassNeverImplemented"})
 public abstract class AbstractComponentAddon implements ComponentAddon {
 
   private String name;

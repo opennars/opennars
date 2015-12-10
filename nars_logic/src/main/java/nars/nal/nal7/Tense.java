@@ -6,7 +6,6 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.UtilityFunctions;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.Temporal;
 import nars.term.Termed;
@@ -311,7 +310,7 @@ public enum Tense  {
         return false;
     }
 
-    public static boolean overlapping(Sentence a, Sentence b) {
+    public static boolean overlapping(Task a, Task b) {
 
 
         if (a == b) return true;

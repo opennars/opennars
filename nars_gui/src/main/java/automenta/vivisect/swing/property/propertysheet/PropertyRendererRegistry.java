@@ -258,6 +258,7 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
 		registerRenderer(short.class, intRenderer);
 		registerRenderer(Short.class, intRenderer);
 
+		//noinspection UseOfObsoleteDateTimeApi
 		registerRenderer(Date.class, new DateRenderer());
 
 		// awt classes

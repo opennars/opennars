@@ -15,6 +15,7 @@ public abstract class CogBoxExample extends IOMatrixExample  {
     final CogBox cog;
     double[] output;
     
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public CogBoxExample(CogBox z) {
 
         cog = z;

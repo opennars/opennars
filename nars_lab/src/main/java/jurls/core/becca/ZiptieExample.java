@@ -15,6 +15,7 @@ public abstract class ZiptieExample extends IOMatrixExample  {
     final Ziptie ziptie;
     double[] output;
     
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public ZiptieExample(Ziptie z) {
 
         ziptie = z;

@@ -18,6 +18,7 @@ package com.github.fge.grappa.run.events;
 
 import com.github.fge.grappa.run.context.MatcherContext;
 
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class MatchContextEvent<V>
 {
     protected final MatcherContext<V> context;

@@ -25,6 +25,7 @@ public abstract class ModelBindedBeanProperty<PROP> extends BeanProperty<Abstrac
 	};
 	
 	
+	@SuppressWarnings("ConstructorNotProtectedInAbstractClass")
 	public ModelBindedBeanProperty(String sourcePropertyName) {
 		setSourcePropertyName(sourcePropertyName);
 	}

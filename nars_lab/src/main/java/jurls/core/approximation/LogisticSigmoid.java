@@ -17,6 +17,7 @@ public class LogisticSigmoid implements DiffableFunctionSource {
         this.x = x;
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     @Override
     public String valueToSource(SourceEnvironment se) {
         String xv = x.valueToSource(se);

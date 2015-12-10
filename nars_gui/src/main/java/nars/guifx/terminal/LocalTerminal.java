@@ -23,6 +23,7 @@ public class LocalTerminal extends TerminalPanel {
         }
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public void connect() throws IOException {
 
         if (pty != null && pty.isAlive()) {

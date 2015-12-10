@@ -109,9 +109,9 @@ public class Or extends Operation {
             
             String exprString = expr.pretty();
             
-            if (i != 0) { string = string.concat(" or "); }
+            if (i != 0) { string = string + " or "; }
             
-            string = string.concat((parens?"(":"") + exprString + (parens?")":""));
+            string = string + (parens ? "(" : "") + exprString + (parens ? ")" : "");
         }
         
         return string;

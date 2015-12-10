@@ -254,6 +254,7 @@ public class NARMenu extends HBox {
 
     abstract static class AsyncMenuItem extends MenuItem {
 
+        @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
         public AsyncMenuItem(NAR n, String label) {
             super(label);
             setOnAction((e) -> run(n));

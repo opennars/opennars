@@ -238,6 +238,7 @@ public class PropertyEditorRegistry implements PropertyEditorFactory {
 		registerEditor(Dimension.class, DimensionEditor.class);
 		registerEditor(Insets.class, InsetsPropertyEditor.class);
 		registerEditor(Rectangle.class, RectanglePropertyEditor.class);
+		//noinspection UseOfObsoleteDateTimeApi
 		registerEditor(Date.class, JCalendarDatePropertyEditor.class);
 
 		try {

@@ -7,6 +7,7 @@ import nars.guifx.graph2.NodeVis;
  * If cells have rectangular backgrounds, then this
  * would appear as a sort of Tree Map diagram
  */
+@SuppressWarnings("AbstractClassNeverImplemented")
 public abstract class WordCloud implements IterativeLayout, NodeVis {
 
 //    public WordCloud(NAR nar) {

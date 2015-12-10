@@ -28,7 +28,6 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -71,7 +70,7 @@ public class LocalRules {
      * known to be equal.
      *
      */
-    public static boolean revisible(Sentence newBelief, Sentence oldBelief) {
+    public static boolean revisible(Task newBelief, Task oldBelief) {
 
         //TODO maybe add DEBUG test: newBelief and oldBelief term must be equal
 

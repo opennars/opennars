@@ -20,6 +20,7 @@ public class MNISTWorld extends MNIST implements World {
     int cycle = 0;
     static final int maxDigit = 2;
     
+    @SuppressWarnings("HardcodedFileSeparator")
     public MNISTWorld(String path, int maxImages, int maxDigit) throws IOException {
         super("/home/me/Downloads", maxImages, maxDigit);
     }
@@ -119,6 +120,7 @@ public class MNISTWorld extends MNIST implements World {
     int maxTrainingCyclesPerImage = 256, trainingCyclesPerImage = 1;
     static final double noise = 0.01;
     
+    @SuppressWarnings("HardcodedFileSeparator")
     public static void main(String[] args) throws IOException, Exception {
         
         MNISTWorld m = new MNISTWorld("/home/me/Downloads", 800, maxDigit);

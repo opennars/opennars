@@ -57,7 +57,8 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
             1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f});
     BufferedImageOp op = new ConvolveOp(kernel);
     
-    public BaseClass()   
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
+    public BaseClass()
     {
         db = null;
         buffer = null;   

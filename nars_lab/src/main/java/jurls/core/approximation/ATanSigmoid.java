@@ -17,6 +17,7 @@ public class ATanSigmoid implements DiffableFunctionSource {
         this.x = x;
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     @Override
     public String partialDeriveToSource(SourceEnvironment se) {
         String xv = x.valueToSource(se);

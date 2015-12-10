@@ -11,10 +11,12 @@ import java.awt.event.HierarchyListener;
  */
 public abstract class NPanel extends JPanel implements HierarchyListener {
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public NPanel() {
         initialize();
     }
 
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public NPanel(LayoutManager l) {
         super(l);
         initialize();

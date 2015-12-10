@@ -15,6 +15,7 @@ import java.util.List;
  *
  * @author me
  */
+@SuppressWarnings("AbstractClassNeverImplemented")
 public abstract class BeliefPrediction extends NARReaction {
     public final List<Concept> concepts;
     public final NAR nar;
@@ -25,10 +26,12 @@ public abstract class BeliefPrediction extends NARReaction {
     /** =1: do each cycle */
     int cyclesPerPredict = 1;
     
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public BeliefPrediction(NAR n, Concept... concepts) {
         this(n, Lists.newArrayList(concepts));
     }
     
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public BeliefPrediction(NAR n, List<Concept> concepts) {
         super(n, true/*, Events.CycleEnd.class*/);
 

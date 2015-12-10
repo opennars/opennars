@@ -86,6 +86,7 @@ public class WebBrowser extends BorderPane {
         public final String url;
         public final String name;
 
+        @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
         public Route(String url, String name) {
             this.url = url;
             this.name = name;
@@ -119,6 +120,7 @@ public class WebBrowser extends BorderPane {
     public static final String DEFAULT_HOME_LOCATION =
             "about:";
 
+    @SuppressWarnings("HardcodedFileSeparator")
     public static final String STYLESHEET =
             "/resources/browser.css";
 
@@ -413,7 +415,7 @@ public class WebBrowser extends BorderPane {
             // update the stage title to monitor the page displayed in the selected browser.
             // todo hmm I wonder how the listeners ever get removed...
             newBrowser.getView().getEngine().titleProperty().addListener((observableValue, oldTitle, newTitle) -> {
-                if (newTitle != null && !"".equals(newTitle)) {
+                if (newTitle != null && !newTitle.isEmpty()) {
                     //stage.setTitle(getString("browser.name") + " - " + newTitle);
                 } else {
                     // necessary because when the browser is in the process of loading a new page, the title will be empty.  todo I wonder if the title would be reset correctly if the page has no title.
