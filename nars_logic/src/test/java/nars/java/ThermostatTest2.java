@@ -82,7 +82,7 @@ public class ThermostatTest2 {
 
         Default2 n = new Default2(1024, 2, 2, 3);
         n.memory.duration.set(dur);
-        n.getInput().inputPerCycle.set(2);
+       // n.getInput().inputPerCycle.set(2);
 
 
         //NAR n = new NAR(new Default().setInternalExperience(null));

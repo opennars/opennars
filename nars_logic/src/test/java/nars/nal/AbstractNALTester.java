@@ -89,7 +89,7 @@ abstract public class AbstractNALTester {
                     () -> {
                         Default2 d = new Default2(512, 1, 2, 2);
                         d.nal(finalLevel);
-                        d.getInput().inputPerCycle.set(3);
+                       // d.getInput().inputPerCycle.set(3);
                         return d;
                     }
             ));

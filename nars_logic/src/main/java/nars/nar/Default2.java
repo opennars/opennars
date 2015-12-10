@@ -123,8 +123,8 @@ public class Default2 extends Default {
         return input;
     }
 
-    public SortedTaskPerception getInput() {
-        return (SortedTaskPerception) input;
+    public ImmediateTaskPerception getInput() {
+        return (ImmediateTaskPerception) input;
     }
 
     @Override
