@@ -540,7 +540,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
                 //&&
                 // ?? && ( y.volume() >= volume() )
                 //same size
-                (size()==y.size());
+                (size()==y.size()) && (relation()==y.relation());
     }
 
     default boolean matchCompoundExEllipsis(Compound y, Ellipsis e) {

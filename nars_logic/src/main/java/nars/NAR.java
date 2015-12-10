@@ -30,6 +30,8 @@ import nars.term.variable.Variable;
 import nars.util.data.Util;
 import nars.util.event.*;
 import net.openhft.affinity.AffinityLock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,6 +79,8 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 //    float defaultGoalDurability = Global.DEFAULT_GOAL_DURABILITY;
 //    float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;
 //    float defaultQuestionDurability = Global.DEFAULT_QUESTION_DURABILITY;
+
+    final static Logger logger = LoggerFactory.getLogger(NAR.class);
 
     static final Consumer<Serializable> onError = e -> {
         if (e instanceof Throwable) {
@@ -222,16 +226,22 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
     public final <S extends Term, T extends S> T term(String t) throws Narsese.NarseseException {
         T x = Narsese.the().term(t);
-        if (x == null) return null;
+        if (x == null) {
+            logger.error("Syntax error: '{}'", t);
+            return null;
+        }
 
-        x = (T) memory.index.getTerm(x);
+        T x2 = (T) memory.index.getTerm(x);
+        if (x2 == null) {
+            logger.error("Unindexed: '{}' ", x2);
+        }
 
         //this is applied automatically when a task is entered.
         //it's only necessary here where a term is requested
         //TODO apply this in index on the original copy only
-        x.setDuration(memory.duration());
+        x2.setDuration(memory.duration());
 
-        return x;
+        return x2;
     }
 
     public final Concept concept(Term term) {
@@ -376,7 +386,11 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return input(pri, dur, goal, GOAL, occurrence, freq, conf);
     }
 
-    public final <C extends Compound> Task input(float pri, float dur, C term, char punc, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
+    public final <C extends Compound> Task input(float pri, float dur, C term, char punc, long occurrenceTime, float freq, float conf)  {
+
+        if (term == null) {
+            return null;
+        }
 
         Task t = new MutableTask(term, punc)
             .truth(freq, conf)

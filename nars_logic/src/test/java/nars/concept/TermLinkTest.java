@@ -56,7 +56,7 @@ public class TermLinkTest {
         assertEquals(3, g.vertexSet().size());
         assertEquals(2+1+1, g.edgeSet().size());
         assertEquals(
-                "[[y, <x --> y>, x], [(y,<x-->y>), (x,<x-->y>), (<x-->y>,y), (<x-->y>,x)]]",
+                "[[y, <x-->y>, x], [(y,<x-->y>), (x,<x-->y>), (<x-->y>,y), (<x-->y>,x)]]",
                 g.toString());
     }
 
@@ -199,14 +199,15 @@ public class TermLinkTest {
 //
         Set<String> f = getTermLinks(n.concept("f").getTermLinks());
         assertTrue(f.toString(), f.size() >= 1);
-        assertTrue(f.contains("<f --> <a --> b>>"));
+        String fAB = "<f--><a-->b>>";
+        assertTrue(f.contains(fAB));
 
 
         //this compound involving f has no incoming links, all links are internal
         Set<String> fc = getTermLinks(n.concept("<f --> <a --> b>>").getTermLinks());
         assertEquals(4, fc.size());
         assertTrue(fc.contains("f"));
-        assertTrue(fc.contains("<a --> b>"));
+        assertTrue(fc.contains("<a-->b>"));
         assertTrue(fc.contains("a"));
         assertTrue(fc.contains("b"));
 

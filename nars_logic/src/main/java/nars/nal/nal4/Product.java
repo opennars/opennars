@@ -30,6 +30,7 @@ import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 
+import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -107,16 +108,17 @@ public interface Product {
 //        return term(s - 1);
 //    }
 
-    static String toString(Compound product) {
-        StringBuilder sb = new StringBuilder().append((char)Symbols.COMPOUND_TERM_OPENER);
+    static void append(Compound product, Appendable p, boolean pretty) throws IOException {
+
         int s = product.size();
+        p.append((char)Symbols.COMPOUND_TERM_OPENER);
         for (int i = 0; i < s; i++) {
-            sb.append(product.term(i));
-            if (i < s - 1)
-                sb.append(", ");
+            product.term(i).append(p, pretty);
+            if (i < s - 1) {
+                p.append(pretty ? ", " : ",");
+            }
         }
-        sb.append((char)Symbols.COMPOUND_TERM_CLOSER);
-        return sb.toString();
+        p.append((char)Symbols.COMPOUND_TERM_CLOSER);
     }
 
 

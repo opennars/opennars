@@ -53,12 +53,12 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     //public Tense tense = Tense.Eternal;
 
 
-    public List<Task> valid;
+    public List<Task> valid = Global.newArrayList();
 
 
     transient int maxSimilars = 3;
 
-    protected TreeMap<Float,Task> similar;
+    protected final TreeMap<Float,Task> similar = new TreeMap();
 
     @Override
     public final Truth getTruth() {
@@ -226,7 +226,6 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 
         if (match) {
             //TODO record a different score for fine-tune optimization?
-            ensureExact();
             valid.add(task);
             /*if (exact==null || (exact.size() < maxExact)) {
                 ensureExact();
@@ -276,27 +275,19 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
             return;
 
         {
-            ensureSimilar();
+
 
             //TODO more efficient way than this
 
             this.similar.put(difference, task);
 
 
-//            if (similar.size() > maxSimilars) {
-//                similar.remove(similar.lastEntry().getKey());
-//            }
+            if (similar.size() > maxSimilars) {
+                similar.remove(similar.lastEntry().getKey());
+            }
         }
     }
 
-    private void ensureExact() {
-        if (valid == null) valid = Global.newArrayList(1);
-    }
-    private void ensureSimilar() {
-        if (similar == null) {
-            similar = new TreeMap();
-        }
-    }
 
 
 //    public String getFalseReason() {

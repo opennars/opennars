@@ -791,7 +791,7 @@ public class FindSubst extends Versioning implements Subst {
             }
 
             /** if they are images, they must have same relationIndex */
-            if (X instanceof Image) { //PRECOMPUTABLE
+            if (X.op().isImage()) { //PRECOMPUTABLE
 
                 //if the ellipsis is normal, then interpret the relationIndex as it is
 

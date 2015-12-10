@@ -10,6 +10,7 @@ import com.github.fge.grappa.run.ListeningParseRunner3;
 import com.github.fge.grappa.run.ParseRunner;
 import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
+import com.github.fge.grappa.stack.DefaultValueStack;
 import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
 import nars.nal.PremiseRule;
@@ -33,6 +34,7 @@ import nars.term.variable.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.Texts;
+import nars.util.data.list.FasterList;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -1098,34 +1100,40 @@ public class Narsese extends BaseParser<Object>  {
 
 
     public <T extends Term> T termRaw(String input) throws NarseseException {
-        return termRaw(input, singleTermParser);
-    }
+
+        ParsingResult r = singleTermParser.run(input);
+
+        DefaultValueStack stack = (DefaultValueStack) r.getValueStack();
+        FasterList sstack = stack.stack;
+
+        switch (sstack.size()) {
+            case 1:
 
 
-    /**
-     * parse one term. it is more efficient to use parseTermNormalized if possible
-     */
-    public static <T extends Term> T termRaw(String input, ParseRunner p) throws NarseseException {
+                Object x = sstack.get(0);
 
-        ParsingResult r = p.run(input);
+                if (x instanceof String)
+                    x = $.$((String) x);
 
-        if (!r.getValueStack().isEmpty()) {
+                if (x != null) {
 
-            Object x = r.getValueStack().iterator().next();
-            if (x instanceof String)
-                x = Atom.the((String) x);
-
-            if (x != null) {
-                try {
-                    return (T) x;
-                } catch (ClassCastException cce) {
-                    throw new NarseseException("Term type mismatch: " + x.getClass(), cce);
+                    try {
+                        return (T) x;
+                    } catch (ClassCastException cce) {
+                        throw new NarseseException("Term mismatch: " + x.getClass(), cce);
+                    }
                 }
-            }
+                break;
+            case 0:
+                return null;
+            default:
+                throw new RuntimeException("Invalid parse stack: " + sstack);
         }
 
-        throw newParseException(input, r, null);
+        return null;
     }
+
+
     public <T extends Compound> T compound(String s) throws NarseseException {
         return term(s);
         /*if (t instanceof Compound)

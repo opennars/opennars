@@ -11,12 +11,14 @@ public class Build {
 
         MavenCli cli = new MavenCli();
         System.setProperty("maven.multiModuleProjectDirectory","/home/me/.m2");
+
         int result = cli.doMain(
                 new String[]{
-                    "validate"
+                    "test"
                 },
 
                 "/home/me/opennars",
+                //"/home/me/opennars/nars_logic",
 
                 System.out, System.out
         );

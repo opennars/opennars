@@ -180,7 +180,8 @@ public class Terms {
         switch (arg.length) {
 
             case 0:
-                throw new RuntimeException("empty"); //return EmptyTermArray;
+                throw new RuntimeException("empty"); //catch these conditions as early as possible, so use an exception here to catch
+                //return null;
 
             case 1:
                 return arg; //new Term[] { arg[0] };
@@ -254,11 +255,12 @@ public class Terms {
         return t;
     }
 
-    public static List<Term> toList(Term... t) {
-        return Arrays.asList((Term[]) t);
+    public static List<Term> toList(Term[] t) {
+        return Arrays.asList(t);
     }
 
-    public static Set<Term> toSet(Term... t) {
+    /** makes a set from the array of terms */
+    public static Set<Term> toSet(Term[] t) {
         if (t.length == 1)
             return Collections.singleton(t[0]);
         Set<Term> l = Global.newHashSet(t.length);

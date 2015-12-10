@@ -101,7 +101,7 @@ public class MethodOperator extends TermFunction {
 
 
             Term xv = x[paramOffset];
-            if (xv.op(Op.PRODUCT))
+            if (!xv.op(Op.PRODUCT))
                 throw new RuntimeException("method parameters must be a product but is " + xv);
 
             Compound pxv = (Compound)xv;

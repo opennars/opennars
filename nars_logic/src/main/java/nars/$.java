@@ -241,24 +241,24 @@ public abstract class $  {
         return Implication.implication(condition, consequence, Tense.ORDER_FORWARD);
     }
 
-    public static Compound extset(Collection<Term> t) {
+    public static Compound set(Collection<Term> t) {
         return SetExt.make(t);
     }
 
-    public static Compound intset(Collection<Term> t) {
+    public static Compound setInt(Collection<Term> t) {
         return SetInt.make(t);
     }
 
-    public static Compound extset(Term... t) {
+    public static Compound set(Term... t) {
         return SetExt.make(t);
     }
 
     /** shorthand for extensional set */
     public static Compound s(Term... t) {
-        return extset(t);
+        return set(t);
     }
 
-    public static Compound intset(Term... t) {
+    public static Compound setInt(Term... t) {
         return SetInt.make(t);
     }
 
@@ -271,7 +271,7 @@ public abstract class $  {
      * @return A compound generated or null
      */
     public static Term property(Term subject, Term predicate) {
-        return inh(subject, $.intset(predicate));
+        return inh(subject, $.setInt(predicate));
     }
 
     public static Variable v(char ch, String name) {
@@ -399,6 +399,12 @@ public abstract class $  {
         return COMPOUND(Op.IMAGE_EXT, x);
     }
     public static Term imageInt(Term... x) {
-        return COMPOUND(Op.IMAGE_EXT, x);
+        return COMPOUND(Op.IMAGE_INT, x);
+    }
+    public static Term sect(Term... x) {
+        return COMPOUND(Op.INTERSECT_EXT, x);
+    }
+    public static Term sectInt(Term... x) {
+        return COMPOUND(Op.INTERSECT_INT, x);
     }
 }

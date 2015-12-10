@@ -132,14 +132,14 @@ public final class Solve extends PreCondition {
             Sequence copy = null; //where to copy the interval data from
             if (mode == TermIsSequence && lookat instanceof Sequence) {
                 copy = (Sequence) lookat;
-            } else {
-                if (lookat.op().isStatement()) {
-                    if (mode == TermSubjectIsSequence && subj(lookat) instanceof Sequence) {
-                        copy = (Sequence) subj(lookat);
-                    } else if (mode == TermPredicateIsSequence && pred(lookat) instanceof Sequence) {
-                        copy = (Sequence) pred(lookat);
-                    }
+            } else if (lookat!=null && lookat.op().isStatement()) {
+
+                if (mode == TermSubjectIsSequence && subj(lookat) instanceof Sequence) {
+                    copy = (Sequence) subj(lookat);
+                } else if (mode == TermPredicateIsSequence && pred(lookat) instanceof Sequence) {
+                    copy = (Sequence) pred(lookat);
                 }
+
             }
             //END CODE
 
