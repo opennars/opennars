@@ -67,9 +67,7 @@ public class PatternIndex extends MapIndex {
             if (volCached > y.volume())
                 return false;
 
-            if (relation != y.relation())
-                return false;
-            return true;
+            return relation == y.relation();
         }
 
     }

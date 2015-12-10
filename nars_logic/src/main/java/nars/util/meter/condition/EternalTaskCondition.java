@@ -251,17 +251,14 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         if (difference >= worstDiff)
             return;
 
-        {
+
+        //TODO more efficient way than this
+
+        this.similar.put(difference, task);
 
 
-            //TODO more efficient way than this
-
-            this.similar.put(difference, task);
-
-
-            if (similar.size() > maxSimilars) {
-                similar.remove(similar.lastEntry().getKey());
-            }
+        if (similar.size() > maxSimilars) {
+            similar.remove(similar.lastEntry().getKey());
         }
     }
 

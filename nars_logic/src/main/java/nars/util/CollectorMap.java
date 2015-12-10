@@ -64,29 +64,27 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
         V removed;
 
         /*synchronized (nameTable)*/
-        {
 
-            K key = value.name();
-            removed = putKey(key, value);
-            if (removed != null) {
+        K key = value.name();
+        removed = putKey(key, value);
+        if (removed != null) {
 
-                V remd = removeItem(removed);
+            V remd = removeItem(removed);
 
-                if (remd == null) {
-                    throw new RuntimeException("unable to remove item corresponding to key " + key);
-                }
+            if (remd == null) {
+                throw new RuntimeException("unable to remove item corresponding to key " + key);
             }
+        }
 
 
-            V removed2 = addItem(value);
+        V removed2 = addItem(value);
 
-            if (removed != null && removed2 != null) {
-                throw new RuntimeException("Only one item should have been removed on this insert; both removed: " + removed + ", " + removed2);
-            }
-            if ((removed2 != null) && (!removed2.name().equals(key))) {
-                removeKey(removed2.name());
-                removed = removed2;
-            }
+        if (removed != null && removed2 != null) {
+            throw new RuntimeException("Only one item should have been removed on this insert; both removed: " + removed + ", " + removed2);
+        }
+        if ((removed2 != null) && (!removed2.name().equals(key))) {
+            removeKey(removed2.name());
+            removed = removed2;
         }
 
         return removed;

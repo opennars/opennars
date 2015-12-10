@@ -452,15 +452,13 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         E selected;
 
         /*synchronized (nameTable)*/
-        {
 
-            selected = items.remove(index);
-            if (selected == null)
-                throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
+        selected = items.remove(index);
+        if (selected == null)
+            throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
 
-            //should be the same object instance
-            this.index.removeKey(selected.name());
-        }
+        //should be the same object instance
+        this.index.removeKey(selected.name());
 
         return selected;
     }

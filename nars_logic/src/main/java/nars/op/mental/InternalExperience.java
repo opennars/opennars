@@ -209,16 +209,14 @@ public class InternalExperience {
 
         // if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
         //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST))) {
-        {
-            //char punc = task.getPunctuation();
-            Budget b = task.getBudget();
-            if (task.isQuestOrQuestion()) {
-                if (b.summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE)) {
-                    return null;
-                }
-            } else if (b.summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE)) {
+        //char punc = task.getPunctuation();
+        Budget b = task.getBudget();
+        if (task.isQuestOrQuestion()) {
+            if (b.summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE)) {
                 return null;
             }
+        } else if (b.summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE)) {
+            return null;
         }
 
         Term content = task.getTerm();

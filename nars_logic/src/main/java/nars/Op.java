@@ -259,8 +259,7 @@ public enum Op implements Serializable {
 
     public boolean validSize(int length) {
         if (minSize!=-1 && length < minSize) return false;
-        if (maxSize!=-1 && length > maxSize) return false;
-        return true;
+        return !(maxSize != -1 && length > maxSize);
     }
 
     public boolean isImage() {

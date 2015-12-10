@@ -117,6 +117,7 @@ public abstract class Atomic implements Term, Byted {
         return this;
     }
 
+    @Override
     public Term apply(Subst f, boolean fullMatch) {
         return this;
     }

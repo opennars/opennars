@@ -84,14 +84,13 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
                 }
             }
 
-            /*if (includeConceptQuestoins)*/ {
-                for (Task t : c.getQuestions()) {
-                    Term target = t.getTerm();
-                    if (!containsVertex(target)) {
-                        addVertex(target);
-                    }
-                    addEdge(source, target, t);
+            /*if (includeConceptQuestoins)*/
+            for (Task t : c.getQuestions()) {
+                Term target = t.getTerm();
+                if (!containsVertex(target)) {
+                    addVertex(target);
                 }
+                addEdge(source, target, t);
             }
 
         }
@@ -137,7 +136,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
     @Override
     public Set<Object> getAllEdges(Object source, Object target) {
-        Set<Object> edges = in.entrySet().stream().filter(e -> e.getValue().equals(source)).filter(e -> out.get(e.getKey()).equals(target)).map(Map.Entry<Object, Object>::getKey).collect(Collectors.toSet());
+        Set<Object> edges = in.entrySet().stream().filter(e -> e.getValue().equals(source)).filter(e -> out.get(e.getKey()).equals(target)).map(Map.Entry::getKey).collect(Collectors.toSet());
         return edges;
     }
 
@@ -196,7 +195,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
     @Override
     public Set<Object> incomingEdgesOf(Object v) {
-        Set<Object> s = in.entrySet().stream().filter(e -> e.getValue().equals(v)).map(Map.Entry<Object, Object>::getKey).collect(Collectors.toSet());
+        Set<Object> s = in.entrySet().stream().filter(e -> e.getValue().equals(v)).map(Map.Entry::getKey).collect(Collectors.toSet());
         return s;
     }
 
@@ -207,7 +206,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
     @Override
     public Set<Object> outgoingEdgesOf(Object v) {
-        Set<Object> s = out.entrySet().stream().filter(e -> e.getValue().equals(v)).map(Map.Entry<Object, Object>::getKey).collect(Collectors.toSet());
+        Set<Object> s = out.entrySet().stream().filter(e -> e.getValue().equals(v)).map(Map.Entry::getKey).collect(Collectors.toSet());
         return s;
     }
 

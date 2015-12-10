@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +28,7 @@ public class FileInput extends TextInput {
         return Files.toString(file, Charset.defaultCharset());
     }
 
-    public static String load(File file, java.util.function.Function<? super String, CharSequence> lineTransform) throws IOException {
+    public static String load(File file, Function<? super String, CharSequence> lineTransform) throws IOException {
         List<String> lines = Files.readLines(file, Charset.defaultCharset());
         return lines.stream().map(lineTransform).collect(Collectors.joining("\n"));
     }

@@ -2,9 +2,6 @@ package nars.term;
 
 import nars.$;
 import nars.Op;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
-import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import org.junit.Test;
 
@@ -36,9 +33,9 @@ public class TermReductionsTest {
     }
     @Test public void testIntersectExtReduction4() {
         //UNION if (term1.op(Op.SET_INT) && term2.op(Op.SET_INT)) {
-        assertEquals("{P,Q,R,S}", sect($.sete(p, q), $.sete(r, s)).toString());
+        assertEquals("{P,Q,R,S}", sect(sete(p, q), sete(r, s)).toString());
         assertEquals("{P,Q,R,S}", $("(&,{P,Q},{R,S})").toString());
-        assertEquals(null, sect($.seti(p, q), $.seti(r, s)));
+        assertEquals(null, sect(seti(p, q), seti(r, s)));
 
     }
 
@@ -58,7 +55,7 @@ public class TermReductionsTest {
     }
     @Test public void testIntersectIntReduction4() {
         //UNION if (term1.op(Op.SET_INT) || term2.op(Op.SET_INT)) {
-        assertEquals("[P,Q,R,S]", sectInt($.seti(p, q), $.seti(r, s)).toString());
+        assertEquals("[P,Q,R,S]", sectInt(seti(p, q), seti(r, s)).toString());
         assertEquals("[P,Q,R,S]", $("(|,[P,Q],[R,S])").toString());
         assertEquals(null, $("(|,{P,Q},{R,S})"));
     }
@@ -69,11 +66,11 @@ public class TermReductionsTest {
 
 
     @Test public void testInvalidEquivalences() {
-        assertEquals("<P<=>Q>", $.equiv(p, q).toString() );
+        assertEquals("<P<=>Q>", equiv(p, q).toString() );
 
-        assertNull($.equiv( $.impl(p, q), r) );
-        assertNull($.equiv( $.equiv(p, q), r) );
-        assertNull($.equiv( $.equivAfter(p, q), r) );
+        assertNull(equiv( impl(p, q), r) );
+        assertNull(equiv( equiv(p, q), r) );
+        assertNull(equiv( equivAfter(p, q), r) );
         assertNull($("<<a <=> b> <=> c>"));
     }
 
@@ -119,9 +116,9 @@ public class TermReductionsTest {
     @Test
     public void testDifferenceImmediate() {
 
-        Compound a = SetInt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
-        Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
-        Term d = diffInt(a, b);
+        Term d = diffInt(
+                seti($("a"), $("b"), $("c")),
+                seti($("d"), $("b")));
         assertEquals(Op.SET_INT, d.op());
         assertEquals(d.toString(), 2, d.size());
         assertEquals("[c,a]", d.toString());
@@ -131,8 +128,8 @@ public class TermReductionsTest {
     public void testDifferenceImmediate2() {
 
 
-        Compound a = SetExt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
-        Compound b = SetExt.make(Atom.the("d"), Atom.the("b"));
+        Compound a = $.sete($("a"), $("b"), $("c"));
+        Compound b = $.sete($("d"), $("b"));
         Term d = diffExt(a, b);
         assertEquals(Op.SET_EXT, d.op());
         assertEquals(d.toString(), 2, d.size());

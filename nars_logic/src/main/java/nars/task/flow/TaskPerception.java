@@ -56,6 +56,7 @@ public abstract class TaskPerception implements Consumer<Task> {
             time = m.time();
         }
 
+        @Override
         public void accept(Task t) {
             long c = t.getCreationTime();
             if (c < minCreationTime) minCreationTime = c;
