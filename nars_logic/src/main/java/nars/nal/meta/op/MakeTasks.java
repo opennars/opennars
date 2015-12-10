@@ -139,8 +139,7 @@ public final class MakeTasks extends PreCondition {
                 receiver.accept(derived);
 
                 if (truth != null && rule.immediate_eternalize && !derived.isEternal()) {
-                    //Truth et = TruthFunctions.eternalize(new DefaultTruth(truth.getFrequency(), truth.getConfidence()));
-                    Truth et = TruthFunctions.eternalize(new DefaultTruth(1.0f, 0.9f));
+                    Truth et = TruthFunctions.eternalize(new DefaultTruth(truth.getFrequency(), truth.getConfidence()));
                     FluentTask deriving2 = premise.newTask((Compound) derivedTerm);
                     Budget budget2 = BudgetFunctions.compoundForward(et, derivedTerm, premise);
 
