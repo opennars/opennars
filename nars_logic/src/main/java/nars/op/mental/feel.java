@@ -16,16 +16,15 @@
  */
 package nars.op.mental;
 
-import nars.$;
 import nars.Memory;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 
 import java.util.ArrayList;
+
+import static nars.$.*;
 
 /**
  * Feeling common operations
@@ -44,11 +43,8 @@ public abstract class feel extends SyncOperator implements Mental {
      */
     protected ArrayList<Task> feeling(float value, Memory memory) {
 
-        Term predicate = SetInt.make(feelingTerm);
 
-        Term self = memory.self();
-        Term selfSubject = SetExt.make(self);
-        Term content = $.inh(selfSubject, predicate);
+        Term content = inh( sete(memory.self()), seti(feelingTerm) );
 
         throw new RuntimeException("unimpl TODO");
 //        return Lists.newArrayList(MutableTask.make(content)

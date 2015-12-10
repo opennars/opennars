@@ -23,9 +23,6 @@ package nars.term.compound;
 import nars.Global;
 import nars.Op;
 import nars.nal.meta.match.Ellipsis;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
-import nars.nal.nal4.Product;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.TermVector;
@@ -165,21 +162,21 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 //        }
 //    }
 
-    static Term unwrap(Term x, boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
-        if (x instanceof Compound) {
-            Compound c = (Compound) x;
-            if (c.size() == 1) {
-                if ((unwrapLen1SetInt && (c instanceof SetInt)) ||
-                        (unwrapLen1SetExt && (c instanceof SetExt)) ||
-                        (unwrapLen1Product && (c instanceof Product))
-                        ) {
-                    return c.term(0);
-                }
-            }
-        }
-
-        return x;
-    }
+//    static Term unwrap(Term x, boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
+//        if (x instanceof Compound) {
+//            Compound c = (Compound) x;
+//            if (c.size() == 1) {
+//                if ((unwrapLen1SetInt && (c instanceof SetInt)) ||
+//                        (unwrapLen1SetExt && (c instanceof SetExt)) ||
+//                        (unwrapLen1Product && (c instanceof Product))
+//                        ) {
+//                    return c.term(0);
+//                }
+//            }
+//        }
+//
+//        return x;
+//    }
 
 
     @Override
@@ -232,10 +229,10 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return true;
     }
 
-    default Term term(int i, boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
-        Term x = term(i);
-        return Compound.unwrap(x, unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);
-    }
+//    default Term term(int i, boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
+//        Term x = term(i);
+//        return Compound.unwrap(x, unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);
+//    }
 
 
     default String toString(BiConsumer<Compound, Appendable> a) {

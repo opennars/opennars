@@ -8,9 +8,10 @@ import nars.nal.meta.pre.PreCondition1;
 import nars.nal.nal7.Sequence;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.term.compound.Compound;
 
 import static nars.Op.IMPLICATION;
+import static nars.Op.SEQUENCE;
+import static nars.term.Statement.subj;
 
 /**
  * Created by me on 8/15/15.
@@ -72,9 +73,9 @@ public class ShiftOccurrence extends PreCondition1 {
 
         if (positive) {
             Term ret = p.getTermLink().getTerm();
-            if (ret.op() == IMPLICATION) {
-                Term impSubj = ((Compound) ret).term(0);
-                if (impSubj instanceof Sequence) {
+            if (ret.op(IMPLICATION)) {
+                Term impSubj = subj(ret);
+                if (impSubj.op(SEQUENCE)) {
                     Sequence seq = (Sequence)impSubj;
 
                     int[] ii = seq.intervals();

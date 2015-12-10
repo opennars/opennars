@@ -13,7 +13,6 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.MethodGen;
-import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.DirectedMultigraph;
 
 import java.util.ArrayList;

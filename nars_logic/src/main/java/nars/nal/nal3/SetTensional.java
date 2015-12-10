@@ -13,7 +13,6 @@ import java.util.Set;
 
 public interface SetTensional {
 
-
     Logger logger = LoggerFactory.getLogger(SetTensional.class);
 
     static void append(Compound set, Appendable p, boolean pretty) {
@@ -49,61 +48,5 @@ public interface SetTensional {
         b.forEach(set::remove);
         return set;
     }
-
-
-//    default boolean showsTermOpenerAndCloser() {
-//        return false;
-//    }
-
-    /**
-     * Check if the compound is communitative.
-     *
-     * @return true for communitative
-     */
-
-//    default boolean isCommutative() {
-//        return true;
-//    }
-
-
-
-//    default byte[] init() {
-//
-//        //TODO calculate length exactly
-//
-//
-//        final int len = size();
-//
-//        final char opener, closer;
-//        if (this instanceof SetExt) {
-//            opener = Op.SET_EXT_OPENER.ch;
-//            closer = Symbols.SET_EXT_CLOSER;
-//        } else {
-//            opener = Op.SET_INT_OPENER.ch;
-//            closer = Symbols.SET_INT_CLOSER;
-//        }
-//
-//        //calculate total size
-//        int bytes = 2;
-//        for (int i = 0; i < len; i++) {
-//            T tt = term(i);
-//            bytes += tt.bytes().length;
-//            if (i != 0) bytes++; //comma
-//        }
-//
-//        ByteBuf b = ByteBuf.create(bytes);
-//
-//        b.add((byte) opener);
-//        for (int i = 0; i < len; i++) {
-//            Term tt = term(i);
-//            if (i != 0) b.add((byte) Symbols.ARGUMENT_SEPARATOR);
-//            b.add(tt.bytes());
-//        }
-//        b.add((byte) closer);
-//
-//        return b.toBytes();
-//
-//    }
-
 
 }

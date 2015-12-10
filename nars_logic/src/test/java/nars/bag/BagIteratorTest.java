@@ -6,7 +6,6 @@ import nars.util.data.random.XORShiftRandom;
 import nars.util.meter.bag.NullItem;
 import org.junit.Test;
 
-import java.util.Iterator;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;

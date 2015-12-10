@@ -3,7 +3,6 @@ package nars.java;
 import com.gs.collections.impl.bimap.mutable.HashBiMap;
 import nars.$;
 import nars.Global;
-import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -155,7 +154,7 @@ public class DefaultTermizer implements Termizer {
         if (o instanceof Set) {
             Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(this::term).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
-            return SetExt.make(arg);
+            return $.sete(arg);
         } else if (o instanceof Map) {
 
             Map mapo = (Map) o;
@@ -172,7 +171,7 @@ public class DefaultTermizer implements Termizer {
                 }
             });
             if (components.isEmpty()) return EMPTY;
-            return SetExt.make(components);
+            return $.sete(components);
         }
         else if (o instanceof Method) {
             //translate the method to an operation term

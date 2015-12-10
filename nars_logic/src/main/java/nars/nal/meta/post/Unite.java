@@ -2,15 +2,14 @@ package nars.nal.meta.post;
 
 import nars.nal.RuleMatch;
 import nars.nal.meta.pre.PreCondition3Output;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
-import nars.nal.nal3.SetTensional;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
 import java.util.Set;
+
+import static nars.term.compound.GenericCompound.COMPOUND;
 
 /**
  * Created by me on 8/15/15.
@@ -27,8 +26,8 @@ public class Unite extends PreCondition3Output {
         if (Unite.invalid(a,b,c)) return false;
 
         //ok both are extensional sets or intensional sets, build difference
-        SetTensional A = (SetTensional) a;
-        SetTensional B = (SetTensional) b;
+        Compound A = (Compound) a;
+        Compound B = (Compound) b;
 
         return createSetAndAddToSubstitutes(m, a, c,
                     Terms.concat(
@@ -45,26 +44,16 @@ public class Unite extends PreCondition3Output {
     }
 
     public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Term[] termsArray) {
-        Compound res;
 
-        res = a instanceof SetExt ? SetExt.make(termsArray) : SetInt.make(termsArray);
-        /*else {
-            throw new RuntimeException("not a set");
-        }*/
-
-        if(res==null)
-            throw new RuntimeException("this condition should have been trapped earlier");
-            //return false;
-
-        m.secondary.put((Variable)c, res);
+        m.secondary.put(
+            (Variable)c, COMPOUND(a.op(), termsArray)
+        );
 
         return true;
     }
 
     public static boolean invalid(Term a, Term b, Term c) {
-        return  c==null ||
-                !((a instanceof SetTensional) &&
-                (a.op()==b.op()));
+        return  c==null || !((a.op().isSet() && a.op()==b.op()));
     }
 
 

@@ -8,8 +8,6 @@ import ch.qos.logback.core.ConsoleAppender;
 import nars.java.AtomObject;
 import nars.nal.meta.match.VarPattern;
 import nars.nal.nal1.Negation;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.CyclesInterval;
@@ -18,8 +16,10 @@ import nars.task.MutableTask;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
@@ -203,7 +203,7 @@ public abstract class $  {
      * @return A compound generated or null
      */
     public static Compound instance(Term subj, Term pred) {
-        return (Compound) $.inh(SetExt.make(subj), pred);
+        return (Compound) $.inh($.sete(subj), pred);
     }
 
 
@@ -216,7 +216,7 @@ public abstract class $  {
      * @return A compound generated or null
      */
     public static final Compound instprop(Term subject, Term predicate) {
-        return (Compound) $.inh(SetExt.make(subject), SetInt.make(predicate));
+        return (Compound) $.inh( $.sete(subject), $.seti(predicate));
     }
 
 //    public static Term term(final Op op, final Term... args) {
@@ -235,29 +235,33 @@ public abstract class $  {
         return new MutableTask(term).goal().truth(freq, conf);
     }
 
-    public static Term implForward(Term condition, Term consequence) {
+    public static Term implafter(Term condition, Term consequence) {
         return COMPOUND(Op.IMPLICATION_AFTER, condition, consequence);
     }
 
-    public static Compound set(Collection<Term> t) {
-        return SetExt.make(t);
+    public static Compound sete(Collection<Term> t) {
+        return $.sete(array(t));
     }
 
-    public static Compound setInt(Collection<Term> t) {
-        return SetInt.make(t);
+    @NotNull private static Term[] array(Collection<Term> t) {
+        return t.toArray(new Term[t.size()]);
     }
 
-    public static Compound set(Term... t) {
-        return SetExt.make(t);
+    public static Compound seti(Collection<Term> t) {
+        return $.seti(array(t));
+    }
+
+    public static Compound sete(Term... t) {
+        return (Compound) GenericCompound.COMPOUND(Op.SET_EXT, t);
     }
 
     /** shorthand for extensional set */
     public static Compound s(Term... t) {
-        return set(t);
+        return sete(t);
     }
 
-    public static Compound setInt(Term... t) {
-        return SetInt.make(t);
+    public static Compound seti(Term... t) {
+        return (Compound) GenericCompound.COMPOUND(Op.SET_INT, t);
     }
 
     /**
@@ -269,7 +273,7 @@ public abstract class $  {
      * @return A compound generated or null
      */
     public static Term property(Term subject, Term predicate) {
-        return inh(subject, $.setInt(predicate));
+        return inh(subject, $.seti(predicate));
     }
 
     public static Variable v(char ch, String name) {

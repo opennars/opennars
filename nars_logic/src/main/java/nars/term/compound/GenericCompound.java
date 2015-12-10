@@ -279,7 +279,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                             ((Compound) term1).terms(),
                             ((Compound) term2).terms(), Term.class);
 
-                    return setUnion == SET_EXT ? $.set(ss) : $.setInt(ss);
+                    return setUnion == SET_EXT ? $.sete(ss) : $.seti(ss);
                 }
 
             } else {
@@ -289,7 +289,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                         Set<Term> ss = ((Compound) term1).toSet();
                         ss.retainAll(((Compound) term2).toSet());
                         if (ss.isEmpty()) return null;
-                        return setIntersection == SET_EXT ? $.set(ss) : $.setInt(ss);
+                        return setIntersection == SET_EXT ? $.sete(ss) : $.seti(ss);
                     }
 
 
