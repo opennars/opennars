@@ -47,7 +47,7 @@ import java.util.Map;
 public class Anticipate {
 
     public float DEFAULT_CONFIRMATION_EXPECTATION = 0.51f;
-    public static float TOLERANCE_DIV=2.0f;
+    public static float TOLERANCE_DIV=0.2f; //can even take up to 5 times as long its fine ^^
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
