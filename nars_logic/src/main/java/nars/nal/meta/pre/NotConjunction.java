@@ -23,7 +23,7 @@ public final class NotConjunction extends PreCondition1 {
 
         Op o = arg1.op();
         switch (o) {
-            case CONJUNCT:
+            case CONJUNCTION:
             case SEQUENCE:
             case PARALLEL:
                 return false;

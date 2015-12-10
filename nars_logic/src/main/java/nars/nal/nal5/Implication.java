@@ -21,14 +21,7 @@
 package nars.nal.nal5;
 
 import nars.Op;
-import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Order;
-import nars.nal.nal7.Tense;
-import nars.term.Term;
-import nars.term.compound.Compound;
-import nars.term.compound.GenericCompound;
-
-import static nars.term.Statement.*;
 
 /**
  * A Statement about an Inheritance copula.
@@ -49,12 +42,6 @@ public interface Implication {
 
 
 
-    static Term implication(Term subject, Term predicate) {
-        if (subject.equals(predicate))
-            return subject;
-        return implication(subject, predicate, Tense.ORDER_NONE);
-    }
-
 //    /**
 //     * Try to make a new compound from two term. Called by the logic rules.
 //     * @param subject The first component
@@ -65,27 +52,6 @@ public interface Implication {
 //        return implication(subject, predicate, Tense.ORDER_NONE);
 //    }
 
-    static Compound implication(Term subject, Term predicate, Order temporalOrder) {
-        if (invalidStatement(subject, predicate)) {
-            return null;
-        }
-        
-        if ((subject instanceof Implication) || (subject instanceof Equivalence) || (predicate instanceof Equivalence) ||
-                (subject instanceof CyclesInterval) || (predicate instanceof CyclesInterval)) {
-            return null;
-        }
-        
-        if (predicate instanceof Implication) {
-            Term oldCondition = subj(predicate);
-            if ((oldCondition instanceof Conjunction) && oldCondition.containsTerm(subject)) {
-                return null;
-            }
-            Term newCondition = Conjunctive.make(subject, oldCondition, temporalOrder);
-            return implication(newCondition, pred(predicate), temporalOrder);
-        } else {
-            return (Compound) GenericCompound.COMPOUND(op(temporalOrder), subject, predicate);
-        }
-    }
 
 
 }

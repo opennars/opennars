@@ -1,11 +1,11 @@
 package nars.link;
 
+import com.google.common.base.Equivalence;
 import nars.Global;
 import nars.Memory;
 import nars.bag.tx.BagActivator;
 import nars.nal.nal1.Negation;
 import nars.nal.nal5.Conjunction;
-import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.CyclesInterval;
 import nars.term.Term;

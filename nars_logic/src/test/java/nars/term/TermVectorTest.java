@@ -1,7 +1,6 @@
 package nars.term;
 
 import nars.$;
-import nars.nal.nal5.Implication;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import org.junit.Test;
@@ -18,7 +17,7 @@ public class TermVectorTest {
     public void testSubtermsEquality() {
 
         Compound a = $.inh("a", "b");
-        Compound b = (Compound) Implication.implication(Atom.the("a"), Atom.the("b"));
+        Compound b = (Compound) $.impl(Atom.the("a"), Atom.the("b"));
 
         assertEquals(a.subterms(), b.subterms());
         assertEquals(a.subterms().hashCode(), b.subterms().hashCode());

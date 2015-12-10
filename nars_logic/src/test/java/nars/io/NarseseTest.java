@@ -191,7 +191,7 @@ public class NarseseTest {
         assertEquals(2, b.size());
 
         Compound c = term("(<a -->b> && y)");
-        assertEquals(Op.CONJUNCT, c.op());
+        assertEquals(Op.CONJUNCTION, c.op());
         assertEquals(2, c.size());
         assertEquals(5, c.complexity());
         assertEquals(Op.INHERIT, c.term(1).op());

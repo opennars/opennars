@@ -124,7 +124,12 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
             if (Statement.subjectOrPredicateIsIndependentVar(st))
                 return true;
 
-            return Statement.invalidStatement(st);
+            if (Global.DEBUG) {
+                if (Statement.invalidStatement(st.term(0), st.term(1)))
+                    throw new RuntimeException("statement invalidity should be tested before created");
+            }
+            //return Statement.invalidStatement(st); //should be checked on Statement construction
+            return false;
 
         }
         else {

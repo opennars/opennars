@@ -473,8 +473,8 @@ public class TermTest {
     @Test
     public void validStatement() {
         NAR n = new Terminal();
-        Term t = n.term("<(*,{tom},{vienna}) --> livingIn>");
-        assertFalse(Statement.invalidStatement((Compound) t));
+        Compound t = $.$("<(*,{tom},{vienna}) --> livingIn>");
+        assertFalse(Statement.invalidStatement(t.term(0), t.term(1)));
     }
 
     @Test
@@ -631,70 +631,6 @@ public class TermTest {
 
     }
 
-    final Term p = $("P"), q = $("Q"), r = $("R"), s = $("S");
-
-    @Test public void testIntersectExtReduction1() {
-        // (&,R,(&,P,Q)) = (&,P,Q,R)
-        assertEquals("(&,P,Q,R)", sect(r, sect(p, q)).toString());
-        assertEquals("(&,P,Q,R)", $("(&,R,(&,P,Q))").toString());
-    }
-    @Test public void testIntersectExtReduction2() {
-        // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-        assertEquals("(&,P,Q,R,S)", sect(sect(p, q), sect(r, s)).toString());
-        assertEquals("(&,P,Q,R,S)", $("(&,(&,P,Q),(&,R,S))").toString());
-    }
-    @Test public void testIntersectExtReduction3() {
-        // (&,R,(&,P,Q)) = (&,P,Q,R)
-        assertEquals("(&,P,Q,R)", $("(&,R,(&,P,Q))").toString());
-    }
-    @Test public void testIntersectExtReduction4() {
-        //UNION if (term1.op(Op.SET_INT) && term2.op(Op.SET_INT)) {
-        assertEquals("{P,Q,R,S}", sect($.set(p, q), $.set(r, s)).toString());
-        assertEquals("{P,Q,R,S}", $("(&,{P,Q},{R,S})").toString());
-        assertEquals(null, sect($.setInt(p, q), $.setInt(r, s)));
-
-    }
-
-    @Test public void testIntersectIntReduction1() {
-        // (|,R,(|,P,Q)) = (|,P,Q,R)
-        assertEquals("(|,P,Q,R)", sectInt(r, sectInt(p, q)).toString());
-        assertEquals("(|,P,Q,R)", $("(|,R,(|,P,Q))").toString());
-    }
-    @Test public void testIntersectIntReduction2() {
-        // (|,(|,P,Q),(|,R,S)) = (|,P,Q,R,S)
-        assertEquals("(|,P,Q,R,S)", sectInt(sectInt(p, q), sectInt(r, s)).toString());
-        assertEquals("(|,P,Q,R,S)", $("(|,(|,P,Q),(|,R,S))").toString());
-    }
-    @Test public void testIntersectIntReduction3() {
-        // (|,R,(|,P,Q)) = (|,P,Q,R)
-        assertEquals("(|,P,Q,R)", $("(|,R,(|,P,Q))").toString());
-    }
-    @Test public void testIntersectIntReduction4() {
-        //UNION if (term1.op(Op.SET_INT) || term2.op(Op.SET_INT)) {
-        assertEquals("[P,Q,R,S]", sectInt($.setInt(p, q), $.setInt(r, s)).toString());
-        assertEquals("[P,Q,R,S]", $("(|,[P,Q],[R,S])").toString());
-        assertEquals(null, $("(|,{P,Q},{R,S})"));
-    }
-    @Test public void testIntersectIntReduction_to_one() {
-        assertEquals("<robin-->bird>", $("<robin-->(|,bird)>").toString());
-        assertEquals("<robin-->bird>", $("<(|,robin)-->(|,bird)>").toString());
-    }
-
-
-
-
-    //TODO:
-        /*
-            (&,(&,P,Q),R) = (&,P,Q,R)
-            (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-
-            // set union
-            if (term1.op(Op.SET_INT) && term2.op(Op.SET_INT)) {
-
-            // set intersection
-            if (term1.op(Op.SET_EXT) && term2.op(Op.SET_EXT)) {
-
-         */
 
     @Test public void testStatemntString() {
         assertTrue( inh("a", "b").op().isStatement() );

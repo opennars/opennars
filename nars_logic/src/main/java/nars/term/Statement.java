@@ -234,9 +234,7 @@ public interface Statement {
     }
 
 
-    static boolean invalidStatement(Compound s) {
-        return invalidStatement(s.term(0), s.term(1));
-    }
+
 
 
     /**

@@ -27,10 +27,11 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static com.google.common.collect.ObjectArrays.concat;
-import static nars.Op.SET_EXT;
-import static nars.Op.SET_INT;
+import static nars.Op.*;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 import static nars.nal.nal5.Conjunctive.flatten;
+import static nars.term.Statement.pred;
+import static nars.term.Statement.subj;
 
 
 public class GenericCompound<T extends Term> implements Compound<T> {
@@ -43,18 +44,28 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     private boolean normalized = false;
 
 
+    /** main compound construction entry-point */
     public static Term COMPOUND(Op op, Term... subterms) {
 
-        //if no relation was specified and it's an Image,
-        if (op.isImage()) {
-            //it must contain a _ placeholder
-            if (Image.hasPlaceHolder(subterms)) {
-                return Image.build(op, subterms);
-            }
-            return null;
-        }
+        switch (op) {
+            case IMAGE_EXT:
+            case IMAGE_INT:
+                //if no relation was specified and it's an Image,
+                //it must contain a _ placeholder
+                if (Image.hasPlaceHolder(subterms)) {
+                    return Image.build(op, subterms);
+                }
+                return null;
 
-        return COMPOUND(op, subterms, -1);
+            case SEQUENCE:
+                return Sequence.makeSequence(subterms);
+
+            case PARALLEL:
+                return Parallel.makeParallel(subterms);
+
+            default:
+                return COMPOUND(op, subterms, -1);
+        }
     }
 
     public static Term COMPOUND(Op op, Term[] t, int relation) {
@@ -67,6 +78,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                 return Parallel.makeParallel(t);
             case INTERSECT_EXT:
                 return newIntersectEXT(t);
+
             case INSTANCE:
                 return $.instance(t[0], t[1]);
             case PROPERTY:
@@ -86,7 +98,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                     if ((relation == -1) || (relation > t.length))
                         throw new RuntimeException("invalid index relation: " + relation + " for args " + Arrays.toString(t));
                     break;
-                case CONJUNCT:
+                case CONJUNCTION:
                     t = flatten(t, Order.None);
                     break;
                 case DIFF_EXT:
@@ -114,17 +126,100 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Nullable
     public static Term newStatement(Op op, Term[] t) {
-        if (op.isCommutative())
-            t = Terms.toSortedSetArray(t);
+
         switch (t.length) {
             case 1: return t[0];
-            case 2:
+            case 2: {
+
+                Term subject = t[0];
+                Term predicate = t[1];
+
+                if (subject == null || predicate == null)
+                    return null;
+
+                //special statement filters
+                switch (op) {
+                    case EQUIV:
+                    case EQUIV_AFTER:
+                    case EQUIV_WHEN:
+                        if (!validEquivalenceTerm(subject)) return null;
+                        if (!validEquivalenceTerm(predicate)) return null;
+                        break;
+
+                    case IMPLICATION:
+                    case IMPLICATION_AFTER:
+                    case IMPLICATION_BEFORE:
+                    case IMPLICATION_WHEN:
+                        if (subject.isAny(InvalidEquivalenceTerm)) return null;
+                        if (predicate.isAny(InvalidImplicationPredicate)) return null;
+
+                        if (predicate.isAny(Op.Implications)) {
+                            Term oldCondition = subj(predicate);
+                            if ((oldCondition.isAny(Op.Conjunctives)) && oldCondition.containsTerm(subject))
+                                return null;
+
+                            return impl2Conj(op, subject, predicate, oldCondition);
+                        }
+                        break;
+                }
+
+                if (op.isCommutative())
+                    t = Terms.toSortedSetArray(t);
+
                 if (!Statement.invalidStatement(t[0], t[1]))
                     return newCompound(op, t, -1, false); //already sorted
+
+                return null;
+            }
         }
+
         return null;
     }
 
+
+
+    /** implications, equivalences, and interval */
+    final static int InvalidEquivalenceTerm =
+            Op.or(IMPLICATION, IMPLICATION_WHEN, IMPLICATION_AFTER, IMPLICATION_BEFORE,
+                    EQUIV, EQUIV_AFTER, EQUIV_WHEN,
+                    INTERVAL);
+
+    /** equivalences and intervals (not implications, they are allowed */
+    final static int InvalidImplicationPredicate =
+            Op.or(EQUIV, EQUIV_AFTER, EQUIV_WHEN, INTERVAL);
+
+    private static boolean validEquivalenceTerm(Term t) {
+        return !t.isAny(InvalidEquivalenceTerm);
+//        if ( instanceof Implication) || (subject instanceof Equivalence)
+//                || (predicate instanceof Implication) || (predicate instanceof Equivalence) ||
+//                (subject instanceof CyclesInterval) || (predicate instanceof CyclesInterval)) {
+//            return null;
+//        }
+    }
+
+
+
+    private static Term impl2Conj(Op op, Term subject, Term predicate, Term oldCondition) {
+        Op conjOp;
+        switch (op) {
+            case IMPLICATION: conjOp = CONJUNCTION; break;
+            case IMPLICATION_AFTER: conjOp = SEQUENCE; break;
+            case IMPLICATION_WHEN: conjOp = PARALLEL; break;
+            case IMPLICATION_BEFORE:
+                conjOp = SEQUENCE;
+                //swap order
+                Term x = oldCondition;
+                oldCondition = subject;
+                subject = x;
+                break;
+            default:
+                throw new RuntimeException("invalid case");
+        }
+
+        return COMPOUND(op,
+                COMPOUND(conjOp, subject, oldCondition),
+                pred(predicate));
+    }
 
     private static Term newCompound(Op op, Term[] t, int relation, boolean sort) {
         if (sort && op.isCommutative())
@@ -224,6 +319,8 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
         return newCompound(intersection, t, -1, true);
     }
+
+
 
 
     protected GenericCompound(Op op, T... subterms) {

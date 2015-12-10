@@ -12,9 +12,7 @@ import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
-import nars.nal.nal5.Implication;
 import nars.nal.nal7.CyclesInterval;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.term.Term;
@@ -120,7 +118,7 @@ public abstract class $  {
 
 
     public static Term impl(Term a, Term b) {
-        return Implication.implication(a, b);
+        return COMPOUND(Op.IMPLICATION, a, b);
     }
 
     public static <X extends Term> X neg(Term x) {
@@ -237,8 +235,8 @@ public abstract class $  {
         return new MutableTask(term).goal().truth(freq, conf);
     }
 
-    public static Compound implForward(Term condition, Term consequence) {
-        return Implication.implication(condition, consequence, Tense.ORDER_FORWARD);
+    public static Term implForward(Term condition, Term consequence) {
+        return COMPOUND(Op.IMPLICATION_AFTER, condition, consequence);
     }
 
     public static Compound set(Collection<Term> t) {

@@ -57,10 +57,10 @@ public enum Op implements Serializable {
 
     /* CompoundStatement operators, length = 2 */
     DISJUNCT("||", true, 5, Args.GTEOne),
-    CONJUNCT("&&", true, 5, Args.GTEOne),
+    CONJUNCTION("&&", true, 5, Args.GTETwo),
 
-    SEQUENCE("&/", 7, Args.GTEOne),
-    PARALLEL("&|", true, 7, Args.GTEOne),
+    SEQUENCE("&/", 7, Args.GTETwo), /* NOTE: after cycle terms intermed, it may appear to have one term. but at construction when this is tested, it will need multiple terms even if they are intervals */
+    PARALLEL("&|", true, 7, Args.GTETwo),
 
 
     /* CompountTerm delimiters, must use 4 different pairs */
@@ -72,7 +72,7 @@ public enum Op implements Serializable {
 
     /* Temporal Relations */
     IMPLICATION_AFTER("=/>", 7, OpType.Relation, Args.Two),
-    IMPLICATION_WHEN("=|>", true, 7, OpType.Relation, Args.Two),
+    IMPLICATION_WHEN("=|>", false, 7, OpType.Relation, Args.Two),
     IMPLICATION_BEFORE("=\\>", 7, OpType.Relation, Args.Two),
 
     EQUIV("<=>", true, 5, OpType.Relation, Args.Two),
@@ -215,6 +215,13 @@ public enum Op implements Serializable {
             w.append(ch);
     }
 
+    public static final int or(int... i) {
+        int bits = 0;
+        for (int x : i) {
+            bits |= x;
+        }
+        return bits;
+    }
     public static final int or(Op... o) {
         int bits = 0;
         for (Op n : o) {
@@ -276,13 +283,21 @@ public enum Op implements Serializable {
         Other
     }
 
+
+    public static final int Implications =
+            Op.or(Op.IMPLICATION, Op.IMPLICATION_BEFORE, Op.IMPLICATION_WHEN, Op.IMPLICATION_AFTER);
+
+    public static final int Conjunctives =
+            Op.or(Op.CONJUNCTION, Op.PARALLEL, Op.SEQUENCE);
+
+    public static final int Equivalences =
+            Op.or(Op.EQUIV, Op.EQUIV_WHEN, Op.EQUIV_AFTER);
+
     public static int StatementBits =
-        Op.or(Op.INHERIT, Op.SIMILAR,
-              Op.EQUIV,
-                    Op.EQUIV_AFTER, Op.EQUIV_WHEN,
-              Op.IMPLICATION,
-                Op.IMPLICATION_AFTER, Op.IMPLICATION_BEFORE, Op.IMPLICATION_WHEN
-        );
+            Op.or(Op.INHERIT.bit(), Op.SIMILAR.bit(),
+                    Equivalences,
+                    Implications
+            );
 
     public static final int ImageBits =
         Op.or(Op.IMAGE_EXT,Op.IMAGE_INT);

@@ -36,9 +36,9 @@ public class TermHashTest {
                 .isAny(Op.TemporalBits));
 
         TestCase.assertFalse(x
-                .isAny(Op.CONJUNCT.bit()));
+                .isAny(Op.CONJUNCTION.bit()));
         assertTrue(x
-                .hasAny(Op.CONJUNCT.bit()));
+                .hasAny(Op.CONJUNCTION.bit()));
 
     }
 

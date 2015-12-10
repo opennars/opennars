@@ -33,7 +33,7 @@ public interface Conjunction  {
 
 
 
-        return GenericCompound.COMPOUND(Op.CONJUNCT, a);
+        return GenericCompound.COMPOUND(Op.CONJUNCTION, a);
     }
 
 }

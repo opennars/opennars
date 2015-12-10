@@ -363,23 +363,23 @@ public abstract class Texts {
         switch (hundredths) {
             //some common values
             case 100:
-                return "1.00";
+                return "1.0";
             case 99:
-                return "0.99";
+                return ".99";
             case 90:
-                return "0.90";
+                return ".90";
             case 0:
-                return "0.00";
+                return ".00";
         }
 
         if (hundredths > 9) {
             int tens = hundredths / 10;
             return new String(new char[]{
-                    '0', '.', (char) ('0' + tens), (char) ('0' + hundredths % 10)
+                    '.', (char) ('0' + tens), (char) ('0' + hundredths % 10)
             });
         } else {
             return new String(new char[]{
-                    '0', '.', '0', (char) ('0' + hundredths)
+                    '.', '0', (char) ('0' + hundredths)
             });
         }
     }
