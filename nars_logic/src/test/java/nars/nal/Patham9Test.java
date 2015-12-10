@@ -361,7 +361,7 @@ public class Patham9Test extends AbstractNALTester {
         float priority_imp_c = priority_safe(c_c);
     }*/
 
-   /* @Test
+    @Test
     public void repeated_sequence_learn_implication() throws Narsese.NarseseException {
         NAR nar = new Default2(1000, 1, 1, 3);
 
@@ -406,18 +406,19 @@ public class Patham9Test extends AbstractNALTester {
         //Expectation: imp_s should not be null!
         //Expectation: The priority of imp_s is less than the one for imp_a_c, but by far not zero, its highly observable in the input data
         //Expectation: A lot of successful anticipations happening, while at the end a handful of failed ones might occur
-    }*/
+    }
 
-    @Test
+   /* @Test
     public void seq_event() throws Narsese.NarseseException {
         TestNAR tester = test();
 
         tester.input("<a --> A>. :|:");
 
         tester.inputAt(10, "<b --> B>. :|:");
-        tester.mustBelieve(cycles, "<(&/,<a --> A>,/1) =/> <b --> B>>", 1.0f, 0.81f, 0); // :|:
+        tester.mustBelieve(cycles, "<(&/, <a --> A>, /5) =/> <b --> B>>", 1.0f, 0.45f, 10); // :|:
+        tester.mustBelieve(cycles, "<(&/, <a --> A>, /5) =/> <b --> B>>", 1.0f, 0.31f); // :|:
         //   tester.run2();
-    }
+    }*/
 /*
     @Test
     public void subsent_1() throws Narsese.NarseseException {
