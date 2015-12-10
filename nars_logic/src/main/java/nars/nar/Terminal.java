@@ -62,7 +62,7 @@ public class Terminal extends Default {
 
     @Override
     public ImmediateTaskPerception initInput() {
-        ImmediateTaskPerception input = new ImmediateTaskPerception(this,
+        ImmediateTaskPerception input = new ImmediateTaskPerception(true, this,
                 taskFilter,
                 task -> process(task)
         );
