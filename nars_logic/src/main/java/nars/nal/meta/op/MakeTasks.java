@@ -7,6 +7,8 @@ import nars.budget.BudgetFunctions;
 import nars.nal.RuleMatch;
 import nars.nal.TaskRule;
 import nars.nal.meta.PreCondition;
+import nars.nal.nal5.Implication;
+import nars.nal.nal7.Tense;
 import nars.op.mental.Anticipate;
 import nars.task.FluentTask;
 import nars.task.PreTask;
@@ -80,9 +82,11 @@ public final class MakeTasks extends PreCondition {
 
         final Task belief = premise.getBelief();
 
-        if(derivedTerm.complexity()>8) { //17
+        boolean valid_excuse=derivedTerm instanceof Implication && derivedTerm.getTemporalOrder()== Tense.ORDER_FORWARD;
+        if(!valid_excuse && derivedTerm.complexity()>8) { //17
             return false;
         }
+
 
         final char punct = post.punct;
         /*if (punct == 0)
