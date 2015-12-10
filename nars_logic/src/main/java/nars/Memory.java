@@ -140,6 +140,7 @@ public class Memory extends Param {
         level = 8;
 
         this.clock = clock;
+        clock.clear(this);
 
         this.index = index;
 
@@ -207,7 +208,7 @@ public class Memory extends Param {
 
         eventReset.emit(this);
 
-        clock.clear();
+        clock.clear(this);
 
         //NOTE: allow stamp serial to continue increasing after reset.
         //currentStampSerial = ;

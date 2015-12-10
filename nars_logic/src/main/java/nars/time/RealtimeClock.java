@@ -14,17 +14,22 @@ public abstract class RealtimeClock implements Clock {
 
 
     @Override
-    public void clear() {
-        update();
+    public void clear(Memory m) {
+        preFrame();
+        t = t0 = getRealTime();
+
         start = t;
     }
 
 
-
     @Override
-    public final void preFrame(Memory memory) {
-        update();
-//        if (memory.resource!=null) {
+    public final void preFrame() {
+        long now = getRealTime();
+
+        t0 = t;
+        t = now;
+
+        //        if (memory.resource!=null) {
 //            final double frameTime = memory.resource.FRAME_DURATION.stop();
 //
 //            //in real-time mode, warn if frame consumed more time than reasoner duration
@@ -51,15 +56,6 @@ public abstract class RealtimeClock implements Clock {
             return "Lag frameTime=" +
                     frameTime + ", duration=" + dur + " cycles)";
         }
-    }
-
-
-    protected void update() {
-        long now = getRealTime();
-
-        t0 = t0 != -1 ? t : now;
-
-        t = now;
     }
 
 

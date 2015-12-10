@@ -798,7 +798,8 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         for (int f = 0; f < frames; f++) {
 
             frameStart.emit(this);
-            memory.clock.preFrame(memory);
+
+            memory.clock.preFrame();
 
             memory.cycle(cpf);
 

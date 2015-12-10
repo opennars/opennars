@@ -9,7 +9,7 @@ public class FrameClock implements Clock {
     long t;
 
     @Override
-    public void clear() {
+    public void clear(Memory m) {
         t = 0;
     }
 
@@ -20,7 +20,7 @@ public class FrameClock implements Clock {
 
 
     @Override
-    public final void preFrame(Memory m) {
+    public final void preFrame() {
         t++;
     }
 

@@ -11,7 +11,7 @@ public class SimulatedClock implements Clock {
 
 
     @Override
-    public void clear() {
+    public void clear(Memory m) {
         t = t0 = 0;
     }
 
@@ -27,7 +27,7 @@ public class SimulatedClock implements Clock {
     public void add(long dt) { set(t + dt); }
 
     @Override
-    public void preFrame(Memory m) {
+    public void preFrame() {
         t0 = t;
         t = tNext;
     }
