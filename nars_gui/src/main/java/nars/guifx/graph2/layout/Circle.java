@@ -1,6 +1,7 @@
 package nars.guifx.graph2.layout;
 
 import javafx.beans.property.SimpleDoubleProperty;
+import nars.guifx.annotation.Range;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.source.SpaceGrapher;
 
@@ -12,8 +13,11 @@ import java.util.function.ToDoubleFunction;
  */
 public class Circle implements IterativeLayout {
 
-    public final SimpleDoubleProperty radiusMin = new SimpleDoubleProperty(1);
-    public final SimpleDoubleProperty radiusMax = new SimpleDoubleProperty(4);
+    @Range(min=0.1, max=10)
+    public final SimpleDoubleProperty radiusMin = new SimpleDoubleProperty(4);
+
+    @Range(min=0.2, max=50)
+    public final SimpleDoubleProperty radiusMax = new SimpleDoubleProperty(8);
 
 
 

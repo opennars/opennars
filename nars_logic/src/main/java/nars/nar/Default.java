@@ -10,7 +10,9 @@ import nars.concept.util.ConceptActivator;
 import nars.nal.Deriver;
 import nars.nal.RuleMatch;
 import nars.task.Task;
+import nars.task.flow.SetTaskPerception;
 import nars.task.flow.SortedTaskPerception;
+import nars.task.flow.TaskPerception;
 import nars.term.Term;
 import nars.term.compile.TermIndex;
 import nars.time.FrameClock;
@@ -159,23 +161,17 @@ public class Default extends AbstractNAR {
 
 
     @Override
-    public SortedTaskPerception initInput() {
+    public TaskPerception initInput() {
 
-        int perceptionCapacity = 64;
-        int inputsPerCycle = -1 /* everything */;
 
-        SortedTaskPerception input = new SortedTaskPerception(
-                this,
-                task -> true /* allow everything */,
-                this::process,
-                perceptionCapacity,
-                inputsPerCycle
-        ) {
+        SetTaskPerception input = new SetTaskPerception(
+            memory, this::process
+        );/* {
             @Override
             protected void onOverflow(Task t) {
                 memory.eventError.emit("Overflow: " + t + " " + getStatistics());
             }
-        };
+        };*/
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
         return input;
     }

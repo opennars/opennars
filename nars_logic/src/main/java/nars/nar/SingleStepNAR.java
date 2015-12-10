@@ -6,7 +6,7 @@ import nars.Global;
 import nars.nal.PremiseRule;
 import nars.process.TaskProcess;
 import nars.task.flow.FIFOTaskPerception;
-import nars.time.FrameClock;
+import nars.time.CycleClock;
 import nars.util.meter.DerivationGraph;
 
 public class SingleStepNAR extends AbstractNAR {
@@ -34,7 +34,7 @@ public class SingleStepNAR extends AbstractNAR {
 
 
     public SingleStepNAR() {
-        super(128, 2, 2, 3, new FrameClock());
+        super(128, 2, 2, 3, new CycleClock());
 
 
         Global.DEBUG = true;
@@ -47,24 +47,22 @@ public class SingleStepNAR extends AbstractNAR {
 
     @Override
     public FIFOTaskPerception initInput() {
-        FIFOTaskPerception input = new FIFOTaskPerception(this,
+        return new FIFOTaskPerception(this,
                 (t) -> { /* allow only input tasks*/
                     if (t.isInput()) return true;
                     else {
                         //fire a fake TaskProcess event
                         t = t.normalize(memory);
-                        if (t!=null) {
+                        if (t != null) {
                             memory.eventTaskProcess.emit(
                                     new TaskProcess(this, t));
                         }
-                       return false;
+                        return false;
                     }
                 },
                 this::process
         );
-        return input;
     }
-
 
 
 //    private static class RuleReport implements Runnable {

@@ -39,9 +39,22 @@ public class FIFOTaskPerception extends TaskPerception {
 
     public final Deque<Task> buffer = new ArrayDeque();
 
+    /**
+     * determines if content can enter
+     */
+    protected final Predicate<Task> filter;
 
     public FIFOTaskPerception(NAR nar, Predicate<Task> filter, Consumer<Task> receiver) {
-        super(nar.memory, filter, receiver);
+        super(nar.memory, receiver);
+        this.filter = filter;
+    }
+
+    public FIFOTaskPerception(NAR nar, Predicate<Task> filter) {
+        super(nar.memory);
+        this.filter = filter;
+    }
+    public FIFOTaskPerception(NAR nar) {
+        this(nar, null);
     }
 
     @Override
@@ -82,7 +95,7 @@ public class FIFOTaskPerception extends TaskPerception {
 
     /** sends the next batch of tasks to the receiver */
     @Override
-    public void nextFrame() {
+    public void nextFrame(Consumer<Task> receiver) {
 
 
         int s = buffer.size();

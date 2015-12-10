@@ -197,9 +197,9 @@ public abstract class AbstractTask extends Item<Task>
         if (t instanceof Sequence)  {
             long[] offset = new long[1];
             Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
-            if ((st == null) || (Task.invalidTaskTerm(st)))
-                return null; //it reduced to an invalid sentence term so return null
-            t = (Compound)st;
+            t = Task.validTaskTerm(st);
+            if (t == null)
+                return null; //it was reduced to something which is invalid as a task term
             if (!isEternal())
                 occurrenceTime -= offset[0];
         }

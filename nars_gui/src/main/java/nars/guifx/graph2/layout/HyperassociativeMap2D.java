@@ -20,16 +20,17 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
     //TODO equilibrum distance, speed, etc
 
     @Range(min = 0.1, max = 10)
-    public final SimpleDoubleProperty attractionStrength = new SimpleDoubleProperty(15.0);
+    public final SimpleDoubleProperty attractionStrength = new SimpleDoubleProperty(2);
     @Range(min = 0.1, max = 10)
-    public final SimpleDoubleProperty repulseWeakness = new SimpleDoubleProperty(10.0);
-    @Range(min = 0, max = 25)
-    public final SimpleDoubleProperty nodeSpeed = new SimpleDoubleProperty(5.0);
-    @Range(min = 0, max = 4)
-    public final SimpleDoubleProperty equilibriumDistance = new SimpleDoubleProperty(0.1);
+    public final SimpleDoubleProperty repulseWeakness = new SimpleDoubleProperty(1);
+    @Range(min = 0, max = 50)
+    public final SimpleDoubleProperty nodeSpeed = new SimpleDoubleProperty(40.0);
+    @Range(min = 0.05, max = 1)
+    public final SimpleDoubleProperty equilibriumDistance = new SimpleDoubleProperty(0.75);
 
     @Range(min = 1, max = 400)
     public final SimpleDoubleProperty scale = new SimpleDoubleProperty(100.0);
+
     private float _nodeSpeed;
     private SpaceGrapher graph;
 
@@ -60,6 +61,7 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
     }
 
     @Override public void getPosition(TermNode node, double[] v) {
+        if (node == null) return; //shouldnt happen
         node.getPosition(v);
     }
 
@@ -94,10 +96,10 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
 
     protected void init() {
         resetLearning();
-        setLearningRate(0.4f);
+        setLearningRate(0.5f);
         setRepulsiveWeakness(repulseWeakness.get());
         setAttractionStrength(attractionStrength.get());
-        setMaxRepulsionDistance(1000);
+        setMaxRepulsionDistance(5000);
         setEquilibriumDistance(equilibriumDistance.floatValue());
         _nodeSpeed = nodeSpeed.floatValue();
     }
@@ -126,7 +128,7 @@ public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap
     @Override
     public double getRadius(TermNode termNode) {
 
-        return termNode.priNorm * 1;
+        return termNode.priNorm * 1 * scaleFactor;
 
     }
 

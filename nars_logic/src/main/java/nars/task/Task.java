@@ -39,10 +39,8 @@ import nars.util.data.id.Named;
 
 import java.io.Serializable;
 import java.lang.ref.Reference;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static nars.Global.dereference;
@@ -92,50 +90,46 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
         }
     }
 
-    static Set<Truthed> getSentences(Iterable<Task> tasks) {
-
-
-        int size;
-
-        size = tasks instanceof Collection ? ((Collection) tasks).size() : 2;
-
-        Set<Truthed> s = Global.newHashSet(size);
-        for (Task t : tasks)
-            s.add(t);
-        return s;
-    }
+//    static Set<Truthed> getSentences(Iterable<Task> tasks) {
+//
+//        int size;
+//
+//        size = tasks instanceof Collection ? ((Collection) tasks).size() : 2;
+//
+//        Set<Truthed> s = Global.newHashSet(size);
+//        for (Task t : tasks)
+//            s.add(t);
+//        return s;
+//    }
 
     /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content
      * returns the compound valid for a Task if so,
      * otherwise returns null
      * */
     static Compound validTaskTerm(Term t) {
-        if (invalidTaskTerm(t))
-            return null;
-        return ((Compound)t);
-    }
 
-    /** only need the positive version of it which calls this */
-    @Deprecated static boolean invalidTaskTerm(Term t) {
+        if (!(t instanceof Compound))//(t instanceof CyclesInterval) || (t instanceof Variable)
+            return null;
+
+        Compound st = (Compound) t;
         if (t.op().isStatement()) {
-            Compound st = (Compound) t;
 
             /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
             if (Statement.subjectOrPredicateIsIndependentVar(st))
-                return true;
+                return null;
 
-            if (Global.DEBUG) {
+            if (Global.DEBUG_PARANOID) {
+                //should be checked on statement construction
+                //if it occurrs here, that did not happen somewhere prior
                 if (Statement.invalidStatement(st.term(0), st.term(1)))
                     throw new RuntimeException("statement invalidity should be tested before created: " + st);
             }
-            //return Statement.invalidStatement(st); //should be checked on Statement construction
-            return false;
 
         }
-        else {
-            return (!(t instanceof Compound));//(t instanceof CyclesInterval) || (t instanceof Variable)
-        }
+
+        return st;
     }
+
 
     default Task getTask() { return this; }
 

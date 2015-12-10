@@ -140,12 +140,9 @@ public abstract class AbstractNAR extends NAR {
 //                }
     }
 
+
     public TaskPerception initInput() {
-        FIFOTaskPerception input = new FIFOTaskPerception(this,
-            task -> true /* allow everything */,
-                this::process
-        );
-        return input;
+        return new FIFOTaskPerception(this, null, this::process);
     }
 
     protected DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {

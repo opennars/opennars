@@ -6,7 +6,6 @@ import nars.task.Task;
 import nars.util.data.MutableInteger;
 
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /** sorts and de-duplicates incoming tasks into a capacity-limited buffer */
 public class SortedTaskPerception extends TaskPerception {
@@ -18,16 +17,12 @@ public class SortedTaskPerception extends TaskPerception {
     /**
      *
      * @param nar
-     * @param filter
-     * @param receiver
      * @param capacity
      * @param inputPerCycle -1 for everything
      */
     public SortedTaskPerception(NAR nar,
-                                Predicate<Task> filter,
-                                Consumer<Task> receiver,
                                 int capacity, int inputPerCycle) {
-        super(nar.memory, filter, receiver);
+        super(nar.memory);
 
         this.inputPerCycle.set( inputPerCycle );
 
@@ -54,8 +49,7 @@ public class SortedTaskPerception extends TaskPerception {
     }
 
     @Override
-    public final void nextFrame() {
-        //ItemAccumulator<> b = this.buffer;
+    public final void nextFrame(Consumer<Task> receiver) {
         TaskAccumulator buffer = this.buffer;
         int available = size();
         if (available > 0) {

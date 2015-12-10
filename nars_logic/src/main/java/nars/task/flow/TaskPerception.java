@@ -5,41 +5,35 @@ import nars.task.Task;
 import nars.util.event.Active;
 
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * Receives tasks which are input to a memory
  */
 public abstract class TaskPerception implements Consumer<Task> {
 
-
-    /**
-     * determines if content can enter
-     */
-    protected final Predicate<Task> filter;
-
     /**
      * where to send output
      */
-    protected final Consumer<Task> receiver;
-
     private final Active active = new Active();
     private final Memory memory;
 
-    public TaskPerception(Memory m,
-                          Predicate<Task> filter,
-                          Consumer<Task> receiver) {
+    public TaskPerception(Memory m) {
 
-        this.filter = filter;
-        this.receiver = receiver;
         this.memory = m;
 
         active.add(
             m.eventInput.on(this),
-            m.eventFrameStart.on((M) -> nextFrame()),
+
             m.eventReset.on((M) -> clear() )
         );
 
+    }
+
+    public TaskPerception(Memory m, Consumer<Task> eachFrameSupplyTo) {
+        this(m);
+        active.add(
+            m.eventFrameStart.on((M) -> nextFrame(eachFrameSupplyTo))
+        );
     }
 
     abstract public void forEach(Consumer<? super Task> each);
@@ -91,7 +85,7 @@ public abstract class TaskPerception implements Consumer<Task> {
     public abstract void accept(Task t);
 
     /** here the buffer should apply any updates and send some/all inputs to the Memory */
-    public abstract void nextFrame();
+    public abstract void nextFrame(Consumer<Task> receiver);
 
     public abstract void clear();
 }
