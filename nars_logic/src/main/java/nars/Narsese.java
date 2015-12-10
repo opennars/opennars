@@ -1005,7 +1005,14 @@ public class Narsese extends BaseParser<Object>  {
      * ondemand
      */
     public static void tasks(String input, Consumer<Task> c, Memory m) {
-        tasksRaw(input, o -> c.accept(decodeTask(input, m, o)));
+        tasksRaw(input, o -> {
+            Task t = decodeTask(m, o);
+            if (t == null) {
+                m.eventError.emit("Invalid task: " + input);
+            } else {
+                c.accept(t);
+            }
+        });
     }
 
 
@@ -1065,21 +1072,18 @@ public class Narsese extends BaseParser<Object>  {
 
 
         try {
-            return decodeTask(input, memory, (Object[])r.getValueStack().peek() );
+            return decodeTask(memory, (Object[])r.getValueStack().peek() );
         }
         catch (Exception e) {
             throw newParseException(input, r, e);
         }
     }
 
-    public static Task decodeTask(String input, Memory m, Object[] x) {
+    /** returns null if the Task is invalid (ex: invalid term) */
+    public static Task decodeTask(Memory m, Object[] x) {
         if (x.length == 1 && x[0] instanceof Task)
             return (Task)x[0];
-        Task y = makeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
-        if (y == null) {
-            m.eventError.emit("NarseseParser: Invalid task: " + input);
-        }
-        return y;
+        return makeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
     }
 
     /** parse one term and normalize it if successful */

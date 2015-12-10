@@ -22,7 +22,6 @@ package nars.term;
 
 import nars.Op;
 import nars.Symbols;
-import nars.nal.nal4.Image;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import nars.util.utf8.ByteBuf;
@@ -307,7 +306,7 @@ public interface Statement {
         if (!(t1 instanceof Compound)) {
             return false;
         }
-        if ((t1 instanceof Image /*Ext) || (t1 instanceof ImageInt*/)) {
+        if ((t1.op().isImage()/*Ext) || (t1 instanceof ImageInt*/)) {
             return false;
         }
         Compound ct1 = (Compound) t1;

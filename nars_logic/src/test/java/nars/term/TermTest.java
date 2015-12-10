@@ -50,36 +50,55 @@ public class TermTest {
     NAR n = new Terminal();
 
 
-    protected void assertEquivalent(String term1String, String term2String) {
+    protected void assertEquivalentTerm(String term1String, String term2String) {
         try {
 
             Term term1 = n.term(term1String);
             Term term2 = n.term(term2String);
 
-            assertTrue(term1 instanceof Compound);
-            assertTrue(term2 instanceof Compound);
             assertNotEquals(term1String, term2String);
 
-            assertEquals(term1, term2);
-            assertEquals(term1, term2);
-            assertEquals(0, term1.compareTo(term2));
+            assertEquivalentTerm(term1, term2);
+
         } catch (Exception e) {
-            assertTrue(e.toString(), false);
+            assertFalse(e.toString(), true);
         }
+    }
+
+    public void assertEquivalentTerm(Term term1, Term term2) {
+        assertTrue(term1 instanceof Compound);
+        assertTrue(term2 instanceof Compound);
+
+        assertEquals(term1, term2);
+        assertEquals(term2, term1);
+        assertEquals(term1.hashCode(), term2.hashCode());
+        assertEquals(((Compound)term1).relation(), ((Compound)term2).relation());
+        assertEquals(0, term1.compareTo(term2));
+        assertEquals(0, term2.compareTo(term1));
+        assertEquals(0, term1.compareTo(term1));
+        assertEquals(0, term2.compareTo(term2));
     }
 
     @Test
     public void testCommutativeCompoundTerm() throws Exception {
 
-        assertEquivalent("(&&,a,b)", "(&&,b,a)");
-        assertEquivalent("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
-        assertEquivalent("(&&,(||,c,b),a)", "(&&,a,(||,b,c))");
+        assertEquivalentTerm("(&&,a,b)", "(&&,b,a)");
+        assertEquivalentTerm("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
+        assertEquivalentTerm("(&&,(||,c,b),a)", "(&&,a,(||,b,c))");
+        assertEquivalentTerm("(&&,(||,c,b),a)", "(&&,a,(||,c,b))");
 
-        assertEquivalent("(&,a,b)", "(&,b,a)");
-        assertEquivalent("{a,c,b}", "{b,a,c}");
+        assertEquivalentTerm("(&,a,b)", "(&,b,a)");
+        assertEquivalentTerm("{a,c,b}", "{b,a,c}");
+        assertEquivalentTerm("{a,c,b}", "{b,c,a}");
+        assertEquivalentTerm("[a,c,b]", "[b,a,c]");
 
-        assertEquivalent("<{Birdie}<->{Tweety}>",
-                        "<{Tweety}<->{Birdie}>");
+        assertEquivalentTerm("<{Birdie}<->{Tweety}>", "<{Tweety}<->{Birdie}>");
+        assertEquivalentTerm((Term)$("<{Birdie}<->{Tweety}>"),
+                        $("<{Tweety}<->{Birdie}>"));
+        assertEquivalentTerm(
+                (Term)$.sim((Term)$("{Birdie}"),$("{Tweety}")),
+                (Term)$.sim((Term)$("{Tweety}"),$("{Birdie}"))
+        );
 
         //test ordering after derivation
         assertEquals("<{Tweety}<->{Birdie}>",

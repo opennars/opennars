@@ -192,7 +192,7 @@ public class LibraryInput extends TextInput {
             if (o instanceof Task) y.add((Task)o);
             else {
                 Object[] z = (Object[])o;
-                y.add(Narsese.decodeTask("", m, z));
+                y.add(Narsese.decodeTask(m, z));
             }
         }
         return y;

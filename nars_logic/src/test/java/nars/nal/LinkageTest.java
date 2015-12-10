@@ -231,18 +231,18 @@ public class LinkageTest extends AbstractNALTester {
 
     @Test
     public void Linkage_NAL5_abduction() throws Exception {
-        ProperlyLinkedTest("<<robin --> bird> ==> <robin --> animal>>","<robin --> animal>");
+        ProperlyLinkedTest("<<robin-->bird>==><robin-->animal>>","<robin-->animal>");
     }
 
 
     @Test
     public void Linkage_NAL5_detachment() throws Exception {
-        ProperlyLinkedTest("<<robin --> bird> ==> <robin --> animal>>", "<robin --> bird>");
+        ProperlyLinkedTest("<<robin-->bird>==><robin-->animal>>", "<robin-->bird>");
     }
 
     @Test
     public void Linkage_NAL6_variable_elimination2() throws Exception {
-        ProperlyLinkedIndirectlyTest("<<$1 --> bird> ==> <$1 --> animal>>", "<tiger --> animal>");
+        ProperlyLinkedIndirectlyTest("<<$1-->bird>==><$1-->animal>>", "<tiger-->animal>");
     }
 
     //here the problem is: they should be interlinked by lock

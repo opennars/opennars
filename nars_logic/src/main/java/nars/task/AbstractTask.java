@@ -131,10 +131,10 @@ public abstract class AbstractTask extends Item<Task>
     @Override
     public final Task normalize(Memory memory) {
 
-        if (hash != 0) {
-            /* already validated */
-            return this;
-        }
+//        if (hash != 0) {
+//            /* already validated */
+//            return this;
+//        }
 
         if (isDeleted())
             return null;

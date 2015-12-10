@@ -40,10 +40,7 @@ public class TextInput extends TaskQueue {
     protected int process(NAR nar, String input) {
         int n = Narsese.the().tasks(process(input),
                 (Collection<Task>)this, nar.memory);
-
-        if (n == 0) {
-            throw new RuntimeException("no parsed tasks: \'" + input + '\"');
-        }
+        //..
 
         return n;
     }

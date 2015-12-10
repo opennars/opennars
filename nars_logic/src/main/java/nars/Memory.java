@@ -38,6 +38,8 @@ import nars.util.event.EventEmitter;
 import nars.util.event.Topic;
 import nars.util.meter.EmotionMeter;
 import nars.util.meter.LogicMeter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Random;
@@ -78,6 +80,7 @@ public class Memory extends Param {
 
     public final transient Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
 
+    public static final Logger logger = LoggerFactory.getLogger(Memory.class);
 
     /**
      * used for reporting or informing outside. consists of additional notes
@@ -100,6 +103,7 @@ public class Memory extends Param {
 
     /** executables (incl. operators) */
     public final transient EventEmitter<Term, Task> exe;
+
 
 
 

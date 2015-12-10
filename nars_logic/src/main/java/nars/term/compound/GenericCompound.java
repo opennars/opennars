@@ -67,6 +67,12 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                 return Parallel.makeParallel(t);
             case INTERSECT_EXT:
                 return newIntersectEXT(t);
+            case INSTANCE:
+                return $.instance(t[0], t[1]);
+            case PROPERTY:
+                return $.property(t[0], t[1]);
+            case INSTANCE_PROPERTY:
+                return $.instprop(t[0], t[1]);
         }
 
 

@@ -21,7 +21,7 @@ public class TaskBeliefPairTest {
             parse.term(a),
             parse.term(b)
         );
-        String expect = "(<x --> #1>, <y --> #1>)";
+        String expect = "(<x-->#1>,<y-->#1>)";
         assertEquals(expect, p.toString());
 
 //        Term pn = p.normalized();

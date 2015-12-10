@@ -3,7 +3,6 @@ package nars.io;
 import nars.Narsese;
 import nars.Op;
 import nars.Symbols;
-import nars.nal.nal1.Negation;
 import nars.nal.nal7.Tense;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -124,22 +123,22 @@ public class NarseseExtendedTest {
     }
 
     @Test public void testNamespaceTermsNonAtomicSubject() {
-        eqTerm("c:{a,b}", "<{a,b} --> c>");
+        eqTerm("c:{a,b}", "<{a,b}-->c>");
     }
     @Test public void testNamespaceTermsNonAtomicPredicate() {
-        eqTerm("<a-->b>:c", "<c --> <a --> b>>");
-        eqTerm("{a,b}:c", "<c --> {a,b}>");
-        eqTerm("(a,b):c", "<c --> (a, b)>");
+        eqTerm("<a-->b>:c", "<c--><a --> b>>");
+        eqTerm("{a,b}:c", "<c-->{a,b}>");
+        eqTerm("(a,b):c", "<c-->(a, b)>");
     }
 
     @Test public void testNamespaceTermsChain() {
 
-        eqTerm("d:{a,b}:c", "<<c --> {a,b}> --> d>");
+        eqTerm("d:{a,b}:c", "<<c-->{a,b}>-->d>");
 
 
-        eqTerm("c:{a,b}", "<{a,b} --> c>");
-        eqTerm("a:b:c",   "<<c --> b> --> a>");
-        eqTerm("a :b :c",   "<<c --> b> --> a>");
+        eqTerm("c:{a,b}", "<{a,b}-->c>");
+        eqTerm("a:b:c",   "<<c-->b>-->a>");
+        eqTerm("a :b :c",   "<<c-->b>-->a>");
     }
 
     @Test
@@ -147,7 +146,7 @@ public class NarseseExtendedTest {
         Narsese p = Narsese.the();
         Term a = p.term("{ a:x, b:{x,y} }");
         assertNotNull(a);
-        assertEquals(p.term("{<{x, y} --> b>, <x --> a>}"), a);
+        assertEquals(p.term("{<{x,y}-->b>, <x-->a>}"), a);
 
     }
 
@@ -181,7 +180,7 @@ public class NarseseExtendedTest {
 
 
         Compound nab = term("--(a & b)");
-        assertTrue(nab instanceof Negation);
+        assertTrue(nab.op(Op.NEGATE));
 
         assertTrue(nab.term(0).op(Op.INTERSECT_EXT));
 

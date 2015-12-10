@@ -82,21 +82,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
     final static Logger logger = LoggerFactory.getLogger(NAR.class);
 
-    static final Consumer<Serializable> onError = e -> {
-        if (e instanceof Throwable) {
-            Throwable ex = (Throwable) e;
 
-            //TODO move this to a specific impl of error reaction:
-            ex.printStackTrace();
-
-            if (Global.DEBUG && Global.EXIT_ON_EXCEPTION) {
-                //throw the exception to the next lower stack catcher, or cause program exit if none exists
-                throw new RuntimeException(ex);
-            }
-        } else {
-            System.err.println(e);
-        }
-    };
 
 
     /**
@@ -140,7 +126,6 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         if (running())
             throw new RuntimeException("NAR must be stopped to change memory");
 
-        m.eventError.on(onError);
 
         self = Global.DEFAULT_SELF; //TODO make this parametreizable
 
@@ -148,6 +133,23 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         /** register some components in the dependency context, Container (which Memory subclasses from) */
         //m.the("memory", m);
         m.the("clock", m.clock);
+
+
+        m.eventError.on(e -> {
+            if (e instanceof Throwable) {
+                Throwable ex = (Throwable) e;
+
+                //TODO move this to a specific impl of error reaction:
+                ex.printStackTrace();
+
+                if (Global.DEBUG && Global.EXIT_ON_EXCEPTION) {
+                    //throw the exception to the next lower stack catcher, or cause program exit if none exists
+                    throw new RuntimeException(ex);
+                }
+            } else {
+                memory.logger.error(e.toString());
+            }
+        });
 
         m.start();
 
@@ -972,7 +974,6 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      */
     protected void error(Throwable ex) {
         memory.eventError.emit(ex);
-
     }
 
     /**
