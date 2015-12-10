@@ -333,9 +333,9 @@ public class Division extends Operation {
         // if (debug) System.err.println("Division toString(): for expr=" + denom + ", printLevelLeft=" + denom.printLevelLeft());
 
         String string = "";
-        string = string.concat((numeratorParens?"(":"") + numerator.pretty() + (numeratorParens?")":""));
-        string = string.concat("/");
-        string = string.concat((denomParens?"(":"") + denom.pretty() + (denomParens?")":""));
+        string = string + (numeratorParens ? "(" : "") + numerator.pretty() + (numeratorParens ? ")" : "");
+        string = string + "/";
+        string = string + (denomParens ? "(" : "") + denom.pretty() + (denomParens ? ")" : "");
         
         return string;
     }

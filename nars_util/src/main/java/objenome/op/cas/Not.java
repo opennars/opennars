@@ -73,9 +73,9 @@ public class Not extends Operation {
         boolean parens = notExpr.functionalParens();
 
         String string = "not";
-        if (!parens) string = string.concat(" ");
+        if (!parens) string = string + " ";
                 
-        string = string.concat((parens?"(":"") + notExpr.pretty() + (parens?")":""));
+        string = string + (parens ? "(" : "") + notExpr.pretty() + (parens ? ")" : "");
         
         return string;
     }

@@ -42,7 +42,7 @@ public class Key extends LocalGridObject {
         space.rect(0.3f, 0, 0.1f, 0.15f);
         space.rect(0.1f, 0, 0.1f, 0.15f);
         space.popMatrix();
-        if(!"".equals(doorname))
+        if(doorname != null && !doorname.isEmpty())
         {
             space.textSize(0.2f);
             space.fill(255,0,0);

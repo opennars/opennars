@@ -620,7 +620,7 @@ public class Formula implements Comparable {
     private String validArgsRecurse(Formula f, String filename, Integer lineNo) {
 
         //System.out.println("INFO in Formula.validArgsRecurse(): Formula: " + f.theFormula);
-        if ("".equals(f.theFormula) || !f.listP() || f.atom() || f.empty()) {
+        if (f.theFormula != null && f.theFormula.isEmpty() || !f.listP() || f.atom() || f.empty()) {
             return "";
         }
         String pred = f.car();
@@ -634,7 +634,7 @@ public class Formula implements Comparable {
             Formula argF = new Formula();
             argF.read(arg);
             String result = validArgsRecurse(argF, filename, lineNo);
-            if (!"".equals(result)) {
+            if (result != null && !result.isEmpty()) {
                 return result;
             }
             restF.theFormula = restF.cdr();
@@ -699,7 +699,7 @@ public class Formula implements Comparable {
      */
     public String validArgs(String filename, Integer lineNo) {
 
-        if (theFormula == null || "".equals(theFormula)) {
+        if (theFormula == null || theFormula.isEmpty()) {
             return "";
         }
         Formula f = new Formula();
@@ -929,7 +929,7 @@ public class Formula implements Comparable {
         int index = start;
         ArrayList<String> result = new ArrayList();
         String arg = getArgument(index);
-        while (arg != null && !"".equals(arg) && !arg.isEmpty()) {
+        while (arg != null && !arg.isEmpty() && !arg.isEmpty()) {
             result.add(arg.intern());
             index++;
             arg = getArgument(index);
@@ -2614,7 +2614,7 @@ public class Formula implements Comparable {
         ArrayList comparisonOperators = new ArrayList(Arrays.asList(compOps));
 
         StringBuilder result = new StringBuilder();
-        if ("".equals(f.theFormula) || !f.listP() || f.atom() || f.empty()) {
+        if (f.theFormula != null && f.theFormula.isEmpty() || !f.listP() || f.atom() || f.empty()) {
             return "";
         }
 
@@ -2980,7 +2980,7 @@ public class Formula implements Comparable {
                 }
                 if (!(Character.isJavaIdentifierPart(theFormula.charAt(i)) || theFormula.charAt(i) == '-') && inToken) {
                     inToken = false;
-                    formatted = !"".equals(hyperlink) ? formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>") : formatted.append(token);
+                    formatted = hyperlink != null && !hyperlink.isEmpty() ? formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>") : formatted.append(token);
                     token = new StringBuilder();
                 }
                 if (!inToken && i > 0 && !(Character.isWhitespace(theFormula.charAt(i)) && theFormula.charAt(i - 1) == '(')) {
@@ -3000,7 +3000,7 @@ public class Formula implements Comparable {
             }
         }
         if (inToken) {    // A term which is outside of parenthesis, typically, a binding.
-            formatted = !"".equals(hyperlink) ? formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>") : formatted.append(token);
+            formatted = hyperlink != null && !hyperlink.isEmpty() ? formatted.append("<a href=\"").append(hyperlink).append("&term=").append(token).append("\">").append(token).append("</a>") : formatted.append(token);
         }
         return formatted.toString();
     }

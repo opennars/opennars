@@ -108,7 +108,7 @@ public class FileEditor extends AbstractPropertyEditor {
 
 		public File getFile() {
 			String file = getText();
-			return "".equals(file) ? null : new File(file);
+			return file != null && file.isEmpty() ? null : new File(file);
 		}
 	}
 

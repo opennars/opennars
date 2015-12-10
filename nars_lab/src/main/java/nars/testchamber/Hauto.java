@@ -166,7 +166,7 @@ public class Hauto {
         if(x == 0 || y ==0 || x == w-1 || y ==h-1)
             return;
         
-        if(!"".equals(doorname) && !doorname.contains("{")) {
+        if(doorname != null && !doorname.isEmpty() && !doorname.contains("{")) {
             doorname= '{' +doorname+ '}';
         }
         
@@ -182,8 +182,8 @@ public class Hauto {
             return;
         }
         
-        if(!"".equals(oper)) {
-            if(!"".equals(readCells[x][y].name) && !"pick".equals(oper)) {
+        if(oper != null && !oper.isEmpty()) {
+            if(readCells[x][y].name != null && !readCells[x][y].name.isEmpty() && !"pick".equals(oper)) {
                 if(allow_imitating) {
                     nar.input(oper + '(' +readCells[x][y].name + ")! :|:"); //we will force the action
                 }
@@ -196,7 +196,7 @@ public class Hauto {
                 //.operateObj(readCells[x][y].name, oper);
             }
             String s=TestChamber.getobj(x, y);
-            if(!"".equals(s)) {
+            if(s != null && !s.isEmpty()) {
                 if(allow_imitating) {
                     nar.input(oper+ '(' + s + ")! :|:");
                 }
@@ -211,13 +211,13 @@ public class Hauto {
             return;
         }
         
-        if(!"".equals(wish)) {
+        if(wish != null && !wish.isEmpty()) {
             boolean inverse=false;
             if("closed".equals(wish) || "off".equals(wish)) {
                 inverse=true;
             }
             String wishreal=wish.replace("closed", "opened").replace("off", "on");
-            if(!"".equals(readCells[x][y].name)) {
+            if(readCells[x][y].name != null && !readCells[x][y].name.isEmpty()) {
                 //nar.input("oper +("+ readCells[x][y].name+")!"); //we will force the action
                 if(!inverse) {
                     nar.input('<' + readCells[x][y].name + " --> [" + wishreal + "]>! :|:"); //in order to make NARS an observer
@@ -227,7 +227,7 @@ public class Hauto {
                 //--nar.step(1);
             }
             String s=TestChamber.getobj(x, y);
-            if(!"".equals(s)) {
+            if(s != null && !s.isEmpty()) {
                 //nar.input(oper + "(" +s+")!");
                 if(!inverse) {
                     nar.input('<' + s + " --> [" + wishreal + "]>! :|:"); //in order to make NARS an observer
@@ -239,7 +239,7 @@ public class Hauto {
             return;
         }
         
-        if(!"".equals(doorname) && selected.material==Material.Door) {
+        if(doorname != null && !doorname.isEmpty() && selected.material==Material.Door) {
             space.add(new Key(x, y, doorname.replace("door", "key")));
             if(TestChamber.staticInformation)
             nar.input('<' + doorname.replace("door", "key") + " --> key>.");
@@ -253,7 +253,7 @@ public class Hauto {
         if(selected.material==Material.Pizza) {
             doorname="{pizza"+entityID.toString()+ '}';
         }
-        if(!"".equals(doorname) && selected.material==Material.Pizza) {
+        if(doorname != null && !doorname.isEmpty() && selected.material==Material.Pizza) {
             space.add(new Pizza(x, y, doorname));
             if(TestChamber.staticInformation)
             nar.input('<' + doorname + " --> pizza>.");
@@ -297,7 +297,7 @@ public class Hauto {
             name= '{' +name+ '}';
             //if it has name already, dont allow overwrite
 
-            if("".equals(readCells[x][y].name)) {
+            if(readCells[x][y].name != null && readCells[x][y].name.isEmpty()) {
                 if(TestChamber.staticInformation)
                 nar.input('<' + name + " --> " + Klass + ">.");
                 readCells[x][y].name = name;
@@ -352,7 +352,7 @@ public class Hauto {
         this.label=label;
         this.oper=oper;
         this.wish=wish;
-        if("".equals(label)) {
+        if(label != null && label.isEmpty()) {
             return;
         }
         selected.is_solid=false;

@@ -36,7 +36,7 @@ public class WordNetUtilities {
      */
     public static String getBareSUMOTerm(String term) {
 
-        return term != null && !"".equals(term) ? term.substring(2, term.length() - 1) : "";
+        return term != null && !term.isEmpty() ? term.substring(2, term.length() - 1) : "";
     }
 
     /**
@@ -78,7 +78,7 @@ public class WordNetUtilities {
      */
     public static char getSUMOMappingSuffix(String term) {
 
-        return term != null && !"".equals(term) ? term.charAt(term.length() - 1) : ' ';
+        return term != null && !term.isEmpty() ? term.charAt(term.length() - 1) : ' ';
     }
 
     /**
@@ -496,7 +496,7 @@ public class WordNetUtilities {
                     String mapType = oldTerm.substring(oldTerm.length() - 1);
                     String synset = posNum + m.group(1);
                     String newTerm = (String) hm.get(synset);
-                    if (!bareOldTerm.contains("&%") && newTerm != null && !"".equals(newTerm) && !newTerm.equals(bareOldTerm) && kb.childOf(newTerm, bareOldTerm)) {
+                    if (!bareOldTerm.contains("&%") && newTerm != null && !newTerm.isEmpty() && !newTerm.equals(bareOldTerm) && kb.childOf(newTerm, bareOldTerm)) {
                         pw.println(m.group(1) + m.group(2) + "| " + m.group(3) + " &%" + newTerm + mapType);
                         System.out.println("INFO in WordNet.processMergers(): synset, oldTerm, newterm: "
                                 + synset + ' ' + oldTerm + ' ' + newTerm);
@@ -580,7 +580,7 @@ public class WordNetUtilities {
                     mappingChar = "instance hypernym".equals(avp.attribute) ? "@" : "+";
                     String targetSynset = avp.value;
                     String targetSUMO = WordNet.wn.getSUMOMapping(targetSynset);
-                    if (targetSUMO != null && !"".equals(targetSUMO)) {
+                    if (targetSUMO != null && !targetSUMO.isEmpty()) {
                         if (targetSUMO.charAt(targetSUMO.length() - 1) == '[') {
                             mappingChar = "[";
                         }
@@ -589,7 +589,7 @@ public class WordNetUtilities {
                             return "&%" + getBareSUMOTerm(targetSUMO) + mappingChar;
                         } else {
                             String candidate = findMappingFromHypernym(targetSynset);
-                            if (candidate != null && !"".equals(candidate)) {
+                            if (candidate != null && !candidate.isEmpty()) {
                                 return candidate;
                             }
                         }
@@ -630,7 +630,7 @@ public class WordNetUtilities {
                     if (m.matches()) {
                         String synset = posNum + m.group(1);
                         String newTerm = findMappingFromHypernym(synset);
-                        if (newTerm != null && !"".equals(newTerm)) {
+                        if (newTerm != null && !newTerm.isEmpty()) {
                             pw.println(m.group(1) + m.group(2) + "| " + m.group(3) + ' ' + newTerm);
 //                            System.out.println("INFO in WordNet.processMissingLinks(): synset, newterm: " + 
 //                                               synset + " " + " " + newTerm);
@@ -711,7 +711,7 @@ public class WordNetUtilities {
                 if (m.matches()) {
                     String newsynset = posNum + m.group(1);
                     String oldsynset = (String) mappings.get(newsynset);
-                    if (oldsynset != null && !"".equals(oldsynset)) {
+                    if (oldsynset != null && !oldsynset.isEmpty()) {
                         String term = "";
                         oldsynset = oldsynset.substring(1);
                         switch (posNum.charAt(0)) {

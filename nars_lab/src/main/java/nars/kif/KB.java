@@ -3214,7 +3214,7 @@ public class KB {
             for (Object t : ts) {
                 Formula formula = (Formula) t;
                 String result = formula.toProlog();
-                if (result != null && !"".equals(result)) {
+                if (result != null && !result.isEmpty()) {
                     pr.println(result);
                 }
                 if (i % 100 == 1) {

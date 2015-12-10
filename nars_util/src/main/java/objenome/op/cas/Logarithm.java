@@ -74,12 +74,12 @@ public class Logarithm extends Function {
         else {
             string = "log";
             if (!(base instanceof Num) || ((Num) base).val() != 10) {
-                string = string.concat('[' + base.pretty() + ']');
+                string = string + '[' + base.pretty() + ']';
             }
         }
-        if (!parens) string = string.concat(" ");
+        if (!parens) string = string + " ";
                 
-        string = string.concat((parens?"(":"") + ofExpr.pretty() + (parens?")":""));
+        string = string + (parens ? "(" : "") + ofExpr.pretty() + (parens ? ")" : "");
         
         return string;
     }

@@ -19,6 +19,6 @@ public abstract class BaseConverter<T> implements IValueFieldConverter<T> {
      * @return true if the tag has been set.
      */
     protected boolean isTagSet() {
-        return tag != null && !"".equals(tag);
+        return tag != null && !tag.isEmpty();
     }
 }

@@ -438,7 +438,7 @@ public class WordNet {
             //                   " " + synset + " " + avp.value);
             al.add(avp);
         }
-        if ((!"".equals(pointers)) && (!pointers.isEmpty()) && !" ".equals(pointers)) {
+        if ((pointers != null && !pointers.isEmpty()) && (!pointers.isEmpty()) && !" ".equals(pointers)) {
             // Only for verbs may we have the following leftover
             // f_cnt + f_num  w_num  [ +  f_num  w_num...] 
             if (synset.charAt(0) == '2') {
@@ -1149,7 +1149,7 @@ public class WordNet {
             if (i == 2) {
                 newWord = verbRootForm(word, word.toLowerCase());
             }
-            if (newWord != null && !"".equals(newWord)) {
+            if (newWord != null && !newWord.isEmpty()) {
                 word = newWord;
             }
             ArrayList al = findSUMOWordSenseArray(word, words, i);
@@ -1256,7 +1256,7 @@ public class WordNet {
         for (Object anAl : al) {
             String word = (String) anAl;
             if (!stopwords.contains(word.toLowerCase())) {
-                result = "".equals(result) ? word : result + ' ' + word;
+                result = result != null && result.isEmpty() ? word : result + ' ' + word;
             }
         }
         return result;
@@ -1272,7 +1272,7 @@ public class WordNet {
         String SUMO = "";
         String newWord = "";
         int i = 0;
-        while ("".equals(SUMO) && i < 4) {
+        while (SUMO != null && SUMO.isEmpty() && i < 4) {
             i++;
             if (i == 1) {
                 newWord = nounRootForm(word, word.toLowerCase());
@@ -1280,7 +1280,7 @@ public class WordNet {
             if (i == 2) {
                 newWord = verbRootForm(word, word.toLowerCase());
             }
-            if (!"".equals(newWord)) {
+            if (newWord != null && !newWord.isEmpty()) {
                 word = newWord;
             }
             SUMO = getSUMOterm(word, i);
@@ -1304,12 +1304,12 @@ public class WordNet {
         for (int i = 0; i < al.size(); i++) {
             String word = (String) al.get(i);
             String SUMO = findSUMOWordSense(word, al);
-            if (SUMO != null && !"".equals(SUMO)) {
-                result = "".equals(result) ? SUMO : result + ' ' + SUMO;
+            if (SUMO != null && !SUMO.isEmpty()) {
+                result = result != null && result.isEmpty() ? SUMO : result + ' ' + SUMO;
             } else {                                    // assume it's a noun
                 SUMO = getBestDefaultSense(word);
-                if (SUMO != null && !"".equals(SUMO)) {
-                    result = "".equals(result) ? SUMO : result + ' ' + SUMO;
+                if (SUMO != null && !SUMO.isEmpty()) {
+                    result = result != null && result.isEmpty() ? SUMO : result + ' ' + SUMO;
                 }
             }
             /**
@@ -1330,7 +1330,7 @@ public class WordNet {
 
         try {
             if (initNeeded) {
-                if (("".equals(WordNet.baseDir)) || (WordNet.baseDir == null)) {
+                if ((WordNet.baseDir != null && WordNet.baseDir.isEmpty()) || (WordNet.baseDir == null)) {
                     WordNet.baseDir = KBmanager.getMgr().getPref("kbDir");
                 }
                 baseDirFile = new File(WordNet.baseDir);
@@ -1708,7 +1708,7 @@ public class WordNet {
      */
     public String getSUMOterm(String word, int pos) {
 
-        if (word == null || "".equals(word)) {
+        if (word == null || word.isEmpty()) {
             return null;
         }
         String synsetBlock = null;  // A String of synsets, which are 8 digit numbers, separated by spaces.
@@ -1858,7 +1858,7 @@ public class WordNet {
         }
         buf.append("<b>").append(POSstring).append(" Synset:</b> ").append(synset);
 
-        if (SUMOterm != null && !"".equals(SUMOterm)) {
+        if (SUMOterm != null && !SUMOterm.isEmpty()) {
             //buf.append(HTMLformatter.termMappingsList(SUMOterm,"<a href=\"Browse.jsp?kb=" + sumokbname + "&term="));      
             buf.append(SUMOterm).append("  ").append(sumokbname);
         }
@@ -2017,7 +2017,7 @@ public class WordNet {
             Iterator it2 = verbSUMOHash.keySet().iterator();
             for (String synset : synsetList) {
                 String sumoTerm = (String) verbSUMOHash.get(synset);
-                if (sumoTerm != null && !"".equals(sumoTerm)) {
+                if (sumoTerm != null && !sumoTerm.isEmpty()) {
                     String bareSumoTerm = WordNetUtilities.getBareSUMOTerm(sumoTerm);
                     String transitivity = getTransitivity(synset, word);
                     String eventstate = "state";
@@ -2061,7 +2061,7 @@ public class WordNet {
             Iterator it2 = adjectiveSUMOHash.keySet().iterator();
             for (String synset : synsetList) {
                 String sumoTerm = (String) adjectiveSUMOHash.get(synset);
-                if (sumoTerm != null && !"".equals(sumoTerm)) {
+                if (sumoTerm != null && !sumoTerm.isEmpty()) {
                     String bareSumoTerm = WordNetUtilities.getBareSUMOTerm(sumoTerm);
                     pw.println("adjective_in_lexicon(" + word + ',' + word + ",normal,positive,"
                             + bareSumoTerm + ").");
@@ -2099,7 +2099,7 @@ public class WordNet {
             Iterator it2 = verbSUMOHash.keySet().iterator();
             for (String synset : synsetList) {
                 String sumoTerm = (String) verbSUMOHash.get(synset);
-                if (sumoTerm != null && !"".equals(sumoTerm)) {
+                if (sumoTerm != null && !sumoTerm.isEmpty()) {
                     String bareSumoTerm = WordNetUtilities.getBareSUMOTerm(sumoTerm);
                     pw.println("adverb_in_lexicon(" + word + ",null," + bareSumoTerm + ").");
                 }
@@ -2133,7 +2133,7 @@ public class WordNet {
             String[] synsetList = splitSynsets(stringSynsets);
             for (String synset : synsetList) {
                 String sumoTerm = (String) nounSUMOHash.get(synset);
-                if (sumoTerm != null && !"".equals(sumoTerm)) {
+                if (sumoTerm != null && !sumoTerm.isEmpty()) {
                     String bareSumoTerm = WordNetUtilities.getBareSUMOTerm(sumoTerm);
                     char mapping = WordNetUtilities.getSUMOMappingSuffix(sumoTerm);
                     String type = "object";
@@ -2212,7 +2212,7 @@ public class WordNet {
      */
     private String senseKeyPOS(String senseKey) {
 
-        if (senseKey == null || "".equals(senseKey)) {
+        if (senseKey == null || senseKey.isEmpty()) {
             return "";
         }
         int underscore2 = senseKey.lastIndexOf('_');
@@ -2318,7 +2318,7 @@ public class WordNet {
                     //System.out.println("INFO in WordNet.writeWordNetS(): Sense key: " + senseKey);              
                     String POS = senseKeyPOS(senseKey);
                     String senseNum = senseKeySenseNum(senseKey);
-                    if ("".equals(POS) || "".equals(senseNum)) {
+                    if (POS != null && POS.isEmpty() || senseNum != null && senseNum.isEmpty()) {
                         System.out.println("Error in WordNet.writeWordNetS(): Bad sense key: " + senseKey);
                     }
                     POS = WordNetUtilities.posLettersToNumber(POS);

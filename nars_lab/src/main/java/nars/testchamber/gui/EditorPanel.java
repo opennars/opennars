@@ -168,7 +168,7 @@ public class EditorPanel extends JPanel {
                                             continue;
                                         }
 
-                                        if (!"".equals(c[11]) && !c[11].contains("{")) {
+                                        if (c[11] != null && !c[11].isEmpty() && !c[11].contains("{")) {
                                             c[11] = '{' + c[11] + '}';
                                         }
 
@@ -203,7 +203,7 @@ public class EditorPanel extends JPanel {
                                                 s.nar.input('<' + c[11] + " --> switch>.");
                                         }
 
-                                        if (!"".equals(c[9])) {
+                                        if (c[9] != null && !c[9].isEmpty()) {
                                             s.cells.readCells[i][j].machine = Machine.values()[Integer.valueOf(c[9])];
                                             s.cells.writeCells[i][j].machine = Machine.values()[Integer.valueOf(c[9])];
                                             if (s.cells.readCells[i][j].machine == Machine.Turret) {
@@ -232,7 +232,7 @@ public class EditorPanel extends JPanel {
                                         s.cells.writeCells[i][j].name = c[11];
 
                                         try {
-                                            if (!"".equals(c[11])) {
+                                            if (c[11] != null && !c[11].isEmpty()) {
                                                 String value = c[11].replaceAll("[A-Za-z]", "").replaceAll("\\}", "").replaceAll("\\{", "");
                                                 int res = Integer.parseInt(value);
                                                 if (res > Hauto.entityID) {
@@ -259,14 +259,14 @@ public class EditorPanel extends JPanel {
                                             continue;
                                         }
 
-                                        if (!"".equals(val[1]) && !val[1].contains("{")) {
+                                        if (val[1] != null && !val[1].isEmpty() && !val[1].contains("{")) {
                                             val[1] = '{' + val[1] + '}';
                                         }
 
                                         String name = val[1];
 
                                         try {
-                                            if (!"".equals(name)) {
+                                            if (name != null && !name.isEmpty()) {
                                                 String value = name.replaceAll("[A-Za-z]", "");
                                                 int res = Integer.parseInt(value);
                                                 if (res > Hauto.entityID) {

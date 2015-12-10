@@ -500,7 +500,7 @@ public class LanguageFormatter {
             String arg = f.car();
             String result = nlStmtPara(arg, false, phraseMap, termMap, language, depth + 1);
 
-            if (result != null && !"".equals(result) && !result.isEmpty()) {
+            if (result != null && !result.isEmpty() && !result.isEmpty()) {
                 args.add(result);
             } else {
                 System.out.println("INFO in LanguageFormatter.paraphraseLogicalOperators(): bad result for: " + arg);
