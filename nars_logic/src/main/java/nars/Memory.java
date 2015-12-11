@@ -440,14 +440,14 @@ public class Memory extends Param {
     public final void cycle(int num) {
 
         //final Clock clock = this.clock;
-        Topic<Memory> end = eventCycleEnd;
+        Topic<Memory> eachCycle = eventCycleEnd;
 
         //synchronized (clock) {
 
             for (; num > 0; num--) {
 
 
-                end.emit(this);
+                eachCycle.emit(this);
 
             }
 

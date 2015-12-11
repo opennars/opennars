@@ -158,7 +158,7 @@ public class SequenceParallelTest {
     @Test public void testParallelWithoutSlashZero() {
 
         assertEquals(
-                    "$.50;.80;.95$ (&|,<hold-->(/,_,John,key)>,<John-->(/,hold,_,key)>). :0: %1.0;.90%",
+                    "$.50;.50;.95$ (&|,<hold-->(/,_,John,key)>,<John-->(/,hold,_,key)>). :0: %1.0;.90%",
         t.inputTask("(&|, <John --> (/, hold, _, key)>, <hold --> (/, _, John, key)>, /0).").toString());
     }
 
@@ -217,7 +217,7 @@ public class SequenceParallelTest {
         assertEquals( ((Parallel)t.term(par1)).duration(),  ((Parallel)t.term(par2)).duration());
         assertEquals( ((Parallel)t.term(par2)).duration(),  ((Parallel)t.term(par3)).duration());
     }
-    
+
     @Test public void testParallel() {
         String seq = "(&|, <a-->b>, <a-->b>, <b-->c> )";
 
@@ -270,7 +270,7 @@ public class SequenceParallelTest {
     }
     @Test public void testTrailingSequenceIntervalRemovedIfTaskTerm() {
         //trailing suffix removed as the top-level term
-        assertEquals("$.50;.80;.95$ <a-->b>. :0: %1.0;.90%",
+        assertEquals("$.50;.50;.95$ <a-->b>. :0: %1.0;.90%",
               t.inputTask("(&/, <a --> b>, /1).").toString());
     }
     @Test public void testInvalidSequenceAsTask() {

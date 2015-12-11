@@ -126,9 +126,9 @@ public class NarseseExtendedTest {
         eqTerm("c:{a,b}", "<{a,b}-->c>");
     }
     @Test public void testNamespaceTermsNonAtomicPredicate() {
-        eqTerm("<a-->b>:c", "<c--><a --> b>>");
+        eqTerm("<a-->b>:c", "<c--><a-->b>>");
         eqTerm("{a,b}:c", "<c-->{a,b}>");
-        eqTerm("(a,b):c", "<c-->(a, b)>");
+        eqTerm("(a,b):c", "<c-->(a,b)>");
     }
 
     @Test public void testNamespaceTermsChain() {

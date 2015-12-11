@@ -50,6 +50,7 @@
         <module>nars_lab</module>
         <module>nars_web</module>
         <module>nars_gui</module>
+        <module>nars_perf</module>
   </modules>
 
     <build>

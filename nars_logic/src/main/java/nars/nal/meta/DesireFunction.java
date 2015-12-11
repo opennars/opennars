@@ -1,24 +1,78 @@
 package nars.nal.meta;
 
+import nars.Global;
 import nars.Memory;
 import nars.Symbols;
+import nars.term.Term;
+import nars.term.atom.Atom;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
-public interface DesireFunction extends TruthOperator {
-    DesireFunction
-            Negation = (t1, ignored, m) -> TruthFunctions.negation(t1),
-            Strong = (T, B, m) -> B == null ? null : TruthFunctions.desireStrong(T, B),
-            Weak = (T, B, m) -> B == null ? null : TruthFunctions.desireWeak(T, B),
-            Induction = (T, B, m) -> B == null ? null : TruthFunctions.desireInd(T, B),
-            Deduction = (T, B, m) -> B == null ? null : TruthFunctions.desireDed(T, B),
-            Identity = (T, B, m) -> new DefaultTruth(T.getFrequency(), T.getConfidence()),
-            StructuralStrong = (T, ignored, m) -> TruthFunctions.desireStrong(T, GOAL(m))
-    ;
+import java.util.Map;
 
-    static Truth GOAL(Memory m) {
-        return new DefaultTruth(1.0f, m.getDefaultConfidence(Symbols.GOAL));
+public enum DesireFunction implements TruthOperator {
+
+    Negation() {
+        @Override public Truth apply(final Truth T, final Truth B, Memory m) {
+            return TruthFunctions.negation(T); }
+    },
+
+    Strong() {
+        @Override public Truth apply(final Truth T, final Truth B, Memory m) {
+            if (B == null) return null;
+            return TruthFunctions.desireStrong(T,B);
+        }
+    },
+    Weak() {
+        @Override public Truth apply(final Truth T, final Truth B, Memory m) {
+            if (B == null) return null;
+            return TruthFunctions.desireWeak(T, B);
+        }
+    },
+    Induction() {
+        @Override public Truth apply(final Truth T, final Truth B, Memory m) {
+            if (B == null) return null;
+            return TruthFunctions.desireInd(T,B);
+        }
+    },
+    Deduction() {
+        @Override public Truth apply(final Truth T, final Truth B, Memory m) {
+            if (B==null) return null;
+            return TruthFunctions.desireDed(T,B);
+        }
+    },
+    Identity() {
+        @Override public Truth apply(final Truth T, /* N/A: */ final Truth B, Memory m) {
+            return new DefaultTruth(T.getFrequency(), T.getConfidence());
+        }
+    },
+    StructuralStrong() {
+        @Override public Truth apply(final Truth T, final Truth B, Memory m) {
+            return TruthFunctions.desireStrong(T, newDefaultTruth(m));
+        }
+    };
+
+
+    private static Truth newDefaultTruth(Memory m) {
+        return m.newDefaultTruth(Symbols.JUDGMENT /* goal? */);
+    }
+
+
+    static final Map<Term, DesireFunction> atomToTruthModifier = Global.newHashMap(DesireFunction.values().length);
+
+    static {
+        for (DesireFunction tm : DesireFunction.values())
+            atomToTruthModifier.put(Atom.the(tm.toString()), tm);
+    }
+
+    @Override
+    public final boolean allowOverlap() {
+        return false;
+    }
+
+    public static DesireFunction get(Term a) {
+        return atomToTruthModifier.get(a);
     }
 
 }

@@ -27,6 +27,7 @@ import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
+import nars.time.Clock;
 import nars.util.data.Util;
 import nars.util.event.*;
 import net.openhft.affinity.AffinityLock;
@@ -794,12 +795,14 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
         Topic<NAR> frameStart = memory.eventFrameStart;
 
+        Clock clock = memory.clock;
+
         int cpf = getCyclesPerFrame();
         for (int f = 0; f < frames; f++) {
 
             frameStart.emit(this);
 
-            memory.clock.preFrame();
+            clock.preFrame();
 
             memory.cycle(cpf);
 

@@ -37,6 +37,7 @@ public class RuleMatch extends FindSubst {
     public final Versioned<Truth> truth;
     public final Versioned<Character> punct;
     public final Versioned<Term> derived;
+    public boolean cyclic;
 
     public RuleMatch(Random r) {
         super(Op.VAR_PATTERN, r );
@@ -114,6 +115,7 @@ public class RuleMatch extends FindSubst {
             taskTerm,
             beliefTerm
         ) );
+        cyclic = premise.isCyclic();
 
         //set initial power which will be divided by branch
         setPower(

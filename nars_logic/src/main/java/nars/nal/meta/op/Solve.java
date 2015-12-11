@@ -2,15 +2,10 @@ package nars.nal.meta.op;
 
 import nars.Op;
 import nars.Premise;
-import nars.Symbols;
 import nars.nal.PremiseRule;
 import nars.nal.RuleMatch;
-import nars.nal.meta.BeliefFunction;
-import nars.nal.meta.CanCycle;
 import nars.nal.meta.PreCondition;
-import nars.nal.meta.TruthOperator;
 import nars.nal.nal7.Sequence;
-import nars.task.Task;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -175,124 +170,6 @@ public final class Solve extends PreCondition {
                     match.occurrenceShift.set(copyIntervals[1]);
                 }
             }
-        }
-    }
-
-    public static final class Truth extends PreCondition {
-        public final Term beliefTerm, desireTerm;
-        public final TruthOperator belief;
-        public final TruthOperator desire;
-        public final char puncOverride;
-
-        private final transient String id;
-
-        public Truth(Term beliefTerm, Term desireTerm, char puncOverride) {
-            this.beliefTerm = beliefTerm;
-            this.desireTerm = desireTerm;
-            this.puncOverride = puncOverride;
-
-            belief = BeliefFunction.the.belief(beliefTerm);
-            if (belief == null)
-                throw new RuntimeException("unknown belief function " + beliefTerm);
-
-            desire = BeliefFunction.the.desire(desireTerm);
-
-
-            String beliefLabel = belief==null ? "_" :
-                    beliefTerm.toString();
-            String desireLabel = desire==null ? "_" :
-                    desireTerm.toString();
-
-            String sn = getClass().getSimpleName();
-            id = puncOverride == 0 ?
-                    sn + ":(" + beliefLabel + ", " + desireLabel + ')' :
-                    sn + ":(" + beliefLabel + ", " + desireLabel + ", \"" + puncOverride + "\")";
-        }
-
-        @Override
-        public String toString() {
-            return id;
-        }
-
-        final TruthOperator getTruth(char punc) {
-
-            switch (punc) {
-
-                case Symbols.JUDGMENT:
-                    return belief;
-
-                case Symbols.GOAL:
-                    return desire;
-
-            /*case Symbols.QUEST:
-            case Symbols.QUESTION:
-            */
-
-                default:
-                    return null;
-            }
-
-        }
-
-        @Override
-        public boolean test(RuleMatch m) {
-
-            Premise premise = m.premise;
-
-
-            /** calculate derived task truth value */
-
-
-
-            Task task = premise.getTask();
-
-            /** calculate derived task punctuation */
-            char punct = puncOverride;
-            if (punct == 0) {
-                /** use the default policy determined by parent task */
-                punct = task.getPunctuation();
-            }
-
-
-            nars.truth.Truth truth;
-
-            if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
-
-                TruthOperator tf = getTruth(punct);
-                if (tf == null)
-                    return false;
-
-                Task belief = premise.getBelief();
-                nars.truth.Truth T = task.getTruth();
-                nars.truth.Truth B = belief == null ? null : belief.getTruth();
-
-                truth = tf.apply(T, B, premise.memory());
-                if (truth == null)
-                    //no truth value function was applicable but it was necessary, abort
-                    return false;
-
-
-                /** filter cyclic double-premise results  */
-                if (!(tf instanceof CanCycle)) {
-                    if (premise.isCyclic()) {
-                        //                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
-                        //                    match.removeCyclic(outcome, premise, truth, punct);
-                        //                }
-                        return false;
-                    }
-                }
-            } else {
-                //question or quest, no truth is involved
-                truth = null;
-            }
-
-
-
-
-            m.truth.set(truth);
-            m.punct.thenSet(punct);
-
-            return true;
         }
     }
 

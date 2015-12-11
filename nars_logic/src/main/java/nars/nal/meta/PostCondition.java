@@ -4,7 +4,7 @@ import nars.Op;
 import nars.Symbols;
 import nars.nal.Level;
 import nars.nal.PremiseRule;
-import nars.nal.meta.op.Solve;
+import nars.nal.meta.op.TruthEval;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.atom.Atom;
@@ -27,7 +27,7 @@ public class PostCondition implements Serializable, Level //since there can be m
     public static final float HALF = 0.5f;
     private static Term beliefTruth, goalTruth;
 
-    public PostCondition(Term term, PreCondition[] afterConclusions, Solve.Truth truth) {
+    public PostCondition(Term term, PreCondition[] afterConclusions, TruthEval truth) {
         this.term = term;
         //this.modifiers = modifiers;
         this.afterConclusions = afterConclusions;
@@ -46,7 +46,7 @@ public class PostCondition implements Serializable, Level //since there can be m
      */
     public final PreCondition[] afterConclusions;
 
-    public final Solve.Truth truth;
+    public final TruthEval truth;
 
 
     /**
@@ -191,7 +191,7 @@ public class PostCondition implements Serializable, Level //since there can be m
 
 
         PostCondition pc = new PostCondition(term, afterConclusions,
-                new Solve.Truth(beliefTruth, goalTruth, puncOverride));
+                new TruthEval(beliefTruth, goalTruth, puncOverride));
         //pc.negate = negate;
         pc.puncOverride = puncOverride;
         if (pc.valid(rule)) {

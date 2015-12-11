@@ -81,7 +81,7 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
     }
 
     protected <T extends Term> Compound<T> compileCompound(Compound<T> c, TermContainer subs) {
-        if (c instanceof GenericCompound) {
+        if ((c instanceof GenericCompound) && (!(c instanceof TermMetadata))) {
             //special case, fast clone
             return new GenericCompound(c.op(), (TermVector)subs, ((GenericCompound) c).relation) {
                 @Override
