@@ -12,7 +12,7 @@
     <name>OpenNARS Web</name>
     <url>https://github.com/opennars/opennars</url>
 
-   
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -20,15 +20,15 @@
     <build>
         <!--<resources>-->
 
-            <!--<resource>-->
-                <!--<directory>${basedir}/src/main/java/</directory>-->
-                <!--<includes>-->
-                    <!--<include>**/*.xml</include>-->
-                    <!--<include>**/public/*</include>-->
-                    <!--<include>**/client/*.java</include>-->
-                <!--</includes>-->
-                <!--<filtering>false</filtering>-->
-            <!--</resource>-->
+        <!--<resource>-->
+        <!--<directory>${basedir}/src/main/java/</directory>-->
+        <!--<includes>-->
+        <!--<include>**/*.xml</include>-->
+        <!--<include>**/public/*</include>-->
+        <!--<include>**/client/*.java</include>-->
+        <!--</includes>-->
+        <!--<filtering>false</filtering>-->
+        <!--</resource>-->
         <!--</resources>-->
     </build>
 
@@ -46,7 +46,7 @@
         </dependency>
 
         <dependency>
-            <groupId>io.undertow</groupId>        
+            <groupId>io.undertow</groupId>
             <artifactId>undertow-core</artifactId>
             <exclusions>
                 <exclusion>
@@ -66,6 +66,19 @@
             <artifactId>maven-embedder</artifactId>
             <version>3.3.9</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.eclipse.golo</groupId>
+            <artifactId>golo</artifactId>
+            <version>3.0.0-incubation</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+
 
     </dependencies>
 
