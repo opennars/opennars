@@ -113,7 +113,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
             (ThreadPoolExecutor) Executors.newCachedThreadPool();
     //Executors.newFixedThreadPool(1);
 
-    private int concurrency = 1;
+    private final int concurrency = 1;
 
 
     public NAR(Memory m) {

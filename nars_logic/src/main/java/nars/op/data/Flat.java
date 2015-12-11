@@ -1,8 +1,7 @@
 package nars.op.data;
 
-import nars.nal.nal3.SetTensional;
+import nars.Op;
 import nars.nal.nal4.Product;
-import nars.nal.nal5.Conjunction;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
@@ -31,7 +30,7 @@ public abstract class Flat extends TermFunction {
 
     public static List<Term> collect(Term[] x, List<Term> l) {
         for (Term a : x) {
-            if ((a instanceof Product) || (a instanceof SetTensional) || (a instanceof Conjunction)) {
+            if (a.op(Op.PRODUCT) || a.op().isSet() || a.isAny(Op.ConjunctivesBits)) {
                 ((Compound)a).addAllTo(l);
             }
             else

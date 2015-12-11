@@ -16,16 +16,16 @@ public class RuleTest extends TestNAR {
         //TODO eventually make this handle all of r's postconditions and modifiers, etc
         String task = r.task().toString();
         task = task.replace("%", "p"); //TODO do proper term replacement
-        char taskPunc = '.';
 
         String belief = r.belief().toString();
         belief = belief.replace("%", "p"); //TODO do proper term replacement
-        char beliefPunc = '.';
 
         String conc = r.getConclusion().term(0).toString();
         conc = conc.replace("%", "p");
         char concPunc = '.';
 
+        char beliefPunc = '.';
+        char taskPunc = '.';
         return new RuleTest(task + taskPunc, belief + beliefPunc, conc + concPunc);
 
     }

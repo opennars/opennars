@@ -61,12 +61,10 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
     public V put(V value) {
 
 
-        V removed;
-
         /*synchronized (nameTable)*/
 
         K key = value.name();
-        removed = putKey(key, value);
+        V removed = putKey(key, value);
         if (removed != null) {
 
             V remd = removeItem(removed);

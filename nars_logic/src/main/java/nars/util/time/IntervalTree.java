@@ -185,12 +185,12 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 		if(root == null){
 			return 0.0;
 		}
-		int total = 0;
-		int count = 0;
 
 		//TODO use IntArrayList
 		Collection<Integer> c = new LinkedList<>();
 		root.averageHeight(c, 0);
+		int count = 0;
+		int total = 0;
 		for(int i : c){
 			total += i;
 			count ++;

@@ -55,14 +55,14 @@ public class FindSubst extends Versioning implements Subst {
 
     //public abstract Term resolve(Term t, Substitution s);
 
-    public VarCachedVersionMap xy;
-    public VarCachedVersionMap yx;
+    public final VarCachedVersionMap xy;
+    public final VarCachedVersionMap yx;
 
     /** current "y"-term being matched against */
-    Versioned<Term> term;
+    final Versioned<Term> term;
 
     /** parent, if in subterms */
-    public Versioned<Compound> parent;
+    public final Versioned<Compound> parent;
 
     /** unification power available at start of current branch */
     //public final Versioned<Integer> branchPower;

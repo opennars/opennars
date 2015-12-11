@@ -288,8 +288,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         //more durability = slower forgetting; durability near 1.0 means forgetting will happen slowly, near 0.0 means will happen at a max rate
         forgetProportion *= (1.0f - budget.getDurability());
 
-        float newPriority;
-        newPriority = forgetProportion > 1.0f ? minPriorityForgettingCanAffect : currentPriority * (1.0f - forgetProportion) + minPriorityForgettingCanAffect * (forgetProportion);
+        float newPriority = forgetProportion > 1.0f ? minPriorityForgettingCanAffect : currentPriority * (1.0f - forgetProportion) + minPriorityForgettingCanAffect * (forgetProportion);
 
 
         budget.setPriority(newPriority);

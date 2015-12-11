@@ -163,7 +163,7 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
 
     public int getIfAbsent(int valueIfMissing) {
         if (isEmpty()) return valueIfMissing;
-        return ((Integer) get());
+        return ((Integer) get()).intValue();
     }
 
     public char getIfAbsent(char valueIfMissing) {

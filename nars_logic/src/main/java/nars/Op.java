@@ -301,7 +301,7 @@ public enum Op implements Serializable {
     public static final int SetsBits =
             Op.or(Op.SET_EXT, Op.SET_INT);
 
-    public static int StatementBits =
+    public static final int StatementBits =
             Op.or(Op.INHERIT.bit(), Op.SIMILAR.bit(),
                     EquivalencesBits,
                     ImplicationsBits
@@ -331,7 +331,7 @@ public enum Op implements Serializable {
 
     }
 
-    public static int[] NALLevelEqualAndAbove = new int[8+1]; //indexed from 0..7, meaning index 7 is NAL8, index 0 is NAL1
+    public static final int[] NALLevelEqualAndAbove = new int[8+1]; //indexed from 0..7, meaning index 7 is NAL8, index 0 is NAL1
     static {
         for (Op o : Op.values()) {
             int l = o.minLevel;

@@ -54,10 +54,10 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     //public Tense tense = Tense.Eternal;
 
 
-    public List<Task> valid = Global.newArrayList();
+    public final List<Task> valid = Global.newArrayList();
 
 
-    transient int maxSimilars = 3;
+    final transient int maxSimilars = 3;
 
     protected final TreeMap<Float,Task> similar = new TreeMap();
 
@@ -217,12 +217,11 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     }
 
     public void recordSimilar(Task task) {
-        TreeMap<Float, Task> similar = this.similar;
+        final TreeMap<Float, Task> similar = this.similar;
 
 
         //TODO add the levenshtein distance of other task components
-        float worstDiff;
-        worstDiff = similar != null && similar.size() >= maxSimilars ? similar.lastKey() : Float.POSITIVE_INFINITY;
+        float worstDiff = similar != null && similar.size() >= maxSimilars ? similar.lastKey() : Float.POSITIVE_INFINITY;
 
         float difference = 0;
         difference +=

@@ -121,14 +121,12 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         }
 
 
-
-        boolean tableChanged = false;
-
         boolean added = tryAdd(input, ranking, memory);
         if (input.isDeleted()) {
             return top();
         }
 
+        boolean tableChanged = false;
         if (added) {
             tableChanged = true;
         }

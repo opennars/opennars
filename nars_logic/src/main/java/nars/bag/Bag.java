@@ -223,8 +223,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     public V update(BagTransaction<K, V> tx) {
 
         K key = tx.name();
-        V item;
-        item = key != null ? get(key) : peekNext();
+        V item = key != null ? get(key) : peekNext();
 
         return updateItem(tx, item);
     }
@@ -269,11 +268,10 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     //selector.getBudget()
 
     boolean updateItemBudget(BagSelector<K, V> selector, V item, Budget nextBudget /* temporary, re-usable instance */) {
-        Budget src;
         /*if (selector instanceof BagActivator)
             src = ((BagActivator)selector).getBudget();
         else*/
-            src = item.getBudget();
+        Budget src = item.getBudget();
         return updateItemBudget(selector, src, item, nextBudget);
     }
 

@@ -129,7 +129,7 @@ public class TaskProcess extends AbstractPremise  {
             return false;
 
         NAR nar = this.nar;
-        int numTemplates = tl.size();
+
         float termLinkThresh = nar.memory.termLinkThreshold.floatValue();
 
         boolean activity = false;

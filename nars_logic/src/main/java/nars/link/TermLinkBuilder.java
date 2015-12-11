@@ -1,12 +1,9 @@
 package nars.link;
 
-import com.google.common.base.Equivalence;
 import nars.Global;
 import nars.Memory;
+import nars.Op;
 import nars.bag.tx.BagActivator;
-import nars.nal.nal1.Negation;
-import nars.nal.nal5.Conjunction;
-import nars.nal.nal5.Implication;
 import nars.nal.nal7.CyclesInterval;
 import nars.term.Term;
 import nars.term.Termed;
@@ -67,8 +64,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         ///** add self link for structural transform: */
         //components.add(t);
 
-        boolean tEquivalence = (t instanceof Equivalence);
-        boolean tImplication = (t instanceof Implication);
+        boolean tEquivalence = t.isAny(Op.EquivalencesBits);
+        boolean tImplication = t.isAny(Op.ImplicationsBits);
 
 
         int ni = t.size();
@@ -88,7 +85,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                 components.add(ti);
             }
 
-            if ((tEquivalence || (tImplication && (i == 0))) && ((ti instanceof Conjunction) || (ti instanceof Negation))) {
+            if ((tEquivalence || (tImplication && (i == 0))) &&
+                    ((ti.isAny(Op.ConjunctivesBits)) || (ti.isAny(Op.NEGATE)))) {
 
                 prepareComponentLinks((Compound) ti, components);
 

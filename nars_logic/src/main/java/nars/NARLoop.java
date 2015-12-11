@@ -86,8 +86,7 @@ public class NARLoop implements Runnable {
             int pri = thread.getPriority();
             int fullThrottlePri = Thread.MIN_PRIORITY;
 
-            int targetPri;
-            targetPri = periodMS == 0 ? fullThrottlePri : Thread.NORM_PRIORITY;
+            int targetPri = periodMS == 0 ? fullThrottlePri : Thread.NORM_PRIORITY;
 
             if (targetPri != pri)
                 thread.setPriority(fullThrottlePri);

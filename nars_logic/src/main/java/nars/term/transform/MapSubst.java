@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class MapSubst implements Subst {
 
-    public Map<Term, Term> subs;
+    public final Map<Term, Term> subs;
 
     /**
      * creates a substitution of one variable; more efficient than supplying a Map

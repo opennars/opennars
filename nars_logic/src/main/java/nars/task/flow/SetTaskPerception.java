@@ -18,7 +18,7 @@ import java.util.function.Consumer;
  */
 public final class SetTaskPerception extends TaskPerception {
 
-    final UnifriedMap<Task,Task> table = new UnifriedMap<Task,Task>();
+    final UnifriedMap<Task,Task> table = new UnifriedMap<>();
     final Procedure2<Budget, Budget> merge;
 
     public SetTaskPerception(Memory m, Consumer<Task> receiver) {

@@ -486,8 +486,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
     }
 
     public static String genericString(Term t, ObjectIntHashMap<Term> _unique) {
-        ObjectIntHashMap<Term> unique;
-        unique = _unique == null ? new ObjectIntHashMap() : _unique;
+        ObjectIntHashMap<Term> unique = _unique == null ? new ObjectIntHashMap() : _unique;
 
         if (t.getClass() == Atom.class) {
             //atomic term

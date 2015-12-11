@@ -172,8 +172,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         E K = items.get(k);
         if (!less(k2 + 1, K) || !less(k2 + 2, K)) {
 
-            int t;
-            t = !less(k2 + 1, k2 + 2) ? 1 : 2;
+            int t = !less(k2 + 1, k2 + 2) ? 1 : 2;
 
             swap(k, k2 + t);
             reHeap(k2 + t, maxMoves);
@@ -193,8 +192,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
             return;
         }
 
-        int hc;
-        hc = (heapCycle == 0) || (heapCycle > (is - 1)) ? (heapCycle = is - 1) : 0;
+        int hc = (heapCycle == 0) || (heapCycle > (is - 1)) ? (heapCycle = is - 1) : 0;
         reHeap(hc, maxMoves);
         swap(0, heapCycle);
 
@@ -449,11 +447,9 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      */
     protected E removeItem(int index) {
 
-        E selected;
-
         /*synchronized (nameTable)*/
 
-        selected = items.remove(index);
+        E selected = items.remove(index);
         if (selected == null)
             throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
 

@@ -34,14 +34,15 @@ public class add extends TermFunction<Integer> implements Mental {
             throw new RuntimeException("Requires 2 arguments");
         }
         
-        int n1, n2;
-        
+        int n1;
+
         try {
             n1 = integer(x[0]);
         } catch (NumberFormatException e) {
             throw new RuntimeException("1st parameter not an integer: " + x[0]);
         }
-        
+
+        int n2;
         try {
             n2 = integer(x[1]);
         } catch (NumberFormatException e) {

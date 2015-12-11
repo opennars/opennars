@@ -89,8 +89,7 @@ public class MethodOperator extends TermFunction {
         if (x.length < requires)
             throw new RuntimeException("invalid argument count: needs " + requires + " but has " + Arrays.toString(x));
 
-        Object instance;
-        instance = paramOffset == 0 ? null : context.object(x[0]);
+        Object instance = paramOffset == 0 ? null : context.object(x[0]);
 
         Object[] args;
         if (pc == 0) {
@@ -125,9 +124,8 @@ public class MethodOperator extends TermFunction {
             //Object result = Invoker.invoke(instance, method.getName(), args); /** from Boon library */
 
 
-            Object result;
             Object ll = currentTask.getLogLast();
-            result = ll instanceof NALObjects.InvocationResult ? ((NALObjects.InvocationResult) ll).value : context.invokeVolition(currentTask, method, instance, args);
+            Object result = ll instanceof NALObjects.InvocationResult ? ((NALObjects.InvocationResult) ll).value : context.invokeVolition(currentTask, method, instance, args);
 
             if (feedback)
                 return context.term(result);

@@ -45,9 +45,8 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
     }
 
     protected <T extends Term> T compile(T t) {
-        T compiled;
 
-        compiled = t instanceof Compound ? (T) compileCompound((Compound) t) : t;
+        T compiled = t instanceof Compound ? (T) compileCompound((Compound) t) : t;
         if (t instanceof TermMetadata) {
 
             //the term instance will remain unique

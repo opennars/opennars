@@ -53,10 +53,10 @@ public class js extends TermFunction implements Mental {
             Term[] args = o.args();
             Bindings bindings = newBindings(args);
             bindings.put("_o", fnCompiled);
-            String input = "_o.apply(this,arg)";
 
             Object result;
             try {
+                String input = "_o.apply(this,arg)";
                 result = js.get().eval(input, bindings);
             } catch (Throwable ex) {
                 ex.printStackTrace();
@@ -193,8 +193,7 @@ public class js extends TermFunction implements Mental {
         }
 
         // copy over all arguments
-        Term[] scriptArguments;
-        scriptArguments = new Term[args.length-1];
+        Term[] scriptArguments = new Term[args.length - 1];
         System.arraycopy(args, 1, scriptArguments, 0, args.length-1);
 
         Bindings bindings = newBindings(scriptArguments);

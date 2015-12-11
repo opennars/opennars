@@ -30,6 +30,7 @@ public class RuleTrie extends Deriver {
         printSummary(trie.root);
     }
 
+    /* (&/, precon1, precon2, ... (&|, fork1, fork2, ... ) ) */
     public static final class RuleBranch {
 
         public final PreCondition[] precondition; //precondition sequence

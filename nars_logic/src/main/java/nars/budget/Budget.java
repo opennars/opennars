@@ -668,9 +668,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     @Override
     public final long setLastForgetTime(long currentTime) {
 
-        long period;
-
-        period = lastForgetTime == Tense.TIMELESS ? 0 : currentTime - lastForgetTime;
+        long period = lastForgetTime == Tense.TIMELESS ? 0 : currentTime - lastForgetTime;
 
         lastForgetTime = currentTime;
         return period;
