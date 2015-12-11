@@ -6,7 +6,7 @@ import jurls.core.utils.MatrixImage;
 import nars.Symbols;
 import nars.Video;
 import nars.concept.Concept;
-import nars.nal.nal8.Operation;
+
 import nars.rl.QEntry;
 import nars.rl.QLAgent;
 import nars.term.Term;

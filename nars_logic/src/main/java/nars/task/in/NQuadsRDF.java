@@ -2,7 +2,6 @@ package nars.task.in;
 
 import nars.$;
 import nars.NAR;
-import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
 import nars.task.Task;
@@ -322,7 +321,7 @@ public abstract class NQuadsRDF {
             //System.out.println(subject + " " + predicate + " " + object);
             if (subject!=null && object!=null && predicate!=null) {
                 belief = (Compound) $.inh(
-                        Product.make(subject, object),
+                        $.p(subject, object),
                         predicate
                 );
             }

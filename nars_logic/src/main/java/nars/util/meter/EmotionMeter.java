@@ -6,7 +6,6 @@ import nars.Memory;
 import nars.Premise;
 import nars.process.ConceptProcess;
 import nars.task.Task;
-import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.util.event.FrameReaction;
 import nars.util.meter.event.DoubleMeter;
@@ -18,7 +17,7 @@ import java.io.Serializable;
  */
 public class EmotionMeter extends FrameReaction implements Serializable {
 
-    public static final Compound BUSYness = $.seti(Atom.the("busy"));
+    //public static final Compound BUSYness = $.seti(Atom.the("busy"));
     private final Memory memory;
 
 

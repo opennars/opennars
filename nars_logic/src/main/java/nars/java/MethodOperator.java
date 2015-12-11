@@ -3,7 +3,6 @@ package nars.java;
 import com.github.drapostolos.typeparser.TypeParser;
 import nars.$;
 import nars.Op;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.task.Task;
 import nars.term.Term;
@@ -67,8 +66,8 @@ public class MethodOperator extends TermFunction {
     }
 
     @Override
-    public Object function(Operation o) {
-        Term[] x = o.args();
+    public Object function(Compound o) {
+        Term[] x = o.terms();
 
         //System.out.println("method: " + method + " w/ " + x);
 

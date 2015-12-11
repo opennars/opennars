@@ -1,7 +1,7 @@
 package nars.nal.meta.match;
 
+import nars.Op;
 import nars.nal.PremiseRule;
-import nars.nal.nal4.Image;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
@@ -38,7 +38,7 @@ public class EllipsisTransform extends EllipsisOneOrMore {
     }
 
     public ArrayEllipsisMatch collect(Compound y, int a, int b, FindSubst subst) {
-        if (from.equals(Image.Index) && (y instanceof Image)) {
+        if (from.equals(Op.Imdex) && (y.op().isImage())) {
 
             int rel = y.relation();
             int n = (b-a)+1;

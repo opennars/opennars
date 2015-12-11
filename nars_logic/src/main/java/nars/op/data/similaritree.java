@@ -1,8 +1,9 @@
 package nars.op.data;
 
-import nars.nal.nal8.Operation;
+import nars.nal.Compounds;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.util.Texts;
 
 /**
@@ -11,9 +12,12 @@ import nars.util.Texts;
  */
 public class similaritree extends TermFunction<Float> {
 
+    //TODO integrate Ters Terms.termDistance()
+
     @Override
-    public Float function(Operation o) {
-        Term[] x = o.args();
+    public Float function(Compound o) {
+
+        Term[] x = Compounds.opArgsArray(o);
         if (x.length!=2) return Float.NaN;
 
         String a = x[0].toString();

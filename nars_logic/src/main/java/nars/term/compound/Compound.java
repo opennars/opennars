@@ -20,6 +20,7 @@
  */
 package nars.term.compound;
 
+import nars.$;
 import nars.Global;
 import nars.Op;
 import nars.nal.meta.match.Ellipsis;
@@ -59,9 +60,16 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
 
 
-    static void ensureFeasibleVolume(int vol) {
+    static void ensureFeasibleVolume(int vol, TermContainer<?> c) {
         if (vol > Global.COMPOUND_VOLUME_MAX) {
-            throw new RuntimeException("volume limit exceeded");
+            $.logger.error("Term volume overflow");
+            c.forEach(x -> {
+                Terms.printRecursive(x, (String line) ->
+                    $.logger.error(line)
+                );
+            });
+
+            throw new RuntimeException("Term volume overflow: " + c);
         }
     }
 

@@ -19,11 +19,10 @@ import static org.junit.Assert.*;
 /** various tests of the Sequence and Parallel term types */
 public class SequenceParallelTest {
 
-    static final Terminal t = new Terminal(); //DURATION=5 by default
+    static final NAR t = new Default(); //DURATION=5 by default
     static final int DURATION = t.memory.duration();
 
     @Test public void testSequenceTaskNormalization() {
-        Terminal t = new Terminal();
 
         Task x = t.inputTask("(&/, <a-->b>, /10). :|:");
         assertEquals(t.term("<a-->b>"), x.getTerm());

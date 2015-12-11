@@ -16,11 +16,12 @@
  */
 package nars.op.math;
 
+import nars.nal.Compounds;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
 import nars.term.Term;
+import nars.term.compound.Compound;
 
 /**
  * Count the number of elements in a set
@@ -28,8 +29,8 @@ import nars.term.Term;
 public class add extends TermFunction<Integer> implements Mental {
 
     @Override
-    public Integer function(Operation o) {
-        Term[] x = o.args();
+    public Integer function(Compound o) {
+        Term[] x = Compounds.opArgsArray(o);
         if (x.length < 2) {
             throw new RuntimeException("Requires 2 arguments");
         }

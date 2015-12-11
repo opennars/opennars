@@ -2,7 +2,6 @@ package nars.rdfowl;
 
 import nars.$;
 import nars.NAR;
-import nars.nal.nal4.Product;
 import nars.nal.nal8.Operator;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -432,7 +431,7 @@ public class OWLInput  {
         }
         else {
             nar.believe($.oper((Operator) atom(predicate),
-                    Product.make(atom(subject), atom(object))));
+                    $.p(atom(subject), atom(object))));
         }
 
 //        // get the entity ids for source and target

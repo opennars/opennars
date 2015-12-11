@@ -165,7 +165,7 @@ public class Default extends AbstractNAR {
     public TaskPerception initInput() {
 
         return new SetTaskPerception(
-            memory, this::process, Budget.plus);
+            memory, this::process, Budget.average);
 
         /* {
             @Override

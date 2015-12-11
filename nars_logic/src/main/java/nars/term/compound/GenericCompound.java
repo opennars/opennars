@@ -3,33 +3,26 @@ package nars.term.compound;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.$;
 import nars.Op;
-import nars.nal.nal3.SetTensional;
-import nars.nal.nal4.Image;
-import nars.nal.nal4.Product;
+import nars.nal.Compounds;
 import nars.nal.nal7.Order;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.term.*;
 import nars.term.visit.SubtermVisitor;
 import nars.util.utf8.ByteBuf;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static com.google.common.collect.ObjectArrays.concat;
-import static nars.Op.*;
+import static nars.Op.SET_EXT;
+import static nars.Op.SET_INT;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
-import static nars.nal.nal5.Conjunctive.flatten;
-import static nars.term.Statement.pred;
-import static nars.term.Statement.subj;
+import static nars.nal.Compounds.flatten;
 
 
 public class GenericCompound<T extends Term> implements Compound<T> {
@@ -43,26 +36,31 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
 
     /** main compound construction entry-point */
-    public static Term COMPOUND(Op op, Term... subterms) {
+    public static Term COMPOUND(Op op, Term... t) {
 
         switch (op) {
             case IMAGE_EXT:
             case IMAGE_INT:
                 //if no relation was specified and it's an Image,
                 //it must contain a _ placeholder
-                if (Image.hasPlaceHolder(subterms)) {
-                    return Image.build(op, subterms);
+                if (Compounds.hasImdex(t)) {
+                    return Compounds.image(op, t);
                 }
                 return null;
 
+            case CONJUNCTION:
+                return Compounds.junction(Op.CONJUNCTION, t);
+            case DISJUNCTION:
+                return Compounds.junction(Op.DISJUNCTION, t);
+
             case SEQUENCE:
-                return Sequence.makeSequence(subterms);
+                return Sequence.makeSequence(t);
 
             case PARALLEL:
-                return Parallel.makeParallel(subterms);
+                return Parallel.makeParallel(t);
 
             default:
-                return COMPOUND(op, subterms, -1);
+                return COMPOUND(op, t, -1);
         }
     }
 
@@ -75,8 +73,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
             case PARALLEL:
                 return Parallel.makeParallel(t);
             case INTERSECT_EXT:
-                return newIntersectEXT(t);
-
+                return Compounds.newIntersectEXT(t);
             case INSTANCE:
                 return $.instance(t[0], t[1]);
             case PROPERTY:
@@ -88,7 +85,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
         //REDUCTIONS
         if (op.isStatement()) {
-            return newStatement(op, t);
+            return Compounds.statement(op, t);
         } else {
             switch (op) {
                 case IMAGE_INT:
@@ -102,239 +99,32 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                 case DIFF_EXT:
                     Term et0 = t[0], et1 = t[1];
                     if ((et0.op(SET_EXT) && et1.op(SET_EXT) )) {
-                        return subtractSet(Op.SET_EXT, (Compound)et0, (Compound)et1);
+                        return Compounds.subtractSet(Op.SET_EXT, (Compound)et0, (Compound)et1);
                     }
                     break;
                 case DIFF_INT:
                     Term it0 = t[0], it1 = t[1];
                     if ((it0.op(SET_INT) && it1.op(SET_INT) )) {
-                        return subtractSet(Op.SET_INT, (Compound)it0, (Compound)it1);
+                        return Compounds.subtractSet(Op.SET_INT, (Compound)it0, (Compound)it1);
                     }
                     break;
-                case INTERSECT_EXT: return newIntersectEXT(t);
-                case INTERSECT_INT: return newIntersectINT(t);
-                /*case DISJUNCT:
+                case INTERSECT_EXT: return Compounds.newIntersectEXT(t);
+                case INTERSECT_INT: return Compounds.newIntersectINT(t);
+                /*case DISJUNCTION:
                     break;*/
             }
         }
 
 
-        return newCompound(op, t, relation, op.isCommutative());
+        return Compounds.newCompound(op, t, relation, op.isCommutative());
     }
-
-    @Nullable
-    public static Term newStatement(Op op, Term[] t) {
-
-        switch (t.length) {
-            case 1: return t[0];
-            case 2: {
-
-                Term subject = t[0];
-                Term predicate = t[1];
-
-                if (subject == null || predicate == null)
-                    return null;
-
-                //special statement filters
-                switch (op) {
-                    case EQUIV:
-                    case EQUIV_AFTER:
-                    case EQUIV_WHEN:
-                        if (!validEquivalenceTerm(subject)) return null;
-                        if (!validEquivalenceTerm(predicate)) return null;
-                        break;
-
-                    case IMPLICATION:
-                    case IMPLICATION_AFTER:
-                    case IMPLICATION_BEFORE:
-                    case IMPLICATION_WHEN:
-                        if (subject.isAny(InvalidEquivalenceTerm)) return null;
-                        if (predicate.isAny(InvalidImplicationPredicate)) return null;
-
-                        if (predicate.isAny(Op.ImplicationsBits)) {
-                            Term oldCondition = subj(predicate);
-                            if ((oldCondition.isAny(Op.ConjunctivesBits)) && oldCondition.containsTerm(subject))
-                                return null;
-
-                            return impl2Conj(op, subject, predicate, oldCondition);
-                        }
-                        break;
-                }
-
-                if (op.isCommutative())
-                    t = Terms.toSortedSetArray(t);
-
-                if (t.length == 1) return t[0]; //reduced to one
-
-                if (!Statement.invalidStatement(t[0], t[1]))
-                    return newCompound(op, t, -1, false); //already sorted
-
-                return null;
-            }
-        }
-
-        return null;
-    }
-
-    static Term subtractSet(Op setType, Compound A, Compound B) {
-        if (A.equals(B))
-            return null; //empty set
-        Set<Term> x = SetTensional.subtract(A, B);
-        if (x.isEmpty())
-            return null;
-        return newCompound(setType, Terms.toArray(x), -1, false /* already sorted here via the Set */);
-    }
-
-    /** implications, equivalences, and interval */
-    final static int InvalidEquivalenceTerm =
-            Op.or(IMPLICATION, IMPLICATION_WHEN, IMPLICATION_AFTER, IMPLICATION_BEFORE,
-                    EQUIV, EQUIV_AFTER, EQUIV_WHEN,
-                    INTERVAL);
-
-    /** equivalences and intervals (not implications, they are allowed */
-    final static int InvalidImplicationPredicate =
-            Op.or(EQUIV, EQUIV_AFTER, EQUIV_WHEN, INTERVAL);
-
-    private static boolean validEquivalenceTerm(Term t) {
-        return !t.isAny(InvalidEquivalenceTerm);
-//        if ( instanceof Implication) || (subject instanceof Equivalence)
-//                || (predicate instanceof Implication) || (predicate instanceof Equivalence) ||
-//                (subject instanceof CyclesInterval) || (predicate instanceof CyclesInterval)) {
-//            return null;
-//        }
-    }
-
-
-
-    private static Term impl2Conj(Op op, Term subject, Term predicate, Term oldCondition) {
-        Op conjOp;
-        switch (op) {
-            case IMPLICATION: conjOp = CONJUNCTION; break;
-            case IMPLICATION_AFTER: conjOp = SEQUENCE; break;
-            case IMPLICATION_WHEN: conjOp = PARALLEL; break;
-            case IMPLICATION_BEFORE:
-                conjOp = SEQUENCE;
-                //swap order
-                Term x = oldCondition;
-                oldCondition = subject;
-                subject = x;
-                break;
-            default:
-                throw new RuntimeException("invalid case");
-        }
-
-        return COMPOUND(op,
-                COMPOUND(conjOp, subject, oldCondition),
-                pred(predicate));
-    }
-
-    private static Term newCompound(Op op, Term[] t, int relation, boolean sort) {
-        if (sort && op.isCommutative())
-            t = Terms.toSortedSetArray(t);
-
-        int numSubs = t.length;
-        if (op.minSize == 2 && numSubs == 1) {
-            return t[0]; //reduction
-        }
-
-        if (!op.validSize(numSubs)) {
-            //throw new RuntimeException(Arrays.toString(t) + " invalid size for " + op);
-            return null;
-        }
-
-        return new GenericCompound(op, t, relation);
-    }
-
-    private static Term newIntersectINT(Term[] t) {
-        return newIntersection(t,
-                Op.INTERSECT_INT,
-                Op.SET_INT,
-                Op.SET_EXT);
-    }
-    private static Term newIntersectEXT(Term[] t) {
-        return newIntersection(t,
-                Op.INTERSECT_EXT,
-                Op.SET_EXT,
-                Op.SET_INT);
-    }
-
-    private static Term newIntersection(Term[] t, Op intersection, Op setUnion, Op setIntersection) {
-        if (t.length == 2) {
-
-            Term term1 = t[0], term2 = t[1];
-
-            if (term2.op(intersection) && !term1.op(intersection)) {
-                //put them in the right order so everything fits in the switch:
-                Term x = term1;
-                term1 = term2;
-                term2 = x;
-            }
-
-            Op o1 = term1.op();
-
-            if (o1 == setUnion) {
-                //set union
-                if (term2.op(setUnion)) {
-                    Term[] ss = concat(
-                            ((Compound) term1).terms(),
-                            ((Compound) term2).terms(), Term.class);
-
-                    return setUnion == SET_EXT ? $.sete(ss) : $.seti(ss);
-                }
-
-            } else {
-                // set intersection
-                if (o1 == setIntersection) {
-                    if (term2.op(setIntersection)) {
-                        Set<Term> ss = ((Compound) term1).toSet();
-                        ss.retainAll(((Compound) term2).toSet());
-                        if (ss.isEmpty()) return null;
-                        return setIntersection == SET_EXT ? $.sete(ss) : $.seti(ss);
-                    }
-
-
-                } else {
-
-                    if (o1 == intersection) {
-                        Term[] suffix;
-
-                        if (term2.op(intersection)) {
-                            // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                            suffix = ((Compound) term2).terms();
-
-                        } else {
-                            // (&,(&,P,Q),R) = (&,P,Q,R)
-
-                            if (term2.op(intersection)) {
-                                // (&,R,(&,P,Q)) = (&,P,Q,R)
-                                throw new RuntimeException("should have been swapped into another condition");
-                            }
-
-                            suffix = new Term[]{term2};
-                        }
-
-                        t = concat(
-                                ((Compound) term1).terms(), suffix, Term.class
-                        );
-
-                    }
-                }
-            }
-
-
-        }
-
-        return newCompound(intersection, t, -1, true);
-    }
-
-
 
 
     protected GenericCompound(Op op, T... subterms) {
         this(op, subterms, 0);
     }
 
-    protected GenericCompound(Op op, T[] subterms, int relation) {
+    public GenericCompound(Op op, T[] subterms, int relation) {
 
         this.op = op;
 
@@ -367,19 +157,19 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         switch (op) {
             case SET_INT_OPENER:
             case SET_EXT_OPENER:
-                SetTensional.append(this, p, pretty);
+                Compounds.setAppend(this, p, pretty);
                 break;
             case PRODUCT:
-                Product.append(this, p, pretty);
+                Compounds.productAppend(this, p, pretty);
                 break;
             case IMAGE_INT:
             case IMAGE_EXT:
-                Image.appendImage(this, p, pretty);
+                Compounds.imageAppend(this, p, pretty);
                 break;
             default:
                 if (op.isStatement()) {
-                    if (Operation.isOperation(this)) {
-                        Operation.appendOperation((Compound) term(0), (Operator) term(1), p, pretty); //TODO Appender
+                    if (Compounds.isOperation(this)) {
+                        Compounds.operationAppend((Compound) term(0), (Operator) term(1), p, pretty); //TODO Appender
                     }
                     else {
                         Statement.append(this, p, pretty);

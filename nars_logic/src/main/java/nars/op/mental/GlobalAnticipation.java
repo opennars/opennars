@@ -17,7 +17,7 @@
 //import nars.nal.nal7.Interval;
 //import nars.nal.nal7.TemporalRules;
 //import nars.nal.nal7.Tense;
-//import nars.nal.nal8.Operation;
+//
 //import nars.nal.nal8.Operator;
 //import nars.nal.stamp.Stamp;
 //import nars.nal.term.Term;

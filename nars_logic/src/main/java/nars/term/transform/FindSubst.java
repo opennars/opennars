@@ -8,7 +8,6 @@ import nars.Op;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TermPattern;
 import nars.nal.meta.match.*;
-import nars.nal.nal4.Image;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.compound.Compound;
@@ -645,8 +644,7 @@ public class FindSubst extends Versioning implements Subst {
         }
 
         if (xOp.isVar() && yOp.isVar()) {
-            nextVarX((Variable) x, y);
-            return true;
+            return nextVarX((Variable) x, y);
         }
 
         return false;
@@ -672,8 +670,7 @@ public class FindSubst extends Versioning implements Subst {
         if (xSubst != null) {
             return match(xSubst, y);
         } else {
-            nextVarX(x, y);
-            return true;
+            return nextVarX(x, y);
         }
     }
 
@@ -685,18 +682,21 @@ public class FindSubst extends Versioning implements Subst {
 //    }
 
 
-    private final void nextVarX(Variable xVar, Term y) {
+    private final boolean nextVarX(Variable xVar, Term y) {
         Op xOp = xVar.op();
 
         if (xOp == type) {
             putVarX(xVar, y);
+            return true;
         } else {
             Op yOp = y.op();
             if (yOp == xOp) {
                 putCommon(xVar, (Variable) y);
+                return true;
             }
         }
 
+        return false;
     }
 
     @Override
@@ -751,7 +751,7 @@ public class FindSubst extends Versioning implements Subst {
                 //this involves a special "image ellipsis transform"
 
                 EllipsisTransform et = (EllipsisTransform)e;
-                if (et.from.equals(Image.Index)) {
+                if (et.from.equals(Op.Imdex)) {
 
                     //the indicated term should be inserted
                     //at the index location of the image

@@ -8,8 +8,8 @@ import nars.nal.nal7.Tense;
 import nars.task.Task;
 import nars.util.data.Util;
 
-import static nars.nal.nal1.LocalRules.getRevision;
-import static nars.nal.nal1.LocalRules.revisible;
+import static nars.nal.LocalRules.getRevision;
+import static nars.nal.LocalRules.revisible;
 
 /**
  * Stores beliefs ranked in a sorted ArrayList, with strongest beliefs at lowest indexes (first iterated)

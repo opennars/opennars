@@ -13,7 +13,7 @@
 //import nars.nal.nal5.Implication;
 //import nars.nal.nal7.TemporalRules;
 //import nars.nal.nal7.Tense;
-//import nars.nal.nal8.Operation;
+//
 //import nars.nar.experimental.Solid;
 //import nars.term.Atom;
 //import nars.term.Term;

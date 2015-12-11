@@ -136,5 +136,24 @@ public class TermReductionsTest {
         assertEquals("{c,a}", d.toString());
 
     }
+    @Test
+    public void testDisjunctionReduction() {
+        assertEquals("(||,a,b,c,d)",
+                $("(||,(||,a,b),(||,c,d))").toString());
+        assertEquals("(||,b,c,d)",
+                $("(||,b,(||,c,d))").toString());
+    }
 
+    @Test
+    public void testConjunctionReduction() {
+        assertEquals("(&&,a,b,c,d)",
+                $("(&&,(&&,a,b),(&&,c,d))").toString());
+        assertEquals("(&&,b,c,d)",
+                $("(&&,b,(&&,c,d))").toString());
+    }
+
+    @Test
+    public void testMultireduction() {
+        //TODO probably works
+    }
 }

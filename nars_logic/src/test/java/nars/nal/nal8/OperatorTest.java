@@ -5,7 +5,6 @@ import nars.$;
 import nars.NAR;
 import nars.Op;
 import nars.budget.Budget;
-import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.nar.Default;
 import nars.nar.Terminal;
@@ -77,13 +76,13 @@ public class OperatorTest {
 //    }
 
     @Test public void testOperationIsInheritance() {
-        Compound o = $.oper(Operator.the("x"), Product.make("x"));
+        Compound o = $.oper(Operator.the("x"), $.p("x"));
         assertEquals(Op.INHERIT, o.op());
     }
 
     @Test public void testInhIsOperation() {
         Compound o = $("<(a,b,c)-->^x>");
-        assertTrue(o.term(0) instanceof Product);
+        assertTrue(o.term(0).op() == Op.PRODUCT);
         assertTrue(o.term(1) instanceof Operator);
         assertEquals("x(a, b, c)", o.toString());
         assertEquals(Op.INHERIT, o.op());
@@ -188,9 +187,9 @@ public class OperatorTest {
         PatternAnswer f = new PatternAnswer("add(%a,%b,#x)") {
             @Override
             public List<Task> run(Task t, Subst s) {
+                System.out.println(t + " " + s);
                 assertEquals($("x"), s.getXY($("%a")));
                 assertEquals($("y"), s.getXY($("%b")));
-                assertEquals(Op.VAR_DEP, s.getXY($("#x")).op());
                 count.getAndIncrement();
                 return null;
             }
@@ -200,11 +199,22 @@ public class OperatorTest {
         Task matching = t.task("add(x,y,#x)?");
         f.apply(matching);
 
+        assertEquals(1, count.get()); //should only be triggered once, by the matching term
+
         Task nonMatching = t.task("add(x)?");
         f.apply(nonMatching);
 
-        //should only be triggered once, by the matching term
-        assertEquals(1, count.get());
+        assertEquals(1, count.get()); //should only be triggered once, by the matching term
+
+        Task nonMatching3 = t.task("add(x,y,z)?");
+        f.apply(nonMatching3);
+
+        assertEquals(1, count.get()); //should only be triggered once, by the matching term
+
+        Task nonMatching2 = t.task("add(x,y,$x)?");
+        f.apply(nonMatching2);
+
+        assertEquals(1, count.get()); //should only be triggered once, by the matching term
     }
 
     @Test public void testPatternAnswererInNAR() {

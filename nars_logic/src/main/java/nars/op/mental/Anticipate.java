@@ -28,9 +28,6 @@ import nars.Global;
 import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.nal5.Conjunction;
-import nars.nal.nal7.Parallel;
-import nars.nal.nal7.Sequence;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.task.Temporal;
@@ -89,7 +86,7 @@ public final class Anticipate {
         }
 
         Compound tt = t.getTerm();
-        if(tt instanceof Conjunction || tt instanceof Parallel || tt instanceof Sequence) { //not observable, TODO probably revise
+        if(tt.op().isConjunctive()) { //not observable, TODO probably revise
             return;
         }
 

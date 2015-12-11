@@ -2,7 +2,7 @@
 //
 //import nars.Memory;
 //import nars.nal.nal4.Product;
-//import nars.nal.nal8.Operation;
+//
 //import nars.task.Task;
 //import nars.term.Atom;
 //import nars.term.Compound;

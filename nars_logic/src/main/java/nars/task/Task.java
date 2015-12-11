@@ -27,7 +27,6 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.concept.Concept;
-import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
 import nars.term.Statement;
@@ -243,7 +242,7 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
 
     default boolean isRevisible() {
         Term t = getTerm();
-        return !(t instanceof Conjunction && t.hasVarDep());
+        return !(t.op().isConjunctive() && t.hasVarDep());
     }
 
     default StringBuilder appendTo(StringBuilder sb) {

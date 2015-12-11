@@ -20,7 +20,7 @@
  */
 package nars.testchamber.operator;
 
-import nars.nal.nal8.Operation;
+import nars.nal.Compounds;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
@@ -49,7 +49,7 @@ public class Activate extends SyncOperator {
         TestChamber.executed=true;
         System.out.println("Executed: " + this);
 
-        Term[] argTerms = Operation.argTerms(operation);
+        Term[] argTerms = Compounds.opArgsArray(operation);
         for (int i = 0, argTermsLength = argTerms.length; i < 1; i++) {
             Term t = argTerms[i];
             System.out.println(" --- " + t);

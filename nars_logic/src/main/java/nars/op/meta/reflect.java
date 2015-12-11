@@ -5,8 +5,6 @@
 package nars.op.meta;
 
 import nars.$;
-import nars.nal.nal4.Product;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -25,9 +23,9 @@ public class reflect extends TermFunction {
 
     
     @Override
-    public Term function(Operation x) {
+    public Term function(Compound x) {
 
-        Term content = x.arg(0);
+        Term content = x.term(0);
 
         return getMetaTerm(content);
     }
@@ -37,13 +35,13 @@ public class reflect extends TermFunction {
      * <(*,subject,object) --> predicate>
      */
     public static Term sop(Term subject, Term object, Term predicate) {
-        return $.inh(Product.make(getMetaTerm(subject),getMetaTerm(object)), predicate);
+        return $.inh($.p(getMetaTerm(subject), getMetaTerm(object)), predicate);
     }
     public static Term sop(Compound s, String operatorName) {
-        return $.inh(Product.make(getMetaTerm(s.term(0)), getMetaTerm(s.term(1))), Atom.quote(operatorName));
+        return $.inh($.p(getMetaTerm(s.term(0)), getMetaTerm(s.term(1))), Atom.quote(operatorName));
     }
     public static Term sop(Compound s, Term predicate) {
-        return $.inh(Product.make(getMetaTerm(s.term(0)),getMetaTerm(s.term(1))), predicate);
+        return $.inh($.p(getMetaTerm(s.term(0)), getMetaTerm(s.term(1))), predicate);
     }
     public static Term sop(String operatorName, Compound c) {
         Term[] m = new Term[c.size()];

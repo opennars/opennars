@@ -13,15 +13,14 @@ import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.DefaultValueStack;
 import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
+import nars.nal.Compounds;
 import nars.nal.PremiseRule;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.match.EllipsisOneOrMore;
 import nars.nal.meta.match.EllipsisTransform;
 import nars.nal.meta.match.EllipsisZeroOrMore;
-import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperator;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.op.io.echo;
 import nars.task.MutableTask;
@@ -512,7 +511,7 @@ public class Narsese extends BaseParser<Object>  {
 
     Rule EmptyProduct() {
         return sequence(
-            COMPOUND_TERM_OPENER, s(), COMPOUND_TERM_CLOSER, push(Product.Empty)
+            COMPOUND_TERM_OPENER, s(), COMPOUND_TERM_CLOSER, push(Compounds.Empty)
         );
     }
 
@@ -770,7 +769,7 @@ public class Narsese extends BaseParser<Object>  {
                         EQUIV.str,
                         IMPLICATION_AFTER.str, IMPLICATION_BEFORE.str, IMPLICATION_WHEN.str,
                         EQUIV_AFTER.str, EQUIV_WHEN.str,
-                        DISJUNCT.str,
+                        DISJUNCTION.str,
                         CONJUNCTION.str,
                         SEQUENCE.str,
                         PARALLEL.str
@@ -804,7 +803,7 @@ public class Narsese extends BaseParser<Object>  {
     }
 
     boolean OperationPrefixTerm() {
-        return push( new Object[] { termable(pop()), (Operation.class) } );
+        return push( new Object[] { termable(pop()), (Operator.class) } );
     }
 
     /**
@@ -902,7 +901,7 @@ public class Narsese extends BaseParser<Object>  {
                 p = pp[0];
             }
 
-            if (p == Operation.class) {
+            if (p == Operator.class) {
                 op = OPERATOR;
                 break;
             }

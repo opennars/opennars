@@ -6,10 +6,10 @@ import com.gs.collections.impl.tuple.Tuples;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.util.ConceptBuilder;
+import nars.nal.Compounds;
 import nars.nal.Level;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.OperatorReaction;
 import nars.nal.nal8.PatternAnswer;
 import nars.nal.nal8.operator.TermFunction;
@@ -476,14 +476,14 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     public final int execute(Task goal) {
         Term term = goal.getTerm();
 
-        if (Operation.isOperation(term)) {
+        if (Compounds.isOperation(term)) {
             Compound o = (Compound) term;
 
             //enqueue
             beforeNextFrame(()-> {
                 if (!goal.isDeleted()) //it may be deleted by the time this runs
                     memory.exe.emit(
-                        Operation.opTerm(o), goal);
+                        Compounds.operatorTerm(o), goal);
                 //else ... --> why?
             });
 
@@ -545,7 +545,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     public final void onExec(Term operator, Consumer<Term[]> func) {
         //wrap the procedure in a function, suboptimal but ok
         onExecTask(operator, (Task tt) -> {
-            func.accept(Operation.args(tt.getTerm()).terms());
+            func.accept(Compounds.opArgs(tt.getTerm()).terms());
             return null;
         });
     }
@@ -569,8 +569,8 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         TermFunction f = new TermFunction(operator) {
 
             @Override
-            public Object function(Operation x) {
-                return func.apply(x.args());
+            public Object function(Compound x) {
+                return func.apply(x.terms());
             }
         };
         onExec(f);

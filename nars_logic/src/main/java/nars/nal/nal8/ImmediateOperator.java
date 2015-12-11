@@ -2,7 +2,7 @@ package nars.nal.nal8;
 
 
 import nars.$;
-import nars.nal.nal4.Product;
+import nars.nal.Compounds;
 import nars.nal.nal8.operator.NullOperator;
 import nars.task.Task;
 import nars.term.Term;
@@ -28,7 +28,7 @@ public abstract class ImmediateOperator extends NullOperator implements Consumer
 
     /** apply Atom.quoteI */
     static Compound termizedProduct(Object... args) {
-        if (args.length == 0) return Product.Empty;
+        if (args.length == 0) return Compounds.Empty;
         return $.p(termized(args));
     }
 

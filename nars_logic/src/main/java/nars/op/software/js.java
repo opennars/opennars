@@ -1,13 +1,14 @@
 package nars.op.software;
 
 import nars.NAR;
-import nars.nal.nal8.Operation;
+import nars.nal.Compounds;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
@@ -49,8 +50,8 @@ public class js extends TermFunction implements Mental {
             }
         }
 
-        @Override public Object function(Operation o) {
-            Term[] args = o.args();
+        @Override public Object function(Compound o) {
+            Term[] args = Compounds.opArgsArray(o);
             Bindings bindings = newBindings(args);
             bindings.put("_o", fnCompiled);
 
@@ -74,7 +75,7 @@ public class js extends TermFunction implements Mental {
 
         @Override
         public List<Task> apply(Task op) {
-            Term[] x = Operation.argTerms(op.getTerm());
+            Term[] x = Compounds.opArgsArray(op.getTerm());
             String funcName = Atom.unquote(x[0]);
             String functionCode = Atom.unquote(x[1]);
             //nar.input( echo.newTask("JS Operator Bind: " + funcName + " = " + functionCode));
@@ -186,8 +187,8 @@ public class js extends TermFunction implements Mental {
     }
 
 
-    @Override public Object function(Operation o) {
-        Term[] args = o.args();
+    @Override public Object function(Compound o) {
+        Term[] args = Compounds.opArgsArray(o);
         if (args.length < 1) {
             return null;
         }

@@ -3,7 +3,6 @@ package nars.java;
 import com.gs.collections.impl.bimap.mutable.HashBiMap;
 import nars.$;
 import nars.Global;
-import nars.nal.nal4.Product;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
@@ -118,17 +117,13 @@ public class DefaultTermizer implements Termizer {
             List<Term> arg = Arrays.stream((int[]) o)
                     .mapToObj(Atom::the).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
-            return Product.make(
-                    arg
-            );
+            return $.p( arg );
         }
         //noinspection IfStatementWithTooManyBranches
         if (o instanceof Object[]) {
             List<Term> arg = Arrays.stream((Object[]) o).map(this::term).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
-            return Product.make(
-                    arg
-            );
+            return $.p( arg );
         }
         if (o instanceof List) {
             if (((List)o).isEmpty()) return EMPTY;
@@ -145,7 +140,7 @@ public class DefaultTermizer implements Termizer {
 
             if (arg.isEmpty()) return EMPTY;
 
-            return Product.make(arg);
+            return $.p(arg);
 
         /*} else if (o instanceof Stream) {
             return Atom.quote(o.toString().substring(17));
@@ -250,10 +245,7 @@ public class DefaultTermizer implements Termizer {
     }
 
     public static Term termClassInPackage(Class c) {
-        return Product.make(
-            termPackage(c.getPackage()),
-            termClass(c)
-        );
+        return $.p(termPackage(c.getPackage()), termClass(c));
     }
 
     public static Term termPackage(Package p) {

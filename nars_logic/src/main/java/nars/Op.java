@@ -3,6 +3,7 @@ package nars;
 
 import com.gs.collections.api.tuple.primitive.IntIntPair;
 import nars.nal.nal7.Order;
+import nars.term.atom.Atom;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
@@ -56,7 +57,7 @@ public enum Op implements Serializable {
     IMAGE_INT("\\", 4, Args.GTEOne),
 
     /* CompoundStatement operators, length = 2 */
-    DISJUNCT("||", true, 5, Args.GTEOne),
+    DISJUNCTION("||", true, 5, Args.GTEOne),
     CONJUNCTION("&&", true, 5, Args.GTETwo),
 
     SEQUENCE("&/", 7, Args.GTETwo), /* NOTE: after cycle terms intermed, it may appear to have one term. but at construction when this is tested, it will need multiple terms even if they are intervals */
@@ -99,6 +100,8 @@ public enum Op implements Serializable {
     //-----------------------------------------------------
 
 
+    /** Image index ("imdex") symbol */
+    public static final Atom Imdex = Atom.the("_");
 
     /**
      * symbol representation of this getOperator
@@ -265,6 +268,15 @@ public enum Op implements Serializable {
     public boolean isImage() {
         return isA(ImageBits);
     }
+
+    public boolean isConjunctive() {
+        return isA(ConjunctivesBits);
+    }
+
+    public boolean isConjunctive(Order order) {
+        return (getTemporalOrder() == order && isConjunctive());
+    }
+
     public boolean isStatement() {
         return isA(StatementBits);
     }
@@ -280,6 +292,8 @@ public enum Op implements Serializable {
     public boolean isSet() {
         return isA(Op.SetsBits);
     }
+
+
 
     /** top-level Op categories */
     public enum OpType {

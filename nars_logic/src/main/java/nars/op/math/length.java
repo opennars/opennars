@@ -17,10 +17,11 @@
 
 package nars.op.math;
 
-import nars.nal.nal8.Operation;
+import nars.nal.Compounds;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
 import nars.term.Term;
+import nars.term.compound.Compound;
 
 /**
  * Count the number of elements in a set
@@ -41,8 +42,8 @@ public class length extends TermFunction<Integer> implements Mental {
     //TODO 'volume' of any term
 
     @Override
-    public Integer function(Operation o) {
-        Term[] x = o.args();
+    public Integer function(Compound o) {
+        Term[] x = Compounds.opArgsArray(o);
         Term content = x[0];
         /*if (!(content instanceof SetExt) && !(content instanceof SetInt)) {
             throw new RuntimeException("Requires 1 SetExt or SetInt argument");

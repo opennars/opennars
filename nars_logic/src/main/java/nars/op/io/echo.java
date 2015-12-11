@@ -1,7 +1,7 @@
 package nars.op.io;
 
+import nars.nal.Compounds;
 import nars.nal.nal8.ImmediateOperator;
-import nars.nal.nal8.Operation;
 import nars.task.Task;
 
 /**
@@ -21,7 +21,7 @@ public class echo extends ImmediateOperator {
 
     @Override
     public void accept(Task o) {
-        nar().memory.eventSpeak.emit( Operation.args(o.getTerm()).terms() );
+        nar().memory.eventSpeak.emit( Compounds.opArgs(o.getTerm()).terms() );
         //nar().emit(echo.class, Arrays.toString( o.args() ) );
     }
 

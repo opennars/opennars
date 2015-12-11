@@ -2,7 +2,7 @@
 //
 //import nars.Memory;
 //import nars.concept.ConstantConceptBuilder;
-//import nars.nal.nal8.Operation;
+//
 //import nars.term.Atom;
 //import nars.term.Term;
 //import nars.truth.Truth;

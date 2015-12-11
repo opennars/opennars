@@ -3,7 +3,7 @@ package nars.nar;
 import nars.NAR;
 import nars.Symbols;
 import nars.concept.Concept;
-import nars.nal.nal8.Operation;
+import nars.nal.Compounds;
 import nars.nal.nal8.operator.NullOperator;
 import nars.task.Task;
 import nars.term.Term;
@@ -29,7 +29,7 @@ public class CommandTest {
             @Override
             public List<Task> apply(Task o) {
                 invoked.set(true);
-                Term[] a = Operation.argTerms(o.getTerm());
+                Term[] a = Compounds.opArgsArray(o.getTerm());
                 assertEquals(1, a.length);
                 assertEquals("x", a[0].toString());
                 return null;

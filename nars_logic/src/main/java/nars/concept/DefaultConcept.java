@@ -16,7 +16,7 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkBuilder;
 import nars.link.TermLinkKey;
-import nars.nal.nal1.LocalRules;
+import nars.nal.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
 

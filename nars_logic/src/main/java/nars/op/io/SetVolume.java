@@ -1,7 +1,7 @@
 //package nars.op.io;
 //
 //import nars.nal.nal8.ImmediateOperator;
-//import nars.nal.nal8.Operation;
+//
 //
 ///**
 // * Sets the global volume / noise level, =(100% - "silence level")

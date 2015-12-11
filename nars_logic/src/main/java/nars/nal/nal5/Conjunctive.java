@@ -7,6 +7,7 @@ import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,37 +19,14 @@ import static nars.nal.nal7.Order.Forward;
 /**
  * Created by me on 10/20/15.
  */
-public interface Conjunctive<T extends Term>  {
+public interface Conjunctive  {
 
-
-    int conjunctiveBits = Op.or(Op.CONJUNCTION, Op.SEQUENCE, Op.PARALLEL);
-
-    /** null if not conjunction with same order */
-    public static boolean isConjunction(Term t, Order order) {
-        if (t.isAny(conjunctiveBits)) {
-            return t.getTemporalOrder() == order;// ? (Compound) t : null;
-        }
-        return false;
-    }
-
-    /**
-     * recursively flatten a embedded conjunction subterms if they are of a specific order
-     */
-    public static Term[] flatten(Term[] args, Order order) {
-        //determine how many there are with same order
-
-        int expandedSize;
-        while ((expandedSize = getFlattenedLength(args, order)) != args.length) {
-            args = _flatten(args, order, expandedSize);
-        }
-        return args;
-    }
 
     static Term[] _flatten(Term[] args, Order order, int expandedSize) {
         Term[] ret = new Term[expandedSize];
         int k = 0;
         for (Term a : args) {
-            if (isConjunction(a, order)) {
+            if (a.op().isConjunctive(order)) {
                 //arraycopy?
                 for (Term t : ((Compound)a).terms()) {
                     ret[k++] = t;
@@ -64,7 +42,7 @@ public interface Conjunctive<T extends Term>  {
     static int getFlattenedLength(Term[] args, Order order) {
         int sz = 0;
         for (Term a : args) {
-            if (isConjunction(a, order))
+            if (a.op().isConjunctive(order))
                 sz += a.size();
             else
                 sz++;
@@ -91,7 +69,7 @@ public interface Conjunctive<T extends Term>  {
     public static Term make(Term[] argList, Order temporalOrder) {
         switch (temporalOrder) {
             case None:
-                return Conjunction.conjunction(argList);
+                return GenericCompound.COMPOUND(Op.CONJUNCTION, argList);
             case Forward:
                 return Sequence.makeSequence(argList);
             case Concurrent:
@@ -109,11 +87,11 @@ public interface Conjunctive<T extends Term>  {
             return Sequence.makeSequence(term2, term1);
             //return null;
         } else {
-            if (term1 instanceof Conjunction) {
+            if (term1.op().isConjunctive()) {
                 Compound ct1 = ((Compound) term1);
                 List<Term> set = Global.newArrayList(ct1.size() + 1);
                 ct1.addAllTo(set);
-                if (term2 instanceof Conjunction) {
+                if (term2.op().isConjunctive()) {
                     // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
                     ((Compound)term2).addAllTo(set);
                 } else {
@@ -121,7 +99,7 @@ public interface Conjunctive<T extends Term>  {
                     set.add(term2);
                 }
                 return make(set, temporalOrder);
-            } else if (term2 instanceof Conjunction) {
+            } else if (term2.op().isConjunctive()) {
                 Compound ct2 = ((Compound) term2);
                 List<Term> set = Global.newArrayList(ct2.size() + 1);
                 ct2.addAllTo(set);

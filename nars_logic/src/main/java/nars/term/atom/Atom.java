@@ -2,7 +2,6 @@ package nars.term.atom;
 
 import nars.Narsese;
 import nars.Op;
-import nars.nal.nal1.Negation;
 import nars.nal.nal7.ShadowAtom;
 import nars.term.Term;
 import nars.util.data.Util;
@@ -205,10 +204,6 @@ public class Atom extends StringAtom {
         if (o instanceof Number)
             return the((Number)o);
         return null;
-    }
-
-    public static Negation notThe(String untrue) {
-        return (Negation) Negation.negation(Atom.the(untrue));
     }
 
     @Override

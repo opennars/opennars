@@ -2,7 +2,7 @@ package nars.budget;
 
 import nars.$;
 import nars.NAR;
-import nars.nar.Terminal;
+import nars.nar.Default;
 import nars.task.Task;
 import nars.util.data.MutableDouble;
 import org.junit.Test;
@@ -15,7 +15,8 @@ import static org.junit.Assert.assertTrue;
 
 
 public class ItemAccumulatorTest {
-    NAR n = new Terminal();
+
+    NAR n = new Default();
 
     @Test
     public void testAccumulatorDeduplication() {
@@ -66,12 +67,12 @@ public class ItemAccumulatorTest {
         assertEquals(capacity, ii.size());
 
         Task one = ii.pop();
-        assertEquals("$0.30;0.80;0.95$ <d-->x>. :0: %1.00;0.90%", one.toString());
+        assertEquals("$.30;.80;.95$ <d-->x>. :0: %1.0;.90%", one.toString());
 
         List<Task> two = new ArrayList();
         two.add(ii.pop());
         two.add(ii.pop());
-        assertEquals("[$0.20;0.80;0.95$ <c-->x>. :0: %1.00;0.90%, $0.10;0.80;0.95$ <b-->x>. :0: %1.00;0.90%]", two.toString());
+        assertEquals("[$.20;.80;.95$ <c-->x>. :0: %1.0;.90%, $.10;.80;.95$ <b-->x>. :0: %1.0;.90%]", two.toString());
 
         assertEquals(1, ii.size());
 

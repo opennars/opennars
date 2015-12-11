@@ -12,7 +12,7 @@
 //import nars.gui.output.JGraphXGraphPanel;
 //import nars.io.in.LibraryInput;
 //import nars.link.TaskLink;
-//import nars.nal.nal8.Operation;
+//
 //import nars.nar.Default;
 //import nars.premise.Premise;
 //import nars.task.Sentence;

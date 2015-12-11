@@ -152,25 +152,25 @@ public abstract class Param extends Container implements Level {
     /** Default priority of input judgment */
     float DEFAULT_JUDGMENT_PRIORITY = 0.5f;
     /** Default durability of input judgment */
-    float DEFAULT_JUDGMENT_DURABILITY = 0.8f; //was 0.8 in 1.5.5; 0.5 after
+    float DEFAULT_JUDGMENT_DURABILITY = 0.5f; //was 0.8 in 1.5.5; 0.5 after
     /** Default priority of input question */
     float DEFAULT_QUESTION_PRIORITY = 0.5f;
     /** Default durability of input question */
-    float DEFAULT_QUESTION_DURABILITY = 0.9f;
+    float DEFAULT_QUESTION_DURABILITY = 0.5f;
 
 
     /** Default confidence of input goal. */
     float DEFAULT_GOAL_CONFIDENCE = 0.9f;
     /** Default priority of input judgment */
-    float DEFAULT_GOAL_PRIORITY = 0.6f;
+    float DEFAULT_GOAL_PRIORITY = 0.5f;
     /** Default durability of input judgment */
-    float DEFAULT_GOAL_DURABILITY = 0.9f;
+    float DEFAULT_GOAL_DURABILITY = 0.5f;
     /** Default priority of input question */
     float DEFAULT_QUEST_PRIORITY = 0.5f;
     /** Default durability of input question */
-    float DEFAULT_QUEST_DURABILITY = 0.9f;
+    float DEFAULT_QUEST_DURABILITY = 0.5f;
 
-    float DEFAULT_QUESTION_QUALITY = 0.9f;
+    float DEFAULT_QUESTION_QUALITY = 0.5f;
 
     float getDefaultPriority(char punctuation) {
         switch (punctuation) {

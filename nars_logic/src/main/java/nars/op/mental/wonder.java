@@ -19,7 +19,7 @@
 //
 //import com.google.common.collect.Lists;
 //import nars.Symbols;
-//import nars.nal.nal8.Operation;
+//
 //import nars.nal.nal8.operator.SyncOperator;
 //import nars.task.Task;
 //import nars.term.Term;

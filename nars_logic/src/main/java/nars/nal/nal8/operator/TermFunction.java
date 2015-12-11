@@ -1,16 +1,14 @@
 package nars.nal.nal8.operator;
 
 import com.google.common.collect.Lists;
-import nars.Memory;
 import nars.Symbols;
+import nars.nal.Compounds;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operation;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.term.variable.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.Texts;
@@ -54,11 +52,12 @@ public abstract class TermFunction<O> extends SyncOperator {
 
     /** y = function(x) 
      * @return y, or null if unsuccessful
+     * @param x
      */
-    public abstract O function(Operation x);
+    public abstract O function(Compound x);
 
 
-    protected List<Task> result(Task opTask, Term y, Term[] x0, Term lastTerm) {
+    protected List<Task> result(Task opTask, Term y/*, Term[] x0, Term lastTerm*/) {
 
         Compound operation = opTask.getTerm();
 
@@ -78,7 +77,7 @@ public abstract class TermFunction<O> extends SyncOperator {
 
         //final int numArgs = x0.length;
 
-        Term inh = Operation.result(operation, y);
+        Term inh = Compounds.result(operation, y);
         if ((!(inh instanceof Compound))) {
             //TODO wrap a non-Compound result as some kind of statement
             return null;
@@ -87,7 +86,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         return Lists.newArrayList(
-                Operation.asFeedback(
+                Compounds.feedback(
                     new MutableTask((Compound)inh).
                         judgment().
                         truth(getResultFrequency(), getResultConfidence()).
@@ -185,36 +184,25 @@ public abstract class TermFunction<O> extends SyncOperator {
 
         Compound operation = opTask.getTerm();
 
-        Term opTerm = Operation.opTerm(operation);
-        Term[] x = Operation.args(operation).terms();
+        //Term opTerm = Compounds.operatorTerm(operation);
+        //Term[] x = Compounds.args(operation).terms();
 
-        Memory memory = nar.memory;
+        //Memory memory = nar.memory;
 
-        int numInputs = x.length;
-        if (x[numInputs - 1].equals(memory.self()))
-            numInputs--;
-
-        Term lastTerm = null;
-        if (x[numInputs - 1] instanceof Variable) {
-            lastTerm = x[numInputs-1];
-            numInputs--;
-        }
+//        int numInputs = x.length;
+//        if (x[numInputs - 1].equals(memory.self()))
+//            numInputs--;
+//
+//        Term lastTerm = null;
+//        if (x[numInputs - 1] instanceof Variable) {
+//            lastTerm = x[numInputs-1];
+//            numInputs--;
+//        }
 
         //Term[] x0 = operation.getArgumentTerms(false, memory);
 
 
-        Object y = function(new Operation() {
-
-            @Override
-            public Term operator() {
-                return opTerm;
-            }
-
-            @Override
-            public Term[] args() {
-                return x;
-            }
-        });
+        Object y = function(Compounds.opArgs(operation));
 
         if (y == null) {
             return null;
@@ -244,7 +232,7 @@ public abstract class TermFunction<O> extends SyncOperator {
             return Lists.newArrayList((Task)y);
         }
         if (y instanceof Term) {
-            return result(opTask, (Term) y, x, lastTerm);
+            return result(opTask, (Term) y/*, x, lastTerm*/);
         }
 
 
@@ -268,7 +256,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         Term t = Atom.the(ys, true);
 
         if (t != null)
-            return result(opTask, t, x, lastTerm);
+            return result(opTask, t/*, x, lastTerm*/);
 
         throw new RuntimeException(this + " return value invalid: " + y);
     }

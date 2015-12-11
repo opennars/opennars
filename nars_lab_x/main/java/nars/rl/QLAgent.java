@@ -9,7 +9,7 @@ import nars.concept.Concept;
 import nars.util.event.FrameReaction;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.OpReaction;
-import nars.nal.nal8.Operation;
+
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.DecideAllGoals;

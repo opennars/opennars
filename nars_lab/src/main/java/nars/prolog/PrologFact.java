@@ -4,7 +4,7 @@
 //import nars.nal.Sentence;
 //import nars.nal.Task;
 //import nars.nal.term.Term;
-//import nars.nal.nal8.Operation;
+//
 //import nars.nal.nal8.Operator;
 //import nars.tuprolog.InvalidTheoryException;
 //import nars.tuprolog.Prolog;

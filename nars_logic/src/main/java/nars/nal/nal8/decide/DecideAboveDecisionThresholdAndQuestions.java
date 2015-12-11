@@ -1,7 +1,7 @@
 //package nars.nal.nal8.decide;
 //
 //import nars.Symbols;
-//import nars.nal.nal8.Operation;
+//
 //
 ///**
 // * Created by me on 5/20/15.

@@ -1,6 +1,6 @@
 package nars.nal.meta.match;
 
-import nars.nal.nal4.Image;
+import nars.Op;
 import nars.term.Term;
 
 /**
@@ -16,7 +16,7 @@ public class ImageTakeMatch extends ArrayEllipsisMatch {
         //this.imageIndex = imageIndex;
 
         //mask the relation term
-        t[imageIndex] = Image.Index;
+        t[imageIndex] = Op.Imdex;
     }
 
 

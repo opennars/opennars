@@ -1,8 +1,8 @@
 package nars.op.data;
 
+import nars.$;
 import nars.Op;
-import nars.nal.nal4.Product;
-import nars.nal.nal8.Operation;
+import nars.nal.Compounds;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -22,9 +22,9 @@ import java.util.List;
 public abstract class Flat extends TermFunction {
 
     @Override
-    public Term function(Operation op) {
+    public Term function(Compound op) {
         List<Term> l = new ArrayList();
-        collect(op.args(), l);
+        collect(Compounds.opArgsArray(op), l);
         return result(l);
     }
 
@@ -46,14 +46,10 @@ public abstract class Flat extends TermFunction {
 
         @Override
         public Term result(List<Term> terms) {
-            return Product.make(terms);
+            return $.p(terms);
         }
 
     }
-
-
-
-
 
     //public Flat(boolean productOrSet, boolean breadthOrDepth) {
         //generate each of the 4 different operate names

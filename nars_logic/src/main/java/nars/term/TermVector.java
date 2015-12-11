@@ -245,7 +245,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
             subt |= t.structure();
         }
 
-        Compound.ensureFeasibleVolume(vol);
+        Compound.ensureFeasibleVolume(vol, this);
 
         hasVarDeps = (byte) deps;
         hasVarIndeps = (byte) indeps;

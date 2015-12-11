@@ -11,7 +11,7 @@
 //import nars.event.AbstractReaction;
 //import nars.gui.NARSwing;
 //import nars.nal.Task;
-//import nars.nal.nal8.Operation;
+//
 //import nars.nal.nal8.Operator;
 //import nars.nal.term.Term;
 //import nars.prototype.Default;

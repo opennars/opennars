@@ -13,7 +13,7 @@ public class SecondLevelUnificationTest {
 
     @Test
     public void test1() throws Narsese.NarseseException {
-        NAR n = new Default(2512, 1, 2, 3);
+        NAR n = new Default(512, 1, 2, 3);
 
         //n.log();
         n.memory.eventTaskRemoved.on(t -> {
@@ -23,11 +23,11 @@ public class SecondLevelUnificationTest {
         n.believe("<<$1 --> x> ==> (&&,<#2 --> y>,<$1 --> (/,open,#2,_)>)>", 1.00f, 0.90f); //en("all xs are opened by some y");
         n.believe("<{z} --> y>", 1.00f, 0.90f); //en("z is a y");
         //tester.mustBelieve(cycles, "<<$1 --> x> ==> <$1 --> (/,open,{z},_)>>", 1.00f, 0.42f); //en("maybe all xs are opened by z");
-        n.frame(550);
+        n.frame(250);
     }
     @Test
     public void test2() throws Narsese.NarseseException {
-        NAR n = new Default(2512, 1, 2, 3);
+        NAR n = new Default(512, 1, 2, 3);
 
         //n.log();
         n.memory.eventTaskRemoved.on(t -> {
@@ -37,7 +37,7 @@ public class SecondLevelUnificationTest {
         n.believe("<<$1 --> x> ==> (&&,<#2 --> y>,<$1 --> #2>)>", 1.00f, 0.90f); //en("all xs are opened by some y");
         n.believe("<{z} --> y>", 1.00f, 0.90f); //en("z is a y");
         //tester.mustBelieve(cycles, "<<$1 --> x> ==> <$1 --> {z}>>", 1.00f, 0.42f); //en("maybe all xs are opened by z");
-        n.frame(1550);
+        n.frame(250);
     }
 
 

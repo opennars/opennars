@@ -28,7 +28,7 @@
 //import nars.budget.Budget;
 //import nars.clock.SimulatedClock;
 //import nars.concept.Concept;
-//import nars.nal.nal8.Operation;
+//
 //import nars.nal.nal8.operator.SynchOperator;
 //import nars.nar.Default;
 //import nars.task.Task;

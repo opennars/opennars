@@ -7,7 +7,7 @@
 //import nars.Global;
 //import nars.Op;
 //import nars.io.out.TextOutput;
-//import nars.nal.nal8.Operation;
+//
 //import nars.nal.nal8.operator.NullOperator;
 //import nars.nar.experimental.Equalized;
 //import nars.task.Task;

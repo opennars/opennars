@@ -6,7 +6,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.concept.Concept;
-import nars.nal.nal8.Operation;
+import nars.nal.Compounds;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
@@ -58,7 +58,7 @@ public class Abbreviation implements Consumer<Task> {
     public boolean canAbbreviate(Task task) {
         Term t = task.getTerm();
 
-        if (t instanceof Operation) return false;
+        if (Compounds.isOperation(t)) return false;
         /*if (t instanceof Similarity) {
             Similarity s = (Similarity)t;
             if (Operation.isA(s.getSubject(), abbreviate)) return false;

@@ -1,7 +1,7 @@
 package nars.io;
 
 import nars.*;
-import nars.nal.nal8.Operation;
+import nars.nal.Compounds;
 import nars.nal.nal8.Operator;
 import nars.nar.Terminal;
 import nars.op.io.echo;
@@ -220,10 +220,10 @@ public class NarseseTest {
 
 
     protected void testBelieveAB(Compound t) {
-        Term[] aa = Operation.argTerms(t);
+        Term[] aa = Compounds.opArgsArray(t);
         assertEquals(2, aa.length);
         assertEquals("^believe", t.term(1).toString());
-        assertEquals("believe", Operation.opTerm(t).toString());
+        assertEquals("believe", Compounds.operatorTerm(t).toString());
         assertEquals("a", aa[0].toString());
         assertEquals("b", aa[1].toString());
     }
@@ -390,14 +390,14 @@ public class NarseseTest {
     }
 
     @Test
-    public void testImageExtRel0() { testImageExtRel("<a --> (/, _, y, z)>", 0); }
+    public void testImageExtRel0() { testImageExtRel("<a-->(/,_,y,z)>", 0); }
     @Test
-    public void testImageIntRel0() { testImageIntRel("<(\\, _, y, z) --> a>", 0); }
+    public void testImageIntRel0() { testImageIntRel("<(\\,_,y,z)-->a>", 0); }
 
     @Test
-    public void testImageExtRel1() { testImageExtRel("<a --> (/, x, _, z)>", 1); }
+    public void testImageExtRel1() { testImageExtRel("<a-->(/,x,_,z)>", 1); }
     @Test
-    public void testImageIntRel1() { testImageIntRel("<(\\, x, _, z) --> a>", 1); }
+    public void testImageIntRel1() { testImageIntRel("<(\\,x,_,z)-->a>", 1); }
 
     @Test
     public void testImageExtRel2() { testImageExtRel("<a --> (/, x, y, _)>", 2); }
@@ -480,7 +480,7 @@ public class NarseseTest {
 
     protected void ensureIsEcho(Compound op) {
         assertEquals(Atom.the(echo.class.getSimpleName()),
-                Operation.opTerm(op));
+                Compounds.operatorTerm(op));
     }
 
 
@@ -519,7 +519,7 @@ public class NarseseTest {
     public void testOperatorWithNoParams() {
         Compound t = term("op()");
         assertNotNull(t);
-        assertEquals(0, Operation.args(t).size());
+        assertEquals(0, Compounds.opArgs(t).size());
     }
 
 }

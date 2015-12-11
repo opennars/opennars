@@ -500,7 +500,7 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
 //import nars.nal.nal3.SetTensional;
 //import nars.nal.nal5.*;
 //import nars.nal.nal7.TemporalRules;
-//import nars.nal.nal8.Operation;
+//
 //import nars.premise.Premise;
 //import nars.process.NAL;
 //import nars.task.Task;

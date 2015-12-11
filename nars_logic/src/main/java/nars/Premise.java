@@ -4,7 +4,7 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.nal.Level;
-import nars.nal.nal1.LocalRules;
+import nars.nal.LocalRules;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
 import nars.task.Tasked;

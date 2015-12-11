@@ -8,6 +8,7 @@ import nars.util.Texts;
 import nars.util.data.sorted.SortedList;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
@@ -238,6 +239,29 @@ public class Terms {
             for (Term z : ((Compound<?>) x))
                 printRecursive(z, level + 1);
         }
+    }
+
+    /**
+     * for printing complex terms as a recursive tree
+     */
+    public static void printRecursive(Term x, Consumer<String> c) {
+        printRecursive(x, 0, c);
+    }
+
+    public static void printRecursive(Term x, int level, Consumer<String> c) {
+        //indent
+        StringBuilder line = new StringBuilder();
+        for (int i = 0; i < level; i++)
+            line.append("  ");
+
+        line.append(x);
+
+        if (x instanceof Compound) {
+            for (Term z : ((Compound<?>) x))
+                printRecursive(z, level + 1, c);
+        }
+
+        c.accept(line.toString());
     }
 
     private static boolean ensureTermLength(int num, Term[] a) {

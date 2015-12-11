@@ -2,7 +2,7 @@
 //
 //import nars.nal.nal3.SetExt;
 //import nars.nal.nal4.Product;
-//import nars.nal.nal8.Operation;
+//
 //import nars.nal.nal8.operator.TermFunction;
 //import nars.term.Term;
 //import nars.term.atom.Atom;

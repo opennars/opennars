@@ -18,8 +18,7 @@ package nars.term;
 
 import nars.*;
 import nars.concept.Concept;
-import nars.nal.nal4.Image;
-import nars.nal.nal8.Operation;
+import nars.nal.Compounds;
 import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.nar.Terminal;
@@ -306,7 +305,7 @@ public class TermTest {
         try {
             Term x = n.term("wonder(a,b)");
             assertEquals(Op.INHERIT, x.op());
-            assertTrue(Operation.isOperation(x));
+            assertTrue(Compounds.isOperation(x));
             assertEquals("wonder(a,b)", x.toString());
 
         } catch (Narsese.NarseseException ex) {
@@ -579,11 +578,11 @@ public class TermTest {
     @Test
     public void testImageConstruction() {
         Term e1 = imageExt($("X"), $("Y"), $("_"));
-        Term e2 = imageExt($("X"), $("Y"), Image.Index);
+        Term e2 = imageExt($("X"), $("Y"), Op.Imdex);
         assertEquals(e1, e2);
 
         Term f1 = imageInt($("X"), $("Y"), $("_"));
-        Term f2 = imageInt($("X"), $("Y"), Image.Index);
+        Term f2 = imageInt($("X"), $("Y"), Op.Imdex);
         assertEquals(f1, f2);
 
         assertNotEquals(e1, f1);

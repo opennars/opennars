@@ -6,10 +6,8 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import nars.java.AtomObject;
+import nars.nal.Compounds;
 import nars.nal.meta.match.VarPattern;
-import nars.nal.nal1.Negation;
-import nars.nal.nal4.Product;
-import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
@@ -35,6 +33,8 @@ import static nars.term.compound.GenericCompound.COMPOUND;
  */
 public abstract class $  {
 
+
+    public static final org.slf4j.Logger logger = LoggerFactory.getLogger($.class);
 
     public static final <T extends Term> T $(String term) {
         return (T)Narsese.the().term(term);
@@ -111,7 +111,7 @@ public abstract class $  {
     public static Compound oper(Operator opTerm, Compound arg) {
         return (Compound) COMPOUND(
                 Op.INHERIT,
-                arg == null ? Product.Empty : arg,
+                arg == null ? Compounds.Empty : arg,
                 opTerm
         );
     }
@@ -122,7 +122,7 @@ public abstract class $  {
     }
 
     public static <X extends Term> X neg(Term x) {
-        return (X) Negation.negation(x);
+        return (X) Compounds.negation(x);
     }
 
     public static CyclesInterval cycles(int numCycles) {
@@ -134,11 +134,11 @@ public abstract class $  {
 
     public static Compound p(Term... t) {
         if (t == null)
-            return Product.Empty;
+            return Compounds.Empty;
 
         int l = t.length;
         if (l == 0) //length 0 product are allowd and shared
-            return Product.Empty;
+            return Compounds.Empty;
 
         return (Compound) COMPOUND(Op.PRODUCT, t);
     }
@@ -312,7 +312,9 @@ public abstract class $  {
     }
 
     public static Term conj(Term a, Term b) {
-        return Conjunction.conjunction(a,b);
+
+
+        return COMPOUND(Op.CONJUNCTION, a, b);
     }
 
     static {

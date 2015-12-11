@@ -4,7 +4,7 @@
 // */
 //package nars.task.filter;
 //
-//import nars.nal.nal8.Operation;
+//
 //import nars.premise.Premise;
 //import nars.task.Task;
 //import nars.term.Compound;

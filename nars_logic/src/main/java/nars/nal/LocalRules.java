@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.nal.nal1;
+package nars.nal;
 
 import com.gs.collections.impl.tuple.Tuples;
 import nars.Memory;

@@ -3,10 +3,9 @@ package nars.op.mental;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.*;
 import nars.budget.Budget;
-import nars.nal.nal4.Product;
+import nars.nal.Compounds;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.task.Task;
 import nars.term.Term;
@@ -221,7 +220,7 @@ public class InternalExperience {
 
         Term content = task.getTerm();
         // to prevent infinite recursions
-        if (content instanceof Operation/* ||  Memory.randomNumber.nextFloat()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
+        if (Compounds.isOperation(content)/* ||  Memory.randomNumber.nextFloat()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
             return null;
         }
 
@@ -297,7 +296,7 @@ public class InternalExperience {
         //also get a chance to reveal its effects to the system this way
 
             beliefReasonDerive(task,
-                    $.oper(op, Product.only(belief.getTerm())),
+                    $.oper(op, $.p(belief.getTerm())),
                     nal, 0);
     }
 

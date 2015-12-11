@@ -7,7 +7,7 @@
 //import nars.nal.nal5.Conjunctive;
 //import nars.nal.nal5.Implication;
 //import nars.nal.nal7.Tense;
-//import nars.nal.nal8.Operation;
+//
 //import nars.nal.nal8.Operator;
 //import nars.nar.AbstractNAR;
 //import nars.nar.Default;
