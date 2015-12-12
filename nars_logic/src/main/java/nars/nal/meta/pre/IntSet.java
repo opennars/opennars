@@ -15,7 +15,7 @@ public class IntSet extends PreCondition1 {
 
     @Override
     public final boolean test(RuleMatch m, Term a) {
-        return (a.op()== Op.SET_INT);
+        return a.op(Op.SET_INT);
     }
 
 }

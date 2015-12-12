@@ -4,14 +4,16 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.RuleBranch;
 import nars.nal.meta.RuleTrie;
 
+import java.util.Collections;
+
 /**
  * separates rules according to task/belief term type but otherwise involves significant redundancy we'll eliminate in other Deriver implementations
  */
 public class TrieDeriver extends RuleTrie {
 
 
-    public TrieDeriver() {
-        this(Deriver.standard);
+    public TrieDeriver(String rule) {
+        super(new PremiseRuleSet(Collections.singleton(rule)));
     }
 
     public TrieDeriver(PremiseRuleSet rules) {
@@ -36,7 +38,7 @@ public class TrieDeriver extends RuleTrie {
 
         for (PreCondition x : r.precondition) {
 
-            //System.out.println(x + " " + match.subst.y + " " + match.subst.parent);
+            //System.out.println(x + " " + match);
 
             if (!x.test(match)) {
                 return;

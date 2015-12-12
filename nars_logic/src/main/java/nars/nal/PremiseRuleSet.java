@@ -1,6 +1,5 @@
 package nars.nal;
 
-import com.google.common.collect.Lists;
 import com.gs.collections.impl.list.mutable.FastList;
 import nars.$;
 import nars.Global;
@@ -46,9 +45,9 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
         this(Files.readAllLines(path));
     }
 
-    public PremiseRuleSet(String... ruleStrings) {
-        this(Lists.newArrayList(ruleStrings));
-    }
+//    public PremiseRuleSet(String... ruleStrings) {
+//        this(Lists.newArrayList(ruleStrings));
+//    }
 
     public PremiseRuleSet(Collection<String> ruleStrings) {
         this(parseRules(loadRuleStrings(ruleStrings)));

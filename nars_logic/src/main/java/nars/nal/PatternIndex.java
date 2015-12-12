@@ -186,7 +186,9 @@ public class PatternIndex extends MapIndex {
 
             sizeCached = seed.size();
             structureCachedWithoutVars =
-                    seed.structure() & ~(Op.VariableBits);
+                    //seed.structure() & ~(Op.VariableBits);
+                    seed.structure() & ~(Op.VAR_PATTERN.bit());
+
             volCached = seed.volume();
             this.termsCached = subterms.terms();
         }
@@ -297,11 +299,11 @@ public class PatternIndex extends MapIndex {
                     //shuffle(shuffleOrder, subst.random);
                     shuffle(shuffleOrder, subst.random);*/
 
-            int[] o = dependencyOrder;
+            //int[] o = dependencyOrder;
 
             Term[] x = termsCached;
             for (int i = 0; i < x.length; i++) {
-                i = o[i]; //remap to the specific sequence
+                //i = o[i]; //remap to the specific sequence
                 if (!subst.match(x[i], y.term(i)))
                     return false;
             }

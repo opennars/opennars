@@ -156,6 +156,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
             return this;*/
 
         Term[] r = Terms.toArray(sub);
+        if (r == null) return null;
         return clone(r);
     }
 

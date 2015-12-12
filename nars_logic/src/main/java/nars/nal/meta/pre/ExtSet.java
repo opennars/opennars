@@ -15,7 +15,7 @@ public class ExtSet extends PreCondition1 {
 
     @Override
     public final boolean test(RuleMatch m, Term a) {
-        return (a.op()==Op.SET_EXT);
+        return a.op(Op.SET_EXT);
     }
 
 }

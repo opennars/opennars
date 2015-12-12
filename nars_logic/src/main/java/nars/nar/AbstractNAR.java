@@ -392,7 +392,7 @@ public abstract class AbstractNAR extends NAR {
     }
 
     protected Deriver getDeriver() {
-        return Deriver.standardDeriver;
+        return Deriver.getDefaultDeriver();
     }
 
     public NAR forEachConcept(Consumer<Concept> recip) {

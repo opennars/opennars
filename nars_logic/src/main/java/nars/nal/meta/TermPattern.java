@@ -187,8 +187,10 @@ public class TermPattern {
             code.add(new FindSubst.SubTermStructure(type, second, x1.structure()));
         }
 
-        compileSubterm(x, first, code);
-        compileSubterm(x, second, code);
+//        compileSubterm(x, first, code);
+//        compileSubterm(x, second, code);
+        compileSubterm(x, 0, code);
+        compileSubterm(x, 1, code);
     }
 
     private void compileSubterm(Compound x, int i, List<PreCondition> code) {

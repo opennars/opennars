@@ -14,19 +14,32 @@ import java.util.function.Consumer;
  */
 public abstract class Deriver  {
 
-    public static final Deriver standardDeriver;
+    private static Deriver defaultDeriver = null;
+    private static PremiseRuleSet defaultRules = null;
+
+    public static synchronized PremiseRuleSet getDefaultRules() {
+        if (defaultRules == null) {
+            try {
+                defaultRules = new PremiseRuleSet();
+            } catch (Exception e) {
+                System.exit(1);  //e.printStackTrace();
+            }
+
+        }
+        return defaultRules;
+    }
+    public static synchronized Deriver getDefaultDeriver() {
+        if (defaultDeriver == null) {
+            defaultDeriver = new TrieDeriver( getDefaultRules() );
+        }
+        return defaultDeriver;
+    }
+
     /**
      * default set of rules, statically available
      */
-    public static PremiseRuleSet standard;
     public final PremiseRuleSet rules;
 
-
-    static {
-        loadRules();
-        //standardDeriver = new SimpleDeriver(SimpleDeriver.standard);
-        standardDeriver = new TrieDeriver(Deriver.standard);
-    }
 
     public Deriver(PremiseRuleSet rules) {
         this.rules = rules;
@@ -56,14 +69,6 @@ public abstract class Deriver  {
 ////                }
 //        );
 //    }
-
-    static void loadRules() {
-        try {
-            Deriver.standard = new PremiseRuleSet();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /** run an initialized rule matcher */
     protected abstract void run(RuleMatch matcher);

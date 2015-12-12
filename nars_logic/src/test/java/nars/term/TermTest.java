@@ -774,4 +774,11 @@ public class TermTest {
         int h2 = n.term(b).hashCode();
         assertNotEquals(h1, h2);
     }
+
+    @Test public void testSetOpFlags() {
+        assertTrue( $("{x}").op().isSet() );
+        assertTrue( $("[y]}").op().isSet() );
+        assertFalse( $("x").op().isSet() );
+        assertFalse( $("a:b").op().isSet() );
+    }
 }

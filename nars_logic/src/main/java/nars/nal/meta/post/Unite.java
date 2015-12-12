@@ -26,13 +26,10 @@ public class Unite extends PreCondition3Output {
         if (Unite.invalid(a,b,c)) return false;
 
         //ok both are extensional sets or intensional sets, build difference
-        Compound A = (Compound) a;
-        Compound B = (Compound) b;
-
         return createSetAndAddToSubstitutes(m, a, c,
                     Terms.concat(
-                        ((Compound)A).terms(),
-                        ((Compound)B).terms()
+                        ((Compound)a).terms(),
+                        ((Compound)b).terms()
                     ));
     }
 
@@ -53,7 +50,7 @@ public class Unite extends PreCondition3Output {
     }
 
     public static boolean invalid(Term a, Term b, Term c) {
-        return  c==null || !((a.op().isSet() && a.op()==b.op()));
+        return c==null || !a.op().isSet() || a.op()!=b.op();
     }
 
 

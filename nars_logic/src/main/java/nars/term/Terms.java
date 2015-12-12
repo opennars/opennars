@@ -390,7 +390,10 @@ public class Terms {
     }
 
     public static Term[] toArray(Collection<Term> l) {
-        return l.toArray(new Term[l.size()]);
+        int s = l.size();
+        if (s == 0)
+            return null;
+        return l.toArray(new Term[s]);
     }
 
     public static Term[] cloneTermsReplacing(Term[] term, Term from, Term to) {
