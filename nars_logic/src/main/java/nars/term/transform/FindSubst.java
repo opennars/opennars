@@ -1221,7 +1221,7 @@ public class FindSubst extends Versioning implements Subst {
     public final Term apply(Term t, boolean fullMatch) {
         //TODO make a half resolve that only does xy?
 
-        Term ret = t.apply(xy, fullMatch);
+        Term ret = t.apply(this, fullMatch);
 
         if ((ret != null) /*&& (!yx.isEmpty())*/) {
             ret = ret.apply(yx, fullMatch);

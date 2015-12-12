@@ -9,7 +9,7 @@ import nars.term.compound.Compound;
 /**
  * Created by me on 8/15/15.
  */
-public class Intersect extends PreCondition3Output {
+@Deprecated public class Intersect extends PreCondition3Output {
 
     public Intersect(Term arg1, Term arg2, Term arg3) {
         super(arg1, arg2, arg3);

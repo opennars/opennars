@@ -176,7 +176,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                 break;
             default:
                 if (op.isStatement()) {
-                    if (Compounds.isOperation(this)) {
+                    if (Op.isOperation(this)) {
                         Compounds.operationAppend((Compound) term(0), (Operator) term(1), p, pretty); //TODO Appender
                     }
                     else {

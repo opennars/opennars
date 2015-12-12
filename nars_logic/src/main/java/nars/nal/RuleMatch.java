@@ -1,10 +1,14 @@
 package nars.nal;
 
+import nars.$;
 import nars.Global;
 import nars.Op;
 import nars.Premise;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.Operator;
+import nars.nal.op.ImmediateTermTransform;
+import nars.nal.op.intersect;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.term.Term;
@@ -13,6 +17,7 @@ import nars.term.transform.FindSubst;
 import nars.truth.Truth;
 import nars.util.version.Versioned;
 
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -39,9 +44,13 @@ public class RuleMatch extends FindSubst {
     public final Versioned<Term> derived;
     public boolean cyclic;
 
+    final Map<Operator, ImmediateTermTransform> transforms =
+            Global.newHashMap();
+
     public RuleMatch(Random r) {
         super(Op.VAR_PATTERN, r );
 
+        addTransform(intersect.class);
 
         secondary = new VarCachedVersionMap(this);
         occurrenceShift = new Versioned(this);
@@ -50,8 +59,21 @@ public class RuleMatch extends FindSubst {
         derived = new Versioned(this);
     }
 
+    private void addTransform(Class<? extends ImmediateTermTransform> c) {
+        Operator o = $.operator(c.getSimpleName());
+        try {
+            transforms.put(o, c.newInstance());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-//    /**
+    @Override public ImmediateTermTransform getTransform(Operator t) {
+        return transforms.get(t);
+    }
+
+
+    //    /**
 //     * thread-specific pool of RuleMatchers
 //     * this pool is local to this deriver
 //     */

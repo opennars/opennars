@@ -225,7 +225,7 @@ public class NarseseTest {
         Term[] aa = Compounds.opArgsArray(t);
         assertEquals(2, aa.length);
         assertEquals("^believe", t.term(1).toString());
-        assertEquals("believe", Compounds.operatorTerm(t).toString());
+        assertEquals("believe", Compounds.operatorName(t).toString());
         assertEquals("a", aa[0].toString());
         assertEquals("b", aa[1].toString());
     }
@@ -482,7 +482,7 @@ public class NarseseTest {
 
     protected void ensureIsEcho(Compound op) {
         assertEquals(Atom.the(echo.class.getSimpleName()),
-                Compounds.operatorTerm(op));
+                Compounds.operatorName(op));
     }
 
 

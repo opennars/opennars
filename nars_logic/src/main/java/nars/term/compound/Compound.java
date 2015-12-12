@@ -23,7 +23,9 @@ package nars.term.compound;
 import nars.$;
 import nars.Global;
 import nars.Op;
+import nars.nal.Compounds;
 import nars.nal.meta.match.Ellipsis;
+import nars.nal.op.ImmediateTermTransform;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.TermVector;
@@ -148,7 +150,14 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
             }
         }
 
-        return apply(sub);
+        Term result = apply(sub);
+
+        if (Op.isOperation(result)) {
+            ImmediateTermTransform tf = f.getTransform(Compounds.operatorTerm((Compound)result));
+            System.out.println(result + " :: " + tf);
+        }
+
+        return result;
     }
 
     default Term apply(List<Term> sub) {
@@ -157,6 +166,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
         Term[] r = Terms.toArray(sub);
         if (r == null) return null;
+
         return clone(r);
     }
 

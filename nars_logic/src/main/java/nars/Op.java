@@ -3,7 +3,9 @@ package nars;
 
 import com.gs.collections.api.tuple.primitive.IntIntPair;
 import nars.nal.nal7.Order;
+import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
@@ -192,6 +194,15 @@ public enum Op implements Serializable {
 
     }
 
+    public static boolean isOperation(Term t) {
+        if (!(t instanceof Compound)) return false;
+        Compound c = (Compound)t;
+        return c.op().isA(OperationBits) &&
+               c.op(Op.INHERIT) &&
+               c.size() == 2 &&
+               c.term(1).op(Op.OPERATOR) &&
+               c.term(0).op(Op.PRODUCT);
+    }
 
 
     @Override
@@ -311,6 +322,10 @@ public enum Op implements Serializable {
 
     public static final int SetsBits =
             Op.or(Op.SET_EXT, Op.SET_INT);
+
+    /** all Operations will have these 3 elements in its subterms: */
+    public static final int OperationBits =
+            Op.or(Op.INHERIT, Op.PRODUCT, OPERATOR);
 
     public static final int StatementBits =
             Op.or(Op.INHERIT.bit(), Op.SIMILAR.bit(),

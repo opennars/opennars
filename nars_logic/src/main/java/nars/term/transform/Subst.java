@@ -1,6 +1,8 @@
 package nars.term.transform;
 
 import nars.Op;
+import nars.nal.nal8.Operator;
+import nars.nal.op.ImmediateTermTransform;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
@@ -29,6 +31,10 @@ public interface Subst  {
 
     static boolean isSubstitutionComplete(Term a, Op o) {
         return o == Op.VAR_PATTERN ? !Variable.hasPatternVariable(a) : !a.hasAny(o);
+    }
+
+    default ImmediateTermTransform getTransform(Operator t) {
+        return null;
     }
 
 

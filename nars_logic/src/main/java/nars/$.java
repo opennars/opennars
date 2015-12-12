@@ -411,4 +411,9 @@ public abstract class $  {
     public static Term sectInt(Term... x) {
         return COMPOUND(Op.INTERSECT_INT, x);
     }
+
+    public static Operator operator(String name) {
+        return new Operator($.the(name));
+    }
+
 }

@@ -3,7 +3,6 @@ package nars.op.mental;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.*;
 import nars.budget.Budget;
-import nars.nal.Compounds;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
@@ -220,7 +219,7 @@ public class InternalExperience {
 
         Term content = task.getTerm();
         // to prevent infinite recursions
-        if (Compounds.isOperation(content)/* ||  Memory.randomNumber.nextFloat()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
+        if (Op.isOperation(content)/* ||  Memory.randomNumber.nextFloat()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
             return null;
         }
 

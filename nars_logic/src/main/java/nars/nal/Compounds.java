@@ -210,8 +210,14 @@ public class Compounds {
         return (Compound) operation.term(0);
     }
 
-    public static Term operatorTerm(Compound operation) {
-        return ((Operator) operation.term(1)).identifier();
+    public static Term operatorName(Compound operation) {
+        Operator tn = operatorTerm(operation);
+        if (tn!=null) return tn.identifier();
+        return null;
+    }
+
+    public static Operator operatorTerm(Compound operation) {
+        return ((Operator) operation.term(1));
     }
 
     /**
@@ -267,15 +273,6 @@ public class Compounds {
         return feedback.budget(goal.getBudget()).
                 budgetScaled(priMult, durMult).
                 parent(goal);
-    }
-
-    public static boolean isOperation(Term t) {
-        if (!(t instanceof Compound)) return false;
-        Compound c = (Compound)t;
-        return c.op() == Op.INHERIT &&
-            c.size() == 2 &&
-            c.term(1).op() == Op.OPERATOR
-            && c.term(0).op() == Op.PRODUCT;
     }
 
     public static Term[] opArgsArray(Compound term) {

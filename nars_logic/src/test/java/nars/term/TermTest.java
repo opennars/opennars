@@ -18,7 +18,6 @@ package nars.term;
 
 import nars.*;
 import nars.concept.Concept;
-import nars.nal.Compounds;
 import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.nar.Terminal;
@@ -305,7 +304,7 @@ public class TermTest {
         try {
             Term x = n.term("wonder(a,b)");
             assertEquals(Op.INHERIT, x.op());
-            assertTrue(Compounds.isOperation(x));
+            assertTrue(Op.isOperation(x));
             assertEquals("wonder(a,b)", x.toString());
 
         } catch (Narsese.NarseseException ex) {

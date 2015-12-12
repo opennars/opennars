@@ -481,14 +481,14 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     public final int execute(Task goal) {
         Term term = goal.getTerm();
 
-        if (Compounds.isOperation(term)) {
+        if (Op.isOperation(term)) {
             Compound o = (Compound) term;
 
             //enqueue
             beforeNextFrame(()-> {
                 if (!goal.isDeleted()) //it may be deleted by the time this runs
                     memory.exe.emit(
-                        Compounds.operatorTerm(o), goal);
+                        Compounds.operatorName(o), goal);
                 //else ... --> why?
             });
 

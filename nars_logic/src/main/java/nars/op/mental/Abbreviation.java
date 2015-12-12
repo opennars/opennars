@@ -1,12 +1,8 @@
 package nars.op.mental;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.$;
-import nars.Memory;
-import nars.NAR;
-import nars.Symbols;
+import nars.*;
 import nars.concept.Concept;
-import nars.nal.Compounds;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
@@ -58,7 +54,7 @@ public class Abbreviation implements Consumer<Task> {
     public boolean canAbbreviate(Task task) {
         Term t = task.getTerm();
 
-        if (Compounds.isOperation(t)) return false;
+        if (Op.isOperation(t)) return false;
         /*if (t instanceof Similarity) {
             Similarity s = (Similarity)t;
             if (Operation.isA(s.getSubject(), abbreviate)) return false;

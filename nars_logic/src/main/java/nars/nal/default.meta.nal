@@ -150,20 +150,20 @@
 
 //Set comprehension:
 
-    (C --> {A..+}), (C --> {B..+}) |- (C --> {A..+,B..+}), (Truth:Union)
-                                      (C --> intersect({A..+},{B..+})), (Truth:Intersection)
+    (C --> {A..+}), (C --> {B..+}) |- (C --> {A..+,B..+}), (Truth:Union),
+                                      (C --> intersect({A..+},{B..+})), (Truth:Intersection),
                                       (C --> difference({A..+},{B..+})), (Truth:Difference)
 
-    (C --> [A..+]), (C --> [B..+]) |- (C --> [A..+,B..+]), (Truth:Intersection)
-                                      (C --> intersect([A..+],[B..+])), (Truth:Union)
+    (C --> [A..+]), (C --> [B..+]) |- (C --> [A..+,B..+]), (Truth:Intersection),
+                                      (C --> intersect([A..+],[B..+])), (Truth:Union),
                                       (C --> difference([A..+],[B..+])), (Truth:Difference)
 
-    ({A..+} --> C), ({B..+} --> C) |- ({A..+,B..+} --> C), (Truth:Intersection)
-                                      (intersect({A..+},{B..+}) --> C), (Truth:Union)
+    ({A..+} --> C), ({B..+} --> C) |- ({A..+,B..+} --> C), (Truth:Intersection),
+                                      (intersect({A..+},{B..+}) --> C), (Truth:Union),
                                       (difference({A..+},{B..+}) --> C), (Truth:Difference)
 
-    ([A..+] --> C), ([B..+] --> C) |- ([A..+,B..+] --> C), (Truth:Union)
-                                      (intersect([A..+],[B..+]) --> C), (Truth:Intersection)
+    ([A..+] --> C), ([B..+] --> C) |- ([A..+,B..+] --> C), (Truth:Union),
+                                      (intersect([A..+],[B..+]) --> C), (Truth:Intersection),
                                       (difference([A..+],[B..+]) --> C), (Truth:Difference)
 
 //Set element takeout:
