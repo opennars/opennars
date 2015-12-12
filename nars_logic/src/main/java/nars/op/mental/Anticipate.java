@@ -47,7 +47,7 @@ import java.util.Map;
 public class Anticipate {
 
     public float DEFAULT_CONFIRMATION_EXPECTATION = 0.51f;
-    public static float TOLERANCE_DIV=0.2f; //can even take up to 5 times as long its fine ^^
+    public static float TOLERANCE_DIV=0.5f; //can even take 2 times as long its fine 
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
@@ -57,7 +57,6 @@ public class Anticipate {
     private final NAR nar;
     private Memory memory;
     private final boolean debug = false;
-    //private long nextUpdateTime = -1;
 
     public Anticipate(NAR nar) {
         this.nar = nar;
