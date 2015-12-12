@@ -58,7 +58,7 @@ public class FindSubst extends Versioning implements Subst {
     public final VarCachedVersionMap yx;
 
     /** current "y"-term being matched against */
-    final Versioned<Term> term;
+    protected final Versioned<Term> term;
 
     /** parent, if in subterms */
     public final Versioned<Compound> parent;

@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 @RunWith(Parameterized.class)
 public class NAL3Test extends AbstractNALTester {
 
-    public static final int cycles = 350;
+    public static final int cycles = 500;
 
     public NAL3Test(Supplier<NAR> b) { super(b); }
 
@@ -87,6 +87,7 @@ public class NAL3Test extends AbstractNALTester {
         tester.believe("<planetX --> [earthly,saturny]>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
         tester.mustBelieve(cycles, "<planetX --> [marsy,earthly,saturny,venusy]>", 0.1f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
     }
+
     @Test
     public void set_operationsSetInt_union1_1_2_3() throws Narsese.NarseseException {
         TestNAR tester = test();
@@ -147,6 +148,7 @@ public class NAL3Test extends AbstractNALTester {
     @Test
     public void composition_on_both_sides_of_a_statement_2() throws Narsese.NarseseException {
         TestNAR tester = test();
+        tester.nar.log();
         tester.believe("<bird --> animal>",0.9f,0.9f); //.en("Bird is a type of animal.");
         tester.ask("<(|,bird,swimmer) --> (|,animal,swimmer)>"); //.en("Is a swimming bird a type of swimming animal?");
         tester.mustBelieve(cycles, "<(|,bird,swimmer) --> (|,animal,swimmer)>", 0.90f ,0.73f); //.en("A swimming bird is probably a type of swimming animal.");

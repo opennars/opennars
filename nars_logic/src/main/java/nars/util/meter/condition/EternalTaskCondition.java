@@ -12,6 +12,7 @@ import nars.term.Terms;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -21,6 +22,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class EternalTaskCondition extends AbstractTask implements NARCondition, Predicate<Task>, Consumer<Tasked> {
+
+    private static final Logger logger = LoggerFactory.getLogger(EternalTaskCondition.class);
 
     protected final NAR nar;
     boolean succeeded = false;
@@ -313,10 +316,17 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 
     public final void accept(Task task) {
 
-        if (!succeeded && test(task)) {
+        if (succeeded) return; //no need to test any further
+
+
+        if (test(task)) {
             succeeded = true;
             successTime = nar.time();
+        } else {
+            //logger.info("non-matched: {}", task);
+            //logger.info("\t{}", task.getLogLast());
         }
+
     }
 
     @Override

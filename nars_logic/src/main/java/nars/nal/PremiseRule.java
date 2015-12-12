@@ -168,9 +168,6 @@ public class PremiseRule extends GenericCompound implements Level {
 
         ///--------------
 
-
-
-
         if (post.afterConclusions.length > 0) {
             l.add(new Solve(post.term, this, true ));
             Collections.addAll(l, post.afterConclusions);

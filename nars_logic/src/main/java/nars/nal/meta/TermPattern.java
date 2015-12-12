@@ -71,6 +71,10 @@ public class TermPattern {
     }
 
     private void compile(Term x, List<PreCondition> code) {
+        code.add(new FindSubst.MatchTerm(x));
+    }
+
+    private void compileRisky(Term x, List<PreCondition> code) {
 
 
         if (x instanceof TaskBeliefPair) {

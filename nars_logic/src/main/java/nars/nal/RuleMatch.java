@@ -111,7 +111,7 @@ public class RuleMatch extends FindSubst {
             p.getBelief().getTerm()
             : p.getTermLink().getTerm() ; //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
 
-        parent.set( new TaskBeliefPair(
+        term.set( new TaskBeliefPair(
             taskTerm,
             beliefTerm
         ) );

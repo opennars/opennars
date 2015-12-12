@@ -3,7 +3,6 @@ package nars.nal;
 import com.google.common.collect.Lists;
 import nars.Global;
 import nars.NAR;
-import nars.nar.Default;
 import nars.nar.SingleStepNAR;
 import nars.nar.Terminal;
 import nars.util.meter.TestNAR;
@@ -82,13 +81,13 @@ public abstract class AbstractNALTester {
         int finalLevel = level;
 
         if (multi) {
-            l.add(supply("Default2[NAL<=" + level + ']',
-                    () -> {
-                        Default d = new Default(512, 2, 2, 2);
-                        d.nal(finalLevel);
-                        return d;
-                    }
-            ));
+//            l.add(supply("Default2[NAL<=" + level + ']',
+//                    () -> {
+//                        Default d = new Default(512, 2, 2, 2);
+//                        d.nal(finalLevel);
+//                        return d;
+//                    }
+//            ));
         }
 
         if (single) {

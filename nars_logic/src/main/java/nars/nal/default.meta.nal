@@ -150,11 +150,14 @@
 
 //Set comprehension:
 
-//  (C --> {A..+}), (C --> {B..+}) |- (C --> {A..+,B..+}), (Truth:Union)
-    (C --> A), (C --> B), set_ext(A), union(A,B,R) |- (C --> R), (Truth:Union)
-    (C --> A), (C --> B), set_int(A), union(A,B,R) |- (C --> R), (Truth:Intersection)
-    (A --> C), (B --> C), set_ext(A), union(A,B,R) |- (R --> C), (Truth:Intersection)
-    (A --> C), (B --> C), set_int(A), union(A,B,R) |- (R --> C), (Truth:Union)
+    (C --> {A..+}), (C --> {B..+}) |- (C --> {A..+,B..+}), (Truth:Union)
+    (C --> [A..+]), (C --> [B..+]) |- (C --> [A..+,B..+]), (Truth:Intersection)
+    ({A..+} --> C), ({B..+} --> C) |- ({A..+,B..+} --> C), (Truth:Intersection)
+    ([A..+] --> C), ([B..+] --> C) |- ([A..+,B..+] --> C), (Truth:Union)
+//    (C --> A), (C --> B), set_ext(A), union(A,B,R) |- (C --> R), (Truth:Union)
+//    (C --> A), (C --> B), set_int(A), union(A,B,R) |- (C --> R), (Truth:Intersection)
+//    (A --> C), (B --> C), set_ext(A), union(A,B,R) |- (R --> C), (Truth:Intersection)
+//    (A --> C), (B --> C), set_int(A), union(A,B,R) |- (R --> C), (Truth:Union)
 
     (C --> A), (C --> B), set_ext(A), intersection(A,B,R) |- (C --> R), (Truth:Intersection)
     (C --> A), (C --> B), set_int(A), intersection(A,B,R) |- (C --> R), (Truth:Union)
@@ -444,16 +447,16 @@
 
 //precondition combiner inference rule (variable_unification6):
 
-    ((&&,C,A..+) ==> Z), ((&&,C,B..+) ==> Z) |- ((&&,A,..) ==> (&&,B,..)), (Truth:Induction),
-                                                ((&&,B,..) ==> (&&,A,..)), (Truth:Induction)
-    (Z ==> (&&,C,A..+)), (Z ==> (&&,C,B..+)) |- ((&&,A,..) ==> (&&,B,..)), (Truth:Abduction),
-                                                ((&&,B,..) ==> (&&,A,..)), (Truth:Abduction)
+    ((&&,C,A..+) ==> Z), ((&&,C,B..+) ==> Z) |- ((&&,A..+,..) ==> (&&,B..+,..)), (Truth:Induction),
+                                                ((&&,B..+,..) ==> (&&,A..+,..)), (Truth:Induction)
+    (Z ==> (&&,C,A..+)), (Z ==> (&&,C,B..+)) |- ((&&,A..+,..) ==> (&&,B..+,..)), (Truth:Abduction),
+                                                ((&&,B..+,..) ==> (&&,A..+,..)), (Truth:Abduction)
 
 
 //second level variable introduction
 
     (Y --> L), ((Y --> S) ==> R) |- ((&&,(#X --> L),(#X --> S)) ==> R), (Truth:Induction)
-    (Y --> L), ((&&,(Y --> S),A..+) ==> R), substitute(Y,#X) |- ((&&,(#X --> L),(#X --> S),A) ==> R), (Truth:Intersection)
+    (Y --> L), ((&&,(Y --> S),A..+) ==> R), substitute(Y,#X) |- ((&&,(#X --> L),(#X --> S),A..+) ==> R), (Truth:Intersection)
 
 ////NAL7 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
@@ -501,8 +504,8 @@
 
 ////composition on both sides of a statement:
 
-    ((&,B,A..+) --> (&,X,A..+)), (B --> X), task("?") |- ((&,B,A..+) --> (&,X,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    ((|,B,A..+) --> (|,X,A..+)), (B --> X), task("?") |- ((|,B,A..+) --> (|,X,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((&,B,A..+) --> (&,X,A..+)), (B --> X), task("?") |- ((&,B,A..+) --> (&,X,A..+)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((|,B,A..+) --> (|,X,A..+)), (B --> X), task("?") |- ((|,B,A..+) --> (|,X,A..+)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
     ((-,S,A) --> (-,S,B)), (B --> A), task("?") |- ((-,S,A) --> (-,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
