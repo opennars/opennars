@@ -11,7 +11,7 @@ import java.util.Collections;
 /**
  * implementation which stores its series of subterms as a Term[]
  */
-public class ArrayEllipsisMatch<T extends Term> extends EllipsisMatch<T> {
+public class ArrayEllipsisMatch<T extends Term> extends EllipsisMatch {
 
     public final Term[] term;
 

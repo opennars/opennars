@@ -8,7 +8,7 @@ import java.util.Collection;
 /**
  * implementation which stores its series of subterms as a Term[]
  */
-public class CollectionEllipsisMatch extends EllipsisMatch<Term> {
+public class CollectionEllipsisMatch extends EllipsisMatch {
 
     public final Collection<Term> term;
 
@@ -16,6 +16,10 @@ public class CollectionEllipsisMatch extends EllipsisMatch<Term> {
         this.term = term;
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ":" + term.toString();
+    }
 
     @Override
     public boolean applyTo(Subst f, Collection<Term> target, boolean fullMatch) {

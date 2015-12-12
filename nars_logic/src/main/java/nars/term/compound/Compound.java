@@ -152,9 +152,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
     default Term apply(List<Term> sub) {
-        if (sub.size() < op().minSize)
-            return null; //too small to create
-
         /*if (subterms().equivalent(sub))
             return this;*/
 

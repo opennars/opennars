@@ -109,12 +109,12 @@ public class FindSubst extends Versioning implements Subst {
         revert(0);
     }
 
-    public Term getXY(Term t) {
-        return xy.get(t);
+    public Term getXY(Object t) {
+        return xy.getXY(t);
     }
 
     public Term getYX(Term t) {
-        return yx.get(t);
+        return yx.getXY(t);
     }
 
 
@@ -136,17 +136,18 @@ public class FindSubst extends Versioning implements Subst {
         }
 
         @Override
-        public boolean cache(Term key) {
+        public final boolean cache(Term key) {
             //since these should always be normalized variables, they will not exceed a predictable range of entries (ex: $1, $2, .. $n)
             return key instanceof Variable;
         }
 
         @Override
-        public Term getXY(Term t) {
+        public final Term getXY(Object t) {
             Versioned<Term> v = map.get(t);
             if (v == null) return null;
             return v.get();
         }
+
     }
 
 
@@ -620,7 +621,7 @@ public class FindSubst extends Versioning implements Subst {
      */
     public final boolean match(Term x, Term y) {
 
-        if (x.equals(y)) {
+         if (x.equals(y)) {
             return true;
         }
 
@@ -907,18 +908,21 @@ public class FindSubst extends Versioning implements Subst {
         //ALL OF THIS CAN BE PRECOMPUTED
         Set<Term> matchFirst = Global.newHashSet(0); //Global.newHashSet(0);
         for (Term x : X.terms()) {
+
+            //ellipsis matched in stage 2
             if (x == Xellipsis || x.equals(Ellipsis.Shim))
                 continue;
-            if (x.op().isVar()) { // == type) {
-                Term r = getXY(x);
-                if (r instanceof EllipsisMatch) {
-                    //adds what would ordinarily be inlined in a Substitution
-                    //which is not necessarily all of the terms it contains
-                    //if it were iterated directly
-                    ((EllipsisMatch) r).applyTo(this, matchFirst, false);
-                    continue;
-                } //else r == null
-            }
+
+//            if (x.op().isVar()) { // == type) {
+//                Term r = getXY(x);
+//                if (r instanceof EllipsisMatch) {
+//                    //adds what would ordinarily be inlined in a Substitution
+//                    //which is not necessarily all of the terms it contains
+//                    //if it were iterated directly
+//                    ((EllipsisMatch) r).applyTo(this, matchFirst, false);
+//                    continue;
+//                } //else r == null
+//            }
 
             matchFirst.add(x);
         }

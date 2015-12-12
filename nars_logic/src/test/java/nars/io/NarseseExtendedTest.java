@@ -82,7 +82,7 @@ public class NarseseExtendedTest {
 
 
         Compound u = term("<a:b --> c:d>");
-        assertEquals("<<b --> a> --> <d --> c>>", u.toString());
+        assertEquals("<<b-->a>--><d-->c>>", u.toString());
 
         Task ut = task("<a:b --> c:d>.");
         assertNotNull(ut);
@@ -118,8 +118,8 @@ public class NarseseExtendedTest {
 
     @Test
     public void testNamespaceTerms2() {
-        eqTerm("a:b", "<b --> a>");
-        eqTerm("a : b", "<b --> a>");
+        eqTerm("a:b", "<b-->a>");
+        eqTerm("a : b", "<b-->a>");
     }
 
     @Test public void testNamespaceTermsNonAtomicSubject() {

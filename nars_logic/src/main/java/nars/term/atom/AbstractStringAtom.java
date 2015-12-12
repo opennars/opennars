@@ -10,6 +10,11 @@ public abstract class AbstractStringAtom extends AbstractStringAtomRaw {
 
     final int hash;
 
+    public AbstractStringAtom() {
+        super("");
+        this.hash = 0;
+    }
+
     public AbstractStringAtom(byte[] id) {
         this(id, null);
     }

@@ -3,7 +3,7 @@ package nars.io;
 import nars.*;
 import nars.nal.Compounds;
 import nars.nal.nal8.Operator;
-import nars.nar.Terminal;
+import nars.nar.Default;
 import nars.op.io.echo;
 import nars.task.Task;
 import nars.term.Term;
@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 
 public class NarseseTest {
 
-    static final NAR n = new Terminal();
+    static final NAR n = new Default();
     static final Narsese p = Narsese.the();
 
     static <T extends Term> T term(String s) throws Narsese.NarseseException {
@@ -112,7 +112,7 @@ public class NarseseTest {
 
     @Test
     public void testMultiCompound() throws Narsese.NarseseException {
-        String tt = "<<a <=> b> --> <c ==> d>>";
+        String tt = "<<a<=>b>--><c==>d>>";
         Task t = task(tt + '?');
         assertNotNull(t);
         assertEquals(Op.INHERIT, t.getTerm().op());
@@ -132,19 +132,21 @@ public class NarseseTest {
     @Test
     public void testFailureOfMultipleDistinctInfixOperators() {
 
-        try {
-            term("(a * b & c)");
-            assertTrue("exception should have been thrown", false);
-        } catch (Narsese.NarseseException e) {
-            String s = e.toString();
-            assertTrue(s.contains("&"));
-            assertTrue(s.contains("*"));
-        }
+        assertEquals(null, term("(a * b & c)"));
+
+//        try {
+//
+//            assertTrue(invalid.toString() + " exception should have been thrown", false);
+//        } catch (Narsese.NarseseException e) {
+//            String s = e.toString();
+//            assertTrue(s.contains("&"));
+//            assertTrue(s.contains("*"));
+//        }
     }
 
     @Test
     public void testQuest() throws Narsese.NarseseException {
-        String tt = "(a, b, c)";
+        String tt = "(a,b,c)";
         Task t = task(tt + '@');
         assertNotNull(t);
         assertEquals(Op.PRODUCT, t.getTerm().op());
@@ -343,7 +345,7 @@ public class NarseseTest {
     @Test
     public void testEscape() throws Narsese.NarseseException {
         taskParses("<a --> \"a\">.");
-        assertTrue(task("<a --> \"a\">.").toString().contains("<a --> \"a\">."));
+        assertTrue(task("<a --> \"a\">.").toString().contains("<a-->\"a\">."));
     }
 
     @Test
@@ -385,7 +387,7 @@ public class NarseseTest {
     public void testImageIndex() {
         Compound t = term("(/,open,$1,_)");
         assertEquals("(/,open,$1,_)", t.toString(false));
-        assertEquals("(/, open, $1, _)", t.toString());
+        assertEquals("(/, open, $1, _)", t.toString(true));
         assertEquals("index psuedo-term should not count toward its size", 2, t.size());
     }
 
@@ -400,9 +402,9 @@ public class NarseseTest {
     public void testImageIntRel1() { testImageIntRel("<(\\,x,_,z)-->a>", 1); }
 
     @Test
-    public void testImageExtRel2() { testImageExtRel("<a --> (/, x, y, _)>", 2); }
+    public void testImageExtRel2() { testImageExtRel("<a-->(/,x,y,_)>", 2); }
     @Test
-    public void testImageIntRel2() { testImageIntRel("<(\\, x, y, _) --> a>", 2); }
+    public void testImageIntRel2() { testImageIntRel("<(\\,x,y,_)-->a>", 2); }
 
     private void testImageIntRel(String imageTerm, int relationIndexExpected) {
         Compound ti = term(imageTerm);

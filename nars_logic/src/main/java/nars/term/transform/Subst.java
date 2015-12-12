@@ -10,7 +10,7 @@ public interface Subst  {
 
     boolean isEmpty();
 
-    Term getXY(Term t);
+    Term getXY(Object t);
 
     void clear();
 

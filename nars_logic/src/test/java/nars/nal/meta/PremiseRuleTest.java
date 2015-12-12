@@ -24,7 +24,7 @@ import static nars.$.$;
 /**
  * Created by me on 7/7/15.
  */
-public class DerivationRuleTest extends TestCase {
+public class PremiseRuleTest extends TestCase {
 
 
     static final Narsese p = Narsese.the();
@@ -115,7 +115,7 @@ public class DerivationRuleTest extends TestCase {
         y = ((PremiseRule)y).normalizeRule();
         Terms.printRecursive(y);
 
-        assertEquals("((<%1 --> %2>, (--,%1)), (<%2 --> %1>, (<Conversion --> Truth>)))", y.toString());
+        assertEquals("((<%1-->%2>,(--,%1)),(<%2-->%1>,(<Conversion-->Truth>)))", y.toString());
         assertEquals(10, y.complexity());
         assertEquals(15, y.volume());
 
@@ -176,7 +176,7 @@ public class DerivationRuleTest extends TestCase {
         //System.out.println(x);
 
         assertEquals(
-            "((<%1 ==> %2>, <(&&, %1, %3..+) ==> %2>), (<(&&, %3..+, ..) ==> %2>, (<DecomposeNegativePositivePositive --> Truth>, <ForAllSame --> Order>, <FromBelief --> SequenceIntervals>)))",
+            "((<%1==>%2>,<(&&,%1,%3..+)==>%2>),(<(&&,%3..+,..)==>%2>,(<DecomposeNegativePositivePositive-->Truth>,<ForAllSame-->Order>,<FromBelief-->SequenceIntervals>)))",
             x.toString()
         );
 
@@ -200,12 +200,15 @@ public class DerivationRuleTest extends TestCase {
 
             Term ellipsisTerm = $(getEllipsis());
 
+            int power = 128;
+
             for (int seed = 0; seed < Math.max(1,repeats*arity) /* enough chances to select all combinations */; seed++) {
 
                 FindSubst f = new FindSubst(Op.VAR_PATTERN, new XorShift128PlusRandom(1+seed));
 
-                boolean matched = f.next(x, y, 16);
-                //System.out.println(x + "\t" + y + "\t" +f);
+
+                boolean matched = f.next(x, y, power);
+                System.out.println(x + "\t" + y + "\t" +f);
                 assertTrue(matched);
 
                 EllipsisMatch varArgs = (EllipsisMatch)f.getXY(ellipsisTerm);
@@ -222,7 +225,7 @@ public class DerivationRuleTest extends TestCase {
 
                 //2. test substitution
                 Term s = r.apply(f, false);
-                //System.out.println(s);
+                System.out.println(s);
 
                 selectedFixed.add(s);
 
@@ -274,7 +277,7 @@ public class DerivationRuleTest extends TestCase {
 
         @Override
         public Compound getMatchable(int arity) {
-            return $(prefix + DerivationRuleTest.termSequence(arity) + suffix);
+            return $(prefix + PremiseRuleTest.termSequence(arity) + suffix);
         }
     }
 
@@ -358,7 +361,7 @@ public class DerivationRuleTest extends TestCase {
     @Test public void testEllipsisMatchCommutive1() {
         for (String e : new String[]{"%2..+"}) {
             for (String[] s : new String[][]{p("(|,", ")"), p("{", "}"), p("[", "]"), p("(&&,", ")")}) {
-                new CommutiveEllipsisTest1(e, s).test(2, 5, 4);
+                new CommutiveEllipsisTest1(e, s).test(2, 4, 4);
             }
         }
     }
