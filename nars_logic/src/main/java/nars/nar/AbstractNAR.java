@@ -15,8 +15,10 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.Deriver;
+import nars.nal.PremiseRule;
 import nars.nal.nal8.OperatorReaction;
 import nars.nal.nal8.operator.NullOperator;
+import nars.nal.nal8.operator.TermFunction;
 import nars.op.data.Flat;
 import nars.op.data.similaritree;
 import nars.op.io.echo;
@@ -99,34 +101,49 @@ public abstract class AbstractNAR extends NAR {
         ));
 
         if (core!=null) {
-            beforeNextFrame(this::initTime);
+            beforeNextFrame(this::initHigherNAL);
         }
 
     }
 
-    public void initTime() {
+    protected void initHigherNAL() {
         if (nal() >= 7) {
-
-            //NAL7 plugins
-            memory.the(new STMTemporalLinkage(this, core.deriver));
-            memory.the(new Anticipate(this));
-
+            initNAL7();
             if(nal() >=8) {
-                for (OperatorReaction o : exampleOperators)
-                    onExec(o);
-            }
-
-            if (nal() > 8) {
-                initNAL9();
+                initNAL8();
+                if (nal() >= 9) {
+                    initNAL9();
+                }
             }
         }
     }
 
-    protected void initNAL9() {
-        //NAL8 plugins
+    public void initNAL7() {
+        //NAL7 plugins
+        memory.the(new STMTemporalLinkage(this, core.deriver));
+        memory.the(new Anticipate(this));
+    }
+
+    public void initNAL8() {
+        /** derivation operators available at runtime */
+        for (Class<? extends TermFunction> c : PremiseRule.Operators) {
+            try {
+                onExec(c.newInstance());
+            } catch (Exception e) {
+                error(e);
+            }
+        }
 
         for (OperatorReaction o : defaultOperators)
             onExec(o);
+
+        for (OperatorReaction o : exampleOperators)
+            onExec(o);
+    }
+
+    protected void initNAL9() {
+
+
 
         new FullInternalExperience(this);
         new Abbreviation(this);
@@ -219,6 +236,8 @@ public abstract class AbstractNAR extends NAR {
 
     //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
     public final Random rng;
+
+
 
     public final OperatorReaction[] defaultOperators = {
 

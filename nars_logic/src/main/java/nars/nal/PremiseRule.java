@@ -11,8 +11,13 @@ import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.op.Derive;
 import nars.nal.meta.op.PostSolve;
 import nars.nal.meta.op.Solve;
-import nars.nal.meta.post.*;
+import nars.nal.meta.post.ShiftOccurrence;
+import nars.nal.meta.post.Substitute;
+import nars.nal.meta.post.SubstituteIfUnified;
 import nars.nal.meta.pre.*;
+import nars.nal.op.ImmediateTermTransform;
+import nars.nal.op.differ;
+import nars.nal.op.intersect;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.Terms;
@@ -35,8 +40,13 @@ import java.util.function.BiConsumer;
  */
 public class PremiseRule extends GenericCompound implements Level {
 
-    public boolean immediate_eternalize = false;
 
+    public static final Class<? extends ImmediateTermTransform>[] Operators = new Class[] {
+        intersect.class,
+        differ.class
+    };
+
+    public boolean immediate_eternalize = false;
 
     public boolean anticipate = false;
     public boolean sequenceIntervalsFromTask = false;
@@ -466,17 +476,17 @@ public class PremiseRule extends GenericCompound implements Level {
                     afterConcs.add(new SubstituteIfUnified(arg1, arg2, args[2]));
                     break;
 
-                case "intersection":
-                    afterConcs.add(new Intersect(arg1, arg2, args[2]));
-                    break;
-
-                case "union":
-                    afterConcs.add(new Unite(arg1, arg2, args[2]));
-                    break;
-
-                case "difference":
-                    afterConcs.add(new Differ(arg1, arg2, args[2]));
-                    break;
+//                case "intersection":
+//                    afterConcs.add(new Intersect(arg1, arg2, args[2]));
+//                    break;
+//
+//                case "union":
+//                    afterConcs.add(new Unite(arg1, arg2, args[2]));
+//                    break;
+//
+//                case "difference":
+//                    afterConcs.add(new Differ(arg1, arg2, args[2]));
+//                    break;
 
                 case "task":
                     switch (arg1.toString()) {

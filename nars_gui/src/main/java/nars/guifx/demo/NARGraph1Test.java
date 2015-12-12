@@ -22,7 +22,7 @@ public class NARGraph1Test {
 
         new BagForgettingEnhancer(n.memory, n.core.concepts(),
                 0f, 0.8f, 0.8f);
-        n.memory.taskLinkForgetDurations.setValue(32);
+        n.memory.taskLinkForgetDurations.setValue(8);
 
 //        n.memory.conceptForgetDurations.setValue(8);
 //        n.memory.termLinkForgetDurations.setValue(12);

@@ -907,16 +907,18 @@ public class FindSubst extends Versioning implements Subst {
 
         //ALL OF THIS CAN BE PRECOMPUTED
         Set<Term> matchFirst = Global.newHashSet(0); //Global.newHashSet(0);
+
+        //terms in Y which have previously been matched and should not be matched by the ellipsis
+        Set<Term> ineligible = Global.newHashSet(0);
         for (Term x : X.terms()) {
 
             Term alreadyMatched = getXY(x);
             if (alreadyMatched == null) {
 
-                //ellipsis matched in stage 2
+                //ellipsis to be matched in stage 2
                 if (x == Xellipsis || x.equals(Ellipsis.Shim))
                     continue;
 
-                matchFirst.add(x);
             } else {
                 if (alreadyMatched instanceof EllipsisMatch) {
                     //check that Y contains all of these
@@ -925,13 +927,19 @@ public class FindSubst extends Versioning implements Subst {
                     for (Term e : tmp) {
                         if (!Y.containsTerm(e))
                             return false;
+                        ineligible.add(e);
                     }
                 } else {
                     if (!Y.containsTerm(alreadyMatched))
                         return false;
+                    ineligible.add(alreadyMatched);
                 }
 
+                continue;
+
             }
+
+            matchFirst.add(x);
 
 
 //            if (x.op().isVar()) { // == type) {
@@ -954,8 +962,15 @@ public class FindSubst extends Versioning implements Subst {
         }
 
         MutableSet<Term> yFree = Y.toSet();
+        yFree.removeAll(ineligible);
+        if (yFree.isEmpty()) {
+            //nothing to match, it is already all valid
+            return true;
+        }
+
 
         if (!matchFirst.isEmpty()) {
+
             //match all the fixed-position subterms
             if (!matchAllCommutive(matchFirst, yFree)) {
                 return false;

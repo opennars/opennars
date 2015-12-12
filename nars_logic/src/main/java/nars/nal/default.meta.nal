@@ -152,7 +152,7 @@
 
     (C --> {A..+}), (C --> {B..+}) |- (C --> {A..+,B..+}), (Truth:Union),
                                       (C --> intersect({A..+},{B..+})), (Truth:Intersection),
-                                      (C --> difference({A..+},{B..+})), (Truth:Difference)
+                                      (C --> differ({A..+},{B..+})), (Truth:Difference)
 
     (C --> [A..+]), (C --> [B..+]) |- (C --> [A..+,B..+]), (Truth:Intersection),
                                       (C --> intersect([A..+],[B..+])), (Truth:Union),

@@ -34,7 +34,11 @@ public class SingleStepNAR extends AbstractNAR {
 
 
     public SingleStepNAR() {
-        super(512, 2, 3, 3, new CycleClock());
+        this(512, 2, 3, 3);
+    }
+
+    public SingleStepNAR(int nConcepts, int conceptsfire, int tasklinkFire, int termlinkFire) {
+        super(nConcepts,conceptsfire, tasklinkFire, termlinkFire, new CycleClock());
 
 
         Global.DEBUG = true;

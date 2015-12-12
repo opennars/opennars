@@ -8,8 +8,6 @@ import nars.nal.meta.TaskBeliefPair;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
-import nars.nal.op.differ;
-import nars.nal.op.intersect;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.term.Term;
@@ -51,8 +49,9 @@ public class RuleMatch extends FindSubst {
     public RuleMatch(Random r) {
         super(Op.VAR_PATTERN, r );
 
-        addTransform(intersect.class);
-        addTransform(differ.class);
+        for (Class<? extends ImmediateTermTransform> c : PremiseRule.Operators) {
+            addTransform(c);
+        }
 
         secondary = new VarCachedVersionMap(this);
         occurrenceShift = new Versioned(this);
