@@ -46,8 +46,6 @@ public class TermLinkTest {
     @Test
     public void termlinkBidirectionality() {
 
-        // [[<x --> y>, y, x], [(<x --> y>,y), (<x --> y>,x), (y,<x --> y>), (x,<x --> y>)]]
-
         AbstractNAR n = new Default();
         n.core.conceptsFiredPerCycle.set(0);
         n.believe("<x --> y>");
@@ -56,7 +54,7 @@ public class TermLinkTest {
         assertEquals(3, g.vertexSet().size());
         assertEquals(2+1+1, g.edgeSet().size());
         assertEquals(
-                "[[y, <x-->y>, x], [(y,<x-->y>), (x,<x-->y>), (<x-->y>,y), (<x-->y>,x)]]",
+                "[[<x-->y>, y, x], [(<x-->y>,y), (<x-->y>,x), (x,<x-->y>), (y,<x-->y>)]]",
                 g.toString());
     }
 

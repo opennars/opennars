@@ -20,16 +20,16 @@ public class HyperassociativeMap2D extends HyperassociativeMap<Termed,TermNode> 
     //TODO equilibrum distance, speed, etc
 
     @Range(min = 0.1, max = 10)
-    public final SimpleDoubleProperty attractionStrength = new SimpleDoubleProperty(2);
+    public final SimpleDoubleProperty attractionStrength = new SimpleDoubleProperty(1);
     @Range(min = 0.1, max = 10)
-    public final SimpleDoubleProperty repulseWeakness = new SimpleDoubleProperty(1);
-    @Range(min = 0, max = 50)
-    public final SimpleDoubleProperty nodeSpeed = new SimpleDoubleProperty(40.0);
+    public final SimpleDoubleProperty repulseWeakness = new SimpleDoubleProperty(3);
+    @Range(min = 0, max = 40)
+    public final SimpleDoubleProperty nodeSpeed = new SimpleDoubleProperty(2.0);
     @Range(min = 0.05, max = 1)
-    public final SimpleDoubleProperty equilibriumDistance = new SimpleDoubleProperty(0.75);
+    public final SimpleDoubleProperty equilibriumDistance = new SimpleDoubleProperty(0.5);
 
-    @Range(min = 1, max = 400)
-    public final SimpleDoubleProperty scale = new SimpleDoubleProperty(100.0);
+    @Range(min = 1, max = 100)
+    public final SimpleDoubleProperty scale = new SimpleDoubleProperty(1.0);
 
     private float _nodeSpeed;
     private SpaceGrapher graph;
@@ -56,6 +56,7 @@ public class HyperassociativeMap2D extends HyperassociativeMap<Termed,TermNode> 
     @Override
     public void init(TermNode n) {
         float scale = this.scale.floatValue();
+
         n.move(-scale/2 + Math.random() * scale,
                 -scale/2 + Math.random() * scale);
     }
@@ -96,10 +97,10 @@ public class HyperassociativeMap2D extends HyperassociativeMap<Termed,TermNode> 
 
     protected void init() {
         resetLearning();
-        setLearningRate(0.5f);
+        setLearningRate(0.6f);
         setRepulsiveWeakness(repulseWeakness.get());
         setAttractionStrength(attractionStrength.get());
-        setMaxRepulsionDistance(5000);
+        setMaxRepulsionDistance(2000);
         setEquilibriumDistance(equilibriumDistance.floatValue());
         _nodeSpeed = nodeSpeed.floatValue();
     }

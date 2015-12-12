@@ -5,8 +5,8 @@ import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
+import nars.budget.BagAggregateBudget;
 import nars.budget.Budget;
-import nars.budget.UnitBudget;
 import nars.concept.AtomConcept;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
@@ -353,14 +353,17 @@ public abstract class AbstractNAR extends NAR {
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag<>(termLinkBagSize, rng).mergeAverage();
 
+        //Budget b = new UnitBudget();
+        Budget b = new BagAggregateBudget(taskLinks);
+
         return t instanceof Atom ?
 
                 new AtomConcept(
-                    t, new UnitBudget(),
+                    t, b,
                     termLinks, taskLinks) :
 
                 new DefaultConcept(
-                    t, new UnitBudget(),
+                    t, b,
                     taskLinks, termLinks, memory);
 
     }

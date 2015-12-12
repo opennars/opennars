@@ -75,14 +75,14 @@ public interface Concept extends Termed, Itemized<Term> {
                 termLinkForgetDurations * dur,
                 result,
                 now,
-                0 /* additional */);
+                1 /* additional */);
     }
     default int nextTaskLinks(int dur, long now, float taskLinkForgetDurations, TaskLink[] result) {
         return getTaskLinks().forgetNext(
                 taskLinkForgetDurations * dur,
                 result,
                 now,
-                0 /* additional */);
+                1 /* additional */);
     }
 
     default void discountBeliefConfidence() {

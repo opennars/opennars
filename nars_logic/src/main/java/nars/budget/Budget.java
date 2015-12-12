@@ -20,7 +20,9 @@ public interface Budget extends Prioritized, Budgeted {
     void delete();
 
     @Override
-    Budget getBudget();
+    default Budget getBudget() {
+        return this;
+    }
 
     @Override
     float getPriority();
@@ -28,8 +30,10 @@ public interface Budget extends Prioritized, Budgeted {
     @Override
     void setPriority(float p);
 
-    @Override
-    long setLastForgetTime(long currentTime);
+    /**
+     * returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime
+     */
+    @Override long setLastForgetTime(long currentTime);
 
     @Override
     long getLastForgetTime();

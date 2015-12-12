@@ -223,6 +223,10 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
     public final TextInput input(String text) {
         TextInput i = new TextInput(this, text);
+        if (i.size() == 0) {
+            //TODO replace with real parser error
+            error(new Narsese.NarseseException("Syntax error: " + text));
+        }
         input((Input) i);
         return i;
     }

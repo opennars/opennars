@@ -115,7 +115,7 @@ public class NAL1Test extends AbstractNALTester {
             //.debug()
             .believe("<robin --> bird>")
             .believe("<bird --> animal>")
-            .mustOutput(8, "<animal --> robin>. %1.00;0.4475%");
+            .mustOutput(32, "<animal --> robin>. %1.00;0.4475%");
     }
 
 
@@ -132,7 +132,7 @@ public class NAL1Test extends AbstractNALTester {
 
     @Test
     public void whQuestionUnifyQueryVar() throws Narsese.NarseseException {
-        testQuestionAnswer(16, "<bird --> swimmer>", "<?x --> swimmer>", "<bird --> swimmer>");
+        testQuestionAnswer(32, "<bird --> swimmer>", "<?x --> swimmer>", "<bird --> swimmer>");
     }
 
     @Test
@@ -170,7 +170,7 @@ public class NAL1Test extends AbstractNALTester {
 
     @Test
     public void backwardInference() throws Narsese.NarseseException {
-        long time = /*nar instanceof Solid ? 15 :*/ 16;
+        long time = 32;
 
 
         test().mustOutput(time, "<?1 --> bird>?") //.en("What is a type of bird?");

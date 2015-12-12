@@ -439,9 +439,7 @@ public class UnitBudget implements Budget {
     }*/
 
 
-    /**
-     * returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime
-     */
+
     @Override
     public final long setLastForgetTime(long currentTime) {
 

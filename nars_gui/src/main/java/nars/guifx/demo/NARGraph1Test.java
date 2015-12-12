@@ -20,19 +20,23 @@ public class NARGraph1Test {
     public static SpaceGrapher newGraph(Default n) {
 
 
-        new BagForgettingEnhancer(n.memory, n.core.concepts(), 0.8f, 0.8f, 0.8f);
+        new BagForgettingEnhancer(n.memory, n.core.concepts(),
+                0f, 0.8f, 0.8f);
+        n.memory.taskLinkForgetDurations.setValue(32);
 
 //        n.memory.conceptForgetDurations.setValue(8);
 //        n.memory.termLinkForgetDurations.setValue(12);
 //        n.memory.taskLinkForgetDurations.setValue(12);
 
-        //n.input(new File("/tmp/h.nal"));
-        n.input("<hydochloric --> acid>.");
-        n.input("<#x-->base>. %0.65%");
-        n.input("<neutralization --> (acid,base)>. %0.75;0.90%");
-        n.input("<(&&, <#x --> hydochloric>, eat:#x) --> nice>. %0.75;0.90%");
-        n.input("<(&&,a,b,ca)-->#x>?");
+//        //n.input(new File("/tmp/h.nal"));
+//        n.input("<hydochloric --> acid>.");
+//        n.input("<#x-->base>. %0.65%");
+//        n.input("<neutralization --> (acid,base)>. %0.75;0.90%");
+//        n.input("<(&&, <#x --> hydochloric>, eat:#x) --> nice>. %0.75;0.90%");
+//        n.input("<(&&,a,b,ca)-->#x>?");
 
+        n.input("<a --> b>.");
+        n.input("<b --> c>.");
         //n.frame(5);
 
 
@@ -70,7 +74,7 @@ public class NARGraph1Test {
     public static void main(String[] args)  {
 
 
-        Default n = new Default();
+        Default n = new Default(1024,1,1,2);
 
         NARide.show(n.loop(), ide -> {
 
