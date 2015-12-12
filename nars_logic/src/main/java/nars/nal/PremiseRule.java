@@ -681,9 +681,9 @@ public class PremiseRule extends GenericCompound implements Level {
         }
 
         @Override protected Variable resolve(Variable v) {
-            if (v instanceof Ellipsis) {
-                return ((Ellipsis) v).target;
-            }
+//            if (v instanceof Ellipsis) {
+//                return ((Ellipsis) v).target;
+//            }
             return v;
         }
 

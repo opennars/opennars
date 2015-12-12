@@ -3,6 +3,8 @@ package nars.nal;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.RuleBranch;
 import nars.nal.meta.RuleTrie;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 
@@ -32,13 +34,16 @@ public class TrieDeriver extends RuleTrie {
 
     }
 
+    final static Logger logger = LoggerFactory.getLogger(TrieDeriver.class);
+
     private static void forEachRule(RuleBranch r, RuleMatch match) {
 
-        //System.out.println(">> " + r);
+        //logger.info("BRANCH {}",r);
 
         for (PreCondition x : r.precondition) {
 
-            //System.out.println(x + " " + match);
+            //logger.info("{}: {}",x, match.xy);
+
 
             if (!x.test(match)) {
                 return;

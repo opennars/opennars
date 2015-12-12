@@ -528,17 +528,17 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
     default boolean matchLinear(TermContainer y, FindSubst subst) {
-        int s = size();
-        if (s == 2) {
-            //HACK - match smallest (least specific) first
-            int v0 = term(0).volume();
-            int v1 = term(1).volume();
-            return v0 <= v1 ? matchSubterm(0, y, subst) &&
-                    matchSubterm(1, y, subst) : matchSubterm(1, y, subst) &&
-                    matchSubterm(0, y, subst);
-        } else {
+//        int s = size();
+//        if (s == 2) {
+//            //HACK - match smallest (least specific) first
+//            int v0 = term(0).volume();
+//            int v1 = term(1).volume();
+//            return v0 <= v1 ? matchSubterm(0, y, subst) &&
+//                    matchSubterm(1, y, subst) : matchSubterm(1, y, subst) &&
+//                    matchSubterm(0, y, subst);
+//        } else {
             return subst.matchLinear(this, y, 0, size());
-        }
+//        }
     }
 
     default boolean matchSubterm(int Xn, TermContainer Y, FindSubst subst) {

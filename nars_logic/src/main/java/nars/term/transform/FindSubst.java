@@ -909,9 +909,30 @@ public class FindSubst extends Versioning implements Subst {
         Set<Term> matchFirst = Global.newHashSet(0); //Global.newHashSet(0);
         for (Term x : X.terms()) {
 
-            //ellipsis matched in stage 2
-            if (x == Xellipsis || x.equals(Ellipsis.Shim))
-                continue;
+            Term alreadyMatched = getXY(x);
+            if (alreadyMatched == null) {
+
+                //ellipsis matched in stage 2
+                if (x == Xellipsis || x.equals(Ellipsis.Shim))
+                    continue;
+
+                matchFirst.add(x);
+            } else {
+                if (alreadyMatched instanceof EllipsisMatch) {
+                    //check that Y contains all of these
+                    Collection<Term> tmp = Global.newArrayList();
+                    ((EllipsisMatch)alreadyMatched).applyTo(this, tmp, false);
+                    for (Term e : tmp) {
+                        if (!Y.containsTerm(e))
+                            return false;
+                    }
+                } else {
+                    if (!Y.containsTerm(alreadyMatched))
+                        return false;
+                }
+
+            }
+
 
 //            if (x.op().isVar()) { // == type) {
 //                Term r = getXY(x);
@@ -924,7 +945,6 @@ public class FindSubst extends Versioning implements Subst {
 //                } //else r == null
 //            }
 
-            matchFirst.add(x);
         }
 
         int numMatchable = Y.size() - matchFirst.size(); //remaining

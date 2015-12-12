@@ -22,7 +22,7 @@ public class Intersect extends PreCondition3Output {
             return false;
 
         //ok both are extensional sets or intensional sets, build intersection, not difference
-        return Unite.createSetAndAddToSubstitutes(m, a, c,
+        return Unite.substituteSet(m, a, c,
             TermContainer.intersect(
                 (Compound) a, (Compound) b
             )

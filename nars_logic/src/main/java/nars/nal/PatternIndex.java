@@ -160,13 +160,14 @@ public class PatternIndex extends MapIndex {
         ///** only compile top-level terms, not their subterms */
         //if (!(x instanceof AbstractCompoundPattern)) {
 
-            if (!Ellipsis.hasEllipsis(x)) {
-                if (!x.isCommutative()) {
-                    return new LinearCompoundPattern(x, (TermVector) subs);
-                } else {
-                    return new CommutiveCompoundPattern(x, (TermVector) subs);
-                }
-            }
+
+//            if (!Ellipsis.hasEllipsis(x)) {
+//                if (!x.isCommutative()) {
+//                    return new LinearCompoundPattern(x, (TermVector) subs);
+//                } else {
+//                    return new CommutiveCompoundPattern(x, (TermVector) subs);
+//                }
+//            }
 
         //}
 
@@ -180,6 +181,7 @@ public class PatternIndex extends MapIndex {
         public final int volCached;
         public final int structureCachedWithoutVars;
         public final Term[] termsCached;
+        protected final boolean ellipsis;
 
         public AbstractCompoundPattern(Compound seed, TermVector subterms) {
             super(seed.op(), subterms, seed.relation());
@@ -189,6 +191,7 @@ public class PatternIndex extends MapIndex {
                     //seed.structure() & ~(Op.VariableBits);
                     seed.structure() & ~(Op.VAR_PATTERN.bit());
 
+            this.ellipsis = Ellipsis.hasEllipsis(this);
             volCached = seed.volume();
             this.termsCached = subterms.terms();
         }
@@ -198,7 +201,7 @@ public class PatternIndex extends MapIndex {
             if ((yStructure | structureCachedWithoutVars) != yStructure)
                 return false;
 
-            if (sizeCached != y.size())
+            if (!ellipsis && sizeCached != y.size())
                 return false;
             if (volCached > y.volume())
                 return false;
@@ -287,7 +290,14 @@ public class PatternIndex extends MapIndex {
         @Override
         public boolean match(Compound y, FindSubst subst) {
             if (!prematch(y)) return false;
-            return matchLinear(y, subst);
+
+
+            if (!ellipsis) {
+                return matchLinear(y, subst);
+            } else {
+                return subst.matchCompoundWithEllipsis(this, y);
+            }
+
         }
 
 
@@ -331,7 +341,13 @@ public class PatternIndex extends MapIndex {
         public boolean match(Compound y, FindSubst subst) {
             if (!prematch(y))
                 return false;
-            return subst.matchPermute(this, y);
+
+            if (!ellipsis) {
+                return subst.matchPermute(this, y);
+            } else {
+                return subst.matchCompoundWithEllipsis(this, y);
+            }
+
         }
 
     }

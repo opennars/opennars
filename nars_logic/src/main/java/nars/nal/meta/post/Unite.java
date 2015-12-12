@@ -1,18 +1,19 @@
 package nars.nal.meta.post;
 
+import com.gs.collections.api.set.MutableSet;
 import nars.nal.RuleMatch;
 import nars.nal.meta.pre.PreCondition3Output;
 import nars.term.Term;
-import nars.term.Terms;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static nars.term.compound.GenericCompound.COMPOUND;
 
 /**
- * Created by me on 8/15/15.
+ * TODO lazy calculate this with a Substitution class
  */
 public class Unite extends PreCondition3Output {
 
@@ -23,27 +24,43 @@ public class Unite extends PreCondition3Output {
     @Override
     public boolean test(RuleMatch m, Term a, Term b, Term c) {
 
-        if (Unite.invalid(a,b,c)) return false;
+        //if (Unite.invalid(a,b,c)) return false;
 
-        //ok both are extensional sets or intensional sets, build difference
-        return createSetAndAddToSubstitutes(m, a, c,
-                    Terms.concat(
-                        ((Compound)a).terms(),
-                        ((Compound)b).terms()
-                    ));
-    }
+        if (c == null) return false;
 
-    public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Set<Term> terms) {
-        if (terms.isEmpty()) return false;
+        if (!a.op().isSet() || a.op()!=b.op())
+            return false;
 
-        return createSetAndAddToSubstitutes(m, a, c,
-                terms.toArray(new Term[terms.size()]) );
-    }
+        MutableSet<Term> x = ((Compound)a).toSet();
+        boolean change = false;
+        //if (b.op().isSet() && (a.op()==b.op())) {
+            //if both sets, must be equal type to merge their subterms
+            change = Collections.addAll( x, ((Compound) b).terms() );
+        /*} else {
+            //include the term itself into the new set
+            change = x.add(b);
+        }*/
 
-    public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Term[] termsArray) {
+        Term result;
+        if (change) {
+            result = COMPOUND(a.op(), x);
+        } else {
+            result = a; /* if no change, re-use term without constructing new one */
+            //maybe return false here
+        }
 
         m.secondary.put(
-            (Variable)c, COMPOUND(a.op(), termsArray)
+            (Variable) c, result
+        );
+
+        return true;
+    }
+
+    public static boolean substituteSet(RuleMatch m, Term a, Term c, Set<Term> terms) {
+        if (terms.isEmpty()) return false;
+
+        m.secondary.put(
+            (Variable) c, COMPOUND(a.op(), terms)
         );
 
         return true;

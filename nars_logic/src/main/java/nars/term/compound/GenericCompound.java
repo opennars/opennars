@@ -33,6 +33,10 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     public final int relation;
     private boolean normalized = false;
 
+    /** main compound construction entry-point */
+    public static Term COMPOUND(Op op, Collection<Term> t) {
+        return COMPOUND(op, Terms.toArray(t));
+    }
 
     /** main compound construction entry-point */
     public static Term COMPOUND(Op op, Term... t) {

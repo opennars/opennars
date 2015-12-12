@@ -64,10 +64,10 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
 //            throw new RuntimeException("expected ellipsis match: " + am);
 //        }
 
-        return ((EllipsisMatch) u).applyTo(f, sub, fullMatch);
+        return u.applyTo(f, sub, fullMatch);
     }
 
-    public final Variable target;
+    //public final Variable target;
 
 
     public Ellipsis(Variable target, String suffix) {
@@ -76,7 +76,7 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
                     + suffix
         );
 
-        this.target = target;
+        //this.target = target;
     }
 
 

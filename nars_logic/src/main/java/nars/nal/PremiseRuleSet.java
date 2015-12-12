@@ -300,6 +300,9 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
             try {
 
                 PremiseRule rUnnorm = $.$(s);
+                if (rUnnorm == null ){
+                    throw new RuntimeException("Invalid rule: " + s);
+                }
 
                 Compound r = rUnnorm.normalizeRule();
                 if (r != null) {
@@ -314,7 +317,9 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
                 }
 
             } catch (Exception ex) {
-                System.err.println("invalid TaskRule:  " + s + " (" + ex + ')');
+                logger.error("Invalid TaskRule: {}", ex);
+                ex.printStackTrace();
+
                 //ex.printStackTrace();
                 //ex.printStackTrace();//ex.printStackTrace();
             }
