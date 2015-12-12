@@ -336,7 +336,7 @@ public class Compounds {
                     List<Term> l = Global.newArrayList(ct1.size());
                     ct1.addAllTo(l);
                     if (term2.op() == op) {
-                        // (||,(&,||,Q),(||,R,S)) = (||,P,Q,R,S)
+                        // (||,(||,P,Q),(||,R,S)) = (||,P,Q,R,S)
                         ((Compound)term2).addAllTo(l);
                     }
                     else {

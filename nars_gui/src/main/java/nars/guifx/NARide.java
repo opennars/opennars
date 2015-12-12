@@ -15,10 +15,8 @@ import nars.NAR;
 import nars.NARLoop;
 import nars.budget.Budget;
 import nars.budget.Budgeted;
-import nars.concept.Concept;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
-import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
@@ -63,6 +61,7 @@ public class NARide extends BorderPane {
     public final PluginPanel pp;
 
     public final Map<Class, Function<Object,Node>> nodeBuilders = Global.newHashMap();
+    public final LoopPane loopPane;
     private Map<Term, Supplier<? extends Node>> tools = new HashMap();
 
 
@@ -94,12 +93,12 @@ public class NARide extends BorderPane {
             ni.addTool("I/O", () -> new IOPane(nar));
             ni.addTool("Active Concepts", () -> new ActiveConceptsLog(nar));
             ni.addTool("Task Tree", () -> new TreePane(nar));
-            ni.addTool("Concept Network", () -> new DefaultGrapher<>(
+            ni.addTool("Concept Network", () -> new DefaultGrapher(
                 new ConceptsSource(nar),
                 96,
                 new DefaultNodeVis(),
                 (A,B) -> {
-                    TermEdge<TermNode<Concept>> te = new TermEdge<TermNode<Concept>>(A,B) {
+                    TermEdge te = new TermEdge(A,B) {
                         @Override public double getWeight() {
                             return 0.25;
                         }
@@ -294,6 +293,7 @@ public class NARide extends BorderPane {
 
     public NARide(NARLoop l) {
 
+        loopPane = new LoopPane(l);
 
         nar = l.nar;
 
@@ -302,7 +302,7 @@ public class NARide extends BorderPane {
         //TODO make these Function<Object,Node>, not a supplier interface
         icon(FrameClock.class, (c) -> new NARMenu.CycleClockPane(nar));
         icon(RealtimeMSClock.class, (c) -> new NARMenu.RTClockPane(nar));
-        icon(NARLoop.class, (ll) -> new LoopPane(l));
+        icon(NARLoop.class, (ll) -> loopPane);
         icon(AbstractNAR.DefaultCycle.class, (c) ->
                 new DefaultCyclePane((AbstractNAR.DefaultCycle) c) //cast is hack
         );
@@ -438,6 +438,16 @@ public class NARide extends BorderPane {
         });
 
     }
+
+    /** number ms delay per cycle, -1 to pause */
+    public void setSpeed(int nMS) {
+        if (nMS < 0) {
+            loopPane.pause();
+        } else {
+            loopPane.setSpeed(nMS);
+        }
+    }
+
 
     private static class DefaultCyclePane extends BorderPane {
 

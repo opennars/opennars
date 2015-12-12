@@ -10,7 +10,6 @@ import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.*;
 import nars.guifx.util.POJOPane;
-import nars.term.Termed;
 
 import java.util.function.BiFunction;
 
@@ -19,7 +18,7 @@ import static javafx.application.Platform.runLater;
 /**
  * provides defalut settings for a NARGraph view
  */
-public class DefaultGrapher<K extends Termed, V extends TermNode<K>, E> extends SpaceGrapher<K,V> {
+public class DefaultGrapher extends SpaceGrapher {
 
     @Implementation(HyperOrganicLayout.class)
     @Implementation(HyperassociativeMap2D.class)
@@ -31,6 +30,8 @@ public class DefaultGrapher<K extends Termed, V extends TermNode<K>, E> extends 
     //@Implementation(TimeGraph.class)
     public final ImplementationProperty<IterativeLayout> layoutType = new ImplementationProperty();
 
+    final InvalidationListener layoutChange;
+    private POJOPane controls;
 
 //    public DefaultGrapher(int capacity, ConceptsSource source) {
 //        this(
@@ -38,34 +39,56 @@ public class DefaultGrapher<K extends Termed, V extends TermNode<K>, E> extends 
 //                new CanvasEdgeRenderer());
 //    }
 
-    public DefaultGrapher(GraphSource<K,V,E> source,
+    public DefaultGrapher(GraphSource source,
                           int size,
                           NodeVis v,
-                          BiFunction<V, V, TermEdge> edgeBuilder,
+                          BiFunction<TermNode, TermNode, TermEdge> edgeBuilder,
                           CanvasEdgeRenderer edgeRenderer) {
 
         super(source, v, size, edgeBuilder, edgeRenderer);
 
-        InvalidationListener layoutChange = e -> {
-            IterativeLayout il = layoutType.getInstance();
-            if (il!=null) {
-                layout.set(il);
-                layoutUpdated();
-            } else {
-                layout.set(nullLayout);
-            }
+        layoutChange = e -> {
+            updateLayoutType();
         };
 
         layoutType.addListener(layoutChange);
 
-        runLater(() -> layoutChange.invalidated(null));
+        runLater(() -> {
 
-        POJOPane c = new POJOPane(this);
-        c.layout();
-        c.autosize();
-        getChildren().add(c);
+            controls = new POJOPane(this);
+            controls.layout();
+            controls.autosize();
+            getChildren().add(controls);
+
+            layoutChange.invalidated(null);
+        });
+
 
 
     }
 
+    private void updateLayoutType() {
+        IterativeLayout il = layoutType.getInstance();
+        if (il!=null) {
+            layout.set(il);
+            layoutUpdated();
+        } else {
+            layout.set(nullLayout);
+        }
+
+    }
+
+//    public void setLayout(Class<? extends IterativeLayout> c) {
+//
+//        layoutType.setValue(c);
+//        layoutChange.invalidated(null);
+//
+//
+//
+//        //layoutType.unbind();
+//        //layoutType.setValue(c);
+//        //layoutType.addListener(layoutChange);
+//        //updateLayoutType();
+//        //layoutChange.invalidated(null);
+//    }
 }

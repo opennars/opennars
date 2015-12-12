@@ -26,21 +26,21 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 8/6/15.
  */
-public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Spacegraph {
+public class SpaceGrapher extends Spacegraph {
 
-    final Map<Term, N> terms = new UnifiedMap();
+    final Map<Term, TermNode> terms = new UnifiedMap();
     //new WeakValueHashMap<>();
 
 
     public final SimpleObjectProperty<EdgeRenderer<TermEdge>> edgeRenderer = new SimpleObjectProperty<>();
 
-    public final SimpleObjectProperty<IterativeLayout<N>> layout = new SimpleObjectProperty<>();
+    final SimpleObjectProperty<IterativeLayout<TermNode>> layout = new SimpleObjectProperty<>();
     public static final IterativeLayout nullLayout = new None();
 
 
     public final SimpleIntegerProperty maxNodes;
-    public final SimpleObjectProperty<GraphSource<K, N, ?>> source = new SimpleObjectProperty<>();
-    public final BiFunction<N, N, TermEdge> edgeVis;
+    public final SimpleObjectProperty<GraphSource> source = new SimpleObjectProperty<>();
+    public final BiFunction<TermNode, TermNode, TermEdge> edgeVis;
 
     /** graph source update period MS */
     private final int updatePeriodMS = -1;
@@ -54,7 +54,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
     //static final Random rng = new XORShiftRandom();
 
 
-    public final SimpleObjectProperty<NodeVis<K, N>> nodeVis = new SimpleObjectProperty<>();
+    public final SimpleObjectProperty<NodeVis> nodeVis = new SimpleObjectProperty<>();
     public TermNode[] displayed = new TermNode[0];
     private Set<TermNode> prevActive;
 
@@ -184,11 +184,11 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
      * @param t
      * @param edgeBuilder
      */
-    public final TermEdge getConceptEdgeOrdered(N s, N t, BiFunction<N, N, TermEdge> edgeBuilder) {
+    public final TermEdge getConceptEdgeOrdered(TermNode s, TermNode t, BiFunction<TermNode, TermNode, TermEdge> edgeBuilder) {
         return getEdge(s, t.term, edgeBuilder);
     }
 
-    public final TermEdge getEdge(N A, K b, BiFunction<N, N, TermEdge> builder) {
+    public final TermEdge getEdge(TermNode A, Termed b, BiFunction<TermNode, TermNode, TermEdge> builder) {
 
         TermEdge newEdge = null;
         if (A != null) {
@@ -203,26 +203,26 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
         return newEdge;
     }
 
-    public final boolean addEdge(TermNode<K> A, K b, TermEdge e) {
+    public final boolean addEdge(TermNode A, Termed b, TermEdge e) {
         return A.putEdge(b, e) == null;
     }
 
-    public final N getTermNode(Term t) {
+    public final TermNode getTermNode(Term t) {
         return terms.get(t);
     }
-    public final N getTermNode(K t) {
+    public final TermNode getTermNode(Termed t) {
         return getTermNode(t.getTerm());
     }
 
-    public final N getOrNewTermNode(K t/*, boolean createIfMissing*/) {
+    public final TermNode getOrNewTermNode(Termed t/*, boolean createIfMissing*/) {
         return terms.computeIfAbsent(t.getTerm(), k -> newNode(t));
     }
 
 
-    protected final N newNode(K k) {
-        N n = nodeVis.get().newNode(k);
+    protected final TermNode newNode(Termed k) {
+        TermNode n = nodeVis.get().newNode(k);
         if (n !=null) {
-            IterativeLayout<N> l = layout.get();
+            IterativeLayout<TermNode> l = layout.get();
             if (l != null)
                 l.init(n);
         }
@@ -327,16 +327,16 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
     }
 
 
-    public void setVertices(Iterable<K> v) {
+    public void setVertices(Iterable<Termed> v) {
 
 
-        GraphSource<K,N,?> ss = source.get();
+        GraphSource ss = source.get();
 
         NodeVis vv = nodeVis.get();
 
-        SpaceGrapher<K, N> ths = this;
+        SpaceGrapher ths = this;
 
-        Iterator<K> cc = v.iterator();
+        Iterator<Termed> cc = v.iterator();
 
 
         int n = maxNodes.get();
@@ -345,8 +345,8 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
 
         while (cc.hasNext() && ((n--) > 0)) {
 
-            K k = cc.next();
-            N t = getOrNewTermNode(k);
+            Termed k = cc.next();
+            TermNode t = getOrNewTermNode(k);
             if (t != null) {
                 active.add(t);
 
@@ -405,7 +405,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
     public void rerender() {
 
         /** apply layout */
-        IterativeLayout<N> l;
+        IterativeLayout<TermNode> l;
         if ((l = layout.get()) != null) {
             l.run(this, 1);
         } else {
@@ -451,10 +451,10 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
     }
 
 
-    public SpaceGrapher(GraphSource<K, N, ?> g,
+    public SpaceGrapher(GraphSource g,
                         NodeVis vv,
                         int maxNodes,
-                        BiFunction<N, N, TermEdge> edgeVis,
+                        BiFunction<TermNode, TermNode, TermEdge> edgeVis,
                         CanvasEdgeRenderer edgeRenderer) {
 
         source.set(g);
@@ -475,7 +475,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
         });
 
         nodeVis.addListener((l, p, n) -> {
-            SpaceGrapher<K, N> gg = SpaceGrapher.this;
+            SpaceGrapher gg = SpaceGrapher.this;
             if (p != null)
                 p.stop(gg);
             if (n != null) {
@@ -553,7 +553,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
 
         stop();
 
-        GraphSource<K, N, ?> src = source.get();
+        GraphSource src = source.get();
 
         if (animator == null && src!=null)  {
             animator = new Animate(layoutPeriodMS, a -> {
@@ -589,7 +589,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
 
         }
 
-        GraphSource<K, N, ?> s = source.get();
+        GraphSource s = source.get();
         if (s!=null) {
             s.stop();
         }

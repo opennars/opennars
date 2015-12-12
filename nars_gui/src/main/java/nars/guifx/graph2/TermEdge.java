@@ -3,11 +3,11 @@ package nars.guifx.graph2;
 /**
  * Created by me on 9/5/15.
  */
-public abstract class TermEdge<N extends TermNode> /*implements ChangeListener*/ {
+public abstract class TermEdge /*implements ChangeListener*/ {
 
 
     public static final TermEdge[] empty = new TermEdge[0];
-    public final N aSrc, //source
+    public final TermNode aSrc, //source
                     bSrc; //target
 
     //public double len = 0.0;
@@ -17,7 +17,7 @@ public abstract class TermEdge<N extends TermNode> /*implements ChangeListener*/
 
 
     @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
-    public TermEdge(N aSrc, N bSrc) {
+    public TermEdge(TermNode aSrc, TermNode bSrc) {
 
 
         //setAutoSizeChildren(true);
@@ -124,7 +124,7 @@ public abstract class TermEdge<N extends TermNode> /*implements ChangeListener*/
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TermEdge<?> termEdge = (TermEdge<?>) o;
+        TermEdge termEdge = (TermEdge) o;
 
         if (!aSrc.equals(termEdge.aSrc)) return false;
         return bSrc.equals(termEdge.bSrc);

@@ -7,7 +7,7 @@ import nars.guifx.graph2.source.SpaceGrapher;
  * for layouts which process items according to their
  * linear sequence position
  */
-public abstract class Linear<V extends TermNode<?>> implements IterativeLayout<V> {
+public abstract class Linear<V extends TermNode> implements IterativeLayout<V> {
 
 
 

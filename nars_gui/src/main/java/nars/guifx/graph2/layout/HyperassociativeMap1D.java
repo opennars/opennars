@@ -9,7 +9,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 /**
  * aligns the entries in a line
  */
-public class HyperassociativeMap1D<N extends Termed> extends HyperassociativeMap2D<N> {
+public class HyperassociativeMap1D<N extends Termed> extends HyperassociativeMap2D {
 
     public HyperassociativeMap1D() {
     }

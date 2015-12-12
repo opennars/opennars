@@ -1,6 +1,5 @@
 package nars.guifx.graph2;
 
-import nars.concept.Concept;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.term.Termed;
 
@@ -10,38 +9,33 @@ import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
 
-/**
- * Created by me on 9/6/15.
- * @param V vertex
- * @param E edge
- * @param N visualized node
- */
-public abstract class GraphSource<V extends Termed, N extends TermNode<V>, E /* W? */>  {
+
+public abstract class GraphSource/* W? */ {
 
     public final AtomicBoolean refresh = new AtomicBoolean(true);
 
     /** current grapher after it starts this */
-    protected SpaceGrapher<V, N> grapher;
+    protected SpaceGrapher grapher;
 
 
-    public abstract void forEachOutgoingEdgeOf(V src, Consumer<V> eachTarget);
+    public abstract void forEachOutgoingEdgeOf(Termed src, Consumer<Termed> eachTarget);
 
 
-    public abstract V getTargetVertex(E edge);
+    public abstract Termed getTargetVertex(Termed edge);
 
     /** if the grapher is ready */
     public final boolean isReady() {
-        SpaceGrapher<V, N> grapher = this.grapher;
+        SpaceGrapher grapher = this.grapher;
         if (grapher == null) return false;
         return grapher.isReady();
     }
 
-    public final void updateNode(SpaceGrapher<V, N> g, V s, N sn) {
+    public final void updateNode(SpaceGrapher g, Termed s, TermNode sn) {
 
 
         forEachOutgoingEdgeOf(s, t -> {
 
-            N tn = g.getTermNode(t.getTerm());
+            TermNode tn = g.getTermNode(t.getTerm());
             if (tn == null)
                 return;
 
@@ -60,9 +54,9 @@ public abstract class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
     }
 
 
-    public static <K extends Termed,V extends TermNode<K>>
-        TermEdge<TermNode<Concept>>
-            getEdge(SpaceGrapher<K,V> g, V s, V t, BiFunction<V, V, TermEdge> edgeBuilder) {
+    public static
+        TermEdge
+    getEdge(SpaceGrapher g, TermNode s, TermNode t, BiFunction<TermNode, TermNode, TermEdge> edgeBuilder) {
 
         //re-order
         int i = s.getTerm().compareTo(t.getTerm());
@@ -72,7 +66,7 @@ public abstract class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
                         + s.term.equals(t.term) + " " + t.term.equals(s.term) + ", hash=" + s.term.hashCode() + "," + t.term.hashCode() );*/
 
         if (!(i < 0)) { //swap
-            V x = s;
+            TermNode x = s;
             s = t;
             t = x;
         }
@@ -89,7 +83,7 @@ public abstract class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
         grapher = null;
     }
 
-    public void start(SpaceGrapher<V, N> g) {
+    public void start(SpaceGrapher g) {
         if (grapher!=null) {
             throw new RuntimeException(this + " already attached to grapher " + grapher + ", can not switch to " + g);
         }
@@ -132,7 +126,7 @@ public abstract class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
         runLater(() -> refresh.set(true));
     }
 
-    public void stop(SpaceGrapher<V,? super N> g) {
+    public void stop(SpaceGrapher g) {
 
     }
 

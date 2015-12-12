@@ -10,6 +10,7 @@ import nars.guifx.graph2.source.SpaceGrapher;
 import nars.link.TLink;
 import nars.nar.AbstractNAR;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.util.event.Active;
 
 import java.util.function.BiFunction;
@@ -20,7 +21,7 @@ import java.util.stream.StreamSupport;
 /**
  * Example Concept supplier with some filters
  */
-public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLink> {
+public class ConceptsSource extends GraphSource {
 
 
     private final NAR nar;
@@ -32,7 +33,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
     public final SimpleDoubleProperty minPri = new SimpleDoubleProperty(0.0);
     public final SimpleStringProperty includeString = new SimpleStringProperty("");
 
-    private BiFunction<TermNode<Concept>, TermNode<Concept>, TermEdge> edgeBuilder =
+    private BiFunction<TermNode, TermNode, TermEdge> edgeBuilder =
             TLinkEdge::new;
 
     public ConceptsSource(NAR nar) {
@@ -47,11 +48,11 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
 
 
     @Override
-    public void forEachOutgoingEdgeOf(Concept cc,
-                                      Consumer<Concept> eachTarget) {
+    public void forEachOutgoingEdgeOf(Termed cc,
+                                      Consumer<Termed> eachTarget) {
 
 
-        SpaceGrapher<Concept, TermNode<Concept>> sg = grapher;
+        SpaceGrapher sg = grapher;
         if (sg == null) return; //???
 
         Consumer<? super TLink<?>> linkUpdater = link -> {
@@ -61,7 +62,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
             if (cc.getTerm().equals(target)) //self-loop
                 return;
 
-            TermNode<Concept> tn = sg.getTermNode(target);
+            TermNode tn = sg.getTermNode(target);
             if (tn == null)
                 return;
 
@@ -76,21 +77,21 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
 //            //missing.remove(tn.term);
         };
 
-        cc.getTermLinks().forEach(maxNodeLinks, linkUpdater);
-        cc.getTaskLinks().forEach(maxNodeLinks, linkUpdater);
+        ((Concept)cc).getTermLinks().forEach(maxNodeLinks, linkUpdater);
+        ((Concept)cc).getTaskLinks().forEach(maxNodeLinks, linkUpdater);
 
         //sn.removeEdges(missing);
 
     }
 
     @Override
-    public Concept getTargetVertex(TLink edge) {
+    public Termed getTargetVertex(Termed edge) {
         return grapher.getTermNode(edge.getTerm()).c;
     }
 
 
     @Override
-    public void start(SpaceGrapher<Concept, TermNode<Concept>> g) {
+    public void start(SpaceGrapher g) {
 
 
         //.stdout()
@@ -117,7 +118,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
     }
 
     @Override
-    public void stop(SpaceGrapher<Concept, ? super TermNode<Concept>> vnarGraph) {
+    public void stop(SpaceGrapher vnarGraph) {
         regs.off();
         regs = null;
     }
@@ -140,7 +141,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
             double minPri = this.minPri.get();
             double maxPri = this.maxPri.get();
 
-            Iterable<Concept> ii = StreamSupport.stream(x.spliterator(), false).filter(cc -> {
+            Iterable<Termed> ii = StreamSupport.stream(x.spliterator(), false).filter(cc -> {
 
                 float p = cc.getPriority();
                 if ((p < minPri) || (p > maxPri))
@@ -162,7 +163,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
 
     }
 
-    private void commit(Iterable<Concept> ii) {
+    private void commit(Iterable<Termed> ii) {
         grapher.setVertices(ii);
     }
 
@@ -184,7 +185,7 @@ public class ConceptsSource extends GraphSource<Concept, TermNode<Concept>, TLin
 
 
 
-    public final void updateNodeOLD(SpaceGrapher<Concept, TermNode<Concept>> sg, Concept cc, TermNode<Concept> sn) {
+    public final void updateNodeOLD(SpaceGrapher sg, Concept cc, TermNode sn) {
 
         sn.c = cc;
         sn.priNorm = cc.getPriority();

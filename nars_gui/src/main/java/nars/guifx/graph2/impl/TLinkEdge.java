@@ -6,7 +6,7 @@ import nars.guifx.graph2.TermNode;
 /**
  * Represents an aggregation of all termlinks and tasklinks sourcing from a Concept
  */
-public class TLinkEdge<N extends TermNode> extends TermEdge<N> {
+public class TLinkEdge<N extends TermNode> extends TermEdge {
 
     private double w;
 

@@ -1,7 +1,6 @@
 package nars.guifx.graph2.source;
 
 import nars.guifx.graph2.GraphSource;
-import nars.guifx.graph2.TermNode;
 import nars.term.Termed;
 import org.jgrapht.DirectedGraph;
 
@@ -10,26 +9,26 @@ import java.util.function.Consumer;
 /**
  * Source from jgrapht graphs
  */
-public abstract class JGraphSource<V extends Termed, E> extends GraphSource<V, TermNode<V>, E> {
+public abstract class JGraphSource extends GraphSource {
 
 
-    DirectedGraph<V, E> graph;
+    DirectedGraph<Termed, Termed> graph;
 
 
     @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
-    public JGraphSource(DirectedGraph<V, E> initialGraph) {
+    public JGraphSource(DirectedGraph<Termed, Termed> initialGraph) {
         graph = initialGraph;
     }
 
 
     @Override
-    public void forEachOutgoingEdgeOf(V src, Consumer<V> eachTarget) {
+    public void forEachOutgoingEdgeOf(Termed src, Consumer<Termed> eachTarget) {
         graph.outgoingEdgesOf(src).forEach(edge ->
                 eachTarget.accept(getTargetVertex(edge)));
     }
 
 
-    public void setGraph(DirectedGraph<V, E> initialGraph) {
+    public void setGraph(DirectedGraph<Termed, Termed> initialGraph) {
         graph = initialGraph;
         updateGraph();
     }

@@ -38,21 +38,24 @@ public class GraphPaneTest {
     public static SpaceGrapher newGrapher() {
 
 
-        JGraphSource<Term, Compound> src = new JGraphSource<Term, Compound>(
+        JGraphSource src = new JGraphSource(
                 //newExampleGraph()
                 newExampleTermLinkGraph()
 
         ) {
-
             @Override
-            public Term getTargetVertex(Compound edge) {
-                return edge.term(1);
+            public Termed getTargetVertex(Termed edge) {
+                return ((Compound)edge).term(1);
             }
 
+//            @Override
+//            public Termed getTargetVertex(TermEdge edge) {
+//                return edge.term(1);
+//            }
         };
 
 
-        SpaceGrapher<Term, TermNode<Term>> g = new DefaultGrapher<>(
+        SpaceGrapher g = new DefaultGrapher(
 
                 src,
 
@@ -73,7 +76,7 @@ public class GraphPaneTest {
                     }
                 },
 
-                (TermNode<Term> S, TermNode<Term> T) -> new TermEdge(S, T) {
+                (TermNode S, TermNode T) -> new TermEdge(S, T) {
                     @Override
                     public double getWeight() {
                         return Math.random() * 0.75;
@@ -107,7 +110,7 @@ public class GraphPaneTest {
 
     }
 
-    private static DirectedGraph<Term, Compound> newExampleTermLinkGraph() {
+    private static DirectedGraph<Termed,Termed> newExampleTermLinkGraph() {
 
         NAR n = new Default(100, 3, 3, 3);
         n.input("a:b.");

@@ -8,7 +8,7 @@ import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
 import nars.term.Term;
-import nars.term.compound.Compound;
+import nars.term.Termed;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.DirectedPseudograph;
 
@@ -19,11 +19,11 @@ import java.util.Set;
  * Generates a graph of a set of Concept's TermLinks. Each TermLink is an edge,
  * and the set of unique Concepts and Terms linked are the vertices.
  */
-public class TermLinkGraph2 extends DirectedPseudograph<Term, Compound> {
+public class TermLinkGraph2 extends DirectedPseudograph<Termed, Termed> {
 
     public TermLinkGraph2() {
         super((a, b) -> {
-            return $.p(a,b);
+            return $.p((Term)a,(Term)b);
         });
     }
 
@@ -46,13 +46,13 @@ public class TermLinkGraph2 extends DirectedPseudograph<Term, Compound> {
 
     public void print(PrintStream out) {
 
-        Set<Term> vs = vertexSet();
+        Set<Termed> vs = vertexSet();
 
         out.println(getClass().getSimpleName() + " numTerms=" + vs.size() + ", numTermLinks=" + edgeSet().size() );
         out.print("\t");
         out.println(this);
 
-        for (Term t : vs) {
+        for (Termed t : vs) {
             out.print(t + ":  ");
             outgoingEdgesOf(t).forEach(e ->
                 out.print("  " + e)

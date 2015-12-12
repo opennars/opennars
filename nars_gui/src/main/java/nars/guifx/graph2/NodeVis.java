@@ -6,19 +6,19 @@ import nars.term.Termed;
 import java.util.function.Consumer;
 
 /** graph node visualization */
-public interface NodeVis<K extends Termed, T extends TermNode<K>> extends Consumer<T> {
+public interface NodeVis extends Consumer<TermNode> {
 
-    T newNode(K t);
+    TermNode newNode(Termed t);
 
-    default void start(SpaceGrapher<K,T> g) {
-
-    }
-
-    default void stop(SpaceGrapher<K,T> gg) {
+    default void start(SpaceGrapher g) {
 
     }
 
-    default void updateNode(T prev) {
+    default void stop(SpaceGrapher gg) {
+
+    }
+
+    default void updateNode(TermNode prev) {
 
     }
 

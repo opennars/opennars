@@ -15,20 +15,20 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class TermNode<K extends Termed> extends GraphNode {
+public class TermNode extends GraphNode {
 
 
     public static final TermNode[] empty = new TermNode[0];
 
 
-    public final Map<K, TermEdge> edge;
+    public final Map<Termed, TermEdge> edge;
 
     /**
      * copy of termedge values for fast iteration during rendering
      */
     boolean modified = false;
 
-    public final K term;
+    public final Termed term;
 
     /** priority normalized to visual context */
     public double priNorm = 0;
@@ -46,7 +46,7 @@ public class TermNode<K extends Termed> extends GraphNode {
 
 
 
-    public TermNode(K t, int maxEdges) {
+    public TermNode(Termed t, int maxEdges) {
 
         if (t instanceof Concept) c = (Concept)t; //HACK
 
@@ -96,7 +96,7 @@ public class TermNode<K extends Termed> extends GraphNode {
 //    }
 
 
-    public final TermEdge putEdge(K b, TermEdge e) {
+    public final TermEdge putEdge(Termed b, TermEdge e) {
         TermEdge r = edge.put(b, e);
         modified |= (e != r);
         return r;
@@ -137,21 +137,21 @@ public class TermNode<K extends Termed> extends GraphNode {
                 v);
     }
 
-    public TermEdge getEdge(K b) {
+    public TermEdge getEdge(Termed b) {
         return edge.get(b);
     }
 
-    public Set<K> getEdgeSet() {
+    public Set<Termed> getEdgeSet() {
         if (edges.length == 0) return Collections.emptySet();
 
-        Set<K> ss = Global.newHashSet(edges.length);
-        for (TermEdge<TermNode<K>> ee : edges)
+        Set<Termed> ss = Global.newHashSet(edges.length);
+        for (TermEdge ee : edges)
             ss.add(ee.bSrc.term);
         return ss;
         //edge.keySet());
     }
 
-    public void removeEdges(Set<K> toRemove) {
+    public void removeEdges(Set<Termed> toRemove) {
         if (!toRemove.isEmpty()) {
 
             toRemove.forEach(edge::remove);

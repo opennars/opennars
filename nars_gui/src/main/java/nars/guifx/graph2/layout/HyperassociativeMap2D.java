@@ -12,7 +12,7 @@ import nars.term.Termed;
 /**
  * Created by me on 9/6/15.
  */
-public class HyperassociativeMap2D<N extends Termed> extends HyperassociativeMap<N,TermNode> implements IterativeLayout<TermNode> {
+public class HyperassociativeMap2D extends HyperassociativeMap<Termed,TermNode> implements IterativeLayout {
     double scaleFactor = 1;
     private TermNode[] termList = null;
 

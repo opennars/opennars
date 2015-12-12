@@ -129,6 +129,17 @@ public class LoopPane extends VBox {
         int nMS = (int) Math.round((1.0 - Math.log(1 + v * logScale) / Math.log(1 + logScale)) * 1024.0) + minDelay;
 
         loop.cyclesPerFrame = (multiplier.getValue());
+        setSpeed(nMS);
+
+    }
+
+    //warning: doesnt set the slider to match
+    public void setSpeed(int nMS) {
+        running = true;
+        updateSpeed(nMS);
+    }
+
+    private void updateSpeed(int nMS) {
         if (loop.setPeriodMS(nMS)) {
 
             //new delay set:
@@ -149,7 +160,7 @@ public class LoopPane extends VBox {
         cpuLabel.setValue("ON");
     }
 
-    private void pause() {
+    public void pause() {
         loop.pause();
 
         runLater(() -> {

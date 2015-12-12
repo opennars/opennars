@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Created by me on 10/2/15.
  */
-public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>> {
+public class DefaultNodeVis implements NodeVis {
 
 //    public static class HexagonNodeVis<C extends Termed> extends DefaultNodeVis<C> {
 //
@@ -74,7 +74,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
     //public Function<Term,TermNode> nodeBuilder;
 
     @Override
-    public TermNode newNode(C term) {
+    public TermNode newNode(Termed term) {
         return new LabeledCanvasNode(term, maxEdges, mouseActivity, mouseUntivity);
     }
 
@@ -239,7 +239,7 @@ public class DefaultNodeVis<C extends Termed> implements NodeVis<C, TermNode<C>>
         graph = null;
     }
 
-public static class LabeledCanvasNode<N extends Termed> extends TermNode<N> {
+public static class LabeledCanvasNode<N extends Termed> extends TermNode {
 
 
     protected final Node base;

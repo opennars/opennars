@@ -1,10 +1,8 @@
 package nars.guifx.demo;
 
-import nars.concept.Concept;
 import nars.guifx.NARide;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
-import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.impl.BlurCanvasEdgeRenderer;
 import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
@@ -38,7 +36,7 @@ public class NARGraph1Test {
         //n.frame(5);
 
 
-        SpaceGrapher<Concept,TermNode<Concept>> g = new DefaultGrapher<>(
+        DefaultGrapher g = new DefaultGrapher(
 
                 new ConceptsSource(n),
 
@@ -47,19 +45,21 @@ public class NARGraph1Test {
                 new DefaultNodeVis(),
                 //new DefaultNodeVis.HexagonNodeVis(),
 
-                (A,B) -> {
-                    TermEdge te = new TermEdge(A,B) {
-                        @Override public double getWeight() {
+                (A, B) -> {
+                    return new TermEdge(A, B) {
+                        @Override
+                        public double getWeight() {
                             return 0.25;
                         }
                     };
-                    return te;
                     //return $.pro(A.getTerm(), B.getTerm());
                 },
 
                 new BlurCanvasEdgeRenderer()
         );
 
+        //g.setLayout(HyperassociativeMap2D.class);
+        g.pan(2000,2000);
 
 
 
@@ -74,9 +74,11 @@ public class NARGraph1Test {
         NARide.show(n.loop(), ide -> {
 
             //ide.addView(new IOPane(n));
-            ide.content.getTabs().setAll(new TabX("Graph", newGraph(n)));
+            ide.content.getTabs().setAll(
+                    new TabX("Graph", newGraph(n)));
 
 
+            ide.setSpeed(50);
             //n.frame(5);
 
         });
