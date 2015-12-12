@@ -3,6 +3,7 @@ package nars.nal.meta;
 import nars.Memory;
 import nars.Premise;
 import nars.nal.RuleMatch;
+import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
 
@@ -18,7 +19,13 @@ public interface TruthOperator {
                 premise.getBelief() == null ? null : premise.getBelief().getTruth(),
                 premise.memory()
         );
+
         if (truth!=null) {
+            //pre-filter insufficient confidence level
+            if (truth.getConfidence() < DefaultTruth.DEFAULT_TRUTH_EPSILON) {
+                return false;
+            }
+
             m.truth.set(truth);
             return true;
         }

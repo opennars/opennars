@@ -38,6 +38,8 @@ public abstract class JGraphSource<V extends Termed, E> extends GraphSource<V, T
     @Override
     public void updateGraph() {
 
+        System.out.println(isReady() + " " + canUpdate() + " " + graph);
+
         if (!isReady())
             return;
 
@@ -52,6 +54,7 @@ public abstract class JGraphSource<V extends Termed, E> extends GraphSource<V, T
 
             grapher.setVertices(graph.vertexSet());
         }
+
     }
 
 }

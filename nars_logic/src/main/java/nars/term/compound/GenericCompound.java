@@ -9,7 +9,6 @@ import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal8.Operator;
 import nars.term.*;
-import nars.term.visit.SubtermVisitor;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -39,6 +38,11 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     public static Term COMPOUND(Op op, Term... t) {
 
         switch (op) {
+            case NEGATE:
+                if (t.length!=1)
+                    return null;
+                return Compounds.negation(t[0]);
+
             case IMAGE_EXT:
             case IMAGE_INT:
                 //if no relation was specified and it's an Image,
@@ -198,12 +202,10 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
         Term t = (Term) o;
         int diff = Integer.compare(op().ordinal(), t.op().ordinal());
-        //int diff = op().compareTo(t.op());
         if (diff != 0) return diff;
 
         Compound c = (Compound)t;
         diff = Integer.compare(relation(), c.relation());
-        //int diff = op().compareTo(t.op());
         if (diff != 0) return diff;
 
         return subterms().compareTo( c.subterms() );
@@ -230,15 +232,17 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         if (this == that)
             return true;
 
-        if (!(that instanceof GenericCompound))
+        if (!(that instanceof Compound)) {
             return false;
+        }
 
-        GenericCompound c = (GenericCompound)that;
+        Compound c = (Compound)that;
         return
-            (hash == c.hash) &&
-            (op == c.op) &&
-            (relation == c.relation) &&
-            (terms.equals(c.subterms()));
+            (hash == c.hashCode()) &&
+            (terms.equals(c.subterms())) &&
+            (op == c.op()) &&
+            (relation == c.relation());
+
     }
 
 
@@ -305,7 +309,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
     @Override public T[] terms() {
-        return terms.terms();
+        return terms.term;
     }
 
     @Override
@@ -445,11 +449,6 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
 
-    @Override
-    public final void recurseTerms(SubtermVisitor v, Term parent) {
-        v.accept(this, parent);
-        terms.visit(v, this);
-    }
 
 
 }

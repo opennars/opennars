@@ -65,11 +65,11 @@ public final class Derive extends PreCondition {
             return false;
 
         Truth truth = m.truth.get();
-        Budget budget = truth != null ? BudgetFunctions.compoundForward(truth, derivedTerm, premise) : BudgetFunctions.compoundBackward(derivedTerm, premise);
+        Budget budget = truth != null ? BudgetFunctions.compoundForward(truth, t, premise) : BudgetFunctions.compoundBackward(t, premise);
 
         if (!premise.validateDerivedBudget(budget)) {
             if (false) {
-                RuleMatch.removeInsufficientBudget(premise, new PreTask(derivedTerm,
+                RuleMatch.removeInsufficientBudget(premise, new PreTask(t,
                         m.punct.get(), truth, budget,
                         m.occurrenceShift.getIfAbsent(Tense.TIMELESS), premise));
             }
@@ -82,7 +82,7 @@ public final class Derive extends PreCondition {
 
         char punct = m.punct.get().charValue();
 
-        MutableTask deriving = new MutableTask((Compound) derivedTerm);
+        MutableTask deriving = new MutableTask((Compound) t);
 
         long now = premise.time();
 

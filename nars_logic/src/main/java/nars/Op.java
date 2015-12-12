@@ -239,9 +239,6 @@ public enum Op implements Serializable {
         return bits | o.bit();
     }
 
-    public final boolean levelValid(int nal) {
-        return (nal >= minLevel);
-    }
 
     /**
      * specifier for any NAL level

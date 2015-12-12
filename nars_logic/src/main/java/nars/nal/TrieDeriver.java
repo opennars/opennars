@@ -1,6 +1,7 @@
 package nars.nal;
 
 import nars.nal.meta.PreCondition;
+import nars.nal.meta.RuleBranch;
 import nars.nal.meta.RuleTrie;
 
 /**

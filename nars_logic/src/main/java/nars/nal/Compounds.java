@@ -53,7 +53,7 @@ public class Compounds {
             // (--,(--,P)) = P
             return ((Compound) t).term(0);
         }
-        return GenericCompound.COMPOUND(Op.NEGATE, t);
+        return GenericCompound.COMPOUND(Op.NEGATE, new Term[] { t }, -1);
     }
 
     public static void setAppend(Compound set, Appendable p, boolean pretty) throws IOException {

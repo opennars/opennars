@@ -25,6 +25,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 
 import java.util.HashMap;
 
+import static javafx.application.Platform.runLater;
 import static nars.$.$;
 
 /**
@@ -37,20 +38,23 @@ public class GraphPaneTest {
     public static SpaceGrapher newGrapher() {
 
 
+        JGraphSource<Term, Compound> src = new JGraphSource<Term, Compound>(
+                //newExampleGraph()
+                newExampleTermLinkGraph()
+
+        ) {
+
+            @Override
+            public Term getTargetVertex(Compound edge) {
+                return edge.term(1);
+            }
+
+        };
+
+
         SpaceGrapher<Term, TermNode<Term>> g = new DefaultGrapher<>(
 
-                new JGraphSource<Term, Compound>(
-                        //newExampleGraph()
-                        newExampleTermLinkGraph()
-
-                ) {
-
-                    @Override
-                    public Term getTargetVertex(Compound edge) {
-                        return edge.term(1);
-                    }
-
-                },
+                src,
 
                 128,
 
@@ -122,7 +126,13 @@ public class GraphPaneTest {
                     new Scene(gggg, 800, 800)
             );
             b.show();
-            gggg.start(35);
+
+            gggg.start(50);
+
+            runLater(()->{
+                ((JGraphSource)gggg.source.get()).updateGraph();
+            });
+            //gggg.start(35);
 
 //            n.spawnThread(250, x -> {
 //

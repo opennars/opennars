@@ -121,8 +121,8 @@ public abstract class $  {
         return COMPOUND(Op.IMPLICATION, a, b);
     }
 
-    public static <X extends Term> X neg(Term x) {
-        return (X) Compounds.negation(x);
+    public static Term neg(Term x) {
+        return COMPOUND(Op.NEGATE, x);
     }
 
     public static CyclesInterval cycles(int numCycles) {

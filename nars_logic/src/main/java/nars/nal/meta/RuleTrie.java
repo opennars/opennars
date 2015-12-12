@@ -30,30 +30,6 @@ public class RuleTrie extends Deriver {
         printSummary(trie.root);
     }
 
-    /* (&/, precon1, precon2, ... (&|, fork1, fork2, ... ) ) */
-    public static final class RuleBranch {
-
-        public final PreCondition[] precondition; //precondition sequence
-
-        public final RuleBranch[] children;
-
-        public RuleBranch(PreCondition[] precondition, RuleBranch[] children) {
-            this.precondition = precondition;
-            this.children = children.length > 0 ? children : null;
-        }
-
-        @Override
-        public String toString() {
-            return
-                "(&/, " + Joiner.on(", ").join(precondition) +
-                ") =/> " +
-                        '{' +
-                    ((children != null) ?
-                        Joiner.on(", ").join(children) : "End") +
-                "}>";
-        }
-    }
-
     public final RuleBranch[] root;
 
     public RuleTrie(PremiseRuleSet R) {

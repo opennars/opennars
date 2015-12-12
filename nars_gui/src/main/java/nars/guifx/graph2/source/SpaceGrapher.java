@@ -329,6 +329,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
 
     public void setVertices(Iterable<K> v) {
 
+
         GraphSource<K,N,?> ss = source.get();
 
         NodeVis vv = nodeVis.get();
@@ -356,6 +357,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
                 cc.remove();
             }
         }
+
 
         if (!Objects.equals(prevActive, active)) {
             setVertices(active.toArray(new TermNode[active.size()]));
@@ -555,9 +557,10 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
 
         if (animator == null && src!=null)  {
             animator = new Animate(layoutPeriodMS, a -> {
-                if (displayed.length != 0) {
-                    rerender();
-                }
+                rerender();
+                /*if (displayed.length != 0) {
+
+                }*/
             });
 
             //System.out.println(this + " started");
@@ -584,7 +587,6 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
             animator.stop();
             animator = null;
 
-            System.out.println(this + " stopped");
         }
 
         GraphSource<K, N, ?> s = source.get();

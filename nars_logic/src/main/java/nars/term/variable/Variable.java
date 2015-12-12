@@ -132,7 +132,7 @@ public abstract class Variable extends AbstractStringAtom {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return op().ch + id;
     }
 

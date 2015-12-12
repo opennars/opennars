@@ -4,7 +4,6 @@ import nars.bag.impl.MapCacheBag;
 import nars.term.*;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
-import nars.term.compound.GenericCompound;
 
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -81,25 +80,25 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
     }
 
     protected <T extends Term> Compound<T> compileCompound(Compound<T> c, TermContainer subs) {
-        if ((c instanceof GenericCompound) && (!(c instanceof TermMetadata))) {
-            //special case, fast clone
-            return new GenericCompound(c.op(), (TermVector)subs, ((GenericCompound) c).relation) {
-                @Override
-                public Term clone(Term[] replaced) {
-                    //TODO use a table with the following lookup
-                    //before needing to construct a term:
-                    // (op,relation), (subterm) --> compound
-                    //this way an existing op+relation+subterm
-                    //can be retrieved without constructing
-                    //the term that will eventually match with it
-
-                    return MapIndex.this.getTerm(
-                            compileCompound(this,
-                                get(new TermVector(replaced)))
-                           );
-                }
-            };
-        }
+//        if ((c instanceof GenericCompound) && (!(c instanceof TermMetadata))) {
+//            //special case, fast clone
+//            return new GenericCompound(c.op(), (TermVector)subs, ((GenericCompound) c).relation) {
+//                @Override
+//                public Term clone(Term[] replaced) {
+//                    //TODO use a table with the following lookup
+//                    //before needing to construct a term:
+//                    // (op,relation), (subterm) --> compound
+//                    //this way an existing op+relation+subterm
+//                    //can be retrieved without constructing
+//                    //the term that will eventually match with it
+//
+//                    return MapIndex.this.getTerm(
+//                            compileCompound(this,
+//                                get(new TermVector(replaced)))
+//                           );
+//                }
+//            };
+//        }
         return (Compound<T>) c.clone(subs);
     }
 

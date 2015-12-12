@@ -32,6 +32,7 @@ import nars.term.transform.CompoundTransform;
 import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 import nars.term.transform.VariableNormalization;
+import nars.term.visit.SubtermVisitor;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
@@ -112,6 +113,19 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         });
         return t;
     }
+
+    default void recurseTerms(SubtermVisitor v) {
+        recurseTerms(v, null);
+    }
+
+    default void recurseTerms(SubtermVisitor v, Term parent) {
+        v.accept(this, parent);
+        Term[] x = terms();
+        for (Term a : x) {
+            a.recurseTerms(v, this);
+        }
+    }
+
 
 
     /** returns the resolved term according to the substitution    */
