@@ -61,6 +61,6 @@ public class Differ extends PreCondition3Output {
                 (Variable) c, result
         );
 
-        return false;
+        return true;
     }
 }

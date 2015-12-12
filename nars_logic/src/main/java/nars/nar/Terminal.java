@@ -2,6 +2,7 @@ package nars.nar;
 
 import nars.Memory;
 import nars.budget.Budget;
+import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.task.Task;
@@ -37,7 +38,9 @@ public class Terminal extends AbstractNAR {
 
     @Override
     public Concept apply(Term t) {
-        return new DefaultConcept(t, memory);
+        return new DefaultConcept(t,
+                new UnitBudget(0,0,0), //TODO a ZeroBudget?
+                memory);
     }
 
     @Override

@@ -1,22 +1,26 @@
 package nars.budget;
 
+import com.google.common.util.concurrent.AtomicDouble;
+import nars.Symbols;
+import nars.util.Texts;
 import nars.util.data.Util;
 
 import javax.annotation.Nullable;
 
 import static nars.Global.BUDGET_EPSILON;
-import static nars.nal.UtilityFunctions.aveGeo;
-import static nars.nal.UtilityFunctions.aveGeoNotLessThan;
+import static nars.nal.UtilityFunctions.*;
 import static nars.util.data.Util.mean;
 
 /**
  * Created by me on 12/11/15.
  */
 public interface Budget extends Prioritized, Budgeted {
+
     Budget zero();
+    void delete();
 
     @Override
-    UnitBudget getBudget();
+    Budget getBudget();
 
     @Override
     float getPriority();
@@ -33,10 +37,12 @@ public interface Budget extends Prioritized, Budgeted {
     @Override
     void mulPriority(float factor);
 
+    @Override
     float getDurability();
 
     void setDurability(float d);
 
+    @Override
     float getQuality();
 
     void setQuality(float q);
@@ -91,6 +97,16 @@ public interface Budget extends Prioritized, Budgeted {
                 Math.max(D, (cp * D) + (np * otherDurability)),
                 Math.max(Q, (cp * Q) + (np * otherQuality))
         );
+    }
+
+    /**
+     * Increase priority value by a percentage of the remaining range.
+     * Uses the 'or' function so it is not linear
+     *
+     * @param v The increasing percent
+     */
+    default void orPriority(float v) {
+        setPriority( or(getPriority(), v) );
     }
 
     /**
@@ -167,6 +183,65 @@ public interface Budget extends Prioritized, Budgeted {
         return aveGeoNotLessThan(min, getPriority(), getDurability(), getQuality());
     }
 
+    /**
+     * Increase durability value by a percentage of the remaining range
+     *
+     * @param v The increasing percent
+     */
+    default void orDurability(float v) {
+        setDurability(or(getDurability(), v));
+    }
+
+    /**
+     * Decrease durability value by a percentage of the remaining range
+     *
+     * @param v The decreasing percent
+     */
+    default void andDurability(float v) {
+        setDurability(and(getDurability(), v));
+    }
+
+
+//    public void maxDurability(final float otherDurability) {
+//        setDurability(Util.max(getDurability(), otherDurability)); //max durab
+//    }
+//
+//    public void maxQuality(final float otherQuality) {
+//        setQuality(Util.max(getQuality(), otherQuality)); //max durab
+//    }
+
+    /**
+     * AND's (multiplies) priority with another value
+     */
+    default void andPriority(float v) {
+        setPriority(and(getPriority(), v));
+    }
+
+
+
+    /**
+     * Whether the budget should get any processing at all
+     * <p>
+     * to be revised to depend on how busy the system is
+     * tests whether summary >= threhsold
+     *
+     * @return The decision on whether to process the Item
+     */
+    default boolean summaryGreaterOrEqual(float budgetThreshold) {
+
+        if (isDeleted()) return false;
+
+        /* since budget can only be positive.. */
+        if (budgetThreshold <= 0) return true;
+
+
+        return summaryNotLessThan(budgetThreshold);
+    }
+
+    default boolean summaryGreaterOrEqual(AtomicDouble budgetThreshold) {
+        return summaryGreaterOrEqual(budgetThreshold.floatValue());
+    }
+
 
     /** copies a budget into this; if source is null, it deletes the budget */
     default Budget budget(@Nullable Budget source) {
@@ -206,5 +281,71 @@ public interface Budget extends Prioritized, Budgeted {
             return p;
         return 0;
     }
+
+    /**
+     * Briefly display the BudgetValue
+     *
+     * @return String representation of the value with 2-digit accuracy
+     */
+    default StringBuilder toBudgetStringExternal() {
+        return toBudgetStringExternal(null);
+    }
+
+    default StringBuilder toBudgetStringExternal(StringBuilder sb) {
+        //return MARK + priority.toStringBrief() + SEPARATOR + durability.toStringBrief() + SEPARATOR + quality.toStringBrief() + MARK;
+
+        CharSequence priorityString = Texts.n2(getPriority());
+        CharSequence durabilityString = Texts.n2(getDurability());
+        CharSequence qualityString = Texts.n2(getQuality());
+
+        return toStringBuilder(sb, priorityString, durabilityString, qualityString);
+    }
+
+    default String toBudgetString() {
+        return toBudgetStringExternal().toString();
+    }
+
+    /**
+     * 1 digit resolution
+     */
+    default String toStringExternalBudget1(boolean includeQuality) {
+        char priorityString = Texts.n1char(getPriority());
+        char durabilityString = Texts.n1char(getDurability());
+        StringBuilder sb = new StringBuilder(1 + 1 + 1 + (includeQuality ? 1 : 0) + 1)
+                .append(Symbols.BUDGET_VALUE_MARK)
+                .append(priorityString).append(Symbols.VALUE_SEPARATOR)
+                .append(durabilityString);
+
+        if (includeQuality)
+            sb.append(Symbols.VALUE_SEPARATOR).append(Texts.n1char(getQuality()));
+
+        return sb.append(Symbols.BUDGET_VALUE_MARK).toString();
+    }
+
+    default String getBudgetString() {
+        return Budget.toString(this);
+    }
+
+    static String toString(Budget b) {
+        //return MARK + Texts.n4(b.getPriority()) + SEPARATOR + Texts.n4(b.getDurability()) + SEPARATOR + Texts.n4(b.getQuality()) + MARK;
+        return Budget.toStringBuilder(new StringBuilder(), Texts.n4(b.getPriority()), Texts.n4(b.getDurability()), Texts.n4(b.getQuality())).toString();
+    }
+
+    static StringBuilder toStringBuilder(StringBuilder sb, CharSequence priorityString, CharSequence durabilityString, CharSequence qualityString) {
+        int c = 1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1;
+        if (sb == null)
+            sb = new StringBuilder(c);
+        else
+            sb.ensureCapacity(c);
+
+        sb.append(Symbols.BUDGET_VALUE_MARK)
+                .append(priorityString).append(Symbols.VALUE_SEPARATOR)
+                .append(durabilityString).append(Symbols.VALUE_SEPARATOR)
+                .append(qualityString)
+                .append(Symbols.BUDGET_VALUE_MARK);
+
+        return sb;
+    }
+
 
 }

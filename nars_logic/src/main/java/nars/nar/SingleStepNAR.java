@@ -34,7 +34,7 @@ public class SingleStepNAR extends AbstractNAR {
 
 
     public SingleStepNAR() {
-        super(128, 2, 2, 3, new CycleClock());
+        super(512, 2, 3, 3, new CycleClock());
 
 
         Global.DEBUG = true;

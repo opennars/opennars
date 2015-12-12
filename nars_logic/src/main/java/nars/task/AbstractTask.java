@@ -488,6 +488,9 @@ public abstract class AbstractTask extends Item<Task>
 
     @Override
     public final int hashCode() {
+        if (hash == 0) {
+            rehash();
+        }
         return hash;
     }
 

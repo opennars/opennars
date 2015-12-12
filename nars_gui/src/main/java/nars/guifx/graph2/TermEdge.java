@@ -13,6 +13,7 @@ public abstract class TermEdge /*implements ChangeListener*/ {
     //public double len = 0.0;
     public boolean visible = false;
 
+    public float pri;
 
 
 

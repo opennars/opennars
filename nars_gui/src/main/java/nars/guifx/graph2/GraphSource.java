@@ -41,7 +41,7 @@ public abstract class GraphSource/* W? */ {
 
             TermEdge ee = getEdge(g, sn, tn, g.edgeVis);
             if (ee != null) {
-                updateEdge(ee);
+                updateEdge(ee, t);
             }
 
         });
@@ -49,7 +49,8 @@ public abstract class GraphSource/* W? */ {
     }
 
 
-    public void updateEdge(TermEdge ee) {
+    public void updateEdge(TermEdge ee, Termed link) {
+
 
     }
 

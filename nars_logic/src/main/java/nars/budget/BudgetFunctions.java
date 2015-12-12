@@ -71,7 +71,7 @@ public final class BudgetFunctions extends UtilityFunctions {
 
         float difT = truth.getExpDifAbs(tTruth);
 
-        UnitBudget tb = task.getBudget();
+        Budget tb = task.getBudget();
         tb.andPriority(1.0f - difT);
         tb.andDurability(1.0f - difT);
 
@@ -353,7 +353,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         return compoundForward(new UnitBudget(), truth, content, nal);
     }
 
-    public static Budget compoundForward(UnitBudget target, Truth truth, Term content, Premise nal) {
+    public static Budget compoundForward(Budget target, Truth truth, Term content, Premise nal) {
         int complexity = content.complexity();
         return budgetInference(target, truthToQuality(truth), complexity, nal);
     }
@@ -393,7 +393,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return Budget of the conclusion task
      */
-    static Budget budgetInference(UnitBudget target, float qual, int complexity, Premise nal) {
+    static Budget budgetInference(Budget target, float qual, int complexity, Premise nal) {
         float complexityFactor = complexity > 1 ?
 
                 // sqrt factor (experimental)
@@ -407,7 +407,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         return budgetInference(target, qual, complexityFactor, nal);
     }
 
-    static Budget budgetInference(UnitBudget target, float qual, float complexityFactor, Premise nal) {
+    static Budget budgetInference(Budget target, float qual, float complexityFactor, Premise nal) {
 
         TaskLink taskLink =
             nal instanceof ConceptProcess ? ((ConceptProcess)nal).getTaskLink() : null;

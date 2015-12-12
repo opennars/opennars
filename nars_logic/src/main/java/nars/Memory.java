@@ -279,7 +279,9 @@ public class Memory extends Param {
         if (willBeReceived && removalReason!=null)
             task.log(removalReason);
 
-        if (task.delete()) {
+        if (!task.isDeleted()) {
+
+            task.delete();
 
             if (willBeReceived) {
 

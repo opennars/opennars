@@ -20,12 +20,9 @@
  */
 package nars.budget;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.block.procedure.Procedure2;
-import nars.Symbols;
 import nars.nal.nal7.Tense;
 import nars.truth.Truth;
-import nars.util.Texts;
 import nars.util.data.Util;
 
 import java.io.Serializable;
@@ -60,7 +57,7 @@ public class UnitBudget implements Budget {
     static {  zero.zero();    }
 
     @Override
-    public UnitBudget getBudget() {
+    public Budget getBudget() {
         return this;
     }
 
@@ -164,27 +161,6 @@ public class UnitBudget implements Budget {
 //        return null;
 //    }
 
-    public static String toString(UnitBudget b) {
-        //return MARK + Texts.n4(b.getPriority()) + SEPARATOR + Texts.n4(b.getDurability()) + SEPARATOR + Texts.n4(b.getQuality()) + MARK;
-        return UnitBudget.toStringBuilder(new StringBuilder(), Texts.n4(b.priority), Texts.n4(b.durability), Texts.n4(b.quality)).toString();
-    }
-
-    private static StringBuilder toStringBuilder(StringBuilder sb, CharSequence priorityString, CharSequence durabilityString, CharSequence qualityString) {
-        int c = 1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1;
-        if (sb == null)
-            sb = new StringBuilder(c);
-        else
-            sb.ensureCapacity(c);
-
-        sb.append(Symbols.BUDGET_VALUE_MARK)
-                .append(priorityString).append(Symbols.VALUE_SEPARATOR)
-                .append(durabilityString).append(Symbols.VALUE_SEPARATOR)
-                .append(qualityString)
-                .append(Symbols.BUDGET_VALUE_MARK);
-
-        return sb;
-    }
-
 
 
     public static float summarySum(Iterable<? extends Budgeted> dd) {
@@ -261,30 +237,6 @@ public class UnitBudget implements Budget {
         priority = Util.clamp(p);
     }
 
-    /**
-     * Increase priority value by a percentage of the remaining range.
-     * Uses the 'or' function so it is not linear
-     *
-     * @param v The increasing percent
-     */
-    public void orPriority(float v) {
-        setPriority( or(priority, v) );
-    }
-
-//    public void maxDurability(final float otherDurability) {
-//        setDurability(Util.max(getDurability(), otherDurability)); //max durab
-//    }
-//
-//    public void maxQuality(final float otherQuality) {
-//        setQuality(Util.max(getQuality(), otherQuality)); //max durab
-//    }
-
-    /**
-     * AND's (multiplies) priority with another value
-     */
-    public void andPriority(float v) {
-        setPriority(and(getPriority(), v));
-    }
 
 
 
@@ -311,23 +263,6 @@ public class UnitBudget implements Budget {
 //        }
     }
 
-    /**
-     * Increase durability value by a percentage of the remaining range
-     *
-     * @param v The increasing percent
-     */
-    public final void orDurability(float v) {
-        setDurability(or(durability, v));
-    }
-
-    /**
-     * Decrease durability value by a percentage of the remaining range
-     *
-     * @param v The decreasing percent
-     */
-    public final void andDurability(float v) {
-        setDurability(and(durability, v));
-    }
 
 
 //    /**
@@ -477,28 +412,6 @@ public class UnitBudget implements Budget {
         //return Objects.hash(getPriority(), getDurability(), getQuality());
     }
 
-    /**
-     * Whether the budget should get any processing at all
-     * <p>
-     * to be revised to depend on how busy the system is
-     * tests whether summary >= threhsold
-     *
-     * @return The decision on whether to process the Item
-     */
-    public final boolean summaryGreaterOrEqual(float budgetThreshold) {
-
-        if (isDeleted()) return false;
-
-        /* since budget can only be positive.. */
-        if (budgetThreshold <= 0) return true;
-
-
-        return summaryNotLessThan(budgetThreshold);
-    }
-
-    public final boolean summaryGreaterOrEqual(AtomicDouble budgetThreshold) {
-        return summaryGreaterOrEqual(budgetThreshold.floatValue());
-    }
 
     /**
      * Fully display the BudgetValue
@@ -510,9 +423,7 @@ public class UnitBudget implements Budget {
         return getBudgetString();
     }
 
-    public String getBudgetString() {
-        return UnitBudget.toString(this);
-    }
+
 
     /**
      * linear interpolate the priority value to another value
@@ -527,45 +438,6 @@ public class UnitBudget implements Budget {
             setPriority( (getPriority() * momentum) + ((1f - momentum) * targetValue) );
     }*/
 
-    /**
-     * Briefly display the BudgetValue
-     *
-     * @return String representation of the value with 2-digit accuracy
-     */
-    public StringBuilder toBudgetStringExternal() {
-        return toBudgetStringExternal(null);
-    }
-
-    public StringBuilder toBudgetStringExternal(StringBuilder sb) {
-        //return MARK + priority.toStringBrief() + SEPARATOR + durability.toStringBrief() + SEPARATOR + quality.toStringBrief() + MARK;
-
-        CharSequence priorityString = Texts.n2(priority);
-        CharSequence durabilityString = Texts.n2(durability);
-        CharSequence qualityString = Texts.n2(quality);
-
-        return toStringBuilder(sb, priorityString, durabilityString, qualityString);
-    }
-
-    public String toBudgetString() {
-        return toBudgetStringExternal().toString();
-    }
-
-    /**
-     * 1 digit resolution
-     */
-    public String toStringExternalBudget1(boolean includeQuality) {
-        char priorityString = Texts.n1char(priority);
-        char durabilityString = Texts.n1char(durability);
-        StringBuilder sb = new StringBuilder(1 + 1 + 1 + (includeQuality ? 1 : 0) + 1)
-                .append(Symbols.BUDGET_VALUE_MARK)
-                .append(priorityString).append(Symbols.VALUE_SEPARATOR)
-                .append(durabilityString);
-
-        if (includeQuality)
-            sb.append(Symbols.VALUE_SEPARATOR).append(Texts.n1char(quality));
-
-        return sb.append(Symbols.BUDGET_VALUE_MARK).toString();
-    }
 
     /**
      * returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime
@@ -657,9 +529,8 @@ public class UnitBudget implements Budget {
         return this;
     }
 
-    public boolean delete() {
+    public void delete() {
         deleteBudget();
-        return true;
     }
 
     public final void deleteBudget() {

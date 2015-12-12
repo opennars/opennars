@@ -66,8 +66,8 @@ public class DefaultConcept extends AtomConcept {
     /** how incoming budget is merged into its existing duplicate quest/question */
     static final Procedure2<Budget, Budget> duplicateQuestionMerge = UnitBudget.plus;
 
-    public DefaultConcept(Term term, Param p) {
-        this(term, new NullBag(), new NullBag(), p);
+    public DefaultConcept(Term term, Budget b, Param p) {
+        this(term, b, new NullBag(), new NullBag(), p);
     }
 
     /**
@@ -76,8 +76,8 @@ public class DefaultConcept extends AtomConcept {
      * @param taskLinks
      * @param termLinks
      */
-    public DefaultConcept(Term term, Bag<Task, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Param p) {
-        super(term, termLinks, taskLinks);
+    public DefaultConcept(Term term, Budget b, Bag<Task, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Param p) {
+        super(term, b, termLinks, taskLinks);
 
         //TODO lazy instantiate?
         beliefs = new ArrayListBeliefTable(p.conceptBeliefsMax.intValue());

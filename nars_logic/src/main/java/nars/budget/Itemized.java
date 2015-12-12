@@ -13,10 +13,7 @@ public interface Itemized<K> extends Budgeted, Named<K> {
      * so that a successful deletion process occurs only once
      * and uninterrupted
      *
-     * @return if it was already deleted, will immediately return false.
      */
-     boolean delete();
-
-
+     void delete();
 
 }

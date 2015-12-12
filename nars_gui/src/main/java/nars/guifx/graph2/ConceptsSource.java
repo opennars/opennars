@@ -18,6 +18,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static nars.util.data.Util.lerp;
+
 /**
  * Example Concept supplier with some filters
  */
@@ -47,6 +49,12 @@ public class ConceptsSource extends GraphSource {
     }
 
 
+    @Override
+    public void updateEdge(TermEdge ee, Termed link) {
+        //rolling average
+        ee.pri = lerp(((TLink)link).getPriority(), ee.pri,
+                      0.05f);
+    }
 
     @Override
     public void forEachOutgoingEdgeOf(Termed cc,
@@ -69,7 +77,7 @@ public class ConceptsSource extends GraphSource {
             if (tn == null)
                 return;
 
-            eachTarget.accept(tn.c);
+            eachTarget.accept(link); //tn.c);
 
 //            TermEdge.TLinkEdge ee = (TermEdge.TLinkEdge) getEdge(sg, sn, tn, edgeBuilder);
 //

@@ -151,7 +151,7 @@ public abstract class Item<K> extends UnitBudget implements Itemized<K> {
     }
 
     @Override
-    public final UnitBudget getBudget() {
+    public final Budget getBudget() {
         return this;
     }
     

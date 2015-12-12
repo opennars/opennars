@@ -152,7 +152,6 @@
 
 //  (C --> {A..+}), (C --> {B..+}) |- (C --> {A..+,B..+}), (Truth:Union)
     (C --> A), (C --> B), set_ext(A), union(A,B,R) |- (C --> R), (Truth:Union)
-
     (C --> A), (C --> B), set_int(A), union(A,B,R) |- (C --> R), (Truth:Intersection)
     (A --> C), (B --> C), set_ext(A), union(A,B,R) |- (R --> C), (Truth:Intersection)
     (A --> C), (B --> C), set_int(A), union(A,B,R) |- (R --> C), (Truth:Union)
@@ -502,16 +501,16 @@
 
 ////composition on both sides of a statement:
 
-    ((&,B,A..+) --> (&,X,A)), (B --> X), task("?") |- ((&,B,A) --> (&,X,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    ((|,B,A..+) --> (|,X,A)), (B --> X), task("?") |- ((|,B,A) --> (|,X,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((&,B,A..+) --> (&,X,A..+)), (B --> X), task("?") |- ((&,B,A..+) --> (&,X,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((|,B,A..+) --> (|,X,A..+)), (B --> X), task("?") |- ((|,B,A..+) --> (|,X,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
     ((-,S,A) --> (-,S,B)), (B --> A), task("?") |- ((-,S,A) --> (-,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
 ////composition on one side of aay w statement:
 
-    (W --> (|,B,A..+)), (W --> B), task("?") |- (W --> (|,B,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    ((&,B,A..+) --> W), (B --> W), task("?") |- ((&,B,A) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    (W --> (|,B,A..+)), (W --> B), task("?") |- (W --> (|,B,A..+)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((&,B,A..+) --> W), (B --> W), task("?") |- ((&,B,A..+) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
     (W --> (-,S,B)), (W --> B), task("?") |- (W --> (-,S,B)), (Truth:BeliefStructuralDifference, Punctuation:Judgment)
     ((~,S,B) --> W), (B --> W), task("?") |- ((~,S,B) --> W), (Truth:BeliefStructuralDifference, Punctuation:Judgment)
@@ -535,4 +534,4 @@
 
 //compound composition one premise
 
-    (||,B,A..+), B, task("?") |- (||,B,A), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    (||,B,A..+), B, task("?") |- (||,B,A..+), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)

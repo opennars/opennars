@@ -1,8 +1,7 @@
 package nars.concept;
 
 import nars.Memory;
-import nars.budget.Item;
-import nars.budget.UnitBudget;
+import nars.budget.Budget;
 import nars.nal.nal7.Tense;
 import nars.term.Term;
 
@@ -11,9 +10,10 @@ import java.util.Map;
 /**
  * Created by me on 7/29/15.
  */
-public abstract class AbstractConcept extends Item<Term> implements Concept {
+public abstract class AbstractConcept implements Concept {
 
     private final Term term;
+    private final Budget budget;
 
     long creationTime = Tense.TIMELESS;
     protected Map meta = null;
@@ -23,9 +23,19 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 
     //@Deprecated final static Variable how = new Variable("?how");
 
-    public AbstractConcept(Term term) {
-        super(UnitBudget.zero);
+    public AbstractConcept(Budget b, Term term) {
+        this.budget = b;
         this.term = term;
+    }
+
+    @Override
+    public Budget getBudget() {
+        return budget;
+    }
+
+    @Override
+    public float getPriority() {
+        return budget.getPriority();
     }
 
     @Override
@@ -140,18 +150,19 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 //    }
 
     /** called by memory, dont call self or otherwise */
-    @Override public boolean delete() {
+    @Override public void delete() {
         /*if (getMemory().inCycle())
             throw new RuntimeException("concept " + this + " attempt to delete() during an active cycle; must be done between cycles");
         */
-        if (!super.delete())
-            return false;
+        if (budget.isDeleted())
+            return; //already deleted
+
+        budget.delete();
 
         if (getMeta() != null) {
             getMeta().clear();
             setMeta(null);
         }
-        return true;
     }
 
 

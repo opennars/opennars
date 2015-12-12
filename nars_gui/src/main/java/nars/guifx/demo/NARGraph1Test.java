@@ -1,6 +1,5 @@
 package nars.guifx.demo;
 
-import nars.concept.Concept;
 import nars.guifx.NARide;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
@@ -50,7 +49,8 @@ public class NARGraph1Test {
                     return new TermEdge(A, B) {
                         @Override
                         public double getWeight() {
-                            return ((Concept)A.term).getPriority();
+                            //return ((Concept)A.term).getPriority();
+                            return pri;
                         }
                     };
                     //return $.pro(A.getTerm(), B.getTerm());

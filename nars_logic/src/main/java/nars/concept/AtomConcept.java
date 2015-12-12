@@ -3,6 +3,7 @@ package nars.concept;
 import nars.Premise;
 import nars.bag.Bag;
 import nars.bag.NullBag;
+import nars.budget.Budget;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
 import nars.link.*;
@@ -22,12 +23,12 @@ public class AtomConcept extends AbstractConcept  {
 
 
     /** creates with no termlink and tasklink ability */
-    public AtomConcept(Term atom) {
-        this(atom, new NullBag(), new NullBag());
+    public AtomConcept(Term atom, Budget budget) {
+        this(atom, budget, new NullBag(), new NullBag());
     }
 
-    public AtomConcept(Term atom, Bag<TermLinkKey, TermLink> termLinks, Bag<Task, TaskLink> taskLinks) {
-        super(atom);
+    public AtomConcept(Term atom, Budget budget, Bag<TermLinkKey, TermLink> termLinks, Bag<Task, TaskLink> taskLinks) {
+        super(budget, atom);
         this.termLinks = termLinks;
         this.taskLinks = taskLinks;
     }

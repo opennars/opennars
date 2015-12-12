@@ -4,7 +4,6 @@ package nars;
 import com.google.common.collect.Sets;
 import com.gs.collections.impl.tuple.Tuples;
 import nars.budget.Budget;
-import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.concept.util.ConceptBuilder;
 import nars.nal.Compounds;
@@ -1332,7 +1331,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
             return null;
         }
 
-        UnitBudget taskBudget = task.getBudget();
+        Budget taskBudget = task.getBudget();
 
 //        if (inputPriorityFactor != 1f) {
 //            taskBudget.mulPriority(inputPriorityFactor);

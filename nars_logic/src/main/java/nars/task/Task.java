@@ -438,12 +438,6 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
         return getTruth();
     }
 
-    /**
-     * signaling that the Task has ended or discarded
-     * @return if it was already deleted, will immediately return false.
-     */
-    @Override
-    boolean delete();
 
 
     /** append a log entry */

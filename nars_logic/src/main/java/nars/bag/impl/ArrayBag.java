@@ -6,7 +6,6 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Itemized;
-import nars.budget.UnitBudget;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
 
@@ -18,7 +17,7 @@ import java.util.function.Consumer;
  */
 public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> implements Iterable<V> {
 
-    public static final Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = UnitBudget.average;
+    //public static final Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = UnitBudget.average;
 
     /**
      * mapping from key to item

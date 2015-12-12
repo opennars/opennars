@@ -13,8 +13,8 @@ import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.NARLoop;
+import nars.budget.Budget;
 import nars.budget.Budgeted;
-import nars.budget.UnitBudget;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
@@ -537,7 +537,7 @@ public class NARide extends BorderPane {
                 Iterable<X> si = source.get();
 
                 for (X i : si) {
-                    UnitBudget b = i.getBudget();
+                    Budget b = i.getBudget();
 
                     int c = i.hashCode();
                     Color f = NARfx.hashColor(c, b.summary(), Plot2D.ca);

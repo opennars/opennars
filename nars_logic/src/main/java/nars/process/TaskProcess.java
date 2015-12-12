@@ -114,7 +114,7 @@ public class TaskProcess extends AbstractPremise  {
      * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
      * @return whether any activity happened as a result of this invocation
      */
-    public boolean linkTemplates(Concept c, UnitBudget b, boolean updateTLinks) {
+    public boolean linkTemplates(Concept c, Budget b, boolean updateTLinks) {
 
         if ((b == null) || (b.isDeleted())) return false;
 

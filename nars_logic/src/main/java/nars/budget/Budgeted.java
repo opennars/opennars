@@ -5,7 +5,7 @@ package nars.budget;
  */
 public interface Budgeted  {
 
-    UnitBudget getBudget();
+    Budget getBudget();
 
     default boolean isDeleted() {
         return Budget.isDeleted(getPriority());
