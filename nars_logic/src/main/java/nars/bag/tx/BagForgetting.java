@@ -1,8 +1,8 @@
 package nars.bag.tx;
 
 import nars.bag.BagSelector;
-import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.budget.UnitBudget;
 
 /**
 * Applies forgetting to the next sequence of sampled bag items
@@ -37,7 +37,7 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagSelector<K,V>
 
 
     @Override
-    public void updateItem(V v, Budget result) {
+    public void updateItem(V v, UnitBudget result) {
         current = v;
 
         //final float priorityStart = v.getPriority();

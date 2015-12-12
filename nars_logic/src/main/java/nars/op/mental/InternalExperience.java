@@ -2,7 +2,7 @@ package nars.op.mental;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.*;
-import nars.budget.Budget;
+import nars.budget.UnitBudget;
 import nars.nal.Compounds;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
@@ -209,7 +209,7 @@ public class InternalExperience {
         // if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
         //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST))) {
         //char punc = task.getPunctuation();
-        Budget b = task.getBudget();
+        UnitBudget b = task.getBudget();
         if (task.isQuestOrQuestion()) {
             if (b.summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE)) {
                 return null;

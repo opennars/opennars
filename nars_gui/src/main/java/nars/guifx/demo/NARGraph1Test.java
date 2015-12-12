@@ -1,5 +1,6 @@
 package nars.guifx.demo;
 
+import nars.concept.Concept;
 import nars.guifx.NARide;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
@@ -40,7 +41,7 @@ public class NARGraph1Test {
 
                 new ConceptsSource(n),
 
-                512,
+                128,
 
                 new DefaultNodeVis(),
                 //new DefaultNodeVis.HexagonNodeVis(),
@@ -49,7 +50,7 @@ public class NARGraph1Test {
                     return new TermEdge(A, B) {
                         @Override
                         public double getWeight() {
-                            return 0.25;
+                            return ((Concept)A.term).getPriority();
                         }
                     };
                     //return $.pro(A.getTerm(), B.getTerm());
@@ -59,7 +60,7 @@ public class NARGraph1Test {
         );
 
         //g.setLayout(HyperassociativeMap2D.class);
-        g.pan(2000,2000);
+        //g.pan(2000,2000);
 
 
 
@@ -78,7 +79,7 @@ public class NARGraph1Test {
                     new TabX("Graph", newGraph(n)));
 
 
-            ide.setSpeed(50);
+            ide.setSpeed(150);
             //n.frame(5);
 
         });

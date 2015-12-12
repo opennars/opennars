@@ -3,6 +3,7 @@ package nars.bag.tx;
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.budget.UnitBudget;
 
 /**
 * Created by me on 1/19/15.
@@ -12,14 +13,14 @@ public abstract class BagActivator<K,V extends Itemized<K>> implements BagTransa
     protected K key;
 
     //TODO make this thread safe
-    private final transient Budget nextActivation = new Budget();
+    private final transient UnitBudget nextActivation = new UnitBudget();
 
 
     public final void setBudget(Budget budget) {
         nextActivation.budget(budget);
     }
 
-    public final Budget getBudget() {
+    public final UnitBudget getBudget() {
         return nextActivation;
     }
 
@@ -39,7 +40,7 @@ public abstract class BagActivator<K,V extends Itemized<K>> implements BagTransa
 
     public abstract long time();
 
-    @Override public void updateItem(V v, Budget result) {
+    @Override public void updateItem(V v, UnitBudget result) {
         result.forget(time(), getForgetCycles(), 0);
 
         //TODO make this merge function parametric

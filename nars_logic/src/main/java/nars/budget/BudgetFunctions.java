@@ -71,7 +71,7 @@ public final class BudgetFunctions extends UtilityFunctions {
 
         float difT = truth.getExpDifAbs(tTruth);
 
-        Budget tb = task.getBudget();
+        UnitBudget tb = task.getBudget();
         tb.andPriority(1.0f - difT);
         tb.andDurability(1.0f - difT);
 
@@ -114,7 +114,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         }
         */
         
-        return new Budget(priority, durability, quality);
+        return new UnitBudget(priority, durability, quality);
     }
 
 //    /**
@@ -141,9 +141,9 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param factor to scale dur and qua
      * @return Budget value for each tlink
      */
-    public static Budget clonePriorityMultiplied(Budget b, float factor) {
+    public static UnitBudget clonePriorityMultiplied(Budget b, float factor) {
         float newPriority = b.getPriority() * factor;
-        return new Budget(newPriority, b.getDurability(), b.getQuality());
+        return new UnitBudget(newPriority, b.getDurability(), b.getQuality());
     }
 
     
@@ -230,7 +230,7 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
 
-    public static float forgetAlann(Budget budget, float forgetPeriod /* cycles */, long currentTime) {
+    public static float forgetAlann(UnitBudget budget, float forgetPeriod /* cycles */, long currentTime) {
         // priority * e^(-lambda*t)
         //     lambda is (1 - durabilty) / forgetPeriod
         //     t is the delta
@@ -350,10 +350,10 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static Budget compoundForward(Truth truth, Term content, Premise nal) {
-        return compoundForward(new Budget(), truth, content, nal);
+        return compoundForward(new UnitBudget(), truth, content, nal);
     }
 
-    public static Budget compoundForward(Budget target, Truth truth, Term content, Premise nal) {
+    public static Budget compoundForward(UnitBudget target, Truth truth, Term content, Premise nal) {
         int complexity = content.complexity();
         return budgetInference(target, truthToQuality(truth), complexity, nal);
     }
@@ -382,7 +382,7 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
     static Budget budgetInference(float qual, int complexity, Premise nal) {
-        return budgetInference(new Budget(), qual, complexity, nal );
+        return budgetInference(new UnitBudget(), qual, complexity, nal );
     }
 
     /**
@@ -393,7 +393,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return Budget of the conclusion task
      */
-    static Budget budgetInference(Budget target, float qual, int complexity, Premise nal) {
+    static Budget budgetInference(UnitBudget target, float qual, int complexity, Premise nal) {
         float complexityFactor = complexity > 1 ?
 
                 // sqrt factor (experimental)
@@ -407,7 +407,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         return budgetInference(target, qual, complexityFactor, nal);
     }
 
-    static Budget budgetInference(Budget target, float qual, float complexityFactor, Premise nal) {
+    static Budget budgetInference(UnitBudget target, float qual, float complexityFactor, Premise nal) {
 
         TaskLink taskLink =
             nal instanceof ConceptProcess ? ((ConceptProcess)nal).getTaskLink() : null;

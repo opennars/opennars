@@ -2,8 +2,8 @@ package nars.util.graph;
 
 import nars.Global;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.budget.Budgeted;
+import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -203,7 +203,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
 
         @Override
-        public Budget getBudget() {
+        public UnitBudget getBudget() {
             return getObject().getBudget();
         }
 
@@ -231,7 +231,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
 
         @Override
-        public Budget getBudget() {
+        public UnitBudget getBudget() {
             return getObject().getBudget();
         }
 

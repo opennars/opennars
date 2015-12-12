@@ -1,8 +1,8 @@
 package nars.concept;
 
 import nars.Memory;
-import nars.budget.Budget;
 import nars.budget.Item;
+import nars.budget.UnitBudget;
 import nars.nal.nal7.Tense;
 import nars.term.Term;
 
@@ -24,7 +24,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     //@Deprecated final static Variable how = new Variable("?how");
 
     public AbstractConcept(Term term) {
-        super(Budget.zero);
+        super(UnitBudget.zero);
         this.term = term;
     }
 

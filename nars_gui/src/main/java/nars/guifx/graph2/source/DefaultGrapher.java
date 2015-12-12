@@ -13,8 +13,6 @@ import nars.guifx.util.POJOPane;
 
 import java.util.function.BiFunction;
 
-import static javafx.application.Platform.runLater;
-
 /**
  * provides defalut settings for a NARGraph view
  */
@@ -31,7 +29,7 @@ public class DefaultGrapher extends SpaceGrapher {
     public final ImplementationProperty<IterativeLayout> layoutType = new ImplementationProperty();
 
     final InvalidationListener layoutChange;
-    private POJOPane controls;
+    final POJOPane controls = new POJOPane(this);
 
 //    public DefaultGrapher(int capacity, ConceptsSource source) {
 //        this(
@@ -53,15 +51,16 @@ public class DefaultGrapher extends SpaceGrapher {
 
         layoutType.addListener(layoutChange);
 
-        runLater(() -> {
 
-            controls = new POJOPane(this);
-            controls.layout();
-            controls.autosize();
-            getChildren().add(controls);
 
-            layoutChange.invalidated(null);
-        });
+
+
+        controls.layout();
+        controls.autosize();
+        getChildren().add(controls);
+
+        layoutChange.invalidated(null);
+
 
 
 

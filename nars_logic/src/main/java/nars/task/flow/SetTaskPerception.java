@@ -3,6 +3,7 @@ package nars.task.flow;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Memory;
 import nars.budget.Budget;
+import nars.budget.UnitBudget;
 import nars.task.Task;
 import nars.util.data.map.UnifriedMap;
 
@@ -22,7 +23,7 @@ public final class SetTaskPerception extends TaskPerception {
     final Procedure2<Budget, Budget> merge;
 
     public SetTaskPerception(Memory m, Consumer<Task> receiver) {
-        this(m, receiver, Budget.plus);
+        this(m, receiver, UnitBudget.plus);
     }
 
     public SetTaskPerception(Memory m, Consumer<Task> receiver, Procedure2<Budget, Budget> merge) {

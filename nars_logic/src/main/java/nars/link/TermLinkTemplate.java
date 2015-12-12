@@ -1,6 +1,6 @@
 package nars.link;
 
-import nars.budget.Budget;
+import nars.budget.UnitBudget;
 import nars.term.Term;
 import nars.term.Termed;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * contains most of the essential data to populate new TermLinks
  */
-public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the pending field */ implements Termed, Serializable {
+public class TermLinkTemplate extends UnitBudget /* extends Budget ?? instead of the pending field */ implements Termed, Serializable {
 
     /** where this termlink template points towards */
     protected Term target;

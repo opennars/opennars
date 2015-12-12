@@ -8,6 +8,7 @@ import nars.Premise;
 import nars.bag.Bag;
 import nars.bag.NullBag;
 import nars.budget.Budget;
+import nars.budget.UnitBudget;
 import nars.concept.util.ArrayListBeliefTable;
 import nars.concept.util.ArrayListTaskTable;
 import nars.concept.util.BeliefTable;
@@ -63,7 +64,7 @@ public class DefaultConcept extends AtomConcept {
     };
 
     /** how incoming budget is merged into its existing duplicate quest/question */
-    static final Procedure2<Budget, Budget> duplicateQuestionMerge = Budget.plus;
+    static final Procedure2<Budget, Budget> duplicateQuestionMerge = UnitBudget.plus;
 
     public DefaultConcept(Term term, Param p) {
         this(term, new NullBag(), new NullBag(), p);

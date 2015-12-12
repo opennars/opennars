@@ -9,6 +9,7 @@ import nars.bag.tx.BagActivator;
 import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.budget.UnitBudget;
 import nars.util.data.Util;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
@@ -82,7 +83,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * set the merging function to 'average'
      */
     public Bag mergeAverage() {
-        mergeFunction = Budget.average;
+        mergeFunction = UnitBudget.average;
         return this;
     }
 
@@ -90,12 +91,12 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * set the merging function to 'plus'
      */
     public Bag mergePlus() {
-        mergeFunction = Budget.plus;
+        mergeFunction = UnitBudget.plus;
         return this;
     }
 
     public Bag mergeMax() {
-        mergeFunction = Budget.max;
+        mergeFunction = UnitBudget.max;
         return this;
     }
 
@@ -229,7 +230,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     }
 
 
-    protected final V updateItem(BagSelector<K, V> selector, V item, Budget reusableTemporary) {
+    protected final V updateItem(BagSelector<K, V> selector, V item, UnitBudget reusableTemporary) {
         if (!updateItemBudget(selector, item, reusableTemporary))
             return item;
         return updateReinsert(selector, item);
@@ -245,7 +246,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
             if (item == null)
                 return null;
         } else {
-            if (!updateItemBudget(tx, item, new Budget()))
+            if (!updateItemBudget(tx, item, new UnitBudget()))
                 return item;
         }
 
@@ -267,15 +268,15 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     //item.getbudget();
     //selector.getBudget()
 
-    boolean updateItemBudget(BagSelector<K, V> selector, V item, Budget nextBudget /* temporary, re-usable instance */) {
+    boolean updateItemBudget(BagSelector<K, V> selector, V item, UnitBudget nextBudget /* temporary, re-usable instance */) {
         /*if (selector instanceof BagActivator)
             src = ((BagActivator)selector).getBudget();
         else*/
-        Budget src = item.getBudget();
+        UnitBudget src = item.getBudget();
         return updateItemBudget(selector, src, item, nextBudget);
     }
 
-    boolean updateItemBudget(BagSelector<K, V> selector, Budget sourceBudget, V item, Budget nextBudget /* temporary, re-usable instance */) {
+    boolean updateItemBudget(BagSelector<K, V> selector, UnitBudget sourceBudget, V item, UnitBudget nextBudget /* temporary, re-usable instance */) {
 
         nextBudget.budget(sourceBudget);
 
@@ -323,7 +324,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
         } while (item == null);
 
-        updateItem(selector, item, new Budget());
+        updateItem(selector, item, new UnitBudget());
 
         return item;
     }

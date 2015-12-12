@@ -17,7 +17,7 @@ public class PeriodicForgettingTest {
         float quality = 0.5f;
         float budgetThreshold = 0.01f;
 
-        Budget b = new Budget(initPriority, durability, quality);
+        UnitBudget b = new UnitBudget(initPriority, durability, quality);
 
         for (int t = 0; t < maxTime; t++) {
             b.forget(t, forgetCycles, 0);

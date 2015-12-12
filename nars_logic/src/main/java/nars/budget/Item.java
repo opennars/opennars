@@ -28,7 +28,7 @@ import nars.Memory;
  * <p>
  * It has a key and a budget. Cannot be cloned
  */
-public abstract class Item<K> extends Budget implements Itemized<K> {
+public abstract class Item<K> extends UnitBudget implements Itemized<K> {
 
 
 
@@ -151,7 +151,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
     }
 
     @Override
-    public final Budget getBudget() {
+    public final UnitBudget getBudget() {
         return this;
     }
     

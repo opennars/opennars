@@ -24,8 +24,8 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
-import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
@@ -503,9 +503,6 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
     void setBestSolution(Task belief, Memory memory);
 
 
-    @Override
-    boolean isDeleted();
-
 
     /** normalize a collection of tasks to each other
      * so that the aggregate budget sums to a provided
@@ -517,7 +514,7 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
     static void normalizeCombined(Iterable<Task> derived, float premisePriority) {
 
 
-        float totalDerivedPriority = Budget.prioritySum(derived);
+        float totalDerivedPriority = UnitBudget.prioritySum(derived);
         float factor = Math.min(
                     premisePriority/totalDerivedPriority,
                     1.0f //limit to only diminish

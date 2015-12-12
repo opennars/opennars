@@ -10,6 +10,7 @@ import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.link.*;
 import nars.task.Task;
@@ -28,7 +29,7 @@ import static nars.budget.BudgetFunctions.clonePriorityMultiplied;
  */
 public class TaskProcess extends AbstractPremise  {
 
-    private static final Procedure2<Budget, Budget> PENDING_TERMLINK_BUDGET_MERGE = Budget.plus;
+    private static final Procedure2<Budget, Budget> PENDING_TERMLINK_BUDGET_MERGE = UnitBudget.plus;
 
     public final Task task;
 
@@ -113,7 +114,7 @@ public class TaskProcess extends AbstractPremise  {
      * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
      * @return whether any activity happened as a result of this invocation
      */
-    public boolean linkTemplates(Concept c, Budget b, boolean updateTLinks) {
+    public boolean linkTemplates(Concept c, UnitBudget b, boolean updateTLinks) {
 
         if ((b == null) || (b.isDeleted())) return false;
 
@@ -123,7 +124,7 @@ public class TaskProcess extends AbstractPremise  {
 
         //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
         float factor = 1.0f / (tl.size());
-        Budget subBudget = BudgetFunctions.clonePriorityMultiplied(b, factor);
+        UnitBudget subBudget = BudgetFunctions.clonePriorityMultiplied(b, factor);
 
         if (subBudget.summaryLessThan(nar.memory.termLinkThreshold.floatValue()))
             return false;
@@ -178,7 +179,7 @@ public class TaskProcess extends AbstractPremise  {
         otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
 
         //if (otherConcept.getTermLinkTemplates()) {
-            Budget termlinkBudget = termLinkBuilder.getBudget();
+            UnitBudget termlinkBudget = termLinkBuilder.getBudget();
             linkTemplates(otherConcept, termlinkBudget, immediateTermLinkPropagation);
         //}
 
@@ -236,7 +237,7 @@ public class TaskProcess extends AbstractPremise  {
 
 
 
-        Budget subBudget = clonePriorityMultiplied(task.getBudget(), 1.0f / numTemplates);
+        UnitBudget subBudget = clonePriorityMultiplied(task.getBudget(), 1.0f / numTemplates);
         if (subBudget.summaryLessThan(nar.memory.taskLinkThreshold.floatValue()))
             return false;
 

@@ -5,7 +5,11 @@ package nars.budget;
  */
 public interface Budgeted  {
 
-    Budget getBudget();
+    UnitBudget getBudget();
+
+    default boolean isDeleted() {
+        return Budget.isDeleted(getPriority());
+    }
 
     default float getPriority() {
         return getBudget().getPriority();
@@ -22,7 +26,6 @@ public interface Budgeted  {
     default long getLastForgetTime() {
         return getBudget().getLastForgetTime();
     }
-
 
 
     default Object[] toBudgetArray() {

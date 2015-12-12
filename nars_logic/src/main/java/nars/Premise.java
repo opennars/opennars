@@ -592,7 +592,7 @@ public interface Premise extends Level, Tasked {
     void updateBelief(Task revised);
 
     default boolean validateDerivedBudget(Budget budget) {
-        if (budget.isDeleted()) {
+        if (Budget.isDeleted(budget.getPriority())) {
             throw new RuntimeException("why is " + budget + " deleted");
 
         }

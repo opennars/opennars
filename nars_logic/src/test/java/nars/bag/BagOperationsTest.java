@@ -6,8 +6,8 @@ package nars.bag;
 
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
-import nars.budget.Budget;
 import nars.budget.Item;
+import nars.budget.UnitBudget;
 import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 
@@ -31,7 +31,7 @@ public class BagOperationsTest {
         private final String id;
 
         public NullConcept(String id, float priority) {
-            super(new Budget(priority, priority, priority));
+            super(new UnitBudget(priority, priority, priority));
             this.id= id;
         }    
 

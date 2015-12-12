@@ -5,6 +5,7 @@ import nars.Premise;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.budget.UnitBudget;
 import nars.nal.UtilityFunctions;
 import nars.task.Task;
 import nars.task.Temporal;
@@ -158,7 +159,7 @@ public enum Tense  {
             task.getBudget().orPriority(quality);
         } else {
             float taskPriority = task.getPriority();
-            budget = new Budget(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.getTruth()));
+            budget = new UnitBudget(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.getTruth()));
             task.getBudget().setPriority(Math.min(1 - quality, taskPriority));
         }
         /*

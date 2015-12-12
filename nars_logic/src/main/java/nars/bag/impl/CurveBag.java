@@ -3,8 +3,8 @@ package nars.bag.impl;
 import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
 import nars.Global;
 import nars.bag.BagSelector;
-import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.budget.UnitBudget;
 import nars.util.ArraySortedIndex;
 import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
@@ -224,7 +224,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
         List<K> toRemove = null;
 
-        Budget b = new Budget(); //TODO avoid creating this
+        UnitBudget b = new UnitBudget(); //TODO avoid creating this
 
 
         //int bend = bstart + len;

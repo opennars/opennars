@@ -47,6 +47,7 @@ public class ConceptsSource extends GraphSource {
     }
 
 
+
     @Override
     public void forEachOutgoingEdgeOf(Termed cc,
                                       Consumer<Termed> eachTarget) {
@@ -54,6 +55,8 @@ public class ConceptsSource extends GraphSource {
 
         SpaceGrapher sg = grapher;
         if (sg == null) return; //???
+
+
 
         Consumer<? super TLink<?>> linkUpdater = link -> {
 

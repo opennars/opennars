@@ -26,6 +26,7 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
+import nars.budget.UnitBudget;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.Decider;
 import nars.task.Task;
@@ -214,7 +215,7 @@ public abstract class OperatorReaction implements Function<Task,List<Task>>, Rea
     protected void noticeExecuted(Task operation) {
 
         Budget b;
-        b = !operation.isDeleted() ? operation.getBudget() : Budget.zero;
+        b = !operation.isDeleted() ? operation.getBudget() : UnitBudget.zero;
 
         Memory memory = nar().memory;
 

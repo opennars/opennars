@@ -2,7 +2,7 @@ package nars.util.meter;
 
 import nars.Global;
 import nars.NAR;
-import nars.budget.Budget;
+import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -96,7 +96,7 @@ public class ExhaustPremises extends TestNAR {
             assert(templates.size() == tempSet.size());
 
             //"termlink templates contains a self-reference"
-            assert(tempSet.contains(new TermLink(tt.getTerm(), new Budget())));
+            assert(tempSet.contains(new TermLink(tt.getTerm(), new UnitBudget())));
 
         }
 
