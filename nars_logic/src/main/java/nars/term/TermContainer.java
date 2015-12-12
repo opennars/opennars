@@ -4,6 +4,7 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.MutableSet;
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
+import nars.Op;
 import nars.term.compound.Compound;
 import nars.util.utf8.ByteBuf;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static nars.Symbols.ARGUMENT_SEPARATORbyte;
+import static nars.term.compound.GenericCompound.COMPOUND;
 
 
 /**
@@ -172,6 +174,17 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
             if (!term(i).equals(sub.get(i))) return false;
         }
         return true;
+    }
+
+    static Term intersect(Op resultOp, Compound a, Compound b) {
+        MutableSet<Term> i = intersect(a, b);
+        if (i.isEmpty()) return null;
+        return COMPOUND(resultOp, i);
+    }
+    static Term difference(Op resultOp, Compound a, Compound b) {
+        MutableSet<Term> i = difference(a, b);
+        if (i.isEmpty()) return null;
+        return COMPOUND(resultOp, i);
     }
 
 }

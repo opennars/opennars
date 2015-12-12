@@ -152,9 +152,16 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
         Term result = apply(sub);
 
+        //apply any known immediate transform operators
         if (Op.isOperation(result)) {
             ImmediateTermTransform tf = f.getTransform(Compounds.operatorTerm((Compound)result));
-            System.out.println(result + " :: " + tf);
+            if (tf!=null) {
+                Term result2 = tf.function(
+                    Compounds.opArgs((Compound) result)
+                );
+                //System.out.println( result + " =/> " + result2);
+                result = result2;
+            }
         }
 
         return result;
