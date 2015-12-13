@@ -40,14 +40,14 @@ public final class Solve extends PreCondition {
     @Override
     public boolean test(RuleMatch match) {
 
-        Term derivedTerm;
+        Term derivedTerm = match.apply(term, !continueIfIncomplete);
 
-        if(null==(derivedTerm=match.apply(term, !continueIfIncomplete)))
+        if(null==derivedTerm)
             return false;
 
-        if (!continueIfIncomplete && Variable.hasPatternVariable(derivedTerm)) {
+        if (!continueIfIncomplete && Variable.hasPatternVariable(derivedTerm))
             return false;
-        }
+
 
         match.derived.set(derivedTerm);
 

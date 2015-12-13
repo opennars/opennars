@@ -58,7 +58,7 @@ public class FindSubst extends Versioning implements Subst {
 
 
     /** variables whose contents are disallowed to equal each other */
-    public ImmutableMap<Variable,Variable> exclusions = null;
+    public ImmutableMap<Term, MatchConstraint> constraints = null;
 
     //public abstract Term resolve(Term t, Substitution s);
 
@@ -115,7 +115,7 @@ public class FindSubst extends Versioning implements Subst {
     @Override
     public void clear() {
         revert(0);
-        exclusions = null;
+        constraints = null;
     }
 
 
@@ -407,26 +407,28 @@ public class FindSubst extends Versioning implements Subst {
 //    }
 
 
+
     /**
      * invokes a dynamic FindSubst match via the generic entry method: match(Term,Term)
      */
     public static class MatchTerm extends PatternOp {
         public final Term x;
         private final String id;
-        private final ImmutableMap<Variable, Variable> exclusions;
+        private final ImmutableMap<Term,MatchConstraint> constraints;
 
         public MatchTerm(Term c, Set<Twin<Variable>> notEquals) {
             x = c;
             if (notEquals == null) {
                 this.id = x.toString();
-                this.exclusions = null;
+                this.constraints = null;
             } else {
-                Map<Variable, Variable> e = Global.newHashMap(notEquals.size() * 2);
+                Map<Term, MatchConstraint> e = Global.newHashMap(notEquals.size() * 2);
                 for (Twin<Variable> t : notEquals) {
-                    e.put(t.getOne(), t.getTwo());
-                    e.put(t.getTwo(), t.getOne());
+                    e.put(t.getOne(), new NotEqualsConstraint(t.getTwo()));
+                    e.put(t.getTwo(), new NotEqualsConstraint(t.getOne()));
                 }
-                this.exclusions = Maps.immutable.ofAll(e);
+
+                this.constraints = Maps.immutable.ofAll(e);
                 this.id = new StringBuilder(x.toString() + "∧neq(").append(
                     Joiner.on(",").join(notEquals.stream().map(v -> {
                         return ( v.getOne() + "==" + v.getTwo() );
@@ -437,7 +439,7 @@ public class FindSubst extends Versioning implements Subst {
 
         @Override
         public boolean run(FindSubst ff) {
-            ff.setExclusions(exclusions);
+            ff.setConstraints(constraints);
             return ff.match(x, ff.term.get());
         }
 
@@ -448,11 +450,11 @@ public class FindSubst extends Versioning implements Subst {
     }
 
     /** null to disable exclusions */
-    public void setExclusions(ImmutableMap<Variable, Variable> exclusions) {
-        if (exclusions == null || exclusions.isEmpty())
-            exclusions = null;
+    public void setConstraints(ImmutableMap<Term,MatchConstraint> constraints) {
+        if (constraints == null || constraints.isEmpty())
+            constraints = null;
         else
-            this.exclusions = exclusions;
+            this.constraints = constraints;
     }
 
 //    /** invokes a dynamic FindSubst match via the matchVarX entry method;
@@ -1271,26 +1273,22 @@ public class FindSubst extends Versioning implements Subst {
     /** returns true if the assignment was allowed, false otherwise */
     public final boolean putXY(Term x /* usually a Variable */, Term y) {
 
-        boolean valid;
-        if (exclusions == null || xy.isEmpty()) {
-            valid = true; //simplest case
-        } else {
-            Term canNotEqualValueOf = exclusions.get(x);
-            if (canNotEqualValueOf == null) {
-                valid = true;
-            } else {
-                Term canNotEqual = xy.get(canNotEqualValueOf);
-                if (canNotEqual!=null)
-                    valid = !y.equals(canNotEqual);
-                else
-                    valid = true;
-            }
-        }
+        if (!assignable(x, y))
+            return false;
 
-        if (!valid) return false;
+        Term existing = xy.put(x, y);
+        if (existing!=null)
+            throw new RuntimeException(x + " overwrites " + existing + " with " + y);
 
-        xy.put(x, y);
         return true;
+    }
+
+
+    public boolean assignable(Term x, Term y) {
+        if (constraints == null) return true;
+        MatchConstraint c = constraints.get(x);
+        if (c == null) return true;
+        return !c.invalid(x, y, this);
     }
 
     public final void putYX(Term y /* usually a Variable */, Term x) {
@@ -1300,6 +1298,7 @@ public class FindSubst extends Versioning implements Subst {
 
     public final Term apply(Term t, boolean fullMatch) {
         //TODO make a half resolve that only does xy?
+
 
         Term ret = t.apply(this, fullMatch);
 

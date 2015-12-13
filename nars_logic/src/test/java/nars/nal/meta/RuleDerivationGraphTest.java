@@ -16,9 +16,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class RuleDerivationGraphTest {
 
-
-
-
     @Test public void testRuleTrie() {
         RuleTrie x = new RuleTrie(Deriver.getDefaultRules());
         x.printSummary();

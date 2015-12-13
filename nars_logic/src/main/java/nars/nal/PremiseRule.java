@@ -413,7 +413,8 @@ public class PremiseRule extends GenericCompound implements Level {
                         (Variable)arg1, (Variable)arg2)
                     );
 
-                    //next = NotEqual.make(arg1, arg2);
+                    //TODO eliminate need for:
+                    next = NotEqual.make(arg1, arg2);
 
                     break;
 
