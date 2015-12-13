@@ -15,9 +15,6 @@ public class VarPattern extends Variable {
         super(name);
     }
 
-    public VarPattern(byte[] name) {
-        super(name);
-    }
 
     @Override
     public final int structure() {

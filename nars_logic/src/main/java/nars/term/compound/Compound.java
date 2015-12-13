@@ -40,7 +40,6 @@ import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -492,7 +491,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         throw new RuntimeException(this + " not modifiable");
     }
 
-    void addAllTo(Collection<Term> set);
 
     /** universal compound hash function */
     static <T extends Term> int hash(TermVector subterms, Op op, int hashSalt) {

@@ -72,7 +72,7 @@ public class PremiseRule extends GenericCompound implements Level {
     /** maximum of the minimum NAL levels involved in the postconditions of this rule */
     public int minNAL;
 
-    private String str;
+    private final String str;
     protected String source;
 
     public final Compound getPremise() {
@@ -195,13 +195,7 @@ public class PremiseRule extends GenericCompound implements Level {
     }
 
 
-    /**
-     * non-null;
-     * if it returns Op.VAR_PATTERN this means that any type can apply
-     */
-    public final Op getTaskTermType() {
-        return getTask().op();
-    }
+
 
     public void setSource(String source) {
         this.source = source;
@@ -217,13 +211,7 @@ public class PremiseRule extends GenericCompound implements Level {
     }
 
 
-    /**
-     * returns Op.NONE if there is no belief term type;
-     * if it returns Op.VAR_PATTERN this means that any type can apply
-     */
-    public final Op getBeliefTermType() {
-        return getBelief().op();
-    }
+
 
     protected final Term getBelief() {
         return getPremise().term(1);
@@ -575,8 +563,8 @@ public class PremiseRule extends GenericCompound implements Level {
         return ((Compound) term(0)).terms()[1];
     }
 
-    public final void setAllowBackward(boolean allowBackward) {
-        this.allowBackward = allowBackward;
+    public final void setAllowBackward() {
+        this.allowBackward = true;
     }
 
 

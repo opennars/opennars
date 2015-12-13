@@ -8,7 +8,9 @@ import nars.Op;
 import nars.term.compound.Compound;
 import nars.util.utf8.ByteBuf;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import static nars.Symbols.ARGUMENT_SEPARATORbyte;
@@ -50,9 +52,29 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     static MutableSet<Term> intersect(TermContainer a, TermContainer b) {
         return Sets.intersect(a.toSet(),b.toSet());
     }
-    static MutableSet<Term> difference(TermContainer a, TermContainer b) {
-        return Sets.difference(a.toSet(), b.toSet());
+
+    /** returns null if empty set; not sorted */
+    static Term[] difference(TermContainer a, TermContainer b) {
+        if (a.size() == 1 && b.size() == 1) {
+            //special case
+            if (a.term(0).equals(b.term(0))) return null;
+            else return a.terms();
+        } else {
+            MutableSet dd = Sets.difference(a.toSet(), b.toSet());
+            if (dd.isEmpty()) return null;
+            return Terms.toArray(dd);
+        }
     }
+
+    static TreeSet<Term> differenceSorted(TermContainer a, TermContainer b) {
+        TreeSet<Term> t = new TreeSet();
+        a.addAllTo(t);
+        b.addAllTo(t);
+        return t;
+    }
+
+    void addAllTo(Collection<Term> set);
+
 
     /** expected to provide a non-copy reference to an internal array,
      *  if it exists. otherwise it should create such array.
@@ -182,8 +204,8 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         return COMPOUND(resultOp, i);
     }
     static Term difference(Op resultOp, Compound a, Compound b) {
-        MutableSet<Term> i = difference(a, b);
-        if (i.isEmpty()) return null;
+        Term[] i = difference(a, b);
+        if (i==null) return null;
         return COMPOUND(resultOp, i);
     }
 

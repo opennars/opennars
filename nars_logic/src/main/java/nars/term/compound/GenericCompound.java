@@ -146,8 +146,8 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     protected GenericCompound(Op op, TermVector subterms, int relation) {
         this.op = op;
         this.terms = subterms;
-        this.hash = Compound.hash(terms, op, relation+1);
         this.relation = relation;
+        this.hash = Compound.hash(terms, op, relation+1);
     }
 
     @Override
@@ -205,6 +205,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         if (this == o) return 0;
 
         Term t = (Term) o;
+        //int diff = op().compareTo(t.op());
         int diff = Integer.compare(op().ordinal(), t.op().ordinal());
         if (diff != 0) return diff;
 

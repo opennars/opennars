@@ -14,7 +14,6 @@ import nars.term.Term;
  * Evaluates the truth of a premise
  */
 public final class TruthEval extends PreCondition {
-    public final Term beliefTerm, desireTerm;
     public final TruthOperator belief;
     public final TruthOperator desire;
     public final char puncOverride;
@@ -22,8 +21,6 @@ public final class TruthEval extends PreCondition {
     private final transient String id;
 
     public TruthEval(Term beliefTerm, Term desireTerm, char puncOverride) {
-        this.beliefTerm = beliefTerm;
-        this.desireTerm = desireTerm;
         this.puncOverride = puncOverride;
 
         belief = BeliefFunction.get(beliefTerm);

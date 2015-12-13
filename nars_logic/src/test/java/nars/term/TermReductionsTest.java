@@ -120,8 +120,8 @@ public class TermReductionsTest {
                 seti($("a"), $("b"), $("c")),
                 seti($("d"), $("b")));
         assertEquals(Op.SET_INT, d.op());
-        assertEquals(d.toString(), 2, d.size());
-        assertEquals("[c,a]", d.toString());
+        assertEquals(d.toString(), 4, d.size());
+        assertEquals("[a,b,c,d]", d.toString());
     }
 
     @Test
@@ -132,10 +132,11 @@ public class TermReductionsTest {
         Compound b = $.sete($("d"), $("b"));
         Term d = diffExt(a, b);
         assertEquals(Op.SET_EXT, d.op());
-        assertEquals(d.toString(), 2, d.size());
-        assertEquals("{c,a}", d.toString());
+        assertEquals(d.toString(), 4, d.size());
+        assertEquals("{a,b,c,d}", d.toString());
 
     }
+
     @Test
     public void testDisjunctionReduction() {
         assertEquals("(||,a,b,c,d)",

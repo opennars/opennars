@@ -3,13 +3,11 @@ package nars.nal.meta.op;
 import nars.Global;
 import nars.Premise;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.nal.PremiseRule;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
 import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
-import nars.task.PreTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -47,15 +45,7 @@ public final class Derive extends PreCondition {
     @Override
     public boolean test(RuleMatch m) {
 
-
-        Premise premise = m.premise;
-
-        Term derivedTerm = m.derived.get();
-
-        if (derivedTerm == null)
-            return false;
-
-        Term t = derivedTerm.normalized();
+        Term t = m.derived.get().normalized();
 
         if (t==null || Variable.hasPatternVariable(t))
             return false;
@@ -64,25 +54,29 @@ public final class Derive extends PreCondition {
         if (c == null)
             return false;
 
-        Truth truth = m.truth.get();
-        Budget budget = truth != null ? BudgetFunctions.compoundForward(truth, t, premise) : BudgetFunctions.compoundBackward(t, premise);
+        derive(m, c);
 
-        if (!premise.validateDerivedBudget(budget)) {
-            if (false) {
-                RuleMatch.removeInsufficientBudget(premise, new PreTask(t,
-                        m.punct.get(), truth, budget,
-                        m.occurrenceShift.getIfAbsent(Tense.TIMELESS), premise));
-            }
-            return false;
-        }
+        return false; //match finish
+    }
+
+    private void derive(RuleMatch m, Compound c) {
+
+        Premise premise = m.premise;
+
+        Truth truth = m.truth.get();
+
+        Budget budget = m.getBudget(truth, c);
+        if (budget == null)
+            return;
+
 
         Task task = premise.getTask();
         Task belief = premise.getBelief();
 
 
-        char punct = m.punct.get().charValue();
+        char punct = m.punct.get();
 
-        MutableTask deriving = new MutableTask((Compound) t);
+        MutableTask deriving = new MutableTask(c);
 
         long now = premise.time();
 
@@ -90,8 +84,8 @@ public final class Derive extends PreCondition {
         long taskOcc = task.getOccurrenceTime();
         long occ = occurence_shift > Tense.TIMELESS ? taskOcc + occurence_shift : taskOcc;
 
-        //just not able to measure it, closed world assumption gone wild.
 
+        //just not able to measure it, closed world assumption gone wild.
         if (occ != Tense.ETERNAL && premise.isEternal() && !premise.nal(7)) {
             throw new RuntimeException("eternal premise " + premise + " should not result in non-eternal occurence time: " + deriving + " via rule " + rule);
         }
@@ -109,7 +103,7 @@ public final class Derive extends PreCondition {
                 .anticipate(occ != Tense.ETERNAL && anticipate);
 
         if ((derived = m.derive(derived)) == null)
-            return false;
+            return;
 
         //--------- TASK WAS DERIVED if it reaches here
 
@@ -117,19 +111,18 @@ public final class Derive extends PreCondition {
         if (truth != null && eternalize && !derived.isEternal()) {
 
             m.derive(
-                new MutableTask(derived.getTerm())
-                    .punctuation(punct)
-                    .truth(
-                        truth.getFrequency(),
-                        eternalizedConfidence(truth.getConfidence())
-                    )
-                    .budgetCompoundForward(premise)
-                    .time(now, Tense.ETERNAL)
-                    .parent(task, belief)
+                    new MutableTask(derived.getTerm())
+                            .punctuation(punct)
+                            .truth(
+                                    truth.getFrequency(),
+                                    eternalizedConfidence(truth.getConfidence())
+                            )
+                            .budgetCompoundForward(premise)
+                            .time(now, Tense.ETERNAL)
+                            .parent(task, belief)
             );
 
         }
 
-        return false; //finished
     }
 }

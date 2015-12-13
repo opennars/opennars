@@ -4,6 +4,8 @@ import nars.$;
 import nars.Global;
 import nars.Op;
 import nars.Premise;
+import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
@@ -30,8 +32,6 @@ public class RuleMatch extends FindSubst {
     public Consumer<Task> receiver;
 
 
-    @Deprecated //reference to the rule should not be necessary when complete
-    public PremiseRule rule;
 
     /** current Premise */
     public Premise premise;
@@ -188,6 +188,32 @@ public class RuleMatch extends FindSubst {
             oc = 0;
         oc += cyclesDelta;
         occurrenceShift.set((int)oc);
+    }
+
+    /** calculates Budget used in a derived task,
+     *  returns null if invalid / insufficient */
+    public final Budget getBudget(Truth truth, Compound c) {
+
+        Premise p = this.premise;
+
+        Budget budget = truth != null ?
+                BudgetFunctions.compoundForward(truth, c, p) :
+                BudgetFunctions.compoundBackward(c, p);
+
+        if (Budget.isDeleted(budget.getPriority())) {
+            throw new RuntimeException("why is " + budget + " deleted");
+        }
+
+        if (!!budget.summaryLessThan(p.memory().derivationThreshold.floatValue())) {
+//            if (false) {
+//                RuleMatch.removeInsufficientBudget(premise, new PreTask(t,
+//                        m.punct.get(), truth, budget,
+//                        m.occurrenceShift.getIfAbsent(Tense.TIMELESS), premise));
+//            }
+            return null;
+        }
+
+        return budget;
     }
 
 

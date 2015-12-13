@@ -243,6 +243,7 @@ public enum BeliefFunction implements TruthOperator {
     }
 
 
+    @Override
     public final boolean allowOverlap() {
         return allowOverlap;
     }

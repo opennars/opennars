@@ -66,13 +66,10 @@ public class PremiseRuleTest extends TestCase {
 //            assertEquals(9, x.getVolume());
 //        }
 
-        {
-            //and the first complete rule:
-            PremiseRule x = p.term("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
-            assertEquals("((<%S-->%M>,<%P-->%M>),(<%P<->%S>,(%TruthComparison,%DesireStrong)))", x.toString());
-            assertEquals(15, x.volume());
-        }
-
+        //and the first complete rule:
+        PremiseRule x = p.term("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
+        assertEquals("((<%S-->%M>,<%P-->%M>),(<%P<->%S>,(%TruthComparison,%DesireStrong)))", x.toString());
+        assertEquals(15, x.volume());
 
 
     }

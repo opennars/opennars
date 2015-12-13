@@ -4,6 +4,7 @@ import nars.term.Term;
 import nars.term.TermContainer;
 import nars.util.math.ShuffledPermutations;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -11,7 +12,7 @@ import java.util.function.Consumer;
 /**
  * proxy to a TermContainer providing access to its subterms via a shuffling order
  */
-public final class Termutator extends ShuffledPermutations implements TermContainer {
+public final class Termutator extends ShuffledPermutations implements TermContainer<Term> {
 
     private final TermContainer compound;
 
@@ -129,4 +130,11 @@ public final class Termutator extends ShuffledPermutations implements TermContai
             x[i] = term(i);
         return x;
     }
+
+
+    @Override
+    public void addAllTo(Collection<Term> set) {
+        forEach(set::add);
+    }
+
 }

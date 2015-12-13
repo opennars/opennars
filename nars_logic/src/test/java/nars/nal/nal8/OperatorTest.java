@@ -143,6 +143,7 @@ public class OperatorTest {
 
         NAR n = new Default();
         n.onExec(new SyncOperator((Term)n.term("<a --> b>")) {
+            @Override
             public List<Task> apply(Task operation) {
                 executed.set(true);
                 return null;

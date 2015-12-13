@@ -1,6 +1,5 @@
 package nars;
 
-import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.nal.Level;
@@ -590,15 +589,6 @@ public interface Premise extends Level, Tasked {
     /** may be called during inference to update the premise
      * with a better belief than what it had previously. */
     void updateBelief(Task revised);
-
-    default boolean validateDerivedBudget(Budget budget) {
-        if (Budget.isDeleted(budget.getPriority())) {
-            throw new RuntimeException("why is " + budget + " deleted");
-
-        }
-        return !budget.summaryLessThan(memory().derivationThreshold.floatValue());
-    }
-
 
 
     default Task derive(Task derived) {

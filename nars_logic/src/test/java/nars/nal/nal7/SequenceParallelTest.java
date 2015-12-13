@@ -351,8 +351,8 @@ public class SequenceParallelTest {
         nar.believe("<(commutesWith, \"commutes with\") --> label>.");
 
         //detect any &/ and &| derivations which are incorrect
-        nar.memory.eventDerived.on(t -> {
-            String ts = t.toString();
+        nar.memory.eventDerived.on(tt -> {
+            String ts = tt.toString();
             if (    (ts.contains("&/")) ||
                     (ts.contains("&|")) )
                 assertFalse(true);

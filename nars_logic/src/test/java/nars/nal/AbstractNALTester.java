@@ -72,10 +72,8 @@ public abstract class AbstractNALTester {
     public static Iterable<Supplier<NAR>> nars(int level, boolean single, boolean multi) {
 
         //Level adjustments
-        {
-            //HACK bump to level 3 is somehow necessary
-            if (level == 2) level = 3;
-        }
+        //HACK bump to level 3 is somehow necessary
+        if (level == 2) level = 3;
 
         List<Supplier<NAR>> l = Global.newArrayList(2);
 
@@ -83,11 +81,11 @@ public abstract class AbstractNALTester {
 
         if (multi) {
             l.add(supply("Default2[NAL<=" + level + ']',
-                    () -> {
-                        Default d = new Default(512, 1, 2, 2);
-                        d.nal(finalLevel);
-                        return d;
-                    }
+                () -> {
+                    Default d = new Default(384, 1, 2, 4);
+                    d.nal(finalLevel);
+                    return d;
+                }
             ));
         }
 

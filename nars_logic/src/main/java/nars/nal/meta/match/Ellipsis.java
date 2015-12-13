@@ -1,19 +1,15 @@
 package nars.nal.meta.match;
 
-import com.gs.collections.api.set.primitive.ShortSet;
 import nars.Op;
-import nars.nal.nal7.Sequence;
 import nars.nal.nal7.ShadowAtom;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.compound.Compound;
-import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 import nars.term.transform.VariableNormalization;
 import nars.term.variable.Variable;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Meta-term of the form:
@@ -109,26 +105,26 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
         return false;
     }
 
-    public static int numUnmatchedEllipsis(Compound x, FindSubst ff) {
-
-        int xs = x.size();
-
-        Map<Term, Term> xy = ff.xy;
-        if (xy.isEmpty()) {
-            //map is empty so return total # ellipsis
-            return numEllipsis(x);
-        }
-
-        int n = 0;
-        for (int i = 0; i < xs; i++) {
-            Term xt = x.term(i);
-            if (xt instanceof Ellipsis) {
-                if (!xy.containsKey(xt))
-                    n++;
-            }
-        }
-        return n;
-    }
+//    public static int numUnmatchedEllipsis(Compound x, FindSubst ff) {
+//
+//        int xs = x.size();
+//
+//        Map<Term, Term> xy = ff.xy;
+//        if (xy.isEmpty()) {
+//            //map is empty so return total # ellipsis
+//            return numEllipsis(x);
+//        }
+//
+//        int n = 0;
+//        for (int i = 0; i < xs; i++) {
+//            Term xt = x.term(i);
+//            if (xt instanceof Ellipsis) {
+//                if (!xy.containsKey(xt))
+//                    n++;
+//            }
+//        }
+//        return n;
+//    }
 
     public static int numEllipsis(TermContainer x) {
         int xs = x.size();
@@ -203,11 +199,11 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
         int numNonVarArgs = Ellipsis.numNonEllipsisSubterms(x);
         return numNonVarArgs;
     }
-
-    @Deprecated public boolean valid(int numNonVarArgs, int ysize) {
-        int collectable = ysize - numNonVarArgs;
-        return valid(collectable);
-    }
+//
+//    @Deprecated public boolean valid(int numNonVarArgs, int ysize) {
+//        int collectable = ysize - numNonVarArgs;
+//        return valid(collectable);
+//    }
 
 
     public abstract boolean valid(int collectable);
@@ -237,30 +233,30 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
 //        }
 //        return null;
 //    }
-    public static Term getFirstNonEllipsis(Compound X) {
-        int xsize = X.size();
-        for (int i = 0; i < xsize; i++) {
-            Term xi = X.term(i);
-            if (!(xi instanceof Ellipsis)) {
-                return xi;
-            }
-        }
-        return null;
-    }
+//    public static Term getFirstNonEllipsis(Compound X) {
+//        int xsize = X.size();
+//        for (int i = 0; i < xsize; i++) {
+//            Term xi = X.term(i);
+//            if (!(xi instanceof Ellipsis)) {
+//                return xi;
+//            }
+//        }
+//        return null;
+//    }
 
-    public static ArrayEllipsisMatch matchRemaining(Compound Y, ShortSet ySubsExcluded) {
-        return EllipsisMatch.matchedSubterms(Y, (index, term) ->
-                !ySubsExcluded.contains((short)index) );
-    }
-
-    public static ArrayEllipsisMatch matchedSubterms(Compound Y) {
-        Term[] arrayGen =
-                !(Y instanceof Sequence) ?
-                        Y.terms() :
-                        ((Sequence)Y).toArrayWithIntervals();
-
-        return new ArrayEllipsisMatch(arrayGen);
-    }
+//    public static ArrayEllipsisMatch matchRemaining(Compound Y, ShortSet ySubsExcluded) {
+//        return EllipsisMatch.matchedSubterms(Y, (index, term) ->
+//                !ySubsExcluded.contains((short)index) );
+//    }
+//
+//    public static ArrayEllipsisMatch matchedSubterms(Compound Y) {
+//        Term[] arrayGen =
+//                !(Y instanceof Sequence) ?
+//                        Y.terms() :
+//                        ((Sequence)Y).toArrayWithIntervals();
+//
+//        return new ArrayEllipsisMatch(arrayGen);
+//    }
 
 
     //    public static RangeTerm rangeTerm(String s) {

@@ -10,8 +10,10 @@ import nars.term.compound.GenericCompound;
  */
 public final class TaskBeliefPair extends GenericCompound {
 
-    public int volA, volB;
-    public int structureA, structureB; //should use the long stuctureHash?
+    public final int volA;
+    public final int volB;
+    public final int structureA;
+    public final int structureB; //should use the long stuctureHash?
 
     private final Term[] t;
     //public final static Variable any = new Variable("%1"); //just use the first pattern variable because it will overlap with it

@@ -157,10 +157,6 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
     }
 
 
-    @Deprecated public static final Term make(Term[] argList) {
-        throw new RuntimeException("Use Sequence.makeSequence");
-    }
-
     @Override
     public Term clone(Term[] t) {
 

@@ -1,17 +1,16 @@
 package nars.nal;
 
 import nars.$;
-import nars.Global;
 import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.nal5.Conjunctive;
 import nars.nal.nal7.Order;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Statement;
 import nars.term.Term;
+import nars.term.TermContainer;
 import nars.term.Terms;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
@@ -21,8 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static com.google.common.collect.ObjectArrays.concat;
 import static nars.Op.*;
@@ -79,11 +78,6 @@ public class Compounds {
         p.append(closer);
     }
 
-    public static Set<Term> subtract(Compound a, Compound b) {
-        Set<Term> set = a.toSet();
-        b.forEach(set::remove);
-        return set;
-    }
 
     public static void imageAppend(GenericCompound image, Appendable p, boolean pretty) throws IOException {
 
@@ -154,19 +148,19 @@ public class Compounds {
         return false;
     }
 
-    /**
-     * Try to make a Product from an ImageExt/ImageInt and a component. Called by the logic rules.
-     *
-     * @param image     The existing Image
-     * @param component The component to be added into the component list
-     * @param index     The index of the place-holder in the new Image -- optional parameter
-     * @return A compound generated or a term it reduced to
-     */
-    public static Term product(Compound<Term> image, Term component, int index) {
-        Term[] argument = image.termsCopy();
-        argument[index] = component;
-        return $.p(argument);
-    }
+//    /**
+//     * Try to make a Product from an ImageExt/ImageInt and a component. Called by the logic rules.
+//     *
+//     * @param image     The existing Image
+//     * @param component The component to be added into the component list
+//     * @param index     The index of the place-holder in the new Image -- optional parameter
+//     * @return A compound generated or a term it reduced to
+//     */
+//    public static Term product(Compound<Term> image, Term component, int index) {
+//        Term[] argument = image.termsCopy();
+//        argument[index] = component;
+//        return $.p(argument);
+//    }
 
     public static void productAppend(Compound product, Appendable p, boolean pretty) throws IOException {
 
@@ -188,8 +182,8 @@ public class Compounds {
         //determine how many there are with same order
 
         int expandedSize;
-        while ((expandedSize = Conjunctive.getFlattenedLength(args, order)) != args.length) {
-            args = Conjunctive._flatten(args, order, expandedSize);
+        while ((expandedSize = getFlattenedLength(args, order)) != args.length) {
+            args = _flatten(args, order, expandedSize);
         }
         return args;
     }
@@ -330,8 +324,7 @@ public class Compounds {
                 Term term2 = t[1];
                 if (term1.op() == op) {
                     Compound ct1 = ((Compound) term1);
-                    List<Term> l = Global.newArrayList(ct1.size());
-                    ct1.addAllTo(l);
+                    Set<Term> l = ct1.toSet();
                     if (term2.op() == op) {
                         // (||,(||,P,Q),(||,R,S)) = (||,P,Q,R,S)
                         ((Compound)term2).addAllTo(l);
@@ -342,10 +335,8 @@ public class Compounds {
                     }
                     return junction(op, l);
                 } else if (term2.op() == op) {
-                    Compound ct2 = ((Compound) term2);
                     // (||,R,(||,P,Q)) = (||,P,Q,R)
-                    List<Term> l = Global.newArrayList(ct2.size());
-                    ct2.addAllTo(l);
+                    Set<Term> l = ((Compound) term2).toSet();
                     l.add(term1);
                     return junction(op, l);
                 } else {
@@ -395,6 +386,8 @@ public class Compounds {
                             return impl2Conj(op, subject, predicate, oldCondition);
                         }
                         break;
+                    default:
+                        break;
                 }
 
                 if (op.isCommutative())
@@ -407,18 +400,19 @@ public class Compounds {
 
                 return null;
             }
+            default:
+                throw new RuntimeException("invalid statement arguments");
         }
-
-        return null;
     }
 
     public static Term subtractSet(Op setType, Compound A, Compound B) {
         if (A.equals(B))
             return null; //empty set
-        Set<Term> x = subtract(A, B);
+        TreeSet<Term> x = TermContainer.differenceSorted(A,B);
         if (x.isEmpty())
             return null;
-        return newCompound(setType, Terms.toArray(x), -1, false /* already sorted here via the Set */);
+        return newCompound(setType, Terms.toArray(x),
+                -1, false /* already sorted here via the Set */);
     }
 
     private static boolean validEquivalenceTerm(Term t) {
@@ -456,12 +450,12 @@ public class Compounds {
         if (sort && op.isCommutative())
             t = Terms.toSortedSetArray(t);
 
-        int numSubs = t.length;
-        if (op.minSize == 2 && numSubs == 1) {
+        int arity = t.length;
+        if (op.minSize > 1 && arity == 1) {
             return t[0]; //reduction
         }
 
-        if (!op.validSize(numSubs)) {
+        if (!op.validSize(arity)) {
             //throw new RuntimeException(Arrays.toString(t) + " invalid size for " + op);
             return null;
         }
@@ -550,6 +544,34 @@ public class Compounds {
         }
 
         return newCompound(intersection, t, -1, true);
+    }
+
+    public static Term[] _flatten(Term[] args, Order order, int expandedSize) {
+        Term[] ret = new Term[expandedSize];
+        int k = 0;
+        for (Term a : args) {
+            if (a.op().isConjunctive(order)) {
+                //arraycopy?
+                for (Term t : ((Compound)a).terms()) {
+                    ret[k++] = t;
+                }
+            } else {
+                ret[k++] = a;
+            }
+        }
+
+        return ret;
+    }
+
+    public static int getFlattenedLength(Term[] args, Order order) {
+        int sz = 0;
+        for (Term a : args) {
+            if (a.op().isConjunctive(order))
+                sz += a.size();
+            else
+                sz++;
+        }
+        return sz;
     }
 
 

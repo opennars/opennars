@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class LinkageTest extends AbstractNALTester {
 
-    private int cycles = 35;
+    private final int cycles = 35;
 
     public LinkageTest(Supplier<NAR> b) { super(b); }
 

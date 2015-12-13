@@ -164,6 +164,7 @@ public class EllipsisTest {
         }
 
 
+        @Override
         public Compound getPattern(String prefix, String suffix) {
             return $(prefix + "%1, " + getEllipsis() + suffix);
         }
@@ -190,6 +191,7 @@ public class EllipsisTest {
             return s;
         }
 
+        @Override
         public Compound getPattern(String prefix, String suffix) {
             return $(prefix + getEllipsis() + suffix);
         }
@@ -247,7 +249,7 @@ public class EllipsisTest {
         //TODO
     }
 
-    public static String[] p(String a, String b) { return new String[] { a, b}; };
+    public static String[] p(String a, String b) { return new String[] { a, b}; }
 
     @Test public void testVarArg0() {
         //String rule = "(%S --> %M), ((|, %S, %A..+ ) --> %M) |- ((|, %A, ..) --> %M), (Truth:DecomposePositiveNegativeNegative)";

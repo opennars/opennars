@@ -19,7 +19,7 @@ public class Parallel extends GenericCompound implements Intermval {
     transient int totalDuration = -1;
 
     //supplied by the memory, used as the default subterm event duration if they do not implement their own Interval.duration()
-    private int eventDuration;
+    private int eventDuration = 0;
 
 
     public static Term makeParallel(Term[] a) {

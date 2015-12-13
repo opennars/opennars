@@ -2,7 +2,6 @@ package nars.nal.nal8;
 
 import nars.task.Task;
 import nars.task.Tasked;
-import nars.term.compound.Compound;
 
 import java.io.Serializable;
 
@@ -22,10 +21,6 @@ public class ExecutionResult implements Serializable, Tasked {
     @Override
     public Task getTask() {
         return operation;
-    }
-
-    public Compound getOperation() {
-        return operation.getTerm();
     }
 
     @Override

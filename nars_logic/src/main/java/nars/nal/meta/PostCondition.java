@@ -25,7 +25,6 @@ public class PostCondition implements Serializable, Level //since there can be m
 {
 
     public static final float HALF = 0.5f;
-    private static Term beliefTruth, goalTruth;
 
     public PostCondition(Term term, PreCondition[] afterConclusions, TruthEval truth) {
         this.term = term;
@@ -83,7 +82,7 @@ public class PostCondition implements Serializable, Level //since there can be m
      * if puncOverride == 0 (unspecified), then the default punctuation rule determines the
      * derived task's punctuation.  otherwise, its punctuation will be set to puncOverride's value
      */
-    public transient char puncOverride;
+    public transient char puncOverride = 0;
 
 
     /**
@@ -99,6 +98,7 @@ public class PostCondition implements Serializable, Level //since there can be m
 
 
         //TruthOperator judgmentTruth = null,goalTruth = null;
+        Term beliefTruth = null, goalTruth = null;
 
         //boolean negate = false;
         char puncOverride = 0;
@@ -153,7 +153,7 @@ public class PostCondition implements Serializable, Level //since there can be m
 
                 case "Derive":
                     if (which.equals(PostCondition.allowBackward))
-                        rule.setAllowBackward(true);
+                        rule.setAllowBackward();
                     break;
 
                 case "Order":

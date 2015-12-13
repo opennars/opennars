@@ -262,6 +262,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         return contentHash;
     }
 
+    @Override
     public final void addAllTo(Collection<Term> set) {
         Collections.addAll(set, term);
     }
