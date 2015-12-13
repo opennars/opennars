@@ -16,24 +16,27 @@
  */
 package nars.op.mental;
 
+import com.google.common.collect.Lists;
+import nars.$;
 import nars.Memory;
+import nars.Symbols;
 import nars.nal.nal8.operator.SyncOperator;
+import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
+import nars.truth.DefaultTruth;
 
 import java.util.ArrayList;
-
-import static nars.$.*;
 
 /**
  * Feeling common operations
  */
 public abstract class feel extends SyncOperator implements Mental {
+
     private final Term feelingTerm = Atom.the("feel");
 
-
-    
     /**
      * To get the current value of an internal sensor
      *
@@ -41,18 +44,16 @@ public abstract class feel extends SyncOperator implements Mental {
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
-    protected ArrayList<Task> feeling(float value, Memory memory) {
+    protected ArrayList<Task> feeling(float value, Memory memory, Term feeling) {
 
 
-        Term content = inh( sete(memory.self()), seti(feelingTerm) );
+        Compound content = $.instprop(memory.self(), feeling);
 
-        throw new RuntimeException("unimpl TODO");
-//        return Lists.newArrayList(MutableTask.make(content)
-//                        .judgment().truth(new DefaultTruth(value, 0.999f))
-//                        .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
-//                        .present(nar.memory)
-//        );
-
-
+        return Lists.newArrayList(
+            new MutableTask(content, Symbols.JUDGMENT)
+                .judgment()
+                .truth(new DefaultTruth(value, 0.999f))
+                .present(nar.memory)
+        );
     }
 }

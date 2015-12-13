@@ -55,8 +55,6 @@
 //If after S usually P happens, then it might be a good guess that usually before P happens, S happens.
 
     (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgment)
-    (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgment)
-    (P ==> S), (S ==> P), task("?") |- (P ==> S), (Truth:Conversion, Punctuation:Judgment)
     (P ==> S), (S ==> P), task("?") |- (P ==> S), (Truth:Conversion, Punctuation:Judgment)
     (P =|> S), (S =|> P), task("?") |- (P =|> S), (Truth:Conversion, Punctuation:Judgment)
     (P =|> S), (S =|> P), task("?") |- (P =|> S), (Truth:Conversion, Punctuation:Judgment)
@@ -359,10 +357,10 @@
 //Can be derived by NAL7 rules so this won't be necessary there (Order:ForAllSame left out here)
 
 //the first rule does not have Order:ForAllSame because it would be invalid, see: https://groups.google.com/forum/#!topic/open-nars/r5UJo64Qhrk
-    ((&&,A..+, ..) ==> C), M, not_implication_or_equivalence(M) |- ((&&,M,A..+) ==> C), (Truth:Induction)
-    ((&&,A..+, ..) =|> C), M, not_implication_or_equivalence(M) |- ((&&,M,A..+) =|> C), (Truth:Induction)
-    ((&&,A..+, ..) =/> C), M, not_implication_or_equivalence(M) |- ((&&,M,A..+) =/> C), (Truth:Induction)
-    ((&&,A..+, ..) =\> C), M, not_implication_or_equivalence(M) |- ((&&,M,A..+) =\> C), (Truth:Induction)
+    ((&&,A..+, ..) ==> C), M, notImplicationOrEquivalence(M) |- ((&&,M,A..+) ==> C), (Truth:Induction)
+    ((&&,A..+, ..) =|> C), M, notImplicationOrEquivalence(M) |- ((&&,M,A..+) =|> C), (Truth:Induction)
+    ((&&,A..+, ..) =/> C), M, notImplicationOrEquivalence(M) |- ((&&,M,A..+) =/> C), (Truth:Induction)
+    ((&&,A..+, ..) =\> C), M, notImplicationOrEquivalence(M) |- ((&&,M,A..+) =\> C), (Truth:Induction)
 
     ((&&,M,A..+) ==> C), (B ==> M) |- ((&&,B,A..+) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromTask)
     ((&&,M,A..+) ==> C), ((&&,B,A..+) ==> C) |- (B ==> M), (Truth:Induction, Order:ForAllSame)
@@ -466,17 +464,17 @@
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
 
-    P, S, after(Task,Belief), measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction, Eternalize:Immediate),
+    P, S, after(Task,Belief), measure_time(I), notImplicationOrEquivalence(P), notImplicationOrEquivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction, Eternalize:Immediate),
                                                                                                                        (P =\> (&/,S,I)), (Truth:Abduction),
                                                                                                                        ((&/,S,I) </> P), (Truth:Comparison)
 
-    P, S, after(Task,Belief), not_conjunction(P), not_conjunction(S),  measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (&/,S,I,P), (Truth:Intersection)
+    P, S, after(Task,Belief), notConjunction(P), notConjunction(S),  measure_time(I), notImplicationOrEquivalence(P), notImplicationOrEquivalence(S) |- (&/,S,I,P), (Truth:Intersection)
 
-    P, S, concurrent(Task,Belief), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction, Eternalize:Immediate),
+    P, S, concurrent(Task,Belief), notImplicationOrEquivalence(P), notImplicationOrEquivalence(S) |- (S =|> P), (Truth:Induction, Eternalize:Immediate),
                                                                                                            (P =|> S), (Truth:Induction),
                                                                                                            (S <|> P), (Truth:Comparison)
 
-    P, S, concurrent(Task,Belief), not_conjunction(P), not_conjunction(S), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (&|,S,P), (Truth:Intersection)
+    P, S, concurrent(Task,Belief), notConjunction(P), notConjunction(S), notImplicationOrEquivalence(P), notImplicationOrEquivalence(S) |- (&|,S,P), (Truth:Intersection)
 
 ////backward inference is mostly handled by the rule transformation:
 

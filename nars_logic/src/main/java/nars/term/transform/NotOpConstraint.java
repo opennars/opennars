@@ -21,4 +21,9 @@ public final class NotOpConstraint implements MatchConstraint {
     public boolean invalid(Term assignee, Term value, FindSubst f) {
         return value.op().isA(op);
     }
+    @Override
+    public String toString() {
+        return "op!=" + op;
+    }
 }
+

@@ -19,4 +19,9 @@ final public class NotEqualsConstraint implements MatchConstraint {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "!=" + b;
+    }
 }

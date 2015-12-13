@@ -369,7 +369,7 @@ public abstract class Texts {
             case 90:
                 return ".90";
             case 0:
-                return ".00";
+                return "0.0";
         }
 
         if (hundredths > 9) {

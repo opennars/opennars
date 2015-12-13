@@ -17,24 +17,32 @@
 
 package nars.op.mental;
 
+import nars.$;
 import nars.task.Task;
+import nars.term.Term;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+
 /**
- * Feeling busy value
+ * Sense of busy-ness
  */
 public class feelBusy extends feel implements Mental {
 
+    public static final Term business = $.the(feelBusy.class.getSimpleName());
+
+    final static Logger logger = LoggerFactory.getLogger(feelBusy.class);
 
     /**
      * To get the current value of an internal sensor
-     * @param args Arguments, a set and a variable
-     * @param memory
-     * @return Immediate results as Tasks
      */
     @Override
     public List<Task> apply(Task operation) {
-        return feeling(nar.memory.emotion.busy(), nar.memory);
-    }    
+        float busy = nar.memory.emotion.busy();
+        logger.info("busy=" + busy + ", terms=" + nar.memory.index.size());
+        return feeling(busy, nar.memory, this.business);
+    }
+
 }

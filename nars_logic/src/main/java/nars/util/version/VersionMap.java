@@ -1,6 +1,7 @@
 package nars.util.version;
 
 import nars.Global;
+import org.jetbrains.annotations.NotNull;
 import org.jgrapht.util.ArrayUnenforcedSet;
 
 import java.util.AbstractMap;
@@ -17,7 +18,7 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     public VersionMap(Versioning context) {
         this(context,
             //new LinkedHashMap<>()
-            Global.newHashMap(256)
+            Global.newHashMap(16)
             //new HashMap(256)
         );
     }
@@ -64,12 +65,12 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     }
 
     @Override
-    public int size() {
+    public final int size() {
         return map.size();
     }
 
     @Override
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return map.isEmpty();
     }
 
@@ -105,10 +106,31 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
      * follows semantics of set()
      */
     @Override
-    public Y put(X key, Y value) {
+    public final Y put(X key, Y value) {
         getOrCreateIfAbsent(key).set(value);
         return null;
     }
+
+//    public void compute(X key, Y value, Predicate<Y> allow) {
+//
+//        map.compute(key, (k, v) -> {
+//            if (v == null)
+//                v = newEntry(k);
+//            Y exists = v.get();
+//            if (exists!=null && exists.equals(value)) {
+//                //if the value hasnt changed,
+//                // only set it if the test allows
+//                return v;
+//            }
+//            if (allow.test(value))
+//                v.set(value);
+//            else
+//                v.set(null);
+//
+//            return v;
+//        });
+//
+//    }
 
     /** follows semantics of thenSet() */
     public Versioning thenPut(X key, Y value) {
@@ -116,11 +138,14 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
         return context;
     }
 
-    public Versioned getOrCreateIfAbsent(X key) {
-        return map.computeIfAbsent(key, k ->
-            cache(k) ? new Versioned(context) :
-                new RemovingVersionedEntry(k)
-        );
+    public final Versioned getOrCreateIfAbsent(X key) {
+        return map.computeIfAbsent(key, this::newEntry);
+    }
+
+    @NotNull
+    public Versioned<Y> newEntry(X k) {
+        return cache(k) ? new Versioned(context) :
+            new RemovingVersionedEntry(k);
     }
 
     /** this implementation removes itself from the map when it is reverted to

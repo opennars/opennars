@@ -4,7 +4,7 @@ import com.google.common.base.Joiner;
 
 /**
  * Created by me on 12/11/15.
- */ /* <(&&, precon1, precon2, ...) =/> (&|, fork1, fork2, ... ) > */
+ */ /* <(&|, precon1, precon2, ...) =/> (&|, fork1, fork2, ... ) > */
 public final class RuleBranch {
 
     public final PreCondition[] precondition; //precondition sequence
@@ -19,11 +19,12 @@ public final class RuleBranch {
     @Override
     public String toString() {
         return
-                "(&/, " + Joiner.on(", ").join(precondition) +
-                        ") =/> " +
-                        '{' +
-                        ((children != null) ?
-                                Joiner.on(", ").join(children) : "End") +
-                        "}>";
+                "<(&|, " +
+                        Joiner.on(", ").join(precondition) +
+                ") =/> " +
+                "(&|," +
+                ((children != null) ?
+                        Joiner.on(", ").join(children) : "End") +
+                ")>";
     }
 }

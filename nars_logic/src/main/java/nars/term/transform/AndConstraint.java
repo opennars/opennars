@@ -2,6 +2,7 @@ package nars.term.transform;
 
 import nars.term.Term;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 public class AndConstraint implements MatchConstraint {
@@ -22,5 +23,10 @@ public class AndConstraint implements MatchConstraint {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "(&&," + Arrays.toString(subConst) + ")";
     }
 }

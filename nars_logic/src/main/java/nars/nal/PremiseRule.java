@@ -393,13 +393,9 @@ public class PremiseRule extends GenericCompound implements Level {
 
             switch (predicateNameStr) {
 
-                case "equal":
-                    next = Equal.make(arg1, arg2);
-                    break;
-
-                case "input_premises":
-                    next = new InputPremises(arg1, arg2);
-                    break;
+//                case "input_premises":
+//                    next = new InputPremises(arg1, arg2);
+//                    break;
 
                 //constraint form
                 case "neq":
@@ -417,18 +413,32 @@ public class PremiseRule extends GenericCompound implements Level {
                     break;
 
                 case "not_set":
-                    next = new NotSet(arg1);
-                    break;
+                    //next = new NotSet(arg1);
+                    //break;
+                    throw new RuntimeException("unimpl");
+
                 case "notSet":
                     constraints.put( arg1, new NotOpConstraint(Op.SetsBits) );
                     break;
 
                 case "not_conjunction":
-                    next = new NotConjunction(arg1);
+                    //next = new NotConjunction(arg1);
+                    //break;
+                    throw new RuntimeException("unimpl");
+
+                case "notConjunction":
+                    constraints.put(arg1, new NotOpConstraint(Op.ConjunctivesBits));
                     break;
+
                 case "not_implication_or_equivalence":
-                    next = new NotImplOrEquiv(arg1);
+                    //next = new NotImplOrEquiv(arg1);
+                    //break;
+                    throw new RuntimeException("unimpl");
+
+                case "notImplicationOrEquivalence":
+                    constraints.put(arg1, new NotOpConstraint(Op.ImplicationOrEquivalenceBits));
                     break;
+
                 case "no_common_subterm":
                     next = NoCommonSubterm.make(arg1, arg2);
                     break;

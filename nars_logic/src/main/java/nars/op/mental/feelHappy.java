@@ -17,7 +17,9 @@
 
 package nars.op.mental;
 
+import nars.$;
 import nars.task.Task;
+import nars.term.Term;
 
 import java.util.List;
 
@@ -26,6 +28,7 @@ import java.util.List;
  */
 public class feelHappy extends feel implements Mental {
 
+    public static final Term happiness = $.the(feelHappy.class.getSimpleName());
 
     /**
      * To get the current value of an internal sensor
@@ -35,6 +38,6 @@ public class feelHappy extends feel implements Mental {
      */
     @Override
     public List<Task> apply(Task operation) {
-        return feeling(nar.memory.emotion.happy(), nar.memory);
+        return feeling(nar.memory.emotion.happy(), nar.memory, happiness);
     }    
 }

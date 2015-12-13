@@ -7,9 +7,9 @@ import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 
 /**
- * resolve a java object expression (instance or static) to a term
+ * resolve a java class from String to its usage knowledge
  */
-public class obj extends TermFunction {
+public class jclass extends TermFunction {
 
     final Termizer termizer = new DefaultTermizer();
 

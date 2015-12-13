@@ -105,6 +105,8 @@ public enum Op implements Serializable {
     /** Image index ("imdex") symbol */
     public static final Atom Imdex = Atom.the("_");
 
+
+
     /**
      * symbol representation of this getOperator
      */
@@ -236,9 +238,8 @@ public enum Op implements Serializable {
     }
     public static final int or(Op... o) {
         int bits = 0;
-        for (Op n : o) {
+        for (Op n : o)
             bits |= n.bit();
-        }
         return bits;
     }
 
@@ -332,6 +333,8 @@ public enum Op implements Serializable {
                     EquivalencesBits,
                     ImplicationsBits
             );
+
+    public static final int ImplicationOrEquivalenceBits = or(Op.EquivalencesBits, Op.ImplicationsBits);
 
     public static final int ImageBits =
         Op.or(Op.IMAGE_EXT,Op.IMAGE_INT);

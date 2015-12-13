@@ -26,12 +26,12 @@ import static nars.nal.Compounds.flatten;
 
 public class GenericCompound<T extends Term> implements Compound<T> {
 
-    protected final TermVector<T> terms;
+    public final TermVector<T> terms;
+    public final Op op;
+    public final int relation;
 
     protected final transient int hash;
-    protected final Op op;
-    public final int relation;
-    private boolean normalized = false;
+    private transient boolean normalized = false;
 
     /** main compound construction entry-point */
     public static Term COMPOUND(Op op, Collection<Term> t) {
