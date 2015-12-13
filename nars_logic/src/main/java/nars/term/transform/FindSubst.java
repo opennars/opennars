@@ -1211,8 +1211,8 @@ public class FindSubst extends Versioning implements Subst {
 
 
     private void powerDivide(int factor) {
-        if (factor <= 0)
-            factor = 1; //HACK
+        /*if (factor <= 0)
+            factor = 1; //HACK*/
         powerDivisor = Math.max(1, powerDivisor * factor);
     }
 
@@ -1225,7 +1225,7 @@ public class FindSubst extends Versioning implements Subst {
     }
 
     private int powerAvailable() {
-        if (powerDivisor <= 0) powerDivisor = 1; //HACK
+        //if (powerDivisor <= 0) powerDivisor = 1; //HACK
         return power / powerDivisor;
     }
 

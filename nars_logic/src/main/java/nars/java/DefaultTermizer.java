@@ -1,5 +1,6 @@
 package nars.java;
 
+import com.gs.collections.api.bimap.MutableBiMap;
 import com.gs.collections.impl.bimap.mutable.HashBiMap;
 import nars.$;
 import nars.Global;
@@ -317,23 +318,34 @@ public class DefaultTermizer implements Termizer {
         if (o instanceof Term)
             return ((Term)o);
 
-        return instances.inverse().computeIfAbsent(o, O -> {
+        MutableBiMap<Object, Term> iii = instances.inverse();
+        Term oe = iii.get(o);
+        //computeifAbsent crashes because it can go recursive
+        if (oe == null) {
 
-            Term oterm = obj2term(O);
+            Term oterm = obj2term(o);
 
-            Term clas = classes.computeIfAbsent(O.getClass(), this::obj2term);
+            Term clas = classes.computeIfAbsent(o.getClass(), this::obj2term);
 
             Term finalClas = clas;
-            post[0] = () ->  onInstanceOfClass(O, oterm, finalClas);
+            post[0] = () ->  onInstanceOfClass(o, oterm, finalClas);
 
             //instances.put(oterm, o); //reverse
 
-            return oterm;
-        });
+            oe = oterm;
+            try {
+                iii.put(o, oterm);
+            }
+            catch (Exception e) { /* hack */ }
+
+        }
+
+        return oe;
     }
 
 
     protected void onInstanceChange(Term oterm, Term prevOterm) {
+
 
     }
 

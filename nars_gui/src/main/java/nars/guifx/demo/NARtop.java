@@ -1,16 +1,22 @@
 package nars.guifx.demo;
 
-import javafx.scene.control.ToggleButton;
+import javafx.scene.Cursor;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.guifx.NARfx;
+import nars.guifx.TaskPane;
+import nars.guifx.util.NSlider;
 import nars.nar.Default;
 import nars.task.Task;
 import nars.task.flow.SetTaskPerception;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,20 +63,53 @@ public class NARtop extends BorderPane {
            v.update();
         });
     }
-    public static class TaskButton extends ToggleButton {
+
+    //public static class TaskButton extends ToggleButton {
+    public static class TaskButton extends Label {
 
         private final Task task;
 
-        public TaskButton(Task t) {
+        public TaskButton(NAR nar, Task t) {
             super(t.toStringWithoutBudget(null));
             this.task = t;
+
+            getStyleClass().clear();
+
+
+            setCursor(Cursor.CROSSHAIR);
             setWrapText(true);
-            update();
-            setOnMouseClicked(c -> {
-                setSelected(false);
-                setFocused(false);
+
+            hoverProperty().addListener(h -> {
+
+               if (isHover()) {
+                   setTextFill(Color.WHITE);
+               } else {
+                   setTextFill(getColor());
+               }
 
             });
+
+
+            setOnMouseClicked(c -> {
+                //setSelected(false);
+                setFocused(false);
+
+                Popup p = new Popup();
+                {
+                    p.getContent().add(new TaskPane(nar, task));
+                    p.getContent().add(new NSlider("pri", 100, 25, 0.5f));
+                    Button b1 = new Button("+");
+                    p.getContent().add(b1);
+                }
+                p.setOpacity(0.75f);
+                p.setAutoHide(true);
+                p.setAutoFix(true);
+
+                p.show(getScene().getWindow(), c.getSceneX(), c.getSceneY());
+            });
+
+            runLater(this::update);
+
         }
 
         private void update() {
@@ -84,10 +123,7 @@ public class NARtop extends BorderPane {
 //            //setStyle("-fx-border-radius: 20;");
             setFont(NARfx.mono(priToFontSize));
 
-            Color c = hsb(
-                (task.getTerm().op().ordinal()/64f)*360.0,
-                    0.4, 0.7, 0.75f + pri * 0.25f
-            );
+            Color c = getColor();
 //            setBackground(new Background(
 //                    new BackgroundFill(
 //                        c,
@@ -96,6 +132,16 @@ public class NARtop extends BorderPane {
             setTextFill(c);
 
 
+
+        }
+
+        @NotNull
+        private Color getColor() {
+            float pri = task.getPriority();
+            return hsb(
+                (task.getTerm().op().ordinal()/64f)*360.0,
+                    0.4, 0.7, 0.75f + pri * 0.25f
+            );
         }
 
     }
@@ -106,7 +152,7 @@ public class NARtop extends BorderPane {
     protected void addInput(Task t) {
         
         taskButtons.computeIfAbsent(t, k -> {
-            TaskButton b = new TaskButton(k);
+            TaskButton b = new TaskButton(nar,k);
             buttons.getChildren().add(b);
             return b;
         });

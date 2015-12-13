@@ -6,8 +6,6 @@ import javafx.scene.input.MouseEvent;
 import nars.NAR;
 import nars.task.Task;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import static javafx.application.Platform.runLater;
 
 /**
@@ -27,6 +25,16 @@ public class TaskLabel extends AutoLabel<Task> {
         summary = new TaskSummaryIcon(obj, this);
         summary.width(iconWidth);
 
+        String selectedClass = "selected";
+        selected.addListener((c, p, v) -> {
+            if (v) {
+                getStyleClass().add(selectedClass);
+            } else {
+                getStyleClass().remove(selectedClass);
+            }
+        });
+
+
         setOnMouseClicked(onMouseClick);
 
         runLater(() -> changed(null, null, null));
@@ -34,11 +42,12 @@ public class TaskLabel extends AutoLabel<Task> {
     }
 
     private static final EventHandler<? super MouseEvent> onMouseClick = (e) -> {
-        nars.guifx.TaskLabel a = (nars.guifx.TaskLabel) e.getSource();
+        TaskLabel a = (TaskLabel) e.getSource();
         Task t = a.obj;
         NARfx.newWindow(a.nar, t);
     };
 
+    @Override
     public void update() {
 
         if (summary == null)
@@ -46,6 +55,7 @@ public class TaskLabel extends AutoLabel<Task> {
 
 
         summary.run();
+
 
         //double sc = 0.5 + 1.0 * pri;
         //setScaleX(sc);
@@ -131,36 +141,28 @@ public class TaskLabel extends AutoLabel<Task> {
             selected.set(!selected.get());
         }
     });*/
-        AtomicBoolean dragging = new AtomicBoolean(false);
-        EventHandler<MouseEvent> onDrag = e -> {
-            if (dragging.compareAndSet(false, true)) {
-                //System.out.println("dragged: " + task);
-                selected.set(!selected.get());
-            }
-        };
-        EventHandler<MouseEvent> clearDrag = e -> {
-            //System.out.println("exited: " + task);
-            dragging.set(false);
-        };
+//        AtomicBoolean dragging = new AtomicBoolean(false);
+//        EventHandler<MouseEvent> onDrag = e -> {
+//            if (dragging.compareAndSet(false, true)) {
+//                //System.out.println("dragged: " + task);
+//                selected.set(!selected.get());
+//            }
+//        };
+//        EventHandler<MouseEvent> clearDrag = e -> {
+//            //System.out.println("exited: " + task);
+//            dragging.set(false);
+//        };
+//
+//
+//        setOnDragOver((e) -> onDrag.handle(null));
+//        setOnDragDetected(e -> {
+//            clearDrag.handle(null);
+//            startFullDrag();
+//        });
+//        setOnMouseDragEntered(onDrag);
+//        setOnMouseReleased(clearDrag);
+//
 
-
-        setOnDragOver((e) -> onDrag.handle(null));
-        setOnDragDetected(e -> {
-            clearDrag.handle(null);
-            startFullDrag();
-        });
-        setOnMouseDragEntered(onDrag);
-        setOnMouseReleased(clearDrag);
-
-
-        String selectedClass = "selected";
-        selected.addListener((c, p, v) -> {
-            if (v) {
-                getStyleClass().add(selectedClass);
-            } else {
-                getStyleClass().remove(selectedClass);
-            }
-        });
 
 
     }

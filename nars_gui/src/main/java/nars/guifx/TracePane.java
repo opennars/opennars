@@ -6,7 +6,8 @@ import javafx.scene.control.Label;
 import nars.NAR;
 import nars.Premise;
 import nars.concept.Concept;
-import nars.task.Task;
+import nars.guifx.demo.NARtop;
+import nars.process.TaskProcess;
 import nars.util.data.list.CircularArrayList;
 import nars.util.event.ArraySharingList;
 import nars.util.event.On;
@@ -162,8 +163,13 @@ public class TracePane extends LogPane {
             return null;
             //
         } else if ("eventInput".equals(channel)) {
-            Task t = (Task) signal;
-            return t.getPriority() >= volume.get() ? new TaskLabel(t, nar) : null;
+            return null;
+            //
+        } else if ("eventTaskProcess".equals(channel)) {
+            TaskProcess t = (TaskProcess) signal;
+            return t.getTask().getPriority() >= volume.get()
+                    //? new TaskLabel(t, nar) : null;
+                    ? new NARtop.TaskButton(nar, t.getTask()) : null;
         } else if (signal instanceof Premise) {
             //return new PremisePane((Premise)signal);
             return null;

@@ -11,6 +11,7 @@ import nars.concept.AtomConcept;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.concept.util.ConceptActivator;
+import nars.java.obj;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -263,6 +264,7 @@ public abstract class AbstractNAR extends NAR {
 
             //Meta
             new reflect(),
+            new obj(),
 
             // feeling operations
             new feelHappy(),
