@@ -235,6 +235,7 @@ public class SequenceParallelTest {
         assertEquals("only non-interval terms are allowed as subterms", 2, s.size());
 
         String ss = s.toString();
+        assertEquals(ss, s.toString());
 
 
         assertEquals(s.size() + 1, s.intervals().length);

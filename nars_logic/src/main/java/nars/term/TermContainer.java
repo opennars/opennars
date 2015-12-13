@@ -187,4 +187,10 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         return COMPOUND(resultOp, i);
     }
 
+    static Term union(Op op, Compound a, Compound b) {
+        MutableSet<Term> s = a.toSet();
+        s.addAll(b.toSet());
+        return COMPOUND(op, s);
+    }
+
 }

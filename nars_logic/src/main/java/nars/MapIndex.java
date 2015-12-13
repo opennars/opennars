@@ -46,15 +46,16 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
 
     protected <T extends Term> T compile(T t) {
 
-        T compiled = t instanceof Compound ? (T) compileCompound((Compound) t) : t;
         if (t instanceof TermMetadata) {
 
             //the term instance will remain unique
             // as determined by TermData's index method
             // however we can potentially index its subterms
-        } else {
-            data.put(t, compiled);
+            return t;
         }
+
+        T compiled = t instanceof Compound ? (T) compileCompound((Compound) t) : t;
+        data.put(t, compiled);
         return compiled;
     }
 

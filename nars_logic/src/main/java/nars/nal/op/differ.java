@@ -4,13 +4,10 @@ import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.compound.Compound;
 
-public class differ extends ImmediateTermTransform {
-    @Override public Term function(Compound x) {
-        if (x.size()!=2)
-            throw new RuntimeException("expects 2 args");
+public class differ extends BinaryTermOperator/*implements BinaryOperator<Term>*/ {
 
-        Term a = x.term(0);
-        Term b = x.term(1);
+    @Override
+    public Term apply(Term a, Term b) {
         return TermContainer.difference(
             a.op(), (Compound) a, (Compound) b
         );

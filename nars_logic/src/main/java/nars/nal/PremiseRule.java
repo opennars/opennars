@@ -18,6 +18,7 @@ import nars.nal.meta.pre.*;
 import nars.nal.op.ImmediateTermTransform;
 import nars.nal.op.differ;
 import nars.nal.op.intersect;
+import nars.nal.op.union;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.Terms;
@@ -43,7 +44,8 @@ public class PremiseRule extends GenericCompound implements Level {
 
     public static final Class<? extends ImmediateTermTransform>[] Operators = new Class[] {
         intersect.class,
-        differ.class
+        differ.class,
+        union.class
     };
 
     public boolean immediate_eternalize = false;

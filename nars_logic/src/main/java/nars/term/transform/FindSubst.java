@@ -795,19 +795,24 @@ public class FindSubst extends Versioning implements Subst {
             if (X.op().isImage()) { //PRECOMPUTABLE
 
                 //if the ellipsis is normal, then interpret the relationIndex as it is
+                if (Ellipsis.countNumNonEllipsis(X) > 0) {
 
-                int xEllipseIndex = X.indexOf(e);
-                int xRelationIndex = ((GenericCompound) X).relation();
-                int yRelationIndex = ((GenericCompound) Y).relation();
+                    int xEllipseIndex = X.indexOf(e);
+                    int xRelationIndex = ((GenericCompound) X).relation();
+                    int yRelationIndex = ((GenericCompound) Y).relation();
 
-                if (xEllipseIndex >= xRelationIndex) {
-                    //compare relation from beginning as in non-ellipsis case
-                    if (xRelationIndex != yRelationIndex)
-                        return false;
+                    if (xEllipseIndex >= xRelationIndex) {
+                        //compare relation from beginning as in non-ellipsis case
+                        if (xRelationIndex != yRelationIndex)
+                            return false;
+                    } else {
+                        //compare relation from end
+                        if ((xsize - xRelationIndex) != (ysize - yRelationIndex))
+                            return false;
+                    }
                 } else {
-                    //compare relation from end
-                    if ((xsize - xRelationIndex) != (ysize - yRelationIndex))
-                        return false;
+                    //ignore the location of imdex in the pattern and match everything
+
                 }
 
             }

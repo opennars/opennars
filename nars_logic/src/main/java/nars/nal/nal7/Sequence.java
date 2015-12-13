@@ -40,7 +40,7 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
      *
      */
     private Sequence(T[] subterms, int[] intervals) {
-        super(Op.SEQUENCE, subterms, 0);
+        super(Op.SEQUENCE, subterms, -1);
 
         if (intervals == null) {
             //TODO leave as null, avoiding allocating this array if all zeros
@@ -250,14 +250,14 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
         }
 
 
-        //if intervals are present:
-        Term[] b = new Term[a.length - intervalsPresent];
-
-        int blen = b.length;
+        int blen = a.length - intervalsPresent;
         if (blen == 0)
             throw new RuntimeException("empty sequence containing only intervals");
 
-        int[] i = new int[b.length + 1];
+        //if intervals are present:
+        Term[] b = new Term[blen];
+
+        int[] i = new int[blen + 1];
 
         int p = 0;
         for (Term x : a) {
