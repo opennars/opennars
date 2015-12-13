@@ -203,10 +203,38 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         if (i.isEmpty()) return null;
         return COMPOUND(resultOp, i);
     }
-    static Term difference(Op resultOp, Compound a, Compound b) {
-        Term[] i = difference(a, b);
-        if (i==null) return null;
-        return COMPOUND(resultOp, i);
+
+    static Term difference(Compound a, Compound b) {
+
+        if (a.size() == 1) {
+
+            if (b.containsTerm(a.term(0))) {
+                return null;
+            } else {
+                return a;
+            }
+
+        } else {
+            //MutableSet dd = Sets.difference(a.toSet(), b.toSet());
+            MutableSet dd = a.toSet();
+            boolean changed = false;
+            for (Term bb : b.terms()) {
+                changed |= dd.remove(bb);
+            }
+
+            if (!changed) {
+                return a;
+            }
+            else if (dd.isEmpty()) {
+                return null;
+            }
+            else {
+                Term[] i = Terms.toArray(dd);
+                if (i == null) return null;
+                return COMPOUND(a.op(), i);
+            }
+        }
+
     }
 
     static Term union(Op op, Compound a, Compound b) {

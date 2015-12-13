@@ -1,6 +1,8 @@
 package nars.nal;
 
 import com.google.common.collect.Sets;
+import com.gs.collections.api.tuple.Twin;
+import com.gs.collections.impl.tuple.Tuples;
 import nars.$;
 import nars.Global;
 import nars.Op;
@@ -33,6 +35,7 @@ import nars.term.variable.Variable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 /**
@@ -355,10 +358,10 @@ public class PremiseRule extends GenericCompound implements Level {
         //(which will not reference any particular atoms)
 
 
+        Set<Twin<Variable>> notEquals = Global.newHashSet(0);
+
         pattern = new TaskBeliefPair(taskTermPattern, beliefTermPattern);
 
-        MatchTaskBelief matcher = new MatchTaskBelief(pattern);
-        preConditionsList.add(matcher);
 
 
         //additional modifiers: either preConditionsList or beforeConcs, classify them here
@@ -399,6 +402,22 @@ public class PremiseRule extends GenericCompound implements Level {
                     next = new InputPremises(arg1, arg2);
                     break;
 
+                //constraint form
+                case "neq":
+
+                    if (arg1.compareTo(arg2) > 0) { //swap to cananical lexicographic order
+                        Term t = arg2;  arg2 = arg1; arg1 = t;
+                    }
+
+                    notEquals.add(Tuples.twin(
+                        (Variable)arg1, (Variable)arg2)
+                    );
+
+                    //next = NotEqual.make(arg1, arg2);
+
+                    break;
+
+                //postcondition test
                 case "not_equal":
                     next = NotEqual.make(arg1, arg2);
                     break;
@@ -511,6 +530,11 @@ public class PremiseRule extends GenericCompound implements Level {
                 preConditionsList.add(next);
         }
 
+        if (notEquals.isEmpty()) notEquals = null;
+
+        MatchTaskBelief matcher = new MatchTaskBelief(pattern, notEquals);
+        preConditionsList.add(matcher);
+
         //store to arrays
         prePreconditions = prePreConditionsList.toArray(new PreCondition[prePreConditionsList.size()]);
         postPreconditions = preConditionsList.toArray(new PreCondition[preConditionsList.size()]);
@@ -550,6 +574,7 @@ public class PremiseRule extends GenericCompound implements Level {
                             Terms.maxLevel(pattern.term(0)),
                             Terms.maxLevel(pattern.term(1)
                             )));
+
 
         ensureValid();
 

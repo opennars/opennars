@@ -24,8 +24,9 @@ public final class TruthEval extends PreCondition {
         this.puncOverride = puncOverride;
 
         belief = BeliefFunction.get(beliefTerm);
-        if (belief == null)
-            throw new RuntimeException("unknown belief function " + beliefTerm);
+//        if (belief == null &&
+//                !((puncOverride==Symbols.GOAL) || (puncOverride==Symbols.QUEST) || (puncOverride==Symbols.QUESTION)))
+//            throw new RuntimeException("unknown belief function " + beliefTerm);
 
         desire = DesireFunction.get(desireTerm);
 

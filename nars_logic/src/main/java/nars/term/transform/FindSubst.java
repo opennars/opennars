@@ -1,6 +1,10 @@
 package nars.term.transform;
 
+import com.google.common.base.Joiner;
+import com.gs.collections.api.map.ImmutableMap;
 import com.gs.collections.api.set.MutableSet;
+import com.gs.collections.api.tuple.Twin;
+import com.gs.collections.impl.factory.Maps;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -22,6 +26,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /* recurses a pair of compound term tree's subterms
@@ -51,6 +56,9 @@ public class FindSubst extends Versioning implements Subst {
     }
 
 
+
+    /** variables whose contents are disallowed to equal each other */
+    public ImmutableMap<Variable,Variable> exclusions = null;
 
     //public abstract Term resolve(Term t, Substitution s);
 
@@ -107,7 +115,9 @@ public class FindSubst extends Versioning implements Subst {
     @Override
     public void clear() {
         revert(0);
+        exclusions = null;
     }
+
 
     public Term getXY(Object t) {
         return xy.getXY(t);
@@ -402,20 +412,47 @@ public class FindSubst extends Versioning implements Subst {
      */
     public static class MatchTerm extends PatternOp {
         public final Term x;
+        private final String id;
+        private final ImmutableMap<Variable, Variable> exclusions;
 
-        public MatchTerm(Term c) {
+        public MatchTerm(Term c, Set<Twin<Variable>> notEquals) {
             x = c;
+            if (notEquals == null) {
+                this.id = x.toString();
+                this.exclusions = null;
+            } else {
+                Map<Variable, Variable> e = Global.newHashMap(notEquals.size() * 2);
+                for (Twin<Variable> t : notEquals) {
+                    e.put(t.getOne(), t.getTwo());
+                    e.put(t.getTwo(), t.getOne());
+                }
+                this.exclusions = Maps.immutable.ofAll(e);
+                this.id = new StringBuilder(x.toString() + "∧neq(").append(
+                    Joiner.on(",").join(notEquals.stream().map(v -> {
+                        return ( v.getOne() + "==" + v.getTwo() );
+                    }).collect(Collectors.toList()))
+                ).append(")").toString();
+            }
         }
 
         @Override
         public boolean run(FindSubst ff) {
+            ff.setExclusions(exclusions);
             return ff.match(x, ff.term.get());
         }
 
         @Override
         public String toString() {
-            return x.toString();
+            return id;
         }
+    }
+
+    /** null to disable exclusions */
+    public void setExclusions(ImmutableMap<Variable, Variable> exclusions) {
+        if (exclusions == null || exclusions.isEmpty())
+            exclusions = null;
+        else
+            this.exclusions = exclusions;
     }
 
 //    /** invokes a dynamic FindSubst match via the matchVarX entry method;
@@ -659,7 +696,7 @@ public class FindSubst extends Versioning implements Subst {
         } else {
             putYX((Variable) y, x);
             if (y instanceof CommonVariable) {
-                putXY((Variable) y, x);
+                return putXY((Variable) y, x);
             }
             return true;
         }
@@ -687,13 +724,11 @@ public class FindSubst extends Versioning implements Subst {
         Op xOp = xVar.op();
 
         if (xOp == type) {
-            putVarX(xVar, y);
-            return true;
+            return putVarX(xVar, y);
         } else {
             Op yOp = y.op();
             if (yOp == xOp) {
-                putCommon(xVar, (Variable) y);
-                return true;
+                return putCommon(xVar, (Variable) y);
             }
         }
 
@@ -760,9 +795,8 @@ public class FindSubst extends Versioning implements Subst {
                     //of the other condition of this if { })
                     if (matchEllipsedLinear(X, e, Y)) {
                         ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
-                        putXY(e, new ImagePutMatch(
+                        return putXY(e, new ImagePutMatch(
                                 raw.term, et.to, Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
-                        return true;
                     }
                 } else {
                     Term n = apply(et.from, false);
@@ -783,9 +817,8 @@ public class FindSubst extends Versioning implements Subst {
 
                     if (matchEllipsedLinear(X, e, Y)) {
                         ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
-                        putXY(e, new ImageTakeMatch(
+                        return putXY(e, new ImageTakeMatch(
                             raw.term, imageIndex)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
-                        return true;
                     }
                 }
                 return false;
@@ -878,8 +911,7 @@ public class FindSubst extends Versioning implements Subst {
 //    }
 
     public final boolean matchEllipsisAll(Ellipsis Xellipsis, Collection<Term> Y) {
-        putXY(Xellipsis, new CollectionEllipsisMatch(Y));
-        return true;
+        return putXY(Xellipsis, new CollectionEllipsisMatch(Y));
     }
 
 
@@ -1119,10 +1151,12 @@ public class FindSubst extends Versioning implements Subst {
 
                         //TODO special handling to extract intermvals from Sequence terms here
 
-                        putXY(Xellipsis,
+                        if (!putXY(Xellipsis,
                                 new ArrayEllipsisMatch(
                                         Y, j, j + available
-                                ));
+                                ))) {
+                            return false;
+                        }
                     } else {
                         //PREFIX the ellipsis occurred at the start and there are additional terms following it
                         //TODO
@@ -1157,19 +1191,24 @@ public class FindSubst extends Versioning implements Subst {
     /**
      * elimination
      */
-    private final void putVarX(Variable x, Term y) {
-        putXY(x, y);
-        if (x instanceof CommonVariable) {
-            putYX(x, y);
+    private final boolean putVarX(Variable x, Term y) {
+        if (putXY(x, y)) {
+            if (x instanceof CommonVariable) {
+                putYX(x, y);
+            }
+            return true;
         }
+        return false;
     }
 
 
-    private void putCommon(Variable x, Variable y) {
+    private boolean putCommon(Variable x, Variable y) {
         Variable commonVar = CommonVariable.make(x, y);
-        putXY(x, commonVar);
-        putYX(y, commonVar);
-        //return true;
+        if (putXY(x, commonVar)) {
+            putYX(y, commonVar);
+            return true;
+        }
+        return false;
     }
 
     public boolean matchLinear(TermContainer X, TermContainer Y) {
@@ -1229,8 +1268,29 @@ public class FindSubst extends Versioning implements Subst {
         return power / powerDivisor;
     }
 
-    public final void putXY(Term x /* usually a Variable */, Term y) {
+    /** returns true if the assignment was allowed, false otherwise */
+    public final boolean putXY(Term x /* usually a Variable */, Term y) {
+
+        boolean valid;
+        if (exclusions == null || xy.isEmpty()) {
+            valid = true; //simplest case
+        } else {
+            Term canNotEqualValueOf = exclusions.get(x);
+            if (canNotEqualValueOf == null) {
+                valid = true;
+            } else {
+                Term canNotEqual = xy.get(canNotEqualValueOf);
+                if (canNotEqual!=null)
+                    valid = !y.equals(canNotEqual);
+                else
+                    valid = true;
+            }
+        }
+
+        if (!valid) return false;
+
         xy.put(x, y);
+        return true;
     }
 
     public final void putYX(Term y /* usually a Variable */, Term x) {

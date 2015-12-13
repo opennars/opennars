@@ -9,7 +9,7 @@ public class differ extends BinaryTermOperator/*implements BinaryOperator<Term>*
     @Override
     public Term apply(Term a, Term b) {
         return TermContainer.difference(
-            a.op(), (Compound) a, (Compound) b
+            (Compound) a, (Compound) b
         );
     }
 }

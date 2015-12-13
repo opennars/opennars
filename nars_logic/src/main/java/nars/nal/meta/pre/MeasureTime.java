@@ -35,8 +35,6 @@ public class MeasureTime extends AbstractMeasureTime {
             return false;
         }
 
-        m.putXY(target, $.cycles(time));
-
-        return true;
+        return m.putXY(target, $.cycles(time));
     }
 }

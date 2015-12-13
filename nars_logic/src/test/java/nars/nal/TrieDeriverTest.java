@@ -1,14 +1,14 @@
 package nars.nal;
 
-import nars.Op;
 import nars.nar.Default;
 import nars.term.TermContainer;
+import nars.term.compound.Compound;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static nars.$.$;
-import static nars.term.compound.GenericCompound.COMPOUND;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by me on 12/12/15.
@@ -57,14 +57,33 @@ public class TrieDeriverTest {
         tester.mustBelieve(cycles, "<planetX --> {Mars,Venus}>", 0.81f ,0.81f); //.en("PlanetX is either Mars or Venus.");*/
         assertEquals(
             $("{Mars,Venus}"),
-            COMPOUND(Op.SET_EXT,
-                TermContainer.difference(
-                    $("{Mars,Pluto,Venus}"),
-                    $("{Pluto,Saturn}")
-                )
+            TermContainer.difference(
+                $("{Mars,Pluto,Venus}"),
+                $("{Pluto,Saturn}")
             )
         );
 
+
+
+        //test identity does not create new instance, single term
+        Compound b = $("{Mars}");
+        assertTrue(
+                b ==
+                TermContainer.difference(
+                        b,
+                        $("{Pluto}")
+                )
+        );
+
+        //test identity does not create new instance, multiterm
+        Compound a = $("{Mars,Venus}");
+        assertTrue(
+                a ==
+                        TermContainer.difference(
+                                a,
+                                $("{Pluto,PlanetX}")
+                        )
+        );
     }
 
 }

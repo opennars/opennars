@@ -97,10 +97,10 @@
 //                (A --> C)
 //If A is a special case of B, and B is a special case of C, so is A a special case of C (strong), the other variations are hypotheses (weak)
 
-    (A --> B), (B --> C), not_equal(A,C) |- (A --> C), (Truth:Deduction, Desire:Strong, Derive:AllowBackward)
-    (A --> B), (A --> C), not_equal(B,C) |- (C --> B), (Truth:Abduction, Desire:Weak, Derive:AllowBackward)
-    (A --> C), (B --> C), not_equal(A,B) |- (B --> A), (Truth:Induction, Desire:Weak, Derive:AllowBackward)
-    (A --> B), (B --> C), not_equal(C,A) |- (C --> A), (Truth:Exemplification, Desire:Weak, Derive:AllowBackward)
+    (A --> B), (B --> C), neq(A,C) |- (A --> C), (Truth:Deduction, Desire:Strong, Derive:AllowBackward)
+    (A --> B), (A --> C), neq(B,C) |- (C --> B), (Truth:Abduction, Desire:Weak, Derive:AllowBackward)
+    (A --> C), (B --> C), neq(A,B) |- (B --> A), (Truth:Induction, Desire:Weak, Derive:AllowBackward)
+    (A --> B), (B --> C), neq(C,A) |- (C --> A), (Truth:Exemplification, Desire:Weak, Derive:AllowBackward)
 
 //// similarity from inheritance ////////////////////////////////////////////////////////////////////////////////////
 //If S is a special case of P, and P is a special case of S, then S and P are similar

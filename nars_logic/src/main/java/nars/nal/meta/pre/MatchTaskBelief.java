@@ -1,13 +1,16 @@
 package nars.nal.meta.pre;
 
+import com.gs.collections.api.tuple.Twin;
 import nars.Op;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.TermPattern;
+import nars.term.variable.Variable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 
 @Deprecated public class MatchTaskBelief extends PreCondition {
@@ -18,10 +21,10 @@ import java.util.List;
 
     final String id;
 
-    public MatchTaskBelief(TaskBeliefPair pattern) {
+    public MatchTaskBelief(TaskBeliefPair pattern, Set<Twin<Variable>> notEqual) {
 
         //this.pattern = pattern;
-        compiled = new TermPattern(Op.VAR_PATTERN, pattern);
+        compiled = new TermPattern(Op.VAR_PATTERN, pattern, notEqual);
 
         //Term beliefPattern = pattern.term(1);
 
