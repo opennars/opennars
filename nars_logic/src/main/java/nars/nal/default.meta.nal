@@ -115,23 +115,23 @@
 //If P and S are a special case of M, then they might be similar (weak),
 //also if P and S are a general case of M
 
-    (P --> M), (S --> M), not_equal(S,P) |- (S <-> P), (Truth:Comparison, Desire:Weak, Derive:AllowBackward)
-    (M --> P), (M --> S), not_equal(S,P) |- (S <-> P), (Truth:Comparison, Desire:Weak, Derive:AllowBackward)
+    (P --> M), (S --> M), neq(S,P) |- (S <-> P), (Truth:Comparison, Desire:Weak, Derive:AllowBackward)
+    (M --> P), (M --> S), neq(S,P) |- (S <-> P), (Truth:Comparison, Desire:Weak, Derive:AllowBackward)
 
 //If M is a special case of P and S and M are similar, then S is also a special case of P (strong)
 
-    (M --> P), (S <-> M), not_equal(S,P) |- (S --> P), (Truth:Analogy, Desire:Strong, Derive:AllowBackward)
-    (P --> M), (S <-> M), not_equal(S,P) |- (P --> S), (Truth:Analogy, Desire:Strong, Derive:AllowBackward)
-    (M <-> P), (S <-> M), not_equal(S,P) |- (S <-> P), (Truth:Resemblance, Desire:Strong, Derive:AllowBackward)
+    (M --> P), (S <-> M), neq(S,P) |- (S --> P), (Truth:Analogy, Desire:Strong, Derive:AllowBackward)
+    (P --> M), (S <-> M), neq(S,P) |- (P --> S), (Truth:Analogy, Desire:Strong, Derive:AllowBackward)
+    (M <-> P), (S <-> M), neq(S,P) |- (S <-> P), (Truth:Resemblance, Desire:Strong, Derive:AllowBackward)
 
 //// inheritance-based composition ////////////////////////////////////////////////////////////////////////////////////
 //If P and S are in the intension/extension of M, then union/difference and intersection can be built:
 
-    (P --> M), (S --> M), not_set(S), not_set(P), not_equal(S,P), no_common_subterm(S,P) |- ((S | P) --> M), (Truth:Intersection),
+    (P --> M), (S --> M), notSet(S), notSet(P), neq(S,P), no_common_subterm(S,P) |- ((S | P) --> M), (Truth:Intersection),
                                                                                             ((S & P) --> M), (Truth:Union),
                                                                                             ((P ~ S) --> M), (Truth:Difference)
 
-    (M --> P), (M --> S), not_set(S), not_set(P), not_equal(S,P), no_common_subterm(S,P) |- (M --> (P & S)), (Truth:Intersection),
+    (M --> P), (M --> S), notSet(S), notSet(P), neq(S,P), no_common_subterm(S,P) |- (M --> (P & S)), (Truth:Intersection),
                                                                                             (M --> (P | S)), (Truth:Union),
                                                                                             (M --> (P - S)), (Truth:Difference)
 
@@ -205,106 +205,106 @@
 //                (A ==> C)
 //If after S M happens, and after M P happens, so P happens after S
 
-    (M ==> P), (S ==> M), not_equal(S,P) |- (S ==> P), (Truth:Deduction, Order:ForAllSame, Derive:AllowBackward)
+    (M ==> P), (S ==> M), neq(S,P) |- (S ==> P), (Truth:Deduction, Order:ForAllSame, Derive:AllowBackward)
 
 //"Please note that the temporal order in the conclusion of a weak rule is
 //not necessarily the same as the order in the premises, given the hypothetical
 //nature of such a rule."
 
-    (P ==> M), (S ==> M), not_equal(S,P) |- (S ==> P), (Truth:Induction, Derive:AllowBackward)
-    (P =|> M), (S =|> M), not_equal(S,P) |- (S =|> P), (Truth:Induction, Derive:AllowBackward),
+    (P ==> M), (S ==> M), neq(S,P) |- (S ==> P), (Truth:Induction, Derive:AllowBackward)
+    (P =|> M), (S =|> M), neq(S,P) |- (S =|> P), (Truth:Induction, Derive:AllowBackward),
                                             (S =/> P), (Truth:Induction, Derive:AllowBackward),
                                             (S =\> P), (Truth:Induction, Derive:AllowBackward)
-    (P =/> M), (S =/> M), not_equal(S,P) |- (S =|> P), (Truth:Induction, Derive:AllowBackward),
+    (P =/> M), (S =/> M), neq(S,P) |- (S =|> P), (Truth:Induction, Derive:AllowBackward),
                                             (S =/> P), (Truth:Induction, Derive:AllowBackward),
                                             (S =\> P), (Truth:Induction, Derive:AllowBackward)
-    (P =\> M), (S =\> M), not_equal(S,P) |- (S =|> P), (Truth:Induction, Derive:AllowBackward),
+    (P =\> M), (S =\> M), neq(S,P) |- (S =|> P), (Truth:Induction, Derive:AllowBackward),
                                             (S =/> P), (Truth:Induction, Derive:AllowBackward),
                                             (S =\> P), (Truth:Induction, Derive:AllowBackward)
 
-    (M ==> P), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Abduction, Derive:AllowBackward)
-    (M =/> P), (M =/> S), not_equal(S,P) |- (S =|> P), (Truth:Abduction, Derive:AllowBackward),
+    (M ==> P), (M ==> S), neq(S,P) |- (S ==> P), (Truth:Abduction, Derive:AllowBackward)
+    (M =/> P), (M =/> S), neq(S,P) |- (S =|> P), (Truth:Abduction, Derive:AllowBackward),
                                             (S =/> P), (Truth:Abduction, Derive:AllowBackward),
                                             (S =\> P), (Truth:Abduction, Derive:AllowBackward)
-    (M =|> P), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Abduction, Derive:AllowBackward),
+    (M =|> P), (M =|> S), neq(S,P) |- (S =|> P), (Truth:Abduction, Derive:AllowBackward),
                                             (S =/> P), (Truth:Abduction, Derive:AllowBackward),
                                             (S =\> P), (Truth:Abduction, Derive:AllowBackward)
-    (M =\> P), (M =\> S), not_equal(S,P) |- (S =|> P), (Truth:Abduction, Derive:AllowBackward),
+    (M =\> P), (M =\> S), neq(S,P) |- (S =|> P), (Truth:Abduction, Derive:AllowBackward),
                                             (S =/> P), (Truth:Abduction, Derive:AllowBackward),
                                             (S =\> P), (Truth:Abduction, Derive:AllowBackward)
 
-    (P ==> M), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Exemplification, Derive:AllowBackward)
-    (P =/> M), (M =/> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification, Derive:AllowBackward)
-    (P =\> M), (M =\> S), not_equal(S,P) |- (S =/> P), (Truth:Exemplification, Derive:AllowBackward)
-    (P =|> M), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Exemplification, Derive:AllowBackward)
+    (P ==> M), (M ==> S), neq(S,P) |- (S ==> P), (Truth:Exemplification, Derive:AllowBackward)
+    (P =/> M), (M =/> S), neq(S,P) |- (S =\> P), (Truth:Exemplification, Derive:AllowBackward)
+    (P =\> M), (M =\> S), neq(S,P) |- (S =/> P), (Truth:Exemplification, Derive:AllowBackward)
+    (P =|> M), (M =|> S), neq(S,P) |- (S =|> P), (Truth:Exemplification, Derive:AllowBackward)
 
 //// implication to equivalence ////////////////////////////////////////////////////////////////////////////////////
 //If when S happens, P happens, and before P happens, S has happened, then they are truth-related equivalent
 
-    (S ==> P), (P ==> S), not_equal(S,P) |- (S <=> P), (Truth:Intersection, Derive:AllowBackward)
-    (S =|> P), (P =|> S), not_equal(S,P) |- (S <|> P), (Truth:Intersection, Derive:AllowBackward)
-    (S =/> P), (P =\> S), not_equal(S,P) |- (S </> P), (Truth:Intersection, Derive:AllowBackward)
-    (S =\> P), (P =/> S), not_equal(S,P) |- (P </> S), (Truth:Intersection, Derive:AllowBackward)
+    (S ==> P), (P ==> S), neq(S,P) |- (S <=> P), (Truth:Intersection, Derive:AllowBackward)
+    (S =|> P), (P =|> S), neq(S,P) |- (S <|> P), (Truth:Intersection, Derive:AllowBackward)
+    (S =/> P), (P =\> S), neq(S,P) |- (S </> P), (Truth:Intersection, Derive:AllowBackward)
+    (S =\> P), (P =/> S), neq(S,P) |- (P </> S), (Truth:Intersection, Derive:AllowBackward)
 
 //// equivalence-based syllogism ////////////////////////////////////////////////////////////////////////////////////
 //Same as for inheritance again
 
-    (P ==> M), (S ==> M), not_equal(S,P) |- (S <=> P), (Truth:Comparison, Derive:AllowBackward)
-    (P =/> M), (S =/> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward),
+    (P ==> M), (S ==> M), neq(S,P) |- (S <=> P), (Truth:Comparison, Derive:AllowBackward)
+    (P =/> M), (S =/> M), neq(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward),
                                             (S </> P), (Truth:Comparison, Derive:AllowBackward),
                                             (P </> S), (Truth:Comparison, Derive:AllowBackward)
-    (P =|> M), (S =|> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward)
-    (P =\> M), (S =\> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward),
+    (P =|> M), (S =|> M), neq(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward)
+    (P =\> M), (S =\> M), neq(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward),
                                             (S </> P), (Truth:Comparison, Derive:AllowBackward),
                                             (P </> S), (Truth:Comparison, Derive:AllowBackward)
 
-    (M ==> P), (M ==> S), not_equal(S,P) |- (S <=> P), (Truth:Comparison, Derive:AllowBackward)
-    (M =/> P), (M =/> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward),
+    (M ==> P), (M ==> S), neq(S,P) |- (S <=> P), (Truth:Comparison, Derive:AllowBackward)
+    (M =/> P), (M =/> S), neq(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward),
                                             (S </> P), (Truth:Comparison, Derive:AllowBackward),
                                             (P </> S), (Truth:Comparison, Derive:AllowBackward)
-    (M =|> P), (M =|> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward)
+    (M =|> P), (M =|> S), neq(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward)
 
 //Same as for inheritance again
 
-    (M ==> P), (S <=> M), not_equal(S,P) |- (S ==> P), (Truth:Analogy, Derive:AllowBackward)
-    (M =/> P), (S </> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
-    (M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
-    (M =|> P), (S <|> M), not_equal(S,P) |- (S =|> P), (Truth:Analogy, Derive:AllowBackward)
-    (M =\> P), (M </> S), not_equal(S,P) |- (S =\> P), (Truth:Analogy, Derive:AllowBackward)
-    (M =\> P), (S <|> M), not_equal(S,P) |- (S =\> P), (Truth:Analogy, Derive:AllowBackward)
+    (M ==> P), (S <=> M), neq(S,P) |- (S ==> P), (Truth:Analogy, Derive:AllowBackward)
+    (M =/> P), (S </> M), neq(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
+    (M =/> P), (S <|> M), neq(S,P) |- (S =/> P), (Truth:Analogy, Derive:AllowBackward)
+    (M =|> P), (S <|> M), neq(S,P) |- (S =|> P), (Truth:Analogy, Derive:AllowBackward)
+    (M =\> P), (M </> S), neq(S,P) |- (S =\> P), (Truth:Analogy, Derive:AllowBackward)
+    (M =\> P), (S <|> M), neq(S,P) |- (S =\> P), (Truth:Analogy, Derive:AllowBackward)
 
-    (P ==> M), (S <=> M), not_equal(S,P) |- (P ==> S), (Truth:Analogy, Derive:AllowBackward)
-    (P =/> M), (S <|> M), not_equal(S,P) |- (P =/> S), (Truth:Analogy, Derive:AllowBackward)
-    (P =|> M), (S <|> M), not_equal(S,P) |- (P =|> S), (Truth:Analogy, Derive:AllowBackward)
-    (P =\> M), (S </> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy, Derive:AllowBackward)
-    (P =\> M), (S <|> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy, Derive:AllowBackward)
+    (P ==> M), (S <=> M), neq(S,P) |- (P ==> S), (Truth:Analogy, Derive:AllowBackward)
+    (P =/> M), (S <|> M), neq(S,P) |- (P =/> S), (Truth:Analogy, Derive:AllowBackward)
+    (P =|> M), (S <|> M), neq(S,P) |- (P =|> S), (Truth:Analogy, Derive:AllowBackward)
+    (P =\> M), (S </> M), neq(S,P) |- (P =\> S), (Truth:Analogy, Derive:AllowBackward)
+    (P =\> M), (S <|> M), neq(S,P) |- (P =\> S), (Truth:Analogy, Derive:AllowBackward)
 
-    (M <=> P), (S <=> M), not_equal(S,P) |- (S <=> P), (Truth:Resemblance, Order:ForAllSame, Derive:AllowBackward)
-    (M </> P), (S <|> M), not_equal(S,P) |- (S </> P), (Truth:Resemblance, Derive:AllowBackward)
-    (M <|> P), (S </> M), not_equal(S,P) |- (S </> P), (Truth:Resemblance, Derive:AllowBackward)
+    (M <=> P), (S <=> M), neq(S,P) |- (S <=> P), (Truth:Resemblance, Order:ForAllSame, Derive:AllowBackward)
+    (M </> P), (S <|> M), neq(S,P) |- (S </> P), (Truth:Resemblance, Derive:AllowBackward)
+    (M <|> P), (S </> M), neq(S,P) |- (S </> P), (Truth:Resemblance, Derive:AllowBackward)
 
 //// implication-based composition ////////////////////////////////////////////////////////////////////////////////////
 //Same as for inheritance again
 
-    (P ==> M), (S ==> M), not_equal(S,P) |- ((P || S) ==> M), (Truth:Intersection),
+    (P ==> M), (S ==> M), neq(S,P) |- ((P || S) ==> M), (Truth:Intersection),
                                             ((P && S) ==> M), (Truth:Union)
-    (P =|> M), (S =|> M), not_equal(S,P) |- ((P || S) =|> M), (Truth:Intersection),
+    (P =|> M), (S =|> M), neq(S,P) |- ((P || S) =|> M), (Truth:Intersection),
                                             ((P &| S) =|> M), (Truth:Union)
-    (P =/> M), (S =/> M), not_equal(S,P) |- ((P || S) =/> M), (Truth:Intersection),
+    (P =/> M), (S =/> M), neq(S,P) |- ((P || S) =/> M), (Truth:Intersection),
                                             ((P &| S) =/> M), (Truth:Union)
-    (P =\> M), (S =\> M), not_equal(S,P) |- ((P || S) =\> M), (Truth:Intersection),
+    (P =\> M), (S =\> M), neq(S,P) |- ((P || S) =\> M), (Truth:Intersection),
                                             ((P &| S) =\> M), (Truth:Union)
 
-    (M ==> P), (M ==> S), not_equal(S,P) |- (M ==> (P && S)), (Truth:Intersection),
+    (M ==> P), (M ==> S), neq(S,P) |- (M ==> (P && S)), (Truth:Intersection),
                                             (M ==> (P || S)), (Truth:Union)
-    (M =/> P), (M =/> S), not_equal(S,P) |- (M =/> (P &| S)), (Truth:Intersection),
+    (M =/> P), (M =/> S), neq(S,P) |- (M =/> (P &| S)), (Truth:Intersection),
                                             (M =/> (P || S)), (Truth:Union)
-    (M =|> P), (M =|> S), not_equal(S,P) |- (M =|> (P &| S)), (Truth:Intersection),
+    (M =|> P), (M =|> S), neq(S,P) |- (M =|> (P &| S)), (Truth:Intersection),
                                             (M =|> (P || S)), (Truth:Union)
-    (M =\> P), (M =\> S), not_equal(S,P) |- (M =\> (P &| S)), (Truth:Intersection),
+    (M =\> P), (M =\> S), neq(S,P) |- (M =\> (P &| S)), (Truth:Intersection),
                                             (M =\> (P || S)), (Truth:Union)
 
-    (D =/> R), (D =\> K), not_equal(R,K) |- (K =/> R), (Truth:Abduction),
+    (D =/> R), (D =\> K), neq(R,K) |- (K =/> R), (Truth:Abduction),
                                             (R =\> K), (Truth:Induction),
                                             (K </> R), (Truth:Comparison)
 //// implication-based decomposition ////////////////////////////////////////////////////////////////////////////////////
@@ -371,32 +371,32 @@
 //// variable introduction ////////////////////////////////////////////////////////////////////////////////////
 //Introduce variables by common subject or predicate
 
-    (S --> M), (P --> M), not_equal(S,P) |- ((P --> $X) ==> (S --> $X)), (Truth:Abduction),
+    (S --> M), (P --> M), neq(S,P) |- ((P --> $X) ==> (S --> $X)), (Truth:Abduction),
                                             ((S --> $X) ==> (P --> $X)), (Truth:Induction),
                                             ((P --> $X) <=> (S --> $X)), (Truth:Comparison),
                                             (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection)
 
-    (S --> M), (P --> M), not_equal(S,P), measure_time(I) |- ((&/,(P --> $X),I) =/> (S --> $X)), (Truth:Abduction),
+    (S --> M), (P --> M), neq(S,P), measure_time(I) |- ((&/,(P --> $X),I) =/> (S --> $X)), (Truth:Abduction),
                                                              ((S --> $X) =\> (&/,(P --> $X),I)), (Truth:Induction),
                                                              ((&/,(P --> $X),I) </> (S --> $X)), (Truth:Comparison),
                                                              (&/,(P --> #Y), I, (S --> #Y)), (Truth:Intersection)
 
-    (S --> M), (P --> M), not_equal(S,P), concurrent(Task,Belief) |- ((P --> $X) =|> (S --> $X)), (Truth:Abduction),
+    (S --> M), (P --> M), neq(S,P), concurrent(Task,Belief) |- ((P --> $X) =|> (S --> $X)), (Truth:Abduction),
                                                                      ((S --> $X) =|> (P --> $X)), (Truth:Induction),
                                                                      ((P --> $X) <|> (S --> $X)), (Truth:Comparison),
                                                                      (&|,(P --> #Y),(S --> #Y)), (Truth:Intersection)
 
-    (M --> S), (M --> P), not_equal(S,P) |- (($X --> S) ==> ($X --> P)), (Truth:Induction),
+    (M --> S), (M --> P), neq(S,P) |- (($X --> S) ==> ($X --> P)), (Truth:Induction),
                                             (($X --> P) ==> ($X --> S)), (Truth:Abduction),
                                             (($X --> S) <=> ($X --> P)), (Truth:Comparison),
                                             (&&,(#Y --> S),(#Y --> P)), (Truth:Intersection)
 
-    (M --> S), (M --> P), not_equal(S,P), measure_time(I) |- ((&/,($X --> S),I) =/> ($X --> P)), (Truth:Induction),
+    (M --> S), (M --> P), neq(S,P), measure_time(I) |- ((&/,($X --> S),I) =/> ($X --> P)), (Truth:Induction),
                                                              (($X --> P) =\> (&/,($X --> S),I)), (Truth:Abduction),
                                                              ((&/,($X --> S),I) </> ($X --> P)), (Truth:Comparison),
                                                              (&/,(#Y --> S), I ,(#Y --> P)), (Truth:Intersection)
 
-    (M --> S), (M --> P), not_equal(S,P), concurrent((M --> P),(M --> S)) |- (($X --> S) =|> ($X --> P)), (Truth:Induction),
+    (M --> S), (M --> P), neq(S,P), concurrent((M --> P),(M --> S)) |- (($X --> S) =|> ($X --> P)), (Truth:Induction),
                                                                              (($X --> P) =|> ($X --> S)), (Truth:Abduction),
                                                                              (($X --> S) <|> ($X --> P)), (Truth:Comparison),
                                                                              (&|,(#Y --> S),(#Y --> P)), (Truth:Intersection)
@@ -406,13 +406,13 @@
     (A ==> (M --> P)), (M --> S), not_equal(A, (M --> S)) |- ((&&,A,($X --> S)) ==> ($X --> P)), (Truth:Induction),
                                                              (&&,(A ==> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
 
-    (&&,(M --> P), A..+), (M --> S), not_equal(S,P) |- (($Y --> S) ==> (&&,($Y --> P), A..+)), (Truth:Induction),
+    (&&,(M --> P), A..+), (M --> S), neq(S,P) |- (($Y --> S) ==> (&&,($Y --> P), A..+)), (Truth:Induction),
                                                        (&&,(#Y --> S), (#Y --> P), A..+), (Truth:Intersection)
 
-    (A ==> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) ==> (S --> $X)), (Truth:Abduction),
+    (A ==> (P --> M)), (S --> M), neq(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) ==> (S --> $X)), (Truth:Abduction),
                                                                              (&&,(A ==> (P --> #Y)), (S --> #Y)), (Truth:Intersection)
 
-    (&&,(P --> M), A..+), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&&,(P --> $Y), A..+)), (Truth:Abduction),
+    (&&,(P --> M), A..+), (S --> M), neq(S,P) |- ((S --> $Y) ==> (&&,(P --> $Y), A..+)), (Truth:Abduction),
                                                          (&&, (S --> #Y), (P --> #Y), A..+), (Truth:Intersection)
 
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////

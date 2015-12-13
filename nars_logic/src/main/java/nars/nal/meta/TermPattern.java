@@ -1,22 +1,22 @@
 package nars.nal.meta;
 
-import com.gs.collections.api.tuple.Twin;
+import com.google.common.collect.ListMultimap;
 import nars.Global;
 import nars.Op;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
-import nars.term.variable.Variable;
+import nars.term.transform.MatchConstraint;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 /** represents the "program" that the matcher will execute */
 public class TermPattern {
 
     public final PreCondition[] code;
     public final Term term;
-    private final Set<Twin<Variable>> notEquals;
+
+    private final ListMultimap<Term, MatchConstraint> constraints;
     private Op type = null;
 
 //    public TermPattern(Op type, TaskBeliefPair pattern) {
@@ -61,11 +61,11 @@ public class TermPattern {
         this(type, pattern, null);
     }
 
-    public TermPattern(Op type, Term pattern, /* nullable */ Set<Twin<Variable>> notEquals) {
+    public TermPattern(Op type, Term pattern, ListMultimap<Term, MatchConstraint> constraints) {
 
         term = pattern;
         this.type = type;
-        this.notEquals = notEquals;
+        this.constraints = constraints;
 
         List<PreCondition> code = Global.newArrayList();
 
@@ -78,7 +78,7 @@ public class TermPattern {
     }
 
     private void compile(Term x, List<PreCondition> code) {
-        code.add(new FindSubst.MatchTerm(x, notEquals));
+        code.add(new FindSubst.MatchTerm(x, constraints));
     }
 
 //    private void compileRisky(Term x, List<PreCondition> code) {

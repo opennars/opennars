@@ -1,9 +1,8 @@
 package nars.term.transform;
 
-import com.google.common.base.Joiner;
+import com.google.common.collect.ListMultimap;
 import com.gs.collections.api.map.ImmutableMap;
 import com.gs.collections.api.set.MutableSet;
-import com.gs.collections.api.tuple.Twin;
 import com.gs.collections.impl.factory.Maps;
 import nars.Global;
 import nars.Memory;
@@ -26,7 +25,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 /* recurses a pair of compound term tree's subterms
@@ -416,24 +414,33 @@ public class FindSubst extends Versioning implements Subst {
         private final String id;
         private final ImmutableMap<Term,MatchConstraint> constraints;
 
-        public MatchTerm(Term c, Set<Twin<Variable>> notEquals) {
-            x = c;
-            if (notEquals == null) {
+        public MatchTerm(Term term, ListMultimap<Term, MatchConstraint> c) {
+            x = term;
+            if (c == null || c.isEmpty()) {
                 this.id = x.toString();
                 this.constraints = null;
             } else {
-                Map<Term, MatchConstraint> e = Global.newHashMap(notEquals.size() * 2);
-                for (Twin<Variable> t : notEquals) {
-                    e.put(t.getOne(), new NotEqualsConstraint(t.getTwo()));
-                    e.put(t.getTwo(), new NotEqualsConstraint(t.getOne()));
-                }
+                Map<Term,MatchConstraint> con = Global.newHashMap();
+                c.asMap().forEach( (t, cc)-> {
+                    switch (cc.size()) {
+                        case 0: return;
+                        case 1: con.put(t, cc.iterator().next());
+                                break;
+                        default:
+                            con.put(t, new AndConstraint(cc));
+                            break;
+                    }
+                });
 
-                this.constraints = Maps.immutable.ofAll(e);
-                this.id = new StringBuilder(x.toString() + "∧neq(").append(
-                    Joiner.on(",").join(notEquals.stream().map(v -> {
-                        return ( v.getOne() + "==" + v.getTwo() );
-                    }).collect(Collectors.toList()))
-                ).append(")").toString();
+
+                this.constraints = Maps.immutable.ofAll(con);
+                this.id = x.toStringCompact() + "^" + con;
+
+//                this.id = new StringBuilder(x.toString() + "∧neq(").append(
+//                    Joiner.on(",").join(notEquals.stream().map(v -> {
+//                        return ( v.getOne() + "==" + v.getTwo() );
+//                    }).collect(Collectors.toList()))
+//                ).append(")").toString();
             }
         }
 
@@ -1234,6 +1241,7 @@ public class FindSubst extends Versioning implements Subst {
                 break;
             }
         }
+
 
         powerDivisor = startDivisor;
 

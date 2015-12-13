@@ -2,9 +2,7 @@ package nars.term.transform;
 
 import nars.term.Term;
 
-/**
- * Created by me on 12/13/15.
- */
+
 @FunctionalInterface
 public interface MatchConstraint {
     /**

@@ -1,8 +1,8 @@
 package nars.nal;
 
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Sets;
-import com.gs.collections.api.tuple.Twin;
-import com.gs.collections.impl.tuple.Tuples;
 import nars.$;
 import nars.Global;
 import nars.Op;
@@ -28,14 +28,12 @@ import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
-import nars.term.transform.CompoundTransform;
-import nars.term.transform.VariableNormalization;
+import nars.term.transform.*;
 import nars.term.variable.Variable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.BiConsumer;
 
 /**
@@ -358,11 +356,12 @@ public class PremiseRule extends GenericCompound implements Level {
         //(which will not reference any particular atoms)
 
 
-        Set<Twin<Variable>> notEquals = Global.newHashSet(0);
+
 
         pattern = new TaskBeliefPair(taskTermPattern, beliefTermPattern);
 
 
+        ListMultimap<Term, MatchConstraint> constraints = MultimapBuilder.treeKeys().arrayListValues().build();
 
         //additional modifiers: either preConditionsList or beforeConcs, classify them here
         for (int i = 2; i < precon.length; i++) {
@@ -404,14 +403,8 @@ public class PremiseRule extends GenericCompound implements Level {
 
                 //constraint form
                 case "neq":
-
-                    if (arg1.compareTo(arg2) > 0) { //swap to cananical lexicographic order
-                        Term t = arg2;  arg2 = arg1; arg1 = t;
-                    }
-
-                    notEquals.add(Tuples.twin(
-                        (Variable)arg1, (Variable)arg2)
-                    );
+                    constraints.put(arg1, new NotEqualsConstraint(arg2));
+                    constraints.put(arg2, new NotEqualsConstraint(arg1));
 
                     //TODO eliminate need for:
                     next = NotEqual.make(arg1, arg2);
@@ -423,15 +416,13 @@ public class PremiseRule extends GenericCompound implements Level {
                     next = NotEqual.make(arg1, arg2);
                     break;
 
-                case "set_ext":
-                    next = new ExtSet(arg1);
-                    break;
-                case "set_int":
-                    next = new IntSet(arg1);
-                    break;
                 case "not_set":
                     next = new NotSet(arg1);
                     break;
+                case "notSet":
+                    constraints.put( arg1, new NotOpConstraint(Op.SetsBits) );
+                    break;
+
                 case "not_conjunction":
                     next = new NotConjunction(arg1);
                     break;
@@ -531,9 +522,8 @@ public class PremiseRule extends GenericCompound implements Level {
                 preConditionsList.add(next);
         }
 
-        if (notEquals.isEmpty()) notEquals = null;
 
-        MatchTaskBelief matcher = new MatchTaskBelief(pattern, notEquals);
+        MatchTaskBelief matcher = new MatchTaskBelief(pattern, constraints);
         preConditionsList.add(matcher);
 
         //store to arrays

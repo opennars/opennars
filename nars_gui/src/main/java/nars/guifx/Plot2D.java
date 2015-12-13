@@ -208,19 +208,15 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
 
                 FloatArrayList sh = s.history;
 
-                int histSize = sh.size();
+                int ss = sh.size();
+                int histSize = ss;
 
                 double dx = (w / histSize);
 
                 double x = 0;
-                for (int i = 0; i < sh.size(); i++) { //TODO why does the array change
-                    double v = sh.get(i);
-
-                    double y = ypos.valueOf(v);
-
-
+                for (int i = 0; i < ss; i++) { //TODO why does the array change
                     //System.out.println(x + " " + y);
-                    g.lineTo(x, y);
+                    g.lineTo(x, ypos.valueOf(sh.get(i)));
 
                     x += dx;
                 }

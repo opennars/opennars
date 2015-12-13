@@ -3,7 +3,7 @@ package nars.term.transform;
 import nars.term.Term;
 
 
-public class NotEqualsConstraint implements MatchConstraint {
+final public class NotEqualsConstraint implements MatchConstraint {
 
     private final Term b;
 
