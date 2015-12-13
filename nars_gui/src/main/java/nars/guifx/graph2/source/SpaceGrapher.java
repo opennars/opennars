@@ -5,7 +5,6 @@ import com.gs.collections.impl.map.mutable.UnifiedMap;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import nars.guifx.Spacegraph;
-import nars.guifx.demo.Animate;
 import nars.guifx.graph2.GraphSource;
 import nars.guifx.graph2.NodeVis;
 import nars.guifx.graph2.TermEdge;
@@ -13,6 +12,7 @@ import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.IterativeLayout;
 import nars.guifx.graph2.layout.None;
+import nars.guifx.util.Animate;
 import nars.term.Term;
 import nars.term.Termed;
 
@@ -34,7 +34,7 @@ public class SpaceGrapher extends Spacegraph {
 
     public final SimpleObjectProperty<EdgeRenderer<TermEdge>> edgeRenderer = new SimpleObjectProperty<>();
 
-    final SimpleObjectProperty<IterativeLayout<TermNode>> layout = new SimpleObjectProperty<>();
+    public final SimpleObjectProperty<IterativeLayout<TermNode>> layout = new SimpleObjectProperty<>();
     public static final IterativeLayout nullLayout = new None();
 
 

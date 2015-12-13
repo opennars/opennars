@@ -533,7 +533,7 @@ public class POJONode {
             Class[] impls = null;
 
             if (parentValue instanceof Field) {
-                Field p = (Field)parentValue;
+                Field p = parentValue;
 
                 Implementations ii = p.getAnnotation(Implementations.class);
                 if (ii!=null) {

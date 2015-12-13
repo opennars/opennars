@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import nars.Global;
 import nars.NAR;
+import nars.guifx.demo.NARide;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class PluginPanel extends VBox {
     }
 
 
-    protected void update() {
+    public void update() {
 
         List<Node> toAdd = Global.newArrayList();
         nar.memory.getSingletons().forEach((k, v) -> toAdd.add(node(k, v)));

@@ -3,7 +3,7 @@ package nars.testchamber;
 import nars.Memory;
 import nars.NAR;
 import nars.guifx.IOPane;
-import nars.guifx.NARide;
+import nars.guifx.demo.NARide;
 import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.process.BagForgettingEnhancer;

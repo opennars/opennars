@@ -8,7 +8,6 @@ import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
-import nars.guifx.demo.Animate;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 

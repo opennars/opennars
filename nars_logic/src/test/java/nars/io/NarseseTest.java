@@ -98,6 +98,17 @@ public class NarseseTest {
     }
 
     @Test
+    public void testBudget() throws Narsese.NarseseException {
+        Task t = task("$0.70;0.60;0.50$ <a <=> b>. %0.00;0.93");
+        assertEquals(0.7f, t.getPriority(), 0.01f);
+        assertEquals(0.6f, t.getDurability(), 0.01f);
+        assertEquals(0.5f, t.getQuality(), 0.01f);
+
+        Task u = task("$0.9$ <a <=> b>. %0.00;0.93");
+        assertEquals(0.9f, u.getPriority(), 0.01f);
+    }
+
+    @Test
     public void testNoBudget() throws Narsese.NarseseException {
         Task t = task("<a <=> b>. %0.00;0.93");
         assertNotNull(t);

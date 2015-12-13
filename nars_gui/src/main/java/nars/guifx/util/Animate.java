@@ -1,4 +1,4 @@
-package nars.guifx.demo;
+package nars.guifx.util;
 
 import javafx.animation.AnimationTimer;
 

@@ -1,6 +1,5 @@
 package nars.guifx.demo;
 
-import nars.guifx.NARide;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.impl.BlurCanvasEdgeRenderer;

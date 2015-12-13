@@ -142,6 +142,8 @@ public abstract class Param extends Container implements Level {
             }
         } else if (t.isQuestion()) {
             t.setQuality(DEFAULT_QUESTION_QUALITY);
+        } else if (t.isQuest()) {
+            t.setQuality(DEFAULT_QUEST_QUALITY);
         }
 
     }
@@ -171,6 +173,7 @@ public abstract class Param extends Container implements Level {
     float DEFAULT_QUEST_DURABILITY = 0.5f;
 
     float DEFAULT_QUESTION_QUALITY = 0.5f;
+    float DEFAULT_QUEST_QUALITY = 0.5f;
 
     float getDefaultPriority(char punctuation) {
         switch (punctuation) {
@@ -201,6 +204,15 @@ public abstract class Param extends Container implements Level {
                 return DEFAULT_GOAL_DURABILITY;
         }
         throw new RuntimeException("Unknown sentence type: " + punctuation);
+    }
+    float getDefaultQuality(char punctuation) {
+        switch (punctuation) {
+            case Symbols.QUESTION:
+                return DEFAULT_QUESTION_DURABILITY;
+            case Symbols.GOAL:
+                return DEFAULT_GOAL_DURABILITY;
+        }
+        throw new RuntimeException("Use truthToQuality for: " + punctuation);
     }
 
     //decision threshold is enough for now

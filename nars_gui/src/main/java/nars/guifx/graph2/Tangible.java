@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import nars.guifx.Spacegraph;
-import nars.guifx.demo.Animate;
+import nars.guifx.util.Animate;
 
 /**
  * Created by me on 12/6/15.

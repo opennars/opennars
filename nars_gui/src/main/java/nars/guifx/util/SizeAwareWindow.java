@@ -12,7 +12,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nars.guifx.NARfx;
-import nars.guifx.NARide;
+import nars.guifx.demo.NARide;
 import nars.nar.Default;
 import nars.util.data.map.LMap;
 

@@ -5,7 +5,7 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Global;
 import nars.NAR;
 import nars.Video;
-import nars.guifx.NARide;
+import nars.guifx.demo.NARide;
 import nars.java.NALObjects;
 import nars.nar.Default;
 import nars.nario.level.Level;

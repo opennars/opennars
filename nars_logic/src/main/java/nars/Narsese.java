@@ -106,9 +106,19 @@ public class Narsese extends BaseParser<Object>  {
 
         switch (blen) {
             case 0:     /* do not set, Memory will apply defaults */ break;
-            case 1:     ttt.budget(b[0], memory.getDefaultDurability(p)); break;
-            case 2:     ttt.budget(b[0], b[1]); break;
-            default:    ttt.budget(b[0], b[1], b[2]); break;
+            case 1:
+                if ((p == Symbols.QUEST || p==Symbols.QUESTION)) {
+                    ttt.budget(b[0],
+                            memory.getDefaultDurability(p),
+                            memory.getDefaultQuality(p));
+
+                } else {
+                    ttt.budget(b[0],
+                            memory.getDefaultDurability(p));
+                }
+                break;
+            case 2:     ttt.budget(b[1], b[0]); break;
+            default:    ttt.budget(b[2], b[1], b[0]); break;
         }
 
         return ttt;
@@ -288,14 +298,14 @@ public class Narsese extends BaseParser<Object>  {
     Rule BudgetPriorityDurability(Var<float[]> budget) {
         return sequence(
                 VALUE_SEPARATOR, ShortFloat(),
-                swap() && budget.set(new float[]{(float) pop(), (float) pop()}) //intermediate representation
+                budget.set(new float[]{(float) pop(), (float) pop()}) //intermediate representation
         );
     }
 
     Rule BudgetPriorityDurabilityQuality(Var<float[]> budget) {
         return sequence(
                 VALUE_SEPARATOR, ShortFloat(), VALUE_SEPARATOR, ShortFloat(),
-                swap() && budget.set(new float[]{(float) pop(), (float) pop(), (float) pop()}) //intermediate representation
+                budget.set(new float[]{(float) pop(), (float) pop(), (float) pop()}) //intermediate representation
         );
     }
 

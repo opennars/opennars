@@ -256,6 +256,11 @@
     -fx-label-padding: 0em;
 }
 
+.tree-cell .tree-disclosure-node .arrow {
+    -fx-background-color: #f00;
+    -fx-padding: 0.333333em; /* 4 */
+    -fx-shape: "M 0 -4 L 8 0 L 0 4 z";
+}
 
 
 .tree-cell:focused {

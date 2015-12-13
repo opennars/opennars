@@ -13,7 +13,7 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 10/1/15.
  */
-class ConceptSonificationPanel extends BorderPane {
+public class ConceptSonificationPanel extends BorderPane {
 
     private final Label info;
     static final int maxVoices = 4;

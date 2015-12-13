@@ -1,4 +1,4 @@
-package nars.guifx;
+package nars.guifx.demo;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -15,6 +15,7 @@ import nars.NAR;
 import nars.NARLoop;
 import nars.budget.Budget;
 import nars.budget.Budgeted;
+import nars.guifx.*;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;

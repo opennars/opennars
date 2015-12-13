@@ -305,6 +305,16 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
     }
 
     @Deprecated
+    default String toStringWithoutBudget(Memory memory) {
+        StringBuilder b = new StringBuilder();
+        appendTo(b, memory, true, false,
+                false, //budget
+                false//log
+        );
+        return b.toString();
+    }
+
+    @Deprecated
     default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ Memory memory, boolean showStamp) {
         boolean notCommand = getPunctuation()!=Symbols.COMMAND;
         return appendTo(buffer, memory, true, showStamp && notCommand,

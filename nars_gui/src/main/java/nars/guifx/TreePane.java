@@ -77,7 +77,7 @@ public class TreePane extends BorderPane {
 
 
 
-            setBottom( new FlowPane(ns));
+        setBottom( new FlowPane(ns));
 
         autosize();
     }

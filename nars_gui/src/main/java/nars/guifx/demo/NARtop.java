@@ -1,0 +1,142 @@
+package nars.guifx.demo;
+
+import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
+import nars.Global;
+import nars.NAR;
+import nars.guifx.NARfx;
+import nars.nar.Default;
+import nars.task.Task;
+import nars.task.flow.SetTaskPerception;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static javafx.application.Platform.runLater;
+import static javafx.scene.paint.Color.hsb;
+
+/**
+ * Created by me on 12/12/15.
+ */
+public class NARtop extends BorderPane {
+
+    final SetTaskPerception active;
+    //final FlowPane buttons = new FlowPane();
+    final TextFlow buttons = new TextFlow();
+    final Map<Task,TaskButton> taskButtons = new HashMap();
+    private final NAR nar;
+
+    public NARtop(NAR d) {
+        super();
+
+        this.nar = d;
+
+        setCenter(buttons);
+        //setLeft(new TreePane(d));
+
+        active = new SetTaskPerception(d.memory, f -> {
+            update();
+        });
+        d.memory.eventTaskProcess.on(tp -> {
+            Task t = (Task) tp.getTask();
+            if (t.isInput()) {
+                runLater( () -> {
+                    addInput(t);
+                });
+
+            }
+        });
+
+    }
+
+    protected void update() {
+        taskButtons.forEach( (k,v) -> {
+           v.update();
+        });
+    }
+    public static class TaskButton extends ToggleButton {
+
+        private final Task task;
+
+        public TaskButton(Task t) {
+            super(t.toStringWithoutBudget(null));
+            this.task = t;
+            setWrapText(true);
+            update();
+            setOnMouseClicked(c -> {
+                setSelected(false);
+                setFocused(false);
+
+            });
+        }
+
+        private void update() {
+            float pri = task.getPriority();
+            float priToFontSize = pri * 40f;
+//            getStyleClass().clear();
+//            getStylesheets().clear();
+//            //setStyle("-fx-background-color: #FFFFFF !important;");
+//            setStyle("-fx-base: #FFFFFF !important;");
+//            setStyle("-fx-padding: 5px !important;");
+//            //setStyle("-fx-border-radius: 20;");
+            setFont(NARfx.mono(priToFontSize));
+
+            Color c = hsb(
+                (task.getTerm().op().ordinal()/64f)*360.0,
+                    0.4, 0.7, 0.75f + pri * 0.25f
+            );
+//            setBackground(new Background(
+//                    new BackgroundFill(
+//                        c,
+//                        CornerRadii.EMPTY,
+//                        Insets.EMPTY)));
+            setTextFill(c);
+
+
+        }
+
+    }
+
+    /**
+     * adds a task to be managed/displayed by this widget
+     */
+    protected void addInput(Task t) {
+        
+        taskButtons.computeIfAbsent(t, k -> {
+            TaskButton b = new TaskButton(k);
+            buttons.getChildren().add(b);
+            return b;
+        });
+    }
+
+    public static void main(String[] args) {
+
+
+        Global.DEBUG = false;
+
+        Default d = new Default(1000, 1, 1, 3);
+
+        NARide.show(d.loop(), (i) -> {
+            Stage s = NARfx.newWindow("x", new NARtop(d));
+            s.show();
+
+//                //NARfx.run((a, b) -> {
+//                    b.setScene(new Scene(, 500, 300));
+//                    b.getScene().getStylesheets().setAll(NARfx.css);
+//                    b.show();
+//                //});
+
+
+
+            d.input("$0.70$ <groceries --> [bought]>!");
+            d.input("$0.40$ <plants --> [watered]>!");
+            d.input("$0.30$ <<perimeter --> home> --> secure>?");
+            d.input("$0.50$ <weather <-> [dangerous]>?");
+            //d.frame();
+            //d.loop(100);
+        });
+    }
+}

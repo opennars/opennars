@@ -13,6 +13,8 @@ import nars.guifx.util.POJOPane;
 
 import java.util.function.BiFunction;
 
+import static javafx.application.Platform.runLater;
+
 /**
  * provides defalut settings for a NARGraph view
  */
@@ -28,8 +30,6 @@ public class DefaultGrapher extends SpaceGrapher {
     //@Implementation(TimeGraph.class)
     public final ImplementationProperty<IterativeLayout> layoutType = new ImplementationProperty();
 
-    final InvalidationListener layoutChange;
-    final POJOPane controls = new POJOPane(this);
 
 //    public DefaultGrapher(int capacity, ConceptsSource source) {
 //        this(
@@ -45,49 +45,26 @@ public class DefaultGrapher extends SpaceGrapher {
 
         super(source, v, size, edgeBuilder, edgeRenderer);
 
-        layoutChange = e -> {
-            updateLayoutType();
+        InvalidationListener layoutChange = e -> {
+            IterativeLayout il = layoutType.getInstance();
+            if (il!=null) {
+                layout.set(il);
+                layoutUpdated();
+            } else {
+                layout.set(nullLayout);
+            }
         };
 
         layoutType.addListener(layoutChange);
 
+        runLater(() -> layoutChange.invalidated(null));
 
-
-
-
-        controls.layout();
-        controls.autosize();
-        getChildren().add(controls);
-
-        layoutChange.invalidated(null);
-
-
+        POJOPane c = new POJOPane(this);
+        c.layout();
+        c.autosize();
+        getChildren().add(c);
 
 
     }
 
-    private void updateLayoutType() {
-        IterativeLayout il = layoutType.getInstance();
-        if (il!=null) {
-            layout.set(il);
-            layoutUpdated();
-        } else {
-            layout.set(nullLayout);
-        }
-
-    }
-
-//    public void setLayout(Class<? extends IterativeLayout> c) {
-//
-//        layoutType.setValue(c);
-//        layoutChange.invalidated(null);
-//
-//
-//
-//        //layoutType.unbind();
-//        //layoutType.setValue(c);
-//        //layoutType.addListener(layoutChange);
-//        //updateLayoutType();
-//        //layoutChange.invalidated(null);
-//    }
 }

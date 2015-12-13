@@ -9,7 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import nars.guifx.NARide;
+import nars.guifx.demo.NARide;
 import nars.guifx.graph3.SpacenetApp;
 import nars.guifx.graph3.Xform;
 import nars.nar.Default;

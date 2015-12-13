@@ -67,7 +67,7 @@ public class NAL8Test extends AbstractNALTester {
                 valid.set(true);
         });
 
-        nar.frame(3);
+        nar.frame(16);
 
         assertTrue(valid.get());
     }

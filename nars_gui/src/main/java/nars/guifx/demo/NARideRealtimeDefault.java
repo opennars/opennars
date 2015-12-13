@@ -1,7 +1,6 @@
 package nars.guifx.demo;
 
 import nars.Memory;
-import nars.guifx.NARide;
 import nars.nar.Default;
 import nars.process.BagForgettingEnhancer;
 import nars.term.compile.TermIndex;

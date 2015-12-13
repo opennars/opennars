@@ -84,7 +84,7 @@ public class POJOPane<X> extends BorderPane {
     public static List<Node> propertyNodes(Object object) {
 
 
-
+        System.out.println("property nodes: " + object);
 
         if (object == null) return Lists.newArrayList(new Text("null")); //Collections.emptyList();
 

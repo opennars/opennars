@@ -422,6 +422,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         else
             throw new RuntimeException("invalid punctuation");
 
+
         t.time(time(), ETERNAL);
 
         input(t);
