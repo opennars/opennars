@@ -7,7 +7,7 @@ import nars.NAR;
 import nars.Premise;
 import nars.concept.Concept;
 import nars.guifx.demo.TaskButton;
-import nars.process.TaskProcess;
+import nars.task.Task;
 import nars.util.data.list.CircularArrayList;
 import nars.util.event.ArraySharingList;
 import nars.util.event.On;
@@ -166,7 +166,7 @@ public class TracePane extends LogPane {
             return null;
             //
         } else if ("eventTaskProcess".equals(channel)) {
-            TaskProcess t = (TaskProcess) signal;
+            Task t = (Task) signal;
             return t.getTask().getPriority() >= volume.get()
                     //? new TaskLabel(t, nar) : null;
                     ? new TaskButton(nar, t.getTask()) : null;

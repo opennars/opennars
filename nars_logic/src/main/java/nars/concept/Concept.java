@@ -34,6 +34,7 @@ import nars.link.*;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
+import nars.term.compound.Compound;
 import nars.truth.Truth;
 
 import java.io.PrintStream;
@@ -385,6 +386,39 @@ public interface Concept extends Termed, Itemized<Term> {
     void setMemory(Memory m);
 
     void setCreationTime(long l);
+
+    /**
+     * process a task in this concept
+     * @return true if process affected the concept (ie. was inserted into a belief table)
+     */
+    boolean process(Task task, NAR nar);
+
+    /** attempt insert a tasklink into this concept's tasklink bag
+     *  return true if successfully inserted
+     * */
+    boolean link(Task task, NAR nar);
+
+    /**
+     *
+     * @param currentTask task with a term equal to this concept's
+     * @param previousTask task with a term equal to another concept's
+     * @return number of links created (0, 1, or 2)
+     */
+    default int crossLink(Task currentTask, Task previousTask, NAR nar) {
+        Compound otherTerm = previousTask.getTerm();
+        if (otherTerm.equals(getTerm())) return 0; //self
+
+        Concept other = getMemory().concept(otherTerm);
+        if (other == null) return 0;
+
+        int count = 0;
+        count += link(previousTask, nar) ? 1 : 0;
+        count += other.link(currentTask, nar) ? 1 : 0;
+
+        return count;
+
+    }
+
 
 
 //    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, List<Task>... lists);

@@ -4,7 +4,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import nars.Global;
 import nars.nal.PremiseRule;
-import nars.process.TaskProcess;
 import nars.task.flow.FIFOTaskPerception;
 import nars.time.CycleClock;
 import nars.util.meter.DerivationGraph;
@@ -55,11 +54,9 @@ public class SingleStepNAR extends AbstractNAR {
                 (t) -> { /* allow only input tasks*/
                     if (t.isInput()) return true;
                     else {
-                        //fire a fake TaskProcess event
                         t = t.normalize(memory);
                         if (t != null) {
-                            memory.eventTaskProcess.emit(
-                                    new TaskProcess(this, t));
+                            memory.eventTaskProcess.emit(t);
                         }
                         return false;
                     }

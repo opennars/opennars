@@ -3,7 +3,6 @@ package nars.util.meter;
 import nars.$;
 import nars.Global;
 import nars.Memory;
-import nars.Premise;
 import nars.task.Task;
 import nars.term.compound.Compound;
 import nars.util.event.FrameReaction;
@@ -69,7 +68,7 @@ public class EmotionMeter extends FrameReaction implements Serializable {
         happy += delta;
     }
 
-    public void happy(float solution, Task task, @Deprecated Premise p) {
+    public void happy(float solution, Task task) {
         happy += ( task.getBudget().summary() * solution );
     }
 

@@ -1,8 +1,10 @@
 package nars.concept;
 
 import nars.Memory;
+import nars.NAR;
 import nars.budget.Budget;
 import nars.nal.nal7.Tense;
+import nars.task.Task;
 import nars.term.Term;
 
 import java.util.Map;
@@ -74,9 +76,17 @@ public abstract class AbstractConcept implements Concept {
         }
     }
 
-    /**
-     * The term is the unique ID of the concept
-     */
+    @Override public boolean process(final Task task, NAR nar) {
+        throw new RuntimeException("concept " + this + " unimplemented: process " + task + " in " + nar);
+    }
+    @Override public boolean link(Task task, NAR nar) {
+        throw new RuntimeException("concept " + this + " unimplemented: link " + task + " in " + nar);
+    }
+
+
+        /**
+         * The term is the unique ID of the concept
+         */
     @Override
     public final Term getTerm() {
         return term;

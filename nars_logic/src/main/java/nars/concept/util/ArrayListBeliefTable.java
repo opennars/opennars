@@ -2,7 +2,6 @@ package nars.concept.util;
 
 import nars.Global;
 import nars.Memory;
-import nars.Premise;
 import nars.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
@@ -102,7 +101,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
      * @return
      */
     @Override
-    public Task add(Task input, BeliefTable.Ranker ranking, Concept c, Premise nal) {
+    public Task add(Task input, BeliefTable.Ranker ranking, Concept c) {
 
 
         /**
@@ -139,7 +138,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         //TODO make sure input.isDeleted() can not happen
         if ( added && revisible(input, top) ) {
 
-            Task revised = getRevision(input, top, nal, now);
+            Task revised = getRevision(input, top, now);
 
             if (revised != null && !input.equals(revised)) {
 
@@ -158,7 +157,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         }
 
-        nal.updateBelief(top);
+        //nal.updateBelief(top);
 
         if (tableChanged) {
             onChanged(c, memory);

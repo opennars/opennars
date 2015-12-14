@@ -65,26 +65,23 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param truth The truth value of the conclusion of revision
      * @return The budget for the new task
      */
-    public static Budget revise(Truth tTruth, Truth bTruth, Truth truth, Premise p) {
-
-        Task task = p.getTask();
+    public static Budget revise(Truth tTruth, Truth bTruth, Truth truth, Budget tb) {
 
         float difT = truth.getExpDifAbs(tTruth);
 
-        Budget tb = task.getBudget();
         tb.andPriority(1.0f - difT);
         tb.andDurability(1.0f - difT);
 
-        boolean feedbackToLinks = (p instanceof ConceptProcess);
-        if (feedbackToLinks) {
-            TaskLink tLink = ((ConceptProcess) p).getTaskLink();
-            tLink.andPriority(1.0f - difT);
-            tLink.andDurability(1.0f - difT);
-            TermLink bLink = p.getTermLink();
-            float difB = truth.getExpDifAbs(bTruth);
-            bLink.andPriority(1.0f - difB);
-            bLink.andDurability(1.0f - difB);
-        }
+//        boolean feedbackToLinks = (p instanceof ConceptProcess);
+//        if (feedbackToLinks) {
+//            TaskLink tLink = ((ConceptProcess) p).getTaskLink();
+//            tLink.andPriority(1.0f - difT);
+//            tLink.andDurability(1.0f - difT);
+//            TermLink bLink = p.getTermLink();
+//            float difB = truth.getExpDifAbs(bTruth);
+//            bLink.andPriority(1.0f - difB);
+//            bLink.andDurability(1.0f - difB);
+//        }
 
         float dif = truth.getConfidence() - Math.max(tTruth.getConfidence(), bTruth.getConfidence());
         

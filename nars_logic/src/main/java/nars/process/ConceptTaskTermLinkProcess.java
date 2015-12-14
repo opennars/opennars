@@ -32,7 +32,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
                 belief = beliefConcept.getBeliefs().top(task, nar.time());
 
                 if (belief != null)
-                    belief = Premise.match(task, belief, this);
+                    belief = Premise.match(task, belief, nar);
             }
         }
 

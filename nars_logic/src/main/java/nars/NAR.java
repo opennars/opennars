@@ -155,6 +155,32 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
     }
 
+    protected Concept run(Task task) {
+
+        Concept c = conceptualize(task, task.getBudget());
+        if (c == null) {
+            memory.remove(task, "Inconceivable");
+            return null;
+        }
+
+        memory.emotion.busy(task);
+
+        if (c.process(task, this)) {
+            if (!task.isDeleted()) {
+
+                c.link(task, this);
+                memory.eventTaskProcess.emit(task);
+
+            }
+
+            return c;
+        } else {
+            memory.remove(task, null /* "Unprocessable" */);
+            return null;
+        }
+
+    }
+
 
     /**
      * Reset the system with an empty memory and reset clock.  Event handlers

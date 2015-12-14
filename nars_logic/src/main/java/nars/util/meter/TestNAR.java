@@ -4,7 +4,6 @@ import nars.Global;
 import nars.NAR;
 import nars.Narsese;
 import nars.nal.nal7.Tense;
-import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.task.Tasked;
 import nars.term.atom.Atom;
@@ -75,7 +74,7 @@ public class TestNAR  {
         nar.memory.eventAnswer.on(tt -> {
             Task t = tt.getTwo();
             t.log("Answer via Derived");
-            nar.memory.eventTaskProcess.emit(new TaskProcess(nar,t) /* dummy */);
+            nar.memory.eventTaskProcess.emit(t);
         });
 
         if (exitOnAllSuccess) {

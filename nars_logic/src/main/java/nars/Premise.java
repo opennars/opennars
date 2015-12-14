@@ -33,13 +33,13 @@ public interface Premise extends Level, Tasked {
      * @param solution The belief
      * @return null if no match
      */
-    static Task match(Task question, Task solution, Premise nal) {
+    static Task match(Task question, Task solution, NAR nar) {
 
         if (question.isQuestion() || question.isGoal()) {
             if (Tense.matchingOrder(question, solution)) {
                 Term[] u = {question.getTerm(), solution.getTerm()};
-                if (unify(Op.VAR_QUERY, u, nal.getRandom())) {
-                    return LocalRules.trySolution(question, solution, nal);
+                if (unify(Op.VAR_QUERY, u, nar.memory.random)) {
+                    return LocalRules.trySolution(question, solution, nar);
                 }
             }
         }

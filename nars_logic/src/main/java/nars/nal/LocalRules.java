@@ -122,7 +122,7 @@ public class LocalRules {
     /** creates a revision task (but does not input it)
      *  if failed, returns null
      * */
-    public static <C extends Compound> Task getRevision(Task newBelief, Task oldBelief, Premise nal, long now) {
+    public static Task getRevision(Task newBelief, Task oldBelief, long now) {
 
         if (newBelief.equals(oldBelief) || Tense.overlapping(newBelief, oldBelief))
             return null;
@@ -130,11 +130,11 @@ public class LocalRules {
         Truth newBeliefTruth = newBelief.getTruth();
 
         long newOcc = newBelief.getOccurrenceTime();
-        Truth oldBeliefTruth = oldBelief.projection(newOcc, nal.time());
+        Truth oldBeliefTruth = oldBelief.projection(newOcc, now);
 
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
 
-        Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
+        Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, newBelief.getBudget());
 
         //Task<T> revised = nal.input(
         return new MutableTask(newBelief.getTerm())
@@ -168,9 +168,7 @@ public class LocalRules {
 
         Task sol = solution;
 
-        Memory memory = nal.memory();
-
-
+        Memory memory = nal.memory;
 
         long now = memory.time();
 
@@ -223,7 +221,7 @@ public class LocalRules {
         }
 
         //else, new solution is btter
-        memory.emotion.happy(newQ - oldQ, question, nal);
+        memory.emotion.happy(newQ - oldQ, question);
 
         question.setBestSolution(sol, memory);
 
@@ -231,7 +229,7 @@ public class LocalRules {
 
 
         //TODO solutionEval calculates the same solutionQuality as here, avoid this unnecessary redundancy
-        Budget budget = Tense.solutionEval(question, sol, nal);
+        Budget budget = Tense.solutionEval(question, sol, nal.time());
 
         if (!(question.isQuestion() || question.isQuest())) {
             System.err.println("err");

@@ -115,7 +115,7 @@ public class InternalExperience {
 
             if (OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
                     (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && task.isQuestOrQuestion())) {
-                experienceFromTaskInternal(tp, task, isFull());
+                experienceFromTaskInternal(task, n.memory.self());
             }
             //we also need Mr task process to be able to have the task process, this is a hack..
 
@@ -139,11 +139,11 @@ public class InternalExperience {
         });
     }
 
-    public static Compound toTerm(Task s, Premise mem, float conceptCreationExpectation) {
-        return toTerm(s, mem, conceptCreationExpectation, enableWantBelieve);
+    public static Compound toTerm(Task s, Term self, float conceptCreationExpectation) {
+        return toTerm(s, self, conceptCreationExpectation, enableWantBelieve);
     }
 
-    public static Compound toTerm(Task s, Premise nal, float conceptCreationExpectation, boolean enableWantBelieve) {
+    public static Compound toTerm(Task s, Term self, float conceptCreationExpectation, boolean enableWantBelieve) {
         Operator opTerm;
         switch (s.getPunctuation()) {
             case Symbols.JUDGMENT:
@@ -174,7 +174,7 @@ public class InternalExperience {
         if (tr != null) {
             arg[k++] = tr.toWordTerm(conceptCreationExpectation);
         }
-        arg[k] = nal.self();
+        arg[k] = self;
 
         Compound operation = $.oper(opTerm, arg);
         if (operation == null) {
@@ -203,7 +203,7 @@ public class InternalExperience {
 //        return null;
 //    }
 
-    protected Task experienceFromTaskInternal(Premise nal, Task task, boolean full) {
+    protected Task experienceFromTaskInternal(Task task, Term self) {
 
         // if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
         //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST))) {
@@ -223,7 +223,7 @@ public class InternalExperience {
             return null;
         }
 
-        Compound ret = toTerm(task, nal, conceptCreationExpectation.floatValue());
+        Compound ret = toTerm(task, self, conceptCreationExpectation.floatValue());
         if (ret == null) {
             return null;
         }

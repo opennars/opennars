@@ -1,7 +1,6 @@
 package nars.nal.nal7;
 
 import nars.Memory;
-import nars.Premise;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -143,14 +142,14 @@ public enum Tense  {
      * @return The budget for the new task which is the belief activated, if
      * necessary
      */
-    public static Budget solutionEval(Task task, Task solution, Premise p) {
+    public static Budget solutionEval(Task task, Task solution, long time) {
         //boolean feedbackToLinks = false;
         /*if (task == null) {
             task = nal.getCurrentTask();
             feedbackToLinks = true;
         }*/
         boolean judgmentTask = task.isJudgment();
-        float quality = solutionQuality(task, solution, p.time());
+        float quality = solutionQuality(task, solution, time);
         if (quality <= 0)
             return null;
 

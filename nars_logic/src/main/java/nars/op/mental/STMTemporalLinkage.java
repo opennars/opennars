@@ -1,11 +1,9 @@
 package nars.op.mental;
 
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.nal.Deriver;
-import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.compound.Compound;
 
@@ -25,6 +23,7 @@ public class STMTemporalLinkage {
     //public static STMTemporalLinkage I=null;
 
     private static final String id = STMTemporalLinkage.class.getSimpleName();
+    private final NAR nar;
 
     @Override
     public final String toString() {
@@ -44,10 +43,11 @@ public class STMTemporalLinkage {
                 inductionOnSucceedingEvents(n, false);
         });
         nar.memory.eventReset.on(n -> stm.clear());
+        this.nar = nar;
 
     }
 
-    public static boolean isInputOrTriggeredOperation(Task newEvent, Memory mem) {
+    public static boolean isInputOrTriggeredOperation(Task newEvent) {
         if (newEvent.isInput()) return true;
         //if (Tense.containsMentalOperator(newEvent)) return true;
         return false;
@@ -58,18 +58,17 @@ public class STMTemporalLinkage {
 //    }
 
 
-    public boolean inductionOnSucceedingEvents(TaskProcess nal, boolean anticipation) {
+    public boolean inductionOnSucceedingEvents(Task currentTask, boolean anticipation) {
 
-        Task currentTask = nal.getTask();
 
-        int stmSize = nal.memory().shortTermMemoryHistory.intValue();
+        int stmSize = nar.memory.shortTermMemoryHistory.intValue();
 
 
 //        if (!currentTask.isTemporalInductable() && !anticipation) { //todo refine, add directbool in task
 //            return false;
 //        }
 
-        if (currentTask.isEternal() || (!isInputOrTriggeredOperation(currentTask, nal.memory()) && !anticipation)) {
+        if (currentTask.isEternal() || (!isInputOrTriggeredOperation(currentTask) && !anticipation)) {
             return false;
         }
 
@@ -84,7 +83,7 @@ public class STMTemporalLinkage {
 
         /** current task's... */
         Compound term = currentTask.getTerm();
-        Concept concept = nal.nar.concept(term);
+        Concept concept = nar.concept(term);
         if (concept == null)
             return false;
 
@@ -94,30 +93,20 @@ public class STMTemporalLinkage {
 
             Task previousTask = ss.next();
 
-
             /*if (!equalSubTermsInRespectToImageAndProduct(term, t.getTerm())) {
                 continue;
             }*/
 
-
             if (numToRemoveFromBeginning > 0) {
-                ss.remove();
                 numToRemoveFromBeginning--;
             }
             else {
-                boolean remaining = false;
                 if (!previousTask.isDeleted()) {
-                    Concept previousConcept = nal.nar.concept(previousTask.getTerm());
-                    if (previousConcept != null) {
-                        nal.link(previousConcept, currentTask);
-                        nal.link(concept, previousTask);
-                        remaining = true;
-                    }
+                    concept.crossLink(currentTask, previousTask, nar);
                 }
-                if (!remaining)
-                    ss.remove();
             }
 
+            ss.remove();
 
            /* continue;
             //nal.setBelief(previousTask);
