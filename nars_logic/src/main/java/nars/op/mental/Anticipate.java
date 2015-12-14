@@ -82,7 +82,7 @@ public class Anticipate {
             return; //Besides that the task has to be a judgement, if the truth expectation is below confirmation expectation,
         }           //the truth value of the incoming event was too low to confirm that the expected event has happened.
 
-        if(nar.concept(tt).get(Anticipate.class) == null || now > occ) { //it's not observable, or about thee future
+        if(tt == null || nar.concept(tt).get(Anticipate.class) == null || now > occ) { //it's not observable, or about thee future
             return;                                            //in the former case CWA can not be applied in general
         }                                                      //and in the latter case anticipation is pointless
 
