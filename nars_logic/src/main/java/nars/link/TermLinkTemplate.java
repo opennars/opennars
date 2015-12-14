@@ -174,16 +174,7 @@ public class TermLinkTemplate extends UnitBudget /* extends Budget ?? instead of
         return target;
     }
 
-    /**
-     * for updating this target's field with an equivalent instance.
-     * calling this should not change the equals() value of target
-     * but just helps to share common term instances
-     *
-     * @param target
-     */
-    public void setTargetInstance(Term target) {
-        this.target = target;
-    }
+
 
     public int hash(boolean incoming) {
         if (incoming) return hashIn;

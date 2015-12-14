@@ -9,7 +9,6 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
 import nars.term.Term;
-import nars.term.TermMetadata;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
@@ -274,12 +273,11 @@ public abstract class AbstractTask extends Item<Task>
     public final void onConcept(Concept c) {
 
         //intermval generally contains unique information that should not be replaced
-        if (term instanceof TermMetadata)
-            return;
+        //if (term instanceof TermMetadata)
+            //return;
 
         //if debug, check that they are equal..
-
-        term = (Compound) c.getTerm(); //HACK the cast
+        //term = (Compound) c.getTerm(); //HACK the cast
     }
 
     @Override

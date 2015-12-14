@@ -148,7 +148,6 @@ public class NAL3Test extends AbstractNALTester {
     @Test
     public void composition_on_both_sides_of_a_statement_2() throws Narsese.NarseseException {
         TestNAR tester = test();
-        tester.nar.log();
         tester.believe("<bird --> animal>",0.9f,0.9f); //.en("Bird is a type of animal.");
         tester.ask("<(|,bird,swimmer) --> (|,animal,swimmer)>"); //.en("Is a swimming bird a type of swimming animal?");
         tester.mustBelieve(cycles, "<(|,bird,swimmer) --> (|,animal,swimmer)>", 0.90f ,0.73f); //.en("A swimming bird is probably a type of swimming animal.");

@@ -16,7 +16,6 @@ import nars.link.*;
 import nars.nal.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
-import nars.term.TermMetadata;
 import nars.term.Termed;
 
 import java.util.List;
@@ -615,6 +614,7 @@ public class DefaultConcept extends AtomConcept {
                 continue;
             }*/
 
+            UnitBudget.plus.value(t, subBudget);
 
             //only apply this loop to non-transform termlink templates
             //PENDING_TERMLINK_BUDGET_MERGE.value(t, subBudget);
@@ -720,11 +720,6 @@ public class DefaultConcept extends AtomConcept {
             Concept componentConcept = getTermLinkTemplateTarget(linkTemplate, subBudget, nar);
             if (componentConcept != null) {
 
-                //possibly share term instances
-                Term cterm = componentConcept.getTerm();
-                if (!(cterm instanceof TermMetadata))
-                    linkTemplate.setTargetInstance(cterm);
-
                 /** activate the peer task tlink */
                 activateTaskLink(componentConcept, taskLinkBuilder);
 
@@ -783,15 +778,6 @@ public class DefaultConcept extends AtomConcept {
     }
 
 
-    /** insert tasklinks between the two concepts of two tasks.
-     * returns 0, 1, 2 depending how many tasklinks were
-     * successfully inserted in the bags */
-    public static int crosslink(Task currentTask, Task previousTask) {
 
-
-        //((DefaultConcept)previousConcept).link(currentTask);
-        //nal.link(concept, previousTask);
-        return 0;
-    }
 
 }

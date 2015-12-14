@@ -56,6 +56,9 @@ public class SingleStepNAR extends AbstractNAR {
                     else {
                         t = t.normalize(memory);
                         if (t != null) {
+
+                            process(t); //immediately process
+
                             memory.eventTaskProcess.emit(t);
                         }
                         return false;

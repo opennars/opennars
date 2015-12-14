@@ -155,32 +155,6 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
     }
 
-    protected Concept run(Task task) {
-
-        Concept c = conceptualize(task, task.getBudget());
-        if (c == null) {
-            memory.remove(task, "Inconceivable");
-            return null;
-        }
-
-        memory.emotion.busy(task);
-
-        if (c.process(task, this)) {
-            if (!task.isDeleted()) {
-
-                c.link(task, this);
-                memory.eventTaskProcess.emit(task);
-
-            }
-
-            return c;
-        } else {
-            memory.remove(task, null /* "Unprocessable" */);
-            return null;
-        }
-
-    }
-
 
     /**
      * Reset the system with an empty memory and reset clock.  Event handlers
@@ -1355,38 +1329,51 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     /**
      * execute a Task as a TaskProcess (synchronous)
      */
-    public Task process(Task task) {
+    public boolean process(Task task) {
 
-        if(task==null) {
-            return null;
-        }
-
-        Budget taskBudget = task.getBudget();
-
+//        if(task==null) {
+//            return false;
+//        }
+//        Budget taskBudget = task.getBudget();
 //        if (inputPriorityFactor != 1f) {
 //            taskBudget.mulPriority(inputPriorityFactor);
 //        }
-
-        Memory memory = this.memory;
-
-        if (!taskBudget.summaryGreaterOrEqual(memory.taskProcessThreshold)) {
-            memory.remove(task, "Insufficient Budget to TaskProcess");
-            return null;
-        }
-
-
-        if (!task.getTerm().levelValid(nal())) {
-            memory.remove(task, "Insufficient NAL level");
-            return null;
-        }
+//        if (!taskBudget.summaryGreaterOrEqual(memory.taskProcessThreshold)) {
+//            memory.remove(task, "Insufficient Budget to TaskProcess");
+//            return null;
+//        }
+//
+//
+//        if (!task.getTerm().levelValid(nal())) {
+//            memory.remove(task, "Insufficient NAL level");
+//            return false;
+//        }
 
 //        TaskProcess d = new TaskProcess(this, task);
 //
 //        d.run();
 
+        Concept c = conceptualize(task, task.getBudget());
+        if (c == null) {
+            memory.remove(task, "Inconceivable");
+            return false;
+        }
 
+        memory.emotion.busy(task);
 
-        return task;
+        if (c.process(task, this)) {
+            if (!task.isDeleted()) {
+
+                c.link(task, this);
+                memory.eventTaskProcess.emit(task);
+
+            }
+
+            return true;
+        } else {
+            memory.remove(task, null /* "Unprocessable" */);
+            return false;
+        }
 
     }
 

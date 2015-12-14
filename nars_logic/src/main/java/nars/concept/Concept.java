@@ -408,11 +408,12 @@ public interface Concept extends Termed, Itemized<Term> {
         Compound otherTerm = previousTask.getTerm();
         if (otherTerm.equals(getTerm())) return 0; //self
 
+        int count = 0;
+        count += link(previousTask, nar) ? 1 : 0;
+
         Concept other = getMemory().concept(otherTerm);
         if (other == null) return 0;
 
-        int count = 0;
-        count += link(previousTask, nar) ? 1 : 0;
         count += other.link(currentTask, nar) ? 1 : 0;
 
         return count;

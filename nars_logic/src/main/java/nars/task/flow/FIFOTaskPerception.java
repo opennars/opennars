@@ -64,11 +64,11 @@ public class FIFOTaskPerception extends TaskPerception {
 
     @Override
     public void accept(Task t) {
-        if (filter == null || filter.test(t)) {
+        Predicate<Task> f = this.filter;
+        if (f == null || f.test(t)) {
 
-                if (t.isDeleted()) {
-                    throw new RuntimeException("task deleted");
-                }
+            if (t.isDeleted())
+                throw new RuntimeException("task deleted");
 
             buffer.add(t);
         }
