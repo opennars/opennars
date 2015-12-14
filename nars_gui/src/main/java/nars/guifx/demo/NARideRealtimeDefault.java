@@ -2,7 +2,6 @@ package nars.guifx.demo;
 
 import nars.Memory;
 import nars.nar.Default;
-import nars.process.BagForgettingEnhancer;
 import nars.term.compile.TermIndex;
 import nars.time.RealtimeMSClock;
 
@@ -32,7 +31,7 @@ public class NARideRealtimeDefault {
         nar.setTaskLinkBagSize(32);
         nar.setTermLinkBagSize(128);
 
-        new BagForgettingEnhancer(nar.memory, nar.core.concepts(), 0.75f, 0.75f, 0.75f);
+        //new BagForgettingEnhancer(nar.memory, nar.core.concepts(), 0.75f, 0.75f, 0.75f);
 
 
         /*nar.memory.conceptForgetDurations.set(10);

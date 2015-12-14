@@ -83,8 +83,8 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
         this.activationFactor = activationFactor;
         this.now = now;
 
-        Concept c = bag.update(this);
-        return c;
+        //Concept c = bag.update(this);
+        return null;
     }
 
 //    public final CacheBag<Term, Concept> index() {

@@ -70,18 +70,20 @@ public interface Concept extends Termed, Itemized<Term> {
      *  from this concept's bag.
      */
     default int nextTermLinks(int dur, long now, float termLinkForgetDurations, TermLink[] result) {
-        return getTermLinks().forgetNext(
-                termLinkForgetDurations * dur,
-                result,
-                now,
-                1 /* additional */);
+        return 0;
+//        return getTermLinks().forgetNext(
+//                termLinkForgetDurations * dur,
+//                result,
+//                now,
+//                1 /* additional */);
     }
     default int nextTaskLinks(int dur, long now, float taskLinkForgetDurations, TaskLink[] result) {
-        return getTaskLinks().forgetNext(
-                taskLinkForgetDurations * dur,
-                result,
-                now,
-                1 /* additional */);
+        return 0;
+//        return getTaskLinks().forgetNext(
+//                taskLinkForgetDurations * dur,
+//                result,
+//                now,
+//                1 /* additional */);
     }
 
     default void discountBeliefConfidence() {

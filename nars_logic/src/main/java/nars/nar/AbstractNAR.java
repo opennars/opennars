@@ -541,7 +541,7 @@ public abstract class AbstractNAR extends NAR {
 //            if (n == 0) return;
 
             for (int i = 0; i < conceptsToFire; i++) {
-                Concept c = active.forgetNext(conceptForgetDurations, nar.memory);
+                Concept c = active.peekNext(); //forgetNext(conceptForgetDurations, nar.memory);
                 if (c == null) break;
                 fireConcept(c);
             }

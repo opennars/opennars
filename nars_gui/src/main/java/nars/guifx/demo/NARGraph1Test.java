@@ -8,7 +8,6 @@ import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
 import nars.nar.Default;
-import nars.process.BagForgettingEnhancer;
 
 /**
  * Created by me on 8/15/15.
@@ -19,8 +18,8 @@ public class NARGraph1Test {
     public static SpaceGrapher newGraph(Default n) {
 
 
-        new BagForgettingEnhancer(n.memory, n.core.concepts(),
-                0f, 0.8f, 0.8f);
+//        new BagForgettingEnhancer(n.memory, n.core.concepts(),
+//                0f, 0.8f, 0.8f);
         n.memory.taskLinkForgetDurations.setValue(8);
 
 //        n.memory.conceptForgetDurations.setValue(8);

@@ -741,7 +741,8 @@ public class DefaultConcept extends AtomConcept {
      * @return the tasklink which was selected or updated
      */
     protected static TaskLink activateTaskLink(Concept c, TaskLinkBuilder taskLink) {
-        return c.getTaskLinks().update(taskLink);
+        //return c.getTaskLinks().update(taskLink);
+        return null;
     }
 
     /**

@@ -1,17 +1,12 @@
 package nars.bag;
 
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.block.procedure.Procedure2;
-import nars.Memory;
 import nars.bag.impl.AbstractCacheBag;
-import nars.bag.tx.BagActivator;
-import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.budget.UnitBudget;
 import nars.util.data.Util;
-import org.apache.commons.lang3.mutable.MutableFloat;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 import java.io.*;
@@ -30,7 +25,6 @@ import java.util.function.Supplier;
  */
 public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, V> implements Consumer<V>, Supplier<V>, Iterable<V>, Externalizable {
 
-    final transient BagForgetting<K, V> forgetNext = new BagForgetting<>();
 
     protected Procedure2<Budget, Budget> mergeFunction;
 
@@ -220,118 +214,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
         return size() == 0;
     }
 
-    /**
-     * calls overflow() on an overflown object
-     * returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics)
-     * NOTE: this is the generic version which may or may not work, or be entirely efficient in some subclasses
-     */
-    public V update(BagTransaction<K, V> tx) {
 
-        K key = tx.name();
-        V item = key != null ? get(key) : peekNext();
-
-        return updateItem(tx, item);
-    }
-
-
-    protected final V updateItem(BagSelector<K, V> selector, V item, UnitBudget reusableTemporary) {
-        if (!updateItemBudget(selector, item, reusableTemporary))
-            return item;
-        return updateReinsert(selector, item);
-    }
-
-    /**
-     * similar to the other updateItem, except this will instantiate
-     * an item via the transaction if item == null
-     */
-    protected V updateItem(BagTransaction<K, V> tx, V item) {
-        if (item == null) {
-            item = tx.newItem();
-            if (item == null)
-                return null;
-        } else {
-            if (!updateItemBudget(tx, item, new UnitBudget()))
-                return item;
-        }
-
-        return updateReinsert(tx, item);
-    }
-
-    public V updateReinsert(BagSelector<K, V> selector, V item) {
-        // put the (new or merged) item into itemTable
-        V overflow = put(item);
-        if (overflow != null)
-            selector.overflow(overflow);
-
-        /*if (overflow == item)
-            return null;*/
-
-        return item;
-    }
-
-    //item.getbudget();
-    //selector.getBudget()
-
-    boolean updateItemBudget(BagSelector<K, V> selector, V item, UnitBudget nextBudget /* temporary, re-usable instance */) {
-        /*if (selector instanceof BagActivator)
-            src = ((BagActivator)selector).getBudget();
-        else*/
-        Budget src = item.getBudget();
-        return updateItemBudget(selector, src, item, nextBudget);
-    }
-
-    boolean updateItemBudget(BagSelector<K, V> selector, Budget sourceBudget, V item, UnitBudget nextBudget /* temporary, re-usable instance */) {
-
-        nextBudget.budget(sourceBudget);
-
-        //HACK for ConceptActivator / TLink activation inconsistency
-        if ((nextBudget.isZero() && (selector instanceof BagActivator)))
-            nextBudget.budget(((BagActivator)selector).getBudget());
-
-        selector.updateItem(item, nextBudget);
-
-        if ((nextBudget.isDeleted()) || (nextBudget.equalsByPrecision(sourceBudget)))
-            return false;
-        //it has changed
-
-        //this PUT(TAKE( sequence can be optimized in particular impl
-        //the default is a non-optimal failsafe
-        remove(item.name());
-
-        //apply changed budget after removed and before re-insert
-        sourceBudget.budget(nextBudget);
-        return true;
-    }
-
-
-    /**
-     * faster than using the BagTransaction version when creation of instances is not necessary
-     */
-    public V peekNext(BagSelector<K, V> selector) {
-
-        V item;
-        do {
-            item = peekNext();
-
-            if (item == null) {
-                //nothing available or bag empty
-                return null;
-            }
-
-            //avoid deleted tasks, and remove them from bag
-            if (item.isDeleted()) {
-                //discovered a deleted item
-                remove(item.name());
-                selector.overflow(item);
-                item = null;
-            }
-
-        } while (item == null);
-
-        updateItem(selector, item, new UnitBudget());
-
-        return item;
-    }
 
     public void printAll() {
         printAll(System.out);
@@ -358,137 +241,18 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 //        return forgetNext(forgetCycles, batch, 0, batch.length, now, batch.length/2 /* default to max 1.5x */);
 //    }
 
+    /** warning: slow */
     public double getStdDev(StandardDeviation target) {
         target.clear();
         forEach(x -> target.increment(x.getPriority()));
         return target.getResult();
     }
 
-    /**
-     * collects a batch of values and returns them after applying forgetting to each
-     * returns number of items collected.
-     * batch[] will be overwritten between start and stop,
-     * but may end before stop.
-     * use the returned count to determine what the next
-     * available position is.
-     * <p>
-     * maxAdditionalAttempts is the number of retries beyond the given
-     * (stop-start) amount of entries in case the bag or selector
-     * refuse to provide one in that iteration.  (ex: novelty
-     * filtering.)
-     * <p>
-     * the produced list may contain duplicates.
-     * TODO make a non-duplicate Set based version of this
-     */
-    public int forgetNext(float forgetCycles, V[] batch, int start, int stop, long now, int maxAdditionalAttempts) {
-        if (isEmpty())
-            return 0;
 
-        return peekNext(forgetNext.set(forgetCycles, now),
-                batch, start, stop, maxAdditionalAttempts);
-    }
-
-    public final int forgetNext(float forgetCycles, V[] batch, long now, int maxAdditionalAttempts) {
-        return forgetNext(forgetCycles, batch, 0, batch.length, now, maxAdditionalAttempts);
-    }
-
-
-    /**
-     * receive a batch (up to specific) of values.
-     * implementations can override this to
-     * optimize it for its unique data management patterns.
-     * <p>
-     * the length is specified by the length of a provider array
-     * where the data values will be stored before returning.
-     *
-     * @return the number of entries filled in the array
-     * remaining entries will be null
-     * <p>
-     * the transaction(s) themseles will have completed by the
-     * time the values are returned.
-     * <p>
-     * TODO option for if duplicates are allowed
-     */
-    protected final int peekNext(BagSelector<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
-
-        int batchlen = Math.min(size(), stop - start);
-        int maxAttempts = batchlen + maxAdditionalAttempts;
-
-        return peekNextFill(tx, batch, start, batchlen, maxAttempts);
-    }
-
-    /** bag implementations will probably want to re-implement this for optimized accesses */
-    protected int peekNextFill(BagSelector<K, V> tx, V[] batch, int start, int len, int maxAttempts) {
-        int fill = 0;
-
-
-        for (int i = 0; (fill < len) && (i < maxAttempts); i++) {
-            V x = peekNext(tx);
-            if (x == null) break;
-
-
-            if (!bufferIncludes(batch, x)) {
-                batch[start + (fill++)] = x;
-            }
-        }
-
-        return fill;
-    }
-
-    /**
-     * accuracy determines the percentage of items which will be processNext().
-     * should be between 0 and 1.0
-     * this is a way to apply the forgetting process applied in putBack.
-     */
-    public void forgetNext(float forgetCycles, float accuracy, Memory m) {
-        int conceptsToForget = (int) Math.ceil(size() * accuracy);
-        if (conceptsToForget == 0) return;
-
-        forgetNext.set(forgetCycles, m.time());
-
-        for (int i = 0; i < conceptsToForget; i++) {
-            peekNext(forgetNext);
-        }
-
-    }
-
-    public final void forgetNext(MutableFloat forgetDurations, float accuracy, Memory m) {
-        float forgetCycles = m.durationToCycles(forgetDurations);
-        forgetNext(forgetCycles, accuracy, m);
-    }
-
-    //    /**
-//     * equivalent to a peekNext where forgetting is applied
-//     *
-//     * @return the variable that was updated, or null if none was taken out
-//     * @forgetCycles forgetting time in cycles
-//     */
-    public final V forgetNext(AtomicDouble forgetDurations, Memory m) {
-        return forgetNext(forgetDurations.floatValue(), m);
-    }
-
-    public V forgetNext(float forgetDurations, Memory m) {
-        setForgetNext(forgetDurations, m);
-        return forgetNext();
-    }
-
-    public V forgetNext() {
-        peekNext(forgetNext);
-        return forgetNext.current;
-    }
-
-    /**
-     * call this to set the forgetNext settings prior to calling forgetNext()
-     */
-    protected void setForgetNext(float forgetDurations, Memory m) {
-        forgetNext.set(m.durationToCycles(forgetDurations), m.time());
-    }
 
 
     @Override
     public String toString() {
-
-
         return getClass().getSimpleName();// + "(" + size() + "/" + getCapacity() +")";
     }
 
@@ -555,32 +319,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     }
 
 
-    public final int peekNext(BagSelector<K, V> tx, V[] result, int additionalAttempts) {
-        return peekNext(tx, result, 0, result.length, additionalAttempts);
-    }
 
     public abstract void setCapacity(int c);
-
-    public void writeValues(ObjectOutput output) throws IOException {
-        int s = size();
-        output.writeInt(s);
-        forEach(s, v -> {
-            try {
-                output.writeObject(v);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-
-    }
-
-    public void readValues(ObjectInput input) throws IOException, ClassNotFoundException {
-        int s = input.readInt();
-        for (int i = 0; i < s; i++) {
-            V v = (V) input.readObject();
-            put(v);
-        }
-    }
 
 
 //    /**

@@ -2,18 +2,17 @@ package nars.bag.impl;
 
 import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
 import com.gs.collections.api.block.procedure.Procedure2;
-import nars.Global;
 import nars.bag.Bag;
-import nars.bag.BagSelector;
 import nars.budget.Budget;
 import nars.budget.Itemized;
-import nars.budget.UnitBudget;
 import nars.util.ArraySortedIndex;
 import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Bag which stores items, sorted, in one array.
@@ -99,6 +98,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
         }
         return null; // empty bag
     }
+
 
 
     //TODO
@@ -241,81 +241,81 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
 //
 //    }
 
-
-    /**
-     * optimized peek implementation that scans the curvebag
-     * iteratively surrounding a randomly selected point
-     */
-    @Override
-    protected int peekNextFill(BagSelector<K, V> tx, V[] batch, int bstart, int len, int maxAttempts) {
-
-
-        int siz = size();
-        len = Math.min(siz, len);
-
-        List<V> a = arrayBag.items.getList();
-
-        int istart;
-
-        if (len != siz) {
-            //asking for some of the items
-            int r = Math.max(1, len / 2);
-            int center = sample();
-            istart = center + r; //scan downwards from here (increasing pri order)
-
-            if (r % 2 == 1) istart--; //if odd, give extra room to the start (higher priority)
-
-            //TODO test and if possible use more fair policy that accounts for clipping
-            if (istart-r < 0) {
-                istart -= (istart - r); //start further below
-            }
-            if (istart >= siz)
-                istart = siz-1;
-        }
-        else {
-            //optimization: asking for all of the items (len==siz)
-            //   just add all elements, so dont sample
-            istart = siz-1;
-        }
-
-
-        List<K> toRemove = null;
-
-        UnitBudget b = new UnitBudget(); //TODO avoid creating this
-
-
-        //int bend = bstart + len;
-        int next = bstart;
-
-        //scan increasing priority, stopping at the top or if buffer filled
-        for (int i = istart; (i >= 0) && (next < len); i--) {
-            V v = a.get(i);
-
-            if (v == null) break; //HACK wtf?
-            //throw new RuntimeException("null");
-
-            if (v.isDeleted()) {
-                if (toRemove == null) toRemove = Global.newArrayList(0); //TODO avoid creating this
-                toRemove.add(v.name());
-            } else {
-                batch[next++] = v;
-            }
-        }
-
-        //pad with nulls. helpful for garbage collection incase they contain old values (the array is meant to be re-used)
-        if (next != len)
-            Arrays.fill(batch, bstart+next, bstart+len, null);
-
-        //update after they have been selected because this will modify their order in the curvebag
-        for (int i = bstart; i < bstart+next; i++)
-            updateItem(tx, batch[i], b);
-
-
-        if (toRemove != null)
-            toRemove.forEach(this::remove);
-
-        return next; //# of items actually filled in the array
-    }
+//
+//    /**
+//     * optimized peek implementation that scans the curvebag
+//     * iteratively surrounding a randomly selected point
+//     */
+//    @Override
+//    protected int peekNextFill(BagSelector<K, V> tx, V[] batch, int bstart, int len, int maxAttempts) {
+//
+//
+//        int siz = size();
+//        len = Math.min(siz, len);
+//
+//        List<V> a = arrayBag.items.getList();
+//
+//        int istart;
+//
+//        if (len != siz) {
+//            //asking for some of the items
+//            int r = Math.max(1, len / 2);
+//            int center = sample();
+//            istart = center + r; //scan downwards from here (increasing pri order)
+//
+//            if (r % 2 == 1) istart--; //if odd, give extra room to the start (higher priority)
+//
+//            //TODO test and if possible use more fair policy that accounts for clipping
+//            if (istart-r < 0) {
+//                istart -= (istart - r); //start further below
+//            }
+//            if (istart >= siz)
+//                istart = siz-1;
+//        }
+//        else {
+//            //optimization: asking for all of the items (len==siz)
+//            //   just add all elements, so dont sample
+//            istart = siz-1;
+//        }
+//
+//
+//        List<K> toRemove = null;
+//
+//        UnitBudget b = new UnitBudget(); //TODO avoid creating this
+//
+//
+//        //int bend = bstart + len;
+//        int next = bstart;
+//
+//        //scan increasing priority, stopping at the top or if buffer filled
+//        for (int i = istart; (i >= 0) && (next < len); i--) {
+//            V v = a.get(i);
+//
+//            if (v == null) break; //HACK wtf?
+//            //throw new RuntimeException("null");
+//
+//            if (v.isDeleted()) {
+//                if (toRemove == null) toRemove = Global.newArrayList(0); //TODO avoid creating this
+//                toRemove.add(v.name());
+//            } else {
+//                batch[next++] = v;
+//            }
+//        }
+//
+//        //pad with nulls. helpful for garbage collection incase they contain old values (the array is meant to be re-used)
+//        if (next != len)
+//            Arrays.fill(batch, bstart+next, bstart+len, null);
+//
+//        //update after they have been selected because this will modify their order in the curvebag
+//        for (int i = bstart; i < bstart+next; i++)
+//            updateItem(tx, batch[i], b);
+//
+//
+//        if (toRemove != null)
+//            toRemove.forEach(this::remove);
+//
+//        return next; //# of items actually filled in the array
+//    }
 
     @Override
     public void setCapacity(int c) {
