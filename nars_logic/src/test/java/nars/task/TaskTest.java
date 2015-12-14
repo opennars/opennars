@@ -49,7 +49,7 @@ public class TaskTest {
         //l.forEach(System.out::println);
         int last = l.size() - 1;
         assertTrue(l.get(0).toString().contains("<b-->a>. :-: %.90;.90%"));
-        assertTrue(l.get(last).toString().contains("<b-->a>. :-: %.00;.00%"));
+        assertTrue(l.get(last).toString().contains("<b-->a>. :-: %0.0;0.0%"));
 
         //test monotonically decreasing
         Task y = null;

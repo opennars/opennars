@@ -20,9 +20,9 @@ public class TextsTest {
         assertEquals(".09", Texts.n2(0.09f).toString());
         assertEquals(".10", Texts.n2(0.1f).toString());
         assertEquals(".01", Texts.n2(0.009f).toString());
-        assertEquals(".00", Texts.n2(0.001f).toString());
+        assertEquals("0.0", Texts.n2(0.001f).toString());
         assertEquals(".01", Texts.n2(0.01f).toString());
-        assertEquals(".00", Texts.n2(0.0f).toString());
+        assertEquals("0.0", Texts.n2(0.0f).toString());
         
         
     }

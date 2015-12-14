@@ -1,9 +1,15 @@
 package nars.nal;
 
 import nars.MapIndex;
+import nars.Op;
+import nars.nal.meta.match.Ellipsis;
 import nars.term.Term;
 import nars.term.TermContainer;
+import nars.term.TermMetadata;
+import nars.term.TermVector;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
+import nars.term.transform.FindSubst;
 
 import java.util.HashMap;
 
@@ -34,14 +40,16 @@ public class PatternIndex extends MapIndex {
         //if (!(x instanceof AbstractCompoundPattern)) {
 
 
+        if (!(x instanceof TermMetadata)) {
 //            if (!Ellipsis.hasEllipsis(x)) {
-//                if (!x.isCommutative()) {
+            if (!x.isCommutative()) {
+                return new AbstractCompoundPattern(x, (TermVector) subs);
 //                    return new LinearCompoundPattern(x, (TermVector) subs);
 //                } else {
 //                    return new CommutiveCompoundPattern(x, (TermVector) subs);
-//                }
+            }
 //            }
-
+        }
         //}
 
         return super.compileCompound(x, subs);
@@ -166,42 +174,69 @@ public class PatternIndex extends MapIndex {
 //        }
 //    }
 //
-//    abstract static class AbstractCompoundPattern extends GenericCompound {
-//
-//
-//        public final int sizeCached;
-//        public final int volCached;
-//        public final int structureCachedWithoutVars;
-//        public final Term[] termsCached;
-//        protected final boolean ellipsis;
-//
-//        public AbstractCompoundPattern(Compound seed, TermVector subterms) {
-//            super(seed.op(), subterms, seed.relation());
-//
-//            sizeCached = seed.size();
-//            structureCachedWithoutVars =
-//                    //seed.structure() & ~(Op.VariableBits);
-//                    seed.structure() & ~(Op.VAR_PATTERN.bit());
-//
-//            this.ellipsis = Ellipsis.hasEllipsis(this);
-//            volCached = seed.volume();
-//            this.termsCached = subterms.terms();
-//        }
-//
-//        final public boolean prematch(Compound y) {
-//            int yStructure = y.structure();
-//            if ((yStructure | structureCachedWithoutVars) != yStructure)
-//                return false;
-//
-//            if (!ellipsis && sizeCached != y.size())
-//                return false;
-//            if (volCached > y.volume())
-//                return false;
-//
-//            return relation == y.relation();
-//        }
-//
-//    }
+    static final class AbstractCompoundPattern extends GenericCompound {
+
+
+        public final int sizeCached;
+        public final int volCached;
+        public final int structureCachedWithoutVars;
+        public final Term[] termsCached;
+        protected final boolean ellipsis;
+        private final boolean commutative;
+
+        public AbstractCompoundPattern(Compound seed, TermVector subterms) {
+            super(seed.op(), subterms, seed.relation());
+
+            sizeCached = seed.size();
+            structureCachedWithoutVars =
+                    seed.structure() & ~(Op.VariableBits);
+                    //seed.structure() & ~(Op.VAR_PATTERN.bit());
+
+            this.ellipsis = Ellipsis.hasEllipsis(this);
+            this.volCached = seed.volume();
+            this.termsCached = subterms.terms();
+            this.commutative = isCommutative();
+        }
+
+        @Override
+        public Term[] terms() {
+            return termsCached;
+        }
+
+    @Override
+        public boolean match(Compound y, FindSubst subst) {
+            if (!prematch(y)) return false;
+
+
+            if (!ellipsis) {
+                if (commutative) {
+                    return subst.matchPermute(this, y);
+                } else {
+                    return matchLinear(y, subst);
+                }
+            } else {
+                return subst.matchCompoundWithEllipsis(this, y);
+            }
+
+        }
+
+        final public boolean prematch(Compound y) {
+            int yStructure = y.structure();
+            if ((yStructure | structureCachedWithoutVars) != yStructure)
+                return false;
+
+            if (!ellipsis) {
+                if (sizeCached != y.size())
+                    return false;
+            }
+
+            if (volCached > y.volume())
+                return false;
+
+            return relation == y.relation();
+        }
+
+    }
 //
 //    /** non-commutive simple compound which can match subterms in any order, but this order is prearranged optimally */
 //    static final class LinearCompoundPattern extends AbstractCompoundPattern {

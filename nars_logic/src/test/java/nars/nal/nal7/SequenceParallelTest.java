@@ -266,7 +266,7 @@ public class SequenceParallelTest {
 
     @Test public void testTrailingSequenceInterval() {
         //trailing suffix interval not removed ordinarily
-        assertEquals("$.00;.00;.00$ <(&/,x,/1)=/>y>. :0: %1.0;.90%",
+        assertEquals("$0.0;0.0;0.0$ <(&/,x,/1)=/>y>. :0: %1.0;.90%",
               t.task("<(&/, x, /1) =/> y>.").toString());
     }
     @Test public void testTrailingSequenceIntervalRemovedIfTaskTerm() {
