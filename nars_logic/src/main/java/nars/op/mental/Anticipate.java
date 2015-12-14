@@ -51,6 +51,7 @@ public class Anticipate {
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
+    final static float priorityBoostOnDisappointment = 1.5f;
 
     final Multimap<Compound,TaskTime> anticipations = LinkedHashMultimap.create();
 
@@ -115,10 +116,13 @@ public class Anticipate {
         if (debug)
             System.err.println("Anticipation Negated " + tt.task);
 
+        Budget expiredBoostedBudget = expiredBudget.clone();
+        expiredBoostedBudget.setPriority(priorityBoostOnDisappointment*expiredBoostedBudget.getPriority());
+
         final Task derived = new FluentTask<>(prediction)
                 .belief()
                 .truth(expiredTruth.getFrequency(), expiredTruth.getConfidence())
-                .budget(expiredBudget)
+                .budget(expiredBoostedBudget)
                 .time(memory.time(), expectedOccurrenceTime)
                 .parent(tt.task, null)
                 .because("Absent Anticipated Event")
@@ -154,7 +158,6 @@ public class Anticipate {
                     teststring += s + "\n";
                 }
             }
-
         }
 
         toRemove.forEach(tt -> anticipations.remove(c.getTerm(),tt));
