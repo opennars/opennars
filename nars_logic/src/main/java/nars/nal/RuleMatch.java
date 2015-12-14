@@ -3,14 +3,13 @@ package nars.nal;
 import nars.$;
 import nars.Global;
 import nars.Op;
-import nars.Premise;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
-import nars.task.PreTask;
+import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -34,7 +33,7 @@ public class RuleMatch extends FindSubst {
 
 
     /** current Premise */
-    public Premise premise;
+    public ConceptProcess premise;
 
     public final VarCachedVersionMap secondary;
     public final Versioned<Integer> occurrenceShift;
@@ -123,13 +122,13 @@ public class RuleMatch extends FindSubst {
     /**
      * set the next premise
      */
-    public final void start(Premise p, Consumer<Task> receiver, Deriver d) {
+    public final void start(ConceptProcess p, Consumer<Task> receiver, Deriver d) {
         clear();
 
         premise = p;
         this.receiver = receiver;
 
-        Compound taskTerm = p.getTask().get();
+        Compound taskTerm = p.getTask().term();
         Term beliefTerm = p.getBelief() != null ?
             p.getBelief().get()
             : p.getTermLink().get() ; //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
@@ -154,12 +153,12 @@ public class RuleMatch extends FindSubst {
 
 
 
-    /**
-     * for debugging
-     */
-    public static void removeInsufficientBudget(Premise premise, PreTask task) {
-        premise.memory().remove(task, "Insufficient Derived Budget");
-    }
+//    /**
+//     * for debugging
+//     */
+//    public static void removeInsufficientBudget(Premise premise, PreTask task) {
+//        premise.memory().remove(task, "Insufficient Derived Budget");
+//    }
 
 //    static boolean validJudgmentOrGoalTruth(Truth truth, float minConf) {
 //        return !((truth == null) || (truth.getConfidence() < minConf));
@@ -194,7 +193,7 @@ public class RuleMatch extends FindSubst {
      *  returns null if invalid / insufficient */
     public final Budget getBudget(Truth truth, Compound c) {
 
-        Premise p = this.premise;
+        ConceptProcess p = this.premise;
 
         Budget budget = truth != null ?
                 BudgetFunctions.compoundForward(truth, c, p) :

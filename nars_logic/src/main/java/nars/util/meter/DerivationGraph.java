@@ -5,8 +5,6 @@ import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import com.gs.collections.impl.tuple.Tuples;
 import nars.Premise;
 import nars.concept.Concept;
-import nars.link.TaskLink;
-import nars.link.TermLink;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.OperatorReaction;
@@ -100,7 +98,9 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
     static final Map<String, String> parsedTerm = new HashMap(1024);
 
     public DerivationPattern add(ConceptProcess n, Task... derived) {
-        return add(n.getConcept(), n.getTaskLink(), n.getTermLink(), n.getBelief(), n.time(), derived);
+        return add(n.getConcept(), n.getTaskLink().get(),
+                n.getTermLink().get(),
+                n.getBelief(), n.time(), derived);
     }
 
 //    public DerivationPattern addExpected(ConceptProcess n, Task... expected) {
@@ -109,7 +109,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 //        return p;
 //    }
 
-    public DerivationPattern add(Concept c, TaskLink tasklink, TermLink termlink, Task belief, long now, Task... result) {
+    public DerivationPattern add(Concept c, Task tasklink, Term termlink, Task belief, long now, Task... result) {
 
         ObjectIntHashMap<Term> unique = new ObjectIntHashMap();
 

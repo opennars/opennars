@@ -1,7 +1,7 @@
 package nars;
 
+import nars.bag.BagBudget;
 import nars.concept.Concept;
-import nars.link.TermLink;
 import nars.nal.Level;
 import nars.nal.LocalRules;
 import nars.nal.nal7.Tense;
@@ -127,7 +127,7 @@ public interface Premise extends Level, Tasked {
 
     Concept getConcept();
 
-    TermLink getTermLink();
+    BagBudget<Term> getTermLink();
 
     //TaskLink getTaskLink();
 
@@ -168,10 +168,6 @@ public interface Premise extends Level, Tasked {
         return nal() >= n;
     }
 
-
-    default float conceptPriority(Term target, float valueForMissing) {
-        return memory().conceptPriority(target, valueForMissing);
-    }
 
     default Memory memory() {
         return nar().memory;

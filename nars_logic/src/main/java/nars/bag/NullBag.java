@@ -1,18 +1,22 @@
 package nars.bag;
 
-import nars.budget.Itemized;
+import nars.budget.Budget;
 
 import java.util.Iterator;
-import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Bag which holds nothing
  */
-public final class NullBag<K, V extends Itemized<K>> extends Bag<K, V> {
-
+public final class NullBag<V> extends Bag<V> {
     @Override
     public void clear() {
 
+    }
+
+    @Override
+    public BagBudget<V> get(V key) {
+        return null;
     }
 
     @Override
@@ -21,24 +25,25 @@ public final class NullBag<K, V extends Itemized<K>> extends Bag<K, V> {
     }
 
     @Override
-    public BagBudget<K> remove(K key) {
+    public BagBudget<V> remove(V key) {
         return null;
     }
 
     @Override
-    public V put(V newItem) {
-        return newItem; //bounces
-    }
-
-    @Override
-    public V get(K key) {
+    public BagBudget<V> put(V newItem) {
         return null;
     }
 
     @Override
-    public Set<K> keySet() {
+    public BagBudget<V> put(V k, Budget b) {
         return null;
     }
+
+    @Override
+    public BagBudget<V> put(V v, BagBudget<V> vBagBudget) {
+        return null;
+    }
+
 
     @Override
     public int capacity() {
@@ -58,6 +63,11 @@ public final class NullBag<K, V extends Itemized<K>> extends Bag<K, V> {
     @Override
     public Iterator<V> iterator() {
         return null;
+    }
+
+    @Override
+    public void forEachEntry(Consumer<BagBudget> each) {
+
     }
 
     @Override

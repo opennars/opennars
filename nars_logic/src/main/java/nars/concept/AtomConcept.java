@@ -4,14 +4,8 @@ import nars.NAR;
 import nars.bag.Bag;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
-import nars.link.TermLink;
-import nars.link.TermLinkBuilder;
-import nars.link.TermLinkTemplate;
 import nars.task.Task;
 import nars.term.Term;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by me on 9/2/15.
@@ -51,10 +45,6 @@ public class AtomConcept extends AbstractConcept  {
         return termLinks;
     }
 
-    @Override
-    public TermLinkBuilder getTermLinkBuilder() {
-        return null;
-    }
 
     @Override
     public BeliefTable getBeliefs() {
@@ -95,30 +85,10 @@ public class AtomConcept extends AbstractConcept  {
         return processQuestion(task, nar );
     }
 
-    /**
-     * Insert a new or activate an existing TermLink in the TermLink bag
-     * via a caching TermLinkSelector which has been configured for the
-     * target Concept and the current budget
-     * <p>
-     * called from buildTermLinks only
-     * <p>
-     * If the tlink already exists, the budgets will be merged
-     *
-     * @param termLink The termLink to be inserted
-     * @return the termlink which was selected or updated
-     */
-    @Override
-    public final TermLink activateTermLink(TermLinkBuilder termLink) {
-        //return termLink.update(termLinks);
-        return null;
-    }
 
-    @Override
-    public final List<TermLinkTemplate> getTermLinkTemplates() {
-        TermLinkBuilder b = getTermLinkBuilder();
-        if (b!=null)
-            return b.templates();
-        return Collections.emptyList();
+    /** atoms have no termlink templates, they are irreducible */
+    @Override public final Term[] getTermLinkTemplates() {
+        return null;
     }
 
 }

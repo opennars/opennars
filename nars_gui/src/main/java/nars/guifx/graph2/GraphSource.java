@@ -18,7 +18,7 @@ public abstract class GraphSource/* W? */ {
     protected SpaceGrapher grapher;
 
 
-    public abstract void forEachOutgoingEdgeOf(Termed src, Consumer<Termed> eachTarget);
+    public abstract void forEachOutgoingEdgeOf(Termed src, Consumer eachTarget);
 
 
     public abstract Termed getTargetVertex(Termed edge);
@@ -35,7 +35,7 @@ public abstract class GraphSource/* W? */ {
 
         forEachOutgoingEdgeOf(s, t -> {
 
-            TermNode tn = g.getTermNode(t.get());
+            TermNode tn = g.getTermNode((Termed)t);
             if (tn == null)
                 return;
 
@@ -49,7 +49,7 @@ public abstract class GraphSource/* W? */ {
     }
 
 
-    public void updateEdge(TermEdge ee, Termed link) {
+    public void updateEdge(TermEdge ee, Object link) {
 
 
     }

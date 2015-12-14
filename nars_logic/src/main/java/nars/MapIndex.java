@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 /**
  * Created by me on 12/7/15.
  */
-public class MapIndex extends MapCacheBag<Termed> implements TermIndex {
+public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
 
     private final Map<TermContainer, TermContainer> subterms = new HashMap();
 

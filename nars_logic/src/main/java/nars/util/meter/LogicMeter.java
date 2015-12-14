@@ -188,23 +188,21 @@ public class LogicMeter extends FrameReaction {
         }
     }
 
-    public class ConceptMeter extends ItemMeter<Concept> {
+    public class ConceptMeter implements Consumer<Concept> {
 
+        int count = 0;
         int totalQuestions = 0;
         int totalBeliefs = 0;
 
-        @Override
         public void reset() {
-            super.reset();
             totalQuestions = totalBeliefs = 0;
+            count = 0;
             //inputPriority.clear();
         }
 
         @Override
         public void accept(Concept c) {
             if (c == null) return;
-
-            super.accept(c);
 
 
             if (c.hasQuestions())
@@ -226,8 +224,10 @@ public class LogicMeter extends FrameReaction {
 
         }
 
+
+
         public void commit(Memory m) {
-            super.commit();
+
 
             CONCEPTS_ACTIVE.set(count);
             CONCEPTS_TOTAL.set(m.index.size());

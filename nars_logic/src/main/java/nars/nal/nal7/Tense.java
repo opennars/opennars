@@ -50,8 +50,8 @@ public enum Tense  {
 
     public static boolean matchingOrder(Termed a, Termed b) {
         return matchingOrder(
-                a.get().getTemporalOrder(),
-                b.get().getTemporalOrder());
+                a.term().getTemporalOrder(),
+                b.term().getTemporalOrder());
     }
 
     public static boolean matchingOrder(Order order1, Order order2) {
@@ -120,7 +120,7 @@ public enum Tense  {
         Truth truth = poc != solution.getOccurrenceTime() ? solution.projection(poc, time) : solution.getTruth();
 
         //if (problem.hasQueryVar()) {
-        return hasQueryVar ? truth.getExpectation() / solution.get().complexity() : truth.getConfidence();
+        return hasQueryVar ? truth.getExpectation() / solution.term().complexity() : truth.getConfidence();
     }
 
     public static float solutionQuality(boolean hasQueryVar, long occTime, Task solution, Truth projectedTruth, long time) {

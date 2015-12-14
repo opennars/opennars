@@ -2,13 +2,7 @@ package nars.util.graph;
 
 import nars.Global;
 import nars.NAR;
-import nars.budget.Budget;
-import nars.budget.Budgeted;
 import nars.concept.Concept;
-import nars.link.TaskLink;
-import nars.link.TermLink;
-import nars.term.Term;
-import nars.term.Termed;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -36,20 +30,10 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
      */
     public interface Filter {
 
-        default float getMinPriority() {
-            return 0;
-        }
-
-        boolean includePriority(float l);
-
         boolean includeConcept(Concept c);
     }
 
     public static final Filter IncludeEverything = new Filter() {
-        @Override
-        public boolean includePriority(float l) {
-            return true;
-        }
 
         @Override
         public boolean includeConcept(Concept c) {
@@ -62,19 +46,12 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         final float thresh;
 
 
-        @Override
-        public float getMinPriority() {
-            return thresh;
-        }
+
 
         public ExcludeBelowPriority(float l) {
             thresh = l;
         }
 
-        @Override
-        public boolean includePriority(float l) {
-            return l >= thresh;
-        }
 
         @Override
         public boolean includeConcept(Concept c) {
@@ -184,60 +161,6 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
     }
 
-    public static class TermLinkEdge extends NAREdge<TermLink> implements Budgeted, Termed {
-
-        public TermLinkEdge(TermLink t) {
-            super(t);
-        }
-
-        @Override
-        public String toString() {
-            return "termlink";
-        }
-
-        @Override
-        public Object clone() {
-            return super.clone();
-        }
-
-        @Override
-        public Budget getBudget() {
-            return getObject().getBudget();
-        }
-
-        @Override
-        public Term get() {
-            return getObject().get();
-        }
-
-    }
-
-    public static class TaskLinkEdge extends NAREdge<TaskLink> implements Termed, Budgeted {
-
-        public TaskLinkEdge(TaskLink t) {
-            super(t);
-        }
-
-        @Override
-        public String toString() {
-            return "tasklink";
-        }
-
-        @Override
-        public Object clone() {
-            return super.clone();
-        }
-
-        @Override
-        public Budget getBudget() {
-            return getObject().getBudget();
-        }
-
-        @Override
-        public Term get() {
-            return getObject().get();
-        }
-    }
 
     public static class TermQuestion extends NAREdge {
 
@@ -312,17 +235,8 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
     public NARGraph add(NAR n, Filter filter, Grapher graphize) {
         graphize.onTime(this, n.time());
 
-        graphize.setMinPriority(filter.getMinPriority());
-
         //TODO support AbstractBag
         n.forEachConcept(c -> {
-
-            //TODO use more efficient iterator so that the entire list does not need to be traversed when excluding ranges
-            float p = c.getPriority();
-
-            if (!filter.includePriority(p)) {
-                return;
-            }
 
             //graphize.preLevel(this, p);
             if (!filter.includeConcept(c)) {

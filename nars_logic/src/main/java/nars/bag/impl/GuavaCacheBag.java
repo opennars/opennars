@@ -4,7 +4,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
-import nars.budget.Itemized;
 
 import java.util.Iterator;
 
@@ -15,19 +14,19 @@ import java.util.Iterator;
  * 
  * http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/cache/package-summary.html*
  */
-public class GuavaCacheBag<K, V> extends AbstractCacheBag<K, V> implements RemovalListener<K, V>, Iterable<V> {
+public class GuavaCacheBag<K,V> extends AbstractCacheBag<K,V> implements RemovalListener<K,V>, Iterable<V> {
 
     public final Cache<K, V> data;
     //public final Observed<V> removed = new Observed();
 
 
-    public static <K,V extends Itemized<K>> GuavaCacheBag<K,V> make(int maxSize) {
+    public static <K,V> GuavaCacheBag<K,V> make(int maxSize) {
         return new GuavaCacheBag(CacheBuilder.newBuilder()
                 .maximumSize(maxSize));
     }
 
 
-    public static <K,V extends Itemized<K>> GuavaCacheBag<K,V> makeSoftValues() {
+    public static <K,V> GuavaCacheBag<K,V> makeSoftValues() {
         return new GuavaCacheBag(CacheBuilder.newBuilder()
 
                 //.maximumSize(capacity)
@@ -37,7 +36,7 @@ public class GuavaCacheBag<K, V> extends AbstractCacheBag<K, V> implements Remov
 
 
                 //.expireAfterWrite(10, TimeUnit.MINUTES)
-               /*.weakKeys()
+               /*.weakVeys()
                .weakValues()
                .weigher(null)*/
 
@@ -70,7 +69,7 @@ public class GuavaCacheBag<K, V> extends AbstractCacheBag<K, V> implements Remov
 
     @Override
     public V remove(K key) {
-        Cache<K, V> d = data;
+        Cache<K,V> d = data;
         V v = d.getIfPresent(key);
         if (v !=null) {
             d.invalidate(v);

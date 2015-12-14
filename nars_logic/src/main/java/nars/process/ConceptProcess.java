@@ -6,11 +6,11 @@ package nars.process;
 
 import nars.Memory;
 import nars.NAR;
+import nars.bag.BagBudget;
 import nars.concept.Concept;
-import nars.link.TaskLink;
-import nars.link.TermLink;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
+import nars.term.Term;
 import nars.term.Terms;
 
 import java.util.function.Consumer;
@@ -26,7 +26,7 @@ public abstract class ConceptProcess extends AbstractPremise {
 
 
 
-    protected final TaskLink taskLink;
+    protected final BagBudget<Task> taskLink;
     protected final Concept concept;
 
     private Task currentBelief = null;
@@ -34,10 +34,10 @@ public abstract class ConceptProcess extends AbstractPremise {
 
     @Override
     public final Task getTask() {
-        return getTaskLink().getTask();
+        return getTaskLink().get();
     }
 
-    public final TaskLink getTaskLink() {
+    public final BagBudget<Task> getTaskLink() {
         return taskLink;
     }
 
@@ -46,7 +46,7 @@ public abstract class ConceptProcess extends AbstractPremise {
     }
 
 
-    public ConceptProcess(NAR nar, Concept concept, TaskLink taskLink) {
+    public ConceptProcess(NAR nar, Concept concept, BagBudget<Task> taskLink) {
         super(nar);
 
         this.taskLink = taskLink;
@@ -103,7 +103,7 @@ public abstract class ConceptProcess extends AbstractPremise {
 
 
     /** iteratively supplies a matrix of premises from the next N tasklinks and M termlinks */
-    public static void firePremiseSquare(NAR nar, Consumer<ConceptProcess> proc, Concept concept, TaskLink[] tasks, TermLink[] terms, float taskLinkForgetDurations) {
+    public static void firePremiseSquare(NAR nar, Consumer<ConceptProcess> proc, Concept concept, BagBudget<Task>[] tasks, BagBudget<Term>[] terms, float taskLinkForgetDurations) {
 
         Memory m = nar.memory;
         int dur = m.duration();
@@ -127,16 +127,16 @@ public abstract class ConceptProcess extends AbstractPremise {
 
     }
 
-    public static void firePremises(NAR nar, Consumer<ConceptProcess> proc, Concept concept, TaskLink[] tasks, TermLink[] terms) {
+    public static void firePremises(NAR nar, Consumer<ConceptProcess> proc, Concept concept, BagBudget<Task>[] tasks, BagBudget<Term>[] terms) {
 
-        for (TaskLink taskLink : tasks) {
+        for (BagBudget<Task> taskLink : tasks) {
 
             if (taskLink == null) break;
 
-            for (TermLink termLink : terms) {
+            for (BagBudget<Term> termLink : terms) {
                 if (termLink == null) break;
 
-                if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.get(), termLink.get()))
+                if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.get().term(), termLink.get()))
                     continue;
 
                 proc.accept(new ConceptTaskTermLinkProcess(

@@ -24,7 +24,7 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
-import nars.budget.Itemized;
+import nars.budget.Budgeted;
 import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.nal.nal7.Order;
@@ -51,8 +51,10 @@ import static nars.Global.dereference;
  * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Termed {
+public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Tasked {
 
+
+    @Deprecated default public Term get() { return term(); }
 
     static void getExplanation(Task task, int indent, StringBuilder sb) {
         //TODO StringBuilder
@@ -68,7 +70,7 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Termed
             sb.append(" log=").append(l);*/
 
         if (task.getBestSolution() != null) {
-            if (!task.get().equals(task.getBestSolution().get())) {
+            if (!task.term().equals(task.getBestSolution().term())) {
                 sb.append(" solution=");
                 task.getBestSolution().appendTo(sb);
             }
@@ -236,11 +238,11 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Termed
     }
 
     default boolean hasQueryVar() {
-        return get().hasVarQuery();
+        return term().hasVarQuery();
     }
 
     default boolean isRevisible() {
-        Term t = get();
+        Term t = term();
         return !(t.op().isConjunctive() && t.hasVarDep());
     }
 
@@ -261,7 +263,7 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Termed
     }
 
     @Override
-    Compound get();
+    Compound term();
 
     @Override
     Truth getTruth();

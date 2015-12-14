@@ -219,7 +219,7 @@ public abstract class OperatorReaction implements Function<Task,List<Task>>, Rea
 
         Memory memory = nar().memory;
 
-        nar().input($.belief(operation.get(),
+        nar().input($.belief(operation.term(),
 
                 operation.getTruth()).
                 //1f, Global.OPERATOR_EXECUTION_CONFIDENCE).

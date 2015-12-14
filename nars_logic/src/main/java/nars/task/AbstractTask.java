@@ -94,7 +94,7 @@ public abstract class AbstractTask extends Item<Task>
 
     /** copy/clone constructor */
     public AbstractTask(Task task) {
-        this(task.get(), task.getPunctuation(), task.getTruth(),
+        this(task.term(), task.getPunctuation(), task.getTruth(),
                 task.getPriority(), task.getDurability(), task.getQuality(),
                 task.getParentTaskRef(), task.getParentBeliefRef(), task.getBestSolutionRef());
     }
@@ -285,6 +285,10 @@ public abstract class AbstractTask extends Item<Task>
 
     @Override
     public final Compound get() {
+        return term;
+    }
+    @Override
+    public final Compound term() {
         return term;
     }
 

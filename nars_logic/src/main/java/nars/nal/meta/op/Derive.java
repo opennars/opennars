@@ -1,12 +1,12 @@
 package nars.nal.meta.op;
 
 import nars.Global;
-import nars.Premise;
 import nars.budget.Budget;
 import nars.nal.PremiseRule;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
 import nars.nal.nal7.Tense;
+import nars.process.ConceptProcess;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
@@ -61,7 +61,7 @@ public final class Derive extends PreCondition {
 
     private void derive(RuleMatch m, Compound c) {
 
-        Premise premise = m.premise;
+        ConceptProcess premise = m.premise;
 
         Truth truth = m.truth.get();
 
@@ -111,7 +111,7 @@ public final class Derive extends PreCondition {
         if (truth != null && eternalize && !derived.isEternal()) {
 
             m.derive(
-                    new MutableTask(derived.get())
+                    new MutableTask(derived.term())
                             .punctuation(punct)
                             .truth(
                                     truth.getFrequency(),

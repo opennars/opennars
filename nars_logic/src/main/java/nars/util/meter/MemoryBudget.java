@@ -3,7 +3,6 @@ package nars.util.meter;
 import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.NAR;
-import nars.concept.Concept;
 import nars.term.Term;
 import nars.util.Texts;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -133,11 +132,11 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
             @Override
             public Object[] sample(Object key) {
-                Concept c = m.concept(termConcept);
-                if (c == null) {
+                //Concept c = m.concept(termConcept);
+                //if (c == null) {
                     return empty;
-                }
-                return c.toBudgetArray();
+                //}
+                //return c.toBudgetArray();
             }
         };
         nm.metrics.add(s);
@@ -190,16 +189,16 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
         double[] tActiveTermLinkPriority = {0};
 
 
-        n.forEachConcept(c -> {
-            if (c == null) return; //HACK ?
-
-            double p = c.getPriority();
-            if (Double.isNaN(p)) return;
-
-            prisum.addValue(p);
-
-
-        });
+//        n.forEachConcept(c -> {
+//            if (c == null) return; //HACK ?
+//
+//            double p = c.getPriority();
+//            if (Double.isNaN(p)) return;
+//
+//            prisum.addValue(p);
+//
+//
+//        });
 
         long N = prisum.getN();
         put(Budgeted.ActiveConceptPrioritySum, prisum.getSum());

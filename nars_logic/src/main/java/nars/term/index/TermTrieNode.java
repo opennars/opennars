@@ -56,7 +56,7 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
     }*/
 
     public Object put(V v) {
-        return put(v.get().bytes(), v);
+        return put(v.term().bytes(), v);
     }
 
     /**
@@ -105,7 +105,7 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
         TermTrieNode branch = new TermTrieNode();
         branch.put(suffix(key, 1), val); // Store new value in new subtree.
 
-        byte[] cleafname = cLeaf.get().bytes();
+        byte[] cleafname = cLeaf.term().bytes();
         branch.put(suffix(cleafname, 1), cLeaf); // Plus the one we collided with.
 
         return put(c, branch);

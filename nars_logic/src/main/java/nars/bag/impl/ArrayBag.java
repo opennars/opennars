@@ -42,8 +42,11 @@ public class ArrayBag<V> extends Bag<V> {
         index = new ArrayMapping(map, items);
     }
 
-    @Override public V put(V k) {
+    @Override public BagBudget<V> put(V k) {
         return put(k, UnitBudget.zero);
+    }
+    @Override public BagBudget<V> put(V k, BagBudget<V> budget) {
+        throw new RuntimeException("unimpl?");
     }
 
 //    @Override public V put(V k, Budget b) {
@@ -176,10 +179,7 @@ public class ArrayBag<V> extends Bag<V> {
         return index.remove(key);
     }
 
-    @Override
-    public BagBudget<V> getBudget(V v) {
-        return index.get(v);
-    }
+
 
     /**
      * Choose an Item according to priority distribution and take it out of the
@@ -201,7 +201,7 @@ public class ArrayBag<V> extends Bag<V> {
      * @return The overflow Item, or null if nothing displaced
      */
     @Override
-    public V put(V i, Budget b) {
+    public BagBudget<V> put(V i, Budget b) {
 
 
         ArrayMapping index = this.index;
@@ -239,8 +239,7 @@ public class ArrayBag<V> extends Bag<V> {
             if (getPriorityMin() > b.getPriority()) {
                 //insufficient priority to enter the bag
                 //remove the key which was put() at beginning of this method
-                index.removeKey(i);
-                return i;
+                return index.removeKey(i);
             }
 
             displaced = removeLowest();
@@ -249,7 +248,7 @@ public class ArrayBag<V> extends Bag<V> {
         //now that room is available:
         index.addItem(new BagBudget(i, b));
 
-        return displaced.get();
+        return displaced;
     }
 
     /**
@@ -303,8 +302,8 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     @Override
-    public V get(V key) {
-        return getBudget(key).get();
+    public BagBudget<V> get(V key) {
+        return index.get(key);
     }
 
     @Override

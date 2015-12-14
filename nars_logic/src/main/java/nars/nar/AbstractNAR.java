@@ -4,14 +4,13 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
 import nars.concept.AtomConcept;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.java.jclass;
-import nars.link.TaskLink;
-import nars.link.TermLink;
 import nars.nal.Deriver;
 import nars.nal.PremiseRule;
 import nars.nal.nal8.OperatorReaction;
@@ -473,10 +472,10 @@ public abstract class AbstractNAR extends NAR {
 
 
         /** temporary re-usable array for batch firing */
-        private TermLink[] firingTermLinks = null;
+        private BagBudget<Term>[] firingTermLinks = null;
 
         /** temporary re-usable array for batch firing */
-        private TaskLink[] firingTaskLinks = null;
+        private BagBudget<Task>[] firingTaskLinks = null;
 
 //        @Deprecated
 //        int tasklinks = 2; //TODO use MutableInteger for this
@@ -555,13 +554,13 @@ public abstract class AbstractNAR extends NAR {
                 int num = termlinksSelectedPerFiredConcept.intValue();
                 if (firingTermLinks == null ||
                         firingTermLinks.length != num)
-                    firingTermLinks = new TermLink[num];
+                    firingTermLinks = new BagBudget[num];
             }
             {
                 int num = tasklinksSelectedPerFiredConcept.intValue();
                 if (firingTaskLinks == null ||
                         firingTaskLinks.length != num)
-                    firingTaskLinks = new TaskLink[num];
+                    firingTaskLinks = new BagBudget[num];
             }
 
             ConceptProcess.firePremiseSquare(

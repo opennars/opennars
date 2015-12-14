@@ -3,9 +3,6 @@ package nars.util.graph;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.concept.Concept;
-import nars.link.TermLink;
-import nars.link.TermLinkKey;
-import nars.link.TermLinkTemplate;
 import nars.term.Term;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.DirectedPseudograph;
@@ -69,7 +66,7 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
         @Override protected void addTermLinks(Concept c) {
             Term sourceTerm = c.get();
 
-            for (TermLinkTemplate t : c.getTermLinkTemplates()) {
+            for (Term t : c.getTermLinkTemplates()) {
                 Term targetTerm = t.get().get();
                 if (!containsVertex(targetTerm)) {
                     addVertex(targetTerm);
@@ -114,11 +111,10 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
 
         Term cterm = c.get();
 
-        Bag<TermLinkKey, TermLink> tl = c.getTermLinks();
+        Bag<Term> tl = c.getTermLinks();
         if (tl == null) return;
 
-        for (TermLink t : tl.values()) {
-            Term target = t.get();
+        for (Term target : tl.values()) {
             if (!containsVertex(target)) {
                 addVertex(target);
             }
@@ -140,7 +136,7 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
     }
 
     public boolean isConnected() {
-        ConnectivityInspector<Term, TermLink> ci = new ConnectivityInspector(this);
+        ConnectivityInspector<Term, String> ci = new ConnectivityInspector(this);
         return ci.isGraphConnected();
     }
 

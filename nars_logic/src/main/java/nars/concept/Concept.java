@@ -26,12 +26,9 @@ import com.google.common.primitives.Longs;
 import nars.Global;
 import nars.NAR;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
-import nars.link.TaskLink;
-import nars.link.TermLink;
-import nars.link.TermLinkBuilder;
-import nars.link.TermLinkTemplate;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
@@ -40,7 +37,6 @@ import nars.truth.Truth;
 
 import java.io.PrintStream;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -57,7 +53,7 @@ public interface Concept extends Termed, Supplier<Term> {
 
 //    boolean linkTerms(Budget budgetRef, boolean updateTLinks);
 //
-    TermLink activateTermLink(TermLinkBuilder termLinkBuilder);
+//    TermLink activateTermLink(TermLinkBuilder termLinkBuilder);
 //      boolean link(Task currentTask);
 
 
@@ -67,7 +63,7 @@ public interface Concept extends Termed, Supplier<Term> {
     /** attempts to fill the supplied array with next termlinks
      *  from this concept's bag.
      */
-    default int nextTermLinks(int dur, long now, float termLinkForgetDurations, TermLink[] result) {
+    default int nextTermLinks(int dur, long now, float termLinkForgetDurations, BagBudget<Term>[] result) {
         return 0;
 //        return getTermLinks().forgetNext(
 //                termLinkForgetDurations * dur,
@@ -75,7 +71,7 @@ public interface Concept extends Termed, Supplier<Term> {
 //                now,
 //                1 /* additional */);
     }
-    default int nextTaskLinks(int dur, long now, float taskLinkForgetDurations, TaskLink[] result) {
+    default int nextTaskLinks(int dur, long now, float taskLinkForgetDurations, BagBudget<Task>[] result) {
         return 0;
 //        return getTaskLinks().forgetNext(
 //                taskLinkForgetDurations * dur,
@@ -134,12 +130,6 @@ public interface Concept extends Termed, Supplier<Term> {
         if (d!=null) return d.getExpectation();
         return 0;
     }
-
-
-
-
-
-    TermLinkBuilder getTermLinkBuilder();
 
 
     default String toInstanceString() {
@@ -345,7 +335,7 @@ public interface Concept extends Termed, Supplier<Term> {
 
 
 
-    List<TermLinkTemplate> getTermLinkTemplates();
+    Term[] getTermLinkTemplates();
 
     Ordering<Task> taskCreationTime = new Ordering<Task>() {
         @Override
@@ -391,7 +381,7 @@ public interface Concept extends Termed, Supplier<Term> {
      * @return number of links created (0, 1, or 2)
      */
     default int crossLink(Task currentTask, Task previousTask, NAR nar) {
-        Compound otherTerm = previousTask.get();
+        Compound otherTerm = previousTask.term();
         if (otherTerm.equals(get())) return 0; //self
 
         int count = 0;

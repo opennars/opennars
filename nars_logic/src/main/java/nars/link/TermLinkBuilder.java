@@ -1,53 +1,40 @@
 package nars.link;
 
 import nars.Global;
-import nars.Memory;
 import nars.Op;
-import nars.bag.tx.BagActivator;
 import nars.nal.nal7.CyclesInterval;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 
-public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey {
+public class TermLinkBuilder  {
 
-    public final transient Termed concept;
+//    public final transient Termed concept;
+//
+//    protected final Term[] template;
+//
+//    transient boolean incoming;
+//
+//    protected int hash;
+//    protected float forgetCycles;
+//    protected long now;
 
-    protected final List<TermLinkTemplate> template;
+    public static Term[] TermLinkBuilder(Termed c) {
+        Term host = c.term();
 
-    transient TermLinkTemplate currentTemplate;
-    transient boolean incoming;
-
-    protected int hash;
-    protected float forgetCycles;
-    protected long now;
-
-    public TermLinkBuilder(Termed c) {
-
-        concept = c;
-
-        setBudget(null);
-
-        Term host = c.get();
         if (host instanceof Compound) {
 
             Set<Term> components = Global.newHashSet(host.complexity());
             prepareComponentLinks((Compound)host, components);
 
-            template = Global.newArrayList(components.size());
-            components.forEach(t -> template.add(
-                    new TermLinkTemplate(host, t))
-            );
-
+            return components.toArray(new Term[components.size()]);
         }
         else {
-            template = Collections.emptyList();
+            return null;
         }
     }
 
@@ -153,127 +140,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         //if ((t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional)) {
         //return (t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional) || (t instanceof Junction);
     }
-
-
-
-    /** count how many termlinks are non-transform */
-    public final List<TermLinkTemplate> templates() {
-        return template;
-    }
-
-
-
-    @Override
-    public final float getForgetCycles() {
-        return forgetCycles;
-    }
-
-    @Override
-    public final long time() {
-        return now;
-    }
-
-
-    /** configures this selector's current bag key for the next bag operation */
-    public final TermLinkBuilder set(TermLinkTemplate temp, boolean initialDirection, Memory m) {
-        if ((temp != currentTemplate) || (incoming != initialDirection)) {
-            currentTemplate = temp;
-            incoming = initialDirection;
-            super.setBudget(/*(Budget)*/temp);
-            validate();
-        }
-
-        forgetCycles = m.durationToCycles(
-                m.termLinkForgetDurations.floatValue()
-        );
-        now = m.time();
-        return this;
-    }
-
-    public final TermLinkBuilder setIncoming(boolean b) {
-        if (incoming !=b) {
-            incoming = b;
-            validate();
-        }
-        return this;
-    }
-
-
-    protected final void validate() {
-        hash = currentTemplate.hash(incoming);
-    }
-
-    @Override
-    public final Term get() {
-        return incoming ? concept.get() : currentTemplate.getTarget();
-    }
-
-//    public final Term getSource() {
-//        return incoming ? currentTemplate.getTarget() : concept.getTerm();
-//    }
-
-    @Override
-    public final boolean equals(Object obj) {
-        return TermLinkKey.termLinkEquals(this, (TermLinkKey) obj);
-    }
-
-
-
-    @Override
-    public final int hashCode() {
-        return hash;
-    }
-
-    @Override
-    public final TermLink newItem() {
-        //this.prefix = null;
-        return new TermLink(get(),  getBudget());
-    }
-
-//    public final TermLink out(TermLinkTemplate tlt) {
-//        return new TermLink(tlt.getTarget(), tlt, getBudget(),
-//                tlt.prefix(false),
-//                tlt.hash(false));
-//    }
-
-
-/*    public int size() {
-        return template.size();
-    }*/
-
-    public void delete() {
-        template.clear();
-        currentTemplate = null;
-    }
-
-
-    @Override
-    public final String toString() {
-        //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return name().toString();
-    }
-
-    @Override
-    public final TermLinkKey name() {
-        return this;
-    }
-
-    public int size() {
-        return templates().size();
-    }
-
-    //    public TermLink get(boolean createIfMissing) {
-//        TermLink t = concept.termLinks.GET(name());
-//        if ((t == null) && createIfMissing) {
-//            t = newItem();
-//        }
-//        return t;
-//    }
-
-//    public final Term getOther() {
-//        return currentTemplate.getTerm();
-//    }
-
 
 
 }

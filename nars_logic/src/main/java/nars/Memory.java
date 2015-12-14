@@ -239,17 +239,6 @@ public class Memory extends Param {
     }
 
 
-    /**
-     * Get the current activation level of a concept.
-     *
-     * @param t The Term naming a concept
-     * @return the priority value of the concept
-     */
-    public final float conceptPriority(Term t, float valueIfMissing) {
-        Concept c = concept(t);
-        return (c == null) ? valueIfMissing : c.getPriority();
-    }
-
 
 //    public void add(final Iterable<Task> source) {
 //        for (final Task t : source)
@@ -280,7 +269,7 @@ public class Memory extends Param {
 
         if (!task.isDeleted()) {
 
-            task.delete();
+            task.getBudget().delete();
 
             if (willBeReceived) {
 

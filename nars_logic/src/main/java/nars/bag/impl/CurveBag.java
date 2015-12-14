@@ -12,6 +12,7 @@ import nars.util.data.sorted.SortedIndex;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.function.Consumer;
 
 /**
  * Bag which stores items, sorted, in one array.
@@ -62,10 +63,6 @@ public class CurveBag<V> extends Bag<V> {
         random = rng;
     }
 
-    @Override
-    public V put(V k, Budget b) {
-        return arrayBag.put(k, b);
-    }
 
     @Override
     public void setMergeFunction(Procedure2<Budget, Budget> mergeFunction) {
@@ -122,6 +119,11 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
+    public BagBudget<V> get(V key) {
+        return null;
+    }
+
+    @Override
     public final V peekNext() {
         return peekNext(false);
     }
@@ -132,13 +134,18 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public V put(V newItem) {
+    public BagBudget<V> put(V v, BagBudget<V> vBagBudget) {
+        return arrayBag.put(v, vBagBudget);
+    }
+
+    @Override
+    public BagBudget<V> put(V newItem) {
         return arrayBag.put(newItem);
     }
 
     @Override
-    public V get(V key) {
-        return arrayBag.get(key);
+    public BagBudget<V> put(V i, Budget b) {
+        return arrayBag.put(i, b);
     }
 
 
@@ -314,6 +321,11 @@ public class CurveBag<V> extends Bag<V> {
 //
 //        return next; //# of items actually filled in the array
 //    }
+
+    @Override
+    public void forEachEntry(Consumer<BagBudget> each) {
+        arrayBag.forEachEntry(each);
+    }
 
     @Override
     public void setCapacity(int c) {

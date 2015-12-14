@@ -137,7 +137,7 @@ public class LocalRules {
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, newBelief.getBudget());
 
         //Task<T> revised = nal.input(
-        return new MutableTask(newBelief.get())
+        return new MutableTask(newBelief.term())
                 .punctuation(newBelief.getPunctuation())
                 .truth(truth)
                 .budget(budget)

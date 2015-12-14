@@ -1,6 +1,7 @@
 package nars.util.meter.bag;
 
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.util.data.Util;
 import nars.util.data.random.XORShiftRandom;
 
@@ -45,11 +46,13 @@ public class BagGenerators {
             //fill with random items
             for (int i= 0; i < insertsPerLoop; i++) {
 
-                String k = Float.toString(rng.nextFloat());
-                float p = f.getBudget(k).getPriority();
-                CharSequence overflow = f.put(k);
-                if (overflow!=null)
+                CharSequence k = Float.toString(rng.nextFloat());
+
+                BagBudget<CharSequence> overflow = f.put(k);
+                if (overflow!=null) {
+                    float p = overflow.getPriority();
                     nRemoved[0] = removal(nRemoved[0], p, count);
+                }
 
             }
 
@@ -88,7 +91,7 @@ public class BagGenerators {
 
                 int sizeAfter = f.size();
 
-                float p = f.getBudget(t).getPriority();
+                float p = f.get(t).getPriority();
 
                 //String expected = (min + " > "+ p + " > " + max);
                 /*if (requireOrder) {

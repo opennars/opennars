@@ -1,6 +1,5 @@
 package nars.op.meta;
 
-import nars.link.TermLink;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
@@ -21,7 +20,7 @@ public class connectivity extends SyncOperator {
         TermLinkGraph g = new TermLinkGraph(nar);
 
 
-        ConnectivityInspector<Term,TermLink> ci = new ConnectivityInspector(g);
+        ConnectivityInspector<Term,String> ci = new ConnectivityInspector(g);
         int set = 0;
         for (Set<Term> s : ci.connectedSets()) {
             for (Term v : s)

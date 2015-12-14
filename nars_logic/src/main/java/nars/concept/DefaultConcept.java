@@ -4,6 +4,7 @@ import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
 import nars.*;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.bag.NullBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -12,16 +13,10 @@ import nars.concept.util.ArrayListBeliefTable;
 import nars.concept.util.ArrayListTaskTable;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
-import nars.link.TaskLink;
-import nars.link.TaskLinkBuilder;
-import nars.link.TermLinkBuilder;
-import nars.link.TermLinkTemplate;
 import nars.nal.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
-
-import java.util.List;
 
 import static nars.budget.BudgetFunctions.clonePriorityMultiplied;
 
@@ -33,13 +28,6 @@ public class DefaultConcept extends AtomConcept {
     protected final BeliefTable beliefs;
     protected final BeliefTable goals;
 
-    /**
-     * Link templates of TermLink, only in concepts with CompoundTerm Templates
-     * are used to improve the efficiency of TermLink building
-     */
-    protected TermLinkBuilder termLinkBuilder = null;
-
-    private final TaskLinkBuilder taskLinkBuilder = new TaskLinkBuilder();
 
 
 //    final static public Equality<Task> taskEquivalence = new Equality<Task>() {
@@ -96,14 +84,7 @@ public class DefaultConcept extends AtomConcept {
 
     }
 
-    @Override
-    public TermLinkBuilder getTermLinkBuilder() {
-        TermLinkBuilder termLinkBuilder = this.termLinkBuilder;
-        if (termLinkBuilder == null) {
-            return this.termLinkBuilder = new TermLinkBuilder(this);
-        }
-        return termLinkBuilder;
-    }
+
 
     /**
      * Pending Quests to be answered by new desire values
@@ -587,12 +568,12 @@ public class DefaultConcept extends AtomConcept {
 
         if ((b == null) || (b.isDeleted())) return false;
 
-        List<TermLinkTemplate> tl = getTermLinkTemplates();
-        if (tl == null || tl.isEmpty())
+        Term[] tl = getTermLinkTemplates();
+        if (tl == null || tl.length == 0)
             return false;
 
         //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
-        float factor = 1.0f / (tl.size());
+        float factor = 1.0f / (tl.length);
         UnitBudget subBudget = BudgetFunctions.clonePriorityMultiplied(b, factor);
 
         final Memory memory = nar.memory;
@@ -604,24 +585,23 @@ public class DefaultConcept extends AtomConcept {
 
         boolean activity = false;
 
-        for (TermLinkTemplate t : tl) {
+        for (Term t : tl) {
 
             /*if ((t.getTarget().equals(getTerm()))) {
                 //self
                 continue;
             }*/
 
-            UnitBudget.plus.value(t, subBudget);
 
             //only apply this loop to non-transform termlink templates
             //PENDING_TERMLINK_BUDGET_MERGE.value(t, subBudget);
 
             if (updateTLinks) {
-                if (t.summaryGreaterOrEqual(termLinkThresh)) {
+                //if (t.summaryGreaterOrEqual(termLinkThresh)) {
 
                     if (link(t, nar))
                         activity = true;
-                }
+                //}
             }
 
         }
@@ -631,16 +611,15 @@ public class DefaultConcept extends AtomConcept {
     }
 
 
-    public boolean link(TermLinkTemplate t, NAR nar) {
-
-        TermLinkBuilder termLinkBuilder = getTermLinkBuilder();
-        Concept otherConcept = getTermLinkTemplateTarget(t, nar);
+    public boolean link(Term t, Budget b, NAR nar) {
 
 
-        termLinkBuilder.set(t, false, nar.memory);
+        Concept otherConcept = getTermLinkTemplateTarget(t, b, nar);
+
+        //termLinkBuilder.set(t, false, nar.memory);
 
         //activate this termlink to peer
-        activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
+        //activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
 
         if (otherConcept == this)
             return false;
@@ -651,28 +630,14 @@ public class DefaultConcept extends AtomConcept {
         //if (otherConcept.getTermLinkTemplates()) {
         UnitBudget termlinkBudget = termLinkBuilder.getBudget();
         linkTemplates(termlinkBudget, immediateTermLinkPropagation, nar);
-        //}
 
-        /*} else {
-
-        }*/
-
-
-        //spent ?
-        //setPriority(0);
 
         return true;
-
-    }
-
-    final static Concept getTermLinkTemplateTarget(TermLinkTemplate t, NAR nar) {
-        Term target = t.getTarget();
-        return activateTermLinkTemplates ? nar.conceptualize(target, t) : nar.concept(target);
     }
 
     final static Concept getTermLinkTemplateTarget(Termed t, Budget taskBudget, NAR nar) {
-        Term tt = t.term();
-        return activateTermLinkTemplateTargetsFromTask ? nar.conceptualize(tt, taskBudget) : nar.concept(tt);
+        Term target = t.term();
+        return activateTermLinkTemplateTargetsFromTask ? nar.conceptualize(target, taskBudget) : nar.concept(target);
     }
 
     /**
@@ -685,17 +650,13 @@ public class DefaultConcept extends AtomConcept {
      */
     protected boolean linkTask(Task task, NAR nar) {
 
-        TermLinkBuilder termLinkBuilder = getTermLinkBuilder();
-        TaskLinkBuilder taskLinkBuilder = this.taskLinkBuilder;
+        Term[] templates = getTermLinkTemplates();
+        if (templates == null) return false;
 
-        List<TermLinkTemplate> templates = termLinkBuilder.templates();
-        int numTemplates = templates.size();
-        if (numTemplates == 0)
-            return false;
+        int numTemplates = templates.length;
+        if (numTemplates == 0) return false;
 
         Memory memory = nar.memory;
-
-        taskLinkBuilder.setTask(task, memory);
 
 
         //ACTIVATE TASK LINKS
@@ -711,7 +672,7 @@ public class DefaultConcept extends AtomConcept {
 
         taskLinkBuilder.setBudget(subBudget);
 
-        for (TermLinkTemplate linkTemplate : templates) {
+        for (Term linkTemplate : templates) {
             //if (!(task.isStructural() && (linkTemplate.getType() == TermLink.TRANSFORM))) { // avoid circular transform
 
 //            final Term componentTerm = linkTemplate.getTarget();
@@ -743,7 +704,7 @@ public class DefaultConcept extends AtomConcept {
      * @param taskLink The termLink to be inserted
      * @return the tasklink which was selected or updated
      */
-    protected static TaskLink activateTaskLink(Concept c, TaskLinkBuilder taskLink) {
+    protected static BagBudget<Task> activateTaskLink(Concept c, Task taskLink) {
         //return c.getTaskLinks().update(taskLink);
         return null;
     }

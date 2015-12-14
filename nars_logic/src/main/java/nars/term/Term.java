@@ -35,8 +35,11 @@ import java.util.function.Predicate;
 public interface Term extends Termed, Comparable, Termlike {
 
 
+    @Deprecated default Term get() {
+        return this;
+    }
 
-    @Override default Term get() {
+    @Override default Term term() {
         return this;
     }
 

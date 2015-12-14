@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 
-public class MapCacheBag<V> extends AbstractCacheBag<V>  {
+public class MapCacheBag<K,V> extends AbstractCacheBag<K,V>  {
 
-    public final Map<V,V> data;
+    public final Map<K,V> data;
 
-    public MapCacheBag(Map<V,V> data) {
+    public MapCacheBag(Map<K,V> data) {
         this.data = data;
     }
 
@@ -20,18 +20,18 @@ public class MapCacheBag<V> extends AbstractCacheBag<V>  {
     }
 
     @Override
-    public V get(V key) {
+    public V get(K key) {
         return data.get(key);
     }
 
     @Override
-    public Object remove(V key) {
+    public V remove(K key) {
         return data.remove(key);
     }
 
     @Override
-    public V put(V k) {
-        return data.put(k, k);
+    public V put(K k, V v) {
+        return data.put(k, v);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class SortedTaskPerception extends TaskPerception {
     @Override
     public final void accept(Task t) {
         if (!t.isDeleted()) {
-            Task overflow = buffer.put(t);
+            Task overflow = buffer.put(t).get();
             if (overflow!=null)
                 onOverflow(overflow);
         }

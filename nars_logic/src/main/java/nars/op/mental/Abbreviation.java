@@ -82,7 +82,7 @@ public class Abbreviation implements Consumer<Task> {
                 return;
 
 
-            Compound termAbbreviating = task.get();
+            Compound termAbbreviating = task.term();
 
             /*Operation compound = Operation.make(
                     Product.make(termArray(termAbbreviating)), abbreviate);*/

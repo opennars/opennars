@@ -21,7 +21,7 @@ public class echo extends ImmediateOperator {
 
     @Override
     public void accept(Task o) {
-        nar().memory.eventSpeak.emit( Compounds.opArgs(o.get()).terms() );
+        nar().memory.eventSpeak.emit( Compounds.opArgs(o.term()).terms() );
         //nar().emit(echo.class, Arrays.toString( o.args() ) );
     }
 

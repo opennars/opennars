@@ -82,7 +82,7 @@ public class STMTemporalLinkage {
         int numToRemoveFromBeginning = Math.max(0, stm.size() - stmSize);
 
         /** current task's... */
-        Compound term = currentTask.get();
+        Compound term = currentTask.term();
         Concept concept = nar.concept(term);
         if (concept == null)
             return false;

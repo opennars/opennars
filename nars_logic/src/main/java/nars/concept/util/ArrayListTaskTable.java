@@ -141,7 +141,7 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
 
         if (isEmpty()) return false;
 
-        if (TermMetadata.hasTemporals(t.get()))
+        if (TermMetadata.hasTemporals(t.term()))
             return false; //special equality condition
 
         Truth taskTruth = t.getTruth();

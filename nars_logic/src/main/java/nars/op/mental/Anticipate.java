@@ -85,7 +85,7 @@ public final class Anticipate {
             return;
         }
 
-        Compound tt = t.get();
+        Compound tt = t.term();
         if(tt.op().isConjunctive()) { //not observable, TODO probably revise
             return;
         }
@@ -144,7 +144,7 @@ public final class Anticipate {
 
         long cOccurr = c.getOccurrenceTime();
 
-        anticipations.get(c.get()).stream().filter(tt -> tt.inTime(cOccurr) && !c.equals(tt.task) &&
+        anticipations.get(c.term()).stream().filter(tt -> tt.inTime(cOccurr) && !c.equals(tt.task) &&
                 tt.task.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION).forEach(tt -> {
             toRemove.add(tt);
             happeneds++;

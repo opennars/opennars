@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<V> extends AbstractCacheBag<V> implements Consumer<V>, Supplier<V>, Iterable<V> {
+public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements Consumer<V>, Supplier<V>, Iterable<V> {
 
     protected Procedure2<Budget, Budget> mergeFunction;
 
@@ -52,15 +52,9 @@ public abstract class Bag<V> extends AbstractCacheBag<V> implements Consumer<V>,
      * if newItem itself is returned, then it was rejected due to insufficient budget
      * if the newItem already existed, the resulting budget is merged.
      */
-    public abstract V put(V newItem);
+    public abstract BagBudget<V> put(V newItem);
 
-
-    /** buffers activation for an item.
-     *  returns the value that will remain associated with the key
-     *  (replacing any current value)
-     *  or null if it wasn't added
-     */
-    public abstract V put(V k, Budget b);
+    public abstract BagBudget<V> put(V i, Budget b);
 
 
 
@@ -149,7 +143,9 @@ public abstract class Bag<V> extends AbstractCacheBag<V> implements Consumer<V>,
      * @param it An item
      * @return Whether the Item is in the Bag
      */
-    abstract public boolean contains(V it);
+    public boolean contains(V it) {
+        return get(it)!=null;
+    }
 
 
     //    /**
@@ -206,7 +202,6 @@ public abstract class Bag<V> extends AbstractCacheBag<V> implements Consumer<V>,
         return total[0];
     }
 
-    abstract public BagBudget getBudget(V v);
 
     abstract public void forEachEntry(Consumer<BagBudget> each);
 

@@ -12,7 +12,7 @@ public final class AtomObject<O> extends StringAtom {
         this.value = value;
     }
 
-    public O get() {
+    public O object() {
         return value;
     }
 }

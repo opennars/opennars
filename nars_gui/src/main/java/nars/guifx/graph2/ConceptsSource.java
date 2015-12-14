@@ -4,10 +4,10 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import nars.NAR;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.concept.Concept;
 import nars.guifx.graph2.impl.TLinkEdge;
 import nars.guifx.graph2.source.SpaceGrapher;
-import nars.link.TLink;
 import nars.nar.AbstractNAR;
 import nars.term.Term;
 import nars.term.Termed;
@@ -50,15 +50,16 @@ public class ConceptsSource extends GraphSource {
 
 
     @Override
-    public void updateEdge(TermEdge ee, Termed link) {
+    public void updateEdge(TermEdge ee, Object link) {
         //rolling average
-        ee.pri = lerp(((TLink)link).getPriority(), ee.pri,
+        ee.pri = lerp(
+                ((BagBudget)link).getPriority(), ee.pri,
                       0.05f);
     }
 
     @Override
     public void forEachOutgoingEdgeOf(Termed cc,
-                                      Consumer<Termed> eachTarget) {
+                                      Consumer eachTarget) {
 
 
         SpaceGrapher sg = grapher;
@@ -66,11 +67,11 @@ public class ConceptsSource extends GraphSource {
 
 
 
-        Consumer<? super TLink<?>> linkUpdater = link -> {
+        Consumer linkUpdater = link -> {
 
-            Term target = link.get();
+            Term target = ((BagBudget<Term>)link).get();
 
-            if (cc.get().equals(target)) //self-loop
+            if (cc.term().equals(target)) //self-loop
                 return;
 
             TermNode tn = sg.getTermNode(target);
@@ -97,7 +98,7 @@ public class ConceptsSource extends GraphSource {
 
     @Override
     public Termed getTargetVertex(Termed edge) {
-        return grapher.getTermNode(edge.get()).c;
+        return grapher.getTermNode(edge.term()).c;
     }
 
 
@@ -144,7 +145,7 @@ public class ConceptsSource extends GraphSource {
 
         if (canUpdate()) {
 
-            Bag<Term, Concept> x = ((AbstractNAR) nar).core.concepts();
+            Bag<Concept> x = ((AbstractNAR) nar).core.concepts();
 
             String keywordFilter, _keywordFilter = includeString.get();
             keywordFilter = _keywordFilter != null && _keywordFilter.isEmpty() ? null : _keywordFilter;
@@ -154,9 +155,9 @@ public class ConceptsSource extends GraphSource {
 
             Iterable<Termed> ii = StreamSupport.stream(x.spliterator(), false).filter(cc -> {
 
-                float p = cc.getPriority();
-                if ((p < minPri) || (p > maxPri))
-                    return false;
+//                float p = cc.getPriority();
+//                if ((p < minPri) || (p > maxPri))
+//                    return false;
 
 
                 if (keywordFilter != null) {
@@ -196,9 +197,9 @@ public class ConceptsSource extends GraphSource {
 
 
 
-    public final void updateNodeOLD(SpaceGrapher sg, Concept cc, TermNode sn) {
+    public final void updateNodeOLD(SpaceGrapher sg, BagBudget<Concept> cc, TermNode sn) {
 
-        sn.c = cc;
+        sn.c = cc.get();
         sn.priNorm = cc.getPriority();
 
 

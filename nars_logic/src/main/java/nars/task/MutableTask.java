@@ -1,11 +1,11 @@
 package nars.task;
 
 import nars.Memory;
-import nars.Premise;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal7.Tense;
+import nars.process.ConceptProcess;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -351,7 +351,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
 //    }
 //
 
-    public MutableTask budgetCompoundForward(Compound result, Premise p) {
+    public MutableTask budgetCompoundForward(Compound result, ConceptProcess p) {
         BudgetFunctions.compoundForward(this, getTruth(), result, p);
         return this;
     }
@@ -410,7 +410,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
         return this;
     }
 
-    public MutableTask budgetCompoundForward(Premise premise) {
+    public MutableTask budgetCompoundForward(ConceptProcess premise) {
         BudgetFunctions.compoundForward(
                 getBudget(), getTruth(),
                 get(), premise);

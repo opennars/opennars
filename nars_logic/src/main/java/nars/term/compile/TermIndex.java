@@ -2,7 +2,6 @@ package nars.term.compile;
 
 import nars.MapIndex;
 import nars.bag.impl.CacheBag;
-import nars.term.Term;
 import nars.term.Termed;
 
 import java.io.PrintStream;
@@ -12,16 +11,16 @@ import java.util.function.Consumer;
 /**
  *
  */
-public interface TermIndex extends CacheBag<Termed> {
+public interface TermIndex extends CacheBag<Termed, Termed> {
 
 
     void forEach(Consumer<? super Termed> c);
 
-    default <T extends Term> T getTerm(T t) {
-        Termed<T> u = get(t);
+    default <T extends Termed> T getTerm(Termed t) {
+        Termed u = get(t);
         if (u == null)
             return null;
-        return u.term();
+        return (T)u.term();
     }
 
 

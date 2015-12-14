@@ -479,7 +479,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * @return number of invoked handlers
      */
     public final int execute(Task goal) {
-        Term term = goal.get();
+        Term term = goal.term();
 
         if (Op.isOperation(term)) {
             Compound o = (Compound) term;
@@ -550,7 +550,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     public final void onExec(Term operator, Consumer<Term[]> func) {
         //wrap the procedure in a function, suboptimal but ok
         onExecTask(operator, (Task tt) -> {
-            func.accept(Compounds.opArgs(tt.get()).terms());
+            func.accept(Compounds.opArgs(tt.term()).terms());
             return null;
         });
     }
@@ -899,10 +899,10 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
         out.append(v.toString());
 
-        if (v instanceof Concept) {
-            Concept c = (Concept) v;
-            out.append(' ').append(c.getBudget().toBudgetString());
-        }
+//        if (v instanceof Concept) {
+//            Concept c = (Concept) v;
+//            out.append(' ').append(c.getBudget().toBudgetString());
+//        }
 
         out.append('\n');
     }
@@ -1179,7 +1179,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         /*if (termed == null)
             return null;*/
 
-        Term term = termed.get();
+        Term term = termed.term();
 
         if ((term = term.normalized()) == null) {
             //throw new RuntimeException("unnormalized term attempts to conceptualize: " + term);
@@ -1381,7 +1381,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * convenience method shortcut for concept(t.getTerm())
      */
     public final Concept concept(Termed termed) {
-        return concept(termed.get());
+        return concept(termed.term());
     }
 
     public On onQuestion(PatternAnswer p) {
