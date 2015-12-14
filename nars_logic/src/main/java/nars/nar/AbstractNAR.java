@@ -164,10 +164,8 @@ public abstract class AbstractNAR extends NAR {
     protected DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
 
         DefaultCycle c = initCore(
-            activeConcepts,
             getDeriver(),
-            newConceptBag(activeConcepts),
-            new ConceptActivator(this, this)
+            newConceptBag(activeConcepts)
         );
 
         //TODO move these to a PremiseGenerator which supplies
@@ -525,7 +523,7 @@ public abstract class AbstractNAR extends NAR {
             //1 concept if (memory.newTasks.isEmpty())*/
             if (conceptsToFire == 0) return;
 
-            float conceptForgetDurations = nar.memory.conceptForgetDurations.floatValue();
+            //float conceptForgetDurations = nar.memory.conceptForgetDurations.floatValue();
 
             //final float tasklinkForgetDurations = nar.memory().taskLinkForgetDurations.floatValue();
 

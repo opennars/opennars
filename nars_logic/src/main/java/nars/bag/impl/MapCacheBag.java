@@ -30,8 +30,8 @@ public class MapCacheBag<V> extends AbstractCacheBag<V>  {
     }
 
     @Override
-    public V put(V k, V v) {
-        return data.put(k, v);
+    public V put(V k) {
+        return data.put(k, k);
     }
 
     @Override

@@ -12,11 +12,11 @@ import java.io.PrintStream;
  *      --next(n, consumer(n)) - visit N highest items
  *
  * */
-public class ItemAccumulator<K,V extends Itemized<K>> extends ArrayBag<K,V> implements Iterable<V> {
+public class ItemAccumulator<V> extends ArrayBag<V> {
 
 
     public ItemAccumulator(int capacity) {
-        super(new ArraySortedIndex<>(capacity));
+        super(new ArraySortedIndex(capacity));
         mergeAverage();
     }
 
@@ -24,19 +24,19 @@ public class ItemAccumulator<K,V extends Itemized<K>> extends ArrayBag<K,V> impl
 
     @Override
     public final V peekNext() {
-        return items.getFirst();
+        return items.getFirst().get();
     }
 
 
     @Override
     public V pop() {
-        return removeHighest();
+        return removeHighest().get();
     }
 
 
     @Override
     public final boolean contains(V t) {
-        return index.containsKey(t.name());
+        return index.containsKey(t);
     }
 
 

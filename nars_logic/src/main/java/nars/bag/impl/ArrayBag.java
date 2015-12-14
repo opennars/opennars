@@ -6,6 +6,7 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.budget.Budget;
+import nars.budget.UnitBudget;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
 
@@ -15,7 +16,7 @@ import java.util.function.Consumer;
 /**
  * A bag implemented as a combination of a Map and a SortedArrayList
  */
-public class ArrayBag<V> extends Bag<V>  {
+public class ArrayBag<V> extends Bag<V> {
 
     //public static final Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = UnitBudget.average;
 
@@ -33,7 +34,7 @@ public class ArrayBag<V> extends Bag<V>  {
         this(items, Global.newHashMap(items.capacity()));
     }
 
-    public ArrayBag(SortedIndex<BagBudget<V>> items, Map<V,BagBudget<V>> map) {
+    public ArrayBag(SortedIndex<BagBudget<V>> items, Map<V, BagBudget<V>> map) {
 
         items.clear();
 
@@ -41,19 +42,23 @@ public class ArrayBag<V> extends Bag<V>  {
         index = new ArrayMapping(map, items);
     }
 
-    @Override public V put(V k, Budget b) {
-        //TODO use Map.compute.., etc
-
-        BagBudget<V> v = getBudget(k);
-
-        if (v!=null) {
-            v.set(b);
-            return k;
-        } else {
-            index.put(k, b);
-            return null;
-        }
+    @Override public V put(V k) {
+        return put(k, UnitBudget.zero);
     }
+
+//    @Override public V put(V k, Budget b) {
+//        //TODO use Map.compute.., etc
+//
+//        BagBudget<V> v = getBudget(k);
+//
+//        if (v!=null) {
+//            v.set(b);
+//            return k;
+//        } else {
+//            index.put(k, b);
+//            return null;
+//        }
+//    }
 
     public boolean isSorted() {
         return items.isSorted();
@@ -95,7 +100,7 @@ public class ArrayBag<V> extends Bag<V>  {
     public void validate() {
         int in = index.size();
         int is = items.size();
-            if (Math.abs(is-in) > 0) {
+        if (Math.abs(is - in) > 0) {
 //                System.err.println("INDEX");
 //                for (Object o : index.values()) {
 //                    System.err.println(o);
@@ -105,18 +110,18 @@ public class ArrayBag<V> extends Bag<V>  {
 //                    System.err.println(o);
 //                }
 
-                Set<V> difference = Sets.symmetricDifference(
-                        new HashSet(index.values()),
-                        new HashSet(items)
-                );
+            Set<V> difference = Sets.symmetricDifference(
+                    new HashSet(index.values()),
+                    new HashSet(items)
+            );
 
-                System.err.println("DIFFERENCE");
-                for (Object o : difference) {
-                    System.err.println("  " + o);
-                }
-
-                throw new RuntimeException("curvebag fault: " + in + " index, " + is + " items");
+            System.err.println("DIFFERENCE");
+            for (Object o : difference) {
+                System.err.println("  " + o);
             }
+
+            throw new RuntimeException("curvebag fault: " + in + " index, " + is + " items");
+        }
 
 //            //test for a discrepency of +1/-1 difference between name and items
 //            if ((is - in > 2) || (is - in < -2)) {
@@ -172,7 +177,7 @@ public class ArrayBag<V> extends Bag<V>  {
     }
 
     @Override
-    public BagBudget getBudget(V v) {
+    public BagBudget<V> getBudget(V v) {
         return index.get(v);
     }
 
@@ -187,9 +192,7 @@ public class ArrayBag<V> extends Bag<V>  {
         throw new RuntimeException("unimpl");
     }
 
-    @Override public V put(V i) {
-        return put(i, null);
-    }
+
 
     /**
      * Insert an item into the itemTable, and return the overflow
@@ -197,25 +200,26 @@ public class ArrayBag<V> extends Bag<V>  {
      * @param i The Item to put in
      * @return The overflow Item, or null if nothing displaced
      */
-    @Override public V put(V i, Budget b) {
+    @Override
+    public V put(V i, Budget b) {
 
 
         ArrayMapping index = this.index;
 
-        V overflow = index.putKey(i, b);
+        BagBudget<V> existing = index.get(i);
 
-        if (overflow!=null) {
+        if (existing != null) {
 
-            index.removeItem(overflow);
+            index.removeItem(existing);
 
-            if (!overflow.isDeleted()) {
+            if (!existing.isDeleted()) {
 
                 /*if (index.removeItem(overflow) == null)
                     throw new RuntimeException("put fault");*/
 
-                merge(i.getBudget(), overflow.getBudget());
+                merge(existing.getBudget(), b);
 
-                index.addItem(i);
+                index.addItem(existing);
 
                 /*if (!i.name().equals(overflow.name())) {
                     throw new RuntimeException("wtf: notEqual " + i.name() + " and " + overflow.name() );
@@ -227,53 +231,56 @@ public class ArrayBag<V> extends Bag<V>  {
         }
 
 
-            V displaced = null;
+        BagBudget<V> displaced = null;
 
-            if (full()) {
+        if (full()) {
 
 
-                if (getPriorityMin() > i.getPriority()) {
-                    //insufficient priority to enter the bag
-                    //remove the key which was put() at beginning of this method
-                    index.removeKey(i.name());
-                    return i;
-                }
-
-                displaced = removeLowest();
+            if (getPriorityMin() > b.getPriority()) {
+                //insufficient priority to enter the bag
+                //remove the key which was put() at beginning of this method
+                index.removeKey(i);
+                return i;
             }
 
-            //now that room is available:
-            index.addItem(i);
+            displaced = removeLowest();
+        }
 
-            return displaced;
+        //now that room is available:
+        index.addItem(new BagBudget(i, b));
+
+        return displaced.get();
     }
 
-    /** TODO make this work for the original condition: (size() >= capacity)
+    /**
+     * TODO make this work for the original condition: (size() >= capacity)
      * all comparisons like this should use this same condition
-     * */
+     */
     final boolean full() {
         return (size() >= capacity());
     }
 
-    protected final V removeLowest() {
+    protected final BagBudget<V> removeLowest() {
         if (isEmpty()) return null;
-        return removeItem(size()-1);
+        return removeItem(size() - 1);
     }
-    protected final V removeHighest() {
+
+    protected final BagBudget<V> removeHighest() {
         if (isEmpty()) return null;
         return removeItem(0);
     }
 
-    public final V highest() {
+    public final BagBudget<V> highest() {
         if (isEmpty()) return null;
         return getItem(0);
     }
-    public final V lowest() {
+
+    public final BagBudget<V> lowest() {
         if (isEmpty()) return null;
-        return getItem(size()-1);
+        return getItem(size() - 1);
     }
 
-    final V getItem(int index) {
+    final BagBudget<V> getItem(int index) {
         return items.get(index);
     }
 
@@ -282,9 +289,9 @@ public class ArrayBag<V> extends Bag<V>  {
      *
      * @return The first Item
      */
-    final V removeItem(int index) {
+    final BagBudget<V> removeItem(int index) {
 
-        V ii = getItem(index);
+        BagBudget<V> ii = getItem(index);
         /*if (ii == null)
             throw new RuntimeException("invalid index: " + index + ", size=" + size());*/
 
@@ -292,7 +299,12 @@ public class ArrayBag<V> extends Bag<V>  {
 //            throw new RuntimeException("removal fault");
 //        }
 
-        return remove( ii.name() );
+        return remove(ii.get());
+    }
+
+    @Override
+    public V get(V key) {
+        return getBudget(key).get();
     }
 
     @Override
@@ -329,13 +341,15 @@ public class ArrayBag<V> extends Bag<V>  {
 //
     }
 
-    /** default implementation; more optimal implementations will avoid instancing an iterator */
+    /**
+     * default implementation; more optimal implementations will avoid instancing an iterator
+     */
     @Override
     public void forEach(int max, Consumer<? super V> action) {
         List<BagBudget<V>> l = items.getList();
         int n = Math.min(l.size(), max);
         //TODO let the list implementation decide this because it can use the array directly in ArraySortedIndex
-        for (int i = 0; i < n; i++){
+        for (int i = 0; i < n; i++) {
             action.accept(l.get(i).get());
         }
     }
@@ -344,7 +358,7 @@ public class ArrayBag<V> extends Bag<V>  {
     public void forEachEntry(Consumer<BagBudget> action) {
         List<BagBudget<V>> l = items.getList();
         int n = l.size();
-        for (int i = 0; i < n; i++){
+        for (int i = 0; i < n; i++) {
             action.accept(l.get(i));
         }
     }
@@ -370,8 +384,7 @@ public class ArrayBag<V> extends Bag<V>  {
         if (n == size()) {
             //special case where size <= inputPerCycle, the entire bag can be flushed in one operation
             popAll(receiver);
-        }
-        else {
+        } else {
             for (int i = 0; i < n; i++) {
                 receiver.accept(pop());
             }
@@ -379,11 +392,11 @@ public class ArrayBag<V> extends Bag<V>  {
     }
 
 
-    public class ArrayMapping extends CollectorMap<V,BagBudget<V>> {
+    public class ArrayMapping extends CollectorMap<V, BagBudget<V>> {
 
         final SortedIndex<BagBudget<V>> items;
 
-        public ArrayMapping(Map<V,BagBudget<V>> map, SortedIndex<BagBudget<V>> items) {
+        public ArrayMapping(Map<V, BagBudget<V>> map, SortedIndex<BagBudget<V>> items) {
             super(map);
             this.items = items;
         }

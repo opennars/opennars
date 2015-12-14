@@ -357,7 +357,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V> implements Consumer<V>,
 
     public double[] getPriorityHistogram(double[] x) {
         int bins = x.length;
-        forEachEntry((e,budget) -> {
+        forEachEntry(budget -> {
             float p = budget.getPriority();
             int b = Util.bin(p, bins - 1);
             x[b]++;

@@ -5,7 +5,6 @@ import com.gs.collections.api.block.procedure.Procedure2;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.budget.Budget;
-import nars.budget.Itemized;
 import nars.util.ArraySortedIndex;
 import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
@@ -13,7 +12,6 @@ import nars.util.data.sorted.SortedIndex;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.Set;
 
 /**
  * Bag which stores items, sorted, in one array.
@@ -28,9 +26,9 @@ import java.util.Set;
  * <p>
  * TODO make a CurveSampling interface with at least 2 implementations: Random and LinearScanning. it will use this instead of the 'boolean random' constructor argument
  */
-public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
+public class CurveBag<V> extends Bag<V> {
 
-    final ArrayBag<K,V> arrayBag;
+    final ArrayBag<V> arrayBag;
 
     public static final BagCurve power4BagCurve = new Power4BagCurve();
     public static final BagCurve power6BagCurve = new Power6BagCurve();
@@ -45,7 +43,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
 
 
     public CurveBag(BagCurve curve, int capacity, Random rng) {
-        this(new ArraySortedIndex<>(capacity), curve, rng);
+        this(new ArraySortedIndex(capacity), curve, rng);
 
                                 /*if (capacity < 128)*/
         //items = new ArraySortedItemList<>(capacity);
@@ -56,9 +54,8 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
 
     }
 
-    public CurveBag(SortedIndex<V> items, BagCurve curve, Random rng) {
+    public CurveBag(SortedIndex<BagBudget<V>> items, BagCurve curve, Random rng) {
         super();
-
 
         this.arrayBag = new ArrayBag(items);
         this.curve = curve;
@@ -66,7 +63,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
     }
 
     @Override
-    public V put(K k, Budget b) {
+    public V put(V k, Budget b) {
         return arrayBag.put(k, b);
     }
 
@@ -88,17 +85,17 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
 
             int index = sample();
 
-            V i = remove ?
+            BagBudget<V> i = remove ?
                     arrayBag.removeItem(index) : arrayBag.getItem(index);
 
             if (!i.getBudget().isDeleted()) {
-                return i;
+                return i.get();
             }
 
             //ignore this deleted item now that it's removed from the bag
             //if it wasnt already removed above
             if (!remove)
-                remove(i.name());
+                remove(i.get());
 
         }
         return null; // empty bag
@@ -130,7 +127,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
     }
 
     @Override
-    public BagBudget<K> remove(K key) {
+    public BagBudget<V> remove(V key) {
         return arrayBag.remove(key);
     }
 
@@ -140,14 +137,10 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
     }
 
     @Override
-    public V get(K key) {
+    public V get(V key) {
         return arrayBag.get(key);
     }
 
-    @Override
-    public Set<K> keySet() {
-        return arrayBag.keySet();
-    }
 
     @Override
     public int capacity() {
@@ -337,11 +330,11 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
         arrayBag.validate();
     }
 
-    public SortedIndex<V> getItems() {
+    public SortedIndex<BagBudget<V>> getItems() {
         return arrayBag.items;
     }
 
-    public V get(int i) {
+    public BagBudget<V> get(int i) {
         return arrayBag.getItem(i);
     }
 

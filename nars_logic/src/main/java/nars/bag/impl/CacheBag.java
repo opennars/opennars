@@ -13,7 +13,7 @@ public interface CacheBag<V>  {
     Object remove(V key);
 
     /** same semantics as Map.put; output value is an existing value or null if none */
-    V put(V k, V v);
+    V put(V k);
 
 
     int size();
