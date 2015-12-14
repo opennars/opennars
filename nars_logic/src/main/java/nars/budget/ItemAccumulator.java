@@ -26,10 +26,13 @@ public class ItemAccumulator<K,V extends Itemized<K>> extends ArrayBag<K,V> impl
     public final V peekNext() {
         return items.getFirst();
     }
+
+
     @Override
-    public final V peekNext(boolean remove) {
+    public V pop() {
         return removeHighest();
     }
+
 
     @Override
     public final boolean contains(V t) {

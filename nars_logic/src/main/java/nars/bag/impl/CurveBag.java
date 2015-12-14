@@ -1,8 +1,11 @@
 package nars.bag.impl;
 
 import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
+import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
+import nars.bag.Bag;
 import nars.bag.BagSelector;
+import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.budget.UnitBudget;
 import nars.util.ArraySortedIndex;
@@ -10,9 +13,7 @@ import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Bag which stores items, sorted, in one array.
@@ -27,7 +28,9 @@ import java.util.Random;
  * <p>
  * TODO make a CurveSampling interface with at least 2 implementations: Random and LinearScanning. it will use this instead of the 'boolean random' constructor argument
  */
-public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
+public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
+
+    final ArrayBag<K,V> arrayBag;
 
     public static final BagCurve power4BagCurve = new Power4BagCurve();
     public static final BagCurve power6BagCurve = new Power6BagCurve();
@@ -55,13 +58,26 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
     }
 
     public CurveBag(SortedIndex<V> items, BagCurve curve, Random rng) {
-        super(items);
+        super();
 
+
+        this.arrayBag = new ArrayBag(items);
         this.curve = curve;
         random = rng;
     }
 
     @Override
+    public void setMergeFunction(Procedure2<Budget, Budget> mergeFunction) {
+        super.setMergeFunction(mergeFunction);
+        arrayBag.setMergeFunction(mergeFunction);
+    }
+
+    @Override
+    public V pop() {
+        return peekNext(true);
+    }
+
+
     public V peekNext(boolean remove) {
 
         while (!isEmpty()) {
@@ -69,7 +85,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
             int index = sample();
 
             V i = remove ?
-                    removeItem(index) : items.get(index);
+                    arrayBag.removeItem(index) : arrayBag.getItem(index);
 
             if (!i.getBudget().isDeleted()) {
                 return i;
@@ -99,8 +115,49 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
 
     @Override
+    public void clear() {
+        arrayBag.clear();
+    }
+
+    @Override
     public final V peekNext() {
         return peekNext(false);
+    }
+
+    @Override
+    public V remove(K key) {
+        return arrayBag.remove(key);
+    }
+
+    @Override
+    public V put(V newItem) {
+        return arrayBag.put(newItem);
+    }
+
+    @Override
+    public V get(K key) {
+        return arrayBag.get(key);
+    }
+
+    @Override
+    public Set<K> keySet() {
+        return arrayBag.keySet();
+    }
+
+    @Override
+    public int capacity() {
+        return arrayBag.capacity();
+    }
+
+
+    @Override
+    public int size() {
+        return arrayBag.size();
+    }
+
+    @Override
+    public Iterator<V> iterator() {
+        return arrayBag.iterator();
     }
 
 
@@ -196,7 +253,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
         int siz = size();
         len = Math.min(siz, len);
 
-        List<V> a = items.getList();
+        List<V> a = arrayBag.items.getList();
 
         int istart;
 
@@ -259,6 +316,30 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
         return next; //# of items actually filled in the array
     }
+
+    @Override
+    public void setCapacity(int c) {
+        arrayBag.setCapacity(c);
+    }
+
+    /** (utility method specific to curvebag) */
+    public boolean isSorted() {
+        return arrayBag.isSorted();
+    }
+
+    /** (utility method specific to curvebag) */
+    public void validate() {
+        arrayBag.validate();
+    }
+
+    public SortedIndex<V> getItems() {
+        return arrayBag.items;
+    }
+
+    public V get(int i) {
+        return arrayBag.getItem(i);
+    }
+
 
     /**
      * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).

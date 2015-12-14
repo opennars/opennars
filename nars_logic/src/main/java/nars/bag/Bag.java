@@ -79,11 +79,15 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
         throw new RuntimeException("depr");
     }
 
+    public void setMergeFunction(Procedure2<Budget, Budget> mergeFunction) {
+        this.mergeFunction = mergeFunction;
+    }
+
     /**
      * set the merging function to 'average'
      */
     public Bag mergeAverage() {
-        mergeFunction = UnitBudget.average;
+        setMergeFunction(UnitBudget.average);
         return this;
     }
 
@@ -91,12 +95,12 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * set the merging function to 'plus'
      */
     public Bag mergePlus() {
-        mergeFunction = UnitBudget.plus;
+        setMergeFunction(UnitBudget.plus);
         return this;
     }
 
     public Bag mergeMax() {
-        mergeFunction = UnitBudget.max;
+        setMergeFunction(UnitBudget.max);
         return this;
     }
 

@@ -1,5 +1,6 @@
 package nars.nar;
 
+import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.term.Term;
@@ -21,7 +22,7 @@ public class Terminal extends AbstractNAR {
 
     @Override
     public Concept apply(Term t) {
-        return new DefaultConcept(t, memory);
+        return new DefaultConcept(t, new UnitBudget(), memory);
     }
 
 

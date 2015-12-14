@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 /**
  * A bag implemented as a combination of a Map and a SortedArrayList
  */
-public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> implements Iterable<V> {
+public class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V>  {
 
     //public static final Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = UnitBudget.average;
 
@@ -60,6 +60,11 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
     public final void clear() {
         items.clear();
         index.clear();
+    }
+
+    @Override
+    public V peekNext() {
+        throw new RuntimeException("unimpl");
     }
 
     /**
@@ -160,11 +165,9 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public final V pop() {
-        return peekNext(true);
+    public V pop() {
+        throw new RuntimeException("unimpl");
     }
-
-    public abstract V peekNext(boolean remove);
 
     /**
      * Insert an item into the itemTable, and return the overflow

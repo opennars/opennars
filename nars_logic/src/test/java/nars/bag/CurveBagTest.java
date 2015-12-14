@@ -117,7 +117,8 @@ public class CurveBagTest extends AbstractBagTest {
         
         //sorted
         assertEquals(3, f.size());
-        assertTrue(f.items.toString(), f.items.get(0).getPriority() > f.items.get(1).getPriority());
+        assertTrue(f.getItems().toString(),
+                f.get(0).getPriority() > f.get(1).getPriority());
 
         f.pop();
         
