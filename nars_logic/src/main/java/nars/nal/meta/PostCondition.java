@@ -77,7 +77,6 @@ public class PostCondition implements Serializable, Level //since there can be m
             allowBackward = the("AllowBackward"),
             fromTask = the("FromTask"),
             fromBelief = the("FromBelief"),
-            anticipate = the("Anticipate"),
             immediate = the("Immediate");
 
     /**
@@ -171,13 +170,6 @@ public class PostCondition implements Serializable, Level //since there can be m
                     break;
 
                 case "Order":
-                    //ignore, because this only affects at TaskRule construction
-                    break;
-
-                case "Event":
-                    if (which.equals(anticipate)) {
-                        rule.anticipate = true;
-                    }
                     //ignore, because this only affects at TaskRule construction
                     break;
 

@@ -37,7 +37,6 @@ public class TaskRule extends ProductN implements Level {
     public boolean immediate_eternalize = false;
 
 
-    public boolean anticipate = false;
     public boolean sequenceIntervalsFromTask = false;
     public boolean sequenceIntervalsFromBelief = false;
     public boolean allowQuestionTask=false;

@@ -73,7 +73,11 @@ public class Anticipate {
                mayHaveHappenedAsExpected(t);
       }
 
-    public void anticipate(Task t) {
+    public void anticipate(Premise premise, Task t) {
+
+        if (!(premise.nal(7) && !t.isInput() && !t.isEternal())) { //anticipating only derived event tasks (given that NAL7 is enabled)
+            return;
+        }
 
         Compound tt = t.getTerm();
         long now = memory.time();
@@ -83,7 +87,7 @@ public class Anticipate {
             return; //Besides that the task has to be a judgement, if the truth expectation is below confirmation expectation,
         }           //the truth value of the incoming event was too low to confirm that the expected event has happened.
 
-        Concept c = nar.concept(tt);
+            Concept c = nar.concept(tt);
         if(c==null || c.get(Anticipate.class) == null || now > occ) { //it's not observable, or about thee future
             return;                                            //in the former case CWA can not be applied in general
         }                                                      //and in the latter case anticipation is pointless

@@ -127,9 +127,8 @@ public final class MakeTasks extends PreCondition {
 
 
             if (derived != null) {
-                if (premise.nal(7) && rule.anticipate && task.isInput()) { //the prediction needs to be based on a observation
-                    premise.memory().the(Anticipate.class).anticipate(derived); //else the system can anticipate things it can not measure
-                }                    //thus these anticipations would fail, leading the system thinking that this did not happen altough it was
+                //potential anticipation
+                premise.memory().the(Anticipate.class).anticipate(premise, derived);
                 if (Global.DEBUG && Global.DEBUG_LOG_DERIVING_RULE) { //just not able to measure it, closed world assumption gone wild.
                     derived.log(rule.toString());
                 }
