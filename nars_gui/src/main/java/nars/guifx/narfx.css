@@ -50,10 +50,14 @@
     -flatter-blue: rgb(0.0, 184.0, 222.0);*/
 
 }
+.root.popup {
+    -fx-background-color: black;
+    -fx-border-width: 0;
+}
 
 .control {
     -fx-base-color: /*transparent;*/ /*rgb(30,30,30); */
-        rgba(0,0,0,0.25);
+        rgba(0,0,0,1);
 }
 
 .text-input-control {

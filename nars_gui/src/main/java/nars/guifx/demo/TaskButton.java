@@ -3,6 +3,9 @@ package nars.guifx.demo;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import nars.NAR;
@@ -49,11 +52,16 @@ public class TaskButton extends Label {
 
             Popup p = new Popup();
             {
-                p.getContent().add(new TaskPane(nar, task));
-                p.getContent().add(new NSlider("pri", 100, 25, 0.5f));
-                Button b1 = new Button("+");
-                p.getContent().add(b1);
+                TaskPane tp = new TaskPane(nar,t);
+                tp.setTop(new FlowPane(
+                    new NSlider("pri", 100, 25, 0.5f),
+                    new Button("+")
+                ));
+                tp.setBackground(Background.EMPTY);
+                ((Pane)tp.getTop()).setBackground(Background.EMPTY);
+                p.getContent().add(tp);
             }
+
             p.setOpacity(0.75f);
             p.setAutoHide(true);
             p.setAutoFix(true);

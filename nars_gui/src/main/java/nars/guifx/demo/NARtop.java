@@ -23,7 +23,7 @@ public class NARtop extends BorderPane {
     final SetTaskPerception active;
     //final FlowPane buttons = new FlowPane();
     final TextFlow buttons = new TextFlow();
-    final Map<Task,TaskButton> taskButtons = new HashMap();
+    final Map<Task,SubButton> taskButtons = new HashMap();
     private final NAR nar;
 
     public NARtop(NAR d) {
@@ -38,7 +38,7 @@ public class NARtop extends BorderPane {
             update();
         });
         d.memory.eventTaskProcess.on(tp -> {
-            Task t = (Task) tp.getTask();
+            Task t = tp.getTask();
             if (t.isInput()) {
                 runLater( () -> {
                     addInput(t);
@@ -50,9 +50,9 @@ public class NARtop extends BorderPane {
     }
 
     protected void update() {
-        taskButtons.forEach( (k,v) -> {
+        /*taskButtons.forEach( (k,v) -> {
            v.update();
-        });
+        });*/
     }
 
     /**
@@ -61,7 +61,8 @@ public class NARtop extends BorderPane {
     protected void addInput(Task t) {
         
         taskButtons.computeIfAbsent(t, k -> {
-            TaskButton b = new TaskButton(nar,k);
+            //TaskButton b = new TaskButton(nar,k);
+            SubButton b = SubButton.make(nar, k);
             buttons.getChildren().add(b);
             return b;
         });
@@ -90,7 +91,7 @@ public class NARtop extends BorderPane {
             d.input("$0.40$ <plants --> [watered]>!");
             d.input("$0.30$ <<perimeter --> home> --> secure>?");
             d.input("$0.50$ <weather <-> [dangerous]>?");
-            //d.frame();
+            d.frame(6);
             //d.loop(100);
         });
     }
