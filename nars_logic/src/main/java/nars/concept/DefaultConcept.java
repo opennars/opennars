@@ -2,24 +2,27 @@ package nars.concept;
 
 import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
-import nars.Global;
-import nars.Param;
-import nars.Premise;
+import nars.*;
 import nars.bag.Bag;
 import nars.bag.NullBag;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.budget.UnitBudget;
 import nars.concept.util.ArrayListBeliefTable;
 import nars.concept.util.ArrayListTaskTable;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
-import nars.link.TaskLink;
-import nars.link.TermLink;
-import nars.link.TermLinkBuilder;
-import nars.link.TermLinkKey;
+import nars.link.*;
 import nars.nal.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.TermMetadata;
+import nars.term.Termed;
+import nars.util.meter.LogicMeter;
+
+import java.util.List;
+
+import static nars.budget.BudgetFunctions.clonePriorityMultiplied;
 
 
 public class DefaultConcept extends AtomConcept {
@@ -34,6 +37,8 @@ public class DefaultConcept extends AtomConcept {
      * are used to improve the efficiency of TermLink building
      */
     protected TermLinkBuilder termLinkBuilder = null;
+
+    private TaskLinkBuilder taskLinkBuilder;
 
 
 //    final static public Equality<Task> taskEquivalence = new Equality<Task>() {
@@ -88,6 +93,12 @@ public class DefaultConcept extends AtomConcept {
         quests = new ArrayListTaskTable(maxQuestions);
 
 
+    }
+
+    @Override
+    public void setMemory(Memory memory) {
+        super.setMemory(memory);
+        taskLinkBuilder = new TaskLinkBuilder(memory);
     }
 
     @Override
@@ -202,8 +213,8 @@ public class DefaultConcept extends AtomConcept {
 
 
 
-    static Task add(TaskTable table, Task input, Equality<Task> eq, Procedure2<Budget,Budget> duplicateMerge, Premise nal) {
-        return table.add(input, eq, duplicateMerge, nal.memory());
+    Task add(TaskTable table, Task input, Equality<Task> eq, Procedure2<Budget,Budget> duplicateMerge) {
+        return table.add(input, eq, duplicateMerge, memory);
     }
 
 
@@ -211,16 +222,17 @@ public class DefaultConcept extends AtomConcept {
      * To accept a new judgment as belief, and check for revisions and solutions
      *
      * @param belief The task to be processed
+     * @param nar
      * @return Whether to continue the processing of the task
      */
     @Override
-    public boolean processBelief(Premise nal) {
-
-        Task belief = nal.getTask();
+    public boolean processBelief(Task belief, NAR nar) {
 
         float successBefore = getSuccess();
 
-        Task strongest = getBeliefs().add( belief, new BeliefTable.SolutionQualityMatchingOrderRanker(belief, nal.time()), this, nal);
+        Task strongest = getBeliefs().add( belief,
+                new BeliefTable.SolutionQualityMatchingOrderRanker(belief, memory.time()),
+                this);
 
         if (strongest == null || strongest.isDeleted()) {
             return false;
@@ -229,7 +241,7 @@ public class DefaultConcept extends AtomConcept {
 
         if (hasQuestions()) {
             //TODO move this to a subclass of TaskTable which is customized for questions. then an arraylist impl of TaskTable can iterate by integer index and not this iterator/lambda
-            getQuestions().forEach( question -> LocalRules.trySolution(question, strongest, nal) );
+            getQuestions().forEach( question -> LocalRules.trySolution(question, strongest, nar) );
         }
         //}
 
@@ -249,15 +261,17 @@ public class DefaultConcept extends AtomConcept {
      * decide whether to actively pursue it
      *
      * @param goal The task to be processed
+     * @param task
      * @return Whether to continue the processing of the task
      */
     @Override
-    public boolean processGoal(Premise nal) {
+    public boolean processGoal(Task goal, NAR nar) {
 
-        Task goal = nal.getTask();
         float successBefore = getSuccess();
 
-        Task strongest = getGoals().add( goal, new BeliefTable.SolutionQualityMatchingOrderRanker(goal, nal.time()), this, nal);
+        Task strongest = getGoals().add( goal,
+                new BeliefTable.SolutionQualityMatchingOrderRanker(goal, memory.time()),
+                this);
 
         if (strongest==null) {
             return false;
@@ -269,9 +283,9 @@ public class DefaultConcept extends AtomConcept {
                memory.emotion.happy(delta);
 
 
-            if(Math.abs(delta)>=nal.memory().getExecutionSatisfactionThreshold()) {
+            if(Math.abs(delta)>= memory.getExecutionSatisfactionThreshold()) {
                 if (strongest.getTruth().getExpectation() > Global.EXECUTION_DESIRE_EXPECTATION_THRESHOLD) {
-                    nal.nar().execute(goal);
+                    nar.execute(goal);
                 }
             }
 
@@ -374,12 +388,14 @@ public class DefaultConcept extends AtomConcept {
      * To answer a quest or q by existing beliefs
      *
      * @param q The task to be processed
+     * @param task
+     * @param nar
      * @return true if the quest/question table changed
      */
     @Override
-    public boolean processQuestion(Premise nal) {
+    public boolean processQuestion(Task task, NAR nar) {
 
-        Task q = nal.getTask();
+        Task q = task.getTask();
         TaskTable table = q.isQuestion() ? getQuestions() : getQuests();
 
 //        //if (Global.DEBUG) {
@@ -398,7 +414,7 @@ public class DefaultConcept extends AtomConcept {
         if (!isConstant()) {
             //boolean newQuestion = table.isEmpty();
 
-            Task match = add(table, q, questionEquivalence, duplicateQuestionMerge, nal);
+            Task match = add(table, q, questionEquivalence, duplicateQuestionMerge);
             if (match == q) {
                 //final int presize = getQuestions().size() + getQuests().size();
                 //onTableUpdated(q.getPunctuation(), presize);
@@ -416,7 +432,7 @@ public class DefaultConcept extends AtomConcept {
         Task sol = q.isQuest() ? getGoals().top(q, now) : getBeliefs().top(q, now);
 
         if (sol!=null) {
-            /*Task solUpdated = */LocalRules.trySolution(q, sol, nal);
+            /*Task solUpdated = */LocalRules.trySolution(q, sol, nar);
         }
 
         return true;
@@ -539,5 +555,303 @@ public class DefaultConcept extends AtomConcept {
 //
 //        return true;
 //    }
+
+    /**
+     * configuration
+     */
+    static final boolean activateTermLinkTemplates = true;
+    static final boolean activateTermLinkTemplateTargetsFromTask = true;
+    static final boolean immediateTermLinkPropagation = false; /* false = buffered until next concept fire */
+
+
+    /**
+     * when a task is processed, a tasklink
+     * can be created at the concept of its term
+     */
+    public static boolean link(Concept c, Task t, NAR nar) {
+
+        if (linkTask(c, t, nar))
+            return linkTemplates(c, t.getBudget(), true, nar);  // recursively insert TermLink
+
+        return false;
+    }
+
+
+    /**
+     * Recursively build TermLinks between a compound and its components
+     * <p>
+     * called only from Memory.continuedProcess
+     * activates termlinked concepts with fractions of the taskbudget
+
+     *
+     * @param b            The BudgetValue of the task
+     * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
+     * @return whether any activity happened as a result of this invocation
+     */
+    public static boolean linkTemplates(Concept c, Budget b, boolean updateTLinks, NAR nar) {
+
+        if ((b == null) || (b.isDeleted())) return false;
+
+        List<TermLinkTemplate> tl = c.getTermLinkTemplates();
+        if (tl == null || tl.isEmpty())
+            return false;
+
+        //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
+        float factor = 1.0f / (tl.size());
+        UnitBudget subBudget = BudgetFunctions.clonePriorityMultiplied(b, factor);
+
+        final Memory memory = c.getMemory();
+
+        if (subBudget.summaryLessThan(memory.termLinkThreshold.floatValue()))
+            return false;
+
+        float termLinkThresh = memory.termLinkThreshold.floatValue();
+
+        boolean activity = false;
+
+        for (TermLinkTemplate t : tl) {
+
+            /*if ((t.getTarget().equals(getTerm()))) {
+                //self
+                continue;
+            }*/
+
+
+            //only apply this loop to non-transform termlink templates
+            //PENDING_TERMLINK_BUDGET_MERGE.value(t, subBudget);
+
+            if (updateTLinks) {
+                if (t.summaryGreaterOrEqual(termLinkThresh)) {
+
+                    if (link(t, c, nar))
+                        activity = true;
+                }
+            }
+
+        }
+
+        return activity;
+
+    }
+
+
+    public static boolean link(TermLinkTemplate t, Concept concept, NAR nar) {
+
+        TermLinkBuilder termLinkBuilder = concept.getTermLinkBuilder();
+        Concept otherConcept = getTermLinkTemplateTarget(t, nar);
+
+
+        termLinkBuilder.set(t, false, concept.getMemory());
+
+        //activate this termlink to peer
+        concept.activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
+
+        if (otherConcept == concept)
+            return false;
+
+        //activate peer termlink to this
+        otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
+
+        //if (otherConcept.getTermLinkTemplates()) {
+        UnitBudget termlinkBudget = termLinkBuilder.getBudget();
+        linkTemplates(otherConcept, termlinkBudget, immediateTermLinkPropagation, nar);
+        //}
+
+        /*} else {
+
+        }*/
+
+
+        //spent ?
+        //setPriority(0);
+
+        return true;
+
+    }
+
+    final static Concept getTermLinkTemplateTarget(TermLinkTemplate t, NAR nar) {
+        Term target = t.getTarget();
+        return activateTermLinkTemplates ? nar.conceptualize(target, t) : nar.concept(target);
+    }
+
+    final static Concept getTermLinkTemplateTarget(Termed t, Budget taskBudget, NAR nar) {
+        Term tt = t.getTerm();
+        return activateTermLinkTemplateTargetsFromTask ? nar.conceptualize(tt, taskBudget) : nar.concept(tt);
+    }
+
+    /**
+     * Link to a new task from all relevant concepts for continued processing in
+     * the near future for unspecified time.
+     * <p>
+     * The only method that calls the TaskLink constructor.
+     *
+     * @param task The task to be linked
+     */
+    protected static boolean linkTask(Concept c, Task task, NAR nar) {
+
+        TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
+        TaskLinkBuilder taskLinkBuilder = ((DefaultConcept)c).taskLinkBuilder;
+
+
+
+
+        List<TermLinkTemplate> templates = termLinkBuilder.templates();
+        int numTemplates = templates.size();
+        if (numTemplates == 0)
+            return false;
+
+        taskLinkBuilder.setTask(task);
+
+
+        //ACTIVATE TASK LINKS
+        //   options: entire budget, or the sub-budget that downtsream receives
+        taskLinkBuilder.setBudget( task.getBudget() );
+        activateTaskLink(c, taskLinkBuilder);
+
+
+
+        UnitBudget subBudget = clonePriorityMultiplied(task.getBudget(), 1.0f / numTemplates);
+        if (subBudget.summaryLessThan(c.getMemory().taskLinkThreshold.floatValue()))
+            return false;
+
+
+        taskLinkBuilder.setBudget(subBudget);
+
+
+        for (TermLinkTemplate linkTemplate : templates) {
+            //if (!(task.isStructural() && (linkTemplate.getType() == TermLink.TRANSFORM))) { // avoid circular transform
+
+//            final Term componentTerm = linkTemplate.getTarget();
+//            if (componentTerm.equals(getTerm())) // avoid circular transform
+//                continue;
+
+            Concept componentConcept = getTermLinkTemplateTarget(linkTemplate, subBudget, nar);
+            if (componentConcept != null) {
+
+                //possibly share term instances
+                Term cterm = componentConcept.getTerm();
+                if (!(cterm instanceof TermMetadata))
+                    linkTemplate.setTargetInstance(cterm);
+
+                /** activate the peer task tlink */
+                activateTaskLink(componentConcept, taskLinkBuilder);
+
+            } else {
+                //taskBudgetBalance += subBudget.getPriority();
+            }
+
+        }
+
+        return true;
+    }
+
+
+
+    /**
+     * Insert a TaskLink into the TaskLink bag
+     * <p>
+     * called only from Memory.continuedProcess
+     *
+     * @param taskLink The termLink to be inserted
+     * @return the tasklink which was selected or updated
+     */
+    protected static TaskLink activateTaskLink(Concept c, TaskLinkBuilder taskLink) {
+        return c.getTaskLinks().update(taskLink);
+    }
+
+    /**
+     * Directly process a new task. Called exactly once on each task. Using
+     * local information and finishing in a constant time. Provide feedback in
+     * the taskBudget value of the task.
+     * <p>
+     * called in Memory.immediateProcess only
+     *
+     * @return whether it was processed
+     */
+    protected static boolean processConcept(final Concept c, final Task task, NAR nar) {
+
+        task.onConcept(c);
+
+        LogicMeter logicMeter = nar.memory.logic;
+
+        switch (task.getPunctuation()) {
+
+            case Symbols.JUDGMENT:
+
+                if (!c.processBelief(task, nar ))
+                    return false;
+
+                logicMeter.JUDGMENT_PROCESS.hit();
+                break;
+
+            case Symbols.GOAL:
+
+                if (!c.processGoal(task, nar))
+                    return false;
+
+                logicMeter.GOAL_PROCESS.hit();
+                break;
+
+            case Symbols.QUESTION:
+
+                if (!c.processQuestion(task, nar ))
+                    return false;
+
+                logicMeter.QUESTION_PROCESS.hit();
+                break;
+
+            case Symbols.QUEST:
+
+                if (!c.processQuest(task,nar ))
+                    return false;
+
+                logicMeter.QUESTION_PROCESS.hit();
+                break;
+
+            default:
+                throw new RuntimeException("Invalid sentence type: " + task);
+        }
+
+        return !task.isDeleted();
+    }
+
+
+
+
+    public static Concept run(NAR nar, Task task) {
+
+//        /** deleted in the time between this was created, and run() */
+//        if (task.isDeleted()) {
+//            throw new RuntimeException(this + " deleted before creation");
+//            //return;
+//        }
+
+
+        final Memory memory = nar.memory;
+
+        Concept c = nar.conceptualize(task, task.getBudget());
+
+        if (c == null) {
+            memory.remove(task, "Inconceivable");
+            return null;
+        }
+
+        memory.emotion.busy(task);
+
+        if (processConcept(c, task, nar)) {
+
+            memory.eventTaskProcess.emit(task);
+
+            link(c, task, nar);
+
+            return c;
+        }
+        memory.remove(task, null /* "Unprocessable" */);
+
+        return null;
+
+    }
+
+
 
 }

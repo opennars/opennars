@@ -22,6 +22,7 @@ package nars.nal;
 
 import com.gs.collections.impl.tuple.Tuples;
 import nars.Memory;
+import nars.NAR;
 import nars.Op;
 import nars.Premise;
 import nars.budget.Budget;
@@ -153,7 +154,7 @@ public class LocalRules {
      * @param question     The question to be processed
      * @return the projected Task, or the original Task
      */
-    public static Task trySolution(Task question, Task solution, Premise nal) {
+    public static Task trySolution(Task question, Task solution, NAR nal) {
 
         if ((solution == null) || (solution.isDeleted()))
             throw new RuntimeException("proposedBelief " + solution + " deleted or null");
@@ -183,7 +184,7 @@ public class LocalRules {
 
             Term[] u = {question.getTerm(), solTerm};
 
-            if ( Premise.unify(Op.VAR_INDEP, u, nal.getRandom()) ) {
+            if ( Premise.unify(Op.VAR_INDEP, u, nal.memory.random) ) {
 
                 sol = sol.solution((Compound)u[1],
                         sol.getPunctuation(),
@@ -274,7 +275,7 @@ public class LocalRules {
         //}
 
         Task finalSol = sol;
-        nal.nar().beforeNextFrame(() -> {
+        nal.beforeNextFrame(() -> {
             //defer this event until after frame ends so reasoning in this cycle may continue
             memory.eventAnswer.emit(Tuples.twin(question, finalSol));
         });

@@ -4,7 +4,6 @@ import com.google.common.collect.Iterators;
 import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
 import nars.Memory;
-import nars.Premise;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.nal7.Tense;
@@ -31,7 +30,7 @@ public interface BeliefTable extends TaskTable {
 
     /** main method */
 
-    Task add(Task input, BeliefTable.Ranker ranking, Concept c, Premise nal);
+    Task add(Task input, BeliefTable.Ranker ranking, Concept c);
 
     /* when does projecting to now not play a role? I guess there is no case,
     //wo we use just one ranker anymore, the normal solution ranker which takes
@@ -92,7 +91,7 @@ public interface BeliefTable extends TaskTable {
         }
 
         @Override
-        public Task add(Task input, Ranker ranking, Concept c, Premise nal) {
+        public Task add(Task input, Ranker ranking, Concept c) {
             return null;
         }
 

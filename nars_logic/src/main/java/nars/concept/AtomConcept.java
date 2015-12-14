@@ -1,8 +1,7 @@
 package nars.concept;
 
-import nars.Premise;
+import nars.NAR;
 import nars.bag.Bag;
-import nars.bag.NullBag;
 import nars.budget.Budget;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
@@ -22,10 +21,10 @@ public class AtomConcept extends AbstractConcept  {
     protected final Bag<TermLinkKey, TermLink> termLinks;
 
 
-    /** creates with no termlink and tasklink ability */
-    public AtomConcept(Term atom, Budget budget) {
-        this(atom, budget, new NullBag(), new NullBag());
-    }
+//    /** creates with no termlink and tasklink ability */
+//    public AtomConcept(Term atom, Budget budget) {
+//        this(atom, budget, new NullBag(), new NullBag());
+//    }
 
     public AtomConcept(Term atom, Budget budget, Bag<TermLinkKey, TermLink> termLinks, Bag<Task, TaskLink> taskLinks) {
         super(budget, atom);
@@ -79,20 +78,20 @@ public class AtomConcept extends AbstractConcept  {
     static final String shouldntProcess = "should not have attempted to process task here";
 
     @Override
-    public boolean processBelief(Premise nal) {
+    public boolean processBelief(Task task, NAR nar) {
         throw new RuntimeException(shouldntProcess);
     }
     @Override
-    public boolean processGoal(Premise nal) {
+    public boolean processGoal(Task task, NAR nar) {
         throw new RuntimeException(shouldntProcess);
     }
     @Override
-    public boolean processQuestion(Premise nal) {
+    public boolean processQuestion(Task task, NAR nar) {
         throw new RuntimeException(shouldntProcess);
     }
     @Override
-    public final boolean processQuest(Premise nal) {
-        return processQuestion(nal);
+    public final boolean processQuest(Task task, NAR nar) {
+        return processQuestion(task, nar );
     }
 
     /**

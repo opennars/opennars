@@ -65,7 +65,7 @@ public abstract class AbstractConcept implements Concept {
     }
 
     @Override
-    public final void setMemory(Memory memory) {
+    public void setMemory(Memory memory) {
         this.memory = memory;
         if (memory!=null) {
             if (creationTime == Tense.TIMELESS) {

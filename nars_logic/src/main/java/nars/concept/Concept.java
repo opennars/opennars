@@ -25,7 +25,7 @@ import com.google.common.collect.Ordering;
 import com.google.common.primitives.Longs;
 import nars.Global;
 import nars.Memory;
-import nars.Premise;
+import nars.NAR;
 import nars.bag.Bag;
 import nars.budget.Itemized;
 import nars.concept.util.BeliefTable;
@@ -226,13 +226,13 @@ public interface Concept extends Termed, Itemized<Term> {
 
 
 
-    boolean processBelief(Premise nal);
+    boolean processBelief(Task task, NAR nar);
 
-    boolean processGoal(Premise nal);
+    boolean processGoal(Task task, NAR nar);
 
-    boolean processQuestion(Premise nal);
+    boolean processQuestion(Task task, NAR nar);
 
-    boolean processQuest(Premise nal);
+    boolean processQuest(Task task, NAR nar);
 
 
 

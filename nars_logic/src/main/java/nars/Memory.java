@@ -25,7 +25,6 @@ import com.gs.collections.api.tuple.Twin;
 import nars.concept.Concept;
 import nars.nal.nal8.ExecutionResult;
 import nars.process.ConceptProcess;
-import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
@@ -78,7 +77,7 @@ public class Memory extends Param {
      */
     public final transient Topic<Memory> eventCycleEnd = new DefaultTopic<>(); //eventCycleStart; //new DefaultObserved();
 
-    public final transient Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
+    public final transient Topic<Task> eventTaskProcess = new DefaultTopic<>();
 
     public static final Logger logger = LoggerFactory.getLogger(Memory.class);
 

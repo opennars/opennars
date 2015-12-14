@@ -4,7 +4,6 @@ import nars.$;
 import nars.Global;
 import nars.Memory;
 import nars.Premise;
-import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.compound.Compound;
 import nars.util.event.FrameReaction;
@@ -153,15 +152,8 @@ public class EmotionMeter extends FrameReaction implements Serializable {
         return -1;
     }
 
-    public void busy(ConceptProcess nal) {
-        busy(nal.getTask(), nal);
-    }
 
-    public void busy(Premise nal) {
-        busy(nal.getTask(), nal);
-    }
-
-    public void busy(Task cause, Premise p) {
+    public void busy(Task cause) {
         busy += cause.getPriority();
     }
 

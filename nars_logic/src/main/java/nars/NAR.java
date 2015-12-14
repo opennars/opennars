@@ -13,7 +13,6 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.OperatorReaction;
 import nars.nal.nal8.PatternAnswer;
 import nars.nal.nal8.operator.TermFunction;
-import nars.process.TaskProcess;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.task.flow.Input;
@@ -1330,7 +1329,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     /**
      * execute a Task as a TaskProcess (synchronous)
      */
-    public TaskProcess process(Task task) {
+    public Task process(Task task) {
 
         if(task==null) {
             return null;
@@ -1355,11 +1354,13 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
             return null;
         }
 
-        TaskProcess d = new TaskProcess(this, task);
+//        TaskProcess d = new TaskProcess(this, task);
+//
+//        d.run();
 
-        d.run();
 
-        return d;
+
+        return task;
 
     }
 
