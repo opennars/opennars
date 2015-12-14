@@ -4,8 +4,8 @@ import com.google.common.collect.Sets;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.budget.Budget;
-import nars.budget.Itemized;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
 
@@ -15,25 +15,25 @@ import java.util.function.Consumer;
 /**
  * A bag implemented as a combination of a Map and a SortedArrayList
  */
-public class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V>  {
+public class ArrayBag<V> extends Bag<V>  {
 
     //public static final Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = UnitBudget.average;
 
     /**
      * mapping from key to item
      */
-    public final ArrayMapping<K,V> index;
-
+    public final ArrayMapping index;
     /**
      * array of lists of items, for items on different level
      */
-    public final SortedIndex<V> items;
+    public final SortedIndex<BagBudget<V>> items;
 
-    public ArrayBag(SortedIndex<V> items) {
+
+    public ArrayBag(SortedIndex<BagBudget<V>> items) {
         this(items, Global.newHashMap(items.capacity()));
     }
 
-    public ArrayBag(SortedIndex<V> items, Map<K,V> map) {
+    public ArrayBag(SortedIndex<BagBudget<V>> items, Map<V,BagBudget<V>> map) {
 
         items.clear();
 
@@ -41,6 +41,19 @@ public class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V>  {
         index = new ArrayMapping(map, items);
     }
 
+    @Override public V put(V k, Budget b) {
+        //TODO use Map.compute.., etc
+
+        BagBudget<V> v = getBudget(k);
+
+        if (v!=null) {
+            v.set(b);
+            return k;
+        } else {
+            index.put(k, b);
+            return null;
+        }
+    }
 
     public boolean isSorted() {
         return items.isSorted();
@@ -133,29 +146,34 @@ public class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V>  {
      */
     @Override
     public boolean contains(V it) {
-        return index.containsValue(it);
+        return index.containsKey(it);
     }
 
-    /**
-     * Get an Item by key
-     *
-     * @param key The key of the Item
-     * @return The Item with the given key
-     */
-    @Override
-    public V get(K key) {
-        //TODO combine into one Map operation
-        V v = index.get(key);
-        if (v!=null && v.getBudget().isDeleted()) {
-            index.remove(key);
-            return null;
-        }
-        return v;
-    }
+//    /**
+//     * Get an Item by key
+//     *
+//     * @param key The key of the Item
+//     * @return The Item with the given key
+//     */
+//    @Override
+//    public V get(K key) {
+//        //TODO combine into one Map operation
+//        V v = index.get(key);
+//        if (v!=null && v.getBudget().isDeleted()) {
+//            index.remove(key);
+//            return null;
+//        }
+//        return v;
+//    }
 
     @Override
-    public V remove(K key) {
+    public BagBudget<V> remove(V key) {
         return index.remove(key);
+    }
+
+    @Override
+    public BagBudget getBudget(V v) {
+        return index.get(v);
     }
 
     /**
@@ -169,20 +187,22 @@ public class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V>  {
         throw new RuntimeException("unimpl");
     }
 
+    @Override public V put(V i) {
+        return put(i, null);
+    }
+
     /**
      * Insert an item into the itemTable, and return the overflow
      *
      * @param i The Item to put in
      * @return The overflow Item, or null if nothing displaced
      */
-    @Override
-    public V put(V i) {
+    @Override public V put(V i, Budget b) {
 
 
-        ArrayMapping<K, V> index = this.index;
+        ArrayMapping index = this.index;
 
-        V overflow = index.putKey(i.name(), i);
-
+        V overflow = index.putKey(i, b);
 
         if (overflow!=null) {
 
@@ -286,24 +306,19 @@ public class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V>  {
     }
 
     @Override
-    public final Set<K> keySet() {
+    public final Collection<V> values() {
         return index.keySet();
     }
 
     @Override
-    public final Collection<V> values() {
-        return items; //index.values();
-    }
-
-    @Override
     public final Iterator<V> iterator() {
-        return items.iterator();
+        return index.keySet().iterator();
     }
 
     @Override
     public final void forEach(Consumer<? super V> action) {
 
-        items.forEach(action);
+        index.keySet().forEach(action);
 //
 //        final List<V> l = items.getList();
 //
@@ -317,9 +332,18 @@ public class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V>  {
     /** default implementation; more optimal implementations will avoid instancing an iterator */
     @Override
     public void forEach(int max, Consumer<? super V> action) {
-        List<V> l = items.getList();
+        List<BagBudget<V>> l = items.getList();
         int n = Math.min(l.size(), max);
         //TODO let the list implementation decide this because it can use the array directly in ArraySortedIndex
+        for (int i = 0; i < n; i++){
+            action.accept(l.get(i).get());
+        }
+    }
+
+    @Override
+    public void forEachEntry(Consumer<BagBudget> action) {
+        List<BagBudget<V>> l = items.getList();
+        int n = l.size();
         for (int i = 0; i < n; i++){
             action.accept(l.get(i));
         }
@@ -355,11 +379,11 @@ public class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V>  {
     }
 
 
-    public class ArrayMapping<K, V extends Itemized<K>> extends CollectorMap<K, V> {
+    public class ArrayMapping extends CollectorMap<V,BagBudget<V>> {
 
-        final SortedIndex<V> items;
+        final SortedIndex<BagBudget<V>> items;
 
-        public ArrayMapping(Map<K, V> map, SortedIndex<V> items) {
+        public ArrayMapping(Map<V,BagBudget<V>> map, SortedIndex<BagBudget<V>> items) {
             super(map);
             this.items = items;
         }
@@ -370,7 +394,7 @@ public class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V>  {
         }
 
         @Override
-        protected V removeItem(V removed) {
+        protected BagBudget<V> removeItem(BagBudget<V> removed) {
 
             if (items.remove(removed)) {
                 return removed;
@@ -380,7 +404,7 @@ public class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V>  {
         }
 
         @Override
-        protected V addItem(V i) {
+        protected BagBudget<V> addItem(BagBudget<V> i) {
 
             return items.insert(i);
         }

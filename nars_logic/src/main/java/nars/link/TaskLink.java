@@ -122,8 +122,8 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Tasked {
      * @return The linked Task
      */
     @Override
-    public final Term getTerm() {
-        return task.getTerm();
+    public final Term get() {
+        return task.get();
     }
 
     @Override

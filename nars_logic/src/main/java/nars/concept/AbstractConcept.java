@@ -1,7 +1,6 @@
 package nars.concept;
 
 import nars.NAR;
-import nars.budget.Budget;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -13,26 +12,18 @@ import java.util.Map;
 public abstract class AbstractConcept implements Concept {
 
     private final Term term;
-    private final Budget budget;
 
     protected Map meta = null;
     protected boolean constant = false;
 
-
-
-    public AbstractConcept(Budget b, Term term) {
-        this.budget = b;
+    public AbstractConcept(Term term) {
         this.term = term;
     }
 
-    @Override
-    public Budget getBudget() {
-        return budget;
-    }
 
     @Override
-    public float getPriority() {
-        return budget.getPriority();
+    public final Term term() {
+        return term;
     }
 
     /**
@@ -62,7 +53,7 @@ public abstract class AbstractConcept implements Concept {
          * The term is the unique ID of the concept
          */
     @Override
-    public final Term getTerm() {
+    public final Term get() {
         return term;
     }
 
@@ -71,7 +62,7 @@ public abstract class AbstractConcept implements Concept {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Concept)) return false;
-        return ((Concept) obj).getTerm().equals(term);
+        return ((Concept) obj).get().equals(term);
     }
 
     @Override
@@ -79,10 +70,6 @@ public abstract class AbstractConcept implements Concept {
         return term.hashCode();
     }
 
-    @Override
-    public final Term name() {
-        return term;
-    }
 
     /**
      * Return a string representation of the concept, called in ConceptBag only
@@ -130,19 +117,16 @@ public abstract class AbstractConcept implements Concept {
 //    }
 
     /** called by memory, dont call self or otherwise */
-    @Override public void delete() {
+    public void delete() {
         /*if (getMemory().inCycle())
             throw new RuntimeException("concept " + this + " attempt to delete() during an active cycle; must be done between cycles");
         */
-        if (budget.isDeleted())
-            return; //already deleted
-
-        budget.delete();
 
         if (getMeta() != null) {
             getMeta().clear();
             setMeta(null);
         }
+        //TODO clear bags
     }
 
 

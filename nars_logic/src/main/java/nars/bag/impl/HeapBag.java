@@ -3,6 +3,7 @@ package nars.bag.impl;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.util.ArraySortedIndex;
@@ -288,7 +289,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
     @Override
-    public E remove(K key) {
+    public BagBudget<K> remove(K key) {
         return index.remove(key);
     }
 

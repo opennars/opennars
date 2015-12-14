@@ -55,14 +55,14 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
     }
 
     public void addConceptTermLinks(Concept c) {
-        Term source = c.getTerm();
+        Term source = c.get();
 
         if (!containsVertex(c)) {
             addVertex(c);
 
             /*if (includeConceptTermLinks)*/ {
                 for (TermLink t : c.getTermLinks().values()) {
-                    Term target = t.getTerm().getTerm();
+                    Term target = t.get().get();
                     addVertex(target);
                     addEdge(source, target, t);
                 }
@@ -78,7 +78,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
             /*if (includeConceptBeliefs)*/ {
                 for (Task s : c.getBeliefs()) {
-                    Term target = s.getTerm();
+                    Term target = s.get();
                     addVertex(target);
                     addEdge(source, target, s);
                 }
@@ -86,7 +86,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
             /*if (includeConceptQuestoins)*/
             for (Task t : c.getQuestions()) {
-                Term target = t.getTerm();
+                Term target = t.get();
                 if (!containsVertex(target)) {
                     addVertex(target);
                 }

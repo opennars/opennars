@@ -126,6 +126,10 @@ public class UnitBudget implements Budget {
     public UnitBudget() {
     }
 
+    public UnitBudget(Budget v) {
+        this(v, false);
+    }
+
     /**
      * Cloning constructor
      *
@@ -204,14 +208,6 @@ public class UnitBudget implements Budget {
 //    }
 
 
-    /**
-     * set all quantities to zero
-     */
-    @Override
-    public final Budget zero() {
-        priority = durability = quality = 0.0f;
-        return this;
-    }
 
     /**
      * Get priority value
@@ -237,8 +233,10 @@ public class UnitBudget implements Budget {
         priority = Util.clamp(p);
     }
 
-
-
+    @Override
+    public void deleteBudget() {
+        this.priority = Float.NaN;
+    }
 
     /**
      * Get durability value
@@ -527,15 +525,7 @@ public class UnitBudget implements Budget {
         return this;
     }
 
-    public void delete() {
-        deleteBudget();
-    }
 
-    public final void deleteBudget() {
-        priority = Float.NaN;
-        durability = 0;
-        quality = 0;
-    }
 
 
 

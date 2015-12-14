@@ -160,7 +160,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
             return false;
         }
 
-        if (!task.getTerm().equals(getTerm())) return false;
+        if (!task.get().equals(get())) return false;
 
         if (task.getPunctuation() != getPunctuation())
             return false;
@@ -228,7 +228,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 
         float difference = 0;
         difference +=
-                task.getTerm()==getTerm() ? 0 : (getTerm().volume());
+                task.get()== get() ? 0 : (get().volume());
         if (difference >= worstDiff)
             return;
 
@@ -247,7 +247,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
             return;
 
         float termDifference =
-                Terms.termDistance(task.getTerm(), getTerm(), worstDiff);
+                Terms.termDistance(task.get(), get(), worstDiff);
         difference += 3 * termDifference;
 
         if (difference >= worstDiff)

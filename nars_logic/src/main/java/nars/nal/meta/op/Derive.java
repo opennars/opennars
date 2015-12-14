@@ -111,7 +111,7 @@ public final class Derive extends PreCondition {
         if (truth != null && eternalize && !derived.isEternal()) {
 
             m.derive(
-                    new MutableTask(derived.getTerm())
+                    new MutableTask(derived.get())
                             .punctuation(punct)
                             .truth(
                                     truth.getFrequency(),

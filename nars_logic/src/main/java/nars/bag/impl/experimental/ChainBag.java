@@ -2,6 +2,7 @@ package nars.bag.impl.experimental;
 
 import nars.Global;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.budget.Item;
 import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;
@@ -456,7 +457,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
     }
 
     @Override
-    public V remove(K key) {
+    public BagBudget<K> remove(K key) {
         DD<V> d = index.remove(key);
         if (d!=null) {
             V v = d.item; //save it here because chain.remove will nullify .item field

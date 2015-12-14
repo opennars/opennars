@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import nars.Global;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.budget.Item;
 import nars.util.data.Util;
 import nars.util.data.list.CircularArrayList;
@@ -333,7 +334,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
 
 
     @Override
-    public E remove(K key) {
+    public BagBudget<K> remove(K key) {
         return onExit(index.remove(key));
     }
 

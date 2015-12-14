@@ -29,7 +29,7 @@ public class CommandTest {
             @Override
             public List<Task> apply(Task o) {
                 invoked.set(true);
-                Term[] a = Compounds.opArgsArray(o.getTerm());
+                Term[] a = Compounds.opArgsArray(o.get());
                 assertEquals(1, a.length);
                 assertEquals("x", a[0].toString());
                 return null;

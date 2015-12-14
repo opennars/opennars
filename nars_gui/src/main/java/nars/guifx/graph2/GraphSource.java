@@ -35,7 +35,7 @@ public abstract class GraphSource/* W? */ {
 
         forEachOutgoingEdgeOf(s, t -> {
 
-            TermNode tn = g.getTermNode(t.getTerm());
+            TermNode tn = g.getTermNode(t.get());
             if (tn == null)
                 return;
 

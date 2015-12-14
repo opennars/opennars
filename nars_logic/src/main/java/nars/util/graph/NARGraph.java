@@ -9,7 +9,6 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.term.Term;
 import nars.term.Termed;
-import nars.util.data.id.Named;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -108,7 +107,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         void setMinPriority(float minPriority);
     }
 
-    public abstract static class NAREdge<X> extends DefaultEdge implements Named<X> {
+    public abstract static class NAREdge<X> extends DefaultEdge {
 
         private final X object;
         private final int hash;
@@ -124,7 +123,6 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
 
 
-        @Override
         public X name() {
             return object;
         }
@@ -208,8 +206,8 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
 
         @Override
-        public Term getTerm() {
-            return getObject().getTerm();
+        public Term get() {
+            return getObject().get();
         }
 
     }
@@ -236,8 +234,8 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
 
         @Override
-        public Term getTerm() {
-            return getObject().getTerm();
+        public Term get() {
+            return getObject().get();
         }
     }
 

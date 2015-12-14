@@ -25,6 +25,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import nars.Global;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.util.data.ReversibleRecyclableArrayIterator;
@@ -266,7 +267,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
 
     @Override
-    public E remove(K name) {
+    public BagBudget<K> remove(K name) {
         DD<E> t = index.get(name);
         if (t == null) return null;
         return extract(t);

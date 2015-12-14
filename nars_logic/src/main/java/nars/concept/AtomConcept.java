@@ -2,10 +2,11 @@ package nars.concept;
 
 import nars.NAR;
 import nars.bag.Bag;
-import nars.budget.Budget;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
-import nars.link.*;
+import nars.link.TermLink;
+import nars.link.TermLinkBuilder;
+import nars.link.TermLinkTemplate;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -17,8 +18,8 @@ import java.util.List;
  */
 public class AtomConcept extends AbstractConcept  {
 
-    protected final Bag<Task, TaskLink> taskLinks;
-    protected final Bag<TermLinkKey, TermLink> termLinks;
+    protected final Bag<Task> taskLinks;
+    protected final Bag<Term> termLinks;
 
 
 //    /** creates with no termlink and tasklink ability */
@@ -26,8 +27,8 @@ public class AtomConcept extends AbstractConcept  {
 //        this(atom, budget, new NullBag(), new NullBag());
 //    }
 
-    public AtomConcept(Term atom, Budget budget, Bag<TermLinkKey, TermLink> termLinks, Bag<Task, TaskLink> taskLinks) {
-        super(budget, atom);
+    public AtomConcept(Term atom, Bag<Term> termLinks, Bag<Task> taskLinks) {
+        super(atom);
         this.termLinks = termLinks;
         this.taskLinks = taskLinks;
     }
@@ -38,7 +39,7 @@ public class AtomConcept extends AbstractConcept  {
      * Task links for indirect processing
      */
     @Override
-    public final Bag<Task, TaskLink> getTaskLinks() {
+    public final Bag<Task> getTaskLinks() {
         return taskLinks;
     }
 
@@ -46,7 +47,7 @@ public class AtomConcept extends AbstractConcept  {
      * Term links between the term and its components and compounds; beliefs
      */
     @Override
-    public final Bag<TermLinkKey, TermLink> getTermLinks() {
+    public final Bag<Term> getTermLinks() {
         return termLinks;
     }
 

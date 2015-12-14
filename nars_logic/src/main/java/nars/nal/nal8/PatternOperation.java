@@ -33,7 +33,7 @@ public abstract class PatternOperation implements Function<Task, List<Task>> {
 
         if (operationTask.isGoal()) {
             FindSubst s = new FindSubst(Op.VAR_PATTERN, rng);
-            if (s.next(pattern, operationTask.getTerm(), Global.UNIFICATION_POWER)) {
+            if (s.next(pattern, operationTask.get(), Global.UNIFICATION_POWER)) {
                 return run(operationTask, s);
             }
         }

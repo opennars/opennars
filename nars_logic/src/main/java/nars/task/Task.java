@@ -34,7 +34,6 @@ import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.truth.*;
-import nars.util.data.id.Named;
 
 import java.io.Serializable;
 import java.lang.ref.Reference;
@@ -52,7 +51,7 @@ import static nars.Global.dereference;
  * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<Task>,Termed {
+public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Termed {
 
 
     static void getExplanation(Task task, int indent, StringBuilder sb) {
@@ -69,7 +68,7 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
             sb.append(" log=").append(l);*/
 
         if (task.getBestSolution() != null) {
-            if (!task.getTerm().equals(task.getBestSolution().getTerm())) {
+            if (!task.get().equals(task.getBestSolution().get())) {
                 sb.append(" solution=");
                 task.getBestSolution().appendTo(sb);
             }
@@ -237,11 +236,11 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
     }
 
     default boolean hasQueryVar() {
-        return getTerm().hasVarQuery();
+        return get().hasVarQuery();
     }
 
     default boolean isRevisible() {
-        Term t = getTerm();
+        Term t = get();
         return !(t.op().isConjunctive() && t.hasVarDep());
     }
 
@@ -249,7 +248,6 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
         return appendTo(sb, null);
     }
 
-    @Override
     default Task name() {
         return this;
     }
@@ -263,7 +261,7 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
     }
 
     @Override
-    Compound getTerm();
+    Compound get();
 
     @Override
     Truth getTruth();
@@ -327,7 +325,7 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
 
 
         String contentName;
-        contentName = term && getTerm() != null ? getTerm().toString() : "";
+        contentName = term && get() != null ? get().toString() : "";
 
         CharSequence tenseString;
         if (memory!=null) {
@@ -497,7 +495,7 @@ public interface Task extends Itemized<Task>, Truthed, Comparable, Stamp, Named<
     }
 
     default Order getTemporalOrder() {
-        return getTerm().getTemporalOrder();
+        return get().getTemporalOrder();
     }
 
     void setTruth(Truth t);

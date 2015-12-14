@@ -26,10 +26,12 @@ import com.google.common.primitives.Longs;
 import nars.Global;
 import nars.NAR;
 import nars.bag.Bag;
-import nars.budget.Itemized;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
-import nars.link.*;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.link.TermLinkBuilder;
+import nars.link.TermLinkTemplate;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
@@ -40,20 +42,17 @@ import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static com.google.common.collect.Iterators.concat;
 
-public interface Concept extends Termed, Itemized<Term> {
+public interface Concept extends Termed, Supplier<Term> {
 
-    Bag<Task, TaskLink> getTaskLinks();
-    Bag<TermLinkKey, TermLink> getTermLinks();
+    Bag<Task> getTaskLinks();
+    Bag<Term> getTermLinks();
 
     Map<Object, Object> getMeta();
     void setMeta(Map<Object, Object> meta);
-
-
-
-
 
 
 //    boolean linkTerms(Budget budgetRef, boolean updateTLinks);
@@ -62,8 +61,7 @@ public interface Concept extends Termed, Itemized<Term> {
 //      boolean link(Task currentTask);
 
 
-    @Override
-    float getPriority();
+    default Term get() { return term(); }
 
 
     /** attempts to fill the supplied array with next termlinks
@@ -146,7 +144,7 @@ public interface Concept extends Termed, Itemized<Term> {
 
     default String toInstanceString() {
         String id = Integer.toString(System.identityHashCode(this), 16);
-        return this + "::" + id + ' ' + getBudget().toBudgetString();
+        return this + "::" + id;
     }
 
 
@@ -311,23 +309,20 @@ public interface Concept extends Termed, Itemized<Term> {
         if (showtermlinks) {
 
             out.println(" TermLinks:");
-            for (TLink t : getTermLinks()) {
+            getTermLinks().forEachEntry(b-> {
                 out.print(indent);
-                out.print(t.getBudget().toBudgetString());
+                out.print(b.get() + " " + b.toBudgetString());
                 out.print(" ");
-                TLink.print(t, out);
-                out.println();
-            }
-
+            });
         }
 
         if (showtasklinks) {
             out.println(" TaskLinks:");
-            for (TLink t : getTaskLinks()) {
+            getTaskLinks().forEachEntry(b-> {
                 out.print(indent);
-                TLink.print(t, out);
-                out.println();
-            }
+                out.print(b.get() + " " + b.toBudgetString());
+                out.print(" ");
+            });
         }
 
         out.println();
@@ -396,8 +391,8 @@ public interface Concept extends Termed, Itemized<Term> {
      * @return number of links created (0, 1, or 2)
      */
     default int crossLink(Task currentTask, Task previousTask, NAR nar) {
-        Compound otherTerm = previousTask.getTerm();
-        if (otherTerm.equals(getTerm())) return 0; //self
+        Compound otherTerm = previousTask.get();
+        if (otherTerm.equals(get())) return 0; //self
 
         int count = 0;
         count += link(previousTask, nar) ? 1 : 0;

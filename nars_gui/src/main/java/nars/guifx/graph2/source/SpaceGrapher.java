@@ -211,11 +211,11 @@ public class SpaceGrapher extends Spacegraph {
         return terms.get(t);
     }
     public final TermNode getTermNode(Termed t) {
-        return getTermNode(t.getTerm());
+        return getTermNode(t.get());
     }
 
     public final TermNode getOrNewTermNode(Termed t/*, boolean createIfMissing*/) {
-        return terms.computeIfAbsent(t.getTerm(), k -> newNode(t));
+        return terms.computeIfAbsent(t.get(), k -> newNode(t));
     }
 
 

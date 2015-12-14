@@ -40,7 +40,7 @@ public class LinkageTest extends AbstractNALTester {
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
             for (TermLink entry : ret.getTermLinks()) {
-                Term w = entry.getTerm();
+                Term w = entry.get();
                 if (w.toString().equals(premise2)) {
                     passed = true;
                 }
@@ -51,7 +51,7 @@ public class LinkageTest extends AbstractNALTester {
         boolean passed2 = false;
         if(ret2!=null && ret2.getTermLinks()!=null) {
             for (TermLink entry : ret2.getTermLinks()) {
-                Term w = entry.getTerm();
+                Term w = entry.get();
                 if (w.toString().equals(premise1)) {
                     passed2 = true;
                 }
@@ -92,16 +92,16 @@ public class LinkageTest extends AbstractNALTester {
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
             for (TermLink entry : ret.getTermLinks()) {
-                if(entry.getTerm().equals(premise2)) {
+                if(entry.get().equals(premise2)) {
                     passed = true;
                     break;
                 }
 
-                Term w = entry.getTerm();
+                Term w = entry.get();
                 Concept Wc = nar.concept(w);
                 if(Wc != null) {
                     for (TermLink entry2 : Wc.getTermLinks()) {
-                        if(entry2.getTerm().equals(premise2)) {
+                        if(entry2.get().equals(premise2)) {
                             passed = true;
                             break;
                         }
@@ -114,15 +114,15 @@ public class LinkageTest extends AbstractNALTester {
         boolean passed2 = false;
         if(ret2!=null && ret2.getTermLinks()!=null) {
             for (TermLink entry : ret2.getTermLinks()) {
-                if(entry.getTerm().equals(premise1)) {
+                if(entry.get().equals(premise1)) {
                     passed2 = true;
                     break;
                 }
-                Term w = entry.getTerm();
+                Term w = entry.get();
                 Concept Wc = nar.concept(w);
                 if(Wc != null) {
                     for (TermLink entry2 : Wc.getTermLinks()) {
-                        if(entry2.getTerm().equals(premise1)) {
+                        if(entry2.get().equals(premise1)) {
                             passed2 = true;
                             break;
                         }
@@ -159,23 +159,23 @@ public class LinkageTest extends AbstractNALTester {
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
             for (TermLink entry : ret.getTermLinks()) {
-                if(entry.getTerm().toString().equals(premise2)) {
+                if(entry.get().toString().equals(premise2)) {
                     passed = true;
                     break;
                 }
-                Term w = entry.getTerm();
+                Term w = entry.get();
                 Concept Wc = tester.nar.concept(w);
                 if(Wc != null) {
                     for (TermLink entry2 : Wc.getTermLinks()) {
-                        if(entry2.getTerm().toString().equals(premise2)) {
+                        if(entry2.get().toString().equals(premise2)) {
                             passed = true;
                             break;
                         }
-                        Term w2 = entry2.getTerm();
+                        Term w2 = entry2.get();
                         Concept Wc2 = tester.nar.concept(w2);
                         if(Wc2 != null) {
                             for (TermLink entry3 : Wc2.getTermLinks()) {
-                                if(entry3.getTerm().toString().equals(premise2)) {
+                                if(entry3.get().toString().equals(premise2)) {
                                     passed = true;
                                     break;
                                 }
@@ -193,23 +193,23 @@ public class LinkageTest extends AbstractNALTester {
         boolean passed2 = false;
         if(ret2!=null && ret2.getTermLinks()!=null) {
             for (TermLink entry : ret2.getTermLinks()) {
-                if(entry.getTerm().toString().equals(premise1)) {
+                if(entry.get().toString().equals(premise1)) {
                     passed2 = true;
                     break;
                 }
-                Term w = entry.getTerm();
+                Term w = entry.get();
                 Concept Wc = tester.nar.concept(w);
                 if(Wc != null) {
                     for (TermLink entry2 : Wc.getTermLinks()) {
-                        if(entry2.getTerm().toString().equals(premise1)) {
+                        if(entry2.get().toString().equals(premise1)) {
                             passed2 = true;
                             break;
                         }
-                        Term w2 = entry2.getTerm();
+                        Term w2 = entry2.get();
                         Concept Wc2 = tester.nar.concept(w2);
                         if(Wc2 != null) {
                             for (TermLink entry3 : Wc2.getTermLinks()) {
-                                if(entry3.getTerm().toString().equals(premise1)) {
+                                if(entry3.get().toString().equals(premise1)) {
                                     passed2 = true;
                                     break;
                                 }

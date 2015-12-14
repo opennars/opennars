@@ -14,12 +14,12 @@ import java.util.function.Consumer;
 /**
  * Created by me on 12/7/15.
  */
-public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> implements TermIndex {
+public class MapIndex extends MapCacheBag<Termed> implements TermIndex {
 
     private final Map<TermContainer, TermContainer> subterms = new HashMap();
 
 
-    public MapIndex(Map<Term, Termed> data) {
+    public MapIndex(Map<Termed, Termed> data) {
         super(data);
     }
     //new ConcurrentHashMap(4096); //TODO try weakref identity hash map etc
@@ -27,9 +27,9 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
 
 
     @Override
-    public final Termed get(Term t) {
+    public final Termed get(Termed t) {
 
-        Map<Term, Termed> d = data;
+        Map<Termed, Termed> d = data;
         Termed existing = d.get(t);
         if (existing ==null) {
             return compile(t);
@@ -44,7 +44,7 @@ public class MapIndex extends MapCacheBag<Term, Termed, Map<Term, Termed>> imple
 
     }
 
-    protected <T extends Term> T compile(T t) {
+    protected <T extends Termed> T compile(T t) {
 
         if (t instanceof TermMetadata) {
 

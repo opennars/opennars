@@ -29,9 +29,9 @@ public class TaskPane extends BorderPane {
             //nar.input(new AbstractTask(c));
         });
 
-        Button conceptButton = new Button("Concept" + c.getTerm().toStringCompact());
+        Button conceptButton = new Button("Concept" + c.get().toStringCompact());
         conceptButton.setOnMouseClicked(e -> {
-            Concept concept = nar.concept(c.getTerm());
+            Concept concept = nar.concept(c.get());
             if (concept!=null) {
                 NARfx.newWindow(concept);
 //                ConceptPane cp = new ConceptPane(nar, concept);

@@ -1,18 +1,13 @@
 package nars.bag;
 
-import com.google.common.collect.Sets;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.bag.impl.AbstractCacheBag;
 import nars.budget.Budget;
-import nars.budget.Itemized;
 import nars.budget.UnitBudget;
 import nars.util.data.Util;
-import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
-import java.io.*;
-import java.util.HashSet;
+import java.io.PrintStream;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -23,19 +18,10 @@ import java.util.function.Supplier;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, V> implements Consumer<V>, Supplier<V>, Iterable<V>, Externalizable {
-
+public abstract class Bag<V> extends AbstractCacheBag<V> implements Consumer<V>, Supplier<V>, Iterable<V> {
 
     protected Procedure2<Budget, Budget> mergeFunction;
 
-    public static final <V> boolean bufferIncludes(V[] buffer, V item) {
-        for (V x : buffer) {
-            if (x == null)
-                break;
-            if (x == item) return true;
-        }
-        return false;
-    }
 
     /**
      * returns the bag to an empty state
@@ -56,7 +42,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * @return
      */
     @Override
-    public abstract V remove(K key);
+    public abstract BagBudget<V> remove(V key);
 
 
 
@@ -68,10 +54,15 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      */
     public abstract V put(V newItem);
 
-    @Override
-    @Deprecated public V put(K k, V v) {
-        throw new RuntimeException("depr");
-    }
+
+    /** buffers activation for an item.
+     *  returns the value that will remain associated with the key
+     *  (replacing any current value)
+     *  or null if it wasn't added
+     */
+    public abstract V put(V k, Budget b);
+
+
 
     public void setMergeFunction(Procedure2<Budget, Budget> mergeFunction) {
         this.mergeFunction = mergeFunction;
@@ -102,16 +93,16 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
         mergeFunction.value(newBudget, oldBudget);
     }
 
-    /**
-     * Get an Item by key
-     *
-     * @param key The key of the Item
-     * @return The Item with the given key
-     */
-    @Override
-    public abstract V get(K key);
+//    /**
+//     * Get an Item by key
+//     *
+//     * @param key The key of the Item
+//     * @return The Item with the given key
+//     */
+//    @Override
+//    public abstract V get(K key);
 
-    public abstract Set<K> keySet();
+//    public abstract Set<K> keySet();
 
     public abstract int capacity();
 
@@ -158,27 +149,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * @param it An item
      * @return Whether the Item is in the Bag
      */
-    public boolean contains(V it) {
-        V exist = get(it.name());
-        if (exist == null) return false;
-        return exist.equals(it);
-    }
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Bag)
-            return Bag.equals(this, ((Bag)obj));
-        return false;
-    }
+    abstract public boolean contains(V it);
 
-    /**  by value set */
-    public static <K,V extends Itemized<K>> boolean equals(Bag<K, V> a, Bag<K, V> b) {
-        if (a.size()!=b.size()) return false;
-        HashSet<V> aa = Sets.newHashSet(a);
-        HashSet<V> bb = Sets.newHashSet(b);
-
-        //TODO test for budget equality, which must be done separately
-        return aa.equals(bb);
-    }
 
     //    /**
 //     * if the next item is true via the predicate, then it is TAKEn out of the bag; otherwise the item remains unaffected
@@ -198,7 +170,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * implements the Consumer<V> interface; invokes a put()
      */
     @Override
-    public void accept(V v) {
+    final public void accept(V v) {
         put(v);
     }
 
@@ -206,22 +178,20 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * implements the Supplier<V> interface; invokes a remove()
      */
     @Override
-    public V get() {
+    final public V get() {
         return pop();
     }
 
-    public boolean isEmpty() {
+    final public boolean isEmpty() {
         return size() == 0;
     }
-
-
 
     public void printAll() {
         printAll(System.out);
     }
 
     public void printAll(PrintStream p) {
-        forEach(x -> p.println(x.getPriority() + " " + x));
+        forEachEntry(b -> p.println(b.toBudgetString() + " " + b.get()));
     }
 
     /**
@@ -232,21 +202,24 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
     //@Override abstract public void forEach(final Consumer<? super V> action);
     public float getPrioritySum() {
         float[] total = {0};
-        forEach(x -> total[0] += x.getPriority());
+        forEachEntry(v -> total[0] += v.getPriority());
         return total[0];
     }
 
+    abstract public BagBudget getBudget(V v);
+
+    abstract public void forEachEntry(Consumer<BagBudget> each);
 
 //    final public int forgetNext(float forgetCycles, final V[] batch, final long now) {
 //        return forgetNext(forgetCycles, batch, 0, batch.length, now, batch.length/2 /* default to max 1.5x */);
 //    }
 
-    /** warning: slow */
-    public double getStdDev(StandardDeviation target) {
-        target.clear();
-        forEach(x -> target.increment(x.getPriority()));
-        return target.getResult();
-    }
+//    /** warning: slow */
+//    public double getStdDev(StandardDeviation target) {
+//        target.clear();
+//        forEachEntry(x -> target.increment(x.getPriority()));
+//        return target.getResult();
+//    }
 
 
 
@@ -260,50 +233,25 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
      * slow, probably want to override in subclasses
      */
     public float getPriorityMin() {
-        float min = 1.0f;
-        for (Itemized e : this) {
-            float p = e.getPriority();
-            if (p < min) min = p;
-        }
-        return min;
+        float[] min = new float[] { Float.POSITIVE_INFINITY };
+        forEachEntry(b -> {
+            float p = b.getPriority();
+            if (p < min[0]) min[0] = p;
+        });
+        return min[0];
     }
-
     /**
      * slow, probably want to override in subclasses
      */
     public float getPriorityMax() {
-        float max = 0.0f;
-        for (Itemized e : this) {
-            float p = e.getPriority();
-            if (p > max) max = p;
-        }
-        return max;
+        float[] max = new float[] { Float.NEGATIVE_INFINITY};
+        forEachEntry(b -> {
+            float p = b.getPriority();
+            if (p > max[0]) max[0] = p;
+        });
+        return max[0];
     }
 
-
-    /**
-     * utility function for inserting an item, capturing any overflow,
-     * and returning the result of the operation
-     * (either the inserted item, or null if rejected).
-     *
-     * @param n
-     * @param selector
-     * @return
-     */
-    protected V putReplacing(V n, BagSelector<K, V> selector) {
-        V overflow = put(n);
-
-        if (overflow != null) {
-            selector.overflow(overflow);
-
-            if (overflow == n) {
-                //the bag rejcted the attempt to put this item, so return null
-                return null;
-            }
-        }
-
-        return n; //return the new instance
-    }
 
     /**
      * default implementation; more optimal implementations will avoid instancing an iterator
@@ -403,37 +351,14 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 //        }
 //    }
 
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        int num = in.readInt();
-        for (int i = 0; i < num; i++) {
-            put((V) in.readObject());
-        }
-    }
-
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(size());
-
-        //TODO use forEach if it can do the right order
-
-        forEach(v -> {
-            try {
-                out.writeObject(v);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
     public double[] getPriorityHistogram(int bins) {
         return getPriorityHistogram(new double[bins]);
     }
 
     public double[] getPriorityHistogram(double[] x) {
         int bins = x.length;
-        forEach(e -> {
-            float p = e.getPriority();
+        forEachEntry((e,budget) -> {
+            float p = budget.getPriority();
             int b = Util.bin(p, bins - 1);
             x[b]++;
         });

@@ -25,13 +25,13 @@ public abstract class ObjIntConceptMap<T extends Term> extends MutableConceptMap
 
     @Override
     public boolean include(Concept c) {
-        T t = (T) c.getTerm();
+        T t = (T) c.get();
         return values.getIfAbsentPut(t, 0) == 0;
     }
 
     @Override
     public boolean exclude(Concept c) {
-        return exclude(c.getTerm());
+        return exclude(c.get());
     }
 
     public boolean exclude(Term t) {

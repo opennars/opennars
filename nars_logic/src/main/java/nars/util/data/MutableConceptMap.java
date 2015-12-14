@@ -34,7 +34,7 @@ public abstract class MutableConceptMap<T extends Term> extends ConceptMap imple
 
     @Override
     protected boolean onConceptForget(Concept c) {
-        if (inclusions.contains(c.getTerm())) return false;
+        if (inclusions.contains(c.get())) return false;
         return exclude(c);
     }
 

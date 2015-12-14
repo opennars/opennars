@@ -31,7 +31,7 @@ public abstract class TermEdge /*implements ChangeListener*/ {
         //b = new TermEdgeHalf(bSrc, aSrc, this);
         //b.setVisible(false);
 
-        if (aSrc.term.getTerm().compareTo(bSrc.term.getTerm()) > 0) {
+        if (aSrc.term.get().compareTo(bSrc.term.get()) > 0) {
             throw new RuntimeException("invalid term order for TermEdge: " + aSrc + ' ' + bSrc);
         }
 

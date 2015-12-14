@@ -75,7 +75,7 @@ public class js extends TermFunction implements Mental {
 
         @Override
         public List<Task> apply(Task op) {
-            Term[] x = Compounds.opArgsArray(op.getTerm());
+            Term[] x = Compounds.opArgsArray(op.get());
             String funcName = Atom.unquote(x[0]);
             String functionCode = Atom.unquote(x[1]);
             //nar.input( echo.newTask("JS Operator Bind: " + funcName + " = " + functionCode));

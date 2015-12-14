@@ -25,11 +25,11 @@ public class SequenceParallelTest {
     @Test public void testSequenceTaskNormalization() {
 
         Task x = t.inputTask("(&/, <a-->b>, /10). :|:");
-        assertEquals(t.term("<a-->b>"), x.getTerm());
+        assertEquals(t.term("<a-->b>"), x.get());
         assertEquals(-10, x.getOccurrenceTime());
 
         Task y = t.inputTask("(&/, <a-->b>, /10).");
-        assertEquals(t.term("<a-->b>"), y.getTerm());
+        assertEquals(t.term("<a-->b>"), y.get());
         assertEquals(Tense.ETERNAL, y.getOccurrenceTime());
 
         Task z = t.inputTask("(&/, a, /10). :|:");
@@ -128,7 +128,7 @@ public class SequenceParallelTest {
 
         Task f = t.inputTask(p);
         assertEquals(DURATION * 2, f.duration());
-        assertEquals(DURATION * 2, ((Parallel)f.getTerm()).duration());
+        assertEquals(DURATION * 2, ((Parallel)f.get()).duration());
     }
     @Test public void testParallelInSequence() {
         Sequence f = t.term("(&/, (&|, (&/, a, /1), c), d )");

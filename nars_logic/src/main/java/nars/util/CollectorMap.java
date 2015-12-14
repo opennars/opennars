@@ -2,15 +2,15 @@ package nars.util;
 
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.budget.Budget;
-import nars.budget.Itemized;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /** adapter to a Map for coordinating changes in a Map with another Collection */
-public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializable {
+public abstract class CollectorMap<K, V extends Supplier<K>> implements Serializable {
 
     public final Map<K, V> map;
 
@@ -63,7 +63,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
 
         /*synchronized (nameTable)*/
 
-        K key = value.name();
+        K key = value.get();
         V removed = putKey(key, value);
         if (removed != null) {
 
@@ -80,8 +80,8 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
         if (removed != null && removed2 != null) {
             throw new RuntimeException("Only one item should have been removed on this insert; both removed: " + removed + ", " + removed2);
         }
-        if ((removed2 != null) && (!removed2.name().equals(key))) {
-            removeKey(removed2.name());
+        if ((removed2 != null) && (!removed2.get().equals(key))) {
+            removeKey(removed2.get());
             removed = removed2;
         }
 

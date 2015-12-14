@@ -114,14 +114,14 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
         ObjectIntHashMap<Term> unique = new ObjectIntHashMap();
 
         PremiseKey premise = newPremise(tasklink.getTask(),
-                termlink.getTerm(), belief, unique, now);
+                termlink.get(), belief, unique, now);
 
         addVertex(premise);
 
 //        TermPattern conceptTerm = addTermPattern(c.getTerm(), unique);
 //        newEdge(conceptTerm, premise);
 
-        TermPattern taskLinkTerm = addTermPattern(tasklink.getTerm(), unique);
+        TermPattern taskLinkTerm = addTermPattern(tasklink.get(), unique);
         //TaskPattern taskLinkTask = addSentencePattern(tasklink.getTask(), unique, now);
 
         /*addEdge(taskLinkTerm, taskLinkTask);
@@ -130,12 +130,12 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
         addEdge(taskLinkTerm, premise);
 
         if (termlink!=null) {
-            TermPattern termLinkTerm = addTermPattern(termlink.getTerm(), unique);
+            TermPattern termLinkTerm = addTermPattern(termlink.get(), unique);
             addEdge(termLinkTerm, premise);
         }
 
         if (belief!=null) {
-            TermPattern beliefTerm = addTermPattern(belief.getTerm(), unique);
+            TermPattern beliefTerm = addTermPattern(belief.get(), unique);
             addEdge(beliefTerm, premise);
         }
 
@@ -144,7 +144,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
         for (Task t : result) {
 
             TaskResult tr = new TaskResult(t, unique, now, includeDerivedTruth, includeDerivedBudget);
-            TermPattern tp = addTermPattern(t.getTerm(), unique);
+            TermPattern tp = addTermPattern(t.get(), unique);
 
             /*addVertex(tr);
             addEdge(premise, tr);
@@ -249,9 +249,9 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
             termLinkKey = termlink == null ? "_" : genericString(termlink, unique);
             beliefKey = belief == null ? "_" : genericString(belief, unique, now, truth, budget, false);
 
-            taskVolume = tasklink.getTerm().volume();
-            termVolume = termlink.getTerm().volume();
-            beliefVolume = (belief!=null) ? belief.getTerm().volume() : 0;
+            taskVolume = tasklink.get().volume();
+            termVolume = termlink.get().volume();
+            beliefVolume = (belief!=null) ? belief.get().volume() : 0;
 
             key = (taskLinkKey + ':' +
                     termLinkKey + ':' +
@@ -466,7 +466,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
     }
 
     public static String genericString(Task s, ObjectIntHashMap<Term> unique, long now, boolean includeTruth) {
-        String t = genericString(s.getTerm(), unique);
+        String t = genericString(s.get(), unique);
 
         t += s.getPunctuation();
 

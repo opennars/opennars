@@ -117,10 +117,10 @@ public final class Solve extends PreCondition {
             Premise premise = match.premise;
 
             if (rule.sequenceIntervalsFromTask) {
-                lookat = premise.getTask().getTerm();
+                lookat = premise.getTask().get();
             } else if (rule.sequenceIntervalsFromBelief) {
                 lookat = premise.getBelief()!=null ?
-                        premise.getBelief().getTerm() : null;
+                        premise.getBelief().get() : null;
             }
 
             //TODO: THIS CODE EXISTS TWICE WITH DIFFERENT PARAMETERS, PLACE2

@@ -3,18 +3,17 @@ package nars.bag.impl;
 import nars.Memory;
 
 
-public interface CacheBag<K, V>  {
+public interface CacheBag<V>  {
     
 
     void clear();
 
-    V get(K key);
+    V get(V key);
 
-    V remove(K key);
+    Object remove(V key);
 
     /** same semantics as Map.put; output value is an existing value or null if none */
-    V put(K k, V v);
-
+    V put(V k, V v);
 
 
     int size();

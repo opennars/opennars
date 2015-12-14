@@ -5,16 +5,13 @@ import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
-import nars.budget.BagAggregateBudget;
 import nars.budget.Budget;
 import nars.concept.AtomConcept;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
-import nars.concept.util.ConceptActivator;
 import nars.java.jclass;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.link.TermLinkKey;
 import nars.nal.Deriver;
 import nars.nal.PremiseRule;
 import nars.nal.nal8.OperatorReaction;
@@ -186,8 +183,8 @@ public abstract class AbstractNAR extends NAR {
         return c;
     }
 
-    protected DefaultCycle initCore(int activeConcepts, Deriver deriver, Bag<Term, Concept> conceptBag, ConceptActivator activator)    {
-        return new Default.DefaultCycle2(this, deriver, conceptBag, activator);
+    protected DefaultCycle initCore(Deriver deriver, Bag<Concept> conceptBag)    {
+        return new Default.DefaultCycle2(this, deriver, conceptBag);
     }
 
     public void initDefaults(Memory m) {
@@ -368,23 +365,23 @@ public abstract class AbstractNAR extends NAR {
     /** ConceptBuilder: */
     public Concept apply(Term t) {
 
-        Bag<Task, TaskLink> taskLinks =
+        Bag<Task> taskLinks =
                 new CurveBag<>(taskLinkBagSize, rng).mergeAverage();
 
-        Bag<TermLinkKey, TermLink> termLinks =
+        Bag<Term> termLinks =
                 new CurveBag<>(termLinkBagSize, rng).mergeAverage();
 
         //Budget b = new UnitBudget();
-        Budget b = new BagAggregateBudget(taskLinks);
+        //Budget b = new BagAggregateBudget(taskLinks);
 
         return t instanceof Atom ?
 
                 new AtomConcept(
-                    t, b,
+                    t,
                     termLinks, taskLinks) :
 
                 new DefaultConcept(
-                    t, b,
+                    t,
                     taskLinks, termLinks, memory);
 
     }
@@ -401,11 +398,12 @@ public abstract class AbstractNAR extends NAR {
 
     @Override
     protected Concept doConceptualize(Term term, Budget b) {
-        return core.activate(term, b);
+        throw new RuntimeException("implement conceptualize");
+        //return core.activate(term, b);
     }
 
 
-    public Bag<Term, Concept> newConceptBag(int initialCapacity) {
+    public Bag<Concept> newConceptBag(int initialCapacity) {
         return new CurveBag<>(initialCapacity, rng).mergePlus();
     }
 
@@ -465,15 +463,13 @@ public abstract class AbstractNAR extends NAR {
         /**
          * concepts active in this cycle
          */
-        public final Bag<Term, Concept> active;
+        public final Bag<Concept> active;
 
 
         @Deprecated
         public final transient NAR nar;
 
         public final MutableInteger capacity = new MutableInteger();
-
-        public final ConceptActivator conceptActivator;
 
         public final MutableFloat conceptForget;
 
@@ -491,10 +487,9 @@ public abstract class AbstractNAR extends NAR {
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
-        public DefaultCycle(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca) {
+        public DefaultCycle(NAR nar, Deriver deriver, Bag<Concept> concepts) {
 
             this.nar = nar;
-            conceptActivator = ca;
 
             this.deriver = deriver;
 
@@ -582,16 +577,16 @@ public abstract class AbstractNAR extends NAR {
         }
 
 
-        public final Concept activate(Term term, Budget b) {
-            Bag<Term, Concept> active = this.active;
-            active.setCapacity(capacity.intValue());
+//        public final Concept activate(Term term, Budget b) {
+//            Bag<Term, Concept> active = this.active;
+//            active.setCapacity(capacity.intValue());
+//
+////            ConceptActivator ca = conceptActivator;
+////            ca.setActivationFactor( activationFactor.floatValue() );
+////            return ca.update(term, b, nar.time(), 1.0f, active);
+//        }
 
-            ConceptActivator ca = conceptActivator;
-            ca.setActivationFactor( activationFactor.floatValue() );
-            return ca.update(term, b, nar.time(), 1.0f, active);
-        }
-
-        public final Bag<Term,Concept> concepts() {
+        public final Bag<Concept> concepts() {
             return active;
         }
 

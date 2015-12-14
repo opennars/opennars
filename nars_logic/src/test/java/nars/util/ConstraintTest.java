@@ -44,7 +44,7 @@ public class ConstraintTest {
 
             @Override
             public void addConstraintsFor(Concept c) {
-                Term t = c.getTerm();
+                Term t = c.get();
                 if (t.op() == Op.IMPLICATION) {
                     Compound i = (Compound)t;
                     Term effect = i.term(1);
@@ -130,7 +130,7 @@ public class ConstraintTest {
 
         void related(Compound t) {
             nar.forEachConcept( c-> {
-                if (c.getTerm().containsTermRecursively(t)) {
+                if (c.get().containsTermRecursively(t)) {
                     addConstraintsFor(c);
                 }
             });

@@ -16,8 +16,24 @@ import static nars.util.data.Util.mean;
  */
 public interface Budget extends Prioritized, Budgeted {
 
-    Budget zero();
-    void delete();
+
+    /**
+     * set all quantities to zero
+     */
+    default Budget zero() {
+        setPriority(0);
+        setDurability(0);
+        setQuality(0);
+        return this;
+    }
+
+    default void delete() {
+        deleteBudget();
+    }
+
+    default void deleteBudget() {
+        setPriority(Float.NaN);
+    }
 
     @Override
     default Budget getBudget() {
@@ -38,8 +54,9 @@ public interface Budget extends Prioritized, Budgeted {
     @Override
     long getLastForgetTime();
 
-    @Override
-    void mulPriority(float factor);
+    default void mulPriority(float factor) {
+        setPriority(getPriority()*factor);
+    }
 
     @Override
     float getDurability();

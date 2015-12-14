@@ -413,7 +413,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
     public MutableTask budgetCompoundForward(Premise premise) {
         BudgetFunctions.compoundForward(
                 getBudget(), getTruth(),
-                getTerm(), premise);
+                get(), premise);
         return this;
     }
 }

@@ -42,7 +42,7 @@ public class Deactivate extends SyncOperator {
     }
 
     @Override public List<Task> apply(Task task) {
-        Compound operation = task.getTerm();
+        Compound operation = task.get();
 
 
 

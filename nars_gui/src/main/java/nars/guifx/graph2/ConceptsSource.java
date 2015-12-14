@@ -68,9 +68,9 @@ public class ConceptsSource extends GraphSource {
 
         Consumer<? super TLink<?>> linkUpdater = link -> {
 
-            Term target = link.getTerm();
+            Term target = link.get();
 
-            if (cc.getTerm().equals(target)) //self-loop
+            if (cc.get().equals(target)) //self-loop
                 return;
 
             TermNode tn = sg.getTermNode(target);
@@ -97,7 +97,7 @@ public class ConceptsSource extends GraphSource {
 
     @Override
     public Termed getTargetVertex(Termed edge) {
-        return grapher.getTermNode(edge.getTerm()).c;
+        return grapher.getTermNode(edge.get()).c;
     }
 
 
@@ -160,7 +160,7 @@ public class ConceptsSource extends GraphSource {
 
 
                 if (keywordFilter != null) {
-                    if (cc.getTerm().toString().contains(keywordFilter))
+                    if (cc.get().toString().contains(keywordFilter))
                         return false;
                 }
 

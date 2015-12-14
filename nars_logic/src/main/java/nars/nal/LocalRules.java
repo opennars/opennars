@@ -137,7 +137,7 @@ public class LocalRules {
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, newBelief.getBudget());
 
         //Task<T> revised = nal.input(
-        return new MutableTask(newBelief.getTerm())
+        return new MutableTask(newBelief.get())
                 .punctuation(newBelief.getPunctuation())
                 .truth(truth)
                 .budget(budget)
@@ -177,10 +177,10 @@ public class LocalRules {
 
         Truth originalTruth = solution.getTruth();
 
-        Term solTerm = sol.getTerm();
-        if (solTerm.hasVarIndep() && !solTerm.equals(question.getTerm())) {
+        Term solTerm = sol.get();
+        if (solTerm.hasVarIndep() && !solTerm.equals(question.get())) {
 
-            Term[] u = {question.getTerm(), solTerm};
+            Term[] u = {question.get(), solTerm};
 
             if ( Premise.unify(Op.VAR_INDEP, u, nal.memory.random) ) {
 

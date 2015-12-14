@@ -36,7 +36,7 @@ public interface Term extends Termed, Comparable, Termlike {
 
 
 
-    @Override default Term getTerm() {
+    @Override default Term get() {
         return this;
     }
 

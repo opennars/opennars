@@ -146,7 +146,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
 //    }
 
     @Override
-    public final Term getTerm() {
+    public final Term get() {
         return target;
     }
 

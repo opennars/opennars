@@ -94,7 +94,7 @@ public abstract class AbstractTask extends Item<Task>
 
     /** copy/clone constructor */
     public AbstractTask(Task task) {
-        this(task.getTerm(), task.getPunctuation(), task.getTruth(),
+        this(task.get(), task.getPunctuation(), task.getTruth(),
                 task.getPriority(), task.getDurability(), task.getQuality(),
                 task.getParentTaskRef(), task.getParentBeliefRef(), task.getBestSolutionRef());
     }
@@ -138,7 +138,7 @@ public abstract class AbstractTask extends Item<Task>
         if (isDeleted())
             return null;
 
-        Compound t = getTerm();
+        Compound t = get();
         if (!t.levelValid( memory.nal() ))
             return null;
 
@@ -261,7 +261,7 @@ public abstract class AbstractTask extends Item<Task>
 
         int h = Objects.hash(
                 Arrays.hashCode(getEvidence()),
-                getTerm(),
+                get(),
                 getPunctuation(),
                 getTruth(),
                 getOccurrenceTime()
@@ -284,7 +284,7 @@ public abstract class AbstractTask extends Item<Task>
     }
 
     @Override
-    public final Compound getTerm() {
+    public final Compound get() {
         return term;
     }
 
@@ -384,7 +384,7 @@ public abstract class AbstractTask extends Item<Task>
         if (this == obj) return 0;
 
         Task o = (Task)obj;
-        int tc = term.compareTo(o.getTerm());
+        int tc = term.compareTo(o.get());
         if (tc != 0) return tc;
         tc = Character.compare(punctuation, o.getPunctuation());
         if (tc != 0) return tc;
@@ -540,7 +540,7 @@ public abstract class AbstractTask extends Item<Task>
 
 
         if (term) {
-            if (!this.term.equals(that.getTerm())) return false;
+            if (!this.term.equals(that.get())) return false;
         }
 
         if (punctuation) {

@@ -1,8 +1,6 @@
 
 package nars.util.event;
 
-import nars.util.data.id.Named;
-
 import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -11,7 +9,7 @@ import java.util.function.Predicate;
 /**
  * notifies subscribers when a value is emitted
  */
-public interface Topic<V> extends Named<String> {
+public interface Topic<V> {
 
     void delete();
 
@@ -88,6 +86,8 @@ public interface Topic<V> extends Named<String> {
     int size();
 
     boolean isEmpty();
+
+    String name();
 
 
 //

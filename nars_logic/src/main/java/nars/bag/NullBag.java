@@ -21,7 +21,7 @@ public final class NullBag<K, V extends Itemized<K>> extends Bag<K, V> {
     }
 
     @Override
-    public V remove(K key) {
+    public BagBudget<K> remove(K key) {
         return null;
     }
 

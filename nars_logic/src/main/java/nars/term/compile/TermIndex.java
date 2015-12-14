@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 /**
  *
  */
-public interface TermIndex extends CacheBag<Term,Termed> {
+public interface TermIndex extends CacheBag<Termed> {
 
 
     void forEach(Consumer<? super Termed> c);
@@ -21,7 +21,7 @@ public interface TermIndex extends CacheBag<Term,Termed> {
         Termed<T> u = get(t);
         if (u == null)
             return null;
-        return u.getTerm();
+        return u.term();
     }
 
 

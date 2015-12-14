@@ -86,7 +86,7 @@ public class NarseseExtendedTest {
 
         Task ut = task("<a:b --> c:d>.");
         assertNotNull(ut);
-        assertEquals(ut.getTerm(), u);
+        assertEquals(ut.get(), u);
 
     }
 //    @Test
@@ -113,7 +113,7 @@ public class NarseseExtendedTest {
     static void eqTask(String x, String b) {
         Task a = t.task(x + '.');
         assertNotNull(a);
-        assertEquals(b, a.getTerm().toString());
+        assertEquals(b, a.get().toString());
     }
 
     @Test
@@ -163,7 +163,7 @@ public class NarseseExtendedTest {
             (--,(negated))! %1.00;0.90% {?: 2}
             */
 
-            Term tt = t.getTerm();
+            Term tt = t.get();
             assertEquals(Op.NEGATE, tt.op());
             assertTrue("negated".equals(((Compound) tt).term(0).toString()));
             assertTrue(t.getPunctuation() == Symbols.GOAL);

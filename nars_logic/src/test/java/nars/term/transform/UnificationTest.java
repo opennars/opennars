@@ -42,8 +42,8 @@ public class UnificationTest  {
         nar.believe(s2);
         nar.frame(2);
 
-        Term t1 = nar.concept(s1).getTerm();
-        Term t2 = nar.concept(s2).getTerm();
+        Term t1 = nar.concept(s1).get();
+        Term t2 = nar.concept(s2).get();
 
         //a somewhat strict lower bound
         int power = 4 * (1 + t1.volume() * t2.volume());
@@ -88,8 +88,8 @@ public class UnificationTest  {
         Concept ret2 = tester.nar.concept(T2);
 
         //these we wanted, but we had to do the crap above since I forgot how to construct terms by strings..
-        Term Term1 = ret.getTerm();
-        Term Term2 = ret2.getTerm();
+        Term Term1 = ret.get();
+        Term Term2 = ret2.get();
 
         FindSubst wu = new FindSubst(Op.VAR_INDEP, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
@@ -112,8 +112,8 @@ public class UnificationTest  {
         Concept ret2 = tester.nar.concept(T2);
 
         //these we wanted, but we had to do the crap above since I forgot how to construct terms by strings..
-        Term Term1 = ret.getTerm();
-        Term Term2 = ret2.getTerm();
+        Term Term1 = ret.get();
+        Term Term2 = ret2.get();
 
         FindSubst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
@@ -136,8 +136,8 @@ public class UnificationTest  {
         Concept ret2 = tester.nar.concept(T2);
 
         //these we wanted, but we had to do the crap above since I forgot how to construct terms by strings..
-        Term Term1 = ret.getTerm();
-        Term Term2 = ret2.getTerm();
+        Term Term1 = ret.get();
+        Term Term2 = ret2.get();
 
         FindSubst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
@@ -169,8 +169,8 @@ public class UnificationTest  {
         Concept ret2 = tester.nar.concept(T2);
 
         
-        Term Term1 = ret.getTerm();
-        Term Term2 = ret2.getTerm();
+        Term Term1 = ret.get();
+        Term Term2 = ret2.get();
 
         FindSubst wu = new FindSubst(Op.VAR_DEP, tester.nar.memory.random);
         boolean unifies = wu.next(Term1, Term2, 1024);
@@ -189,8 +189,8 @@ public class UnificationTest  {
         nar.input(s1 + '.');
         nar.input(s2 + '.');
         nar.frame(1000);
-        Term t1 = nar.concept(s1).getTerm();
-        Term t2 = nar.concept(s2).getTerm();
+        Term t1 = nar.concept(s1).get();
+        Term t2 = nar.concept(s2).get();
 
         FindSubst sub = new FindSubst(Op.VAR_PATTERN, nar.memory.random);
         if (!sub.next(t1, t2, 99999)) {
@@ -208,8 +208,8 @@ public class UnificationTest  {
         nar.input(s1 + '.');
         nar.input(s2 + '.');
         nar.frame(1000);
-        Term t1 = nar.concept(s1).getTerm();
-        Term t2 = nar.concept(s2).getTerm();
+        Term t1 = nar.concept(s1).get();
+        Term t2 = nar.concept(s2).get();
 
         FindSubst sub = new FindSubst(Op.VAR_PATTERN, nar);
         if (!sub.next(t1, t2, 99999)) {

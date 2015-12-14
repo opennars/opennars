@@ -37,7 +37,7 @@ public interface Premise extends Level, Tasked {
 
         if (question.isQuestion() || question.isGoal()) {
             if (Tense.matchingOrder(question, solution)) {
-                Term[] u = {question.getTerm(), solution.getTerm()};
+                Term[] u = {question.get(), solution.get()};
                 if (unify(Op.VAR_QUERY, u, nar.memory.random)) {
                     return LocalRules.trySolution(question, solution, nar);
                 }
@@ -134,7 +134,7 @@ public interface Premise extends Level, Tasked {
     Task getBelief();
 
     default Term getTerm() {
-        return getConcept().getTerm();
+        return getConcept().get();
     }
 
 
@@ -397,7 +397,7 @@ public interface Premise extends Level, Tasked {
     /** returns a string indicating a reason why it is invalid, or null if it actually is valid */
     default String validate(Task task) {
 
-        if (task.getTerm() == null) {
+        if (task.get() == null) {
             throw new RuntimeException("task has null term");
         }
 

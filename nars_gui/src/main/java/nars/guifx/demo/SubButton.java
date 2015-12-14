@@ -62,7 +62,7 @@ public class SubButton extends TextFlow {
 
     public static SubButton make(NAR nar, Task t) {
         SubButton sb = new SubButton();
-        sb.add(make(nar, t.getTerm()));
+        sb.add(make(nar, t.get()));
         if (t.getTruth()!=null)
             sb.add(make(t.getTruth().toString()));
         sb.add(make(String.valueOf(t.getPunctuation())));

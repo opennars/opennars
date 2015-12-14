@@ -7,7 +7,7 @@ import nars.term.Termed;
 public interface TermLinkKey extends Termed /* byte[] holds the prefix part */ {
 
     @Override
-    Term getTerm();
+    Term get();
 
 
 
@@ -23,7 +23,7 @@ public interface TermLinkKey extends Termed /* byte[] holds the prefix part */ {
         //if (!(b instanceof TermLinkKey)) return false;
 
         return //Byted.equals(a, b) &&
-                a.getTerm().equals(b.getTerm());
+                a.get().equals(b.get());
 
         /*return Byted.equals(a, b) &&
                 a.getTerm().equals(b.getTerm());*/

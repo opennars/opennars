@@ -136,7 +136,7 @@ public abstract class ConceptProcess extends AbstractPremise {
             for (TermLink termLink : terms) {
                 if (termLink == null) break;
 
-                if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))
+                if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.get(), termLink.get()))
                     continue;
 
                 proc.accept(new ConceptTaskTermLinkProcess(

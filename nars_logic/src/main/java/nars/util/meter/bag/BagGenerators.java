@@ -21,7 +21,7 @@ public class BagGenerators {
 //        return testRemovalPriorityDistribution(loops, insertsPerLoop, fractionToAdjust, fractionToRemove, f, true);
 //    }
 
-    public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToRemove, Bag<CharSequence, NullItem> f) {
+    public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToRemove, Bag<CharSequence> f) {
 
         int levels = 13;
         int[] count = new int[levels];
@@ -44,13 +44,12 @@ public class BagGenerators {
 
             //fill with random items
             for (int i= 0; i < insertsPerLoop; i++) {
-                NullItem ni = new NullItem(
-                    rng.nextFloat()
-                );
 
-                NullItem overflow = f.put(ni);
+                String k = Float.toString(rng.nextFloat());
+                float p = f.getBudget(k).getPriority();
+                CharSequence overflow = f.put(k);
                 if (overflow!=null)
-                    nRemoved[0] = removal(nRemoved[0], overflow.getPriority(), count);
+                    nRemoved[0] = removal(nRemoved[0], p, count);
 
             }
 
@@ -78,7 +77,7 @@ public class BagGenerators {
             for (int i= 0; i < insertsPerLoop * accessFraction; i++) {
                 int sizeBefore = f.size();
 
-                NullItem t = f.peekNext();
+                CharSequence t = f.peekNext();
 
                 if (t == null) {
                     //Assert.assertTrue(sizeAfter == 0);
@@ -89,7 +88,7 @@ public class BagGenerators {
 
                 int sizeAfter = f.size();
 
-                float p = t.getPriority();
+                float p = f.getBudget(t).getPriority();
 
                 //String expected = (min + " > "+ p + " > " + max);
                 /*if (requireOrder) {
@@ -134,7 +133,7 @@ public class BagGenerators {
         return nRemoved;
     }
 
-    public static int[] testRetaining(int loops, int insertsPerLoop, Bag<CharSequence, NullItem> f) {
+    public static int[] testRetaining(int loops, int insertsPerLoop, Bag<CharSequence> f) {
 
         int levels = 9;
         int[] count = new int[levels];
@@ -143,8 +142,7 @@ public class BagGenerators {
         for (int l = 0; l < loops; l++) {
             //fill with random items
             for (int i= 0; i < insertsPerLoop; i++) {
-                NullItem ni = new NullItem(rng.nextFloat());
-                f.put(ni);
+                f.put(Float.toString(rng.nextFloat()));
             }
 
 

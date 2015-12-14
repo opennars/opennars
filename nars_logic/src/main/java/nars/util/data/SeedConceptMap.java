@@ -19,7 +19,7 @@ public abstract class SeedConceptMap extends ConceptMap {
 
     @Override
     public boolean contains(Concept c) {
-        Term s = c.getTerm();
+        Term s = c.get();
         return terms.contains(s);
     }
 

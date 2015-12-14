@@ -12,7 +12,10 @@ import nars.concept.util.ArrayListBeliefTable;
 import nars.concept.util.ArrayListTaskTable;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
-import nars.link.*;
+import nars.link.TaskLink;
+import nars.link.TaskLinkBuilder;
+import nars.link.TermLinkBuilder;
+import nars.link.TermLinkTemplate;
 import nars.nal.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
@@ -69,8 +72,8 @@ public class DefaultConcept extends AtomConcept {
     /** how incoming budget is merged into its existing duplicate quest/question */
     static final Procedure2<Budget, Budget> duplicateQuestionMerge = UnitBudget.plus;
 
-    public DefaultConcept(Term term, Budget b, Param p) {
-        this(term, b, new NullBag(), new NullBag(), p);
+    public DefaultConcept(Term term, Param p) {
+        this(term, new NullBag(), new NullBag(), p);
     }
 
     /**
@@ -79,8 +82,8 @@ public class DefaultConcept extends AtomConcept {
      * @param taskLinks
      * @param termLinks
      */
-    public DefaultConcept(Term term, Budget b, Bag<Task, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Param p) {
-        super(term, b, termLinks, taskLinks);
+    public DefaultConcept(Term term, Bag<Task> taskLinks, Bag<Term> termLinks, Param p) {
+        super(term, termLinks, taskLinks);
 
         //TODO lazy instantiate?
         beliefs = new ArrayListBeliefTable(p.conceptBeliefsMax.intValue());
@@ -668,7 +671,7 @@ public class DefaultConcept extends AtomConcept {
     }
 
     final static Concept getTermLinkTemplateTarget(Termed t, Budget taskBudget, NAR nar) {
-        Term tt = t.getTerm();
+        Term tt = t.term();
         return activateTermLinkTemplateTargetsFromTask ? nar.conceptualize(tt, taskBudget) : nar.concept(tt);
     }
 

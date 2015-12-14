@@ -25,12 +25,12 @@ public abstract class ConceptSetTermsOnly<T extends Term> extends MutableConcept
 
     @Override
     public boolean include(Concept c) {
-        values.add((T)c.getTerm());
+        values.add((T)c.get());
         return true;
     }
     @Override
     public boolean exclude(Concept c) {
-        return values.remove(c.getTerm());
+        return values.remove(c.get());
     }
     public boolean exclude(Term t) {
         return true;

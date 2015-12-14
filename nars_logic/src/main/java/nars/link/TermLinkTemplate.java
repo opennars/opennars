@@ -36,7 +36,7 @@ public class TermLinkTemplate extends UnitBudget /* extends Budget ?? instead of
     public TermLinkTemplate(Termed host, Term target) {
         super(0, 0.5f, 0.5f);
 
-        concept = host.getTerm();
+        concept = host.get();
 
         this.target = target;
 
@@ -142,14 +142,14 @@ public class TermLinkTemplate extends UnitBudget /* extends Budget ?? instead of
 //    }
 
     @Override
-    public final Term getTerm() {
+    public final Term get() {
         return getTarget();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof TLink) {
-            return getTerm().equals(((TLink)obj).getTerm());
+            return get().equals(((TLink)obj).get());
         }
         return false;
         //throw new RuntimeException("TermLinkTemplates should not need compared to each other");

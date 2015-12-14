@@ -376,7 +376,7 @@ public static class HexTermNode extends LabeledCanvasNode<Termed> {
 
 
         //this.label = new Text(t.getTerm().toStringCompact());
-        label = new Label(t.getTerm().toString());
+        label = new Label(t.get().toString());
 
         //label.setFill(Color.WHITE);
         //label.setBoundsType(TextBoundsType.VISUAL);

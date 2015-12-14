@@ -3,6 +3,7 @@ package nars.bag.impl;
 import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.util.ArraySortedIndex;
@@ -38,7 +39,6 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
     public final BagCurve curve;
     private final Random random;
 
-
     public CurveBag(int capacity, Random rng) {
         this(CurveBag.power6BagCurve, capacity, rng);
     }
@@ -63,6 +63,11 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
         this.arrayBag = new ArrayBag(items);
         this.curve = curve;
         random = rng;
+    }
+
+    @Override
+    public V put(K k, Budget b) {
+        return arrayBag.put(k, b);
     }
 
     @Override
@@ -125,7 +130,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K,V> {
     }
 
     @Override
-    public V remove(K key) {
+    public BagBudget<K> remove(K key) {
         return arrayBag.remove(key);
     }
 

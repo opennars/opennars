@@ -421,7 +421,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         if (termLink!=null) {
             priority = or(priority, termLink.getPriority());
             durability = and(durability, termLink.getDurability()); //originaly was 'AND'
-            float targetActivation = nal.conceptPriority(termLink.getTerm(), -1);
+            float targetActivation = nal.conceptPriority(termLink.get(), -1);
             if (targetActivation >= 0) {
                 termLink.orPriority(or(quality, targetActivation));
                 termLink.orDurability(quality);

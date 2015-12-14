@@ -4,6 +4,6 @@ package nars.term;
 @FunctionalInterface
 public interface Termed<TT extends Term>  {
 
-    TT getTerm();
+    TT term();
 
 }

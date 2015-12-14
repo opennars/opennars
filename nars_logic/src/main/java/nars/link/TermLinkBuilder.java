@@ -34,7 +34,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
         setBudget(null);
 
-        Term host = c.getTerm();
+        Term host = c.get();
         if (host instanceof Compound) {
 
             Set<Term> components = Global.newHashSet(host.complexity());
@@ -204,8 +204,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     @Override
-    public final Term getTerm() {
-        return incoming ? concept.getTerm() : currentTemplate.getTarget();
+    public final Term get() {
+        return incoming ? concept.get() : currentTemplate.getTarget();
     }
 
 //    public final Term getSource() {
@@ -227,7 +227,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public final TermLink newItem() {
         //this.prefix = null;
-        return new TermLink(getTerm(),  getBudget());
+        return new TermLink(get(),  getBudget());
     }
 
 //    public final TermLink out(TermLinkTemplate tlt) {

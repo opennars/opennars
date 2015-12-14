@@ -32,7 +32,7 @@ public abstract class PatternAnswer implements Function<Task, List<Task>> {
     public List<Task> apply(Task questionTask) {
 
         FindSubst s = new FindSubst(Op.VAR_PATTERN, rng);
-        if (s.next(pattern, questionTask.getTerm(), Global.UNIFICATION_POWER)) {
+        if (s.next(pattern, questionTask.get(), Global.UNIFICATION_POWER)) {
             List<Task> answers = run(questionTask, s);
             if (answers!=null)
                 return process(questionTask, answers);

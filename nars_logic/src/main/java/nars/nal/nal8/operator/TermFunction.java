@@ -59,7 +59,7 @@ public abstract class TermFunction<O> extends SyncOperator {
 
     protected List<Task> result(Task opTask, Term y/*, Term[] x0, Term lastTerm*/) {
 
-        Compound operation = opTask.getTerm();
+        Compound operation = opTask.get();
 
         //Variable var=new Variable("$1");
         //  Term actual_part = Similarity.make(var, y);
@@ -182,7 +182,7 @@ public abstract class TermFunction<O> extends SyncOperator {
     @Override
     public List<Task> apply(Task opTask) {
 
-        Compound operation = opTask.getTerm();
+        Compound operation = opTask.get();
 
         //Term opTerm = Compounds.operatorTerm(operation);
         //Term[] x = Compounds.args(operation).terms();

@@ -67,10 +67,10 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
 
         /** add the termlink templates instead of termlinks */
         @Override protected void addTermLinks(Concept c) {
-            Term sourceTerm = c.getTerm();
+            Term sourceTerm = c.get();
 
             for (TermLinkTemplate t : c.getTermLinkTemplates()) {
-                Term targetTerm = t.getTerm().getTerm();
+                Term targetTerm = t.get().get();
                 if (!containsVertex(targetTerm)) {
                     addVertex(targetTerm);
                 }
@@ -82,7 +82,7 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
     }
 
     public TermLinkGraph add(Concept c, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {
-        Term source = c.getTerm();
+        Term source = c.get();
 
         if (!containsVertex(source)) {
             addVertex(source);
@@ -112,13 +112,13 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
         if (c == null)
             throw new RuntimeException("null concept");
 
-        Term cterm = c.getTerm();
+        Term cterm = c.get();
 
         Bag<TermLinkKey, TermLink> tl = c.getTermLinks();
         if (tl == null) return;
 
         for (TermLink t : tl.values()) {
-            Term target = t.getTerm();
+            Term target = t.get();
             if (!containsVertex(target)) {
                 addVertex(target);
             }

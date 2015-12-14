@@ -78,8 +78,8 @@ public class NarseseTest {
     public void testIncompleteTask() throws Narsese.NarseseException {
         Task t = task("<a --> b>.");
         assertNotNull(t);
-        assertEquals(Op.INHERIT, t.getTerm().op());
-        Compound i = t.getTerm();
+        assertEquals(Op.INHERIT, t.get().op());
+        Compound i = t.get();
         assertEquals("a", i.term(0).toString());
         assertEquals("b", i.term(1).toString());
         assertEquals('.', t.getPunctuation());
@@ -112,7 +112,7 @@ public class NarseseTest {
     public void testNoBudget() throws Narsese.NarseseException {
         Task t = task("<a <=> b>. %0.00;0.93");
         assertNotNull(t);
-        assertEquals(Op.EQUIV, t.getTerm().op());
+        assertEquals(Op.EQUIV, t.get().op());
 
         assertEquals('.', t.getPunctuation());
         //assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
@@ -126,11 +126,11 @@ public class NarseseTest {
         String tt = "<<a<=>b>--><c==>d>>";
         Task t = task(tt + '?');
         assertNotNull(t);
-        assertEquals(Op.INHERIT, t.getTerm().op());
-        assertEquals(tt, t.getTerm().toString());
+        assertEquals(Op.INHERIT, t.get().op());
+        assertEquals(tt, t.get().toString());
         assertEquals('?', t.getPunctuation());
         assertNull(t.getTruth());
-        assertEquals(7, t.getTerm().complexity());
+        assertEquals(7, t.get().complexity());
     }
 
     protected void testProductABC(Compound p) throws Narsese.NarseseException {
@@ -160,8 +160,8 @@ public class NarseseTest {
         String tt = "(a,b,c)";
         Task t = task(tt + '@');
         assertNotNull(t);
-        assertEquals(Op.PRODUCT, t.getTerm().op());
-        assertEquals(tt, t.getTerm().toString());
+        assertEquals(Op.PRODUCT, t.get().op());
+        assertEquals(tt, t.get().toString());
         assertEquals('@', t.getPunctuation());
         assertNull(t.getTruth());
 
@@ -486,7 +486,7 @@ public class NarseseTest {
         String a = "<a --> b>.\n//comment1234\n<b-->c>.";
         List<Task> l = tasks(a);
         assertEquals(3, l.size());
-        Compound op = ((Task)l.get(1)).getTerm();
+        Compound op = ((Task)l.get(1)).get();
         ensureIsEcho(op);
         assertEquals("echo(\"comment1234\")", op.toString());
     }

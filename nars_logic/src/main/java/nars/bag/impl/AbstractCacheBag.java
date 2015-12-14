@@ -5,7 +5,7 @@ import nars.Memory;
 /**
  * Created by me on 9/1/15.
  */
-public abstract class AbstractCacheBag<K, V> implements CacheBag<K,V> {
+public abstract class AbstractCacheBag<V> implements CacheBag<V> {
 
     protected Memory memory = null;
 

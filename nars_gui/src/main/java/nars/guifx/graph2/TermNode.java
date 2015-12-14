@@ -133,7 +133,7 @@ public class TermNode extends GraphNode {
 
     public static Color getTermColor(Termed term, ColorMatrix colors, double v) {
         return colors.get(
-                (term.getTerm().op().ordinal() % colors.cc.length) / ((double) Op.values().length),
+                (term.get().op().ordinal() % colors.cc.length) / ((double) Op.values().length),
                 v);
     }
 
@@ -161,7 +161,7 @@ public class TermNode extends GraphNode {
     }
 
     public final Term getTerm() {
-        return term.getTerm();
+        return term.get();
     }
 
     public void commitEdges() {

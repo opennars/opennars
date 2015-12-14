@@ -28,7 +28,7 @@ public class ConceptSummaryPane extends Text {
             0.1 + 0.9f * conf));
 
     public ConceptSummaryPane(Concept c) {
-        super(c.getTerm().toStringCompact());
+        super(c.get().toStringCompact());
 
 
         concept = c;
@@ -129,7 +129,7 @@ public class ConceptSummaryPane extends Text {
 
             GraphicsContext g = getGraphicsContext2D();
 
-            Color c = NARfx.hashColor(concept.getTerm().hashCode(),
+            Color c = NARfx.hashColor(concept.get().hashCode(),
                     1.0f, Plot2D.ca);
             g.setStroke(Color.GRAY);
             g.setLineWidth(m);

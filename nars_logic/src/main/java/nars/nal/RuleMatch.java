@@ -87,7 +87,7 @@ public class RuleMatch extends FindSubst {
     public Task derive(Task derived) {
 
         //HACK this should exclude the invalid rules which form any of these
-        if (!derived.getTerm().levelValid( premise.nal()) )
+        if (!derived.get().levelValid( premise.nal()) )
             return null;
 
         //pre-normalize to avoid discovering invalidity after having consumed space and survived the input queue
@@ -129,10 +129,10 @@ public class RuleMatch extends FindSubst {
         premise = p;
         this.receiver = receiver;
 
-        Compound taskTerm = p.getTask().getTerm();
+        Compound taskTerm = p.getTask().get();
         Term beliefTerm = p.getBelief() != null ?
-            p.getBelief().getTerm()
-            : p.getTermLink().getTerm() ; //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
+            p.getBelief().get()
+            : p.getTermLink().get() ; //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
 
         term.set( new TaskBeliefPair(
             taskTerm,

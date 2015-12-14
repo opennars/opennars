@@ -30,7 +30,7 @@ public class TermIndexTest {
         Task t1 = t.inputTask(term);
         Task t2 = t.inputTask(term);
 
-        testShared(t1.getTerm(), t2.getTerm());
+        testShared(t1.get(), t2.get());
 
     }
 
@@ -89,7 +89,7 @@ public class TermIndexTest {
 
         if (t1 instanceof Compound) {
             //test all subterms are shared
-            for (int i = 0; i < t1.getTerm().size(); i++)
+            for (int i = 0; i < t1.get().size(); i++)
                 testShared(((Compound)t1).term(i), ((Compound)t2).term(i));
         }
     }
@@ -98,7 +98,7 @@ public class TermIndexTest {
     @Test public void testRuleTermsAddedToMemoryTermIndex() {
         NAR d = new Default(100,1,1,1);
         Set<Term> t = new TreeSet();
-        d.memory.index.forEach(x -> t.add(x.getTerm()));
+        d.memory.index.forEach(x -> t.add(x.get()));
 
         assertTrue(t.size() > 100); //approximate
 

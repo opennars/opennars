@@ -7,14 +7,12 @@ import nars.NAR;
 import nars.bag.Bag;
 import nars.budget.UnitBudget;
 import nars.concept.Concept;
-import nars.concept.util.ConceptActivator;
 import nars.nal.Deriver;
 import nars.nal.RuleMatch;
 import nars.task.Task;
 import nars.task.flow.SetTaskPerception;
 import nars.task.flow.SortedTaskPerception;
 import nars.task.flow.TaskPerception;
-import nars.term.Term;
 import nars.term.compile.TermIndex;
 import nars.time.FrameClock;
 import nars.util.data.list.FasterList;
@@ -59,11 +57,8 @@ public class Default extends AbstractNAR {
     }
 
     @Override
-    protected DefaultCycle2 initCore(int activeConcepts, Deriver deriver, Bag<Term, Concept> conceptBag, ConceptActivator activator) {
-
-        return new DefaultCycle2(this, deriver,
-                conceptBag, activator
-        );
+    protected DefaultCycle2 initCore(Deriver deriver, Bag<Concept> conceptBag) {
+        return new DefaultCycle2(this, deriver, conceptBag );
     }
 
     /**
@@ -87,8 +82,8 @@ public class Default extends AbstractNAR {
         final Collection<Task> derivedTasksBuffer;
 
 
-        public DefaultCycle2(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca) {
-            super(nar, deriver, concepts, ca);
+        public DefaultCycle2(NAR nar, Deriver deriver, Bag<Concept> concepts) {
+            super(nar, deriver, concepts);
 
             matcher = new RuleMatch(nar.memory.random);
             /* if detecting duplicates, use a list. otherwise use a set to deduplicate anyway */

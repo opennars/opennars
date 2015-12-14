@@ -55,7 +55,7 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
     }
 
     protected boolean reportAnyExistingSolutions() {
-        Concept c = nar.memory.concept(question.getTerm());
+        Concept c = nar.memory.concept(question.get());
         if (c == null) return false;
 
         Task top = c.getBeliefs().top();
