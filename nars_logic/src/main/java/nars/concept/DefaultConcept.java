@@ -213,7 +213,7 @@ public class DefaultConcept extends AtomConcept {
 
         final Task belief = nal.getTask();
 
-        if(belief.isJudgment() && !belief.isEternal()) {
+        if(belief.isInput() && belief.isJudgment() && !belief.isEternal()) {
             this.put(Anticipate.class, true);
         }
 

@@ -81,11 +81,7 @@ public class ImmediateTaskPerception extends TaskPerception {
                 receiver.accept(t);
             }
 
-            for(Task tt: buffer) {
-                if(tt.isInput()) {
-                    receiver.accept(tt);
-                }
-            }
+            buffer.stream().filter(tt -> tt.isInput()).forEach(receiver::accept);
             buffer.clear();
         } else {
             for(Task t: buffer) {
