@@ -7,7 +7,6 @@ import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.bag.NullBag;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.budget.UnitBudget;
 import nars.concept.util.ArrayListBeliefTable;
 import nars.concept.util.ArrayListTaskTable;
@@ -17,8 +16,6 @@ import nars.nal.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
-
-import static nars.budget.BudgetFunctions.clonePriorityMultiplied;
 
 
 public class DefaultConcept extends AtomConcept {
@@ -544,10 +541,10 @@ public class DefaultConcept extends AtomConcept {
      * when a task is processed, a tasklink
      * can be created at the concept of its term
      */
-    public boolean link(Task t, NAR nar) {
+    @Override public boolean link(Task t, float scale, NAR nar) {
 
-        if (linkTask(t, nar))
-            return linkTemplates(t.getBudget(), true, nar);  // recursively insert TermLink
+        if (linkTask(t, scale, nar))
+            return linkTemplates(t.getBudget(), scale, true, nar);  // recursively insert TermLink
 
         return false;
     }
@@ -564,7 +561,7 @@ public class DefaultConcept extends AtomConcept {
      * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
      * @return whether any activity happened as a result of this invocation
      */
-    public boolean linkTemplates(Budget b, boolean updateTLinks, NAR nar) {
+    public boolean linkTemplates(Budget b, float scale, boolean updateTLinks, NAR nar) {
 
         if ((b == null) || (b.isDeleted())) return false;
 
@@ -573,15 +570,12 @@ public class DefaultConcept extends AtomConcept {
             return false;
 
         //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
-        float factor = 1.0f / (tl.length);
-        UnitBudget subBudget = BudgetFunctions.clonePriorityMultiplied(b, factor);
+        float factor = scale / (tl.length);
 
         final Memory memory = nar.memory;
 
-        if (subBudget.summaryLessThan(memory.termLinkThreshold.floatValue()))
+        if (factor < memory.termLinkThreshold.floatValue())
             return false;
-
-        float termLinkThresh = memory.termLinkThreshold.floatValue();
 
         boolean activity = false;
 
@@ -599,7 +593,7 @@ public class DefaultConcept extends AtomConcept {
             if (updateTLinks) {
                 //if (t.summaryGreaterOrEqual(termLinkThresh)) {
 
-                    if (link(t, nar))
+                    if (link(t, b, factor, nar))
                         activity = true;
                 //}
             }
@@ -611,33 +605,34 @@ public class DefaultConcept extends AtomConcept {
     }
 
 
-    public boolean link(Term t, Budget b, NAR nar) {
+    @Override public boolean link(Term t, Budget b, float scale, NAR nar) {
 
 
-        Concept otherConcept = getTermLinkTemplateTarget(t, b, nar);
+        Concept otherConcept = activateConcept(t, b, scale, nar);
 
         //termLinkBuilder.set(t, false, nar.memory);
 
         //activate this termlink to peer
-        //activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
+        // this concept termLink to that concept
+        termLinks.put(t, b, scale);
 
         if (otherConcept == this)
             return false;
 
         //activate peer termlink to this
-        otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
+        //otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
+        otherConcept.getTermLinks().put(term(), b, scale);
 
         //if (otherConcept.getTermLinkTemplates()) {
-        UnitBudget termlinkBudget = termLinkBuilder.getBudget();
-        linkTemplates(termlinkBudget, immediateTermLinkPropagation, nar);
-
+        //UnitBudget termlinkBudget = termLinkBuilder.getBudget();
+        linkTemplates(b, scale, immediateTermLinkPropagation, nar);
 
         return true;
     }
 
-    final static Concept getTermLinkTemplateTarget(Termed t, Budget taskBudget, NAR nar) {
+    final static Concept activateConcept(Termed t, Budget taskBudget, float scale, NAR nar) {
         Term target = t.term();
-        return activateTermLinkTemplateTargetsFromTask ? nar.conceptualize(target, taskBudget) : nar.concept(target);
+        return activateTermLinkTemplateTargetsFromTask ? nar.conceptualize(target, taskBudget, scale) : nar.concept(target);
     }
 
     /**
@@ -648,7 +643,7 @@ public class DefaultConcept extends AtomConcept {
      *
      * @param task The task to be linked
      */
-    protected boolean linkTask(Task task, NAR nar) {
+    protected boolean linkTask(Task task, float scale, NAR nar) {
 
         Term[] templates = getTermLinkTemplates();
         if (templates == null) return false;
@@ -656,21 +651,14 @@ public class DefaultConcept extends AtomConcept {
         int numTemplates = templates.length;
         if (numTemplates == 0) return false;
 
-        Memory memory = nar.memory;
-
 
         //ACTIVATE TASK LINKS
         //   options: entire budget, or the sub-budget that downtsream receives
-        Budget taskBudget = task.getBudget();
+        link(task, scale, nar);
 
-        taskLinkBuilder.setBudget(taskBudget);
-        activateTaskLink(this, taskLinkBuilder);
-
-        UnitBudget subBudget = clonePriorityMultiplied(taskBudget, 1.0f / numTemplates);
-        if (subBudget.summaryLessThan(memory.taskLinkThreshold.floatValue()))
-            return false;
-
-        taskLinkBuilder.setBudget(subBudget);
+        float subScale = scale / numTemplates;
+        /*if (subBudget.summaryLessThan(memory.taskLinkThreshold.floatValue()))
+            return false;*/
 
         for (Term linkTemplate : templates) {
             //if (!(task.isStructural() && (linkTemplate.getType() == TermLink.TRANSFORM))) { // avoid circular transform
@@ -679,12 +667,12 @@ public class DefaultConcept extends AtomConcept {
 //            if (componentTerm.equals(getTerm())) // avoid circular transform
 //                continue;
 
-            Concept componentConcept = getTermLinkTemplateTarget(linkTemplate, subBudget, nar);
+            Concept componentConcept = activateConcept(linkTemplate, task.getBudget(), subScale, nar);
             if (componentConcept != null) {
 
                 /** activate the peer task tlink */
-                activateTaskLink(componentConcept, taskLinkBuilder);
-
+                //activateTaskLink(componentConcept, taskLinkBuilder);
+                componentConcept.link(task, subScale, nar);
             } else {
                 //taskBudgetBalance += subBudget.getPriority();
             }
@@ -704,9 +692,8 @@ public class DefaultConcept extends AtomConcept {
      * @param taskLink The termLink to be inserted
      * @return the tasklink which was selected or updated
      */
-    protected static BagBudget<Task> activateTaskLink(Concept c, Task taskLink) {
-        //return c.getTaskLinks().update(taskLink);
-        return null;
+    protected static BagBudget<Task> activateTaskLink(Concept c, Task task, float scale) {
+        return c.getTaskLinks().put(task, task.getBudget(), scale);
     }
 
     /**

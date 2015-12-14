@@ -1175,7 +1175,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      *
      * @return an existing Concept, or a new one, or null
      */
-    public final Concept conceptualize(Termed termed, Budget budget) {
+    public final Concept conceptualize(Termed termed, Budget budget, float scale) {
         /*if (termed == null)
             return null;*/
 
@@ -1191,7 +1191,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
             //return null;
         }
 
-        Concept c = doConceptualize(term, budget);
+        Concept c = doConceptualize(term, budget, scale);
         if (c!=null) {
             memory.eventConceptActivated.emit(c);
         }
@@ -1200,7 +1200,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return c;
     }
 
-    protected abstract Concept doConceptualize(Term term, Budget budget);
+    protected abstract Concept doConceptualize(Term term, Budget budget, float scale);
 
     static boolean validConceptTerm(Term term) {
         return !((term instanceof Variable) || (term instanceof CyclesInterval));
@@ -1353,7 +1353,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 //
 //        d.run();
 
-        Concept c = conceptualize(task, task.getBudget());
+        Concept c = conceptualize(task, task.getBudget(), 1f);
         if (c == null) {
             memory.remove(task, "Inconceivable");
             return false;
@@ -1364,7 +1364,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         if (c.process(task, this)) {
             if (!task.isDeleted()) {
 
-                c.link(task, this);
+                c.link(task, 1f, this);
                 memory.eventTaskProcess.emit(task);
 
             }

@@ -102,7 +102,7 @@ public class STMTemporalLinkage {
             }
             else {
                 if (!previousTask.isDeleted()) {
-                    concept.crossLink(currentTask, previousTask, nar);
+                    concept.crossLink(currentTask, previousTask, 1f, nar);
                 }
             }
 

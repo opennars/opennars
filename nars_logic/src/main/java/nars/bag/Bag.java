@@ -54,8 +54,12 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
      */
     public abstract BagBudget<V> put(V newItem);
 
-    public abstract BagBudget<V> put(V i, Budget b);
 
+    public final BagBudget<V> put(V i, Budget b) {
+        put(i, b, 1f);
+    }
+
+    public abstract BagBudget<V> put(V i, Budget b, float scale);
 
 
     public void setMergeFunction(Procedure2<Budget, Budget> mergeFunction) {

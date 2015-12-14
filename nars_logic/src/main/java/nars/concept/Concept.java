@@ -27,6 +27,7 @@ import nars.Global;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
+import nars.budget.Budget;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
 import nars.task.Task;
@@ -57,6 +58,7 @@ public interface Concept extends Termed, Supplier<Term> {
 //      boolean link(Task currentTask);
 
 
+    @Override
     default Term get() { return term(); }
 
 
@@ -372,7 +374,9 @@ public interface Concept extends Termed, Supplier<Term> {
     /** attempt insert a tasklink into this concept's tasklink bag
      *  return true if successfully inserted
      * */
-    boolean link(Task task, NAR nar);
+    boolean link(Task task, float scale, NAR nar);
+
+    boolean link(Term t, Budget b, float scale, NAR nar);
 
     /**
      *
@@ -380,17 +384,17 @@ public interface Concept extends Termed, Supplier<Term> {
      * @param previousTask task with a term equal to another concept's
      * @return number of links created (0, 1, or 2)
      */
-    default int crossLink(Task currentTask, Task previousTask, NAR nar) {
+    default int crossLink(Task currentTask, Task previousTask, float scale, NAR nar) {
         Compound otherTerm = previousTask.term();
         if (otherTerm.equals(get())) return 0; //self
 
         int count = 0;
-        count += link(previousTask, nar) ? 1 : 0;
+        count += link(previousTask, scale, nar) ? 1 : 0;
 
         Concept other = nar.concept(otherTerm);
         if (other == null) return 0;
 
-        count += other.link(currentTask, nar) ? 1 : 0;
+        count += other.link(currentTask, scale, nar) ? 1 : 0;
 
         return count;
 

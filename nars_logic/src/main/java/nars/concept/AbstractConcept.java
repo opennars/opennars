@@ -44,7 +44,7 @@ public abstract class AbstractConcept implements Concept {
     @Override public boolean process(final Task task, NAR nar) {
         throw new RuntimeException("concept " + this + " unimplemented: process " + task + " in " + nar);
     }
-    @Override public boolean link(Task task, NAR nar) {
+    @Override public boolean link(Task task, float scale, NAR nar) {
         throw new RuntimeException("concept " + this + " unimplemented: link " + task + " in " + nar);
     }
 
