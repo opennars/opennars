@@ -47,7 +47,7 @@ import java.util.Map;
 public class Anticipate {
 
     public float DEFAULT_CONFIRMATION_EXPECTATION = 0.51f;
-    public static float TOLERANCE_DIV=0.5f; //can even take 2 times as long its fine 
+    public static float TOLERANCE_DIV=0.5f; //can even take 2 times as long its fine
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
@@ -73,30 +73,29 @@ public class Anticipate {
 
     public void anticipate(Task t) {
 
-        if (t.getTruth().getExpectation() < DEFAULT_CONFIRMATION_EXPECTATION || t.getPunctuation() != Symbols.JUDGMENT) {
-            return;
-        }
-
         Compound tt = t.getTerm();
-       if(tt instanceof Conjunction || tt instanceof Parallel || tt instanceof Sequence) { //not observable, TODO probably revise
-           return;
-        }
-
         long now = memory.time();
-
         long occ = t.getOccurrenceTime();
-        if (now > occ) //its about the past..
-            return;
+
+        if (t.getPunctuation() != Symbols.JUDGMENT || t.getTruth().getExpectation() < DEFAULT_CONFIRMATION_EXPECTATION) {
+            return; //Besides that the task has to be a judgement, if the truth expectation is below confirmation expectation,
+        }           //the truth value of the incoming event was too low to confirm that the expected event has happened.
+
+        if(nar.concept(tt).get(Anticipate.class) == null || now > occ) { //it's not observable, or about thee future
+            return;                                            //in the former case CWA can not be applied in general
+        }                                                      //and in the latter case anticipation is pointless
 
         if (debug)
             System.err.println("Anticipating " + tt + " in " + (t.getOccurrenceTime() - now));
 
         TaskTime taskTime = new TaskTime(t, t.getCreationTime());
+
         if(true || testing) {
             String s = "anticipating: "+taskTime.task.getTerm().toString();
             System.out.println(s);
             teststring += s + "\n";
         }
+
         anticipations.put(tt, taskTime);
     }
 

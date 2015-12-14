@@ -16,6 +16,7 @@ import nars.link.TermLink;
 import nars.link.TermLinkBuilder;
 import nars.link.TermLinkKey;
 import nars.nal.nal1.LocalRules;
+import nars.op.mental.Anticipate;
 import nars.task.Task;
 import nars.term.Term;
 import nars.Global;
@@ -33,7 +34,6 @@ public class DefaultConcept extends AtomConcept {
      * are used to improve the efficiency of TermLink building
      */
     protected TermLinkBuilder termLinkBuilder = null;
-
 
 //    final static public Equality<Task> taskEquivalence = new Equality<Task>() {
 //
@@ -212,6 +212,10 @@ public class DefaultConcept extends AtomConcept {
     public boolean processBelief(final Premise nal) {
 
         final Task belief = nal.getTask();
+
+        if(belief.isJudgment() && !belief.isEternal()) {
+            this.put(Anticipate.class, true);
+        }
 
         float successBefore = getSuccess();
 
