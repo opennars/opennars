@@ -149,19 +149,12 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
 
 
 
-//    /** called when a Concept enters attention. its state should be set active prior to call */
-//    @Deprecated void on(Concept c) { }
 
-    /** called when a Concept leaves attention. its state should be set forgotten prior to call */
-    @Deprecated void off(Concept c) {
-
-    }
 
 
     @Override
     public final void overflow(Concept c) {
         //getMemory().logic.CONCEPT_FORGET.hit();
-        off(c);
     }
 
     public void setActivationFactor(float activationFactor) {

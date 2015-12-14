@@ -51,6 +51,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         }
     }
 
+    final static int NegationOrConjunctive = Op.or(Op.ConjunctivesBits,Op.NEGATE);
+
     /**
      * Collect TermLink templates into a list, go down one level except in
      * special cases
@@ -86,7 +88,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             }
 
             if ((tEquivalence || (tImplication && (i == 0))) &&
-                    ((ti.isAny(Op.ConjunctivesBits)) || (ti.isAny(Op.NEGATE)))) {
+                    (ti.isAny(NegationOrConjunctive))) {
 
                 prepareComponentLinks((Compound) ti, components);
 

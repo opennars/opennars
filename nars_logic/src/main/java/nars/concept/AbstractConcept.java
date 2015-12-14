@@ -1,9 +1,7 @@
 package nars.concept;
 
-import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
-import nars.nal.nal7.Tense;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -17,13 +15,10 @@ public abstract class AbstractConcept implements Concept {
     private final Term term;
     private final Budget budget;
 
-    long creationTime = Tense.TIMELESS;
     protected Map meta = null;
     protected boolean constant = false;
 
-    @Deprecated protected transient Memory memory;
 
-    //@Deprecated final static Variable how = new Variable("?how");
 
     public AbstractConcept(Budget b, Term term) {
         this.budget = b;
@@ -40,11 +35,6 @@ public abstract class AbstractConcept implements Concept {
         return budget.getPriority();
     }
 
-    @Override
-    public void setCreationTime(long creationTime) {
-        this.creationTime = creationTime;
-    }
-
     /**
      * metadata table where processes can store and retrieve concept-specific data by a key. lazily allocated
      */
@@ -58,23 +48,7 @@ public abstract class AbstractConcept implements Concept {
         this.meta = meta;
     }
 
-    /**
-     * Reference to the memory to which the Concept belongs
-     */
-    @Override
-    public final Memory getMemory() {
-        return memory;
-    }
 
-    @Override
-    public void setMemory(Memory memory) {
-        this.memory = memory;
-        if (memory!=null) {
-            if (creationTime == Tense.TIMELESS) {
-                creationTime = memory.time();
-            }
-        }
-    }
 
     @Override public boolean process(final Task task, NAR nar) {
         throw new RuntimeException("concept " + this + " unimplemented: process " + task + " in " + nar);
@@ -92,26 +66,22 @@ public abstract class AbstractConcept implements Concept {
         return term;
     }
 
-    @Override
-    public final long getCreationTime() {
-        return creationTime;
-    }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Concept)) return false;
-        return ((Concept) obj).getTerm().equals(getTerm());
+        return ((Concept) obj).getTerm().equals(term);
     }
 
     @Override
     public final int hashCode() {
-        return getTerm().hashCode();
+        return term.hashCode();
     }
 
     @Override
     public final Term name() {
-        return getTerm();
+        return term;
     }
 
     /**
@@ -123,7 +93,7 @@ public abstract class AbstractConcept implements Concept {
     public final String toString() {  // called from concept bag
         //return (super.toStringBrief() + " " + key);
         //return super.toStringExternal();
-        return getTerm().toString();
+        return term.toString();
     }
 
 //    /**

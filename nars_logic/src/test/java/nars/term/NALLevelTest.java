@@ -28,7 +28,7 @@ public class NALLevelTest {
         NAR n8 = new Default().nal(8);
         EventCount n8Count = new EventCount(n8);
 
-        String productSentence = "<(*,a,b) --> c>.\n<c <-> a>?\n";
+        String productSentence = "<(a,b) --> c>.\n<c <-> a>?\n";
 
         n1.input(productSentence);
         n1.frame(5);

@@ -24,7 +24,6 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Longs;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.budget.Itemized;
@@ -53,7 +52,6 @@ public interface Concept extends Termed, Itemized<Term> {
     void setMeta(Map<Object, Object> meta);
 
 
-    Memory getMemory();
 
 
 
@@ -215,9 +213,6 @@ public interface Concept extends Termed, Itemized<Term> {
 
 
 
-    long getCreationTime();
-
-
 //    /** debugging utility */
 //    default public void ensureNotDeleted() {
 //        if (isDeleted())
@@ -276,9 +271,8 @@ public interface Concept extends Termed, Itemized<Term> {
 
     /** prints a summary of all termlink, tasklink, etc.. */
     default void print(PrintStream out, boolean showbeliefs, boolean showgoals, boolean showtermlinks, boolean showtasklinks) {
-        long now = time();
 
-        out.println("concept: " + toInstanceString() + " @ " + now);
+        out.println("concept: " + toInstanceString());
 
         String indent = "  \t";
         if (showbeliefs) {
@@ -337,9 +331,6 @@ public interface Concept extends Termed, Itemized<Term> {
         out.println();
     }
 
-    default long time() {
-        return getMemory().time();
-    }
 
 //    default Iterator<Term> adjacentTerms(boolean termLinks, boolean taskLinks) {
 //        return transform(adjacentTermables(termLinks, taskLinks), Termed::getTerm);
@@ -383,9 +374,7 @@ public interface Concept extends Termed, Itemized<Term> {
 
     }
 
-    void setMemory(Memory m);
 
-    void setCreationTime(long l);
 
     /**
      * process a task in this concept
@@ -411,7 +400,7 @@ public interface Concept extends Termed, Itemized<Term> {
         int count = 0;
         count += link(previousTask, nar) ? 1 : 0;
 
-        Concept other = getMemory().concept(otherTerm);
+        Concept other = nar.concept(otherTerm);
         if (other == null) return 0;
 
         count += other.link(currentTask, nar) ? 1 : 0;

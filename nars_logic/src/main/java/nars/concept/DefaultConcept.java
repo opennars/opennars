@@ -36,7 +36,7 @@ public class DefaultConcept extends AtomConcept {
      */
     protected TermLinkBuilder termLinkBuilder = null;
 
-    private TaskLinkBuilder taskLinkBuilder;
+    private final TaskLinkBuilder taskLinkBuilder = new TaskLinkBuilder();
 
 
 //    final static public Equality<Task> taskEquivalence = new Equality<Task>() {
@@ -91,12 +91,6 @@ public class DefaultConcept extends AtomConcept {
         quests = new ArrayListTaskTable(maxQuestions);
 
 
-    }
-
-    @Override
-    public void setMemory(Memory memory) {
-        super.setMemory(memory);
-        taskLinkBuilder = new TaskLinkBuilder(memory);
     }
 
     @Override
@@ -211,7 +205,7 @@ public class DefaultConcept extends AtomConcept {
 
 
 
-    Task add(TaskTable table, Task input, Equality<Task> eq, Procedure2<Budget,Budget> duplicateMerge) {
+    Task add(TaskTable table, Task input, Equality<Task> eq, Procedure2<Budget,Budget> duplicateMerge, Memory memory) {
         return table.add(input, eq, duplicateMerge, memory);
     }
 
@@ -229,8 +223,8 @@ public class DefaultConcept extends AtomConcept {
         float successBefore = getSuccess();
 
         Task strongest = getBeliefs().add( belief,
-                new BeliefTable.SolutionQualityMatchingOrderRanker(belief, memory.time()),
-                this);
+                new BeliefTable.SolutionQualityMatchingOrderRanker(belief, nar.memory.time()),
+                this, nar.memory);
 
         if (strongest == null || strongest.isDeleted()) {
             return false;
@@ -248,7 +242,7 @@ public class DefaultConcept extends AtomConcept {
         float successAfter = getSuccess();
         float delta = successAfter - successBefore;
         if (delta!=0) //more satisfaction of a goal due to belief, more happiness
-            memory.emotion.happy(delta);
+            nar.memory.emotion.happy(delta);
 
         return true;
     }
@@ -267,9 +261,11 @@ public class DefaultConcept extends AtomConcept {
 
         float successBefore = getSuccess();
 
+        Memory memory = nar.memory;
+
         Task strongest = getGoals().add( goal,
                 new BeliefTable.SolutionQualityMatchingOrderRanker(goal, memory.time()),
-                this);
+                this, memory);
 
         if (strongest==null) {
             return false;
@@ -412,7 +408,7 @@ public class DefaultConcept extends AtomConcept {
         if (!isConstant()) {
             //boolean newQuestion = table.isEmpty();
 
-            Task match = add(table, q, questionEquivalence, duplicateQuestionMerge);
+            Task match = add(table, q, questionEquivalence, duplicateQuestionMerge, nar.memory);
             if (match == q) {
                 //final int presize = getQuestions().size() + getQuests().size();
                 //onTableUpdated(q.getPunctuation(), presize);
@@ -425,9 +421,7 @@ public class DefaultConcept extends AtomConcept {
 
         //TODO if the table was not affected, does the following still need to happen:
 
-        long now = getMemory().time();
-
-        Task sol = q.isQuest() ? getGoals().top(q, now) : getBeliefs().top(q, now);
+        Task sol = q.isQuest() ? getGoals().top(q, nar.time()) : getBeliefs().top(q, nar.time());
 
         if (sol!=null) {
             /*Task solUpdated = */LocalRules.trySolution(q, sol, nar);
@@ -696,16 +690,20 @@ public class DefaultConcept extends AtomConcept {
         if (numTemplates == 0)
             return false;
 
-        taskLinkBuilder.setTask(task);
+        Memory memory = nar.memory;
+
+        taskLinkBuilder.setTask(task, memory);
 
 
         //ACTIVATE TASK LINKS
         //   options: entire budget, or the sub-budget that downtsream receives
-        taskLinkBuilder.setBudget( task.getBudget() );
+        Budget taskBudget = task.getBudget();
+
+        taskLinkBuilder.setBudget(taskBudget);
         activateTaskLink(this, taskLinkBuilder);
 
-        UnitBudget subBudget = clonePriorityMultiplied(task.getBudget(), 1.0f / numTemplates);
-        if (subBudget.summaryLessThan(nar.memory.taskLinkThreshold.floatValue()))
+        UnitBudget subBudget = clonePriorityMultiplied(taskBudget, 1.0f / numTemplates);
+        if (subBudget.summaryLessThan(memory.taskLinkThreshold.floatValue()))
             return false;
 
         taskLinkBuilder.setBudget(subBudget);

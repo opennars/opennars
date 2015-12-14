@@ -108,7 +108,7 @@ public class AtomConcept extends AbstractConcept  {
      */
     @Override
     public final TermLink activateTermLink(TermLinkBuilder termLink) {
-        return getTermLinks().update(termLink);
+        return termLinks.update(termLink);
     }
 
     @Override

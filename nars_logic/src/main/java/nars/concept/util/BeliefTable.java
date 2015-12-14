@@ -30,7 +30,7 @@ public interface BeliefTable extends TaskTable {
 
     /** main method */
 
-    Task add(Task input, BeliefTable.Ranker ranking, Concept c);
+    Task add(Task input, BeliefTable.Ranker ranking, Concept c, Memory m);
 
     /* when does projecting to now not play a role? I guess there is no case,
     //wo we use just one ranker anymore, the normal solution ranker which takes
@@ -91,7 +91,7 @@ public interface BeliefTable extends TaskTable {
         }
 
         @Override
-        public Task add(Task input, Ranker ranking, Concept c) {
+        public Task add(Task input, Ranker ranking, Concept c, Memory m) {
             return null;
         }
 

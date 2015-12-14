@@ -138,6 +138,10 @@ public abstract class AbstractTask extends Item<Task>
         if (isDeleted())
             return null;
 
+        Compound t = getTerm();
+        if (!t.levelValid( memory.nal() ))
+            return null;
+
 
         char punc = getPunctuation();
         if (punc == 0)
@@ -159,14 +163,13 @@ public abstract class AbstractTask extends Item<Task>
             throw new RuntimeException("invalid punctuation: " + punc);
         }
 
-
-
-
-        Compound t = getTerm();
         if (t == null) throw new RuntimeException("null term");
         Term tNorm = t.normalized();
         if (tNorm == null)
             throw new RuntimeException("term not normalized");
+
+
+
         t = Task.validTaskTerm(tNorm);
         if (t == null) {
             throw new RuntimeException("invalid sentence term: " + tNorm);

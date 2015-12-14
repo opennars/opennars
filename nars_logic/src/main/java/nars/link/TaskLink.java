@@ -38,7 +38,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Tasked {
     /**
      * The Task linked
      */
-    public final Task targetTask;
+    public final Task task;
 
 
     public TaskLink(Task t) {
@@ -47,14 +47,14 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Tasked {
         if (t.isDeleted())
             throw new RuntimeException(this + " deleted task");
 
-        targetTask = t;
+        task = t;
     }
 
 
 
 
     @Override
-    public final Task name() { return targetTask; }
+    public final Task name() { return task; }
 
 
 
@@ -66,7 +66,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Tasked {
 
     @Override
     public final int hashCode() {
-        return targetTask.hashCode();
+        return task.hashCode();
     }
 
     @Override
@@ -80,7 +80,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Tasked {
 
         //if (obj instanceof TaskLink) {
         TaskLink t = (TaskLink) obj;
-        return targetTask.equals(t.targetTask);
+        return task.equals(t.task);
         //}
         //return false;
 //
@@ -123,12 +123,12 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Tasked {
      */
     @Override
     public final Term getTerm() {
-        return targetTask.getTerm();
+        return task.getTerm();
     }
 
     @Override
     public final Task getTask() {
-        return targetTask;
+        return task;
     }
 
     @Override
@@ -147,7 +147,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Tasked {
         //the task will be useless anyway, and this signals
         //to any bag holding it to discard it
 
-        if (getTask().isDeleted()) {
+        if (task.isDeleted()) {
             delete();
             return true;
         }

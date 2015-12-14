@@ -7,20 +7,16 @@ import nars.task.Task;
 /** adjusts budget of items in a Bag. ex: merge */
 public class TaskLinkBuilder extends BagActivator<Task,TaskLink> {
 
-    public final Memory memory;
     private float forgetCycles;
     private long now;
 
-    public TaskLinkBuilder(Memory m) {
-        memory = m;
-    }
 
-    public void setTask(Task t) {
+    public void setTask(Task t, Memory m) {
 
         setKey(t);
         setBudget(t.getBudget());
 
-        Memory m = memory;
+
 
         forgetCycles = m.duration() *
                 m.taskLinkForgetDurations.floatValue();

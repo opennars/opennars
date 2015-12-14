@@ -153,7 +153,7 @@ public class Global {
     public static short COMPOUND_VOLUME_MAX = 384;
 
     /** extra debugging checks */
-    public static boolean DEBUG_PARANOID = true;
+    public static boolean DEBUG_PARANOID = false;
 
 
 //    public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {

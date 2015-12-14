@@ -97,11 +97,10 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
      * @param input
      * @param ranking
      * @param c
-     * @param nal
      * @return
      */
     @Override
-    public Task add(Task input, BeliefTable.Ranker ranking, Concept c) {
+    public Task add(Task input, BeliefTable.Ranker ranking, Concept c, Memory memory) {
 
 
         /**
@@ -109,7 +108,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
          * input, strongest, revised (created here and returned)
          */
 
-        Memory memory = c.getMemory();
 
 
         //empty (special case)
@@ -194,7 +192,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
                 if (b.equals(input)) {
                     //these should be preventable earlier
-                    memory.remove(input, "Duplicate");
+                    onBeliefRemoved(input, "Duplicate", memory);
                     if (Global.DEBUG) {
                         checkForDeleted();
                     }
@@ -220,11 +218,11 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         if (atCapacity) {
             if (i == siz) {
                 //reached the end of the list and there is no room to add at the end
-                onBeliefRemoved(input, "Unbelievable/Undesirable");
+                onBeliefRemoved(input, "Unbelievable/Undesirable", memory);
                 return false;
             } else {
                 Task removed = remove(siz - 1);
-                onBeliefRemoved(removed, "Forgotten");
+                onBeliefRemoved(removed, "Forgotten", memory);
             }
         }
 
@@ -232,9 +230,8 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         return true;
     }
 
-    private final void onBeliefRemoved(Task t, String reason) {
-        //patrick says to not delete() these tasks
-        //memory.remove(t, reason)
+    private final void onBeliefRemoved(Task t, String reason, Memory memory) {
+        memory.remove(t, reason);
     }
 
     private void checkForDeleted() {
