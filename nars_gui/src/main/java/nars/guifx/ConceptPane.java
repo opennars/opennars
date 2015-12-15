@@ -4,7 +4,6 @@ import com.gs.collections.impl.set.mutable.UnifiedSet;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -16,16 +15,13 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import nars.NAR;
 import nars.bag.Bag;
-import nars.budget.Itemized;
 import nars.concept.Concept;
 import nars.guifx.graph3.SpaceNet;
 import nars.guifx.graph3.Xform;
 import nars.guifx.util.ColorArray;
-import nars.link.TaskLink;
-import nars.link.TermLink;
-import nars.link.TermLinkKey;
 import nars.nar.Default;
 import nars.task.Task;
+import nars.term.Term;
 import nars.truth.Truth;
 import nars.util.event.FrameReaction;
 
@@ -35,7 +31,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static javafx.application.Platform.runLater;
-import static nars.guifx.NARfx.scrolled;
 
 /**
  * Created by me on 8/10/15.
@@ -44,8 +39,8 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
     private final Concept concept;
     private final Scatter3D tasks;
-    private final BagView<Task, TaskLink> taskLinkView;
-    private final BagView<TermLinkKey, TermLink> termLinkView;
+//    private final BagView<Task> taskLinkView;
+//    private final BagView<Term> termLinkView;
     private FrameReaction reaction;
 
     public abstract static class Scatter3D<X> extends SpaceNet {
@@ -199,25 +194,24 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
     }
 
-    public static class BagView<X, Y extends Itemized<X>> extends FlowPane implements Runnable {
+    public static class BagView<X> extends FlowPane implements Runnable {
 
         final Map<X,Node> componentCache = new WeakHashMap<>();
-        private final Bag<X, Y> bag;
-        private Function<Y, Node> builder;
+        private final Bag<X> bag;
+        private Function<X, Node> builder;
         final List<Node> pending = new ArrayList();
         final AtomicBoolean queued = new AtomicBoolean();
 
-        public BagView(Bag<X, Y> bag, Function<Y,Node> builder) {
+        public BagView(Bag<X> bag, Function<X,Node> builder) {
             this.bag = bag;
             this.builder = builder;
             frame();
         }
 
-        Node getNode(Y c) {
-            X n = c.name();
+        Node getNode(X n) {
             Node existing = componentCache.get(n);
             if (existing == null) {
-                componentCache.put(n, existing = builder.apply(c));
+                componentCache.put(n, existing = builder.apply(n));
             }
             return existing;
         }
@@ -294,25 +288,26 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 //        Label beliefs = new Label("Beliefs diagram");
 //        Label goals = new Label("Goals diagram");
 //        Label questions = new Label("Questions diagram");
-        SplitPane links = new SplitPane(
-                scrolled(termLinkView = new BagView<>(c.getTermLinks(),
-                                (t) -> new ItemButton(t, Object::toString,
-                                        (i) -> {
 
-                                        }
-
-                                )
-                        )
-                ),
-                scrolled(taskLinkView = new BagView<>(c.getTaskLinks(),
-                        (t) -> new TaskLabel(t.getTask(), null)
-
-                ))
-        );
-        links.setOrientation(Orientation.VERTICAL);
+//        SplitPane links = new SplitPane(
+//                scrolled(termLinkView = new BagView<>(c.getTermLinks(),
+//                                (t) -> new ItemButton(t, Object::toString,
+//                                        (i) -> {
+//
+//                                        }
+//
+//                                )
+//                        )
+//                ),
+//                scrolled(taskLinkView = new BagView<>(c.getTaskLinks(),
+//                        (t) -> new TaskLabel(t.getTask(), null)
+//
+//                ))
+//        );
+//        links.setOrientation(Orientation.VERTICAL);
         //links.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
 
-
+        BorderPane links = new BorderPane();
         setCenter(new SplitPane(new BorderPane(links), tasks.content));
 
         Label controls = new Label("Control Panel");
@@ -327,8 +322,8 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
     protected void frame() {
         tasks.frame();
-        taskLinkView.frame();
-        termLinkView.frame();
+        /*taskLinkView.frame();
+        termLinkView.frame();*/
     }
 
     @Override

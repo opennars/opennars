@@ -23,8 +23,7 @@ public class TermLinkBuilder  {
 //    protected float forgetCycles;
 //    protected long now;
 
-    public static Term[] TermLinkBuilder(Termed c) {
-        Term host = c.term();
+    public static Term[] build(Term host) {
 
         if (host instanceof Compound) {
 

@@ -118,14 +118,14 @@ public class LogPane extends BorderPane  {
         }
 
         public ActivationTreeMap(Concept signal) {
-            this(signal, signal.getPriority());
+            this(signal, 1f /*signal.getPriority()*/);
         }
 
 
         /** setup before display */
         public void commit() {
             for (Concept c : concept)
-                r.add(c, c.getPriority());
+                r.add(c, 1f /*c.getPriority()*/);
             runLater(this::update);
         }
 

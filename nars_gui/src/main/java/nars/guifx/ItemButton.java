@@ -3,7 +3,6 @@ package nars.guifx;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import nars.budget.Itemized;
-import nars.link.TaskLink;
 import nars.task.Task;
 
 import java.util.function.Consumer;
@@ -25,8 +24,6 @@ public class ItemButton<I extends Itemized> extends Label implements Runnable {
         Task t = null;
         if (i instanceof Task)
             t = (Task)i;
-        else if (i instanceof TaskLink)
-            t = ((TaskLink)i).getTask();
 
         if (clicked!=null) {
             setOnMouseClicked(e -> clicked.accept(i));

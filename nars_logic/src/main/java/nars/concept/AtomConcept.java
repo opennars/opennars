@@ -88,7 +88,7 @@ public class AtomConcept extends AbstractConcept  {
 
 
     /** atoms have no termlink templates, they are irreducible */
-    @Override public final Term[] getTermLinkTemplates() {
+    @Override public Term[] getTermLinkTemplates() {
         return null;
     }
 
@@ -97,4 +97,13 @@ public class AtomConcept extends AbstractConcept  {
         return false;
     }
 
+    @Override
+    public boolean link(Task task, float scale, NAR nar) {
+        return false;
+    }
+
+    @Override
+    public boolean process(Task task, NAR nar) {
+        return false;
+    }
 }

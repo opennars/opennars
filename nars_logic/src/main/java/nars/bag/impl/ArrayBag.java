@@ -233,22 +233,27 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     @Override
-    public void update() {
-        index.forEach((k,v) -> {
-            if (v.hasDelta()) {
-                if (items.remove(v)) {
-                    v.commit();
-                    items.insert(v);
-                }
-            }
+    public void update(Consumer<BagBudget> updater) {
+        forEachEntry(v -> {
+            update(v, updater);
         });
+    }
+
+    public void update(BagBudget v, Consumer<BagBudget> updater) {
+        updater.accept(v);
+        if (v.hasDelta()) {
+            if (items.remove(v)) {
+                v.commit();
+                items.insert(v);
+            }
+        }
     }
 
     /**
      * TODO make this work for the original condition: (size() >= capacity)
      * all comparisons like this should use this same condition
      */
-    final boolean full() {
+    final boolean isFull() {
         return (size() >= capacity());
     }
 
@@ -346,13 +351,17 @@ public class ArrayBag<V> extends Bag<V> {
         }
     }
 
-    @Override
-    public void forEachEntry(Consumer<BagBudget> action) {
+    @Override public void forEachEntry(Consumer<BagBudget> action) {
         List<BagBudget<V>> l = items.getList();
         int n = l.size();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++)
             action.accept(l.get(i));
-        }
+    }
+    @Override public void forEachEntry(int limit, Consumer<BagBudget> action) {
+        List<BagBudget<V>> l = items.getList();
+        int n = Math.min(l.size(), limit);
+        for (int i = 0; i < n; i++)
+            action.accept(l.get(i));
     }
 
     @Override

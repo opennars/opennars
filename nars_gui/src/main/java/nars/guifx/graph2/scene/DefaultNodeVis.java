@@ -85,7 +85,7 @@ public class DefaultNodeVis implements NodeVis {
         if (t == null) {
             return;
         }
-        t.priNorm = ((Concept)t.term).getPriority();
+        t.priNorm = 1f; //((Concept)t.term).getPriority();
 
 //            p = t.term.cgetPriority();
 //            q = t.c.getQuality();
@@ -376,7 +376,7 @@ public static class HexTermNode extends LabeledCanvasNode<Termed> {
 
 
         //this.label = new Text(t.getTerm().toStringCompact());
-        label = new Label(t.get().toString());
+        label = new Label(t.term().toString());
 
         //label.setFill(Color.WHITE);
         //label.setBoundsType(TextBoundsType.VISUAL);

@@ -56,7 +56,8 @@ public class Circle implements IterativeLayout {
 
         run(termList,
                 (v) -> {
-                    double r = (v.c != null ? v.c.getPriority() : 0);
+                    double vpri = 1f;// v.c.getPriority();
+                    double r = (v.c != null ? vpri : 0);
                     return r * (radiusMax - radiusMin) + radiusMin;
                 },
                 (v) -> {

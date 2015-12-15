@@ -1,28 +1,39 @@
-//package nars.concept;
-//
-//import nars.NAR;
-//import nars.bag.Bag;
-//import nars.link.TermLink;
-//import nars.link.TermLinkKey;
-//import nars.link.TermLinkTemplate;
-//import nars.nar.AbstractNAR;
-//import nars.nar.Default;
-//import nars.nar.SingleStepNAR;
-//import nars.term.Term;
-//import nars.util.graph.TermLinkGraph;
-//import org.jgrapht.alg.ConnectivityInspector;
-//import org.junit.Test;
-//
-//import java.util.HashSet;
-//import java.util.List;
-//import java.util.Set;
-//
-//import static junit.framework.TestCase.assertNotNull;
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertTrue;
-//
-//
-//public class TermLinkTest {
+package nars.concept;
+
+import nars.NAR;
+import nars.bag.Bag;
+import nars.nar.AbstractNAR;
+import nars.nar.Default;
+import nars.nar.SingleStepNAR;
+import nars.term.Term;
+import nars.util.graph.TermLinkGraph;
+import org.jgrapht.alg.ConnectivityInspector;
+import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+
+public class TermLinkTest {
+
+    @Test public void testTermLinkActivationOnConceptualization() {
+        Default n = new Default();
+        n.input("a:b.");
+        //n.input("b:c.");
+
+        for (int i = 0; i < 15; i++) {
+            System.out.println(n.time());
+            n.frame();
+        }
+
+    }
+
+
 //
 //    @Test public void testTermLinkActivationOnConceptualization() {
 //        //when a concept is conceptualized, it should have all its templates activated into its TermLink bag
@@ -290,5 +301,5 @@
 ////
 ////    }
 //
-//
-//}
+
+}

@@ -196,7 +196,7 @@ public class ConceptSonification extends FrameReaction {
     }
 
     protected final boolean audible(Concept c) {
-        return c.getPriority() > audiblePriorityThreshold;
+        return 1f /*c.getPriority()*/ > audiblePriorityThreshold;
     }
 
     static final double twoTo12 = Math.pow((2),1/ 12.0);
@@ -206,7 +206,7 @@ public class ConceptSonification extends FrameReaction {
 
         if (audible(c)) {
             //TODO autmatic gain control
-            float vol = 0.9f * c.getBudget().getPriority();
+            float vol = 1f; //0.9f * c.getBudget().getPriority();
             //System.out.println(c + " at " + vol);
             ((SoundProducer.Amplifiable) g).setAmplitude(vol /
                     ((polyphony)/8.0f)
@@ -215,7 +215,7 @@ public class ConceptSonification extends FrameReaction {
             if (g instanceof Granulize) {
                 Granulize gg = ((Granulize) g);
                 gg.setStretchFactor(
-                        0.85f + c.getDurability()/ 3.0f);// + 4f * (1f - c.getQuality()));
+                        0.85f /*+ c.getDurability()/ 3.0f*/);// + 4f * (1f - c.getQuality()));
 
 
                 float pitch = 1.0f;

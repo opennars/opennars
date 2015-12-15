@@ -128,6 +128,6 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
     }
 
     static boolean nonZero(float x) {
-        return (x > Global.BUDGET_EPSILON);
+        return (Math.abs(x) > Global.BUDGET_EPSILON);
     }
 }

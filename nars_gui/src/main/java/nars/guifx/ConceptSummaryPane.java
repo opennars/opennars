@@ -64,9 +64,10 @@ public class ConceptSummaryPane extends Text {
             this.icon.repaint();
         }
 
-        float pri = concept.getPriority();
+        float pri = 1f;
+        /*float pri = concept.getPriority();
         if (Util.equal(lastPri, pri, 0.01) )
-            priority = false;
+            priority = false;*/
 
         //HACK //TODO add truth value / color caching
         boolean truth = true;

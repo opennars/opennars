@@ -22,7 +22,7 @@ public abstract class JGraphSource extends GraphSource {
 
 
     @Override
-    public void forEachOutgoingEdgeOf(Termed src, Consumer<Termed> eachTarget) {
+    public void forEachOutgoingEdgeOf(Termed src, Consumer eachTarget) {
         graph.outgoingEdgesOf(src).forEach(edge ->
                 eachTarget.accept(getTargetVertex(edge)));
     }

@@ -21,6 +21,8 @@ import static nars.Global.BUDGET_EPSILON;
 public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements Consumer<V>, Supplier<V>, Iterable<V> {
 
 
+
+
     public interface BudgetMerge {
         void merge(Budget target, Budget src, float srcScale);
     }
@@ -189,8 +191,12 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
 //    }
 
     /** update the entire bag */
-    abstract public void update();
+    abstract public void update(Consumer<BagBudget> updater);
 
+    /** just update */
+    public void update() {
+        update( x-> {} );
+    }
 
     /**
      * implements the Consumer<V> interface; invokes a put()
@@ -234,6 +240,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
 
 
     abstract public void forEachEntry(Consumer<BagBudget> each);
+    abstract public void forEachEntry(int limit, Consumer<BagBudget> each);
 
 //    final public int forgetNext(float forgetCycles, final V[] batch, final long now) {
 //        return forgetNext(forgetCycles, batch, 0, batch.length, now, batch.length/2 /* default to max 1.5x */);

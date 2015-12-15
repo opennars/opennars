@@ -62,12 +62,17 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public void update() {
+    public void update(Consumer<BagBudget> updater) {
 
     }
 
     @Override
     public void forEachEntry(Consumer<BagBudget> each) {
+
+    }
+
+    @Override
+    public void forEachEntry(int limit, Consumer<BagBudget> each) {
 
     }
 

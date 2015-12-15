@@ -69,7 +69,8 @@ public class ConceptsSource extends GraphSource {
 
         Consumer linkUpdater = link -> {
 
-            Term target = ((BagBudget<Term>)link).get();
+            //Term target = ((BagBudget<Term>)link).get();
+            Term target = (Term)link;
 
             if (cc.term().equals(target)) //self-loop
                 return;
@@ -89,8 +90,8 @@ public class ConceptsSource extends GraphSource {
 //            //missing.remove(tn.term);
         };
 
-        ((Concept)cc).getTermLinks().forEach(maxNodeLinks, linkUpdater);
-        ((Concept)cc).getTaskLinks().forEach(maxNodeLinks, linkUpdater);
+        ((Concept)cc).getTermLinks().forEachEntry(maxNodeLinks, linkUpdater);
+        ((Concept)cc).getTaskLinks().forEachEntry(maxNodeLinks, linkUpdater);
 
         //sn.removeEdges(missing);
 

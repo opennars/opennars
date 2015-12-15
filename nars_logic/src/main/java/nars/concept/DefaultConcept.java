@@ -12,6 +12,7 @@ import nars.concept.util.ArrayListBeliefTable;
 import nars.concept.util.ArrayListTaskTable;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
+import nars.link.TermLinkBuilder;
 import nars.nal.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
@@ -56,6 +57,7 @@ public class DefaultConcept extends AtomConcept {
 
     /** how incoming budget is merged into its existing duplicate quest/question */
     static final Procedure2<Budget, Budget> duplicateQuestionMerge = UnitBudget.plus;
+    private Term[] termLinkTemplates;
 
     public DefaultConcept(Term term, Param p) {
         this(term, new NullBag(), new NullBag(), p);
@@ -78,6 +80,7 @@ public class DefaultConcept extends AtomConcept {
         questions = new ArrayListTaskTable(maxQuestions);
         quests = new ArrayListTaskTable(maxQuestions);
 
+        this.termLinkTemplates = TermLinkBuilder.build(term);
 
     }
 
@@ -607,6 +610,8 @@ public class DefaultConcept extends AtomConcept {
 
     @Override public boolean link(Term t, Budget b, float scale, NAR nar) {
 
+        if (t.equals(term()))
+            throw new RuntimeException("looped activation");
 
         Concept otherConcept = activateConcept(t, b, scale, nar);
 
@@ -614,10 +619,7 @@ public class DefaultConcept extends AtomConcept {
 
         //activate this termlink to peer
         // this concept termLink to that concept
-        termLinks.put(t, b, scale);
-
-        if (otherConcept == this)
-            return false;
+        getTermLinks().put(t, b, scale);
 
         //activate peer termlink to this
         //otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
@@ -633,6 +635,10 @@ public class DefaultConcept extends AtomConcept {
     final static Concept activateConcept(Termed t, Budget taskBudget, float scale, NAR nar) {
         Term target = t.term();
         return activateTermLinkTemplateTargetsFromTask ? nar.conceptualize(target, taskBudget, scale) : nar.concept(target);
+    }
+
+    @Override public Term[] getTermLinkTemplates() {
+        return termLinkTemplates;
     }
 
     /**
@@ -651,10 +657,9 @@ public class DefaultConcept extends AtomConcept {
         int numTemplates = templates.length;
         if (numTemplates == 0) return false;
 
+        //insert tasklink
+        getTaskLinks().put(task, task.getBudget(), scale);
 
-        //ACTIVATE TASK LINKS
-        //   options: entire budget, or the sub-budget that downtsream receives
-        link(task, scale, nar);
 
         float subScale = scale / numTemplates;
         /*if (subBudget.summaryLessThan(memory.taskLinkThreshold.floatValue()))

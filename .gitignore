@@ -24,3 +24,6 @@ UIFiles
 .settings
 /cache
 
+jmh-result.text
+nars_logic/tree.xml
+nars_logic/vis.xml

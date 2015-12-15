@@ -543,9 +543,30 @@ public abstract class AbstractNAR extends NAR {
 //            int n = active.forgetNext(conceptForgetDurations, buffer, time());
 //            if (n == 0) return;
 
+
+            concepts().update(c-> {
+                float p = ((Concept)c.get()).getTermLinks().getPriorityMax();
+                c.setPriority(p);
+            });
+
             for (int i = 0; i < conceptsToFire; i++) {
                 Concept c = active.peekNext(); //forgetNext(conceptForgetDurations, nar.memory);
                 if (c == null) break;
+
+                {
+                    System.out.println(c +
+                            "\n\t" + ((CurveBag)c.getTermLinks()).getItems() +
+                            "\n\t" + ((CurveBag)c.getTaskLinks()).getItems());
+
+                    Consumer<BagBudget> simpleForgetDecay = (b) -> {
+                        b.mulPriority(0.9f);
+                    };
+                    c.getTermLinks().update(simpleForgetDecay);
+                    c.getTaskLinks().update(simpleForgetDecay);
+
+                }
+
+
                 fireConcept(c);
             }
         }
@@ -559,7 +580,8 @@ public abstract class AbstractNAR extends NAR {
         }*/
 
 
-        protected final void fireConcept(Concept concept, Consumer<ConceptProcess> withResult) {
+        protected final void fireConcept(Concept c, Consumer<ConceptProcess> withResult) {
+
 
             {
                 int num = termlinksSelectedPerFiredConcept.intValue();
@@ -577,7 +599,7 @@ public abstract class AbstractNAR extends NAR {
             ConceptProcess.firePremiseSquare(
                 nar,
                 withResult,
-                concept,
+                c,
                 firingTaskLinks,
                 firingTermLinks,
                 nar.memory.taskLinkForgetDurations.intValue()

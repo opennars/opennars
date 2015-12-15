@@ -74,8 +74,8 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public void update() {
-        arrayBag.update();
+    public void update(Consumer<BagBudget> updater) {
+        arrayBag.update(updater);
     }
 
     public V peekNext(boolean remove) {
@@ -319,9 +319,11 @@ public class CurveBag<V> extends Bag<V> {
 //        return next; //# of items actually filled in the array
 //    }
 
-    @Override
-    public void forEachEntry(Consumer<BagBudget> each) {
+    @Override public void forEachEntry(Consumer<BagBudget> each) {
         arrayBag.forEachEntry(each);
+    }
+    @Override public void forEachEntry(int limit, Consumer<BagBudget> each) {
+        arrayBag.forEachEntry(limit, each);
     }
 
     @Override
