@@ -27,8 +27,8 @@ import nars.util.data.Util;
 
 import java.io.Serializable;
 
-import static nars.Global.BUDGET_EPSILON;
-import static nars.nal.UtilityFunctions.*;
+import static nars.nal.UtilityFunctions.and;
+import static nars.nal.UtilityFunctions.or;
 
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).
@@ -381,19 +381,7 @@ public class UnitBudget implements Budget {
 //        return Float.NaN;
 //    }
 
-    public final boolean equalsByPrecision(Budget t) {
-        return equalsByPrecision(t, BUDGET_EPSILON);
-    }
 
-    public final boolean equalsByPrecision(Budget t, float epsilon) {
-        return  equal(getPriority(), t.getPriority(), epsilon) &&
-                equal(getDurability(), t.getDurability(), epsilon) &&
-                equal(getQuality(), t.getQuality(), epsilon);
-    }
-
-    public final boolean equalsBudget(Budget t) {
-        return equalsByPrecision(t) && (getLastForgetTime() == t.getLastForgetTime());
-    }
 
     public boolean equals(Object that) {
         if (that instanceof Budget) {

@@ -17,16 +17,13 @@ public class ItemAccumulator<V> extends ArrayBag<V> {
 
     public ItemAccumulator(int capacity) {
         super(new ArraySortedIndex(capacity));
-        mergeAverage();
+        mergePlus();
     }
-
-
 
     @Override
     public final V peekNext() {
         return items.getFirst().get();
     }
-
 
     @Override
     public V pop() {

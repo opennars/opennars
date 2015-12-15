@@ -2,6 +2,7 @@ package nars.concept;
 
 import nars.NAR;
 import nars.bag.Bag;
+import nars.budget.Budget;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
 import nars.task.Task;
@@ -89,6 +90,11 @@ public class AtomConcept extends AbstractConcept  {
     /** atoms have no termlink templates, they are irreducible */
     @Override public final Term[] getTermLinkTemplates() {
         return null;
+    }
+
+    @Override
+    public boolean link(Term t, Budget b, float scale, NAR nar) {
+        return false;
     }
 
 }

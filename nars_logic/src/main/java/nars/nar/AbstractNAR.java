@@ -363,10 +363,10 @@ public abstract class AbstractNAR extends NAR {
     public Concept apply(Term t) {
 
         Bag<Task> taskLinks =
-                new CurveBag<>(taskLinkBagSize, rng).mergeAverage();
+                new CurveBag<>(taskLinkBagSize, rng).mergePlus();
 
         Bag<Term> termLinks =
-                new CurveBag<>(termLinkBagSize, rng).mergeAverage();
+                new CurveBag<>(termLinkBagSize, rng).mergePlus();
 
         //Budget b = new UnitBudget();
         //Budget b = new BagAggregateBudget(taskLinks);
@@ -394,9 +394,11 @@ public abstract class AbstractNAR extends NAR {
 //    }
 
     @Override
-    protected Concept doConceptualize(Term term, Budget b) {
-        throw new RuntimeException("implement conceptualize");
-        //return core.activate(term, b);
+    protected Concept doConceptualize(Term term, Budget b, float scale) {
+        BagBudget<Concept> t = core.concepts().put(term, b, scale);
+        if (t!=null)
+            return t.get();
+        return null;
     }
 
 

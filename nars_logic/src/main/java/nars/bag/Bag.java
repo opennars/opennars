@@ -1,15 +1,15 @@
 package nars.bag;
 
-import com.gs.collections.api.block.procedure.Procedure2;
 import nars.bag.impl.AbstractCacheBag;
 import nars.budget.Budget;
-import nars.budget.UnitBudget;
 import nars.util.data.Util;
 
 import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static nars.Global.BUDGET_EPSILON;
 
 
 /**
@@ -20,7 +20,11 @@ import java.util.function.Supplier;
  */
 public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements Consumer<V>, Supplier<V>, Iterable<V> {
 
-    protected Procedure2<Budget, Budget> mergeFunction;
+    public interface BudgetMerge {
+        void merge(Budget target, Budget src, float srcScale);
+    }
+
+    protected BudgetMerge mergeFunction;
 
 
     /**
@@ -47,48 +51,65 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
 
 
     /**
-     * @param newItem
-     * @return null if put was successful, or a displaced item if newItem was inserted.
-     * if newItem itself is returned, then it was rejected due to insufficient budget
-     * if the newItem already existed, the resulting budget is merged.
+     * put with an empty budget
      */
-    public abstract BagBudget<V> put(V newItem);
+    public abstract BagBudget<V> put(Object newItem);
 
 
-    public final BagBudget<V> put(V i, Budget b) {
-        put(i, b, 1f);
+    public final BagBudget<V> put(Object i, Budget b) {
+        return put(i, b, 1f);
     }
 
-    public abstract BagBudget<V> put(V i, Budget b, float scale);
+    @Override
+    public BagBudget<V> put(V v, BagBudget<V> b) {
+        return put(v, b, 1f);
+    }
+
+    public abstract BagBudget<V> put(Object i, Budget b, float scale);
 
 
-    public void setMergeFunction(Procedure2<Budget, Budget> mergeFunction) {
+    public void setMergeFunction(BudgetMerge mergeFunction) {
         this.mergeFunction = mergeFunction;
     }
 
-    /**
-     * set the merging function to 'average'
-     */
-    public Bag mergeAverage() {
-        setMergeFunction(UnitBudget.average);
-        return this;
-    }
+    public static BudgetMerge plus = (target, src, srcScale) -> {
+        float dp = src.getPriority() * srcScale;
+
+        float currentPriority = target.getPriorityIfNaNThenZero();
+
+        float nextPriority = Math.min(1,currentPriority + dp);
+
+        float currentNextPrioritySum = (currentPriority + nextPriority);
+
+        /* current proportion */ float cp = (Util.equal(currentNextPrioritySum, 0, BUDGET_EPSILON)) ?
+                0.5f : /* both are zero so they have equal infleunce */
+                (currentPriority / currentNextPrioritySum);
+        /* next proportion */ float np = 1.0f - cp;
+
+
+        float D = target.getDurability();
+        float Q = target.getQuality();
+
+        target.set(
+            nextPriority,
+            Math.max(D, (cp * D) + (np * src.getDurability())),
+            Math.max(Q, (cp * Q) + (np * src.getQuality()))
+        );
+    };
+
+
 
     /**
      * set the merging function to 'plus'
      */
     public Bag mergePlus() {
-        setMergeFunction(UnitBudget.plus);
+        setMergeFunction(plus);
         return this;
     }
 
-    public Bag mergeMax() {
-        setMergeFunction(UnitBudget.max);
-        return this;
-    }
 
-    protected final void merge(Budget newBudget, Budget oldBudget) {
-        mergeFunction.value(newBudget, oldBudget);
+    protected final void merge(Budget newBudget, Budget oldBudget, float scale) {
+        mergeFunction.merge(newBudget, oldBudget, scale);
     }
 
 //    /**
@@ -232,7 +253,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
      * slow, probably want to override in subclasses
      */
     public float getPriorityMin() {
-        float[] min = new float[] { Float.POSITIVE_INFINITY };
+        float[] min = { Float.POSITIVE_INFINITY };
         forEachEntry(b -> {
             float p = b.getPriority();
             if (p < min[0]) min[0] = p;
@@ -243,7 +264,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
      * slow, probably want to override in subclasses
      */
     public float getPriorityMax() {
-        float[] max = new float[] { Float.NEGATIVE_INFINITY};
+        float[] max = { Float.NEGATIVE_INFINITY};
         forEachEntry(b -> {
             float p = b.getPriority();
             if (p > max[0]) max[0] = p;

@@ -29,21 +29,17 @@ public final class NullBag<V> extends Bag<V> {
         return null;
     }
 
+
+
     @Override
-    public BagBudget<V> put(V newItem) {
+    public BagBudget<V> put(Object newItem) {
         return null;
     }
 
     @Override
-    public BagBudget<V> put(V k, Budget b) {
+    public BagBudget<V> put(Object i, Budget b, float scale) {
         return null;
     }
-
-    @Override
-    public BagBudget<V> put(V v, BagBudget<V> vBagBudget) {
-        return null;
-    }
-
 
     @Override
     public int capacity() {

@@ -48,7 +48,7 @@ public class Terminal extends AbstractNAR {
 
 
     @Override
-    protected Concept doConceptualize(Term term, Budget b) {
+    protected Concept doConceptualize(Term term, Budget b, float scale) {
         Concept exists = memory.concept(term);
         if (exists!=null) {
             return exists;

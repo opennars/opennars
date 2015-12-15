@@ -98,7 +98,7 @@ public class TermIndexTest {
     @Test public void testRuleTermsAddedToMemoryTermIndex() {
         NAR d = new Default(100,1,1,1);
         Set<Term> t = new TreeSet();
-        d.memory.index.forEach(x -> t.add(x.get()));
+        d.memory.index.forEach(x -> t.add(x.term()));
 
         assertTrue(t.size() > 100); //approximate
 

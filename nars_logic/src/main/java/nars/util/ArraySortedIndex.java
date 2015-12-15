@@ -1,7 +1,7 @@
 package nars.util;
 
 import nars.Global;
-import nars.budget.Itemized;
+import nars.budget.Budgeted;
 import nars.util.data.sorted.SortedIndex;
 
 import java.io.Serializable;
@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 //import org.apache.commons.collections.iterators.ReverseListIterator;
 
 
-public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> implements Serializable {
+public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> implements Serializable {
 
     protected int capacity;
 
@@ -57,7 +57,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
      *
      * TODO parameter score function
      */
-    static float score(Itemized b) {
+    static float score(Budgeted b) {
 
         //MODE 0: priority only
         return b.getPriority();

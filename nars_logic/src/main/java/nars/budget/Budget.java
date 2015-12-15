@@ -120,6 +120,22 @@ public interface Budget extends Prioritized, Budgeted {
         );
     }
 
+    default boolean equalsByPrecision(Budget t) {
+        return equalsByPrecision(t, BUDGET_EPSILON);
+    }
+
+    default boolean equalsByPrecision(Budget t, float epsilon) {
+        return  equal(getPriority(), t.getPriority(), epsilon) &&
+                equal(getDurability(), t.getDurability(), epsilon) &&
+                equal(getQuality(), t.getQuality(), epsilon);
+    }
+
+
+
+    default boolean equalsBudget(Budget t) {
+        return equalsByPrecision(t);// && (getLastForgetTime() == t.getLastForgetTime());
+    }
+
     /**
      * Increase priority value by a percentage of the remaining range.
      * Uses the 'or' function so it is not linear
@@ -369,4 +385,7 @@ public interface Budget extends Prioritized, Budgeted {
     }
 
 
+    default void set(float p, float d, float q) {
+        setPriority(p); setDurability(d); setQuality(q);
+    }
 }

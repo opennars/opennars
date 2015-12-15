@@ -1,7 +1,6 @@
 package nars.util;
 
-import com.gs.collections.api.block.procedure.Procedure2;
-import nars.budget.Budget;
+import nars.bag.Bag;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -18,7 +17,7 @@ public abstract class CollectorMap<K, V extends Supplier<K>> implements Serializ
         this.map = map;
     }
 
-    public abstract Procedure2<Budget, Budget> getMerge();
+    public abstract Bag.BudgetMerge getMerge();
 
     /** implementation for adding the value to another collecton (called internally)  */
     protected abstract V addItem(V e);
@@ -58,12 +57,10 @@ public abstract class CollectorMap<K, V extends Supplier<K>> implements Serializ
 //    }
 
 
-    public V put(V value) {
+    public V put(K key, V value) {
 
 
         /*synchronized (nameTable)*/
-
-        K key = value.get();
         V removed = putKey(key, value);
         if (removed != null) {
 
@@ -125,7 +122,7 @@ public abstract class CollectorMap<K, V extends Supplier<K>> implements Serializ
         map.clear();
     }
 
-    public final V get(K key) {
+    public final V get(Object key) {
         return map.get(key);
     }
 

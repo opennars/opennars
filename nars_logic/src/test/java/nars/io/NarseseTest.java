@@ -79,7 +79,7 @@ public class NarseseTest {
         Task t = task("<a --> b>.");
         assertNotNull(t);
         assertEquals(Op.INHERIT, t.get().op());
-        Compound i = t.get();
+        Compound i = t.term();
         assertEquals("a", i.term(0).toString());
         assertEquals("b", i.term(1).toString());
         assertEquals('.', t.getPunctuation());
@@ -486,7 +486,7 @@ public class NarseseTest {
         String a = "<a --> b>.\n//comment1234\n<b-->c>.";
         List<Task> l = tasks(a);
         assertEquals(3, l.size());
-        Compound op = ((Task)l.get(1)).get();
+        Compound op = ((Task)l.get(1)).term();
         ensureIsEcho(op);
         assertEquals("echo(\"comment1234\")", op.toString());
     }

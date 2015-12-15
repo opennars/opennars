@@ -69,6 +69,7 @@ public class SingleStepNAR extends AbstractNAR {
     }
 
 
+
 //    private static class RuleReport implements Runnable {
 //        @Override
 //        public void run() {

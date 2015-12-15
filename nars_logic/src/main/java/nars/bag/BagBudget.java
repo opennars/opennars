@@ -108,4 +108,16 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
         setDurability(b.getDurability());
         setQuality(b.getQuality());
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        /*if (obj instanceof Budget)*/ {
+            return equalsBudget((Budget) obj);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return id + "=" + toBudgetString();
+    }
 }

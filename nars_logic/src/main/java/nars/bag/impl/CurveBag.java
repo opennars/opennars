@@ -1,7 +1,6 @@
 package nars.bag.impl;
 
 import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
-import com.gs.collections.api.block.procedure.Procedure2;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.budget.Budget;
@@ -65,8 +64,7 @@ public class CurveBag<V> extends Bag<V> {
 
 
     @Override
-    public void setMergeFunction(Procedure2<Budget, Budget> mergeFunction) {
-        super.setMergeFunction(mergeFunction);
+    public void setMergeFunction(BudgetMerge mergeFunction) {
         arrayBag.setMergeFunction(mergeFunction);
     }
 
@@ -120,7 +118,7 @@ public class CurveBag<V> extends Bag<V> {
 
     @Override
     public BagBudget<V> get(V key) {
-        return null;
+        return arrayBag.get(key);
     }
 
     @Override
@@ -133,21 +131,16 @@ public class CurveBag<V> extends Bag<V> {
         return arrayBag.remove(key);
     }
 
+
     @Override
-    public BagBudget<V> put(V v, BagBudget<V> vBagBudget) {
-        return arrayBag.put(v, vBagBudget);
+    public BagBudget<V> put(Object v, Budget vBagBudget, float scale) {
+        return arrayBag.put(v, vBagBudget, scale);
     }
 
     @Override
-    public BagBudget<V> put(V newItem) {
+    public BagBudget<V> put(Object newItem) {
         return arrayBag.put(newItem);
     }
-
-    @Override
-    public BagBudget<V> put(V i, Budget b) {
-        return arrayBag.put(i, b);
-    }
-
 
     @Override
     public int capacity() {

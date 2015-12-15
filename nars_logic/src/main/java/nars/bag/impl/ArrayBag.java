@@ -1,7 +1,6 @@
 package nars.bag.impl;
 
 import com.google.common.collect.Sets;
-import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
@@ -42,12 +41,10 @@ public class ArrayBag<V> extends Bag<V> {
         index = new ArrayMapping(map, items);
     }
 
-    @Override public BagBudget<V> put(V k) {
+    @Override public BagBudget<V> put(Object k) {
         return put(k, UnitBudget.zero);
     }
-    @Override public BagBudget<V> put(V k, BagBudget<V> budget) {
-        throw new RuntimeException("unimpl?");
-    }
+
 
 //    @Override public V put(V k, Budget b) {
 //        //TODO use Map.compute.., etc
@@ -180,7 +177,6 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
 
-
     /**
      * Choose an Item according to priority distribution and take it out of the
      * Bag
@@ -198,11 +194,10 @@ public class ArrayBag<V> extends Bag<V> {
      * Insert an item into the itemTable, and return the overflow
      *
      * @param i The Item to put in
-     * @return The overflow Item, or null if nothing displaced
+     * @return The updated budget
      */
     @Override
-    public BagBudget<V> put(V i, Budget b) {
-
+    public BagBudget<V> put(Object i, Budget b, float scale) {
 
         ArrayMapping index = this.index;
 
@@ -210,45 +205,25 @@ public class ArrayBag<V> extends Bag<V> {
 
         if (existing != null) {
 
-            index.removeItem(existing);
-
-            if (!existing.isDeleted()) {
-
-                /*if (index.removeItem(overflow) == null)
-                    throw new RuntimeException("put fault");*/
-
-                merge(existing.getBudget(), b);
-
-                index.addItem(existing);
-
-                /*if (!i.name().equals(overflow.name())) {
-                    throw new RuntimeException("wtf: notEqual " + i.name() + " and " + overflow.name() );
-                }*/
-
-                /* absorbed */
-                return null;
-            }
+            merge(existing.getBudget(), b, scale);
+            return existing;
         }
 
-
-        BagBudget<V> displaced = null;
-
-        if (full()) {
-
-
-            if (getPriorityMin() > b.getPriority()) {
-                //insufficient priority to enter the bag
-                //remove the key which was put() at beginning of this method
-                return index.removeKey(i);
-            }
-
-            displaced = removeLowest();
-        }
+//        //TODO optional displacement until next update, allowing sub-threshold to grow beyond threshold
+//        BagBudget<V> displaced = null;
+//        if (full()) {
+//            if (getPriorityMin() > b.getPriority()) {
+//                //insufficient priority to enter the bag
+//                //remove the key which was put() at beginning of this method
+//                return index.removeKey(i);
+//            }
+//            displaced = removeLowest();
+//        }
 
         //now that room is available:
-        index.addItem(new BagBudget(i, b));
-
-        return displaced;
+        BagBudget newBudget = new BagBudget(i, b, scale);
+        index.put((V)i, newBudget);
+        return newBudget;
     }
 
     /**
@@ -302,7 +277,7 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     @Override
-    public BagBudget<V> get(V key) {
+    public BagBudget<V> get(Object key) {
         return index.get(key);
     }
 
@@ -401,7 +376,7 @@ public class ArrayBag<V> extends Bag<V> {
         }
 
         @Override
-        public final Procedure2<Budget, Budget> getMerge() {
+        public final BudgetMerge getMerge() {
             return mergeFunction;
         }
 
