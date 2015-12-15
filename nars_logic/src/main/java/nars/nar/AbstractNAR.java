@@ -34,6 +34,7 @@ import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
 import nars.task.flow.TaskPerception;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.time.Clock;
@@ -395,10 +396,18 @@ public abstract class AbstractNAR extends NAR {
 
     @Override
     protected Concept doConceptualize(Term term, Budget b, float scale) {
-        BagBudget<Concept> t = core.concepts().put(term, b, scale);
-        if (t!=null)
-            return t.get();
-        return null;
+        Termed c = memory.index.get(term);
+        if (!(c instanceof Concept)) {
+            c = apply(term);
+            if (c == null)
+                return null; //unconceptualizable
+            memory.index.put(term, c);
+        }
+
+        BagBudget<Concept> t = core.concepts().put(c, b, scale);
+        /*if (t!=null)
+            return t.get();*/
+        return (Concept)c;
     }
 
 

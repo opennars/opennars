@@ -15,7 +15,7 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public BagBudget<V> get(V key) {
+    public BagBudget<V> get(Object key) {
         return null;
     }
 

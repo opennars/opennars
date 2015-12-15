@@ -121,7 +121,7 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public BagBudget<V> get(V key) {
+    public BagBudget<V> get(Object key) {
         return arrayBag.get(key);
     }
 

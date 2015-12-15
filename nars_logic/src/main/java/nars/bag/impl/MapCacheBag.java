@@ -20,7 +20,7 @@ public class MapCacheBag<K,V> extends AbstractCacheBag<K,V>  {
     }
 
     @Override
-    public V get(K key) {
+    public V get(Object key) {
         return data.get(key);
     }
 

@@ -7,7 +7,7 @@ public interface CacheBag<K,V>  {
 
     void clear();
 
-    V get(K key);
+    V get(Object key);
 
     Object remove(K key);
 

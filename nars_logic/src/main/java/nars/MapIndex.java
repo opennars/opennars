@@ -27,12 +27,12 @@ public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
 
 
     @Override
-    public final Termed get(Termed t) {
+    public final Termed get(Object t) {
 
         Map<Termed, Termed> d = data;
         Termed existing = d.get(t);
         if (existing ==null) {
-            return compile(t);
+            return compile((Termed)t);
         }
         return existing;
 

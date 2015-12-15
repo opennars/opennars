@@ -61,7 +61,7 @@ public class GuavaCacheBag<K,V> extends AbstractCacheBag<K,V> implements Removal
 
 
     @Override
-    public final V get(K key) {
+    public final V get(Object key) {
         if (key == null)
             throw new RuntimeException("null");
         return data.getIfPresent(key);
