@@ -479,8 +479,8 @@ public abstract class AbstractNAR extends NAR {
         public final MutableInteger capacity = new MutableInteger();
 
         public final MutableFloat conceptForget;
-
-
+        private BagBudget[] termsArray = new BagBudget[0];
+        private BagBudget[] tasksArray = new BagBudget[0];
 
 
 //        @Deprecated
@@ -561,12 +561,12 @@ public abstract class AbstractNAR extends NAR {
                     simpleForgetDecay
                 );
 
-                c.getTermLinks().update();
-                c.getTaskLinks().update();
+
+
 
                 return true;
             });
-            active.update();
+            active.commit();
 
         }
 
@@ -598,30 +598,37 @@ public abstract class AbstractNAR extends NAR {
 
             //long now = nar.time();
 
-        /* dur, now,
+            /* dur, now,
                 taskLinkForgetDurations * dur,
                 tasks); */
-
             int tasksCount = concept.getTaskLinks().next(tasklinks, each, tasks);
             if (tasksCount == 0) return;
+            concept.getTaskLinks().commit();
 
 
-        /*int termsCount = concept.nextTermLinks(dur, now,
+
+            /*int termsCount = concept.nextTermLinks(dur, now,
                 m.termLinkForgetDurations.floatValue(),
                 terms);*/
             int termsCount = concept.getTermLinks().next(termlinks, each, terms);
             if (termsCount == 0) return;
+            concept.getTermLinks().commit();
+
 
             /*System.out.println(tasks.size() + "," + terms.size() + ": "
                     + tasks + " " + terms);*/
 
+            //convert to array for fast for-within-for iterations
+            tasksArray = this.tasks.toArray(tasksArray);
+            this.tasks.clear();
+
+            termsArray = this.terms.toArray(termsArray);
+            this.terms.clear();
+
             ConceptProcess.firePremises(concept,
-                    tasks.toArray(new BagBudget[tasks.size()]),
-                    terms.toArray(new BagBudget[terms.size()]),
+                    tasksArray, termsArray,
                     proc, nar);
 
-            tasks.clear();
-            terms.clear();
         }
 
 

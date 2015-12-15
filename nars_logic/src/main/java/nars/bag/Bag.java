@@ -237,7 +237,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
 
 
     /** commits the next set of changes and updates any sorting */
-    abstract public void update();
+    abstract public void commit();
 
     /**
      * implements the Consumer<V> interface; invokes a put()

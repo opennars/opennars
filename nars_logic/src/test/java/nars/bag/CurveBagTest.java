@@ -55,7 +55,7 @@ public class CurveBagTest  {
         a.put("x", new UnitBudget(0.1f, 0.5f, 0.5f));
         assertEquals(1, a.size());
 
-        a.update();
+        a.commit();
 
         assertEquals(new UnitBudget(0.2f, 0.5f, 0.5f), a.get("x"));
 
@@ -72,12 +72,12 @@ public class CurveBagTest  {
         assertEquals("y", ii.next());
         assertEquals("x", ii.next());
 
-        a.update();
+        a.commit();
 
         assertEquals("[y=$0.2000;0.5000;0.5000$, x=$0.1000;0.5000;0.5000$]", a.items.toString());
 
         a.put("x", new UnitBudget(0.2f,0.5f,0.5f));
-        a.update();
+        a.commit();
 
         //x should now be ahead
         assertEquals("[x=$0.3000;0.5000;0.5000$, y=$0.2000;0.5000;0.5000$]", a.items.toString());
@@ -96,7 +96,7 @@ public class CurveBagTest  {
         a.put("y", new UnitBudget(0.2f, 0.5f, 0.5f));
         a.put("z", new UnitBudget(0.05f, 0.5f, 0.5f));
 
-        a.update();
+        a.commit();
 
         System.out.println(a.items);
         System.out.println(a.index);
@@ -113,14 +113,14 @@ public class CurveBagTest  {
 
         a.put("x", new UnitBudget(0.1f, 0.5f, 0.5f));
         a.put("x", new UnitBudget(0.1f, 0.5f, 0.5f), 0.5f);
-        a.update();
+        a.commit();
 
         assertEquals(0.15, a.get("x").getPriority(), 0.001f);
 
         a.put("y", new UnitBudget(0.1f, 0.5f, 0.5f));
         a.put("y", new UnitBudget(0.1f, 0.5f, 0.5f), 0.5f);
         a.put("y", new UnitBudget(0.1f, 0.5f, 0.5f), 0.25f);
-        a.update();
+        a.commit();
 
         assertEquals(0.175, a.get("y").getPriority(), 0.001f);
 

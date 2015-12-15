@@ -74,8 +74,8 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public void update() {
-        arrayBag.update();
+    public void commit() {
+        arrayBag.commit();
     }
 
     public BagBudget<V> peekNext(boolean remove) {

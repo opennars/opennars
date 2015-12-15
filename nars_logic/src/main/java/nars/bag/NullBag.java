@@ -62,7 +62,7 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public void update() {
+    public void commit() {
 
     }
 

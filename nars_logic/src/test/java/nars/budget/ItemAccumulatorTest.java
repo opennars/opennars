@@ -37,7 +37,7 @@ public class ItemAccumulatorTest {
         ii.put(t);
         assertEquals(1, ii.size());
 
-        ii.update();
+        ii.commit();
 
         ii.forEach(c -> System.out.println(c));
 
@@ -64,7 +64,7 @@ public class ItemAccumulatorTest {
         ii.put(n.task("$0.1$ <b-->x>" + s ));
         ii.put(n.task("$0.2$ <c-->x>" + s ));
         ii.put(n.task("$0.3$ <d-->x>" + s ));
-        ii.update();
+        ii.commit();
         assertEquals(4, ii.size());
 
         //z should be ignored
@@ -111,7 +111,7 @@ public class ItemAccumulatorTest {
             ii.put($.$("a:" + i, '?').budget( (float)Math.random() * 0.95f, 0.5f, 0.5f));
         }
 
-        ii.update();
+        ii.commit();
 
         MutableDouble prev = new MutableDouble(Double.POSITIVE_INFINITY);
 
