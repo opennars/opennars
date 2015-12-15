@@ -1,11 +1,13 @@
 package nars.bag.impl;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.budget.UnitBudget;
+import nars.util.ArraySortedIndex;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
 
@@ -39,6 +41,10 @@ public class ArrayBag<V> extends Bag<V> {
 
         this.items = items;
         index = new ArrayMapping(map, items);
+    }
+
+    public ArrayBag(int capacity) {
+        this(new ArraySortedIndex(capacity));
     }
 
     @Override public BagBudget<V> put(Object k) {
@@ -205,7 +211,7 @@ public class ArrayBag<V> extends Bag<V> {
 
         if (existing != null) {
 
-            merge(existing.getBudget(), b, scale);
+            merge(existing, b, scale);
             return existing;
         }
 
@@ -224,6 +230,18 @@ public class ArrayBag<V> extends Bag<V> {
         BagBudget newBudget = new BagBudget(i, b, scale);
         index.put((V)i, newBudget);
         return newBudget;
+    }
+
+    @Override
+    public void update() {
+        index.forEach((k,v) -> {
+            if (v.hasDelta()) {
+                if (items.remove(v)) {
+                    v.commit();
+                    items.insert(v);
+                }
+            }
+        });
     }
 
     /**
@@ -298,21 +316,21 @@ public class ArrayBag<V> extends Bag<V> {
 
     @Override
     public final Iterator<V> iterator() {
-        return index.keySet().iterator();
+        return Iterators.transform(items.iterator(), t-> t.get() );
     }
 
     @Override
     public final void forEach(Consumer<? super V> action) {
 
-        index.keySet().forEach(action);
-//
-//        final List<V> l = items.getList();
-//
-//        //start at end
-//        for (int i = l.size()-1; i >= 0; i--){
-//            action.accept(l.get(i));
-//        }
-//
+        //items.forEach(b -> action.accept(b.get()));
+
+        final List<BagBudget<V>> l = items.getList();
+
+        //start at end
+        for (int i = l.size()-1; i >= 0; i--){
+            action.accept(l.get(i).get());
+        }
+
     }
 
     /**
@@ -392,8 +410,11 @@ public class ArrayBag<V> extends Bag<V> {
 
         @Override
         protected BagBudget<V> addItem(BagBudget<V> i) {
-
-            return items.insert(i);
+            BagBudget<V> overflow = items.insert(i);
+            if (overflow!=null) {
+                removeKey(overflow.get());
+            }
+            return overflow;
         }
     }
 }

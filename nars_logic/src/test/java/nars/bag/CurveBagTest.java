@@ -1,15 +1,16 @@
 package nars.bag;
 
 import nars.Global;
+import nars.bag.impl.ArrayBag;
 import nars.bag.impl.CurveBag;
 import nars.budget.UnitBudget;
 import nars.util.data.random.XorShift128PlusRandom;
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -25,11 +26,15 @@ public class CurveBagTest  {
 
 
     @Test public void testBasicInsertionRemoval() {
-        int cap = 4;
-        CurveBag<String> c = new CurveBag(cap, rng);
+        int cap = 1;
+        testBasicInsertionRemoval(new ArrayBag(cap));
+        testBasicInsertionRemoval(new CurveBag(cap, rng));
+    }
+
+    public void testBasicInsertionRemoval(Bag<String> c) {
         c.mergePlus();
 
-        assertEquals(cap, c.capacity());
+        assertEquals(1, c.capacity());
         assertEquals(0, c.size());
         assertTrue(c.isEmpty());
 
@@ -39,6 +44,85 @@ public class CurveBagTest  {
         assertEquals(0, c.getPriorityMin(), 0.001f);
 
         assertEquals(UnitBudget.zero,  c.get("x"));
+
+    }
+
+    @Test public void testBudgetMerge() {
+        ArrayBag<String> a = new ArrayBag(4);
+        a.mergePlus();
+
+        a.put("x", new UnitBudget(0.1f, 0.5f, 0.5f));
+        a.put("x", new UnitBudget(0.1f, 0.5f, 0.5f));
+        assertEquals(1, a.size());
+
+        a.update();
+
+        assertEquals(new UnitBudget(0.2f, 0.5f, 0.5f), a.get("x"));
+
+    }
+
+    @Test public void testSort() {
+        ArrayBag<String> a = new ArrayBag(4);
+        a.mergePlus();
+
+        a.put("x", new UnitBudget(0.1f, 0.5f, 0.5f));
+        a.put("y", new UnitBudget(0.2f, 0.5f, 0.5f));
+
+        Iterator<String> ii = a.iterator();
+        assertEquals("y", ii.next());
+        assertEquals("x", ii.next());
+
+        a.update();
+
+        assertEquals("[y=$0.2000;0.5000;0.5000$, x=$0.1000;0.5000;0.5000$]", a.items.toString());
+
+        a.put("x", new UnitBudget(0.2f,0.5f,0.5f));
+        a.update();
+
+        //x should now be ahead
+        assertEquals("[x=$0.3000;0.5000;0.5000$, y=$0.2000;0.5000;0.5000$]", a.items.toString());
+
+        ii = a.iterator();
+        assertEquals("x", ii.next());
+        assertEquals("y", ii.next());
+
+    }
+
+    @Test public void testCapacity() {
+        ArrayBag<String> a = new ArrayBag(2);
+        a.mergePlus();
+
+        a.put("x", new UnitBudget(0.1f, 0.5f, 0.5f));
+        a.put("y", new UnitBudget(0.2f, 0.5f, 0.5f));
+        a.put("z", new UnitBudget(0.05f, 0.5f, 0.5f));
+
+        a.update();
+
+        System.out.println(a.items);
+        System.out.println(a.index);
+
+        assertEquals(2, a.size());
+        assertTrue(a.contains("x") && a.contains("y"));
+        assertFalse(a.contains("z"));
+
+    }
+
+    @Test public void testScalePut() {
+        ArrayBag<String> a = new ArrayBag(2);
+        a.mergePlus();
+
+        a.put("x", new UnitBudget(0.1f, 0.5f, 0.5f));
+        a.put("x", new UnitBudget(0.1f, 0.5f, 0.5f), 0.5f);
+        a.update();
+
+        assertEquals(0.15, a.get("x").getPriority(), 0.001f);
+
+        a.put("y", new UnitBudget(0.1f, 0.5f, 0.5f));
+        a.put("y", new UnitBudget(0.1f, 0.5f, 0.5f), 0.5f);
+        a.put("y", new UnitBudget(0.1f, 0.5f, 0.5f), 0.25f);
+        a.update();
+
+        assertEquals(0.175, a.get("y").getPriority(), 0.001f);
 
     }
 

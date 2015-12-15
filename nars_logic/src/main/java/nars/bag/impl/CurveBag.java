@@ -73,6 +73,10 @@ public class CurveBag<V> extends Bag<V> {
         return peekNext(true);
     }
 
+    @Override
+    public void update() {
+        arrayBag.update();
+    }
 
     public V peekNext(boolean remove) {
 

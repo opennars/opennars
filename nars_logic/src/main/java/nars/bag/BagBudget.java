@@ -1,5 +1,6 @@
 package nars.bag;
 
+import nars.Global;
 import nars.budget.Budget;
 import nars.budget.UnitBudget;
 
@@ -118,6 +119,15 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
 
     @Override
     public String toString() {
-        return id + "=" + toBudgetString();
+        return id + "=" + getBudgetString();
+    }
+
+    public boolean hasDelta() {
+        float[] b = this.b;
+        return nonZero(b[3]) || nonZero(b[4]) || nonZero(b[5]);
+    }
+
+    static boolean nonZero(float x) {
+        return (x > Global.BUDGET_EPSILON);
     }
 }
