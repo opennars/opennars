@@ -561,9 +561,12 @@ public abstract class AbstractNAR extends NAR {
                     simpleForgetDecay
                 );
 
+                c.getTermLinks().update();
+                c.getTaskLinks().update();
+
                 return true;
             });
-
+            active.update();
 
         }
 

@@ -238,20 +238,18 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     @Override
-    public void update(Consumer<BagBudget> updater) {
-        forEachEntry(v -> {
-            update(v, updater);
-        });
+    public void update() {
+        forEachEntry(this::update);
     }
 
-    public void update(BagBudget v, Consumer<BagBudget> updater) {
-        if (items.remove(v)) {
-            updater.accept(v);
-            //if (v.hasDelta()) {
+    public void update(BagBudget v) {
+        if (v.hasDelta()) {
+            SortedIndex<BagBudget<V>> ii = this.items;
+            if (ii.remove(v)) {
                 v.commit();
-                items.insert(v);
+                ii.insert(v);
             }
-        //}
+        }
     }
 
     /**

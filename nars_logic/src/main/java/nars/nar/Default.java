@@ -142,12 +142,12 @@ public class Default extends AbstractNAR {
 
             if (!buffer.isEmpty()) {
 
-                /*Task.normalize(
+                Task.normalize(
                         buffer,
                         //p.getMeanPriority()
                         p.getTask().getPriority()
                         //p.getTask().getPriority()/buffer.size()
-                );*/
+                );
 
                 buffer.forEach(narInput);
 

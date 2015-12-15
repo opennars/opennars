@@ -714,7 +714,7 @@ public class FindSubst extends Versioning implements Subst {
     public boolean matchXvar(Variable x, Term y) {
         Term xSubst = getXY(x);
 
-        if (xSubst != null) {
+        if (xSubst != null && !xSubst.equals(x)) {
             return match(xSubst, y);
         } else {
             return nextVarX(x, y);

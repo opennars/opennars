@@ -62,7 +62,7 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public void update(Consumer<BagBudget> updater) {
+    public void update() {
 
     }
 
