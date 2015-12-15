@@ -9,9 +9,11 @@ import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Bag which stores items, sorted, in one array.
@@ -101,19 +103,28 @@ public class CurveBag<V> extends Bag<V> {
     }
 
 
+    /** optimized batch fill, using consecutive array elements, also ensuring uniqueness */
+    @Override public int next(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
 
-    //TODO
-    //FOR linear scanner, if re-implemented
-//    /**
-//     * Rate of sampling index when in non-random "scanning" removal mode.
-//     * The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
-//     * Default scanning behavior is to start at 1.0 (highest priority) and decrement.
-//     * When a value exceeds 0.0 or 1.0 it wraps to the opposite end (modulo).
-//     * <p>
-//     * Valid values are: -1.0 <= x <= 1.0, x!=0
-//     */
-//    final float scanningRate = -1.0f;
+        int ss = size();
+        if (ss <= n) {
+            //special case: give everything
+            forEachEntry(c -> target.add(c));
+            return n;
+        }
 
+        int startSize = target.size();
+
+        int begin = random.nextInt(ss - n);
+        for (int i = begin; i < n+begin; i++) {
+            BagBudget<V> ii = get(i);
+            if (each.test(ii)) {
+                target.add(ii);
+            }
+        }
+        return target.size() - startSize;
+
+    }
 
     @Override
     public void clear() {

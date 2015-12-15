@@ -93,7 +93,8 @@ public class TaskButton extends Label {
 //            setStyle("-fx-base: #FFFFFF !important;");
 //            setStyle("-fx-padding: 5px !important;");
 //            //setStyle("-fx-border-radius: 20;");
-        setFont(NARfx.mono(priToFontSize));
+        final float minFontSize = 8;
+        setFont(NARfx.mono(minFontSize + priToFontSize));
 
         Color c = getColor();
 //            setBackground(new Background(

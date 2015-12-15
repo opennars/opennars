@@ -224,7 +224,7 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
 
-    public static float forgetAlann(UnitBudget budget, float forgetPeriod /* cycles */, long currentTime) {
+    public static float forgetAlann(Budget budget, float forgetPeriod /* cycles */, long currentTime) {
         // priority * e^(-lambda*t)
         //     lambda is (1 - durabilty) / forgetPeriod
         //     t is the delta

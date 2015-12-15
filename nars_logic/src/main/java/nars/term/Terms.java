@@ -129,11 +129,11 @@ public class Terms {
         //original code did not check relation index equality
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/language/CompoundTerm.java
         if (requireEqualImageRelation) {
-            if (sa.op().isImage() && sb.op().isImage()) {
+            //if (sa.op().isImage() && sb.op().isImage()) {
                 if (((Compound)sa).relation() != ((Compound)sb).relation()) {
                     return false;
                 }
-            }
+            //}
         }
 
         return containsAll((Compound) sa, ta, (Compound) sb, tb);
@@ -141,18 +141,17 @@ public class Terms {
     }
 
     private static boolean containsAll(Compound sat, Term ta, Compound sbt, Term tb) {
-        //temporary set for fast containment check
-        Set<Term> componentsA = Global.newHashSet(sat.size() + 1);
+        //set for fast containment check
+        Set<Term> componentsA = sat.toSet();
         componentsA.add(ta);
-        sat.addAllTo(componentsA);
 
         //test A contains B
         if (!componentsA.contains(tb))
             return false;
-        int l = sbt.size();
-        for (int i = 0; i < l; i++) {
-            Term bComponent = sbt.term(i);
-            if (!componentsA.contains(bComponent))
+
+        Term[] sbtt = sbt.terms();
+        for (Term x : sbtt) {
+            if (!componentsA.contains(x))
                 return false;
         }
 

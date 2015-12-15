@@ -505,6 +505,36 @@ public abstract class AbstractNAR extends NAR {
                 nar.memory.eventCycleEnd.on((m) -> fireConcepts(conceptsFiredPerCycle.intValue(), c->process(c))),
                 nar.memory.eventReset.on((m) -> reset())
             );
+
+            alannForget = (budget) -> {
+                // priority * e^(-lambda*t)
+                //     lambda is (1 - durabilty) / forgetPeriod
+                //     dt is the delta
+                final long currentTime = nar.time(); //TODO cache
+
+                long dt = budget.setLastForgetTime(currentTime);
+                if (dt == 0) return true; //too soon to update
+
+                float currentPriority = budget.getPriorityIfNaNThenZero();
+
+                final float forgetPeriod = nar.memory.termLinkForgetDurations.floatValue() * nar.memory.duration(); //TODO cache
+                float lambda = (1.0f - budget.getDurability()) / forgetPeriod;
+
+                float relativeThreshold = 0.1f;
+
+                float expDecayed = currentPriority * (float) Math.exp(-lambda * dt);
+                float threshold = budget.getQuality() * relativeThreshold;
+
+                float nextPriority = Math.max(
+                    expDecayed,
+                    threshold
+                );
+
+                budget.setPriority(nextPriority);
+
+
+                return true;
+            };
         }
 
 
@@ -523,12 +553,13 @@ public abstract class AbstractNAR extends NAR {
 
         }
 
-        Predicate<BagBudget> simpleForgetDecay = (b) -> {
+        static final Predicate<BagBudget> simpleForgetDecay = (b) -> {
             float p = b.getPriority() * 0.99f;
             if (p > b.getQuality()*0.1f)
                 b.setPriority(p);
             return true;
         };
+        Predicate<BagBudget> alannForget;
 
         protected void fireConcepts(int conceptsToFire, Consumer<ConceptProcess> processor) {
 
@@ -558,7 +589,8 @@ public abstract class AbstractNAR extends NAR {
                 firePremiseSquare(nar, processor, c,
                     tasklinksSelectedPerFiredConcept.intValue(),
                     termlinksSelectedPerFiredConcept.intValue(),
-                    simpleForgetDecay
+                    //simpleForgetDecay
+                    alannForget
                 );
 
 

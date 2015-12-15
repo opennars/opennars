@@ -3,6 +3,7 @@ package nars.bag;
 import nars.Global;
 import nars.budget.Budget;
 import nars.budget.UnitBudget;
+import nars.nal.nal7.Tense;
 
 import java.util.function.Supplier;
 
@@ -13,8 +14,9 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
 
     private final float[] b = new float[6];
     public final X id;
+    private long lastForget;
 
-    public BagBudget(X id) {
+    protected BagBudget(X id) {
         this.id = id;
     }
 
@@ -34,6 +36,10 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
     }
 
     protected void init(Budget c, float scale) {
+        //this.lastForget = c.getLastForgetTime();
+        this.lastForget = Tense.TIMELESS;
+
+
         float[] b = this.b;
         b[0] = c.getPriority() * scale;
         b[1] = c.getDurability();
@@ -88,14 +94,21 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
 
     @Override
     public long setLastForgetTime(long currentTime) {
-        //N/A
-        return 0;
+        long lastForget = this.lastForget;
+        long diff;
+        if (lastForget == Tense.TIMELESS) {
+            diff = 0;
+        } else {
+            diff = currentTime - lastForget;
+            if (diff == 0) return 0;
+        }
+        this.lastForget = currentTime;
+        return diff;
     }
 
     @Override
     public long getLastForgetTime() {
-        //N/A
-        return 0;
+        return lastForget;
     }
 
 

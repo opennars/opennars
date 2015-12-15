@@ -237,6 +237,8 @@ public class ArrayBag<V> extends Bag<V> {
         return newBudget;
     }
 
+
+
     @Override
     public void commit() {
         forEachEntry(this::update);
