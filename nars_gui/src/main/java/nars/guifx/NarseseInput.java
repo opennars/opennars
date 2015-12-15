@@ -5,7 +5,7 @@ import nars.guifx.util.CodeInput;
 import nars.task.in.TextInput;
 
 /**
- * Created by me on 8/11/15.
+ * TODO use looping state, not nar.running() likely to be false
  */
 public class NarseseInput extends CodeInput {
     private final NAR nar;
@@ -18,11 +18,20 @@ public class NarseseInput extends CodeInput {
     public boolean onInput(String s) {
         TextInput i = null;
 
+        boolean running = nar.running();
+
         if (!s.isEmpty()) {
-            i = nar.input(s);
+            if (!running) {
+                i = nar.input(s);
+            } else {
+                nar.beforeNextFrame(() -> {
+                    nar.input(s);
+                });
+            }
+
         }
 
-        if (!nar.running())
+        if (!running)
             nar.frame();
 
         return i != null;

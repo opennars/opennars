@@ -5,6 +5,7 @@ import nars.concept.Concept;
 import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
@@ -38,8 +39,8 @@ public class LinkageTest extends AbstractNALTester {
         Concept ret = tester.nar.concept(premise1);
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
-            for (Term entry : ret.getTermLinks()) {
-                Term w = entry;
+            for (Termed entry : ret.getTermLinks()) {
+                Term w = entry.term();
                 if (w.toString().equals(premise2)) {
                     passed = true;
                 }
@@ -49,8 +50,8 @@ public class LinkageTest extends AbstractNALTester {
         Concept ret2 = tester.nar.concept(premise2);
         boolean passed2 = false;
         if(ret2!=null && ret2.getTermLinks()!=null) {
-            for (Term entry : ret2.getTermLinks()) {
-                Term w = entry;
+            for (Termed entry : ret2.getTermLinks()) {
+                Term w = entry.term();
                 if (w.toString().equals(premise1)) {
                     passed2 = true;
                 }
@@ -90,16 +91,16 @@ public class LinkageTest extends AbstractNALTester {
         Concept ret = nar.concept(premise1);
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
-            for (Term entry : ret.getTermLinks()) {
-                if(entry.equals(premise2)) {
+            for (Termed entry : ret.getTermLinks()) {
+                if(entry.term().equals(premise2)) {
                     passed = true;
                     break;
                 }
 
-                Term w = entry;
+                Term w = entry.term();
                 Concept Wc = nar.concept(w);
                 if(Wc != null) {
-                    for (Term entry2 : Wc.getTermLinks()) {
+                    for (Termed entry2 : Wc.getTermLinks()) {
                         if(entry2.equals(premise2)) {
                             passed = true;
                             break;
@@ -112,16 +113,16 @@ public class LinkageTest extends AbstractNALTester {
         Concept ret2 = nar.concept(premise2);
         boolean passed2 = false;
         if(ret2!=null && ret2.getTermLinks()!=null) {
-            for (Term entry : ret2.getTermLinks()) {
-                if(entry.equals(premise1)) {
+            for (Termed entry : ret2.getTermLinks()) {
+                if(entry.term().equals(premise1)) {
                     passed2 = true;
                     break;
                 }
-                Term w = entry;
+                Term w = entry.term();
                 Concept Wc = nar.concept(w);
                 if(Wc != null) {
-                    for (Term entry2 : Wc.getTermLinks()) {
-                        if(entry2.equals(premise1)) {
+                    for (Termed entry2 : Wc.getTermLinks()) {
+                        if(entry2.term().equals(premise1)) {
                             passed2 = true;
                             break;
                         }
@@ -157,24 +158,24 @@ public class LinkageTest extends AbstractNALTester {
         Concept ret = tester.nar.concept(premise1);
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
-            for (Term entry : ret.getTermLinks()) {
-                if(entry.toString().equals(premise2)) {
+            for (Termed entry : ret.getTermLinks()) {
+                if(entry.term().toString().equals(premise2)) {
                     passed = true;
                     break;
                 }
-                Term w = entry;
+                Term w = entry.term();
                 Concept Wc = tester.nar.concept(w);
                 if(Wc != null) {
-                    for (Term entry2 : Wc.getTermLinks()) {
-                        if(entry2.toString().equals(premise2)) {
+                    for (Termed entry2 : Wc.getTermLinks()) {
+                        if(entry2.term().toString().equals(premise2)) {
                             passed = true;
                             break;
                         }
-                        Term w2 = entry2;
+                        Term w2 = entry2.term();
                         Concept Wc2 = tester.nar.concept(w2);
                         if(Wc2 != null) {
-                            for (Term entry3 : Wc2.getTermLinks()) {
-                                if(entry3.toString().equals(premise2)) {
+                            for (Termed entry3 : Wc2.getTermLinks()) {
+                                if(entry3.term().toString().equals(premise2)) {
                                     passed = true;
                                     break;
                                 }
@@ -191,24 +192,24 @@ public class LinkageTest extends AbstractNALTester {
         Concept ret2 = tester.nar.concept(premise2);
         boolean passed2 = false;
         if(ret2!=null && ret2.getTermLinks()!=null) {
-            for (Term entry : ret2.getTermLinks()) {
-                if(entry.toString().equals(premise1)) {
+            for (Termed entry : ret2.getTermLinks()) {
+                if(entry.term().toString().equals(premise1)) {
                     passed2 = true;
                     break;
                 }
-                Term w = entry;
+                Term w = entry.term();
                 Concept Wc = tester.nar.concept(w);
                 if(Wc != null) {
-                    for (Term entry2 : Wc.getTermLinks()) {
-                        if(entry2.toString().equals(premise1)) {
+                    for (Termed entry2 : Wc.getTermLinks()) {
+                        if(entry2.term().toString().equals(premise1)) {
                             passed2 = true;
                             break;
                         }
-                        Term w2 = entry2.get();
+                        Term w2 = entry2.term().get();
                         Concept Wc2 = tester.nar.concept(w2);
                         if(Wc2 != null) {
-                            for (Term entry3 : Wc2.getTermLinks()) {
-                                if(entry3.toString().equals(premise1)) {
+                            for (Termed entry3 : Wc2.getTermLinks()) {
+                                if(entry3.term().toString().equals(premise1)) {
                                     passed2 = true;
                                     break;
                                 }

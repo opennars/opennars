@@ -114,11 +114,11 @@ public class TermLinkGraph2 extends DirectedPseudograph<Termed, Termed> {
 
         Term cterm = c.get();
 
-        Bag<Term> tl = c.getTermLinks();
+        Bag<Termed> tl = c.getTermLinks();
         if (tl == null) return;
 
         tl.forEach(t -> {
-            Term target = t.get();
+            Term target = t.term();
             if (!containsVertex(target)) {
                 addVertex(target);
             }

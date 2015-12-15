@@ -15,6 +15,7 @@ import nars.link.TermLinkBuilder;
 import nars.nal.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 
 
 public class DefaultConcept extends AtomConcept {
@@ -67,7 +68,7 @@ public class DefaultConcept extends AtomConcept {
      * @param taskLinks
      * @param termLinks
      */
-    public DefaultConcept(Term term, Bag<Task> taskLinks, Bag<Term> termLinks, Param p) {
+    public DefaultConcept(Term term, Bag<Task> taskLinks, Bag<Termed> termLinks, Param p) {
         super(term, termLinks, taskLinks);
 
         //TODO lazy instantiate?
@@ -595,14 +596,14 @@ public class DefaultConcept extends AtomConcept {
     public boolean linkTemplates(Budget budget, float scale, NAR nar) {
 
         Term[] tl = getTermLinkTemplates();
-        if (tl == null || tl.length == 0)
+        int numTemplates;
+        if (tl == null || (numTemplates = tl.length) == 0)
             return false;
-
-        //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
-        float subScale = scale / (tl.length);
 
         final Memory memory = nar.memory;
 
+
+        float subScale = scale / numTemplates;
         if (subScale < memory.termLinkThreshold.floatValue())
             return false;
 

@@ -72,7 +72,7 @@ public class ShiftOccurrence extends PreCondition1 {
         }
 
         if (positive) {
-            Term ret = p.getTermLink().get();
+            Term ret = p.getTermLink().get().term();
             if (ret.op(IMPLICATION)) {
                 Term impSubj = subj(ret);
                 if (impSubj.op(SEQUENCE)) {

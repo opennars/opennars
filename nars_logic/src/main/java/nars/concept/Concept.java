@@ -46,7 +46,7 @@ import static com.google.common.collect.Iterators.concat;
 public interface Concept extends Termed, Supplier<Term> {
 
     Bag<Task> getTaskLinks();
-    Bag<Term> getTermLinks();
+    Bag<Termed> getTermLinks();
 
     Map<Object, Object> getMeta();
     void setMeta(Map<Object, Object> meta);
@@ -65,7 +65,7 @@ public interface Concept extends Termed, Supplier<Term> {
     /** attempts to fill the supplied array with next termlinks
      *  from this concept's bag.
      */
-    default int nextTermLinks(int dur, long now, float termLinkForgetDurations, BagBudget<Term>[] result) {
+    default int nextTermLinks(int dur, long now, float termLinkForgetDurations, BagBudget<Termed>[] result) {
         return 0;
 //        return getTermLinks().forgetNext(
 //                termLinkForgetDurations * dur,

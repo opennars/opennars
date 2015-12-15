@@ -202,7 +202,7 @@ public class ArrayBag<V> extends Bag<V> {
 
 
     /**
-     * Insert an item into the itemTable, and return the overflow
+     * Insert an item into the itemTable
      *
      * @param i The Item to put in
      * @return The updated budget

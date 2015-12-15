@@ -39,7 +39,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
 //    public double maxPri = 1;
 //    public double minPri = 0;
 
-    double minWidth = 3;
+    double minWidth = 1;
     double maxWidth = 10;
 
     @Override

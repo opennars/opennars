@@ -6,8 +6,10 @@ import nars.util.data.Util;
 import nars.util.data.list.FasterList;
 
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static nars.Global.BUDGET_EPSILON;
@@ -86,6 +88,32 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
     }
 
     public abstract BagBudget<V> put(Object i, Budget b, float scale);
+
+
+    /** continues sampling until the predicate returns false */
+    public void next(Predicate<BagBudget<V>> each) {
+        while ( each.test(peekNext()) ) { }
+    }
+
+    /** continues sampling until predicate returns false, limited by max iterations (n) */
+    public void next(int n, Predicate<BagBudget<V>> each) {
+        int[] toFire = { n };
+        next(c -> each.test(c) && ((--toFire[0]) > 0));
+    }
+
+    /** fills a collection with at-most N items, if an item passes the predicate.
+     *  returns how many items added
+     * */
+    public int next(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
+        int startSize = target.size();
+        next(n, c-> {
+           if (each.test(c)) {
+                target.add(c);
+           }
+            return true;
+        });
+        return target.size() - startSize;
+    }
 
 
     public void setMergeFunction(BudgetMerge mergeFunction) {

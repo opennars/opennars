@@ -4,6 +4,7 @@ import nars.NAR;
 import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.term.Term;
+import nars.term.Termed;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.DirectedPseudograph;
 
@@ -111,10 +112,11 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
 
         Term cterm = c.get();
 
-        Bag<Term> tl = c.getTermLinks();
+        Bag<Termed> tl = c.getTermLinks();
         if (tl == null) return;
 
-        for (Term target : tl.values()) {
+        for (Termed tt : tl.values()) {
+            Term target = tt.term();
             if (!containsVertex(target)) {
                 addVertex(target);
             }

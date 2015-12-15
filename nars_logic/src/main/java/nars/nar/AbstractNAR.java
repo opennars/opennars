@@ -45,7 +45,9 @@ import org.apache.commons.lang3.mutable.MutableFloat;
 
 import java.io.Serializable;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 
 /**
@@ -366,7 +368,7 @@ public abstract class AbstractNAR extends NAR {
         Bag<Task> taskLinks =
                 new CurveBag<>(taskLinkBagSize, rng).mergePlus();
 
-        Bag<Term> termLinks =
+        Bag<Termed> termLinks =
                 new CurveBag<>(termLinkBagSize, rng).mergePlus();
 
         //Budget b = new UnitBudget();
@@ -404,15 +406,12 @@ public abstract class AbstractNAR extends NAR {
             memory.index.put(term, c);
         }
 
-        BagBudget<Concept> t = core.concepts().put(c, b, scale);
-        /*if (t!=null)
-            return t.get();*/
-        return (Concept)c;
+        return core.concepts().put(c, b, scale).get();
     }
 
 
     public Bag<Concept> newConceptBag(int initialCapacity) {
-        return new CurveBag<>(initialCapacity, rng).mergePlus();
+        return new CurveBag(initialCapacity, rng).mergePlus();
     }
 
     public AbstractNAR setTaskLinkBagSize(int taskLinkBagSize) {
@@ -482,11 +481,7 @@ public abstract class AbstractNAR extends NAR {
         public final MutableFloat conceptForget;
 
 
-        /** temporary re-usable array for batch firing */
-        private BagBudget<Term>[] firingTermLinks = null;
 
-        /** temporary re-usable array for batch firing */
-        private BagBudget<Task>[] firingTaskLinks = null;
 
 //        @Deprecated
 //        int tasklinks = 2; //TODO use MutableInteger for this
@@ -507,11 +502,13 @@ public abstract class AbstractNAR extends NAR {
             active = concepts;
 
             handlers.add(
-                nar.memory.eventCycleEnd.on((m) -> fireConcepts(conceptsFiredPerCycle.intValue())),
+                nar.memory.eventCycleEnd.on((m) -> fireConcepts(conceptsFiredPerCycle.intValue(), c->process(c))),
                 nar.memory.eventReset.on((m) -> reset())
             );
         }
 
+
+        abstract protected void process(ConceptProcess cp);
 
         /**
          * samples an active concept
@@ -526,50 +523,50 @@ public abstract class AbstractNAR extends NAR {
 
         }
 
-        protected void fireConcepts(int conceptsToFire) {
+        Predicate<BagBudget> simpleForgetDecay = (b) -> {
+            float p = b.getPriority() * 0.99f;
+            if (p > b.getQuality()*0.1f)
+                b.setPriority(p);
+            return true;
+        };
+
+        protected void fireConcepts(int conceptsToFire, Consumer<ConceptProcess> processor) {
 
             active.setCapacity(capacity.intValue()); //TODO share the MutableInteger so that this doesnt need to be called ever
 
-            //1 concept if (memory.newTasks.isEmpty())*/
             if (conceptsToFire == 0 || active.isEmpty()) return;
 
-            //float conceptForgetDurations = nar.memory.conceptForgetDurations.floatValue();
+            active.next(conceptsToFire, cb -> {
+                Concept c = (AtomConcept) cb.get();
 
-            //final float tasklinkForgetDurations = nar.memory().taskLinkForgetDurations.floatValue();
+                //c.getTermLinks().update(simpleForgetDecay);
+                //c.getTaskLinks().update(simpleForgetDecay);
 
-            //final int termLinkSelections = termLinksPerConcept.getValue();
+                float p =
+                        //Math.max(
+                       c.getTaskLinks().getPriorityMax()
+                       // c.getTermLinks().getPriorityMax()
+                        //)
+                        ;
 
-//            Concept[] buffer = new Concept[conceptsToFire];
-//            int n = active.forgetNext(conceptForgetDurations, buffer, time());
-//            if (n == 0) return;
+                cb.setPriority(p);
+                cb.setDurability(p);
+                cb.setQuality(p);
 
-            concepts().update(c-> {
-                float p = ((Concept)c.get()).getTaskLinks().getPriorityMax();
-                c.setPriority(p);
+                //if above firing threshold
+                //fireConcept(c);
+                firePremiseSquare(nar, processor, c,
+                    tasklinksSelectedPerFiredConcept.intValue(),
+                    termlinksSelectedPerFiredConcept.intValue(),
+                    simpleForgetDecay
+                );
+
+                return true;
             });
 
-            for (int i = 0; i < conceptsToFire; i++) {
-                Concept c = active.peekNext().get(); //forgetNext(conceptForgetDurations, nar.memory);
-                if (c == null) break;
 
-                {
-
-                    Consumer<BagBudget> simpleForgetDecay = (b) -> {
-                        float p = b.getPriority() * 0.9f;
-                        if (p > b.getQuality()*0.1f)
-                            b.setPriority(p);
-                    };
-                    c.getTermLinks().update(simpleForgetDecay);
-                    c.getTaskLinks().update(simpleForgetDecay);
-
-                }
-
-
-                fireConcept(c);
-            }
         }
 
-        protected abstract void fireConcept(Concept c);
         /*{
             fireConcept(c, p -> {
                 //direct: just input to nar
@@ -577,31 +574,79 @@ public abstract class AbstractNAR extends NAR {
             });
         }*/
 
-        protected final void fireConceptSquare(Concept c, Consumer<ConceptProcess> withResult) {
+
+        /** temporary re-usable array for batch firing */
+        private final Set<BagBudget<Termed>> terms = Global.newHashSet(1);
+        /** temporary re-usable array for batch firing */
+        private final Set<BagBudget<Task>> tasks = Global.newHashSet(1);
+
+        /**
+         * iteratively supplies a matrix of premises from the next N tasklinks and M termlinks
+         * (recycles buffers, non-thread safe, one thread use this at a time)
+         */
+        public void firePremiseSquare(
+                NAR nar,
+                Consumer<ConceptProcess> proc,
+                Concept concept,
+                int tasklinks, int termlinks, Predicate<BagBudget> each) {
+
+            //Memory m = nar.memory;
+            //int dur = m.duration();
+
+            //long now = nar.time();
+
+        /* dur, now,
+                taskLinkForgetDurations * dur,
+                tasks); */
+
+            int tasksCount = concept.getTaskLinks().next(tasklinks, each, tasks);
+            if (tasksCount == 0) return;
 
 
-            {
-                int num = termlinksSelectedPerFiredConcept.intValue();
-                if (firingTermLinks == null ||
-                        firingTermLinks.length != num)
-                    firingTermLinks = new BagBudget[num];
-            }
-            {
-                int num = tasklinksSelectedPerFiredConcept.intValue();
-                if (firingTaskLinks == null ||
-                        firingTaskLinks.length != num)
-                    firingTaskLinks = new BagBudget[num];
-            }
+        /*int termsCount = concept.nextTermLinks(dur, now,
+                m.termLinkForgetDurations.floatValue(),
+                terms);*/
+            int termsCount = concept.getTermLinks().next(termlinks, each, terms);
+            if (termsCount == 0) return;
 
-            ConceptProcess.firePremiseSquare(
-                nar,
-                withResult,
-                c,
-                firingTaskLinks,
-                firingTermLinks,
-                nar.memory.taskLinkForgetDurations.intValue()
-            );
+            /*System.out.println(tasks.size() + "," + terms.size() + ": "
+                    + tasks + " " + terms);*/
+
+            ConceptProcess.firePremises(concept,
+                    tasks.toArray(new BagBudget[tasks.size()]),
+                    terms.toArray(new BagBudget[terms.size()]),
+                    proc, nar);
+
+            tasks.clear();
+            terms.clear();
         }
+
+
+//        protected final void fireConceptSquare(Concept c, Consumer<ConceptProcess> withResult) {
+//
+//
+//            {
+//                int num = termlinksSelectedPerFiredConcept.intValue();
+//                if (firingTermLinks == null ||
+//                        firingTermLinks.length != num)
+//                    firingTermLinks = new BagBudget[num];
+//            }
+//            {
+//                int num = tasklinksSelectedPerFiredConcept.intValue();
+//                if (firingTaskLinks == null ||
+//                        firingTaskLinks.length != num)
+//                    firingTaskLinks = new BagBudget[num];
+//            }
+//
+//            firePremiseSquare(
+//                nar,
+//                withResult,
+//                c,
+//                firingTaskLinks,
+//                firingTermLinks,
+//                nar.memory.taskLinkForgetDurations.intValue()
+//            );
+//        }
 
 
 //        public final Concept activate(Term term, Budget b) {

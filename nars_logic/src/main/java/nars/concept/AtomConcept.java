@@ -2,7 +2,6 @@ package nars.concept;
 
 import nars.NAR;
 import nars.bag.Bag;
-import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
@@ -16,7 +15,7 @@ import nars.term.Termed;
 public class AtomConcept extends AbstractConcept  {
 
     protected final Bag<Task> taskLinks;
-    protected final Bag<Term> termLinks;
+    protected final Bag<Termed> termLinks;
 
 
 //    /** creates with no termlink and tasklink ability */
@@ -24,7 +23,7 @@ public class AtomConcept extends AbstractConcept  {
 //        this(atom, budget, new NullBag(), new NullBag());
 //    }
 
-    public AtomConcept(Term atom, Bag<Term> termLinks, Bag<Task> taskLinks) {
+    public AtomConcept(Term atom, Bag<Termed> termLinks, Bag<Task> taskLinks) {
         super(atom);
         this.termLinks = termLinks;
         this.taskLinks = taskLinks;
@@ -44,7 +43,7 @@ public class AtomConcept extends AbstractConcept  {
      * Term links between the term and its components and compounds; beliefs
      */
     @Override
-    public final Bag<Term> getTermLinks() {
+    public final Bag<Termed> getTermLinks() {
         return termLinks;
     }
 
@@ -103,17 +102,6 @@ public class AtomConcept extends AbstractConcept  {
     }
 
 
-    /**
-     * Insert a TaskLink into the TaskLink bag
-     * <p>
-     * called only from Memory.continuedProcess
-     *
-     * @param taskLink The termLink to be inserted
-     * @return the tasklink which was selected or updated
-     */
-    protected static BagBudget<Task> activateTaskLink(Concept c, Task task, float scale) {
-        return c.getTaskLinks().put(task, task.getBudget(), scale);
-    }
 
 
 

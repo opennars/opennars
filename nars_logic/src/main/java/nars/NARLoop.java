@@ -67,7 +67,7 @@ public class NARLoop implements Runnable {
 
         setPeriodMS(initialPeriod);
 
-        thread = new Thread(this);
+        thread = new Thread(this, n.self + ":loop");
         thread.start();
         logger.info(() -> (this + " started thread " + thread + " with priority=" + thread.getPriority()) );
 

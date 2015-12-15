@@ -99,7 +99,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
     public DerivationPattern add(ConceptProcess n, Task... derived) {
         return add(n.getConcept(), n.getTaskLink().get(),
-                n.getTermLink().get(),
+                n.getTermLink().get().term(),
                 n.getBelief(), n.time(), derived);
     }
 

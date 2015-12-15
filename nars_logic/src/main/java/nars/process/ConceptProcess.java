@@ -4,13 +4,12 @@
  */
 package nars.process;
 
-import nars.Memory;
 import nars.NAR;
 import nars.bag.BagBudget;
 import nars.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
-import nars.term.Term;
+import nars.term.Termed;
 import nars.term.Terms;
 
 import java.util.function.Consumer;
@@ -101,46 +100,19 @@ public abstract class ConceptProcess extends AbstractPremise {
         return cyclic;
     }
 
-
-    /** iteratively supplies a matrix of premises from the next N tasklinks and M termlinks */
-    public static void firePremiseSquare(NAR nar, Consumer<ConceptProcess> proc, Concept concept, BagBudget<Task>[] tasks, BagBudget<Term>[] terms, float taskLinkForgetDurations) {
-
-        Memory m = nar.memory;
-        int dur = m.duration();
-
-        long now = nar.time();
-
-        int tasksCount = concept.nextTaskLinks(dur, now,
-                taskLinkForgetDurations * dur,
-                tasks);
-
-        if (tasksCount == 0) return;
-
-        int termsCount = concept.nextTermLinks(dur, now,
-                m.termLinkForgetDurations.floatValue(),
-                terms);
-
-        if (termsCount == 0) return;
-
-
-        firePremises(nar, proc, concept, tasks, terms);
-
-    }
-
-    public static void firePremises(NAR nar, Consumer<ConceptProcess> proc, Concept concept, BagBudget<Task>[] tasks, BagBudget<Term>[] terms) {
+    public static void firePremises(Concept concept, BagBudget<Task>[] tasks, BagBudget<Termed>[] terms, Consumer<ConceptProcess> proc, NAR nar) {
 
         for (BagBudget<Task> taskLink : tasks) {
 
-            if (taskLink == null) break;
+            for (BagBudget<Termed> termLink : terms) {
 
-            for (BagBudget<Term> termLink : terms) {
-                if (termLink == null) break;
-
-                if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.get().term(), termLink.get()))
+                if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.get().term(), termLink.get().term()))
                     continue;
 
-                proc.accept(new ConceptTaskTermLinkProcess(
-                        nar, concept, taskLink, termLink));
+                proc.accept(
+                    new ConceptTaskTermLinkProcess(
+                        nar, concept, taskLink, termLink)
+                );
             }
         }
     }

@@ -148,7 +148,7 @@ public class LoopPane extends VBox {
 
             runLater(() -> {
                 unpause();
-                say("cycle period=" + MS + "ms (" + Texts.n4(1000.0f / MS) + "hz)");
+                say("@" + MS + "ms (" + Texts.n2(1000.0f / MS) + "hz)");
             });
         }
     }

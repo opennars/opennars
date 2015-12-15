@@ -26,6 +26,7 @@ import nars.nal.UtilityFunctions;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.truth.Truth;
 
 import static java.lang.Math.pow;
@@ -413,7 +414,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         float durability = t.getDurability() * complexityFactor;
         float quality = qual * complexityFactor;
 
-        BagBudget<Term> termLink = nal.getTermLink();
+        BagBudget<Termed> termLink = nal.getTermLink();
         if (termLink!=null) {
             priority = or(priority, termLink.getPriority());
             durability = and(durability, termLink.getDurability()); //originaly was 'AND'

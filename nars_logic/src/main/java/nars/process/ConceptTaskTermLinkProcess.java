@@ -5,20 +5,20 @@ import nars.Premise;
 import nars.bag.BagBudget;
 import nars.concept.Concept;
 import nars.task.Task;
-import nars.term.Term;
+import nars.term.Termed;
 
 /**
  * Created by me on 8/5/15.
  */
 public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
-    protected final BagBudget<Term> termLink;
+    protected final BagBudget<Termed> termLink;
 
-    public ConceptTaskTermLinkProcess(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Term> termLink) {
+    public ConceptTaskTermLinkProcess(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink) {
         this(nar, concept, taskLink, termLink, null);
     }
 
-    public ConceptTaskTermLinkProcess(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Term> termLink, Task belief) {
+    public ConceptTaskTermLinkProcess(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Task belief) {
         super(nar, concept, taskLink);
 
         this.termLink = termLink;
@@ -47,7 +47,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
      * @return the current termLink aka BeliefLink
      */
     @Override
-    public final BagBudget<Term> getTermLink() {
+    public final BagBudget<Termed> getTermLink() {
         return termLink;
     }
 

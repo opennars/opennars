@@ -303,7 +303,7 @@ public class NARide extends BorderPane {
         //TODO make these Function<Object,Node>, not a supplier interface
         icon(FrameClock.class, (c) -> new NARMenu.CycleClockPane(nar));
         icon(RealtimeMSClock.class, (c) -> new NARMenu.RTClockPane(nar));
-        icon(NARLoop.class, (ll) -> loopPane);
+        //icon(NARLoop.class, (ll) -> loopPane);
         icon(AbstractNAR.DefaultCycle.class, (c) ->
                 new DefaultCyclePane((AbstractNAR.DefaultCycle) c) //cast is hack
         );
@@ -312,6 +312,7 @@ public class NARide extends BorderPane {
         spp = scrolled(pp = new PluginPanel(this));
 
         controlPane = new NARMenu(nar);
+        controlPane.getChildren().add(loopPane);
 
 //        Button addIcon = new Button("++");
 //        addIcon.setOnMouseClicked(e -> {

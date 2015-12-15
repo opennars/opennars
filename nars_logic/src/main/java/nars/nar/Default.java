@@ -5,17 +5,15 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
-import nars.bag.BagBudget;
 import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.nal.Deriver;
 import nars.nal.RuleMatch;
-import nars.process.ConceptTaskTermLinkProcess;
+import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.task.flow.SetTaskPerception;
 import nars.task.flow.SortedTaskPerception;
 import nars.task.flow.TaskPerception;
-import nars.term.Term;
 import nars.term.compile.TermIndex;
 import nars.time.FrameClock;
 import nars.util.data.list.FasterList;
@@ -35,8 +33,9 @@ public class Default extends AbstractNAR {
      * max # of tasks to accumulate in sorted buffer
      */
 
-    @Deprecated public Default() {
-        this(1024, 1,1,3);
+    @Deprecated
+    public Default() {
+        this(1024, 1, 1, 3);
     }
 
     public Default(int numConcepts,
@@ -44,8 +43,8 @@ public class Default extends AbstractNAR {
                    int tasklinkFirePerConcept,
                    int termlinkFirePerConcept) {
         this(new Memory(new FrameClock(),
-                TermIndex.memory(numConcepts*8)
-        ), numConcepts, conceptsFirePerCycle, tasklinkFirePerConcept, termlinkFirePerConcept);
+                TermIndex.memory(numConcepts * 8)
+        ), numConcepts, conceptsFirePerCycle, termlinkFirePerConcept, tasklinkFirePerConcept);
     }
 
     public Default(Memory mem, int i, int i1, int i2, int i3) {
@@ -61,20 +60,22 @@ public class Default extends AbstractNAR {
 
     @Override
     protected DefaultCycle2 initCore(Deriver deriver, Bag<Concept> conceptBag) {
-        return new DefaultCycle2(this, deriver, conceptBag );
+        return new DefaultCycle2(this, deriver, conceptBag);
     }
 
     /**
      * groups each derivation's tasks as a group before inputting into
      * the main perception buffer, allowing post-processing such as budget normalization.
-     *
+     * <p>
      * ex: this can ensure that a premise which produces many derived tasks
      * will not consume budget unfairly relative to another premise
      * with less tasks but equal budget.
      */
     public static class DefaultCycle2 extends DefaultCycle {
 
-        /** re-used, not to be used outside of this */
+        /**
+         * re-used, not to be used outside of this
+         */
         private final RuleMatch matcher;
 
         /**
@@ -92,69 +93,76 @@ public class Default extends AbstractNAR {
             /* if detecting duplicates, use a list. otherwise use a set to deduplicate anyway */
             derivedTasksBuffer =
                     Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS ?
-                        new FasterList() : Global.newHashSet(1);
+                            new FasterList() : Global.newHashSet(1);
 
         }
 
 
-
-        @Override
-        protected void fireConcept(Concept c) {
-
-            Collection<Task> buffer = derivedTasksBuffer;
-            Consumer<Task> narInput = nar::input;
-            Deriver deriver = this.deriver;
-
-            BagBudget<Term> term = c.getTermLinks().peekNext();
-            if (term!=null) {
-                BagBudget<Task> task = c.getTaskLinks().peekNext();
-                if (task!=null) {
-                    deriver.run(
-                            new ConceptTaskTermLinkProcess(nar, c , task, term),
-                            matcher,
-                            nar::input
-                    );
-                }
-            }
-
+//        @Override
+//        protected void fireConcept(Concept c) {
+//
+//            Collection<Task> buffer = derivedTasksBuffer;
+//            Consumer<Task> narInput = nar::input;
+//            Deriver deriver = this.deriver;
+//
+//            BagBudget<Termed> term = c.getTermLinks().peekNext();
+//            if (term!=null) {
+//                BagBudget<Task> task = c.getTaskLinks().peekNext();
+//                if (task!=null) {
+//                    deriver.run(
+//                            new ConceptTaskTermLinkProcess(nar, c , task, term),
+//                            matcher,
+//                            nar::input
+//                    );
+//                }
+//            }
+//
 
 
 //        fireConceptSquare(c, p -> {
 //
-//                deriver.run(p, matcher, buffer::add);
-//
-//                if (Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS) {
-//                    HashBag<Task> b = detectDuplicates(buffer);
-//                    buffer.clear();
-//                    b.addAll(buffer);
-//                }
-//
-//
-//                if (!buffer.isEmpty()) {
-//
-//                    Task.normalize(
-//                            buffer,
-//                            //p.getMeanPriority()
-//                            p.getTask().getPriority()
-//                            //p.getTask().getPriority()/buffer.size()
-//                    );
-//
-//                    buffer.forEach(narInput);
-//
-//                    buffer.clear();
-//                }
 //
 //            });
+
+
+        @Override
+        public void process(ConceptProcess p) {
+            Collection<Task> buffer = derivedTasksBuffer;
+            Consumer<Task> narInput = nar::input;
+
+            Deriver deriver = this.deriver;
+            deriver.run(p, matcher, buffer::add);
+
+            if (Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS) {
+                HashBag<Task> b = detectDuplicates(buffer);
+                buffer.clear();
+                b.addAll(buffer);
+            }
+
+
+            if (!buffer.isEmpty()) {
+
+                /*Task.normalize(
+                        buffer,
+                        //p.getMeanPriority()
+                        p.getTask().getPriority()
+                        //p.getTask().getPriority()/buffer.size()
+                );*/
+
+                buffer.forEach(narInput);
+
+                buffer.clear();
+            }
 
         }
 
         static HashBag<Task> detectDuplicates(Collection<Task> buffer) {
             HashBag<Task> taskCount = new HashBag<>();
             taskCount.addAll(buffer);
-            taskCount.forEachWithOccurrences((t,i) -> {
+            taskCount.forEachWithOccurrences((t, i) -> {
                 if (i == 1) return;
 
-                System.err.println("DUPLICATE TASK(" + i +"): " + t);
+                System.err.println("DUPLICATE TASK(" + i + "): " + t);
                 List<Task> equiv = buffer.stream().filter(u -> u.equals(t)).collect(toList());
                 HashBag<String> rules = new HashBag();
                 equiv.forEach(u -> {
@@ -165,12 +173,13 @@ public class Default extends AbstractNAR {
 //                    System.err.println("\t\t" + rule );
 //                    System.err.println();
                 });
-                rules.forEachWithOccurrences( (String r, int c) -> System.err.println("\t" + c + '\t' + r));
+                rules.forEachWithOccurrences((String r, int c) -> System.err.println("\t" + c + '\t' + r));
                 System.err.println("--");
 
             });
             return taskCount;
         }
+
     }
 
 
@@ -178,7 +187,7 @@ public class Default extends AbstractNAR {
     public TaskPerception initInput() {
 
         return new SetTaskPerception(
-            memory, this::process, UnitBudget.average);
+                memory, this::process, UnitBudget.average);
 
         /* {
             @Override
