@@ -80,7 +80,7 @@ public class BagGenerators {
             for (int i= 0; i < insertsPerLoop * accessFraction; i++) {
                 int sizeBefore = f.size();
 
-                CharSequence t = f.peekNext();
+                CharSequence t = f.peekNext().get();
 
                 if (t == null) {
                     //Assert.assertTrue(sizeAfter == 0);

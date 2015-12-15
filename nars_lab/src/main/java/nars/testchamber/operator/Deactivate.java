@@ -42,9 +42,7 @@ public class Deactivate extends SyncOperator {
     }
 
     @Override public List<Task> apply(Task task) {
-        Compound operation = task.get();
-
-
+        Compound operation = task.term();
 
         TestChamber.executed=true;
         System.out.println("Executed: " + this);

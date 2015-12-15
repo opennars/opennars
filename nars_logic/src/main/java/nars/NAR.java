@@ -250,9 +250,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return x2;
     }
 
-    public final Concept concept(Term term) {
-        return memory.concept(term);
-    }
+
 
     /**
      * gets a concept if it exists, or returns null if it does not
@@ -1381,7 +1379,10 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * convenience method shortcut for concept(t.getTerm())
      */
     public final Concept concept(Termed termed) {
-        return concept(termed.term());
+        if (termed instanceof Concept)
+            return (Concept)termed;
+
+        return memory.concept(termed.term());
     }
 
     public On onQuestion(PatternAnswer p) {

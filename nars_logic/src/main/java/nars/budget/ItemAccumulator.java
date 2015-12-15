@@ -1,9 +1,11 @@
 package nars.budget;
 
+import nars.bag.BagBudget;
 import nars.bag.impl.ArrayBag;
 import nars.util.ArraySortedIndex;
 
 import java.io.PrintStream;
+import java.util.function.Consumer;
 
 /** priority queue which merges equal tasks and accumulates their budget.
  * stores the highest item in the last position, and lowest item in the first.
@@ -12,7 +14,7 @@ import java.io.PrintStream;
  *      --next(n, consumer(n)) - visit N highest items
  *
  * */
-public class ItemAccumulator<V> extends ArrayBag<V> {
+public class ItemAccumulator<V extends Budgeted> extends ArrayBag<V> {
 
 
     public ItemAccumulator(int capacity) {
@@ -21,15 +23,20 @@ public class ItemAccumulator<V> extends ArrayBag<V> {
     }
 
     @Override
-    public final V peekNext() {
-        return items.getFirst().get();
+    public final BagBudget<V> peekNext() {
+        return items.getFirst();
     }
 
     @Override
-    public V pop() {
-        return removeHighest().get();
+    public BagBudget<V> pop() {
+        return removeHighest();
     }
 
+    @Override
+    public void update(BagBudget v, Consumer<BagBudget> updater) {
+        super.update(v, updater);
+        ((Budgeted)v.get()).getBudget().set(v); //TODO replace instance's budget on insert so this copy isnt necessary
+    }
 
     @Override
     public final boolean contains(V t) {

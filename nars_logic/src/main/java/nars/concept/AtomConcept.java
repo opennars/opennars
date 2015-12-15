@@ -2,11 +2,13 @@ package nars.concept;
 
 import nars.NAR;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 
 /**
  * Created by me on 9/2/15.
@@ -92,13 +94,65 @@ public class AtomConcept extends AbstractConcept  {
         return null;
     }
 
-    @Override
-    public boolean link(Term t, Budget b, float scale, NAR nar) {
-        return false;
+    static final boolean activateTermLinkTemplateTargetsFromTask = true;
+
+
+    final static Concept activateConcept(Termed t, Budget taskBudget, float scale, NAR nar) {
+        Term target = t.term();
+        return activateTermLinkTemplateTargetsFromTask ? nar.conceptualize(target, taskBudget, scale) : nar.concept(target);
     }
 
-    @Override
-    public boolean link(Task task, float scale, NAR nar) {
+
+    /**
+     * Insert a TaskLink into the TaskLink bag
+     * <p>
+     * called only from Memory.continuedProcess
+     *
+     * @param taskLink The termLink to be inserted
+     * @return the tasklink which was selected or updated
+     */
+    protected static BagBudget<Task> activateTaskLink(Concept c, Task task, float scale) {
+        return c.getTaskLinks().put(task, task.getBudget(), scale);
+    }
+
+
+
+    /**
+     * when a task is processed, a tasklink
+     * can be created at the concept of its term
+     */
+    @Override public boolean link(Task t, float scale, NAR nar) {
+
+        Term[] templates = getTermLinkTemplates();
+        if (templates == null) return false;
+
+        int numTemplates = templates.length;
+        if (numTemplates == 0) return false;
+
+        //activate local tasklink
+        getTaskLinks().put(t, t.getBudget(), scale);
+
+
+        float subScale = scale / numTemplates;
+        if (subScale < nar.memory.taskLinkThreshold.floatValue())
+            return false;
+
+        for (Term linkTemplate : templates) {
+            Concept componentConcept = activateConcept(linkTemplate, t.getBudget(), subScale, nar);
+            if (componentConcept != null) {
+
+                /** activate the peer task tlink */
+                componentConcept.getTaskLinks().put(t, t.getBudget(), subScale);
+            }
+        }
+
+        linkTemplates(t.getBudget(), 1f, nar);
+
+        return true;
+    }
+
+    /** atom concept, being irreducible, will have no templates to recurse into */
+    @Override public boolean linkTemplates(Budget budget, float scale, NAR nar) {
         return false;
     }
 

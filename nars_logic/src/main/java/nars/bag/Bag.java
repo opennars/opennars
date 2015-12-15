@@ -3,6 +3,7 @@ package nars.bag;
 import nars.bag.impl.AbstractCacheBag;
 import nars.budget.Budget;
 import nars.util.data.Util;
+import nars.util.data.list.FasterList;
 
 import java.io.PrintStream;
 import java.util.Iterator;
@@ -18,8 +19,7 @@ import static nars.Global.BUDGET_EPSILON;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements Consumer<V>, Supplier<V>, Iterable<V> {
-
+public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements Consumer<V>, Supplier<BagBudget<V>>, Iterable<V> {
 
 
 
@@ -40,7 +40,24 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
      * gets the next value without removing changing it or removing it from any index.  however
      * the bag is cycled so that subsequent elements are different.
      */
-    public abstract V peekNext();
+    public abstract BagBudget<V> peekNext();
+
+    /** not finished yet */
+    public int updateNext(float forgetCycles, BagBudget<V>[] result, long now, int retries) {
+        int ss = size();
+        if (ss <= result.length) {
+            FasterList l = new FasterList(result);
+            forEachEntry(b -> l.add(b));
+            if (ss < result.length)
+                l.set(ss, null); //null terminator
+            return ss;
+        }
+        for (int i = 0; i < result.length; i++) {
+
+        }
+        return 0;
+    }
+
 
     /**
      * TODO rename 'remove'
@@ -134,7 +151,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
      *
      * @return The selected Item, or null if this bag is empty
      */
-    public abstract V pop();
+    public abstract BagBudget<V> pop();
 
     /**
      * The number of items in the bag
@@ -210,7 +227,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
      * implements the Supplier<V> interface; invokes a remove()
      */
     @Override
-    final public V get() {
+    final public BagBudget<V> get() {
         return pop();
     }
 

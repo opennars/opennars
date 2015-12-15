@@ -1,22 +1,7 @@
 package nars.concept;
 
-import nars.NAR;
-import nars.bag.Bag;
-import nars.nar.AbstractNAR;
 import nars.nar.Default;
-import nars.nar.SingleStepNAR;
-import nars.term.Term;
-import nars.util.graph.TermLinkGraph;
-import org.jgrapht.alg.ConnectivityInspector;
 import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 
 public class TermLinkTest {
@@ -24,9 +9,10 @@ public class TermLinkTest {
     @Test public void testTermLinkActivationOnConceptualization() {
         Default n = new Default();
         n.input("a:b.");
-        //n.input("b:c.");
+        n.input("b:c.");
+        n.log();
 
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 55; i++) {
             System.out.println(n.time());
             n.frame();
         }

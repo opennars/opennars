@@ -20,7 +20,7 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public V peekNext() {
+    public BagBudget<V> peekNext() {
         return null;
     }
 
@@ -47,7 +47,7 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public V pop() {
+    public BagBudget<V> pop() {
         return null;
     }
 

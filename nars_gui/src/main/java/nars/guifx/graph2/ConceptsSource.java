@@ -9,7 +9,7 @@ import nars.concept.Concept;
 import nars.guifx.graph2.impl.TLinkEdge;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.nar.AbstractNAR;
-import nars.term.Term;
+import nars.nar.Default;
 import nars.term.Termed;
 import nars.util.event.Active;
 
@@ -57,6 +57,19 @@ public class ConceptsSource extends GraphSource {
                       0.05f);
     }
 
+
+
+
+    public float getConceptPriority(Termed cc) {
+        return ((Default)nar).core.concepts().get(cc).getPriorityIfNaNThenZero();
+    }
+
+    @Override
+    public void updateNode(SpaceGrapher g, Termed s, TermNode sn) {
+        sn.priNorm = getConceptPriority(s);
+        super.updateNode(g, s, sn);
+    }
+
     @Override
     public void forEachOutgoingEdgeOf(Termed cc,
                                       Consumer eachTarget) {
@@ -67,10 +80,10 @@ public class ConceptsSource extends GraphSource {
 
 
 
+
         Consumer linkUpdater = link -> {
 
-            //Term target = ((BagBudget<Term>)link).get();
-            Term target = (Term)link;
+            Termed target = ((BagBudget<Termed>)link).get();
 
             if (cc.term().equals(target)) //self-loop
                 return;
@@ -198,35 +211,35 @@ public class ConceptsSource extends GraphSource {
 
 
 
-    public final void updateNodeOLD(SpaceGrapher sg, BagBudget<Concept> cc, TermNode sn) {
-
-        sn.c = cc.get();
-        sn.priNorm = cc.getPriority();
-
-
-
-        //final Term t = tn.term;
-        //final DoubleSummaryReusableStatistics ta = tn.taskLinkStat;
-        //final DoubleSummaryReusableStatistics te = tn.termLinkStat;
-
-
-//        System.out.println("refresh " + Thread.currentThread() + " " + termLinkMean.getResult() + " #" + termLinkMean.getN() );
-
-
-//        Consumer<TLink> tLinkConsumer = t -> {
-//            Term target = t.getTerm();
-//            if (!source.equals(target.getTerm())) {
-//                TermNode tn = getTermNode(graph, target);
-//                //TermEdge edge = getConceptEdge(graph, sn, tn);
+//    public final void updateNodeOLD(SpaceGrapher sg, BagBudget<Concept> cc, TermNode sn) {
 //
-//            }
-//        };
+//        sn.c = cc.get();
+//        sn.priNorm = cc.getPriority();
 //
-//        c.getTaskLinks().forEach(tLinkConsumer);
-//        c.getTermLinks().forEach(tLinkConsumer);
-
-
-    }
+//
+//
+//        //final Term t = tn.term;
+//        //final DoubleSummaryReusableStatistics ta = tn.taskLinkStat;
+//        //final DoubleSummaryReusableStatistics te = tn.termLinkStat;
+//
+//
+////        System.out.println("refresh " + Thread.currentThread() + " " + termLinkMean.getResult() + " #" + termLinkMean.getN() );
+//
+//
+////        Consumer<TLink> tLinkConsumer = t -> {
+////            Term target = t.getTerm();
+////            if (!source.equals(target.getTerm())) {
+////                TermNode tn = getTermNode(graph, target);
+////                //TermEdge edge = getConceptEdge(graph, sn, tn);
+////
+////            }
+////        };
+////
+////        c.getTaskLinks().forEach(tLinkConsumer);
+////        c.getTermLinks().forEach(tLinkConsumer);
+//
+//
+//    }
 
 
 }

@@ -23,7 +23,9 @@ public class ItemAccumulatorTest {
         TaskAccumulator ii = new TaskAccumulator(
                 2 //capacity = 2 but this test will only grow to size 1 if successful
         );
+
         ii.mergePlus();
+
         assertEquals(0, ii.size());
 
         Task t = n.task("$0.1$ <a --> b>. %1.00;0.90%");
@@ -34,6 +36,10 @@ public class ItemAccumulatorTest {
 
         ii.put(t);
         assertEquals(1, ii.size());
+
+        ii.update();
+
+        ii.forEach(c -> System.out.println(c));
 
         //mergePlus:
         assertEquals(0.1f+0.1f, ii.peekNext().getPriority(), 0.001f);
@@ -58,6 +64,7 @@ public class ItemAccumulatorTest {
         ii.put(n.task("$0.1$ <b-->x>" + s ));
         ii.put(n.task("$0.2$ <c-->x>" + s ));
         ii.put(n.task("$0.3$ <d-->x>" + s ));
+        ii.update();
         assertEquals(4, ii.size());
 
         //z should be ignored
@@ -66,12 +73,17 @@ public class ItemAccumulatorTest {
 
         assertEquals(capacity, ii.size());
 
-        Task one = ii.pop();
+        assertTrue(ii.isSorted());
+
+        //System.out.println(ii);
+        ii.forEachEntry(x -> System.out.println(x));
+
+        Task one = ii.pop().get();
         assertEquals("$.30;.50;.95$ <d-->x>. :0: %1.0;.90%", one.toString());
 
         List<Task> two = new ArrayList();
-        two.add(ii.pop());
-        two.add(ii.pop());
+        two.add(ii.pop().get());
+        two.add(ii.pop().get());
         assertEquals("[$.20;.50;.95$ <c-->x>. :0: %1.0;.90%, $.10;.50;.95$ <b-->x>. :0: %1.0;.90%]", two.toString());
 
         assertEquals(1, ii.size());
@@ -99,7 +111,10 @@ public class ItemAccumulatorTest {
             ii.put($.$("a:" + i, '?').budget( (float)Math.random() * 0.95f, 0.5f, 0.5f));
         }
 
+        ii.update();
+
         MutableDouble prev = new MutableDouble(Double.POSITIVE_INFINITY);
+
         ii.forEach( (Budgeted t) -> {
             float p = t.getBudget().getPriority();
             assertTrue(p <= prev.floatValue()); //decreasing

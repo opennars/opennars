@@ -15,7 +15,8 @@
 package hellblazer.gossip;
 
 import com.hellblazer.utils.fd.FailureDetectorFactory;
-import junit.framework.TestCase;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.mockito.internal.verification.Times;
 
 import java.lang.reflect.Field;
@@ -29,8 +30,10 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
 
-public class GossipTest extends TestCase {
+@Ignore
+public class GossipTest {
 
+    @Test
     public void testApplyDeregister() throws Exception {
         GossipMessages handler = mock(GossipMessages.class);
         GossipCommunications communications = mock(GossipCommunications.class);
@@ -127,13 +130,13 @@ public class GossipTest extends TestCase {
         verifyNoMoreInteractions(receiver);
     }
 
-    public void testApplyDiscover() throws Exception {
-        GossipMessages handler = mock(GossipMessages.class);
+    @Test public void testApplyDiscover() throws Exception {
         GossipCommunications communications = mock(GossipCommunications.class);
         FailureDetectorFactory fdFactory = mock(FailureDetectorFactory.class);
         SystemView view = mock(SystemView.class);
         Random random = mock(Random.class);
         InetSocketAddress localAddress = new InetSocketAddress("127.0.0.1", 0);
+        GossipMessages handler = mock(GossipMessages.class);
         when(communications.getLocalAddress()).thenReturn(localAddress);
         when(communications.handlerFor(isA(InetSocketAddress.class))).thenReturn(handler);
         GossipListener receiver = mock(GossipListener.class);
@@ -206,7 +209,7 @@ public class GossipTest extends TestCase {
         verifyNoMoreInteractions(receiver);
     }
 
-    public void testApplyUpdate() throws Exception {
+    @Test public void testApplyUpdate() throws Exception {
         FailureDetectorFactory fdFactory = mock(FailureDetectorFactory.class);
         GossipCommunications communications = mock(GossipCommunications.class);
         GossipListener receiver = mock(GossipListener.class);
@@ -299,7 +302,7 @@ public class GossipTest extends TestCase {
         verifyNoMoreInteractions(communications);
     }
 
-    public void testExamineAllNew() throws Exception {
+    @Test public void testExamineAllNew() throws Exception {
         GossipListener listener = mock(GossipListener.class);
         GossipCommunications communications = mock(GossipCommunications.class);
         GossipMessages gossipHandler = mock(GossipMessages.class);
@@ -339,7 +342,7 @@ public class GossipTest extends TestCase {
         verifyNoMoreInteractions(gossipHandler);
     }
 
-    public void testExamineMixed() throws Exception {
+    @Test public void testExamineMixed() throws Exception {
         GossipListener listener = mock(GossipListener.class);
         GossipCommunications communications = mock(GossipCommunications.class);
         GossipMessages gossipHandler = mock(GossipMessages.class);

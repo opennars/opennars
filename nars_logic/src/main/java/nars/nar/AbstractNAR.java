@@ -517,7 +517,7 @@ public abstract class AbstractNAR extends NAR {
          * samples an active concept
          */
         public Concept next() {
-            return active.peekNext();
+            return active.peekNext().get();
         }
 
 
@@ -531,7 +531,7 @@ public abstract class AbstractNAR extends NAR {
             active.setCapacity(capacity.intValue()); //TODO share the MutableInteger so that this doesnt need to be called ever
 
             //1 concept if (memory.newTasks.isEmpty())*/
-            if (conceptsToFire == 0) return;
+            if (conceptsToFire == 0 || active.isEmpty()) return;
 
             //float conceptForgetDurations = nar.memory.conceptForgetDurations.floatValue();
 
@@ -543,23 +543,21 @@ public abstract class AbstractNAR extends NAR {
 //            int n = active.forgetNext(conceptForgetDurations, buffer, time());
 //            if (n == 0) return;
 
-
             concepts().update(c-> {
-                float p = ((Concept)c.get()).getTermLinks().getPriorityMax();
+                float p = ((Concept)c.get()).getTaskLinks().getPriorityMax();
                 c.setPriority(p);
             });
 
             for (int i = 0; i < conceptsToFire; i++) {
-                Concept c = active.peekNext(); //forgetNext(conceptForgetDurations, nar.memory);
+                Concept c = active.peekNext().get(); //forgetNext(conceptForgetDurations, nar.memory);
                 if (c == null) break;
 
                 {
-                    System.out.println(c +
-                            "\n\t" + ((CurveBag)c.getTermLinks()).getItems() +
-                            "\n\t" + ((CurveBag)c.getTaskLinks()).getItems());
 
                     Consumer<BagBudget> simpleForgetDecay = (b) -> {
-                        b.mulPriority(0.9f);
+                        float p = b.getPriority() * 0.9f;
+                        if (p > b.getQuality()*0.1f)
+                            b.setPriority(p);
                     };
                     c.getTermLinks().update(simpleForgetDecay);
                     c.getTaskLinks().update(simpleForgetDecay);
@@ -579,8 +577,7 @@ public abstract class AbstractNAR extends NAR {
             });
         }*/
 
-
-        protected final void fireConcept(Concept c, Consumer<ConceptProcess> withResult) {
+        protected final void fireConceptSquare(Concept c, Consumer<ConceptProcess> withResult) {
 
 
             {

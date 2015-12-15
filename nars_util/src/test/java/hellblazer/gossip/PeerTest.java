@@ -1,5 +1,6 @@
 package hellblazer.gossip;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by me on 5/22/15.
  */
+@Ignore
 public class PeerTest {
 
     @Test

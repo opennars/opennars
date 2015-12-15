@@ -74,12 +74,11 @@ public interface Concept extends Termed, Supplier<Term> {
 //                1 /* additional */);
     }
     default int nextTaskLinks(int dur, long now, float taskLinkForgetDurations, BagBudget<Task>[] result) {
-        return 0;
-//        return getTaskLinks().forgetNext(
-//                taskLinkForgetDurations * dur,
-//                result,
-//                now,
-//                1 /* additional */);
+        return getTaskLinks().updateNext(
+                taskLinkForgetDurations * dur,
+                result,
+                now,
+                1 /* additional */);
     }
 
     default void discountBeliefConfidence() {
@@ -376,7 +375,8 @@ public interface Concept extends Termed, Supplier<Term> {
      * */
     boolean link(Task task, float scale, NAR nar);
 
-    boolean link(Term t, Budget b, float scale, NAR nar);
+    boolean linkTemplates(Budget budget, float scale, NAR nar);
+
 
     /**
      *

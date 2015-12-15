@@ -17,7 +17,6 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.TextAlignment;
-import nars.concept.Concept;
 import nars.guifx.JFX;
 import nars.guifx.NARfx;
 import nars.guifx.annotation.Range;
@@ -85,7 +84,7 @@ public class DefaultNodeVis implements NodeVis {
         if (t == null) {
             return;
         }
-        t.priNorm = 1f; //((Concept)t.term).getPriority();
+        //t.priNorm = 1f; //((Concept)t.term).getPriority();
 
 //            p = t.term.cgetPriority();
 //            q = t.c.getQuality();

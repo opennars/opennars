@@ -42,7 +42,7 @@ public class Activate extends SyncOperator {
     }
 
     @Override public List<Task> apply(Task task) {
-        Compound operation = task.get();
+        Compound operation = task.term();
 
         //Operator op = content.getOperator();
 

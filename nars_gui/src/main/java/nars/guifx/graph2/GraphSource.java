@@ -1,5 +1,6 @@
 package nars.guifx.graph2;
 
+import nars.bag.BagBudget;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.term.Termed;
 
@@ -30,12 +31,13 @@ public abstract class GraphSource/* W? */ {
         return grapher.isReady();
     }
 
-    public final void updateNode(SpaceGrapher g, Termed s, TermNode sn) {
+    public void updateNode(SpaceGrapher g, Termed s, TermNode sn) {
+
 
 
         forEachOutgoingEdgeOf(s, t -> {
 
-            TermNode tn = g.getTermNode((Termed)t);
+            TermNode tn = g.getTermNode(((BagBudget<Termed>)t).get());
             if (tn == null)
                 return;
 
@@ -46,6 +48,10 @@ public abstract class GraphSource/* W? */ {
 
         });
         sn.commitEdges();
+    }
+
+    protected void updateNode(TermNode tn, Object indexing) {
+
     }
 
 

@@ -15,6 +15,7 @@
 package hellblazer.gossip;
 
 import junit.framework.TestCase;
+import org.junit.Ignore;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -25,12 +26,14 @@ import java.util.Random;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+
 /**
  * Basic testing of the system view
  * 
  * @author <a href="mailto:hal.hildebrand@gmail.com">Hal Hildebrand</a>
  * 
  */
+@Ignore
 public class SystemViewTest extends TestCase {
 
     public void testLiveMembers() throws Exception {

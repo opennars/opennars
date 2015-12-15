@@ -5,14 +5,17 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
+import nars.bag.BagBudget;
 import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.nal.Deriver;
 import nars.nal.RuleMatch;
+import nars.process.ConceptTaskTermLinkProcess;
 import nars.task.Task;
 import nars.task.flow.SetTaskPerception;
 import nars.task.flow.SortedTaskPerception;
 import nars.task.flow.TaskPerception;
+import nars.term.Term;
 import nars.term.compile.TermIndex;
 import nars.time.FrameClock;
 import nars.util.data.list.FasterList;
@@ -102,32 +105,46 @@ public class Default extends AbstractNAR {
             Consumer<Task> narInput = nar::input;
             Deriver deriver = this.deriver;
 
-            fireConcept(c, p -> {
-
-                deriver.run(p, matcher, buffer::add);
-
-                if (Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS) {
-                    HashBag<Task> b = detectDuplicates(buffer);
-                    buffer.clear();
-                    b.addAll(buffer);
-                }
-
-
-                if (!buffer.isEmpty()) {
-
-                    Task.normalize(
-                            buffer,
-                            //p.getMeanPriority()
-                            p.getTask().getPriority()
-                            //p.getTask().getPriority()/buffer.size()
+            BagBudget<Term> term = c.getTermLinks().peekNext();
+            if (term!=null) {
+                BagBudget<Task> task = c.getTaskLinks().peekNext();
+                if (task!=null) {
+                    deriver.run(
+                            new ConceptTaskTermLinkProcess(nar, c , task, term),
+                            matcher,
+                            nar::input
                     );
-
-                    buffer.forEach(narInput);
-
-                    buffer.clear();
                 }
+            }
 
-            });
+
+
+//        fireConceptSquare(c, p -> {
+//
+//                deriver.run(p, matcher, buffer::add);
+//
+//                if (Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS) {
+//                    HashBag<Task> b = detectDuplicates(buffer);
+//                    buffer.clear();
+//                    b.addAll(buffer);
+//                }
+//
+//
+//                if (!buffer.isEmpty()) {
+//
+//                    Task.normalize(
+//                            buffer,
+//                            //p.getMeanPriority()
+//                            p.getTask().getPriority()
+//                            //p.getTask().getPriority()/buffer.size()
+//                    );
+//
+//                    buffer.forEach(narInput);
+//
+//                    buffer.clear();
+//                }
+//
+//            });
 
         }
 

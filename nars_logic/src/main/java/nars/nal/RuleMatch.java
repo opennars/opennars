@@ -12,6 +12,7 @@ import nars.nal.op.ImmediateTermTransform;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
@@ -129,13 +130,13 @@ public class RuleMatch extends FindSubst {
         this.receiver = receiver;
 
         Compound taskTerm = p.getTask().term();
-        Term beliefTerm = p.getBelief() != null ?
+        Termed beliefTerm = p.getBelief() != null ?
             p.getBelief().get()
-            : p.getTermLink().get() ; //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
+            : p.getTermLink().get(); //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
 
         term.set( new TaskBeliefPair(
-            taskTerm,
-            beliefTerm
+            taskTerm.term(),
+            beliefTerm.term()
         ) );
         cyclic = premise.isCyclic();
 

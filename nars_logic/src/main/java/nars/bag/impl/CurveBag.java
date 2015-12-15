@@ -69,7 +69,7 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public V pop() {
+    public BagBudget<V> pop() {
         return peekNext(true);
     }
 
@@ -78,7 +78,7 @@ public class CurveBag<V> extends Bag<V> {
         arrayBag.update(updater);
     }
 
-    public V peekNext(boolean remove) {
+    public BagBudget<V> peekNext(boolean remove) {
 
         while (!isEmpty()) {
 
@@ -88,7 +88,7 @@ public class CurveBag<V> extends Bag<V> {
                     arrayBag.removeItem(index) : arrayBag.getItem(index);
 
             if (!i.getBudget().isDeleted()) {
-                return i.get();
+                return i;
             }
 
             //ignore this deleted item now that it's removed from the bag
@@ -126,7 +126,7 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public final V peekNext() {
+    public final BagBudget<V> peekNext() {
         return peekNext(false);
     }
 

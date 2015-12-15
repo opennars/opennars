@@ -6,6 +6,7 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.budget.Budget;
+import nars.budget.Budgeted;
 import nars.budget.UnitBudget;
 import nars.util.ArraySortedIndex;
 import nars.util.CollectorMap;
@@ -51,6 +52,10 @@ public class ArrayBag<V> extends Bag<V> {
         return put(k, UnitBudget.zero);
     }
 
+    public BagBudget<V> put(Budgeted k) {
+        return put(k, k.getBudget());
+    }
+
 
 //    @Override public V put(V k, Budget b) {
 //        //TODO use Map.compute.., etc
@@ -87,7 +92,7 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     @Override
-    public V peekNext() {
+    public BagBudget<V> peekNext() {
         throw new RuntimeException("unimpl");
     }
 
@@ -190,7 +195,7 @@ public class ArrayBag<V> extends Bag<V> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public V pop() {
+    public BagBudget<V> pop() {
         throw new RuntimeException("unimpl");
     }
 
@@ -240,13 +245,13 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     public void update(BagBudget v, Consumer<BagBudget> updater) {
-        updater.accept(v);
-        if (v.hasDelta()) {
-            if (items.remove(v)) {
+        if (items.remove(v)) {
+            updater.accept(v);
+            //if (v.hasDelta()) {
                 v.commit();
                 items.insert(v);
             }
-        }
+        //}
     }
 
     /**
@@ -332,7 +337,9 @@ public class ArrayBag<V> extends Bag<V> {
         final List<BagBudget<V>> l = items.getList();
 
         //start at end
-        for (int i = l.size()-1; i >= 0; i--){
+        int n = l.size();
+        for (int i = 0; i < n; i++) {
+        //for (int i = l.size()-1; i >= 0; i--){
             action.accept(l.get(i).get());
         }
 
@@ -387,7 +394,7 @@ public class ArrayBag<V> extends Bag<V> {
             popAll(receiver);
         } else {
             for (int i = 0; i < n; i++) {
-                receiver.accept(pop());
+                receiver.accept(pop().get());
             }
         }
     }
