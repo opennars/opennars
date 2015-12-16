@@ -11,7 +11,7 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.op.Derive;
-import nars.nal.meta.op.PostSolve;
+import nars.nal.meta.op.ReSolve;
 import nars.nal.meta.op.Solve;
 import nars.nal.meta.post.ShiftOccurrence;
 import nars.nal.meta.post.Substitute;
@@ -184,7 +184,7 @@ public class PremiseRule extends GenericCompound implements Level {
         if (post.afterConclusions.length > 0) {
             l.add(new Solve(post.term, this, true ));
             Collections.addAll(l, post.afterConclusions);
-            l.add(PostSolve.the);
+            l.add(ReSolve.the);
         }
         else {
             l.add(new Solve(post.term, this, false ));

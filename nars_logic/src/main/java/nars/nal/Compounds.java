@@ -38,12 +38,16 @@ public class Compounds {
      * universal zero-length product
      */
     public static final Compound Empty = (Compound) GenericCompound.COMPOUND(Op.PRODUCT, Terms.Empty);
-    /** implications, equivalences, and interval */
+    /**
+     * implications, equivalences, and interval
+     */
     final static int InvalidEquivalenceTerm =
             or(IMPLICATION, IMPLICATION_WHEN, IMPLICATION_AFTER, IMPLICATION_BEFORE,
                     EQUIV, EQUIV_AFTER, EQUIV_WHEN,
                     INTERVAL);
-    /** equivalences and intervals (not implications, they are allowed */
+    /**
+     * equivalences and intervals (not implications, they are allowed
+     */
     final static int InvalidImplicationPredicate =
             or(EQUIV, EQUIV_AFTER, EQUIV_WHEN, INTERVAL);
 
@@ -52,7 +56,7 @@ public class Compounds {
             // (--,(--,P)) = P
             return ((Compound) t).term(0);
         }
-        return GenericCompound.COMPOUND(Op.NEGATE, new Term[] { t }, -1);
+        return GenericCompound.COMPOUND(Op.NEGATE, new Term[]{t}, -1);
     }
 
     public static void setAppend(Compound set, Appendable p, boolean pretty) throws IOException {
@@ -126,10 +130,10 @@ public class Compounds {
             //index = 0;
             return null;
         } else {
-            int serN = res.length-1;
+            int serN = res.length - 1;
             Term[] ser = new Term[serN];
             System.arraycopy(res, 0, ser, 0, index);
-            System.arraycopy(res, index+1, ser, index, (serN - index));
+            System.arraycopy(res, index + 1, ser, index, (serN - index));
             res = ser;
         }
 
@@ -206,7 +210,7 @@ public class Compounds {
 
     public static Term operatorName(Compound operation) {
         Operator tn = operatorTerm(operation);
-        if (tn!=null) return tn.identifier();
+        if (tn != null) return tn.identifier();
         return null;
     }
 
@@ -218,7 +222,6 @@ public class Compounds {
      * creates a result term in the conventional format.
      * the final term in the product (x) needs to be a variable,
      * which will be replaced with the result term (y)
-     *
      */
     public static Term result(Compound operation, Term y) {
         Compound x = (Compound) operation.term(0);
@@ -227,16 +230,17 @@ public class Compounds {
             return null;
 
         return $.inh(
-            y, //SetExt.make(y),
-            makeImageExt(x, operation.term(1), (short) (x.size() - 1) /* position of the variable */)
+                y, //SetExt.make(y),
+                makeImageExt(x, operation.term(1), (short) (x.size() - 1) /* position of the variable */)
         );
     }
 
     /**
      * Try to make an Image from a Product and a relation. Called by the logic rules.
-     * @param product The product
+     *
+     * @param product  The product
      * @param relation The relation (the operator)
-     * @param index The index of the place-holder (variable)
+     * @param index    The index of the place-holder (variable)
      * @return A compound generated or a term it reduced to
      */
     public static Term makeImageExt(Compound product, Term relation, short index) {
@@ -255,14 +259,16 @@ public class Compounds {
         /*Term[] argument =
             Terms.concat(new Term[] { relation }, product.cloneTerms()
         );*/
-        Term[] argument = new Term[ pl  ];
+        Term[] argument = new Term[pl];
         argument[0] = relation;
         System.arraycopy(product.terms(), 0, argument, 1, pl - 1);
 
-        return GenericCompound.COMPOUND(Op.IMAGE_EXT, argument, index+1);
+        return GenericCompound.COMPOUND(Op.IMAGE_EXT, argument, index + 1);
     }
 
-    /** applies certain data to a feedback task relating to its causing operation's task */
+    /**
+     * applies certain data to a feedback task relating to its causing operation's task
+     */
     public static Task feedback(MutableTask feedback, Task goal, float priMult, float durMult) {
         return feedback.budget(goal.getBudget()).
                 budgetScaled(priMult, durMult).
@@ -318,7 +324,8 @@ public class Compounds {
 
         t = Terms.toSortedSetArray(t);
         switch (t.length) {
-            case 1: return t[0];
+            case 1:
+                return t[0];
             case 2:
                 Term term1 = t[0];
                 Term term2 = t[1];
@@ -327,9 +334,8 @@ public class Compounds {
                     Set<Term> l = ct1.toSet();
                     if (term2.op() == op) {
                         // (||,(||,P,Q),(||,R,S)) = (||,P,Q,R,S)
-                        ((Compound)term2).addAllTo(l);
-                    }
-                    else {
+                        ((Compound) term2).addAllTo(l);
+                    } else {
                         // (||,(||,P,Q),R) = (||,P,Q,R)
                         l.add(term2);
                     }
@@ -353,7 +359,8 @@ public class Compounds {
     public static Term statement(Op op, Term[] t) {
 
         switch (t.length) {
-            case 1: return t[0];
+            case 1:
+                return t[0];
             case 2: {
 
                 Term subject = t[0];
@@ -408,7 +415,7 @@ public class Compounds {
     public static Term subtractSet(Op setType, Compound A, Compound B) {
         if (A.equals(B))
             return null; //empty set
-        TreeSet<Term> x = TermContainer.differenceSorted(A,B);
+        TreeSet<Term> x = TermContainer.differenceSorted(A, B);
         if (x.isEmpty())
             return null;
         return newCompound(setType, Terms.toArray(x),
@@ -427,9 +434,15 @@ public class Compounds {
     private static Term impl2Conj(Op op, Term subject, Term predicate, Term oldCondition) {
         Op conjOp;
         switch (op) {
-            case IMPLICATION: conjOp = CONJUNCTION; break;
-            case IMPLICATION_AFTER: conjOp = SEQUENCE; break;
-            case IMPLICATION_WHEN: conjOp = PARALLEL; break;
+            case IMPLICATION:
+                conjOp = CONJUNCTION;
+                break;
+            case IMPLICATION_AFTER:
+                conjOp = SEQUENCE;
+                break;
+            case IMPLICATION_WHEN:
+                conjOp = PARALLEL;
+                break;
             case IMPLICATION_BEFORE:
                 conjOp = SEQUENCE;
                 //swap order
@@ -478,72 +491,70 @@ public class Compounds {
     }
 
     private static Term newIntersection(Term[] t, Op intersection, Op setUnion, Op setIntersection) {
-        if (t.length == 2) {
-
-            Term term1 = t[0], term2 = t[1];
-
-            if (term2.op(intersection) && !term1.op(intersection)) {
-                //put them in the right order so everything fits in the switch:
-                Term x = term1;
-                term1 = term2;
-                term2 = x;
-            }
-
-            Op o1 = term1.op();
-
-            if (o1 == setUnion) {
-                //set union
-                if (term2.op(setUnion)) {
-                    Term[] ss = concat(
-                            ((Compound) term1).terms(),
-                            ((Compound) term2).terms(), Term.class);
-
-                    return setUnion == SET_EXT ? $.sete(ss) : $.seti(ss);
-                }
-
-            } else {
-                // set intersection
-                if (o1 == setIntersection) {
-                    if (term2.op(setIntersection)) {
-                        Set<Term> ss = ((Compound) term1).toSet();
-                        ss.retainAll(((Compound) term2).toSet());
-                        if (ss.isEmpty()) return null;
-                        return setIntersection == SET_EXT ? $.sete(ss) : $.seti(ss);
-                    }
-
-
-                } else {
-
-                    if (o1 == intersection) {
-                        Term[] suffix;
-
-                        if (term2.op(intersection)) {
-                            // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                            suffix = ((Compound) term2).terms();
-
-                        } else {
-                            // (&,(&,P,Q),R) = (&,P,Q,R)
-
-                            if (term2.op(intersection)) {
-                                // (&,R,(&,P,Q)) = (&,P,Q,R)
-                                throw new RuntimeException("should have been swapped into another condition");
-                            }
-
-                            suffix = new Term[]{term2};
-                        }
-
-                        t = concat(
-                                ((Compound) term1).terms(), suffix, Term.class
-                        );
-
-                    }
-                }
-            }
-
-
+        switch (t.length) {
+            case 1:
+                return t[0];
+            case 2:
+                Term r = newIntersection2(t[0], t[1], intersection, setUnion, setIntersection);
+                if (r != null) return r;
+                break;
+            /*default:
+                throw new RuntimeException("err what?");*/
         }
 
         return newCompound(intersection, t, -1, true);
+    }
+
+    private static Term newIntersection2(Term term1, Term term2, Op intersection, Op setUnion, Op setIntersection) {
+
+
+
+        Op o1 = term1.op();
+        Op o2 = term2.op();
+
+        if ((o1 == setUnion) && (o2 == setUnion)) {
+            //the set type that is united
+            return TermContainer.union(setUnion, (Compound) term1, (Compound) term2);
+        }
+
+
+        if ((o1 == setIntersection) && (o2 == setIntersection)) {
+            //the set type which is intersected
+            return TermContainer.intersect(setIntersection, (Compound) term1, (Compound) term2);
+        }
+
+        if (o2 == intersection && o1!=intersection) {
+            //put them in the right order so everything fits in the switch:
+            Term x = term1;
+            term1 = term2;
+            term2 = x;
+        }
+
+        //reduction between one or both of the intersection type
+        if (o1 == intersection) {
+            Term[] suffix;
+
+            if (term2.op(intersection)) {
+                // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+                suffix = ((Compound) term2).terms();
+
+            } else {
+                // (&,(&,P,Q),R) = (&,P,Q,R)
+
+                if (term2.op(intersection)) {
+                    // (&,R,(&,P,Q)) = (&,P,Q,R)
+                    throw new RuntimeException("should have been swapped into another condition");
+                }
+
+                suffix = new Term[]{term2};
+            }
+
+            return newCompound(intersection, concat(
+                ((Compound) term1).terms(), suffix, Term.class
+            ), -1, true);
+        }
+
+        return null; //no special cases were handled here
     }
 
     public static Term[] _flatten(Term[] args, Order order, int expandedSize) {
@@ -552,7 +563,7 @@ public class Compounds {
         for (Term a : args) {
             if (a.op().isConjunctive(order)) {
                 //arraycopy?
-                for (Term t : ((Compound)a).terms()) {
+                for (Term t : ((Compound) a).terms()) {
                     ret[k++] = t;
                 }
             } else {
@@ -655,7 +666,6 @@ public class Compounds {
 //        Term r = (relationIndex == 0) ? term[1] : term[0];
 //        return r;
 //    }
-
 
 
     //    @Override

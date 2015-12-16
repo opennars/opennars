@@ -1281,6 +1281,9 @@ public class FindSubst extends Versioning implements Subst {
     /** returns true if the assignment was allowed, false otherwise */
     public final boolean putXY(Term x /* usually a Variable */, Term y) {
 
+//        if (x.equals(y))
+//            throw new RuntimeException("x==y");
+
         VarCachedVersionMap xy = this.xy;
 
         Versioned<Term> v = xy.map.get(x);

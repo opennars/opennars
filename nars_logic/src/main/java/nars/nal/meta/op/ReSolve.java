@@ -8,17 +8,17 @@ import nars.term.transform.FindSubst;
 /**
  * Called after 1 or more after conclusions have completed to apply their results to a rederived term
  */
-public final class PostSolve extends PreCondition {
+public final class ReSolve extends PreCondition {
 
-    public static final PostSolve the = new PostSolve();
+    public static final ReSolve the = new ReSolve();
 
-    protected PostSolve() {
+    protected ReSolve() {
     }
 
 
     @Override
     public String toString() {
-        return "PostSolve";
+        return "ReSolve";
     }
 
     @Override

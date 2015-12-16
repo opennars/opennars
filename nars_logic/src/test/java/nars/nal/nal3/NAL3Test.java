@@ -152,6 +152,8 @@ public class NAL3Test extends AbstractNALTester {
         tester.ask("<(|,bird,swimmer) --> (|,animal,swimmer)>"); //.en("Is a swimming bird a type of swimming animal?");
         tester.mustBelieve(cycles, "<(|,bird,swimmer) --> (|,animal,swimmer)>", 0.90f ,0.73f); //.en("A swimming bird is probably a type of swimming animal.");
 
+        /*<bird --> animal>. %0.9;0.9%
+                <(|,bird,swimmer) --> (|,animal,swimmer)>?*/
     }
 
     @Test
