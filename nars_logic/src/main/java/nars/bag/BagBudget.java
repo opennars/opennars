@@ -1,6 +1,5 @@
 package nars.bag;
 
-import nars.Global;
 import nars.budget.Budget;
 import nars.budget.UnitBudget;
 import nars.nal.nal7.Tense;
@@ -142,6 +141,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
     }
 
     static boolean nonZero(float x) {
-        return (Math.abs(x) > Global.BUDGET_EPSILON);
+        //return (Math.abs(x) > Global.BUDGET_EPSILON);
+        return x!=0f;
     }
 }

@@ -520,18 +520,15 @@ public abstract class AbstractNAR extends NAR {
                 final float forgetPeriod = nar.memory.termLinkForgetDurations.floatValue() * nar.memory.duration(); //TODO cache
                 float lambda = (1.0f - budget.getDurability()) / forgetPeriod;
 
-                float relativeThreshold = 0.1f;
+                float relativeThreshold = 0.1f; //BAG THRESHOLD
 
                 float expDecayed = currentPriority * (float) Math.exp(-lambda * dt);
                 float threshold = budget.getQuality() * relativeThreshold;
 
-                float nextPriority = Math.max(
-                    expDecayed,
-                    threshold
-                );
+                float nextPriority = expDecayed;
+                if (nextPriority < threshold) nextPriority = threshold;
 
                 budget.setPriority(nextPriority);
-
 
                 return true;
             };
@@ -573,6 +570,7 @@ public abstract class AbstractNAR extends NAR {
                 //c.getTermLinks().update(simpleForgetDecay);
                 //c.getTaskLinks().update(simpleForgetDecay);
 
+
                 float p =
                         //Math.max(
                        c.getTaskLinks().getPriorityMax()
@@ -580,9 +578,7 @@ public abstract class AbstractNAR extends NAR {
                         //)
                         ;
 
-                cb.setPriority(p);
-                cb.setDurability(p);
-                cb.setQuality(p);
+                cb.set(p, 0.5f, 0.5f);
 
                 //if above firing threshold
                 //fireConcept(c);
@@ -592,9 +588,6 @@ public abstract class AbstractNAR extends NAR {
                     //simpleForgetDecay
                     alannForget
                 );
-
-
-
 
                 return true;
             });
