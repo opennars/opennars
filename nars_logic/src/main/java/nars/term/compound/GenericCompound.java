@@ -4,7 +4,6 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.$;
 import nars.Op;
 import nars.nal.Compounds;
-import nars.nal.nal7.Order;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal8.Operator;
@@ -21,7 +20,6 @@ import java.util.function.Predicate;
 import static nars.Op.SET_EXT;
 import static nars.Op.SET_INT;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
-import static nars.nal.Compounds.flatten;
 
 
 public class GenericCompound<T extends Term> implements Compound<T> {
@@ -56,16 +54,6 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                 }
                 return null;
 
-            case CONJUNCTION:
-                return Compounds.junction(Op.CONJUNCTION, t);
-            case DISJUNCTION:
-                return Compounds.junction(Op.DISJUNCTION, t);
-
-            case SEQUENCE:
-                return Sequence.makeSequence(t);
-
-            case PARALLEL:
-                return Parallel.makeParallel(t);
 
             default:
                 return COMPOUND(op, t, -1);
@@ -86,43 +74,41 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                 return $.property(t[0], t[1]);
             case INSTANCE_PROPERTY:
                 return $.instprop(t[0], t[1]);
+            case CONJUNCTION:
+                return Compounds.junction(Op.CONJUNCTION, t);
+            case DISJUNCTION:
+                return Compounds.junction(Op.DISJUNCTION, t);
+            case IMAGE_INT:
+            case IMAGE_EXT:
+                if ((relation == -1) || (relation > t.length))
+                    throw new RuntimeException("invalid index relation: " + relation + " for args " + Arrays.toString(t));
+                break;
+            case DIFF_EXT:
+                Term et0 = t[0], et1 = t[1];
+                if ((et0.op(SET_EXT) && et1.op(SET_EXT) )) {
+                    return Compounds.subtractSet(Op.SET_EXT, (Compound)et0, (Compound)et1);
+                }
+                break;
+            case DIFF_INT:
+                Term it0 = t[0], it1 = t[1];
+                if ((it0.op(SET_INT) && it1.op(SET_INT) )) {
+                    return Compounds.subtractSet(Op.SET_INT, (Compound)it0, (Compound)it1);
+                }
+                break;
+            case INTERSECT_EXT: return Compounds.newIntersectEXT(t);
+            case INTERSECT_INT: return Compounds.newIntersectINT(t);
         }
 
 
-        //REDUCTIONS
         if (op.isStatement()) {
             return Compounds.statement(op, t);
         } else {
-            switch (op) {
-                case IMAGE_INT:
-                case IMAGE_EXT:
-                    if ((relation == -1) || (relation > t.length))
-                        throw new RuntimeException("invalid index relation: " + relation + " for args " + Arrays.toString(t));
-                    break;
-                case CONJUNCTION:
-                    t = flatten(t, Order.None);
-                    break;
-                case DIFF_EXT:
-                    Term et0 = t[0], et1 = t[1];
-                    if ((et0.op(SET_EXT) && et1.op(SET_EXT) )) {
-                        return Compounds.subtractSet(Op.SET_EXT, (Compound)et0, (Compound)et1);
-                    }
-                    break;
-                case DIFF_INT:
-                    Term it0 = t[0], it1 = t[1];
-                    if ((it0.op(SET_INT) && it1.op(SET_INT) )) {
-                        return Compounds.subtractSet(Op.SET_INT, (Compound)it0, (Compound)it1);
-                    }
-                    break;
-                case INTERSECT_EXT: return Compounds.newIntersectEXT(t);
-                case INTERSECT_INT: return Compounds.newIntersectINT(t);
-                /*case DISJUNCTION:
-                    break;*/
-            }
+            //product, set, etc..
+            return Compounds.newCompound(op, t, relation, op.isCommutative());
         }
 
 
-        return Compounds.newCompound(op, t, relation, op.isCommutative());
+
     }
 
 

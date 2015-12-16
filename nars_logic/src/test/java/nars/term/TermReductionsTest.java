@@ -28,6 +28,10 @@ public class TermReductionsTest {
         assertEquals("(&,P,Q,R,S)", $("(&,(&,P,Q),(&,R,S))").toString());
     }
     @Test public void testIntersectExtReduction3() {
+        // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+        assertEquals("(&,P,Q,R,S,T,U)", $("(&,(&,P,Q),(&,R,S), (&,T,U))").toString());
+    }
+    @Test public void testIntersectExtReduction2_1() {
         // (&,R,(&,P,Q)) = (&,P,Q,R)
         assertEquals("(&,P,Q,R)", $("(&,R,(&,P,Q))").toString());
     }
@@ -57,8 +61,12 @@ public class TermReductionsTest {
         //UNION if (term1.op(Op.SET_INT) || term2.op(Op.SET_INT)) {
         assertEquals("[P,Q,R,S]", sectInt(seti(p, q), seti(r, s)).toString());
         assertEquals("[P,Q,R,S]", $("(|,[P,Q],[R,S])").toString());
+
+    }
+    @Test public void testIntersectIntReductionToZero() {
         assertEquals(null, $("(|,{P,Q},{R,S})"));
     }
+
     @Test public void testIntersectIntReduction_to_one() {
         assertEquals("<robin-->bird>", $("<robin-->(|,bird)>").toString());
         assertEquals("<robin-->bird>", $("<(|,robin)-->(|,bird)>").toString());
@@ -157,4 +165,26 @@ public class TermReductionsTest {
     public void testMultireduction() {
         //TODO probably works
     }
+
+    @Test public void testConjunctionMultipleAndEmbedded() {
+
+        assertEquals("(&&,a,b,c,d)",
+                $("(&&,(&&,a,b),(&&,c,d))").toString());
+        assertEquals("(&&,a,b,c,d,e,f)",
+                $("(&&,(&&,a,b),(&&,c,d), (&&, e, f))").toString());
+        assertEquals("(&&,a,b,c,d,e,f,g,h)",
+                $("(&&,(&&,a,b, (&&, g, h)),(&&,c,d), (&&, e, f))").toString());
+
+    }
+    @Test public void testDisjunctionMultipleAndEmbedded() {
+
+        assertEquals("(||,a,b,c,d)",
+                $("(||,(||,a,b),(||,c,d))").toString());
+        assertEquals("(||,a,b,c,d,e,f)",
+                $("(||,(||,a,b),(||,c,d), (||, e, f))").toString());
+        assertEquals("(||,a,b,c,d,e,f,g,h)",
+                $("(||,(||,a,b, (||, g, h)),(||,c,d), (||, e, f))").toString());
+
+    }
+
 }

@@ -19,11 +19,10 @@ import nars.truth.Truth;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
 import java.util.TreeSet;
 
 import static com.google.common.collect.ObjectArrays.concat;
+import static java.util.Arrays.copyOfRange;
 import static nars.Op.*;
 import static nars.Symbols.*;
 import static nars.term.Statement.pred;
@@ -314,45 +313,41 @@ public class Compounds {
 
     }
 
-    private static Term junction(Op o, Collection<Term> t) {
-        return junction(o, Terms.toArray(t));
-    }
+//    private static Term junction(Op o, Collection<Term> t) {
+//        return junction(o, Terms.toArray(t));
+//    }
 
 
     public static Term junction(Op op, Term[] t) {
         if (t.length == 0) return null;
 
-        t = Terms.toSortedSetArray(t);
-        switch (t.length) {
-            case 1:
-                return t[0];
-            case 2:
-                Term term1 = t[0];
-                Term term2 = t[1];
-                if (term1.op() == op) {
-                    Compound ct1 = ((Compound) term1);
-                    Set<Term> l = ct1.toSet();
-                    if (term2.op() == op) {
-                        // (||,(||,P,Q),(||,R,S)) = (||,P,Q,R,S)
-                        ((Compound) term2).addAllTo(l);
-                    } else {
-                        // (||,(||,P,Q),R) = (||,P,Q,R)
-                        l.add(term2);
-                    }
-                    return junction(op, l);
-                } else if (term2.op() == op) {
-                    // (||,R,(||,P,Q)) = (||,P,Q,R)
-                    Set<Term> l = ((Compound) term2).toSet();
-                    l.add(term1);
-                    return junction(op, l);
-                } else {
-                    //the two terms by themselves, unreducable
-                    //continue
+
+        boolean done = true;
+
+        //TODO use a more efficient flattening that doesnt involve recursion and multiple array creations
+        TreeSet<Term> s = new TreeSet();
+        for (Term x : t) {
+            if (x.op(op)) {
+                for (Term y : ((Compound)x).terms()) {
+                    s.add(y);
+                    if (y.op(op))
+                        done = false;
                 }
-                break;
+            } else {
+                s.add(x);
+            }
         }
 
-        return GenericCompound.COMPOUND(op, t, -1);
+        Term[] sa = s.toArray(new Term[s.size()]);
+
+        if (!done) {
+            return junction(op, sa);
+        }
+
+        if (sa.length == 1) return sa[0];
+
+        return newCompound(op, sa, -1, false /* already sorted via TreeSet */);
+
     }
 
     @Nullable
@@ -495,19 +490,20 @@ public class Compounds {
             case 1:
                 return t[0];
             case 2:
-                Term r = newIntersection2(t[0], t[1], intersection, setUnion, setIntersection);
-                if (r != null) return r;
-                break;
-            /*default:
-                throw new RuntimeException("err what?");*/
+                return newIntersection2(t[0], t[1], intersection, setUnion, setIntersection);
+            default:
+                //HACK use more efficient way
+                return newIntersection2(
+                    newIntersection2(t[0], t[1], intersection, setUnion, setIntersection),
+                    newIntersection(copyOfRange(t, 2, t.length), intersection, setUnion, setIntersection),
+                    intersection, setUnion, setIntersection
+                );
         }
 
-        return newCompound(intersection, t, -1, true);
+        //return newCompound(intersection, t, -1, true);
     }
 
-    private static Term newIntersection2(Term term1, Term term2, Op intersection, Op setUnion, Op setIntersection) {
-
-
+    @Deprecated private static Term newIntersection2(Term term1, Term term2, Op intersection, Op setUnion, Op setIntersection) {
 
         Op o1 = term1.op();
         Op o2 = term2.op();
@@ -528,33 +524,33 @@ public class Compounds {
             Term x = term1;
             term1 = term2;
             term2 = x;
+            o2 = o1;
+            o1 = intersection;
         }
 
         //reduction between one or both of the intersection type
+
         if (o1 == intersection) {
             Term[] suffix;
 
-            if (term2.op(intersection)) {
+            if (o2 == intersection) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
                 suffix = ((Compound) term2).terms();
 
             } else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
-
-                if (term2.op(intersection)) {
-                    // (&,R,(&,P,Q)) = (&,P,Q,R)
-                    throw new RuntimeException("should have been swapped into another condition");
-                }
-
                 suffix = new Term[]{term2};
             }
 
             return newCompound(intersection, concat(
-                ((Compound) term1).terms(), suffix, Term.class
+                    ((Compound) term1).terms(), suffix, Term.class
             ), -1, true);
+
         }
 
-        return null; //no special cases were handled here
+        return newCompound(intersection, new Term[]{term1, term2}, -1, true);
+
+
     }
 
     public static Term[] _flatten(Term[] args, Order order, int expandedSize) {
