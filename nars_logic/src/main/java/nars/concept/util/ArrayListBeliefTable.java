@@ -230,7 +230,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         return true;
     }
 
-    private final void onBeliefRemoved(Task t, String reason, Memory memory) {
+    private static void onBeliefRemoved(Task t, String reason, Memory memory) {
         memory.remove(t, reason);
     }
 

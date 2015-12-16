@@ -109,7 +109,7 @@ public class CurveBag<V> extends Bag<V> {
         int ss = size();
         if (ss <= n) {
             //special case: give everything
-            forEachEntry(c -> target.add(c));
+            forEachEntry(target::add);
             return n;
         }
 

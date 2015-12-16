@@ -3,7 +3,6 @@ package nars.bag;
 import nars.bag.impl.AbstractCacheBag;
 import nars.budget.Budget;
 import nars.util.data.Util;
-import nars.util.data.list.FasterList;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -25,11 +24,12 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
 
 
 
+    @FunctionalInterface
     public interface BudgetMerge {
         void merge(Budget target, Budget src, float srcScale);
     }
 
-    protected BudgetMerge mergeFunction;
+    protected BudgetMerge mergeFunction = null;
 
 
     /**
@@ -43,22 +43,6 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
      * the bag is cycled so that subsequent elements are different.
      */
     public abstract BagBudget<V> peekNext();
-
-    /** not finished yet */
-    public int updateNext(float forgetCycles, BagBudget<V>[] result, long now, int retries) {
-        int ss = size();
-        if (ss <= result.length) {
-            FasterList l = new FasterList(result);
-            forEachEntry(b -> l.add(b));
-            if (ss < result.length)
-                l.set(ss, null); //null terminator
-            return ss;
-        }
-        for (int i = 0; i < result.length; i++) {
-
-        }
-        return 0;
-    }
 
 
     /**
@@ -120,7 +104,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
         this.mergeFunction = mergeFunction;
     }
 
-    public static BudgetMerge plus = (target, src, srcScale) -> {
+    public static final BudgetMerge plus = (target, src, srcScale) -> {
         float dp = src.getPriority() * srcScale;
 
         float currentPriority = target.getPriorityIfNaNThenZero();
@@ -264,7 +248,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
     }
 
     public void printAll(PrintStream p) {
-        forEachEntry(b -> p.println(b.toBudgetString() + " " + b.get()));
+        forEachEntry(b -> p.println(b.toBudgetString() + ' ' + b.get()));
     }
 
     /**
@@ -333,7 +317,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
 
         Iterator<V> ii = iterator();
         int n = 0;
-        while (ii.hasNext() && n++ < max) {
+        while (ii.hasNext() && (n++ < max)) {
             action.accept(ii.next());
         }
 

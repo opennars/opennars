@@ -1,6 +1,5 @@
 package nars.concept.util;
 
-import com.google.common.collect.Iterators;
 import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
 import nars.Memory;
@@ -66,13 +65,13 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
         return capacity;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof TaskTable)) return false;
-        TaskTable t = (TaskTable) obj;
-        return getCapacity() == t.getCapacity() &&
-                Iterators.elementsEqual(iterator(), t.iterator());
-    }
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (!(obj instanceof TaskTable)) return false;
+//        TaskTable t = (TaskTable) obj;
+//        return getCapacity() == t.getCapacity() &&
+//                Iterators.elementsEqual(iterator(), t.iterator());
+//    }
 
     @Override
     public void setCapacity(int newCapacity) {

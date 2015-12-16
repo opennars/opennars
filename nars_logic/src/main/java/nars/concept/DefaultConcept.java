@@ -56,7 +56,7 @@ public class DefaultConcept extends AtomConcept {
 
     /** how incoming budget is merged into its existing duplicate quest/question */
     static final Procedure2<Budget, Budget> duplicateQuestionMerge = UnitBudget.plus;
-    private Term[] termLinkTemplates;
+    private final Term[] termLinkTemplates;
 
     public DefaultConcept(Term term, Param p) {
         this(term, new NullBag(), new NullBag(), p);

@@ -15,10 +15,7 @@ import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
 import nars.nal.Compounds;
 import nars.nal.PremiseRule;
-import nars.nal.meta.match.Ellipsis;
-import nars.nal.meta.match.EllipsisOneOrMore;
-import nars.nal.meta.match.EllipsisTransform;
-import nars.nal.meta.match.EllipsisZeroOrMore;
+import nars.nal.meta.match.*;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operator;
@@ -50,13 +47,6 @@ import static nars.Symbols.*;
  */
 public class Narsese extends BaseParser<Object>  {
 
-    /** Maximum supported NAL level */
-    public static final int level = 8;
-
-    /** MetaNAL enable/disable */
-    public static final boolean meta = true;
-
-    static final char[] variables = { Symbols.VAR_INDEPENDENT, Symbols.VAR_DEPENDENT, Symbols.VAR_QUERY, Symbols.VAR_PATTERN };
 
     //These should be set to something like RecoveringParseRunner for performance
     private final ParseRunner inputParser = new ListeningParseRunner3(Input());
@@ -370,24 +360,24 @@ public class Narsese extends BaseParser<Object>  {
     }
 
 
-    Rule IntegerNonNegative() {
-        return sequence(
-                oneOrMore(digit()),
-                push(Integer.parseInt(matchOrDefault("NaN")))
-        );
-    }
+//    Rule IntegerNonNegative() {
+//        return sequence(
+//                oneOrMore(digit()),
+//                push(Integer.parseInt(matchOrDefault("NaN")))
+//        );
+//    }
 
-    Rule Number() {
-
-        return sequence(
-                sequence(
-                        optional('-'),
-                        oneOrMore(digit()),
-                        optional('.', oneOrMore(digit()))
-                ),
-                push(Float.parseFloat(matchOrDefault("NaN")))
-        );
-    }
+//    Rule Number() {
+//
+//        return sequence(
+//                sequence(
+//                        optional('-'),
+//                        oneOrMore(digit()),
+//                        optional('.', oneOrMore(digit()))
+//                ),
+//                push(Float.parseFloat(matchOrDefault("NaN")))
+//        );
+//    }
 
     Rule SentencePunctuation(Var<Character> punc) {
         return sequence(anyOf(".?!@;"), punc.set(matchedChar()));
@@ -417,17 +407,12 @@ public class Narsese extends BaseParser<Object>  {
         return seq(
                 s(),
                 firstOf(
-
-
                         QuotedMultilineLiteral(),
                         QuotedLiteral(),
 
                         Operator(),
 
-
                         Interval(),
-
-                        EmptyProduct(),
 
                         seq(meta, Ellipsis() ),
                         seq(meta, EllipsisExpand() ),
@@ -436,18 +421,22 @@ public class Narsese extends BaseParser<Object>  {
 
                         seq(oper, ColonReverseInheritance() ),
 
-                        seq(oper,
-                            Term(false,false),
-                            EmptyOperationParens()
-                        ),
 
                         //Functional form of an Operation, ex: operate(p1,p2), TODO move to FunctionalOperationTerm() rule
                         seq(oper,
-                            Term(false,false),
-                            COMPOUND_TERM_OPENER,
-                            MultiArgTerm(Op.OPERATOR, COMPOUND_TERM_CLOSER, false, false, false, true)
-                        ),
 
+                            Term(false,false),
+
+                            COMPOUND_TERM_OPENER,
+
+                            firstOf(
+
+                                //empty operator parens
+                                sequence( s(), COMPOUND_TERM_CLOSER,  push(popTerm(Op.OPERATOR, false)) ),
+
+                                MultiArgTerm(Op.OPERATOR, COMPOUND_TERM_CLOSER, false, false, false, true)
+                            )
+                        ),
 
                         seq( STATEMENT_OPENER,
                             MultiArgTerm(null, STATEMENT_CLOSER, false, true, true, false)
@@ -455,27 +444,25 @@ public class Narsese extends BaseParser<Object>  {
 
                         Variable(),
 
-
 //                        //negation shorthand
                         seq(Op.NEGATE.str, s(), Term(), push(
                             //Negation.make(popTerm(null, true)))),
                             $.neg(Atom.the(pop())))),
 
-
                         seq(
                             Op.SET_EXT_OPENER.str,
-                            MultiArgTerm(Op.SET_EXT_OPENER, SET_EXT_CLOSER, false, false, false)
+                            MultiArgTerm(Op.SET_EXT_OPENER, SET_EXT_CLOSER)
                         ),
 
                         seq(
                             Op.SET_INT_OPENER.str,
-                            MultiArgTerm(Op.SET_INT_OPENER, SET_INT_CLOSER, false, false, false)
+                            MultiArgTerm(Op.SET_INT_OPENER, SET_INT_CLOSER)
                         ),
-
-
 
                         seq( COMPOUND_TERM_OPENER,
                                 firstOf(
+                                        //empty product
+                                        seq( s(), COMPOUND_TERM_CLOSER, push(Compounds.Empty) ),
 
                                         MultiArgTerm(null, COMPOUND_TERM_CLOSER, true, false, false, false),
 
@@ -498,9 +485,6 @@ public class Narsese extends BaseParser<Object>  {
 //                        ),
 
 
-
-
-
                         //BacktickReverseInstance(),
 
                         Atom()
@@ -519,11 +503,11 @@ public class Narsese extends BaseParser<Object>  {
     }
 
 
-    Rule EmptyProduct() {
-        return sequence(
-            COMPOUND_TERM_OPENER, s(), COMPOUND_TERM_CLOSER, push(Compounds.Empty)
-        );
-    }
+//    Rule EmptyProduct() {
+//        return sequence(
+//            COMPOUND_TERM_OPENER, s(), COMPOUND_TERM_CLOSER, push(Compounds.Empty)
+//        );
+//    }
 
 
     Rule Operator() {
@@ -537,9 +521,8 @@ public class Narsese extends BaseParser<Object>  {
      * an atomic term, returns a String because the result may be used as a Variable name
      */
     Rule Atom() {
-
         return sequence(
-                new ValidAtomCharMatcher(),
+                ValidAtomCharMatcher.the,
                 push(match())
         );
     }
@@ -549,7 +532,9 @@ public class Narsese extends BaseParser<Object>  {
     public static final class ValidAtomCharMatcher extends AbstractMatcher
     {
 
-        public ValidAtomCharMatcher() {
+        public static final ValidAtomCharMatcher the = new ValidAtomCharMatcher();
+
+        protected ValidAtomCharMatcher() {
             super("'ValidAtomChar'");
         }
 
@@ -574,8 +559,10 @@ public class Narsese extends BaseParser<Object>  {
     }
 
     public static boolean isValidAtomChar(char c) {
+        int x = (int)c;
+
         //TODO replace these with Symbols. constants
-        switch((byte)c) {
+        switch(x) {
             case ' ':
             case Symbols.ARGUMENT_SEPARATOR:
             case Symbols.JUDGMENT:
@@ -702,7 +689,7 @@ public class Narsese extends BaseParser<Object>  {
 //                push( pop().toString() + pop().toString()));
 //    }
 
-    Rule alphanumeric() { return firstOf(alpha(), digit()); }
+    //Rule alphanumeric() { return firstOf(alpha(), digit()); }
 
 
 
@@ -726,13 +713,17 @@ public class Narsese extends BaseParser<Object>  {
            <variable> ::= "$"<word>                          // independent variable
                         | "#"[<word>]                        // dependent variable
                         | "?"[<word>]                        // query variable in question
+                        | "%"[<word>]                        // pattern variable in rule
         */
-        return sequence(
-                anyOf(variables),
-                push(match().charAt(0)), Atom(), swap(),
-                    push($.v((char)pop(), (String) pop())
-                )
-
+        return firstOf(
+            sequence( Symbols.VAR_INDEPENDENT, Atom(), push( new Variable.VarIndep((String)pop()))) ,
+            sequence( Symbols.VAR_DEPENDENT, Atom(), push( new Variable.VarDep((String)pop()))) ,
+            sequence( Symbols.VAR_QUERY, Atom(), push( new Variable.VarQuery((String)pop()))) ,
+            sequence( Symbols.VAR_PATTERN, Atom(), push( new VarPattern((String)pop())))
+//                anyOf(variables),
+//                push(match().charAt(0)), Atom(), swap(),
+//                    push($.v((char)pop(), (String) pop())
+//                )
         );
     }
 
@@ -808,8 +799,8 @@ public class Narsese extends BaseParser<Object>  {
     }
 
     @Cached
-    Rule MultiArgTerm(Op open, char close, boolean allowInitialOp, boolean allowInternalOp, @Deprecated boolean allowSpaceToSeparate) {
-        return MultiArgTerm(open, /*open, */close, allowInitialOp, allowInternalOp, allowSpaceToSeparate, false);
+    Rule MultiArgTerm(Op open, char close) {
+        return MultiArgTerm(open, /*open, */close, false, false, false, false);
     }
 
     boolean OperationPrefixTerm() {
@@ -820,14 +811,12 @@ public class Narsese extends BaseParser<Object>  {
      * list of terms prefixed by a particular compound term operate
      */
     @Cached
-    Rule MultiArgTerm(Op defaultOp, /*NALOperator open, */char close, boolean initialOp, boolean allowInternalOp, @Deprecated boolean spaceSeparates, boolean operatorPrecedes) {
+    Rule MultiArgTerm(Op defaultOp, char close, boolean initialOp, boolean allowInternalOp, @Deprecated boolean spaceSeparates, boolean operatorPrecedes) {
 
 
         return sequence(
 
                 operatorPrecedes ?  OperationPrefixTerm() : push(Compound.class),
-
-                //open != null ? sequence(open.ch, s()) : s(),
 
                 initialOp ? Op() : Term(),
 
@@ -984,9 +973,9 @@ public class Narsese extends BaseParser<Object>  {
         return zeroOrMore(anyOf(" \t\f\n\r"));
     }
 
-    Rule sNonNewLine() {
-        return zeroOrMore(anyOf(" \t\f"));
-    }
+//    Rule sNonNewLine() {
+//        return zeroOrMore(anyOf(" \t\f"));
+//    }
 
 //    public static NarseseParser newParser(NAR n) {
 //        return newParser(n.memory);

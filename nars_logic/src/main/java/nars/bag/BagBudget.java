@@ -8,13 +8,14 @@ import nars.nal.nal7.Tense;
 import java.util.function.Supplier;
 
 /**
- * Created by me on 12/14/15.
+ * An entry in a bag
+ * equalsTo/hashCode proxies to the wrapped element, X id
  */
 public final class BagBudget<X> implements Budget, Supplier<X> {
 
     private final float[] b = new float[6];
     public final X id;
-    private long lastForget;
+    private long lastForget = Tense.TIMELESS;
 
     protected BagBudget(X id) {
         this.id = id;
@@ -117,17 +118,17 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
         return new UnitBudget(this);
     }
 
-    public void set(Budget b) {
-        setPriority(b.getPriority());
-        setDurability(b.getDurability());
-        setQuality(b.getQuality());
+
+    @Override public boolean equals(Object obj) {
+//        /*if (obj instanceof Budget)*/ {
+//            return equalsBudget((Budget) obj);
+//        }
+//        return id.equals(((BagBudget)obj).id);
+        return obj == this;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        /*if (obj instanceof Budget)*/ {
-            return equalsBudget((Budget) obj);
-        }
+    @Override public int hashCode() {
+        return id.hashCode();
     }
 
     @Override

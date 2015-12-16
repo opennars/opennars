@@ -26,7 +26,6 @@ import com.google.common.primitives.Longs;
 import nars.Global;
 import nars.NAR;
 import nars.bag.Bag;
-import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
@@ -61,25 +60,6 @@ public interface Concept extends Termed, Supplier<Term> {
     @Override
     default Term get() { return term(); }
 
-
-    /** attempts to fill the supplied array with next termlinks
-     *  from this concept's bag.
-     */
-    default int nextTermLinks(int dur, long now, float termLinkForgetDurations, BagBudget<Termed>[] result) {
-        return 0;
-//        return getTermLinks().forgetNext(
-//                termLinkForgetDurations * dur,
-//                result,
-//                now,
-//                1 /* additional */);
-    }
-    default int nextTaskLinks(int dur, long now, float taskLinkForgetDurations, BagBudget<Task>[] result) {
-        return getTaskLinks().updateNext(
-                taskLinkForgetDurations * dur,
-                result,
-                now,
-                1 /* additional */);
-    }
 
     default void discountBeliefConfidence() {
         if (hasBeliefs()) {

@@ -93,17 +93,10 @@ public class AtomConcept extends AbstractConcept  {
         return null;
     }
 
-    static final boolean activateTermLinkTemplateTargetsFromTask = true;
-
-
     final static Concept activateConcept(Termed t, Budget taskBudget, float scale, NAR nar) {
         Term target = t.term();
-        return activateTermLinkTemplateTargetsFromTask ? nar.conceptualize(target, taskBudget, scale) : nar.concept(target);
+        return nar.conceptualize(target, taskBudget, scale);
     }
-
-
-
-
 
     /**
      * when a task is processed, a tasklink
