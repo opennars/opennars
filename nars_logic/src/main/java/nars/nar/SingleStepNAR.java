@@ -1,20 +1,17 @@
 package nars.nar;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import nars.Global;
-import nars.nal.PremiseRule;
 import nars.task.flow.FIFOTaskPerception;
 import nars.time.CycleClock;
-import nars.util.meter.DerivationGraph;
 
 public class SingleStepNAR extends AbstractNAR {
 
     //static DerivationGraph derivations = new DerivationGraph(false, false);
 
-    static Multimap<PremiseRule, DerivationGraph.PremiseKey> ruleDerivations =
-            Multimaps.newMultimap(Global.newHashMap(1024),
-                    () -> Global.newHashSet(4));
+//    static Multimap<PremiseRule, DerivationGraph.PremiseKey> ruleDerivations =
+//            Multimaps.newMultimap(Global.newHashMap(1024),
+//                    () -> Global.newHashSet(4));
+    private int maxProcessableTermVolume = 24;
 
 //    static Multimap<DerivationGraph.PremiseKey, TaskRule> derivationRules =
 //            Multimaps.newMultimap(new FasterHashMap(1024),
@@ -56,6 +53,8 @@ public class SingleStepNAR extends AbstractNAR {
                     else {
                         t = t.normalize(memory);
                         if (t != null) {
+                            if (t.term().volume() > maxProcessableTermVolume)
+                                return false;
 
                             process(t); //immediately process
 
