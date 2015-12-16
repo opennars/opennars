@@ -139,7 +139,6 @@ public class Default extends AbstractNAR {
                 b.addAll(buffer);
             }
 
-
             if (!buffer.isEmpty()) {
 
                 Task.normalize(

@@ -313,8 +313,8 @@ public interface Budget extends Prioritized, Budgeted {
 
 
     default float getPriorityIfNaNThenZero() {
-        float p;
-        if (!Float.isNaN(p = getPriority()))
+        float p = getPriority();
+        if (!Float.isNaN( p ))
             return p;
         return 0;
     }

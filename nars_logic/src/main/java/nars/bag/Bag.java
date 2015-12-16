@@ -11,8 +11,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static nars.Global.BUDGET_EPSILON;
-
 
 /**
  * K=key, V = item/value of type Item
@@ -104,29 +102,27 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
         this.mergeFunction = mergeFunction;
     }
 
-    public static final BudgetMerge plus = (target, src, srcScale) -> {
+    public static final BudgetMerge plus = (tgt, src, srcScale) -> {
         float dp = src.getPriority() * srcScale;
 
-        float currentPriority = target.getPriorityIfNaNThenZero();
+        float currentPriority = tgt.getPriorityIfNaNThenZero();
 
-        float nextPriority = Math.min(1,currentPriority + dp);
+        float nextPri = currentPriority + dp;
+        if (nextPri > 1) nextPri = 1f;
 
-        float currentNextPrioritySum = (currentPriority + nextPriority);
+        float currentNextPrioritySum = (currentPriority + nextPri);
 
-        /* current proportion */ float cp = (Util.equal(currentNextPrioritySum, 0, BUDGET_EPSILON)) ?
-                0.5f : /* both are zero so they have equal infleunce */
+        /* current proportion */
+        float cp = //(Util.equal(currentNextPrioritySum, 0, BUDGET_EPSILON)) ? 0.5f : /* both are zero so they have equal infleunce */
                 (currentPriority / currentNextPrioritySum);
-        /* next proportion */ float np = 1.0f - cp;
+        /* next proportion */
+        float np = 1.0f - cp;
 
 
-        float D = target.getDurability();
-        float Q = target.getQuality();
+        float nextDur = (cp * tgt.getDurability()) + (np * src.getDurability());
+        float nextQua = (cp * tgt.getQuality()) + (np * src.getQuality());
 
-        target.set(
-            nextPriority,
-            Math.max(D, (cp * D) + (np * src.getDurability())),
-            Math.max(Q, (cp * Q) + (np * src.getQuality()))
-        );
+        tgt.set( nextPri, nextDur, nextQua );
     };
 
 

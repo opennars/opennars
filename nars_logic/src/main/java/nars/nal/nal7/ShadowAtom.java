@@ -13,6 +13,9 @@ public class ShadowAtom extends AbstractStringAtom {
 
     private static final byte[] empty = new byte[0];
 
+    public ShadowAtom() {
+        super();
+    }
 
     public ShadowAtom(String id) {
         super(id);

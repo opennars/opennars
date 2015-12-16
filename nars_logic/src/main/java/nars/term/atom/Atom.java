@@ -2,15 +2,11 @@ package nars.term.atom;
 
 import nars.Narsese;
 import nars.Op;
-import nars.nal.nal7.ShadowAtom;
 import nars.term.Term;
 import nars.util.data.Util;
 
 /** default Atom implementation */
 public class Atom extends StringAtom {
-
-
-    public static final Term Null = new ShadowAtom("NULL");
 
     static final Atom[] digits = new Atom[10];
     //private static final Map<String,Atom> atoms = Global.newHashMap();
@@ -206,9 +202,11 @@ public class Atom extends StringAtom {
         return null;
     }
 
+    final static int AtomBit = Op.ATOM.bit();
+
     @Override
     public final int structure() {
-        return 1 << Op.ATOM.ordinal();
+        return AtomBit;
     }
 
     public final String toStringUnquoted() {

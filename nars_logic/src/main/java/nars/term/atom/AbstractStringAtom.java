@@ -11,7 +11,7 @@ public abstract class AbstractStringAtom extends AbstractStringAtomRaw {
     final int hash;
 
     public AbstractStringAtom() {
-        super("");
+        super(null);
         this.hash = 0;
     }
 

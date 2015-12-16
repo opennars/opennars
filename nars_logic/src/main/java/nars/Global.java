@@ -150,7 +150,7 @@ public class Global {
     /** hard upper-bound limit on Compound term complexity;
      * if this is exceeded it may indicate a recursively
      * malformed term due to a serious inference bug */
-    public static short COMPOUND_VOLUME_MAX = 384;
+    public static final int COMPOUND_VOLUME_MAX = 384;
 
     /** extra debugging checks */
     public static boolean DEBUG_PARANOID = false;

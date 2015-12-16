@@ -287,8 +287,9 @@ public class FindSubst extends Versioning implements Subst {
         public SubTermStructure(Op matchingType, int subterm, int bits) {
             this.subterm = subterm;
 
-            if (matchingType != Op.VAR_PATTERN)
-                bits &= (~matchingType.bit());
+//            if (matchingType != Op.VAR_PATTERN)
+//                bits &= (~matchingType.bit());
+            bits &= ~(Op.VariableBits);
 
             this.bits = bits;
             id = "t" + subterm + ':' +
@@ -303,9 +304,8 @@ public class FindSubst extends Versioning implements Subst {
 
         @Override
         boolean run(FindSubst ff) {
-            Compound parent = ff.parent.get();
-            int s = parent.term(subterm).structure();
-            return (s | bits) == s;
+            Compound t = (Compound) ff.term.get();
+            return !t.term(subterm).impossibleStructureMatch(bits);
         }
     }
 
@@ -331,7 +331,7 @@ public class FindSubst extends Versioning implements Subst {
 
         @Override
         boolean run(FindSubst ff) {
-            Compound parent = ff.parent.get();
+            Compound parent = (Compound) ff.term.get();
             return parent.term(subterm).op() == op;
         }
     }

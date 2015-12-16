@@ -69,12 +69,26 @@ public class TermPattern {
 
         List<PreCondition> code = Global.newArrayList();
 
-
+        if (pattern instanceof TaskBeliefPair) {
+            compileTaskBeliefPair((TaskBeliefPair)pattern, code);
+        }
         compile(pattern, code);
 
-        //code.add(new RuleMatch.Stage(RuleMatch.MatchStage.Post));
-
         this.code = code.toArray(new PreCondition[code.size()]);
+    }
+
+    private void compileTaskBeliefPair(TaskBeliefPair pattern, List<PreCondition> code) {
+        Term x0 = pattern.term(0);
+        Term x1 = pattern.term(1);
+        if (x0.op()!=Op.VAR_PATTERN) {
+            code.add(new FindSubst.SubTermOp(0, x0.op()));
+            //code.add(new FindSubst.SubTermStructure(type, 0, x0.structure()));
+        }
+        if (x1.op()!=Op.VAR_PATTERN) {
+            code.add(new FindSubst.SubTermOp(1, x1.op()));
+            //code.add(new FindSubst.SubTermStructure(type, 1, x1.structure()));
+        }
+
     }
 
     private void compile(Term x, List<PreCondition> code) {

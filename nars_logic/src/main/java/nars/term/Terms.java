@@ -159,6 +159,7 @@ public class Terms {
     }
 
 
+    /** brute-force equality test */
     public static boolean contains(Term[] container, Term v) {
         for (Term e : container)
             if (v.equals(e))

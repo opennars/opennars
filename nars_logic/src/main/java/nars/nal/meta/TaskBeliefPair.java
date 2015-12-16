@@ -2,7 +2,6 @@ package nars.nal.meta;
 
 import nars.Op;
 import nars.term.Term;
-import nars.term.atom.Atom;
 import nars.term.compound.GenericCompound;
 
 /**
@@ -17,10 +16,6 @@ public final class TaskBeliefPair extends GenericCompound {
 
     private final Term[] t;
     //public final static Variable any = new Variable("%1"); //just use the first pattern variable because it will overlap with it
-
-    public TaskBeliefPair() {
-        this(Atom.Null, Atom.Null);
-    }
 
     public TaskBeliefPair(Term a, Term b) {
         super(Op.PRODUCT, a, b);

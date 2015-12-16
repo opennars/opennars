@@ -19,7 +19,7 @@ import java.util.function.Function;
 public abstract class EllipsisMatch extends ShadowAtom {
 
     public EllipsisMatch() {
-        super("");
+        super();
     }
 
     public static ArrayEllipsisMatch matchedSubterms(Compound Y, IntObjectPredicate<Term> filter) {
