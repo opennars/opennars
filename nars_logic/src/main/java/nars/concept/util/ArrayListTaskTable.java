@@ -1,9 +1,8 @@
 package nars.concept.util;
 
-import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
 import nars.Memory;
-import nars.budget.Budget;
+import nars.budget.BudgetMerge;
 import nars.task.Task;
 import nars.term.TermMetadata;
 import nars.truth.Truth;
@@ -98,13 +97,13 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
 
 
     @Override
-    public Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m) {
+    public Task add(Task t, Equality<Task> equality, BudgetMerge duplicateMerge, Memory m) {
 
         Task existing = getFirstEquivalent(t, equality);
         if (existing != null) {
 
             if (existing != t) {
-                duplicateMerge.value(existing.getBudget(), t.getBudget());
+                duplicateMerge.merge(existing.getBudget(), t.getBudget(), 1f);
                 m.remove(t, "PreExisting TaskTable Duplicate");
             }
 

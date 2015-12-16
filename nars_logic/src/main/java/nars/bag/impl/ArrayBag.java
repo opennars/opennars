@@ -6,6 +6,7 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.budget.Budget;
+import nars.budget.BudgetMerge;
 import nars.budget.Budgeted;
 import nars.budget.UnitBudget;
 import nars.util.ArraySortedIndex;
@@ -244,13 +245,32 @@ public class ArrayBag<V> extends Bag<V> {
         forEachEntry(this::update);
     }
 
-    public void update(BagBudget v) {
-        if (v.hasDelta()) {
-            SortedIndex<BagBudget<V>> ii = this.items;
-            if (ii.remove(v)) {
-                v.commit();
-                ii.insert(v);
-            }
+    public void update(BagBudget<V> v) {
+        if (!v.hasDelta()) {
+            return;
+        }
+        if (size() == 1) {
+            v.commit();
+            return;
+        }
+
+        SortedIndex<BagBudget<V>> ii = this.items;
+
+        int currentIndex = ii.locate(v);
+        if (currentIndex == -1) {
+            throw new RuntimeException("bag fault");
+        }
+
+        v.commit();
+
+        float newScore = ii.score(v);
+        if ((newScore < ii.scoreAt(currentIndex+1)) || //score of item below
+                (newScore > ii.scoreAt(currentIndex-1)) //score of item above
+            ) {
+            ii.remove(currentIndex);
+            ii.insert(v); //reinsert
+        } else {
+            //otherwise, it remains in the same position and move unnecessary
         }
     }
 

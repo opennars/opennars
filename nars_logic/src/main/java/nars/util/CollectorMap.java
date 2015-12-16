@@ -1,6 +1,6 @@
 package nars.util;
 
-import nars.bag.Bag;
+import nars.budget.BudgetMerge;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -23,7 +23,7 @@ public abstract class CollectorMap<K, V extends Supplier<K>> implements Serializ
         return map.toString();
     }
 
-    public abstract Bag.BudgetMerge getMerge();
+    public abstract BudgetMerge getMerge();
 
     /** implementation for adding the value to another collecton (called internally)  */
     protected abstract V addItem(V e);

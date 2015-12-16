@@ -20,12 +20,9 @@
  */
 package nars.budget;
 
-import com.gs.collections.api.block.procedure.Procedure2;
 import nars.nal.nal7.Tense;
 import nars.truth.Truth;
 import nars.util.data.Util;
-
-import java.io.Serializable;
 
 import static nars.nal.UtilityFunctions.and;
 import static nars.nal.UtilityFunctions.or;
@@ -38,14 +35,14 @@ import static nars.nal.UtilityFunctions.or;
  */
 public class UnitBudget implements Budget {
 
-    public static final Procedure2<Budget,Budget> average =
-        //(Serializable & Procedure2<Budget, Budget>) Budget::mergeAverage;
-        (Serializable & Procedure2<Budget, Budget>) Budget::mergeAverageLERP;
-    public static final Procedure2<Budget,Budget> plus =
-        (Serializable & Procedure2<Budget, Budget>) Budget::mergePlus;
-    public static final Procedure2<Budget,Budget> max =
-        (Serializable & Procedure2<Budget, Budget>) Budget::mergeMax;
-
+//    public static final Procedure2<Budget,Budget> average =
+//        //(Serializable & Procedure2<Budget, Budget>) Budget::mergeAverage;
+//        (Serializable & Procedure2<Budget, Budget>) Budget::mergeAverageLERP;
+//    public static final Procedure2<Budget,Budget> plus =
+//        (Serializable & Procedure2<Budget, Budget>) Budget::mergePlus;
+//    public static final Procedure2<Budget,Budget> max =
+//        (Serializable & Procedure2<Budget, Budget>) Budget::mergeMax;
+//
 
 
     //common instance for a 'deleted budget'.  TODO use a wrapper class to make it unmodifiable
@@ -384,10 +381,7 @@ public class UnitBudget implements Budget {
 
 
     public boolean equals(Object that) {
-        if (that instanceof Budget) {
-            return equalsBudget((Budget) that);
-        }
-        return false;
+        throw new RuntimeException("N/A");
     }
 
     @Override
@@ -501,18 +495,6 @@ public class UnitBudget implements Budget {
     public void mulDurability(float factor) {
         setDurability(getDurability() * factor);
     }
-
-
-    public final Budget forget(long now, float forgetCycles, float relativeThreshold) {
-        if (!isDeleted()) {
-            //BudgetFunctions.forgetPeriodic(this, forgetCycles, relativeThreshold, now);
-            BudgetFunctions.forgetAlann(this, forgetCycles, now);
-        }
-
-        setLastForgetTime(now);
-        return this;
-    }
-
 
 
 

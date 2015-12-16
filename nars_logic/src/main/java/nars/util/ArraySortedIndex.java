@@ -57,7 +57,7 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> impleme
      *
      * TODO parameter score function
      */
-    static float score(Budgeted b) {
+    @Override public float score(Budgeted b) {
 
         //MODE 0: priority only
         return b.getPriority();
@@ -110,7 +110,7 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> impleme
     }
 
 
-    public final int pos(E o) {
+    @Override public final int pos(E o) {
         return pos(score(o));
     }
 
@@ -184,23 +184,16 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> impleme
         return removed;
     }
 
-    //TODO use last known position, stored in the Map
-    //it could be a better predictor of where it was
     @Override public boolean remove(Object o) {
+        int l = locate(o);
+        if (l!=-1) return remove((int)l)==o;
+        return true;
+    }
+
+    @Override public int locate(Object o) {
 
         int s = size();
-        if (s == 0) return false;
-
-        //final E o = (E)_o;
-        //final Object on = o.name();
-
-//        if (s == 1) {
-//            if (get(0)==o) {
-//                clear();
-//                return true;
-//            }
-//            return false;
-//        }
+        if (s == 0) return -1;
 
 
         //estimated position according to current priority,
@@ -210,8 +203,8 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> impleme
         if (p >= s) p = s-1;
         if (p < 0)  p = 0;
 
-        if (attemptRemoval(o, p))
-            return true;
+        if (attemptEqual(o, p))
+            return p;
 
         int r = 0;
         int maxDist = Math.max(s - p, p);
@@ -236,13 +229,10 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> impleme
                 if (u < 0) continue;
             }
 
-            if (attemptRemoval(o, u))
-                return true;
+            if (attemptEqual(o, u))
+                return u;
 
         } while ( r <= maxDist );
-
-
-
 
 //        //try exhaustive removal as a final option
 //        if (list.remove(o)) {
@@ -254,10 +244,10 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> impleme
         //return false;
     }
 
-    private final boolean attemptRemoval(Object o, /*final Object oName, */ int i) {
+    private final boolean attemptEqual(Object o, /*final Object oName, */ int i) {
         List<E> l = list;
         if (o == l.get( i ) /*|| (r.name().equals(oName))*/) {
-            return l.remove(i)!=null; //shouldnt actually ever return false here
+            return true;
         }
         return false;
     }

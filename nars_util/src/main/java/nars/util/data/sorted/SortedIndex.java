@@ -20,6 +20,9 @@ public abstract class SortedIndex<T> implements Collection<T>, Serializable {
 
     public abstract T insert(T i);
 
+    /** current index of existing item */
+    public abstract int pos(T o);
+
     /** numeric access */
     public abstract T get(int i);
     public abstract T remove(int i);
@@ -48,9 +51,20 @@ public abstract class SortedIndex<T> implements Collection<T>, Serializable {
 
     public abstract boolean isSorted();
 
+    public abstract int locate(Object o);
+
     public abstract int capacity();
 
     public void print(PrintStream out) {
         forEach(out::println);
+    }
+
+    public abstract float score(T v);
+
+
+    public final float scoreAt(int i) {
+        if (i == -1) return Float.POSITIVE_INFINITY;
+        if (i == size()) return Float.NEGATIVE_INFINITY;
+        return score(get(i));
     }
 }

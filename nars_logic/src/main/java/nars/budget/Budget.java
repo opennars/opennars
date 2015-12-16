@@ -7,7 +7,6 @@ import nars.util.data.Util;
 
 import javax.annotation.Nullable;
 
-import static nars.Global.BUDGET_EPSILON;
 import static nars.nal.UtilityFunctions.*;
 import static nars.util.data.Util.mean;
 
@@ -16,6 +15,39 @@ import static nars.util.data.Util.mean;
  */
 public interface Budget extends Prioritized, Budgeted {
 
+
+    BudgetMerge plus = (tgt, src, srcScale) -> {
+        float dp = src.getPriority() * srcScale;
+
+        float currentPriority = tgt.getPriorityIfNaNThenZero();
+
+        float nextPri = currentPriority + dp;
+        if (nextPri > 1) nextPri = 1f;
+
+        float currentNextPrioritySum = (currentPriority + nextPri);
+
+        /* current proportion */
+        final float cp;
+        if (currentNextPrioritySum != 0) {
+            cp = (currentPriority / currentNextPrioritySum);
+        } else {
+            //both equal to zero
+            cp = 0.5f;
+        }
+
+        /* next proportion = 1 - cp */
+        float np = 1.0f - cp;
+
+
+        float nextDur = (cp * tgt.getDurability()) + (np * src.getDurability());
+        float nextQua = (cp * tgt.getQuality()) + (np * src.getQuality());
+
+        if (Float.isNaN(nextDur))
+            throw new RuntimeException("NaN dur: " + src + " " + tgt.getDurability());
+        if (Float.isNaN(nextQua)) throw new RuntimeException("NaN quality");
+
+        tgt.set( nextPri, nextDur, nextQua );
+    };
 
     /**
      * set all quantities to zero
@@ -77,52 +109,6 @@ public interface Budget extends Prioritized, Budgeted {
         );
     }
 
-    /**
-     * priority: adds the value of another budgetvalue to this; all components max at 1.0
-     * durability: max(this, b) (similar to merge)
-     * quality: max(this, b)    (similar to merge)
-     */
-    default Budget mergePlus(Budget b) {
-        return mergePlus(b, 1.0f);
-    }
-
-    default Budget mergePlus(Budget b, float factor) {
-        return mergePlus(b.getPriority(), b.getDurability(), b.getQuality(), factor);
-    }
-
-    default Budget mergePlus(float addPriority, float otherDurability, float otherQuality) {
-        return mergePlus(addPriority, otherDurability, otherQuality, 1.0f);
-    }
-
-    /** linearly interpolates the change affected to determine dur, qua */
-    default Budget mergePlus(float addPriority, float otherDurability, float otherQuality, float factor) {
-
-        float dp = addPriority * factor;
-
-        float currentPriority = getPriorityIfNaNThenZero();
-
-        float nextPriority = Math.min(1,currentPriority + dp);
-
-        float currentNextPrioritySum = (currentPriority + nextPriority);
-
-        /* current proportion */ float cp = (Util.equal(currentNextPrioritySum, 0, BUDGET_EPSILON)) ?
-                0.5f : /* both are zero so they have equal infleunce */
-                (currentPriority / currentNextPrioritySum);
-        /* next proportion */ float np = 1.0f - cp;
-
-
-        float D = getDurability();
-        float Q = getQuality();
-        return budget(
-                nextPriority,
-                Math.max(D, (cp * D) + (np * otherDurability)),
-                Math.max(Q, (cp * Q) + (np * otherQuality))
-        );
-    }
-
-    default boolean equalsByPrecision(Budget t) {
-        return equalsByPrecision(t, BUDGET_EPSILON);
-    }
 
     default boolean equalsByPrecision(Budget t, float epsilon) {
         return  equal(getPriority(), t.getPriority(), epsilon) &&
@@ -132,9 +118,7 @@ public interface Budget extends Prioritized, Budgeted {
 
 
 
-    default boolean equalsBudget(Budget t) {
-        return equalsByPrecision(t);// && (getLastForgetTime() == t.getLastForgetTime());
-    }
+
 
     /**
      * Increase priority value by a percentage of the remaining range.
@@ -146,32 +130,32 @@ public interface Budget extends Prioritized, Budgeted {
         setPriority( or(getPriority(), v) );
     }
 
-    /**
-     * merges another budget into this one, averaging each component
-     */
-    default void mergeAverageLERP(Budget that) {
-        if (this == that) return;
-
-        float currentPriority = getPriority();
-
-        float otherPriority = that.getPriority();
-
-        float prisum = (currentPriority + otherPriority);
-
-        /* current proportion */
-        float cp = (Util.equal(prisum, 0, BUDGET_EPSILON)) ?
-                0.5f : /* both are zero so they have equal infleunce */
-                (currentPriority / prisum);
-
-        /* next proportion */
-        float np = 1.0f - cp;
-
-        budget(
-                cp * getPriority() + np * that.getPriority(),
-                cp * getDurability() + np * that.getDurability(),
-                cp * getQuality() + np * that.getQuality()
-        );
-    }
+//    /**
+//     * merges another budget into this one, averaging each component
+//     */
+//    default void mergeAverageLERP(Budget that) {
+//        if (this == that) return;
+//
+//        float currentPriority = getPriority();
+//
+//        float otherPriority = that.getPriority();
+//
+//        float prisum = (currentPriority + otherPriority);
+//
+//        /* current proportion */
+//        float cp = (Util.equal(prisum, 0, BUDGET_EPSILON)) ?
+//                0.5f : /* both are zero so they have equal infleunce */
+//                (currentPriority / prisum);
+//
+//        /* next proportion */
+//        float np = 1.0f - cp;
+//
+//        budget(
+//                cp * getPriority() + np * that.getPriority(),
+//                cp * getDurability() + np * that.getDurability(),
+//                cp * getQuality() + np * that.getQuality()
+//        );
+//    }
 
     /**
      * merges another budget into this one, averaging each component
@@ -204,10 +188,6 @@ public interface Budget extends Prioritized, Budgeted {
 //        return AbstractBudget.isDeleted(getPriority());
 //    }
 
-
-    default boolean isZero() {
-        return summaryLessThan(BUDGET_EPSILON);
-    }
 
     default boolean summaryLessThan(float s) {
         return !summaryNotLessThan(s);
@@ -386,7 +366,9 @@ public interface Budget extends Prioritized, Budgeted {
 
 
     default void set(float p, float d, float q) {
-        setPriority(p); setDurability(d); setQuality(q);
+        setPriority(Util.clamp(p));
+        setDurability(Util.clamp(d));
+        setQuality(Util.clamp(q));
     }
     default void set(Budget b) {
         set(b.getPriority(), b.getDurability(), b.getQuality());

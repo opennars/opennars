@@ -1,9 +1,8 @@
 package nars.task.flow;
 
-import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Memory;
 import nars.budget.Budget;
-import nars.budget.UnitBudget;
+import nars.budget.BudgetMerge;
 import nars.task.Task;
 import nars.util.data.map.UnifriedMap;
 
@@ -20,13 +19,13 @@ import java.util.function.Consumer;
 public final class SetTaskPerception extends TaskPerception {
 
     final UnifriedMap<Task,Task> table = new UnifriedMap<>();
-    final Procedure2<Budget, Budget> merge;
+    final BudgetMerge merge;
 
     public SetTaskPerception(Memory m, Consumer<Task> receiver) {
-        this(m, receiver, UnitBudget.plus);
+        this(m, receiver, Budget.plus);
     }
 
-    public SetTaskPerception(Memory m, Consumer<Task> receiver, Procedure2<Budget, Budget> merge) {
+    public SetTaskPerception(Memory m, Consumer<Task> receiver, BudgetMerge merge) {
         super(m, receiver);
         this.merge = merge;
     }
@@ -40,7 +39,7 @@ public final class SetTaskPerception extends TaskPerception {
     public void accept(Task t) {
         Task existing = table.put(t, t);
         if (existing!=null) {
-            merge.value(t.getBudget(), existing.getBudget());
+            merge.merge(t.getBudget(), existing.getBudget(), 1f);
         }
     }
 

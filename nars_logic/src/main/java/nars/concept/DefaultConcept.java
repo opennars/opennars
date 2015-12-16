@@ -1,12 +1,11 @@
 package nars.concept;
 
-import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
 import nars.*;
 import nars.bag.Bag;
 import nars.bag.NullBag;
 import nars.budget.Budget;
-import nars.budget.UnitBudget;
+import nars.budget.BudgetMerge;
 import nars.concept.util.ArrayListBeliefTable;
 import nars.concept.util.ArrayListTaskTable;
 import nars.concept.util.BeliefTable;
@@ -55,7 +54,7 @@ public class DefaultConcept extends AtomConcept {
     };
 
     /** how incoming budget is merged into its existing duplicate quest/question */
-    static final Procedure2<Budget, Budget> duplicateQuestionMerge = UnitBudget.plus;
+    static final BudgetMerge duplicateQuestionMerge = Budget.plus;
     private final Term[] termLinkTemplates;
 
     public DefaultConcept(Term term, Param p) {
@@ -188,7 +187,7 @@ public class DefaultConcept extends AtomConcept {
 
 
 
-    Task add(TaskTable table, Task input, Equality<Task> eq, Procedure2<Budget,Budget> duplicateMerge, Memory memory) {
+    Task add(TaskTable table, Task input, Equality<Task> eq, BudgetMerge duplicateMerge, Memory memory) {
         return table.add(input, eq, duplicateMerge, memory);
     }
 

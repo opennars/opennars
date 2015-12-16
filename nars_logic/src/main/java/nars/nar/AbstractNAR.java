@@ -210,8 +210,8 @@ public abstract class AbstractNAR extends NAR {
         m.taskProcessThreshold.set(0); //warning: if this is not zero, it could remove un-TaskProcess-able tasks even if they are stored by a Concept
 
         //budget propagation thresholds
-        m.termLinkThreshold.set(Global.BUDGET_EPSILON);
-        m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
+        m.termLinkThreshold.set(Global.BUDGET_PROPAGATION_EPSILON);
+        m.taskLinkThreshold.set(Global.BUDGET_PROPAGATION_EPSILON);
 
         m.executionExpectationThreshold.set(0.5);
 

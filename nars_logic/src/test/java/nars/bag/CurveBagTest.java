@@ -4,9 +4,12 @@ import nars.Global;
 import nars.bag.impl.ArrayBag;
 import nars.bag.impl.CurveBag;
 import nars.budget.UnitBudget;
+import nars.concept.Concept;
+import nars.nar.Default;
 import nars.util.data.random.XorShift128PlusRandom;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -43,7 +46,7 @@ public class CurveBagTest  {
 
         assertEquals(0, c.getPriorityMin(), 0.001f);
 
-        assertEquals(UnitBudget.zero,  c.get("x"));
+        assertTrue(UnitBudget.zero.equalsByPrecision( c.get("x"), 0.01f) );
 
     }
 
@@ -57,7 +60,8 @@ public class CurveBagTest  {
 
         a.commit();
 
-        assertEquals(new UnitBudget(0.2f, 0.5f, 0.5f), a.get("x"));
+        assertTrue(new UnitBudget(0.2f, 0.5f, 0.5f).equalsByPrecision(
+            a.get("x"), 0.01f));
 
     }
 
@@ -125,6 +129,21 @@ public class CurveBagTest  {
         assertEquals(0.175, a.get("y").getPriority(), 0.001f);
 
     }
+
+    @Test public void testDistribution() {
+        Default n = new Default(1000, 2, 3, 4);
+        n.input("a:b.");
+        n.input("b:c.");
+        n.frame(60);
+        Bag<Concept> bag = n.core.active;
+
+        bag.forEachEntry(System.out::println);
+        System.out.println(bag.size() + " " + bag.getPriorityMax() + " " + bag.getPriorityMin());
+
+        System.out.println(Arrays.toString(bag.getPriorityHistogram(4)));
+        System.out.println(Arrays.toString(bag.getPriorityHistogram(8)));
+    }
+
 
 //
 //    static final BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();

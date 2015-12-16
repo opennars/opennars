@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author me
  */
-public class AdaptiveContinuousBagTest {
+public class BudgetTest {
 
     @Test
     public void test() {

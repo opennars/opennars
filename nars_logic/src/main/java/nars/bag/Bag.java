@@ -2,6 +2,7 @@ package nars.bag;
 
 import nars.bag.impl.AbstractCacheBag;
 import nars.budget.Budget;
+import nars.budget.BudgetMerge;
 import nars.util.data.Util;
 
 import java.io.PrintStream;
@@ -20,12 +21,6 @@ import java.util.function.Supplier;
  */
 public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements Consumer<V>, Supplier<BagBudget<V>>, Iterable<V> {
 
-
-
-    @FunctionalInterface
-    public interface BudgetMerge {
-        void merge(Budget target, Budget src, float srcScale);
-    }
 
     protected BudgetMerge mergeFunction = null;
 
@@ -102,36 +97,12 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
         this.mergeFunction = mergeFunction;
     }
 
-    public static final BudgetMerge plus = (tgt, src, srcScale) -> {
-        float dp = src.getPriority() * srcScale;
-
-        float currentPriority = tgt.getPriorityIfNaNThenZero();
-
-        float nextPri = currentPriority + dp;
-        if (nextPri > 1) nextPri = 1f;
-
-        float currentNextPrioritySum = (currentPriority + nextPri);
-
-        /* current proportion */
-        float cp = //(Util.equal(currentNextPrioritySum, 0, BUDGET_EPSILON)) ? 0.5f : /* both are zero so they have equal infleunce */
-                (currentPriority / currentNextPrioritySum);
-        /* next proportion */
-        float np = 1.0f - cp;
-
-
-        float nextDur = (cp * tgt.getDurability()) + (np * src.getDurability());
-        float nextQua = (cp * tgt.getQuality()) + (np * src.getQuality());
-
-        tgt.set( nextPri, nextDur, nextQua );
-    };
-
-
 
     /**
      * set the merging function to 'plus'
      */
     public Bag mergePlus() {
-        setMergeFunction(plus);
+        setMergeFunction(Budget.plus);
         return this;
     }
 

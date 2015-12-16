@@ -20,7 +20,6 @@
  */
 package nars.budget;
 
-import nars.Global;
 import nars.bag.BagBudget;
 import nars.nal.UtilityFunctions;
 import nars.process.ConceptProcess;
@@ -28,8 +27,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.truth.Truth;
-
-import static java.lang.Math.pow;
 
 
 /**
@@ -200,100 +197,65 @@ public final class BudgetFunctions extends UtilityFunctions {
 //        activate(receiver, amount, mode, 1f);
 //    }
 
-    /* ---------------- Bag functions, on all Items ------------------- */
-    /**
-     * Decrease Priority after an item is used, called in Bag.
-     * After a constant time, p should become d*p. Since in this period, the
-     * item is accessed c*p times, each time p-q should multiple d^(1/(c*p)).
-     * The intuitive meaning of the parameter "forgetRate" is: after this number
-     * of times of access, priority 1 will become d, it is a system parameter
-     * adjustable in run time.
-     *
-     * @param budget The previous budget value
-     * @param forgetCycles The budget for the new item
-     * @param relativeThreshold The relative threshold of the bag
-     */
-    @Deprecated public static float forgetIterative(Budget budget, float forgetCycles, float relativeThreshold) {
-        float newPri = budget.getQuality() * relativeThreshold;      // re-scaled quality
-        float dp = budget.getPriority() - newPri;                     // priority above quality
-        if (dp > 0) {
-            newPri += (float) (dp * pow(budget.getDurability(), 1.0f / (forgetCycles * dp)));
-        }    // priority Durability
-        budget.setPriority(newPri);
-        return newPri;
-    }
-
-
-    public static float forgetAlann(Budget budget, float forgetPeriod /* cycles */, long currentTime) {
-        // priority * e^(-lambda*t)
-        //     lambda is (1 - durabilty) / forgetPeriod
-        //     t is the delta
-        float currentPriority = budget.getPriorityIfNaNThenZero();
-
-        if (currentPriority == 0)
-            return 0;
-        if (currentPriority < Global.BUDGET_EPSILON) {
-            budget.setPriority(0);
-            return 0;
-        }
-
-        long t = budget.setLastForgetTime(currentTime);
-
-        float lambda = (1.0f - budget.getDurability()) / forgetPeriod;
-
-        float relativeThreshold = 0.1f;
-
-        float expDecayed = currentPriority * (float) Math.exp(-lambda * t);
-        float threshold = budget.getQuality() * relativeThreshold;
-
-        float nextPriority =
-                Float.isNaN(expDecayed) ? threshold :
-                Math.max(
-                    expDecayed,
-                    threshold
-                );
-                    //(float)Math.exp(-lambda * t);
-
-        //self limiting to [0,1] interval so no need for checks
-        budget.setPriority(nextPriority);
-
-        return nextPriority;
-    }
-
-    /** forgetting calculation for real-time timing */
-    public static float forgetPeriodic(Budget budget, float forgetPeriod /* cycles */, float minPriorityForgettingCanAffect, long currentTime) {
-
-        float currentPriority = budget.getPriority();
-        long forgetDelta = budget.setLastForgetTime(currentTime);
-        if (forgetDelta == 0) {
-            return currentPriority;
-        }
-
-        minPriorityForgettingCanAffect *= budget.getQuality();
-
-        if (currentPriority < minPriorityForgettingCanAffect) {
-            //priority already below threshold, don't decrease any further
-            return currentPriority;
-        }
-
-        float forgetProportion = forgetDelta / forgetPeriod;
-        if (forgetProportion <= 0) return currentPriority;
-
-        //more durability = slower forgetting; durability near 1.0 means forgetting will happen slowly, near 0.0 means will happen at a max rate
-        forgetProportion *= (1.0f - budget.getDurability());
-
-        float newPriority = forgetProportion > 1.0f ? minPriorityForgettingCanAffect : currentPriority * (1.0f - forgetProportion) + minPriorityForgettingCanAffect * (forgetProportion);
-
-
-        budget.setPriority(newPriority);
-
-        return newPriority;
-
-
-        /*if (forgetDelta > 0)
-            System.out.println("  " + currentPriority + " -> " + budget.getPriority());*/
-        
-    }
+//    /* ---------------- Bag functions, on all Items ------------------- */
+//    /**
+//     * Decrease Priority after an item is used, called in Bag.
+//     * After a constant time, p should become d*p. Since in this period, the
+//     * item is accessed c*p times, each time p-q should multiple d^(1/(c*p)).
+//     * The intuitive meaning of the parameter "forgetRate" is: after this number
+//     * of times of access, priority 1 will become d, it is a system parameter
+//     * adjustable in run time.
+//     *
+//     * @param budget The previous budget value
+//     * @param forgetCycles The budget for the new item
+//     * @param relativeThreshold The relative threshold of the bag
+//     */
+//    @Deprecated public static float forgetIterative(Budget budget, float forgetCycles, float relativeThreshold) {
+//        float newPri = budget.getQuality() * relativeThreshold;      // re-scaled quality
+//        float dp = budget.getPriority() - newPri;                     // priority above quality
+//        if (dp > 0) {
+//            newPri += (float) (dp * pow(budget.getDurability(), 1.0f / (forgetCycles * dp)));
+//        }    // priority Durability
+//        budget.setPriority(newPri);
+//        return newPri;
+//    }
+//
+//
+//
+//    /** forgetting calculation for real-time timing */
+//    public static float forgetPeriodic(Budget budget, float forgetPeriod /* cycles */, float minPriorityForgettingCanAffect, long currentTime) {
+//
+//        float currentPriority = budget.getPriority();
+//        long forgetDelta = budget.setLastForgetTime(currentTime);
+//        if (forgetDelta == 0) {
+//            return currentPriority;
+//        }
+//
+//        minPriorityForgettingCanAffect *= budget.getQuality();
+//
+//        if (currentPriority < minPriorityForgettingCanAffect) {
+//            //priority already below threshold, don't decrease any further
+//            return currentPriority;
+//        }
+//
+//        float forgetProportion = forgetDelta / forgetPeriod;
+//        if (forgetProportion <= 0) return currentPriority;
+//
+//        //more durability = slower forgetting; durability near 1.0 means forgetting will happen slowly, near 0.0 means will happen at a max rate
+//        forgetProportion *= (1.0f - budget.getDurability());
+//
+//        float newPriority = forgetProportion > 1.0f ? minPriorityForgettingCanAffect : currentPriority * (1.0f - forgetProportion) + minPriorityForgettingCanAffect * (forgetProportion);
+//
+//
+//        budget.setPriority(newPriority);
+//
+//        return newPriority;
+//
+//
+//        /*if (forgetDelta > 0)
+//            System.out.println("  " + currentPriority + " -> " + budget.getPriority());*/
+//
+//    }
 
 
     /*public final static float abs(final float a, final float b) {

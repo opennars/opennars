@@ -1,10 +1,9 @@
 package nars.concept.util;
 
 import com.google.common.collect.Iterators;
-import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
 import nars.Memory;
-import nars.budget.Budget;
+import nars.budget.BudgetMerge;
 import nars.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
@@ -86,7 +85,7 @@ public interface BeliefTable extends TaskTable {
             return true;
         }
         @Override
-        public Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m) {
+        public Task add(Task t, Equality<Task> equality, BudgetMerge duplicateMerge, Memory m) {
             return null;
         }
 

@@ -4,6 +4,7 @@ import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.budget.Budget;
+import nars.budget.BudgetMerge;
 import nars.util.ArraySortedIndex;
 import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
@@ -107,16 +108,19 @@ public class CurveBag<V> extends Bag<V> {
     @Override public int next(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
 
         int ss = size();
+        final int begin, end;
         if (ss <= n) {
             //special case: give everything
-            forEachEntry(target::add);
-            return n;
+            begin = 0;
+            end = ss;
+        } else {
+            begin = random.nextInt(ss - n);
+            end = begin + n;
         }
 
         int startSize = target.size();
 
-        int begin = random.nextInt(ss - n);
-        for (int i = begin; i < n+begin; i++) {
+        for (int i = begin; i < end; i++) {
             BagBudget<V> ii = get(i);
             if (each.test(ii)) {
                 target.add(ii);

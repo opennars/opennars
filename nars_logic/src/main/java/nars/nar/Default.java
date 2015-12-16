@@ -5,7 +5,7 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
-import nars.budget.UnitBudget;
+import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.Deriver;
 import nars.nal.RuleMatch;
@@ -186,7 +186,7 @@ public class Default extends AbstractNAR {
     public TaskPerception initInput() {
 
         return new SetTaskPerception(
-                memory, this::process, UnitBudget.average);
+                memory, this::process, Budget.plus);
 
         /* {
             @Override

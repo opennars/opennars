@@ -1,9 +1,8 @@
 package nars.concept.util;
 
-import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
 import nars.Memory;
-import nars.budget.Budget;
+import nars.budget.BudgetMerge;
 import nars.task.Task;
 import org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
@@ -40,7 +39,7 @@ public interface TaskTable extends Iterable<Task> {
      */
 
 
-    Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m);
+    Task add(Task t, Equality<Task> equality, BudgetMerge duplicateMerge, Memory m);
 
     /**
      * @return null if no duplicate was discovered, or the first Task that matched if one was

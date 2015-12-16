@@ -3,6 +3,7 @@ package nars.bag;
 import nars.budget.Budget;
 import nars.budget.UnitBudget;
 import nars.nal.nal7.Tense;
+import nars.util.data.Util;
 
 import java.util.function.Supplier;
 
@@ -41,9 +42,9 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
 
 
         float[] b = this.b;
-        b[0] = c.getPriority() * scale;
-        b[1] = c.getDurability();
-        b[2] = c.getQuality();
+        b[0] = Util.clamp(c.getPriority() * scale);
+        b[1] = Util.clamp(c.getDurability());
+        b[2] = Util.clamp(c.getQuality());
         clearDelta();
     }
 
@@ -54,9 +55,9 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
 
     public void commit() {
         float[] b = this.b;
-        b[0] += b[3];
-        b[1] += b[4];
-        b[2] += b[5];
+        b[0] = Util.clamp(b[0] + b[3]);
+        b[1] = Util.clamp(b[1] + b[4]);
+        b[2] = Util.clamp(b[2] + b[5]);
         clearDelta();
     }
 
@@ -67,6 +68,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
 
     @Override
     public void setPriority(float p) {
+        float[] b = this.b;
         b[3] += (p-b[0]);
     }
 
@@ -78,7 +80,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
     @Override
     public void setDurability(float d) {
         float[] b = this.b;
-        b[4] = (d-b[1]);
+        b[4] += (d-b[1]);
     }
 
     @Override
@@ -89,7 +91,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
     @Override
     public void setQuality(float q) {
         float[] b = this.b;
-        b[5] = (q-b[2]);
+        b[5] += (q-b[2]);
     }
 
     @Override
