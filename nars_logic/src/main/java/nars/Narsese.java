@@ -1136,12 +1136,6 @@ public class Narsese extends BaseParser<Object>  {
     }
 
 
-    public <T extends Compound> T compound(String s) throws NarseseException {
-        return term(s);
-        /*if (t instanceof Compound)
-            return ((T)t).normalizeDestructively();*/
-    }
-
     public static NarseseException newParseException(String input, ParsingResult r, Exception e) {
 
         //CharSequenceInputBuffer ib = (CharSequenceInputBuffer) r.getInputBuffer();

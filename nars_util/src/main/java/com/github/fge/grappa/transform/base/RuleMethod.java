@@ -208,7 +208,7 @@ public class RuleMethod
     }
 
     public InstructionGraphNode setGraphNode(AbstractInsnNode insn,
-                                             BasicValue resultValue, List<BasicValue> predecessors)
+                                             BasicValue resultValue, BasicValue[] predecessors)
     {
         if (graphNodes == null) {
             // initialize with a list of null values

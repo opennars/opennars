@@ -47,8 +47,8 @@ public final class Position
     {
         if (this == obj)
             return true;
-        if (!(obj instanceof Position))
-            return false;
+        /*if (!(obj instanceof Position))
+            return false;*/
         Position position = (Position) obj;
         return column == position.column && line == position.line;
 

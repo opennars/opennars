@@ -60,8 +60,8 @@ public final class SuperCallRewriter
         }
     }
 
-    private void process(ParserClassNode classNode,
-                         RuleMethod method, MethodInsnNode insn)
+    private static void process(ParserClassNode classNode,
+                                RuleMethod method, MethodInsnNode insn)
     {
         if ("<init>".equals(insn.name))
             return;

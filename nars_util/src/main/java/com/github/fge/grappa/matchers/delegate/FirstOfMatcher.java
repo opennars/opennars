@@ -22,13 +22,12 @@ import com.github.fge.grappa.matchers.base.Matcher;
 import com.github.fge.grappa.rules.Rule;
 import com.github.fge.grappa.run.context.MatcherContext;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
  * A {@link Matcher} trying all of its submatchers in sequence and succeeding when the first submatcher succeeds.
  */
-public class FirstOfMatcher
+public final class FirstOfMatcher
     extends CustomDefaultLabelMatcher<FirstOfMatcher>
 {
     public FirstOfMatcher(Rule[] subRules)
@@ -43,12 +42,11 @@ public class FirstOfMatcher
     }
 
     @Override
-    public final <V> boolean match(MatcherContext<V> context)
-    {
+    public final <V> boolean match(MatcherContext<V> context) {
 
-
-        List<Matcher> children = getChildren();
+        Matcher[] children = getChildren().array();
         for (Matcher matcher : children) {
+            if (matcher == null) break;
             if (matcher.getSubContext(context).runMatcher())
                 return true;
         }

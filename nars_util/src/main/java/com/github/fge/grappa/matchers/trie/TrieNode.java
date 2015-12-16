@@ -69,59 +69,62 @@ public final class TrieNode
 
     /**
      * Core search method
-     *
+     * <p>
      * <p>This method uses a {@link CharBuffer} to perform searches, and changes
      * this buffer's position as the match progresses. The two other arguments
      * are the depth of the current search (ie the number of nodes visited
      * since root) and the index of the last node where a match was found (ie
      * the last node where {@link #fullWord} was true.</p>
      *
-     * @param buffer the charbuffer
+     * @param buffer        the charbuffer
      * @param matchedLength the last matched length (-1 if no match yet)
      * @param currentLength the current length walked by the trie
      * @return the length of the match found, -1 otherwise
      */
     private int doSearch(CharBuffer buffer, int matchedLength,
-                         int currentLength, boolean ignoreCase)
-    {
+                         int currentLength, boolean ignoreCase) {
+        TrieNode other = this;
+        while (true) {
         /*
          * Try and see if there is a possible match here; there is if "fullword"
          * is true, in this case the next "matchedLength" argument to a possible
          * child call will be the current length.
          */
-        int nextLength = fullWord ? currentLength : matchedLength;
+            int nextLength = other.fullWord ? currentLength : matchedLength;
 
 
         /*
          * If there is nothing left in the buffer, we have a match.
          */
-        if (!buffer.hasRemaining())
-            return nextLength;
+            if (!buffer.hasRemaining())
+                return nextLength;
 
         /*
          * OK, there is at least one character remaining, so pick it up and see
          * whether it is in the list of our children...
          */
-        char c = buffer.get();
-        int index = Arrays.binarySearch(nextChars, c);
-        if (index < 0 && ignoreCase) {
-            boolean isUpper = Character.isUpperCase(c);
-            boolean isLower = Character.isLowerCase(c);
-            if (isUpper != isLower) {
-               c = isUpper ? Character.toLowerCase(c)
-                   : Character.toUpperCase(c);
-               index = Arrays.binarySearch(nextChars, c);
+            char c = buffer.get();
+            int index = Arrays.binarySearch(other.nextChars, c);
+            if (index < 0 && ignoreCase) {
+                boolean isUpper = Character.isUpperCase(c);
+                boolean isLower = Character.isLowerCase(c);
+                if (isUpper != isLower) {
+                    c = isUpper ? Character.toLowerCase(c)
+                            : Character.toUpperCase(c);
+                    index = Arrays.binarySearch(other.nextChars, c);
+                }
             }
-        }
 
         /*
          * If not, we return the last good match; if yes, we call this same
          * method on the matching child node with the (possibly new) matched
          * length as an argument and a depth increased by 1.
          */
-        if (index < 0)
-            return nextLength;
-        return nextNodes[index].doSearch(buffer, nextLength, currentLength + 1,
-            ignoreCase);
+            if (index < 0)
+                return nextLength;
+            matchedLength = nextLength;
+            currentLength = currentLength + 1;
+            other = other.nextNodes[index];
+        }
     }
 }

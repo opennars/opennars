@@ -262,7 +262,9 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     /** ask question */
     public Task ask(String termString) throws Narsese.NarseseException {
         //TODO remove '?' if it is attached at end
-        return ask((Compound) Narsese.the().compound(termString));
+        /*if (t instanceof Compound)
+            return ((T)t).normalizeDestructively();*/
+        return ask((Compound) Narsese.the().<Compound>term(termString));
     }
 
     /** ask question */

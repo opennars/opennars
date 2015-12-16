@@ -185,7 +185,8 @@ public final class DefaultMatcherContext<V>
         if (matcher.getType() == MatcherType.PREDICATE)
             return true;
 
-        return parent != null && parent.inPredicate();
+        DefaultMatcherContext<V> p = this.parent;
+        return p != null && p.inPredicate();
 
     }
 

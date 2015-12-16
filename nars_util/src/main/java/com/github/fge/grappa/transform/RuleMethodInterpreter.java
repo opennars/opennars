@@ -34,7 +34,6 @@ import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public final class RuleMethodInterpreter
@@ -116,9 +115,7 @@ public final class RuleMethodInterpreter
 
     @Override
     public void returnOperation(AbstractInsnNode insn,
-                                BasicValue value, BasicValue expected)
-        throws AnalyzerException
-    {
+                                BasicValue value, BasicValue expected) {
         Preconditions.checkState(insn.getOpcode() == ARETURN);
         Preconditions.checkState(unwrap(value).getType().equals(
             Type.getType(Rule.class)));
@@ -131,8 +128,7 @@ public final class RuleMethodInterpreter
     private InstructionGraphNode createNode(AbstractInsnNode insn,
                                             BasicValue resultValue, BasicValue... prevNodes)
     {
-        return method.setGraphNode(insn, unwrap(resultValue), Arrays.asList(
-            prevNodes));
+        return method.setGraphNode(insn, unwrap(resultValue), prevNodes);
     }
 
     @Override

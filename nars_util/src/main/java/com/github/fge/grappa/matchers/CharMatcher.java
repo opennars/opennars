@@ -47,7 +47,7 @@ public final class CharMatcher
     {
         if (c == Chars.EOI) return escape(c);
         //return new String( new char[] { '\'', escapeChar(c), '\'' });
-        return new String('\'' + escape(c) + '\'');
+        return '\'' + escape(c) + '\'';
     }
 
     @Override

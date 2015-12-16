@@ -6,6 +6,8 @@ import com.github.fge.grappa.matchers.base.Matcher;
 import com.github.fge.grappa.run.ParseRunnerListener;
 import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.run.events.*;
+import com.gs.collections.impl.map.mutable.primitive.IntIntHashMap;
+import com.gs.collections.impl.map.mutable.primitive.IntLongHashMap;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.BufferedWriter;
@@ -16,7 +18,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -49,12 +50,12 @@ public final class TracingListener<V>
     private final Map<Matcher, Integer> matcherIds = new IdentityHashMap<>();
     private int nextMatcherId = 0;
 
-    private final Map<Integer, Integer> nodeIds = new HashMap<>();
+    private final IntIntHashMap nodeIds = new IntIntHashMap();
     private int nextNodeId = 0;
 
-    private final Map<Integer, Integer> prematchMatcherIds = new HashMap<>();
-    private final Map<Integer, Integer> prematchIndices = new HashMap<>();
-    private final Map<Integer, Long> prematchTimes = new HashMap<>();
+    private final IntIntHashMap prematchMatcherIds = new IntIntHashMap();
+    private final IntIntHashMap prematchIndices = new IntIntHashMap();
+    private final IntLongHashMap prematchTimes = new IntLongHashMap();
 
     private final Path zipPath;
     private final Path nodeFile;
@@ -192,7 +193,7 @@ public final class TracingListener<V>
         URI uri = URI.create("jar:" + zipPath.toUri());
 
         try (
-            final FileSystem zipfs = FileSystems.newFileSystem(uri, ENV);
+            final FileSystem zipfs = FileSystems.newFileSystem(uri, ENV)
         ) {
             Files.move(nodeFile, zipfs.getPath(NODE_PATH));
             copyInputText(zipfs);
@@ -212,7 +213,7 @@ public final class TracingListener<V>
         nrCodePoints = s.codePointCount(0, nrChars);
 
         try (
-            final BufferedWriter writer = Files.newBufferedWriter(path, UTF_8);
+            final BufferedWriter writer = Files.newBufferedWriter(path, UTF_8)
         ) {
             writer.write(s);
             writer.flush();
@@ -224,7 +225,7 @@ public final class TracingListener<V>
         Path path = zipfs.getPath(MATCHERS_PATH);
 
         try (
-            final BufferedWriter writer = Files.newBufferedWriter(path, UTF_8);
+            final BufferedWriter writer = Files.newBufferedWriter(path, UTF_8)
         ) {
             for (MatcherDescriptor descriptor:
                 matcherDescriptors.values()) {
@@ -248,7 +249,7 @@ public final class TracingListener<V>
         Path path = zipfs.getPath(INFO_PATH);
         try (
 
-            final BufferedWriter writer = Files.newBufferedWriter(path, UTF_8);
+            final BufferedWriter writer = Files.newBufferedWriter(path, UTF_8)
         ) {
             sb.setLength(0);
             sb.append(startTime).append(';')

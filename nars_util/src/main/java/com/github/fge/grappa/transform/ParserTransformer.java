@@ -85,7 +85,7 @@ public final class ParserTransformer
         ParserClassNode classNode = new ParserClassNode(parserClass);
         new ClassNodeInitializer().process(classNode);
         runMethodTransformers(classNode);
-        new ConstructorGenerator().process(classNode);
+        ConstructorGenerator.process(classNode);
         defineExtendedParserClass(classNode);
         return classNode;
     }

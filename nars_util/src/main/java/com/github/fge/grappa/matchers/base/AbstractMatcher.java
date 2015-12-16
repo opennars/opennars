@@ -19,7 +19,7 @@ package com.github.fge.grappa.matchers.base;
 import com.github.fge.grappa.misc.ImmutableGraphNode;
 import com.github.fge.grappa.rules.Rule;
 import com.github.fge.grappa.run.context.MatcherContext;
-import com.gs.collections.impl.list.mutable.FastList;
+import nars.util.data.list.FasterList;
 
 import java.util.Objects;
 
@@ -45,7 +45,7 @@ public abstract class AbstractMatcher
 
     protected AbstractMatcher(Rule[] subRules, String label)
     {
-        super(/*ImmutableList.copyOf*/ FastList.newListWith(
+        super(/*ImmutableList.copyOf*/ new FasterList(
                 toMatchers(Objects.requireNonNull(subRules))
             )
         );

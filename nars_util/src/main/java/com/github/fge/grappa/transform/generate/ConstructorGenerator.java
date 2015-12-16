@@ -35,7 +35,7 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public final class ConstructorGenerator
 {
-    public void process(ParserClassNode classNode)
+    public static void process(ParserClassNode classNode)
     {
         Objects.requireNonNull(classNode, "classNode");
 

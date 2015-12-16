@@ -112,10 +112,11 @@ public final class VarFramingMatcher
      * @param matcher the matcher to unwrap
      * @return the given instance if it is not a VarFramingMatcher, otherwise the innermost Matcher
      */
-    public static Matcher unwrap(Matcher matcher)
-    {
-        if (!(matcher instanceof VarFramingMatcher))
-            return matcher;
-        return unwrap(((VarFramingMatcher) matcher).inner);
+    public static Matcher unwrap(Matcher matcher) {
+        while (true) {
+            if (!(matcher instanceof VarFramingMatcher))
+                return matcher;
+            matcher = ((VarFramingMatcher) matcher).inner;
+        }
     }
 }

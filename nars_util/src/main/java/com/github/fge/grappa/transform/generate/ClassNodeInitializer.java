@@ -35,6 +35,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -182,14 +183,15 @@ public final class ClassNodeInitializer
         // descriptor; if we do we add the method with a "$" prefix in order
         // to have it processed and be able to reference it later if we have to
         String methodKey = name + desc;
-        while (classNode.getRuleMethods().containsKey(methodKey)) {
+        Map<String, RuleMethod> ruleMethods = classNode.getRuleMethods();
+        while (ruleMethods.containsKey(methodKey)) {
             name = '$' + name;
             methodKey = name + desc;
         }
 
         RuleMethod method = new RuleMethod(ownerClass, access, name, desc,
             signature, exceptions, annotations);
-        classNode.getRuleMethods().put(methodKey, method);
+        ruleMethods.put(methodKey, method);
         // return the newly created method in order to have it "filled" with the
         // actual method code
         return method;

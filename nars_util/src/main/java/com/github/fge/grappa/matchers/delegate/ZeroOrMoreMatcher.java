@@ -51,7 +51,8 @@ public final class ZeroOrMoreMatcher
         int beforeMatch = context.getCurrentIndex();
         int afterMatch;
 
-        while (subMatcher.getSubContext(context).runMatcher()) {
+        Matcher m = this.subMatcher;
+        while (m.getSubContext(context).runMatcher()) {
             if ((afterMatch = context.getCurrentIndex()) != beforeMatch) {
                 beforeMatch = afterMatch;
                 continue;

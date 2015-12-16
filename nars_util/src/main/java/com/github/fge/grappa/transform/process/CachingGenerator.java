@@ -188,8 +188,8 @@ public final class CachingGenerator
         return false;
     }
 
-    private void generatePushNewParameterObjectArray(CodeBlock block,
-                                                     Type[] paramTypes)
+    private static void generatePushNewParameterObjectArray(CodeBlock block,
+                                                            Type[] paramTypes)
     {
         block.bipush(paramTypes.length).anewarray(CodegenUtils.p(Object.class));
 

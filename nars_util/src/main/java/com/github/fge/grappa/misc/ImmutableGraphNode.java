@@ -16,9 +16,9 @@
 
 package com.github.fge.grappa.misc;
 
+import nars.util.data.list.FasterList;
+
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -30,24 +30,26 @@ import java.util.function.Consumer;
 public class ImmutableGraphNode<T extends GraphNode<T>>
     implements GraphNode<T>
 {
+    private static final FasterList emptyList = new FasterList();
+
     /*
-     * TODO: cleanup that royal mess
-     *
-     * ImmutableLinkedList seems only to be used in a few special cases; this
-     * class unfortunately allows for both the aforementioned class (which is,
-     * frankly, also a mess) and regular lists.
-     *
-     * Find a way to separate.
-     */
-    private final List<T> children;
+         * TODO: cleanup that royal mess
+         *
+         * ImmutableLinkedList seems only to be used in a few special cases; this
+         * class unfortunately allows for both the aforementioned class (which is,
+         * frankly, also a mess) and regular lists.
+         *
+         * Find a way to separate.
+         */
+    private final FasterList<T> children;
 
     public ImmutableGraphNode()
     {
-        this(Collections.<T>emptyList()/*ImmutableList.<T>of()*/);
+        this(emptyList/*ImmutableList.<T>of()*/);
     }
 
     // TODO! Null! Again! I need a gun!
-    public ImmutableGraphNode(@Nonnull List<T> children)
+    public ImmutableGraphNode(@Nonnull FasterList<T> children)
     {
         //Objects.requireNonNull(children);
         /*
@@ -61,7 +63,7 @@ public class ImmutableGraphNode<T extends GraphNode<T>>
     }
 
     @Override
-    public final List<T> getChildren()    {
+    public final FasterList<T> getChildren()    {
         return children;
     }
 
