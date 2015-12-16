@@ -988,24 +988,25 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
         int l = t.length;
 
-        for (int i = 0; i < l; i += 2) {
-            Object cur = t[i];
+        for (int i = 0; i < l; ) {
+            Object cur = t[i++];
+            Object curVal = t[i++];
             if (cur == CHAINED_KEY) {
-                chainedForEachValue((Object[]) t[i + 1], procedure);
+                chainedForEachValue((Object[]) curVal, procedure);
             } else if (cur != null) {
-                procedure.value((V) t[i + 1]);
+                procedure.value((V) curVal);
             }
         }
     }
 
     private static <V> void chainedForEachValue(Object[] chain, Procedure<? super V> procedure) {
         int l = chain.length;
-        for (int i = 0; i < l; i += 2) {
-            Object cur = chain[i];
+        for (int i = 0; i < l; ) {
+            Object cur = chain[i++];
             if (cur == null) {
                 return;
             }
-            procedure.value((V) chain[i + 1]);
+            procedure.value((V) chain[i++]);
         }
     }
 

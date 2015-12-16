@@ -45,7 +45,8 @@ public final class SetTaskPerception extends TaskPerception {
 
     @Override
     public void nextFrame(Consumer<Task> receiver) {
-        table.forEach((k, v)->receiver.accept(v));
+        //table.forEach((k, v)->receiver.accept(v));
+        table.forEachValue(receiver::accept);
         table.clear();
     }
 

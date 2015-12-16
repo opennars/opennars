@@ -32,9 +32,9 @@ public class ItemAccumulator<V extends Budgeted> extends ArrayBag<V> {
     }
 
     @Override
-    public void update(BagBudget v) {
+    public void update(BagBudget<V> v) {
         super.update(v);
-        ((Budgeted)v.get()).getBudget().set(v); //TODO replace instance's budget on insert so this copy isnt necessary
+        v.get().getBudget().set(v); //TODO replace instance's budget on insert so this copy isnt necessary
     }
 
     @Override

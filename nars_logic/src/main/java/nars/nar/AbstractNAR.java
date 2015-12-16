@@ -190,8 +190,8 @@ public abstract class AbstractNAR extends NAR {
     public void initDefaults(Memory m) {
         //parameter defaults
 
-        setTaskLinkBagSize(24);
-        setTermLinkBagSize(24);
+        setTaskLinkBagSize(16);
+        setTermLinkBagSize(16);
 
         m.duration.set(5);
 
@@ -199,9 +199,9 @@ public abstract class AbstractNAR extends NAR {
         m.conceptGoalsMax.set(5);
         m.conceptQuestionsMax.set(3);
 
-        m.conceptForgetDurations.setValue(2.0);
-        m.taskLinkForgetDurations.setValue(3.0);
-        m.termLinkForgetDurations.setValue(4.0);
+        m.conceptForgetDurations.setValue(2.0); //not currently used
+        m.taskLinkForgetDurations.setValue(6.0);
+        m.termLinkForgetDurations.setValue(4.0); //not currently used, tasklink is
 
 
         m.derivationThreshold.set(0);
@@ -459,7 +459,7 @@ public abstract class AbstractNAR extends NAR {
         public final MutableInteger tasklinksSelectedPerFiredConcept = new MutableInteger(1);
         public final MutableInteger termlinksSelectedPerFiredConcept = new MutableInteger(1);
 
-        public final MutableFloat activationFactor = new MutableFloat(1.0f);
+        //public final MutableFloat activationFactor = new MutableFloat(1.0f);
 
 //        final Function<Task, Task> derivationPostProcess = d -> {
 //            return LimitDerivationPriority.limitDerivation(d);
@@ -517,12 +517,14 @@ public abstract class AbstractNAR extends NAR {
 
                 float currentPriority = budget.getPriorityIfNaNThenZero();
 
-                final float forgetPeriod = nar.memory.termLinkForgetDurations.floatValue() * nar.memory.duration(); //TODO cache
-                float lambda = (1.0f - budget.getDurability()) / forgetPeriod;
+                Memory m = nar.memory;
+                final float forgetPeriod =    m.termLinkForgetDurations.floatValue() * m.duration(); //TODO cache
 
                 float relativeThreshold = 0.1f; //BAG THRESHOLD
 
-                float expDecayed = currentPriority * (float) Math.exp(-lambda * dt);
+                float expDecayed = currentPriority * (float) Math.exp(
+                    -((1.0f - budget.getDurability()) / forgetPeriod) * dt
+                );
                 float threshold = budget.getQuality() * relativeThreshold;
 
                 float nextPriority = expDecayed;
@@ -560,11 +562,13 @@ public abstract class AbstractNAR extends NAR {
 
         protected void fireConcepts(int conceptsToFire, Consumer<ConceptProcess> processor) {
 
-            active.setCapacity(capacity.intValue()); //TODO share the MutableInteger so that this doesnt need to be called ever
+            Bag<Concept> b = this.active;
 
-            if (conceptsToFire == 0 || active.isEmpty()) return;
+            b.setCapacity(capacity.intValue()); //TODO share the MutableInteger so that this doesnt need to be called ever
 
-            active.next(conceptsToFire, cb -> {
+            if (conceptsToFire == 0 || b.isEmpty()) return;
+
+            b.next(conceptsToFire, cb -> {
                 Concept c = (AtomConcept) cb.get();
 
                 //c.getTermLinks().update(simpleForgetDecay);
@@ -591,7 +595,7 @@ public abstract class AbstractNAR extends NAR {
 
                 return true;
             });
-            active.commit();
+            b.commit();
 
         }
 
