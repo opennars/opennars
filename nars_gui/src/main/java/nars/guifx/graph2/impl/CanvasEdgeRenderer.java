@@ -22,7 +22,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
 //            Color.BLUE,
 //            Color.GREEN
 //    );
-    static final ColorMatrix colors = DefaultNodeVis.colors; /*new ColorMatrix(24,24,
+    public static final ColorMatrix colors = DefaultNodeVis.colors; /*new ColorMatrix(24,24,
 
         (pri,termTaskBalance) -> {
             return Color.hsb(30 + 120.0 * termTaskBalance, 0.75, 0.35 + 0.5 * pri);

@@ -9,6 +9,8 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import nars.NAR;
 import nars.guifx.NARfx;
+import nars.guifx.graph2.TermNode;
+import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -48,7 +50,7 @@ public class SubButton extends TextFlow {
     }
 
     public static SubButton make(NAR nar, Term t) {
-        SubButton sb = new SubButton();
+        SubButton sb = new SubButton(6, t, 0.5f);
         if (t instanceof Compound) {
             sb.add(make(t.op().str));
             for (Term x : ((Compound)t).terms()) {
@@ -61,7 +63,7 @@ public class SubButton extends TextFlow {
     }
 
     public static SubButton make(NAR nar, Task t) {
-        SubButton sb = new SubButton();
+        SubButton sb = new SubButton(6, t.term(), t.getPriority());
         sb.add(make(nar, t.get()));
         if (t.getTruth()!=null)
             sb.add(make(t.getTruth().toString()));
@@ -79,6 +81,16 @@ public class SubButton extends TextFlow {
         this(6, "#262");
     }
 
+    public SubButton(int padding, Term t, float p) {
+        this(padding,
+                TermNode.getTermColor(t.term(),
+                        CanvasEdgeRenderer.colors,
+                        p)
+                        .interpolate(Color.TRANSPARENT, 1f-p)
+                        .toString().replace("0x", "#")
+        );
+
+    }
     public SubButton(int padding, String bg) {
         super();
 

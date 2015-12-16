@@ -91,6 +91,9 @@ public class NARtop extends BorderPane {
             d.input("$0.40$ <plants --> [watered]>!");
             d.input("$0.30$ <<perimeter --> home> --> secure>?");
             d.input("$0.50$ <weather <-> [dangerous]>?");
+            d.input("$0.70$ prompt(string, \"Reason?\").");
+            d.input("$0.40$ emote(happy)!");
+            d.input("$0.80$ plot(line, (0, 2, 1, 3), \"Chart\").");
             d.frame(6);
             //d.loop(100);
         });
