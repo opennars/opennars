@@ -3,12 +3,12 @@ package nars.nal.meta.op;
 import nars.Premise;
 import nars.Symbols;
 import nars.nal.RuleMatch;
-import nars.nal.meta.BeliefFunction;
-import nars.nal.meta.DesireFunction;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TruthOperator;
 import nars.task.Task;
 import nars.term.Term;
+import nars.truth.BeliefFunction;
+import nars.truth.DesireFunction;
 
 /**
  * Evaluates the truth of a premise

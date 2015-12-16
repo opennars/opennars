@@ -64,10 +64,10 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 
     protected final TreeMap<Float,Task> similar = new TreeMap();
 
-    @Override
-    public final Truth getTruth() {
-        return DefaultTruth.NULL;
-    }
+//    @Override
+//    public final Truth getTruth() {
+//        return DefaultTruth.NULL;
+//    }
 
     public EternalTaskCondition(NAR n, long creationStart, long creationEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.NarseseException {
         super(n.task(sentenceTerm + punc).normalize(n.memory));

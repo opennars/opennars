@@ -16,7 +16,7 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
     }
 
     @Override
-    public float getConfidence() {
+    public final float getConfidence() {
         return confidence;
     }
 

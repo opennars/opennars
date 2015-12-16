@@ -21,7 +21,6 @@
 package nars.truth;
 
 import nars.nal.UtilityFunctions;
-import nars.nal.nal7.Tense;
 
 import static java.lang.Math.abs;
 
@@ -126,8 +125,17 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return (non-Analytic) Truth value of the conclusion - normal truth because this is based on 2 premises
      */
     public static Truth deduction(Truth a, Truth b) {
-        float f = and(a.getFrequency(), b.getFrequency());
-        float c = and(f, a.getConfidence(), b.getConfidence());
+        return deduction(a, b.getFrequency(), b.getConfidence());
+    }
+
+    /** assumes belief freq=1f */
+    public static Truth deduction1(Truth a, float bC) {
+        return deduction(a, 1f, bC);
+    }
+
+    public static Truth deduction(Truth a, float bF, float bC) {
+        float f = and(a.getFrequency(), bF);
+        float c = and(f, a.getConfidence(), bC);
         return new DefaultTruth(f, c);
     }
 
@@ -458,8 +466,7 @@ public final class TruthFunctions extends UtilityFunctions {
     public static ProjectedTruth eternalize(float freq, float conf) {
         return new ProjectedTruth(
                 freq,
-                eternalizedConfidence(conf),
-                Tense.ETERNAL
+                eternalizedConfidence(conf)
         );
     }
     public static float eternalizedConfidence(float conf) {

@@ -1,13 +1,11 @@
-package nars.nal.meta;
+package nars.truth;
 
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
+import nars.nal.meta.TruthOperator;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.truth.DefaultTruth;
-import nars.truth.Truth;
-import nars.truth.TruthFunctions;
 
 import java.util.Map;
 
@@ -35,7 +33,7 @@ public enum BeliefFunction implements TruthOperator {
     StructuralDeduction() {
         @Override public Truth apply(final Truth T, final Truth B, Memory m) {
             //if (B == null) return null;
-            return TruthFunctions.deduction(T, newDefaultTruth(m));
+            return TruthFunctions.deduction1(T, defaultConfidence(m));
         }
     },
     StructuralAbduction() {
@@ -188,13 +186,13 @@ public enum BeliefFunction implements TruthOperator {
     BeliefStructuralDeduction() {
         @Override public Truth apply(final Truth T, /* nullable*/ final Truth B, Memory m) {
             if (B == null) return null;
-            return TruthFunctions.deduction(B, newDefaultTruth(m));
+            return TruthFunctions.deduction1(B, defaultConfidence(m));
         }
     },
     BeliefStructuralDifference() {
         @Override public Truth apply(final Truth T, /* nullable*/ final Truth B, Memory m) {
             if (B == null) return null;
-            Truth res =  TruthFunctions.deduction(B, newDefaultTruth(m));
+            Truth res =  TruthFunctions.deduction1(B, defaultConfidence(m));
             return new DefaultTruth(1.0f-res.getFrequency(), res.getConfidence());
         }
     },
@@ -207,6 +205,10 @@ public enum BeliefFunction implements TruthOperator {
 
     public static Truth newDefaultTruth(Memory m) {
         return m.newDefaultTruth(Symbols.JUDGMENT);
+    }
+
+    public static float defaultConfidence(Memory m) {
+        return m.getDefaultConfidence(Symbols.JUDGMENT);
     }
 
 

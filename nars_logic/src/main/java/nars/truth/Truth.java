@@ -104,7 +104,7 @@ public interface Truth extends MetaTruth<Float> {
      * @return True if the frequence is less than 1/2
      */
     default boolean isNegative() {
-        return getFrequency() < 0.5;
+        return getFrequency() < 0.5f;
     }
 
 

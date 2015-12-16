@@ -1,13 +1,11 @@
-package nars.nal.meta;
+package nars.truth;
 
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
+import nars.nal.meta.TruthOperator;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.truth.DefaultTruth;
-import nars.truth.Truth;
-import nars.truth.TruthFunctions;
 
 import java.util.Map;
 
