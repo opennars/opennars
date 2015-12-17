@@ -1,27 +1,26 @@
 package nars.term.transform;
 
-import com.google.common.collect.ListMultimap;
 import com.gs.collections.api.map.ImmutableMap;
 import com.gs.collections.api.set.MutableSet;
-import com.gs.collections.impl.factory.Maps;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Op;
-import nars.nal.meta.PreCondition;
-import nars.nal.meta.TermPattern;
-import nars.nal.meta.match.*;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
+import nars.term.constraint.MatchConstraint;
+import nars.term.match.*;
 import nars.term.variable.CommonVariable;
 import nars.term.variable.Variable;
-import nars.util.version.VersionMap;
 import nars.util.version.Versioned;
 import nars.util.version.Versioning;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 
 /* recurses a pair of compound term tree's subterms
@@ -34,6 +33,16 @@ abstract public class FindSubst extends Versioning implements Subst {
     public final Random random;
 
     public final Op type;
+
+    final List<Termutator> termutes = Global.newArrayList();
+
+    public interface Termutator {
+        public boolean test();
+
+        public void reset();
+
+        int total();
+    }
 
 
     @Override
@@ -61,7 +70,7 @@ abstract public class FindSubst extends Versioning implements Subst {
     public final VarCachedVersionMap yx;
 
     /** current "y"-term being matched against */
-    protected final Versioned<Term> term;
+    public final Versioned<Term> term;
 
     /** parent, if in subterms */
     public final Versioned<Compound> parent;
@@ -76,7 +85,7 @@ abstract public class FindSubst extends Versioning implements Subst {
      *  limits the # of permutations
      *  that can be tried, or the # of subterms that can be compared
      */
-    int powerDivisor;
+    @Deprecated int powerDivisor;
 
 
 
@@ -125,7 +134,7 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-    final void goSubterm(int index) {
+    public final void goSubterm(int index) {
         Term pp = parent.get().term(index);
         /*if (pp == null)
             throw new RuntimeException("null subterm");*/
@@ -143,49 +152,6 @@ abstract public class FindSubst extends Versioning implements Subst {
         } else {
         }
     }
-
-
-    public static final class VarCachedVersionMap extends VersionMap<Term, Term> implements Subst {
-
-        public VarCachedVersionMap(Versioning context) {
-            super(context);
-        }
-        public VarCachedVersionMap(Versioning context, Map<Term,Versioned<Term>> map) {
-            super(context, map);
-        }
-
-        @Override
-        public final boolean cache(Term key) {
-            //since these should always be normalized variables, they will not exceed a predictable range of entries (ex: $1, $2, .. $n)
-            return key instanceof Variable;
-        }
-
-        @Override
-        public final Term getXY(Object t) {
-            Versioned<Term> v = map.get(t);
-            if (v == null) return null;
-            return v.get();
-        }
-
-    }
-
-
-    /**
-     * push in to children
-     */
-    public static final PatternOp Subterms = new PatternOp() {
-
-        @Override
-        public String toString() {
-            return "Sub";
-        }
-
-        @Override
-        public boolean run(FindSubst ff) {
-            ff.parent.set((Compound) ff.term.get());
-            return true;
-        }
-    };
 
 
     //    @Override
@@ -213,261 +179,6 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-    public static final class TermEquals extends MatchOp {
-        public final Term a;
-
-        public TermEquals(Term a) {
-            this.a = a;
-        }
-
-        @Override
-        public boolean match(Term t) {
-            return a.equals(t);
-        }
-
-        @Override
-        public String toString() {
-            return "=" + a;
-        }
-    }
-
-    public static final class TermSizeEquals extends MatchOp {
-        public final int size;
-
-        public TermSizeEquals(int size) {
-            this.size = size;
-        }
-
-        @Override
-        public boolean match(Term t) {
-            return t.size() == size;
-        }
-
-        @Override
-        public String toString() {
-            return "size=" + size;
-        }
-    }
-
-    public static final class TermVolumeMin extends MatchOp {
-        public final int volume;
-
-        public TermVolumeMin(int volume) {
-            this.volume = volume;
-        }
-
-        @Override
-        public boolean match(Term t) {
-            return t.volume() >= volume;
-        }
-
-        @Override
-        public String toString() {
-            return "vol>=" + volume;
-        }
-    }
-
-    public static final class TermStructure extends MatchOp {
-        public final int bits;
-
-        public TermStructure(Op matchingType, int bits) {
-            this.bits = bits & (~matchingType.bit());
-        }
-
-        @Override
-        public boolean match(Term t) {
-            int s = t.structure();
-            return (s | bits) == s;
-        }
-
-        @Override
-        public String toString() {
-            return /*"Struct = " + */ Integer.toString(bits, 2);
-        }
-    }
-
-    /**
-     * requires a specific subterm to have minimum bit structure
-     */
-    public static final class SubTermStructure extends PatternOp {
-        public final int subterm;
-        public final int bits;
-        private final transient String id;
-
-
-        public SubTermStructure(Op matchingType, int subterm, int bits) {
-            this.subterm = subterm;
-
-//            if (matchingType != Op.VAR_PATTERN)
-//                bits &= (~matchingType.bit());
-            bits &= ~(Op.VariableBits);
-
-            this.bits = bits;
-            id = "t" + subterm + ':' +
-                    Integer.toString(bits, 16);
-        }
-
-
-        @Override
-        public String toString() {
-            return id;
-        }
-
-        @Override
-        boolean run(FindSubst ff) {
-            Compound t = (Compound) ff.term.get();
-            return !t.term(subterm).impossibleStructureMatch(bits);
-        }
-    }
-
-    /**
-     * requires a specific subterm type
-     */
-    public static final class SubTermOp extends PatternOp {
-        public final int subterm;
-        public final Op op;
-        private final transient String id;
-
-
-        public SubTermOp(int subterm, Op op) {
-            this.subterm = subterm;
-            this.op = op;
-            id = "t" + subterm + ':' + op;
-        }
-
-        @Override
-        public String toString() {
-            return id;
-        }
-
-        @Override
-        boolean run(FindSubst ff) {
-            Compound parent = (Compound) ff.term.get();
-            return parent.term(subterm).op() == op;
-        }
-    }
-
-    public static final class TermOpEquals extends MatchOp {
-        public final Op type;
-
-        public TermOpEquals(Op type) {
-            this.type = type;
-        }
-
-        @Override
-        public boolean match(Term t) {
-            return t.op() == type;
-        }
-
-        @Override
-        public String toString() {
-            return type.toString(); /* + " "*/
-        }
-    }
-
-//    public static final class SubOpEquals extends MatchOp {
-//        public final Op type;
-//        private final int subterm;
-//
-//        public SubOpEquals(int subterm, Op type) {
-//            this.subterm = subterm;
-//            this.type = type;
-//        }
-//
-//        @Override
-//        public boolean match(Term t) {
-//            return t.term(subterm).op() == type;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return "SubOpEq{" + subterm + "," + type + '}';
-//        }
-//    }
-
-
-    /**
-     * Imdex == image index
-     */
-    public static final class ImageIndexEquals extends MatchOp {
-        public final int index;
-
-        public ImageIndexEquals(int index) {
-            this.index = index;
-        }
-
-        @Override
-        public boolean match(Term t) {
-            return ((Compound) t).relation() == index;
-        }
-
-        @Override
-        public String toString() {
-            return "imdex:" + index;
-        }
-    }
-
-//    public static class MatchTerm implements PatternOp {
-//        public final Term term;
-//
-//        public MatchTerm(Term term) {
-//            this.term = term;
-//        }
-//    }
-
-
-
-    /**
-     * invokes a dynamic FindSubst match via the generic entry method: match(Term,Term)
-     */
-    public static class MatchTerm extends PatternOp {
-        public final Term x;
-        private final String id;
-        private final ImmutableMap<Term,MatchConstraint> constraints;
-
-        public MatchTerm(Term term, ListMultimap<Term, MatchConstraint> c) {
-            x = term;
-            if (c == null || c.isEmpty()) {
-                this.id = x.toString();
-                this.constraints = null;
-            } else {
-                Map<Term,MatchConstraint> con = Global.newHashMap();
-                c.asMap().forEach( (t, cc)-> {
-                    switch (cc.size()) {
-                        case 0: return;
-                        case 1: con.put(t, cc.iterator().next());
-                                break;
-                        default:
-                            con.put(t, new AndConstraint(cc));
-                            break;
-                    }
-                });
-
-
-                this.constraints = Maps.immutable.ofAll(con);
-                this.id = x.toStringCompact() + "^" + con;
-
-//                this.id = new StringBuilder(x.toString() + "∧neq(").append(
-//                    Joiner.on(",").join(notEquals.stream().map(v -> {
-//                        return ( v.getOne() + "==" + v.getTwo() );
-//                    }).collect(Collectors.toList()))
-//                ).append(")").toString();
-            }
-        }
-
-        @Override
-        public boolean run(FindSubst ff) {
-            ff.setConstraints(constraints);
-            ff.matchAll(x, ff.term.get());
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return id;
-        }
-    }
-
     /** null to disable exclusions */
     public void setConstraints(ImmutableMap<Term,MatchConstraint> constraints) {
         if (constraints == null || constraints.isEmpty())
@@ -475,156 +186,6 @@ abstract public class FindSubst extends Versioning implements Subst {
         else
             this.constraints = constraints;
     }
-
-//    /** invokes a dynamic FindSubst match via the matchVarX entry method;
-//     *  this is more specific than match() so slightly faster */
-//    public static class MatchXVar extends PatternOp {
-//        public final Variable x;
-//
-//        public MatchXVar(Variable c) {
-//            this.x = c;
-//        }
-//
-//        @Override
-//        public boolean run(Subst ff) {
-//            return ff.matchXvar(x, ff.y);
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return "XVar{" + x + '}';
-//        }
-//    }
-
-
-//    public final static class MatchPermute extends PatternOp {
-//        public final Compound x;
-//
-//        public MatchPermute(Compound c) {
-//            this.x = c;
-//        }
-//
-//        @Override
-//        public boolean run(Subst ff) {
-//            return ff.matchPermute(x, ((Compound) ff.y));
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return "MatchPermute{" + x + '}';
-//        }
-//    }
-
-    /**
-     * pop out to parent
-     */
-    public static final PatternOp Superterm = new PatternOp() {
-
-        @Override
-        public String toString() {
-            return "Super";
-        }
-
-        @Override
-        public boolean run(FindSubst ff) {
-
-            ff.term.set(ff.parent.get());
-            ff.parent.set(null);
-            return true;
-        }
-    };
-
-
-    /**
-     * selects the ith sibling subterm of the current parent
-     */
-    public static final class Subterm extends PatternOp {
-        public final int index;
-
-        public Subterm(int index) {
-            this.index = index;
-        }
-
-        @Override
-        public boolean run(FindSubst f) {
-            f.goSubterm(index);
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "t" + index; //s for subterm and sibling
-        }
-    }
-
-    /**
-     * sets the term to its parent, and the parent to a hardcoded value (its parent)
-     */
-    public static final class ParentTerm extends PatternOp {
-        public final Compound parent;
-
-        public ParentTerm(Compound parent) {
-            this.parent = parent;
-        }
-
-        @Override
-        public boolean run(FindSubst f) {
-            f.term.set(f.parent.get());
-            f.parent.set(parent);
-
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "parent(" + parent + ')'; //s for subterm and sibling
-        }
-    }
-
-
-//    public static final class MatchSubterm extends PatternOp {
-//        public final int index;
-//        private final Term x;
-//
-//        public MatchSubterm(Term x, int index) {
-//            this.index = index;
-//            this.x = x;
-//        }
-//
-//        @Override
-//        public boolean run(Subst ff) {
-//            Term y = ff.y = ff.parent.term(index);
-//            return ff.match(x, y);
-//        }
-//
-//
-//        @Override
-//        public String toString() {
-//            return "MatchSubterm{" + x + "," + index + '}';
-//        }
-//    }
-
-//    /**
-//     * match 0th subterm (fast)
-//     */
-//    public static final class MatchTheSubterm extends PatternOp {
-//
-//        private final Term x;
-//
-//        public MatchTheSubterm(Term x) {
-//            this.x = x;
-//        }
-//
-//        @Override
-//        public boolean run(Subst ff) {
-//            return ff.match(x, ff.y.term(0));
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return "MatchTheSubterm{" + x + '}';
-//        }
-//    }
 
 
     /**
@@ -639,32 +200,6 @@ abstract public class FindSubst extends Versioning implements Subst {
         //System.out.println(startPower + "\t" + power);
     }
 
-    /**
-     * find substitutions using a pre-compiled term pattern
-     */
-    @Deprecated
-    public final boolean matchAll(TermPattern x, Term y, int startPower) {
-
-        term.set(y);
-
-        setPower(startPower);
-
-        boolean match = true;
-
-        for (PreCondition o : x.code) {
-            if (!(o instanceof PatternOp)) continue;
-            if (!((PatternOp) o).run(this)) {
-                match = false;
-                break;
-            }
-        }
-
-        if (powerDivisor != 1.0f)
-            throw new RuntimeException("power divisor not restored");
-
-        return match;
-
-    }
 
 
     /**
@@ -882,21 +417,8 @@ abstract public class FindSubst extends Versioning implements Subst {
 //        return false;
 //    }
 
-
-
-
-    final List<Termutation> termutes = Global.newArrayList();
-
-    public interface Termutation {
-        public boolean test();
-
-        public void reset();
-
-        int total();
-    }
-
-    public class TermutationPermutation implements Termutation {
-        final Termutator perm;
+    public class CommutivePermutations implements Termutator {
+        final ShuffledSubterms perm;
         private final TermContainer y;
 
         @Override
@@ -907,8 +429,8 @@ abstract public class FindSubst extends Versioning implements Subst {
                     '}';
         }
 
-        public TermutationPermutation(TermContainer x, TermContainer Y) {
-            this.perm = new Termutator(random,x);
+        public CommutivePermutations(TermContainer x, TermContainer Y) {
+            this.perm = new ShuffledSubterms(random,x);
             this.y = Y;
         }
 
@@ -932,53 +454,10 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
     public final boolean matchPermute(TermContainer x, Compound y) {
-        termutes.add(new TermutationPermutation(x, y));
+        termutes.add(new CommutivePermutations(x, y));
         return true;
     }
 
-    /**
-     * @param x the compound which is permuted/shuffled
-     * @param y what is being compared against
-     */
-    public final boolean matchPermuteOLD(TermContainer x, Compound y) {
-
-        int len = x.size();
-
-        /* heuristic: use the term size as the subset # of permutations to try */
-
-        int startDivisor = powerDivisor;
-
-        Termutator perm = new Termutator(random, x);
-        int attempts = Math.min(perm.total(), powerDivided(len));
-
-
-        int prePermute = now();
-
-
-        boolean matched = false;
-        while (attempts-- > 0) { // && perm.hasNext()) {
-
-            perm.next();
-
-            if (matchLinear(perm, y, 0, len)) {
-                matched = true;
-                break;
-            } else {
-                revert(prePermute);
-            }
-        }
-
-        powerDivisor = startDivisor;
-
-        //finished
-        return matched;
-
-    }
-
-//    public final boolean matchEllipsisAll(Ellipsis Xellipsis, Compound Y) {
-//        putXY(Xellipsis, Ellipsis.matchedSubterms(Y));
-//        return true;
-//    }
 
     public final boolean matchEllipsisAll(Ellipsis Xellipsis, Collection<Term> Y) {
         return putXY(Xellipsis, new CollectionEllipsisMatch(Y));
@@ -1274,10 +753,6 @@ abstract public class FindSubst extends Versioning implements Subst {
         return false;
     }
 
-//    public boolean matchLinear(TermContainer X, TermContainer Y) {
-//        return matchLinear(X, Y, 0, X.size());
-//    }
-
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
@@ -1312,7 +787,7 @@ abstract public class FindSubst extends Versioning implements Subst {
             return true;
         }
 
-        Termutation t = termutes.get(i);
+        Termutator t = termutes.get(i);
         t.reset();
 
         int revert = now();
@@ -1342,25 +817,11 @@ abstract public class FindSubst extends Versioning implements Subst {
     private boolean powerDividable(int factor) {
         if (powerAvailable() < factor) return false;
 
-        powerDivide(factor);
+        powerDivisor = Math.max(1, powerDivisor * factor);
 
         return true;
     }
 
-
-    private void powerDivide(int factor) {
-        /*if (factor <= 0)
-            factor = 1; //HACK*/
-        powerDivisor = Math.max(1, powerDivisor * factor);
-    }
-
-    private int powerDivided(int factor) {
-        if (powerAvailable() < factor) return 0;
-
-        powerDivide(factor);
-
-        return powerAvailable();
-    }
 
     private int powerAvailable() {
         //if (powerDivisor <= 0) powerDivisor = 1; //HACK
@@ -1392,7 +853,7 @@ abstract public class FindSubst extends Versioning implements Subst {
         return true;
     }
 
-
+    /** true if the match assignment is allowed by constraints */
     public boolean assignable(Term x, Term y) {
         if (constraints == null) return true;
         MatchConstraint c = constraints.get(x);
@@ -1419,146 +880,6 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-    //    private static class ShuffledPermutationsDequePool extends DequePool<ShuffledPermutations> {
-//        public ShuffledPermutationsDequePool() {
-//            super(1);
-//        }
-//
-//        @Override public final ShuffledPermutations create() {
-//            return new ShuffledPermutations();
-//        }
-//    }
-//
-//    private static class MapDequePool extends DequePool<Map<Term,Term>> {
-//        public MapDequePool() {
-//            super(1);
-//        }
-//
-//        @Override public final Map<Term,Term> create() {
-//            return Global.newHashMap();
-//        }
-//
-//        @Override
-//        public final void put(Map<Term, Term> i) {
-//            i.clear();
-//            super.put(i);
-//        }
-//    }
-
 }
 
 
-//    private int permute3(final Compound X, final Compound Y, int power) {
-//
-//        final Term[] ySubterms = Y.term;
-//        final Term a = ySubterms[0];
-//        final Term b = ySubterms[1];
-//        final Term c = ySubterms[2];
-//
-//        int tries = 6;
-//        Term d, e, f;
-//
-//        int order = random.nextInt(6); //random starting permutation
-//
-//        do {
-//            switch (order) {
-//                case 0: d = a; e = b; f = c;     break;
-//                case 1: d = a; e = c; f = b;     break;
-//                case 2: d = b; e = a; f = c;     break;
-//                case 3: d = b; e = c; f = a;     break;
-//                case 4: d = c; e = a; f = b;     break;
-//                case 5: d = c; e = b; f = a;     break;
-//                default:
-//                    throw new RuntimeException("invalid permutation");
-//            }
-//
-//            if ((power = matchAll(power, X.term,
-//                    new Term[]{ d, e, f}) )  >= 0)
-//                return power; //success
-//            else {
-//                power = -power; //try again; reverse negated power back to a positive value for next attempt
-//                order = (order + 1) % 6;
-//                tries--;
-//            }
-//        } while (tries > 0);
-//
-//        return fail(power); //fail
-//    }
-
-//
-//    private int permute2(final Compound X, final Compound Y, int power) {
-//
-//        final Term[] xSubterms = X.term;
-//        Term x0 = xSubterms[0];
-//        Term x1 = xSubterms[1];
-//
-//        //50% probabilty of an initial swap
-//        if (random.nextBoolean()) {
-//            Term t = x0;
-//            x0 = x1;
-//            x1 = t;
-//        }
-//
-//        //SAVE
-//        HashMap<Variable, Term> tmpXY = Maps.newHashMap(xy);
-//        HashMap<Variable, Term> tmpYX = Maps.newHashMap(yx);
-//
-//        final Term[] ySubterms = Y.term;
-//
-//        //allocate half of the power for the first attempt.
-//        //2nd attempt will have at least this much (what remains from the first).
-//        int subPower = power/2;
-//
-//        int remainingSubPower =
-//               matchAll2(subPower, x0, x1, ySubterms);
-//
-//        //subtract expense and add the surplus
-//        power -= (subPower - Math.abs(remainingSubPower));
-//        if (remainingSubPower >= 0) //success
-//            return power;
-//
-//        //RESTORE
-//        xy.clear(); xy.putAll(tmpXY);
-//        yx.clear(); yx.putAll(tmpYX);
-//
-//        power = matchAll2(power, x1, x0, ySubterms);
-//        if (power < 0) {
-//            //RESTORE
-//            xy.clear(); xy.putAll(tmpXY);
-//            yx.clear(); yx.putAll(tmpYX);
-//        }
-//
-//        return power;
-//    }
-
-
-//    final protected int matchAll2(int power, final Term x0, final Term x1, final Term[] ySubterms) {
-//        if ((power = find(x0, ySubterms[0], power)) < 0)
-//            return power;
-//        return       find(x1, ySubterms[1], power);
-//    }
-
-/*
-        boolean phase = false;
-
-        int processed = 0;
-
-        //process non-commutative subterms in phase 1, then phase 2
-        do {
-
-            for (int i = 0; i < yLen; i++) {
-
-                Term xSub = X.term(i);
-
-                if (xSub.isCommutative() == phase) {
-                    if (!match(xSub, Y.term(i)))
-                        return false;
-                    processed++;
-                }
-            }
-
-            phase = !phase;
-
-        } while (processed < yLen);
-
- */

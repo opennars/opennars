@@ -17,6 +17,7 @@ import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
+import nars.term.transform.VarCachedVersionMap;
 import nars.truth.Truth;
 import nars.util.version.Versioned;
 

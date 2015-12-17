@@ -7,7 +7,7 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.TermPattern;
 import nars.term.Term;
-import nars.term.transform.MatchConstraint;
+import nars.term.constraint.MatchConstraint;
 
 import java.util.Collections;
 import java.util.List;

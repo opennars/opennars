@@ -3,9 +3,10 @@ package nars.nal.meta;
 import com.google.common.collect.ListMultimap;
 import nars.Global;
 import nars.Op;
+import nars.nal.meta.op.MatchTerm;
+import nars.nal.meta.op.SubTermOp;
 import nars.term.Term;
-import nars.term.transform.FindSubst;
-import nars.term.transform.MatchConstraint;
+import nars.term.constraint.MatchConstraint;
 
 import java.util.Arrays;
 import java.util.List;
@@ -81,18 +82,18 @@ public class TermPattern {
         Term x0 = pattern.term(0);
         Term x1 = pattern.term(1);
         if (x0.op()!=Op.VAR_PATTERN) {
-            code.add(new FindSubst.SubTermOp(0, x0.op()));
+            code.add(new SubTermOp(0, x0.op()));
             //code.add(new FindSubst.SubTermStructure(type, 0, x0.structure()));
         }
         if (x1.op()!=Op.VAR_PATTERN) {
-            code.add(new FindSubst.SubTermOp(1, x1.op()));
+            code.add(new SubTermOp(1, x1.op()));
             //code.add(new FindSubst.SubTermStructure(type, 1, x1.structure()));
         }
 
     }
 
     private void compile(Term x, List<PreCondition> code) {
-        code.add(new FindSubst.MatchTerm(x, constraints));
+        code.add(new MatchTerm(x, constraints));
     }
 
 //    private void compileRisky(Term x, List<PreCondition> code) {

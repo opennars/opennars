@@ -1,4 +1,4 @@
-package nars.nal.meta.match;
+package nars.term.match;
 
 import nars.term.transform.VariableNormalization;
 import nars.term.variable.Variable;

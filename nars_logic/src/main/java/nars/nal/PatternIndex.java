@@ -2,13 +2,13 @@ package nars.nal;
 
 import nars.MapIndex;
 import nars.Op;
-import nars.nal.meta.match.Ellipsis;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.TermMetadata;
 import nars.term.TermVector;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
+import nars.term.match.Ellipsis;
 import nars.term.transform.FindSubst;
 
 import java.util.HashMap;

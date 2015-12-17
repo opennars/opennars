@@ -1,6 +1,7 @@
-package nars.term.transform;
+package nars.term.constraint;
 
 import nars.term.Term;
+import nars.term.transform.FindSubst;
 
 
 @FunctionalInterface

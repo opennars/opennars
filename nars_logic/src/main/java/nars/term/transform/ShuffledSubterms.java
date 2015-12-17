@@ -12,12 +12,12 @@ import java.util.function.Consumer;
 /**
  * proxy to a TermContainer providing access to its subterms via a shuffling order
  */
-public final class Termutator extends ShuffledPermutations implements TermContainer<Term> {
+public final class ShuffledSubterms extends ShuffledPermutations implements TermContainer<Term> {
 
     private final TermContainer compound;
     private final Random rng;
 
-    public Termutator(Random rng, TermContainer x) {
+    public ShuffledSubterms(Random rng, TermContainer x) {
         this.rng = rng;
         this.compound = x;
         reset();

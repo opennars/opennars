@@ -85,7 +85,7 @@ public class ConceptsSource extends GraphSource {
 
             Termed target = ((BagBudget<Termed>)link).get();
 
-            if (cc.term().equals(target)) //self-loop
+            if (cc.term().equals(target.term())) //self-loop
                 return;
 
             TermNode tn = sg.getTermNode(target);

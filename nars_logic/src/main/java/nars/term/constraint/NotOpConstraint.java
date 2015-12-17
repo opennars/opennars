@@ -1,7 +1,8 @@
-package nars.term.transform;
+package nars.term.constraint;
 
 import nars.Op;
 import nars.term.Term;
+import nars.term.transform.FindSubst;
 
 /**
  * Created by me on 12/13/15.

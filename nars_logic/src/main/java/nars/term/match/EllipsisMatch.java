@@ -1,4 +1,4 @@
-package nars.nal.meta.match;
+package nars.term.match;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.nal.nal7.Sequence;
