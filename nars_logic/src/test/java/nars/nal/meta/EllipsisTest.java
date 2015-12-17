@@ -63,7 +63,7 @@ public class EllipsisTest {
 
                     @Override
                     public boolean onMatch() {
-                        System.out.println(x + "\t" + y + "\t" + this);
+                        //System.out.println(x + "\t" + y + "\t" + this);
 
                         EllipsisMatch varArgs = (EllipsisMatch)getXY(ellipsisTerm);
 
@@ -80,7 +80,7 @@ public class EllipsisTest {
 
                         //2. test substitution
                         Term s = r.apply(this, false);
-                        System.out.println(s);
+                        //System.out.println(s);
 
                         selectedFixed.add(s);
 
@@ -91,10 +91,11 @@ public class EllipsisTest {
                     }
                 };
 
-                assertTrue(matched.get());
-
-
                 f.matchAll(x, y, power);
+
+                assertTrue(//f.toString(),
+                        matched.get());
+
             }
 
 
@@ -322,8 +323,6 @@ public class EllipsisTest {
 
     }
 
-
-
     @Test public void testEllipsisCombinatorics1() {
         //rule: ((&&,M,A..+) ==> C), ((&&,A,..) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
         testCombinations(
@@ -351,7 +350,7 @@ public class EllipsisTest {
         testCombinations(
                 $("((|,%X,%A..+) --> (|,%Y,%A..+))"),
                 $("((|,bird,swimmer)-->(|,animal,swimmer))"),
-                1);
+                1 /* weird */);
     }
 
     @Test public void testRepeatEllipsisB() {

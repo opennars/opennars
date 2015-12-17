@@ -17,7 +17,6 @@ import nars.term.variable.Variable;
 import nars.util.version.Versioned;
 import nars.util.version.Versioning;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -36,12 +35,23 @@ abstract public class FindSubst extends Versioning implements Subst {
 
     final List<Termutator> termutes = Global.newArrayList();
 
-    public interface Termutator {
-        public boolean test();
+    public abstract class Termutator {
+        public abstract boolean test();
 
-        public void reset();
+        public abstract void reset();
 
-        int total();
+        public abstract int total();
+
+
+        @Override
+        public boolean equals(Object obj) {
+            return toString().equals(obj.toString());
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
+        }
     }
 
 
@@ -118,6 +128,11 @@ abstract public class FindSubst extends Versioning implements Subst {
     /** called each time all variables are satisfied in a unique way */
     abstract public boolean onMatch();
 
+    /** called each time a match is not fully successful */
+    public void onIncomplete() {
+
+    }
+
     @Override
     public void clear() {
         revert(0);
@@ -150,24 +165,9 @@ abstract public class FindSubst extends Versioning implements Subst {
                 onMatch();
             }
         } else {
+            onIncomplete();
         }
     }
-
-
-    //    @Override
-//    public final Subst clone() {
-//        FindSubst x = new FindSubst(type,
-//                Global.newHashMap(xy),
-//                Global.newHashMap(yx),
-//                random);
-//        x.parent = parent;
-//        x.xyChanged = xyChanged; //necessary?
-//        x.yxChanged = yxChanged; //necessary?
-//        x.y = y;
-//        x.power = power;
-//        return x;
-//    }
-
 
     private final void print(String prefix, Term a, Term b) {
         System.out.print(prefix);
@@ -417,16 +417,20 @@ abstract public class FindSubst extends Versioning implements Subst {
 //        return false;
 //    }
 
-    public class CommutivePermutations implements Termutator {
+    public class CommutivePermutations extends Termutator {
         final ShuffledSubterms perm;
         private final TermContainer y;
+        private transient String id;
 
         @Override
         public String toString() {
-            return "TermutationPermutation{" +
-                    "perm=" + perm +
-                    ", y=" + y +
-                    '}';
+            if (this.id == null) {
+                return this.id = "CommutivePermutations{" +
+                        "perm=" + perm.compound /* should be in normal sorted order if commutive */ +
+                        ", y=" + y +
+                        '}';
+            }
+            return this.id;
         }
 
         public CommutivePermutations(TermContainer x, TermContainer Y) {
@@ -453,14 +457,14 @@ abstract public class FindSubst extends Versioning implements Subst {
         }
     }
 
-    public final boolean matchPermute(TermContainer x, Compound y) {
-        termutes.add(new CommutivePermutations(x, y));
-        return true;
+    protected void termute(Termutator t) {
+        if (!termutes.contains(t))
+            termutes.add(t);
     }
 
-
-    public final boolean matchEllipsisAll(Ellipsis Xellipsis, Collection<Term> Y) {
-        return putXY(Xellipsis, new CollectionEllipsisMatch(Y));
+    public final boolean matchPermute(TermContainer x, Compound y) {
+        termute(new CommutivePermutations(x, y));
+        return true;
     }
 
 
@@ -470,7 +474,8 @@ abstract public class FindSubst extends Versioning implements Subst {
      * X pattern contains:
      * <p>
      * one unmatched ellipsis (identified)
-     * <p>
+     * <p>                    //HACK should not need new list
+
      * zero or more "constant" (non-pattern var) terms
      * all of which Y must contain
      * <p>
@@ -508,7 +513,6 @@ abstract public class FindSubst extends Versioning implements Subst {
             } else {
                 if (alreadyMatched instanceof EllipsisMatch) {
                     //check that Y contains all of these
-                    //HACK should not need new list
                     if (!((EllipsisMatch)alreadyMatched).addContained(Y, ineligible))
                         return false;
                 } else {
@@ -553,33 +557,34 @@ abstract public class FindSubst extends Versioning implements Subst {
 
         if (!matchFirst.isEmpty()) {
 
-            //first match all the fixed-position subterms
-            if (!matchAllCommutive(matchFirst, yFree)) {
-                return false;
-            }
+            //first match all the fixed-position subterms (later)
+            matchCommutiveRemaining(Xellipsis, matchFirst, yFree);
+            return true;
         }
 
         //select all remaining
-        return matchEllipsisAll(Xellipsis, yFree);
+        return putXY(Xellipsis, new CollectionEllipsisMatch(yFree));
     }
 
 
 
     /** toMatch matched into some or all of Y's terms */
-    private boolean matchAllCommutive(Set<Term> toMatch, MutableSet<Term> y) {
-        int xsize = toMatch.size();
+    private boolean matchCommutiveRemaining(Term xEllipsis, Set<Term> xToMatch, MutableSet<Term> yFree) {
+        int xsize = xToMatch.size();
 
         switch (xsize) {
             case 0:
                 return true;
             case 1:
-                return matchChoose1(toMatch.iterator().next(), y);
-            case 2:
-                return matchChoose2(toMatch.toArray(new Term[xsize]), y);
+                termute(new Choose1(xEllipsis, xToMatch.iterator().next(), yFree));
+                return true;
+            /*case 2:
+                return matchChoose2(toMatch.toArray(new Term[xsize]), y);*/
             default:
                 //3 or more combination
                 throw new RuntimeException("unimpl: " + xsize + " arity combination unimplemented");
         }
+
     }
 
     private boolean matchChoose2(Term[] x, MutableSet<Term> y) {
@@ -625,35 +630,79 @@ abstract public class FindSubst extends Versioning implements Subst {
         return matched;
     }
 
+    public class Choose1 extends Termutator {
+
+        private final Set<Term> yFree;
+        private final Term x;
+        private final Term xEllipsis;
+        private int shuffle;
+        private final Term[] yy;
+        private transient String id;
+
+        @Override
+        public String toString() {
+            if (this.id == null) {
+                return this.id = "Choose1{" +
+                        "yFree=" + yFree +
+                        ", xEllipsis=" + xEllipsis +
+                        ", x=" + x +
+                        '}';
+            }
+            return this.id;
+        }
+
+        public Choose1(Term xEllipsis, Term x, Set<Term> yFree) {
+            this.x = x;
+            this.yFree = yFree;
+            this.xEllipsis = xEllipsis;
+            int ysize = yFree.size();
+            yy = yFree.toArray(new Term[ysize]);
+        }
+
+        @Override
+        public int total() {
+            return yFree.size();
+        }
+
+        @Override
+        public void reset() {
+            this.shuffle = random.nextInt(total()); //randomize starting offset
+        }
+
+        @Override
+        public boolean test() {
+            final int ysize = yy.length;
+
+            Term y = yy[(shuffle++) % ysize];
+
+            boolean matched = match(x, y);
+
+            if (matched) {
+                return putXY(xEllipsis, new CollectionEllipsisMatch(yFree, y));
+            }
+
+            return false;
+        }
+    }
+
     /**
      * choose 1 at a time from a set of N, which means iterating up to N
      * will remove the chosen item(s) from Y if successful before returning
      */
-    private boolean matchChoose1(Term X, Set<Term> Yfree) {
+    private boolean matchChoose1(Term x, Set<Term> Yfree) {
+
+
 
         int ysize = Yfree.size();
-        int shuffle = random.nextInt(ysize); //randomize starting offset
 
         int prePermute = now();
 
         int iterations = Math.min(ysize, (powerAvailable()));
 
 
-        Term[] yy = Yfree.toArray(new Term[ysize]);
 
         for (int i = 0; i < iterations; i++) {
 
-            Term y = yy[(shuffle++) % ysize];
-
-            boolean matched = match(X, y);
-
-            if (matched) {
-                Yfree.remove(y); //exclude this item from the set of free terms
-                return true;
-            } else {
-                revert(prePermute);
-                //else: continue on next permutation
-            }
         }
 
         //finished
@@ -837,9 +886,12 @@ abstract public class FindSubst extends Versioning implements Subst {
         VarCachedVersionMap xy = this.xy;
 
         Versioned<Term> v = xy.map.get(x);
-        if (v!=null) {
-            if (x.equals(v.get())) {
+        Term vv = v!=null ? v.get() : null;
+        if (vv!=null) {
+            if (y.equals(vv)) {
                 return true; //same value
+            } else {
+                return false; //already assigned
             }
         }
         if (!assignable(x, y))

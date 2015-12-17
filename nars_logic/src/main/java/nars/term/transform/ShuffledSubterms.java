@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  */
 public final class ShuffledSubterms extends ShuffledPermutations implements TermContainer<Term> {
 
-    private final TermContainer compound;
+    public final TermContainer compound;
     private final Random rng;
 
     public ShuffledSubterms(Random rng, TermContainer x) {

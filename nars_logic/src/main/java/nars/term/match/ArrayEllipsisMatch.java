@@ -1,13 +1,11 @@
 package nars.term.match;
 
+import com.google.common.collect.Iterators;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 /**
  * implementation which stores its series of subterms as a Term[]
@@ -49,4 +47,8 @@ public class ArrayEllipsisMatch<T extends Term> extends EllipsisMatch {
         return true;
     }
 
+    @Override
+    public Iterator<Term> iterator() {
+        return Iterators.forArray(term);
+    }
 }

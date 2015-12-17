@@ -1,10 +1,12 @@
 package nars.term.match;
 
+import nars.Global;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -17,6 +19,15 @@ public class CollectionEllipsisMatch extends EllipsisMatch {
     public CollectionEllipsisMatch(Collection<Term> term) {
         this.term = term;
     }
+    public CollectionEllipsisMatch(Collection<Term> term, Term except) {
+        Collection<Term> tt = this.term = Global.newArrayList(term.size() - 1);
+        term.forEach(x -> {
+            if (x!=except)
+                tt.add(x);
+        });
+    }
+
+
 
     @Override
     public String toString() {
@@ -45,5 +56,8 @@ public class CollectionEllipsisMatch extends EllipsisMatch {
 
     }
 
-
+    @Override
+    public Iterator<Term> iterator() {
+        return term.iterator();
+    }
 }
