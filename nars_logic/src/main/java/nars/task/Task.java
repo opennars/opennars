@@ -80,12 +80,13 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
         Task pb = task.getParentBelief();
         sb.append('\n');
 
+        sb.append("  ");
         if (pt != null) {
-            sb.append("  PARENT ");
+            //sb.append("  PARENT ");
             getExplanation(pt, indent+1, sb);
         }
         if (pb != null) {
-            sb.append("  BELIEF ");
+            //sb.append("  BELIEF ");
             getExplanation(pb, indent+1, sb);
         }
     }
@@ -180,9 +181,9 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     /** called when a Concept processes this Task */
     void onConcept(Concept/*<T>*/ equivalentInstance);
 
-    default <X extends Compound> MutableTask<X> solution(X t, char newPunc, Truth newTruth, long newOcc, Task question, Memory memory) {
+    default <X extends Compound> MutableTask solution(X t, char newPunc, Truth newTruth, long newOcc, Task question, Memory memory) {
 
-        MutableTask tt = new MutableTask<>(t, newPunc)
+        MutableTask tt = new MutableTask(t, newPunc)
             .truth(newTruth)
             .budget(getPriority(), getDurability(), getQuality())
             .time(memory.time(), newOcc);

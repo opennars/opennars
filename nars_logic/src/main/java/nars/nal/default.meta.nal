@@ -501,6 +501,7 @@
 
 ////composition on both sides of a statement:
 
+
     ((&,B,A..+) --> (&,X,A..+)), (B --> X), task("?") |- ((&,B,A..+) --> (&,X,A..+)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((|,B,A..+) --> (|,X,A..+)), (B --> X), task("?") |- ((|,B,A..+) --> (|,X,A..+)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 

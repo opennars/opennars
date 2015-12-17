@@ -1,11 +1,9 @@
 package nars.nal.meta.post;
 
-import nars.Global;
 import nars.Op;
 import nars.nal.RuleMatch;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.term.transform.FindSubst;
 
 /**
  * Created by me on 8/15/15.
@@ -51,21 +49,19 @@ public class SubstituteIfUnified extends Substitute {
     @Override
     protected boolean substitute(RuleMatch m, Term a, Term b) {
 
-//        Map<Term, Term> left = m.sub2.left;
-//        Map<Term, Term> right = m.sub2.right;
-
-        FindSubst sub = new FindSubst(type, m.premise.getRandom());
-
-        boolean result;
-        if (sub.next(a, b, Global.UNIFICATION_POWER)) {
-            m.secondary.putAll(sub.xy);
-            result = true;
-        }
-        else {
-            result = false;
-        }
-
-        return result;
+//        FindSubst sub = new FindSubst(type, m.premise.getRandom());
+//
+//        boolean result;
+//        if (sub.matchAll(a, b, Global.UNIFICATION_POWER)) {
+//            m.secondary.putAll(sub.xy);
+//            result = true;
+//        }
+//        else {
+//            result = false;
+//        }
+//
+//        return result;
+        return false;
     }
 
 //    @Override

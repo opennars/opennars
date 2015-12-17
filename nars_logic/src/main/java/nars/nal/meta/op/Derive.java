@@ -43,9 +43,12 @@ public final class Derive extends PreCondition {
     }
 
     @Override
-    public boolean test(RuleMatch m) {
+    public boolean test(RuleMatch r) {
+        r.derived2.set(this);
+        return true;
+    }
 
-        Term t = m.derived.get().normalized();
+    public boolean derive(RuleMatch m, Term t) {
 
         if (t==null || Variable.hasPatternVariable(t))
             return false;

@@ -68,8 +68,8 @@ public class NARMenu extends HBox {
             Button iconButton = JFX.newIconButton(FontAwesomeIcon.GEAR);
             iconButton.setMouseTransparent(true);
 
-
             Menu main = new Menu("", iconButton);
+
             main.getStyleClass().add("nar_main_menu");
             main.getItems().add(new MenuItem("", fontSlider));
             main.getItems().add(new MenuItem("New..."));

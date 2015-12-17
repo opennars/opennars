@@ -124,7 +124,7 @@ public final class Anticipate {
         if (debug)
             System.err.println("Anticipation Negated " + tt.task);
 
-        nar.input(new MutableTask<>(prediction)
+        nar.input(new MutableTask(prediction)
                 .belief()
                 .truth(0.0f, nar.memory.getDefaultConfidence(Symbols.JUDGMENT))
                 .time(nar.time(), expectedOccurrenceTime)

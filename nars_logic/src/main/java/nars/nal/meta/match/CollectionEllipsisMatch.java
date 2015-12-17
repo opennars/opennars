@@ -1,9 +1,11 @@
 package nars.nal.meta.match;
 
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * implementation which stores its series of subterms as a Term[]
@@ -31,4 +33,17 @@ public class CollectionEllipsisMatch extends EllipsisMatch {
     public int size() {
         return term.size();
     }
+
+    @Override
+    public boolean addContained(Compound Y, Set<Term> ineligible) {
+
+        for (Term e : term) {
+            if (!Y.containsTerm(e)) return false;
+            ineligible.add(e);
+        }
+        return true;
+
+    }
+
+
 }

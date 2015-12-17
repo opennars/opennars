@@ -124,6 +124,7 @@ public class NAL1Test extends AbstractNALTester {
 
         long time = 16;
         TestNAR test = test();
+        test.nar.log();
         test.believe("<bird --> swimmer>")
             .ask("<swimmer --> bird>") //.en("Is swimmer a type of bird?");
             .mustOutput(time, "<swimmer --> bird>. %1.00;0.47%");

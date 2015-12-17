@@ -1,11 +1,11 @@
-package nars.nal.meta.match;
+package nars.nal.meta;
 
 import junit.framework.TestCase;
 import nars.$;
 import nars.Global;
-import nars.Narsese;
 import nars.Op;
 import nars.nal.PremiseRule;
+import nars.nal.meta.match.*;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static nars.$.$;
 import static org.junit.Assert.*;
@@ -25,7 +26,6 @@ import static org.junit.Assert.*;
  */
 public class EllipsisTest {
 
-    static final Narsese p = Narsese.the();
 
     static String termSequence(int arity) {
         StringBuilder sb = new StringBuilder(arity * 3);
@@ -57,33 +57,44 @@ public class EllipsisTest {
 
             for (int seed = 0; seed < Math.max(1,repeats*arity) /* enough chances to select all combinations */; seed++) {
 
-                FindSubst f = new FindSubst(Op.VAR_PATTERN, new XorShift128PlusRandom(1+seed));
+                AtomicBoolean matched = new AtomicBoolean(false);
+
+                FindSubst f = new FindSubst(Op.VAR_PATTERN, new XorShift128PlusRandom(1+seed)) {
+
+                    @Override
+                    public boolean onMatch() {
+                        System.out.println(x + "\t" + y + "\t" + this);
+
+                        EllipsisMatch varArgs = (EllipsisMatch)getXY(ellipsisTerm);
+
+                        matched.set(true);
+
+                        TestCase.assertEquals(getExpectedUniqueTerms(arity), varArgs.size());
+
+                        Set<Term> varArgTerms = Global.newHashSet(1);
+                        varArgs.applyTo(this, varArgTerms, true);
+
+                        TestCase.assertEquals(getExpectedUniqueTerms(arity), varArgTerms.size());
+
+                        testFurther(selectedFixed, this, varArgTerms);
+
+                        //2. test substitution
+                        Term s = r.apply(this, false);
+                        System.out.println(s);
+
+                        selectedFixed.add(s);
 
 
-                boolean matched = f.next(x, y, power);
-                System.out.println(x + "\t" + y + "\t" +f);
-                TestCase.assertTrue(matched);
+                        TestCase.assertFalse(Variable.hasPatternVariable(s));
 
-                EllipsisMatch varArgs = (EllipsisMatch)f.getXY(ellipsisTerm);
+                        return true;
+                    }
+                };
 
-
-                TestCase.assertEquals(getExpectedUniqueTerms(arity), varArgs.size());
-
-                Set<Term> varArgTerms = Global.newHashSet(1);
-                varArgs.applyTo(f, varArgTerms, true);
-
-                TestCase.assertEquals(getExpectedUniqueTerms(arity), varArgTerms.size());
-
-                testFurther(selectedFixed, f, varArgTerms);
-
-                //2. test substitution
-                Term s = r.apply(f, false);
-                System.out.println(s);
-
-                selectedFixed.add(s);
+                assertTrue(matched.get());
 
 
-                TestCase.assertFalse(Variable.hasPatternVariable(s));
+                f.matchAll(x, y, power);
             }
 
 
@@ -254,7 +265,7 @@ public class EllipsisTest {
     @Test public void testVarArg0() {
         //String rule = "(%S --> %M), ((|, %S, %A..+ ) --> %M) |- ((|, %A, ..) --> %M), (Truth:DecomposePositiveNegativeNegative)";
         String rule = "(%S ==> %M), ((&&,%S,%A..+) ==> %M) |- ((&&,%A..+,..) ==> %M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromBelief)";
-        Compound x = p.term('<' + rule + '>');
+        Compound x = $.$('<' + rule + '>');
         //System.out.println(x);
         x = ((PremiseRule)x).normalizeRule();
         //System.out.println(x);
@@ -287,27 +298,73 @@ public class EllipsisTest {
         }
     }
 
+    static void testCombinations(Compound X, Compound Y, int expect) {
 
-    public void testEllipsisCombinatorics1() {
+        for (int seed = 0; seed < 1 /*expect*5*/; seed++) {
 
-        //rule: ((&&,M,A..+) ==> C), ((&&,A,..) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
-        Compound X = $("(&&, %1..+, %2)");
-        Compound Y = $("(&&, <r --> [c]>, <r --> [w]>, <r --> [f]>)");
-        int expect = 3;
+            Set<String> results = Global.newHashSet(0);
 
-        Set<String> results = Global.newHashSet(0);
-        for (int seed = 0; seed < expect*5; seed++) {
             Random rng = new XorShift128PlusRandom(seed);
-            FindSubst f = new FindSubst(Op.VAR_PATTERN, rng);
-            f.setPower(1000);
-            boolean b = f.match(X, Y);
-            assertTrue(b);
-            results.add(f.xy.toString());
-        }
+            FindSubst f = new FindSubst(Op.VAR_PATTERN, rng) {
+                @Override
+                public boolean onMatch() {
+                    results.add(xy.toString());
+                    return true;
+                }
+            };
 
-        results.forEach(System.out::println);
-        assertEquals(expect, results.size());
+            f.setPower(1000);
+            f.matchAll(X, Y);
+
+            results.forEach(System.out::println);
+            assertEquals(expect, results.size());
+        }
 
     }
 
+
+
+    @Test public void testEllipsisCombinatorics1() {
+        //rule: ((&&,M,A..+) ==> C), ((&&,A,..) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
+        testCombinations(
+                $("(&&, %1..+, %2)"),
+                $("(&&, <r --> [c]>, <r --> [w]>, <r --> [f]>)"),
+                3);
+    }
+
+    @Test public void testMatchAll2() {
+        testCombinations(
+                $("((|,%X,%A) --> (|,%Y,%A))"),
+                $("((|,bird,swimmer)-->(|,animal,swimmer))"),
+                1);
+    }
+    @Test public void testMatchAll3() {
+        testCombinations(
+                $("((|,%X,%Z,%A) --> (|,%Y,%Z,%A))"),
+                $("((|,bird,man, swimmer)-->(|,man, animal,swimmer))"),
+                1);
+    }
+
+    @Test public void testRepeatEllipsisA() {
+
+        //should match the same with ellipsis
+        testCombinations(
+                $("((|,%X,%A..+) --> (|,%Y,%A..+))"),
+                $("((|,bird,swimmer)-->(|,animal,swimmer))"),
+                1);
+    }
+
+    @Test public void testRepeatEllipsisB() {
+
+        //should match the same with ellipsis
+        testCombinations(
+                $("((|,%X,%A..+) --> (|,%X,%B..+))"),
+                $("((|,bird,swimmer)-->(|,animal,swimmer))"),
+                1);
+
+
+
+    }
+
+    //TODO case which actually needs the ellipsis and not single term:
 }

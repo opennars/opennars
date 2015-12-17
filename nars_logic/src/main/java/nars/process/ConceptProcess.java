@@ -111,10 +111,8 @@ public abstract class ConceptProcess extends AbstractPremise {
                 if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.get().term(), termLink.get().term()))
                     continue;
 
-                proc.accept(
-                    new ConceptTaskTermLinkProcess(
-                        nar, concept, taskLink, termLink)
-                );
+                ConceptTaskTermLinkProcess.fireAll(
+                    nar, concept, taskLink, termLink, proc);
             }
         }
     }

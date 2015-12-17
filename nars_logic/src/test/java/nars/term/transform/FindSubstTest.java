@@ -6,10 +6,14 @@ import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
-@Deprecated public class FindSubstTest {
+@Deprecated
+public class FindSubstTest {
 
     @Test
     public void testFindSubst1() {
@@ -18,23 +22,34 @@ import static org.junit.Assert.assertEquals;
     }
 
 
-    public Subst testFindSubst(Term a, Term b, boolean returnsTrue) {
+    public Subst testFindSubst(Term a, Term b, boolean matches) {
 
-        FindSubst f = new FindSubst(Op.VAR_QUERY, new XORShiftRandom());
+        AtomicBoolean matched = new AtomicBoolean(false);
 
-        boolean r = f.next(b, a, 1024);
+        FindSubst f = new FindSubst(Op.VAR_QUERY, new XORShiftRandom()) {
 
-        assertEquals(returnsTrue, r);
-        if (r) {
+            @Override
+            public boolean onMatch() {
 
-            //identifier: punctuation, mapA, mapB
-            assertEquals("{?1=a}", f.xy.toString());
+                assertTrue(matches);
 
-            //output
-            assertEquals(
-                    "<a-->b> <?1-->b> -?> true",
-                    a + " " + b + " -?> " + r /*+ " remaining power"*/);
-        }
+                matched.set(true);
+
+                //identifier: punctuation, mapA, mapB
+                assertEquals("{?1=a}", xy.toString());
+
+                //output
+                assertEquals(
+                        "<a-->b> <?1-->b> -?>",
+                        a + " " + b + " -?>"  /*+ " remaining power"*/);
+
+                return true;
+            }
+        };
+
+        f.matchAll(b, a, 1024);
+
+        assertEquals(matched.get(), matches);
 
         return f;
     }

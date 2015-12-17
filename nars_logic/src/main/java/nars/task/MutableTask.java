@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
  * <p>
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
-public class MutableTask<C extends Compound> extends AbstractTask {
+public class MutableTask extends AbstractTask {
 
 
 //    public static <C extends Compound> TaskSeed make(NAR nar, C t) {
@@ -35,12 +35,16 @@ public class MutableTask<C extends Compound> extends AbstractTask {
         setOccurrenceTime(Tense.TIMELESS);
     }
 
-    public MutableTask(C term) {
+    public MutableTask(Task taskToClone) {
+        super(taskToClone);
+    }
+
+    public MutableTask(Compound term) {
         this();
         term(term);
     }
 
-    public MutableTask(C content, char punc) {
+    public MutableTask(Compound content, char punc) {
         this(content);
         punctuation(punc);
     }
@@ -145,7 +149,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
 //        return this;
 //    }
 
-    public final MutableTask term(C t) {
+    public final MutableTask term(Compound t) {
         setTerm(t);
         return this;
     }
@@ -278,7 +282,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
 //    }
 
 
-    public MutableTask<C> punctuation(char punctuation) {
+    public MutableTask punctuation(char punctuation) {
         setPunctuation(punctuation);
         return this;
     }
@@ -398,7 +402,7 @@ public class MutableTask<C extends Compound> extends AbstractTask {
 //        return this;
 //    }
 
-    public MutableTask<C> eternal() {
+    public MutableTask eternal() {
         setEternal();
         return this;
     }

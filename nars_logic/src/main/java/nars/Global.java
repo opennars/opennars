@@ -50,14 +50,11 @@ public class Global {
     //TODO use 'I' for SELf, it is 3 characters shorter
     public static final Atom DEFAULT_SELF = Atom.the("I");
 
-    public static final float CONFIDENCE_PREFILTER = 0.015f; /** some non-zero epsilon */
-    public static final float CONFIDENCE_PREFILTER_DEBUG = 0.015f;
-
 
     /** allow everything */
 
-    public static int UNIFICATION_POWERmin = 150;
-    public static int UNIFICATION_POWER = 300;
+    public static int UNIFICATION_POWER = 400;
+    public static int UNIFICATION_POWERmin = UNIFICATION_POWER;
 
     public static int DEFAULT_NAL_LEVEL = 8;
 

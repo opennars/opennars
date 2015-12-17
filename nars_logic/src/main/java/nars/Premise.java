@@ -5,6 +5,7 @@ import nars.concept.Concept;
 import nars.nal.Level;
 import nars.nal.LocalRules;
 import nars.nal.nal7.Tense;
+import nars.task.MutableTask;
 import nars.task.Task;
 import nars.task.Tasked;
 import nars.term.Term;
@@ -12,13 +13,13 @@ import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
 import nars.term.transform.MapSubst;
-import nars.term.transform.Subst;
 import nars.truth.DefaultTruth;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Consumer;
 
 /**
  * Defines the conditions used in an instance of a derivation
@@ -34,14 +35,20 @@ public interface Premise extends Level, Tasked {
      * @param solution The belief
      * @return null if no match
      */
-    static Task match(Task question, Task solution, NAR nar) {
+    static Task match(Task question, Task solution, NAR nar, Consumer<Task> eachSolution) {
 
         if (question.isQuestion() || question.isGoal()) {
             if (Tense.matchingOrder(question, solution)) {
                 Term[] u = {question.get(), solution.get()};
-                if (unify(Op.VAR_QUERY, u, nar.memory.random)) {
-                    return LocalRules.trySolution(question, solution, nar);
-                }
+                unify(Op.VAR_QUERY, u, nar.memory.random, (st) -> {
+                    Task s;
+                    if (!st.equals(solution.term())) {
+                        s = new MutableTask(solution).term((Compound)st);
+                    } else {
+                        s = solution;
+                    }
+                    LocalRules.trySolution(question, s, nar, eachSolution);
+                });
             }
         }
 
@@ -57,74 +64,80 @@ public interface Premise extends Level, Tasked {
      * <p>
      * only sets the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
      */
-    static boolean unify(Op varType, Term[] t, Random random) {
+    static void unify(Op varType, Term[] t, Random random, Consumer<Term> solution) {
 
+        FindSubst f = new FindSubst(varType, random) {
 
-        FindSubst f = new FindSubst(varType, random);
-        boolean hasSubs = f.next(t[0], t[1], Global.UNIFICATION_POWER);
-        if (!hasSubs) return false;
+            @Override public boolean onMatch() {
 
-        //TODO combine these two blocks to use the same sub-method
+                //TODO combine these two blocks to use the same sub-method
 
-        Term a = t[0];
-        Term aa = a;
+                Term a = t[0];
+                Term aa = a;
 
-        //FORWARD
-        if (a instanceof Compound) {
+                //FORWARD
+                if (a instanceof Compound) {
 
-            aa = a.applyOrSelf(f);
+                    aa = a.applyOrSelf(this);
 
-            if (aa == null) return false;
+                    if (aa == null) return false;
 
-            Op aaop = aa.op();
-            if (a.op() == Op.VAR_QUERY && (aaop == Op.VAR_INDEP || aaop == Op.VAR_DEP))
-                return false;
+                    Op aaop = aa.op();
+                    if (a.op() == Op.VAR_QUERY && (aaop == Op.VAR_INDEP || aaop == Op.VAR_DEP))
+                        return false;
 
-        }
+                }
 
-        Term b = t[1];
-        Term bb = b;
+                Term b = t[1];
+                Term bb = b;
 
-        //REVERSE
-        if (b instanceof Compound) {
-            bb = applySubstituteAndRenameVariables(
-                ((Compound) b),
-                (Map<Term, Term>) f.yx //inverse map
-            );
+                //REVERSE
+                if (b instanceof Compound) {
+                    bb = applySubstituteAndRenameVariables(
+                            ((Compound) b),
+                            (Map<Term, Term>)yx //inverse map
+                    );
 
-            if (bb == null) return false;
+                    if (bb == null) return false;
 
-            Op bbop = bb.op();
-            if (b.op() == Op.VAR_QUERY && (bbop == Op.VAR_INDEP || bbop == Op.VAR_DEP))
-                return false;
-        }
+                    Op bbop = bb.op();
+                    if (b.op() == Op.VAR_QUERY && (bbop == Op.VAR_INDEP || bbop == Op.VAR_DEP))
+                        return false;
+                }
 
-        t[0] = aa;
-        t[1] = bb;
+                t[0] = aa;
+                t[1] = bb;
 
-        return true;
+                solution.accept(t[1]);
+
+                return false; //just the first
+            }
+
+            Term applySubstituteAndRenameVariables(Compound t, Map<Term,Term> subs) {
+                if ((subs == null) || (subs.isEmpty())) {
+                    //no change needed
+                    return t;
+                }
+                return t.apply(new MapSubst(subs));
+            }
+
+        };
+        f.matchAll(t[0], t[1], Global.UNIFICATION_POWER);
     }
 
-    static Term applySubstituteAndRenameVariables(Compound t, Map<Term,Term> subs) {
-        if ((subs == null) || (subs.isEmpty())) {
-            //no change needed
-            return t;
-        }
-        return t.apply(new MapSubst(subs));
-    }
 
-    /**
-     * appliesSubstitute and renameVariables, resulting in a cloned object,
-     * will not change this instance
-     */
-    static Term applySubstituteAndRenameVariables(Compound t, Subst subs) {
-        if ((subs == null) || (subs.isEmpty())) {
-            //no change needed
-            return t;
-        }
-
-        return t.apply(subs);
-    }
+//    /**
+//     * appliesSubstitute and renameVariables, resulting in a cloned object,
+//     * will not change this instance
+//     */
+//    static Term applySubstituteAndRenameVariables(Compound t, Subst subs) {
+//        if ((subs == null) || (subs.isEmpty())) {
+//            //no change needed
+//            return t;
+//        }
+//
+//        return t.apply(subs);
+//    }
 
     Concept getConcept();
 

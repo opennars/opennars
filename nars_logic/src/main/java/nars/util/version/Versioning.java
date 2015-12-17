@@ -57,7 +57,7 @@ public class Versioning extends FasterList<Versioned> {
 
         while (get(s).revertNext(when)) {
             --s;
-            if (s <= 0) break;
+            if (s < 0) break;
             //break; //HACK for now, 1 at a time
         }
 
@@ -72,7 +72,7 @@ public class Versioning extends FasterList<Versioned> {
     }
 
     static final int initiALPOOL_CAPACITY = 16;
-    static final int stackLimit = 16;
+    static final int stackLimit = 12;
 
     final DequePool<FasterList> valueStackPool = new DequePool<FasterList>(initiALPOOL_CAPACITY) {
         @Override public FasterList create() {

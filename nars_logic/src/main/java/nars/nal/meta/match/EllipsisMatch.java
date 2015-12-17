@@ -8,6 +8,7 @@ import nars.term.compound.Compound;
 import nars.term.transform.Subst;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -46,4 +47,7 @@ public abstract class EllipsisMatch extends ShadowAtom {
 
     @Override
     public abstract int size();
+
+    abstract public boolean addContained(Compound Y, Set<Term> ineligible);
+
 }

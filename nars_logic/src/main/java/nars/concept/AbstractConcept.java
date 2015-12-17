@@ -1,7 +1,5 @@
 package nars.concept;
 
-import nars.NAR;
-import nars.task.Task;
 import nars.term.Term;
 
 import java.util.Map;

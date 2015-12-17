@@ -413,7 +413,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
         //TODO use input method like believe uses which avoids creation of redundant Budget instance
 
-        MutableTask<T> t = new MutableTask(term);
+        MutableTask t = new MutableTask(term);
         if (questionOrQuest == QUESTION)
             t.question();
         else if (questionOrQuest == QUEST)

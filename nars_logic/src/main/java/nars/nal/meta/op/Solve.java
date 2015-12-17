@@ -39,17 +39,18 @@ public final class Solve extends PreCondition {
 
     @Override
     public boolean test(RuleMatch match) {
+        match.derived.set(this);
+        return true;
+    }
 
+    public Term solve(RuleMatch match) {
         Term derivedTerm = match.apply(term, !continueIfIncomplete);
 
         if(null==derivedTerm)
-            return false;
+            return null;
 
         if (!continueIfIncomplete && Variable.hasPatternVariable(derivedTerm))
-            return false;
-
-
-        match.derived.set(derivedTerm);
+            return null;
 
 
         Compound pattern = (Compound) rule.term(0);
@@ -70,7 +71,7 @@ public final class Solve extends PreCondition {
 
         }
 
-        return true;
+        return derivedTerm;
     }
 
     public void processSequence(RuleMatch match, Term derivedTerm, Term toInvestigate) {

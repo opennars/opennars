@@ -11,7 +11,6 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.match.Ellipsis;
 import nars.nal.meta.op.Derive;
-import nars.nal.meta.op.ReSolve;
 import nars.nal.meta.op.Solve;
 import nars.nal.meta.post.ShiftOccurrence;
 import nars.nal.meta.post.Substitute;
@@ -22,7 +21,6 @@ import nars.nal.op.differ;
 import nars.nal.op.intersect;
 import nars.nal.op.union;
 import nars.term.Term;
-import nars.term.TermContainer;
 import nars.term.Terms;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
@@ -31,7 +29,6 @@ import nars.term.compound.GenericCompound;
 import nars.term.transform.*;
 import nars.term.variable.Variable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -174,23 +171,24 @@ public class PremiseRule extends GenericCompound implements Level {
         l.add(post.truth);
 
         ///--------------
-        //l.add(new RuleMatch.Stage(RuleMatch.MatchStage.Pattern));
+        l.add(new Solve(post.term, this, false )); //sets the solve callback
+        l.add(new Derive(this, anticipate, immediate_eternalize)); //sets the derive callback
 
         for (PreCondition p : postPreconditions)
             p.addConditions(l);
 
         ///--------------
 
-        if (post.afterConclusions.length > 0) {
-            l.add(new Solve(post.term, this, true ));
-            Collections.addAll(l, post.afterConclusions);
-            l.add(ReSolve.the);
-        }
-        else {
-            l.add(new Solve(post.term, this, false ));
-        }
-
-        l.add(new Derive(this, anticipate, immediate_eternalize));
+//        if (post.afterConclusions.length > 0) {
+//            l.add(new Solve(post.term, this, true ));
+//            Collections.addAll(l, post.afterConclusions);
+//            l.add(ReSolve.the);
+//        }
+//        else {
+//            l.add(new Solve(post.term, this, false ));
+//        }
+//
+//        l.add(new Derive(this, anticipate, immediate_eternalize));
 
         return l;
     }
@@ -630,10 +628,10 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
 
-    @Override
-    public Term clone(TermContainer subs) {
-        return null;
-    }
+//    @Override
+//    public Term clone(TermContainer subs) {
+//        return null;
+//    }
 
     //    @Override
 //    public Term clone(Term[] x) {

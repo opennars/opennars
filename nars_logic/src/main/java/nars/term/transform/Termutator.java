@@ -15,11 +15,12 @@ import java.util.function.Consumer;
 public final class Termutator extends ShuffledPermutations implements TermContainer<Term> {
 
     private final TermContainer compound;
+    private final Random rng;
 
     public Termutator(Random rng, TermContainer x) {
-        restart(x.size(), rng);
-        compound = x;
-
+        this.rng = rng;
+        this.compound = x;
+        reset();
     }
 
     @Override
@@ -136,5 +137,10 @@ public final class Termutator extends ShuffledPermutations implements TermContai
     public void addAllTo(Collection<Term> set) {
         forEach(set::add);
     }
+
+    public void reset() {
+        restart(compound.size(), rng);
+    }
+
 
 }

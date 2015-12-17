@@ -34,6 +34,9 @@ import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Consumer;
 
 
 /**
@@ -154,7 +157,7 @@ public class LocalRules {
      * @param question     The question to be processed
      * @return the projected Task, or the original Task
      */
-    public static Task trySolution(Task question, Task solution, NAR nal) {
+    public static void trySolution(Task question, Task solution, NAR nal, Consumer<Task> eachSolutions) {
 
         if ((solution == null) || (solution.isDeleted()))
             throw new RuntimeException("proposedBelief " + solution + " deleted or null");
@@ -162,8 +165,7 @@ public class LocalRules {
         if (!Tense.matchingOrder(question, solution)) {
             //System.out.println("Unsolved: Temporal order not matching");
             //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
-            return null;
-
+            return;
         }
 
         Task sol = solution;
@@ -182,9 +184,9 @@ public class LocalRules {
 
             Term[] u = {question.get(), solTerm};
 
-            if ( Premise.unify(Op.VAR_INDEP, u, nal.memory.random) ) {
+            Premise.unify(Op.VAR_INDEP, u, nal.memory.random, (st) -> {
 
-                sol = sol.solution((Compound)u[1],
+                MutableTask ss = sol.solution((Compound) st,
                         sol.getPunctuation(),
                         originalTruth,
                         sol.getOccurrenceTime(),
@@ -192,17 +194,25 @@ public class LocalRules {
                         memory
                 );
 
-                //float newQ1 = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
-                //System.err.println(" before unf: " + newQ0 + " , after " + newQ1);
-                //System.err.println();
-            }
+                eachSolutions.accept(ss);
+
+                //TODO move this to a callee's consumer?
+                processSolution(question, nal, ss, memory, now);
+            });
         } else {
-            //sol = sol.clone(originalTruth);
+            if (sol == null)
+                throw new RuntimeException("Unification invalid: " + solution + " unified and projected to " + sol);
+
+            eachSolutions.accept(sol);
+
+            //TODO move this to a callee's consumer?
+            processSolution(question, nal, sol, memory, now);
         }
 
-        if (sol == null)
-            throw new RuntimeException("Unification invalid: " + solution + " unified and projected to " + sol);
+    }
 
+    @Nullable
+    public static void processSolution(Task question, NAR nal, Task sol, Memory memory, long now) {
         //use sol.getTruth() in case sol was changed since input to this method:
         float newQ = Tense.solutionQuality(question, sol, sol.getTruth(), now);
 //        if (newQ == 0) {
@@ -216,8 +226,8 @@ public class LocalRules {
         float oldQ = (oldBest != null) ? Tense.solutionQuality(question, oldBest, now) : 0;
 
         if (oldQ >= newQ) {
-            //old solution was better:
-            return oldBest;
+            //old solution was better
+            return;
         }
 
         //else, new solution is btter
@@ -248,10 +258,8 @@ public class LocalRules {
         //.reason(currentTask.getHistory())
 
 
-
-
         //if (belief != inputBelief) { //!belief.equals(inputBelief)) {
-            //it was either unified and/or projected:
+        //it was either unified and/or projected:
             /*belief = nal.addNewTask(nal.newTask(belief.getTerm(), belief.getPunctuation())
                             .truth(belief.getTruth())
                             .budget(budget)
@@ -263,13 +271,11 @@ public class LocalRules {
                     true, false, false);*/
 
 
-
-
         /** decrease question's budget for transfer to solutions */
         question.getBudget().andPriority(budget.getPriority());
 
         //memory.eventDerived.emit(sol);
-            //nal.nar().input(sol); //is this necessary? i cant find any reason for reinserting to input onw that it's part of the concept's belief/goal tables
+        //nal.nar().input(sol); //is this necessary? i cant find any reason for reinserting to input onw that it's part of the concept's belief/goal tables
         //}
 
         Task finalSol = sol;
@@ -277,29 +283,6 @@ public class LocalRules {
             //defer this event until after frame ends so reasoning in this cycle may continue
             memory.eventAnswer.emit(Tuples.twin(question, finalSol));
         });
-
-        return sol;
-
-        //} else {
-            //
-
-            //belief.getBudget().mergePlus(budget);
-
-//            if (Global.DEBUG_TASK_LOG_SOLUTION)
-//                belief.logUnrepeated("Solution" /*Global.DEBUG ? "Solution " + question : */);
-        //}
-
-
-        //Solution Activated
-//        if (question.isQuestOrQuestion()) {
-//            //if (questionTask.isInput()) { //only show input tasks as solutions
-
-
-
-//        } else {
-//            memory.eventAnswer.emit(Tuples.twin(belief, question));
-//        }
-
     }
 
 

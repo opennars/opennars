@@ -7,6 +7,7 @@ import nars.term.transform.Subst;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 /**
  * implementation which stores its series of subterms as a Term[]
@@ -38,4 +39,14 @@ public class ArrayEllipsisMatch<T extends Term> extends EllipsisMatch {
     public int size() {
         return term.length;
     }
+
+    @Override
+    public boolean addContained(Compound Y, Set<Term> ineligible) {
+        for (Term e : term) {
+            if (!Y.containsTerm(e)) return false;
+            ineligible.add(e);
+        }
+        return true;
+    }
+
 }

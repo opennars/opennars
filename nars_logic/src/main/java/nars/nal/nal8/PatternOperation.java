@@ -1,11 +1,8 @@
 package nars.nal.nal8;
 
-import nars.Global;
 import nars.Narsese;
-import nars.Op;
 import nars.task.Task;
 import nars.term.Term;
-import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 import nars.util.data.random.XorShift128PlusRandom;
 
@@ -30,13 +27,13 @@ public abstract class PatternOperation implements Function<Task, List<Task>> {
 
     @Override
     public List<Task> apply(Task operationTask) {
-
-        if (operationTask.isGoal()) {
-            FindSubst s = new FindSubst(Op.VAR_PATTERN, rng);
-            if (s.next(pattern, operationTask.get(), Global.UNIFICATION_POWER)) {
-                return run(operationTask, s);
-            }
-        }
+//
+//        if (operationTask.isGoal()) {
+//            FindSubst s = new FindSubst(Op.VAR_PATTERN, rng);
+//            if (s.matchAll(pattern, operationTask.get(), Global.UNIFICATION_POWER)) {
+//                return run(operationTask, s);
+//            }
+//        }
 
         return null;
     }

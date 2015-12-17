@@ -4,7 +4,6 @@ import com.gs.collections.impl.factory.Sets;
 import nars.Global;
 import nars.NAR;
 import nars.Op;
-import nars.concept.Concept;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.term.Term;
@@ -17,9 +16,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /** "don't touch this file" - patham9 */
 public class UnificationTest  {
@@ -49,101 +48,82 @@ public class UnificationTest  {
         int power = 4 * (1 + t1.volume() * t2.volume());
         //power*=power;
 
-        FindSubst sub = new FindSubst(type, nar);
-        boolean subbed = sub.next(t1, t2, power);
+        AtomicBoolean subbed = new AtomicBoolean(false);
 
-        System.out.println();
-        System.out.println(t1 + " " + t2 + ' ' + subbed);
-        System.out.println(sub);
+        FindSubst sub = new FindSubst(type, nar) {
 
-        assertEquals(shouldSub, subbed);
+            @Override
+            public boolean onMatch() {
 
+                if (shouldSub) {
+                    if ((t2 instanceof Compound) && (t1 instanceof Compound)) {
+                        Set<Term> t1u = ((Compound) t1).unique(type);
+                        Set<Term> t2u = ((Compound) t2).unique(type);
 
+                        int n1 = Sets.difference(t1u, t2u).size();
+                        int n2 = Sets.difference(t2u, t1u).size();
 
-        if (shouldSub && (t2 instanceof Compound) && (t1 instanceof Compound)) {
-            Set<Term> t1u = ((Compound) t1).unique(type);
-            Set<Term> t2u = ((Compound) t2).unique(type);
+                        assertTrue( (n2) <= (yx.size()));
+                        assertTrue( (n1) <= (xy.size()));
+                    }
+                } else {
+                    assertFalse("match found but should not have", true);
+                }
 
-            int n1 = Sets.difference(t1u, t2u).size();
-            int n2 = Sets.difference(t2u, t1u).size();
+                subbed.set(true);
 
-            assertTrue( (n2) <= (sub.yx.size()));
-            assertTrue( (n1) <= (sub.xy.size()));
-        }
+                return true;
+            }
+        };
+        sub.matchAll(t1, t2, power);
+
+        assertEquals(shouldSub, subbed.get());
 
         return sub;
     }
 
+
+
     @Test
-    public void unification1()  { 
-
-        String T1 = "<(*,$1,$1) --> wu>";
-        String T2 = "<(*,a,b) --> wu>";
-        TestNAR tester = test();
-        tester.believe(T1); 
-        tester.believe(T2); 
-        tester.run(10);
-
-        Concept ret = tester.nar.concept(T1);
-        Concept ret2 = tester.nar.concept(T2);
-
-        //these we wanted, but we had to do the crap above since I forgot how to construct terms by strings..
-        Term Term1 = ret.get();
-        Term Term2 = ret2.get();
-
-        FindSubst wu = new FindSubst(Op.VAR_INDEP, tester.nar.memory.random);
-        boolean unifies = wu.next(Term1, Term2, 1024);
-        if (unifies)
-            assertTrue("Unification is nonsensical", false);
-
+    public void unificationP0()  {
+        test(Op.VAR_PATTERN,
+                "<%A =/> %B>",
+                "<<a --> A> =/> <b --> B>>",
+                true
+        );
     }
 
     @Test
-    public void unification2()  { 
-
-        String T1 = "<(*,#1,$1) --> wu>";
-        String T2 = "<(*,a,b) --> wu>";
-        TestNAR tester = test();
-        tester.believe(T1); 
-        tester.believe(T2); 
-        tester.run(10);
-
-        Concept ret = tester.nar.concept(T1);
-        Concept ret2 = tester.nar.concept(T2);
-
-        //these we wanted, but we had to do the crap above since I forgot how to construct terms by strings..
-        Term Term1 = ret.get();
-        Term Term2 = ret2.get();
-
-        FindSubst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
-        boolean unifies = wu.next(Term1, Term2, 1024);
-        if (unifies)
-            assertTrue("Unification is nonsensical", false);
-
+    public void unificationP1()  {
+        test(Op.VAR_INDEP,
+                "<(*,$1,$1) --> wu>",
+                "<(*,a,b) --> wu>",
+                false
+        );
     }
-
     @Test
-    public void unification3()  { 
-
-        String T1 = "<(*,%1,%1,$1) --> wu>";
-        String T2 = "<(*,lol,lol2,$1) --> wu>";
-        TestNAR tester = test();
-        tester.believe(T1); 
-        tester.believe(T2); 
-        tester.run(10);
-
-        Concept ret = tester.nar.concept(T1);
-        Concept ret2 = tester.nar.concept(T2);
-
-        //these we wanted, but we had to do the crap above since I forgot how to construct terms by strings..
-        Term Term1 = ret.get();
-        Term Term2 = ret2.get();
-
-        FindSubst wu = new FindSubst(Op.VAR_PATTERN, tester.nar.memory.random);
-        boolean unifies = wu.next(Term1, Term2, 1024);
-        if (unifies)
-            assertTrue("Unification is nonsensical", false);
-
+    public void unificationP2()  {
+        test(Op.VAR_DEP,
+                "<(*,#1,$1) --> wu>",
+                "<(*,a,b) --> wu>",
+                false
+        );
+    }
+    @Test
+    public void unificationP3()  {
+        test(Op.VAR_PATTERN,
+                "<(*,%1,%1,$1) --> wu>",
+                "<(*,lol,lol2,$1) --> wu>",
+                false
+        );
+    }
+    @Test
+    public void unificationP5()  {
+        test(Op.VAR_DEP,
+                "<#x --> lock>",
+                "<{lock1} --> lock>",
+                true
+        );
     }
 
     @Test
@@ -155,67 +135,6 @@ public class UnificationTest  {
         );
     }
 
-    @Test
-    public void unification_multiple_variable_elimination4()  { 
-
-        String T1 = "<#x --> lock>";
-        String T2 = "<{lock1} --> lock>";
-        TestNAR tester = test();
-        tester.believe(T1); 
-        tester.believe(T2); 
-        tester.run(10);
-
-        Concept ret = tester.nar.concept(T1);
-        Concept ret2 = tester.nar.concept(T2);
-
-        
-        Term Term1 = ret.get();
-        Term Term2 = ret2.get();
-
-        FindSubst wu = new FindSubst(Op.VAR_DEP, tester.nar.memory.random);
-        boolean unifies = wu.next(Term1, Term2, 1024);
-        if (!unifies)
-            assertTrue("Unification is nonsensical", false);
-
-    }
-
-    @Test
-    public void pattern_trySubs_atomic()  {
-        TestNAR test = test();
-        NAR nar = test.nar;
-
-        String s1 = "<%A =/> %B>";
-        String s2 = "<<a --> A> =/> <b --> B>>";
-        nar.input(s1 + '.');
-        nar.input(s2 + '.');
-        nar.frame(1000);
-        Term t1 = nar.concept(s1).get();
-        Term t2 = nar.concept(s2).get();
-
-        FindSubst sub = new FindSubst(Op.VAR_PATTERN, nar.memory.random);
-        if (!sub.next(t1, t2, 99999)) {
-            assertTrue("Unification is nonsensical", false);
-        }
-    }
-
-    @Test
-    public void pattern_trySubs_Indep_Var()  {
-        TestNAR test = test();
-        NAR nar = test.nar;
-
-        String s1 = "<%A =/> %B>";
-        String s2 = "<<$1 --> A> =/> <$1 --> B>>";
-        nar.input(s1 + '.');
-        nar.input(s2 + '.');
-        nar.frame(1000);
-        Term t1 = nar.concept(s1).get();
-        Term t2 = nar.concept(s2).get();
-
-        FindSubst sub = new FindSubst(Op.VAR_PATTERN, nar);
-        if (!sub.next(t1, t2, 99999)) {
-            assertTrue("Unification with pattern variable failed", false);
-        }
-    }
 
     @Test public void pattern_trySubs_Dep_Var()  {
         test(Op.VAR_PATTERN,

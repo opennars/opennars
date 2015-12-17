@@ -21,17 +21,14 @@ import nars.util.version.VersionMap;
 import nars.util.version.Versioned;
 import nars.util.version.Versioning;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 
 /* recurses a pair of compound term tree's subterms
 across a hierarchy of sequential and permutative fanouts
 where valid matches are discovered, backtracked,
 and collected until power is depleted. */
-public class FindSubst extends Versioning implements Subst {
+abstract public class FindSubst extends Versioning implements Subst {
 
 
     public final Random random;
@@ -109,6 +106,8 @@ public class FindSubst extends Versioning implements Subst {
         powerDivisor = 1;
     }
 
+    /** called each time all variables are satisfied in a unique way */
+    abstract public boolean onMatch();
 
     @Override
     public void clear() {
@@ -131,6 +130,17 @@ public class FindSubst extends Versioning implements Subst {
         /*if (pp == null)
             throw new RuntimeException("null subterm");*/
         term.set( pp );
+    }
+
+    public void matchAll(Term x, Term y) {
+        termutes.clear();
+        if (match(x, y)) {
+            if (!termutes.isEmpty()) {
+                matchTermutations(0);
+            } else {
+                onMatch();
+            }
+        }
     }
 
 
@@ -447,7 +457,8 @@ public class FindSubst extends Versioning implements Subst {
         @Override
         public boolean run(FindSubst ff) {
             ff.setConstraints(constraints);
-            return ff.match(x, ff.term.get());
+            ff.matchAll(x, ff.term.get());
+            return true;
         }
 
         @Override
@@ -618,22 +629,20 @@ public class FindSubst extends Versioning implements Subst {
     /**
      * find substitutions, returning the success state.
      */
-    public final boolean next(Term x, Term y, int startPower) {
+    public final void matchAll(Term x, Term y, int startPower) {
 
         setPower(startPower);
 
-        boolean b = match(x, y);
+        matchAll(x, y);
 
         //System.out.println(startPower + "\t" + power);
-
-        return b;
     }
 
     /**
      * find substitutions using a pre-compiled term pattern
      */
     @Deprecated
-    public final boolean next(TermPattern x, Term y, int startPower) {
+    public final boolean matchAll(TermPattern x, Term y, int startPower) {
 
         term.set(y);
 
@@ -875,11 +884,62 @@ public class FindSubst extends Versioning implements Subst {
 
 
 
+    final List<Termutation> termutes = Global.newArrayList();
+
+    public interface Termutation {
+        public boolean test();
+
+        public void reset();
+
+        int total();
+    }
+
+    public class TermutationPermutation implements Termutation {
+        final Termutator perm;
+        private final TermContainer y;
+
+        @Override
+        public String toString() {
+            return "TermutationPermutation{" +
+                    "perm=" + perm +
+                    ", y=" + y +
+                    '}';
+        }
+
+        public TermutationPermutation(TermContainer x, TermContainer Y) {
+            this.perm = new Termutator(random,x);
+            this.y = Y;
+        }
+
+        public int total() { return perm.total(); }
+
+        public boolean test() {
+            boolean b = matchLinear(perm, y, 0, perm.size());
+            if (perm.hasNext())
+                perm.next();
+            return b;
+        }
+
+        public void reset() {
+            perm.reset();
+            perm.next();
+        }
+
+        public boolean hasNext() {
+            return perm.hasNext();
+        }
+    }
+
+    public final boolean matchPermute(TermContainer x, Compound y) {
+        termutes.add(new TermutationPermutation(x, y));
+        return true;
+    }
+
     /**
      * @param x the compound which is permuted/shuffled
      * @param y what is being compared against
      */
-    public final boolean matchPermute(TermContainer x, Compound y) {
+    public final boolean matchPermuteOLD(TermContainer x, Compound y) {
 
         int len = x.size();
 
@@ -968,13 +1028,9 @@ public class FindSubst extends Versioning implements Subst {
             } else {
                 if (alreadyMatched instanceof EllipsisMatch) {
                     //check that Y contains all of these
-                    Collection<Term> tmp = Global.newArrayList();
-                    ((EllipsisMatch)alreadyMatched).applyTo(this, tmp, false);
-                    for (Term e : tmp) {
-                        if (!Y.containsTerm(e))
-                            return false;
-                        ineligible.add(e);
-                    }
+                    //HACK should not need new list
+                    if (!((EllipsisMatch)alreadyMatched).addContained(Y, ineligible))
+                        return false;
                 } else {
                     if (!Y.containsTerm(alreadyMatched))
                         return false;
@@ -1017,7 +1073,7 @@ public class FindSubst extends Versioning implements Subst {
 
         if (!matchFirst.isEmpty()) {
 
-            //match all the fixed-position subterms
+            //first match all the fixed-position subterms
             if (!matchAllCommutive(matchFirst, yFree)) {
                 return false;
             }
@@ -1032,64 +1088,61 @@ public class FindSubst extends Versioning implements Subst {
     /** toMatch matched into some or all of Y's terms */
     private boolean matchAllCommutive(Set<Term> toMatch, MutableSet<Term> y) {
         int xsize = toMatch.size();
-        Term[] x = toMatch.toArray(new Term[xsize]);
-        if (xsize == 1) {
 
-            return matchChoose1(x[0], y);
-
+        switch (xsize) {
+            case 0:
+                return true;
+            case 1:
+                return matchChoose1(toMatch.iterator().next(), y);
+            case 2:
+                return matchChoose2(toMatch.toArray(new Term[xsize]), y);
+            default:
+                //3 or more combination
+                throw new RuntimeException("unimpl: " + xsize + " arity combination unimplemented");
         }
-        if (xsize == 2) {
+    }
 
-            int prePermute = now();
-            MutableSet<Term> yCopy = y.clone(); //because matchChoose1 will remove on match
+    private boolean matchChoose2(Term[] x, MutableSet<Term> y) {
+        int prePermute = now();
+        MutableSet<Term> yCopy = y.clone(); //because matchChoose1 will remove on match
 
-            //initial shuffle
-            if (random.nextBoolean()) {
-                Term p = x[0];
-                x[0] = x[1];
-                x[1] = p;
+        //initial shuffle
+        if (random.nextBoolean()) {
+            Term p = x[0];
+            x[0] = x[1];
+            x[1] = p;
+        }
+
+        int startDivisor = powerDivisor;
+        if (!powerDividable(2))
+            return false;
+
+        boolean matched = false;
+        for (int i = 0; i < 2; i++) {
+
+            boolean modified = false;
+            if (matchChoose1(x[0], y)) {
+                modified = true;
+                if (matchChoose1(x[1], y)) {
+                    matched = true;
+                    break;
+                }
             }
 
-            int startDivisor = powerDivisor;
-            if (!powerDividable(2))
-                return false;
-
-            boolean matched = false;
-            for (int i = 0; i < 2; i++) {
-
-                boolean modified = false;
-                if (matchChoose1(x[0], y)) {
-                    modified = true;
-                    if (matchChoose1(x[1], y)) {
-                        matched = true;
-                        break;
-                    }
-                }
-
-                if (modified) {
-                    y.addAll(yCopy); //restore the original set if any where removed during an incomplete match
-                }
-
-                revert(prePermute);
-
-                /* swap */
-                Term p = x[0];
-                x[0] = x[1];
-                x[1] = p;
+            if (modified) {
+                y.addAll(yCopy); //restore the original set if any where removed during an incomplete match
             }
 
-            powerDivisor = startDivisor;
-            return matched;
+            revert(prePermute);
 
+            /* swap */
+            Term p = x[0];
+            x[0] = x[1];
+            x[1] = p;
         }
-        if (xsize == 0) {
-            return true;
-        }
 
-        //3 or more combination
-        throw new RuntimeException("unimpl: " + xsize + " arity combination unimplemented");
-
-
+        powerDivisor = startDivisor;
+        return matched;
     }
 
     /**
@@ -1220,9 +1273,9 @@ public class FindSubst extends Versioning implements Subst {
         return false;
     }
 
-    public boolean matchLinear(TermContainer X, TermContainer Y) {
-        return matchLinear(X, Y, 0, X.size());
-    }
+//    public boolean matchLinear(TermContainer X, TermContainer Y) {
+//        return matchLinear(X, Y, 0, X.size());
+//    }
 
     /**
      * a branch for comparing a particular permutation, called from the main next()
@@ -1245,8 +1298,43 @@ public class FindSubst extends Versioning implements Subst {
 
         powerDivisor = startDivisor;
 
+
         //success
         return success;
+    }
+
+    private boolean matchTermutations(int i) {
+
+        if (i == termutes.size()) {
+            //System.out.println("SOLUTION: " + xy);
+            onMatch();
+            return true;
+        }
+
+        Termutation t = termutes.get(i);
+        t.reset();
+
+        int revert = now();
+
+        for (int j = 0; j < t.total(); j++) {
+
+
+            //System.out.println("@" + now() + " " + i + ": " + t + " ");
+            //System.out.println("->  " + xy);
+
+            if (t.test()) {
+                //System.out.println("@" + now() + " -->  " + xy);
+                if (matchTermutations(i + 1)) {
+
+                }
+            }
+
+            revert(revert);
+            //System.out.println("@" + revert + " <-  " + xy);
+
+        }
+
+        return true;// matches!=0;
     }
 
 
