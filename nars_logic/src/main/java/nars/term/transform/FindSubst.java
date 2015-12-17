@@ -140,6 +140,7 @@ abstract public class FindSubst extends Versioning implements Subst {
             } else {
                 onMatch();
             }
+        } else {
         }
     }
 

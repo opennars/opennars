@@ -20,24 +20,33 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
         Task task = taskLink.get();
 
+        int[] beliefAttempts = new int[1];
+
+        Task belief;
+
         Concept beliefConcept = nar.concept(termLink.get());
         if (beliefConcept != null) {
 
-            Task belief = beliefConcept.getBeliefs().top(task, nar.time());
+            belief = beliefConcept.getBeliefs().top(task, nar.time());
 
             if (belief != null) {
-                Premise.match(task, belief, nar, beliefResolved ->
+                Premise.match(task, belief, nar, beliefResolved -> {
+                    beliefAttempts[0]++;
                     cp.accept(new ConceptTaskTermLinkProcess(
                             nar, concept,
                             taskLink, termLink,
-                            beliefResolved) )
-                );
+                            beliefResolved));
+                });
             }
 
         } else {
+            belief = null;
+        }
+
+        if (beliefAttempts[0] == 0) {
             //belief = null
             cp.accept(new ConceptTaskTermLinkProcess(nar, concept,
-                    taskLink, termLink, null));
+                    taskLink, termLink, belief));
         }
 
     }
