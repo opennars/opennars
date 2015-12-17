@@ -201,6 +201,7 @@ import nars.nal.nal8.operator.TermFunction;
 import nars.nar.Default;
 import nars.nar.Default2;
 import nars.op.mental.Anticipate;
+import nars.task.DefaultTask;
 import nars.term.Term;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
@@ -297,7 +298,7 @@ public class Patham9Test extends AbstractNALTester {
 
     @Parameterized.Parameters(name = "{0}")
     public static Iterable configurations() {
-        return AbstractNALTester.nars(8, false);
+        return AbstractNALTester.nars(8, false, true);
     }
 
     @Override
@@ -361,7 +362,7 @@ public class Patham9Test extends AbstractNALTester {
         float priority_imp_c = priority_safe(c_c);
     }*/
 
-    @Test
+  /*  @Test
     public void repeated_sequence_learn_implication() throws Narsese.NarseseException {
         NAR nar = new Default2(1000, 1, 1, 3);
 
@@ -403,6 +404,45 @@ public class Patham9Test extends AbstractNALTester {
         float priority_imp_b = priority_safe(c_b);
         float priority_imp_c = priority_safe(c_c);
 
+        //Expectation: imp_s should not be null!
+        //Expectation: The priority of imp_s is less than the one for imp_a_c, but by far not zero, its highly observable in the input data
+        //Expectation: A lot of successful anticipations happening, while at the end a handful of failed ones might occur
+    }*/
+
+    @Test
+    public void grouped_events_1() throws Narsese.NarseseException {
+        NAR nar = new Default2(1000, 1, 1, 3);
+
+        Anticipate.testing = false;
+
+        for(int i=0;i<10;i++) {
+            nar.input("<{0} --> pixel1>. :|:");
+            nar.input("<{0} --> pixel2>. :|:");
+            nar.frame(20);
+            nar.input("<{0} --> pixel1>. :|:");
+            nar.input("<{1} --> pixel2>. :|:");
+            nar.frame(20);
+            nar.input("<{1} --> pixel1>. :|:");
+            nar.input("<{0} --> pixel2>. :|:");
+            nar.frame(20);
+            nar.input("<{1} --> pixel1>. :|:");
+            nar.input("<{1} --> pixel2>. :|:");
+            nar.frame(100);
+        }
+
+        nar.frame(800);
+        nar.input("<?how =/> <{1} --> pixel1>>?");
+       // nar.input("<?how =/> (&|,<{0} --> pixel1>,<{1} --> pixel2>)>?");
+       // nar.input("<?how =/> (&|,<{0} --> pixel1>,<{1} --> pixel2>)>?");
+       // nar.input("<?how =/> (&|,<{0} --> pixel1>,<{1} --> pixel2>)>?");
+        //nar.input("<{0} --> pixel2>. :|:");
+
+
+
+        Anticipate.testing = true;
+        nar.frame(5000);
+
+        throw new Narsese.NarseseException("finished test");
         //Expectation: imp_s should not be null!
         //Expectation: The priority of imp_s is less than the one for imp_a_c, but by far not zero, its highly observable in the input data
         //Expectation: A lot of successful anticipations happening, while at the end a handful of failed ones might occur

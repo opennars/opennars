@@ -14,6 +14,7 @@ import nars.budget.Item;
 import nars.concept.Concept;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Sequence;
+import nars.op.mental.Anticipate;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.TermMetadata;
@@ -639,6 +640,11 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      */
     @Override
     public final void setBestSolution(final Task judg, final Memory memory) {
+        if(Anticipate.testing && this.isInput()) {
+            System.out.println(this);
+            System.out.println("has new best solution:");
+            System.out.println(judg);
+        }
         bestSolution = reference(judg);
         //InternalExperience.experienceFromBelief(memory, this, judg);
     }
