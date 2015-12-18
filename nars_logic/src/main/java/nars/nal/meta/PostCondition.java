@@ -4,7 +4,6 @@ import nars.Op;
 import nars.Symbols;
 import nars.nal.Level;
 import nars.nal.PremiseRule;
-import nars.nal.meta.op.TruthEval;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.atom.Atom;
@@ -25,12 +24,16 @@ public class PostCondition implements Serializable, Level //since there can be m
 {
 
     public static final float HALF = 0.5f;
+    public final Term beliefTruth;
+    public final Term goalTruth;
 
-    public PostCondition(Term term, PreCondition[] afterConclusions, TruthEval truth) {
+    public PostCondition(Term term, PreCondition[] afterConclusions, Term beliefTruth, Term goalTruth, char puncOverride) {
         this.term = term;
         //this.modifiers = modifiers;
         this.afterConclusions = afterConclusions;
-        this.truth = truth;
+        this.beliefTruth = beliefTruth;
+        this.goalTruth = goalTruth;
+        this.puncOverride = puncOverride;
         minNAL = Terms.maxLevel(term);// term.op().minLevel;
     }
 
@@ -44,8 +47,6 @@ public class PostCondition implements Serializable, Level //since there can be m
      * steps to apply after forming the goal. after each of these steps, the term will be re-resolved
      */
     public final PreCondition[] afterConclusions;
-
-    public final TruthEval truth;
 
 
     /**
@@ -191,7 +192,8 @@ public class PostCondition implements Serializable, Level //since there can be m
 
 
         PostCondition pc = new PostCondition(term, afterConclusions,
-                new TruthEval(beliefTruth, goalTruth, puncOverride));
+                beliefTruth, goalTruth, puncOverride);
+
         //pc.negate = negate;
         pc.puncOverride = puncOverride;
         if (pc.valid(rule)) {
@@ -246,7 +248,9 @@ public class PostCondition implements Serializable, Level //since there can be m
                 "term=" + term +
                 ", afterConc=" + Arrays.toString(afterConclusions) +
                 //", modifiers=" + Arrays.toString(modifiers) +
-                ", truth=" + truth +
+                ", beliefTruth=" + beliefTruth +
+                ", goalTruth=" + goalTruth +
+                ", puncOverride=" + puncOverride +
                 '}';
     }
 

@@ -60,7 +60,6 @@ public class TrieDeriver extends RuleTrie {
 //        branchPower.set( branchPower.get() / branchingFactor );
 //        //System.out.println("    branch power: " + branchPower + " x " + branchingFactor);
 
-        if (children == null) return;
 
         for (RuleBranch s : children) {
             forEachRule(s, match);

@@ -9,8 +9,7 @@ import nars.Op;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
-import nars.nal.meta.op.Derive;
-import nars.nal.meta.op.Solve;
+import nars.nal.meta.op.TruthEval;
 import nars.nal.meta.post.ShiftOccurrence;
 import nars.nal.meta.post.Substitute;
 import nars.nal.meta.post.SubstituteIfUnified;
@@ -172,24 +171,32 @@ public class PremiseRule extends GenericCompound implements Level {
         for (PreCondition p : prePreconditions)
             p.addConditions(l);
 
-        l.add(post.truth);
-
-        ///--------------
-
-        if (post.afterConclusions.length > 0) {
-            l.add(new Solve(post.term, this, post.afterConclusions ));
-        }
-        else {
-            l.add(new Solve(post.term, this ));
-        }
-
-        l.add(new Derive(this, anticipate, immediate_eternalize)); //sets the derive callback
+        TruthEval truth = new TruthEval(post.beliefTruth, post.goalTruth, post.puncOverride,
+            this, anticipate, immediate_eternalize, post.term, post.afterConclusions
+        );
+        l.add(truth);
+        l.add(truth.getDerive());
 
         for (PreCondition p : postPreconditions)
             p.addConditions(l);
 
-        ///--------------
 
+        //blank marker trie node indicating the derivation and terminating the branch
+        l.add(new PreCondition() {
+
+
+
+            @Override
+            public boolean test(RuleMatch versioneds) {
+                //END
+                return false;
+            }
+
+            @Override
+            public String toString() {
+                return "End";
+            }
+        });
 
         return l;
     }
@@ -533,7 +540,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
         MatchTaskBelief matcher = new MatchTaskBelief(pattern, constraints);
-        preConditionsList.add(matcher);
+        preConditionsList.add(0, matcher);
 
         //store to arrays
         prePreconditions = prePreConditionsList.toArray(new PreCondition[prePreConditionsList.size()]);

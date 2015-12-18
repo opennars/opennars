@@ -6,8 +6,7 @@ import nars.Op;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.meta.TaskBeliefPair;
-import nars.nal.meta.op.Derive;
-import nars.nal.meta.op.Solve;
+import nars.nal.meta.op.TruthEval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
@@ -42,9 +41,8 @@ public class RuleMatch extends FindSubst {
     public final Versioned<Truth> truth;
     public final Versioned<Character> punct;
     //@Deprecated public final Versioned<Term> derived;
-    @Deprecated public final Versioned<Solve> derived;
-    @Deprecated public final Versioned<Derive> derived2;
-    @Deprecated public final Versioned<Solve> partial;
+    @Deprecated public final Versioned<TruthEval.Derive> derived;
+    @Deprecated public final Versioned<TruthEval.Derive> partial;
 
     public boolean cyclic;
 
@@ -63,9 +61,7 @@ public class RuleMatch extends FindSubst {
         truth = new Versioned(this);
         punct = new Versioned(this);
         derived = new Versioned(this);
-        derived2 = new Versioned(this);
         partial = new Versioned(this);
-
     }
 
     private void addTransform(Class<? extends ImmediateTermTransform> c) {
@@ -94,7 +90,7 @@ public class RuleMatch extends FindSubst {
 
     @Override
     public void onPartial() {
-        Solve pp = partial.get();
+        TruthEval.Derive pp = partial.get();
         if (pp == null) return; //second layer not supported in this match
 
         Term tt = pp.partial(this);
@@ -102,17 +98,19 @@ public class RuleMatch extends FindSubst {
         tt = tt.normalized();
         if (tt == null) return;
 
-        derived2.get().derive(this, tt);
+        pp.derive(this, tt);
     }
 
     @Override
     public boolean onMatch() {
-        Term tt = derived.get().solve(this);
+        TruthEval.Derive dd = derived.get();
+
+        Term tt = dd.solve(this);
         if (tt == null) return true;
         tt = tt.normalized();
         if (tt == null) return true;
 
-        derived2.get().derive(this, tt);
+        dd.derive(this, tt);
 
         return true;
     }
