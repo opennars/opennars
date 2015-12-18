@@ -26,6 +26,13 @@ public class CollectionEllipsisMatch extends EllipsisMatch {
                 tt.add(x);
         });
     }
+    public CollectionEllipsisMatch(Collection<Term> term, Term except, Term except2) {
+        Collection<Term> tt = this.term = Global.newArrayList(term.size() - 2);
+        term.forEach(x -> {
+            if ((x!=except) && (x!=except2))
+                tt.add(x);
+        });
+    }
 
 
 

@@ -578,8 +578,9 @@ abstract public class FindSubst extends Versioning implements Subst {
             case 1:
                 termute(new Choose1(xEllipsis, xToMatch.iterator().next(), yFree));
                 return true;
-            /*case 2:
-                return matchChoose2(toMatch.toArray(new Term[xsize]), y);*/
+            case 2:
+                termute(new Choose2(xEllipsis, xToMatch.toArray(new Term[xsize]), yFree));
+                return true;
             default:
                 //3 or more combination
                 throw new RuntimeException("unimpl: " + xsize + " arity combination unimplemented");
@@ -587,49 +588,53 @@ abstract public class FindSubst extends Versioning implements Subst {
 
     }
 
-    private boolean matchChoose2(Term[] x, MutableSet<Term> y) {
-        int prePermute = now();
-        MutableSet<Term> yCopy = y.clone(); //because matchChoose1 will remove on match
+//    private boolean matchChoose2(Term[] x, MutableSet<Term> y) {
+//        int prePermute = now();
+//        MutableSet<Term> yCopy = y.clone(); //because matchChoose1 will remove on match
+//
+//        //initial shuffle
+//        if (random.nextBoolean()) {
+//            Term p = x[0];
+//            x[0] = x[1];
+//            x[1] = p;
+//        }
+//
+//        int startDivisor = powerDivisor;
+//        if (!powerDividable(2))
+//            return false;
+//
+//        boolean matched = false;
+//        for (int i = 0; i < 2; i++) {
+//
+//            boolean modified = false;
+//            if (matchChoose1(x[0], y)) {
+//                modified = true;
+//                if (matchChoose1(x[1], y)) {
+//                    matched = true;
+//                    break;
+//                }
+//            }
+//
+//            if (modified) {
+//                y.addAll(yCopy); //restore the original set if any where removed during an incomplete match
+//            }
+//
+//            revert(prePermute);
+//
+//            /* swap */
+//            Term p = x[0];
+//            x[0] = x[1];
+//            x[1] = p;
+//        }
+//
+//        powerDivisor = startDivisor;
+//        return matched;
+//    }
 
-        //initial shuffle
-        if (random.nextBoolean()) {
-            Term p = x[0];
-            x[0] = x[1];
-            x[1] = p;
-        }
-
-        int startDivisor = powerDivisor;
-        if (!powerDividable(2))
-            return false;
-
-        boolean matched = false;
-        for (int i = 0; i < 2; i++) {
-
-            boolean modified = false;
-            if (matchChoose1(x[0], y)) {
-                modified = true;
-                if (matchChoose1(x[1], y)) {
-                    matched = true;
-                    break;
-                }
-            }
-
-            if (modified) {
-                y.addAll(yCopy); //restore the original set if any where removed during an incomplete match
-            }
-
-            revert(prePermute);
-
-            /* swap */
-            Term p = x[0];
-            x[0] = x[1];
-            x[1] = p;
-        }
-
-        powerDivisor = startDivisor;
-        return matched;
-    }
-
+    /**
+     * choose 1 at a time from a set of N, which means iterating up to N
+     * will remove the chosen item(s) from Y if successful before returning
+     */
     public class Choose1 extends Termutator {
 
         private final Set<Term> yFree;
@@ -685,30 +690,77 @@ abstract public class FindSubst extends Versioning implements Subst {
         }
     }
 
-    /**
-     * choose 1 at a time from a set of N, which means iterating up to N
-     * will remove the chosen item(s) from Y if successful before returning
-     */
-    private boolean matchChoose1(Term x, Set<Term> Yfree) {
+    public class Choose2 extends Termutator {
 
+        private final Set<Term> yFree;
+        private final Term[] x;
+        private final Term xEllipsis;
+        private int shuffle, shuffle2;
+        private final Term[] yy;
+        private transient String id;
+        private int n;
 
-
-        int ysize = Yfree.size();
-
-        int prePermute = now();
-
-        int iterations = Math.min(ysize, (powerAvailable()));
-
-
-
-        for (int i = 0; i < iterations; i++) {
-
+        @Override
+        public String toString() {
+            if (this.id == null) {
+                return this.id = "Choose2{" +
+                        "yFree=" + yFree +
+                        ", xEllipsis=" + xEllipsis +
+                        ", x=" + x[0] + "," + x[1] +
+                         '}';
+            }
+            return this.id;
         }
 
-        //finished
-        return false;
+        public Choose2(Term xEllipsis, Term[] x, Set<Term> yFree) {
+            this.x = x;
+            this.yFree = yFree;
+            this.xEllipsis = xEllipsis;
+            int ysize = yFree.size();
+            yy = yFree.toArray(new Term[ysize]);
+        }
 
+        @Override
+        public int total() {
+            int n = yFree.size();
+            return n * (n-1);
+        }
+
+        @Override
+        public void reset() {
+            int t = total();
+            this.shuffle = random.nextInt(t); //randomize starting offset
+            this.shuffle2 = random.nextInt(t -1); //randomize starting offset
+            this.n = 0;
+        }
+
+        @Override
+        public boolean test() {
+            final int ysize = yy.length;
+
+            if (n % ysize == 0) {
+                shuffle2++;
+            }
+
+            Term y1 = yy[(n + shuffle) % ysize];
+            n++;
+
+            if (match(x[0], y1)) {
+
+                int n2 = shuffle2;
+                if (n2 == (n-1 /* to account for the n++ */ + shuffle) )
+                    n2 = (n2 + 1);
+
+                Term y2 = yy[n2% ysize];
+                if (match(x[1], y2)) {
+                    return putXY(xEllipsis, new CollectionEllipsisMatch(yFree, y1, y2));
+                }
+            }
+            return false;
+        }
     }
+
+
 
     /**
      * non-commutive compound match
