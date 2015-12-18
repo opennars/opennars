@@ -9,7 +9,7 @@ import nars.Op;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
-import nars.nal.meta.op.TruthEval;
+import nars.nal.meta.op.Solve;
 import nars.nal.meta.post.ShiftOccurrence;
 import nars.nal.meta.post.Substitute;
 import nars.nal.meta.post.SubstituteIfUnified;
@@ -75,6 +75,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
     private final String str;
     protected String source;
+    public MatchTaskBelief match;
 
     public final Compound getPremise() {
         return (Compound) term(0);
@@ -171,14 +172,15 @@ public class PremiseRule extends GenericCompound implements Level {
         for (PreCondition p : prePreconditions)
             p.addConditions(l);
 
-        TruthEval truth = new TruthEval(post.beliefTruth, post.goalTruth, post.puncOverride,
-            this, anticipate, immediate_eternalize, post.term, post.afterConclusions
+        Solve truth = new Solve(post.beliefTruth, post.goalTruth, post.puncOverride,
+            this, anticipate, immediate_eternalize, post.term,
+                post.afterConclusions,
+                postPreconditions
         );
         l.add(truth);
         l.add(truth.getDerive());
 
-        for (PreCondition p : postPreconditions)
-            p.addConditions(l);
+        match.addConditions(l);
 
 
         //blank marker trie node indicating the derivation and terminating the branch
@@ -539,8 +541,8 @@ public class PremiseRule extends GenericCompound implements Level {
         }
 
 
-        MatchTaskBelief matcher = new MatchTaskBelief(pattern, constraints);
-        preConditionsList.add(0, matcher);
+        this.match = new MatchTaskBelief(pattern, constraints);
+
 
         //store to arrays
         prePreconditions = prePreConditionsList.toArray(new PreCondition[prePreConditionsList.size()]);

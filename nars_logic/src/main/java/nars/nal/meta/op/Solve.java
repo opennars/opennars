@@ -32,24 +32,22 @@ import static nars.truth.TruthFunctions.eternalizedConfidence;
 /**
  * Evaluates the truth of a premise
  */
-public final class TruthEval extends PreCondition {
+public final class Solve extends PreCondition {
     public final TruthOperator belief;
     public final TruthOperator desire;
     public final char puncOverride;
 
     private final transient String id;
 
-
-    public final Term term;
     public final PremiseRule rule;
-
-    private final PreCondition[] secondLayer;
-    private final boolean anticipate;
-    private final boolean eternalize;
+    private Derive derive;
 
 
-    public TruthEval(Term beliefTerm, Term desireTerm, char puncOverride,
-                     PremiseRule rule, boolean anticipate, boolean eternalize, Term term, PreCondition[] secondLayer
+    public Solve(Term beliefTerm, Term desireTerm, char puncOverride,
+                 PremiseRule rule, boolean anticipate, boolean eternalize, Term term,
+
+                 PreCondition[] secondLayer,
+                 PreCondition[] postPreconditions
     ) {
         this.puncOverride = puncOverride;
 
@@ -73,21 +71,14 @@ public final class TruthEval extends PreCondition {
 
 
         this.rule = rule;
-        this.anticipate = anticipate;
-        this.eternalize = eternalize;
 
-        this.term = term;
-
-        boolean continueIfIncomplete = secondLayer!=null && secondLayer.length>0;
-
-        this.secondLayer = continueIfIncomplete ? secondLayer : null;
-
-        if (continueIfIncomplete)
-            i += "," + Arrays.toString(secondLayer) + ')';
-        else
-            i += ")";
 
         this.id = i;
+        this.derive = new Derive(rule, term,
+                secondLayer!=null && secondLayer.length>0 ?  secondLayer : null,
+                postPreconditions,
+                anticipate,
+                eternalize);
     }
 
     @Override
@@ -162,18 +153,40 @@ public final class TruthEval extends PreCondition {
     }
 
     public Derive getDerive() {
-        return new Derive();
+        return derive;
     }
 
-    public class Derive extends PreCondition {
+    public static class Derive extends PreCondition {
 
         private final String id;
 
-        public Derive() {
-            this.id =
-                "{eternalize=" + eternalize +
-                ",anticipate=" + anticipate +
-                "}:" + term;
+        private final PreCondition[] secondLayer;
+        private final boolean anticipate;
+        private final boolean eternalize;
+        private final PremiseRule rule;
+        private final Term term;
+        private final PreCondition[] postMatch;
+
+        public Derive(PremiseRule rule, Term term, PreCondition[] secondLayer, PreCondition[] postMatch, boolean anticipate, boolean eternalize ) {
+            this.rule = rule;
+            this.postMatch = postMatch;
+            this.term = term;
+            this.secondLayer = secondLayer;
+            this.anticipate = anticipate;
+            this.eternalize = eternalize;
+            String i =
+                "{eternalize=" + this.eternalize +
+                ",anticipate=" + this.anticipate +
+                "}," + term;
+
+            if (this.secondLayer !=null)
+                i += "," + Arrays.toString(this.secondLayer) + "," + Arrays.toString(postMatch);
+
+            //TODO trie-ize these into a parallel evaluation
+            i += "," + Arrays.toString(postMatch);
+
+            i += ")";
+            this.id = i;
         }
 
         @Override
@@ -244,7 +257,18 @@ public final class TruthEval extends PreCondition {
 
             }
 
+
             return derivedTerm;
+        }
+
+        public boolean post(RuleMatch match) {
+
+            for (PreCondition p : postMatch) {
+                if (!p.test(match))
+                    return false;
+            }
+
+            return true;
         }
 
         public void processSequence(RuleMatch match, Term derivedTerm, Term toInvestigate) {

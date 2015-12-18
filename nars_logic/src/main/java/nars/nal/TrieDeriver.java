@@ -22,15 +22,15 @@ public class TrieDeriver extends RuleTrie {
         super(rules);
     }
 
-    @Override public final void run(RuleMatch match) {
+    @Override public final void run(RuleMatch m) {
 
-        int now = match.now();
+        int now = m.now();
 
         for (RuleBranch r : root) {
-            forEachRule(r, match);
+            forEachRule(r, m);
         }
 
-        match.revert(now);
+        m.revert(now);
 
     }
 
