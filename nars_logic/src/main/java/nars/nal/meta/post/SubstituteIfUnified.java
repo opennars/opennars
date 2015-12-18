@@ -2,17 +2,13 @@ package nars.nal.meta.post;
 
 import nars.Op;
 import nars.nal.RuleMatch;
+import nars.nal.op.substituteIfUnifies;
 import nars.term.Term;
-import nars.term.atom.Atom;
 
 /**
  * Created by me on 8/15/15.
  */
 public class SubstituteIfUnified extends Substitute {
-
-    static final Atom INDEP_VAR = Atom.the("$", true);
-    static final Atom QUERY_VAR = Atom.the("?", true);
-    static final Atom DEP_VAR = Atom.the("#", true);
 
     private final Op type;
     private final transient String id;
@@ -27,11 +23,11 @@ public class SubstituteIfUnified extends Substitute {
         super(x, y);
 
         //noinspection IfStatementWithTooManyBranches
-        if (varType.equals(QUERY_VAR))  {
+        if (varType.equals(substituteIfUnifies.QUERY_VAR))  {
             type = Op.VAR_QUERY;
-        } else if (varType.equals(INDEP_VAR)) {
+        } else if (varType.equals(substituteIfUnifies.INDEP_VAR)) {
             type = Op.VAR_INDEP;
-        } else if (varType.equals(DEP_VAR)) {
+        } else if (varType.equals(substituteIfUnifies.DEP_VAR)) {
             type = Op.VAR_DEP;
         } else {
             throw new RuntimeException("invalid variable type: " + varType);
@@ -61,7 +57,7 @@ public class SubstituteIfUnified extends Substitute {
 //        }
 //
 //        return result;
-        return false;
+        return true;
     }
 
 //    @Override

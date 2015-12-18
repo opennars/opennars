@@ -351,7 +351,7 @@
 //// multi-conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //Inference about the pre/postconditions
 
-    Y, ((&&,X,A..+) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A..+,..) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromBelief)
+    Y, ((&&,X,A..+) ==> B) |- substituteIfUnifies(((&&,A..+,..) ==> B),"$",X,Y), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromBelief)
     ((&&,M,A..+) ==> C), ((&&,A..+,..) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
 
 //Can be derived by NAL7 rules so this won't be necessary there (Order:ForAllSame left out here)

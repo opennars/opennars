@@ -366,6 +366,12 @@ public class UnificationTest  {
                 "(#1,$1)",
                 true);
     }
+    @Test public void diffVarTypes1Reverse()  {
+        test(Op.VAR_DEP,
+                "(#1,$1)",
+                "(a,$1)",
+                true);
+    }
     @Test public void impossibleMatch1()  {
         test(Op.VAR_DEP,
                 "(a,#1)",

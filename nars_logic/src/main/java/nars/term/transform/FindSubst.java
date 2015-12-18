@@ -479,11 +479,12 @@ abstract public class FindSubst extends Versioning implements Subst {
         //SPECIAL CASE: no variables
         {
             if
-                    (((type!=Op.VAR_PATTERN && x.impossibleStructureMatch(type.bit())) ||
+                    (((type!=Op.VAR_PATTERN && (0 == (x.structure() & type.bit()))) ||
             ((type == Op.VAR_PATTERN) && !Variable.hasPatternVariable(x) )))
 
             {
                 return matchLinear(x, y, 0, x.size());
+                //return x.equals(y);
             }
         }
 
@@ -929,7 +930,7 @@ abstract public class FindSubst extends Versioning implements Subst {
             if (termutes.size() == max)
                 onMatch();
             else {
-                throw new RuntimeException("termutes modified");
+                //throw new RuntimeException("termutes modified");
                 //have to restart
             }
             return;

@@ -189,8 +189,8 @@ public class PatternIndex extends MapIndex {
 
             sizeCached = seed.size();
             structureCachedWithoutVars =
-                    seed.structure() & ~(Op.VariableBits);
-                    //seed.structure() & ~(Op.VAR_PATTERN.bit());
+                    //seed.structure() & ~(Op.VariableBits);
+                    seed.structure() & ~(Op.VAR_PATTERN.bit());
 
             this.ellipsis = Ellipsis.hasEllipsis(this);
             this.volCached = seed.volume();

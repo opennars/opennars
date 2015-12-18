@@ -14,10 +14,7 @@ import nars.nal.meta.post.ShiftOccurrence;
 import nars.nal.meta.post.Substitute;
 import nars.nal.meta.post.SubstituteIfUnified;
 import nars.nal.meta.pre.*;
-import nars.nal.op.ImmediateTermTransform;
-import nars.nal.op.differ;
-import nars.nal.op.intersect;
-import nars.nal.op.union;
+import nars.nal.op.*;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.atom.Atom;
@@ -46,7 +43,8 @@ public class PremiseRule extends GenericCompound implements Level {
     public static final Class<? extends ImmediateTermTransform>[] Operators = new Class[] {
         intersect.class,
         differ.class,
-        union.class
+        union.class,
+        substituteIfUnifies.class
     };
 
     public boolean immediate_eternalize = false;
