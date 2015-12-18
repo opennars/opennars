@@ -33,7 +33,36 @@ abstract public class FindSubst extends Versioning implements Subst {
 
     public final Op type;
 
+    /** variables whose contents are disallowed to equal each other */
+    public ImmutableMap<Term, MatchConstraint> constraints = null;
+
+    //public abstract Term resolve(Term t, Substitution s);
+
+    public final VarCachedVersionMap xy;
+    public final VarCachedVersionMap yx;
+
+    /** current "y"-term being matched against */
+    public final Versioned<Term> term;
+
+    /** parent, if in subterms */
+    public final Versioned<Compound> parent;
+
+    /** unification power available at start of current branch */
+    //public final Versioned<Integer> branchPower;
+
+    /** unification power remaining in the current branch */
+    int power;
+
+    /** current power divisor which divides power to
+     *  limits the # of permutations
+     *  that can be tried, or the # of subterms that can be compared
+     */
+    @Deprecated int powerDivisor;
+
+
+
     final List<Termutator> termutes = Global.newArrayList();
+
 
     public abstract class Termutator {
         public abstract boolean test();
@@ -70,32 +99,6 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-
-    /** variables whose contents are disallowed to equal each other */
-    public ImmutableMap<Term, MatchConstraint> constraints = null;
-
-    //public abstract Term resolve(Term t, Substitution s);
-
-    public final VarCachedVersionMap xy;
-    public final VarCachedVersionMap yx;
-
-    /** current "y"-term being matched against */
-    public final Versioned<Term> term;
-
-    /** parent, if in subterms */
-    public final Versioned<Compound> parent;
-
-    /** unification power available at start of current branch */
-    //public final Versioned<Integer> branchPower;
-
-    /** unification power remaining in the current branch */
-    int power;
-
-    /** current power divisor which divides power to
-     *  limits the # of permutations
-     *  that can be tried, or the # of subterms that can be compared
-     */
-    @Deprecated int powerDivisor;
 
 
 
@@ -157,10 +160,20 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
     public void matchAll(Term x, Term y) {
-        termutes.clear();
         if (match(x, y)) {
             if (!termutes.isEmpty()) {
-                matchTermutations(0);
+
+                //repeat until # of termutes stabilizes
+                int termutesPre;
+                //System.out.println("termutes start");
+                do {
+                    //System.out.println("  termutes: " + termutes);
+                    termutesPre = termutes.size();
+                    matchTermutations(0, termutesPre);
+                } while (termutes.size() != termutesPre);
+
+                termutes.clear();
+
             } else {
                 onMatch();
             }
@@ -463,6 +476,17 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
     public final boolean matchPermute(TermContainer x, Compound y) {
+        //SPECIAL CASE: no variables
+        {
+            if
+                    (((type!=Op.VAR_PATTERN && x.impossibleStructureMatch(type.bit())) ||
+            ((type == Op.VAR_PATTERN) && !Variable.hasPatternVariable(x) )))
+
+            {
+                return matchLinear(x, y, 0, x.size());
+            }
+        }
+
         termute(new CommutivePermutations(x, y));
         return true;
     }
@@ -501,17 +525,22 @@ abstract public class FindSubst extends Versioning implements Subst {
 
         //terms in Y which have previously been matched and should not be matched by the ellipsis
         Set<Term> ineligible = Global.newHashSet(0);
+        boolean ellipsisMatched = false;
         for (Term x : X.terms()) {
 
             Term alreadyMatched = getXY(x);
             if (alreadyMatched == null) {
 
                 //ellipsis to be matched in stage 2
-                if (x == Xellipsis || x.equals(Ellipsis.Shim))
+                if (x == Xellipsis || x.equals(Ellipsis.Shim)) {
                     continue;
+                }
 
             } else {
                 if (alreadyMatched instanceof EllipsisMatch) {
+                    //assume it's THE ellipsis here, ie. x == xEllipsis
+                    ellipsisMatched = true;
+
                     //check that Y contains all of these
                     if (!((EllipsisMatch)alreadyMatched).addContained(Y, ineligible))
                         return false;
@@ -541,10 +570,14 @@ abstract public class FindSubst extends Versioning implements Subst {
 
         }
 
-        int numMatchable = Y.size() - matchFirst.size(); //remaining
-        if (!Xellipsis.valid(numMatchable)) {
-            //wouldnt be enough remaining matches to satisfy ellipsis cardinality
-            return false;
+        if (ellipsisMatched) {
+            Xellipsis = null;
+        } else {
+            int numMatchable = Y.size() - matchFirst.size(); //remaining
+            if (!Xellipsis.valid(numMatchable)) {
+                //wouldnt be enough remaining matches to satisfy ellipsis cardinality
+                return false;
+            }
         }
 
         MutableSet<Term> yFree = Y.toSet();
@@ -556,6 +589,12 @@ abstract public class FindSubst extends Versioning implements Subst {
 
 
         if (!matchFirst.isEmpty()) {
+
+            if (yFree.size() == 1 && matchFirst.size() == 1) {
+                //one choice
+                putXY(matchFirst.iterator().next(), yFree.iterator().next());
+                return true;
+            }
 
             //first match all the fixed-position subterms (later)
             matchCommutiveRemaining(Xellipsis, matchFirst, yFree);
@@ -661,17 +700,20 @@ abstract public class FindSubst extends Versioning implements Subst {
             this.yFree = yFree;
             this.xEllipsis = xEllipsis;
             int ysize = yFree.size();
+            if (ysize == 1) {
+                throw new RuntimeException("yfree=1, no choice");
+            }
             yy = yFree.toArray(new Term[ysize]);
         }
 
         @Override
         public int total() {
-            return yFree.size();
+            return yy.length;
         }
 
         @Override
         public void reset() {
-            this.shuffle = random.nextInt(total()); //randomize starting offset
+            this.shuffle = random.nextInt(total()-1); //randomize starting offset
         }
 
         @Override
@@ -729,8 +771,8 @@ abstract public class FindSubst extends Versioning implements Subst {
         @Override
         public void reset() {
             int t = total();
-            this.shuffle = random.nextInt(t); //randomize starting offset
-            this.shuffle2 = random.nextInt(t -1); //randomize starting offset
+            this.shuffle = random.nextInt(t - 1); //randomize starting offset
+            this.shuffle2 = random.nextInt(t - 2); //randomize starting offset
             this.n = 0;
         }
 
@@ -880,12 +922,17 @@ abstract public class FindSubst extends Versioning implements Subst {
         return success;
     }
 
-    private boolean matchTermutations(int i) {
 
-        if (i == termutes.size()) {
-            //System.out.println("SOLUTION: " + xy);
-            onMatch();
-            return true;
+    private void matchTermutations(int i, int max) {
+
+        if (i == max) {
+            if (termutes.size() == max)
+                onMatch();
+            else {
+                throw new RuntimeException("termutes modified");
+                //have to restart
+            }
+            return;
         }
 
         Termutator t = termutes.get(i);
@@ -901,9 +948,7 @@ abstract public class FindSubst extends Versioning implements Subst {
 
             if (t.test()) {
                 //System.out.println("@" + now() + " -->  " + xy);
-                if (matchTermutations(i + 1)) {
-
-                }
+                matchTermutations(i + 1, max);
             }
 
             revert(revert);
@@ -911,7 +956,6 @@ abstract public class FindSubst extends Versioning implements Subst {
 
         }
 
-        return true;// matches!=0;
     }
 
 

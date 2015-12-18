@@ -1,5 +1,7 @@
 package nars.term;
 
+import java.util.function.Predicate;
+
 /**
  * Features exhibited by, and which can classify terms
  */
@@ -64,4 +66,13 @@ public interface Termlike  {
                 (impossibleSubTermOrEqualityVolume(target.volume())));
     }
 
+    /** recurses all subterms while the result of the predicate is true;
+     *  returns true if all true
+     *  */
+    boolean and(Predicate<Term> v);
+
+    /** recurses all subterms until the result of the predicate becomes true;
+     *  returns true if any true
+     * */
+    boolean or(Predicate<Term> v);
 }

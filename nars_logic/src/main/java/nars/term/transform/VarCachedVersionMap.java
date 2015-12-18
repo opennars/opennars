@@ -34,4 +34,13 @@ public final class VarCachedVersionMap extends VersionMap<Term, Term> implements
         return v.get();
     }
 
+    /** must inspect elements because the entries will be there but possibly null */
+    @Override public final boolean isEmpty() {
+        if (super.isEmpty())
+            return true;
+        for (Versioned x : map.values()) {
+            if (x.get()!=null) return false;
+        }
+        return true;
+    }
 }

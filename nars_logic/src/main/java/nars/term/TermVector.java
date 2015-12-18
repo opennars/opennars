@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 import static java.util.Arrays.copyOf;
 
@@ -349,22 +348,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
             v.accept(t, parent);
     }
 
-    /** returns true if evaluates true for all terms */
-    public final boolean and(Predicate<Term> p) {
-        for (Term t : term) {
-            if (!p.test(t))
-                return false;
-        }
-        return true;
-    }
-    /** returns true if evaluates true for any terms */
-    public final boolean or(Predicate<Term> p) {
-        for (Term t : term) {
-            if (t.or(p))
-                return true;
-        }
-        return false;
-    }
+
 
 
 }

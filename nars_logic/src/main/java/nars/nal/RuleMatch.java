@@ -41,7 +41,7 @@ public class RuleMatch extends FindSubst {
     public final Versioned<Truth> truth;
     public final Versioned<Character> punct;
     @Deprecated public final Versioned<Solve.Derive> derived;
-    @Deprecated public final Versioned<Solve.Derive> partial;
+    @Deprecated public final Versioned<Solve.Derive> secondLayer;
 
     public boolean cyclic;
 
@@ -60,7 +60,7 @@ public class RuleMatch extends FindSubst {
         truth = new Versioned(this);
         punct = new Versioned(this);
         derived = new Versioned(this);
-        partial = new Versioned(this);
+        secondLayer = new Versioned(this);
     }
 
     private void addTransform(Class<? extends ImmediateTermTransform> c) {
@@ -79,22 +79,23 @@ public class RuleMatch extends FindSubst {
 
     @Override
     public void onPartial() {
-        Solve.Derive pp = partial.get();
+        Solve.Derive pp = secondLayer.get();
         if (pp == null) return; //second layer not supported in this match
 
-        Term tt = pp.partial(this);
-        if (tt == null) return;
-        tt = tt.normalized();
-        if (tt == null) return;
-
-        if (!pp.post(this))
-            return ;
-
-        pp.derive(this, tt);
+        pp.partial(this);
     }
 
     @Override
     public boolean onMatch() {
+
+        Solve.Derive pp = secondLayer.get();
+        if (pp != null) {
+            //run through second-layer stuff anyway
+            pp.partial(this);
+            return true;
+        }
+
+
         Solve.Derive dd = derived.get();
 
         Term tt = dd.solve(this);

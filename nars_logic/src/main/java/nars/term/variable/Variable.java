@@ -24,6 +24,7 @@ package nars.term.variable;
 import nars.$;
 import nars.Op;
 import nars.term.Term;
+import nars.term.Termlike;
 import nars.term.atom.AbstractStringAtom;
 import nars.term.transform.Subst;
 
@@ -119,7 +120,7 @@ public abstract class Variable extends AbstractStringAtom {
      * true if it has or is a pattern variable
      * necessary because VAR_PATTERN are hidden from substructure
      */
-    public static boolean hasPatternVariable(Term t) {
+    public static boolean hasPatternVariable(Termlike t) {
         return t.or(x ->
                 x.op() == Op.VAR_PATTERN
         );

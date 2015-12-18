@@ -37,8 +37,8 @@ public class SubstituteIfUnified extends Substitute {
             throw new RuntimeException("invalid variable type: " + varType);
         }
 
-        id = getClass().getSimpleName() + ":(" +
-                type + "_," + x + ',' + y + ')';
+        id = getClass().getSimpleName() + ":(\"" +
+                type + "\"," + x + ',' + y + ')';
     }
 
     @Override

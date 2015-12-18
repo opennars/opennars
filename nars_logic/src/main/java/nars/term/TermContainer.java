@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static nars.Symbols.ARGUMENT_SEPARATORbyte;
 import static nars.term.compound.GenericCompound.COMPOUND;
@@ -241,6 +242,24 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         MutableSet<Term> s = a.toSet();
         s.addAll(b.toSet());
         return COMPOUND(op, s);
+    }
+
+    /** returns true if evaluates true for any terms */
+    default boolean or(Predicate<Term> p) {
+        for (Term t : terms()) {
+            if (t.or(p))
+                return true;
+        }
+        return false;
+    }
+
+    /** returns true if evaluates true for all terms */
+    default boolean and(Predicate<Term> p) {
+        for (Term t : terms()) {
+            if (!p.test(t))
+                return false;
+        }
+        return true;
     }
 
 }

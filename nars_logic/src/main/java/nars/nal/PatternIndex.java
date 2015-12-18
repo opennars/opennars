@@ -42,12 +42,12 @@ public class PatternIndex extends MapIndex {
 
         if (!(x instanceof TermMetadata)) {
 //            if (!Ellipsis.hasEllipsis(x)) {
-            if (!x.isCommutative()) {
+//            if (!x.isCommutative()) {
                 return new AbstractCompoundPattern(x, (TermVector) subs);
 //                    return new LinearCompoundPattern(x, (TermVector) subs);
 //                } else {
 //                    return new CommutiveCompoundPattern(x, (TermVector) subs);
-            }
+//            }
 //            }
         }
         //}
@@ -209,11 +209,13 @@ public class PatternIndex extends MapIndex {
 
 
             if (!ellipsis) {
-                if (commutative) {
+
+                if (commutative && y.size() > 1) {
                     return subst.matchPermute(this, y);
-                } else {
-                    return matchLinear(y, subst);
                 }
+
+                return matchLinear(y, subst);
+
             } else {
                 return subst.matchCompoundWithEllipsis(this, y);
             }

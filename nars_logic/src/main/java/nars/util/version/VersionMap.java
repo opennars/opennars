@@ -70,7 +70,7 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     }
 
     @Override
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
         return map.isEmpty();
     }
 

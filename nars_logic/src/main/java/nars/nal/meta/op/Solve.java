@@ -198,21 +198,24 @@ public final class Solve extends PreCondition {
         public boolean test(RuleMatch m) {
             //set derivation handlers
             if (secondLayer!=null) {
-                m.partial.set(this);
+                m.secondLayer.set(this);
             }
             m.derived.set(this);
             return true;
         }
 
-        public Term partial(RuleMatch match) {
+        public void partial(RuleMatch match) {
             Term dt = solve(match);
-            if (dt == null) return null;
-
+            if (dt == null) return ;
 
             for (PreCondition pc : secondLayer) {
                 if (!pc.test(match))
-                    return null;
+                    return;
             }
+
+            //maybe this needs applied somewhre diferent
+            if (!post(match))
+                return ;
 
             VarCachedVersionMap secondary = match.secondary;
 
@@ -222,9 +225,14 @@ public final class Solve extends PreCondition {
 
                 //its possible that the substitution produces an invalid term, ex: an invalid statement
                 dt = rederivedTerm;
+                if (dt == null) return;
             }
 
-            return dt;
+            dt = dt.normalized();
+            if (dt == null) return;
+
+
+            derive(match, dt);
         }
 
         public Term solve(RuleMatch match) {

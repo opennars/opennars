@@ -29,7 +29,6 @@ import nars.term.visit.SubtermVisitor;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.function.Predicate;
 
 
 public interface Term extends Termed, Comparable, Termlike {
@@ -79,15 +78,7 @@ public interface Term extends Termed, Comparable, Termlike {
 
 
 
-    /** recurses all subterms while the result of the predicate is true;
-     *  returns true if all true
-     *  */
-    boolean and(Predicate<Term> v);
 
-    /** recurses all subterms until the result of the predicate becomes true;
-     *  returns true if any true
-     * */
-    boolean or(Predicate<Term> v);
 
 
     /**

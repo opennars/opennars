@@ -87,7 +87,7 @@ public abstract class AbstractNALTester {
 
         if (single) {
             l.add( supply("SingleStep[NAL<=" + level + ']',
-                    () -> new SingleStepNAR(512, 1, 2, 5).nal(finalLevel) ) );
+                    () -> new SingleStepNAR(512, 1, 2, 3).nal(finalLevel) ) );
         }
 
         return l;
