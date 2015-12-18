@@ -76,9 +76,9 @@ public class TaskButton extends Label {
     private static String labelize(String s) {
         //https://en.wikipedia.org/wiki/List_of_logic_symbols
         return s.replace("-->","→")
-                .replace("==>","⇒")
-                .replace("<=>","⇄")
                 .replace("<->","↔")
+                //.replace("==>","⇒")
+                .replace("<=>","⇄")
                 .replace("||", "⇵")
                 ;
         //↔ ⇔ ⇒ ⇄ ⇾ ⇥ ⇵
@@ -86,14 +86,14 @@ public class TaskButton extends Label {
 
     public void update() {
         float pri = task.getPriority();
-        float priToFontSize = pri * 40f;
+        float priToFontSize = pri * 30f;
 //            getStyleClass().clear();
 //            getStylesheets().clear();
 //            //setStyle("-fx-background-color: #FFFFFF !important;");
 //            setStyle("-fx-base: #FFFFFF !important;");
 //            setStyle("-fx-padding: 5px !important;");
 //            //setStyle("-fx-border-radius: 20;");
-        final float minFontSize = 8;
+        final float minFontSize = 12;
         setFont(NARfx.mono(minFontSize + priToFontSize));
 
         Color c = getColor();

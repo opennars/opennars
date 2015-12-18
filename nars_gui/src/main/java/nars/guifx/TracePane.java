@@ -1,32 +1,33 @@
 package nars.guifx;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
+import javafx.scene.Parent;
 import nars.NAR;
-import nars.Premise;
-import nars.concept.Concept;
-import nars.guifx.demo.TaskButton;
-import nars.task.Task;
 import nars.util.data.list.CircularArrayList;
+import nars.util.data.list.FasterList;
 import nars.util.event.ArraySharingList;
 import nars.util.event.On;
 import nars.util.event.Topic;
+
+import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
 
 /**
  * Created by me on 10/15/15.
  */
-public class TracePane extends LogPane {
+abstract public class TracePane extends LogPane implements ChangeListener<Parent>, Consumer<NAR> {
 
-    private final NAR nar;
+    public final NAR nar;
     /**
      * threshold for minimum displayable priority
      */
-    private final DoubleProperty volume;
+    public final DoubleProperty volume;
     private On reg;
-    private Node prev; //last node added
+    protected Node prev; //last node added
     ActivationTreeMap activationSet = null;
     //Pane cycleSet = null; //either displays one cycle header, or a range of cycles, including '...' waiting for next output while they queue
     boolean trace = false;
@@ -39,69 +40,21 @@ public class TracePane extends LogPane {
 
         this.volume = volume;
         this.nar = nar;
-        Topic.all(nar.memory, this::output);
+        Topic.all(nar.memory, this::output,
+            (k) -> !k.equals("eventConceptProcess") &&
+                    !k.equals("eventConceptActivated")
+        );
 
 //            for (Object o : enabled)
 //                filter.value(o, 1);
 
-        parentProperty().addListener(e-> {
-            visible = (getParent()!=null);
-            if (reg == null) {
-                reg = nar.memory.eventFrameStart.on((n) -> {
-
-                    if (!visible) {
-                        reg.off();
-                        reg = null;
-                        return;
-                    }
-
-                    if (pending == null)
-                        return;
-
-                    Node[] p = pending.getCachedNullTerminatedArray();
-                    if (p != null) {
-                        pending = null;
-                        //synchronized (nar) {
-                        int ps = p.length;
-                        int start = ps - Math.min(ps, maxLines);
-
-                        int tr = ((ps - start) + toShow.size()) - maxLines;
-                        if (tr > ps) {
-                            toShow.clear();
-                        } else {
-                            //remove first N
-                            for (int i = 0; i < tr; i++)
-                                toShow.removeFirst();
-                        }
-
-                        for (int i = 0; i < ps; i++) {
-                            Node v = p[i];
-                            if (v == null)
-                                break;
-                            if (i >= start)
-                                toShow.add(v);
-                        }
-                        //}
-
-                        //if (queueUpdate)
-                        Node[] c = toShow.toArray(new Node[toShow.size()]);
-                        if (c != null) {
-                            runLater(()->commit(c));
-                        }
-                    }
-                });
-
-            }
-        });
-
+        parentProperty().addListener(this);
 
 
     }
 
 
-
     protected void output(Object channel, Object signal) {
-
 
 
         //double f = filter.value(channel);
@@ -110,7 +63,7 @@ public class TracePane extends LogPane {
         if (!trace && ("eventDerived".equals(channel) ||
                 "eventTaskRemoved".equals(channel) ||
                 "eventConceptChange".equals(channel)
-        ) )
+        ))
             return;
 
         Node n = getNode(channel, signal);
@@ -127,59 +80,66 @@ public class TracePane extends LogPane {
 
     boolean activationTreeMap = false;
 
-    private Node getNode(Object channel, Object signal) {
-        //noinspection IfStatementWithTooManyBranches
-        if ("eventConceptActivated".equals(channel)) {
-            boolean newn = false;
-            if (activationSet == null && activationTreeMap) {
-                activationSet =
-                        //new ActivationSet();
-                        new ActivationTreeMap((Concept) signal);
+    abstract public Node getNode(Object channel, Object signal);
 
-                //activationSet.prefWidth(getWidth());
-                activationSet.width.set(400);
-                activationSet.height.set(100);
-                newn = true;
-            } else if (activationSet != null) {
-                activationSet.add((Concept) signal);
-                newn = false;
-            }
 
-            return !newn ? null : activationSet;
-        } else if ("eventCycleEnd".equals(channel)) {
-            if ((prev instanceof CycleActivationBar)) {
-                ((CycleActivationBar) prev).setTo(nar.time());
-                return null;
-            } else {
-                return new CycleActivationBar(nar.time());
-            }
-//            if (activationSet!=null) {
-//                activationSet.commit();
-//                activationSet = null; //force a new one
-//            }
-            //return null;
-            //
-        } else if ("eventFrameStart".equals(channel)) {
-            return null;
-            //
-        } else if ("eventInput".equals(channel)) {
-            return null;
-            //
-        } else if ("eventTaskProcess".equals(channel)) {
-            Task t = (Task) signal;
-            return t.getTask().getPriority() >= volume.get()
-                    //? new TaskLabel(t, nar) : null;
-                    ? new TaskButton(nar, t.getTask()) : null;
-        } else if (signal instanceof Premise) {
-            //return new PremisePane((Premise)signal);
-            return null;
-        } else {
-            return new Label(
-                    //channel.toString() + ": " +
-                    channel + ": " +
-                            signal.toString());
+
+
+    @Override
+    public void changed(ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) {
+        visible = (getParent() != null);
+        if (reg == null) {
+            reg = nar.memory.eventFrameStart.on(this);
+
         }
+
     }
 
+    @Override
+    public void accept(NAR n) {
 
+        if (!visible) {
+            reg.off();
+            reg = null;
+            return;
+        }
+
+        if (pending == null)
+            return;
+
+        Node[] p = pending.getCachedNullTerminatedArray();
+        if (p == null) return;
+
+        pending = null;
+        //synchronized (nar) {
+        int ps = p.length;
+        int start = ps - Math.min(ps, maxLines);
+
+        CircularArrayList<Node> s = this.toShow;
+        int tr = ((ps - start) + s.size()) - maxLines;
+        if (tr > ps) {
+            s.clear();
+        } else {
+            s.removeFirst(tr);
+        }
+
+        for (int i = 0; i < ps; i++) {
+            Node v = p[i];
+            if (v == null)
+                break;
+            if (i >= start)
+                s.add(v);
+        }
+        //}
+
+        //if (queueUpdate)
+        //Node[] c = s.toArray(new Node[s.size()]);
+        if (!s.isEmpty()) {
+            //if (c != null) {
+            runLater(() -> commit(new FasterList(s)));
+            //this.toShow = new CircularArrayList<>(maxLines);
+        }
+        //}
+
+    }
 }

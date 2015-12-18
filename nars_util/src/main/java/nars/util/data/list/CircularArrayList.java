@@ -19,7 +19,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     public CircularArrayList(int capacity) {
         n = capacity;
         //buf = (E[])Array.newInstance(clazz, capacity);
-        array = (E[])new Object[capacity];
+        array = (E[]) new Object[capacity];
     }
 
     @Override
@@ -66,7 +66,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     @Override
     public void forEach(Consumer<? super E> action) {
         /** NOTE: uses the descending iterator's semantics */
-        for (int i = size-1; i >=0; i--) {
+        for (int i = size - 1; i >= 0; i--) {
             action.accept(get(i--));
         }
     }
@@ -149,7 +149,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
             shiftBlock(i, s);
         }
 
-        if (e!=null)
+        if (e != null)
             setFast(i, e);
     }
 
@@ -165,12 +165,19 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         size--;
     }
 
+    public void removeFirst(int n) {
+        n = Math.min(size(), n);
+        for (int i = 0; i < n; i++) {
+            removeFast(0);
+        }
+    }
+
     @Override
     public E remove(int i) {
         int s = size;
-         if (i < 0 || i >= s) {
-         throw new IndexOutOfBoundsException();
-         }
+        if (i < 0 || i >= s) {
+            throw new IndexOutOfBoundsException();
+        }
 
 
         E e = get(i);
@@ -179,8 +186,9 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
     public boolean remove(Object o) {
-        return remove(indexOf(o))!=null;
+        return remove(indexOf(o)) != null;
     }
+
     public boolean removeIdentity(Object o) {
         int s = size();
         for (int i = 0; i < s; i++) {
@@ -199,11 +207,11 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
     @Override
     public E getLast() {
-        return get(size-1);
+        return get(size - 1);
     }
 
     public void swapWithLast(int i) {
-        swap(i, size-1);
+        swap(i, size - 1);
     }
 
     public void swap(int a, int b) {
@@ -223,7 +231,6 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
 
-
     @Override
     public E getFirst() {
         return get(0);
@@ -236,22 +243,25 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
 
+
+
     @Override
     public E removeLast() {
-        return remove(size-1);
+        return remove(size - 1);
     }
 
     public void removeFirstFast() {
         removeFast(0);
     }
+
     public void removeLastFast() {
-        removeFast(size-1);
+        removeFast(size - 1);
     }
 
 
     @Override
     public final boolean isEmpty() {
-        return size==0;
+        return size == 0;
     }
 
     @Override
@@ -265,8 +275,6 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
 
-
-
     @Override
     public E pollFirst() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -276,7 +284,6 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     public E pollLast() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 
 
     @Override
