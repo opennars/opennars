@@ -175,7 +175,14 @@ public class PremiseRule extends GenericCompound implements Level {
         l.add(post.truth);
 
         ///--------------
-        l.add(new Solve(post.term, this, false )); //sets the solve callback
+
+        if (post.afterConclusions.length > 0) {
+            l.add(new Solve(post.term, this, post.afterConclusions ));
+        }
+        else {
+            l.add(new Solve(post.term, this ));
+        }
+
         l.add(new Derive(this, anticipate, immediate_eternalize)); //sets the derive callback
 
         for (PreCondition p : postPreconditions)
@@ -183,16 +190,6 @@ public class PremiseRule extends GenericCompound implements Level {
 
         ///--------------
 
-//        if (post.afterConclusions.length > 0) {
-//            l.add(new Solve(post.term, this, true ));
-//            Collections.addAll(l, post.afterConclusions);
-//            l.add(ReSolve.the);
-//        }
-//        else {
-//            l.add(new Solve(post.term, this, false ));
-//        }
-//
-//        l.add(new Derive(this, anticipate, immediate_eternalize));
 
         return l;
     }

@@ -9,6 +9,7 @@ import nars.nal.nal7.Sequence;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.transform.VarCachedVersionMap;
 import nars.term.variable.Variable;
 
 import static nars.term.Statement.pred;
@@ -24,12 +25,18 @@ public final class Solve extends PreCondition {
 
     private final transient String id;
     private final boolean continueIfIncomplete;
+    private final PreCondition[] secondLayer;
 
-    public Solve(Term term, PremiseRule rule, boolean continueIfIncomplete) {
+    public Solve(Term term, PremiseRule rule) {
+        this(term, rule, null);
+    }
+
+    public Solve(Term term, PremiseRule rule, PreCondition[] secondLayer) {
         this.term = term;
         this.rule = rule;
-        this.continueIfIncomplete = continueIfIncomplete;
-        id = getClass().getSimpleName() + ':' + term;
+        this.continueIfIncomplete = secondLayer!=null;
+        this.id = getClass().getSimpleName() + ':' + term;
+        this.secondLayer = secondLayer;
     }
 
     @Override
@@ -39,8 +46,34 @@ public final class Solve extends PreCondition {
 
     @Override
     public boolean test(RuleMatch match) {
+        if (continueIfIncomplete) {
+            match.partial.set(this);
+        }
         match.derived.set(this);
         return true;
+    }
+
+    public Term partial(RuleMatch match) {
+        Term dt = solve(match);
+        if (dt == null) return null;
+
+
+        for (PreCondition pc : this.secondLayer) {
+            if (!pc.test(match))
+                return null;
+        }
+
+        VarCachedVersionMap secondary = match.secondary;
+
+        if (!secondary.isEmpty()) {
+
+            Term rederivedTerm = dt.apply(secondary, true);
+
+            //its possible that the substitution produces an invalid term, ex: an invalid statement
+            dt = rederivedTerm;
+        }
+
+        return dt;
     }
 
     public Term solve(RuleMatch match) {

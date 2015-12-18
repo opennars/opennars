@@ -44,6 +44,7 @@ public class RuleMatch extends FindSubst {
     //@Deprecated public final Versioned<Term> derived;
     @Deprecated public final Versioned<Solve> derived;
     @Deprecated public final Versioned<Derive> derived2;
+    @Deprecated public final Versioned<Solve> partial;
 
     public boolean cyclic;
 
@@ -63,6 +64,8 @@ public class RuleMatch extends FindSubst {
         punct = new Versioned(this);
         derived = new Versioned(this);
         derived2 = new Versioned(this);
+        partial = new Versioned(this);
+
     }
 
     private void addTransform(Class<? extends ImmediateTermTransform> c) {
@@ -88,6 +91,19 @@ public class RuleMatch extends FindSubst {
 //        return new RuleMatch(new XorShift128PlusRandom(1));
 //    });
 
+
+    @Override
+    public void onPartial() {
+        Solve pp = partial.get();
+        if (pp == null) return; //second layer not supported in this match
+
+        Term tt = pp.partial(this);
+        if (tt == null) return;
+        tt = tt.normalized();
+        if (tt == null) return;
+
+        derived2.get().derive(this, tt);
+    }
 
     @Override
     public boolean onMatch() {

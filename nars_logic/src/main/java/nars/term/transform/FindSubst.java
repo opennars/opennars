@@ -129,7 +129,7 @@ abstract public class FindSubst extends Versioning implements Subst {
     abstract public boolean onMatch();
 
     /** called each time a match is not fully successful */
-    public void onIncomplete() {
+    public void onPartial() {
 
     }
 
@@ -165,7 +165,7 @@ abstract public class FindSubst extends Versioning implements Subst {
                 onMatch();
             }
         } else {
-            onIncomplete();
+            onPartial();
         }
     }
 
