@@ -1,13 +1,15 @@
 package nars.guifx.demo;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.property.ReadOnlyProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.OverrunStyle;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import nars.NAR;
@@ -20,7 +22,7 @@ import nars.term.compound.Compound;
 /**
  * Created by me on 12/13/15.
  */
-public class SubButton extends FlowPane {
+public class SubButton extends HBox {
 
 
     public static final float paddingDefault = 0.5f;
@@ -29,70 +31,89 @@ public class SubButton extends FlowPane {
         return new Text("  ");
     }
 
+    public static Node makeParagraph(String s) {
+        Text l = new Text(s);
+        l.getStyleClass().clear();
+        l.setFill(Color.WHITE);
+        return l;
+    }
+
     public static Node make(String s) {
-        Label l = new Label(s);
+        Text l = new Text(s);
+        //l.setMaxWidth(0);
         l.getStyleClass().clear();
         //l.setWrapText(true);
-        l.setWrapText(true);
-        l.setTextOverrun(OverrunStyle.WORD_ELLIPSIS);
+        //l.setWrapText(true);
 
+        //l.setTextOverrun(OverrunStyle.ELLIPSIS);
+        //l.setAlignment(Pos.CENTER_LEFT);
+        l.setTextOrigin(VPos.CENTER);
         l.setTextAlignment(TextAlignment.LEFT);
         //l.setWrapText(true);
 
         //l.setTextOverrun(OverrunStyle.WORD_ELLIPSIS);
-        l.setTextFill(Color.WHITE);
+        //l.setTextFill(Color.WHITE);
+        l.setFill(Color.WHITE);
 
         //l.setFont(NARfx.mono(20));
         //l.setTextOrigin(VPos.CENTER);
 
 
-        l.hoverProperty().addListener(k -> {
-
-            //Text kk = (Text)l;
-            Label kk = (Label)l;
-            if (kk.isHover()) {
-                kk.setUnderline(true);
-            } else {
-                kk.setUnderline(false);
-            }
-
+        l.setOnMouseClicked(e-> {
+            System.out.println(s);
+            //NARfx.newWindow()
         });
+        //l.setTooltip(new Tooltip(""));
+        l.hoverProperty().addListener(TextNodeHoverListener);
         return l;
     }
 
     public static SubButton make(NAR nar, Term t) {
         SubButton sb = new SubButton(paddingDefault, t, paddingDefault);
         if (t instanceof Compound) {
-            HBox ig = new HBox();
-            ig.setMaxWidth(0);
+            //Pane ig = new FlowPane();
+            //ig.setMaxWidth(0);
 
-            ig.getChildren().add(make(t.op().str));
+            sb.getChildren().add(make(t.op().str));
 
 
             for (Term x : ((Compound)t).terms()) {
-                ig.getChildren().add(make(nar, x));
-
-                //HACK
-                Rectangle space = new Rectangle(4f, 4f);
-                space.setFill(Color.TRANSPARENT);
-                ig.getChildren().add(space);
+                SubButton subterm = make(nar, x);
+                subterm.setPadding(new Insets(0,4,0,0));
+                sb.getChildren().add(subterm);
+//
+//                //HACK
+//                Rectangle space = new Rectangle(4f, 4f);
+//                space.setFill(Color.TRANSPARENT);
+//                sb.getChildren().add(space);
             }
-            sb.add(ig);
+            //sb.add(ig);
         } else {
             sb.add(make(t.toString(true)));
         }
-        sb.layout();
+
         return sb;
     }
 
     public static SubButton make(NAR nar, Task t) {
         SubButton sb = new SubButton(paddingDefault, t.term(), t.getPriority());
-        sb.add(make(nar, t.get()));
-        sb.add(make(String.valueOf(t.getPunctuation())));
-        if ( !t.isQuestOrQuestion()) {
-            sb.scale( 0.5f + 0.5f * t.getTruth().getConfidence() );
+
+
+
+        if (t.term().volume() > 16) {
+            sb.add(makeParagraph(t.toString()));
+        } else {
+            sb.add(make(nar, t.get()));
+            sb.add(make(String.valueOf(t.getPunctuation())));
+            //sb.add(make(space()));
         }
-        //sb.add(make(space()));
+
+        float minScale = 0.25f;
+        if (!t.isQuestOrQuestion()) {
+            sb.scale(minScale + 2f * 0.75f * t.getTruth().getConfidence());
+        }
+        sb.setOpacity(0.5f + 0.5f * t.getPriority());
+
         return sb;
     }
 
@@ -126,7 +147,8 @@ public class SubButton extends FlowPane {
 
         getStyleClass().clear();
 
-        setMaxWidth(0);
+        //setMaxWidth(0);
+        setAlignment(Pos.CENTER_LEFT);
 
         setCursor(Cursor.CROSSHAIR);
 
@@ -172,6 +194,25 @@ public class SubButton extends FlowPane {
                 ;
         //↔ ⇔ ⇒ ⇄ ⇾ ⇥ ⇵
     }
+
+    private static final InvalidationListener TextNodeHoverListener  = new InvalidationListener() {
+
+        @Override
+        public void invalidated(Observable k) {
+
+            Text kk = (Text) ((ReadOnlyProperty) k).getBean();
+
+            //Text kk = (Text)
+            //Label kk = (Label)l;
+            kk.setUnderline(kk.isHover());
+            if (kk.isHover()) {
+                kk.setUnderline(true);
+            } else {
+                kk.setUnderline(false);
+            }
+
+        }
+    };
 
 //    public void update() {
 //        float pri = task.getPriority();

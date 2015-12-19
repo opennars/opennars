@@ -11,7 +11,7 @@ public class SingleStepNAR extends AbstractNAR {
 //    static Multimap<PremiseRule, DerivationGraph.PremiseKey> ruleDerivations =
 //            Multimaps.newMultimap(Global.newHashMap(1024),
 //                    () -> Global.newHashSet(4));
-    private final int maxProcessableTermVolume = 32;
+    private final int maxProcessableTermVolume = Global.COMPOUND_VOLUME_MAX;
 
 //    static Multimap<DerivationGraph.PremiseKey, TaskRule> derivationRules =
 //            Multimaps.newMultimap(new FasterHashMap(1024),
