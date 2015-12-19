@@ -78,7 +78,7 @@ abstract public class TracePane extends LogPane implements ChangeListener<Parent
         }
     }
 
-    boolean activationTreeMap = false;
+
 
     abstract public Node getNode(Object channel, Object signal);
 

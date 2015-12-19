@@ -7,9 +7,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import nars.NAR;
-import nars.guifx.demo.TaskButton;
+import nars.guifx.demo.SubButton;
 import nars.guifx.util.NSlider;
 import nars.task.Task;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by me on 8/2/15.
@@ -66,11 +67,13 @@ public class IOPane extends BorderPane implements FXIconPaneBuilder {
                 case "eventFrameStart":
                 case "eventInput":
                     break;
+                case "eventRevision":
                 case "eventTaskProcess":
                     Task t = (Task) signal;
                     return t.getTask().getPriority() >= volume.get()
                             //? new TaskLabel(t, nar) : null;
-                            ? new TaskButton(nar, t.getTask()) : null;
+                            ?
+                            getTaskNode(t) : null;
                 default:
                     return new Label(
                             //channel.toString() + ": " +
@@ -80,6 +83,12 @@ public class IOPane extends BorderPane implements FXIconPaneBuilder {
             }
 
             return null;
+        }
+
+        @NotNull
+        public Node getTaskNode(Task t) {
+            //return new TaskButton(nar, t.getTask());
+            return SubButton.make(nar, t);
         }
     }
 
