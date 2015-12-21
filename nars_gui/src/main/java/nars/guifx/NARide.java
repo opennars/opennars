@@ -151,7 +151,7 @@ public class NARide extends BorderPane {
             b.setScene(scene);
 
             b.show();
-
+            b.setTitle("Open-NARS v1.7.0");
             if (ide != null)
                 ide.accept(ni);
 

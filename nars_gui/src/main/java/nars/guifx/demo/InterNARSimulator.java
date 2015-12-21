@@ -104,7 +104,7 @@ public class InterNARSimulator {
                         }, new HyperOrganicLayout(1000))
                     , 800, 600));
 
-            b.getScene().getStylesheets().add(NARfx.css);
+            //b.getScene().getStylesheets().add(NARfx.css);
             b.show();
 
             runLater(()->  sg.start(250) );

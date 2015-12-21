@@ -179,7 +179,7 @@ public class LanternaTerminal extends Application {
 
 
         primaryStage.setScene(new Scene(new VBox(area), 700, 700));
-        primaryStage.getScene().getStylesheets().setAll(NARfx.css );
+        //primaryStage.getScene().getStylesheets().setAll(NARfx.css );
         primaryStage.setTitle("Popup Demo");
         primaryStage.show();
         //popup.show(primaryStage);

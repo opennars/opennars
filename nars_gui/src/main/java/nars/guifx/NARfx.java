@@ -260,7 +260,7 @@ public class NARfx  {
 
     public static Stage newWindow(String title, Scene scene, Stage stage) {
         stage.setScene(scene);
-        stage.getScene().getStylesheets().setAll(NARfx.css );
+        //stage.getScene().getStylesheets().setAll(NARfx.css );
 
         //scene.getRoot().maxWidth(Double.MAX_VALUE);
         //scene.getRoot().maxHeight(Double.MAX_VALUE);
