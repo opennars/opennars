@@ -57,12 +57,8 @@
     (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgment)
     (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgment)
     (P ==> S), (S ==> P), task("?") |- (P ==> S), (Truth:Conversion, Punctuation:Judgment)
-    (P ==> S), (S ==> P), task("?") |- (P ==> S), (Truth:Conversion, Punctuation:Judgment)
-    (P =|> S), (S =|> P), task("?") |- (P =|> S), (Truth:Conversion, Punctuation:Judgment)
     (P =|> S), (S =|> P), task("?") |- (P =|> S), (Truth:Conversion, Punctuation:Judgment)
     (P =\> S), (S =/> P), task("?") |- (P =\> S), (Truth:Conversion, Punctuation:Judgment)
-    (P =\> S), (S =/> P), task("?") |- (P =\> S), (Truth:Conversion, Punctuation:Judgment)
-    (P =/> S), (S =\> P), task("?") |- (P =/> S), (Truth:Conversion, Punctuation:Judgment)
     (P =/> S), (S =\> P), task("?") |- (P =/> S), (Truth:Conversion, Punctuation:Judgment)
 
 // "If not smoking lets you be healthy, being not healthy may be the result of smoking"
