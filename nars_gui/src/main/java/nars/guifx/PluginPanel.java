@@ -80,6 +80,22 @@ public class PluginPanel extends VBox {
             if(k.equals("clock")) {
 
             }
+            else
+            if(k.equals("TreePane")) {
+
+            }
+            else
+            if(k.equals("DefaultNARGraph")) {
+
+            }
+            else
+            if(k.equals("StatusPane")) {
+
+            }
+            else
+            if(k.equals("ActiveConceptsLog")) {
+
+            }
             else {
                 toAdd.add(node(k, v));
             }
