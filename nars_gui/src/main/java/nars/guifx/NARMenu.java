@@ -123,8 +123,9 @@ public class NARMenu extends HBox {
           //  main.getItems().add(new SeparatorMenuItem());
             //main.getItems().add(new MenuItem("Exit..."));
 
-
-            getChildren().add(new MenuBar(tool, main2, main3));
+            MenuBar menubar = new MenuBar(tool, main2, main3);
+            menubar.prefWidthProperty().bind(this.widthProperty());
+            getChildren().add(menubar);
         }
 
 
