@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import nars.NAR;
+import nars.guifx.nars.LoopPane;
 import nars.guifx.util.NSlider;
 import nars.task.in.NQuadsRDF;
 import nars.util.event.Active;
@@ -83,7 +84,18 @@ public class NARMenu extends HBox {
 
             Menu main2 = new Menu("", vol);
 
-            Menu main3 = new Menu("", JFX.newIconButton(FontAwesomeIcon.FLAG));
+            Button finish = JFX.newIconButton(FontAwesomeIcon.FLAG);
+            finish.setOnAction(new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent event) {
+                                    vol.value(100);
+                                    LoopPane.runButton.getOnAction().handle(null);
+                                    LoopPane.cpuSlider.value(1.0);
+                                }
+                            });
+
+
+            Menu main3 = new Menu("", finish);
             main.getItems().add(new MenuItem("New..."));
 
 

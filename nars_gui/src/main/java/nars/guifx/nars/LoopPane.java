@@ -26,11 +26,11 @@ public class LoopPane extends VBox {
     //        final static Text play = GlyphsDude.createIcon(FontAwesomeIcon.PLAY, GlyphIcon.DEFAULT_FONT_SIZE);
 //        final static Text stop = GlyphsDude.createIcon(FontAwesomeIcon.STOP, GlyphIcon.DEFAULT_FONT_SIZE);
     private final NARLoop loop;
-    private final Button runButton;
+    public static Button runButton;
     private final Button stepButton;
     private final SimpleStringProperty cpuLabel;
 
-    private final NSlider cpuSlider;
+    public static NSlider cpuSlider;
     private final ComboBox<Integer> multiplier;
 
     boolean running = false;
