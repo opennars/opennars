@@ -141,7 +141,7 @@ public class NARide extends BorderPane {
 //                }*/
 //                return () -> ni;
 //            });
-            Scene scene = new Scene(ni, 900, 540,
+            Scene scene = new Scene(ni, 777, 480,
                     false, SceneAntialiasing.DISABLED);
 
            // scene.getStylesheets().setAll(NARfx.css);
@@ -387,7 +387,7 @@ public class NARide extends BorderPane {
 
         SplitPane p = new SplitPane();
         p.getItems().setAll(f, content);
-        p.setDividerPositions(0.28f);
+        p.setDividerPositions(0.31f);
 
         setCenter(p);
 

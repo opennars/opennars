@@ -104,11 +104,11 @@ public class LoopPane extends VBox {
 
         pause();
 
-        say("ready");
+        //say("ready");
 
         getChildren().addAll(
-                new FlowPane(runButton, cpuSlider, stepButton, multiplier),
-                new FlowPane(label)
+                new FlowPane(runButton, cpuSlider, stepButton, multiplier) //,
+               // new FlowPane(label)
         );
 
     }
@@ -139,7 +139,7 @@ public class LoopPane extends VBox {
 
             runLater(() -> {
                 unpause();
-                say("cycle period=" + MS + "ms (" + Texts.n4(1000f / MS) + "hz)");
+                //say("cycle period=" + MS + "ms (" + Texts.n4(1000f / MS) + "hz)");
             });
         }
     }
@@ -155,7 +155,7 @@ public class LoopPane extends VBox {
         loop.pause();
 
         runLater(() -> {
-            say("ready");
+           // say("ready");
 
             stepButton.setDisable(false);
             cpuSlider.setMouseTransparent(true);

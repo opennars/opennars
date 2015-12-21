@@ -34,6 +34,7 @@ public class NARMenu extends HBox {
 
     public final Menu tool;
 
+    public static NSlider vol = new NSlider("Volume", 100, 30, NSlider.BarSlider, 0.0);
 
     public NARMenu(NAR n) {
         super();
@@ -72,20 +73,29 @@ public class NARMenu extends HBox {
             iconButton.setMouseTransparent(true);
 
 
+            Button button2 = JFX.newIconButton(FontAwesomeIcon.NAVICON);
+            button2.setMouseTransparent(true);
+            tool = new Menu("", button2);
+
             Menu main = new Menu("", iconButton);
             main.getStyleClass().add("nar_main_menu");
-            main.getItems().add(new MenuItem("", fontSlider));
-            //main.getItems().add(new MenuItem("New..."));
+            tool.getItems().add(new MenuItem("Font Size", fontSlider));
+
+            Menu main2 = new Menu("", vol);
+
+            Menu main3 = new Menu("", JFX.newIconButton(FontAwesomeIcon.FLAG));
+            main.getItems().add(new MenuItem("New..."));
+
 
             MenuItem res = new MenuItem("Reset");
             res.setOnAction(new EventHandler<ActionEvent>() {
-                                                          @Override
-                                                          public void handle(ActionEvent event) {
-                                                              nar.reset();
-                                                          }
-                                                      }
+                                @Override
+                                public void handle(ActionEvent event) {
+                                    nar.reset();
+                                }
+                            }
             );
-            main.getItems().add(res);
+            tool.getItems().add(res);
 
             Menu loadMenu;
             /*main.getItems().add(loadMenu = new Menu("Load..."));
@@ -113,11 +123,8 @@ public class NARMenu extends HBox {
           //  main.getItems().add(new SeparatorMenuItem());
             //main.getItems().add(new MenuItem("Exit..."));
 
-            Button button2 = JFX.newIconButton(FontAwesomeIcon.NAVICON);
-            button2.setMouseTransparent(true);
-            tool = new Menu("", button2);
 
-            getChildren().add(new MenuBar(main, tool));
+            getChildren().add(new MenuBar(tool, main2, main3));
         }
 
 
