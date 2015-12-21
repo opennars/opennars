@@ -141,7 +141,7 @@ public class NARide extends BorderPane {
 //                }*/
 //                return () -> ni;
 //            });
-            Scene scene = new Scene(ni, 900, 700,
+            Scene scene = new Scene(ni, 900, 540,
                     false, SceneAntialiasing.DISABLED);
 
            // scene.getStylesheets().setAll(NARfx.css);
@@ -374,6 +374,7 @@ public class NARide extends BorderPane {
         f.setTop(controlPane);
 
 
+
         content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         //  content.getTabs().add(new Tab("I/O", new TerminalPane(nar)));
 
@@ -386,7 +387,7 @@ public class NARide extends BorderPane {
 
         SplitPane p = new SplitPane();
         p.getItems().setAll(f, content);
-        p.setDividerPositions(0.5f);
+        p.setDividerPositions(0.28f);
 
         setCenter(p);
 
