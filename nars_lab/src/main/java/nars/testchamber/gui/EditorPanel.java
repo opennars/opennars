@@ -27,7 +27,7 @@ import java.util.ArrayList;
 */
 public class EditorPanel extends JPanel {
 
-    final String levelPath = "./src/main/java/nars/grid2d/level/";
+    final String levelPath = "nars_lab/src/main/java/nars/testchamber/level/";
 
     abstract public static class EditorMode extends DefaultMutableTreeNode {
 
@@ -139,8 +139,7 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode save = new DefaultMutableTreeNode("Save Scenario");
         root.add(save);
 
-        String levelPath2="C:\\Users\\patrick.hammer\\IdeaProjects\\opennars_radical2\\nars_lab\\src\\main\\java\\nars\\testchamber\\level";
-        File f = new File(levelPath2); // current directory
+        File f = new File(levelPath); // current directory
         try {
             File[] files = f.listFiles();
             for (File file : files) {
