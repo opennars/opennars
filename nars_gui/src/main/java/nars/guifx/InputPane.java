@@ -1,5 +1,7 @@
 package nars.guifx;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -35,23 +37,23 @@ public class InputPane extends TabPane {
 
         getTabs().add(new TabXLazy("Library", LibraryInputPane::new));
 
-        getTabs().add(new TabXLazy("Wiki", () -> {
+        /*getTabs().add(new TabXLazy("Wiki", () -> {
 
             //"Navigate wikipedia to collect tags to use as input terms"
             return new NARWikiBrowser("Happiness");
-        }));
-        getTabs().add(new TabXLazy("Space", WebMap::new) /*"Space", "Navigate a 2D map to input (map region-as-shape analysis, and lists of features and their locations)")*/);
+        }));*/
+       // getTabs().add(new TabXLazy("Space", WebMap::new) /*"Space", "Navigate a 2D map to input (map region-as-shape analysis, and lists of features and their locations)")*/);
 
 
-        getTabs().add(new TabXLazy("Natural", () ->
+       /* getTabs().add(new TabXLazy("Natural", () ->
             //"Natural language input in any of the major languages, using optional strategies (ex: CoreNLP)"
             new NaturalLanguagePane(n)
-        ));
+        )); */
         /*getTabs().add(new Tab("En"));
         getTabs().add(new Tab("Es"));
         getTabs().add(new Tab("Fr"));
         getTabs().add(new Tab("De"));*/
-        getTabs().add(new ComingSoonTab("Sensors", "List of live signals and data sources which can be enabled, disabled, and reprioritized"));
+       /* getTabs().add(new ComingSoonTab("Sensors", "List of live signals and data sources which can be enabled, disabled, and reprioritized"));
         getTabs().add(new ComingSoonTab("Data", "Spreadsheet view for entering tabular data"));
         getTabs().add(new ComingSoonTab("Draw", "Drawing/composing an image that can be input"));
         getTabs().add(new ComingSoonTab("Webcam", "Webcam/video stream record; audio optional"));
@@ -61,7 +63,7 @@ public class InputPane extends TabPane {
         getTabs().add(new ComingSoonTab("Time", "Navigate a timeline to view and edit significants in any time region"));
         getTabs().add(new ComingSoonTab("Patterns", "Frequently-used inputs and templates selectable via speed-dial button grid"));
         getTabs().add(new ComingSoonTab("URL", "Bookmarks that will create a new browser tab for web pages. Also includes URL navigation textfield"));
-
+*/
     }
 
 
@@ -80,11 +82,25 @@ public class InputPane extends TabPane {
 
             GridPane buttons = new GridPane();
             buttons.setMaxHeight(Double.MAX_VALUE);
+            Button Inp = new Button("Input");
+
+            Inp.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    for(String s : LibraryInput.toInput) {
+                        try {
+                            nar.input(s);
+                        }
+                        catch(Exception ex) {}
+                    }
+                }
+            });
+
             buttons.addColumn(0,
-                    new Button("Input"), //input immediately
-                    new Button("Edit"), //copy the source to narsese input panel and switch to it, after verifying with user before needing to remove any existing code there
-                    new Button("Append"), //append the source to current narsese input buffer
-                    new Button("Fork") //fork a new NAR which will have this executed in it, while the current NAR remains the same
+                    Inp //input immediately
+                   // new Button("Edit"), //copy the source to narsese input panel and switch to it, after verifying with user before needing to remove any existing code there
+                  //  new Button("Append"), //append the source to current narsese input buffer
+                   // new Button("Fork") //fork a new NAR which will have this executed in it, while the current NAR remains the same
             );
 
             BorderPane bp = new BorderPane();

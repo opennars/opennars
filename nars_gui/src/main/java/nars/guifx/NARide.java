@@ -77,7 +77,7 @@ public class NARide extends BorderPane {
             NARide ni = new NARide(loop);
 
             {
-                ni.addView(new TaskSheet(nar));
+                //ni.addView(new TaskSheet(nar));
                 ni.addView(new IOPane(nar));
 
                 /*ni.addView(new UDPPane(new UDPNetwork(
@@ -87,9 +87,9 @@ public class NARide extends BorderPane {
                 /*ni.addIcon(() -> {
                     return new InputPane(nar);
                 });*/
-                ni.addIcon(() -> {
+               /* ni.addIcon(() -> {
                     return new ConceptSonificationPanel(nar);
-                });
+                });*/
                 //ni.addView(additional components);
             }
 
@@ -97,28 +97,28 @@ public class NARide extends BorderPane {
             ni.addTool("Active Concepts", () -> new ActiveConceptsLog(nar));
             ni.addTool("Task Tree", () -> new TreePane(nar));
             ni.addTool("Concept Network", () -> new DefaultNARGraph(64, new ConceptsSource(nar)));
-            ni.addTool("Fractal Workspace", () -> new NARspace(nar));
+           // ni.addTool("Fractal Workspace", () -> new NARspace(nar));
 
 
-            ni.addTool("Webcam", () -> {
+           /* ni.addTool("Webcam", () -> {
                 try {
                     return new WebcamFX();
                 } catch (LineUnavailableException e) {
                     return new VBox(new Label(e.toString()));
                 }
             });
+*/
 
-
-            ni.addTool("Terminal (bash)", LocalTerminal::new);
+           // ni.addTool("Terminal (bash)", LocalTerminal::new);
             ni.addTool("Status", () -> new StatusPane(nar, 320));
-            ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
-            ni.addTool("Web Browser", WebBrowser::new);
+           // ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
+           // ni.addTool("Web Browser", WebBrowser::new);
 
-            ni.addTool("HTTP Server", Pane::new);
+           //ni.addTool("HTTP Server", Pane::new);
 
-            ni.addTool(new Menu("Interface..."));
-            ni.addTool(new Menu("Cognition..."));
-            ni.addTool(new Menu("Sensor..."));
+           // ni.addTool(new Menu("Interface..."));
+           // ni.addTool(new Menu("Cognition..."));
+          //  ni.addTool(new Menu("Sensor..."));
 
 
             //Button summaryPane = new Button(":D");
@@ -144,7 +144,7 @@ public class NARide extends BorderPane {
             Scene scene = new Scene(ni, 900, 700,
                     false, SceneAntialiasing.DISABLED);
 
-            scene.getStylesheets().setAll(NARfx.css);
+           // scene.getStylesheets().setAll(NARfx.css);
             b.setScene(scene);
 
 
@@ -306,12 +306,12 @@ public class NARide extends BorderPane {
         spp = scrolled(pp = new PluginPanel(this));
 
         controlPane = new NARMenu(nar);
-        Button addIcon = new Button("++");
+       /* Button addIcon = new Button("++");
         addIcon.setOnMouseClicked(e -> {
             popupToolDialog(
                     pp.getChildren()::addAll);
         });
-        controlPane.getChildren().add(addIcon);
+        controlPane.getChildren().add(addIcon);*/
 
 
         final BorderPane f = new BorderPane();

@@ -56,7 +56,7 @@ public class LibraryInput extends TextInput {
         if (!id.endsWith(".nal"))
             id = id + ".nal";
 
-        String path = getExamplePath(id);
+        String path = id; //getExamplePath(id);
                 
         return new LibraryInput(n, path);
     }
@@ -114,9 +114,20 @@ public class LibraryInput extends TextInput {
         return l;
     }
 
+    public static ArrayList<String> toInput = new ArrayList<String>();
     @Override
     protected int process(NAR nar, String input) {
-        int n = super.process(nar, input);
+        toInput = new ArrayList<String>();
+        int n = 0; //super.process(nar, input);
+        for(String s : input.replace("\r","").split("\n")) {
+            try {
+                //nar.input(s);
+               //n += super.process(nar, s);
+                toInput.add(s);
+            }catch(Exception ex) {
+
+            }
+        }
         this.input = input;
         return n;
     }
