@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -40,6 +41,7 @@ import nars.video.WebcamFX;
 import org.jewelsea.willow.browser.WebBrowser;
 
 import javax.sound.sampled.LineUnavailableException;
+import java.io.FileInputStream;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -151,6 +153,8 @@ public class NARide extends BorderPane {
             b.setScene(scene);
 
             b.show();
+            b.getIcons().add(new Image(
+                    new FileInputStream("nars_gui/src/main/java/nars/guifx/logo.png")));
             b.setTitle("Open-NARS v1.7.0");
             if (ide != null)
                 ide.accept(ni);
