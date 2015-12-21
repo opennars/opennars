@@ -49,7 +49,40 @@ public class PluginPanel extends VBox {
 
         final List<Node> toAdd = Global.newArrayList();
         nar.memory.getSingletons().forEach((k, v) -> {
-            toAdd.add(node(k, v));
+            if(k.equals("Anticipate")) {
+
+            }
+            else
+            if(k.equals("ConceptBuilder")) {
+
+            }
+            else
+            if(k.equals("NAR")) {
+
+            }
+            else
+            if(k.equals("core")) {
+
+            }
+            else
+            if(k.equals("")) {
+
+            }
+            else
+            if(k.equals("input")) {
+
+            }
+            else
+            if(k.equals("STMTemporalLinkage")) {
+
+            }
+            else
+            if(k.equals("clock")) {
+
+            }
+            else {
+                toAdd.add(node(k, v));
+            }
         });
 
         //TODO use faster comparison method

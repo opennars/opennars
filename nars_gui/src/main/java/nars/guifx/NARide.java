@@ -295,9 +295,10 @@ public class NARide extends BorderPane {
 
         //default node builders
         //TODO make these Function<Object,Node>, not a supplier interface
+        icon(NARLoop.class, (ll) -> new LoopPane(l));
         icon(FrameClock.class, (c) -> new NARMenu.CycleClockPane(nar));
         icon(RealtimeMSClock.class, (c) -> new NARMenu.RTClockPane(nar));
-        icon(NARLoop.class, (ll) -> new LoopPane(l));
+
         icon(Default.DefaultCycle.class, (c) ->
                 new DefaultCyclePane((Default.DefaultCycle)c) //cast is hack
         );

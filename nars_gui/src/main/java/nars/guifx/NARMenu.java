@@ -110,7 +110,7 @@ public class NARMenu extends HBox {
             //main.getItems().add(new MenuItem("Save..."));
             //main.getItems().add(new MenuItem("Fork..."));
             //main.getItems().add(new MenuItem("Discard..."));
-            main.getItems().add(new SeparatorMenuItem());
+          //  main.getItems().add(new SeparatorMenuItem());
             //main.getItems().add(new MenuItem("Exit..."));
 
             Button button2 = JFX.newIconButton(FontAwesomeIcon.NAVICON);
