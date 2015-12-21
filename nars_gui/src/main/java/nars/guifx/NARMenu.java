@@ -1,6 +1,8 @@
 package nars.guifx;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
@@ -73,16 +75,26 @@ public class NARMenu extends HBox {
             Menu main = new Menu("", iconButton);
             main.getStyleClass().add("nar_main_menu");
             main.getItems().add(new MenuItem("", fontSlider));
-            main.getItems().add(new MenuItem("New..."));
+            //main.getItems().add(new MenuItem("New..."));
+
+            MenuItem res = new MenuItem("Reset");
+            res.setOnAction(new EventHandler<ActionEvent>() {
+                                                          @Override
+                                                          public void handle(ActionEvent event) {
+                                                              nar.reset();
+                                                          }
+                                                      }
+            );
+            main.getItems().add(res);
 
             Menu loadMenu;
-            main.getItems().add(loadMenu = new Menu("Load..."));
+            /*main.getItems().add(loadMenu = new Menu("Load..."));
             {
                 loadMenu.getItems().add(new AsyncMenuItem(n, ".n3 RDF") {
                     @Override public void run(NAR n) {
                         FileChooser fileChooser = new FileChooser();
                         fileChooser.setTitle("Load RDF File");
-                        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("n3","n4","turtle","rdf" /* .. */));
+                        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("n3","n4","turtle","rdf" ));
                         File f = fileChooser.showOpenDialog(null);
                         if (f!=null) {
                             try {
@@ -93,13 +105,13 @@ public class NARMenu extends HBox {
                         }
                     }
                 });
-            }
+            }*/
 
-            main.getItems().add(new MenuItem("Save..."));
-            main.getItems().add(new MenuItem("Fork..."));
-            main.getItems().add(new MenuItem("Discard..."));
+            //main.getItems().add(new MenuItem("Save..."));
+            //main.getItems().add(new MenuItem("Fork..."));
+            //main.getItems().add(new MenuItem("Discard..."));
             main.getItems().add(new SeparatorMenuItem());
-            main.getItems().add(new MenuItem("Exit..."));
+            //main.getItems().add(new MenuItem("Exit..."));
 
             Button button2 = JFX.newIconButton(FontAwesomeIcon.NAVICON);
             button2.setMouseTransparent(true);

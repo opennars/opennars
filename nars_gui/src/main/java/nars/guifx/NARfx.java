@@ -241,7 +241,7 @@ public class NARfx  {
     public static Stage newWindow(String title, Region n) {
 
         Scene scene = new Scene(n);
-        scene.getStylesheets().setAll(NARfx.css );
+        //scene.getStylesheets().setAll(NARfx.css );
 
         Stage s = new Stage();
         s.setTitle(title);
