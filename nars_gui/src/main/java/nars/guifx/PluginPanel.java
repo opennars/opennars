@@ -49,6 +49,38 @@ public class PluginPanel extends VBox {
 
         final List<Node> toAdd = Global.newArrayList();
         nar.memory.getSingletons().forEach((k, v) -> {
+            if (k.equals("Anticipate")) {
+
+            } else if (k.equals("ConceptBuilder")) {
+
+            } else if (k.equals("NAR")) {
+
+            } else if (k.equals("core")) {
+
+            } else if (k.equals("")) {
+
+            } else if (k.equals("input")) {
+
+            } else if (k.equals("STMTemporalLinkage")) {
+
+            } else if (k.equals("clock")) {
+
+            } else if (k.equals("TreePane")) {
+
+            } else if (k.equals("DefaultNARGraph")) {
+
+            } else if (k.equals("StatusPane")) {
+
+            } else if (k.equals("ActiveConceptsLog")) {
+
+            } else if (k.equals("IOPane")) {
+
+            } else {
+                toAdd.add(node(k, v));
+            }
+        });
+
+        nar.memory.getSingletons().forEach((k, v) -> {
             if(k.equals("Anticipate")) {
 
             }
@@ -94,6 +126,10 @@ public class PluginPanel extends VBox {
             }
             else
             if(k.equals("ActiveConceptsLog")) {
+
+            }
+            else
+            if(k.equals("loop")) {
 
             }
             else {
