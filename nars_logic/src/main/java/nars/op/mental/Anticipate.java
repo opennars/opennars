@@ -37,6 +37,7 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 
 import java.util.Iterator;
 import java.util.List;
@@ -52,7 +53,7 @@ public class Anticipate {
     public static float TOLERANCE_FACTOR=0.5f; //0.5 means if it happens in 2 seconds, up to max 3 seconds is also fine
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
-    final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
+    final static Budget expiredBudget = new Budget(0.5f, 0.8f, BudgetFunctions.truthToQuality(expiredTruth));
     final static float priorityBoostOnDisappointment = 1.5f;
 
     final Multimap<Compound,TaskTime> anticipations = LinkedHashMultimap.create();
@@ -95,7 +96,7 @@ public class Anticipate {
         if (debug)
             System.err.println("Anticipating " + tt + " in " + (t.getOccurrenceTime() - now));
 
-        TaskTime taskTime = new TaskTime(t, t.getCreationTime(), t.getParentTask(), t.getParentBelief(), nar);
+        TaskTime taskTime = new TaskTime(t, t.getCreationTime());
 
         if(testing) {
             String s = "anticipating: "+taskTime.task.getTerm().toString();
@@ -222,17 +223,10 @@ public class Anticipate {
         /** cached locally, same value as in task */
         private final int hash;
         public float tolerance = 0;
-        public Task eventParent = null;
 
-        public TaskTime(Task task, long creationTime, Task parentTask, Task parentBelief, NAR nar) { //better save it here since the soft refs will be gone later
+        public TaskTime(Task task, long creationTime) { //better save it here since the soft refs will be gone later
             super();
             this.task = task;
-            if(parentTask != null && isObservable(nar, parentTask.getTerm())) {
-                eventParent = parentTask;
-            }
-            if(parentBelief != null && isObservable(nar, parentBelief.getTerm())) {
-                eventParent = parentBelief;
-            }
             this.creationTime = task.getCreationTime();
             this.occurrTime = task.getOccurrenceTime();
             this.hash = (int)(31 * creationTime + occurrTime);

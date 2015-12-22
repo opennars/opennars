@@ -173,10 +173,14 @@ public class TracePane extends LogPane {
             //return new PremisePane((Premise)signal);
             return null;
         } else {
-            return new Label(
-                    //channel.toString() + ": " +
-                    channel + ": " +
-                            signal.toString());
+            //since we had an exception here TODO lookat
+            Label placeholder = new Label(channel + ": "+"exception on toString");
+            try {
+                return new Label(
+                        channel + ": " +
+                                signal.toString());
+            }catch(Exception ex){}
+            return placeholder;
         }
     }
 
