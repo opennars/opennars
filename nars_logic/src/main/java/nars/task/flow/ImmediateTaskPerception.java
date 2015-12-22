@@ -70,10 +70,12 @@ public class ImmediateTaskPerception extends TaskPerception {
         if(!SingleStep) {
             CurveBag bag = new CurveBag(buffer.size(),nar.memory.random); //new LevelBag(10,buffer.size());//new CurveBag(buffer.size(),nar.memory.random);
             bag.mergeMax();
-            for (Task t : buffer) {
-                if(t!=null && t.getBudget()!=null && !t.isInput())
-                    bag.put(t);
-            }
+            try {
+                for (Task t : buffer) {
+                    if (t != null && t.getBudget() != null && !t.isInput())
+                        bag.put(t);
+                }
+            }catch(Exception ex) {} //no crash on concurrent exception ^^
             Task t = (Task) bag.pop();
 
             //todo create a bag of the buffer, sample one element with probability determmined by budget priority, and then clear the buffer

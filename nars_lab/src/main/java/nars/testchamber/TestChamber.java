@@ -5,6 +5,7 @@ import nars.NAR;
 import nars.guifx.NARide;
 import nars.nar.Default;
 import nars.nar.Default2;
+import nars.op.mental.Anticipate;
 import nars.testchamber.Cell.Logic;
 import nars.testchamber.Cell.Material;
 import nars.testchamber.map.Maze;
@@ -36,7 +37,7 @@ public class TestChamber {
 
     public static void main(String[] args) {
         Default nar = new Default2(1024, 1, 1, 3);
-
+        Anticipate.testing = true;
         //set NAR architecture parameters:
         //builder...
         Global.DEFAULT_JUDGMENT_DURABILITY = 0.99f; //try to don't forget the input in TestChamber domain

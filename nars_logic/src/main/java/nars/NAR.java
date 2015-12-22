@@ -412,6 +412,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      */
     public final boolean input(final Task<?> t) {
 
+        boolean tester = t.isInput();
         final Memory m = memory;
 
 //        if (t == null) {

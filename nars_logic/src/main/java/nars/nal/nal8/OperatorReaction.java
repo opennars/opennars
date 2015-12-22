@@ -232,7 +232,6 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
 
                 budget(b).
                 present(memory).
-                parent(operation).
                 because("Executed")
         );
 
