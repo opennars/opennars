@@ -189,11 +189,6 @@ abstract public class FindSubst extends Versioning implements Subst {
 
     /**
      * recurses into the next sublevel of the term
-     *
-     * @return if success: a POSITIVE next power value, after having subtracted the cost (>0)
-     * if fail: the NEGATED next power value (<=0)
-     * *
-     * this effectively uses the sign bit of the integer as a success flag while still preserving the magnitude of the decreased power for the next attempt
      */
     public final boolean match(Term x, Term y) {
 

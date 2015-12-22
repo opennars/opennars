@@ -2,7 +2,7 @@ package nars.nal.op;
 
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.transform.FindSubst;
+import nars.term.transform.MapSubst;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -33,17 +33,20 @@ public class substitute extends ImmediateTermTransform {
 
     @Nullable
     public Term subst(Compound p, Term term, Term x, Term y) {
-        if (substitute(p, null, x, y)) {
-            if (!x.equals(y)) {
-                //m.secondary.put(x, y);
-                return term;
-            }
+        MapSubst m = new MapSubst(x, y);
+
+        //if (!x.equals(y)) {
+
+        if (substitute(p, m, x, y)) {
+            return term.apply(m,
+                !(this instanceof substituteIfUnifies)
+            );
         }
 
-        return (this instanceof substituteIfUnifies) ? term : null;
+        return null; //(this instanceof substituteIfUnifies) ? term : null;
     }
 
-    protected boolean substitute(Compound p, FindSubst m, Term a, Term b) {
+    protected boolean substitute(Compound p, MapSubst m, Term a, Term b) {
         //for subclasses to override; here it just falls through true
         return true;
     }

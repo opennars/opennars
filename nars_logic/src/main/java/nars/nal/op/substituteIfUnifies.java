@@ -5,6 +5,7 @@ import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
+import nars.term.transform.MapSubst;
 import nars.util.data.random.XorShift128PlusRandom;
 
 import java.util.Random;
@@ -26,7 +27,7 @@ public final class substituteIfUnifies extends substitute {
     }
 
     @Override
-    protected boolean substitute(Compound p, FindSubst m, Term a, Term b) {
+    protected boolean substitute(Compound p, MapSubst m, Term a, Term b) {
         final Term type = p.term(1);
         Op o;
 
@@ -47,7 +48,10 @@ public final class substituteIfUnifies extends substitute {
             }
         };
 
-        return sub.match(a, b);
+        boolean result = sub.match(a, b);
+        m.subs.putAll(sub.xy); //HACK, use the same map instance
+        return result;
+
 //        boolean result;
 //        if (sub.match(a, b)) { //matchAll?
 //            //m.secondary.putAll(sub.xy);
