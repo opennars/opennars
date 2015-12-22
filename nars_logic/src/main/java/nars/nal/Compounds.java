@@ -21,7 +21,6 @@ import nars.truth.Truth;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -631,7 +630,9 @@ public class Compounds {
                     return image(op, t);
                 }
                 if ((relation == -1) || (relation > t.length))
-                    throw new RuntimeException("invalid index relation: " + relation + " for args " + Arrays.toString(t));
+                    return null;
+                    //throw new RuntimeException("invalid index relation: " + relation + " for args " + Arrays.toString(t));
+
                 break;
             case DIFF_EXT:
                 Term et0 = t[0], et1 = t[1];

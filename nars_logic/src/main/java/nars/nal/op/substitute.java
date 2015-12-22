@@ -35,12 +35,18 @@ public class substitute extends ImmediateTermTransform {
     public Term subst(Compound p, Term term, Term x, Term y) {
         MapSubst m = new MapSubst(x, y);
 
-        //if (!x.equals(y)) {
+        /*(if (x.equals(y)) {
+            return term;
+        }*/
 
         if (substitute(p, m, x, y)) {
-            return term.apply(m,
-                !(this instanceof substituteIfUnifies)
-            );
+            if (!x.equals(y)) {
+                return term.apply(m,
+                        !(this instanceof substituteIfUnifies)
+                );
+            } else {
+                return term;
+            }
         }
 
         return null; //(this instanceof substituteIfUnifies) ? term : null;

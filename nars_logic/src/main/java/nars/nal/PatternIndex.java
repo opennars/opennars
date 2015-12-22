@@ -183,8 +183,9 @@ public class PatternIndex extends MapIndex {
         public final Term[] termsCached;
         protected final boolean ellipsis;
         private final boolean commutative;
+        private final boolean ellipsisTransform;
 
-        public AbstractCompoundPattern(Compound seed, TermVector subterms) {
+    public AbstractCompoundPattern(Compound seed, TermVector subterms) {
             super(seed.op(), subterms, seed.relation());
 
             sizeCached = seed.size();
@@ -193,6 +194,7 @@ public class PatternIndex extends MapIndex {
                     seed.structure() & ~(Op.VAR_PATTERN.bit());
 
             this.ellipsis = Ellipsis.hasEllipsis(this);
+            this.ellipsisTransform = Ellipsis.hasEllipsisTransform(this);
             this.volCached = seed.volume();
             this.termsCached = subterms.terms();
             this.commutative = isCommutative();
@@ -235,7 +237,12 @@ public class PatternIndex extends MapIndex {
             if (volCached > y.volume())
                 return false;
 
-            return relation == y.relation();
+            if (!ellipsisTransform) {
+                if (relation != y.relation())
+                    return false;
+            }
+
+            return true;
         }
 
     }

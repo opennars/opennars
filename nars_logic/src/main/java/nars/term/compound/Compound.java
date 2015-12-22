@@ -142,8 +142,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
             if (!t.applyTo(f, sub, fullMatch)) {
                 if (fullMatch)
                     return null;
-                else {
-                }
             }
         }
 

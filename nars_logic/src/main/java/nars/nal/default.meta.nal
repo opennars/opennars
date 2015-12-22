@@ -185,7 +185,7 @@
     (M --> (A..B=_..+)), B |- ((\, M, A..B=_..+, _ ) --> B), (Truth:Identity, Desire:Identity)
     (M --> (A..+)), M |- ((\,_, A..+, ..) --> M), (Truth:Identity, Desire:Identity)
 
-    (B --> (/,M, A.._=B..+, _)), M |- ((A..+) --> M), (Truth:Identity, Desire:Identity)
+    (B --> (/,M, A.._=B..+, _)), M |- ((A.._=B..+) --> M), (Truth:Identity, Desire:Identity)
     (M --> (/, _, A..+ )), M |- ((A..+) --> M), (Truth:Identity, Desire:Identity)
 
     ((\, M, A.._=B..+, _ ) --> B), M |- (M --> (A.._=B..+)), (Truth:Identity, Desire:Identity)
