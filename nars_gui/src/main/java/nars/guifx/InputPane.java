@@ -82,7 +82,8 @@ public class InputPane extends TabPane {
 
             GridPane buttons = new GridPane();
             buttons.setMaxHeight(Double.MAX_VALUE);
-            Button Inp = new Button("Input");
+            Button Inp = new Button("+");
+            Inp.prefHeightProperty().bind(source.heightProperty());
 
             Inp.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
