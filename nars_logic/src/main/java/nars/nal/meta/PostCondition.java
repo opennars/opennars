@@ -10,7 +10,6 @@ import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,10 +26,9 @@ public class PostCondition implements Serializable, Level //since there can be m
     public final Term beliefTruth;
     public final Term goalTruth;
 
-    public PostCondition(Term term, PreCondition[] afterConclusions, Term beliefTruth, Term goalTruth, char puncOverride) {
+    public PostCondition(Term term, Term beliefTruth, Term goalTruth, char puncOverride) {
         this.term = term;
         //this.modifiers = modifiers;
-        this.afterConclusions = afterConclusions;
         this.beliefTruth = beliefTruth;
         this.goalTruth = goalTruth;
         this.puncOverride = puncOverride;
@@ -42,12 +40,6 @@ public class PostCondition implements Serializable, Level //since there can be m
 
     /** steps to apply before initially forming the derived task's term */
     //public final PreCondition[] beforeConclusions;
-
-    /**
-     * steps to apply after forming the goal. after each of these steps, the term will be re-resolved
-     */
-    public final PreCondition[] afterConclusions;
-
 
     /**
      * minimum NAL level necessary to involve this postcondition
@@ -94,7 +86,6 @@ public class PostCondition implements Serializable, Level //since there can be m
      * @throws RuntimeException
      */
     public static PostCondition make(PremiseRule rule, Term term,
-                                     PreCondition[] afterConclusions,
                                      Term... modifiers) throws RuntimeException {
 
 
@@ -191,7 +182,7 @@ public class PostCondition implements Serializable, Level //since there can be m
         }
 
 
-        PostCondition pc = new PostCondition(term, afterConclusions,
+        PostCondition pc = new PostCondition(term,
                 beliefTruth, goalTruth, puncOverride);
 
         //pc.negate = negate;
@@ -237,16 +228,11 @@ public class PostCondition implements Serializable, Level //since there can be m
     }
 
 
-//    @Override
-//    public String toString() {
-//        return term + "(" + Arrays.toString(modifiers) + ")";
-//    }
 
     @Override
     public String toString() {
         return "PostCondition{" +
                 "term=" + term +
-                ", afterConc=" + Arrays.toString(afterConclusions) +
                 //", modifiers=" + Arrays.toString(modifiers) +
                 ", beliefTruth=" + beliefTruth +
                 ", goalTruth=" + goalTruth +

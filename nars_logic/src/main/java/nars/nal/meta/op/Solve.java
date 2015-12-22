@@ -17,7 +17,6 @@ import nars.task.Task;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.transform.VarCachedVersionMap;
 import nars.term.variable.Variable;
 import nars.truth.BeliefFunction;
 import nars.truth.DesireFunction;
@@ -46,7 +45,6 @@ public final class Solve extends PreCondition {
     public Solve(Term beliefTerm, Term desireTerm, char puncOverride,
                  PremiseRule rule, boolean anticipate, boolean eternalize, Term term,
 
-                 PreCondition[] secondLayer,
                  PreCondition[] postPreconditions
     ) {
         this.puncOverride = puncOverride;
@@ -75,7 +73,6 @@ public final class Solve extends PreCondition {
 
         this.id = i;
         this.derive = new Derive(rule, term,
-                secondLayer!=null && secondLayer.length>0 ?  secondLayer : null,
                 postPreconditions,
                 anticipate,
                 eternalize);
@@ -160,27 +157,22 @@ public final class Solve extends PreCondition {
 
         private final String id;
 
-        private final PreCondition[] secondLayer;
         private final boolean anticipate;
         private final boolean eternalize;
         private final PremiseRule rule;
         private final Term term;
         private final PreCondition[] postMatch;
 
-        public Derive(PremiseRule rule, Term term, PreCondition[] secondLayer, PreCondition[] postMatch, boolean anticipate, boolean eternalize ) {
+        public Derive(PremiseRule rule, Term term, PreCondition[] postMatch, boolean anticipate, boolean eternalize ) {
             this.rule = rule;
             this.postMatch = postMatch;
             this.term = term;
-            this.secondLayer = secondLayer;
             this.anticipate = anticipate;
             this.eternalize = eternalize;
             String i =
                 "{eternalize=" + this.eternalize +
                 ",anticipate=" + this.anticipate +
                 "}," + term;
-
-            if (this.secondLayer !=null)
-                i += "," + Arrays.toString(this.secondLayer) + "," + Arrays.toString(postMatch);
 
             //TODO trie-ize these into a parallel evaluation
             i += "," + Arrays.toString(postMatch);
@@ -197,46 +189,38 @@ public final class Solve extends PreCondition {
         @Override
         public boolean test(RuleMatch m) {
             //set derivation handlers
-            if (secondLayer!=null) {
-                m.secondLayer.set(this);
-            }
             m.derived.set(this);
             return true;
         }
 
-        public void partial(RuleMatch match) {
-            Term dt = solve(match);
-            if (dt == null) return ;
-
-            for (PreCondition pc : secondLayer) {
-                if (!pc.test(match))
-                    return;
-            }
-
-            //maybe this needs applied somewhre diferent
-            if (!post(match))
-                return ;
-
-            VarCachedVersionMap secondary = match.secondary;
-
-            if (!secondary.isEmpty()) {
-
-                Term rederivedTerm = dt.apply(secondary, true);
-
-                //its possible that the substitution produces an invalid term, ex: an invalid statement
-                dt = rederivedTerm;
-                if (dt == null) return;
-            }
-
-            dt = dt.normalized();
-            if (dt == null) return;
-
-
-            derive(match, dt);
-        }
+//        public void partial(RuleMatch match) {
+//            Term dt = solve(match);
+//            if (dt == null) return ;
+//
+//            //maybe this needs applied somewhre diferent
+//            if (!post(match))
+//                return ;
+//
+//            VarCachedVersionMap secondary = match.secondary;
+//
+//            if (!secondary.isEmpty()) {
+//
+//                Term rederivedTerm = dt.apply(secondary, true);
+//
+//                //its possible that the substitution produces an invalid term, ex: an invalid statement
+//                dt = rederivedTerm;
+//                if (dt == null) return;
+//            }
+//
+//            dt = dt.normalized();
+//            if (dt == null) return;
+//
+//
+//            derive(match, dt);
+//        }
 
         public Term solve(RuleMatch match) {
-            boolean partial = secondLayer != null;
+            boolean partial = true; //secondLayer != null;
 
             Term derivedTerm = match.apply(term, !partial);
 

@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.NAR;
 import nars.nar.Default;
-import nars.nar.SingleStepNAR;
 import nars.nar.Terminal;
 import nars.util.meter.TestNAR;
 import org.junit.After;
@@ -86,8 +85,9 @@ public abstract class AbstractNALTester {
         }
 
         if (single) {
-            l.add( supply("SingleStep[NAL<=" + level + ']',
-                    () -> new SingleStepNAR(512, 1, 2, 3).nal(finalLevel) ) );
+            //throw new RuntimeException("depr");
+//            l.add( supply("SingleStep[NAL<=" + level + ']',
+//                    () -> new SingleStepNAR(512, 1, 2, 3).nal(finalLevel) ) );
         }
 
         return l;

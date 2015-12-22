@@ -171,7 +171,6 @@ public class PremiseRule extends GenericCompound implements Level {
 
         Solve truth = new Solve(post.beliefTruth, post.goalTruth, post.puncOverride,
             this, anticipate, immediate_eternalize, post.term,
-                post.afterConclusions,
                 postPreconditions
         );
         l.add(truth);
@@ -344,9 +343,6 @@ public class PremiseRule extends GenericCompound implements Level {
 
         List<PreCondition> prePreConditionsList = Global.newArrayList(precon.length);
         List<PreCondition> preConditionsList = Global.newArrayList(precon.length);
-
-
-        List<PreCondition> afterConcs = Global.newArrayList(0);
 
 
         Term taskTermPattern = getTaskTermPattern();
@@ -558,10 +554,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
             Term[] modifiers = ((Compound) postcons[i++]).terms();
 
-            PreCondition[] afterConclusions = afterConcs.toArray(new PreCondition[afterConcs.size()]);
-
             PostCondition pc = PostCondition.make(this, t,
-                    afterConclusions,
                     Terms.toSortedSetArray(modifiers));
 
             if (pc!=null)
