@@ -1,5 +1,6 @@
 package nars.guifx;
 
+import javafx.scene.Node;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
@@ -12,9 +13,9 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 10/15/15.
  */
-public class ActiveConceptsLog extends LogPane {
+abstract public class ActiveConceptsLog extends LogPane {
 
-    private List<ConceptSummaryPane> displayed;
+    private List<Node> displayed;
     LinkedHashSet<Concept> display = new LinkedHashSet();
     int maxShown = 64;
 
@@ -24,7 +25,7 @@ public class ActiveConceptsLog extends LogPane {
 
         n.onEachFrame(nn-> {
             if (displayed!=null)
-                displayed.forEach(csp -> csp.update(true, false));
+                displayed.forEach(this::update);
         });
         n.memory.eventConceptChange.on((Concept c) -> {
             //TODO more efficient:
@@ -60,13 +61,23 @@ public class ActiveConceptsLog extends LogPane {
 
     }
 
-    final Map<Concept,ConceptSummaryPane> cache =
+
+
+    final Map<Concept,Node> cache =
             new WeakHashMap();
 
-    ConceptSummaryPane node(Concept cc) {
-        ConceptSummaryPane cp = cache.computeIfAbsent(cc, ConceptSummaryPane::new);
-        cp.update(true,true);
+    public abstract Node make(Concept cc);
+
+    Node node(Concept cc) {
+        Node cp = cache.computeIfAbsent(cc, this::make);
+        if (cp instanceof ConceptSummaryPane)
+            ((ConceptSummaryPane)cp).update(true,true);
         return cp;
     }
 
+    protected void update(Node node) {
+        if (node instanceof ConceptSummaryPane) {
+            ((ConceptSummaryPane)node).update(true, false);
+        }
+    }
 }

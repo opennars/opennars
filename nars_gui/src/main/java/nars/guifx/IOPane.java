@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import nars.NAR;
 import nars.guifx.demo.TaskButton;
 import nars.guifx.util.NSlider;
@@ -15,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by me on 8/2/15.
  */
-public class IOPane extends BorderPane implements FXIconPaneBuilder {
-
+public class IOPane extends BorderPane /*implements FXIconPaneBuilder*/ {
 
     final NSlider vs = new NSlider("Volume", 100, 45, NSlider.BarSlider, 0.0);
     final DoubleProperty volume = vs.value[0];
@@ -92,6 +92,20 @@ public class IOPane extends BorderPane implements FXIconPaneBuilder {
         }
     }
 
+    public class OutputPane extends BorderPane {
+
+        public OutputPane() {
+            super();
+
+            FlowPane menu = new FlowPane( vs );
+            setTop(menu);
+
+            setCenter(
+                new DefaultTracePane(nar, volume)
+            );
+        }
+    }
+
     public IOPane(NAR nar) {
 
 
@@ -101,7 +115,7 @@ public class IOPane extends BorderPane implements FXIconPaneBuilder {
         split.setOrientation(Orientation.VERTICAL);
 
         split.getItems().addAll(
-                new DefaultTracePane(nar, volume),
+                new OutputPane(),
                 new InputPane(nar));
 
         split.setDividerPosition(0,0.85);
@@ -114,30 +128,30 @@ public class IOPane extends BorderPane implements FXIconPaneBuilder {
         setCenter(split);
     }
 
-    @Override
-    public Node newIconPane() {
-
-
-        BorderPane b = new BorderPane();
-        b.setBottom(vs);
-        b.setCenter(new StatusPane(nar, 384));
-        return b;
-
-        //return new NSlider(150, 60);
-
-        /*return new HBox(
-            new LinePlot(
-                    "# Concepts",
-                    () -> nar.concepts().size(),
-                    300,
-                    200,200
-            ),
-            new LinePlot(
-                    "Memory",
-                    () -> Runtime.getRuntime().freeMemory(),
-                    300,
-                    200,200
-            )
-        );*/
-    }
+//    @Override
+//    public Node newIconPane() {
+//
+//
+//        BorderPane b = new BorderPane();
+//        b.setBottom(vs);
+//        b.setCenter(new StatusPane(nar, 384));
+//        return b;
+//
+//        //return new NSlider(150, 60);
+//
+//        /*return new HBox(
+//            new LinePlot(
+//                    "# Concepts",
+//                    () -> nar.concepts().size(),
+//                    300,
+//                    200,200
+//            ),
+//            new LinePlot(
+//                    "Memory",
+//                    () -> Runtime.getRuntime().freeMemory(),
+//                    300,
+//                    200,200
+//            )
+//        );*/
+//    }
 }

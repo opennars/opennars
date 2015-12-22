@@ -237,8 +237,14 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
         return existing;        
     }
     public <T> T the(Object key, Object value) {
+        if (value == null) {
+            throw new RuntimeException("null singleton value specified for key " + key);
+            //TODO remove?
+            //return null;
+        }
         return the(key, new SingletonBuilder(value));
     }
+
     public <T> T the(Object value) {    
         T existing = get((Object)value);
         if (existing == null) {

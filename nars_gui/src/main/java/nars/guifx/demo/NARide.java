@@ -15,6 +15,7 @@ import nars.NAR;
 import nars.NARLoop;
 import nars.budget.Budget;
 import nars.budget.Budgeted;
+import nars.concept.Concept;
 import nars.guifx.*;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
@@ -92,7 +93,18 @@ public class NARide extends BorderPane {
             }
 
             ni.addTool("I/O", () -> new IOPane(nar));
-            ni.addTool("Active Concepts", () -> new ActiveConceptsLog(nar));
+            ni.addTool("Active Concepts Buttons", () -> new ActiveConceptsLog(nar) {
+
+                @Override public Node make(Concept cc) {
+                    return SubButton.make(nar, cc);
+                }
+            });
+            ni.addTool("Active Concepts Log", () -> new ActiveConceptsLog(nar) {
+
+                @Override public Node make(Concept cc) {
+                    return new ConceptSummaryPane(cc);
+                }
+            });
             ni.addTool("Task Tree", () -> new TreePane(nar));
             ni.addTool("Concept Network", () -> new DefaultGrapher(
                 new ConceptsSource(nar),

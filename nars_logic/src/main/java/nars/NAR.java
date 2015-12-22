@@ -506,10 +506,6 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * register a singleton
      */
     public final <X> X the(Object key, X value) {
-        if (value == null) {
-            //TODO remove?
-            return null;
-        }
         return memory.the(key, value);
     }
 
