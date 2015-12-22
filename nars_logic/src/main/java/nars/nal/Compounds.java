@@ -598,15 +598,6 @@ public class Compounds {
                     return null;
                 return negation(t[0]);
 
-            case IMAGE_EXT:
-            case IMAGE_INT:
-                //if no relation was specified and it's an Image,
-                //it must contain a _ placeholder
-                if (hasImdex(t)) {
-                    return image(op, t);
-                }
-                return null;
-
 
             default:
                 return the(op, t, -1);
@@ -633,6 +624,12 @@ public class Compounds {
                 return junction(DISJUNCTION, t);
             case IMAGE_INT:
             case IMAGE_EXT:
+                //if no relation was specified and it's an Image,
+                //it must contain a _ placeholder
+                if (hasImdex(t)) {
+                    //TODO use result of hasImdex in image construction to avoid repeat iteration to find it
+                    return image(op, t);
+                }
                 if ((relation == -1) || (relation > t.length))
                     throw new RuntimeException("invalid index relation: " + relation + " for args " + Arrays.toString(t));
                 break;

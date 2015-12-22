@@ -869,6 +869,11 @@ abstract public class FindSubst extends Versioning implements Subst {
      */
     public boolean matchLinear(TermContainer X, TermContainer Y, int start, int stop) {
 
+        //special case
+        if ((X.size() == 2) && (X.term(1).op(type))) {
+            return matchLinearReverse(X, Y, start, stop);
+        }
+
         boolean success = true;
         for (int i = start; i < stop; i++) {
             if (!match(X.term(i), Y.term(i))) {
@@ -877,6 +882,19 @@ abstract public class FindSubst extends Versioning implements Subst {
             }
         }
 
+        //success
+        return success;
+    }
+
+    public boolean matchLinearReverse(TermContainer X, TermContainer Y, int start, int stop) {
+
+        boolean success = true;
+        for (int i = stop-1; i >=start; i--) {
+            if (!match(X.term(i), Y.term(i))) {
+                success = false;
+                break;
+            }
+        }
 
         //success
         return success;
