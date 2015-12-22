@@ -84,7 +84,7 @@ public class NARMenu extends HBox {
 
             Menu main2 = new Menu("", vol);
 
-            Button finish = JFX.newIconButton(FontAwesomeIcon.FLAG);
+            Button finish = JFX.newIconButton(FontAwesomeIcon.FLAG_CHECKERED);
             finish.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
