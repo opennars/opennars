@@ -5,6 +5,7 @@ import com.gs.collections.api.set.MutableSet;
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
 import nars.Op;
+import nars.nal.Compounds;
 import nars.term.compound.Compound;
 import nars.util.utf8.ByteBuf;
 
@@ -15,7 +16,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static nars.Symbols.ARGUMENT_SEPARATORbyte;
-import static nars.term.compound.GenericCompound.COMPOUND;
 
 
 /**
@@ -202,7 +202,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     static Term intersect(Op resultOp, Compound a, Compound b) {
         MutableSet<Term> i = intersect(a, b);
         if (i.isEmpty()) return null;
-        return COMPOUND(resultOp, i);
+        return Compounds.the(resultOp, i);
     }
 
     static Term difference(Compound a, Compound b) {
@@ -232,7 +232,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
             else {
                 Term[] i = Terms.toArray(dd);
                 if (i == null) return null;
-                return COMPOUND(a.op(), i);
+                return Compounds.the(a.op(), i);
             }
         }
 
@@ -241,7 +241,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     static Term union(Op op, Compound a, Compound b) {
         MutableSet<Term> s = a.toSet();
         s.addAll(b.toSet());
-        return COMPOUND(op, s);
+        return Compounds.the(op, s);
     }
 
     /** returns true if evaluates true for any terms */

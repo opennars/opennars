@@ -93,8 +93,6 @@ public abstract class ConceptProcess extends AbstractPremise {
         return currentBelief;
     }
 
-
-    //TODO cache this value
     @Override
     public final boolean isCyclic() {
         return cyclic;

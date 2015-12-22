@@ -47,18 +47,6 @@ abstract public class FindSubst extends Versioning implements Subst {
     /** parent, if in subterms */
     public final Versioned<Compound> parent;
 
-    /** unification power available at start of current branch */
-    //public final Versioned<Integer> branchPower;
-
-    /** unification power remaining in the current branch */
-    int power;
-
-    /** current power divisor which divides power to
-     *  limits the # of permutations
-     *  that can be tried, or the # of subterms that can be compared
-     */
-    @Deprecated int powerDivisor;
-
 
 
     final List<Termutator> termutes = Global.newArrayList();
@@ -92,7 +80,6 @@ abstract public class FindSubst extends Versioning implements Subst {
                 ", term:" + term +
                 ", parent:" + parent +
                 //"random:" + random +
-                ", power:" + power +
                 ", xy:" + xy +
                 ", yx:" + yx +
                 '}';
@@ -121,11 +108,6 @@ abstract public class FindSubst extends Versioning implements Subst {
         //branchPower = new Versioned(this);
 
 
-    }
-
-    public void setPower(int startPower) {
-        power = startPower;
-        powerDivisor = 1;
     }
 
     /** called each time all variables are satisfied in a unique way */
@@ -201,17 +183,7 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-    /**
-     * find substitutions, returning the success state.
-     */
-    public final void matchAll(Term x, Term y, int startPower) {
 
-        setPower(startPower);
-
-        matchAll(x, y);
-
-        //System.out.println(startPower + "\t" + power);
-    }
 
 
 
@@ -902,11 +874,6 @@ abstract public class FindSubst extends Versioning implements Subst {
      */
     public boolean matchLinear(TermContainer X, TermContainer Y, int start, int stop) {
 
-        int startDivisor = powerDivisor;
-        if (!powerDividable(stop-start))
-            return false;
-
-
         boolean success = true;
         for (int i = start; i < stop; i++) {
             if (!match(X.term(i), Y.term(i))) {
@@ -914,9 +881,6 @@ abstract public class FindSubst extends Versioning implements Subst {
                 break;
             }
         }
-
-
-        powerDivisor = startDivisor;
 
 
         //success
@@ -960,19 +924,7 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-    private boolean powerDividable(int factor) {
-        if (powerAvailable() < factor) return false;
 
-        powerDivisor = Math.max(1, powerDivisor * factor);
-
-        return true;
-    }
-
-
-    private int powerAvailable() {
-        //if (powerDivisor <= 0) powerDivisor = 1; //HACK
-        return power / powerDivisor;
-    }
 
     /** returns true if the assignment was allowed, false otherwise */
     public final boolean putXY(Term x /* usually a Variable */, Term y) {

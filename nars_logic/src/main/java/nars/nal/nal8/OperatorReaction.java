@@ -226,7 +226,7 @@ public abstract class OperatorReaction implements Function<Task,List<Task>>, Rea
 
                 budget(b).
                 present(memory).
-                parent(operation).
+                //parent(operation). //https://github.com/opennars/opennars/commit/23d34d5ddaf7c71348d0a70a88e2805ec659ed1c#diff-abb6b480847c96e2dbf488d303fb4962L235
                 because("Executed")
         );
 

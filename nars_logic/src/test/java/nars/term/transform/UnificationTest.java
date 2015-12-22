@@ -75,7 +75,7 @@ public class UnificationTest  {
                 return true;
             }
         };
-        sub.matchAll(t1, t2, power);
+        sub.matchAll(t1, t2);
 
         assertEquals(shouldSub, subbed.get());
 

@@ -1,24 +1,18 @@
 package nars.term.compound;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
-import nars.$;
 import nars.Op;
 import nars.nal.Compounds;
-import nars.nal.nal7.Parallel;
-import nars.nal.nal7.Sequence;
 import nars.nal.nal8.Operator;
 import nars.term.*;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static nars.Op.SET_EXT;
-import static nars.Op.SET_INT;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
@@ -30,86 +24,6 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     protected final transient int hash;
     private transient boolean normalized = false;
-
-    /** main compound construction entry-point */
-    public static Term COMPOUND(Op op, Collection<Term> t) {
-        return COMPOUND(op, Terms.toArray(t));
-    }
-
-    /** main compound construction entry-point */
-    public static Term COMPOUND(Op op, Term... t) {
-
-        switch (op) {
-            case NEGATE:
-                if (t.length!=1)
-                    return null;
-                return Compounds.negation(t[0]);
-
-            case IMAGE_EXT:
-            case IMAGE_INT:
-                //if no relation was specified and it's an Image,
-                //it must contain a _ placeholder
-                if (Compounds.hasImdex(t)) {
-                    return Compounds.image(op, t);
-                }
-                return null;
-
-
-            default:
-                return COMPOUND(op, t, -1);
-        }
-    }
-
-    public static Term COMPOUND(Op op, Term[] t, int relation) {
-
-        /* special handling */
-        switch (op) {
-            case SEQUENCE:
-                return Sequence.makeSequence(t);
-            case PARALLEL:
-                return Parallel.makeParallel(t);
-            case INSTANCE:
-                return $.instance(t[0], t[1]);
-            case PROPERTY:
-                return $.property(t[0], t[1]);
-            case INSTANCE_PROPERTY:
-                return $.instprop(t[0], t[1]);
-            case CONJUNCTION:
-                return Compounds.junction(Op.CONJUNCTION, t);
-            case DISJUNCTION:
-                return Compounds.junction(Op.DISJUNCTION, t);
-            case IMAGE_INT:
-            case IMAGE_EXT:
-                if ((relation == -1) || (relation > t.length))
-                    throw new RuntimeException("invalid index relation: " + relation + " for args " + Arrays.toString(t));
-                break;
-            case DIFF_EXT:
-                Term et0 = t[0], et1 = t[1];
-                if ((et0.op(SET_EXT) && et1.op(SET_EXT) )) {
-                    return Compounds.subtractSet(Op.SET_EXT, (Compound)et0, (Compound)et1);
-                }
-                break;
-            case DIFF_INT:
-                Term it0 = t[0], it1 = t[1];
-                if ((it0.op(SET_INT) && it1.op(SET_INT) )) {
-                    return Compounds.subtractSet(Op.SET_INT, (Compound)it0, (Compound)it1);
-                }
-                break;
-            case INTERSECT_EXT: return Compounds.newIntersectEXT(t);
-            case INTERSECT_INT: return Compounds.newIntersectINT(t);
-        }
-
-
-        if (op.isStatement()) {
-            return Compounds.statement(op, t);
-        } else {
-            //product, set, etc..
-            return Compounds.newCompound(op, t, relation, op.isCommutative());
-        }
-
-
-
-    }
 
 
     protected GenericCompound(Op op, T... subterms) {
@@ -208,7 +122,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public Term clone(Term[] replaced) {
-        return COMPOUND(op(), replaced, relation);
+        return Compounds.the(op(), replaced, relation);
     }
 
     @Override
@@ -274,9 +188,9 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return terms.vars();
     }
 
-    public final Term[] cloneTermsReplacing(int index, Term replaced) {
-        return terms.cloneTermsReplacing(index, replaced);
-    }
+//    public final Term[] cloneTermsReplacing(int index, Term replaced) {
+//        return terms.cloneTermsReplacing(index, replaced);
+//    }
 
     public final boolean isEmpty() {
         return terms.isEmpty();

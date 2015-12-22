@@ -122,7 +122,7 @@ public interface Premise extends Level, Tasked {
             }
 
         };
-        f.matchAll(t[0], t[1], Global.UNIFICATION_POWER);
+        f.matchAll(t[0], t[1]);
     }
 
 

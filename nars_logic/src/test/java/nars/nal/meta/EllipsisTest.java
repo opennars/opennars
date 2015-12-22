@@ -91,7 +91,7 @@ public class EllipsisTest {
                     }
                 };
 
-                f.matchAll(x, y, power);
+                f.matchAll(x, y);
 
                 assertTrue(//f.toString(),
                         matched.get());
@@ -314,7 +314,6 @@ public class EllipsisTest {
                 }
             };
 
-            f.setPower(1000);
             f.matchAll(X, Y);
 
             results.forEach(System.out::println);

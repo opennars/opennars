@@ -24,7 +24,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.term.compound.GenericCompound;
 import nars.term.match.*;
 import nars.term.variable.Variable;
 import nars.truth.DefaultTruth;
@@ -960,7 +959,7 @@ public class Narsese extends BaseParser<Object>  {
         }
         else {
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
-            return GenericCompound.COMPOUND(op, va);
+            return Compounds.the(op, va);
         }
     }
 

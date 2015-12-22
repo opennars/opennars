@@ -13,7 +13,6 @@ import nars.task.MutableTask;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.term.compound.GenericCompound;
 import nars.term.match.VarPattern;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.List;
 
-import static nars.term.compound.GenericCompound.COMPOUND;
+import static nars.Op.*;
 
 /**
  * core utility class for:
@@ -82,7 +81,7 @@ public abstract class $  {
 //            return new GenericCompound(Op.INHERITANCE, (Operator)predicate, (Product)subject);
 //        else
 
-        return (T) COMPOUND(Op.INHERIT, subj, pred);
+        return (T) Compounds.the(INHERIT, subj, pred);
     }
 
 
@@ -92,7 +91,7 @@ public abstract class $  {
 
 
     public static Term sim(Term subj, Term pred) {
-        return COMPOUND(Op.SIMILAR, subj, pred);
+        return Compounds.the(SIMILAR, subj, pred);
     }
 
     public static Compound oper(String operator, String... args) {
@@ -109,8 +108,8 @@ public abstract class $  {
     }
 
     public static Compound oper(Operator opTerm, Compound arg) {
-        return (Compound) COMPOUND(
-                Op.INHERIT,
+        return (Compound) Compounds.the(
+                INHERIT,
                 arg == null ? Compounds.Empty : arg,
                 opTerm
         );
@@ -118,11 +117,11 @@ public abstract class $  {
 
 
     public static Term impl(Term a, Term b) {
-        return COMPOUND(Op.IMPLICATION, a, b);
+        return Compounds.the(IMPLICATION, a, b);
     }
 
     public static Term neg(Term x) {
-        return COMPOUND(Op.NEGATE, x);
+        return Compounds.the(NEGATE, x);
     }
 
     public static CyclesInterval cycles(int numCycles) {
@@ -140,7 +139,7 @@ public abstract class $  {
         if (l == 0) //length 0 product are allowd and shared
             return Compounds.Empty;
 
-        return (Compound) COMPOUND(Op.PRODUCT, t);
+        return (Compound) Compounds.the(PRODUCT, t);
     }
 
     /** creates from a sublist of a list */
@@ -163,35 +162,35 @@ public abstract class $  {
 
 
     public static Variable varDep(int i) {
-        return v(Op.VAR_DEP, i);
+        return v(VAR_DEP, i);
     }
 
     public static Variable varDep(String s) {
-        return v(Op.VAR_DEP, s);
+        return v(VAR_DEP, s);
     }
 
     public static Variable varIndep(int i) {
-        return v(Op.VAR_INDEP, i);
+        return v(VAR_INDEP, i);
     }
 
     public static Variable varIndep(String s) {
-        return v(Op.VAR_INDEP, s);
+        return v(VAR_INDEP, s);
     }
 
     public static Variable varQuery(int i) {
-        return v(Op.VAR_QUERY, i);
+        return v(VAR_QUERY, i);
     }
 
     public static Variable varQuery(String s) {
-        return v(Op.VAR_QUERY, s);
+        return v(VAR_QUERY, s);
     }
 
     public static Variable varPattern(int i) {
-        return v(Op.VAR_PATTERN, i);
+        return v(VAR_PATTERN, i);
     }
 
     public static Variable varPattern(String s) {
-        return v(Op.VAR_PATTERN, s);
+        return v(VAR_PATTERN, s);
     }
 
     /**
@@ -236,7 +235,7 @@ public abstract class $  {
     }
 
     public static Term implafter(Term condition, Term consequence) {
-        return COMPOUND(Op.IMPLICATION_AFTER, condition, consequence);
+        return Compounds.the(IMPLICATION_AFTER, condition, consequence);
     }
 
     public static Compound sete(Collection<Term> t) {
@@ -252,7 +251,7 @@ public abstract class $  {
     }
 
     public static Compound sete(Term... t) {
-        return (Compound) GenericCompound.COMPOUND(Op.SET_EXT, t);
+        return (Compound) Compounds.the(SET_EXT, t);
     }
 
     /** shorthand for extensional set */
@@ -261,7 +260,7 @@ public abstract class $  {
     }
 
     public static Compound seti(Term... t) {
-        return (Compound) GenericCompound.COMPOUND(Op.SET_INT, t);
+        return (Compound) Compounds.the(SET_INT, t);
     }
 
     /**
@@ -314,7 +313,7 @@ public abstract class $  {
     public static Term conj(Term a, Term b) {
 
 
-        return COMPOUND(Op.CONJUNCTION, a, b);
+        return Compounds.the(CONJUNCTION, a, b);
     }
 
     static {
@@ -382,34 +381,34 @@ public abstract class $  {
     }
 
     public static Term equiv(Term subject, Term pred) {
-        return COMPOUND(Op.EQUIV, subject, pred);
+        return Compounds.the(EQUIV, subject, pred);
     }
     public static Term equivAfter(Term subject, Term pred) {
-        return COMPOUND(Op.EQUIV_AFTER, subject, pred);
+        return Compounds.the(EQUIV_AFTER, subject, pred);
     }
     public static Term equivWhen(Term subject, Term pred) {
-        return COMPOUND(Op.EQUIV_WHEN, subject, pred);
+        return Compounds.the(EQUIV_WHEN, subject, pred);
     }
 
     public static Term diffInt(Term a, Term b) {
-        return COMPOUND(Op.DIFF_INT, a, b);
+        return Compounds.the(DIFF_INT, a, b);
     }
 
     public static Term diffExt(Term a, Term b) {
-        return COMPOUND(Op.DIFF_EXT, a, b);
+        return Compounds.the(DIFF_EXT, a, b);
     }
 
     public static Term imageExt(Term... x) {
-        return COMPOUND(Op.IMAGE_EXT, x);
+        return Compounds.the(IMAGE_EXT, x);
     }
     public static Term imageInt(Term... x) {
-        return COMPOUND(Op.IMAGE_INT, x);
+        return Compounds.the(IMAGE_INT, x);
     }
     public static Term sect(Term... x) {
-        return COMPOUND(Op.INTERSECT_EXT, x);
+        return Compounds.the(INTERSECT_EXT, x);
     }
     public static Term sectInt(Term... x) {
-        return COMPOUND(Op.INTERSECT_INT, x);
+        return Compounds.the(INTERSECT_INT, x);
     }
 
     public static Operator operator(String name) {

@@ -11,8 +11,6 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.Solve;
 import nars.nal.meta.post.ShiftOccurrence;
-import nars.nal.meta.post.Substitute;
-import nars.nal.meta.post.SubstituteIfUnified;
 import nars.nal.meta.pre.*;
 import nars.nal.op.*;
 import nars.term.Term;
@@ -44,6 +42,7 @@ public class PremiseRule extends GenericCompound implements Level {
         intersect.class,
         differ.class,
         union.class,
+        substitute.class,
         substituteIfUnifies.class
     };
 
@@ -486,12 +485,14 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
                 case "substitute":
-                    afterConcs.add(new Substitute(arg1, (Variable)arg2));
-                    break;
+                    throw new RuntimeException("depr");
+                    //afterConcs.add(new Substitute(arg1, (Variable)arg2));
+                    //break;
 
                 case "substitute_if_unifies":
-                    afterConcs.add(new SubstituteIfUnified(arg1, arg2, args[2]));
-                    break;
+                    throw new RuntimeException("depr");
+                    //afterConcs.add(new SubstituteIfUnified(arg1, arg2, args[2]));
+                    //break;
 
 //                case "intersection":
 //                    afterConcs.add(new Intersect(arg1, arg2, args[2]));

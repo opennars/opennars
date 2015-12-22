@@ -47,7 +47,7 @@ public class FindSubstTest {
             }
         };
 
-        f.matchAll(b, a, 1024);
+        f.matchAll(b, a);
 
         assertEquals(matched.get(), matches);
 

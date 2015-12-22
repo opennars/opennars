@@ -5,6 +5,8 @@ import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.nal7.Order;
+import nars.nal.nal7.Parallel;
+import nars.nal.nal7.Sequence;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
@@ -19,6 +21,8 @@ import nars.truth.Truth;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.TreeSet;
 
 import static com.google.common.collect.ObjectArrays.concat;
@@ -36,7 +40,7 @@ public class Compounds {
     /**
      * universal zero-length product
      */
-    public static final Compound Empty = (Compound) GenericCompound.COMPOUND(Op.PRODUCT, Terms.Empty);
+    public static final Compound Empty = (Compound) the(Op.PRODUCT, Terms.Empty);
     /**
      * implications, equivalences, and interval
      */
@@ -55,7 +59,7 @@ public class Compounds {
             // (--,(--,P)) = P
             return ((Compound) t).term(0);
         }
-        return GenericCompound.COMPOUND(Op.NEGATE, new Term[]{t}, -1);
+        return the(Op.NEGATE, new Term[]{t}, -1);
     }
 
     public static void setAppend(Compound set, Appendable p, boolean pretty) throws IOException {
@@ -136,7 +140,7 @@ public class Compounds {
             res = ser;
         }
 
-        return GenericCompound.COMPOUND(
+        return the(
                 o,
                 res, index);
     }
@@ -168,14 +172,14 @@ public class Compounds {
     public static void productAppend(Compound product, Appendable p, boolean pretty) throws IOException {
 
         int s = product.size();
-        p.append((char) COMPOUND_TERM_OPENER);
+        p.append(COMPOUND_TERM_OPENER);
         for (int i = 0; i < s; i++) {
             product.term(i).append(p, pretty);
             if (i < s - 1) {
                 p.append(pretty ? ", " : ",");
             }
         }
-        p.append((char) COMPOUND_TERM_CLOSER);
+        p.append(COMPOUND_TERM_CLOSER);
     }
 
     /**
@@ -262,7 +266,7 @@ public class Compounds {
         argument[0] = relation;
         System.arraycopy(product.terms(), 0, argument, 1, pl - 1);
 
-        return GenericCompound.COMPOUND(Op.IMAGE_EXT, argument, index + 1);
+        return the(Op.IMAGE_EXT, argument, index + 1);
     }
 
     /**
@@ -356,7 +360,7 @@ public class Compounds {
         switch (t.length) {
             case 1:
                 return t[0];
-            case 2: {
+            case 2:
 
                 Term subject = t[0];
                 Term predicate = t[1];
@@ -401,7 +405,6 @@ public class Compounds {
                     return newCompound(op, t, -1, false); //already sorted
 
                 return null;
-            }
             default:
                 throw new RuntimeException("invalid statement arguments");
         }
@@ -449,8 +452,8 @@ public class Compounds {
                 throw new RuntimeException("invalid case");
         }
 
-        return GenericCompound.COMPOUND(op,
-                GenericCompound.COMPOUND(conjOp, subject, oldCondition),
+        return the(op,
+                the(conjOp, subject, oldCondition),
                 pred(predicate));
     }
 
@@ -579,6 +582,86 @@ public class Compounds {
                 sz++;
         }
         return sz;
+    }
+
+    /** main compound construction entry-point */
+    public static Term the(Op op, Collection<Term> t) {
+        return the(op, Terms.toArray(t));
+    }
+
+    /** main compound construction entry-point */
+    public static Term the(Op op, Term... t) {
+
+        switch (op) {
+            case NEGATE:
+                if (t.length!=1)
+                    return null;
+                return negation(t[0]);
+
+            case IMAGE_EXT:
+            case IMAGE_INT:
+                //if no relation was specified and it's an Image,
+                //it must contain a _ placeholder
+                if (hasImdex(t)) {
+                    return image(op, t);
+                }
+                return null;
+
+
+            default:
+                return the(op, t, -1);
+        }
+    }
+
+    public static Term the(Op op, Term[] t, int relation) {
+
+        /* special handling */
+        switch (op) {
+            case SEQUENCE:
+                return Sequence.makeSequence(t);
+            case PARALLEL:
+                return Parallel.makeParallel(t);
+            case INSTANCE:
+                return $.instance(t[0], t[1]);
+            case PROPERTY:
+                return $.property(t[0], t[1]);
+            case INSTANCE_PROPERTY:
+                return $.instprop(t[0], t[1]);
+            case CONJUNCTION:
+                return junction(CONJUNCTION, t);
+            case DISJUNCTION:
+                return junction(DISJUNCTION, t);
+            case IMAGE_INT:
+            case IMAGE_EXT:
+                if ((relation == -1) || (relation > t.length))
+                    throw new RuntimeException("invalid index relation: " + relation + " for args " + Arrays.toString(t));
+                break;
+            case DIFF_EXT:
+                Term et0 = t[0], et1 = t[1];
+                if ((et0.op(SET_EXT) && et1.op(SET_EXT) )) {
+                    return subtractSet(Op.SET_EXT, (Compound)et0, (Compound)et1);
+                }
+                break;
+            case DIFF_INT:
+                Term it0 = t[0], it1 = t[1];
+                if ((it0.op(SET_INT) && it1.op(SET_INT) )) {
+                    return subtractSet(Op.SET_INT, (Compound)it0, (Compound)it1);
+                }
+                break;
+            case INTERSECT_EXT: return newIntersectEXT(t);
+            case INTERSECT_INT: return newIntersectINT(t);
+        }
+
+
+        if (op.isStatement()) {
+            return statement(op, t);
+        } else {
+            //product, set, etc..
+            return newCompound(op, t, relation, op.isCommutative());
+        }
+
+
+
     }
 
 

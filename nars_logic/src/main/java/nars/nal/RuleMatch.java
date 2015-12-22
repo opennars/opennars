@@ -68,7 +68,7 @@ public class RuleMatch extends FindSubst {
         try {
             transforms.put(o, c.newInstance());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(c + ": " + e);
         }
     }
 
@@ -167,12 +167,12 @@ public class RuleMatch extends FindSubst {
         ) );
         cyclic = premise.isCyclic();
 
-        //set initial power which will be divided by branch
-        setPower(
-            //LERP the power in min/max range by premise mean priority
-            (int) ((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
-                    + Global.UNIFICATION_POWERmin)
-        );
+//        //set initial power which will be divided by branch
+//        setPower(
+//            //LERP the power in min/max range by premise mean priority
+//            (int) ((p.getMeanPriority() * (Global.UNIFICATION_POWER - Global.UNIFICATION_POWERmin))
+//                    + Global.UNIFICATION_POWERmin)
+//        );
 
         //setPower(branchPower.get()); //HACK is this where it should be assigned?
 
