@@ -270,7 +270,9 @@ public class LocalRules {
         //memory.eventDerived.emit(sol);
             //nal.nar().input(sol); //is this necessary? i cant find any reason for reinserting to input onw that it's part of the concept's belief/goal tables
         //}
-        memory.eventAnswer.emit(Tuples.twin(question, sol));
+        if(question.isInput()) { //only report answers to input events
+            memory.eventAnswer.emit(Tuples.twin(question, sol));
+        }
 
         return sol;
 
