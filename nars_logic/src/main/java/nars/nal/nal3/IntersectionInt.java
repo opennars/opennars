@@ -50,7 +50,7 @@ public class IntersectionInt extends Intersect {
     }
 
     public static IntersectionInt isIntersectionInt(Term t) {
-        if (t instanceof IntersectionExt) {
+        if (t instanceof IntersectionInt) {
             IntersectionInt c = (IntersectionInt) t;
             return c;
         }
