@@ -37,8 +37,8 @@ public class JFX {
 
     final static ColorArray grayscale = new ColorArray(
             128,
-            Color.rgb(0, 0, 0, 1.0),
-            Color.rgb(255,255,255,1.0)
+            Color.rgb(255,255,255,1.0),
+            Color.rgb(0, 0, 0, 1.0)
     );
 
    public static void popup(Application a) {
