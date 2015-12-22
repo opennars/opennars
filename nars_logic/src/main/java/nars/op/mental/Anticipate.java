@@ -34,6 +34,7 @@ import nars.nal.nal7.Sequence;
 import nars.task.FluentTask;
 import nars.task.Task;
 import nars.term.Compound;
+import nars.term.Term;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
@@ -48,7 +49,7 @@ import java.util.Map;
 public class Anticipate {
 
     public float DEFAULT_CONFIRMATION_EXPECTATION = 0.51f;
-    public static float TOLERANCE_DIV=0.5f; //can even take 2 times as long its fine
+    public static float TOLERANCE_FACTOR=0.5f; //0.5 means if it happens in 2 seconds, up to max 3 seconds is also fine
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
@@ -87,15 +88,14 @@ public class Anticipate {
             return; //Besides that the task has to be a judgement, if the truth expectation is below confirmation expectation,
         }           //the truth value of the incoming event was too low to confirm that the expected event has happened.
 
-            Concept c = nar.concept(tt);
-        if(c==null || c.get(Anticipate.class) == null || now > occ) { //it's not observable, or about thee future
+        if(!isObservable(nar, tt) || now > occ) { //it's not observable, or about thee future
             return;                                            //in the former case CWA can not be applied in general
         }                                                      //and in the latter case anticipation is pointless
 
         if (debug)
             System.err.println("Anticipating " + tt + " in " + (t.getOccurrenceTime() - now));
 
-        TaskTime taskTime = new TaskTime(t, t.getCreationTime());
+        TaskTime taskTime = new TaskTime(t, t.getCreationTime(), t.getParentTask(), t.getParentBelief(), nar);
 
         if(testing) {
             String s = "anticipating: "+taskTime.task.getTerm().toString();
@@ -104,6 +104,14 @@ public class Anticipate {
         }
 
         anticipations.put(tt, taskTime);
+    }
+
+    public static boolean isObservable(NAR nar, Term t) {
+        Concept c = nar.concept(t);
+        if(c != null && c.get(Anticipate.class) != null) {
+            return true;
+        }
+        return false;
     }
 
     protected void deriveDidntHappen(Compound prediction, TaskTime tt) {
@@ -214,20 +222,27 @@ public class Anticipate {
         /** cached locally, same value as in task */
         private final int hash;
         public float tolerance = 0;
+        public Task eventParent = null;
 
-        public TaskTime(Task task, long creationTime) {
+        public TaskTime(Task task, long creationTime, Task parentTask, Task parentBelief, NAR nar) { //better save it here since the soft refs will be gone later
             super();
             this.task = task;
+            if(parentTask != null && isObservable(nar, parentTask.getTerm())) {
+                eventParent = parentTask;
+            }
+            if(parentBelief != null && isObservable(nar, parentBelief.getTerm())) {
+                eventParent = parentBelief;
+            }
             this.creationTime = task.getCreationTime();
             this.occurrTime = task.getOccurrenceTime();
             this.hash = (int)(31 * creationTime + occurrTime);
             //expiredate in relation how long we predicted forward
             long prediction_time = this.occurrTime - this.creationTime;
-            tolerance = prediction_time/TOLERANCE_DIV;
+            tolerance = prediction_time*TOLERANCE_FACTOR;
         }
 
         public boolean tooLate(long occur) {
-            return occur > occurrTime + tolerance;
+            return occur >= occurrTime + tolerance;
         }
 
         public boolean inTime(long occur) {
