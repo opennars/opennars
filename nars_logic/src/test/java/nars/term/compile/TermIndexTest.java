@@ -1,5 +1,6 @@
 package nars.term.compile;
 
+import javassist.scopedpool.SoftValueHashMap;
 import nars.MapIndex;
 import nars.NAR;
 import nars.nar.Default;
@@ -14,6 +15,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.WeakHashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -21,7 +23,8 @@ import static org.junit.Assert.assertTrue;
 
 public class TermIndexTest {
 
-    @Test public void testTaskTermSharing1() {
+    @Test
+    public void testTaskTermSharing1() {
 
         NAR t = new Terminal();
 
@@ -35,9 +38,18 @@ public class TermIndexTest {
     }
 
     @Test public void testTermSharing1() {
-        testTermSharing(new MapIndex(new HashMap()));
-        testTermSharing(new MapIndex(new UnifriedMap()));
+        testTermSharing(new MapIndex(new HashMap(), new HashMap()));
     }
+    @Test public void testTermSharing2() {
+        testTermSharing(new MapIndex(new UnifriedMap(), new UnifriedMap()));
+    }
+    @Test public void testTermSharing3() {
+        testTermSharing(new MapIndex(new SoftValueHashMap(), new SoftValueHashMap()));
+    }
+    @Test public void testTermSharing4() {
+        testTermSharing(new MapIndex(new WeakHashMap(), new WeakHashMap()));
+    }
+
 
     public void testTermSharing(TermIndex tt) {
         NAR n = new Terminal(tt);
@@ -52,7 +64,8 @@ public class TermIndexTest {
 
     }
 
-    @Test public void testSequenceNotShared() {
+    @Test
+    public void testSequenceNotShared() {
         NAR n = new Terminal();
         testNotShared(n, "(&/, 1, 2, /2, 3, /4)");
 
@@ -82,7 +95,7 @@ public class TermIndexTest {
         //t.memory.terms.forEachTerm(System.out::println);
 
         assertEquals(t1, t2);
-        if (t1!=t2)
+        if (t1 != t2)
             System.err.println("share failed: " + t1);
 
         assertTrue(t1 == t2);
@@ -90,13 +103,14 @@ public class TermIndexTest {
         if (t1 instanceof Compound) {
             //test all subterms are shared
             for (int i = 0; i < t1.get().size(); i++)
-                testShared(((Compound)t1).term(i), ((Compound)t2).term(i));
+                testShared(((Compound) t1).term(i), ((Compound) t2).term(i));
         }
     }
 
     @Ignore
-    @Test public void testRuleTermsAddedToMemoryTermIndex() {
-        NAR d = new Default(100,1,1,1);
+    @Test
+    public void testRuleTermsAddedToMemoryTermIndex() {
+        NAR d = new Default(100, 1, 1, 1);
         Set<Term> t = new TreeSet();
         d.memory.index.forEach(x -> t.add(x.term()));
 

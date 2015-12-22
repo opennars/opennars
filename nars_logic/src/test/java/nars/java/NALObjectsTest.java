@@ -306,7 +306,7 @@ public class NALObjectsTest  {
 
         NAR n = new Default(512,8,4,2);
 
-        n.log();
+        //n.log();
 
         //EventCount count = new EventCount(n);
 
@@ -316,7 +316,7 @@ public class NALObjectsTest  {
         tc.getClassMethods();
 
 
-        n.frame(32);
+        n.frame(16);
 
 
 

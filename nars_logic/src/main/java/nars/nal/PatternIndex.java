@@ -19,7 +19,7 @@ import java.util.HashMap;
 public class PatternIndex extends MapIndex {
 
     public PatternIndex() {
-        super(new HashMap(1024));
+        super(new HashMap(1024),new HashMap(1024));
     }
 
 

@@ -6,8 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import nars.NAR;
@@ -68,8 +68,9 @@ public class LogPane extends BorderPane  {
 
     public LogPane() {
 
-        content = new FlowPane();
-        //content = new VBox(1);
+        //content = new FlowPane();
+        content = new VBox(1);
+
         //content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         //((VBox)content).setFillWidth(false);
 

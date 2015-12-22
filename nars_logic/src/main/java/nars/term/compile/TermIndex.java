@@ -1,11 +1,13 @@
 package nars.term.compile;
 
+import javassist.scopedpool.SoftValueHashMap;
 import nars.MapIndex;
 import nars.bag.impl.CacheBag;
 import nars.term.Termed;
 
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
 /**
@@ -47,11 +49,22 @@ public interface TermIndex extends CacheBag<Termed, Termed> {
 //        CacheBuilder builder = CacheBuilder.newBuilder()
 //            .maximumSize(capacity);
         return new MapIndex(
-            new HashMap(capacity)
+            new HashMap(capacity),new HashMap(capacity*2)
             //new UnifriedMap()
         );
     }
-
+    static TermIndex memorySoft(int capacity) {
+        return new MapIndex(
+                new SoftValueHashMap(capacity),
+                new SoftValueHashMap(capacity*2)
+        );
+    }
+    static TermIndex memoryWeak(int capacity) {
+        return new MapIndex(
+                new WeakHashMap(capacity),
+                new WeakHashMap(capacity*2)
+        );
+    }
     default void print(PrintStream out) {
         forEach(out::println);
     }

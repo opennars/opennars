@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import nars.NAR;
-import nars.guifx.demo.SubButton;
+import nars.guifx.demo.TaskButton;
 import nars.guifx.util.NSlider;
 import nars.task.Task;
 import org.jetbrains.annotations.NotNull;
@@ -87,8 +87,8 @@ public class IOPane extends BorderPane implements FXIconPaneBuilder {
 
         @NotNull
         public Node getTaskNode(Task t) {
-            //return new TaskButton(nar, t.getTask());
-            return SubButton.make(nar, t);
+            return new TaskButton(nar, t.getTask());
+            //return SubButton.make(nar, t);
         }
     }
 

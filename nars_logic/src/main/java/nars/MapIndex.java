@@ -6,7 +6,6 @@ import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
 import java.io.PrintStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -16,12 +15,14 @@ import java.util.function.Consumer;
  */
 public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
 
-    private final Map<TermContainer, TermContainer> subterms = new HashMap();
+    private final Map<TermContainer, TermContainer> subterms;
 
 
-    public MapIndex(Map<Termed, Termed> data) {
+    public MapIndex(Map<Termed, Termed> data, Map<TermContainer, TermContainer> subterms) {
         super(data);
+        this.subterms = subterms;
     }
+
     //new ConcurrentHashMap(4096); //TODO try weakref identity hash map etc
 
 
