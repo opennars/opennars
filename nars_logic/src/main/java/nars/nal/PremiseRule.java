@@ -10,7 +10,6 @@ import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.Solve;
-import nars.nal.meta.post.ShiftOccurrence;
 import nars.nal.meta.pre.*;
 import nars.nal.op.*;
 import nars.term.Term;
@@ -43,7 +42,8 @@ public class PremiseRule extends GenericCompound implements Level {
         differ.class,
         union.class,
         substitute.class,
-        substituteIfUnifies.class
+        substituteIfUnifies.class,
+        occurrsRelative.class
     };
 
     public boolean immediate_eternalize = false;
@@ -444,9 +444,6 @@ public class PremiseRule extends GenericCompound implements Level {
                     next = NoCommonSubterm.make(arg1, arg2);
                     break;
 
-
-
-
                 case "event":
                     preNext = Temporality.both;
                     break;
@@ -464,11 +461,12 @@ public class PremiseRule extends GenericCompound implements Level {
                     break;
 
                 case "shift_occurrence_forward":
-                    next = ShiftOccurrence.make(arg1, arg2, true);
-                    break;
                 case "shift_occurrence_backward":
-                    next = ShiftOccurrence.make(arg1, arg2, false);
-                    break;
+                    throw new RuntimeException("depr");
+                    //next = ShiftOccurrence.make(arg1, arg2, true);
+                    //break;
+                    //next = ShiftOccurrence.make(arg1, arg2, false);
+                    //break;
 
                 case "measure_time":
                     if (args.length!=1)

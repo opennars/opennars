@@ -1,8 +1,9 @@
 package nars.util.meter;
 
+import nars.NAR;
 import nars.Narsese;
 import nars.nal.PremiseRule;
-import nars.nar.SingleStepNAR;
+import nars.nar.Default;
 import nars.task.Task;
 
 /**
@@ -34,17 +35,19 @@ public class RuleTest extends TestNAR {
         this(task, belief, result, 0, 1, 0, 1);
     }
     public RuleTest(String task, String belief, String result, float minFreq, float maxFreq, float minConf, float maxConf) {
-        this(new SingleStepNAR(), task, belief, result, minFreq, maxFreq, minConf, maxConf);
+        this(//new SingleStepNAR(),
+                new Default(),
+                task, belief, result, minFreq, maxFreq, minConf, maxConf);
     }
 
 
     static final Narsese p = Narsese.the();
 
-    public RuleTest(SingleStepNAR nar, String task, String belief, String result, float minFreq, float maxFreq, float minConf, float maxConf) {
+    public RuleTest(NAR nar, String task, String belief, String result, float minFreq, float maxFreq, float minConf, float maxConf) {
         this(nar, nar.task(task), nar.task(belief), result, minFreq, maxFreq, minConf, maxConf);
 
     }
-    public RuleTest(SingleStepNAR nar, Task task, Task belief, String result, float minFreq, float maxFreq, float minConf, float maxConf) {
+    public RuleTest(NAR nar, Task task, Task belief, String result, float minFreq, float maxFreq, float minConf, float maxConf) {
         super(nar);
 
         nar.input(task);

@@ -394,6 +394,19 @@ public class NarseseTest {
         taskParses("$0.80;0.50;0.95$ <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>. %1.00;0.90%");
     }
 
+    @Test public void testNonNegativeIntegerAtoms() {
+        //TODO test parsing to numeric atom types
+        Atom a = term("1");
+        assertEquals("1", a.toString());
+    }
+
+    @Test public void testNegativeIntegerAtoms() {
+        //TODO test parsing to numeric atom types
+        Atom a = term("-1");
+        assertNotNull(a);
+        assertEquals("-1", a.toString());
+    }
+
     @Test
     public void testImageIndex() {
         Compound t = term("(/,open,$1,_)");

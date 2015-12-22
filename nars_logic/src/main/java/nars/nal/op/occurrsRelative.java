@@ -1,38 +1,26 @@
-//package nars.nal.meta.post;
-//
-//import com.gs.collections.api.block.procedure.Procedure2;
-//import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
-//import nars.Premise;
-//import nars.nal.RuleMatch;
-//import nars.nal.meta.pre.PreCondition1;
-//import nars.nal.nal7.Sequence;
-//import nars.term.Term;
-//import nars.term.atom.Atom;
-//
-//import static nars.Op.IMPLICATION;
-//import static nars.Op.SEQUENCE;
-//import static nars.term.Statement.subj;
-//
-///**
-// * Created by me on 8/15/15.
-// */
-//public class ShiftOccurrence extends PreCondition1 {
-//
-//    public final boolean positive;
-//    public final int direction;
-//    private final String id;
-//
-//    public static ShiftOccurrence make(Term arg1, Term operator, boolean positive) {
-//
-//        int dir = getDirection(operator);
-//        //if (dir == 0) return null;
-//        if (dir == Integer.MIN_VALUE)
-//            throw new RuntimeException("invalid operator: " + operator);
-//            //return null;
-//
-//        return new ShiftOccurrence(arg1, positive, dir);
-//    }
-//
+package nars.nal.op;
+
+
+import nars.term.Term;
+import nars.term.compound.Compound;
+
+/** occurrsRelative(target, variable, direction)
+ *    target: pass through
+ *    direction= +1, -1, 0
+ *    variable: term to modify occurrence relative to
+ * */
+public class occurrsRelative extends ImmediateTermTransform {
+
+    @Override
+    public Term function(Compound p) {
+        final Term[] xx = p.terms();
+
+        //TODO ...
+
+        return xx[0];
+    }
+
+
 //    ShiftOccurrence(Term arg1, boolean positive, int direction) {
 //        super(arg1);
 ///* doesnt seem to work so my way for now
@@ -84,7 +72,7 @@
 //
 //                    if (iiLen > 0) {
 //                        m.occurrenceShift.set(
-//                            ii[iiLen - 1]
+//                                ii[iiLen - 1]
 //                        );
 //                        //positive ? interval : -interval);
 //                    }
@@ -119,10 +107,10 @@
 //        long offset = direction != 0 ? m.premise.getTask().duration() : 0;
 //
 //        //if (offset > Stamp.TIMELESS) {
-//            //shift since it has an order..
-//            m.occurrenceAdd(
+//        //shift since it has an order..
+//        m.occurrenceAdd(
 //                (positive ? +1 : -1) * offset
-//            );
+//        );
 //        //}
 //
 //        return true;
@@ -146,14 +134,5 @@
 ////        r.value("&|", 0);
 ////        //r.value("&&", null);
 //    }
-//
-//    static int getDirection(Term operator) {
-//        String ss = ((Atom)operator).toStringUnquoted();
-//        return relationDirection.getIfAbsent(ss, Integer.MIN_VALUE);
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return id;
-//    }
-//}
+
+}

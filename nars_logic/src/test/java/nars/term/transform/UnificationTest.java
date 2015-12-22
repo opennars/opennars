@@ -330,7 +330,7 @@ public class UnificationTest  {
                 "{%1,b,%2}",
                 true);
     }
-    @Test public void pattern_trySubs_set3_1_b_revesre()  {
+    @Test public void pattern_trySubs_set3_1_b_reverse()  {
         test(Op.VAR_PATTERN,
                 "{%1,b,%2}",
                 "{a,b,c}",

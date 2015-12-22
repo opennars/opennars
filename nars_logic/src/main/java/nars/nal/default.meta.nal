@@ -313,10 +313,10 @@
 //// conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //If after M, P usually happens, and M happens, it means P is expected to happen
 
-    M, (M ==> P), shift_occurrence_forward(M,"==>")  |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    M, (P ==> M), shift_occurrence_backward(P,"==>") |- P, (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
-    M, (S <=> M), shift_occurrence_backward(M,"<=>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
-    M, (M <=> S), shift_occurrence_forward(S,"==>")  |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
+    M, (M ==> P) |- occurrsRelative(P, M, 1), (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    M, (P ==> M) |- occurrsRelative(P, P, reverse), (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
+    M, (S <=> M) |- occurrsRelative(S, M, 0), (Truth:Analogy, Desire:Strong, Order:ForAllSame)
+    M, (M <=> S) |- occurrsRelative(S, S, 1), (Truth:Analogy, Desire:Strong, Order:ForAllSame)
 
 //// conditional composition: ////////////////////////////////////////////////////////////////////////////////////
 //They are let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
@@ -427,11 +427,11 @@
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 
-    B, (A ==> C), shift_occurrence_forward(A,"==>")  |- substituteIfUnifies(C,"$",A,B), (Truth:Deduction, Order:ForAllSame, Event:Anticipate)
-    B, (C ==> A), shift_occurrence_backward(A,"==>") |- substituteIfUnifies(C,"$",A,B), (Truth:Abduction, Order:ForAllSame)
+    B, (A ==> C) |- occurrsRelative( substituteIfUnifies( C, "$",A,B), A, 1), (Truth:Deduction, Order:ForAllSame, Event:Anticipate)
+    B, (C ==> A) |- occurrsRelative( substituteIfUnifies( C, "$",A,B), A, reverse), (Truth:Abduction, Order:ForAllSame)
 
-    B, (A <=> C), shift_occurrence_backward(C,"<=>") |- substituteIfUnifies(C,"$",A,B), (Truth:Deduction, Order:ForAllSame)
-    B, (C <=> A), shift_occurrence_forward(C,"<=>") |- substituteIfUnifies(C,"$",A,B), (Truth:Deduction, Order:ForAllSame)
+    B, (A <=> C) |- occurrsRelative( substituteIfUnifies( C, "$",A,B), C, 0), (Truth:Deduction, Order:ForAllSame)
+    B, (C <=> A) |- occurrsRelative( substituteIfUnifies( C, "$",A,B), C, 0), (Truth:Deduction, Order:ForAllSame)
 
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
 //second level variable elimination (termlink level2 growth needed in order for these rules to work)
@@ -455,8 +455,8 @@
 ////NAL7 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
 
-    X, (XI ==> B), shift_occurrence_forward(XI,"==>") |- substituteIfUnifies(B, "$", XI, (&/,X,/1)), (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
-    X, (BI ==> Y), shift_occurrence_backward(BI,"==>") |- substituteIfUnifies(BI,"$",Y,X), (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
+    X, (XI ==> B) |- occurrsRelative( substituteIfUnifies( B, "$", XI, (&/,X,/1)), XI, 1), (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+    X, (BI ==> Y) |- occurrsRelative( substituteIfUnifies( BI, "$", Y, X), BI, reverse), (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
 
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.

@@ -6,7 +6,6 @@ import nars.Narsese;
 import nars.nal.AbstractNALTester;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.operator.TermFunction;
-import nars.nar.SingleStepNAR;
 import nars.term.Term;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
@@ -364,7 +363,7 @@ public class NAL8Test extends AbstractNALTester {
         tester.input("<#y --> (/,^exe,x,_)>! :|:");
         tester.mustDesire(4, "exe(x, #y)", 1.0f, 0.9f, 0);
 
-        if (!(tester.nar instanceof SingleStepNAR)) {
+        //if (!(tester.nar instanceof SingleStepNAR)) {
             //tester.nar.log();
             tester.mustBelieve(250, "exe(x, a)", 1.0f, 0.99f, 10);
             //        tester.mustBelieve(26, "<a --> (/, ^exe, x, _)>",
@@ -377,7 +376,7 @@ public class NAL8Test extends AbstractNALTester {
                 if (n.time() > 8)
                     assertEquals(1, exeCount);
             });
-        }
+        //}
 
     }
 

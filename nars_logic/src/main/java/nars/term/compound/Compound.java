@@ -155,7 +155,13 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
                     Compounds.opArgs((Compound) result)
                 );
                 //System.out.println( result + " =/> " + result2);
-                result = result2;
+                if (result2 == null) {
+                    return null;
+                } else if (!result.equals(result2)) {
+                    //recurse
+                    return result2.apply(f, fullMatch);
+                } else
+                    return result2;
             }
         }
 
