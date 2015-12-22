@@ -90,7 +90,7 @@ public class NARMenu extends HBox {
                                 public void handle(ActionEvent event) {
                                     vol.value(100);
                                     LoopPane.cpuSlider.value(1.0);
-                                    LoopPane.multiplier.setValue(512);
+                                    LoopPane.multiplier.setValue(128);
                                     LoopPane.runButton.getOnAction().handle(null);
                                 }
                             });

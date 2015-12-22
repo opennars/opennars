@@ -99,7 +99,7 @@ public class LoopPane extends VBox {
 
         this.multiplier = new ComboBox<Integer>();
         this.multiplier.setPrefWidth(20);
-        multiplier.getItems().addAll( 1, 4, 16, 64, 128, 512);
+        multiplier.getItems().addAll( 1, 4, 16, 64, 128);
         multiplier.setValue(1);
         multiplier.valueProperty().addListener(updateLoopOnChange);
 
