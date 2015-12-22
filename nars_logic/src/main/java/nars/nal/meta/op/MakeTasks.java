@@ -69,6 +69,7 @@ public final class MakeTasks extends PreCondition {
             //budget = BudgetFunctions.forward(truth, premise);
         } else {
             budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
+            budget.setDurability(budget.getDurability()*0.1f);
         }
 
         if (!premise.validateDerivedBudget(budget)) {
@@ -137,7 +138,7 @@ public final class MakeTasks extends PreCondition {
 
                 receiver.accept(derived);
 
-                if (truth != null && rule.immediate_eternalize && !derived.isEternal()) {
+                if (truth != null && rule.immediate_eternalize && !derived.isEternal() && derived.isJudgment()) {
                     Truth et = TruthFunctions.eternalize(new DefaultTruth(truth.getFrequency(), truth.getConfidence()));
                     FluentTask deriving2 = premise.newTask((Compound) derivedTerm);
                     Budget budget2 = BudgetFunctions.compoundForward(et, derivedTerm, premise);
