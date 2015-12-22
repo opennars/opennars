@@ -391,7 +391,7 @@ public class NARide extends BorderPane {
 
         SplitPane p = new SplitPane();
         p.getItems().setAll(f, content);
-        p.setDividerPositions(0.31f);
+        p.setDividerPositions(0.28f);
 
         setCenter(p);
 

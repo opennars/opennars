@@ -98,6 +98,7 @@ public class LoopPane extends VBox {
         cpuSlider.value[0].addListener(updateLoopOnChange);
 
         this.multiplier = new ComboBox<Integer>();
+        this.multiplier.setPrefWidth(20);
         multiplier.getItems().addAll( 1, 4, 16, 64, 128, 512);
         multiplier.setValue(1);
         multiplier.valueProperty().addListener(updateLoopOnChange);
