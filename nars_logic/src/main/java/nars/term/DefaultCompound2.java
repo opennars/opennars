@@ -1,5 +1,6 @@
 package nars.term;
 
+import nars.nal.nal7.Tense;
 import nars.term.compile.TermIndex;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.TermVisitor;
@@ -64,7 +65,6 @@ public abstract class DefaultCompound2<T extends Term> implements Compound<T> {
      * call this after changing Term[] contents: recalculates variables and complexity
      */
     protected void init(final T... term) {
-
         this.terms.init(term);
 
         this.normalized = !hasVar();

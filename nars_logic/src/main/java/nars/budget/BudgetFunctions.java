@@ -412,6 +412,15 @@ public final class BudgetFunctions extends UtilityFunctions {
                 // linear factor (original)
                 (1f / Math.max(1, complexity))
 
+                //exponential factor (experimental)
+                //(float) (1f / Math.pow(2.0, Math.max(1, complexity)))
+
+                //quadratic factor (experimental)
+                //(float) (1f / Math.max(1, complexity * complexity))
+
+                //linear*log factor
+                 //(float) (1f / Math.max(1, complexity * Math.log(complexity)))
+
                 : 1f;
 
         return budgetInference(target, qual, complexityFactor, nal);

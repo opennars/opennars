@@ -36,7 +36,58 @@ public class IntersectionExt extends Intersect {
     private IntersectionExt(Term[] arg) {
         super();
 
-        init(arg);
+        init(flattenAndSort(arg));
+    }
+
+
+    public static Term[] flattenAndSort(Term[] args) {
+        //determine how many there are with same order
+
+        int expandedSize;
+        while ((expandedSize = getFlattenedLength(args)) != args.length) {
+            args = _flatten(args, expandedSize);
+        }
+        return Terms.toSortedSetArray(args);
+    }
+
+    public static IntersectionExt isIntersectionExt(Term t) {
+        if (t instanceof IntersectionExt) {
+            IntersectionExt c = (IntersectionExt) t;
+            return c;
+        }
+        return null;
+    }
+
+    private static Term[] _flatten(Term[] args, int expandedSize) {
+        final Term[] ret = new Term[expandedSize];
+        int k = 0;
+        for (int i = 0; i < args.length; i++) {
+            Term a = args[i];
+            IntersectionExt c = isIntersectionExt(a);
+            if (c != null) {
+                //arraycopy?
+                for (Term t : c.cloneTerms()) {
+                    ret[k++] = t;
+                }
+            } else {
+                ret[k++] = a;
+            }
+        }
+
+        return ret;
+    }
+
+    protected static int getFlattenedLength(Term[] args) {
+        int sz = 0;
+        for (int i = 0; i < args.length; i++) {
+            Term a = args[i];
+            IntersectionExt c = isIntersectionExt(a);
+            if (c != null)
+                sz += c.size();
+            else
+                sz += 1;
+        }
+        return sz;
     }
 
 
