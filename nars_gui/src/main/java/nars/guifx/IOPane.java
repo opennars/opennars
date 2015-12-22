@@ -32,7 +32,7 @@ public class IOPane extends BorderPane implements FXIconPaneBuilder {
                 new TracePane(nar, volume),
                 new InputPane(nar));
 
-        split.setDividerPosition(0,0.85);
+        split.setDividerPosition(0,0.84);
 
 
         setMinSize(400, 300);
