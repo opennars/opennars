@@ -19,6 +19,7 @@ import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.term.constraint.MatchConstraint;
+import nars.term.constraint.NoCommonSubtermsConstraint;
 import nars.term.constraint.NotEqualsConstraint;
 import nars.term.constraint.NotOpConstraint;
 import nars.term.match.Ellipsis;
@@ -49,15 +50,11 @@ public class PremiseRule extends GenericCompound implements Level {
     /** blank marker trie node indicating the derivation and terminating the branch */
     public static final PreCondition END = new PreCondition() {
 
-
-        @Override
-        public boolean test(RuleMatch versioneds) {
-            //END
+        @Override public boolean test(RuleMatch versioneds) {
             return false;
         }
 
-        @Override
-        public String toString() {
+        @Override public String toString() {
             return "End";
         }
     };
@@ -206,42 +203,6 @@ public class PremiseRule extends GenericCompound implements Level {
     }
 
 
-//    /**
-//     * test applicability of this rule with a specific maximum NAL level
-//     */
-//    public boolean levelValid(final int nalLevel) {
-//        return Terms.levelValid(getTask(), nalLevel) &&
-//                Terms.levelValid(getBelief(), nalLevel) &&
-//                Terms.levelValid(getResult(), nalLevel);
-//    }
-
-//    public boolean isReversible() {
-//        //TEST
-//        if (toString().contains("shift_occurrence"))
-//            return false;
-//        if (toString().contains("substitute"))
-//            return false;
-//        return true;
-//    }
-//
-
-//    /** how many unique pattern variables are present */
-//    public int numPatternVariables() {
-//        return numPatternVar;
-//    }
-
-
-
-//    public String getFlagsString() {
-//        return "TaskRule{" +
-//                "  immediate_eternalize=" + immediate_eternalize +
-//                ", anticipate=" + anticipate +
-//                ", sequenceIntervalsFromTask=" + sequenceIntervalsFromTask +
-//                ", sequenceIntervalsFromBelief=" + sequenceIntervalsFromBelief +
-//                ", allowQuestionTask=" + allowQuestionTask +
-//                ", allowBackward=" + allowBackward +
-//                '}';
-//    }
 
     @Override
     public final String toString() {
@@ -382,6 +343,13 @@ public class PremiseRule extends GenericCompound implements Level {
 
                     break;
 
+                case "no_common_subterm":
+                    constraints.put(arg1, new NoCommonSubtermsConstraint(arg2));
+                    constraints.put(arg2, new NoCommonSubtermsConstraint(arg1));
+
+                    //next = NoCommonSubterm.make(arg1, arg2);
+                    break;
+
                 //postcondition test
                 case "not_equal":
                     next = NotEqual.make(arg1, arg2);
@@ -402,9 +370,7 @@ public class PremiseRule extends GenericCompound implements Level {
                     constraints.put(arg1, new NotOpConstraint(Op.ImplicationOrEquivalenceBits));
                     break;
 
-                case "no_common_subterm":
-                    next = NoCommonSubterm.make(arg1, arg2);
-                    break;
+
 
                 case "event":
                     preNext = Temporality.both;

@@ -14,6 +14,7 @@ public final class NotOpConstraint implements MatchConstraint {
     public NotOpConstraint(Op o) {
         this(o.bit());
     }
+
     public NotOpConstraint(int opVector) {
         this.op = opVector;
     }
