@@ -314,7 +314,7 @@
 //If after M, P usually happens, and M happens, it means P is expected to happen
 
     M, (M ==> P) |- occurrsRelative(P, M, 1), (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    M, (P ==> M) |- occurrsRelative(P, P, reverse), (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
+    M, (P ==> M) |- occurrsRelative(P, P, -1), (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
     M, (S <=> M) |- occurrsRelative(S, M, 0), (Truth:Analogy, Desire:Strong, Order:ForAllSame)
     M, (M <=> S) |- occurrsRelative(S, S, 1), (Truth:Analogy, Desire:Strong, Order:ForAllSame)
 
@@ -428,7 +428,7 @@
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 
     B, (A ==> C) |- occurrsRelative( substituteIfUnifies( C, "$",A,B), A, 1), (Truth:Deduction, Order:ForAllSame, Event:Anticipate)
-    B, (C ==> A) |- occurrsRelative( substituteIfUnifies( C, "$",A,B), A, reverse), (Truth:Abduction, Order:ForAllSame)
+    B, (C ==> A) |- occurrsRelative( substituteIfUnifies( C, "$",A,B), A, -1), (Truth:Abduction, Order:ForAllSame)
 
     B, (A <=> C) |- occurrsRelative( substituteIfUnifies( C, "$",A,B), C, 0), (Truth:Deduction, Order:ForAllSame)
     B, (C <=> A) |- occurrsRelative( substituteIfUnifies( C, "$",A,B), C, 0), (Truth:Deduction, Order:ForAllSame)
@@ -456,7 +456,7 @@
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
 
     X, (XI ==> B) |- occurrsRelative( substituteIfUnifies( B, "$", XI, (&/,X,/1)), XI, 1), (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
-    X, (BI ==> Y) |- occurrsRelative( substituteIfUnifies( BI, "$", Y, X), BI, reverse), (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
+    X, (BI ==> Y) |- occurrsRelative( substituteIfUnifies( BI, "$", Y, X), BI, -1), (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
 
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.

@@ -46,6 +46,22 @@ public class PremiseRule extends GenericCompound implements Level {
         occurrsRelative.class
     };
 
+    /** blank marker trie node indicating the derivation and terminating the branch */
+    public static final PreCondition END = new PreCondition() {
+
+
+        @Override
+        public boolean test(RuleMatch versioneds) {
+            //END
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return "End";
+        }
+    };
+
     public boolean immediate_eternalize = false;
 
     public boolean anticipate = false;
@@ -134,28 +150,6 @@ public class PremiseRule extends GenericCompound implements Level {
         return transform(uppercaseAtomsToPatternVariables);
     }
 
-//    @Override
-//    public Term index(TermIndex termIndex) {
-//
-//        //task and belief pattern term
-//        for (int i = 0; i < 2; i++) {
-//            Term s = (Term) getPremise().terms()[i];
-//            if (s == null)
-//                throw new RuntimeException("null premise term: " + this);
-//            getPremise().terms()[i] = s;
-//        }
-//
-//        //conclusion pattern term
-//        getConclusion().terms()[0] = (Term) getConclusion().terms()[0];
-//
-//        return this;
-//    }
-
-
-    //    public Product result() {
-//        return (Product) term(1);
-//    }
-
 
 
     /** add the sequence of involved conditions to a list, for one given postcondition (ex: called for each this.postconditions)  */
@@ -163,7 +157,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
         int n = prePreconditions.length + postPreconditions.length;
 
-        List<PreCondition> l = Global.newArrayList(n*2);
+        List<PreCondition> l = Global.newArrayList(n+4 /* estimate */);
 
         ///--------------
         for (PreCondition p : prePreconditions)
@@ -179,22 +173,7 @@ public class PremiseRule extends GenericCompound implements Level {
         match.addConditions(l);
 
 
-        //blank marker trie node indicating the derivation and terminating the branch
-        l.add(new PreCondition() {
-
-
-
-            @Override
-            public boolean test(RuleMatch versioneds) {
-                //END
-                return false;
-            }
-
-            @Override
-            public String toString() {
-                return "End";
-            }
-        });
+        l.add(END);
 
         return l;
     }
@@ -394,11 +373,6 @@ public class PremiseRule extends GenericCompound implements Level {
 
             switch (predicateNameStr) {
 
-//                case "input_premises":
-//                    next = new InputPremises(arg1, arg2);
-//                    break;
-
-                //constraint form
                 case "neq":
                     constraints.put(arg1, new NotEqualsConstraint(arg2));
                     constraints.put(arg2, new NotEqualsConstraint(arg1));
@@ -413,28 +387,16 @@ public class PremiseRule extends GenericCompound implements Level {
                     next = NotEqual.make(arg1, arg2);
                     break;
 
-                case "not_set":
-                    //next = new NotSet(arg1);
-                    //break;
-                    throw new RuntimeException("unimpl");
 
                 case "notSet":
                     constraints.put( arg1, new NotOpConstraint(Op.SetsBits) );
                     break;
 
-                case "not_conjunction":
-                    //next = new NotConjunction(arg1);
-                    //break;
-                    throw new RuntimeException("unimpl");
 
                 case "notConjunction":
                     constraints.put(arg1, new NotOpConstraint(Op.ConjunctivesBits));
                     break;
 
-                case "not_implication_or_equivalence":
-                    //next = new NotImplOrEquiv(arg1);
-                    //break;
-                    throw new RuntimeException("unimpl");
 
                 case "notImplicationOrEquivalence":
                     constraints.put(arg1, new NotOpConstraint(Op.ImplicationOrEquivalenceBits));
@@ -460,13 +422,6 @@ public class PremiseRule extends GenericCompound implements Level {
                     preNext = Concurrent.the;
                     break;
 
-                case "shift_occurrence_forward":
-                case "shift_occurrence_backward":
-                    throw new RuntimeException("depr");
-                    //next = ShiftOccurrence.make(arg1, arg2, true);
-                    //break;
-                    //next = ShiftOccurrence.make(arg1, arg2, false);
-                    //break;
 
                 case "measure_time":
                     if (args.length!=1)
@@ -479,12 +434,11 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
                 case "substitute":
+                case "substitute_if_unifies":
                     throw new RuntimeException("depr");
                     //afterConcs.add(new Substitute(arg1, (Variable)arg2));
                     //break;
 
-                case "substitute_if_unifies":
-                    throw new RuntimeException("depr");
                     //afterConcs.add(new SubstituteIfUnified(arg1, arg2, args[2]));
                     //break;
 
@@ -518,6 +472,14 @@ public class PremiseRule extends GenericCompound implements Level {
                             throw new RuntimeException("Unknown task punctuation type: " + predicate.term(0));
                     }
                     break;
+
+
+                case "not_conjunction":
+                case "not_set":
+                case "not_implication_or_equivalence":
+                case "shift_occurrence_forward":
+                case "shift_occurrence_backward":
+                    throw new RuntimeException("depr");
 
                 default:
                     throw new RuntimeException("unhandled postcondition: " + predicateNameStr + " in " + this + "");

@@ -414,7 +414,7 @@ public class Narsese extends BaseParser<Object>  {
                         Interval(),
 
                         seq(meta, Ellipsis() ),
-                        seq(meta, EllipsisExpand() ),
+                        seq(meta, EllipsisShim() ),
 
                         seq(meta, TaskRule() ),
 
@@ -472,20 +472,7 @@ public class Narsese extends BaseParser<Object>  {
                                 )
                         ),
 
-
-
-//                        seq( NALOperator.COMPOUND_TERM_OPENER.symbol,
-//
-//                        ),
-//
-//
-//
-//                        seq( NALOperator.COMPOUND_TERM_OPENER.symbol,
-//                        ),
-
-
-                        //BacktickReverseInstance(),
-
+                        NumberAtom(),
                         Atom()
 
                 ),
@@ -525,6 +512,18 @@ public class Narsese extends BaseParser<Object>  {
                 push(match())
         );
     }
+
+    Rule NumberAtom() {
+        return sequence(
+            sequence(
+                    optional('-'),
+                    oneOrMore(digit()),
+                    optional('.', oneOrMore(digit()))
+            ),
+            push(Atom.the(Float.parseFloat(matchOrDefault("NaN"))))
+        );
+    }
+
 
 
 
@@ -669,7 +668,7 @@ public class Narsese extends BaseParser<Object>  {
         );
     }
 
-    Rule EllipsisExpand() {
+    Rule EllipsisShim() {
         return sequence(
                 "..",
                 push( Ellipsis.Shim)

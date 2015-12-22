@@ -406,6 +406,14 @@ public class NarseseTest {
         assertNotNull(a);
         assertEquals("-1", a.toString());
     }
+    @Test public void testFloatAtom() {
+        //TODO test parsing to numeric atom types
+        float f = 1.24f;
+        String ff = Float.toString(f);
+        Atom a = term(ff);
+        assertNotNull(a);
+        assertEquals(ff, a.toString());
+    }
 
     @Test
     public void testImageIndex() {
