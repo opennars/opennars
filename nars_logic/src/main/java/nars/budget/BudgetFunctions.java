@@ -31,6 +31,7 @@ import nars.process.ConceptProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
+import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.data.Util;
 
@@ -375,7 +376,8 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static Budget compoundBackward(final Term content, final Premise nal) {
-        return budgetInference(1f, content.complexity(), nal);
+       // return budgetInference(1f, content.complexity(), nal);
+        return budgetInference(new Budget(), truthToQuality(new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE)), content.complexity(), nal);
     }
 
     /**

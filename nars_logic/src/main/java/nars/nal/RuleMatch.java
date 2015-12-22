@@ -679,7 +679,10 @@ public class RuleMatch {
 
     @Deprecated
     protected static boolean cyclic(PostCondition outcome, Premise premise) {
-        return (outcome.truth != null && !outcome.truth.allowOverlap) && premise.isCyclic();
+        if(outcome.truth != null && outcome.truth.allowOverlap) {
+            return false; //overlap allowed so no matter if there is an overlap or not it isnt cyclic
+        }
+        return premise.isCyclic(); //in the other cases we have to return whether there is an overlap or not no matter if it has a truth value or not
     }
 
     public static boolean cyclic(TruthFunction f, Premise premise) {

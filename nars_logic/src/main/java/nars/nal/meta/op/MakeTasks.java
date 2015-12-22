@@ -69,7 +69,7 @@ public final class MakeTasks extends PreCondition {
             //budget = BudgetFunctions.forward(truth, premise);
         } else {
             budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
-            budget.setDurability(budget.getDurability()*0.1f);
+            budget.setDurability(budget.getDurability()*0.5f);
         }
 
         if (!premise.validateDerivedBudget(budget)) {
