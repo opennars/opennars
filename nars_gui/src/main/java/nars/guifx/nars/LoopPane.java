@@ -31,7 +31,7 @@ public class LoopPane extends VBox {
     private final SimpleStringProperty cpuLabel;
 
     public static NSlider cpuSlider;
-    private final ComboBox<Integer> multiplier;
+    public static ComboBox<Integer> multiplier;
 
     boolean running = false;
 
