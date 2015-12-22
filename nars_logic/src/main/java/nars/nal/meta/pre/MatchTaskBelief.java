@@ -48,6 +48,10 @@ import java.util.List;
 
     }
 
+    public void addPreConditions(List<PreCondition> l) {
+        Collections.addAll(l, compiled.pre);
+    }
+
     @Override
     public void addConditions(List<PreCondition> l) {
         Collections.addAll(l, compiled.code);

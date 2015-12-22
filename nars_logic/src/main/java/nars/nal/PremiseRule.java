@@ -44,7 +44,8 @@ public class PremiseRule extends GenericCompound implements Level {
         union.class,
         substitute.class,
         substituteIfUnifies.class,
-        occurrsRelative.class
+        occurrsForward.class,
+        occurrsBackward.class
     };
 
     /** blank marker trie node indicating the derivation and terminating the branch */
@@ -160,6 +161,8 @@ public class PremiseRule extends GenericCompound implements Level {
         for (PreCondition p : prePreconditions)
             p.addConditions(l);
 
+        match.addPreConditions(l); //pre-conditions
+
         Solve truth = new Solve(post.beliefTruth, post.goalTruth, post.puncOverride,
             this, anticipate, immediate_eternalize, post.term,
                 postPreconditions
@@ -167,7 +170,7 @@ public class PremiseRule extends GenericCompound implements Level {
         l.add(truth);
         l.add(truth.getDerive());
 
-        match.addConditions(l);
+        match.addConditions(l); //the match itself
 
 
         l.add(END);

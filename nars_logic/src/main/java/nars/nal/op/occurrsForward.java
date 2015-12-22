@@ -9,7 +9,7 @@ import nars.term.compound.Compound;
  *    direction= +1, -1, 0
  *    variable: term to modify occurrence relative to
  * */
-public class occurrsRelative extends ImmediateTermTransform {
+public class occurrsForward extends ImmediateTermTransform {
 
     @Override
     public Term function(Compound p) {
@@ -20,8 +20,11 @@ public class occurrsRelative extends ImmediateTermTransform {
         return xx[0];
     }
 
+    protected boolean invert() {
+        return false;
+    }
 
-//    ShiftOccurrence(Term arg1, boolean positive, int direction) {
+    //    ShiftOccurrence(Term arg1, boolean positive, int direction) {
 //        super(arg1);
 ///* doesnt seem to work so my way for now
 //        if ((

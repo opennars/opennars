@@ -14,6 +14,7 @@ import java.util.List;
 /** represents the "program" that the matcher will execute */
 public class TermPattern {
 
+    public final PreCondition[] pre;
     public final PreCondition[] code;
     public final Term term;
 
@@ -68,25 +69,27 @@ public class TermPattern {
         this.type = type;
         this.constraints = constraints;
 
+        List<PreCondition> pre = Global.newArrayList();
         List<PreCondition> code = Global.newArrayList();
 
         if (pattern instanceof TaskBeliefPair) {
-            compileTaskBeliefPair((TaskBeliefPair)pattern, code);
+            compileTaskBeliefPair((TaskBeliefPair)pattern, pre, code);
         }
         compile(pattern, code);
 
+        this.pre = pre.toArray(new PreCondition[pre.size()]);
         this.code = code.toArray(new PreCondition[code.size()]);
     }
 
-    private void compileTaskBeliefPair(TaskBeliefPair pattern, List<PreCondition> code) {
+    private void compileTaskBeliefPair(TaskBeliefPair pattern, List<PreCondition> pre, List<PreCondition> code) {
         Term x0 = pattern.term(0);
         Term x1 = pattern.term(1);
         if (x0.op()!=Op.VAR_PATTERN) {
-            code.add(new SubTermOp(0, x0.op()));
+            pre.add(new SubTermOp(0, x0.op()));
             //code.add(new FindSubst.SubTermStructure(type, 0, x0.structure()));
         }
         if (x1.op()!=Op.VAR_PATTERN) {
-            code.add(new SubTermOp(1, x1.op()));
+            pre.add(new SubTermOp(1, x1.op()));
             //code.add(new FindSubst.SubTermStructure(type, 1, x1.structure()));
         }
 

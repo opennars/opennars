@@ -67,6 +67,7 @@ public final class Solve extends PreCondition {
                 sn + ":(" + beliefLabel + "," + desireLabel  :
                 sn + ":(" + beliefLabel + "," + desireLabel + ",punc:\"" + puncOverride + '\"';
 
+        i += ')';
 
         this.rule = rule;
 
@@ -169,13 +170,23 @@ public final class Solve extends PreCondition {
             this.term = term;
             this.anticipate = anticipate;
             this.eternalize = eternalize;
-            String i =
-                "{eternalize=" + this.eternalize +
-                ",anticipate=" + this.anticipate +
-                "}," + term;
 
-            //TODO trie-ize these into a parallel evaluation
-            i += "," + Arrays.toString(postMatch);
+            String i = "Derive:(";
+            if (eternalize || anticipate) {
+                if (eternalize && anticipate) {
+                    i += "{eternalize,anticipate},";
+                } else if (eternalize && !anticipate) {
+                    i += "{eternalize},";
+                } else if (anticipate && !eternalize) {
+                    i += "{anticipate},";
+                }
+            }
+
+            i += term.toString();
+
+            if (postMatch.length > 0) {
+                i += "," + Arrays.toString(postMatch);
+            }
 
             i += ")";
             this.id = i;
