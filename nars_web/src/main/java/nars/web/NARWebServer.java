@@ -66,8 +66,6 @@ public class NARWebServer extends PathHandler {
                         "DER: " + t)),*/
                 nar.memory.eventAnswer.on(t -> send(socket,
                         "ANS: " + t)),
-                nar.memory.eventExecute.on(t -> send(socket,
-                        "EXE: " + t)),
                 nar.memory.eventError.on(t -> send(socket,
                         "ERR: " + t))
             );

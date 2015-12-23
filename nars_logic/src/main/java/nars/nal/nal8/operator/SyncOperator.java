@@ -1,6 +1,6 @@
 package nars.nal.nal8.operator;
 
-import nars.nal.nal8.OperatorReaction;
+import nars.nal.nal8.AbstractOperator;
 import nars.term.Term;
 
 /**
@@ -8,7 +8,7 @@ import nars.term.Term;
  * Should be used only if the operation procedure will not take long
  * and block the reasoner thread.
  */
-public abstract class SyncOperator extends OperatorReaction {
+public abstract class SyncOperator extends AbstractOperator {
 
     public SyncOperator(Term term) {
         super(term);

@@ -1,8 +1,8 @@
 package nars.op.io;
 
-import nars.nal.Compounds;
 import nars.nal.nal8.Execution;
-import nars.nal.nal8.ImmediateOperator;
+import nars.nal.nal8.Operator;
+import nars.nal.nal8.operator.ImmediateOperator;
 
 /**
  * explicitly repeated input (repetition of the content of input ECHO commands)
@@ -22,6 +22,6 @@ public class echo extends ImmediateOperator {
 
     @Override
     public void execute(Execution e) {
-        e.nar.memory.eventSpeak.emit( Compounds.opArgs(e.term()).terms() );
+        e.nar.memory.eventSpeak.emit( Operator.opArgs(e.term()).terms() );
     }
 }

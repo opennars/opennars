@@ -17,7 +17,7 @@
 
 package nars.op.math;
 
-import nars.nal.Compounds;
+import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
 import nars.term.Term;
@@ -43,7 +43,7 @@ public class length extends TermFunction<Integer> implements Mental {
 
     @Override
     public Integer function(Compound o) {
-        Term[] x = Compounds.opArgsArray(o);
+        Term[] x = Operator.opArgsArray(o);
         Term content = x[0];
         /*if (!(content instanceof SetExt) && !(content instanceof SetInt)) {
             throw new RuntimeException("Requires 1 SetExt or SetInt argument");

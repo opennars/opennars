@@ -3,8 +3,8 @@ package nars.nar;
 import nars.NAR;
 import nars.Symbols;
 import nars.concept.Concept;
-import nars.nal.Compounds;
 import nars.nal.nal8.Execution;
+import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.task.Task;
 import nars.term.Term;
@@ -30,7 +30,7 @@ public class CommandTest {
             public void execute(Execution execution) {
 
                 invoked.set(true);
-                Term[] a = Compounds.opArgsArray(execution.term());
+                Term[] a = Operator.opArgsArray(execution.term());
                 assertEquals(1, a.length);
                 assertEquals("x", a[0].toString());
 

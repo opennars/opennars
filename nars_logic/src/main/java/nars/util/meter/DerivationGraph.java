@@ -7,7 +7,7 @@ import nars.Premise;
 import nars.concept.Concept;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.OperatorReaction;
+import nars.nal.nal8.AbstractOperator;
 import nars.nar.Terminal;
 import nars.process.ConceptProcess;
 import nars.task.Task;
@@ -492,7 +492,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
             //atomic term
             return genericLiteral(t, unique);
         }
-        if (t instanceof OperatorReaction) {
+        if (t instanceof AbstractOperator) {
             return t.toString();
         }
         if (t instanceof Variable || t instanceof Compound) {

@@ -75,7 +75,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
             default:
                 if (op.isStatement()) {
                     if (Op.isOperation(this)) {
-                        Compounds.operationAppend((Compound) term(0), (Operator) term(1), p, pretty); //TODO Appender
+                        Operator.operationAppend((Compound) term(0), (Operator) term(1), p, pretty); //TODO Appender
                     }
                     else {
                         Statement.append(this, p, pretty);

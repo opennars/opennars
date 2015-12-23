@@ -6,12 +6,12 @@ import com.gs.collections.impl.tuple.Tuples;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.util.ConceptBuilder;
-import nars.nal.Compounds;
 import nars.nal.Level;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.AbstractOperator;
 import nars.nal.nal8.Execution;
-import nars.nal.nal8.OperatorReaction;
+import nars.nal.nal8.Operator;
 import nars.nal.nal8.PatternAnswer;
 import nars.nal.nal8.operator.TermFunction;
 import nars.task.MutableTask;
@@ -488,7 +488,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         if (Op.isOperation(term)) {
 
             Topic<Execution> tt = memory.exe.get(
-                Compounds.operatorName((Compound) term)
+                Operator.operatorName((Compound) term)
             );
 
             if (tt!=null && !tt.isEmpty()) {
@@ -579,7 +579,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         });
     }
 
-    public final On onExec(OperatorReaction r) {
+    public final On onExec(AbstractOperator r) {
         return onExec(r.getOperatorTerm(), r);
     }
 
@@ -953,7 +953,13 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * after the end of the current frame before the next frame.
      */
     public final void beforeNextFrame(Runnable t) {
-        nextTasks.addLast(t);
+        if (running.get()) {
+            //in a frame, so schedule for after it
+            nextTasks.addLast(t);
+        } else {
+            //not in a frame, can execute immediately
+            t.run();
+        }
     }
 
 //    /*

@@ -1,7 +1,7 @@
 package nars.op.io;
 
 import nars.nal.nal8.Execution;
-import nars.nal.nal8.ImmediateOperator;
+import nars.nal.nal8.operator.ImmediateOperator;
 
 /**
  * Resets memory, @see memory.reset()

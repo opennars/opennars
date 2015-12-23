@@ -12,7 +12,7 @@ import nars.NAR;
 import nars.Op;
 import nars.guifx.demo.TaskButton;
 import nars.guifx.util.NSlider;
-import nars.nal.Compounds;
+import nars.nal.nal8.Operator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -126,8 +126,8 @@ public class IOPane extends BorderPane /*implements FXIconPaneBuilder*/ {
         Term tt = t.term();
         if (Op.isOperation(tt)) {
             Compound ct = (Compound) tt;
-            Term[] a = Compounds.opArgsArray(ct);
-            switch (Compounds.operatorName(ct).toString()) {
+            Term[] a = Operator.opArgsArray(ct);
+            switch (Operator.operatorName(ct).toString()) {
                 case "html":
                     WebView w = new WebView();
                     //w.resize(400,200);

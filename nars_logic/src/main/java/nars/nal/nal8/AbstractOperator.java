@@ -30,14 +30,9 @@ import nars.term.atom.Atom;
 import java.util.function.Consumer;
 
 /**
- * An operator implementation identified by a term
- * which would need to appear in the predicate of an Operation in order for
- * this to be executed.
- *
- * An instance of an Operator must not be shared by multiple Memory
- * since it will be associated with a particular one.  Create a separate one for each
+ * An operator implementation
  */
-public abstract class OperatorReaction implements Consumer<Execution> {
+public abstract class AbstractOperator implements Consumer<Execution> {
 
 
     public final Term operatorTerm;
@@ -50,18 +45,18 @@ public abstract class OperatorReaction implements Consumer<Execution> {
         return '^' + operatorTerm.toString();
     }
 
-    public OperatorReaction(Term term) {
+    public AbstractOperator(Term term) {
         if (term == null) {
             term = Atom.the(getClass().getSimpleName());
         }
         operatorTerm = term;
     }
 
-    public OperatorReaction(String operatorName) {
+    public AbstractOperator(String operatorName) {
         this(Atom.the(operatorName));
     }
 
-    public OperatorReaction(Atom operatorTerm) {
+    public AbstractOperator(Atom operatorTerm) {
         this.operatorTerm = operatorTerm;
     }
 
@@ -69,7 +64,7 @@ public abstract class OperatorReaction implements Consumer<Execution> {
     /**
      * use the class name as the operator name
      */
-    public OperatorReaction() {
+    public AbstractOperator() {
         String className = getClass().getSimpleName();
         operatorTerm = Atom.the(className);
     }

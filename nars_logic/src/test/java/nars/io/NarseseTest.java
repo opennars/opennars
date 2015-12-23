@@ -1,7 +1,6 @@
 package nars.io;
 
 import nars.*;
-import nars.nal.Compounds;
 import nars.nal.nal8.Operator;
 import nars.nar.Default;
 import nars.op.io.echo;
@@ -233,10 +232,10 @@ public class NarseseTest {
 
 
     protected void testBelieveAB(Compound t) {
-        Term[] aa = Compounds.opArgsArray(t);
+        Term[] aa = Operator.opArgsArray(t);
         assertEquals(2, aa.length);
         assertEquals("^believe", t.term(1).toString());
-        assertEquals("believe", Compounds.operatorName(t).toString());
+        assertEquals("believe", Operator.operatorName(t).toString());
         assertEquals("a", aa[0].toString());
         assertEquals("b", aa[1].toString());
     }
@@ -514,7 +513,7 @@ public class NarseseTest {
 
     protected void ensureIsEcho(Compound op) {
         assertEquals(Atom.the(echo.class.getSimpleName()),
-                Compounds.operatorName(op));
+                Operator.operatorName(op));
     }
 
 
@@ -553,7 +552,7 @@ public class NarseseTest {
     public void testOperatorWithNoParams() {
         Compound t = term("op()");
         assertNotNull(t);
-        assertEquals(0, Compounds.opArgs(t).size());
+        assertEquals(0, Operator.opArgs(t).size());
     }
 
 }

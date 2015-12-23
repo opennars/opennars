@@ -1,9 +1,9 @@
-package nars.nal.nal8;
+package nars.nal.nal8.operator;
 
 
 import nars.$;
 import nars.nal.Compounds;
-import nars.nal.nal8.operator.NullOperator;
+import nars.nal.nal8.Operator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;

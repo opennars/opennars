@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import nars.$;
-import nars.nal.Compounds;
+import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.software.scheme.cons.Cons;
 import nars.op.software.scheme.expressions.Expression;
@@ -80,7 +80,7 @@ public class scheme extends TermFunction {
 
     @Override
     public Term function(Compound o) {
-        Term[] x = Compounds.opArgsArray(o);
+        Term[] x = Operator.opArgsArray(o);
         Term code = x[0];
 
         return code instanceof Compound ? schemeToNars.apply(eval(((Compound) code))) : schemeToNars.apply(eval($.p(x)));

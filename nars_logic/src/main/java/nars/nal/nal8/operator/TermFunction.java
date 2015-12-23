@@ -3,9 +3,9 @@ package nars.nal.nal8.operator;
 import com.google.common.collect.Lists;
 import nars.NAR;
 import nars.Symbols;
-import nars.nal.Compounds;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Execution;
+import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
@@ -79,7 +79,7 @@ public abstract class TermFunction<O> extends SyncOperator {
 
         //final int numArgs = x0.length;
 
-        Term inh = Compounds.result(operation, y);
+        Term inh = Operator.result(operation, y);
         if ((!(inh instanceof Compound))) {
             //TODO wrap a non-Compound result as some kind of statement
             return null;
@@ -88,7 +88,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         return Lists.newArrayList(
-                Compounds.feedback(
+                Operator.feedback(
                     new MutableTask(inh).
                         judgment().
                         truth(getResultFrequency(), getResultConfidence()).
@@ -208,7 +208,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Term[] x0 = operation.getArgumentTerms(false, memory);
 
 
-        Object y = function(Compounds.opArgs(operation));
+        Object y = function(Operator.opArgs(operation));
 
         if (y == null) {
             return;

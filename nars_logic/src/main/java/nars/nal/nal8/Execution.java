@@ -5,7 +5,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.budget.UnitBudget;
-import nars.nal.Compounds;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -48,10 +47,10 @@ public class Execution implements Runnable {
      * unwrapped (without ^)
      */
     public final Term operator() {
-        return Compounds.operatorTerm(term());
+        return Operator.operatorTerm(term());
     }
     public final Term[] argArray() {
-        return Compounds.opArgsArray(term());
+        return Operator.opArgsArray(term());
     }
 
 
@@ -72,13 +71,6 @@ public class Execution implements Runnable {
     public void feedback(List<Task> feedback) {
 
         //Display a message in the output stream to indicate the reportExecution of an operation
-
-
-        if (!nar.memory.eventExecute.isEmpty()) {
-            nar.memory.eventExecute.emit(
-                new ExecutionResult(task, feedback)
-            );
-        }
 
 
         if (!task.isCommand()) {

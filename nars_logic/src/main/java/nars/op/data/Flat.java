@@ -2,7 +2,7 @@ package nars.op.data;
 
 import nars.$;
 import nars.Op;
-import nars.nal.Compounds;
+import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -24,7 +24,7 @@ public abstract class Flat extends TermFunction {
     @Override
     public Term function(Compound op) {
         List<Term> l = new ArrayList();
-        collect(Compounds.opArgsArray(op), l);
+        collect(Operator.opArgsArray(op), l);
         return result(l);
     }
 

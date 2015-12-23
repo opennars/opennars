@@ -7,7 +7,6 @@ import nars.budget.Budget;
 import nars.nal.nal7.Order;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
-import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Statement;
@@ -16,7 +15,6 @@ import nars.term.TermContainer;
 import nars.term.Terms;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
-import nars.term.variable.Variable;
 import nars.truth.Truth;
 import org.jetbrains.annotations.Nullable;
 
@@ -206,117 +204,7 @@ public class Compounds {
                 .occurr(occ);
     }
 
-    public static Compound opArgs(Compound operation) {
-        return (Compound) operation.term(0);
-    }
-
-    public static Term operatorName(Compound operation) {
-        Operator tn = operatorTerm(operation);
-        if (tn != null) return tn.identifier();
-        return null;
-    }
-
-    public static Operator operatorTerm(Compound operation) {
-        return ((Operator) operation.term(1));
-    }
-
-    /**
-     * creates a result term in the conventional format.
-     * the final term in the product (x) needs to be a variable,
-     * which will be replaced with the result term (y)
-     */
-    public static Term result(Compound operation, Term y) {
-        Compound x = (Compound) operation.term(0);
-        Term t = x.last();
-        if (!(t instanceof Variable))
-            return null;
-
-        return $.inh(
-                y, //SetExt.make(y),
-                makeImageExt(x, operation.term(1), (short) (x.size() - 1) /* position of the variable */)
-        );
-    }
-
-    /**
-     * Try to make an Image from a Product and a relation. Called by the logic rules.
-     *
-     * @param product  The product
-     * @param relation The relation (the operator)
-     * @param index    The index of the place-holder (variable)
-     * @return A compound generated or a term it reduced to
-     */
-    private static Term makeImageExt(Compound product, Term relation, short index) {
-        int pl = product.size();
-        if (relation.op(Op.PRODUCT)) {
-            Compound p2 = (Compound) relation;
-            if ((pl == 2) && (p2.size() == 2)) {
-                if ((index == 0) && product.term(1).equals(p2.term(1))) { // (/,_,(*,a,b),b) is reduced to a
-                    return p2.term(0);
-                }
-                if ((index == 1) && product.term(0).equals(p2.term(0))) { // (/,(*,a,b),a,_) is reduced to b
-                    return p2.term(1);
-                }
-            }
-        }
-        /*Term[] argument =
-            Terms.concat(new Term[] { relation }, product.cloneTerms()
-        );*/
-        Term[] argument = new Term[pl];
-        argument[0] = relation;
-        System.arraycopy(product.terms(), 0, argument, 1, pl - 1);
-
-        return the(Op.IMAGE_EXT, argument, index + 1);
-    }
-
-    /**
-     * applies certain data to a feedback task relating to its causing operation's task
-     */
-    public static Task feedback(MutableTask feedback, Task goal, float priMult, float durMult) {
-        return feedback.budget(goal.getBudget()).
-                budgetScaled(priMult, durMult).
-                parent(goal);
-    }
-
-    public static Term[] opArgsArray(Compound term) {
-        return opArgs(term).terms();
-    }
-
-    public static void operationAppend(Compound argsProduct, Operator operator, Appendable p, boolean pretty) throws IOException {
-
-        Term predTerm = operator.identifier(); //getOperatorTerm();
-
-        if ((predTerm.volume() != 1) || (predTerm.hasVar())) {
-            //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format
-            Compound.appendSeparator(p, pretty);
-            return;
-        }
-
-
-        Term[] xt = argsProduct.terms();
-
-        predTerm.append(p, pretty); //add the operator name without leading '^'
-        p.append(COMPOUND_TERM_OPENER);
-
-
-        int n = 0;
-        for (Term t : xt) {
-            if (n != 0) {
-                p.append(ARGUMENT_SEPARATOR);
-                if (pretty)
-                    p.append(' ');
-            }
-
-            t.append(p, pretty);
-
-
-            n++;
-        }
-
-        p.append(COMPOUND_TERM_CLOSER);
-
-    }
-
-//    private static Term junction(Op o, Collection<Term> t) {
+    //    private static Term junction(Op o, Collection<Term> t) {
 //        return junction(o, Terms.toArray(t));
 //    }
 

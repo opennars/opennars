@@ -13,7 +13,7 @@ import nars.concept.DefaultConcept;
 import nars.java.jclass;
 import nars.nal.Deriver;
 import nars.nal.PremiseRule;
-import nars.nal.nal8.OperatorReaction;
+import nars.nal.nal8.AbstractOperator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.data.Flat;
@@ -133,10 +133,10 @@ public abstract class AbstractNAR extends NAR {
             }
         }
 
-        for (OperatorReaction o : defaultOperators)
+        for (AbstractOperator o : defaultOperators)
             onExec(o);
 
-        for (OperatorReaction o : exampleOperators)
+        for (AbstractOperator o : exampleOperators)
             onExec(o);
     }
 
@@ -217,7 +217,7 @@ public abstract class AbstractNAR extends NAR {
     }
 
 
-    public static final OperatorReaction[] exampleOperators = {
+    public static final AbstractOperator[] exampleOperators = {
             //new Wait(),
             new NullOperator("break"),
             new NullOperator("drop"),
@@ -235,7 +235,7 @@ public abstract class AbstractNAR extends NAR {
 
 
 
-    public final OperatorReaction[] defaultOperators = {
+    public final AbstractOperator[] defaultOperators = {
 
             //system control
             new echo(),

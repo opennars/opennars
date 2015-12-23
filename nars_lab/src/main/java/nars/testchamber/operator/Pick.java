@@ -20,8 +20,8 @@
  */
 package nars.testchamber.operator;
 
-import nars.nal.Compounds;
 import nars.nal.nal8.Execution;
+import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -46,7 +46,7 @@ public class Pick extends SyncOperator {
 
         TestChamber.executed=true;
         System.out.println("Executed: " + this);
-        Term[] argTerms = Compounds.opArgsArray(operation);
+        Term[] argTerms = Operator.opArgsArray(operation);
         //noinspection LoopStatementThatDoesntLoop
         for (int i = 0; i < 1; i++) {
             Term t = argTerms[i];

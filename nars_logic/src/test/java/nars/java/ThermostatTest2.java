@@ -2,7 +2,6 @@ package nars.java;
 
 import com.gs.collections.api.tuple.Twin;
 import nars.Global;
-import nars.nal.nal8.ExecutionResult;
 import nars.nar.Default;
 import nars.task.Task;
 import nars.task.Tasked;
@@ -141,8 +140,6 @@ public class ThermostatTest2 {
                 if (t == null)
                     return false;
 
-                if (v instanceof ExecutionResult)
-                    return false;
 
                 //if (t.isJudgmentOrGoal()) return true;
 

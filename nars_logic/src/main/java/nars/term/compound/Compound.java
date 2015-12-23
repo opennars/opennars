@@ -22,9 +22,9 @@ package nars.term.compound;
 
 import nars.Global;
 import nars.Op;
-import nars.nal.Compounds;
 import nars.nal.PremiseAware;
 import nars.nal.RuleMatch;
+import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
 import nars.term.Term;
 import nars.term.TermContainer;
@@ -154,7 +154,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
         //apply any known immediate transform operators
         if (Op.isOperation(result)) {
-            ImmediateTermTransform tf = f.getTransform(Compounds.operatorTerm((Compound)result));
+            ImmediateTermTransform tf = f.getTransform(Operator.operatorTerm((Compound)result));
             if (tf!=null) {
                 return applyImmediateTransform(f, result, tf);
             }
@@ -166,7 +166,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     @Nullable
     default Term applyImmediateTransform(Subst f, Term result, ImmediateTermTransform tf) {
 
-        Compound args = (Compound) Compounds.opArgs((Compound) result).apply(f);
+        Compound args = (Compound) Operator.opArgs((Compound) result).apply(f);
         ////Compounds.opArgs((Compound) result)
 
         if ((tf instanceof PremiseAware) && (f instanceof RuleMatch)) {
