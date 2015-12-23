@@ -112,7 +112,7 @@ public class NARide extends BorderPane {
 */
 
            // ni.addTool("Terminal (bash)", LocalTerminal::new);
-            ni.addTool("Status", () -> new StatusPane(nar, 320));
+            //ni.addTool("Status", () -> new StatusPane(nar, 320));
            // ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
            // ni.addTool("Web Browser", WebBrowser::new);
 
