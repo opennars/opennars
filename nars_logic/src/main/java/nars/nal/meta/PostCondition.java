@@ -75,6 +75,7 @@ public class PostCondition implements Serializable, Level //since there can be m
             contraposition = the("Contraposition"),
             identity = the("Identity"),*/
             allowBackward = the("AllowBackward"),
+            fromPremises = the("FromPremises"),
             fromTask = the("FromTask"),
             fromBelief = the("FromBelief"),
             immediate = the("Immediate");
@@ -181,9 +182,8 @@ public class PostCondition implements Serializable, Level //since there can be m
                     break;
 
                 case "SequenceIntervals":
-                    if (which.equals(fromBelief)) {
+                    if (which.equals(fromPremises)) {
                         rule.sequenceIntervalsFromBelief = true;
-                    } else if (which.equals(fromTask)) {
                         rule.sequenceIntervalsFromTask = true;
                     }
                     break;

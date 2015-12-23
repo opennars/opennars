@@ -47,6 +47,14 @@ public final class Resolve extends PreCondition {
 
         Term possibleSequenceHolder = null;
 
+        //can be deduced, so maybe in rule language just SequenceIntervals:FromPremises from now on!
+        rule.sequenceIntervalsFromBelief = beliefpart != null && beliefpart.hasAny(Op.SEQUENCE);
+        rule.sequenceIntervalsFromTask = taskpart != null && taskpart.hasAny(Op.SEQUENCE);
+
+        if(rule.sequenceIntervalsFromBelief && rule.sequenceIntervalsFromTask) {
+            System.out.println("fatal exception, this is not supported!!");
+        }
+
         if (rule.sequenceIntervalsFromBelief) {
             possibleSequenceHolder = beliefpart;
         }
