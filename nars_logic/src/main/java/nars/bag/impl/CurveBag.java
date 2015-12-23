@@ -414,6 +414,14 @@ public class CurveBag<V> extends Bag<V> {
 
     }
 
+    @Override
+    public float getPriorityMin() {
+        return arrayBag.getPriorityMin();
+    }
+    @Override
+    public float getPriorityMax() {
+        return arrayBag.getPriorityMax();
+    }
 
     public final int sample() {
         int s = size();

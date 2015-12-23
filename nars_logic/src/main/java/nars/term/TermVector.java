@@ -283,7 +283,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
 
         if (this == that) return true;
 
-        if (!(that instanceof TermContainer)) return false;
+        if (!(that instanceof TermVector)) return false;
 
         TermVector c = (TermVector) that;
         return (contentHash == c.contentHash) &&
@@ -297,8 +297,9 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         if (s!=c.size())
             return false;
 
+        T[] tt = this.term;
         for (int i = 0; i < s; i++) {
-            if (!term[i].equals(c.term(i)))
+            if (!tt[i].equals(c.term(i)))
                 return false;
         }
 

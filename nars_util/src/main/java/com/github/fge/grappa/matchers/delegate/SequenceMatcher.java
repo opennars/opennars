@@ -55,13 +55,13 @@ public class SequenceMatcher
     public final <V> boolean match(MatcherContext<V> context)
     {
         List<Matcher> children = getChildren();
-        int cs = children.size();
-
 
         ValueStack<V> stack = context.getValueStack();
         Object snapshot = stack.takeSnapshot();
 
-        for (Matcher matcher : children) {
+
+        for (int i = 0, childrenSize = children.size(); i < childrenSize; i++) {
+            Matcher matcher = children.get(i);
             if (!matcher.getSubContext(context).runMatcher()) {
                 stack.restoreSnapshot(snapshot);
                 return false;

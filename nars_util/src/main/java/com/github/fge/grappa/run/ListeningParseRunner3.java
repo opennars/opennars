@@ -140,8 +140,10 @@ public class ListeningParseRunner3<V>
 
     protected void resetValueStackDOESNTNEEDTOBEFINALPLEASE()     {
         //ONLY CREATE A REPLACEMENT VALUESTACK IF IS EMPTY
-        if (valueStack == null || !valueStack.isEmpty())
+        if (valueStack == null)
             valueStack = new DefaultValueStack();
+        else
+            valueStack.clear();
         stackSnapshot = null;
     }
 

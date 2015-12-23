@@ -243,6 +243,9 @@ public abstract class NQuadsRDF {
     static final Atom sameAs = Atom.the("sameAs");
     static final Atom dataTypeProperty = Atom.the("DatatypeProperty");
 
+    static final Term subjCondition(Term subject) { return $.inh($.sete($.p($.varDep("subj"), $.varDep("obj"))),
+            $.seti(subject)); }
+
     /**
      * Saves the relation into the database. Both entities must exist if the
      * relation is to be saved. Takes care of updating relation_types as well.
@@ -286,17 +289,16 @@ public abstract class NQuadsRDF {
             // PROPERTY domain CLASS
             //<PROPERTY($subj, $obj) ==> <$subj {-- CLASS>>.
 
-            Term a = $.$("<{(#subj,#obj)} --> [" + subject + "]>");
-            Term b = $.$("<{#subj} --> [" +  object + "]>");
-            belief = $.conj(a,b);
+
+            Term b = $.inh($.sete($.varDep("subj")), $.seti(object));
+            belief = $.conj(subjCondition(subject),b);
         }
         else if (predicate.equals(range)) {
             // PROPERTY range CLASS
             //<PROPERTY($subj, $obj) ==> <$obj {-- CLASS>>.
 
-            Term a = $.$("<{(#subj,#obj)} --> [" + subject + "]>");
-            Term b = $.$("<{#obj} --> [" +  object + "]>");
-            belief = $.conj(a,b);
+            Term b = $.inh($.sete($.varDep("obj")), $.seti(object));
+            belief = $.conj(subjCondition(subject),b);
 
 //            belief = nar.term(
 //                    //"<" + subject + "($subj,$obj) ==> <$obj {-- " + object + ">>"

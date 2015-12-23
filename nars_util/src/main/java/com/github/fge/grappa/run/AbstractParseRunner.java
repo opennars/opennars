@@ -56,7 +56,11 @@ public abstract class AbstractParseRunner<V>
     protected final void resetValueStack()
     {
         // TODO: write a "memoizing" API
-        valueStack = new DefaultValueStack<>();
+        if (valueStack!=null)
+            valueStack.clear();
+        else
+            valueStack = new DefaultValueStack<>();
+
         stackSnapshot = null;
     }
 

@@ -1,10 +1,10 @@
 package nars.util.version;
 
-import nars.Global;
 import org.jetbrains.annotations.NotNull;
 import org.jgrapht.util.ArrayUnenforcedSet;
 
 import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -18,8 +18,8 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
     public VersionMap(Versioning context) {
         this(context,
             //new LinkedHashMap<>()
-            Global.newHashMap(16)
-            //new HashMap(256)
+            //Global.newHashMap(16)
+            new HashMap(16)
         );
     }
 
