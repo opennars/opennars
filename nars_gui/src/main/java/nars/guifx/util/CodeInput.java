@@ -61,11 +61,11 @@ public class CodeInput extends BorderPane {
                                     try {
                                         String s = e.getMessage();
                                         String[] spl = s.split(" ");
-                                        String total = "";
+                                        String total = "(&/";
                                         for (String S : spl) {
-                                            total += "<" + S + " --> WORD>. :|:";
-                                            total += "\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n"; //10 steps inbetween ^^
+                                            total += ",<" + S + " --> WORD>,/10";
                                         }
+                                        total+="). :|:";
                                         if (onInput(total)) {
                                             codeArea.clear();
                                             setTop(null);
