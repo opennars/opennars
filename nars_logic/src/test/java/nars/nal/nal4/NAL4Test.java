@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 public class NAL4Test extends AbstractNALTester {
 
 
-    public static final int CYCLES = 75;
+    public static final int CYCLES = 25;
 
     public NAL4Test(Supplier<NAR> b) { super(b);  }
 
@@ -55,15 +55,42 @@ public class NAL4Test extends AbstractNALTester {
         tester.believe("<neutralization --> (acid,base)>",1.0f,0.9f); //en("Neutralization is a relation between an acid and a base. ");
         tester.mustBelieve(CYCLES, "<(\\,neutralization,_,base) --> acid>.", 1.0f, 0.9f); //en("Something that can neutralize a base is an acid.");
         tester.mustBelieve(CYCLES, "<(\\,neutralization,acid,_) --> base>", 1.0f, 0.9f); //en("Something that can be neutralized by an acid is a base.");
-
     }
+
+    @Test
+    public void structural_transformation4_extended() throws Narsese.NarseseException {
+        TestNAR tester = test();
+        tester.believe("<neutralization --> (substance,acid,base)>",1.0f,0.9f);
+        tester.mustBelieve(CYCLES, "<(\\,neutralization,_,acid,base) --> substance>.", 1.0f, 0.9f);
+        tester.mustBelieve(CYCLES, "<(\\,neutralization,substance,_,base) --> acid>.", 1.0f, 0.9f);
+        tester.mustBelieve(CYCLES, "<(\\,neutralization,substance,acid,_) --> base>", 1.0f, 0.9f);
+    }
+
 
     @Test
     public void structural_transformation5() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(\\,neutralization,_,base) --> acid>",1.0f,0.9f); //en("Something that can neutralize a base is an acid.");
         tester.mustBelieve(CYCLES, "<neutralization --> (acid,base)>", 1.0f, 0.9f); //en("Neutralization is a relation between an acid and a base.");
+    }
 
+    @Test
+    public void structural_transformation5_extended() throws Narsese.NarseseException {
+        TestNAR tester = test();
+        tester.believe("<(\\,neutralization,substance,_,base) --> acid>",1.0f,0.9f);
+        tester.mustBelieve(CYCLES, "<neutralization --> (substance,acid,base)>", 1.0f, 0.9f);
+    }
+    @Test
+    public void structural_transformation5_extended2a() throws Narsese.NarseseException {
+        TestNAR tester = test();
+        tester.believe("<(\\,neutralization,substance,_,base,reaction) --> acid>",1.0f,0.9f);
+        tester.mustBelieve(CYCLES, "<neutralization --> (substance,acid,base,reaction)>", 1.0f, 0.9f);
+    }
+    @Test
+    public void structural_transformation5_extended2b() throws Narsese.NarseseException {
+        TestNAR tester = test();
+        tester.believe("<(\\,neutralization,substance,acid,_,reaction) --> base>",1.0f,0.9f);
+        tester.mustBelieve(CYCLES, "<neutralization --> (substance,acid,base,reaction)>", 1.0f, 0.9f);
     }
 
     @Test
