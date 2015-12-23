@@ -1,6 +1,7 @@
 package nars.guifx;
 
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
@@ -192,12 +193,11 @@ public class PluginPanel extends VBox {
     }
 
     Map<String, Node> nodes = new ConcurrentHashMap<>();
-
     private Node node(String k, Object v) {
         return nodes.computeIfAbsent(k, (K) -> {
 
 
-            ToggleButton p = new ToggleButton();
+            Button p = new Button();
             p.getStyleClass().add("plugin_button");
             p.setGraphic(icon(K, v));
             p.setMaxWidth(Double.MAX_VALUE);
