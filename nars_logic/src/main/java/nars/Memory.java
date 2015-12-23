@@ -277,8 +277,8 @@ public class Memory extends Param {
 
             if (willBeReceived) {
 
-                if (Global.DEBUG_DERIVATION_STACKTRACES && Global.DEBUG_TASK_LOG)
-                    task.log(Premise.getStack());
+                /*if (Global.DEBUG_DERIVATION_STACKTRACES && Global.DEBUG_TASK_LOG)
+                    task.log(Premise.getStack());*/
 
                 eventTaskRemoved.emit(task);
             }

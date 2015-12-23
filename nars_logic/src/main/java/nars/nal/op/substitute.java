@@ -16,6 +16,7 @@ public class substitute extends ImmediateTermTransform {
     public static final Atom DEP_VAR = Atom.the("#", true);
 
 
+
     @Override public Term function(Compound p) {
         final Term[] xx = p.terms();
 

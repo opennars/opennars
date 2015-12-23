@@ -125,7 +125,7 @@ public class InternalExperience {
             if (belief == null) return;
 
             Task task = p.getTask();
-            Random r = p.getRandom();
+            Random r = p.memory().random;
 
             if (r.nextFloat() < INTERNAL_EXPERIENCE_RARE_PROBABILITY) {
                 nonInnate(belief, task, p, randomNonInnate(r) );

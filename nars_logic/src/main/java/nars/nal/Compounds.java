@@ -21,6 +21,7 @@ import nars.truth.Truth;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -129,8 +130,7 @@ public class Compounds {
         }
 
         if (index == -1) {
-            //index = 0;
-            return null;
+            throw new RuntimeException("invalid image subterms: " + Arrays.toString(res));
         } else {
             int serN = res.length - 1;
             Term[] ser = new Term[serN];
@@ -245,7 +245,7 @@ public class Compounds {
      * @param index    The index of the place-holder (variable)
      * @return A compound generated or a term it reduced to
      */
-    public static Term makeImageExt(Compound product, Term relation, short index) {
+    private static Term makeImageExt(Compound product, Term relation, short index) {
         int pl = product.size();
         if (relation.op(Op.PRODUCT)) {
             Compound p2 = (Compound) relation;
@@ -413,8 +413,8 @@ public class Compounds {
         if (A.equals(B))
             return null; //empty set
         TreeSet<Term> x = TermContainer.differenceSorted(A, B);
-        if (x.isEmpty())
-            return null;
+        /*if (x.isEmpty())
+            return null;*/
         return newCompound(setType, Terms.toArray(x),
                 -1, false /* already sorted here via the Set */);
     }

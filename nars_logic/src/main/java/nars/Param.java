@@ -42,26 +42,26 @@ public abstract class Param extends Container implements Level {
 
 
 
-    /** converts durations to cycles */
-    public final float durationToCycles(MutableFloat durations) {
-        return durationToCycles(durations.floatValue());
-    }
-
-    public final float durationToCycles(float durations) {
-        return duration.floatValue() * durations;
-    }
-
-
+//    /** converts durations to cycles */
+//    public final float durationToCycles(MutableFloat durations) {
+//        return durationToCycles(durations.floatValue());
+//    }
+//
+//    public final float durationToCycles(float durations) {
+//        return duration.floatValue() * durations;
+//    }
 
 
 
 
 
-    /** Concept decay rate in ConceptBag, in [1, 99].  originally: CONCEPT_FORGETTING_CYCLE 
-     *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
-     *  Lower means faster rate of decay.
-     */
-    @Deprecated public final MutableFloat conceptForgetDurations = new MutableFloat();
+
+
+//    /** Concept decay rate in ConceptBag, in [1, 99].  originally: CONCEPT_FORGETTING_CYCLE
+//     *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
+//     *  Lower means faster rate of decay.
+//     */
+//    @Deprecated public final MutableFloat conceptForgetDurations = new MutableFloat();
     
     /** TermLink decay rate in TermLinkBag, in [1, 99]. originally: TERM_LINK_FORGETTING_CYCLE */
     //TODO use separate termlink forget rates whether the termlink was actually selected for firing or not.

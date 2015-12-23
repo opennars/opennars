@@ -197,6 +197,7 @@ public interface Budget extends Prioritized, Budgeted {
      * uses optimized aveGeoNotLessThan to avoid a cube root operation
      */
     default boolean summaryNotLessThan(float min) {
+        if (min == 0f) return true;
         return aveGeoNotLessThan(min, getPriority(), getDurability(), getQuality());
     }
 

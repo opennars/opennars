@@ -41,7 +41,6 @@ import nars.time.Clock;
 import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift128PlusRandom;
 import nars.util.event.Active;
-import org.apache.commons.lang3.mutable.MutableFloat;
 
 import java.io.Serializable;
 import java.util.Random;
@@ -199,7 +198,6 @@ public abstract class AbstractNAR extends NAR {
         m.conceptGoalsMax.set(5);
         m.conceptQuestionsMax.set(3);
 
-        m.conceptForgetDurations.setValue(2.0); //not currently used
         m.taskLinkForgetDurations.setValue(6.0);
         m.termLinkForgetDurations.setValue(6.0); //not currently used, tasklink is
 
@@ -482,7 +480,6 @@ public abstract class AbstractNAR extends NAR {
 
         public final MutableInteger capacity = new MutableInteger();
 
-        public final MutableFloat conceptForget;
         private BagBudget[] termsArray = new BagBudget[0];
         private BagBudget[] tasksArray = new BagBudget[0];
 
@@ -500,7 +497,6 @@ public abstract class AbstractNAR extends NAR {
 
             this.deriver = deriver;
 
-            conceptForget = nar.memory.conceptForgetDurations;
 
             conceptsFiredPerCycle = new MutableInteger(1);
             active = concepts;

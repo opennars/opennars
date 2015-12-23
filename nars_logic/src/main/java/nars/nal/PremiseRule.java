@@ -375,13 +375,13 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
 
-                case "event":
-                    preNext = Temporality.both;
-                    break;
+//                case "event":
+//                    preNext = Temporality.both;
+//                    break;
 
-                case "temporal":
-                    preNext = Temporality.either;
-                    break;
+//                case "temporal":
+//                    preNext = Temporality.either;
+//                    break;
 
                 case "after":
                     preNext = After.the;

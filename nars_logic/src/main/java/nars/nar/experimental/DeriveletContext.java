@@ -33,7 +33,7 @@ public abstract class DeriveletContext implements Consumer<NAR> {
     public void accept(NAR nar) {
         //each cycle
         Memory memory = nar.memory;
-        forgetCycles = memory.duration() * memory.conceptForgetDurations.floatValue();
+        forgetCycles = memory.duration() * 1; //memory.conceptForgetDurations.floatValue();
     }
 
     public float nextFloat() {

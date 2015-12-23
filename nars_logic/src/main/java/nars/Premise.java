@@ -15,8 +15,6 @@ import nars.term.transform.FindSubst;
 import nars.term.transform.MapSubst;
 import nars.truth.DefaultTruth;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -193,74 +191,70 @@ public interface Premise extends Level, Tasked {
     }
 
 
-    default Random getRandom() {
-        return memory().random;
-    }
 
+//    /**
+//     * produces a cropped and filtered stack trace (list of methods called)
+//     */
+//    static List<String> getStack() {
+//        StackTraceElement[] s = Thread.currentThread().getStackTrace();
+//
+//        String prefix = "";
+//
+//        boolean tracing = false;
+//        //String prevMethodID;
+//
+//        List<String> path = new ArrayList();
+//        for (StackTraceElement e : s) {
+//            String className = e.getClassName();
+//            String methodName = e.getMethodName();
+//
+//
+//            if (tracing) {
+//
+//                //Filter conditions
+//                if (className.contains("reactor."))
+//                    continue;
+//                if (className.contains("EventEmitter"))
+//                    continue;
+//                if (("NAL".equals(className) || "Memory".equals(className)) && "emit".equals(methodName))
+//                    continue;
+//
+//                int cli = className.lastIndexOf('.') + 1;
+//                if (cli != -1)
+//                    className = className.substring(cli, className.length()); //class's simpleName
+//
+//                String methodID = className + '_' + methodName;
+//
+//                String sm = prefix + methodID + '_' + e.getLineNumber();
+//
+//
+//                path.add(sm);
+//
+//                //prevMethodID = methodID;
+//
+//
+//                //Termination conditions
+//                if (className.contains("ConceptFireTask") && "accept".equals(methodName))
+//                    break;
+//                if (className.contains("ImmediateProcess") && "rule".equals(methodName))
+//                    break;
+//                if (className.contains("ConceptFire") && "rule".equals(methodName))
+//                    break;
+//            } else if (className.endsWith(".NAL") && "deriveTask".equals(methodName)) {
+//                tracing = true; //begins with next stack element
+//            }
+//
+//        }
+//
+//
+//        return path;
+//
+//    }
 
-    /**
-     * produces a cropped and filtered stack trace (list of methods called)
-     */
-    static List<String> getStack() {
-        StackTraceElement[] s = Thread.currentThread().getStackTrace();
-
-        String prefix = "";
-
-        boolean tracing = false;
-        //String prevMethodID;
-
-        List<String> path = new ArrayList();
-        for (StackTraceElement e : s) {
-            String className = e.getClassName();
-            String methodName = e.getMethodName();
-
-
-            if (tracing) {
-
-                //Filter conditions
-                if (className.contains("reactor."))
-                    continue;
-                if (className.contains("EventEmitter"))
-                    continue;
-                if (("NAL".equals(className) || "Memory".equals(className)) && "emit".equals(methodName))
-                    continue;
-
-                int cli = className.lastIndexOf('.') + 1;
-                if (cli != -1)
-                    className = className.substring(cli, className.length()); //class's simpleName
-
-                String methodID = className + '_' + methodName;
-
-                String sm = prefix + methodID + '_' + e.getLineNumber();
-
-
-                path.add(sm);
-
-                //prevMethodID = methodID;
-
-
-                //Termination conditions
-                if (className.contains("ConceptFireTask") && "accept".equals(methodName))
-                    break;
-                if (className.contains("ImmediateProcess") && "rule".equals(methodName))
-                    break;
-                if (className.contains("ConceptFire") && "rule".equals(methodName))
-                    break;
-            } else if (className.endsWith(".NAL") && "deriveTask".equals(methodName)) {
-                tracing = true; //begins with next stack element
-            }
-
-        }
-
-
-        return path;
-
-    }
-
-
-    default int duration() {
-        return memory().duration();
-    }
+//
+//    default int duration() {
+//        return memory().duration();
+//    }
 
 //    default public CyclesInterval newInterval(final long cycles) {
 //        //return Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
@@ -539,50 +533,52 @@ public interface Premise extends Level, Tasked {
         return t.isEternal();
     }
 
-    /** true if either task or belief is non-eternal */
-    default boolean isTemporal() {
-        Task t = getTask();
-        if (!t.isEternal()) return true;
-
-        Task b = getBelief();
-        return (b != null) && (!b.isEternal());
-
-    }
+//    /** true if either task or belief is non-eternal */
+//    default boolean isTemporal() {
+//        Task t = getTask();
+//        if (!t.isEternal()) return true;
+//
+//        Task b = getBelief();
+//        return (b != null) && (!b.isEternal());
+//
+//    }
 
 
 //    default boolean isTaskEvent() {
 //        return !Temporal.isEternal(getTask().getOccurrenceTime());
 //    }
 
-    //TODO cache this value
-    default boolean isCyclic() {
-        Task t = getTask();
-        Task b = getBelief();
-        if (b != null) {
-            return Tense.overlapping(t, b);
-        }
-        return false;
-    }
+    boolean isCyclic();
 
-    /** gets the average summary of one or both task/belief task's */
-    default float getMeanPriority() {
-        float total = 0;
-        int n = 0;
-        Task pt = getTask();
-        if (pt!=null) {
-            if (!pt.isDeleted())
-                total += pt.getPriority();
-            n++;
-        }
-        Task pb = getBelief();
-        if (pb!=null) {
-            if (!pb.isDeleted())
-                total += pb.getPriority();
-            n++;
-        }
+//    //TODO cache this value
+//    default boolean isCyclic() {
+//        Task t = getTask();
+//        Task b = getBelief();
+//        if (b != null) {
+//            return Tense.overlapping(t, b);
+//        }
+//        return false;
+//    }
 
-        return total/n;
-    }
+//    /** gets the average summary of one or both task/belief task's */
+//    default float getMeanPriority() {
+//        float total = 0;
+//        int n = 0;
+//        Task pt = getTask();
+//        if (pt!=null) {
+//            if (!pt.isDeleted())
+//                total += pt.getPriority();
+//            n++;
+//        }
+//        Task pb = getBelief();
+//        if (pb!=null) {
+//            if (!pb.isDeleted())
+//                total += pb.getPriority();
+//            n++;
+//        }
+//
+//        return total/n;
+//    }
 
 //    default Task input(Task t) {
 //        if (((t = validate(t))!=null)) {

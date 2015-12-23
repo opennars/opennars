@@ -191,9 +191,9 @@ public class RuleMatch extends FindSubst {
                 BudgetFunctions.compoundForward(truth, c, p) :
                 BudgetFunctions.compoundBackward(c, p);
 
-        if (Budget.isDeleted(budget.getPriority())) {
-            throw new RuntimeException("why is " + budget + " deleted");
-        }
+//        if (Budget.isDeleted(budget.getPriority())) {
+//            throw new RuntimeException("why is " + budget + " deleted");
+//        }
 
         if (!!budget.summaryLessThan(p.memory().derivationThreshold.floatValue())) {
 //            if (false) {

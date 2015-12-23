@@ -280,23 +280,19 @@ public interface Term extends Termed, Comparable, Termlike {
     }
 
 
-    static Term apply(Term x, Subst f) {
-        Term y = f.getXY(x);
-
-        //attempt 1: apply known substitution
-        //containsTerm prevents infinite recursion
-        if ((y == null || y.containsTerm(x)))
-            return null;
-
-        return y;
-    }
-
     default Term apply(Subst f) {
         return apply(f, false);
     }
 
     default Term apply(Subst f, boolean fullMatch) {
-        return Term.apply(this, f);
+        Term y = f.getXY(this);
+
+        //attempt 1: apply known substitution
+        //containsTerm prevents infinite recursion
+        if ((y == null || y.containsTerm(this)))
+            return null;
+
+        return y;
     }
 
     default Term applyOrSelf(FindSubst f) {
