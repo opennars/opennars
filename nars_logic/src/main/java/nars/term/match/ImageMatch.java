@@ -1,5 +1,6 @@
 package nars.term.match;
 
+import nars.Op;
 import nars.term.Term;
 import nars.term.compound.Compound;
 
@@ -8,7 +9,7 @@ import nars.term.compound.Compound;
  * at the index location of the original image
  * used to make products from image subterms
  */
-public class ImagePutMatch /*extends ArrayEllipsisMatch<Term>*/ {
+public class ImageMatch /*extends ArrayEllipsisMatch<Term>*/ {
 
 //    private final Term to;
 //    private final Compound origin;
@@ -20,7 +21,7 @@ public class ImagePutMatch /*extends ArrayEllipsisMatch<Term>*/ {
      * @param y the (concrete) image being matched against the pattern
      * @return
      */
-    public static ArrayEllipsisMatch make(Term[] t, Term relationTerm, Compound y) {
+    public static ArrayEllipsisMatch put(Term[] t, Term relationTerm, Compound y) {
 
         int l = t.length;
         Term[] t2 = new Term[l + 1];
@@ -36,6 +37,16 @@ public class ImagePutMatch /*extends ArrayEllipsisMatch<Term>*/ {
             t2[j++] = relationTerm; //it replaces the final position
 
         return new ArrayEllipsisMatch(t2);
+    }
+
+    public static ArrayEllipsisMatch take(ArrayEllipsisMatch m, int imageIndex) {
+
+        //this.imageIndex = imageIndex;
+
+        //mask the relation term
+        Term[] t = m.term;
+        t[imageIndex] = Op.Imdex;
+        return m;
     }
 
 //    @Override

@@ -333,9 +333,8 @@ abstract public class FindSubst extends Versioning implements Subst {
                     //of the other condition of this if { })
                     if (matchEllipsedLinear(X, e, Y)) {
                         ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
-                        xy.put(e, null); //clear it otherwise it will be denied
-                        return putXY(e, ImagePutMatch.make(
-                                raw.term, n, Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
+                        xy.put(e, null); //HACK clear it to replace with a new value
+                        return putXY(e, ImageMatch.put(raw.term, n, Y));
                     }
                 } else {
                     Term n = apply(et.from, false);
@@ -356,8 +355,9 @@ abstract public class FindSubst extends Versioning implements Subst {
 
                     if (matchEllipsedLinear(X, e, Y)) {
                         ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
-                        return putXY(e, new ImageTakeMatch(
-                            raw.term, imageIndex)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
+                        //clear not necessary as in above block because ImageTakeMatch just modifies the array already present, so it will be equal
+                        return putXY(e, ImageMatch.take(
+                            raw, imageIndex)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
                     }
                 }
                 return false;
