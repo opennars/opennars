@@ -333,7 +333,7 @@ public class LinkageTest extends AbstractNALTester {
     public void ConceptFormationTest(String s) throws Exception {
         TestNAR tester = test();
         tester.believe(s,1.0f,0.9f);
-        tester.run(10);
+        tester.run(24);
         Concept ret = tester.nar.concept(s);
 
 //        if(ret == null) {

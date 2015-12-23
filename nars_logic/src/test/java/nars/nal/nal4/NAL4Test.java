@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 public class NAL4Test extends AbstractNALTester {
 
 
-    public static final int CYCLES = 150;
+    public static final int CYCLES = 75;
 
     public NAL4Test(Supplier<NAR> b) { super(b);  }
 
@@ -44,8 +44,6 @@ public class NAL4Test extends AbstractNALTester {
     @Test
     public void structural_transformation3() throws Narsese.NarseseException {
         TestNAR tester = test();
-        tester.nar.log();
-
         tester.believe("<base --> (/,reaction,acid,_)>",1.0f,0.9f); //en("A base is something that has a reaction with an acid.");
         tester.mustBelieve(CYCLES, "<(acid,base) --> reaction>", 1.0f, 0.9f); //en("Acid can react with base.");
 

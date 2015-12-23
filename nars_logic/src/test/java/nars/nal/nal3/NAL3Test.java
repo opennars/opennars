@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 @RunWith(Parameterized.class)
 public class NAL3Test extends AbstractNALTester {
 
-    public static final int cycles = 200;
+    public static final int cycles = 50;
 
     public NAL3Test(Supplier<NAR> b) { super(b); }
 
@@ -58,7 +58,7 @@ public class NAL3Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<robin --> swimmer>",0.0f,0.9f); //.en("Robin is not a type of swimmer.");
         tester.believe("<robin --> (-,mammal,swimmer)>", 0.0f, 0.9f); //.en("Robin is not a nonswimming mammal.");
-        tester.mustBelieve(cycles*5, "<robin --> mammal>", 0.0f ,0.81f); //.en("Robin is not a type of mammal.");
+        tester.mustBelieve(cycles*3, "<robin --> mammal>", 0.0f ,0.81f); //.en("Robin is not a type of mammal.");
 
     }
 
@@ -102,7 +102,7 @@ public class NAL3Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<planetX --> {Mars,Pluto,Venus}>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
         tester.believe("<planetX --> {Pluto,Saturn}>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
-        tester.mustBelieve(cycles*6, "<planetX --> {Mars,Venus}>", 0.81f ,0.81f); //.en("PlanetX is either Mars or Venus.");
+        tester.mustBelieve(cycles*3, "<planetX --> {Mars,Venus}>", 0.81f ,0.81f); //.en("PlanetX is either Mars or Venus.");
 
     }
 
@@ -188,7 +188,7 @@ public class NAL3Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<swan --> bird>",0.9f,0.9f); //.en("Swan is a type of bird.");
         tester.ask("<(&,swan,swimmer) --> bird>"); //.en("Is swimming swan a type of bird?");
-        tester.mustBelieve(cycles*4, "<(&,swan,swimmer) --> bird>", 0.90f ,0.73f); //.en("Swimming swan is a type of bird.");
+        tester.mustBelieve(cycles*3, "<(&,swan,swimmer) --> bird>", 0.90f ,0.73f); //.en("Swimming swan is a type of bird.");
 
     }
 
@@ -222,7 +222,7 @@ public class NAL3Test extends AbstractNALTester {
     public void compound_decomposition_one_premise2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<(|, boy, girl) --> youth>", 0.9f, 0.9f); //.en("Boys and gials are youth.");
-        tester.mustBelieve(cycles*4, "<boy --> youth>", 0.90f ,0.73f); //.en("Boys are youth.");
+        tester.mustBelieve(cycles*3, "<boy --> youth>", 0.90f ,0.73f); //.en("Boys are youth.");
 
     }
 

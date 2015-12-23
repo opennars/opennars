@@ -323,14 +323,19 @@ abstract public class FindSubst extends Versioning implements Subst {
                 EllipsisTransform et = (EllipsisTransform)e;
                 if (et.from.equals(Op.Imdex)) {
 
+                    Term n = apply(et.to, false);
+                    if (n == null)
+                        return false;
+
                     //the indicated term should be inserted
                     //at the index location of the image
                     //being processed. (this is the opposite
                     //of the other condition of this if { })
                     if (matchEllipsedLinear(X, e, Y)) {
                         ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
-                        return putXY(e, new ImagePutMatch(
-                                raw.term, et.to, Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
+                        xy.put(e, null); //clear it otherwise it will be denied
+                        return putXY(e, ImagePutMatch.make(
+                                raw.term, n, Y)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
                     }
                 } else {
                     Term n = apply(et.from, false);
