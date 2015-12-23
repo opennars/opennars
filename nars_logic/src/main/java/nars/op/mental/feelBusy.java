@@ -18,12 +18,11 @@
 package nars.op.mental;
 
 import nars.$;
-import nars.task.Task;
+import nars.Memory;
+import nars.nal.nal8.Execution;
 import nars.term.Term;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 
 /**
@@ -39,10 +38,14 @@ public class feelBusy extends feel {
      * To get the current value of an internal sensor
      */
     @Override
-    public List<Task> apply(Task operation) {
-        float busy = nar.memory.emotion.busy();
-        logger.info("busy=" + busy + ", terms=" + nar.memory.index.size());
-        return feeling(busy, nar.memory, business);
+    public void execute(Execution e) {
+        Memory m = e.nar.memory;
+        float busy = m.emotion.busy();
+        logger.info("busy=" + busy + ", terms=" + m.index.size());
+
+        e.feedback(
+            feeling(busy, m, business)
+        );
     }
 
 }

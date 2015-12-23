@@ -18,10 +18,9 @@
 package nars.op.mental;
 
 import nars.$;
-import nars.task.Task;
+import nars.Memory;
+import nars.nal.nal8.Execution;
 import nars.term.Term;
-
-import java.util.List;
 
 /**
  * Feeling happy value
@@ -37,7 +36,10 @@ public class feelHappy extends feel {
      * @return Immediate results as Tasks
      */
     @Override
-    public List<Task> apply(Task operation) {
-        return feeling(nar.memory.emotion.happy(), nar.memory, happiness);
-    }    
+    public void execute(Execution e) {
+        Memory m = e.nar.memory;
+        e.feedback(
+            feeling(m.emotion.happy(), m, happiness)
+        );
+    }
 }

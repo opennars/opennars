@@ -3,6 +3,7 @@ package nars.java;
 import com.github.drapostolos.typeparser.TypeParser;
 import nars.$;
 import nars.Op;
+import nars.nal.nal8.Execution;
 import nars.nal.nal8.operator.TermFunction;
 import nars.task.Task;
 import nars.term.Term;
@@ -13,7 +14,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -52,18 +52,15 @@ public class MethodOperator extends TermFunction {
         return $.the(superClass + '_' + methodName);
     }
 
-
     @Override
-    public synchronized List<Task> apply(Task opTask) {
+    public void execute(Execution e) {
+        currentTask = e.task; //HACK
 
-        currentTask = opTask; //HACK
-
-        List result = super.apply(opTask);
+        super.execute(e);
 
         currentTask = null;
-
-        return result;
     }
+
 
     @Override
     public Object function(Compound o) {
@@ -143,7 +140,7 @@ public class MethodOperator extends TermFunction {
 
         } catch (Exception e) {
             //System.err.println(method + " <- " + instance + " (" + instance.getClass() + " =?= " + method.getDeclaringClass() + "\n\t<<< " + Arrays.toString(args));
-            nar.memory.eventError.emit(e);
+            //nar.memory.eventError.emit(e);
             return context.term(e);
         }
 

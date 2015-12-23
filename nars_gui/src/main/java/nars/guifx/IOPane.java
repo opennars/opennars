@@ -7,11 +7,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.web.WebView;
 import nars.NAR;
+import nars.Op;
 import nars.guifx.demo.TaskButton;
 import nars.guifx.util.NSlider;
+import nars.nal.Compounds;
 import nars.task.Task;
+import nars.term.Term;
+import nars.term.atom.Atom;
+import nars.term.compound.Compound;
+import nars.util.event.On;
 import org.jetbrains.annotations.NotNull;
+
+import static javafx.application.Platform.runLater;
 
 /**
  * Created by me on 8/2/15.
@@ -23,7 +32,7 @@ public class IOPane extends BorderPane /*implements FXIconPaneBuilder*/ {
 
     private final NAR nar;
 
-    public static class DefaultTracePane extends TracePane {
+    public class DefaultTracePane extends TracePane {
 
         public DefaultTracePane(NAR nar, DoubleProperty volume) {
             super(nar, volume);
@@ -87,9 +96,50 @@ public class IOPane extends BorderPane /*implements FXIconPaneBuilder*/ {
 
         @NotNull
         public Node getTaskNode(Task t) {
-            return new TaskButton(nar, t.getTask());
-            //return SubButton.make(nar, t);
+            return IOPane.this.newTaskNode(t);
         }
+
+        @Override
+        public void appear() {
+            super.appear();
+            On commands = nar.onExec("html", (e) -> {
+
+                Term[] a = e.argArray();
+                WebView w = new WebView();
+                //w.resize(400,200);
+                w.getEngine().loadContent(
+                        ((Atom)a[0]).toStringUnquoted()
+                );
+
+                runLater(() -> { append(w); } );
+            });
+        }
+
+        @Override
+        public void disappear() {
+            super.disappear();
+            //TODO unregister
+        }
+    }
+
+    public Node newTaskNode(Task t) {
+        Term tt = t.term();
+        if (Op.isOperation(tt)) {
+            Compound ct = (Compound) tt;
+            Term[] a = Compounds.opArgsArray(ct);
+            switch (Compounds.operatorName(ct).toString()) {
+                case "html":
+                    WebView w = new WebView();
+                    //w.resize(400,200);
+                    w.getEngine().loadContent(
+                        ((Atom)a[0]).toStringUnquoted()
+                    );
+                    return w;
+
+            }
+        }
+        return new TaskButton(nar, t.getTask());
+        //return SubButton.make(nar, t);
     }
 
     public class OutputPane extends BorderPane {

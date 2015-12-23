@@ -4,12 +4,12 @@ import nars.NAR;
 import nars.Symbols;
 import nars.concept.Concept;
 import nars.nal.Compounds;
+import nars.nal.nal8.Execution;
 import nars.nal.nal8.operator.NullOperator;
 import nars.task.Task;
 import nars.term.Term;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static junit.framework.TestCase.assertEquals;
@@ -27,12 +27,13 @@ public class CommandTest {
         n.onExec(new NullOperator("c") {
 
             @Override
-            public List<Task> apply(Task o) {
+            public void execute(Execution execution) {
+
                 invoked.set(true);
-                Term[] a = Compounds.opArgsArray(o.term());
+                Term[] a = Compounds.opArgsArray(execution.term());
                 assertEquals(1, a.length);
                 assertEquals("x", a[0].toString());
-                return null;
+
             }
         });
         Task t = n.task("c(x);");

@@ -2,6 +2,7 @@ package nars.op.software;
 
 import nars.NAR;
 import nars.nal.Compounds;
+import nars.nal.nal8.Execution;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
@@ -15,7 +16,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Executes a Javascript expression
@@ -52,7 +52,7 @@ public class js extends TermFunction implements Mental {
 
         @Override public Object function(Compound o) {
             Term[] args = Compounds.opArgsArray(o);
-            Bindings bindings = newBindings(args);
+            Bindings bindings = newBindings(null, args);
             bindings.put("_o", fnCompiled);
 
             Object result;
@@ -74,17 +74,16 @@ public class js extends TermFunction implements Mental {
     public class jsop extends NullOperator {
 
         @Override
-        public List<Task> apply(Task op) {
+        public void execute(Execution e) {
+            Task op = e.task;
             Term[] x = Compounds.opArgsArray(op.term());
             String funcName = Atom.unquote(x[0]);
             String functionCode = Atom.unquote(x[1]);
             //nar.input( echo.newTask("JS Operator Bind: " + funcName + " = " + functionCode));
             DynamicFunction d = new DynamicFunction(funcName, functionCode);
-            nar.onExec(d);
+            e.nar.onExec(d);
 
             //op.stop();
-
-            return null;
         }
 
 
@@ -161,26 +160,26 @@ public class js extends TermFunction implements Mental {
 //
 //    }
 
+//
+//    @Override
+//    public boolean setEnabled(NAR n, boolean enabled) {
+//        //this is a plugin which attches additional plugins. kind of messy, this will change
+//        boolean x = super.setEnabled(n, enabled);
+//        if (enabled) {
+//            n.onExec(new jsop());
+//            //n.on(new jsbelief());
+//        }
+//        return x;
+//    }
 
-    @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
-        //this is a plugin which attches additional plugins. kind of messy, this will change
-        boolean x = super.setEnabled(n, enabled);
-        if (enabled) {
-            n.onExec(new jsop());
-            //n.on(new jsbelief());
-        }
-        return x;
-    }
 
-
-    public Bindings newBindings(Term[] args) {
+    public Bindings newBindings(NAR nar, Term[] args) {
 
         Bindings bindings = new SimpleBindings();
         bindings.put("global", global);
         bindings.put("js", this);
         bindings.put("arg", args);
-        bindings.put("memory", nar());
+        bindings.put("memory", nar);
         bindings.put("nar", nar);
 
         return bindings;
@@ -197,7 +196,7 @@ public class js extends TermFunction implements Mental {
         Term[] scriptArguments = new Term[args.length - 1];
         System.arraycopy(args, 1, scriptArguments, 0, args.length-1);
 
-        Bindings bindings = newBindings(scriptArguments);
+        Bindings bindings = newBindings(null /*TODO */, scriptArguments);
 
 
         

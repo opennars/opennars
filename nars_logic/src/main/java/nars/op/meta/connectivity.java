@@ -1,12 +1,11 @@
 package nars.op.meta;
 
+import nars.nal.nal8.Execution;
 import nars.nal.nal8.operator.SyncOperator;
-import nars.task.Task;
 import nars.term.Term;
 import nars.util.graph.TermLinkGraph;
 import org.jgrapht.alg.ConnectivityInspector;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,9 +14,9 @@ import java.util.Set;
 public class connectivity extends SyncOperator {
 
     @Override
-    public List<Task> apply(Task o) {
+    public void execute(Execution e) {
 
-        TermLinkGraph g = new TermLinkGraph(nar);
+        TermLinkGraph g = new TermLinkGraph(e.nar);
 
 
         ConnectivityInspector<Term,String> ci = new ConnectivityInspector(g);
@@ -29,6 +28,5 @@ public class connectivity extends SyncOperator {
         }
 
         //o.stop();
-        return null;
     }
 }

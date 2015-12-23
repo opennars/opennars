@@ -10,6 +10,7 @@ import nars.nal.Compounds;
 import nars.nal.Level;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.Execution;
 import nars.nal.nal8.OperatorReaction;
 import nars.nal.nal8.PatternAnswer;
 import nars.nal.nal8.operator.TermFunction;
@@ -37,7 +38,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -484,11 +488,17 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         if (Op.isOperation(term)) {
             Compound o = (Compound) term;
 
-            //enqueue
+            //enqueue after this frame, before next
             beforeNextFrame(()-> {
-                if (!goal.isDeleted()) //it may be deleted by the time this runs
-                    memory.exe.emit(
-                        Compounds.operatorName(o), goal);
+                if (goal.isDeleted())
+                    return; //it may be deleted by the time this runs
+
+                Topic<Execution> tt = memory.exe.get(
+                        Compounds.operatorName(o));
+                if (tt!=null && !tt.isEmpty()) {
+                    tt.emit( new Execution(this, goal ));
+                }
+
                 //else ... --> why?
             });
 
@@ -535,54 +545,57 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-    public final TermFunction onExecTerm(String operator, Function<Term[], Object> func) {
-        return onExecTerm(Atom.the(operator), func);
+//    public final TermFunction onExecTerm(String operator, Function<Term[], Object> func) {
+//        return onExecTerm(Atom.the(operator), func);
+//    }
+//
+//    public final EventEmitter.Registrations onExec(String operator, Consumer<Term[]> func) {
+//        return onExec(Atom.the(operator), func);
+//    }
+
+//    public final EventEmitter.Registrations onExec(Term operator, Consumer<Term[]> func) {
+//        //wrap the procedure in a function, suboptimal but ok
+//        return onExecTask(operator, (Task tt) -> {
+//            func.accept(Compounds.opArgs(tt.term()).terms());
+//            return null;
+//        });
+//    }
+
+    public On onExecTask(String operator, Consumer<Execution> f) {
+        return onExec(Atom.the(operator), f);
     }
 
-    public final void onExec(String operator, Consumer<Term[]> func) {
-        onExec(Atom.the(operator), func);
+    public On onExecTerm(String operator, Function<Term[], Object> f) {
+        return onExecTerm(Atom.the(operator), f);
     }
 
-    public final void onExec(Term operator, Consumer<Term[]> func) {
-        //wrap the procedure in a function, suboptimal but ok
-        onExecTask(operator, (Task tt) -> {
-            func.accept(Compounds.opArgs(tt.term()).terms());
-            return null;
-        });
-    }
-
-    public void onExecTask(String operator, Function<Task, List<Task>> f) {
-        onExecTask(Atom.the(operator), f);
-    }
-    //TODO use specific names for these types of functons in this class
-    public void onExecTask(Term operator, Function<Task, List<Task>> f) {
-        onExec(new OperatorReaction(operator) {
-            @Override
-            public List<Task> apply(Task t) {
-                return f.apply(t);
-            }
-        });
-    }
     /**
      * creates a TermFunction operator from a supplied function, which can be a lambda
      */
-    public TermFunction onExecTerm(Term operator, Function<Term[], Object> func) {
-        TermFunction f = new TermFunction(operator) {
+    public On onExecTerm(Term operator, Function<Term[], Object> func) {
+        return onExec(operator, new TermFunction(operator) {
 
             @Override
             public Object function(Compound x) {
-                return func.apply(x.terms());
+                return func.apply( x.terms() );
             }
-        };
-        onExec(f);
-        return f;
+
+        });
     }
 
-
-
-    public final EventEmitter.Registrations onExec(Reaction<Term, Task> o, Term c) {
-        return memory.exe.on(o, c);
+    public final On onExec(OperatorReaction r) {
+        return onExec(r.getOperatorTerm(), r);
     }
+
+    public final On onExec(String op, Consumer<Execution> each) {
+        return onExec(Atom.the(op), each);
+    }
+
+    public final On onExec(Term op, Consumer<Execution> each) {
+        Topic<Execution> t = memory.exe.computeIfAbsent(op, (Term o) -> new DefaultTopic<Execution>() );
+        return t.on(each);
+    }
+
 
 //    /** Explicitly removes an input channel and notifies it, via Input.finished(true) that is has been removed */
 //    public Input removeInput(Input channel) {
@@ -617,11 +630,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 //        return Collections.unmodifiableList(plugins);
 //    }
 
-    public EventEmitter.Registrations onExec(OperatorReaction o) {
-        EventEmitter.Registrations reg = onExec(o, o.getOperatorTerm());
-        o.setEnabled(this, true);
-        return reg;
-    }
+
 
 
     public final int getCyclesPerFrame() {
@@ -1003,13 +1012,13 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         }
     }
 
-    public boolean execAsync(Consumer<NAR> t) {
-        return execAsync( /* Runnable */ () -> t.accept(NAR.this));
-    }
-
-    public <X> Future<X> execAsync(Function<NAR, X> t) {
-        return asyncs.submit( /* (Callable) */() -> t.apply(NAR.this));
-    }
+//    public boolean execAsync(Consumer<NAR> t) {
+//        return execAsync( /* Runnable */ () -> t.accept(NAR.this));
+//    }
+//
+//    public <X> Future<X> execAsync(Function<NAR, X> t) {
+//        return asyncs.submit( /* (Callable) */() -> t.apply(NAR.this));
+//    }
 
     @Override
     public String toString() {

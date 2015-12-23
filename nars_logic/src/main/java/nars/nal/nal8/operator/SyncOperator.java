@@ -23,5 +23,4 @@ public abstract class SyncOperator extends OperatorReaction {
         super((Term)null);
     }
 
-
 }

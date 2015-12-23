@@ -51,8 +51,7 @@ public class ExecutionResult implements Serializable, Tasked {
             */
 
         //sb.append(')');
-
-        sb.append(" >EXE> ");
+        sb.append(' ');
 
         if (feedback != null)
             sb.append(feedback);

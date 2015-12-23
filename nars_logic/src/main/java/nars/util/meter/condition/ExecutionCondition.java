@@ -24,18 +24,17 @@ public class ExecutionCondition implements NARCondition {
         this.minExpect = minExpect;
         this.maxExpect = maxExpect;
 
-        n.onExecTask(opTerm, t -> {
+        n.onExec(opTerm, t -> {
 
             if (!success) {
                 long now = n.time();
                 if ((now >= start) && (now <= end)) {
-                    float expect = t.getExpectation();
+                    float expect = t.task.getExpectation();
                     if ((expect >= minExpect) && (expect <= maxExpect)) {
                         success = true;
                     }
                 }
             }
-            return null;
         });
 
     }

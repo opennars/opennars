@@ -5,8 +5,8 @@ import nars.NAR;
 import nars.Narsese;
 import nars.nal.AbstractNALTester;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
+import nars.util.event.On;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ public class NAL8Test extends AbstractNALTester {
 
     final int cycles = 700;
     int exeCount = 0;
-    private TermFunction exeFunc;
+    private On exeFunc;
 
     public NAL8Test(Supplier<NAR> b) { super(b); }
 

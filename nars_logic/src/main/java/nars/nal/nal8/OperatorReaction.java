@@ -21,22 +21,13 @@
 
 package nars.nal.nal8;
 
-import nars.$;
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.budget.Budget;
-import nars.budget.UnitBudget;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.Decider;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.util.event.Reaction;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 /**
  * An operator implementation identified by a term
@@ -46,12 +37,12 @@ import java.util.function.Function;
  * An instance of an Operator must not be shared by multiple Memory
  * since it will be associated with a particular one.  Create a separate one for each
  */
-public abstract class OperatorReaction implements Function<Task,List<Task>>, Reaction<Term,Task>, Serializable {
+public abstract class OperatorReaction implements Consumer<Execution> {
 
 
     public final Term operatorTerm;
 
-    protected transient NAR nar;
+
 
 
     @Override
@@ -74,10 +65,6 @@ public abstract class OperatorReaction implements Function<Task,List<Task>>, Rea
         this.operatorTerm = operatorTerm;
     }
 
-    public boolean setEnabled(NAR n, boolean enabled) {
-        nar = enabled ? n : null;
-        return enabled;
-    }
 
     /**
      * use the class name as the operator name
@@ -88,9 +75,6 @@ public abstract class OperatorReaction implements Function<Task,List<Task>>, Rea
     }
 
 
-    public final NAR nar() {
-        return nar;
-    }
 
     public Decider decider() {
         return DecideAboveDecisionThreshold.the;
@@ -98,10 +82,10 @@ public abstract class OperatorReaction implements Function<Task,List<Task>>, Rea
 
 
     @Override
-    public final void event(Term event, Task o) {
-
+    public void accept(Execution execution) {
+        Task o = execution.task;
         if (o.isCommand() || decider().test(o)) {
-            execute(o);
+            _execute(execution);
         }
     }
 
@@ -119,26 +103,34 @@ public abstract class OperatorReaction implements Function<Task,List<Task>>, Rea
      * @param op     The operate to be executed
      * @return true if successful, false if an error occurred
      */
-    public final boolean execute(Task op) {
-        return async() ? nar.execAsync(() -> executeSynch(op)) : executeSynch(op);
-    }
-
-    final boolean executeSynch(Task op) {
-        try {
-            List<Task> feedback = apply(op);
-            executed(op, feedback);
-        } catch (Exception e) {
-            nar().memory.eventError.emit(e);
-
-            //TODO hack this should be handled by the error handler
-            if (Global.DEBUG) {
-                e.printStackTrace();
-            }
-            return false;
+    public final void _execute(Execution execution) {
+        if (async()) {
+            //asynch
+            execution.nar.execAsync(() -> execute(execution));
+        } else {
+            //synchronous
+            execute(execution);
         }
-
-        return true;
     }
+
+    abstract public void execute(Execution execution);
+
+//    {
+//        try {
+//            List<Task> feedback = apply(op);
+//            executed(op, feedback);
+//        } catch (Exception e) {
+//            nar().memory.eventError.emit(e);
+//
+//            //TODO hack this should be handled by the error handler
+//            if (Global.DEBUG) {
+//                e.printStackTrace();
+//            }
+//            return false;
+//        }
+//
+//        return true;
+//    }
 
     /** determines the execution strategy. currently there are only two: synch and async, and if
      * we want to add more we can use a lambda Consumer<Runnable> or something
@@ -166,71 +158,8 @@ public abstract class OperatorReaction implements Function<Task,List<Task>>, Rea
 //    protected void executed(Operation op, Task... feedback) {
 //        executed(op, Lists.newArrayList(feedback));
 //    }
-    /**
-     * called after execution completed
-     */
-    protected void executed(Task op, List<Task> feedback) {
-
-        NAR n = nar();
-
-        //Display a message in the output stream to indicate the reportExecution of an operation
 
 
-        if (!n.memory.eventExecute.isEmpty()) {
-            n.memory.eventExecute.emit(
-                new ExecutionResult(op, feedback)
-            );
-        }
 
-
-        if (!op.isCommand()) {
-            noticeExecuted(op);
-        }
-
-        //feedback tasks as input
-        //should we allow immediate tasks to create feedback?
-        if (feedback != null) {
-
-            //final Operation t = op.getTerm();
-
-            for (Task f : feedback) {
-                //if (t == null) continue;
-
-                f.log("Feedback");
-
-                //TODO avoid using a string like this
-                //f.log("Feedback: " + t /*"Feedback"*/);
-
-                n.input(f);
-            }
-        }
-
-    }
-
-
-    /**
-     * internal notice of the execution
-     * @param operation
-     */
-    protected void noticeExecuted(Task operation) {
-
-        Budget b;
-        b = !operation.isDeleted() ? operation.getBudget() : UnitBudget.zero;
-
-        Memory memory = nar().memory;
-
-        nar().input($.belief(operation.term(),
-
-                operation.getTruth()).
-                //1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
-
-                budget(b).
-                present(memory).
-                //parent(operation). //https://github.com/opennars/opennars/commit/23d34d5ddaf7c71348d0a70a88e2805ec659ed1c#diff-abb6b480847c96e2dbf488d303fb4962L235
-                because("Executed")
-        );
-
-        memory.logic.TASK_EXECUTED.hit();
-    }
 
 }

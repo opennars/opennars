@@ -1,9 +1,7 @@
 package nars.op.mental;
 
+import nars.nal.nal8.Execution;
 import nars.nal.nal8.operator.SyncOperator;
-import nars.task.Task;
-
-import java.util.List;
 
 /**
  * Counting and Cardinality
@@ -12,10 +10,14 @@ import java.util.List;
 public class Counting extends SyncOperator {
 
     @Override
-    public List<Task> apply(Task operation) {
+    public void execute(Execution execution) {
         //TODO upgrade code below to new api
-        return null;
     }
+
+//    @Override
+//    public List<Task> apply(Task operation) {
+//        return null;
+//    }
 
 //    public Reaction obs;
 //

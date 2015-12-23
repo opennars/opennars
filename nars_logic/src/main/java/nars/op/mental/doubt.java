@@ -17,17 +17,13 @@
 
 package nars.op.mental;
 
+import nars.nal.nal8.Execution;
 import nars.nal.nal8.operator.SyncOperator;
-import nars.task.Task;
-
-import java.util.List;
 
 /**
  * Operator that activates a concept
  */
 public class doubt extends SyncOperator implements Mental {
-
-
 
     /**
      * To activate a concept as if a question has been asked about it
@@ -37,7 +33,9 @@ public class doubt extends SyncOperator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    public List<Task> apply(Task operation) {
+    public void execute(Execution execution) {
+        //TODO upgrade code below to new api
+
         System.err.println("^doubt unimpl");
 //        Term term = operation.getTerm().arg();
 //        Budget b = operation.getBudget();
@@ -47,7 +45,6 @@ public class doubt extends SyncOperator implements Mental {
 //            concept.discountBeliefConfidence();
 //        });
 //        return null;
-        return null;
     }
 
 }

@@ -5,7 +5,6 @@ import nars.$;
 import nars.NAR;
 import nars.Op;
 import nars.budget.Budget;
-import nars.nal.nal8.operator.SyncOperator;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -114,12 +113,8 @@ public class OperatorTest {
         AtomicBoolean executed = new AtomicBoolean(false);
 
         NAR n = new Default();
-        n.onExec(new SyncOperator("exe") {
-            @Override
-            public List<Task> apply(Task operation) {
-                executed.set(true);
-                return null;
-            }
+        n.onExec("exe", (exec) -> {
+            executed.set(true);
         });
 
         //n.trace();
@@ -142,12 +137,9 @@ public class OperatorTest {
         AtomicBoolean executed = new AtomicBoolean(false);
 
         NAR n = new Default();
-        n.onExec(new SyncOperator((Term)n.term("<a --> b>")) {
-            @Override
-            public List<Task> apply(Task operation) {
-                executed.set(true);
-                return null;
-            }
+
+        n.onExec((Term)n.term("<a --> b>"), (exec) -> {
+            executed.set(true);
         });
 
         n.input("<a --> b>(a,b,c)!");

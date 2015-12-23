@@ -20,14 +20,10 @@
  */
 package nars.testchamber.operator;
 
-import nars.nal.Compounds;
+import nars.nal.nal8.Execution;
 import nars.nal.nal8.operator.SyncOperator;
-import nars.task.Task;
 import nars.term.Term;
-import nars.term.compound.Compound;
 import nars.testchamber.TestChamber;
-
-import java.util.List;
 
 /**
  *  A class used as a template for Operator definition.
@@ -41,12 +37,13 @@ public class Deactivate extends SyncOperator {
         this.chamb=chamb;
     }
 
-    @Override public List<Task> apply(Task task) {
-        Compound operation = task.term();
+    @Override
+    public void execute(Execution e) {
+        Term[] argTerms = e.argArray();
 
         TestChamber.executed=true;
         System.out.println("Executed: " + this);
-        Term[] argTerms = Compounds.opArgsArray(operation);
+
         for (int i = 0; i < 1; i++) {
             Term t = argTerms[i];
             System.out.println(" --- " + t);
@@ -54,15 +51,10 @@ public class Deactivate extends SyncOperator {
 
         }
         
-        
        // if(nars.grid2d.Grid2DSpace.world_used) {
             //ok lets start pathfinding tool
             //nars.grid2d.Grid2DSpace.pathFindAndGoto(arg);
        // }
-        
-       
-        
-        return null;
     }
 
 }

@@ -53,7 +53,7 @@ public abstract class feel extends SyncOperator implements Mental {
             new MutableTask(content, Symbols.JUDGMENT)
                 .judgment()
                 .truth(new DefaultTruth(value, 0.999f))
-                .present(nar.memory)
+                .present(memory)
         );
     }
 }

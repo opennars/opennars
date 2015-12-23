@@ -67,17 +67,21 @@ abstract public class TracePane extends LogPane implements ChangeListener<Parent
             return;
 
         Node n = getNode(channel, signal);
-        if (n != null) {
-            //synchronized (toShow) {
-            if (pending == null)
-                pending = new ArraySharingList(Node[]::new); //Global.newArrayList();
 
-            pending.add(n);
-            prev = n;
-            //}
+        if (n != null) {
+            append(n);
         }
     }
 
+    public void append(Node n) {
+        //synchronized (toShow) {
+        if (pending == null)
+            pending = new ArraySharingList(Node[]::new); //Global.newArrayList();
+
+        pending.add(n);
+        prev = n;
+        //}
+    }
 
 
     abstract public Node getNode(Object channel, Object signal);
@@ -89,18 +93,19 @@ abstract public class TracePane extends LogPane implements ChangeListener<Parent
     public void changed(ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) {
         visible = (getParent() != null);
         if (reg == null) {
-            reg = nar.memory.eventFrameStart.on(this);
+            appear();
 
         }
 
     }
 
+
+
     @Override
     public void accept(NAR n) {
 
         if (!visible) {
-            reg.off();
-            reg = null;
+            disappear();
             return;
         }
 
@@ -141,5 +146,13 @@ abstract public class TracePane extends LogPane implements ChangeListener<Parent
         }
         //}
 
+    }
+
+    public void disappear() {
+        reg.off();
+        reg = null;
+    }
+    public void appear() {
+        reg = nar.memory.eventFrameStart.on(this);
     }
 }

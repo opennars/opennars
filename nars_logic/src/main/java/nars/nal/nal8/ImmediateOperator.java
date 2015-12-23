@@ -9,12 +9,9 @@ import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 /** an operation that executes immediately, and without logical consequences;
  *  used for system control functions  */
-public abstract class ImmediateOperator extends NullOperator implements Consumer<Task> {
+public abstract class ImmediateOperator extends NullOperator  {
 
     public final Operator op;
 
@@ -49,11 +46,6 @@ public abstract class ImmediateOperator extends NullOperator implements Consumer
 //                null, 0, 0, 0);
 //    }
 
-    @Override
-    public List<Task> apply(Task o) {
-        accept(o);
-        return null;
-    }
 
     public static Task command(Class<? extends ImmediateOperator> opClass, Object... args) {
         return Task.command(

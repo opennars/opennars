@@ -21,13 +21,11 @@
 package nars.testchamber.operator;
 
 import nars.nal.Compounds;
+import nars.nal.nal8.Execution;
 import nars.nal.nal8.operator.SyncOperator;
-import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.testchamber.TestChamber;
-
-import java.util.List;
 
 /**
  *  A class used as a template for Operator definition.
@@ -41,10 +39,11 @@ public class Pick extends SyncOperator {
         this.chamb=chamb;
     }
 
-    @Override public List<Task> apply(Task task) {
-        Compound operation = task.term();
+    @Override
+    public void execute(Execution e) {
 
-         
+        Compound operation = e.term();
+
         TestChamber.executed=true;
         System.out.println("Executed: " + this);
         Term[] argTerms = Compounds.opArgsArray(operation);
@@ -62,9 +61,7 @@ public class Pick extends SyncOperator {
             //nars.grid2d.Grid2DSpace.pathFindAndGoto(arg);
        // }
         
-       
-        
-        return null;
+
     }
 
 }

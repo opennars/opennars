@@ -1,9 +1,11 @@
 package nars.nal.nal8.operator;
 
 import com.google.common.collect.Lists;
+import nars.NAR;
 import nars.Symbols;
 import nars.nal.Compounds;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.Execution;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
@@ -57,7 +59,7 @@ public abstract class TermFunction<O> extends SyncOperator {
     public abstract O function(Compound x);
 
 
-    protected List<Task> result(Task opTask, Term y/*, Term[] x0, Term lastTerm*/) {
+    protected List<Task> result(NAR nar, Task opTask, Term y/*, Term[] x0, Term lastTerm*/) {
 
         Compound operation = opTask.term();
 
@@ -179,9 +181,13 @@ public abstract class TermFunction<O> extends SyncOperator {
 //        //no notice
 //    }
 
-    @Override
-    public List<Task> apply(Task opTask) {
 
+
+
+    @Override
+    public void execute(Execution e) {
+
+        Task opTask = e.task;
         Compound operation = opTask.term();
 
         //Term opTerm = Compounds.operatorTerm(operation);
@@ -205,7 +211,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         Object y = function(Compounds.opArgs(operation));
 
         if (y == null) {
-            return null;
+            return;
         }
 
         if (y instanceof Boolean) {
@@ -215,12 +221,12 @@ public abstract class TermFunction<O> extends SyncOperator {
         if (y instanceof Truth) {
             //this will get the original input operation term, not after it has been inlined.
 
-            nar.input(
+            e.nar.input(
                 new MutableTask(operation).judgment()
                         .truth((Truth) y).eternal()
             );
 
-            return null;
+            return;
         }
 
 
@@ -229,10 +235,12 @@ public abstract class TermFunction<O> extends SyncOperator {
         }
 
         if (y instanceof Task) {
-            return Lists.newArrayList((Task)y);
+            e.feedback( Lists.newArrayList((Task)y) );
+            return;
         }
         if (y instanceof Term) {
-            return result(opTask, (Term) y/*, x, lastTerm*/);
+            e.feedback( result(e.nar, opTask, (Term) y/*, x, lastTerm*/) );
+            return;
         }
 
 
@@ -243,9 +251,11 @@ public abstract class TermFunction<O> extends SyncOperator {
         char mustBePuncToBeTask = ys.charAt(ys.length()-1); //early prevention from invoking parser
         if (Symbols.isPunctuation(mustBePuncToBeTask) || mustBePuncToBeTask == ':' /* tense ending character */) {
             try {
-                Task t = nar.task(ys);
-                if (t != null)
-                    return Lists.newArrayList(t);
+                Task t = e.nar.task(ys);
+                if (t != null) {
+                    e.feedback( t );
+                    return;
+                }
             } catch (Throwable t) {
                 t.printStackTrace();
             }
@@ -255,8 +265,9 @@ public abstract class TermFunction<O> extends SyncOperator {
 
         Term t = Atom.the(ys, true);
 
-        if (t != null)
-            return result(opTask, t/*, x, lastTerm*/);
+        if (t != null) {
+            e.feedback( result(e.nar, opTask, t/*, x, lastTerm*/) );
+        }
 
         throw new RuntimeException(this + " return value invalid: " + y);
     }

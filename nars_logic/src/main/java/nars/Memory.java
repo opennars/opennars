@@ -23,6 +23,7 @@ package nars;
 
 import com.gs.collections.api.tuple.Twin;
 import nars.concept.Concept;
+import nars.nal.nal8.Execution;
 import nars.nal.nal8.ExecutionResult;
 import nars.process.ConceptProcess;
 import nars.task.Task;
@@ -41,6 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -87,7 +90,7 @@ public class Memory extends Param {
      */
     public final transient Topic<Serializable> eventSpeak = new DefaultTopic<>();
 
-    public final transient Topic<ExecutionResult> eventExecute = new DefaultTopic<>();
+
 
     public final transient Topic<Task> eventInput = new DefaultTopic<>();
     public final transient Topic<Serializable> eventError = new DefaultTopic<>();
@@ -101,8 +104,8 @@ public class Memory extends Param {
     public final transient Topic<Concept> eventConceptChange = new DefaultTopic();
 
     /** executables (incl. operators) */
-    public final transient EventEmitter<Term, Task> exe;
-
+    @Deprecated public final transient Topic<ExecutionResult> eventExecute = new DefaultTopic<>();
+    public final transient Map<Term, Topic<Execution>> exe = new HashMap();
 
 
 
@@ -147,7 +150,6 @@ public class Memory extends Param {
         self = Global.DEFAULT_SELF; //default value
 
         event = new EventEmitter.DefaultEventEmitter();
-        exe = new EventEmitter.DefaultEventEmitter();
 
 
         //temporary
