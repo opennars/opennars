@@ -330,7 +330,7 @@
 //// conjunction decompose
 
     (&&,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong, Order:ForAllSame)
-    (&/,B,A_1..n), B, task("!") |- (&/,A_1..n), (Desire:Strong, SequenceIntervals:FromTask)
+    (&/,B,A_1..n), B |- (&/,A_1..n), (Truth:Deduction, Desire:Strong, SequenceIntervals:FromTask)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A_1..n) is not the case, it can't be that (&&,A_1..n) is the case
@@ -528,7 +528,3 @@
 //compound composition one premise
 
     (||,B,A_1..n), B, task("?") |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-
-//detaching observation
-
-    C, (&/,C,A_1..n,/1) |- (&/,A_1..n,/1), (Truth:Deduction, SequenceIntervals:FromBelief)
