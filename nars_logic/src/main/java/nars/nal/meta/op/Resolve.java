@@ -53,6 +53,7 @@ public final class Resolve extends PreCondition {
 
         if(rule.sequenceIntervalsFromBelief && rule.sequenceIntervalsFromTask) {
             System.out.println("fatal exception, this is not supported!!");
+            System.exit(0);
         }
 
         if (rule.sequenceIntervalsFromBelief) {
