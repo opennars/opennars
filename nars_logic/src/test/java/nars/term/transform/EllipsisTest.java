@@ -1,4 +1,4 @@
-package nars.nal.meta;
+package nars.term.transform;
 
 import junit.framework.TestCase;
 import nars.$;
@@ -9,7 +9,6 @@ import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.term.match.*;
-import nars.term.transform.FindSubst;
 import nars.term.variable.Variable;
 import nars.util.data.random.XorShift128PlusRandom;
 import org.junit.Test;

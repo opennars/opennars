@@ -52,26 +52,6 @@ abstract public class FindSubst extends Versioning implements Subst {
     final List<Termutator> termutes = Global.newArrayList();
 
 
-    public abstract class Termutator {
-        public abstract boolean test();
-
-        public abstract void reset();
-
-        public abstract int total();
-
-
-        @Override
-        public boolean equals(Object obj) {
-            return toString().equals(obj.toString());
-        }
-
-        @Override
-        public int hashCode() {
-            return toString().hashCode();
-        }
-    }
-
-
     @Override
     public String toString() {
         return "subst:{" +
@@ -142,8 +122,8 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
     public void matchAll(Term x, Term y) {
-        if (match(x, y)) {
-            if (!termutes.isEmpty()) {
+        boolean b = match(x, y);
+            if (b && !termutes.isEmpty()) {
 
                 //repeat until # of termutes stabilizes
                 int termutesPre;
@@ -157,11 +137,14 @@ abstract public class FindSubst extends Versioning implements Subst {
                 termutes.clear();
 
             } else {
-                onMatch();
+                if (b)
+                    onMatch();
+                else
+                    onPartial();
             }
-        } else {
-            onPartial();
-        }
+//        } else {
+//            onPartial();
+//        }
     }
 
     private final void print(String prefix, Term a, Term b) {
@@ -402,49 +385,10 @@ abstract public class FindSubst extends Versioning implements Subst {
 //        return false;
 //    }
 
-    public class CommutivePermutations extends Termutator {
-        final ShuffledSubterms perm;
-        private final TermContainer y;
-        private transient String id;
-
-        @Override
-        public String toString() {
-            if (this.id == null) {
-                return this.id = "CommutivePermutations{" +
-                        "perm=" + perm.compound /* should be in normal sorted order if commutive */ +
-                        ", y=" + y +
-                        '}';
-            }
-            return this.id;
-        }
-
-        public CommutivePermutations(TermContainer x, TermContainer Y) {
-            this.perm = new ShuffledSubterms(random,x);
-            this.y = Y;
-        }
-
-        public int total() { return perm.total(); }
-
-        public boolean test() {
-            boolean b = matchLinear(perm, y, 0, perm.size());
-            if (perm.hasNext())
-                perm.next();
-            return b;
-        }
-
-        public void reset() {
-            perm.reset();
-            perm.next();
-        }
-
-        public boolean hasNext() {
-            return perm.hasNext();
-        }
-    }
-
-    protected void termute(Termutator t) {
+    protected boolean termute(Term key, Termutator t) {
         if (!termutes.contains(t))
             termutes.add(t);
+        return true;
     }
 
     public final boolean matchPermute(TermContainer x, Compound y) {
@@ -460,7 +404,7 @@ abstract public class FindSubst extends Versioning implements Subst {
             }
         }
 
-        termute(new CommutivePermutations(x, y));
+        termute((Term)x, new CommutivePermutations(this, x, y));
         return true;
     }
 
@@ -494,15 +438,18 @@ abstract public class FindSubst extends Versioning implements Subst {
     public final boolean matchEllipsedCommutative(Compound X, Ellipsis Xellipsis, Compound Y) {
 
         //ALL OF THIS CAN BE PRECOMPUTED
-        Set<Term> matchFirst = Global.newHashSet(0); //Global.newHashSet(0);
+        Set<Term> xSpecific = Global.newHashSet(0); //Global.newHashSet(0);
 
-        //terms in Y which have previously been matched and should not be matched by the ellipsis
+        //constant terms which have been verified existing in Y and will not need matched
         Set<Term> ineligible = Global.newHashSet(0);
+
         boolean ellipsisMatched = false;
         for (Term x : X.terms()) {
 
-            Term alreadyMatched = getXY(x);
-            if (alreadyMatched == null) {
+            boolean xVar = x.op() == type;
+            Term v = xVar ? getXY(x) : x;
+
+            if (v == null) {
 
                 //ellipsis to be matched in stage 2
                 if (x == Xellipsis || x.equals(Ellipsis.Shim)) {
@@ -510,92 +457,68 @@ abstract public class FindSubst extends Versioning implements Subst {
                 }
 
             } else {
-                if (alreadyMatched instanceof EllipsisMatch) {
+                if (v instanceof EllipsisMatch) {
                     //assume it's THE ellipsis here, ie. x == xEllipsis
                     ellipsisMatched = true;
+                    Xellipsis = null;
 
                     //check that Y contains all of these
-                    if (!((EllipsisMatch)alreadyMatched).addContained(Y, ineligible))
+                    if (!((EllipsisMatch) v).addContained(Y, ineligible))
                         return false;
-                } else {
-                    if (!Y.containsTerm(alreadyMatched))
+                } else if (!xVar) {
+                    if (!Y.containsTerm(v))
                         return false;
-                    ineligible.add(alreadyMatched);
+                    ineligible.add(v);
+                    continue;
                 }
 
-                continue;
-
             }
 
-            matchFirst.add(x);
+            if (!xVar)
+                throw new RuntimeException("fault");
+
+            if (x!=Xellipsis)
+                xSpecific.add(x);
 
 
-//            if (x.op().isVar()) { // == type) {
-//                Term r = getXY(x);
-//                if (r instanceof EllipsisMatch) {
-//                    //adds what would ordinarily be inlined in a Substitution
-//                    //which is not necessarily all of the terms it contains
-//                    //if it were iterated directly
-//                    ((EllipsisMatch) r).applyTo(this, matchFirst, false);
-//                    continue;
-//                } //else r == null
-//            }
-
-        }
-
-        if (ellipsisMatched) {
-            Xellipsis = null;
-        } else {
-            int numMatchable = Y.size() - matchFirst.size(); //remaining
-            if (!Xellipsis.valid(numMatchable)) {
-                //wouldnt be enough remaining matches to satisfy ellipsis cardinality
-                return false;
-            }
         }
 
         MutableSet<Term> yFree = Y.toSet();
+
+        if (ellipsisMatched) {
+            //Xellipsis = null;
+            return ineligible.equals(yFree);
+        }
+
         yFree.removeAll(ineligible);
-        if (yFree.isEmpty()) {
-            //nothing to match, it is already all valid
-            return true;
+
+        if (!Xellipsis.valid(yFree.size() - xSpecific.size())) {
+            //wouldnt be enough remaining matches to satisfy ellipsis cardinality
+            return false;
         }
 
+        return matchCommutiveRemaining(Xellipsis, xSpecific, yFree);
 
-        if (!matchFirst.isEmpty()) {
-
-            if (yFree.size() == 1 && matchFirst.size() == 1) {
-                //one choice
-                putXY(matchFirst.iterator().next(), yFree.iterator().next());
-                return true;
-            }
-
-            //first match all the fixed-position subterms (later)
-            matchCommutiveRemaining(Xellipsis, matchFirst, yFree);
-            return true;
-        }
-
-        //select all remaining
-        return putXY(Xellipsis, new CollectionEllipsisMatch(yFree));
     }
 
 
 
     /** toMatch matched into some or all of Y's terms */
-    private boolean matchCommutiveRemaining(Term xEllipsis, Set<Term> xToMatch, MutableSet<Term> yFree) {
-        int xsize = xToMatch.size();
+    private boolean matchCommutiveRemaining(Term xEllipsis, Set<Term> x, MutableSet<Term> yFree) {
+        int xs = x.size();
 
-        switch (xsize) {
+        switch (xs) {
             case 0:
-                return true;
+                return putXY(xEllipsis, new CollectionEllipsisMatch(yFree));
             case 1:
-                termute(new Choose1(xEllipsis, xToMatch.iterator().next(), yFree));
-                return true;
+                return termute(xEllipsis, new Choose1(this,
+                        xEllipsis, x.iterator().next(), yFree));
             case 2:
-                termute(new Choose2(xEllipsis, xToMatch.toArray(new Term[xsize]), yFree));
-                return true;
+                return termute(xEllipsis, new Choose2(this,
+                        xEllipsis, x.toArray(new Term[x.size()]), yFree));
             default:
                 //3 or more combination
-                throw new RuntimeException("unimpl: " + xsize + " arity combination unimplemented");
+                throw new RuntimeException("unimpl: " + xs + " arity combination unimplemented");
         }
 
     }
@@ -642,139 +565,6 @@ abstract public class FindSubst extends Versioning implements Subst {
 //        powerDivisor = startDivisor;
 //        return matched;
 //    }
-
-    /**
-     * choose 1 at a time from a set of N, which means iterating up to N
-     * will remove the chosen item(s) from Y if successful before returning
-     */
-    public class Choose1 extends Termutator {
-
-        private final Set<Term> yFree;
-        private final Term x;
-        private final Term xEllipsis;
-        private int shuffle;
-        private final Term[] yy;
-        private transient String id;
-
-        @Override
-        public String toString() {
-            if (this.id == null) {
-                return this.id = "Choose1{" +
-                        "yFree=" + yFree +
-                        ", xEllipsis=" + xEllipsis +
-                        ", x=" + x +
-                        '}';
-            }
-            return this.id;
-        }
-
-        public Choose1(Term xEllipsis, Term x, Set<Term> yFree) {
-            this.x = x;
-            this.yFree = yFree;
-            this.xEllipsis = xEllipsis;
-            int ysize = yFree.size();
-            if (ysize == 1) {
-                throw new RuntimeException("yfree=1, no choice");
-            }
-            yy = yFree.toArray(new Term[ysize]);
-        }
-
-        @Override
-        public int total() {
-            return yy.length;
-        }
-
-        @Override
-        public void reset() {
-            this.shuffle = random.nextInt(total()-1); //randomize starting offset
-        }
-
-        @Override
-        public boolean test() {
-            final int ysize = yy.length;
-
-            Term y = yy[(shuffle++) % ysize];
-
-            boolean matched = match(x, y);
-
-            if (matched) {
-                return putXY(xEllipsis, new CollectionEllipsisMatch(yFree, y));
-            }
-
-            return false;
-        }
-    }
-
-    public class Choose2 extends Termutator {
-
-        private final Set<Term> yFree;
-        private final Term[] x;
-        private final Term xEllipsis;
-        private int shuffle, shuffle2;
-        private final Term[] yy;
-        private transient String id;
-        private int n;
-
-        @Override
-        public String toString() {
-            if (this.id == null) {
-                return this.id = "Choose2{" +
-                        "yFree=" + yFree +
-                        ", xEllipsis=" + xEllipsis +
-                        ", x=" + x[0] + "," + x[1] +
-                         '}';
-            }
-            return this.id;
-        }
-
-        public Choose2(Term xEllipsis, Term[] x, Set<Term> yFree) {
-            this.x = x;
-            this.yFree = yFree;
-            this.xEllipsis = xEllipsis;
-            int ysize = yFree.size();
-            yy = yFree.toArray(new Term[ysize]);
-        }
-
-        @Override
-        public int total() {
-            int n = yFree.size();
-            return n * (n-1);
-        }
-
-        @Override
-        public void reset() {
-            int t = total();
-            this.shuffle = random.nextInt(t - 1); //randomize starting offset
-            this.shuffle2 = random.nextInt(t - 2); //randomize starting offset
-            this.n = 0;
-        }
-
-        @Override
-        public boolean test() {
-            final int ysize = yy.length;
-
-            if (n % ysize == 0) {
-                shuffle2++;
-            }
-
-            Term y1 = yy[(n + shuffle) % ysize];
-            n++;
-
-            if (match(x[0], y1)) {
-
-                int n2 = shuffle2;
-                if (n2 == (n-1 /* to account for the n++ */ + shuffle) )
-                    n2 = (n2 + 1);
-
-                Term y2 = yy[n2% ysize];
-                if (match(x[1], y2)) {
-                    return putXY(xEllipsis, new CollectionEllipsisMatch(yFree, y1, y2));
-                }
-            }
-            return false;
-        }
-    }
-
 
 
     /**
@@ -909,7 +699,7 @@ abstract public class FindSubst extends Versioning implements Subst {
     private void matchTermutations(int i, int max) {
 
         if (i == max) {
-            if (termutes.size() == max)
+            if (this.termutes.size() == max)
                 onMatch();
             else {
                 //throw new RuntimeException("termutes modified");
@@ -923,13 +713,13 @@ abstract public class FindSubst extends Versioning implements Subst {
 
         int revert = now();
 
-        for (int j = 0; j < t.total(); j++) {
+        while (t.hasNext()) {
 
 
             //System.out.println("@" + now() + " " + i + ": " + t + " ");
             //System.out.println("->  " + xy);
 
-            if (t.test()) {
+            if (t.next()) {
                 //System.out.println("@" + now() + " -->  " + xy);
                 matchTermutations(i + 1, max);
             }

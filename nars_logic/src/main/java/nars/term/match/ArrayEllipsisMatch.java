@@ -39,10 +39,10 @@ public class ArrayEllipsisMatch<T extends Term> extends EllipsisMatch {
     }
 
     @Override
-    public boolean addContained(Compound Y, Set<Term> ineligible) {
+    public boolean addContained(Compound Y, Set<Term> target) {
         for (Term e : term) {
             if (!Y.containsTerm(e)) return false;
-            ineligible.add(e);
+            target.add(e);
         }
         return true;
     }

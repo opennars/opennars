@@ -52,6 +52,6 @@ public abstract class EllipsisMatch extends ShadowAtom implements Iterable<Term>
     @Override
     public abstract int size();
 
-    abstract public boolean addContained(Compound Y, Set<Term> ineligible);
+    abstract public boolean addContained(Compound Y, Set<Term> target);
 
 }

@@ -295,7 +295,7 @@ public class NAL5Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<<robin --> [flying]> ==> <robin --> bird>>"); //.en("If robin can fly then robin is a bird.");
         tester.believe("<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>"); //.en("If robin both swims and flys then robin is a bird.");
-        tester.mustBelieve(cycles," <robin --> swimmer>",1.00f,0.45f); //.en("I guess robin swims.");
+        tester.mustBelieve(cycles*8," <robin --> swimmer>",1.00f,0.45f); //.en("I guess robin swims.");
 
     }
 
@@ -314,21 +314,52 @@ public class NAL5Test extends AbstractNALTester {
     public void conditional_abduction3(){
         TestNAR tester = test();
         tester.believe("<(&&,<robin --> [flying]>,<robin --> [withWings]>) ==> <robin --> [living]>>",0.9f,0.9f); //.en("If robin can fly and it has wings, then robin is living.");
-        tester.believe("<(&&,<robin --> [flying]>,<robin --> bird>) ==> <robin --> [living]>>."); //.en("If robin can fly and robin is a bird then robin is living.");
+        tester.believe("<(&&,<robin --> [flying]>,<robin --> bird>) ==> <robin --> [living]>>"); //.en("If robin can fly and robin is a bird then robin is living.");
         tester.mustBelieve(cycles,"<<robin --> bird> ==> <robin --> [withWings]>>",1.00f,0.42f); //.en("I guess if robin is a bird, then robin has wings.");
         tester.mustBelieve(cycles,"<<robin --> [withWings]> ==> <robin --> bird>>",0.90f,0.45f); //.en("I guess if robin has wings, then robin is a bird.");
 
+    }
+
+    @Test
+    public void conditional_abduction3_semigeneric(){
+        TestNAR tester = test();
+        tester.believe("<(&&,<robin --> [f]>,<robin --> [w]>) ==> <robin --> [l]>>",0.9f,0.9f);
+        tester.believe("<(&&,<robin --> [f]>,<robin --> b>) ==> <robin --> [l]>>");
+        tester.mustBelieve(cycles,"<<robin --> b> ==> <robin --> [w]>>",1.00f,0.42f);
+        tester.mustBelieve(cycles,"<<robin --> [w]> ==> <robin --> b>>",0.90f,0.45f);
+    }
+    @Test
+    public void conditional_abduction3_semigeneric2(){
+        TestNAR tester = test();
+        tester.believe("<(&&,<ro --> [f]>,<ro --> [w]>) ==> <ro --> [l]>>",0.9f,0.9f);
+        tester.believe("<(&&,<ro --> [f]>,<ro --> b>) ==> <ro --> [l]>>");
+        tester.mustBelieve(cycles,"<<ro --> b> ==> <ro --> [w]>>",1.00f,0.42f);
+        tester.mustBelieve(cycles,"<<ro --> [w]> ==> <ro --> b>>",0.90f,0.45f);
+    }
+    @Test
+    public void conditional_abduction3_semigeneric3(){
+        TestNAR tester = test();
+        tester.believe("<(&&,<R --> [f]>,<R --> [w]>) ==> <R --> [l]>>",0.9f,0.9f);
+        tester.believe("<(&&,<R --> [f]>,<R --> b>) ==> <R --> [l]>>");
+        tester.mustBelieve(cycles,"<<R --> b> ==> <R --> [w]>>",1.00f,0.42f);
+        tester.mustBelieve(cycles,"<<R --> [w]> ==> <R --> b>>",0.90f,0.45f);
+    }
+    @Test
+    public void conditional_abduction3_semigeneric4(){
+        TestNAR tester = test();
+        tester.believe("<(&&,<s --> [f]>,<s --> [w]>) ==> <s --> [l]>>",0.9f,0.9f);
+        tester.believe("<(&&,<s --> [f]>,<s --> b>) ==> <s --> [l]>>");
+        tester.mustBelieve(cycles,"<<s --> b> ==> <s --> [w]>>",1.00f,0.42f);
+        tester.mustBelieve(cycles,"<<s --> [w]> ==> <s --> b>>",0.90f,0.45f);
     }
     @Test
     public void conditional_abduction3_generic(){
         TestNAR tester = test();
         tester.believe("<(&&,<r --> [f]>,<r --> [w]>) ==> <r --> [l]>>",0.9f,0.9f);
-        tester.believe("<(&&,<r --> [f]>,<r --> b>) ==> <r --> [l]>>.");
-        tester.mustBelieve(cycles,"<<r --> b> ==> <r --> [w]>>",1.00f,0.42f);
-        tester.mustBelieve(cycles,"<<r --> [w]> ==> <r --> b>>",0.90f,0.45f);
-
+        tester.believe("<(&&,<r --> [f]>,<r --> b>) ==> <r --> [l]>>");
+        tester.mustBelieve(cycles*8,"<<r --> b> ==> <r --> [w]>>",1.00f,0.42f);
+        tester.mustBelieve(cycles*8,"<<r --> [w]> ==> <r --> b>>",0.90f,0.45f);
     }
-
 
     @Test
     public void conditional_induction(){

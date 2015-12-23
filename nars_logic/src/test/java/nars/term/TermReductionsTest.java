@@ -6,8 +6,7 @@ import nars.term.compound.Compound;
 import org.junit.Test;
 
 import static nars.$.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by me on 12/10/15.
@@ -174,8 +173,39 @@ public class TermReductionsTest {
                 $("(&&,(&&,a,b),(&&,c,d), (&&, e, f))").toString());
         assertEquals("(&&,a,b,c,d,e,f,g,h)",
                 $("(&&,(&&,a,b, (&&, g, h)),(&&,c,d), (&&, e, f))").toString());
+    }
+
+    @Test public void testConjunctionEquality() {
+
+        assertEquals(
+            $("(&&,r,s)"),
+            $("(&&,s,r)"));
+        assertNotEquals(
+            $("(&/,r,s)"),
+            $("(&/,s,r)"));
+        assertEquals(
+            $("(&|,r,s)"),
+            $("(&|,s,r)"));
 
     }
+
+    @Test public void testImplicationInequality() {
+
+        assertNotEquals(
+                $("<r ==> s>"),
+                $("<s ==> r>"));
+        assertNotEquals(
+                $("<r =/> s>"),
+                $("<s =/> r>"));
+        assertNotEquals(
+                $("<r =\\> s>"),
+                $("<s =\\> r>"));
+        assertNotEquals(
+                $("<r =|> s>"),
+                $("<s =|> r>"));
+
+    }
+
     @Test public void testDisjunctionMultipleAndEmbedded() {
 
         assertEquals("(||,a,b,c,d)",
