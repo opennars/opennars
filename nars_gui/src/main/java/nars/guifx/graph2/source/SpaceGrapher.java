@@ -13,6 +13,7 @@ import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.VisModel;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
+import nars.guifx.graph2.layout.HyperassociativeMap2D;
 import nars.guifx.graph2.layout.IterativeLayout;
 import nars.guifx.graph2.layout.None;
 
@@ -41,6 +42,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
 
     public final SimpleObjectProperty<IterativeLayout<V>> layout = new SimpleObjectProperty<>();
     public static final IterativeLayout nullLayout = new None();
+    public static final HyperassociativeMap2D hyperlay = new HyperassociativeMap2D();
 
 
     public final SimpleIntegerProperty maxNodes;

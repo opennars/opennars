@@ -47,11 +47,15 @@ public class DefaultNARGraph<K extends Comparable & Termed, V extends TermNode<K
                 layout.set(il);
                 layoutUpdated();
             } else {
-                layout.set(nullLayout);
+                IterativeLayout il2 = new HyperOrganicLayout<>(); 
+                layout.set(il2);
+                layoutUpdated();
             }
         };
 
         layoutType.addListener(layoutChange);
+
+        layoutType.setValue(HyperOrganicLayout.class);
 
         runLater(() -> layoutChange.invalidated(null));
 

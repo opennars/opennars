@@ -236,9 +236,15 @@ public class TermNode<K extends Comparable> extends Group {
     }
 
     public static Color getTermColor(Termed term, ColorMatrix colors, double v) {
+        return Color.DARKGRAY;
+        /*if(term == null) {
+            return colors.get(
+                    (1 % colors.cc.length) / ((double) Op.values().length),
+                    v);
+        }
         return colors.get(
                 (term.getTerm().op().ordinal() % colors.cc.length) / ((double) Op.values().length),
-                v);
+                v);*/
     }
 
     public TermEdge getEdge(K b) {

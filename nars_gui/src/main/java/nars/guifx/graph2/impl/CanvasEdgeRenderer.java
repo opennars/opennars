@@ -93,11 +93,14 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
         //gfx.setStroke(colors.get(np, te/(te+ta)));
 
         final GraphicsContext gfx = this.gfx;
+        int activat = +(int)(150.0f*p);
 
         //HACK specific to Term instances
         if (t.term instanceof Termed) {
             gfx.setStroke(
-                TermNode.getTermColor((Termed)t.term, colors, p)
+
+                    Color.rgb(150-activat,150,150)
+                //TermNode.getTermColor(null, colors, p)
             );
         }
 

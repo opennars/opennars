@@ -274,7 +274,7 @@ public static class LabeledCanvasNode<N extends Comparable> extends TermNode<N> 
         getChildren().setAll(base);
 
 
-        render(128, 24); //TODO call this lazily as it is being shown
+        render(128, 24); //TODO call this lazily as it is being shownf
 
 
     }
@@ -307,7 +307,8 @@ public static class LabeledCanvasNode<N extends Comparable> extends TermNode<N> 
 
         //HACK specific to Term
         if (term instanceof Term) {
-            g.setFill(TermNode.getTermColor( ((Term)term), colors, 0.5)); /*colors.get(
+
+            g.setFill(Color.rgb(148,188,148)); /*TermNode.getTermColor( ((Term)term), colors, 0.75)); */ /*colors.get(
                         ,
                         //c==null ? 0 : c.getPriority()) //this can work if re-rendered
                         0.5 //otherwise jus use medium
@@ -316,9 +317,9 @@ public static class LabeledCanvasNode<N extends Comparable> extends TermNode<N> 
         g.fillRect(0, 0, W, H);
 
 
-        g.setFont(mono);
+       // g.setFont(mono);
         g.setFill(Color.BLACK);
-        g.setFontSmoothingType(FontSmoothingType.LCD);
+       // g.setFontSmoothingType(FontSmoothingType.LCD);
 
         g.fillText(term.toString(), 0, H / 2);
 
