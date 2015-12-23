@@ -39,6 +39,7 @@ import nars.term.visit.SubtermVisitor;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
@@ -153,29 +154,25 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         if (Op.isOperation(result)) {
             ImmediateTermTransform tf = f.getTransform(Compounds.operatorTerm((Compound)result));
             if (tf!=null) {
-                Term result2;
-
-                Compound args = (Compound) Compounds.opArgs((Compound) result).apply(f);
-                ////Compounds.opArgs((Compound) result)
-
-                if ((tf instanceof PremiseAware) && (f instanceof RuleMatch)) {
-                    result2 = ((PremiseAware)tf).function(args, (RuleMatch)f);
-                } else {
-
-                    result2 = tf.function(args);
-                }
-                //System.out.println( result + " =/> " + result2);
-                if (result2 == null) {
-                    return null;
-                } else if (!result.equals(result2)) {
-                    //recurse
-                    return result2.apply(f, fullMatch);
-                } else
-                    return result2;
+                return applyImmediateTransform(f, result, tf);
             }
         }
 
         return result;
+    }
+
+    @Nullable
+    default Term applyImmediateTransform(Subst f, Term result, ImmediateTermTransform tf) {
+
+        Compound args = (Compound) Compounds.opArgs((Compound) result).apply(f);
+        ////Compounds.opArgs((Compound) result)
+
+        if ((tf instanceof PremiseAware) && (f instanceof RuleMatch)) {
+            return ((PremiseAware)tf).function(args, (RuleMatch)f);
+        } else {
+            return tf.function(args);
+        }
+
     }
 
     default Term apply(List<Term> sub) {

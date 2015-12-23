@@ -4,6 +4,7 @@ import nars.Global;
 import nars.Op;
 import nars.nal.nal7.CyclesInterval;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
@@ -22,14 +23,14 @@ public class TermLinkBuilder  {
 //    protected float forgetCycles;
 //    protected long now;
 
-    public static Term[] build(Term host) {
+    public static Termed[] build(Term host) {
 
         if (host instanceof Compound) {
 
-            Set<Term> components = Global.newHashSet(host.complexity());
+            Set<Termed> components = Global.newHashSet(host.complexity());
             prepareComponentLinks((Compound)host, components);
 
-            return components.toArray(new Term[components.size()]);
+            return components.toArray(new Termed[components.size()]);
         }
         else {
             return null;
@@ -46,7 +47,7 @@ public class TermLinkBuilder  {
      * @param t The CompoundTerm for which to build links
      * @param components set of components being accumulated, to avoid duplicates
      */
-    static void prepareComponentLinks(Compound t, Set<Term> components) {
+    static void prepareComponentLinks(Compound t, Set<Termed> components) {
 
         ///** add self link for structural transform: */
         //components.add(t);

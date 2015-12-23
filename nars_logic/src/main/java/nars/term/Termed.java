@@ -9,4 +9,7 @@ public interface Termed<TT extends Term>  {
     TT term();
 
     default Op op() { return term().op(); }
+
+    default boolean isAny(int vector) { return term().isAny(vector); }
+
 }

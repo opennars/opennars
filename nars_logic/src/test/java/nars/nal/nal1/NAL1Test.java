@@ -157,7 +157,7 @@ public class NAL1Test extends AbstractNALTester {
 
                 //test for a few task conditions, everything except for evidence
                 if (a.getPunctuation() == expectedTask.getPunctuation())
-                    if (a.get().equals(expectedTask.get())) {
+                    if (a.term().equals(expectedTask.term())) {
                         if (Objects.equals(a.getTruth(), expectedTask.getTruth()))
                             solved.set(true);
                 }

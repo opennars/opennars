@@ -407,7 +407,7 @@ public interface Premise extends Level, Tasked {
     /** returns a string indicating a reason why it is invalid, or null if it actually is valid */
     default String validate(Task task) {
 
-        if (task.get() == null) {
+        if (task.term() == null) {
             throw new RuntimeException("task has null term");
         }
 

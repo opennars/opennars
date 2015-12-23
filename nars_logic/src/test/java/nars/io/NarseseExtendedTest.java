@@ -86,7 +86,7 @@ public class NarseseExtendedTest {
 
         Task ut = task("<a:b --> c:d>.");
         assertNotNull(ut);
-        assertEquals(ut.get(), u);
+        assertEquals(ut.term(), u);
 
     }
 //    @Test
@@ -113,7 +113,7 @@ public class NarseseExtendedTest {
     static void eqTask(String x, String b) {
         Task a = t.task(x + '.');
         assertNotNull(a);
-        assertEquals(b, a.get().toString());
+        assertEquals(b, a.term().toString());
     }
 
     @Test

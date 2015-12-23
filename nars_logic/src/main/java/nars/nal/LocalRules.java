@@ -180,7 +180,7 @@ public class LocalRules {
         Truth originalTruth = solution.getTruth();
 
         Term solTerm = sol.term();
-        if (solTerm.hasVarIndep() && !solTerm.equals(question.get())) {
+        if (solTerm.hasVarIndep() && !solTerm.equals(question.term())) {
 
             Term[] u = {question.term(), solTerm};
 
@@ -213,6 +213,7 @@ public class LocalRules {
 
     @Nullable
     public static void processSolution(Task question, NAR nal, Task sol, Memory memory, long now) {
+
         //use sol.getTruth() in case sol was changed since input to this method:
         float newQ = Tense.solutionQuality(question, sol, sol.getTruth(), now);
 //        if (newQ == 0) {

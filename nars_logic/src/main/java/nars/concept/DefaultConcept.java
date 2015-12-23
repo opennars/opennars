@@ -55,7 +55,7 @@ public class DefaultConcept extends AtomConcept {
 
     /** how incoming budget is merged into its existing duplicate quest/question */
     static final BudgetMerge duplicateQuestionMerge = Budget.plus;
-    private final Term[] termLinkTemplates;
+    private final Termed[] termLinkTemplates;
 
     public DefaultConcept(Term term, Param p) {
         this(term, new NullBag(), new NullBag(), p);
@@ -600,7 +600,7 @@ public class DefaultConcept extends AtomConcept {
      */
     public boolean linkTemplates(Budget budget, float scale, NAR nar) {
 
-        Term[] tl = getTermLinkTemplates();
+        Termed[] tl = getTermLinkTemplates();
         int numTemplates;
         if (tl == null || (numTemplates = tl.length) == 0)
             return false;
@@ -614,7 +614,7 @@ public class DefaultConcept extends AtomConcept {
 
         boolean activity = false;
 
-        for (Term t : tl) {
+        for (Termed t : tl) {
 
             /*if ((t.getTarget().equals(getTerm()))) {
                 //self
@@ -658,7 +658,7 @@ public class DefaultConcept extends AtomConcept {
 //        return true;
 //    }
 
-    @Override public Term[] getTermLinkTemplates() {
+    @Override public Termed[] getTermLinkTemplates() {
         return termLinkTemplates;
     }
 

@@ -161,7 +161,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
             return false;
         }
 
-        if (!task.get().equals(get())) return false;
+        if (!task.term().equals(term())) return false;
 
         if (task.getPunctuation() != getPunctuation())
             return false;

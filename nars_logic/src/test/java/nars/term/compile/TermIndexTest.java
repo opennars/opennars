@@ -95,7 +95,7 @@ public class TermIndexTest {
     static void testShared(Termed t1, Termed t2) {
         //t.memory.terms.forEachTerm(System.out::println);
 
-        assertEquals(t1, t2);
+        assertEquals(t1.term(), t2.term());
         if (t1 != t2)
             System.err.println("share failed: " + t1);
 

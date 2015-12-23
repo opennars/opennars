@@ -406,6 +406,10 @@ public abstract class AbstractNAR extends NAR {
             memory.index.put(term, c);
         }
 
+        return doConceptualize(c, b, scale);
+    }
+
+    protected Concept doConceptualize(Termed c, Budget b, float scale) {
         return core.concepts().put(c, b, scale).get();
     }
 

@@ -6,7 +6,6 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.graph2.ConceptsSource;
 import nars.term.Termed;
-import nars.term.compound.Compound;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -36,7 +35,7 @@ public class ConceptNeighborhoodSource extends ConceptsSource {
 
             Concept c = (Concept) r;
             c.getTaskLinks().forEach(termLinkNeighbors, n -> {
-                Termed<Compound> tn = n.get();
+                Termed tn = n.get();
                 if (tn instanceof Concept) {
                     conceptsSet.add(tn);
                 } else {

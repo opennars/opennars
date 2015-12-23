@@ -89,7 +89,7 @@ public class AtomConcept extends AbstractConcept  {
 
 
     /** atoms have no termlink templates, they are irreducible */
-    @Override public Term[] getTermLinkTemplates() {
+    @Override public Termed[] getTermLinkTemplates() {
         return null;
     }
 
@@ -104,7 +104,7 @@ public class AtomConcept extends AbstractConcept  {
      */
     @Override public boolean link(Task t, float scale, NAR nar) {
 
-        Term[] templates = getTermLinkTemplates();
+        Termed[] templates = getTermLinkTemplates();
         if (templates == null) return false;
 
         int numTemplates = templates.length;
@@ -118,7 +118,7 @@ public class AtomConcept extends AbstractConcept  {
         if (subScale < nar.memory.taskLinkThreshold.floatValue())
             return false;
 
-        for (Term linkTemplate : templates) {
+        for (Termed linkTemplate : templates) {
             Concept componentConcept = activateConcept(linkTemplate, t.getBudget(), subScale, nar);
             if (componentConcept != null) {
 

@@ -150,7 +150,7 @@ public final class Anticipate {
             happeneds++;
         });
 
-        toRemove.forEach(tt -> anticipations.remove(c.get(),tt));
+        toRemove.forEach(tt -> anticipations.remove(c.term(),tt));
     }
 
     protected void updateAnticipations() {

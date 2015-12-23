@@ -228,8 +228,12 @@ public class Memory extends Param {
      * Get an existing (active OR forgotten) Concept identified
      * by the provided Term
      */
-    public final Concept concept(Term t) {
-        Term u = t.normalized();
+    public final Concept concept(Termed t) {
+        //careful with this if multiple nars share termed's they may introduce conflicting concepts into each other's reasoners
+        if (t instanceof Concept)
+            return ((Concept)t);
+
+        Term u = t.term().normalized();
         if (u == null) return null;
 
         Termed tt = index.get(u);

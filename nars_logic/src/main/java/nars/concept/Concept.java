@@ -316,7 +316,7 @@ public interface Concept extends Termed, Supplier<Term> {
 
 
 
-    Term[] getTermLinkTemplates();
+    Termed[] getTermLinkTemplates();
 
     Ordering<Task> taskCreationTime = new Ordering<Task>() {
         @Override

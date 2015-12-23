@@ -158,6 +158,7 @@ public enum Tense  {
             task.getBudget().orPriority(quality);
         } else {
             float taskPriority = task.getPriority();
+
             budget = new UnitBudget(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.getTruth()));
             task.getBudget().setPriority(Math.min(1 - quality, taskPriority));
         }

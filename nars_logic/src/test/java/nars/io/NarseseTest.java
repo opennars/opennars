@@ -112,7 +112,7 @@ public class NarseseTest {
     public void testNoBudget() throws Narsese.NarseseException {
         Task t = task("<a <=> b>. %0.00;0.93");
         assertNotNull(t);
-        assertEquals(Op.EQUIV, t.get().op());
+        assertEquals(Op.EQUIV, t.op());
 
         assertEquals('.', t.getPunctuation());
         //assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
@@ -126,8 +126,8 @@ public class NarseseTest {
         String tt = "<<a<=>b>--><c==>d>>";
         Task t = task(tt + '?');
         assertNotNull(t);
-        assertEquals(Op.INHERIT, t.get().op());
-        assertEquals(tt, t.get().toString());
+        assertEquals(Op.INHERIT, t.op());
+        assertEquals(tt, t.term().toString());
         assertEquals('?', t.getPunctuation());
         assertNull(t.getTruth());
         assertEquals(7, t.term().complexity());
@@ -160,8 +160,8 @@ public class NarseseTest {
         String tt = "(a,b,c)";
         Task t = task(tt + '@');
         assertNotNull(t);
-        assertEquals(Op.PRODUCT, t.get().op());
-        assertEquals(tt, t.get().toString());
+        assertEquals(Op.PRODUCT, t.op());
+        assertEquals(tt, t.term().toString());
         assertEquals('@', t.getPunctuation());
         assertNull(t.getTruth());
 

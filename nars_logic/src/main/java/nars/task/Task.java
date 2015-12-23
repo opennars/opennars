@@ -330,7 +330,8 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
 
         String contentName;
-        contentName = term && get() != null ? get().toString() : "";
+        Compound t = term();
+        contentName = term && t != null ? t.toString() : "";
 
         CharSequence tenseString;
         if (memory!=null) {
