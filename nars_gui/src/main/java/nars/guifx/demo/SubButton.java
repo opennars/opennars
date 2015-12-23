@@ -17,7 +17,6 @@ import javafx.scene.text.TextAlignment;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.concept.Concept;
-import nars.guifx.NARfx;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.task.Task;
@@ -61,7 +60,7 @@ public class SubButton extends HBox {
 
         Object v = sb.getValue();
         if (v instanceof Concept) {
-            NARfx.newWindow((Concept)v);
+            //NARfx.newWindow(nar, (Concept)v);
         }
 
         e.consume();

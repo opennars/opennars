@@ -223,6 +223,8 @@ abstract public class FindSubst extends Versioning implements Subst {
         Term xSubst = getXY(x);
 
         if (xSubst != null /*&& !xSubst.equals(x)*/) {
+            if (xSubst.equals(x))
+                throw new RuntimeException("loop");
             return match(xSubst, y);
         } else {
             return nextVarX(x, y);

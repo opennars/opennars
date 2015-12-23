@@ -1,10 +1,12 @@
 package nars.guifx.demo;
 
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -101,8 +103,19 @@ public class NARide extends BorderPane {
             });
             ni.addTool("Active Concepts Log", () -> new ActiveConceptsLog(nar) {
 
+                final EventHandler<? super MouseEvent> clickHandler =
+                        e -> {
+                            System.out.println(e);
+                            ConceptSummaryPane src = (ConceptSummaryPane) e.getSource();
+
+                            Concept cc = src.concept;
+                            NARfx.newWindow(nar,cc);
+                        };
+
                 @Override public Node make(Concept cc) {
-                    return new ConceptSummaryPane(cc);
+                    ConceptSummaryPane csp = new ConceptSummaryPane(cc);
+                    setOnMouseClicked( clickHandler );
+                    return csp;
                 }
             });
             ni.addTool("Task Tree", () -> new TreePane(nar));

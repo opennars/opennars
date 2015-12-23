@@ -8,7 +8,6 @@ import nars.concept.Concept;
 import nars.guifx.util.ColorMatrix;
 import nars.task.Task;
 import nars.truth.Truth;
-import nars.util.data.Util;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -18,7 +17,7 @@ import static javafx.application.Platform.runLater;
 public class ConceptSummaryPane extends Text {
 
 
-    private final Concept concept;
+    public final Concept concept;
     //final Label subLabel = new Label();
     final AtomicBoolean pendingUpdate = new AtomicBoolean(false);
     private ConceptSummaryPaneIcon icon;
@@ -49,10 +48,7 @@ public class ConceptSummaryPane extends Text {
             }
         });
 
-        setOnMouseClicked( e -> {
-            Concept cc = ((ConceptSummaryPane)e.getSource()).concept;
-            NARfx.newWindow(cc);
-        });
+
     }
 
     public void update(boolean priority, boolean icon) {

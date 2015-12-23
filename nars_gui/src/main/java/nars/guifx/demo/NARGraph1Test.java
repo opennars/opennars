@@ -1,86 +1,29 @@
 package nars.guifx.demo;
 
-import com.google.common.collect.Lists;
 import javafx.scene.Node;
-import nars.Global;
-import nars.NAR;
 import nars.concept.Concept;
-import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.impl.BlurCanvasEdgeRenderer;
 import nars.guifx.graph2.scene.DefaultNodeVis;
+import nars.guifx.graph2.source.ConceptNeighborhoodSource;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
 import nars.nar.Default;
 import nars.term.Termed;
-import nars.term.compound.Compound;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * Created by me on 8/15/15.
  */
 public class NARGraph1Test {
 
-    public static class ConceptNeighborhoodSource extends ConceptsSource {
-
-        private final ArrayList<Termed> roots;
-        int termLinkNeighbors = 16;
-
-        public ConceptNeighborhoodSource(NAR nar, Concept... c) {
-            super(nar);
-            this.roots = Lists.newArrayList(c);
-        }
-
-        final Set<Termed> conceptsSet = Global.newHashSet(1);
-
-        @Override
-        public void commit() {
-
-            roots.forEach(r -> {
-                conceptsSet.add(r);
-                if (!(r instanceof Concept)) return;
-
-                Concept c = (Concept)r;
-                c.getTaskLinks().forEach(termLinkNeighbors, n-> {
-                    Termed<Compound> tn = n.get();
-                    if (tn instanceof Concept) {
-                        conceptsSet.add(tn);
-                    } else {
-                        //System.out.println("non-Concept TaskLink target: " + tn + " " + tn.getClass());
-                        conceptsSet.add( nar.concept( tn ) );
-                    }
-                });
-                c.getTermLinks().forEach(termLinkNeighbors, n-> {
-                    if (n instanceof Concept) {
-                        conceptsSet.add(n);
-                    } else {
-                        //System.out.println("non-Concept TermLink target: " + n + " " + n.getClass());
-                        conceptsSet.add( nar.concept( n.term() ) );
-                    }
-                });
-                        //concepts::add);
-            });
-
-            commit(conceptsSet);
-
-            //System.out.println(concepts);
-
-            conceptsSet.clear();
-
-        }
-    }
-
     public static SpaceGrapher newGraph(Default n) {
 
 
 //        new BagForgettingEnhancer(n.memory, n.core.concepts(),
 //                0f, 0.8f, 0.8f);
-        n.memory.taskLinkForgetDurations.setValue(16);
-        n.memory.termLinkForgetDurations.setValue(16);
+
 
 //        n.memory.conceptForgetDurations.setValue(8);
 //        n.memory.termLinkForgetDurations.setValue(12);
@@ -157,6 +100,8 @@ public class NARGraph1Test {
 
 
         Default n = new Default(1024,1,1,2);
+        n.memory.taskLinkForgetDurations.setValue(16);
+        n.memory.termLinkForgetDurations.setValue(16);
 
         NARide.show(n.loop(), ide -> {
 

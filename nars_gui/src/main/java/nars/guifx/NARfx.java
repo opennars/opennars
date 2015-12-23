@@ -271,9 +271,9 @@ public class NARfx  {
 //        NARide.show(nar.loop(), (Consumer)null);
 //    }
 
-    public static void newWindow(Concept c) {
+    public static void newWindow(NAR nar, Concept c) {
         //TODO //ConceptPane wn = new ConceptPane(nar, c);
-        Pane wn = new ConceptPane(c);
+        Pane wn = new ConceptPane(nar, c);
 
         Stage st;
         Stage removed = window.put(c, st = newWindow(c.toString(), wn));

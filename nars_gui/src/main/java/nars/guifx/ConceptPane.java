@@ -7,7 +7,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
@@ -16,13 +15,19 @@ import javafx.scene.shape.Box;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.concept.Concept;
+import nars.guifx.demo.SubButton;
+import nars.guifx.graph2.TermEdge;
+import nars.guifx.graph2.TermNode;
+import nars.guifx.graph2.impl.BlurCanvasEdgeRenderer;
+import nars.guifx.graph2.scene.DefaultNodeVis;
+import nars.guifx.graph2.source.ConceptNeighborhoodSource;
+import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph3.SpaceNet;
 import nars.guifx.graph3.Xform;
 import nars.guifx.util.ColorArray;
 import nars.nar.Default;
 import nars.task.Task;
-import nars.term.Term;
-import nars.truth.Truth;
+import nars.term.Termed;
 import nars.util.event.FrameReaction;
 
 import java.util.*;
@@ -38,7 +43,7 @@ import static javafx.application.Platform.runLater;
 public class ConceptPane extends BorderPane implements ChangeListener {
 
     private final Concept concept;
-    private final Scatter3D tasks;
+//    private final Scatter3D tasks;
 //    private final BagView<Task> taskLinkView;
 //    private final BagView<Term> termLinkView;
     private FrameReaction reaction;
@@ -238,7 +243,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         }
     }
 
-    public ConceptPane(Concept c) {
+    public ConceptPane(NAR nar, Concept c) {
 
         concept = c;
 
@@ -252,76 +257,131 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                 c.getQuests()
         };
 
-        //Label termlinks = new Label("Termlinks diagram");
-        //Label tasklinks = new Label("Tasklnks diagram");
-        tasks = new Scatter3D<Task>() {
 
-
-
-            @Override
-            Iterable<Task>[] get() {
-                return taskCollects;
-            }
-
-            @Override
-            protected void update(Task tl, double[] position, double[] size, Consumer<Color> color) {
-
-                if (tl.isQuestOrQuestion()) {
-                    position[0] = -1;
-                    position[1] = tl.getBestSolution() != null ? tl.getBestSolution().getConfidence() : 0;
-                }
-                else {
-                    Truth t = tl.getTruth();
-                    position[0] = t.getFrequency();
-                    position[1] = t.getConfidence();
-                }
-                float pri = tl.getPriority();
-                position[2] = pri;
-
-                size[0] = size[1] = size[2] = 0.5f + pri;
-                color.accept(ca.get(pri));
-            }
-        };
-
-        //TilePane links = new TilePane(links.content);
-
-//        Label beliefs = new Label("Beliefs diagram");
-//        Label goals = new Label("Goals diagram");
-//        Label questions = new Label("Questions diagram");
-
-//        SplitPane links = new SplitPane(
-//                scrolled(termLinkView = new BagView<>(c.getTermLinks(),
-//                                (t) -> new ItemButton(t, Object::toString,
-//                                        (i) -> {
+//        //Label termlinks = new Label("Termlinks diagram");
+//        //Label tasklinks = new Label("Tasklnks diagram");
+//        tasks = new Scatter3D<Task>() {
 //
-//                                        }
 //
-//                                )
-//                        )
-//                ),
-//                scrolled(taskLinkView = new BagView<>(c.getTaskLinks(),
-//                        (t) -> new TaskLabel(t.getTask(), null)
 //
-//                ))
-//        );
-//        links.setOrientation(Orientation.VERTICAL);
-        //links.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
+//            @Override
+//            Iterable<Task>[] get() {
+//                return taskCollects;
+//            }
+//
+//            @Override
+//            protected void update(Task tl, double[] position, double[] size, Consumer<Color> color) {
+//
+//                if (tl.isQuestOrQuestion()) {
+//                    position[0] = -1;
+//                    position[1] = tl.getBestSolution() != null ? tl.getBestSolution().getConfidence() : 0;
+//                }
+//                else {
+//                    Truth t = tl.getTruth();
+//                    position[0] = t.getFrequency();
+//                    position[1] = t.getConfidence();
+//                }
+//                float pri = tl.getPriority();
+//                position[2] = pri;
+//
+//                size[0] = size[1] = size[2] = 0.5f + pri;
+//                color.accept(ca.get(pri));
+//            }
+//        };
+//
+//        //TilePane links = new TilePane(links.content);
+//
+////        Label beliefs = new Label("Beliefs diagram");
+////        Label goals = new Label("Goals diagram");
+////        Label questions = new Label("Questions diagram");
+//
+////        SplitPane links = new SplitPane(
+////                scrolled(termLinkView = new BagView<>(c.getTermLinks(),
+////                                (t) -> new ItemButton(t, Object::toString,
+////                                        (i) -> {
+////
+////                                        }
+////
+////                                )
+////                        )
+////                ),
+////                scrolled(taskLinkView = new BagView<>(c.getTaskLinks(),
+////                        (t) -> new TaskLabel(t.getTask(), null)
+////
+////                ))
+////        );
+////        links.setOrientation(Orientation.VERTICAL);
+//        //links.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
 
-        BorderPane links = new BorderPane();
-        setCenter(new SplitPane(new BorderPane(links), tasks.content));
+//        BorderPane links = new BorderPane();
+//        setCenter(new SplitPane(new BorderPane(links), tasks.content));
 
-        Label controls = new Label("Control Panel");
-        setBottom(controls);
+
+        setCenter(new ConceptNeighborhoodGraph(nar, concept));
+
+        /*Label controls = new Label("Control Panel");
+        setBottom(controls);*/
 
         visibleProperty().addListener(this);
         changed(null, null, null);
     }
 
+    public static class ConceptNeighborhoodGraph extends BorderPane {
+
+        public ConceptNeighborhoodGraph(NAR n, Concept c) {
+            DefaultGrapher g = new DefaultGrapher(
+
+                    //new ConceptsSource(n),
+                    new ConceptNeighborhoodSource(n,
+                            c
+                    ),
+
+                    new DefaultNodeVis() {
+
+                        @Override
+                        public TermNode newNode(Termed term) {
+                            return new LabeledCanvasNode(term, 32, e-> { }, e-> { }) {
+                                @Override
+                                protected Node newBase() {
+                                    SubButton s = SubButton.make(n, (Concept) term);
+
+                                    s.setScaleX(0.02f);
+                                    s.setScaleY(0.02f);
+                                    s.shade(1f);
+
+                                    s.setManaged(false);
+                                    s.setCenterShape(false);
+
+                                    return s;
+                                }
+                            };
+                            //return new HexTermNode(term.term(), 32, e-> { }, e-> { });
+                            //return super.newNode(term);
+                        }
+                    },
+                    //new DefaultNodeVis.HexTermNode(),
+
+                    (A, B) -> {
+                        return new TermEdge(A, B) {
+                            @Override
+                            public double getWeight() {
+                                //return ((Concept)A.term).getPriority();
+                                return pri;
+                            }
+                        };
+                        //return $.pro(A.getTerm(), B.getTerm());
+                    },
+
+                    new BlurCanvasEdgeRenderer()
+            );
+            setCenter(g);
+        }
+    }
 
 
 
     protected void frame() {
-        tasks.frame();
+        //tasks.frame();
         /*taskLinkView.frame();
         termLinkView.frame();*/
     }
@@ -357,7 +417,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         n.frame(516);
 
         NARfx.run((a,s) -> {
-            NARfx.newWindow(n.concept("<a-->b>"));
+            NARfx.newWindow(n, n.concept("<a-->b>"));
 //            s.setScene(new ConsolePanel(n, n.concept("<a-->b>")),
 //                    800,600);
 
