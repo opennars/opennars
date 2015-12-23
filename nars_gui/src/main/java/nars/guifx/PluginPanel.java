@@ -75,7 +75,12 @@ public class PluginPanel extends VBox {
 
             } else if (k.equals("IOPane")) {
 
-            } else {
+            }
+            else
+            if(k.equals("TaskSheet")) {
+
+            }
+            else {
                 toAdd.add(node(k, v));
             }
         });
@@ -130,6 +135,10 @@ public class PluginPanel extends VBox {
             }
             else
             if(k.equals("loop")) {
+
+            }
+            else
+            if(k.equals("TaskSheet")) {
 
             }
             else {

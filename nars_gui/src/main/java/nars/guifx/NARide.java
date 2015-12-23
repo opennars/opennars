@@ -79,8 +79,8 @@ public class NARide extends BorderPane {
             NARide ni = new NARide(loop);
 
             {
-                //ni.addView(new TaskSheet(nar));
                 ni.addView(new IOPane(nar));
+              //  ni.addView(new TaskSheet(nar));
 
                 /*ni.addView(new UDPPane(new UDPNetwork(
                         10001+(int)(Math.random()*5000) //HACK
@@ -98,6 +98,7 @@ public class NARide extends BorderPane {
             ni.addTool("I/O", () -> new IOPane(nar));
             ni.addTool("Active Concepts", () -> new ActiveConceptsLog(nar));
             ni.addTool("Task Tree", () -> new TreePane(nar));
+            ni.addTool("Task Sheet", () -> new TaskSheet(nar));
             ni.addTool("Concept Network", () -> new DefaultNARGraph(64, new ConceptsSource(nar)));
            // ni.addTool("Fractal Workspace", () -> new NARspace(nar));
 
