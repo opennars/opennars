@@ -4,6 +4,7 @@ import nars.budget.Budget;
 
 import java.util.Iterator;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Bag which holds nothing
@@ -68,6 +69,11 @@ public final class NullBag<V> extends Bag<V> {
 
     @Override
     public void forEachEntry(Consumer<BagBudget> each) {
+
+    }
+
+    @Override
+    public void whileEachEntry(Predicate<BagBudget<V>> each) {
 
     }
 

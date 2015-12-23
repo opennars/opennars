@@ -2,7 +2,6 @@ package nars.guifx.graph2.source;
 
 
 import com.gs.collections.impl.map.mutable.UnifiedMap;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import nars.guifx.Spacegraph;
 import nars.guifx.graph2.GraphSource;
@@ -38,7 +37,7 @@ public class SpaceGrapher extends Spacegraph {
     public static final IterativeLayout nullLayout = new None();
 
 
-    public final SimpleIntegerProperty maxNodes;
+    //public final SimpleIntegerProperty maxNodes;
     public final SimpleObjectProperty<GraphSource> source = new SimpleObjectProperty<>();
     public final BiFunction<TermNode, TermNode, TermEdge> edgeVis;
 
@@ -327,7 +326,7 @@ public class SpaceGrapher extends Spacegraph {
     }
 
 
-    public void setVertices(Iterable<Termed> v) {
+    public void setVertices(Collection<Termed> v) {
 
 
         GraphSource ss = source.get();
@@ -339,11 +338,9 @@ public class SpaceGrapher extends Spacegraph {
         Iterator<Termed> cc = v.iterator();
 
 
-        int n = maxNodes.get();
+        Set<TermNode> active = new LinkedHashSet(v.size()); //Global.newHashSet(maxNodes);
 
-        Set<TermNode> active = new LinkedHashSet(n); //Global.newHashSet(maxNodes);
-
-        while (cc.hasNext() && ((n--) > 0)) {
+        while (cc.hasNext()) {
 
             Termed k = cc.next();
             TermNode t = getOrNewTermNode(k);
@@ -453,7 +450,6 @@ public class SpaceGrapher extends Spacegraph {
 
     public SpaceGrapher(GraphSource g,
                         NodeVis vv,
-                        int maxNodes,
                         BiFunction<TermNode, TermNode, TermEdge> edgeVis,
                         CanvasEdgeRenderer edgeRenderer) {
 
@@ -509,7 +505,7 @@ public class SpaceGrapher extends Spacegraph {
         //runLater(() -> checkVisibility());
 
 
-        this.maxNodes = new SimpleIntegerProperty(maxNodes);
+        //this.maxNodes = new SimpleIntegerProperty(maxNodes);
         nodeVis.set(vv); //set vis before source
         this.edgeVis = (edgeVis);
         this.edgeRenderer.set(edgeRenderer);

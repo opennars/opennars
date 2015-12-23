@@ -7,6 +7,7 @@ import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.util.data.map.UnifriedMap;
 import org.junit.Ignore;
@@ -91,7 +92,7 @@ public class TermIndexTest {
         //testShared(a, n.term(..).substMap(..
     }
 
-    static void testShared(Term t1, Term t2) {
+    static void testShared(Termed t1, Termed t2) {
         //t.memory.terms.forEachTerm(System.out::println);
 
         assertEquals(t1, t2);
@@ -102,7 +103,7 @@ public class TermIndexTest {
 
         if (t1 instanceof Compound) {
             //test all subterms are shared
-            for (int i = 0; i < t1.get().size(); i++)
+            for (int i = 0; i < t1.term().size(); i++)
                 testShared(((Compound) t1).term(i), ((Compound) t2).term(i));
         }
     }

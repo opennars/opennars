@@ -50,13 +50,13 @@ public class Circle implements IterativeLayout {
         //double[] i = new double[1];
         //double numFraction = Math.PI * 2.0 * 1.0 / termList.length;
 
-        int num = graph.maxNodes.get(); //termList.length;
+        int num = graph.getVertices().size(); //termList.length;
         double radiusMin = num * this.radiusMin.get();
         double radiusMax = radiusMin + num * this.radiusMax.get();
 
         run(termList,
                 (v) -> {
-                    double vpri = 1f;// v.c.getPriority();
+                    double vpri = v.priNorm; // 1f;// v.c.getPriority();
                     double r = (v.c != null ? vpri : 0);
                     return r * (radiusMax - radiusMin) + radiusMin;
                 },

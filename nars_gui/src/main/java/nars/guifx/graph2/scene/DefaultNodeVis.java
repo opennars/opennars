@@ -252,6 +252,7 @@ public static class LabeledCanvasNode<N extends Termed> extends TermNode {
         super(t, maxEdges);
 
         base = newBase();
+        setManaged(false);
 
         base.setOnMouseClicked(e -> {
             //System.out.println("click " + e.getClickCount());
@@ -287,9 +288,9 @@ public static class LabeledCanvasNode<N extends Termed> extends TermNode {
         Canvas base = new Canvas();
         base.setLayoutX(-0.5f);
         base.setLayoutY(-0.5f);
+
         g = base.getGraphicsContext2D();
         g.setFontSmoothingType(FontSmoothingType.LCD);
-        setManaged(false);
 
         return base;
     }
@@ -300,9 +301,6 @@ public static class LabeledCanvasNode<N extends Termed> extends TermNode {
      */
     public void render(double w, double h) {
 
-        Color color = TermNode.getTermColor(term, colors, 0.5);
-        //TODO move nodeScaleCache elsewhere
-        double s = (1.0 * 4.0) / w; //scaled to width
 
 
         //HACK
@@ -313,6 +311,10 @@ public static class LabeledCanvasNode<N extends Termed> extends TermNode {
             g.clearRect(0, 0, w, h);
 
 
+
+            Color color = TermNode.getTermColor(term, colors, 0.5);
+            //TODO move nodeScaleCache elsewhere
+            double s = (1.0 * 4.0) / w; //scaled to width
 
             //if (term instanceof Term) {
             g.setFill(color); /*colors.get(

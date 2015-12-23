@@ -218,7 +218,7 @@ public interface Truth extends MetaTruth<Float> {
             }
         }
 
-        return problemHasQueryVar ? Truth.expectation(freq, conf) / s.get().complexity() : conf;
+        return problemHasQueryVar ? Truth.expectation(freq, conf) / s.term().complexity() : conf;
 
     }
 

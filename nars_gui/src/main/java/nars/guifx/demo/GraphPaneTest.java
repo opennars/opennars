@@ -59,8 +59,6 @@ public class GraphPaneTest {
 
                 src,
 
-                128,
-
                 new DefaultNodeVis() {
 
                     @Override

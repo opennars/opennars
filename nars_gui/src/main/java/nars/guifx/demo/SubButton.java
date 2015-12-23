@@ -169,7 +169,7 @@ public class SubButton extends HBox {
         if (t.term().volume() > 16) {
             sb.add(makeParagraph(t.toString()));
         } else {
-            sb.add(make(nar, t.get()));
+            sb.add(make(nar, t.term()));
             sb.add(make(String.valueOf(t.getPunctuation())));
             //sb.add(make(space()));
         }
@@ -189,7 +189,7 @@ public class SubButton extends HBox {
     }
 
 
-    private void scale(float v) {
+    public void scale(float v) {
         setStyle("-fx-font-size:" + (100f * v) + "%;");
         //setScaleX(v);
         //setScaleY(v);

@@ -119,8 +119,22 @@ public abstract class GraphSource/* W? */ {
 //    }
 
 
+//    public void updateGraph() {
+//
+//    }
+
     /** called once per frame to update anything about the grapher scope */
-    public void updateGraph() {
+    public final void updateGraph() {
+
+        //System.out.println(isReady() + " " + canUpdate() + " " + graph);
+
+        if (!isReady())
+            return;
+
+
+        if (canUpdate()) {
+            commit();
+        }
 
     }
 
@@ -136,6 +150,9 @@ public abstract class GraphSource/* W? */ {
     public void stop(SpaceGrapher g) {
 
     }
+
+    /** applies updates each frame */
+    public abstract void commit();
 
 //
 //        //final Term source = c.getTerm();

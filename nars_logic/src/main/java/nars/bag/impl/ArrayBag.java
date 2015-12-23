@@ -15,6 +15,7 @@ import nars.util.data.sorted.SortedIndex;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * A bag implemented as a combination of a Map and a SortedArrayList
@@ -375,6 +376,15 @@ public class ArrayBag<V> extends Bag<V> {
         //TODO let the list implementation decide this because it can use the array directly in ArraySortedIndex
         for (int i = 0; i < n; i++) {
             action.accept(l.get(i).get());
+        }
+    }
+
+    @Override public void whileEachEntry(Predicate<BagBudget<V>> action) {
+        List<BagBudget<V>> l = items.getList();
+        int n = l.size();
+        for (int i = 0; i < n; i++) {
+            if (!action.test(l.get(i)))
+                break;
         }
     }
 

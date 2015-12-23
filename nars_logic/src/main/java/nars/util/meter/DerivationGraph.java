@@ -121,7 +121,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 //        TermPattern conceptTerm = addTermPattern(c.getTerm(), unique);
 //        newEdge(conceptTerm, premise);
 
-        TermPattern taskLinkTerm = addTermPattern(tasklink.get(), unique);
+        TermPattern taskLinkTerm = addTermPattern(tasklink.term(), unique);
         //TaskPattern taskLinkTask = addSentencePattern(tasklink.getTask(), unique, now);
 
         /*addEdge(taskLinkTerm, taskLinkTask);
@@ -135,7 +135,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
         }
 
         if (belief!=null) {
-            TermPattern beliefTerm = addTermPattern(belief.get(), unique);
+            TermPattern beliefTerm = addTermPattern(belief.term(), unique);
             addEdge(beliefTerm, premise);
         }
 
@@ -144,7 +144,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
         for (Task t : result) {
 
             TaskResult tr = new TaskResult(t, unique, now, includeDerivedTruth, includeDerivedBudget);
-            TermPattern tp = addTermPattern(t.get(), unique);
+            TermPattern tp = addTermPattern(t.term(), unique);
 
             /*addVertex(tr);
             addEdge(premise, tr);
@@ -249,9 +249,9 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
             termLinkKey = termlink == null ? "_" : genericString(termlink, unique);
             beliefKey = belief == null ? "_" : genericString(belief, unique, now, truth, budget, false);
 
-            taskVolume = tasklink.get().volume();
-            termVolume = termlink.get().volume();
-            beliefVolume = (belief!=null) ? belief.get().volume() : 0;
+            taskVolume = tasklink.term().volume();
+            termVolume = termlink.term().volume();
+            beliefVolume = (belief!=null) ? belief.term().volume() : 0;
 
             key = (taskLinkKey + ':' +
                     termLinkKey + ':' +
@@ -466,7 +466,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
     }
 
     public static String genericString(Task s, ObjectIntHashMap<Term> unique, long now, boolean includeTruth) {
-        String t = genericString(s.get(), unique);
+        String t = genericString(s.term(), unique);
 
         t += s.getPunctuation();
 

@@ -38,12 +38,11 @@ public class DefaultGrapher extends SpaceGrapher {
 //    }
 
     public DefaultGrapher(GraphSource source,
-                          int size,
                           NodeVis v,
                           BiFunction<TermNode, TermNode, TermEdge> edgeBuilder,
                           CanvasEdgeRenderer edgeRenderer) {
 
-        super(source, v, size, edgeBuilder, edgeRenderer);
+        super(source, v, edgeBuilder, edgeRenderer);
 
         InvalidationListener layoutChange = e -> {
             IterativeLayout il = layoutType.getInstance();

@@ -54,7 +54,7 @@ import static nars.Global.dereference;
 public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Tasked {
 
 
-    @Deprecated default public Term get() { return term(); }
+
 
     static void getExplanation(Task task, int indent, StringBuilder sb) {
         //TODO StringBuilder
@@ -169,6 +169,8 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
     Reference<Task> getParentBeliefRef();
 
+    /** may reference the concept directly */
+    default public Termed<Compound> get() { return term(); }
 
     /**
      * Check whether different aspects of sentence are equivalent to another one
@@ -498,7 +500,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     }
 
     default Order getTemporalOrder() {
-        return get().getTemporalOrder();
+        return term().getTemporalOrder();
     }
 
     void setTruth(Truth t);

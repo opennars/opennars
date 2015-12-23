@@ -9,6 +9,7 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
@@ -32,7 +33,7 @@ public abstract class AbstractTask extends Item<Task>
         implements Task, Temporal {
 
     /** content term of this task */
-    private Compound term;
+    private Termed<Compound> term;
 
 
     private char punctuation;
@@ -94,7 +95,7 @@ public abstract class AbstractTask extends Item<Task>
 
     /** copy/clone constructor */
     public AbstractTask(Task task) {
-        this(task.term(), task.getPunctuation(), task.getTruth(),
+        this(task.get(), task.getPunctuation(), task.getTruth(),
                 task.getPriority(), task.getDurability(), task.getQuality(),
                 task.getParentTaskRef(), task.getParentBeliefRef(), task.getBestSolutionRef());
     }
@@ -105,11 +106,20 @@ public abstract class AbstractTask extends Item<Task>
     }
 
     void setTime(long creation, long occurrence) {
-        setCreationTime(creation);
-        setOccurrenceTime(occurrence);
+        this.creationTime = creation;
+
+        boolean changed = this.occurrenceTime!=occurrence;
+        if (changed) {
+            this.occurrenceTime = occurrence;
+            invalidate();
+        }
+
+        /*setCreationTime(creation);
+        setOccurrenceTime(occurrence);*/
     }
 
-    protected final void setTerm(Compound t) {
+
+    protected final void setTerm(Termed<Compound> t) {
         if (term!=t) {
             term = t;
             invalidate();
@@ -117,7 +127,7 @@ public abstract class AbstractTask extends Item<Task>
     }
 
 
-    public AbstractTask(Compound term, char punctuation, Truth truth, float p, float d, float q, Reference<Task> parentTask, Reference<Task> parentBelief, Reference<Task> solution) {
+    public AbstractTask(Termed<Compound> term, char punctuation, Truth truth, float p, float d, float q, Reference<Task> parentTask, Reference<Task> parentBelief, Reference<Task> solution) {
         super(p, d, q);
         this.truth = truth;
         this.punctuation = punctuation;
@@ -138,7 +148,7 @@ public abstract class AbstractTask extends Item<Task>
         if (isDeleted())
             return null;
 
-        Compound t = get();
+        Compound t = term();
         if (!t.levelValid( memory.nal() ))
             return null;
 
@@ -217,7 +227,7 @@ public abstract class AbstractTask extends Item<Task>
         }
 
         //obtain shared copy of term
-        setTerm((Compound)memory.index.getTerm(t));
+        setTerm((Termed)memory.index.get(t));
 
         setDuration(
             memory.duration() //assume the default perceptual duration?
@@ -284,12 +294,13 @@ public abstract class AbstractTask extends Item<Task>
     }
 
     @Override
-    public final Compound get() {
+    public final Termed<Compound> get() {
         return term;
     }
+
     @Override
     public final Compound term() {
-        return term;
+        return term.term();
     }
 
     @Override
@@ -333,7 +344,7 @@ public abstract class AbstractTask extends Item<Task>
         if (duration < 0)
             throw new RuntimeException(this + " negative duration");
 
-        Term term = this.term;
+        Compound term = term();
 
         term.setDuration(duration); //HACK int<->long stuff
 
@@ -375,7 +386,7 @@ public abstract class AbstractTask extends Item<Task>
 
     @Override
     public final int duration() {
-        Term t = term;
+        Compound t = term();
         if (t instanceof Interval)
             return ((Interval)t).duration();
         return duration;
@@ -388,8 +399,9 @@ public abstract class AbstractTask extends Item<Task>
         if (this == obj) return 0;
 
         Task o = (Task)obj;
-        int tc = term.compareTo(o.get());
+        int tc = term().compareTo(o.term());
         if (tc != 0) return tc;
+
         tc = Character.compare(punctuation, o.getPunctuation());
         if (tc != 0) return tc;
 

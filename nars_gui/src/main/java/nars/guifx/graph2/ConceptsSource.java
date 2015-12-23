@@ -2,6 +2,7 @@ package nars.guifx.graph2;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
+import nars.Global;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
@@ -13,10 +14,11 @@ import nars.nar.Default;
 import nars.term.Termed;
 import nars.util.event.Active;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.function.Predicate;
 
 import static nars.util.data.Util.lerp;
 
@@ -26,9 +28,10 @@ import static nars.util.data.Util.lerp;
 public class ConceptsSource extends GraphSource {
 
 
-    private final NAR nar;
+    public final NAR nar;
     private Active regs = null;
 
+    final int maxNodes = 64;
     final int maxNodeLinks = 24; //per type
 
     public final SimpleDoubleProperty maxPri = new SimpleDoubleProperty(1.0);
@@ -37,6 +40,26 @@ public class ConceptsSource extends GraphSource {
 
     private BiFunction<TermNode, TermNode, TermEdge> edgeBuilder =
             TLinkEdge::new;
+
+    private float _maxPri = 0, _minPri = 0;
+    protected final List<Termed> concepts = Global.newArrayList();
+    private String keywordFilter = null;
+    private final Predicate<BagBudget<Concept>> eachConcept = cc -> {
+
+        float p = cc.getPriority();
+        if ((p < _minPri) || (p > _maxPri))
+            return true;
+
+
+        if (keywordFilter != null) {
+            if (cc.get().toString().contains(keywordFilter))
+                return true;
+        }
+
+        concepts.add(cc.get());
+
+        return concepts.size() < maxNodes;
+    };
 
     public ConceptsSource(NAR nar) {
 
@@ -61,7 +84,9 @@ public class ConceptsSource extends GraphSource {
 
 
     public float getConceptPriority(Termed cc) {
-        return ((Default)nar).core.concepts().get(cc).getPriorityIfNaNThenZero();
+        BagBudget<Concept> ccc = ((Default) nar).core.concepts().get(cc);
+        if (ccc == null) return 0;
+        return ccc.getPriorityIfNaNThenZero();
     }
 
     @Override
@@ -130,12 +155,13 @@ public class ConceptsSource extends GraphSource {
 
 
         regs = new Active(
-                nar.memory.eventConceptActivated.on(
+                /*nar.memory.eventConceptActivated.on(
                         c -> refresh.set(true)
-                ),
-                nar.memory.eventFrameStart.on(
-                        h -> updateGraph()
-                )
+                ),*/
+                nar.memory.eventFrameStart.on(h -> {
+                    refresh.set(true);
+                    updateGraph();
+                })
         );
 
         super.start(g);
@@ -150,46 +176,45 @@ public class ConceptsSource extends GraphSource {
     }
 
 
-
     @Override
-    public void updateGraph() {
+    public void commit() {
 
-        if (!isReady())
-            return;
+        Bag<Concept> x = ((AbstractNAR) nar).core.concepts();
 
-        if (canUpdate()) {
+        String _keywordFilter = includeString.get();
+        this.keywordFilter = _keywordFilter != null && _keywordFilter.isEmpty() ? null : _keywordFilter;
 
-            Bag<Concept> x = ((AbstractNAR) nar).core.concepts();
+        _minPri = this.minPri.floatValue();
+        _maxPri = this.maxPri.floatValue();
 
-            String keywordFilter, _keywordFilter = includeString.get();
-            keywordFilter = _keywordFilter != null && _keywordFilter.isEmpty() ? null : _keywordFilter;
+        //final int maxNodes = this.maxNodes;
 
-            double minPri = this.minPri.get();
-            double maxPri = this.maxPri.get();
+        //TODO use forEach witha predicate return to stop early
+        x.whileEachEntry(eachConcept);
 
-            Iterable<Termed> ii = StreamSupport.stream(x.spliterator(), false).filter(cc -> {
-
-//                float p = cc.getPriority();
-//                if ((p < minPri) || (p > maxPri))
+//        Iterable<Termed> _concepts = StreamSupport.stream(x.spliterator(), false).filter(cc -> {
+//
+//            float p = getConceptPriority(cc);
+//            if ((p < minPri) || (p > maxPri))
+//                return false;
+//
+//
+//            if (keywordFilter != null) {
+//                if (cc.get().toString().contains(keywordFilter))
 //                    return false;
+//            }
+//
+//            return true;
+//
+//        }).collect(Collectors.toList());
 
+        commit(concepts);
 
-                if (keywordFilter != null) {
-                    if (cc.get().toString().contains(keywordFilter))
-                        return false;
-                }
-
-                return true;
-
-            }).collect(Collectors.toList());
-
-            commit(ii);
-        }
-
-
+        concepts.clear();
     }
 
-    private void commit(Iterable<Termed> ii) {
+
+    protected final void commit(Collection<Termed> ii) {
         grapher.setVertices(ii);
     }
 

@@ -9,6 +9,7 @@ import nars.task.AbstractTask;
 import nars.task.Task;
 import nars.task.Tasked;
 import nars.term.Terms;
+import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import org.slf4j.Logger;
@@ -227,27 +228,30 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
         float worstDiff = similar != null && similar.size() >= maxSimilars ? similar.lastKey() : Float.POSITIVE_INFINITY;
 
         float difference = 0;
+        Compound tterm = task.term();
         difference +=
-                task.get()== get() ? 0 : (get().volume());
+                tterm.equals( term() ) ? 0 : (term().volume());
         if (difference >= worstDiff)
             return;
 
+        float f = task.getFrequency();
         float freqDiff = Math.min(
-                Math.abs(task.getFrequency() - freqMin),
-                Math.abs(task.getFrequency() - freqMax));
+                Math.abs(f - freqMin),
+                Math.abs(f - freqMax));
         difference += 2 * freqDiff;
         if (difference >= worstDiff)
             return;
 
+        float c = task.getConfidence();
         float confDiff = Math.min(
-                Math.abs(task.getConfidence() - confMin),
-                Math.abs(task.getConfidence() - confMax));
+                Math.abs(c - confMin),
+                Math.abs(c - confMax));
         difference += 1 * confDiff;
         if (difference >= worstDiff)
             return;
 
         float termDifference =
-                Terms.termDistance(task.get(), get(), worstDiff);
+                Terms.termDistance(tterm, term(), worstDiff);
         difference += 3 * termDifference;
 
         if (difference >= worstDiff)

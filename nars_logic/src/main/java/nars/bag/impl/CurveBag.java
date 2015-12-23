@@ -103,6 +103,10 @@ public class CurveBag<V> extends Bag<V> {
         return null; // empty bag
     }
 
+    @Override
+    public final void whileEachEntry(Predicate<BagBudget<V>> each) {
+        arrayBag.whileEachEntry(each);
+    }
 
     /** optimized batch fill, using consecutive array elements, also ensuring uniqueness */
     @Override public int next(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {

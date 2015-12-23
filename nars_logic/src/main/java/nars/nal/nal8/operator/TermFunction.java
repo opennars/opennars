@@ -87,7 +87,7 @@ public abstract class TermFunction<O> extends SyncOperator {
 
         return Lists.newArrayList(
                 Compounds.feedback(
-                    new MutableTask((Compound)inh).
+                    new MutableTask(inh).
                         judgment().
                         truth(getResultFrequency(), getResultConfidence()).
                         tense(getResultTense(), nar.memory), opTask, feedbackPriorityMultiplier, feedbackDurabilityMultiplier)

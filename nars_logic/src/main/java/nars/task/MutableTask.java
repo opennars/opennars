@@ -6,6 +6,7 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal7.Tense;
 import nars.process.ConceptProcess;
+import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -35,19 +36,24 @@ public class MutableTask extends AbstractTask {
         setOccurrenceTime(Tense.TIMELESS);
     }
 
-    public MutableTask(Task taskToClone) {
+    public static MutableTask clone(Task t) {
+        return new MutableTask(t, true);
+    }
+
+    MutableTask(Task taskToClone, boolean dummy) {
         super(taskToClone);
     }
 
-    public MutableTask(Compound term) {
+    public MutableTask(Termed<Compound> term) {
         this();
         term(term);
     }
 
-    public MutableTask(Compound content, char punc) {
+    public MutableTask(Termed<Compound> content, char punc) {
         this(content);
         punctuation(punc);
     }
+
 
 
 //    public FluentTask(String termOrTaskString) {
@@ -149,7 +155,7 @@ public class MutableTask extends AbstractTask {
 //        return this;
 //    }
 
-    public final MutableTask term(Compound t) {
+    public final MutableTask term(Termed<Compound> t) {
         setTerm(t);
         return this;
     }
@@ -417,7 +423,7 @@ public class MutableTask extends AbstractTask {
     public MutableTask budgetCompoundForward(ConceptProcess premise) {
         BudgetFunctions.compoundForward(
                 getBudget(), getTruth(),
-                get(), premise);
+                term(), premise);
         return this;
     }
 }

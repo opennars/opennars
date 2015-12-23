@@ -179,10 +179,10 @@ public class LocalRules {
 
         Truth originalTruth = solution.getTruth();
 
-        Term solTerm = sol.get();
+        Term solTerm = sol.term();
         if (solTerm.hasVarIndep() && !solTerm.equals(question.get())) {
 
-            Term[] u = {question.get(), solTerm};
+            Term[] u = {question.term(), solTerm};
 
             Premise.unify(Op.VAR_INDEP, u, nal.memory.random, (st) -> {
 

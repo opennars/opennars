@@ -39,11 +39,11 @@ public interface Premise extends Level, Tasked {
 
         if (question.isQuestion() || question.isGoal()) {
             if (Tense.matchingOrder(question, solution)) {
-                Term[] u = {question.get(), solution.get()};
+                Term[] u = {question.term(), solution.term()};
                 unify(Op.VAR_QUERY, u, nar.memory.random, (st) -> {
                     Task s;
                     if (!st.equals(solution.term())) {
-                        s = new MutableTask(solution).term((Compound)st);
+                        s = MutableTask.clone(solution).term((Compound)st);
                     } else {
                         s = solution;
                     }

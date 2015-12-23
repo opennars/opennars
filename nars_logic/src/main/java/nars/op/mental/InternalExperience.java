@@ -131,7 +131,7 @@ public class InternalExperience {
                 nonInnate(belief, task, p, randomNonInnate(r) );
             }
 
-            Term beliefTerm = belief.get();
+            Term beliefTerm = belief.term();
 
             if (beliefTerm.op()==Op.IMPLICATION && r.nextFloat() <= INTERNAL_EXPERIENCE_PROBABILITY) {
                 internalizeImplication(task, p, (Compound)beliefTerm);
@@ -168,7 +168,7 @@ public class InternalExperience {
 
         Truth tr = s.getTruth();
         Term[] arg = new Term[1 + (tr == null ? 1 : 2)];
-        arg[0] = s.get();
+        arg[0] = s.term();
         int k = 1;
 
         if (tr != null) {
@@ -217,7 +217,7 @@ public class InternalExperience {
             return null;
         }
 
-        Term content = task.get();
+        Term content = task.term();
         // to prevent infinite recursions
         if (Op.isOperation(content)/* ||  Memory.randomNumber.nextFloat()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
             return null;
@@ -260,7 +260,7 @@ public class InternalExperience {
     };
 
     private void internalizeImplication(Task task, Premise nal, Compound beliefImpl) {
-        Term taskTerm = task.get();
+        Term taskTerm = task.term();
         Compound imp = beliefImpl;
         if (imp.getTemporalOrder() == Tense.ORDER_FORWARD) {
             //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
@@ -295,7 +295,7 @@ public class InternalExperience {
         //also get a chance to reveal its effects to the system this way
 
             beliefReasonDerive(task,
-                    $.oper(op, $.p(belief.get())),
+                    $.oper(op, $.p(belief.term())),
                     nal, 0);
     }
 

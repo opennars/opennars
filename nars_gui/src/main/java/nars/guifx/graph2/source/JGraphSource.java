@@ -34,26 +34,17 @@ public abstract class JGraphSource extends GraphSource {
     }
 
 
+
     @Override
-    public void updateGraph() {
-
-        System.out.println(isReady() + " " + canUpdate() + " " + graph);
-
-        if (!isReady())
-            return;
-
+    public void commit() {
         if (graph == null) return;
 
-        if (canUpdate()) {
-
-//            if (graph == null) {
+        //            if (graph == null) {
 //                //setvertices empty array?
 //                return;
 //            }
 
-            grapher.setVertices(graph.vertexSet());
-        }
-
+        grapher.setVertices(graph.vertexSet());
     }
 
 }

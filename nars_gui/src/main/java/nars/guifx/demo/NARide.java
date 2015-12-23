@@ -108,8 +108,7 @@ public class NARide extends BorderPane {
             ni.addTool("Task Tree", () -> new TreePane(nar));
             ni.addTool("Concept Network", () -> new DefaultGrapher(
                 new ConceptsSource(nar),
-                96,
-                new DefaultNodeVis(),
+                    new DefaultNodeVis(),
                 (A,B) -> {
                     TermEdge te = new TermEdge(A,B) {
                         @Override public double getWeight() {

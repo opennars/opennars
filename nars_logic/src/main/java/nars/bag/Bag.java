@@ -231,8 +231,19 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
     }
 
 
-    abstract public void forEachEntry(Consumer<BagBudget> each);
+    @Deprecated public void forEachEntry(Consumer<BagBudget> each) {
+        whileEachEntry(e -> {
+            each.accept(e);
+            return true;
+        });
+    }
+
+    /** if predicate evaluates false, it terminates the iteration */
+    abstract public void whileEachEntry(Predicate<BagBudget<V>> each);
+
+    //TODO provide default impl
     abstract public void forEachEntry(int limit, Consumer<BagBudget> each);
+
 
 //    final public int forgetNext(float forgetCycles, final V[] batch, final long now) {
 //        return forgetNext(forgetCycles, batch, 0, batch.length, now, batch.length/2 /* default to max 1.5x */);

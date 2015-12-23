@@ -163,7 +163,7 @@ public class NarseseExtendedTest {
             (--,(negated))! %1.00;0.90% {?: 2}
             */
 
-            Term tt = t.get();
+            Term tt = t.term();
             assertEquals(Op.NEGATE, tt.op());
             assertTrue("negated".equals(((Compound) tt).term(0).toString()));
             assertTrue(t.getPunctuation() == Symbols.GOAL);

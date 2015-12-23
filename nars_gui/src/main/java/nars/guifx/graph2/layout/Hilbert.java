@@ -15,7 +15,7 @@ public class Hilbert extends Linear {
     @Override
     public void run(SpaceGrapher graph, int iterations) {
 
-        int m = graph.maxNodes.get();
+        int m = graph.getVertices().size();
 
         int order = 2;
         do {

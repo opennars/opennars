@@ -78,7 +78,7 @@ public class NarseseTest {
     public void testIncompleteTask() throws Narsese.NarseseException {
         Task t = task("<a --> b>.");
         assertNotNull(t);
-        assertEquals(Op.INHERIT, t.get().op());
+        assertEquals(Op.INHERIT, t.op());
         Compound i = t.term();
         assertEquals("a", i.term(0).toString());
         assertEquals("b", i.term(1).toString());
@@ -130,7 +130,7 @@ public class NarseseTest {
         assertEquals(tt, t.get().toString());
         assertEquals('?', t.getPunctuation());
         assertNull(t.getTruth());
-        assertEquals(7, t.get().complexity());
+        assertEquals(7, t.term().complexity());
     }
 
     protected void testProductABC(Compound p) throws Narsese.NarseseException {
