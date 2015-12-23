@@ -149,6 +149,11 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
         if (s == 0) return 0;
         return getPrioritySum() / s;
     }
+    public float getSummaryMean() {
+        int s = size();
+        if (s == 0) return 0;
+        return getSummarySum() / s;
+    }
 
 //    /** not used currently in Bag classes, but from CacheBag interface */
 //    @Override public Consumer<V> getOnRemoval() {  return null;    }
@@ -229,7 +234,11 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
         forEachEntry(v -> total[0] += v.getPriority());
         return total[0];
     }
-
+    public float getSummarySum() {
+        float[] total = {0};
+        forEachEntry(v -> total[0] += v.summary());
+        return total[0];
+    }
 
     @Deprecated public void forEachEntry(Consumer<BagBudget> each) {
         whileEachEntry(e -> {

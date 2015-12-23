@@ -112,8 +112,8 @@ public class NARGraph1Test {
 
 
         Default n = new Default(1024,1,1,2);
-        n.memory.taskLinkForgetDurations.setValue(16);
-        n.memory.termLinkForgetDurations.setValue(16);
+        n.memory.taskLinkForgetDurations.setValue(4);
+        n.memory.termLinkForgetDurations.setValue(4);
 
         NARide.show(n.loop(), ide -> {
 

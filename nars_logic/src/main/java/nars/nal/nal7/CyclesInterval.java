@@ -1,5 +1,8 @@
 package nars.nal.nal7;
 
+import nars.Op;
+import nars.term.atom.AbstractStringAtom;
+
 import java.io.IOException;
 
 /**
@@ -14,7 +17,7 @@ import java.io.IOException;
  *
  * TODO realtime subclass which includes a number value that maps to external wall time
  */
-public final class CyclesInterval extends ShadowAtom implements Interval {
+public final class CyclesInterval extends AbstractStringAtom implements Interval {
 
     static final CyclesInterval zero = new CyclesInterval(0);
 
@@ -35,21 +38,56 @@ public final class CyclesInterval extends ShadowAtom implements Interval {
 
     }
 
-    public boolean equals(Object o) {
-        if (o instanceof CyclesInterval) {
-            return cyc == ((CyclesInterval)o).cyc;
-        }
-        return false;
+//    public boolean equals(Object o) {
+//        if (o instanceof CyclesInterval) {
+//            return cyc == ((CyclesInterval)o).cyc;
+//        }
+//        return false;
+//    }
+
+//    @Override
+//    public int hashCode() {
+//        return cyc;
+//    }
+
+    @Override
+    public Op op() {
+        return Op.INTERVAL;
     }
 
     @Override
-    public int hashCode() {
-        return cyc;
+    public int complexity() {
+        return 0;
+    }
+
+    @Override
+    public int structure() {
+        return 0;
     }
 
     @Override
     public void append(Appendable output, boolean pretty) throws IOException {
         output.append('/').append(Long.toString(cyc));//.append('/');
+    }
+
+    @Override
+    public int varIndep() {
+        return 0;
+    }
+
+    @Override
+    public int varDep() {
+        return 0;
+    }
+
+    @Override
+    public int varQuery() {
+        return 0;
+    }
+
+    @Override
+    public int vars() {
+        return 0;
     }
 
     @Override

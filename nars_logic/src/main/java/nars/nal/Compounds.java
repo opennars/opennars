@@ -438,6 +438,9 @@ public class Compounds {
 
         }
 
+        if (term1.equals(term2))
+            return term1;
+
         return newCompound(intersection, new Term[]{term1, term2}, -1, true);
 
 
@@ -527,12 +530,16 @@ public class Compounds {
                 if ((et0.op(SET_EXT) && et1.op(SET_EXT) )) {
                     return subtractSet(Op.SET_EXT, (Compound)et0, (Compound)et1);
                 }
+                if (et0.equals(et1))
+                    return null;
                 break;
             case DIFF_INT:
                 Term it0 = t[0], it1 = t[1];
                 if ((it0.op(SET_INT) && it1.op(SET_INT) )) {
                     return subtractSet(Op.SET_INT, (Compound)it0, (Compound)it1);
                 }
+                if (it0.equals(it1))
+                    return null;
                 break;
             case INTERSECT_EXT: return newIntersectEXT(t);
             case INTERSECT_INT: return newIntersectINT(t);

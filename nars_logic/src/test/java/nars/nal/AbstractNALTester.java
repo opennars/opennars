@@ -77,7 +77,7 @@ public abstract class AbstractNALTester {
         if (multi) {
             l.add(supply("Default2[NAL<=" + level + ']',
                 () -> {
-                    Default d = new Default(512, 1, 2, 3);
+                    Default d = new Default(768, 2, 2, 3);
                     d.nal(finalLevel);
                     return d;
                 }

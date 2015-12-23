@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 @RunWith(Parameterized.class)
 public class NAL3Test extends AbstractNALTester {
 
-    public static final int cycles = 50;
+    public static final int cycles = 150;
 
     public NAL3Test(Supplier<NAR> b) { super(b); }
 
@@ -121,8 +121,8 @@ public class NAL3Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<[marsy,earthly,venusy] --> planetX>",1.0f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
         tester.believe("<[earthly,saturny] --> planetX>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
-        tester.mustBelieve(cycles, "<[marsy,earthly,saturny,venusy] --> planetX>", 1.0f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
-        tester.mustBelieve(cycles, "<[marsy,venusy] --> planetX>", 0.90f ,0.81f); //.en("PlanetX is either Mars or Venus.");
+        tester.mustBelieve(cycles*2, "<[marsy,earthly,saturny,venusy] --> planetX>", 1.0f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        tester.mustBelieve(cycles*2, "<[marsy,venusy] --> planetX>", 0.90f ,0.81f); //.en("PlanetX is either Mars or Venus.");
 
     }
 
@@ -188,7 +188,7 @@ public class NAL3Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<swan --> bird>",0.9f,0.9f); //.en("Swan is a type of bird.");
         tester.ask("<(&,swan,swimmer) --> bird>"); //.en("Is swimming swan a type of bird?");
-        tester.mustBelieve(cycles*3, "<(&,swan,swimmer) --> bird>", 0.90f ,0.73f); //.en("Swimming swan is a type of bird.");
+        tester.mustBelieve(cycles, "<(&,swan,swimmer) --> bird>", 0.90f ,0.73f); //.en("Swimming swan is a type of bird.");
 
     }
 

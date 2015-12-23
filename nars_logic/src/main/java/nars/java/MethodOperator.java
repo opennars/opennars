@@ -96,12 +96,15 @@ public class MethodOperator extends TermFunction {
 
 
             Term xv = x[paramOffset];
-            if (!xv.op(Op.PRODUCT))
-                throw new RuntimeException("method parameters must be a product but is " + xv);
+            if (!xv.op(Op.PRODUCT)) {
+                //throw new RuntimeException("method parameters must be a product but is " + xv);
+                return null;
+            }
 
             Compound pxv = (Compound)xv;
             if (pxv.size()!=pc) {
-                throw new RuntimeException("invalid # method parameters; requires " + pc + " but " + pxv.size() + " given");
+                //throw new RuntimeException("invalid # method parameters; requires " + pc + " but " + pxv.size() + " given");
+                return null;
             }
 
             for (int i = 0; i < pc; i++) {

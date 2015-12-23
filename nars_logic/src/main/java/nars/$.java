@@ -310,10 +310,12 @@ public abstract class $  {
         return v(type.ch, String.valueOf(counter));
     }
 
-    public static Term conj(Term a, Term b) {
+    public static Term conj(Term... a) {
+        return Compounds.the(CONJUNCTION, a);
+    }
 
-
-        return Compounds.the(CONJUNCTION, a, b);
+    public static Term disj(Term... a) {
+        return Compounds.the(DISJUNCTION, a);
     }
 
     static {
@@ -414,5 +416,6 @@ public abstract class $  {
     public static Operator operator(String name) {
         return new Operator($.the(name));
     }
+
 
 }

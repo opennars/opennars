@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.lang.System.arraycopy;
 import static nars.Symbols.COMPOUND_TERM_OPENER;
 import static nars.nal.nal7.Tense.appendInterval;
 
@@ -167,6 +166,9 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
 //
 //        }
 
+
+        //return cloneIntervals(t);
+        //return makeSequence(t, false);
         return size() != t.length ? makeSequence(t) : cloneIntervals(t);
     }
 
@@ -284,37 +286,37 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
     }
 
 
-    public static Term makeSequence(Term term1, Term term2) {
-        Term[] components;
-
-        if (term1.op().isConjunctive(Tense.ORDER_FORWARD)) {
-
-            Compound cterm1 = (Compound) term1;
-
-            List<Term> list = Global.newArrayList(cterm1.size());
-            cterm1.addAllTo(list);
-
-            if (term2.op().isConjunctive(Tense.ORDER_FORWARD)) {
-                // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
-                ((Compound) term2).addAllTo(list);
-            } else {
-                // (&,(&,P,Q),R) = (&,P,Q,R)
-                list.add(term2);
-            }
-
-            components = list.toArray(new Term[list.size()]);
-
-        } else if (term2.op().isConjunctive(Tense.ORDER_FORWARD)) {
-            Compound cterm2 = (Compound) term2;
-            components = new Term[term2.size() + 1];
-            components[0] = term1;
-            arraycopy(cterm2.terms(), 0, components, 1, cterm2.size());
-        } else {
-            components = new Term[]{term1, term2};
-        }
-
-        return makeSequence(components);
-    }
+//    public static Term makeSequence(Term term1, Term term2) {
+//        Term[] components;
+//
+//        if (term1.op().isConjunctive(Tense.ORDER_FORWARD)) {
+//
+//            Compound cterm1 = (Compound) term1;
+//
+//            List<Term> list = Global.newArrayList(cterm1.size());
+//            cterm1.addAllTo(list);
+//
+//            if (term2.op().isConjunctive(Tense.ORDER_FORWARD)) {
+//                // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
+//                ((Compound) term2).addAllTo(list);
+//            } else {
+//                // (&,(&,P,Q),R) = (&,P,Q,R)
+//                list.add(term2);
+//            }
+//
+//            components = list.toArray(new Term[list.size()]);
+//
+//        } else if (term2.op().isConjunctive(Tense.ORDER_FORWARD)) {
+//            Compound cterm2 = (Compound) term2;
+//            components = new Term[term2.size() + 1];
+//            components[0] = term1;
+//            arraycopy(cterm2.terms(), 0, components, 1, cterm2.size());
+//        } else {
+//            components = new Term[]{term1, term2};
+//        }
+//
+//        return makeSequence(components);
+//    }
 
     //TODO maybe override only Compound.appendArgs
     @Override

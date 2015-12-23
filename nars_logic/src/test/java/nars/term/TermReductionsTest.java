@@ -120,6 +120,27 @@ public class TermReductionsTest {
 
          */
 
+    @Test public void testDisjunctEqual() {
+        assertEquals(p, $.disj(p, p));
+    }
+    @Test public void testConjunctionEqual() {
+        assertEquals(p, $.conj(p, p));
+    }
+
+    @Test public void testIntExtEqual() {
+        assertEquals(p, $.sect(p, p));
+        assertEquals(p, $.sectInt(p, p));
+    }
+
+    @Test public void testDiffIntEqual() {
+        Term d = diffInt(p, p);
+        assertNull(d);
+    }
+    @Test public void testDiffExtEqual() {
+        Term d = diffExt(p, p);
+        assertNull(d);
+    }
+
     @Test
     public void testDifferenceImmediate() {
 

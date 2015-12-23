@@ -79,9 +79,9 @@ public class ThermostatTest2 {
 
         int dur = 5;
 
-        Default n = new Default(1024, 8, 2, 3);
+        Default n = new Default(1024, 4, 2, 3);
         n.memory.duration.set(dur);
-        n.getInput().inputPerCycle.set(2);
+        //n.getInput().inputPerCycle.set(2);
 
 
         //NAR n = new NAR(new Default().setInternalExperience(null));
@@ -200,7 +200,7 @@ public class ThermostatTest2 {
 
 //                n.input(notValid + "! %0%");
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 5; i++) {
 
             reset(tc, range);
             tc.go(true); n.frame(dur*2); ///*tc.valid();*/ n.frame(dur*4);

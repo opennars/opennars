@@ -166,8 +166,8 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     @Nullable
     default Term applyImmediateTransform(Subst f, Term result, ImmediateTermTransform tf) {
 
-        Compound args = (Compound) Operator.opArgs((Compound) result).apply(f);
-        ////Compounds.opArgs((Compound) result)
+        //Compound args = (Compound) Operator.opArgs((Compound) result).apply(f);
+        Compound args = Operator.opArgs((Compound) result);
 
         if ((tf instanceof PremiseAware) && (f instanceof RuleMatch)) {
             return ((PremiseAware)tf).function(args, (RuleMatch)f);

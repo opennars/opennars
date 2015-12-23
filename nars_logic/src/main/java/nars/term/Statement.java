@@ -23,7 +23,6 @@ package nars.term;
 import nars.Op;
 import nars.Symbols;
 import nars.term.compound.Compound;
-import nars.term.variable.Variable;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -321,14 +320,7 @@ public interface Statement {
 
     static boolean subjectOrPredicateIsIndependentVar(Compound t) {
         if (!t.hasVarIndep()) return false;
-
-        Term subj = t.term(0);
-        if ((subj instanceof Variable) && (subj.hasVarIndep()))
-            return true;
-
-        Term pred = t.term(1);
-        return (pred instanceof Variable) && (pred.hasVarIndep());
-
+        return (t.term(0).op(Op.VAR_INDEP)) || (t.term(1).op(Op.VAR_INDEP));
     }
 
 }

@@ -12,7 +12,6 @@ import nars.nal.RuleMatch;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.task.flow.SetTaskPerception;
-import nars.task.flow.SortedTaskPerception;
 import nars.task.flow.TaskPerception;
 import nars.term.compile.TermIndex;
 import nars.time.FrameClock;
@@ -198,8 +197,8 @@ public class Default extends AbstractNAR {
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
     }
 
-    public SortedTaskPerception getInput() {
-        return (SortedTaskPerception) input;
+    public TaskPerception getInput() {
+        return input;
     }
 
     @Override

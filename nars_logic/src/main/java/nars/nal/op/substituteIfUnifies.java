@@ -21,7 +21,7 @@ public final class substituteIfUnifies extends substitute {
 
         FindSubst umap = unifies(op, x, y);
         if (umap!=null) {
-            umap.putXY(x, y);
+            //umap.putXY(term, y);
             return subst(umap, term);
         }
 

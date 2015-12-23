@@ -329,10 +329,25 @@ public class NAL6Test extends AbstractNALTester {
     }
 
     @Test //see discussion on https://groups.google.com/forum/#!topic/open-nars/1TmvmQx2hMk
+    public void strong_unification_simple()  {
+        TestNAR tester = test();
+        tester.believe("<<($a,$b) --> pair> ==> <$a --> $b>>", 1.00f, 0.90f);
+        tester.believe("<(x,y) --> pair>", 1.00f, 0.90f);
+        tester.mustBelieve(cycles, "<x --> y>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
+    }
+    @Test public void strong_unification_simple2()  {
+        TestNAR tester = test();
+        tester.believe("<<($a,$b) --> pair> ==> {$a,$b}>", 1.00f, 0.90f);
+        tester.believe("<(x,y) --> pair>", 1.00f, 0.90f);
+        tester.mustBelieve(cycles, "{x,y}", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
+    }
+
+
+    @Test //see discussion on https://groups.google.com/forum/#!topic/open-nars/1TmvmQx2hMk
     public void strong_unification()  {
         TestNAR tester = test();
-        tester.believe("<<(*,$a,is,$b) --> sentence> ==> <$a --> $b>>", 1.00f, 0.90f);
-        tester.believe("<(*,bmw,is,car) --> sentence>", 1.00f, 0.90f);
+        tester.believe("<<($a,is,$b) --> sentence> ==> <$a --> $b>>", 1.00f, 0.90f);
+        tester.believe("<(bmw,is,car) --> sentence>", 1.00f, 0.90f);
         tester.mustBelieve(cycles, "<bmw --> car>", 1.00f, 0.81f); //en("there is a lock which is opened by key1");
 
     }

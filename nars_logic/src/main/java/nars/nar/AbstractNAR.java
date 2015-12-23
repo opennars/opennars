@@ -189,17 +189,17 @@ public abstract class AbstractNAR extends NAR {
     public void initDefaults(Memory m) {
         //parameter defaults
 
-        setTaskLinkBagSize(24);
-        setTermLinkBagSize(24);
+        setTaskLinkBagSize(12);
+        setTermLinkBagSize(12);
 
         m.duration.set(5);
 
-        m.conceptBeliefsMax.set(8);
-        m.conceptGoalsMax.set(5);
-        m.conceptQuestionsMax.set(3);
+        m.conceptBeliefsMax.set(12);
+        m.conceptGoalsMax.set(8);
+        m.conceptQuestionsMax.set(5);
 
-        m.taskLinkForgetDurations.setValue(6.0);
-        m.termLinkForgetDurations.setValue(6.0); //not currently used, tasklink is
+        m.taskLinkForgetDurations.setValue(2.0);
+        m.termLinkForgetDurations.setValue(2.0); //not currently used, tasklink is
 
 
         m.derivationThreshold.set(0);
@@ -571,13 +571,14 @@ public abstract class AbstractNAR extends NAR {
             b.next(conceptsToFire, cb -> {
                 Concept c = (AtomConcept) cb.get();
 
-                //c.getTermLinks().update(simpleForgetDecay);
+                //c.getTermLinks().up(simpleForgetDecay);
                 //c.getTaskLinks().update(simpleForgetDecay);
 
 
                 float p =
                         //Math.max(
-                       c.getTaskLinks().getPriorityMax()
+                       //c.getTaskLinks().getPriorityMax()
+                        c.getTaskLinks().getSummaryMean()
                        // c.getTermLinks().getPriorityMax()
                         //)
                         ;
