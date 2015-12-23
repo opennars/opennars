@@ -1,28 +1,112 @@
 package nars.nal.op;
 
 
+import com.gs.collections.api.block.procedure.Procedure2;
+import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
+import nars.$;
+import nars.Op;
+import nars.nal.PremiseAware;
+import nars.nal.RuleMatch;
+import nars.nal.nal7.Sequence;
+import nars.process.ConceptProcess;
+import nars.term.Statement;
 import nars.term.Term;
+import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 
-/** occurrsRelative(target, variable, direction)
- *    target: pass through
- *    direction= +1, -1, 0
- *    variable: term to modify occurrence relative to
- * */
-public class occurrsForward extends ImmediateTermTransform {
+/**
+ * occurrsRelative(target, variable, direction)
+ * target: pass through
+ * direction= +1, -1, 0
+ * variable: term to modify occurrence relative to
+ */
+public class occurrsForward extends ImmediateTermTransform implements PremiseAware {
+    static final ObjectIntHashMap<Atom> relationDirection = new ObjectIntHashMap<>(16);
+
+    static {
+        Procedure2<Atom, Integer> r = relationDirection::put;
+
+        r.value($.the("\"=/>\""), +1);
+        r.value($.the("\"=\\>\""), -1);
+        r.value($.the("\"=|>\""), 0);
+        r.value($.the("\"==>\""), 0);
+
+        r.value($.the("\"<|>\""), 0);
+        r.value($.the("\"</>\""), +1);
+        r.value($.the("\"<=>\""), 0);
+
+//        r.value("&/", +1);
+//        r.value("&|", 0);
+//        //r.value("&&", null);
+    }
+
+    //HACK
+    @Override public Term function(Compound p) {
+        throw new RuntimeException("should only be called during RuleMatch");
+    }
 
     @Override
-    public Term function(Compound p) {
+    public Term function(Compound p, RuleMatch r) {
         final Term[] xx = p.terms();
 
-        //TODO ...
+        Term term = xx[0];
 
-        return xx[0];
+        ConceptProcess premise = r.premise;
+
+        if (premise.isEternal()) {
+            //continue with derivation but dont apply shift
+            return term;
+        }
+
+
+        int direction = relationDirection.getIfAbsent(xx[2], Integer.MAX_VALUE);
+        if (direction == Integer.MAX_VALUE)
+            throw new RuntimeException("invalid direction term: " + xx[2]);
+        boolean positive = positive();
+
+
+        if (positive) {
+            //Term ret = xx[1];
+            Term ret = premise.getTermLink().get().term();
+
+            if (ret.op(Op.IMPLICATION)) {
+                Term impSubj = Statement.subj(ret);
+                if (impSubj.op(Op.SEQUENCE)) {
+                    Sequence seq = (Sequence)impSubj;
+
+                    int[] ii = seq.intervals();
+                    int iiLen = ii.length;
+
+                    if (iiLen > 0) {
+                        r.occurrenceShift.set(
+                                ii[iiLen - 1]
+                        );
+                        //positive ? interval : -interval);
+                    }
+
+                }
+            }
+        }
+        /* on backward its already handled by shifting
+           (&/,a,/i) backward on i and changing it to a
+         */
+
+
+        //long durationsOffset = direction; //direction != 0 ? direction : 0;
+
+        long durationsDelta = (positive ? +1 : -1) * direction;
+
+        r.occurrenceAdd(durationsDelta);
+
+
+        return term;
     }
 
-    protected boolean invert() {
-        return false;
+    protected boolean positive() {
+        return true;
     }
+
+
 
     //    ShiftOccurrence(Term arg1, boolean positive, int direction) {
 //        super(arg1);

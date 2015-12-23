@@ -171,12 +171,12 @@ public class RuleMatch extends FindSubst {
 
 
 
-    public final void occurrenceAdd(long cyclesDelta) {
+    public final void occurrenceAdd(long durationsDelta) {
         //TODO move to post
         int oc = occurrenceShift.getIfAbsent(Tense.TIMELESS);
         if (oc == Tense.TIMELESS)
             oc = 0;
-        oc += cyclesDelta;
+        oc += durationsDelta * premise.getTask().duration();
         occurrenceShift.set((int)oc);
     }
 

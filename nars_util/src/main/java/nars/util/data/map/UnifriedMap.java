@@ -901,6 +901,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     }
 
     public void forEachKeyValue(Procedure2<? super K, ? super V> procedure) {
+        if (isEmpty())
+            return;
+
         for (int i = 0; i < table.length; i += 2) {
             Object[] t = table;
             Object cur = t[i];
@@ -959,6 +962,8 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public final void forEachKey(Procedure<? super K> procedure) {
+        if (isEmpty()) return;
+
         Object[] t = table;
         int l = t.length;
         for (int i = 0; i < l; i += 2) {
@@ -984,6 +989,9 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
 
     @Override
     public void forEachValue(Procedure<? super V> procedure) {
+        if (isEmpty())
+            return;
+
         Object[] t = table;
 
         int l = t.length;

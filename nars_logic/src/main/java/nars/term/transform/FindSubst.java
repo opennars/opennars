@@ -49,7 +49,7 @@ abstract public class FindSubst extends Versioning implements Subst {
 
 
 
-    final List<Termutator> termutes = Global.newArrayList();
+    public final List<Termutator> termutes = Global.newArrayList();
 
 
     @Override
@@ -385,7 +385,7 @@ abstract public class FindSubst extends Versioning implements Subst {
 //        return false;
 //    }
 
-    protected boolean termute(Term key, Termutator t) {
+    protected boolean termute(Termutator t) {
         if (!termutes.contains(t))
             termutes.add(t);
         return true;
@@ -404,7 +404,7 @@ abstract public class FindSubst extends Versioning implements Subst {
             }
         }
 
-        termute((Term)x, new CommutivePermutations(this, x, y));
+        termute(new CommutivePermutations(this, x, y));
         return true;
     }
 
@@ -511,10 +511,10 @@ abstract public class FindSubst extends Versioning implements Subst {
             case 0:
                 return putXY(xEllipsis, new CollectionEllipsisMatch(yFree));
             case 1:
-                return termute(xEllipsis, new Choose1(this,
+                return termute(new Choose1(this,
                         xEllipsis, x.iterator().next(), yFree));
             case 2:
-                return termute(xEllipsis, new Choose2(this,
+                return termute(new Choose2(this,
                         xEllipsis, x.toArray(new Term[x.size()]), yFree));
             default:
                 //3 or more combination
