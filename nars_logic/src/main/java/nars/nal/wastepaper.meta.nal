@@ -1,0 +1,50 @@
+//relation introduction (experimental)
+
+   ((A --> C), (B --> D) |- ((A,B) --> (C,D)), (Truth:Intersection)
+
+//truth/time to inheritance relation (experimental)
+
+   ((A =/> B), A |- ((B,A) --> imp_after), (Truth:Identity)
+   ((A =/> B), B |- ((B,A) --> imp_after), (Truth:Identity)
+   (((B,A) --> imp_after), A |- (A =/> B), (Truth:Identity)
+   (((B,A) --> imp_after), B |- (A =/> B), (Truth:Identity)
+
+   ((A =\> B), A |- ((B,A) --> imp_before), (Truth:Identity)
+   ((A =\> B), B |- ((B,A) --> imp_before), (Truth:Identity)
+   (((B,A) --> imp_before), A |- (A =\> B), (Truth:Identity)
+   (((B,A) --> imp_before), B |- (A =\> B), (Truth:Identity)
+
+   ((A =|> B), A |- ((B,A) --> imp_concurrent), (Truth:Identity)
+   ((A =|> B), B |- ((B,A) --> imp_concurrent), (Truth:Identity)
+   (((B,A) --> imp_concurrent), A |- (A =|> B), (Truth:Identity)
+   (((B,A) --> imp_concurrent), B |- (A =|> B), (Truth:Identity)
+
+   ((A ==> B), A |- ((B,A) --> imp_orderless), (Truth:Identity)
+   ((A ==> B), B |- ((B,A) --> imp_orderless), (Truth:Identity)
+   (((B,A) --> imp_orderless), A |- (A ==> B), (Truth:Identity)
+   (((B,A) --> imp_orderless), B |- (A ==> B), (Truth:Identity)
+
+   ((A <|> B), A |- ((B,A) --> eq_concurrent), (Truth:Identity)
+   ((A <|> B), B |- ((B,A) --> eq_concurrent), (Truth:Identity)
+   (((B,A) --> eq_concurrent), A |- (A <|> B), (Truth:Identity)
+   (((B,A) --> eq_concurrent), B |- (A <|> B), (Truth:Identity)
+
+   ((A </> B), A |- ((B,A) --> eq_after), (Truth:Identity)
+   ((A </> B), B |- ((B,A) --> eq_after), (Truth:Identity)
+   (((B,A) --> eq_after), A |- (A </> B), (Truth:Identity)
+   (((B,A) --> eq_after), B |- (A </> B), (Truth:Identity)
+
+   ((A <=> B), A |- ((B,A) --> eq_orderless), (Truth:Identity)
+   ((A <=> B), B |- ((B,A) --> eq_orderless), (Truth:Identity)
+   (((B,A) --> eq_orderless), A |- (A <|> B), (Truth:Identity)
+   (((B,A) --> eq_orderless), B |- (A <|> B), (Truth:Identity)
+
+   (A <-> B), A |- ((B,A) --> similar), (Truth:Identity)
+   (A <-> B), B |- ((B,A) --> similar), (Truth:Identity)
+   ((B,A) --> similar), A |- (A <-> B), (Truth:Identity)
+   ((B,A) --> similar), B |- (A <-> B), (Truth:Identity)
+
+   (A --> B), A |- ((B,A) --> inherit), (Truth:Identity)
+   (A --> B), B |- ((B,A) --> inherit), (Truth:Identity)
+   ((B,A) --> inherit), A |- (A --> B), (Truth:Identity)
+   ((B,A) --> inherit), B |- (A --> B), (Truth:Identity)
