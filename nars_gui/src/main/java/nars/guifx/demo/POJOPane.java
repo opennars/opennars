@@ -50,7 +50,7 @@ public class POJOPane<X> extends BorderPane {
             setTop(toggle);
 
             runLater(()->{
-                toggle.setSelected(true);
+                toggle.setSelected(false);
             });
         }
         else {
