@@ -585,7 +585,7 @@ public class PremiseRule extends GenericCompound implements Level {
         //      B, T, [pre], task_is_question() |- T, [post]
 
         PremiseRule clone1 = clone(B, T, C, false);
-        return clone1;//.normalizeRule();
+        return clone1.normalizeRule();
     }
 
     private final PremiseRule clone(Term newT, Term newB, Term newR, boolean question) {

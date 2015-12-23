@@ -73,6 +73,11 @@ public class RuleTrie extends Deriver {
         });
 
         R.forEach((Consumer<? super PremiseRule>) s -> {
+            if (s == null)
+                return;
+            if (s.postconditions==null)
+                return;
+
             //List<PreCondition> ll = s.getConditions();
             //System.out.println(ll);
             for (PostCondition p : s.postconditions) {

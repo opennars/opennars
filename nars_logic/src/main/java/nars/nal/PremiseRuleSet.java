@@ -4,7 +4,7 @@ import com.gs.collections.impl.list.mutable.FastList;
 import nars.$;
 import nars.Global;
 import nars.MapIndex;
-import nars.term.compound.Compound;
+import nars.term.compile.TermIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,26 +49,21 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
 //        this(Lists.newArrayList(ruleStrings));
 //    }
 
-    public PremiseRuleSet(Collection<String> ruleStrings) {
-        this(parseRules(loadRuleStrings(ruleStrings)));
-    }
 
     /** for compiling and de-duplicating pattern term components */
     final MapIndex patterns = new PatternIndex();
 
     static final Logger logger = LoggerFactory.getLogger(PremiseRuleSet.class);
 
-    public PremiseRuleSet(Set<PremiseRule> r) {
+
+    public PremiseRuleSet(Collection<String> ruleStrings) {
         final int[] errors = {0};
-        r.forEach(t -> {
-            try {
-                PremiseRule p = t.setup(patterns);
-                add( p );
-            } catch (RuntimeException e) {
-                logger.warn("PremiseRule '{}': {}", t, e.getMessage());
-                errors[0]++;
-            }
+
+        Set<PremiseRule> r = parse(load(ruleStrings), patterns);
+        r.forEach(s -> {
+                add(s);
         });
+
 
         logger.info("indexed " + size() + " total rules, consisting of " + patterns.size() + " unique pattern components terms");
         if (errors[0] > 0) {
@@ -76,20 +71,8 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
         }
     }
 
-//    public DerivationRules(Stream<TaskRule[]> r, Predicate<TaskRule[]> filter) {
-//        rules = r.filter(filter).toArray(n -> new TaskRule[n]);
-//    }
 
-//    public DerivationRules(DerivationRules master, Predicate<TaskRule> filter) {
-//        rules = Stream.of(master.rules).filter(filter).toArray(n -> new TaskRule[n]);
-//    }
-
-//    public DerivationRules(DerivationRules master, int nalLevel) {
-//        this(master, tr -> tr.levelValid(nalLevel));
-//    }
-
-
-    static List<String> loadRuleStrings(Iterable<String> lines) {
+    static List<String> load(Iterable<String> lines) {
 
         List<String> unparsed_rules = Global.newArrayList(2048);
 
@@ -170,8 +153,8 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
      * @param rules
      * @param ruleString
      */
-    static void addAndPermuteTenses(Collection<String> rules /* results collection */,
-                                    String ruleString) {
+    static void permuteTenses(Collection<String> rules /* results collection */,
+                              String ruleString) {
 
         //Original version which permutes in different tenses
 
@@ -212,28 +195,6 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
 
                     String p3 = conj != null ? conjOperatorPattern.matcher(p2).replaceAll(Matcher.quoteReplacement(conj)) : p2;
 
-//                        String[] premiseConc = p3.split("\\|\\-");
-//
-//                        boolean premiseTemporal = Narsese.the().term("(" + premiseConc[0] + ")").containsTemporal();
-//
-//                        String conc = premiseConc[1].substring(0, premiseConc[1].length()-1);
-//
-//                        boolean conclusionTemporal =
-//                                ((Product)Narsese.the().term("(" + conc + ")" )).term(0).containsTemporal();
-//
-//                        boolean valid = true;
-//                        if (conclusionTemporal) {
-//
-//                            //premise and conclusion have opposite temporality
-//                            //so this is invalid
-//
-//                            //p3 = p3.replace(" |-", ", temporal |-");
-//                            System.out.println(premiseTemporal + " " + premiseConc[0]);
-//                            valid = false;
-//                        }
-//                        if (valid)
-
-                    //System.out.println(ruleString + " " + p3);
                     rules.add(p3);
                 }
             }
@@ -242,38 +203,11 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
 
     }
 
-//    /**
-//     * //TODO do this on the parsed rule, because string contents could be unpredictable:
-//     * permute(rule, Map<Op,Op[]> alternates)
-//     *
-//     * @param rules
-//     * @param ruleString
-//     */
-//    static void addAndPermuteTensesWrong(Collection<String> rules /* results collection */,
-//                                    String ruleString) {
-//
-//        //add the original, which should be tenseless/eternal
-//        rules.add(ruleString);
-//
-//        if (!ruleString.contains("Order:ForAllSame")) {
-//            return;
-//        }
-//
-//        for (int order : new int[] { 0, 1}) {
-//            String r = ruleString;
-//            r = r.replace("<=>", order == 0 ? "<|>" : "</>");
-//            r = r.replace("&&", order == 0 ? "&|" : "&/");
-//            r = r.replace("==>", order == 0 ? "=|>" : "=/>");
-//            rules.add(r);
-//        }
-//
-//    }
+
+    static Set<PremiseRule> parse(Collection<String> rawRules, TermIndex index) {
 
 
-    static Set<PremiseRule> parseRules(Collection<String> rawRules) {
-
-
-        Set<String> expanded = new HashSet(1000); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
+        Set<String> expanded = new HashSet(rawRules.size() * 4); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
 
 
         rawRules/*.parallelStream()*/.forEach(rule -> {
@@ -285,59 +219,41 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
             /*if (p.contains("A_1..n") || p.contains("A_1..A_i.substitute(_)..A_n")) {
                 addUnrolledVarArgs(expanded, p, maxVarArgsToMatch);
             } else {*/
-            addAndPermuteTenses(expanded, p);
+            permuteTenses(expanded, p);
 
 
 
         });//.forEachOrdered(s -> expanded.addAll(s));
 
 
-        Set<PremiseRule> ur = Global.newHashSet(1024);
+        Set<PremiseRule> ur = Global.newHashSet(rawRules.size()*4);
         //ListMultimap<TaskRule, TaskRule> ur = MultimapBuilder.linkedHashKeys().arrayListValues().build();
 
         //accumulate these in a set to eliminate duplicates
-        expanded.forEach(s -> {
+        expanded.forEach(src -> {
             try {
 
-                PremiseRule rUnnorm = $.$(s);
-                if (rUnnorm == null ){
-                    throw new RuntimeException("Invalid rule: " + s);
-                }
 
-                Compound r = rUnnorm.normalizeRule();
-                if (r != null) {
-                    AcceptRule(ur, rUnnorm, s);
+                PremiseRule r = eachRule(ur, (PremiseRule)$.$(src), src, index);
 
-                    PremiseRule rFwd = rUnnorm.forwardPermutation();
-                    AcceptRule(ur, rFwd, s);
-                }
-                else {
-                    throw new RuntimeException("unnormalizable task: " + s);
+                if (r == null)
+                    throw new RuntimeException("unnormalizable task: " + src);
 
-                }
+                eachRule(ur, r, src, index);
+
+                eachRule(ur, r.forwardPermutation(), src, index);
+
 
             } catch (Exception ex) {
                 logger.error("Invalid TaskRule: {}", ex);
                 ex.printStackTrace();
-
-                //ex.printStackTrace();
-                //ex.printStackTrace();//ex.printStackTrace();
             }
         });
 
-//        ur.asMap().forEach((t, copies) -> {
-//            if (copies.size() <= 1) return;
-//
-//            System.err.println("DUPLICATE RULE: " + t);
-//            copies.forEach(d -> System.err.println("\t" + d));
-//            System.err.println();
-//        });
-
-        //return ur.keySet();
         return ur;
     }
 
-    private static void AcceptRule(Collection<PremiseRule> c, PremiseRule r, String src) {
+    static private PremiseRule eachRule(Collection<PremiseRule> target, PremiseRule r, String src, TermIndex patterns) {
 //        if (rNorm == null)
 //            throw new RuntimeException("invalid rule, detected after normalization: " + s);
 //
@@ -346,24 +262,24 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
         //add reverse questions
 
         r.forEachQuestionReversal((q,reason) -> {
-            q = q.normalizeRule();
-            if (q == null)
-                throw new RuntimeException("invalid rule at normalization");
 
             //normalize may be returned null if the rearranging produced an invalid result, so do not add null
-            addRule(c, q, src + "//" + reason);
+            add(target, q, src + "//" + reason, patterns);
 
         });
 
         //addRule(c, r.normalizeRule(), src);
-        addRule(c, r.normalizeRule(), src);
+        return add(target, r, src, patterns);
     }
 
-    static void addRule(Collection<PremiseRule> c, PremiseRule q, String src) {
-        if (q!=null) {
-            q.setSource(src);
-            c.add(q);
-        }
+    static PremiseRule add(Collection<PremiseRule> target, PremiseRule q, String src, TermIndex patterns) {
+        if (q == null)
+            throw new RuntimeException("null: " + q + " " + src);
+
+        q = q.normalizeRule().setup(patterns);
+        q.setSource(src);
+        target.add(q);
+        return q;
     }
 
     //    private static void addRule(Multimap<TaskRule, TaskRule> c, TaskRule q, String src) {
