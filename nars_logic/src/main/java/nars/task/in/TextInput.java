@@ -43,7 +43,7 @@ public class TextInput extends TaskQueue {
                 (Collection<Task>)this, nar.memory);
 
         if (n == 0) {
-            throw new RuntimeException("no parsed tasks: \'" + input + '\"');
+            throw new RuntimeException(input);
         }
 
         return n;

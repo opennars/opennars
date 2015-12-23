@@ -1,8 +1,12 @@
 package nars.guifx.util;
 
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
 import static javafx.application.Platform.runLater;
@@ -49,11 +53,35 @@ public class CodeInput extends BorderPane {
                         layout();
                     }
                     catch (Exception e) {
-                        Label err = new Label(e.getMessage());
+                        Label err = new Label("invalid Narsese, click to enter as natural language");
+                        err.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+                                    try {
+                                        String s = e.getMessage();
+                                        String[] spl = s.split(" ");
+                                        String total = "";
+                                        for (String S : spl) {
+                                            total += "<" + S + " --> WORD>. :|:";
+                                            total += "\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n"; //10 steps inbetween ^^
+                                        }
+                                        if (onInput(total)) {
+                                            codeArea.clear();
+                                            setTop(null);
+                                            layout();
+                                        }
+                                    }
+                                    catch(Exception ex) {}
+                                }
+                            }
+                        });
+                        //Button err = new Button("not valid Narsese, click to enter as natural language"); //e.getMessage()
                         err.getStyleClass().add("error");
                         setTop(err);
                         layout();
-                        e.printStackTrace();
+                        //e.printStackTrace();
+                        String s = e.getMessage();
                     }
                 });
             }
