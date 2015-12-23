@@ -356,9 +356,9 @@
     ((&&,A_1..n) =|> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =|> C), (Truth:Induction)
     ((&&,A_1..n) =/> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =/> C), (Truth:Induction)
     ((&&,A_1..n) =\> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =\> C), (Truth:Induction)
-    ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
+    (A ==> M), ((&&,M,A_1..n) ==> C) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
     ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
-    ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame, SequenceIntervals:FromPremises)
+    (A ==> M), ((&&,A,A_1..n) ==> C)  |- ((&&,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame, SequenceIntervals:FromPremises)
 
 //// variable introduction ////////////////////////////////////////////////////////////////////////////////////
 //Introduce variables by common subject or predicate
@@ -383,10 +383,10 @@
                                             (($X --> S) <=> ($X --> P)), (Truth:Comparison),
                                             (&&,(#Y --> S),(#Y --> P)), (Truth:Intersection)
 
-    (M --> S), (M --> P), not_equal(S,P), after(Task,Belief), measure_time(I) |- ((&/,($X --> S),I) =/> ($X --> P)), (Truth:Induction),
-                                                                                 (($X --> P) =\> (&/,($X --> S),I)), (Truth:Abduction),
-                                                                                 ((&/,($X --> S),I) </> ($X --> P)), (Truth:Comparison),
-                                                                                 (&/,(#Y --> S), I ,(#Y --> P)), (Truth:Intersection)
+    (M --> S), (M --> P), not_equal(S,P), after(Task,Belief), measure_time(I) |- ((&/,($X --> P),I) =/> ($X --> S)), (Truth:Induction),
+                                                                                 (($X --> S) =\> (&/,($X --> P),I)), (Truth:Abduction),
+                                                                                 ((&/,($X --> P),I) </> ($X --> S)), (Truth:Comparison),
+                                                                                 (&/,(#Y --> P), I ,(#Y --> S)), (Truth:Intersection)
 
     (M --> S), (M --> P), not_equal(S,P), concurrent((M --> P),(M --> S)) |- (($X --> S) =|> ($X --> P)), (Truth:Induction),
                                                                              (($X --> P) =|> ($X --> S)), (Truth:Abduction),
@@ -410,7 +410,7 @@
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    (&&,A, A_1..n), B, substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong, Order:ForAllSame, SequenceIntervals:FromPremises)
+    B, (&&,A, A_1..n), substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong, Order:ForAllSame, SequenceIntervals:FromPremises)
 
 //conditional abduction by dependent variable
 

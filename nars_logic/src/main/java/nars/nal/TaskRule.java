@@ -608,8 +608,6 @@ public class TaskRule extends ProductN implements Level {
      * for each calculable "question reverse" rule,
      * supply to the consumer
      */
-    static final Term sequenceIntervalsFromTaskTerm = $.$("SequenceIntervals:FromTask");
-    static final Term sequenceIntervalsFromBeliefTerm = $.$("SequenceIntervals:FromBelief");
 
     public final TaskRule forwardPermutation() {
 
@@ -627,24 +625,7 @@ public class TaskRule extends ProductN implements Level {
 
         //      B, T, [pre], task_is_question() |- T, [post]
 
-        TaskRule ruleCloned = (TaskRule) clone(B, T, C, false).cloneTransforming(new CompoundTransform() {
-            @Override
-            public Term apply(Compound parent, Term s, int depth) {
-                if (s.equals(sequenceIntervalsFromTaskTerm)) {
-                    return sequenceIntervalsFromBeliefTerm;
-                }
-                if (s.equals(sequenceIntervalsFromBeliefTerm)) {
-                    return sequenceIntervalsFromTaskTerm;
-                }
-                return s;
-            }
-
-            @Override
-            public boolean test(Object o) {
-                return true;
-            }
-        });
-
+        TaskRule ruleCloned = (TaskRule) clone(B, T, C, false);
         return ruleCloned.normalizeRule();
     }
 
