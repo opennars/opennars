@@ -162,7 +162,7 @@ public class RopeTest  {
 			try {
 				z3.iterator(j);
 			} catch (Exception e) {
-				fail(j + " " + e.toString());
+				fail(j + " " + e);
 			}
 		}
 		assertTrue(4 == z4.length());
@@ -170,7 +170,7 @@ public class RopeTest  {
 			try {
 				z4.iterator(j);
 			} catch (Exception e) {
-				fail(j + " " + e.toString());
+				fail(j + " " + e);
 			}
 		}
 		i=z4.iterator(4);
@@ -589,14 +589,13 @@ public class RopeTest  {
 			Rope r1 = Rope.build(s1);
 			Assert.assertEquals(s1.indexOf(s2), r1.indexOf(s2));
 		}
-		{   // extra test, aahmad
+			// extra test, aahmad
 			String s1 = "ABABAABBABABBAAABBBAAABABABABBBBAA";
 			String s2 = "ABABAB";
 
 			Rope r1 = Rope.build(s1);
 			Assert.assertEquals(s1.indexOf(s2), r1.indexOf(s2));
 		}
-	}
 }
 
 

@@ -8,7 +8,7 @@ import nars.term.Term;
 import java.util.Iterator;
 
 /** uses a predefined set of terms that will be mapped */
-public abstract class ObjIntConceptMap<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
+public abstract class ObjIntConceptMap<T extends Term> extends MutableConceptMap<T> {
 
 
     public final ObjectIntHashMap<T> values = new ObjectIntHashMap();

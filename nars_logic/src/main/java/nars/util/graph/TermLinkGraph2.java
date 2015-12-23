@@ -38,7 +38,7 @@ public class TermLinkGraph2 extends DirectedPseudograph<Termed, Termed> {
 
     @Override
     public String toString() {
-        return '[' + vertexSet().toString() + ", " + edgeSet().toString() + ']';
+        return '[' + vertexSet().toString() + ", " + edgeSet() + ']';
     }
 
     public void print(PrintStream out) {

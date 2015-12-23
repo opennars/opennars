@@ -52,6 +52,10 @@
             <artifactId>nars_logic</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.jbox2d</groupId>
+            <artifactId>jbox2d-library</artifactId>
+        </dependency>
         <!--<dependency>-->
             <!--&lt;!&ndash; deprecated.. replacewhen possible &ndash;&gt;-->
             <!--<groupId>org.apache.logging.log4j</groupId>-->

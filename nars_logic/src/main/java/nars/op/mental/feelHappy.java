@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Feeling happy value
  */
-public class feelHappy extends feel implements Mental {
+public class feelHappy extends feel {
 
     public static final Term happiness = $.the(feelHappy.class.getSimpleName());
 

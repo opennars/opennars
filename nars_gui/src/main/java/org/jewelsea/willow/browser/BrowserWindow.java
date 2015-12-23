@@ -22,11 +22,15 @@
 package org.jewelsea.willow.browser;
 
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
-import javafx.scene.control.*;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
@@ -34,7 +38,8 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.jewelsea.willow.dialogs.DialogFactory;
@@ -42,8 +47,8 @@ import org.jewelsea.willow.helpers.FavIconHandler;
 import org.jewelsea.willow.helpers.LocationHandler;
 import org.jewelsea.willow.navigation.History;
 
-import static org.jewelsea.willow.util.ResourceUtil.getString;
 import static org.jewelsea.willow.util.ResourceUtil.copyImageView;
+import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 /**
  * A single web browser window to be displayed in a tab.

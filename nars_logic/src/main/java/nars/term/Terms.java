@@ -366,11 +366,11 @@ public class Terms {
         return arr;
     }
 
-    public static <T> Term[] filter(T[] input, IntObjectPredicate<T> filter) {
+    public static <T extends Term> Term[] filter(T[] input, IntObjectPredicate<T> filter) {
 
         int s = input.length;
 
-        List<T> l = Global.newArrayList(s);
+        List<Term> l = Global.newArrayList(s);
 
         for (int i = 0; i < s; i++) {
             T t = input[i];

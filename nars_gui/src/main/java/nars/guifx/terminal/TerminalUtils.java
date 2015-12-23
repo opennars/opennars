@@ -1,10 +1,10 @@
 package nars.guifx.terminal;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author sergei.malafeev

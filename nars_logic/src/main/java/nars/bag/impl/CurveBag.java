@@ -9,7 +9,6 @@ import nars.util.ArraySortedIndex;
 import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
@@ -377,7 +376,7 @@ public class CurveBag<V> extends Bag<V> {
      */
 
     @FunctionalInterface
-    public interface BagCurve extends FloatToFloatFunction, Serializable {
+    public interface BagCurve extends FloatToFloatFunction {
     }
 
 //    public static class RandomSampler implements ToIntFunction<CurveBag>, Serializable {

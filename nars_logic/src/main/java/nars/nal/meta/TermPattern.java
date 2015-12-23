@@ -19,7 +19,7 @@ public class TermPattern {
     public final Term term;
 
     private final ListMultimap<Term, MatchConstraint> constraints;
-    private Op type = null;
+    //private Op type = null;
 
 //    public TermPattern(Op type, TaskBeliefPair pattern) {
 //
@@ -59,14 +59,14 @@ public class TermPattern {
 //        this.code = code.toArray(new PreCondition[code.size()]);
 //    }
 
-    public TermPattern(Op type, Term pattern) {
-        this(type, pattern, null);
+    public TermPattern(Term pattern) {
+        this(pattern, null);
     }
 
-    public TermPattern(Op type, Term pattern, ListMultimap<Term, MatchConstraint> constraints) {
+    public TermPattern(Term pattern, ListMultimap<Term, MatchConstraint> constraints) {
 
         term = pattern;
-        this.type = type;
+        //this.type = type;
         this.constraints = constraints;
 
         List<PreCondition> pre = Global.newArrayList();

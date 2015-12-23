@@ -28,10 +28,12 @@ public class CommutivePermutations extends Termutator {
         this.f = f;
     }
 
+    @Override
     public int getEstimatedPermutations() {
         return perm.total();
     }
 
+    @Override
     public boolean next() {
         //if (perm.hasNext())
         perm.next();
@@ -41,11 +43,13 @@ public class CommutivePermutations extends Termutator {
         return b;
     }
 
+    @Override
     public void reset() {
         perm.reset();
         //perm.next();
     }
 
+    @Override
     public boolean hasNext() {
         return perm.hasNext();
     }

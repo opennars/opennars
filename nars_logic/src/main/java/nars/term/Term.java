@@ -42,6 +42,7 @@ public interface Term extends Termed, Comparable, Termlike {
         return this;
     }
 
+    @Override
     Op op();
 
     /** syntactic help */
@@ -131,6 +132,7 @@ public interface Term extends Termed, Comparable, Termlike {
         int s = structure();
         return (s | structuralVector) == s;
     }
+    @Override
     default boolean isAny(int structuralVector) {
         int s = op().bit();
         return (s & structuralVector) == s;

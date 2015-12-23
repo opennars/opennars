@@ -34,7 +34,7 @@ public interface StringOps {
 
                 //TODO copy in byte[] without String transforms
                 if (replacement != null) {
-                    sb.append(replacement.toString());
+                    sb.append(replacement);
                 } else {
                     sb.append(s);
                 }

@@ -102,7 +102,7 @@ public class TermutatorTest {
                 }
 
             } else {
-                System.err.println( f.xy.toString() );
+                System.err.println(f.xy);
                 blocked++;
             }
         }

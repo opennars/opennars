@@ -86,6 +86,7 @@ public interface Budget extends Prioritized, Budgeted {
     @Override
     long getLastForgetTime();
 
+    @Override
     default void mulPriority(float factor) {
         setPriority(getPriority()*factor);
     }

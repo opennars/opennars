@@ -34,7 +34,7 @@ public class NARLoop implements Runnable {
 
     @Override
     public String toString() {
-        return nar.toString() + ":loop@" + getFrequency() + "Hz";
+        return nar + ":loop@" + getFrequency() + "Hz";
     }
 
     //in Hz / fps

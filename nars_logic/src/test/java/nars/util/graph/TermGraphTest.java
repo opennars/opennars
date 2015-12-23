@@ -313,6 +313,7 @@ public class TermGraphTest {
          *
          * @return the permutation iterator
          */
+        @Override
         protected CollectionPermutationIter<V> createPermutationIterator(
                 Set<V> vertexSet1,
                 Set<V> vertexSet2)
@@ -328,6 +329,7 @@ public class TermGraphTest {
          *
          * @return FIXME Document me
          */
+        @Override
         protected boolean areVertexSetsOfTheSameEqualityGroup(
                 Set<V> vertexSet1,
                 Set<V> vertexSet2)
@@ -676,6 +678,7 @@ public class TermGraphTest {
          *
          * @return <code>true</code> iff the two graphs are isomorphic
          */
+        @Override
         public boolean isIsomorphic()
         {
             return !(this.nextSupplier.isEnumerationStartedEmpty());
@@ -684,6 +687,7 @@ public class TermGraphTest {
         /* (non-Javadoc)
          * @see java.util.Enumeration#hasMoreElements()
          */
+        @Override
         public boolean hasNext()
         {
             boolean result = this.nextSupplier.hasMoreElements();
@@ -692,8 +696,9 @@ public class TermGraphTest {
         }
 
         /**
-         * @see java.util.Iterator#next()
+         * @see Iterator#next()
          */
+        @Override
         public IsomorphismRelation next()
         {
             return this.nextSupplier.nextElement();
@@ -702,6 +707,7 @@ public class TermGraphTest {
         /* (non-Javadoc)
          * @see java.util.Iterator#remove()
          */
+        @Override
         public void remove()
         {
             throw new UnsupportedOperationException(
@@ -714,6 +720,7 @@ public class TermGraphTest {
         private class NextFunctor
                 implements PrefetchIterator.NextElementFunctor<IsomorphismRelation>
         {
+            @Override
             public IsomorphismRelation nextElement()
                     throws NoSuchElementException
             {

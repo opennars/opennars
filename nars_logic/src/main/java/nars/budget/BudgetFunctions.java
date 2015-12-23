@@ -366,7 +366,7 @@ public final class BudgetFunctions extends UtilityFunctions {
     static Budget budgetInference(Budget target, float qual, float complexityFactor, ConceptProcess nal) {
 
         BagBudget<Task> taskLink =
-            nal instanceof ConceptProcess ? ((ConceptProcess)nal).getTaskLink() : null;
+            nal instanceof ConceptProcess ? nal.getTaskLink() : null;
 
         Budget t =
             (taskLink !=null) ? taskLink :  nal.getTask().getBudget();

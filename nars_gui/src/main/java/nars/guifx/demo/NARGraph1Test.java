@@ -49,6 +49,15 @@ public class NARGraph1Test {
                         n.concept("<b --> c>")
                 ),
 
+                /*new JGraphSource(n, GraphPaneTest.newExampleTermLinkGraph() ) {
+
+                    @Override
+                    public Termed getTargetVertex(Termed edge) {
+                        //System.out.println("? target vertex of " + edge + " " + edge.getClass());
+                        return edge;
+                    }
+                },*/
+
                 new DefaultNodeVis() {
 
                     @Override
@@ -56,7 +65,10 @@ public class NARGraph1Test {
                         return new LabeledCanvasNode(term, 32, e-> { }, e-> { }) {
                             @Override
                             protected Node newBase() {
-                                SubButton s = SubButton.make(n, (Concept) term);
+                                SubButton s = SubButton.make(
+                                    n, (Concept) term
+                                    //n, $.the(term.toString())
+                                );
 
                                 s.setScaleX(0.02f);
                                 s.setScaleY(0.02f);

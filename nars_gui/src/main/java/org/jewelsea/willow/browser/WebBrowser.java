@@ -21,13 +21,6 @@
 
 package org.jewelsea.willow.browser;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import javafx.animation.Animation;
 import javafx.animation.Transition;
 import javafx.application.Application;
@@ -38,41 +31,25 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.embed.swing.SwingNode;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Control;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
-import javax.swing.JComponent;
-import org.jewelsea.willow.browser.BrowserTab;
-import org.jewelsea.willow.browser.BrowserWindow;
-import org.jewelsea.willow.browser.LoadingProgressDisplay;
-import org.jewelsea.willow.browser.StatusDisplay;
-import org.jewelsea.willow.browser.TabManager;
-import org.jewelsea.willow.browser.UITab;
 import org.jewelsea.willow.navigation.NavTools;
 import org.jewelsea.willow.util.DebugUtil;
-import org.jewelsea.willow.util.ResourceUtil;
+
+import javax.swing.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 public class WebBrowser extends BorderPane {

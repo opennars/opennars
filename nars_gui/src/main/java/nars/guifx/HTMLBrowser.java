@@ -1,8 +1,6 @@
 package nars.guifx;
 
 import javafx.application.Application;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.scene.Node;
 import javafx.scene.Parent;

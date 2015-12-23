@@ -20,7 +20,6 @@ package automenta.vivisect.swing.property.swing;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 /**
  * PercentLayout. <BR>Constraint based layout which allow the space to be

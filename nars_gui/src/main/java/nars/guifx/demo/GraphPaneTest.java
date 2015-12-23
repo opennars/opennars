@@ -35,10 +35,10 @@ public class GraphPaneTest {
 
 
 
-    public static SpaceGrapher newGrapher() {
+    public static SpaceGrapher newGrapher(NAR nar) {
 
 
-        JGraphSource src = new JGraphSource(
+        JGraphSource src = new JGraphSource(nar,
                 //newExampleGraph()
                 newExampleTermLinkGraph()
 
@@ -108,7 +108,7 @@ public class GraphPaneTest {
 
     }
 
-    private static DirectedGraph<Termed,Termed> newExampleTermLinkGraph() {
+    public static DirectedGraph<Termed,Termed> newExampleTermLinkGraph() {
 
         NAR n = new Default(100, 3, 3, 3);
         n.input("a:b.");
@@ -122,7 +122,7 @@ public class GraphPaneTest {
 
 
         NARfx.run((a, b) -> {
-            SpaceGrapher gggg = newGrapher();
+            SpaceGrapher gggg = newGrapher(new Default());
             b.setScene(
                     new Scene(gggg, 800, 800)
             );

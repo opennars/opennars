@@ -62,7 +62,7 @@ public class TestChamber {
         nar.memory.termLinkForgetDurations.set(100);*/
 
         nar.memory.duration.set(50 /* ie, milliseconds */);
-        nar.memory.conceptForgetDurations.setValue(20);
+        //nar.memory.conceptForgetDurations.setValue(20);
 
 
         //set NAR architecture parameters:

@@ -53,10 +53,7 @@
             <groupId>org.boofcv</groupId>
             <artifactId>WebcamCapture</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.jbox2d</groupId>
-            <artifactId>jbox2d-library</artifactId>
-        </dependency>
+
 
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>

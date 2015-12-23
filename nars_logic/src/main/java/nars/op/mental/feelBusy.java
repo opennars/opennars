@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Sense of busy-ness
  */
-public class feelBusy extends feel implements Mental {
+public class feelBusy extends feel {
 
     public static final Term business = $.the(feelBusy.class.getSimpleName());
 
@@ -42,7 +42,7 @@ public class feelBusy extends feel implements Mental {
     public List<Task> apply(Task operation) {
         float busy = nar.memory.emotion.busy();
         logger.info("busy=" + busy + ", terms=" + nar.memory.index.size());
-        return feeling(busy, nar.memory, this.business);
+        return feeling(busy, nar.memory, business);
     }
 
 }

@@ -413,7 +413,7 @@ public class TestNAR  {
         public void toString(PrintStream out) {
 
             if (error!=null) {
-                out.print(error.toString());
+                out.print(error);
             }
 
             out.print("@" + time + ' ');

@@ -91,8 +91,8 @@ public class TermTest {
         assertEquivalentTerm((Term)$("<{Birdie}<->{Tweety}>"),
                         $("<{Tweety}<->{Birdie}>"));
         assertEquivalentTerm(
-                (Term)$.sim((Term)$("{Birdie}"),$("{Tweety}")),
-                (Term)$.sim((Term)$("{Tweety}"),$("{Birdie}"))
+                $.sim($("{Birdie}"),$("{Tweety}")),
+                $.sim($("{Tweety}"),$("{Birdie}"))
         );
 
         //test ordering after derivation
@@ -491,7 +491,7 @@ public class TermTest {
         Term tb = $(b);
 
         assertNotEquals(ta, tb);
-        assertNotEquals(ta.toString() + " vs. " + tb.toString(),
+        assertNotEquals(ta + " vs. " + tb,
                 ta.hashCode(), tb.hashCode());
 
 

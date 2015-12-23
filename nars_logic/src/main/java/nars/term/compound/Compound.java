@@ -116,10 +116,12 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return t;
     }
 
+    @Override
     default void recurseTerms(SubtermVisitor v) {
         recurseTerms(v, null);
     }
 
+    @Override
     default void recurseTerms(SubtermVisitor v, Term parent) {
         v.accept(this, parent);
         Term[] x = terms();

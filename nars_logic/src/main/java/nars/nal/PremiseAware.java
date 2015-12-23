@@ -5,5 +5,5 @@ import nars.term.compound.Compound;
 
 
 public interface PremiseAware {
-    public Term function(Compound args, RuleMatch r);
+    Term function(Compound args, RuleMatch r);
 }

@@ -103,9 +103,7 @@ public class ThermostatTest2 {
         //n.trace(System.out);
         //n.log();
 
-        {
-
-//            @Override
+        //            @Override
 //            protected boolean output(Channel channel, Class event, Object... args) {
 //                if (event == Events.EXE.class) {
 //                    ExecutionResult t = (ExecutionResult)args[0];
@@ -115,7 +113,6 @@ public class ThermostatTest2 {
 //                }
 //                return false;
 //            }
-        }
 
 //        for (int i = 0; i < 2; i++) {
 //            teach(n, tc, range);
@@ -212,15 +209,13 @@ public class ThermostatTest2 {
             tc.go(true); n.frame(dur*2); ///*tc.valid();*/ n.frame(dur*4);
             tc.go(false); n.frame(dur*2); ///*tc.valid();*/ n.frame(dur*4);
 
-            {
-                //tc.log = false;
+            //tc.log = false;
 
 
-                //tc.valid();
+            //tc.valid();
 
-                //n.frame(50);
-                //tc.log = true;
-            }
+            //n.frame(50);
+            //tc.log = true;
 
             //$0.8;0.5;0.95$
             //n.input("<true --> (/, ^Model_valid, T, (), _)>!");

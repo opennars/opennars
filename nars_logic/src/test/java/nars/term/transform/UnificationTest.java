@@ -666,7 +666,7 @@ public class UnificationTest  {
         n.frame(1);
 
         TermLinkGraph g = new TermLinkGraph(n);
-        assertTrue("termlinks form a fully connected graph:\n" + g.toString(), g.isConnected());
+        assertTrue("termlinks form a fully connected graph:\n" + g, g.isConnected());
 
     }
 

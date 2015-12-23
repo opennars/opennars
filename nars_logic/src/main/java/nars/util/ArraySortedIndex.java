@@ -4,7 +4,6 @@ import nars.Global;
 import nars.budget.Budgeted;
 import nars.util.data.sorted.SortedIndex;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.function.Consumer;
 //import org.apache.commons.collections.iterators.ReverseListIterator;
 
 
-public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> implements Serializable {
+public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> {
 
     protected int capacity;
 
@@ -186,7 +185,7 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> impleme
 
     @Override public boolean remove(Object o) {
         int l = locate(o);
-        if (l!=-1) return remove((int)l)==o;
+        if (l!=-1) return remove(l)==o;
         return true;
     }
 
@@ -246,10 +245,7 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> impleme
 
     private final boolean attemptEqual(Object o, /*final Object oName, */ int i) {
         List<E> l = list;
-        if (o == l.get( i ) /*|| (r.name().equals(oName))*/) {
-            return true;
-        }
-        return false;
+        return o == l.get(i);
     }
 
 

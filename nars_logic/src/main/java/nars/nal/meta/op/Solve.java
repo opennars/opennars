@@ -39,7 +39,7 @@ public final class Solve extends PreCondition {
     private final transient String id;
 
     public final PremiseRule rule;
-    private Derive derive;
+    private final Derive derive;
 
 
     public Solve(Term beliefTerm, Term desireTerm, char puncOverride,

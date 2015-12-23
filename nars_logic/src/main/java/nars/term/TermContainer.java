@@ -245,6 +245,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     }
 
     /** returns true if evaluates true for any terms */
+    @Override
     default boolean or(Predicate<Term> p) {
         for (Term t : terms()) {
             if (t.or(p))
@@ -254,6 +255,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     }
 
     /** returns true if evaluates true for all terms */
+    @Override
     default boolean and(Predicate<Term> p) {
         for (Term t : terms()) {
             if (!p.test(t))

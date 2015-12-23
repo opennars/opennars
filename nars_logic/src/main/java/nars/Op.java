@@ -9,14 +9,13 @@ import nars.term.compound.Compound;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import static com.gs.collections.impl.tuple.primitive.PrimitiveTuples.pair;
 
 /**
  * NAL symbol table
  */
-public enum Op implements Serializable {
+public enum Op {
 
 
 

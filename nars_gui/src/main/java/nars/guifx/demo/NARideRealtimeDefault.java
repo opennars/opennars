@@ -19,7 +19,7 @@ public class NARideRealtimeDefault {
         Memory mem = new Memory(new RealtimeMSClock(),
             //new MapCacheBag(
                     //new WeakValueHashMap<>()
-                TermIndex.memory(1024*1024)
+                TermIndex.memoryWeak(1024*64)
                 //GuavaCacheBag.make(1024*1024)
                 /*new InfiniCacheBag(
                     InfiniPeer.tmp().getCache()
@@ -38,7 +38,6 @@ public class NARideRealtimeDefault {
         nar.memory.termLinkForgetDurations.set(100);*/
 
         nar.memory.duration.set(750 /* ie, milliseconds */);
-        nar.memory.conceptForgetDurations.setValue(20);
         //nar.spawnThread(1000/60);
 
 

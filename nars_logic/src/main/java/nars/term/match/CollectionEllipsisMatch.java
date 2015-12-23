@@ -38,7 +38,7 @@ public class CollectionEllipsisMatch extends EllipsisMatch {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + ":" + term.toString();
+        return getClass().getSimpleName() + ":" + term;
     }
 
     @Override

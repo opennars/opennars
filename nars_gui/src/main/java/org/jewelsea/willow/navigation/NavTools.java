@@ -22,8 +22,6 @@
 package org.jewelsea.willow.navigation;
 
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -34,7 +32,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.controlsfx.glyphfont.FontAwesome;
 import org.jewelsea.willow.browser.WebBrowser;
 import org.jewelsea.willow.util.ResourceUtil;
 

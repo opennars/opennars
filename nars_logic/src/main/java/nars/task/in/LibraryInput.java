@@ -145,7 +145,7 @@ public class LibraryInput extends TextInput {
             examples.put(path, existing);
             return existing;
         } catch (Exception ex) {
-            throw new RuntimeException("Example file not found: " + path + ": " + ex.toString()  + ": " + " ./=" + new File(".").getAbsolutePath());
+            throw new RuntimeException("Example file not found: " + path + ": " + ex + ": " + " ./=" + new File(".").getAbsolutePath());
         }
     }
 

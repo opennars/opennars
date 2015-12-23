@@ -3,7 +3,6 @@ package nars.op.mental;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.nal.Deriver;
 import nars.task.Task;
 import nars.term.compound.Compound;
 
@@ -30,7 +29,7 @@ public class STMTemporalLinkage {
         return id;
     }
 
-    public STMTemporalLinkage(NAR nar, Deriver deriver) {
+    public STMTemporalLinkage(NAR nar) {
 
         //this.deriver = deriver;
         //this.stmSize = 1;

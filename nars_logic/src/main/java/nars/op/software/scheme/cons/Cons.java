@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class Cons<T> implements Iterable<T> {
+    private static final Cons EMPTY = new Empty();
+
     private T car;
     private Cons<T> cdr;
 
@@ -65,7 +67,7 @@ public class Cons<T> implements Iterable<T> {
         return stream().count();
     }
 
-    private static final Cons<Object> EMPTY = new Empty();
+
 
     @SuppressWarnings("unchecked")
     public static <E> Cons<E> empty() {

@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /** similar to ConceptSet except Concepts are not stored, useful as a pass-through */
-public abstract class ConceptSetTermsOnly<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
+public abstract class ConceptSetTermsOnly<T extends Term> extends MutableConceptMap<T> {
 
     public final Set<T> values = new HashSet();
 

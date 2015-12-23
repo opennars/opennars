@@ -2,7 +2,10 @@ package nars.guifx.terminal;
 
 
 import javax.annotation.PreDestroy;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 

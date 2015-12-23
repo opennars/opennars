@@ -23,16 +23,19 @@ public class TestAggregator extends RunListener {
     String testName = null;
     Set<Description> success = new HashSet();
 
+    @Override
     public void testRunStarted(Description description) throws Exception {
         testName = "nartest" + System.currentTimeMillis();
     }
 
+    @Override
     public void testRunFinished(Result result) throws Exception {
         for (Description d : success) {
             describe(d, true);
         }
     }
 
+    @Override
     public void testStarted(Description d) throws Exception {
 
         String si = '<' + getDescriptionTerm(d) + " --> " + testName + ">.";
@@ -40,6 +43,7 @@ public class TestAggregator extends RunListener {
     }
 
 
+    @Override
     public void testFinished(Description d) throws Exception {
 
         success.add(d);
@@ -67,6 +71,7 @@ public class TestAggregator extends RunListener {
         nar.input(si);
     }
 
+    @Override
     public void testFailure(Failure failure) throws Exception {
 
         Description d = failure.getDescription();
@@ -79,9 +84,11 @@ public class TestAggregator extends RunListener {
         //System.out.println(JSON.stringFrom(failure));
     }
 
+    @Override
     public void testAssumptionFailure(Failure failure) {
     }
 
+    @Override
     public void testIgnored(Description description) throws Exception {
     }
 

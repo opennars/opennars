@@ -119,7 +119,7 @@ public abstract class AbstractNAR extends NAR {
 
     public void initNAL7() {
         //NAL7 plugins
-        memory.the(new STMTemporalLinkage(this, core.deriver));
+        memory.the(new STMTemporalLinkage(this));
         memory.the(new Anticipate(this));
     }
 

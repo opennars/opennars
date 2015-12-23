@@ -22,8 +22,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.tree.TreeCellEditor;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
 import java.util.EventObject;
 

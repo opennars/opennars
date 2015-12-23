@@ -162,7 +162,7 @@ public class ControlFlowGraph {
                     // debug not installed: just do toString() on the instructions
                 }
                 if (!printed) {
-                    sb.append(instruction.toString());
+                    sb.append(instruction);
                 }
             }
 

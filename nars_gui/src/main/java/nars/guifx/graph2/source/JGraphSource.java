@@ -1,6 +1,7 @@
 package nars.guifx.graph2.source;
 
-import nars.guifx.graph2.GraphSource;
+import nars.NAR;
+import nars.guifx.graph2.ConceptsSource;
 import nars.term.Termed;
 import org.jgrapht.DirectedGraph;
 
@@ -9,14 +10,15 @@ import java.util.function.Consumer;
 /**
  * Source from jgrapht graphs
  */
-public abstract class JGraphSource extends GraphSource {
+public abstract class JGraphSource extends ConceptsSource {
 
 
     DirectedGraph<Termed, Termed> graph;
 
 
     @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
-    public JGraphSource(DirectedGraph<Termed, Termed> initialGraph) {
+    public JGraphSource(NAR nar, DirectedGraph<Termed, Termed> initialGraph) {
+        super(nar);
         graph = initialGraph;
     }
 
@@ -37,6 +39,7 @@ public abstract class JGraphSource extends GraphSource {
 
     @Override
     public void commit() {
+        System.out.println("commit: " + graph);
         if (graph == null) return;
 
         //            if (graph == null) {

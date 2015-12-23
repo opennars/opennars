@@ -37,6 +37,8 @@ public abstract class GraphSource/* W? */ {
 
         forEachOutgoingEdgeOf(s, t -> {
 
+            if (t == null) return;
+
             TermNode tn = g.getTermNode(((BagBudget<Termed>)t).get());
             if (tn == null)
                 return;

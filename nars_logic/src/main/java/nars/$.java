@@ -86,7 +86,7 @@ public abstract class $  {
 
 
     public static <T extends Term> T inh(String subj, String pred) {
-        return inh((Term)$(subj), (Term)$(pred));
+        return inh((Term)$(subj), $(pred));
     }
 
 

@@ -85,9 +85,7 @@ public class ThermostatTest  {
         //n.trace(System.out);
          n.log();
 
-        {
-
-//            @Override
+        //            @Override
 //            protected boolean output(Channel channel, Class event, Object... args) {
 //                if (event == Events.EXE.class) {
 //                    ExecutionResult t = (ExecutionResult)args[0];
@@ -97,7 +95,6 @@ public class ThermostatTest  {
 //                }
 //                return false;
 //            }
-        }
 
         for (int i = 0; i < 2; i++) {
             demonstrate(n, tc, range);

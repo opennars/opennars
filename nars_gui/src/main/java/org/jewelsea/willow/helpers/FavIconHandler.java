@@ -25,11 +25,8 @@ import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.jewelsea.willow.util.LruCache;
-import org.jewelsea.willow.util.ResourceUtil;
 
-import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
