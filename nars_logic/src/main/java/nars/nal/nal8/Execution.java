@@ -9,6 +9,7 @@ import nars.nal.Compounds;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.util.event.Topic;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,14 +21,23 @@ import java.util.List;
  * and utility methods for extracting features
  * of the operation task in the context of the executing NAR.
  */
-public class Execution {
+public class Execution implements Runnable {
 
     public final NAR nar;
     public final Task task;
+    private final Topic<Execution> listeners;
 
-    public Execution(NAR nar, Task task) {
+    public Execution(NAR nar, Task task, Topic<Execution> listeners) {
         this.nar = nar;
         this.task = task;
+        this.listeners = listeners;
+    }
+
+    /** should only be called by NAR */
+    @Override public final void run() {
+        if (task.isDeleted()) return;
+
+        listeners.emit(this);
     }
 
     public final Compound term() {
