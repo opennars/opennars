@@ -128,7 +128,7 @@ public class Global {
      /** Default confidence of input goal. */
      public static final float DEFAULT_GOAL_CONFIDENCE = 0.9f;
      /** Default priority of input judgment */
-     public static final float DEFAULT_GOAL_PRIORITY = 0.6f;
+     public static final float DEFAULT_GOAL_PRIORITY = 0.75f;
      /** Default durability of input judgment */
      public static final float DEFAULT_GOAL_DURABILITY = 0.9f;
      /** Default priority of input question */

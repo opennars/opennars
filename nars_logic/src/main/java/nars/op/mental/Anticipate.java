@@ -28,6 +28,7 @@ import nars.*;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
+import nars.nal.meta.TruthFunction;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
@@ -53,8 +54,7 @@ public class Anticipate {
     public static float TOLERANCE_FACTOR=0.5f; //0.5 means if it happens in 2 seconds, up to max 3 seconds is also fine
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
-    final static Budget expiredBudget = new Budget(0.5f, 0.8f, BudgetFunctions.truthToQuality(expiredTruth));
-    final static float priorityBoostOnDisappointment = 1.5f;
+    final static Budget expiredBudget = new Budget(0.75f, 0.5f, BudgetFunctions.truthToQuality(TruthFunctions.negation(expiredTruth)));
 
     final Multimap<Compound,TaskTime> anticipations = LinkedHashMultimap.create();
 
@@ -131,13 +131,10 @@ public class Anticipate {
         if (debug)
             System.err.println("Anticipation Negated " + tt.task);
 
-        Budget expiredBoostedBudget = expiredBudget.clone();
-        expiredBoostedBudget.setPriority(priorityBoostOnDisappointment*expiredBoostedBudget.getPriority());
-
         final Task derived = new FluentTask<>(prediction)
                 .belief()
                 .truth(expiredTruth.getFrequency(), expiredTruth.getConfidence())
-                .budget(expiredBoostedBudget)
+                .budget(expiredBudget)
                 .time(memory.time(), expectedOccurrenceTime)
                 .parent(tt.task, null)
                 .because("Absent Anticipated Event")
