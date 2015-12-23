@@ -18,7 +18,6 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
     public static void fireAll(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Consumer<ConceptProcess> cp) {
 
-        Task task = taskLink.get();
 
         int[] beliefAttempts = new int[1];
 
@@ -26,6 +25,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
         Concept beliefConcept = nar.concept(termLink.get());
         if (beliefConcept != null) {
+            Task task = taskLink.get();
 
             belief = beliefConcept.getBeliefs().top(task, nar.time());
 

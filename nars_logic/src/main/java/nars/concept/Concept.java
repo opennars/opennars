@@ -355,7 +355,7 @@ public interface Concept extends Termed, Supplier<Term> {
      * */
     boolean link(Task task, float scale, NAR nar);
 
-    boolean linkTemplates(Budget budget, float scale, NAR nar);
+    void linkTemplates(Budget budget, float scale, NAR nar);
 
 
     /**

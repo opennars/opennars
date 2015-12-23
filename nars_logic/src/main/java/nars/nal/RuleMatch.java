@@ -77,7 +77,6 @@ public class RuleMatch extends FindSubst {
 
     @Override
     public void onPartial() {
-        onMatch();
     }
 
     @Override

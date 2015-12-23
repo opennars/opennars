@@ -133,8 +133,7 @@ public class AtomConcept extends AbstractConcept  {
     }
 
     /** atom concept, being irreducible, will have no templates to recurse into */
-    @Override public boolean linkTemplates(Budget budget, float scale, NAR nar) {
-        return false;
+    @Override public void linkTemplates(Budget budget, float scale, NAR nar) {
     }
 
     @Override

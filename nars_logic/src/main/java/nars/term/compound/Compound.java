@@ -137,9 +137,9 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         if (y!=null)
             return y;
 
-        List<Term> sub = Global.newArrayList(0);
-
         int len = size();
+        List<Term> sub = Global.newArrayList(len /* estimate */);
+
         for (int i = 0; i < len; i++) {
             Term t = term(i);
             if (!t.applyTo(f, sub, fullMatch)) {

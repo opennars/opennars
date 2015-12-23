@@ -598,39 +598,42 @@ public class DefaultConcept extends AtomConcept {
      * Process is started by one Task, and recurses only to templates
      * creating bidirectional links between compound to components
      */
-    public boolean linkTemplates(Budget budget, float scale, NAR nar) {
+    @Override public void linkTemplates(Budget budget, float scale, NAR nar) {
 
         Termed[] tl = getTermLinkTemplates();
         int numTemplates;
         if (tl == null || (numTemplates = tl.length) == 0)
-            return false;
+            return;
 
         final Memory memory = nar.memory;
 
 
         float subScale = scale / numTemplates;
         if (subScale < memory.termLinkThreshold.floatValue())
-            return false;
+            return;
 
-        boolean activity = false;
+        final Bag<Termed> termLinks = this.getTermLinks();
+        final Term thisTerm = term();
 
-        for (Termed t : tl) {
+        for (int i = 0; i < tl.length; i++) {
+            Termed t = tl[i];
 
-            /*if ((t.getTarget().equals(getTerm()))) {
-                //self
-                continue;
-            }*/
+            final Concept target;
+            if (t instanceof Concept) {
+                target = (Concept) t;
+            } else {
+                target = memory.concept(t);
+                if (target == null) continue;
+                tl[i] = target;
+            }
 
-            Concept target = memory.concept(t);
-            if (target == null) continue;
 
-            this.getTermLinks().put(target, budget, subScale);
-            target.getTermLinks().put(this.term(), budget, subScale);
+            termLinks.put(target, budget, subScale);
+            target.getTermLinks().put(thisTerm, budget, subScale);
 
-            activity |= target.linkTemplates(budget, subScale, nar);
+            target.linkTemplates(budget, subScale, nar);
         }
 
-        return activity;
 
     }
 
