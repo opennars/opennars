@@ -35,7 +35,7 @@ public class NARMenu extends HBox {
 
     public final Menu tool;
 
-    public static NSlider vol = new NSlider("Volume", 100, 30, NSlider.BarSlider, 0.0);
+    public static NSlider vol = new NSlider("Silence", 100, 30, NSlider.BarSlider, 0.0);
 
     public NARMenu(NAR n) {
         super();
@@ -90,7 +90,7 @@ public class NARMenu extends HBox {
                                 public void handle(ActionEvent event) {
                                     vol.value(100);
                                     LoopPane.cpuSlider.value(1.0);
-                                    LoopPane.multiplier.setValue(128);
+                                    LoopPane.multiplier.setValue(8);
                                     LoopPane.runButton.getOnAction().handle(null);
                                 }
                             });
@@ -136,7 +136,7 @@ public class NARMenu extends HBox {
           //  main.getItems().add(new SeparatorMenuItem());
             //main.getItems().add(new MenuItem("Exit..."));
 
-            MenuBar menubar = new MenuBar(tool, main2, main3);
+            MenuBar menubar = new MenuBar(main3, main2, tool);
             menubar.prefWidthProperty().bind(this.widthProperty());
             getChildren().add(menubar);
         }

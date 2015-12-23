@@ -3,6 +3,7 @@ package nars.guifx.nars;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -54,7 +55,6 @@ public class LoopPane extends VBox {
         //cpuSlider.min.set(0);
         //cpuSlider.max.set(2000);
 
-
         runButton.setTooltip(new Tooltip("Toggle run/pause"));
 
 
@@ -99,16 +99,18 @@ public class LoopPane extends VBox {
 
         this.multiplier = new ComboBox<Integer>();
         this.multiplier.setPrefWidth(20);
-        multiplier.getItems().addAll( 1, 4, 16, 64, 128);
+        multiplier.getItems().addAll( 1, 2, 3, 4, 5, 6, 7, 8 ); //1,2,3,4,5,6
         multiplier.setValue(1);
         multiplier.valueProperty().addListener(updateLoopOnChange);
 
         pause();
 
+        cpuSlider.setPadding(new Insets(0,0,0,4));
         //say("ready");
 
+        FlowPane flowp = new FlowPane(runButton, stepButton, cpuSlider, multiplier);
         getChildren().addAll(
-                new FlowPane(runButton, cpuSlider, stepButton, multiplier) //,
+                new FlowPane(runButton, stepButton, cpuSlider, multiplier) //,
                // new FlowPane(label)
         );
 
@@ -131,7 +133,7 @@ public class LoopPane extends VBox {
         int minDelay = 20; //slightly slower than 60hz, which is what javafx pulse runs at
         int nMS = (int) Math.round((1.0 - Math.log(1 + v * logScale) / Math.log(1 + logScale)) * 1024.0) + minDelay;
 
-        loop.cyclesPerFrame = (multiplier.getValue());
+        loop.cyclesPerFrame = ((int)Math.pow(2,multiplier.getValue()-1));
         if (loop.setPeriodMS(nMS)) {
 
             //new delay set:

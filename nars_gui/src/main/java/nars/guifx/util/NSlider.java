@@ -249,12 +249,12 @@ public class NSlider extends NControl {
 
 
         g1.setLineWidth(mh * 2);
-        g1.setStroke(Color.GRAY);
+        g1.setStroke(Color.LIGHTGRAY);
         g1.strokeRect(0, 0, W, H);
 
         g1.setLineWidth(0);
         double hp = 0.5 + 0.5 * p;
-        g1.setFill(Color.DARKGRAY); //Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
+        g1.setFill(Color.rgb(188,188,188)); //Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
         g1.fillRect(mh, mh, barSize - mh * 2, H - mh * 2);
     };
 
