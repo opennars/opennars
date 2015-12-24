@@ -172,7 +172,8 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> {
 
             insertPos = pos(incomingScore);
 
-            if (insertPos < 0) insertPos = 0;
+            if (insertPos < 0)
+                insertPos = 0;
             else
                 insertPos++;
 

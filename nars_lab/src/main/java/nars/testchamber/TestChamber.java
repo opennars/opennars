@@ -55,7 +55,7 @@ public class TestChamber {
         //new BagForgettingEnhancer(nar.memory, nar.core.concepts(), 0.75f, 0.75f, 0.75f);
 
 
-        nar.the(Default.DefaultCycle.class, nar.core);
+        nar.the(Default.AbstractCycle.class, nar.core);
 
         /*nar.memory.conceptForgetDurations.set(10);
         nar.memory.termLinkForgetDurations.set(100);*/

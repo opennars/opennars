@@ -350,10 +350,6 @@ public abstract class AbstractNAR extends NAR {
         return (Concept)c;
     }
 
-    abstract protected void activate(Concept c);
-
-
-
 
     public AbstractNAR setTaskLinkBagSize(int taskLinkBagSize) {
         this.taskLinkBagSize = taskLinkBagSize;

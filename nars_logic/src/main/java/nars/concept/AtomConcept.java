@@ -99,14 +99,14 @@ public class AtomConcept extends AbstractConcept  {
      */
     @Override public final boolean link(Task t, float scale, float minScale, NAR nar) {
 
+        //activate tasklink locally
+        getTaskLinks().put(t, t.getBudget(), scale);
+
         Termed[] templates = getTermLinkTemplates();
         if (templates == null) return false;
 
         int numTemplates = templates.length;
         if (numTemplates == 0) return false;
-
-        //activate tasklink locally
-        getTaskLinks().put(t, t.getBudget(), scale);
 
         float subScale = scale / numTemplates;
         if (subScale < minScale)
@@ -120,17 +120,26 @@ public class AtomConcept extends AbstractConcept  {
 
                 /** activate the peer task tlink */
                 componentConcept.link(t, subScale, minScale, nar);
+
+                linkTemplate(componentConcept, t.getBudget(), subScale);
             }
         }
 
-        linkTemplates(t.getBudget(), scale, nar);
+        //linkTemplates(t.getBudget(), scale, nar);
 
         return true;
     }
 
-    /** atom concept, being irreducible, will have no templates to recurse into */
-    @Override public void linkTemplates(Budget budget, float scale, NAR nar) {
+
+    protected void linkTemplate(Concept target, Budget budget, float subScale) {
+        termLinks.put(target, budget, subScale);
+        target.getTermLinks().put(this, budget, subScale);
+
     }
+
+//    /** atom concept, being irreducible, will have no templates to recurse into */
+//    @Override public void linkTemplates(Budget budget, float scale, NAR nar) {
+//    }
 
     @Override
     public boolean process(Task task, NAR nar) {

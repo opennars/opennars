@@ -593,46 +593,42 @@ public class DefaultConcept extends AtomConcept {
 //    }
 
 
-    /**
-     * Recursively build TermLinks between a compound and its components
-     * Process is started by one Task, and recurses only to templates
-     * creating bidirectional links between compound to components
-     */
-    @Override public void linkTemplates(Budget budget, float scale, NAR nar) {
+//    /**
+//     * Recursively build TermLinks between a compound and its components
+//     * Process is started by one Task, and recurses only to templates
+//     * creating bidirectional links between compound to components
+//     */
+//    @Override public void linkTemplates(Budget budget, float scale, NAR nar) {
+//
+//        Termed[] tl = getTermLinkTemplates();
+//        int numTemplates;
+//        if (tl == null || (numTemplates = tl.length) == 0)
+//            return;
+//
+//        final Memory memory = nar.memory;
+//
+//        float subScale = scale / numTemplates;
+//        if (subScale < memory.termLinkThreshold.floatValue())
+//            return;
+//
+//        for (int i = 0; i < tl.length; i++) {
+//            Termed t = tl[i];
+//
+//            final Concept target;
+//            if (t instanceof Concept) {
+//                target = (Concept) t;
+//            } else {
+//                target = nar.conceptualize(t);
+//                if (target == null) continue;
+//                tl[i] = target;
+//            }
+//
+//            linkTemplate(target, budget, subScale, nar);
+//            target.linkTemplates(budget, subScale, nar);
+//        }
+//
+//    }
 
-        Termed[] tl = getTermLinkTemplates();
-        int numTemplates;
-        if (tl == null || (numTemplates = tl.length) == 0)
-            return;
-
-        final Memory memory = nar.memory;
-
-        float subScale = scale / numTemplates;
-        if (subScale < memory.termLinkThreshold.floatValue())
-            return;
-
-        final Bag<Termed> termLinks = this.getTermLinks();
-        final Term thisTerm = term();
-
-        for (int i = 0; i < tl.length; i++) {
-            Termed t = tl[i];
-
-            final Concept target;
-            if (t instanceof Concept) {
-                target = (Concept) t;
-            } else {
-                target = nar.conceptualize(t);
-                if (target == null) continue;
-                tl[i] = target;
-            }
-
-            termLinks.put(target, budget, subScale);
-            target.getTermLinks().put(thisTerm, budget, subScale);
-
-            target.linkTemplates(budget, subScale, nar);
-        }
-
-    }
 
 //    @Override public boolean link(Term t, Budget b, float scale, NAR nar) {
 //

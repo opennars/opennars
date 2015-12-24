@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class Default extends AbstractNAR {
 
-    public final DefaultCycle core;
+    public final AbstractCycle core;
     public final TaskPerception input;
 
 
@@ -98,9 +98,9 @@ public class Default extends AbstractNAR {
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
     }
 
-    protected DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+    protected AbstractCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
 
-        DefaultCycle c = new DefaultCycle2(this, getDeriver(), newConceptBag(activeConcepts));
+        AbstractCycle c = new DefaultCycle(this, getDeriver(), newConceptBag(activeConcepts));
 
         //TODO move these to a PremiseGenerator which supplies
         // batches of Premises
@@ -125,11 +125,15 @@ public class Default extends AbstractNAR {
                 if (b==null)
                     b = new BagBudget(c, 0,1,1);
 
+                c.getTaskLinks().commit();
+                c.getTermLinks().commit();
+
                 float p =
                         //Math.max(
                         //c.getTaskLinks().getPriorityMax()
-                        c.getTaskLinks().getSummaryMean()
-                        // c.getTermLinks().getPriorityMax()
+                        (c.getTaskLinks().getSummaryMean() +
+                        c.getTermLinks().getSummaryMean()) * 0.5f
+                         //c.getTermLinks().getPriorityMax()
                         //)
                         ;
 
@@ -170,7 +174,7 @@ public class Default extends AbstractNAR {
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
      */
-    public abstract static class DefaultCycle implements Serializable {
+    public abstract static class AbstractCycle implements Serializable {
 
         final Active handlers = new Active();
 
@@ -207,6 +211,7 @@ public class Default extends AbstractNAR {
 
         /** activated concepts pending (re-)insert to bag */
         public final LinkedHashSet<Concept> activated = new LinkedHashSet();
+        final Derivelet der = new Derivelet();
 
 
 //        @Deprecated
@@ -216,7 +221,7 @@ public class Default extends AbstractNAR {
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
-        public DefaultCycle(NAR nar, Deriver deriver, Bag<Concept> concepts) {
+        public AbstractCycle(NAR nar, Deriver deriver, Bag<Concept> concepts) {
 
             this.nar = nar;
 
@@ -229,7 +234,14 @@ public class Default extends AbstractNAR {
             handlers.add(
                     nar.memory.eventCycleEnd.on((m) -> {
                         fireConcepts(conceptsFiredPerCycle.intValue(), c->process(c));
+
+                        System.out.println(nar.time());
+                        System.out.println(activated);
+
                         activateConcepts();
+
+                        active.printAll();
+
                     }),
                     nar.memory.eventReset.on((m) -> reset())
             );
@@ -265,12 +277,15 @@ public class Default extends AbstractNAR {
         }
 
         private void activateConcepts() {
+            //active.commit();
+
             if (!activated.isEmpty()) {
                 activated.forEach(this::updateConcept);
                 activated.clear();
-            }
 
+            }
             active.commit();
+
         }
 
         protected void updateConcept(Concept c) {
@@ -288,15 +303,15 @@ public class Default extends AbstractNAR {
 
 
         public void reset() {
-
-
+            active.clear();
+            activated.clear();
         }
 
 
 
         public final Predicate<BagBudget> alannForget;
 
-        protected void fireConcepts(int conceptsToFire, Consumer<ConceptProcess> processor) {
+        protected final void fireConcepts(int conceptsToFire, Consumer<ConceptProcess> processor) {
 
             Bag<Concept> b = this.active;
 
@@ -310,8 +325,6 @@ public class Default extends AbstractNAR {
                 //c.getTermLinks().up(simpleForgetDecay);
                 //c.getTaskLinks().update(simpleForgetDecay);
 
-                activated.add(c); //update at end of cycle
-
                 //if above firing threshold
                 //fireConcept(c);
                 der.firePremiseSquare(nar, processor, c,
@@ -320,6 +333,8 @@ public class Default extends AbstractNAR {
                         //simpleForgetDecay
                         alannForget
                 );
+
+                activated.add(c); //update at end of cycle
 
                 return true;
             });
@@ -333,7 +348,6 @@ public class Default extends AbstractNAR {
             });
         }*/
 
-        final Derivelet der = new Derivelet();
 
 
 
@@ -377,7 +391,7 @@ public class Default extends AbstractNAR {
             return active;
         }
 
-        public void activate(Concept c) {
+        public final void activate(Concept c) {
             activated.add(c);
             //core.active.put(c);
         }
@@ -446,7 +460,7 @@ public class Default extends AbstractNAR {
      * will not consume budget unfairly relative to another premise
      * with less tasks but equal budget.
      */
-    public static class DefaultCycle2 extends DefaultCycle {
+    public static class DefaultCycle extends AbstractCycle {
 
         /**
          * re-used, not to be used outside of this
@@ -461,7 +475,7 @@ public class Default extends AbstractNAR {
         final Collection<Task> derivedTasksBuffer;
 
 
-        public DefaultCycle2(NAR nar, Deriver deriver, Bag<Concept> concepts) {
+        public DefaultCycle(NAR nar, Deriver deriver, Bag<Concept> concepts) {
             super(nar, deriver, concepts);
 
             matcher = new RuleMatch(nar.memory.random);

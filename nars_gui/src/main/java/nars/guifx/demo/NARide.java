@@ -328,8 +328,8 @@ public class NARide extends BorderPane {
         icon(FrameClock.class, (c) -> new NARMenu.CycleClockPane(nar));
         icon(RealtimeMSClock.class, (c) -> new NARMenu.RTClockPane(nar));
         //icon(NARLoop.class, (ll) -> loopPane);
-        icon(Default.DefaultCycle.class, (c) ->
-                new DefaultCyclePane((Default.DefaultCycle) c) //cast is hack
+        icon(Default.AbstractCycle.class, (c) ->
+                new DefaultCyclePane((Default.AbstractCycle) c) //cast is hack
         );
 
 
@@ -478,10 +478,10 @@ public class NARide extends BorderPane {
     private static class DefaultCyclePane extends BorderPane {
 
         private final NAR nar;
-        private final Default.DefaultCycle cycle;
+        private final Default.AbstractCycle cycle;
         //final NSlider activation;
 
-        public DefaultCyclePane(Default.DefaultCycle l) {
+        public DefaultCyclePane(Default.AbstractCycle l) {
             cycle = l;
             nar = l.nar;
 

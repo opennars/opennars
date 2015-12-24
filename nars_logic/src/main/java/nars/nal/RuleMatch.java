@@ -103,6 +103,7 @@ public class RuleMatch extends FindSubst {
         //HACK this should exclude the invalid rules which form any of these
         ConceptProcess p = this.premise;
 
+
         if (!derived.term().levelValid( p.nal()) )
             return null;
 

@@ -7,6 +7,7 @@ import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.budget.BudgetMerge;
 import nars.budget.Budgeted;
+import nars.budget.UnitBudget;
 import nars.util.ArraySortedIndex;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
@@ -52,7 +53,12 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     @Override public BagBudget<V> put(Object v) {
-        throw new RuntimeException("unimpl");
+        //TODO combine with CurveBag.put(v)
+        BagBudget<V> existing = get(v);
+        if (existing!=null)
+            return existing;
+        else
+            return put((V)v, UnitBudget.zero);
     }
 
 
@@ -212,7 +218,7 @@ public class ArrayBag<V> extends Bag<V> {
      * @return The updated budget
      */
     @Override
-    public BagBudget<V> put(Object i, Budget b, float scale) {
+    public final BagBudget<V> put(Object i, Budget b, float scale) {
 
         ArrayMapping index = this.index;
 
@@ -223,7 +229,26 @@ public class ArrayBag<V> extends Bag<V> {
             if (existing!=b)
                 merge(existing, b, scale);
 
+            update(existing);
+
             return existing;
+
+        } else {
+
+            BagBudget newBudget;
+            if (!(b instanceof BagBudget)) {
+                newBudget = new BagBudget(i, b, scale);
+            } else {
+                //use provided
+                newBudget = (BagBudget)b;
+                newBudget.commit();
+            }
+
+            BagBudget<V> displaced = index.put((V) i, newBudget);
+            if (displaced == newBudget)
+                return null; //wasnt inserted
+            else
+                return newBudget;
         }
 
 //        //TODO optional displacement until next update, allowing sub-threshold to grow beyond threshold
@@ -236,11 +261,8 @@ public class ArrayBag<V> extends Bag<V> {
 //            }
 //            displaced = removeLowest();
 //        }
-
         //now that room is available:
-        BagBudget newBudget = new BagBudget(i, b, scale);
-        index.put((V)i, newBudget);
-        return newBudget;
+
     }
 
 

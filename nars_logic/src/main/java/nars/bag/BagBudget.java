@@ -50,7 +50,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
         init(c.getPriority() * scale, c.getDurability(), c.getQuality());
     }
 
-    private void init(float p, float d, float q) {
+    public void init(float p, float d, float q) {
         float[] b = this.b;
         b[0] = clamp(p);
         b[1] = clamp(d);

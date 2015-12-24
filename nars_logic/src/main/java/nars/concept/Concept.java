@@ -26,7 +26,6 @@ import com.google.common.primitives.Longs;
 import nars.Global;
 import nars.NAR;
 import nars.bag.Bag;
-import nars.budget.Budget;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
 import nars.task.Task;
@@ -355,7 +354,7 @@ public interface Concept extends Termed, Supplier<Term> {
      * */
     boolean link(Task task, float scale, float minScale, NAR nar);
 
-    void linkTemplates(Budget budget, float scale, NAR nar);
+    //void linkTemplates(Budget budget, float scale, NAR nar);
 
 
     default boolean link(Task task, NAR nar) {
