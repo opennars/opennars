@@ -136,7 +136,6 @@ public class Anticipate {
                 .truth(expiredTruth.getFrequency(), expiredTruth.getConfidence())
                 .budget(expiredBudget)
                 .time(memory.time(), expectedOccurrenceTime)
-                .parent(tt.task, null)
                 .because("Absent Anticipated Event")
                 ;
 
