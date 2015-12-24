@@ -3,9 +3,10 @@ package nars.bag;
 import nars.budget.Budget;
 import nars.budget.UnitBudget;
 import nars.nal.nal7.Tense;
-import nars.util.data.Util;
 
 import java.util.function.Supplier;
+
+import static nars.util.data.Util.clamp;
 
 /**
  * An entry in a bag
@@ -19,6 +20,11 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
 
     protected BagBudget(X id) {
         this.id = id;
+    }
+
+    public BagBudget(X id, float p, float d, float q) {
+        this(id);
+        init(p, d, q);
     }
 
     public BagBudget(X id, Budget b) {
@@ -36,16 +42,19 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
         return id;
     }
 
-    protected void init(Budget c, float scale) {
+    private void init(Budget c, float scale) {
         //this.lastForget = c.getLastForgetTime();
         this.lastForget = Tense.TIMELESS;
 
 
+        init(c.getPriority() * scale, c.getDurability(), c.getQuality());
+    }
+
+    private void init(float p, float d, float q) {
         float[] b = this.b;
-        b[0] = Util.clamp(c.getPriority() * scale);
-        b[1] = Util.clamp(c.getDurability());
-        b[2] = Util.clamp(c.getQuality());
-        clearDelta();
+        b[0] = clamp(p);
+        b[1] = clamp(d);
+        b[2] = clamp(q);
     }
 
     private void clearDelta() {
@@ -55,9 +64,9 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
 
     public void commit() {
         float[] b = this.b;
-        b[0] = Util.clamp(b[0] + b[3]);
-        b[1] = Util.clamp(b[1] + b[4]);
-        b[2] = Util.clamp(b[2] + b[5]);
+        b[0] = clamp(b[0] + b[3]);
+        b[1] = clamp(b[1] + b[4]);
+        b[2] = clamp(b[2] + b[5]);
         clearDelta();
     }
 
@@ -69,7 +78,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
     @Override
     public void setPriority(float p) {
         float[] b = this.b;
-        b[3] += (p-b[0]);
+        b[3] += (clamp(p)-b[0]);
     }
 
     @Override
@@ -80,7 +89,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
     @Override
     public void setDurability(float d) {
         float[] b = this.b;
-        b[4] += (d-b[1]);
+        b[4] += (clamp(d)-b[1]);
     }
 
     @Override
@@ -91,7 +100,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
     @Override
     public void setQuality(float q) {
         float[] b = this.b;
-        b[5] += (q-b[2]);
+        b[5] += (clamp(q)-b[2]);
     }
 
     @Override

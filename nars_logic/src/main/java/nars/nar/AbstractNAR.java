@@ -5,7 +5,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
-import nars.budget.Budget;
 import nars.concept.AtomConcept;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
@@ -308,10 +307,10 @@ public abstract class AbstractNAR extends NAR {
     public static Concept newDefaultConcept(Term t, int termLinkBagSize, int taskLinkBagSize, Memory memory) {
 
         Bag<Task> taskLinks =
-                new CurveBag<>(taskLinkBagSize, memory.random).mergePlus();
+                new CurveBag<Task>(taskLinkBagSize, memory.random).mergePlus();
 
         Bag<Termed> termLinks =
-                new CurveBag<>(termLinkBagSize, memory.random).mergePlus();
+                new CurveBag<Termed>(termLinkBagSize, memory.random).mergePlus();
 
         //Budget b = new UnitBudget();
         //Budget b = new BagAggregateBudget(taskLinks);
@@ -339,7 +338,7 @@ public abstract class AbstractNAR extends NAR {
 //    }
 
     @Override
-    protected Concept doConceptualize(Term term, Budget b, float scale) {
+    protected Concept doConceptualize(Term term) {
         Termed c = memory.index.get(term);
         if (!(c instanceof Concept)) {
             c = apply(term);
@@ -348,16 +347,13 @@ public abstract class AbstractNAR extends NAR {
             memory.index.put(term, c);
         }
 
-        return doConceptualize(c, b, scale);
+        return (Concept)c;
     }
 
-    abstract protected Concept doConceptualize(Termed c, Budget b, float scale);
+    abstract protected void activate(Concept c);
 
 
 
-    public Bag<Concept> newConceptBag(int initialCapacity) {
-        return new CurveBag(initialCapacity, rng).mergePlus();
-    }
 
     public AbstractNAR setTaskLinkBagSize(int taskLinkBagSize) {
         this.taskLinkBagSize = taskLinkBagSize;

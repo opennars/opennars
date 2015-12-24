@@ -93,19 +93,24 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
     }
 
 
-    public void setMergeFunction(BudgetMerge mergeFunction) {
+    public Bag<V> setMergeFunction(BudgetMerge mergeFunction) {
         this.mergeFunction = mergeFunction;
+        return this;
     }
 
 
     /**
      * set the merging function to 'plus'
      */
-    public Bag mergePlus() {
-        setMergeFunction(Budget.plus);
-        return this;
+    public Bag<V> mergePlus() {
+        return setMergeFunction(Budget.plus);
     }
 
+    /** sets a null merge function, which can be used to detect
+     * merging which should not happen (it will throw null pointer exception) */
+    public Bag<V> mergeNull() {
+        return setMergeFunction(null);
+    }
 
     protected final void merge(Budget target, Budget src, float scale) {
         mergeFunction.merge(target, src, scale);
@@ -416,5 +421,6 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
         }
         return x;
     }
+
 
 }

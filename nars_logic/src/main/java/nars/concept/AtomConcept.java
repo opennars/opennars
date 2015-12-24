@@ -93,16 +93,11 @@ public class AtomConcept extends AbstractConcept  {
         return null;
     }
 
-    final static Concept activateConcept(Termed t, Budget taskBudget, float scale, NAR nar) {
-        Term target = t.term();
-        return nar.conceptualize(target, taskBudget, scale);
-    }
-
     /**
      * when a task is processed, a tasklink
      * can be created at the concept of its term
      */
-    @Override public boolean link(Task t, float scale, NAR nar) {
+    @Override public final boolean link(Task t, float scale, float minScale, NAR nar) {
 
         Termed[] templates = getTermLinkTemplates();
         if (templates == null) return false;
@@ -110,24 +105,25 @@ public class AtomConcept extends AbstractConcept  {
         int numTemplates = templates.length;
         if (numTemplates == 0) return false;
 
-        //activate local tasklink
+        //activate tasklink locally
         getTaskLinks().put(t, t.getBudget(), scale);
 
-
         float subScale = scale / numTemplates;
-        if (subScale < nar.memory.taskLinkThreshold.floatValue())
+        if (subScale < minScale)
             return false;
 
         for (Termed linkTemplate : templates) {
-            Concept componentConcept = activateConcept(linkTemplate, t.getBudget(), subScale, nar);
+
+            Concept componentConcept = nar.conceptualize(linkTemplate);
+
             if (componentConcept != null) {
 
                 /** activate the peer task tlink */
-                componentConcept.getTaskLinks().put(t, t.getBudget(), subScale);
+                componentConcept.link(t, subScale, minScale, nar);
             }
         }
 
-        linkTemplates(t.getBudget(), 1f, nar);
+        linkTemplates(t.getBudget(), scale, nar);
 
         return true;
     }

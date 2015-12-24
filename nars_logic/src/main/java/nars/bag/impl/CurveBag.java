@@ -66,8 +66,9 @@ public class CurveBag<V> extends Bag<V> {
 
 
     @Override
-    public void setMergeFunction(BudgetMerge mergeFunction) {
+    public CurveBag<V> setMergeFunction(BudgetMerge mergeFunction) {
         arrayBag.setMergeFunction(mergeFunction);
+        return this;
     }
 
     @Override
@@ -159,9 +160,17 @@ public class CurveBag<V> extends Bag<V> {
         return arrayBag.put(v, vBagBudget, scale);
     }
 
-    @Override
-    public BagBudget<V> put(Object newItem) {
-        return arrayBag.put(newItem);
+
+    @Override public BagBudget<V> put(Object v) {
+        BagBudget<V> existing = get(v);
+        if (existing!=null)
+            return existing;
+        else
+            return put((V)v, getDefaultBudget((V)v));
+    }
+
+    protected BagBudget<V> getDefaultBudget(V v) {
+        return new BagBudget(v, 0,0,0);
     }
 
     @Override

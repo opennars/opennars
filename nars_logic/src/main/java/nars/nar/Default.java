@@ -6,6 +6,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
+import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.Deriver;
@@ -16,7 +17,6 @@ import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
 import nars.task.flow.SetTaskPerception;
 import nars.task.flow.TaskPerception;
-import nars.term.Termed;
 import nars.term.compile.TermIndex;
 import nars.time.FrameClock;
 import nars.util.data.MutableInteger;
@@ -25,6 +25,7 @@ import nars.util.event.Active;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -99,10 +100,7 @@ public class Default extends AbstractNAR {
 
     protected DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
 
-        DefaultCycle c = initCore(
-                getDeriver(),
-                newConceptBag(activeConcepts)
-        );
+        DefaultCycle c = new DefaultCycle2(this, getDeriver(), newConceptBag(activeConcepts));
 
         //TODO move these to a PremiseGenerator which supplies
         // batches of Premises
@@ -117,14 +115,41 @@ public class Default extends AbstractNAR {
         return c;
     }
 
-    protected DefaultCycle initCore(Deriver deriver, Bag<Concept> conceptBag)    {
-        return new DefaultCycle2(this, deriver, conceptBag);
+
+    public Bag<Concept> newConceptBag(int initialCapacity) {
+        return new CurveBag<Concept>(initialCapacity, rng) {
+
+            @Override public BagBudget<Concept> put(Object v) {
+                BagBudget<Concept> b = get(v);
+                Concept c = (Concept) v;
+                if (b==null)
+                    b = new BagBudget(c, 0,1,1);
+
+                float p =
+                        //Math.max(
+                        //c.getTaskLinks().getPriorityMax()
+                        c.getTaskLinks().getSummaryMean()
+                        // c.getTermLinks().getPriorityMax()
+                        //)
+                        ;
+
+                b.set(p, 1f, 1f);
+
+                return put(c, b);
+            }
+
+//            @Override
+//            protected BagBudget<Concept> getDefaultBudget(Concept o) {
+//                return new BagBudget<>(o,
+//                        o.getTaskLinks().getSummaryMean(), 0.5f, 0.5f);
+//            }
+
+        }.mergeNull();
     }
 
-
     @Override
-    protected Concept doConceptualize(Termed c, Budget b, float scale) {
-        return core.concepts().put(c, b, scale).get();
+    protected final void activate(Concept c) {
+        core.activate(c);
     }
 
     @Override
@@ -180,6 +205,8 @@ public class Default extends AbstractNAR {
 
         public final MutableInteger capacity = new MutableInteger();
 
+        /** activated concepts pending (re-)insert to bag */
+        public final LinkedHashSet<Concept> activated = new LinkedHashSet();
 
 
 //        @Deprecated
@@ -200,7 +227,10 @@ public class Default extends AbstractNAR {
             active = concepts;
 
             handlers.add(
-                    nar.memory.eventCycleEnd.on((m) -> fireConcepts(conceptsFiredPerCycle.intValue(), c->process(c))),
+                    nar.memory.eventCycleEnd.on((m) -> {
+                        fireConcepts(conceptsFiredPerCycle.intValue(), c->process(c));
+                        activateConcepts();
+                    }),
                     nar.memory.eventReset.on((m) -> reset())
             );
 
@@ -234,6 +264,18 @@ public class Default extends AbstractNAR {
             };
         }
 
+        private void activateConcepts() {
+            if (!activated.isEmpty()) {
+                activated.forEach(this::updateConcept);
+                activated.clear();
+            }
+
+            active.commit();
+        }
+
+        protected void updateConcept(Concept c) {
+            active.put(c);
+        }
 
         abstract protected void process(ConceptProcess cp);
 
@@ -268,16 +310,7 @@ public class Default extends AbstractNAR {
                 //c.getTermLinks().up(simpleForgetDecay);
                 //c.getTaskLinks().update(simpleForgetDecay);
 
-
-                float p =
-                        //Math.max(
-                        //c.getTaskLinks().getPriorityMax()
-                        c.getTaskLinks().getSummaryMean()
-                        // c.getTermLinks().getPriorityMax()
-                        //)
-                        ;
-
-                cb.set(p, 0.5f, 0.5f);
+                activated.add(c); //update at end of cycle
 
                 //if above firing threshold
                 //fireConcept(c);
@@ -290,7 +323,6 @@ public class Default extends AbstractNAR {
 
                 return true;
             });
-            b.commit();
 
         }
 
@@ -345,7 +377,10 @@ public class Default extends AbstractNAR {
             return active;
         }
 
-
+        public void activate(Concept c) {
+            activated.add(c);
+            //core.active.put(c);
+        }
 
 
         //try to implement some other way, this is here because of serializability

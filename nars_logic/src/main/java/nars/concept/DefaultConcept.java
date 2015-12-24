@@ -607,7 +607,6 @@ public class DefaultConcept extends AtomConcept {
 
         final Memory memory = nar.memory;
 
-
         float subScale = scale / numTemplates;
         if (subScale < memory.termLinkThreshold.floatValue())
             return;
@@ -622,18 +621,16 @@ public class DefaultConcept extends AtomConcept {
             if (t instanceof Concept) {
                 target = (Concept) t;
             } else {
-                target = memory.concept(t);
+                target = nar.conceptualize(t);
                 if (target == null) continue;
                 tl[i] = target;
             }
-
 
             termLinks.put(target, budget, subScale);
             target.getTermLinks().put(thisTerm, budget, subScale);
 
             target.linkTemplates(budget, subScale, nar);
         }
-
 
     }
 

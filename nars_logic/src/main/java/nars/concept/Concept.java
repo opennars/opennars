@@ -353,31 +353,41 @@ public interface Concept extends Termed, Supplier<Term> {
     /** attempt insert a tasklink into this concept's tasklink bag
      *  return true if successfully inserted
      * */
-    boolean link(Task task, float scale, NAR nar);
+    boolean link(Task task, float scale, float minScale, NAR nar);
 
     void linkTemplates(Budget budget, float scale, NAR nar);
 
 
+    default boolean link(Task task, NAR nar) {
+        return link(task, 1f, nar);
+    }
+
+    default boolean link(Task task, float initialScale, NAR nar) {
+        float minScale =
+            nar.memory.taskLinkThreshold.floatValue() / task.getBudget().summary();
+
+        if (!Float.isFinite(minScale)) return false;
+        return link(task, initialScale, minScale, nar);
+    }
+
     /**
      *
-     * @param currentTask task with a term equal to this concept's
-     * @param previousTask task with a term equal to another concept's
+     * @param thisTask task with a term equal to this concept's
+     * @param otherTask task with a term equal to another concept's
      * @return number of links created (0, 1, or 2)
      */
-    default int crossLink(Task currentTask, Task previousTask, float scale, NAR nar) {
-        Compound otherTerm = previousTask.term();
-        if (otherTerm.equals(get())) return 0; //self
+    default void crossLink(Task thisTask, Task otherTask, float initialScale, NAR nar) {
+        Compound otherTerm = otherTask.term();
+        if (otherTerm.equals(term()))
+            return; //self
 
-        int count = 0;
-        count += link(previousTask, scale, nar) ? 1 : 0;
+        link(otherTask, initialScale, nar);
 
-        Concept other = nar.concept(otherTerm);
-        if (other == null) return 0;
+        Concept other = nar.conceptualize(otherTask.get());
+        if (other == null)
+            return;
 
-        count += other.link(currentTask, scale, nar) ? 1 : 0;
-
-        return count;
-
+        other.link(thisTask, initialScale, nar);
     }
 
 

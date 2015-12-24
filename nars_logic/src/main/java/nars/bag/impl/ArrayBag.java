@@ -7,7 +7,6 @@ import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.budget.BudgetMerge;
 import nars.budget.Budgeted;
-import nars.budget.UnitBudget;
 import nars.util.ArraySortedIndex;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
@@ -52,9 +51,10 @@ public class ArrayBag<V> extends Bag<V> {
         this(new ArraySortedIndex(capacity));
     }
 
-    @Override public BagBudget<V> put(Object k) {
-        return put(k, UnitBudget.zero);
+    @Override public BagBudget<V> put(Object v) {
+        throw new RuntimeException("unimpl");
     }
+
 
     public BagBudget<V> put(Budgeted k) {
         return put(k, k.getBudget());
@@ -220,7 +220,9 @@ public class ArrayBag<V> extends Bag<V> {
 
         if (existing != null) {
 
-            merge(existing, b, scale);
+            if (existing!=b)
+                merge(existing, b, scale);
+
             return existing;
         }
 

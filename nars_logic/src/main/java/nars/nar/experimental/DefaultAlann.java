@@ -3,7 +3,6 @@ package nars.nar.experimental;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.task.Task;
 import nars.term.Term;
@@ -115,11 +114,7 @@ public class DefaultAlann extends AbstractAlann  {
         return newDefaultConcept(t, 24, 24, memory);
     }
 
-    @Override
-    protected Concept doConceptualize(Termed c, Budget b, float scale) {
-        if (!(c instanceof Concept)) return null;
-        return (Concept)c;
-    }
+
 
     @Override
     public NAR forEachConcept(Consumer<Concept> each) {
@@ -127,6 +122,10 @@ public class DefaultAlann extends AbstractAlann  {
         return this;
     }
 
+    @Override
+    protected void activate(Concept c) {
+        //...
+    }
 
     private final class MyDeriveletContext extends DeriveletContext {
         public MyDeriveletContext(NAR nar) {

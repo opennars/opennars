@@ -2,13 +2,9 @@ package nars.nal;
 
 import com.google.common.collect.Lists;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.nar.Default;
 import nars.nar.Terminal;
-import nars.nar.experimental.DefaultAlann;
-import nars.term.compile.TermIndex;
-import nars.time.FrameClock;
 import nars.util.meter.TestNAR;
 import org.junit.After;
 import org.junit.Before;
@@ -86,17 +82,18 @@ public abstract class AbstractNALTester {
                     return d;
                 }
             ));
-            l.add(supply("Alann[NAL<=" + level + ']',
-                () -> {
-                    DefaultAlann d = new DefaultAlann(
-                        new Memory(new FrameClock(),TermIndex.memorySoft(1024)),
-                        8 /* input cycler capacity */,
-                        24 /* derivelets */
-                    );
-                    d.nal(finalLevel);
-                    return d;
-                }
-            ));
+
+//            l.add(supply("Alann[NAL<=" + level + ']',
+//                () -> {
+//                    DefaultAlann d = new DefaultAlann(
+//                        new Memory(new FrameClock(),TermIndex.memorySoft(1024)),
+//                        8 /* input cycler capacity */,
+//                        24 /* derivelets */
+//                    );
+//                    d.nal(finalLevel);
+//                    return d;
+//                }
+//            ));
         }
 
         if (single) {

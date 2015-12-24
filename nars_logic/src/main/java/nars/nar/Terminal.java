@@ -2,13 +2,11 @@ package nars.nar;
 
 import nars.Memory;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
 import nars.term.Term;
-import nars.term.Termed;
 import nars.term.compile.TermIndex;
 import nars.time.RealtimeMSClock;
 
@@ -62,10 +60,10 @@ public class Terminal extends AbstractNAR {
 //
 //    }
 
+
     @Override
-    protected Concept doConceptualize(Termed c, Budget b, float scale) {
-        if (c instanceof Concept) return ((Concept)c);
-        return null;
+    protected void activate(Concept c) {
+        //nothing
     }
 
     @Override

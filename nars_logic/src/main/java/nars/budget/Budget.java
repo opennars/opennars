@@ -368,10 +368,11 @@ public interface Budget extends Prioritized, Budgeted {
 
 
     default void set(float p, float d, float q) {
-        setPriority(Util.clamp(p));
-        setDurability(Util.clamp(d));
-        setQuality(Util.clamp(q));
+        setPriority(p);
+        setDurability(d);
+        setQuality(q);
     }
+
     default void set(Budget b) {
         set(b.getPriority(), b.getDurability(), b.getQuality());
     }

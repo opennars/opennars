@@ -33,7 +33,7 @@ public abstract class ConceptMap  {
             onFrame();
             cycleInFrame = 0;
         }),
-        nar.memory.eventConceptActivated.on(this::onConceptActive),
+        //nar.memory.eventConceptActivated.on(this::onConceptActive),
 //        nar.memory.eventConceptForget.on(c -> {
 //            onConceptForget(c);
 //        }),

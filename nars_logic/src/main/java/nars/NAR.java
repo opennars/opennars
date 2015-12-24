@@ -3,7 +3,6 @@ package nars;
 
 import com.google.common.collect.Sets;
 import com.gs.collections.impl.tuple.Tuples;
-import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.util.ConceptBuilder;
 import nars.nal.Level;
@@ -1185,12 +1184,11 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      *
      * @return an existing Concept, or a new one, or null
      */
-    public final Concept conceptualize(Termed termed, Budget budget, float scale) {
+    public final Concept conceptualize(Termed termed) {
 
         Concept c;
         if (termed instanceof Concept) {
             c = (Concept) termed;
-            c = doConceptualize(c, budget, scale);
         } else {
 
             /*if (termed == null)
@@ -1207,12 +1205,12 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
                 throw new RuntimeException("invalid term attempts to conceptualize: " + term);
                 //return null;
             }
-            c = doConceptualize(term, budget, scale);
+
+            c = doConceptualize(term);
         }
 
-        if (c!=null) {
-            memory.eventConceptActivated.emit(c);
-        }
+        activate(c);
+
 //        if (c==null)
 //            throw new RuntimeException("unconceptualizable: " + termed + " , " + budget);
         return c;
@@ -1220,8 +1218,8 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
 
 
-    protected abstract Concept doConceptualize(Term term, Budget budget, float scale);
-    protected abstract Concept doConceptualize(Termed term, Budget budget, float scale);
+    protected abstract Concept doConceptualize(Term term);
+    protected abstract void activate(Concept c);
 
     static boolean validConceptTerm(Term term) {
         return !((term instanceof Variable) || (term instanceof CyclesInterval));
@@ -1374,7 +1372,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 //
 //        d.run();
 
-        Concept c = conceptualize(task.term(), task.getBudget(), 1f);
+        Concept c = conceptualize(task.term());
         if (c == null) {
             memory.remove(task, "Inconceivable");
             return null;
@@ -1401,6 +1399,8 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
     /**
      * convenience method shortcut for concept(t.getTerm())
+     * when possible, try to provide an existing Concept instance
+     * to avoid a lookup
      */
     public final Concept concept(Termed termed) {
         return memory.concept(termed);
