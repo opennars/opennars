@@ -9,8 +9,6 @@ public class HalfHalfRightTriangleCanvasEdgeRenderer extends CanvasEdgeRenderer 
 
     private double[] xp = new double[4];
     private double[] yp = new double[4];
-    private double[] xr = new double[4];
-    private double[] yr = new double[4];
 
 
     @Override
@@ -36,10 +34,6 @@ public class HalfHalfRightTriangleCanvasEdgeRenderer extends CanvasEdgeRenderer 
         //double cx = 0.5f * (x1 + x2);
         //double cy = 0.5f * (y1 + y2);
 
-        //norm vector
-        double nx = 0; //Math.sin(rot);
-        double ny = 1f; //Math.cos(rot);
-
         //Affine.translate(cx,cy).rotate(rot, 0,0).scale(len,len)
 //            translate.setY(cy);
 //            rotate.setAngle(FastMath.toDegrees(rot));
@@ -47,22 +41,27 @@ public class HalfHalfRightTriangleCanvasEdgeRenderer extends CanvasEdgeRenderer 
 //            scale.setY(len);
 
 
-        gfx.save();
-        gfx.translate((x1+x2)/2f, (y1+y2)/2f);
-        gfx.scale(len, len);
-        gfx.rotate(rot * 180f/3.14150);
-
-
         final double t = e.getWeight() *maxWidth + minWidth;
 
+        gfx.save();
+        gfx.translate((x1+x2)/2f, (y1+y2)/2f);
+        gfx.rotate(rot * 180f/3.14150);
+        gfx.scale(len, t);
+
+
+
+
         //if (aSrc.isVisible()) {
-            render(e, aSrc, -0.5, 0, 0.5, 1, nx * t, ny * t, xp, yp);
+        double[] X = this.xp;
+        double[] Y = this.yp;
+
+        render(e, aSrc, -0.5, 0, 0.5, 0, 0, 0.5, X, Y);
 
         gfx.rotate(180);
 
         //}
         //if (bVis) {
-            render(e, bSrc, -0.5, 0, 0.5, 1, nx * t, ny * t, xr, yr);
+            render(e, bSrc, -0.5, 0, 0.5, 0, 0, 0.5, X, Y);
         //}
 
         gfx.restore();
