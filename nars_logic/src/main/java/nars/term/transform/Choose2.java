@@ -16,22 +16,21 @@ public class Choose2 extends Termutator {
     private final FindSubst f;
     private int shuffle, shuffle2;
     private final Term[] yy;
-    private transient String id;
     private int a, b;
 
     @Override
     public String toString() {
-        if (this.id == null) {
-            return this.id = "Choose2{" +
+
+            return "Choose2{" +
                     "yFree=" + yFree +
                     ", xEllipsis=" + xEllipsis +
                     ", x=" + x[0] + "," + x[1] +
                     '}';
-        }
-        return this.id;
+
     }
 
     public Choose2(FindSubst f, Term xEllipsis, Term[] x, Set<Term> yFree) {
+        super(xEllipsis);
         this.f = f;
         this.x = x;
         this.yFree = yFree;

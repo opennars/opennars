@@ -17,23 +17,20 @@ public class Choose1 extends Termutator {
     private final FindSubst f;
     private int shuffle;
     private final Term[] yy;
-    private transient String id;
     private int count;
 
     @Override
     public String toString() {
-        if (this.id == null) {
-            return this.id = "Choose1{" +
-                    "yFree=" + yFree +
-                    ", xEllipsis=" + xEllipsis +
-                    ", x=" + x +
-                    '}';
-        }
-        return this.id;
+
+        return "Choose1{" +
+                "yFree=" + yFree +
+                ", xEllipsis=" + xEllipsis +
+                ", x=" + x +
+                '}';
     }
 
     public Choose1(FindSubst f, Term xEllipsis, Term x, Set<Term> yFree) {
-
+        super(xEllipsis);
 
         int ysize = yFree.size();
         if (ysize < 2) {
@@ -58,8 +55,8 @@ public class Choose1 extends Termutator {
     @Override
     public void reset() {
         int l = yy.length;
-        this.count = l -1;
-        this.shuffle = f.random.nextInt(l -1); //randomize starting offset
+        this.count = l - 1;
+        this.shuffle = f.random.nextInt(l - 1); //randomize starting offset
     }
 
     @Override
@@ -71,7 +68,7 @@ public class Choose1 extends Termutator {
     public boolean next() {
         final int ysize = yy.length;
 
-        Term y = yy[(shuffle+count) % ysize];
+        Term y = yy[(shuffle + count) % ysize];
         count--;
 
         if (y.equals(x))

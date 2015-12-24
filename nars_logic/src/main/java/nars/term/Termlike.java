@@ -4,9 +4,9 @@ import java.util.function.Predicate;
 
 /**
  * Features exhibited by, and which can classify terms
+ * and termlike productions
  */
 public interface Termlike  {
-
 
     int volume();
     int complexity();

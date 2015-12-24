@@ -8,6 +8,7 @@ import nars.NAR;
 import nars.Op;
 import nars.term.Term;
 import nars.term.TermContainer;
+import nars.term.Termlike;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.term.constraint.MatchConstraint;
@@ -33,7 +34,9 @@ abstract public class FindSubst extends Versioning implements Subst {
 
     public final Op type;
 
-    /** variables whose contents are disallowed to equal each other */
+    /**
+     * variables whose contents are disallowed to equal each other
+     */
     public ImmutableMap<Term, MatchConstraint> constraints = null;
 
     //public abstract Term resolve(Term t, Substitution s);
@@ -41,12 +44,15 @@ abstract public class FindSubst extends Versioning implements Subst {
     public final VarCachedVersionMap xy;
     public final VarCachedVersionMap yx;
 
-    /** current "y"-term being matched against */
+    /**
+     * current "y"-term being matched against
+     */
     public final Versioned<Term> term;
 
-    /** parent, if in subterms */
+    /**
+     * parent, if in subterms
+     */
     public final Versioned<Compound> parent;
-
 
 
     public final List<Termutator> termutes = Global.newArrayList();
@@ -64,9 +70,6 @@ abstract public class FindSubst extends Versioning implements Subst {
                 ", yx:" + yx +
                 '}';
     }
-
-
-
 
 
     public FindSubst(Op type, NAR nar) {
@@ -90,10 +93,14 @@ abstract public class FindSubst extends Versioning implements Subst {
 
     }
 
-    /** called each time all variables are satisfied in a unique way */
+    /**
+     * called each time all variables are satisfied in a unique way
+     */
     abstract public boolean onMatch();
 
-    /** called each time a match is not fully successful */
+    /**
+     * called each time a match is not fully successful
+     */
     public void onPartial() {
 
     }
@@ -118,33 +125,31 @@ abstract public class FindSubst extends Versioning implements Subst {
         Term pp = parent.get().term(index);
         /*if (pp == null)
             throw new RuntimeException("null subterm");*/
-        term.set( pp );
+        term.set(pp);
     }
 
     public void matchAll(Term x, Term y) {
         boolean b = match(x, y);
-            if (b && !termutes.isEmpty()) {
+        if (b && !termutes.isEmpty()) {
 
-                //repeat until # of termutes stabilizes
-                int termutesPre;
-                //System.out.println("termutes start");
-                do {
-                    //System.out.println("  termutes: " + termutes);
-                    termutesPre = termutes.size();
-                    matchTermutations(0, termutesPre);
-                } while (termutes.size() != termutesPre);
+            //repeat until # of termutes stabilizes
+            int termutesPre;
+            //System.out.println("termutes start");
+            do {
+                //System.out.println("  termutes: " + termutes);
+                termutesPre = termutes.size();
+                matchTermutations(0, termutesPre);
+            } while (termutes.size() != termutesPre);
 
-                termutes.clear();
+            termutes.clear();
 
-            } else {
-                if (b)
-                    onMatch();
-                else
-                    onPartial();
-            }
-//        } else {
-//            onPartial();
-//        }
+        } else {
+            if (b)
+                onMatch();
+            else
+                onPartial();
+        }
+
     }
 
     private final void print(String prefix, Term a, Term b) {
@@ -157,8 +162,10 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-    /** null to disable exclusions */
-    public void setConstraints(ImmutableMap<Term,MatchConstraint> constraints) {
+    /**
+     * null to disable exclusions
+     */
+    public void setConstraints(ImmutableMap<Term, MatchConstraint> constraints) {
         if (constraints == null || constraints.isEmpty())
             constraints = null;
         else
@@ -166,16 +173,12 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-
-
-
-
     /**
      * recurses into the next sublevel of the term
      */
     public final boolean match(Term x, Term y) {
 
-         if (x.equals(y)) {
+        if (x.equals(y)) {
             return true;
         }
 
@@ -187,7 +190,7 @@ abstract public class FindSubst extends Versioning implements Subst {
         Op yOp = y.op();
 
         if ((xOp == yOp) && (x instanceof Compound)) {
-            return ((Compound)x).match((Compound)y, this);
+            return ((Compound) x).match((Compound) y, this);
         }
 
         if (xOp == t) {
@@ -305,7 +308,7 @@ abstract public class FindSubst extends Versioning implements Subst {
             if (e instanceof EllipsisTransform) {
                 //this involves a special "image ellipsis transform"
 
-                EllipsisTransform et = (EllipsisTransform)e;
+                EllipsisTransform et = (EllipsisTransform) e;
                 if (et.from.equals(Op.Imdex)) {
 
                     Term n = apply(et.to, false);
@@ -342,7 +345,7 @@ abstract public class FindSubst extends Versioning implements Subst {
                         ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
                         //clear not necessary as in above block because ImageTakeMatch just modifies the array already present, so it will be equal
                         return putXY(e, ImageMatch.take(
-                            raw, imageIndex)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
+                                raw, imageIndex)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
                     }
                 }
                 return false;
@@ -374,7 +377,7 @@ abstract public class FindSubst extends Versioning implements Subst {
 
             }
 
-            return matchEllipsedLinear( X, e, Y );
+            return matchEllipsedLinear(X, e, Y);
         }
 
     }
@@ -387,9 +390,36 @@ abstract public class FindSubst extends Versioning implements Subst {
 //        return false;
 //    }
 
-    protected boolean termute(Termutator t) {
-        if (!termutes.contains(t))
-            termutes.add(t);
+    protected boolean addTermutator(Termutator t) {
+
+        //resolve termutator interferences that the addition may cause
+        Termlike a = t.resultKey;
+        for (int i = 0; i < termutes.size(); i++) {
+            Termutator s = termutes.get(i);
+            Termlike b = s.resultKey;
+            if (a.equals(b)) {
+                //TODO maybe bifurcate a termutator tree with an OR branch?
+
+                //if exact same conditions, dont add duplicate
+                if (a.getClass() == b.getClass() &&
+                        s.toString().equals(t.toString()))
+                    return true;
+                else
+                    continue;
+            }
+            if (a.containsTerm((Term) b)) {
+                //insert b before a since it is more specific
+                termutes.add(i, t);
+                return true;
+            } else if (b.containsTerm((Term) a)) {
+                //a contained by b; append to end (after a)
+                continue;
+            }
+
+        }
+
+        //unique, add
+        termutes.add(t);
         return true;
     }
 
@@ -397,8 +427,8 @@ abstract public class FindSubst extends Versioning implements Subst {
         //SPECIAL CASE: no variables
         {
             if
-                    (((type!=Op.VAR_PATTERN && (0 == (x.structure() & type.bit()))) ||
-            ((type == Op.VAR_PATTERN) && !Variable.hasPatternVariable(x) )))
+                    (((type != Op.VAR_PATTERN && (0 == (x.structure() & type.bit()))) ||
+                    ((type == Op.VAR_PATTERN) && !Variable.hasPatternVariable(x))))
 
             {
                 return matchLinear(x, y, 0, x.size());
@@ -406,8 +436,7 @@ abstract public class FindSubst extends Versioning implements Subst {
             }
         }
 
-        termute(new CommutivePermutations(this, x, y));
-        return true;
+        return addTermutator(new CommutivePermutations(this, x, y));
     }
 
 
@@ -418,7 +447,7 @@ abstract public class FindSubst extends Versioning implements Subst {
      * <p>
      * one unmatched ellipsis (identified)
      * <p>                    //HACK should not need new list
-
+     * <p>
      * zero or more "constant" (non-pattern var) terms
      * all of which Y must contain
      * <p>
@@ -479,7 +508,7 @@ abstract public class FindSubst extends Versioning implements Subst {
             if (!xVar)
                 throw new RuntimeException("fault");
 
-            if (x!=Xellipsis)
+            if (x != Xellipsis)
                 xSpecific.add(x);
 
 
@@ -504,8 +533,9 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-
-    /** toMatch matched into some or all of Y's terms */
+    /**
+     * toMatch matched into some or all of Y's terms
+     */
     private boolean matchCommutiveRemaining(Term xEllipsis, Set<Term> x, MutableSet<Term> yFree) {
         int xs = x.size();
 
@@ -513,10 +543,10 @@ abstract public class FindSubst extends Versioning implements Subst {
             case 0:
                 return putXY(xEllipsis, new CollectionEllipsisMatch(yFree));
             case 1:
-                return termute(new Choose1(this,
+                return addTermutator(new Choose1(this,
                         xEllipsis, x.iterator().next(), yFree));
             case 2:
-                return termute(new Choose2(this,
+                return addTermutator(new Choose2(this,
                         xEllipsis, x.toArray(new Term[x.size()]), yFree));
             default:
                 //3 or more combination
@@ -686,7 +716,7 @@ abstract public class FindSubst extends Versioning implements Subst {
     public boolean matchLinearReverse(TermContainer X, TermContainer Y, int start, int stop) {
 
         boolean success = true;
-        for (int i = stop-1; i >=start; i--) {
+        for (int i = stop - 1; i >= start; i--) {
             if (!match(X.term(i), Y.term(i))) {
                 success = false;
                 break;
@@ -734,9 +764,9 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-
-
-    /** returns true if the assignment was allowed, false otherwise */
+    /**
+     * returns true if the assignment was allowed, false otherwise
+     */
     public final boolean putXY(Term x /* usually a Variable */, Term y) {
 
 //        if (x.equals(y))
@@ -745,8 +775,8 @@ abstract public class FindSubst extends Versioning implements Subst {
         VarCachedVersionMap xy = this.xy;
 
         Versioned<Term> v = xy.map.get(x);
-        Term vv = v!=null ? v.get() : null;
-        if (vv!=null) {
+        Term vv = v != null ? v.get() : null;
+        if (vv != null) {
             if (y.equals(vv)) {
                 return true; //same value
             } else {
@@ -764,7 +794,9 @@ abstract public class FindSubst extends Versioning implements Subst {
         return true;
     }
 
-    /** true if the match assignment is allowed by constraints */
+    /**
+     * true if the match assignment is allowed by constraints
+     */
     public boolean assignable(Term x, Term y) {
         if (constraints == null) return true;
         MatchConstraint c = constraints.get(x);

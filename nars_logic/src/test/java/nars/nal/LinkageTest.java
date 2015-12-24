@@ -7,7 +7,9 @@ import nars.nar.Default;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
+import nars.util.graph.TermLinkGraph;
 import nars.util.meter.TestNAR;
+import org.jgrapht.alg.ConnectivityInspector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -21,7 +23,7 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class LinkageTest extends AbstractNALTester {
 
-    private final int cycles = 35;
+    private final int cycles = 4;
 
     public LinkageTest(Supplier<NAR> b) { super(b); }
 
@@ -88,11 +90,33 @@ public class LinkageTest extends AbstractNALTester {
 
         //List<String> fails = new ArrayList();
 
-        Concept ret = nar.concept(premise1);
+
+        boolean passed = linksIndirectly(nar, premise2, nar.concept(premise1));
+        boolean passed2 = linksIndirectly(nar, premise1, nar.concept(premise2));
+
+
+        //System.err.println(premise1 + " not linked with " + premise2);
+        TermLinkGraph g = new TermLinkGraph(nar);
+
+        //g.print(System.out);
+        //System.out.println(g.isConnected() + " " + g.vertexSet().size() + " " + g.edgeSet().size());
+        if (!g.isConnected()) {
+            ConnectivityInspector ci = new ConnectivityInspector(g);
+            System.out.println("\ndisconnected termlink connectivity sets for " + premise1 + " and " + premise2);
+            ci.connectedSets().forEach( s -> System.out.println("\n\t" + s));
+        }
+        assertTrue(g.isConnected());
+
+        assertTrue(passed);
+        assertTrue(passed2);
+
+    }
+
+    public boolean linksIndirectly(NAR nar, Compound premise2, Concept ret) {
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
             for (Termed entry : ret.getTermLinks()) {
-                if(entry.term().equals(premise2)) {
+                if(entry.term().equals(premise2.term())) {
                     passed = true;
                     break;
                 }
@@ -101,7 +125,7 @@ public class LinkageTest extends AbstractNALTester {
                 Concept Wc = nar.concept(w);
                 if(Wc != null) {
                     for (Termed entry2 : Wc.getTermLinks()) {
-                        if(entry2.equals(premise2)) {
+                        if(entry2.term().equals(premise2.term())) {
                             passed = true;
                             break;
                         }
@@ -109,42 +133,7 @@ public class LinkageTest extends AbstractNALTester {
                 }
             }
         }
-
-        Concept ret2 = nar.concept(premise2);
-        boolean passed2 = false;
-        if(ret2!=null && ret2.getTermLinks()!=null) {
-            for (Termed entry : ret2.getTermLinks()) {
-                if(entry.term().equals(premise1)) {
-                    passed2 = true;
-                    break;
-                }
-                Term w = entry.term();
-                Concept Wc = nar.concept(w);
-                if(Wc != null) {
-                    for (Termed entry2 : Wc.getTermLinks()) {
-                        if(entry2.term().equals(premise1)) {
-                            passed2 = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        //System.err.println(premise1 + " not linked with " + premise2);
-        //TermLinkGraph g = new TermLinkGraph(nar);
-
-        //g.print(System.out);
-
-        assertTrue(passed && passed2);
-        //assertTrue(g.isConnected());
-
-//        if(passed && passed2) { //dummy to pass the test:
-//            tester.believe("<a --> b>");
-//        } else {
-//
-//        }
-//        tester.mustBelieve(10,"<a --> b>",0.9f);
+        return passed;
     }
 
 
@@ -153,8 +142,19 @@ public class LinkageTest extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe(premise1); //.en("If robin is a type of bird then robin can fly.");
         tester.believe(premise2); //.en("Robin is a type of bird.");
-        tester.run(10);
+        tester.nar.frame(10);
 
+        boolean passed = links(premise1, premise2, tester);
+        boolean passed2 = links(premise2, premise1, tester);
+        assertTrue(passed);
+        assertTrue(passed2);
+
+
+        tester.believe("<a --> b>");
+        tester.mustBelieve(10,"<a --> b>",0.9f);
+    }
+
+    public boolean links(String premise1, String premise2, TestNAR tester) {
         Concept ret = tester.nar.concept(premise1);
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
@@ -188,44 +188,7 @@ public class LinkageTest extends AbstractNALTester {
                 }*/
             }
         }
-
-        Concept ret2 = tester.nar.concept(premise2);
-        boolean passed2 = false;
-        if(ret2!=null && ret2.getTermLinks()!=null) {
-            for (Termed entry : ret2.getTermLinks()) {
-                if(entry.term().toString().equals(premise1)) {
-                    passed2 = true;
-                    break;
-                }
-                Term w = entry.term();
-                Concept Wc = tester.nar.concept(w);
-                if(Wc != null) {
-                    for (Termed entry2 : Wc.getTermLinks()) {
-                        if(entry2.term().toString().equals(premise1)) {
-                            passed2 = true;
-                            break;
-                        }
-                        Term w2 = entry2.term().get();
-                        Concept Wc2 = tester.nar.concept(w2);
-                        if(Wc2 != null) {
-                            for (Termed entry3 : Wc2.getTermLinks()) {
-                                if(entry3.term().toString().equals(premise1)) {
-                                    passed2 = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if(passed && passed2) { //dummy to pass the test:
-            tester.believe("<a --> b>");
-        } else {
-            throw new Exception("failed");
-        }
-        tester.mustBelieve(10,"<a --> b>",0.9f);
+        return passed;
     }
 
 
@@ -330,50 +293,43 @@ public class LinkageTest extends AbstractNALTester {
         ProperlyLinkedIndirectlyTest("<a --> <b --> <#1 --> x>>>", "<k --> x>");
     }
 
-    public void ConceptFormationTest(String s) throws Exception {
+    public void testConceptFormed(String s) throws Exception {
         TestNAR tester = test();
         tester.believe(s,1.0f,0.9f);
-        tester.run(24);
+        tester.nar.frame(24);
         Concept ret = tester.nar.concept(s);
 
-//        if(ret == null) {
-//            tester.nar.forEachConcept(System.out::println);
-//        }
-
         assertNotNull("Failed to create a concept for "+s, ret);
-
-
-
     }
 
     @Test
     public void Basic_Concept_Formation_Test() throws Exception {
-        ConceptFormationTest("<a --> b>");
+        testConceptFormed("<a --> b>");
     }
 
     @Test
     public void Advanced_Concept_Formation_Test() throws Exception {
-        ConceptFormationTest("<#1 --> b>");
+        testConceptFormed("<#1 --> b>");
     }
 
     @Test
      public void Advanced_Concept_Formation_Test2() throws Exception {
-        ConceptFormationTest("<<$1 --> a> ==> <$1 --> b>>");
+        testConceptFormed("<<$1 --> a> ==> <$1 --> b>>");
     }
 
     @Test
     public void Advanced_Concept_Formation_Test2_2() throws Exception {
-        ConceptFormationTest("<<$1 --> bird> ==> <$1 --> animal>>");
+        testConceptFormed("<<$1 --> bird> ==> <$1 --> animal>>");
     }
 
     @Test
     public void Advanced_Concept_Formation_Test3() throws Exception {
-        ConceptFormationTest("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/, open, $2, _)>>)");
+        testConceptFormed("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/, open, $2, _)>>)");
     }
 
     @Test
     public void Advanced_Concept_Formation_Test4() throws Exception {
-        ConceptFormationTest("(&&,<#1 --> (/,open,#2,_)>,<#1 --> lock>,<#2 --> key>)");
+        testConceptFormed("(&&,<#1 --> (/,open,#2,_)>,<#1 --> lock>,<#2 --> key>)");
     }
 
 

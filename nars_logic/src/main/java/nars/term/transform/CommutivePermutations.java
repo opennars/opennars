@@ -9,20 +9,18 @@ public class CommutivePermutations extends Termutator {
     final ShuffledSubterms perm;
     private final TermContainer y;
     private final FindSubst f;
-    private transient String id;
 
     @Override
     public String toString() {
-        if (this.id == null) {
-            return this.id = "CommutivePermutations{" +
-                    "perm=" + perm.compound /* should be in normal sorted order if commutive */ +
+
+            return "CommutivePermutations{" +
+                    "perm=" + perm.compound +
                     ", y=" + y +
                     '}';
-        }
-        return this.id;
     }
 
     public CommutivePermutations(FindSubst f, TermContainer x, TermContainer Y) {
+        super(x);
         this.perm = new ShuffledSubterms(f.random, x);
         this.y = Y;
         this.f = f;
