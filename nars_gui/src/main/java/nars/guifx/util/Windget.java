@@ -18,7 +18,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import nars.guifx.DefaultWindow;
 import nars.guifx.Spacegraph;
-import nars.guifx.graph2.Tangible;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 /** window widget */
@@ -89,11 +88,9 @@ public class Windget extends DefaultWindow  {
 
             setOnMouseEntered(event -> {
                 setFill(Color.GREEN);
-                event.consume();
             });
             setOnMouseExited(event -> {
                 setFill(Color.ORANGE);
-                event.consume();
             });
             /*setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
@@ -127,7 +124,6 @@ public class Windget extends DefaultWindow  {
                     }
 
                     dragging = null;
-                    e.consume();
                 }
 
             });
@@ -344,13 +340,12 @@ public class Windget extends DefaultWindow  {
         super(title);
 
 
-
-
         getStyleClass().add("windget");
 
 
         overlay = new AnchorPane();
         overlay.setPickOnBounds(false);
+        overlay.setMouseTransparent(true);
 
         root.getChildren().setAll(content);
         root.getChildren().add(overlay);
@@ -362,7 +357,7 @@ public class Windget extends DefaultWindow  {
         this(title, content);
 
 
-        new Tangible(this);
+        //new Tangible(this);
 
 
         //content.setAutoSizeChildren(true);

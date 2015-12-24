@@ -10,6 +10,7 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.Deriver;
 import nars.nal.RuleMatch;
+import nars.nar.experimental.Derivelet;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
@@ -25,7 +26,6 @@ import nars.util.event.Active;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -174,8 +174,6 @@ public class Default extends AbstractNAR {
 
         public final MutableInteger capacity = new MutableInteger();
 
-        private BagBudget[] termsArray = new BagBudget[0];
-        private BagBudget[] tasksArray = new BagBudget[0];
 
 
 //        @Deprecated
@@ -252,7 +250,8 @@ public class Default extends AbstractNAR {
                 b.setPriority(p);
             return true;
         };
-        Predicate<BagBudget> alannForget;
+
+        public final Predicate<BagBudget> alannForget;
 
         protected void fireConcepts(int conceptsToFire, Consumer<ConceptProcess> processor) {
 
@@ -281,7 +280,7 @@ public class Default extends AbstractNAR {
 
                 //if above firing threshold
                 //fireConcept(c);
-                firePremiseSquare(nar, processor, c,
+                der.firePremiseSquare(nar, processor, c,
                         tasklinksSelectedPerFiredConcept.intValue(),
                         termlinksSelectedPerFiredConcept.intValue(),
                         //simpleForgetDecay
@@ -301,59 +300,8 @@ public class Default extends AbstractNAR {
             });
         }*/
 
+        final Derivelet der = new Derivelet();
 
-        /** temporary re-usable array for batch firing */
-        private final Set<BagBudget<Termed>> terms = Global.newHashSet(1);
-        /** temporary re-usable array for batch firing */
-        private final Set<BagBudget<Task>> tasks = Global.newHashSet(1);
-
-        /**
-         * iteratively supplies a matrix of premises from the next N tasklinks and M termlinks
-         * (recycles buffers, non-thread safe, one thread use this at a time)
-         */
-        public void firePremiseSquare(
-                NAR nar,
-                Consumer<ConceptProcess> proc,
-                Concept concept,
-                int tasklinks, int termlinks, Predicate<BagBudget> each) {
-
-            //Memory m = nar.memory;
-            //int dur = m.duration();
-
-            //long now = nar.time();
-
-            /* dur, now,
-                taskLinkForgetDurations * dur,
-                tasks); */
-            int tasksCount = concept.getTaskLinks().next(tasklinks, each, tasks);
-            if (tasksCount == 0) return;
-            concept.getTaskLinks().commit();
-
-
-
-            /*int termsCount = concept.nextTermLinks(dur, now,
-                m.termLinkForgetDurations.floatValue(),
-                terms);*/
-            int termsCount = concept.getTermLinks().next(termlinks, each, terms);
-            if (termsCount == 0) return;
-            concept.getTermLinks().commit();
-
-
-            /*System.out.println(tasks.size() + "," + terms.size() + ": "
-                    + tasks + " " + terms);*/
-
-            //convert to array for fast for-within-for iterations
-            tasksArray = this.tasks.toArray(tasksArray);
-            this.tasks.clear();
-
-            termsArray = this.terms.toArray(termsArray);
-            this.terms.clear();
-
-            ConceptProcess.firePremises(concept,
-                    tasksArray, termsArray,
-                    proc, nar);
-
-        }
 
 
 //        protected final void fireConceptSquare(Concept c, Consumer<ConceptProcess> withResult) {

@@ -184,7 +184,7 @@ public class ZoomFX extends AnchorPane {
      */
     public void pan(double sceneX, double sceneY) {
         if (panStart == null) {
-            startPan(sceneX, sceneY);
+            startPan(panX.target, panY.target);
         } else {
             ArrayRealVector panStart = this.panStart;
 
@@ -195,11 +195,13 @@ public class ZoomFX extends AnchorPane {
             panStart.setEntry(0, sceneX);
             panStart.setEntry(1, sceneY);
 
+
             panX.setTargetPlus(-dX);
             panY.setTargetPlus(-dY);
 
         }
     }
+
 
 
     /**

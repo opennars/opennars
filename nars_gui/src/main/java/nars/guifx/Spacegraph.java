@@ -210,17 +210,24 @@ public class Spacegraph extends ZoomFX {
         DragActionHandler.with(zoomFXPan)
 
                 .doOnDragStart((event) -> {
-                     if (event.getButton() == MouseButton.SECONDARY)
-                        startPan(event.getSceneX(), event.getSceneY());
-                    //event.consume();
+                     if (event.getButton() == MouseButton.SECONDARY) {
+                         startPan(event.getSceneX(), event.getSceneY());
+                         event.consume();
+                     }
                 })
                 .doOnDrag((event) -> {
-                    pan(event.getSceneX(), event.getSceneY());
-                    //event.consume();
+
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        pan(event.getSceneX(), event.getSceneY());
+                        event.consume();
+                    }
+
                 })
                 .doOnDragFinish((event) -> {
-                    endPan();
-                    //event.consume();
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        endPan();
+                        event.consume();
+                    }
                 })
                 .register(getViewport());
 

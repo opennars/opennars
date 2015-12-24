@@ -42,9 +42,11 @@ import javafx.geometry.Insets;
 import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -54,6 +56,7 @@ import javafx.scene.transform.Transform;
 import jfxtras.labs.scene.control.window.SelectableNode;
 import jfxtras.labs.scene.control.window.Window;
 import jfxtras.labs.util.WindowUtil;
+import jfxtras.scene.control.window.WindowIcon;
 import jfxtras.util.NodeUtil;
 import nars.guifx.graph2.layout.GraphNode;
 
@@ -77,9 +80,9 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
     private boolean RESIZE_LEFT;
     private boolean RESIZE_BOTTOM;
     private boolean RESIZE_RIGHT;
-    public Label titleBar;
+    public Node titleBar;
     public final StackPane root = new StackPane();
-    private double contentScale = 1.0;
+    private final double contentScale = 0.95f;
     private double oldHeight;
     private Timeline minimizeTimeLine;
 
@@ -110,13 +113,13 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
      * List of icons shown on the left. TODO replace left/right with more
      * generic position property?
      */
-    private final ObservableList<jfxtras.scene.control.window.WindowIcon> leftIcons =
+    private final ObservableList<WindowIcon> leftIcons =
             FXCollections.observableArrayList();
     /**
      * List of icons shown on the right. TODO replace left/right with more
      * generic position property?
      */
-    private final ObservableList<jfxtras.scene.control.window.WindowIcon> rightIcons = FXCollections.observableArrayList();
+    private final ObservableList<WindowIcon> rightIcons = FXCollections.observableArrayList();
     /**
      * Defines the width of the border /area where the user can grab the window
      * and resize it.
@@ -158,6 +161,28 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
     public DefaultWindow(String title) {
 
         titleBar = new Label(title);
+        //titleBar = new Button(title);
+
+        titleBar.setOnMouseClicked(e-> {
+            if (e.getButton() == MouseButton.SECONDARY) {
+                Spacegraph s = getSpace();
+                if (s!=null) {
+                    System.out.println("autozoom to: " + DefaultWindow.this);
+                    System.out.println(s.getZoomFactor());
+
+
+
+                    Bounds bp = getBoundsInParent();
+                    double lx = bp.getMinX();
+                    double ly = bp.getMinY();
+
+                    s.startPan(s.getPanX(),s.getPanY());//getLayoutX(), getLayoutY());
+                    s.pan(-lx+s.getPanX(), -ly+s.getPanY());
+                    s.setZoomFactor(2f);
+                    s.endPan();
+                }
+            }
+        });
 
         titleBar.setCache(true);
         titleBar.setCacheHint(CacheHint.SCALE);
@@ -166,6 +191,16 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
 
         init2();
 
+    }
+
+    private Spacegraph getSpace() {
+        Parent p = getParent();
+        while (p!=null && (!(p instanceof Spacegraph))) {
+            p = p.getParent();
+        }
+        if (p instanceof Spacegraph)
+            return (Spacegraph) p;
+        return null;
     }
 
 
@@ -226,7 +261,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
      *
      * @see #getRightIcons()
      */
-    public ObservableList<jfxtras.scene.control.window.WindowIcon> getLeftIcons() {
+    public ObservableList<WindowIcon> getLeftIcons() {
         return leftIcons;
     }
 
@@ -239,7 +274,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
      *
      * @see #getLeftIcons()
      */
-    public ObservableList<jfxtras.scene.control.window.WindowIcon> getRightIcons() {
+    public ObservableList<WindowIcon> getRightIcons() {
         return rightIcons;
     }
 
@@ -419,7 +454,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
      *
      * @return the "on-closed-action" property.
      *
-     * @see #setOnClosedAction(javafx.event.EventHandler)
+     * @see #setOnClosedAction(EventHandler)
      */
     public ObjectProperty<EventHandler<ActionEvent>> onClosedActionProperty() {
         return onClosedActionProperty;
@@ -451,7 +486,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
      *
      * @return the "on-close-action" property.
      *
-     * @see #setOnCloseAction(javafx.event.EventHandler)
+     * @see #setOnCloseAction(EventHandler)
      */
     public ObjectProperty<EventHandler<ActionEvent>> onCloseActionProperty() {
         return onCloseActionProperty;
@@ -483,7 +518,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
      *
      * @return the "close-transition" property.
      *
-     * @see #setCloseTransition(javafx.animation.Transition)
+     * @see #setCloseTransition(Transition)
      */
     public ObjectProperty<Transition> closeTransitionProperty() {
         return closeTransitionProperty;
@@ -558,6 +593,8 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
 
         content = new BorderPane();
 
+
+
         getChildren().add(content);
 
         content.setCenter(root);
@@ -574,7 +611,7 @@ public class DefaultWindow extends GraphNode implements SelectableNode {
             if (newValue) {
                 DropShadow shadow = new DropShadow(20, Color.WHITE);
                 Glow effect = new Glow(0.5);
-//                    shadow.setInput(effect);
+                shadow.setInput(effect);
                 setEffect(effect);
             } else {
                 setEffect(null);

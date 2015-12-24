@@ -2,12 +2,10 @@ package nars.nar.experimental;
 
 import nars.Global;
 import nars.Memory;
-import nars.NAR;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nar.AbstractNAR;
 import nars.op.app.Commander;
-import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
@@ -15,7 +13,6 @@ import nars.util.data.random.XorShift128PlusRandom;
 
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 /**
  * Base class for ALANN impls
@@ -211,156 +208,4 @@ public abstract class AbstractAlann extends AbstractNAR {
         return -1;
     }
 
-    /** particle that travels through the graph,
-     * responsible for deciding what to derive */
-    public static class Derivelet  {
-
-
-        /** modulating the TTL (time-to-live) allows the system to control
-         * the quality of attention it experiences.
-         * a longer TTL will cause derivelets to restart
-         * less frequently and continue exploring potentially "yarny"
-         * paths of knowledge
-          */
-        int ttl;
-
-
-        /** current location */
-        public Concept concept;
-
-        /** utility context */
-        public DeriveletContext context;
-
-
-        public ConceptProcess nextPremise(long now) {
-
-//            final Concept concept = this.concept;
-//
-//
-//
-//            concept.getBudget().forget(now, context.getForgetCycles(), 0);
-//
-//
-//
-//            TaskLink tl = concept.getTaskLinks().forgetNext();
-//            if ((tl == null) || (tl.getTask().isDeleted()))
-//                return null;
-//
-//            /*if (runner.nextFloat() < 0.1) {
-//                return new ALANNConceptTaskLinkProcess(concept, tl);
-//            }
-//            else*/ {
-//                TermLink tm = concept.getTermLinks().forgetNext();
-//                if ((tm != null) && (tl.type != TermLink.TRANSFORM)) {
-//                    return new Derivelet.ALANNConceptTaskTermLinkProcess(nar(), concept, tl, tm);
-//                }
-//                else {
-//                    return new Derivelet.ALANNConceptTaskLinkProcess(nar(), concept, tl);
-//                }
-//            }
-
-            return null;
-        }
-
-        protected void inputDerivations(final Set<Task> derived) {
-            if (derived!=null) {
-//                //transform this ConceptProcess's derivation to a TaskProcess and run it
-//                final Memory mem = concept.getMemory();
-//
-//                derived.forEach(/*newTaskProcess*/ t -> {
-//
-//                    if (t.init(mem)) {
-//
-//                        //nar().memory().eventDerived.emit(t);
-//
-//                        //System.err.println("direct input: " + t);
-//                        nar().exec(t);
-//                    }
-//
-//                });
-            }
-        }
-
-        private NAR nar() {
-            return context.nar;
-        }
-
-        /** determines a next concept to move adjacent to
-         *  the concept it is currently at
-         */
-        public Concept nextConcept() {
-
-            final Concept concept = this.concept;
-
-            if (concept == null) {
-                return null;
-            }
-
-
-            final float x = context.nextFloat();
-
-            //calculate probability it will stay at this concept
-            final float stayProb = 0.5f ;//(concept.getPriority()) * 0.5f;
-            if (x < stayProb ) {
-                //stay here
-                return concept;
-            }
-            else {
-//                final TLink tl;
-//                float rem = 1.0f - stayProb;
-//                if (x > stayProb + rem/2 ) {
-//                    tl = concept.getTermLinks().peekNext();
-//                } else {
-//                    tl = concept.getTaskLinks().peekNext();
-//                }
-//                if (tl != null) {
-//                    Concept c = context.concept(tl.getTerm());
-//                    if (c != null) return c;
-//                }
-            }
-
-            return null;
-        }
-
-        /** run next iteration; true if still alive by end, false if died and needs recycled */
-        final public boolean cycle(final long now) {
-
-
-
-            if (this.ttl-- == 0) {
-                //died
-                return false;
-            }
-
-            if ( (this.concept = nextConcept()) == null) {
-                //dead-end
-                return false;
-            }
-
-            final ConceptProcess p = nextPremise(now);
-            if (p!=null) {
-                //p.input(context.nar, deriver);
-            }
-            else {
-                //no premise
-                return false;
-            }
-
-            return true;
-        }
-
-
-        public final void start(final Concept concept, int ttl, final DeriveletContext context) {
-            this.context = context;
-            this.concept = concept;
-            this.ttl = ttl;
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName() + '@' + concept;
-        }
-
-
-    }
 }

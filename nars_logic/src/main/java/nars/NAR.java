@@ -437,16 +437,8 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-
-    /**
-     * exposes the memory to an input, derived, or immediate task.
-     * the memory then delegates it to its controller
-     * <p>
-     * return true if the task was processed
-     * if the task was a command, it will return false even if executed
-     */
-    public final boolean input(Task t) {
-
+    /** returns a validated task if valid, null otherwise */
+    public Task validInput(Task t) {
         Memory m = memory;
 
 //        if (t == null) {
@@ -459,18 +451,32 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
             if (n == 0) {
                 m.remove(t, "Unknown Command");
             }
-            return false;
+            return null;
         }
 
         Task tNorm = t.normalize(m);
         if (tNorm==null) {
             m.remove(t, "Garbage");
-            return false;
+            return null;
         }
-        t = tNorm;
+
+        return tNorm;
+
+    }
 
 
-        m.eventInput.emit(t);
+    /**
+     * exposes the memory to an input, derived, or immediate task.
+     * the memory then delegates it to its controller
+     * <p>
+     * return true if the task was processed
+     * if the task was a command, it will return false even if executed
+     */
+    public final boolean input(Task t) {
+        if (null == (t = validInput(t)))
+            return false;
+
+        memory.eventInput.emit(t);
 
         return true;
     }
@@ -1040,9 +1046,6 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return running.get();
     }
 
-    public final Concept get(Term key) {
-        return memory.concept(key);
-    }
 
 
     public NAR answer(String question, Consumer<Task> recvSolution) {

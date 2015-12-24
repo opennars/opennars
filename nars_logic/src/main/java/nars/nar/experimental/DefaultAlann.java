@@ -171,8 +171,8 @@ public class DefaultAlann extends AbstractAlann  {
         }
 
         @Override
-        public final Concept concept(Term term) {
-            return get(term);
+        public final Concept concept(Termed term) {
+            return nar.concept(term);
         }
     }
 }

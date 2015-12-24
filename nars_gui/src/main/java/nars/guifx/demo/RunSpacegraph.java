@@ -7,13 +7,11 @@ import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.stage.Stage;
-import nars.$;
 import nars.guifx.Spacegraph;
 import nars.guifx.graph2.layout.HyperOrganicLayout;
 import nars.guifx.terminal.Console;
 import nars.guifx.util.CodeInput;
 import nars.guifx.util.Windget;
-import za.co.knonchalant.builder.POJONode;
 
 
 public class RunSpacegraph extends Application {
@@ -80,12 +78,12 @@ public class RunSpacegraph extends Application {
                     //new IOPane(new Default2(512,8,4,2)), 200, 200).move(-200,300)
             );
 
-            for (int i = 0; i < 4; i++) {
-                addNodes( new Windget("x" + i,
-                        POJONode.build(
-                        //new POJOPane(
-                                $.$("<a --> " + i + '>'))) );
-            }
+//            for (int i = 0; i < 4; i++) {
+//                addNodes( new Windget("x" + i,
+//                        POJONode.build(
+//                        //new POJOPane(
+//                                $.$("<a --> " + i + '>'))) );
+//            }
 
             ground.getChildren().add(new GridCanvas(true));
 
