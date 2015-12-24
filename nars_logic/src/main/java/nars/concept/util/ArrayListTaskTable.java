@@ -1,6 +1,5 @@
 package nars.concept.util;
 
-import javolution.util.function.Equality;
 import nars.Memory;
 import nars.budget.BudgetMerge;
 import nars.task.Task;
@@ -9,6 +8,7 @@ import nars.truth.Truth;
 import nars.util.event.ArraySharingList;
 
 import java.util.Arrays;
+import java.util.function.BiPredicate;
 
 /**
  * implements a Task table suitable for Questions and Quests using an ArrayList.
@@ -83,13 +83,13 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
      * iterator-less implementation
      */
     @Override
-    public Task getFirstEquivalent(Task t, Equality<Task> e) {
+    public Task getFirstEquivalent(Task t, BiPredicate<Task,Task> e) {
         if (isEmpty()) return null;
 
         Task[] aa = getCachedNullTerminatedArray();
         Task a;
         for (int i = 0; null != (a = aa[i++]); ) {
-            if (e.areEqual(a, t))
+            if (e.test(a, t))
                 return a;
         }
         return null;
@@ -97,7 +97,7 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
 
 
     @Override
-    public Task add(Task t, Equality<Task> equality, BudgetMerge duplicateMerge, Memory m) {
+    public Task add(Task t, BiPredicate<Task,Task> equality, BudgetMerge duplicateMerge, Memory m) {
 
         Task existing = getFirstEquivalent(t, equality);
         if (existing != null) {

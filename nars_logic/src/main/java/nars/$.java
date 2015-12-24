@@ -16,7 +16,6 @@ import nars.term.compound.Compound;
 import nars.term.match.VarPattern;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
@@ -242,7 +241,7 @@ public abstract class $  {
         return $.sete(array(t));
     }
 
-    @NotNull private static Term[] array(Collection<Term> t) {
+   private static Term[] array(Collection<Term> t) {
         return t.toArray(new Term[t.size()]);
     }
 

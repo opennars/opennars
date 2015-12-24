@@ -1,6 +1,5 @@
 package nars.util.version;
 
-import org.jetbrains.annotations.NotNull;
 import org.jgrapht.util.ArrayUnenforcedSet;
 
 import java.util.AbstractMap;
@@ -142,7 +141,6 @@ public class VersionMap<X,Y> extends AbstractMap<X, Y>  {
         return map.computeIfAbsent(key, this::newEntry);
     }
 
-    @NotNull
     public Versioned<Y> newEntry(X k) {
         return cache(k) ? new Versioned(context) :
             new RemovingVersionedEntry(k);

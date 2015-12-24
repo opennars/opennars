@@ -281,8 +281,9 @@ public class Cell {
                         drawtext(s,"-");
                     break;
                 case Turret:            
-                    if (charge > 0)
-                        s.particles.emitParticles(0.5f, 0.3f, s.getTime()/ 40.0f, 0.07f, state.x+0.5f, state.y+0.5f, 1);
+                    /*if (charge > 0)
+                        s.particles.emitParticles(0.5f, 0.3f, s.getTime()/ 40.0f, 0.07f, state.x+0.5f, state.y+0.5f, 1);*/
+                    System.err.println("particles disabled");
                     break;
             }
         }

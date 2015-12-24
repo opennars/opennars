@@ -1,7 +1,6 @@
 package nars.concept.util;
 
 import com.google.common.collect.Iterators;
-import javolution.util.function.Equality;
 import nars.Memory;
 import nars.budget.BudgetMerge;
 import nars.concept.Concept;
@@ -16,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import static nars.nal.UtilityFunctions.or;
@@ -85,7 +85,7 @@ public interface BeliefTable extends TaskTable {
             return true;
         }
         @Override
-        public Task add(Task t, Equality<Task> equality, BudgetMerge duplicateMerge, Memory m) {
+        public Task add(Task t, BiPredicate<Task,Task> equality, BudgetMerge duplicateMerge, Memory m) {
             return null;
         }
 

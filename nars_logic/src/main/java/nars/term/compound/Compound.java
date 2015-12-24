@@ -39,7 +39,6 @@ import nars.term.visit.SubtermVisitor;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
@@ -163,7 +162,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return result;
     }
 
-    @Nullable
+
     default Term applyImmediateTransform(Subst f, Term result, ImmediateTermTransform tf) {
 
         //Compound args = (Compound) Operator.opArgs((Compound) result).apply(f);

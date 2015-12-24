@@ -5,7 +5,6 @@ import nars.NAR;
 import nars.testchamber.Cell.Logic;
 import nars.testchamber.Cell.Material;
 import nars.testchamber.gui.EditorPanel;
-import nars.testchamber.particle.ParticleSystem;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -13,8 +12,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.util.*;
 import java.util.List;
 
@@ -54,7 +51,7 @@ public class Grid2DSpace extends PApplet {
 //    int sy = 800;
     long lasttime = -1;
     double realtime;
-    public ParticleSystem particles;
+    //public ParticleSystem particles;
     public NAR nar;
     
     public Grid2DSpace(Hauto cells, NAR nar) {
@@ -289,7 +286,7 @@ public class Grid2DSpace extends PApplet {
             frameRate(FrameRate);
         }
         
-        particles = new ParticleSystem(this);
+        //particles = new ParticleSystem(this);
     }
     
     int time = 0;

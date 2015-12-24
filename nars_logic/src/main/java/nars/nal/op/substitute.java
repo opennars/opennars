@@ -6,7 +6,6 @@ import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.term.transform.MapSubst;
 import nars.term.transform.Subst;
-import org.jetbrains.annotations.Nullable;
 
 
 public class substitute extends ImmediateTermTransform {
@@ -32,7 +31,6 @@ public class substitute extends ImmediateTermTransform {
         return subst(term, x, y);
     }
 
-    @Nullable
     public Term subst(Term term, Term x, Term y) {
         if (x.equals(y))
             return term;

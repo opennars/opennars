@@ -16,7 +16,6 @@ package nars.util.data;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
-import javolution.context.ConcurrentContext;
 import nars.util.utf8.Utf8;
 import sun.misc.Unsafe;
 
@@ -580,23 +579,23 @@ public class Util {
      */
     public static void run(Deque<Runnable> tasks, int maxTasksToRun, int threads) {
 
-        int concurrency = Math.min(threads, maxTasksToRun);
-        if (concurrency == 1) {
+        //int concurrency = Math.min(threads, maxTasksToRun);
+        //if (concurrency == 1) {
             tasks.forEach(Runnable::run);
-            return;
-        }
-
-        ConcurrentContext ctx = ConcurrentContext.enter();
-        ctx.setConcurrency(concurrency);
-
-        try {
-            run(tasks, maxTasksToRun, ctx::execute);
-        } finally {
-            // Waits for all concurrent executions to complete.
-            // Re-exports any exception raised during concurrent executions.
-            if (ctx != null)
-                ctx.exit();
-        }
+//            return;
+  //      }
+//
+//        ConcurrentContext ctx = ConcurrentContext.enter();
+//        ctx.setConcurrency(concurrency);
+//
+//        try {
+//            run(tasks, maxTasksToRun, ctx::execute);
+//        } finally {
+//            // Waits for all concurrent executions to complete.
+//            // Re-exports any exception raised during concurrent executions.
+//            if (ctx != null)
+//                ctx.exit();
+//        }
 
     }
 

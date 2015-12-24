@@ -34,7 +34,6 @@ import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -211,7 +210,6 @@ public class LocalRules {
 
     }
 
-    @Nullable
     public static void processSolution(Task question, NAR nal, Task sol, Memory memory, long now) {
 
         //use sol.getTruth() in case sol was changed since input to this method:

@@ -1,6 +1,5 @@
 package nars.concept;
 
-import javolution.util.function.Equality;
 import nars.*;
 import nars.bag.Bag;
 import nars.bag.NullBag;
@@ -15,6 +14,8 @@ import nars.nal.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
+
+import java.util.function.BiPredicate;
 
 
 public class DefaultConcept extends AtomConcept {
@@ -41,16 +42,17 @@ public class DefaultConcept extends AtomConcept {
 
 
 
-    public static final Equality<Task> questionEquivalence = new Equality<Task>() {
+    public static final BiPredicate<Task,Task> questionEquivalence = new BiPredicate<Task,Task> () {
+
 
         @Override
-        public boolean areEqual(Task a, Task b) {
+        public boolean test(Task a, Task b) {
             return (a.equals(b));
         }
 
-        //N/A
-        @Override public int compare(Task task, Task t1) {  return 0;        }
-        @Override public int hashCodeOf(Task task) { return task.hashCode(); }
+//        //N/A
+//        @Override public int compare(Task task, Task t1) {  return 0;        }
+//        @Override public int hashCodeOf(Task task) { return task.hashCode(); }
     };
 
     /** how incoming budget is merged into its existing duplicate quest/question */
@@ -187,7 +189,7 @@ public class DefaultConcept extends AtomConcept {
 
 
 
-    Task add(TaskTable table, Task input, Equality<Task> eq, BudgetMerge duplicateMerge, Memory memory) {
+    Task add(TaskTable table, Task input, BiPredicate<Task,Task>  eq, BudgetMerge duplicateMerge, Memory memory) {
         return table.add(input, eq, duplicateMerge, memory);
     }
 

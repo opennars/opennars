@@ -1,5 +1,6 @@
 package nars.guifx.graph2.impl;
 
+import javafx.scene.transform.Affine;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.source.SpaceGrapher;
@@ -7,8 +8,13 @@ import nars.guifx.graph2.source.SpaceGrapher;
 /** (slower, nicer rendering) half edges are drawn as overlapping polygons */
 public class HalfHalfRightTriangleCanvasEdgeRenderer extends CanvasEdgeRenderer {
 
-    private double[] xp = new double[4];
-    private double[] yp = new double[4];
+    private final double[] xp = new double[3];
+    private final double[] yp = new double[3];
+
+    static final Affine reverse = new Affine();
+    static {
+        reverse.appendRotation(180);
+    }
 
 
     @Override
@@ -17,6 +23,26 @@ public class HalfHalfRightTriangleCanvasEdgeRenderer extends CanvasEdgeRenderer 
         gfx.setStroke(null);
         gfx.setLineCap(null);
         gfx.setLineJoin(null);
+        //if (aSrc.isVisible()) {
+        double[] X = this.xp;
+        double[] Y = this.yp;
+        /*{
+            X[0] = -0.5;
+            Y[0] = 0d;
+            X[1] = -0.5;
+            Y[1] = 0.5;
+            X[2] = 0.5;
+            Y[2] = 0d;
+        }*/
+        {
+            X[0] = -0.5;
+            Y[0] = -0.5;
+            X[1] = -0.5;
+            Y[1] = 0.5;
+            X[2] = 0.5;
+            Y[2] = 0d;
+        }
+
     }
 
     @Override
@@ -29,7 +55,6 @@ public class HalfHalfRightTriangleCanvasEdgeRenderer extends CanvasEdgeRenderer 
         //len-=fw/2;
 
         //double rot = Math.atan2(dy, dx);
-        double rot = /*Fast*/Math.atan2(dy, dx);
 
         //double cx = 0.5f * (x1 + x2);
         //double cy = 0.5f * (y1 + y2);
@@ -41,11 +66,15 @@ public class HalfHalfRightTriangleCanvasEdgeRenderer extends CanvasEdgeRenderer 
 //            scale.setY(len);
 
 
-        final double t = e.getWeight() *maxWidth + minWidth;
+        double p = e.getWeight();
+        final double t = p *maxWidth + minWidth;
 
         gfx.save();
         gfx.translate((x1+x2)/2f, (y1+y2)/2f);
+
+        double rot = /*Fast*/Math.atan2(dy, dx);
         gfx.rotate(rot * 180f/3.14150);
+
         gfx.scale(len, t);
 
 
@@ -55,32 +84,17 @@ public class HalfHalfRightTriangleCanvasEdgeRenderer extends CanvasEdgeRenderer 
         double[] X = this.xp;
         double[] Y = this.yp;
 
-        render(e, aSrc, -0.5, 0, 0.5, 0, 0, 0.5, X, Y);
 
-        gfx.rotate(180);
+        gfx.setFill(TermNode.getTermColor(aSrc.term, colors, p));
+        gfx.fillPolygon(X, Y, 3);
 
-        //}
-        //if (bVis) {
-            render(e, bSrc, -0.5, 0, 0.5, 0, 0, 0.5, X, Y);
-        //}
+        gfx.transform(reverse);
+
+        gfx.setFill(TermNode.getTermColor(aSrc.term, colors, p));
+        gfx.fillPolygon(X, Y, 3);
+
 
         gfx.restore();
-    }
-
-    protected void render(TermEdge e, TermNode origin, double x1, double y1, double x2, double y2, double nx, double ny, double[] X, double[] Y) {
-        double p = e.getWeight();
-
-
-        X[0] = x1;
-        Y[0] = y1;
-        X[1] = x1 + nx;
-        Y[1] = y1 + ny;
-        X[2] = x2;
-        Y[2] = y2;
-
-
-        gfx.setFill(TermNode.getTermColor(origin.term, colors, p));
-        gfx.fillPolygon(X, Y, 3);
     }
 
 }

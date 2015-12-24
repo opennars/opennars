@@ -1,6 +1,5 @@
 package nars.concept.util;
 
-import javolution.util.function.Equality;
 import nars.Memory;
 import nars.budget.BudgetMerge;
 import nars.task.Task;
@@ -10,6 +9,7 @@ import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
 /**
@@ -39,14 +39,14 @@ public interface TaskTable extends Iterable<Task> {
      */
 
 
-    Task add(Task t, Equality<Task> equality, BudgetMerge duplicateMerge, Memory m);
+    Task add(Task t, BiPredicate<Task,Task>  equality, BudgetMerge duplicateMerge, Memory m);
 
     /**
      * @return null if no duplicate was discovered, or the first Task that matched if one was
      */
-    default Task getFirstEquivalent(Task t, Equality<Task> e) {
+    default Task getFirstEquivalent(Task t, BiPredicate<Task,Task>  e) {
         for (Task a : this) {
-            if (e.areEqual(a, t))
+            if (e.test(a, t))
                 return a;
         }
         return null;

@@ -74,11 +74,11 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>org.eclipse.golo</groupId>
-            <artifactId>golo</artifactId>
-            <version>3.0.0-incubation</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.eclipse.golo</groupId>-->
+            <!--<artifactId>golo</artifactId>-->
+            <!--<version>3.0.0-incubation</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>

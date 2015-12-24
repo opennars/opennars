@@ -1,5 +1,10 @@
 package nars.guifx.graph2;
 
+
+//import scala.tools.nsc.doc.model.Object;
+
+
+
 /**
  * Created by me on 9/5/15.
  */
@@ -17,7 +22,6 @@ public abstract class TermEdge /*implements ChangeListener*/ {
 
 
 
-    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public TermEdge(TermNode aSrc, TermNode bSrc) {
 
 

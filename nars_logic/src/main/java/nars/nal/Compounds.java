@@ -16,7 +16,6 @@ import nars.term.Terms;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.truth.Truth;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -241,7 +240,6 @@ public class Compounds {
 
     }
 
-    @Nullable
     public static Term statement(Op op, Term[] t) {
 
         switch (t.length) {
