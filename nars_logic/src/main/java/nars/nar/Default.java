@@ -134,6 +134,12 @@ public class Default extends AbstractNAR {
     }
 
 
+    public static final Predicate<BagBudget> simpleForgetDecay = (b) -> {
+        float p = b.getPriority() * 0.95f;
+        if (p > b.getQuality()*0.1f)
+            b.setPriority(p);
+        return true;
+    };
 
     /**
      * The original deterministic memory cycle implementation that is currently used as a standard
@@ -244,12 +250,7 @@ public class Default extends AbstractNAR {
 
         }
 
-        static final Predicate<BagBudget> simpleForgetDecay = (b) -> {
-            float p = b.getPriority() * 0.99f;
-            if (p > b.getQuality()*0.1f)
-                b.setPriority(p);
-            return true;
-        };
+
 
         public final Predicate<BagBudget> alannForget;
 

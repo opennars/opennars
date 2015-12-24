@@ -41,8 +41,8 @@ public class Commander implements Consumer<NAR>, Supplier<Concept> {
     private final int maxTemporalBeliefDurations = 16 /* should be tuned */;
     private final NAR nar;
 
-    int inputsPerFrame = 1;
-    int cycleDivisor = 1;
+    int inputsPerFrame = 2;
+    int cycleDivisor = 3;
 
 //    float priorityPerCycle = 1,
 //            priorityRemaining = 0; //change left over from last cycle

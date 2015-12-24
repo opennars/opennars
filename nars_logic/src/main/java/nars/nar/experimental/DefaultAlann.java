@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -60,9 +59,9 @@ public class DefaultAlann extends AbstractAlann  {
             derivers.add( d );
         }
 
-        log.info(derivers.size() + " derivelets ready");
+        //log.info(derivers.size() + " derivelets ready");
 
-        defaultTTL = m.duration() * 3;
+        defaultTTL = m.duration() * 2; //longer ttl means potentially deeper search before reboots
         this.context = new MyDeriveletContext(this);
 
         memory.eventCycleEnd.on(x -> processConcepts());
@@ -85,61 +84,25 @@ public class DefaultAlann extends AbstractAlann  {
 
                 final Derivelet d = derivers.get(i);
 
-                //System.out.println(d + " cycle");
-
                 if (!d.cycle(now)) {
                     restart(d); //recycle this derivelet
                 }
             }
         }
 
-        //System.out.println("cycle " + memory.time());
 
     }
 
-//    public abstract class RunProb implements Runnable {
-//        private final float prob;
-//
-//        public RunProb(float initialProb) {
-//            this.prob = initialProb;
-//        }
-//
-//        public float getProb() { return prob; }
-//    }
-
-    public static <D> D runProbability(Random rng, float[] probs, D[] choices) {
-        float tProb = 0;
-        for (int i = 0; i < probs.length; i++) {
-            tProb += probs[i];
-        }
-        float s = rng.nextFloat() * tProb;
-        int c = 0;
-        for (int i = 0; i < probs.length; i++) {
-            s -= probs[i];
-            if (s <= 0) { c = i; break; }
-        }
-        return choices[c];
-    }
 
     final Supplier<Concept> fromInput = () -> {
         if (commander.isEmpty()) return null;
         Task t = commander.commandIterator.next();
         return concept(t.term());
     };
-    final Supplier<Concept> fromNext = () -> {
-        return null;
-    };
-
-    final float[] fromNextp1 = new float[] { 1f, 0f };
-    final Supplier<Concept>[] fromNextpC = new Supplier[] { fromInput, fromNext };
 
     final void restart(final Derivelet d) {
 
-        Supplier<Concept> source = runProbability(rng,
-                fromNextp1,
-                fromNextpC
-        );
-        Concept next = source.get();
+        Concept next = fromInput.get();
 
         if (next != null) {
             d.start(next, defaultTTL, context);
@@ -149,7 +112,7 @@ public class DefaultAlann extends AbstractAlann  {
 
     @Override
     public Concept apply(Term t) {
-        return newDefaultConcept(t, 32, 32, memory);
+        return newDefaultConcept(t, 24, 24, memory);
     }
 
     @Override
@@ -165,7 +128,7 @@ public class DefaultAlann extends AbstractAlann  {
     }
 
 
-    private class MyDeriveletContext extends DeriveletContext {
+    private final class MyDeriveletContext extends DeriveletContext {
         public MyDeriveletContext(NAR nar) {
             super(nar, nar.memory.random, DefaultAlann.this.commander);
         }

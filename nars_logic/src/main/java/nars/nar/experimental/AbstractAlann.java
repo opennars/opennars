@@ -1,23 +1,32 @@
 package nars.nar.experimental;
 
-import nars.Global;
 import nars.Memory;
-import nars.budget.Budget;
-import nars.concept.Concept;
 import nars.nar.AbstractNAR;
 import nars.op.app.Commander;
-import nars.task.Task;
-import nars.term.Term;
-import nars.term.Termed;
 import nars.util.data.random.XorShift128PlusRandom;
 
-import java.util.List;
 import java.util.Random;
 
 /**
  * Base class for ALANN impls
  */
 public abstract class AbstractAlann extends AbstractNAR {
+
+    final Random rng = new XorShift128PlusRandom(1);
+    final Commander commander;
+
+    public AbstractAlann(Memory m, int commanderCapacity) {
+        super(m);
+
+        commander = new Commander(this, commanderCapacity);
+    }
+
+    protected abstract void processConcepts();
+
+
+    //final ItemAccumulator<Task> newTasks = new ItemAccumulator<>(Budget.plus);
+
+    //public float tlinkToConceptExchangeRatio = 0.1f;
 
     //final static Deriver deriver;
 
@@ -38,21 +47,7 @@ public abstract class AbstractAlann extends AbstractNAR {
 //
 //    }; // shadow defaults, will replace once refactored
 
-    protected final List<Task> sorted = Global.newArrayList();
-
-    final Random rng = new XorShift128PlusRandom(1);
-    //final ItemAccumulator<Task> newTasks = new ItemAccumulator<>(Budget.plus);
-    Commander commander;
-    public float tlinkToConceptExchangeRatio = 0.1f;
-
-    public AbstractAlann(Memory m, int commanderCapacity) {
-        super(m);
-
-        commander = new Commander(this, commanderCapacity);
-    }
-
-    protected abstract void processConcepts();
-
+    //protected final List<Task> sorted = Global.newArrayList();
 
 
 //    protected void processNewTasks(int maxNewTaskHistory, int maxNewTasksPerCycle) {
@@ -99,33 +94,33 @@ public abstract class AbstractAlann extends AbstractNAR {
 
 
 
-    public Concept conceptualize(final Termed termed, final Budget budget, final boolean createIfMissing) {
-        final Term term = termed.term();
-
-        final float activationFactor;
-//        if ((termed instanceof TermLinkBuilder) ||
-//                (termed instanceof TaskLink) || (termed instanceof TermLinkTemplate)) {
-            activationFactor = tlinkToConceptExchangeRatio;
-//        }
-//        else {
-//            //task seed
-//            activationFactor = 1f;
-//        }
-
-        return null;
-
-//        return ((MapCacheBag<Term,Concept,?>)(memory.getConcepts())).data.compute(term, (k, existing) -> {
-//            if (existing!=null) {
-//                existing.getBudget().mergePlus(budget, activationFactor);
-//                return existing;
-//            }
-//            else {
-//                Concept c = newConcept(term, memory);
-//                c.getBudget().budget(budget).mulPriority(activationFactor);
-//                return c;
-//            }
-//        });
-    }
+//    public Concept conceptualize(final Termed termed, final Budget budget, final boolean createIfMissing) {
+//        final Term term = termed.term();
+//
+//        final float activationFactor;
+////        if ((termed instanceof TermLinkBuilder) ||
+////                (termed instanceof TaskLink) || (termed instanceof TermLinkTemplate)) {
+//            //activationFactor = tlinkToConceptExchangeRatio;
+////        }
+////        else {
+////            //task seed
+////            activationFactor = 1f;
+////        }
+//
+//        return null;
+//
+////        return ((MapCacheBag<Term,Concept,?>)(memory.getConcepts())).data.compute(term, (k, existing) -> {
+////            if (existing!=null) {
+////                existing.getBudget().mergePlus(budget, activationFactor);
+////                return existing;
+////            }
+////            else {
+////                Concept c = newConcept(term, memory);
+////                c.getBudget().budget(budget).mulPriority(activationFactor);
+////                return c;
+////            }
+////        });
+//    }
 
 //    @Override
 //    public boolean reprioritize(Term term, float newPriority) {
@@ -199,13 +194,12 @@ public abstract class AbstractAlann extends AbstractNAR {
 //        return c;
 //    }
 
-
-    private int getConceptTaskLinks() {
-        return -1;
-    }
-
-    private int getConceptTermLinks() {
-        return -1;
-    }
+//    private int getConceptTaskLinks() {
+//        return -1;
+//    }
+//
+//    private int getConceptTermLinks() {
+//        return -1;
+//    }
 
 }

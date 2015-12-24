@@ -4,9 +4,8 @@ import nars.Global;
 import nars.NAR;
 import nars.bag.BagBudget;
 import nars.concept.Concept;
-import nars.nal.Deriver;
 import nars.nal.RuleMatch;
-import nars.nal.TrieDeriver;
+import nars.nar.Default;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Termed;
@@ -42,7 +41,6 @@ public class Derivelet {
      */
     public DeriveletContext context;
 
-    final Deriver deriver = new TrieDeriver(Deriver.getDefaultRules());
     RuleMatch matcher;
 
     /**
@@ -62,7 +60,7 @@ public class Derivelet {
      * iteratively supplies a matrix of premises from the next N tasklinks and M termlinks
      * (recycles buffers, non-thread safe, one thread use this at a time)
      */
-    public void firePremiseSquare(
+    public int firePremiseSquare(
             NAR nar,
             Consumer<ConceptProcess> proc,
             Concept concept,
@@ -77,7 +75,7 @@ public class Derivelet {
             taskLinkForgetDurations * dur,
             tasks); */
         int tasksCount = concept.getTaskLinks().next(tasklinks, each, tasks);
-        if (tasksCount == 0) return;
+        if (tasksCount == 0) return 0;
         concept.getTaskLinks().commit();
 
 
@@ -86,7 +84,7 @@ public class Derivelet {
             m.termLinkForgetDurations.floatValue(),
             terms);*/
         int termsCount = concept.getTermLinks().next(termlinks, each, terms);
-        if (termsCount == 0) return;
+        if (termsCount == 0) return 0;
         concept.getTermLinks().commit();
 
 
@@ -100,7 +98,7 @@ public class Derivelet {
         termsArray = this.terms.toArray(termsArray);
         this.terms.clear();
 
-        ConceptProcess.firePremises(concept,
+        return ConceptProcess.firePremises(concept,
                 tasksArray, termsArray,
                 proc, nar);
 
@@ -122,7 +120,6 @@ public class Derivelet {
         if (concept == null) {
             return null;
         }
-
 
         final float x = context.nextFloat();
 
@@ -153,10 +150,10 @@ public class Derivelet {
      */
     final public boolean cycle(final long now) {
 
-//        if (this.ttl-- == 0) {
-//            //died
-//            return false;
-//        }
+        if (this.ttl-- == 0) {
+            //died
+            return false;
+        }
 
         if ((this.concept = nextConcept()) == null) {
             //dead-end
@@ -164,34 +161,31 @@ public class Derivelet {
         }
 
 
-        int tasklinks = 4;
-        int termlinks = 4;
-        firePremiseSquare(context.nar, p -> {
+        int tasklinks = 1;
+        int termlinks = 2;
 
-            deriver.run(p, matcher, (derived) -> {
-                final NAR n = nar();
+        int fired = firePremiseSquare(context.nar,
+                perPremise, this.concept,
+                tasklinks, termlinks,
+                Default.simpleForgetDecay
+        );
 
-                derived = n.validInput(derived);
-                n.memory.eventInput.emit(derived);
-                if (derived != null)
-                    n.process(derived);
-            });
-
-        }, this.concept, tasklinks, termlinks, (e) -> {
-            return true;
-        });
-
-//            final ConceptProcess p = nextPremise(now);
-//            if (p!=null) {
-//                //p.input(context.nar, deriver);
-//            }
-//            else {
-//                //no premise
-//                return false;
-//            }
-
-        return true;
+        return fired > 0;
     }
+
+    final Consumer<Task> perDerivation = (derived) -> {
+        final NAR n = nar();
+
+        derived = n.validInput(derived);
+        if (derived != null)
+            n.process(derived);
+    };
+
+    final Consumer<ConceptProcess> perPremise = p -> {
+
+        context.deriver.run(p, matcher, perDerivation);
+
+    };
 
 
     public final void start(final Concept concept, int ttl, final DeriveletContext context) {

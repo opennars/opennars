@@ -725,4 +725,18 @@ public class Util {
     public static float unbinCenter(int b, int bins) {
         return ((float)b)/bins;
     }
+
+    public static <D> D runProbability(Random rng, float[] probs, D[] choices) {
+        float tProb = 0;
+        for (int i = 0; i < probs.length; i++) {
+            tProb += probs[i];
+        }
+        float s = rng.nextFloat() * tProb;
+        int c = 0;
+        for (int i = 0; i < probs.length; i++) {
+            s -= probs[i];
+            if (s <= 0) { c = i; break; }
+        }
+        return choices[c];
+    }
 }

@@ -90,8 +90,8 @@ public abstract class AbstractNALTester {
                 () -> {
                     DefaultAlann d = new DefaultAlann(
                         new Memory(new FrameClock(),TermIndex.memorySoft(1024)),
-                        32 /* input cycler capacity */,
-                        64 /* derivelets */
+                        8 /* input cycler capacity */,
+                        24 /* derivelets */
                     );
                     d.nal(finalLevel);
                     return d;

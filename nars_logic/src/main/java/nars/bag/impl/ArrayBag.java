@@ -2,7 +2,6 @@ package nars.bag.impl;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
-import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.budget.Budget;
@@ -35,7 +34,10 @@ public class ArrayBag<V> extends Bag<V> {
 
 
     public ArrayBag(SortedIndex<BagBudget<V>> items) {
-        this(items, Global.newHashMap(items.capacity()));
+        this(items,
+            //Global.newHashMap(items.capacity())
+            new HashMap(items.capacity())
+        );
     }
 
     public ArrayBag(SortedIndex<BagBudget<V>> items, Map<V, BagBudget<V>> map) {

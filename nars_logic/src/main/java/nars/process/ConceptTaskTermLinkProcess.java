@@ -16,7 +16,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
     protected final BagBudget<Termed> termLink;
 
-    public static void fireAll(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Consumer<ConceptProcess> cp) {
+    public static int fireAll(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Consumer<ConceptProcess> cp) {
 
 
         int[] beliefAttempts = new int[1];
@@ -47,7 +47,10 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
             //belief = null
             cp.accept(new ConceptTaskTermLinkProcess(nar, concept,
                     taskLink, termLink, belief));
+            return 1;
         }
+
+        return beliefAttempts[0];
 
     }
 

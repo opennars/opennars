@@ -98,7 +98,9 @@ public abstract class ConceptProcess extends AbstractPremise {
         return cyclic;
     }
 
-    public static void firePremises(Concept concept, BagBudget<Task>[] tasks, BagBudget<Termed>[] terms, Consumer<ConceptProcess> proc, NAR nar) {
+    public static int firePremises(Concept concept, BagBudget<Task>[] tasks, BagBudget<Termed>[] terms, Consumer<ConceptProcess> proc, NAR nar) {
+
+        int total = 0;
 
         for (BagBudget<Task> taskLink : tasks) {
             if (taskLink == null) break;
@@ -109,10 +111,12 @@ public abstract class ConceptProcess extends AbstractPremise {
                 if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.get().term(), termLink.get().term()))
                     continue;
 
-                ConceptTaskTermLinkProcess.fireAll(
+                total+= ConceptTaskTermLinkProcess.fireAll(
                     nar, concept, taskLink, termLink, proc);
             }
         }
+
+        return total;
     }
 
 
