@@ -173,6 +173,7 @@ public class TermNode extends GraphNode {
 
     }
 
+
     public static final class FixedLinkedHashMap<K,V> extends LinkedHashMap<K, V> {
 
         final int max_cap;

@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import nars.guifx.ResizableCanvas;
+import nars.guifx.graph2.EdgeRenderer;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.scene.DefaultNodeVis;
@@ -15,7 +16,7 @@ import nars.term.Termed;
 /**
  * Created by me on 9/6/15.
  */
-public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
+public class CanvasEdgeRenderer implements EdgeRenderer<TermEdge> {
 
 //    ColorArray colors = new ColorArray(
 //            32,

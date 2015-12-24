@@ -95,12 +95,30 @@ import java.util.List;
  */
 public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V> {
 
+
+
+
+
+
+	/**
+	 * Constructs a new fast organic layout for the specified graph.
+	 */
+//	public FastOrganicLayout() {
+//
+//		setInitialTemp(13f);
+//		setMinDistanceLimit(1f);
+//		setMaxDistanceLimit(200f);
+//
+//		setForceConstant(100f);
+//		setMaxIterations(1);
+//	}
+
 	/**
 	 * Whether or not the distance between edge and nodes will be calculated
 	 * as an energy cost function. This function is CPU intensive and is best
 	 * only used in the fine tuning phase.
 	 */
-	protected boolean isOptimizeEdgeDistance = true;
+	protected boolean isOptimizeEdgeDistance = false;
 
 	/**
 	 * Whether or not edges crosses will be calculated as an energy cost
@@ -125,11 +143,11 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 */
 	protected boolean isOptimizeBorderLine = false;
 
-	/**
-	 * Whether or not node distribute will contribute an energy cost where
-	 * nodes are close together. The function is moderately CPU intensive.
-	 */
-	protected static final boolean isOptimizeNodeDistribution = true;
+//	/**
+//	 * Whether or not node distribute will contribute an energy cost where
+//	 * nodes are close together. The function is moderately CPU intensive.
+//	 */
+//	protected static final boolean isOptimizeNodeDistribution = true;
 
 	/**
 	 * when {@link #moveRadius}reaches this value, the algorithm is terminated
@@ -155,15 +173,15 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * minimum energy positions and decreasing it causes the minimum radius
 	 * termination condition to occur more quickly.
 	 */
-	protected float radiusScaleFactor = 0.10f;
+	protected float radiusScaleFactor = 0.9f;
 
 	/**
 	 * The average amount of area allocated per node. If <code> bounds</code>
 	 * is not set this value mutiplied by the number of nodes to find
 	 * the total graph area. The graph is assumed square.
 	 */
-	@Range(min = 1000, max = 200000)
-	public final SimpleDoubleProperty averageNodeArea = new SimpleDoubleProperty(160000);
+	@Range(min = 50, max = 200000)
+	public final SimpleDoubleProperty averageNodeArea = new SimpleDoubleProperty(100);
 
 	/**
 	 * The radius below which fine tuning of the layout should start
@@ -177,7 +195,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * Limit to the number of iterations that may take place. This is only
 	 * reached if one of the termination conditions does not occur first.
 	 */
-	protected int maxIterations = 1;
+	protected int maxIterations = 10;
 
 	/**
 	 * Cost factor applied to energy calculations involving the distance
@@ -256,21 +274,21 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * prevents from dividing with zero and from creating excessive energy
 	 * values
 	 */
-	@Range(min = 1, max = 2)
-	public final SimpleDoubleProperty minDistanceLimit = new SimpleDoubleProperty(0.5);
+	@Range(min = 0.1, max = 2)
+	public final SimpleDoubleProperty minDistanceLimit = new SimpleDoubleProperty(1f);
 
 
 	/**
 	 * cached version of <code>minDistanceLimit</code> squared
 	 */
-	protected float minDistanceLimitSquared = 0.0F;
+	protected float minDistanceLimitSquared;
 
 	/**
 	 * distance limit beyond which energy costs due to object repulsive is
 	 * not calculated as it would be too insignificant
 	 */
-	@Range(min = 0, max = 100)
-	public final SimpleDoubleProperty maxDistanceLimit = new SimpleDoubleProperty(50);
+	@Range(min = 0, max = 500)
+	public final SimpleDoubleProperty maxDistanceLimit = new SimpleDoubleProperty(200);
 
 	/**
 	 * cached version of <code>maxDistanceLimit</code> squared
@@ -336,7 +354,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 * <code>performRound</code> method might further improve accuracy for a
 	 * small performance hit. The change is described in the method comment.
 	 */
-	protected static final int circleResolution = 8; //originally 8, lets try an odd or prime #
+	protected static final int circleResolution = 9; //originally 8, lets try an odd or prime #
 
 	static {
 
@@ -371,11 +389,7 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 	 */
 	protected boolean disableEdgeStyle = true;
 
-	/**
-	 * Specifies if all edge points of traversed edges should be removed.
-	 * Default is true.
-	 */
-	protected boolean resetEdges = false;
+
 
 	public HyperOrganicLayout() {
 		this(new Rectangle2D.Float(-25 * 1.0f, -25 * 1.0f, 25.0f * 1.0f, 25.0f * 1.0f));
@@ -666,10 +680,12 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 				float movey = moveRadius * yNormTry[j];
 
 				// applying new move
-				float oldx = v[index].x;
-				float oldy = v[index].y;
-				v[index].x = v[index].x + movex;
-				v[index].y = v[index].y + movey;
+                CellWrapper vv = v[index];
+
+                float oldx = vv.x;
+				float oldy = vv.y;
+				vv.x = oldx + movex;
+				vv.y = oldy + movey;
 
 				// calculate the energy delta from this move
 				float energyDelta = calcEnergyDelta(index,
@@ -683,8 +699,8 @@ public class HyperOrganicLayout<V extends TermNode> implements IterativeLayout<V
 					break; // exits loop
 				} else {
 					// Revert node coordinates
-					v[index].x = oldx;
-					v[index].y = oldy;
+					vv.x = oldx;
+					vv.y = oldy;
 				}
 			}
 		}

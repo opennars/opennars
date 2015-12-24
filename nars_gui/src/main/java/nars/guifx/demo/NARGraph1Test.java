@@ -2,11 +2,11 @@ package nars.guifx.demo;
 
 import javafx.scene.Node;
 import nars.concept.Concept;
+import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
-import nars.guifx.graph2.impl.BlurCanvasEdgeRenderer;
+import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.scene.DefaultNodeVis;
-import nars.guifx.graph2.source.ConceptNeighborhoodSource;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
@@ -43,11 +43,14 @@ public class NARGraph1Test {
 
         DefaultGrapher g = new DefaultGrapher(
 
-                //new ConceptsSource(n),
+                new ConceptsSource(n),
+
+                /*
                 new ConceptNeighborhoodSource(n,
                         n.concept("<a --> b>"),
                         n.concept("<b --> c>")
                 ),
+                */
 
                 /*new JGraphSource(n, GraphPaneTest.newExampleTermLinkGraph() ) {
 
@@ -97,7 +100,8 @@ public class NARGraph1Test {
                     //return $.pro(A.getTerm(), B.getTerm());
                 },
 
-                new BlurCanvasEdgeRenderer()
+                new CanvasEdgeRenderer()
+                //new BlurCanvasEdgeRenderer()
         );
 
         //g.setLayout(HyperassociativeMap2D.class);

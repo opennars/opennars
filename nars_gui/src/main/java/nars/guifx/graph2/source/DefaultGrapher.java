@@ -20,6 +20,7 @@ import static javafx.application.Platform.runLater;
  */
 public class DefaultGrapher extends SpaceGrapher {
 
+    @Implementation(FastOrganicLayout.class)
     @Implementation(HyperOrganicLayout.class)
     @Implementation(HyperassociativeMap2D.class)
     @Implementation(Spiral.class)

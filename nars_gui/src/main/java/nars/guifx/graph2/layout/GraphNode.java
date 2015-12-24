@@ -53,6 +53,11 @@ public class GraphNode extends Group {
 		return this;
 	}
 
+	public void moveDelta(float dx, float dy) {
+		move(tx + dx, ty + dy);
+	}
+
+
 	public final void move(double[] v, double speed, double threshold) {
 		move(v[0], v[1], speed, threshold);
 	}

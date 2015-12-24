@@ -4,10 +4,7 @@ package nars.guifx.graph2.source;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import javafx.beans.property.SimpleObjectProperty;
 import nars.guifx.Spacegraph;
-import nars.guifx.graph2.GraphSource;
-import nars.guifx.graph2.NodeVis;
-import nars.guifx.graph2.TermEdge;
-import nars.guifx.graph2.TermNode;
+import nars.guifx.graph2.*;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.IterativeLayout;
 import nars.guifx.graph2.layout.None;
@@ -18,7 +15,6 @@ import nars.term.Termed;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
 
@@ -386,14 +382,6 @@ public class SpaceGrapher extends Spacegraph {
 //                if (n != null) n.update();
 //            });
 //    }
-
-
-    public interface EdgeRenderer<E> extends Consumer<E> {
-        /**
-         * called before any update begins
-         */
-        void reset(SpaceGrapher g);
-    }
 
 
     /**

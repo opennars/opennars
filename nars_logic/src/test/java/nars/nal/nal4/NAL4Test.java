@@ -115,7 +115,7 @@ public class NAL4Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<bird --> animal>",1.0f,0.9f); //en("Bird is a type of animal.");
         tester.ask("<(bird,plant) --> (animal,plant)>");
-        tester.mustBelieve(CYCLES*16, "<(bird,plant) --> (animal,plant)>", 1.0f, 0.81f); //en("The relation between bird and plant is a type of relation between animal and plant.");
+        tester.mustBelieve(CYCLES*24, "<(bird,plant) --> (animal,plant)>", 1.0f, 0.81f); //en("The relation between bird and plant is a type of relation between animal and plant.");
 
     }
 
