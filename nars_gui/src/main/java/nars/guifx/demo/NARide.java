@@ -21,7 +21,7 @@ import nars.concept.Concept;
 import nars.guifx.*;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
-import nars.guifx.graph2.impl.CanvasEdgeRenderer;
+import nars.guifx.graph2.impl.HalfHalfRightTriangleCanvasEdgeRenderer;
 import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.nars.LoopPane;
@@ -131,7 +131,10 @@ public class NARide extends BorderPane {
                     return te;
                     //return $.pro(A.getTerm(), B.getTerm());
                 },
-                new CanvasEdgeRenderer()
+
+                new HalfHalfRightTriangleCanvasEdgeRenderer()
+                //new HalfHalfLineCanvasEdgeRenderer()
+
             ));
             ni.addTool("Fractal Workspace", () -> new NARspace(nar));
 

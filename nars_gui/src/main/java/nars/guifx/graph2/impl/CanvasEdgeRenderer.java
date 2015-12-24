@@ -11,12 +11,11 @@ import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.ColorMatrix;
-import nars.term.Termed;
 
 /**
  * Created by me on 9/6/15.
  */
-public class CanvasEdgeRenderer implements EdgeRenderer<TermEdge> {
+abstract public class CanvasEdgeRenderer implements EdgeRenderer<TermEdge> {
 
 //    ColorArray colors = new ColorArray(
 //            32,
@@ -40,7 +39,7 @@ public class CanvasEdgeRenderer implements EdgeRenderer<TermEdge> {
 //    public double maxPri = 1;
 //    public double minPri = 0;
 
-    double minWidth = 1;
+    double minWidth = 2;
     double maxWidth = 10;
 
     @Override
@@ -68,50 +67,15 @@ public class CanvasEdgeRenderer implements EdgeRenderer<TermEdge> {
         double y1 = s*(ty+aSrc.y());// + fh / 2d;
         double x2 = s*(tx+bSrc.x());// + tw / 2d;
         double y2 = s*(ty+bSrc.y());// + th / 2d;
-        double cx = 0.5 * (x1+x2);
-        double cy = 0.5 * (y1+y2);
 
-
-        drawHalf(i, aSrc, x1, y1, cx, cy);
-        drawHalf(i, bSrc, x2, y2, cx, cy);
+        draw(i, aSrc, bSrc, x1, y1, x2, y2);
 
     }
 
-    public void drawHalf(TermEdge i, TermNode t, double x1, double y1, double x2, double y2) {
+    abstract public void draw(TermEdge i, TermNode aSrc, TermNode bSrc, double x1, double y1, double x2, double y2);
 
 
 
-
-        double p = i.getWeight();
-
-        //double np = normalize(p);
-
-        //System.out.println(p + " " + np + " " + minPri + " " + maxPri);
-
-        //gfx.setStroke(colors.get(np));
-        //gfx.setStroke(colors.get(np, te/(te+ta)));
-
-        GraphicsContext gfx = this.gfx;
-
-        //HACK specific to Term instances
-        if (t.term instanceof Termed) {
-            gfx.setStroke(
-                TermNode.getTermColor(t.term, colors, p)
-            );
-        }
-
-        /*
-            colors.get(
-                (t.term.op().ordinal()%colors.cc.length)/((double) Op.values().length),
-                p
-            )
-        );*/
-
-        double mw = minWidth;
-        gfx.setLineWidth(mw + p * (maxWidth-mw));
-
-        gfx.strokeLine(x1, y1, x2, y2);
-    }
 
 //    public double normalize(final double p) {
 //        double maxPri = this.maxPri, minPri = this.minPri;
@@ -166,13 +130,14 @@ public class CanvasEdgeRenderer implements EdgeRenderer<TermEdge> {
     }
 
     protected final void clearTotally(double w, double h) {
+
         gfx.clearRect(0, 0, w, h );
     }
 
     final Color FADEOUT = new Color(0,0,0,0.25);
 
 
-//    /** iteration in which min/max dynamic range is relaxed; if nothing has stretched it in the past cycle then it will expand the range to its limits */
+    //    /** iteration in which min/max dynamic range is relaxed; if nothing has stretched it in the past cycle then it will expand the range to its limits */
 //    private void unnormalize(double rate) {
 //        double maxPriPre = maxPri;
 //        double minPriPre = minPri;

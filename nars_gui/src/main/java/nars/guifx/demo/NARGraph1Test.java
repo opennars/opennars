@@ -5,7 +5,7 @@ import nars.concept.Concept;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
-import nars.guifx.graph2.impl.CanvasEdgeRenderer;
+import nars.guifx.graph2.impl.HalfHalfRightTriangleCanvasEdgeRenderer;
 import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.SpaceGrapher;
@@ -100,7 +100,8 @@ public class NARGraph1Test {
                     //return $.pro(A.getTerm(), B.getTerm());
                 },
 
-                new CanvasEdgeRenderer()
+                //new HalfHalfLineCanvasEdgeRenderer()
+                new HalfHalfRightTriangleCanvasEdgeRenderer()
                 //new BlurCanvasEdgeRenderer()
         );
 

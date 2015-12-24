@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V> {
 
-    public static final float speed = 0.5f;
+    public static final float speed = 0.2f;
     /**
      * Specifies if the top left corner of the input cells should be the origin
      * of the layout result. Default is true.
@@ -28,11 +28,6 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
      */
     protected boolean resetEdges = true;
 
-    /**
-     * Specifies if the STYLE_NOEDGESTYLE flag should be set on edge that are
- modified by the result. Default is true.
-     */
-    protected boolean disableEdgeStyle = true;
 
     /**
      * The force constant by which the attractive forces are divided and the
@@ -65,7 +60,7 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
     /**
      * Start value of temperature. Default is 200.
      */
-    protected double initialTemp = 200;
+    protected double initialTemp = 100;
 
     /**
      * Temperature to limit displacement at later stages of layout.
@@ -144,7 +139,6 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
         setMinDistanceLimit(1f);
         setMaxDistanceLimit(200f);
         
-        setForceConstant(100f);
         setMaxIterations(1);
     }
 
@@ -191,20 +185,6 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
         resetEdges = value;
     }
 
-    /**
-     *
-     */
-    public boolean isDisableEdgeStyle() {
-        return disableEdgeStyle;
-    }
-
-    /**
-     *
-     * @param value
-     */
-    public void setDisableEdgeStyle(boolean value) {
-        disableEdgeStyle = value;
-    }
 
     /**
      *
@@ -362,8 +342,8 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
 			// Set the X,Y value of the internal version of the cell to
             // the center point of the vertex for better positioning
             double ww = vd.width(); /*getRadius()*/
-            double width = ww*2f; //bounds.getWidth();
-            double height = ww*2f; //bounds.getHeight();
+            double width = ww;//*2f; //bounds.getWidth();
+            double height = ww;//*2f; //bounds.getHeight();
 
             // Randomize (0, 0) locations
             //TODO re-use existing location
