@@ -1,15 +1,18 @@
 package nars.nar;
 
 import nars.Memory;
+import nars.NAR;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.compile.TermIndex;
 import nars.time.RealtimeMSClock;
 
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -28,7 +31,10 @@ public class Terminal extends AbstractNAR {
                 new RealtimeMSClock(),
                 termIndex
                 //new TrieCacheBag()
-        ), 0,0,0,0);
+        ));
+
+        the("input", initInput());
+
     }
 
     public Terminal() {
@@ -40,29 +46,33 @@ public class Terminal extends AbstractNAR {
         return new DefaultConcept(t, memory);
     }
 
+
+
+//    @Override
+//    protected Concept doConceptualize(Term term, Budget b, float scale) {
+//        Concept exists = memory.concept(term);
+//        if (exists!=null) {
+//            return exists;
+//        }
+//        else {
+//            Concept c = apply(term);
+//            memory.index.put(term, c);
+//            return c;
+//        }
+//
+//    }
+
     @Override
-    public DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
-        //nothing
+    protected Concept doConceptualize(Termed c, Budget b, float scale) {
+        if (c instanceof Concept) return ((Concept)c);
         return null;
     }
 
-
     @Override
-    protected Concept doConceptualize(Term term, Budget b, float scale) {
-        Concept exists = memory.concept(term);
-        if (exists!=null) {
-            return exists;
-        }
-        else {
-            Concept c = apply(term);
-            memory.index.put(term, c);
-            return c;
-        }
+    public NAR forEachConcept(Consumer<Concept> recip) {
+        return null;
     }
 
-
-
-    @Override
     public FIFOTaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
                 taskFilter,

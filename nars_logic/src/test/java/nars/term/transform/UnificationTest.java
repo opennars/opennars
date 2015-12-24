@@ -5,7 +5,6 @@ import nars.Global;
 import nars.NAR;
 import nars.Op;
 import nars.nar.Default;
-import nars.nar.Terminal;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.util.graph.TermLinkGraph;
@@ -26,8 +25,12 @@ public class UnificationTest  {
     private TestNAR t;
 
     @Before public void start() {
-        t = new TestNAR(new Terminal());
+        t = new TestNAR(
+            //new Terminal()
+            new Default() //TODO return to using Terminal as a demo of its minimal functionality
+        );
     }
+
     public TestNAR test() {
         return t;
     }

@@ -4,7 +4,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.guifx.IOPane;
 import nars.guifx.demo.NARide;
-import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.term.compile.TermIndex;
 import nars.testchamber.Cell.Logic;
@@ -47,7 +46,7 @@ public class TestChamber {
                 )*/
 
         );
-        AbstractNAR nar = new Default(mem, 4096, 100, 1, 3);
+        Default nar = new Default(mem, 4096, 100, 1, 3);
 
         //nar.nal(9);
         nar.setTaskLinkBagSize(32);
@@ -56,7 +55,7 @@ public class TestChamber {
         //new BagForgettingEnhancer(nar.memory, nar.core.concepts(), 0.75f, 0.75f, 0.75f);
 
 
-        nar.the(AbstractNAR.DefaultCycle.class, nar.core);
+        nar.the(Default.DefaultCycle.class, nar.core);
 
         /*nar.memory.conceptForgetDurations.set(10);
         nar.memory.termLinkForgetDurations.set(100);*/

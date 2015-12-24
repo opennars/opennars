@@ -18,7 +18,6 @@ package nars.term;
 
 import nars.*;
 import nars.concept.Concept;
-import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -185,7 +184,7 @@ public class TermTest {
 
     @Test
     public void testConceptInstancing() throws Narsese.NarseseException {
-        AbstractNAR n = new Default();
+        Default n = new Default();
 
         String statement1 = "<a --> b>.";
 

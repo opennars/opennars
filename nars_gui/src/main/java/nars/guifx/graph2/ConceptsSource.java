@@ -9,7 +9,6 @@ import nars.bag.BagBudget;
 import nars.concept.Concept;
 import nars.guifx.graph2.impl.TLinkEdge;
 import nars.guifx.graph2.source.SpaceGrapher;
-import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.term.Termed;
 import nars.util.event.Active;
@@ -179,7 +178,7 @@ public class ConceptsSource extends GraphSource {
     @Override
     public void commit() {
 
-        Bag<Concept> x = ((AbstractNAR) nar).core.concepts();
+        Bag<Concept> x = ((Default) nar).core.concepts();
 
         String _keywordFilter = includeString.get();
         this.keywordFilter = _keywordFilter != null && _keywordFilter.isEmpty() ? null : _keywordFilter;

@@ -31,7 +31,7 @@ import nars.guifx.util.NControl;
 import nars.guifx.util.POJOPane;
 import nars.guifx.util.TabPaneDetacher;
 import nars.guifx.util.TabX;
-import nars.nar.AbstractNAR;
+import nars.nar.Default;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.time.FrameClock;
@@ -328,8 +328,8 @@ public class NARide extends BorderPane {
         icon(FrameClock.class, (c) -> new NARMenu.CycleClockPane(nar));
         icon(RealtimeMSClock.class, (c) -> new NARMenu.RTClockPane(nar));
         //icon(NARLoop.class, (ll) -> loopPane);
-        icon(AbstractNAR.DefaultCycle.class, (c) ->
-                new DefaultCyclePane((AbstractNAR.DefaultCycle) c) //cast is hack
+        icon(Default.DefaultCycle.class, (c) ->
+                new DefaultCyclePane((Default.DefaultCycle) c) //cast is hack
         );
 
 
@@ -478,10 +478,10 @@ public class NARide extends BorderPane {
     private static class DefaultCyclePane extends BorderPane {
 
         private final NAR nar;
-        private final AbstractNAR.DefaultCycle cycle;
+        private final Default.DefaultCycle cycle;
         //final NSlider activation;
 
-        public DefaultCyclePane(AbstractNAR.DefaultCycle l) {
+        public DefaultCyclePane(Default.DefaultCycle l) {
             cycle = l;
             nar = l.nar;
 

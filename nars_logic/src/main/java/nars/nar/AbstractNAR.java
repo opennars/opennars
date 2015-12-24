@@ -4,7 +4,6 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
-import nars.bag.BagBudget;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
 import nars.concept.AtomConcept;
@@ -29,24 +28,16 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
-import nars.process.ConceptProcess;
 import nars.task.Task;
-import nars.task.flow.FIFOTaskPerception;
-import nars.task.flow.TaskPerception;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.time.Clock;
-import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift128PlusRandom;
-import nars.util.event.Active;
 
-import java.io.Serializable;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 
 /**
@@ -58,50 +49,27 @@ import java.util.function.Predicate;
  */
 public abstract class AbstractNAR extends NAR {
 
-    public final DefaultCycle core;
-    public final TaskPerception input;
 
-    /**
-     * Size of TaskLinkBag
-     */
-    int taskLinkBagSize;
-    /**
-     * Size of TermLinkBag
-     */
-    int termLinkBagSize;
+    /** default for new concepts */
+    @Deprecated int taskLinkBagSize;
+    /** default for new concepts */
+    @Deprecated int termLinkBagSize;
 
 
-//    /**
-//     * Default DEFAULTS
-//     */
-//    public Default() {
-//        this(1024, 1, 2, 3, new FrameClock());
-//    }
+    //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
+    public final Random rng;
 
-    public AbstractNAR(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle, Clock clock) {
-        this(new Memory(clock,
-                TermIndex.memory(activeConcepts)
-        ), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
+    public AbstractNAR(Clock clock) {
+        this(new Memory(clock, TermIndex.memory(1024) ));
     }
 
-    public AbstractNAR(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+    public AbstractNAR(Memory memory) {
         super(memory);
 
         rng = new XorShift128PlusRandom(1);
 
         initDefaults(memory);
 
-        the("input", input = initInput());
-
-        the("core", core = initCore(
-                activeConcepts,
-                conceptsFirePerCycle,
-                termLinksPerCycle, taskLinksPerCycle
-        ));
-
-        if (core!=null) {
-            beforeNextFrame(this::initHigherNAL);
-        }
 
     }
 
@@ -158,33 +126,6 @@ public abstract class AbstractNAR extends NAR {
     }
 
 
-    public TaskPerception initInput() {
-        return new FIFOTaskPerception(this, null, this::process);
-    }
-
-    protected DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
-
-        DefaultCycle c = initCore(
-            getDeriver(),
-            newConceptBag(activeConcepts)
-        );
-
-        //TODO move these to a PremiseGenerator which supplies
-        // batches of Premises
-        c.termlinksSelectedPerFiredConcept.set(termLinksPerCycle);
-        c.tasklinksSelectedPerFiredConcept.set(taskLinksPerCycle);
-
-        //tmpConceptsFiredPerCycle[0] = c.conceptsFiredPerCycle;
-        c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
-
-        c.capacity.set(activeConcepts);
-
-        return c;
-    }
-
-    protected DefaultCycle initCore(Deriver deriver, Bag<Concept> conceptBag)    {
-        return new Default.DefaultCycle2(this, deriver, conceptBag);
-    }
 
     public void initDefaults(Memory m) {
         //parameter defaults
@@ -230,8 +171,7 @@ public abstract class AbstractNAR extends NAR {
             new NullOperator("deactivate")
     };
 
-    //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
-    public final Random rng;
+
 
 
 
@@ -407,9 +347,8 @@ public abstract class AbstractNAR extends NAR {
         return doConceptualize(c, b, scale);
     }
 
-    protected Concept doConceptualize(Termed c, Budget b, float scale) {
-        return core.concepts().put(c, b, scale).get();
-    }
+    abstract protected Concept doConceptualize(Termed c, Budget b, float scale);
+
 
 
     public Bag<Concept> newConceptBag(int initialCapacity) {
@@ -435,328 +374,10 @@ public abstract class AbstractNAR extends NAR {
         return Deriver.getDefaultDeriver();
     }
 
-    public NAR forEachConcept(Consumer<Concept> recip) {
-        core.active.forEach(recip);
-        return this;
-    }
+    /** reports all active concepts or those which can be reached */
+    abstract public NAR forEachConcept(Consumer<Concept> recip);
 
 
-    /**
-     * The original deterministic memory cycle implementation that is currently used as a standard
-     * for development and testing.
-     */
-    public abstract static class DefaultCycle implements Serializable {
-
-        final Active handlers = new Active();
-
-        /**
-         * How many concepts to fire each cycle; measures degree of parallelism in each cycle
-         */
-        public final MutableInteger conceptsFiredPerCycle;
-
-
-        public final Deriver  deriver;
-
-
-        public final MutableInteger tasklinksSelectedPerFiredConcept = new MutableInteger(1);
-        public final MutableInteger termlinksSelectedPerFiredConcept = new MutableInteger(1);
-
-        //public final MutableFloat activationFactor = new MutableFloat(1.0f);
-
-//        final Function<Task, Task> derivationPostProcess = d -> {
-//            return LimitDerivationPriority.limitDerivation(d);
-//        };
-
-
-
-        /**
-         * concepts active in this cycle
-         */
-        public final Bag<Concept> active;
-
-
-        @Deprecated
-        public final transient NAR nar;
-
-        public final MutableInteger capacity = new MutableInteger();
-
-        private BagBudget[] termsArray = new BagBudget[0];
-        private BagBudget[] tasksArray = new BagBudget[0];
-
-
-//        @Deprecated
-//        int tasklinks = 2; //TODO use MutableInteger for this
-//        @Deprecated
-//        int termlinks = 3; //TODO use MutableInteger for this
-
-        /* ---------- Short-term workspace for a single cycle ------- */
-
-        public DefaultCycle(NAR nar, Deriver deriver, Bag<Concept> concepts) {
-
-            this.nar = nar;
-
-            this.deriver = deriver;
-
-
-            conceptsFiredPerCycle = new MutableInteger(1);
-            active = concepts;
-
-            handlers.add(
-                nar.memory.eventCycleEnd.on((m) -> fireConcepts(conceptsFiredPerCycle.intValue(), c->process(c))),
-                nar.memory.eventReset.on((m) -> reset())
-            );
-
-            alannForget = (budget) -> {
-                // priority * e^(-lambda*t)
-                //     lambda is (1 - durabilty) / forgetPeriod
-                //     dt is the delta
-                final long currentTime = nar.time(); //TODO cache
-
-                long dt = budget.setLastForgetTime(currentTime);
-                if (dt == 0) return true; //too soon to update
-
-                float currentPriority = budget.getPriorityIfNaNThenZero();
-
-                Memory m = nar.memory;
-                final float forgetPeriod =    m.termLinkForgetDurations.floatValue() * m.duration(); //TODO cache
-
-                float relativeThreshold = 0.1f; //BAG THRESHOLD
-
-                float expDecayed = currentPriority * (float) Math.exp(
-                    -((1.0f - budget.getDurability()) / forgetPeriod) * dt
-                );
-                float threshold = budget.getQuality() * relativeThreshold;
-
-                float nextPriority = expDecayed;
-                if (nextPriority < threshold) nextPriority = threshold;
-
-                budget.setPriority(nextPriority);
-
-                return true;
-            };
-        }
-
-
-        abstract protected void process(ConceptProcess cp);
-
-        /**
-         * samples an active concept
-         */
-        public Concept next() {
-            return active.peekNext().get();
-        }
-
-
-        public void reset() {
-
-
-        }
-
-        static final Predicate<BagBudget> simpleForgetDecay = (b) -> {
-            float p = b.getPriority() * 0.99f;
-            if (p > b.getQuality()*0.1f)
-                b.setPriority(p);
-            return true;
-        };
-        Predicate<BagBudget> alannForget;
-
-        protected void fireConcepts(int conceptsToFire, Consumer<ConceptProcess> processor) {
-
-            Bag<Concept> b = this.active;
-
-            b.setCapacity(capacity.intValue()); //TODO share the MutableInteger so that this doesnt need to be called ever
-
-            if (conceptsToFire == 0 || b.isEmpty()) return;
-
-            b.next(conceptsToFire, cb -> {
-                Concept c = (AtomConcept) cb.get();
-
-                //c.getTermLinks().up(simpleForgetDecay);
-                //c.getTaskLinks().update(simpleForgetDecay);
-
-
-                float p =
-                        //Math.max(
-                       //c.getTaskLinks().getPriorityMax()
-                        c.getTaskLinks().getSummaryMean()
-                       // c.getTermLinks().getPriorityMax()
-                        //)
-                        ;
-
-                cb.set(p, 0.5f, 0.5f);
-
-                //if above firing threshold
-                //fireConcept(c);
-                firePremiseSquare(nar, processor, c,
-                    tasklinksSelectedPerFiredConcept.intValue(),
-                    termlinksSelectedPerFiredConcept.intValue(),
-                    //simpleForgetDecay
-                    alannForget
-                );
-
-                return true;
-            });
-            b.commit();
-
-        }
-
-        /*{
-            fireConcept(c, p -> {
-                //direct: just input to nar
-                deriver.run(p, nar::input);
-            });
-        }*/
-
-
-        /** temporary re-usable array for batch firing */
-        private final Set<BagBudget<Termed>> terms = Global.newHashSet(1);
-        /** temporary re-usable array for batch firing */
-        private final Set<BagBudget<Task>> tasks = Global.newHashSet(1);
-
-        /**
-         * iteratively supplies a matrix of premises from the next N tasklinks and M termlinks
-         * (recycles buffers, non-thread safe, one thread use this at a time)
-         */
-        public void firePremiseSquare(
-                NAR nar,
-                Consumer<ConceptProcess> proc,
-                Concept concept,
-                int tasklinks, int termlinks, Predicate<BagBudget> each) {
-
-            //Memory m = nar.memory;
-            //int dur = m.duration();
-
-            //long now = nar.time();
-
-            /* dur, now,
-                taskLinkForgetDurations * dur,
-                tasks); */
-            int tasksCount = concept.getTaskLinks().next(tasklinks, each, tasks);
-            if (tasksCount == 0) return;
-            concept.getTaskLinks().commit();
-
-
-
-            /*int termsCount = concept.nextTermLinks(dur, now,
-                m.termLinkForgetDurations.floatValue(),
-                terms);*/
-            int termsCount = concept.getTermLinks().next(termlinks, each, terms);
-            if (termsCount == 0) return;
-            concept.getTermLinks().commit();
-
-
-            /*System.out.println(tasks.size() + "," + terms.size() + ": "
-                    + tasks + " " + terms);*/
-
-            //convert to array for fast for-within-for iterations
-            tasksArray = this.tasks.toArray(tasksArray);
-            this.tasks.clear();
-
-            termsArray = this.terms.toArray(termsArray);
-            this.terms.clear();
-
-            ConceptProcess.firePremises(concept,
-                    tasksArray, termsArray,
-                    proc, nar);
-
-        }
-
-
-//        protected final void fireConceptSquare(Concept c, Consumer<ConceptProcess> withResult) {
-//
-//
-//            {
-//                int num = termlinksSelectedPerFiredConcept.intValue();
-//                if (firingTermLinks == null ||
-//                        firingTermLinks.length != num)
-//                    firingTermLinks = new BagBudget[num];
-//            }
-//            {
-//                int num = tasklinksSelectedPerFiredConcept.intValue();
-//                if (firingTaskLinks == null ||
-//                        firingTaskLinks.length != num)
-//                    firingTaskLinks = new BagBudget[num];
-//            }
-//
-//            firePremiseSquare(
-//                nar,
-//                withResult,
-//                c,
-//                firingTaskLinks,
-//                firingTermLinks,
-//                nar.memory.taskLinkForgetDurations.intValue()
-//            );
-//        }
-
-
-//        public final Concept activate(Term term, Budget b) {
-//            Bag<Term, Concept> active = this.active;
-//            active.setCapacity(capacity.intValue());
-//
-////            ConceptActivator ca = conceptActivator;
-////            ca.setActivationFactor( activationFactor.floatValue() );
-////            return ca.update(term, b, nar.time(), 1.0f, active);
-//        }
-
-        public final Bag<Concept> concepts() {
-            return active;
-        }
-
-
-
-
-        //try to implement some other way, this is here because of serializability
-
-    }
-
-//    @Deprecated
-//    public static class CommandLineNARBuilder extends Default {
-//
-//        List<String> filesToLoad = new ArrayList();
-//
-//        public CommandLineNARBuilder(String[] args) {
-//            super();
-//
-//            for (int i = 0; i < args.length; i++) {
-//                String arg = args[i];
-//                if ("--silence".equals(arg)) {
-//                    arg = args[++i];
-//                    int sl = Integer.parseInt(arg);
-//                    //outputVolume.set(100 - sl);
-//                } else if ("--noise".equals(arg)) {
-//                    arg = args[++i];
-//                    int sl = Integer.parseInt(arg);
-//                    //outputVolume.set(sl);
-//                } else {
-//                    filesToLoad.add(arg);
-//                }
-//            }
-//
-//            for (String x : filesToLoad) {
-//                taskNext(() -> {
-//                    try {
-//                        input(new File(x));
-//                    } catch (FileNotFoundException fex) {
-//                        System.err.println(getClass() + ": " + fex.toString());
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                });
-//
-//                //n.run(1);
-//            }
-//        }
-//
-//        /**
-//         * Decode the silence level
-//         *
-//         * @param param Given argument
-//         * @return Whether the argument is not the silence level
-//         */
-//        public static boolean isReallyFile(String param) {
-//            return !"--silence".equals(param);
-//        }
-//    }
 
 
 }

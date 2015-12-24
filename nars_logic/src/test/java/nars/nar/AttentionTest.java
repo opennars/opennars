@@ -23,7 +23,7 @@ public class AttentionTest {
     @Test public void testSampleNextConcept() {
         
         int numConcepts = 32;
-        AbstractNAR n = new Default();
+        Default n = new Default();
         for (int i = 0; i < numConcepts; i++)
             n.believe("<x" + i + " <-> x" + (i + 1) + '>');
         

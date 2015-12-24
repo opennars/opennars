@@ -3,7 +3,6 @@ package nars.util.meter.experiment;
 import nars.$;
 import nars.Global;
 import nars.NAR;
-import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
@@ -100,7 +99,7 @@ public class DeductiveChainTest extends TestNAR {
         //n.stdout();
         //n.frame(5000);
 
-        int nc = ((AbstractNAR)n).core.concepts().size();
+        int nc = ((Default)n).core.concepts().size();
         String ts = timestamp(start);
         long time = n.time();
 
