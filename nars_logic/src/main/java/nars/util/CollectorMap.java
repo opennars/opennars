@@ -80,7 +80,6 @@ public abstract class CollectorMap<K, V extends Supplier<K>> implements Serializ
             }
         }
 
-
         V removed2 = addItem(value);
 
         if (removed != null && removed2 != null) {

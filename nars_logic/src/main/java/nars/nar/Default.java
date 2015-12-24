@@ -126,13 +126,14 @@ public class Default extends AbstractNAR {
                     b = new BagBudget(c, 0,1,1);
 
                 c.getTaskLinks().commit();
-                c.getTermLinks().commit();
+                //c.getTermLinks().commit();
 
                 float p =
                         //Math.max(
-                        //c.getTaskLinks().getPriorityMax()
-                        (c.getTaskLinks().getSummaryMean() +
-                        c.getTermLinks().getSummaryMean()) * 0.5f
+                        c.getTaskLinks().getSummarySum()/taskLinkBagSize
+                        //(
+                        //c.getTaskLinks().getSummaryMean()
+                        //+c.getTermLinks().getSummaryMean()) * 0.5f
                          //c.getTermLinks().getPriorityMax()
                         //)
                         ;
@@ -235,12 +236,12 @@ public class Default extends AbstractNAR {
                     nar.memory.eventCycleEnd.on((m) -> {
                         fireConcepts(conceptsFiredPerCycle.intValue(), c->process(c));
 
-                        System.out.println(nar.time());
-                        System.out.println(activated);
+                        /*System.out.println(nar.time());
+                        System.out.println(activated);*/
 
                         activateConcepts();
 
-                        active.printAll();
+                        //active.printAll();
 
                     }),
                     nar.memory.eventReset.on((m) -> reset())
@@ -277,15 +278,12 @@ public class Default extends AbstractNAR {
         }
 
         private void activateConcepts() {
-            //active.commit();
+            active.commit();
 
             if (!activated.isEmpty()) {
                 activated.forEach(this::updateConcept);
                 activated.clear();
-
             }
-            active.commit();
-
         }
 
         protected void updateConcept(Concept c) {
@@ -534,7 +532,8 @@ public class Default extends AbstractNAR {
                         buffer,
                         //p.getMeanPriority()
                         //p.getTask().getPriority()
-                        p.getTask().getPriority()/buffer.size()
+                        //p.getTask().getPriority()/buffer.size()
+                        p.getTaskLink().getPriority()/buffer.size()
                 );
 
                 buffer.forEach(narInput);

@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 public class NAL4Test extends AbstractNALTester {
 
 
-    public static final int CYCLES = 75;
+    public static final int CYCLES = 150;
 
     public NAL4Test(Supplier<NAR> b) { super(b);  }
 
@@ -114,8 +114,8 @@ public class NAL4Test extends AbstractNALTester {
     public void composition_on_both_sides_of_a_statement_2() throws Narsese.NarseseException {
         TestNAR tester = test();
         tester.believe("<bird --> animal>",1.0f,0.9f); //en("Bird is a type of animal.");
-        tester.ask("<(bird,plant) --> (*,animal,plant)>");
-        tester.mustBelieve(CYCLES, "<(*,bird,plant) --> (*,animal,plant)>", 1.0f, 0.81f); //en("The relation between bird and plant is a type of relation between animal and plant.");
+        tester.ask("<(bird,plant) --> (animal,plant)>");
+        tester.mustBelieve(CYCLES*16, "<(bird,plant) --> (animal,plant)>", 1.0f, 0.81f); //en("The relation between bird and plant is a type of relation between animal and plant.");
 
     }
 

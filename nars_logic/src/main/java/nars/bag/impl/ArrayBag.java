@@ -268,7 +268,7 @@ public class ArrayBag<V> extends Bag<V> {
 
 
     @Override
-    public void commit() {
+    public final void commit() {
         forEachEntry(this::update);
     }
 
@@ -416,9 +416,7 @@ public class ArrayBag<V> extends Bag<V> {
 
     @Override public void forEachEntry(Consumer<BagBudget> action) {
         List<BagBudget<V>> l = items.getList();
-        int n = l.size();
-        for (int i = 0; i < n; i++)
-            action.accept(l.get(i));
+        l.forEach(action);
     }
     @Override public void forEachEntry(int limit, Consumer<BagBudget> action) {
         List<BagBudget<V>> l = items.getList();

@@ -124,18 +124,19 @@ public class NALObjectsTest  {
 
             String l = log.toString();
             boolean hasPuppet = l.contains("Puppet");
-            if (!external && hasPuppet && t.isGoal())
-                assertFalse("internal mode registered a Puppet invocation", true);
+            boolean isMultiply = t.toString().contains("multiply");
+            if (!external && hasPuppet && t.isGoal() && isMultiply)
+                assertFalse(t + " internal mode registered a Puppet invocation", true);
             boolean hasInput = l.contains("Input");
-            if (external && hasInput && t.isGoal())
+            if (external && hasInput && t.isGoal() && isMultiply)
                 assertFalse(t + " external mode registered a volition invocation", true);
-            if (t.isGoal()) {
+            if (t.isGoal() && isMultiply) {
                 if (hasPuppet) puppets.incrementAndGet();
                 if (hasInput) inputs.incrementAndGet();
             }
         });
 
-        n.frame(8);
+        n.frame(6);
 
 
         assertEquals(0, wrapped.count); //unaffected

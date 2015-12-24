@@ -129,8 +129,8 @@ public abstract class AbstractNAR extends NAR {
     public void initDefaults(Memory m) {
         //parameter defaults
 
-        setTaskLinkBagSize(12);
-        setTermLinkBagSize(12);
+        setTaskLinkBagSize(18);
+        setTermLinkBagSize(18);
 
         m.duration.set(5);
 
@@ -138,8 +138,8 @@ public abstract class AbstractNAR extends NAR {
         m.conceptGoalsMax.set(8);
         m.conceptQuestionsMax.set(5);
 
-        m.taskLinkForgetDurations.setValue(2.0);
-        m.termLinkForgetDurations.setValue(2.0); //not currently used, tasklink is
+        m.taskLinkForgetDurations.setValue(3.0);
+        m.termLinkForgetDurations.setValue(3.0); //not currently used, tasklink is
 
 
         m.derivationThreshold.set(0);
