@@ -20,7 +20,7 @@ public abstract class DeriveletContext implements Consumer<NAR> {
     /** current concept, next concept */
     public final Supplier<Concept> conceptSupply;
     public final NAR nar;
-    private float forgetCycles;
+    //private float forgetCycles;
 
     public DeriveletContext(NAR nar, Random rng, Supplier<Concept> conceptSupply) {
         this.nar = nar;
@@ -33,7 +33,7 @@ public abstract class DeriveletContext implements Consumer<NAR> {
     public void accept(NAR nar) {
         //each cycle
         Memory memory = nar.memory;
-        forgetCycles = memory.duration() * 1; //memory.conceptForgetDurations.floatValue();
+        //forgetCycles = memory.duration() * 1; //memory.conceptForgetDurations.floatValue();
     }
 
     public float nextFloat() {
@@ -43,7 +43,7 @@ public abstract class DeriveletContext implements Consumer<NAR> {
 
     public abstract Concept concept(Term term);
 
-    public float getForgetCycles() {
-        return forgetCycles;
-    }
+//    public float getForgetCycles() {
+//        return forgetCycles;
+//    }
 }

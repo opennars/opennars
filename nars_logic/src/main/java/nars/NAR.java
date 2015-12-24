@@ -1347,7 +1347,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     /**
      * execute a Task as a TaskProcess (synchronous)
      */
-    public boolean process(Task task) {
+    public Concept process(Task task) {
 
 //        if(task==null) {
 //            return false;
@@ -1374,7 +1374,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         Concept c = conceptualize(task.term(), task.getBudget(), 1f);
         if (c == null) {
             memory.remove(task, "Inconceivable");
-            return false;
+            return null;
         }
 
         memory.emotion.busy(task);
@@ -1388,10 +1388,10 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
             }
 
-            return true;
+            return c;
         } else {
             memory.remove(task, null /* "Unprocessable" */);
-            return false;
+            return null;
         }
 
     }

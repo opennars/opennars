@@ -302,12 +302,16 @@ public abstract class AbstractNAR extends NAR {
 
     /** ConceptBuilder: */
     public Concept apply(Term t) {
+        return newDefaultConcept(t, termLinkBagSize, taskLinkBagSize, memory);
+    }
+
+    public static Concept newDefaultConcept(Term t, int termLinkBagSize, int taskLinkBagSize, Memory memory) {
 
         Bag<Task> taskLinks =
-                new CurveBag<>(taskLinkBagSize, rng).mergePlus();
+                new CurveBag<>(taskLinkBagSize, memory.random).mergePlus();
 
         Bag<Termed> termLinks =
-                new CurveBag<>(termLinkBagSize, rng).mergePlus();
+                new CurveBag<>(termLinkBagSize, memory.random).mergePlus();
 
         //Budget b = new UnitBudget();
         //Budget b = new BagAggregateBudget(taskLinks);
@@ -315,12 +319,12 @@ public abstract class AbstractNAR extends NAR {
         return t instanceof Atom ?
 
                 new AtomConcept(
-                    t,
-                    termLinks, taskLinks) :
+                        t,
+                        termLinks, taskLinks) :
 
                 new DefaultConcept(
-                    t,
-                    taskLinks, termLinks, memory);
+                        t,
+                        taskLinks, termLinks, memory);
 
     }
 

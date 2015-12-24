@@ -574,10 +574,6 @@ public class Default extends AbstractNAR {
 
 
 
-    public TaskPerception getInput() {
-        return input;
-    }
-
     @Override
     protected void initNAL9() {
         super.initNAL9();
