@@ -46,6 +46,10 @@ public class FasterList<X> extends FastList<X> {
     }
 
 
+    public X removeLast() {
+        return this.items[--size];
+    }
+
     @Override
     public final X get(int index) {
         //if (index < this.size) {

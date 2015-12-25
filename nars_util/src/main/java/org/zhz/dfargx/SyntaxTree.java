@@ -1,42 +1,44 @@
-package org.zhz.dfargx.tree;
+package org.zhz.dfargx;
 
+import nars.util.data.list.FasterList;
+import org.zhz.dfargx.node.*;
+import org.zhz.dfargx.node.bracket.LeftBracket;
+import org.zhz.dfargx.node.bracket.RightBracket;
 import org.zhz.dfargx.stack.OperatingStack;
 import org.zhz.dfargx.stack.ShuntingStack;
-import org.zhz.dfargx.tree.node.*;
-import org.zhz.dfargx.tree.node.bracket.LeftBracket;
-import org.zhz.dfargx.tree.node.bracket.RightBracket;
 import org.zhz.dfargx.util.CommonSets;
 import org.zhz.dfargx.util.InvalidSyntaxException;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Created on 2015/5/8.
  */
 public class SyntaxTree {
-    private String regex;
-    private boolean itemTerminated;
-    private List<Node> nodeList;
-    private Stack<Node> nodeStack;
+    private final String regex;
+    private final FasterList<Node> nodeList = new FasterList();
+    private final FasterList<Node> nodeStack = new FasterList();
 
-    private Node root;
+    private final Node root;
+
+    private boolean itemTerminated;
+
 
     public SyntaxTree(String regex) {
-        root = null;
         this.regex = regex;
-        nodeList = new ArrayList<>();
         itemTerminated = false;
         normalize();
 //        System.out.println(nodeList);
         shunt();
 //        System.out.println(nodeStack);
-        buildTree();
-    }
 
-    private void buildTree() {
+
         OperatingStack operatingStack = new OperatingStack();
+//        nodeStack.forEach(e->e.accept(operatingStack));
+//        nodeStack.clear();
         while (!nodeStack.isEmpty()) {
-            Node node = nodeStack.pop();
+            Node node = nodeStack.removeLast();
             node.accept(operatingStack);
         }
         try {
@@ -51,30 +53,30 @@ public class SyntaxTree {
 
     private void shunt() {
         ShuntingStack shuntingStack = new ShuntingStack();
-        for (Node node : nodeList) {
-            node.accept(shuntingStack);
-        }
-        nodeStack = shuntingStack.finish();
+        nodeList.forEach((Consumer<Node>) n -> n.accept(shuntingStack));
+        shuntingStack.finish(nodeStack);
     }
 
     private void normalize() {
         int index = 0;
-        while (index < regex.length()) {
-            char ch = regex.charAt(index++);
+        String r = this.regex;
+        while (index < r.length()) {
+            char ch = r.charAt(index++);
+            FasterList<Node> nodeList = this.nodeList;
             switch (ch) {
-                case '[': {
+                case '[':
                     tryConcat();
                     List<Character> all = new ArrayList<>();
                     boolean isComplementarySet;
-                    if (regex.charAt(index) == '^') {
+                    if (r.charAt(index) == '^') {
                         isComplementarySet = true;
                         index++;
                     } else isComplementarySet = false;
-                    for (char next = regex.charAt(index++); next != ']'; next = regex.charAt(index++)) {
+                    for (char next = r.charAt(index++); next != ']'; next = r.charAt(index++)) {
                         if (next == '\\' || next == '.') {
                             String token;
                             if (next == '\\') {
-                                char nextNext = regex.charAt(index++);
+                                char nextNext = r.charAt(index++);
                                 token = new String(new char[]{next, nextNext});
                             } else token = String.valueOf(next);
                             List<Character> tokenSet = CommonSets.interpretToken(token);
@@ -85,24 +87,23 @@ public class SyntaxTree {
                     if (isComplementarySet) {
                         chSet = CommonSets.complementarySet(chSet);
                     }
-                    nodeList.add(new LeftBracket());
+                    nodeList.add(LeftBracket.the);
                     for (int i = 0; i < chSet.length; i++) {
                         nodeList.add(new LChar(chSet[i]));
                         if (i == chSet.length - 1 || chSet[i + 1] == 0) break;
                         nodeList.add(new BOr());
                     }
-                    nodeList.add(new RightBracket());
+                    nodeList.add(RightBracket.the);
                     itemTerminated = true;
                     break;
-                }
-                case '{': {
+                case '{':
                     int least;
                     int most = -1;
                     boolean deterministicLength = false;
                     StringBuilder sb = new StringBuilder();
-                    for (char next = regex.charAt(index++); ; ) {
+                    for (char next = r.charAt(index++); ; ) {
                         sb.append(next);
-                        next = regex.charAt(index++);
+                        next = r.charAt(index++);
                         if (next == '}') {
                             deterministicLength = true;
                             break;
@@ -113,10 +114,10 @@ public class SyntaxTree {
                     least = Integer.parseInt(sb.toString());
 
                     if (!deterministicLength) {
-                        char next = regex.charAt(index);
+                        char next = r.charAt(index);
                         if (next != '}') {
                             sb = new StringBuilder();
-                            for (char nextNext = regex.charAt(index++); nextNext != '}'; nextNext = regex.charAt(index++)) {
+                            for (char nextNext = r.charAt(index++); nextNext != '}'; nextNext = r.charAt(index++)) {
                                 sb.append(nextNext);
                             }
                             if (sb.length() != 0) {
@@ -128,59 +129,51 @@ public class SyntaxTree {
                     performMany(least, most);
                     itemTerminated = true;
                     break;
-                }
-                case '(': {
+                case '(':
                     tryConcat();
-                    nodeList.add(new LeftBracket());
+                    nodeList.add(LeftBracket.the);
                     itemTerminated = false;
                     break;
-                }
-                case ')': {
-                    nodeList.add(new RightBracket());
+                case ')':
+                    nodeList.add(RightBracket.the);
                     itemTerminated = true;
                     break;
-                }
-                case '*': {
+                case '*':
                     performMany(0, -1);
                     itemTerminated = true;
                     break;
-                }
-                case '?': {
+                case '?':
                     performMany(0, 1);
                     itemTerminated = true;
                     break;
-                }
-                case '+': {
+                case '+':
                     performMany(1, -1);
                     itemTerminated = true;
                     break;
-                }
-                case '|': {
+                case '|':
                     nodeList.add(new BOr());
                     itemTerminated = false;
                     break;
-                }
-                default: {
+                default:
                     tryConcat();
                     if (ch == '\\' || ch == '.') {
                         String token;
                         if (ch == '\\') {
-                            char next = regex.charAt(index++);
+                            char next = r.charAt(index++);
                             token = new String(new char[]{ch, next});
                         } else token = String.valueOf(ch);
                         List<Character> tokenSet = CommonSets.interpretToken(token);
-                        nodeList.add(new LeftBracket());
+                        nodeList.add(LeftBracket.the);
                         nodeList.add(new LChar(tokenSet.get(0)));
                         for (int i = 1; i < tokenSet.size(); i++) {
                             nodeList.add(new BOr());
                             nodeList.add(new LChar(tokenSet.get(i)));
                         }
-                        nodeList.add(new RightBracket());
+                        nodeList.add(RightBracket.the);
                     } else nodeList.add(new LChar(ch));
 
                     itemTerminated = true;
                     break;
-                }
             }
         }
     }
@@ -188,6 +181,7 @@ public class SyntaxTree {
     // look back for a completed term
     private void performMany(int least, int most) {
         if (!(least == 1 && most == 1)) {
+            FasterList<Node> nodeList = this.nodeList;
             if (least == 0 && most == -1) {
                 nodeList.add(new BMany());
                 nodeList.add(new LNull());
@@ -221,11 +215,11 @@ public class SyntaxTree {
                     nodeList.add(new LNull());
                 } else {
                     if (least != most) {
-                        nodeList.add(new LeftBracket());
+                        nodeList.add(LeftBracket.the);
                         for (int i = least; i <= most; i++) {
-                            nodeList.add(new LeftBracket());
+                            nodeList.add(LeftBracket.the);
                             if (i == 0) {
-                                nodeList.add(new LClosure());
+                                nodeList.add(LClosure.the);
                             } else {
                                 for (int j = 0; j < i; j++) {
                                     nodeList.addAll(copyNodes(sample));
@@ -234,21 +228,21 @@ public class SyntaxTree {
                                     }
                                 }
                             }
-                            nodeList.add(new RightBracket());
+                            nodeList.add(RightBracket.the);
                             if (i != most) {
                                 nodeList.add(new BOr());
                             }
                         }
-                        nodeList.add(new RightBracket());
+                        nodeList.add(RightBracket.the);
                     } else {
-                        nodeList.add(new LeftBracket());
+                        nodeList.add(LeftBracket.the);
                         for (int i = 0; i < least; i++) {
                             nodeList.addAll(copyNodes(sample));
                             if (i != least - 1) {
                                 nodeList.add(new BConcat());
                             }
                         }
-                        nodeList.add(new RightBracket());
+                        nodeList.add(RightBracket.the);
                     }
                 }
             }
@@ -256,15 +250,13 @@ public class SyntaxTree {
     }
 
     public List<Node> copyNodes(List<Node> sample) {
-        List<Node> result = new ArrayList<>(sample.size());
-        for (Node node : sample) {
-            result.add(node.copy());
-        }
+        List<Node> result = new FasterList(sample.size());
+        sample.forEach(node -> result.add(node.copy()));
         return result;
     }
 
     private Node last() {
-        return nodeList.get(nodeList.size() - 1);
+        return nodeList.getLast();
     }
 
 

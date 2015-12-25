@@ -1,20 +1,20 @@
 package org.zhz.dfargx.stack;
 
-import org.zhz.dfargx.tree.node.BranchNode;
-import org.zhz.dfargx.tree.node.LeafNode;
-import org.zhz.dfargx.tree.node.Node;
+import org.zhz.dfargx.node.BranchNode;
+import org.zhz.dfargx.node.LeafNode;
+import org.zhz.dfargx.node.Node;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
 
 /**
  * Created on 2015/5/9.
  */
 public class OperatingStack {
 
-    private Stack<Node> stack;
+    private final ArrayDeque<Node> stack;
 
     public OperatingStack() {
-        this.stack = new Stack<>();
+        this.stack = new ArrayDeque<>();
     }
 
     public void visit(LeafNode leafNode) {
@@ -22,10 +22,11 @@ public class OperatingStack {
     }
 
     public void visit(BranchNode branchNode) {
-        Node right = stack.pop();
-        Node left = stack.pop();
+        ArrayDeque<Node> st = this.stack;
+        Node right = st.pop();
+        Node left = st.pop();
         branchNode.operate(left, right);
-        stack.push(branchNode);
+        st.push(branchNode);
     }
 
     public Node pop() {

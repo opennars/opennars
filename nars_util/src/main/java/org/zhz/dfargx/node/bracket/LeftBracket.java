@@ -1,15 +1,22 @@
-package org.zhz.dfargx.tree.node.bracket;
+package org.zhz.dfargx.node.bracket;
 
 import org.zhz.dfargx.automata.NFA;
+import org.zhz.dfargx.node.BranchNode;
+import org.zhz.dfargx.node.Node;
 import org.zhz.dfargx.stack.OperatingStack;
 import org.zhz.dfargx.stack.ShuntingStack;
-import org.zhz.dfargx.tree.node.BranchNode;
-import org.zhz.dfargx.tree.node.Node;
 
 /**
  * Created on 2015/5/12.
  */
-public class LeftBracket extends BranchNode {
+public final class LeftBracket extends BranchNode {
+
+    public static final LeftBracket the = new LeftBracket();
+
+    private LeftBracket() {
+        super();
+    }
+
     @Override
     public void accept(NFA nfa) {
         throw new UnsupportedOperationException();
@@ -22,7 +29,7 @@ public class LeftBracket extends BranchNode {
 
     @Override
     public Node copy() {
-        return new LeftBracket();
+        return this; //new LeftBracket();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.zhz.dfargx.tree.node;
+package org.zhz.dfargx.node;
 
 import org.zhz.dfargx.automata.NFA;
 import org.zhz.dfargx.stack.OperatingStack;

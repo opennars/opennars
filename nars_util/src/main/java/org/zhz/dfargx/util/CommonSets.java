@@ -27,11 +27,11 @@ public class CommonSets {
 
     private static final char[] SUW = complementarySet(SLW); // slash upper w \W
 
-    private static final char[] SLS = new char[]{' ', '\t'}; // slash lower s \s
+    private static final char[] SLS = {' ', '\t'}; // slash lower s \s
 
     private static final char[] SUS = complementarySet(SLS); // slash upper s \S
 
-    private static final char[] SLD = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    private static final char[] SLD = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
     private static final char[] SUD = complementarySet(SLD);
 
@@ -144,7 +144,7 @@ public class CommonSets {
         int i = 0;
         for (char j = 0; j < book.length; j++) {
             boolean e = book[j];
-            if (!(e ^ persistedFlag)) {
+            if (e == persistedFlag) {
                 newSet[i++] = j;
             }
         }

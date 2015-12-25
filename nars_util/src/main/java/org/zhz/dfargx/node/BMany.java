@@ -1,4 +1,4 @@
-package org.zhz.dfargx.tree.node;
+package org.zhz.dfargx.node;
 
 import org.zhz.dfargx.automata.NFA;
 import org.zhz.dfargx.stack.OperatingStack;
@@ -7,10 +7,10 @@ import org.zhz.dfargx.stack.ShuntingStack;
 /**
  * Created on 2015/5/10.
  */
-public class LNull extends LeafNode {
+public class BMany extends BranchNode {
     @Override
-    public Node copy() {
-        return new LNull();
+    public String toString() {
+        return "[M]";
     }
 
     @Override
@@ -19,8 +19,8 @@ public class LNull extends LeafNode {
     }
 
     @Override
-    public String toString() {
-        return "{N}";
+    public Node copy() {
+        return new BMany();
     }
 
     @Override
@@ -31,5 +31,10 @@ public class LNull extends LeafNode {
     @Override
     public void accept(ShuntingStack shuntingStack) {
         shuntingStack.visit(this);
+    }
+
+    @Override
+    public int getPri() {
+        return 2;
     }
 }

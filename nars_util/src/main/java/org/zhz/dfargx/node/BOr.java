@@ -1,4 +1,4 @@
-package org.zhz.dfargx.tree.node;
+package org.zhz.dfargx.node;
 
 import org.zhz.dfargx.automata.NFA;
 import org.zhz.dfargx.stack.OperatingStack;
@@ -7,10 +7,11 @@ import org.zhz.dfargx.stack.ShuntingStack;
 /**
  * Created on 2015/5/10.
  */
-public class BMany extends BranchNode {
+public class BOr extends BranchNode {
+
     @Override
     public String toString() {
-        return "[M]";
+        return "[O]";
     }
 
     @Override
@@ -20,7 +21,7 @@ public class BMany extends BranchNode {
 
     @Override
     public Node copy() {
-        return new BMany();
+        return new BOr();
     }
 
     @Override
@@ -35,6 +36,6 @@ public class BMany extends BranchNode {
 
     @Override
     public int getPri() {
-        return 2;
+        return 0;
     }
 }

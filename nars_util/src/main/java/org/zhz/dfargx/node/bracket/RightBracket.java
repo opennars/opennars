@@ -1,15 +1,19 @@
-package org.zhz.dfargx.tree.node.bracket;
+package org.zhz.dfargx.node.bracket;
 
 import org.zhz.dfargx.automata.NFA;
+import org.zhz.dfargx.node.BranchNode;
+import org.zhz.dfargx.node.Node;
 import org.zhz.dfargx.stack.OperatingStack;
 import org.zhz.dfargx.stack.ShuntingStack;
-import org.zhz.dfargx.tree.node.BranchNode;
-import org.zhz.dfargx.tree.node.Node;
 
 /**
  * Created on 2015/5/12.
  */
-public class RightBracket extends BranchNode {
+public final class RightBracket extends BranchNode {
+
+    public static final RightBracket the = new RightBracket();
+
+    private RightBracket() { super(); }
 
     @Override
     public void accept(NFA nfa) {
@@ -23,7 +27,7 @@ public class RightBracket extends BranchNode {
 
     @Override
     public Node copy() {
-        return new RightBracket();
+        return this; // new RightBracket();
     }
 
     @Override

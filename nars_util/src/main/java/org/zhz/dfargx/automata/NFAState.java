@@ -1,28 +1,27 @@
 package org.zhz.dfargx.automata;
 
-import java.util.*;
+import com.gs.collections.impl.map.mutable.primitive.CharObjectHashMap;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created on 2015/5/10.
  */
 public class NFAState {
 
-    private Set<NFAState> directTable;
-    private Map<Character, Set<NFAState>> transitionMap;
-    private int id;
+    private final Set<NFAState> directTable;
+    public final CharObjectHashMap<Set<NFAState>> transitions;
+    private final int id;
 
     public NFAState(int id) {
         directTable = new HashSet<>();
-        transitionMap = new HashMap<>();
+        transitions = new CharObjectHashMap<>();
         this.id = id;
     }
 
     public void transitionRule(char ch, NFAState state) {
-        Set<NFAState> stateSet = transitionMap.get(ch);
-        if (stateSet == null) {
-            stateSet = new HashSet<>();
-            transitionMap.put(ch, stateSet);
-        }
+        Set<NFAState> stateSet = transitions.getIfAbsentPut(ch, HashSet::new);
         stateSet.add(state);
     }
 
@@ -37,22 +36,18 @@ public class NFAState {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        //if (o == null || getClass() != o.getClass()) return false;
         NFAState state = (NFAState) o;
-        return Objects.equals(id, state.id);
+        return id == state.id; //Objects.equals(id, state.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return id; //Objects.hash(id);
     }
 
     public Set<NFAState> getDirectTable() {
         return directTable;
-    }
-
-    public Map<Character, Set<NFAState>> getTransitionMap() {
-        return transitionMap;
     }
 
     @Override

@@ -4,8 +4,8 @@ package org.zhz.dfargx;
  * Created on 5/25/15.
  */
 public class MatchedText {
-    private String text;
-    private int Pos;
+    private final String text;
+    private final int Pos;
 
     MatchedText(String text, int Pos) {
         this.text = text;

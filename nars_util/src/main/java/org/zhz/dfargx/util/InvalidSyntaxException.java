@@ -1,6 +1,6 @@
 package org.zhz.dfargx.util;
 
-import org.zhz.dfargx.tree.node.Node;
+import org.zhz.dfargx.node.Node;
 
 /**
  * Created on 2015/5/9.

@@ -1,7 +1,7 @@
 package org.zhz.dfargx;
 
-import org.zhz.dfargx.tree.node.LNull;
-import org.zhz.dfargx.tree.node.Node;
+import org.zhz.dfargx.node.LNull;
+import org.zhz.dfargx.node.Node;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

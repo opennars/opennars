@@ -4,8 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.zhz.dfargx.automata.DFA;
 import org.zhz.dfargx.automata.NFA;
-import org.zhz.dfargx.tree.SyntaxTree;
-import org.zhz.dfargx.tree.node.Node;
+import org.zhz.dfargx.node.Node;
 
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -19,7 +18,7 @@ public class RegexTest {
     //"([ab]([^cd]*\\w+(abc|abcd){2,5})+)?.*"
     @Test
     public void testProcessing() {
-        long pre = System.currentTimeMillis();
+        long pre = System.nanoTime();
         String regex = "(a*b|ab*)";
         SyntaxTree tree = new SyntaxTree(regex);
         Node root = tree.getRoot();
@@ -30,7 +29,7 @@ public class RegexTest {
         System.out.println("NFA has " + nfa.getStateList().size() + " states");
         DFA dfa = new DFA(nfa.getStateList());
         System.out.println("DFA has " + dfa.getTransitionTable().length + " states");
-        System.out.println("Cost " + (System.currentTimeMillis() - pre) + " ms to compile");
+        System.out.println("Cost " + (System.nanoTime() - pre)/1E6 + " ms to compile");
     }
 
     @Test
@@ -73,34 +72,38 @@ public class RegexTest {
         System.out.println("Matching " + num + " strings using: ");
         System.out.println("[Pattern] " + regex);
         System.out.println("[String]" + str);
-        long pre = System.currentTimeMillis();
+        long pre = System.nanoTime();
         RegexMatcher rgxMatcher = new RegexMatcher(regex);
-        System.out.println("DFA matcher Cost " + (System.currentTimeMillis() - pre) + " ms to compile");
-        pre = System.currentTimeMillis();
+        System.out.println("DFA matcher Cost " + (System.nanoTime() - pre)/1E6f + " ms to compile");
+        pre = System.nanoTime();
         boolean dfaResult = false;
         for (int i = 0; i < num; i++) {
             dfaResult = rgxMatcher.match(str);
         }
-        System.out.println("DFA matcher Cost " + (System.currentTimeMillis() - pre) + " ms to do matching");
+        System.out.println("DFA matcher Cost " + matchesPerMS(num, pre)*1E6f + " matches per ms");
         System.out.println(dfaResult);
 
-        pre = System.currentTimeMillis();
+        pre = System.nanoTime();
         Pattern pattern = Pattern.compile(regex);
         Matcher mc = pattern.matcher(str);
-        System.out.println("Java pattern Cost " + (System.currentTimeMillis() - pre) + " ms to compile");
-        pre = System.currentTimeMillis();
+        System.out.println("Java pattern Cost " + (System.nanoTime() - pre)/1E6f + " ms to compile");
+        pre = System.nanoTime();
         boolean jpResult = false;
         for (int i = 0; i < num; i++) {
             jpResult = pattern.matcher(str).matches();
         }
-        System.out.println("Java pattern Cost " + (System.currentTimeMillis() - pre) + " ms to do matching");
+        System.out.println("Java pattern Cost " + matchesPerMS(num, pre)*1E6f + " matches per ms");
         System.out.println(jpResult);
         System.out.println();
         Assert.assertTrue(dfaResult == jpResult);
     }
 
+    private float matchesPerMS(float num, long pre) {
+        return (num * 1f)/(System.nanoTime() - pre);
+    }
+
     private void testSearchingSpeed(String regex, String str, int num) {
-        long pre = System.currentTimeMillis();
+        long pre = System.nanoTime();
         RegexSearcher searcher = new RegexSearcher(regex);
         for (int i = 0; i < num; i++) {
             searcher.search(str);
@@ -110,16 +113,17 @@ public class RegexTest {
                 text.getPos();
             }
         }
-        System.out.println("DFA matcher Cost " + (System.currentTimeMillis() - pre) + " ms to do searching");
-        pre = System.currentTimeMillis();
+        System.out.println("DFA matcher Cost " + (System.nanoTime() - pre)/1E6 + " ms to do searching");
+        pre = System.nanoTime();
         Pattern pattern = Pattern.compile(regex);
         for (int i = 0; i < num; i++) {
             Matcher matcher = pattern.matcher(str);
             while (matcher.find()) {
                 matcher.group();
                 matcher.start();
+                //System.out.println(matcher + " " + matcher.group() + " " + matcher.start());
             }
         }
-        System.out.println("Java pattern Cost " + (System.currentTimeMillis() - pre) + " ms to do searching");
+        System.out.println("Java pattern Cost " + (System.nanoTime() - pre)/1E6 + " ms to do searching");
     }
 }

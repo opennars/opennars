@@ -1,4 +1,4 @@
-package org.zhz.dfargx.tree.node;
+package org.zhz.dfargx.node;
 
 /**
  * Created on 2015/5/10.

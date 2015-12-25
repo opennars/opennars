@@ -2,22 +2,18 @@ package org.zhz.dfargx;
 
 import org.zhz.dfargx.automata.DFA;
 import org.zhz.dfargx.automata.NFA;
-import org.zhz.dfargx.tree.SyntaxTree;
 
 /**
  * Created on 2015/5/11.
  */
 public class RegexMatcher {
-    private int[][] transitionTable;
-    private int is;
-    private int rs;
-    private boolean[] fs;
+
+    private final int[][] transitionTable;
+    private final int is;
+    private final int rs;
+    private final boolean[] fs;
 
     public RegexMatcher(String regex) {
-        compile(regex);
-    }
-
-    private void compile(String regex) {
         SyntaxTree syntaxTree = new SyntaxTree(regex);
         NFA nfa = new NFA(syntaxTree.getRoot());
         DFA dfa = new DFA(nfa.getStateList());
@@ -27,12 +23,12 @@ public class RegexMatcher {
         rs = dfa.getRejectedState();
     }
 
-    public boolean match(String str) {
+    public final boolean match(String str) {
         int s = is;
-        for (int i = 0, length = str.length(); i < length; i++) {
-            char ch = str.charAt(i);
-            s = transitionTable[s][ch];
-            if (s == rs) {
+        int[][] t = this.transitionTable;
+        final int rejected = rs;
+        for (int i = 0, length = str.length()-1; (length--) >= 0; i++) {
+            if ((s = t[s][str.charAt(i)]) == rejected) {
                 return false; // fast failed using rejected state
             }
         }
