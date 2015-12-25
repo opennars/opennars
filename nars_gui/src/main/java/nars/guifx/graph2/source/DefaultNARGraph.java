@@ -10,6 +10,7 @@ import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.VisModel;
 import nars.guifx.graph2.impl.CanvasEdgeRenderer;
 import nars.guifx.graph2.layout.*;
+import nars.guifx.graph2.layout.FastOrganicLayout;
 import nars.guifx.graph2.scene.DefaultVis;
 import nars.term.Termed;
 
@@ -20,6 +21,7 @@ import static javafx.application.Platform.runLater;
  */
 public class DefaultNARGraph<K extends Comparable & Termed, V extends TermNode<K>> extends SpaceGrapher<K,V> {
 
+    @Implementation(FastOrganicLayout.class)
     @Implementation(HyperOrganicLayout.class)
     @Implementation(HyperassociativeMap2D.class)
     @Implementation(Spiral.class)

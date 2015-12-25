@@ -130,6 +130,20 @@ public class TermNode<K extends Comparable> extends Group {
     final public void move(final double[] v, final double speed, final double threshold) {
         move(v[0], v[1], speed, threshold);
     }
+
+    public void moveDelta(float dx, float dy) {
+        move(tx + dx, ty + dy);
+    }
+
+    public final void move(double v0, double v1, double speed) {
+        double px = tx;
+        double py = ty;
+        double momentum = 1.0f - speed;
+        double nx = v0 * speed + px * momentum;
+        double ny = v1 * speed + py * momentum;
+        move(nx, ny);
+    }
+
     final public void move(final double v0, final double v1, final double speed, final double threshold) {
         final double px = tx;
         final double py = ty;
