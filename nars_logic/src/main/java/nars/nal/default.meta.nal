@@ -449,9 +449,8 @@
 
     P, S, after(Task,Belief), measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction, Eternalize:Immediate),
                                                                                                                        (P =\> (&/,S,I)), (Truth:Abduction),
-                                                                                                                       ((&/,S,I) </> P), (Truth:Comparison)
-
-    P, S, after(Task,Belief), not_conjunction(P), not_conjunction(S),  measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (&/,S,I,P), (Truth:Intersection)
+                                                                                                                       ((&/,S,I) </> P), (Truth:Comparison),
+                                                                                                                       (&/,S,I,P), (Truth:Intersection)
 
     P, S, concurrent(Task,Belief), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction, Eternalize:Immediate),
                                                                                                            (P =|> S), (Truth:Induction),
@@ -491,7 +490,7 @@
     ((-,S,A) --> (-,S,B)), (B --> A), task("?") |- ((-,S,A) --> (-,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
-////composition on one side of a statement:
+////composition on one side of aay w statement:
 
     (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
@@ -511,7 +510,7 @@
     ((/,N,_,B) --> ?X), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((/,N,_,B) --> (/,N,_,S)), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
-//NAL5: //TODO: if neg rule above is general this one we can skip then
+//NAL5:
 
   --A,   A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgment)
     A, --A, task("?") |-   A, (Truth:BeliefNegation, Punctuation:Judgment)
