@@ -218,8 +218,10 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
     protected void noticeExecuted(final Task<Operation> operation) {
 
         Budget b;
-        if (!operation.isDeleted())
-            b = operation.getBudget();
+        if (!operation.isDeleted()) {
+            b = operation.getBudget().clone();
+            b.setPriority(b.getPriority()*Global.OPERATION_EXECUTION_PRIORITY_BOOST);
+        }
         else
             b = Budget.zero;//if operation was cancelled, at least provide some result feedback
 

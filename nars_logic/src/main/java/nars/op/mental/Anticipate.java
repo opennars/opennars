@@ -74,10 +74,7 @@ public class Anticipate {
     public void onInput(Task t) {
         if (t.isInput()) {
             //increase task priority if its an operation
-            if(t instanceof Operation) {
-                t.getBudget().setPriority(Math.min(1,t.getBudget().getPriority()*1.5f));
-            }
-               mayHaveHappenedAsExpected(t);
+            mayHaveHappenedAsExpected(t);
         }
       }
 
