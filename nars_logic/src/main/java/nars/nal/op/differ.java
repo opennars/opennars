@@ -8,8 +8,8 @@ public class differ extends BinaryTermOperator/*implements BinaryOperator<Term>*
 
     @Override
     public Term apply(Term a, Term b) {
-        return TermContainer.difference(
-            (Compound) a, (Compound) b
-        );
+        return ((Compound)a).clone(TermContainer.difference(
+                (Compound) a, (Compound) b
+        ));
     }
 }

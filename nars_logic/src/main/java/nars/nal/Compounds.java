@@ -1,5 +1,6 @@
 package nars.nal;
 
+import com.gs.collections.api.set.MutableSet;
 import nars.$;
 import nars.Op;
 import nars.Symbols;
@@ -32,34 +33,35 @@ import static nars.term.Statement.subj;
 /**
  * static compound builder support
  */
-public class Compounds {
+public interface Compounds {
 
     /**
      * universal zero-length product
      */
-    public static final Compound Empty = (Compound) the(Op.PRODUCT, Terms.Empty);
+    Compound Empty = (Compound)$.p(Terms.Empty);
+
     /**
      * implications, equivalences, and interval
      */
-    final static int InvalidEquivalenceTerm =
+    int InvalidEquivalenceTerm =
             or(IMPLICATION, IMPLICATION_WHEN, IMPLICATION_AFTER, IMPLICATION_BEFORE,
                     EQUIV, EQUIV_AFTER, EQUIV_WHEN,
                     INTERVAL);
     /**
      * equivalences and intervals (not implications, they are allowed
      */
-    final static int InvalidImplicationPredicate =
+    int InvalidImplicationPredicate =
             or(EQUIV, EQUIV_AFTER, EQUIV_WHEN, INTERVAL);
 
-    public static Term negation(Term t) {
+    default Term negation(Term t) {
         if (t.op() == Op.NEGATE) {
             // (--,(--,P)) = P
             return ((Compound) t).term(0);
         }
-        return the(Op.NEGATE, new Term[]{t}, -1);
+        return the(Op.NEGATE, new Term[]{t}, -1, false);
     }
 
-    public static void setAppend(Compound set, Appendable p, boolean pretty) throws IOException {
+    static void setAppend(Compound set, Appendable p, boolean pretty) throws IOException {
 
         int len = set.size();
 
@@ -83,7 +85,7 @@ public class Compounds {
     }
 
 
-    public static void imageAppend(GenericCompound image, Appendable p, boolean pretty) throws IOException {
+    static void imageAppend(GenericCompound image, Appendable p, boolean pretty) throws IOException {
 
         int len = image.size();
 
@@ -116,7 +118,7 @@ public class Compounds {
 
     }
 
-    public static Term image(Op o, Term[] res) {
+    default Term image(Op o, Term[] res) {
 
         int index = 0, j = 0;
         for (Term x : res) {
@@ -141,7 +143,7 @@ public class Compounds {
                 res, index);
     }
 
-    public static boolean hasImdex(Term[] r) {
+    static boolean hasImdex(Term[] r) {
         for (Term x : r) {
             //        if (t instanceof Compound) return false;
 //        byte[] n = t.bytes();
@@ -165,7 +167,7 @@ public class Compounds {
 //        return $.p(argument);
 //    }
 
-    public static void productAppend(Compound product, Appendable p, boolean pretty) throws IOException {
+    static void productAppend(Compound product, Appendable p, boolean pretty) throws IOException {
 
         int s = product.size();
         p.append(COMPOUND_TERM_OPENER);
@@ -181,7 +183,7 @@ public class Compounds {
     /**
      * recursively flatten a embedded conjunction subterms if they are of a specific order
      */
-    public static Term[] flatten(Term[] args, Order order) {
+    static Term[] flatten(Term[] args, Order order) {
         //determine how many there are with same order
 
         int expandedSize;
@@ -191,11 +193,11 @@ public class Compounds {
         return args;
     }
 
-    public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
+    static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
         return spawn(parent, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
     }
 
-    public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
+    static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
         return new MutableTask(content, punctuation)
                 .truth(truth)
                 .budget(p, d, q)
@@ -208,7 +210,7 @@ public class Compounds {
 //    }
 
 
-    public static Term junction(Op op, Term[] t) {
+    default Term junction(Op op, Term[] t) {
         if (t.length == 0) return null;
 
 
@@ -236,11 +238,11 @@ public class Compounds {
 
         if (sa.length == 1) return sa[0];
 
-        return newCompound(op, sa, -1, false /* already sorted via TreeSet */);
+        return the(op, sa, -1, false /* already sorted via TreeSet */);
 
     }
 
-    public static Term statement(Op op, Term[] t) {
+    default Term statement(Op op, Term[] t) {
 
         switch (t.length) {
             case 1:
@@ -287,7 +289,7 @@ public class Compounds {
                 if (t.length == 1) return t[0]; //reduced to one
 
                 if (!Statement.invalidStatement(t[0], t[1]))
-                    return newCompound(op, t, -1, false); //already sorted
+                    return the(op, t, -1, false); //already sorted
 
                 return null;
             default:
@@ -295,17 +297,17 @@ public class Compounds {
         }
     }
 
-    public static Term subtractSet(Op setType, Compound A, Compound B) {
+    default Term subtractSet(Op setType, Compound A, Compound B) {
         if (A.equals(B))
             return null; //empty set
         TreeSet<Term> x = TermContainer.differenceSorted(A, B);
         /*if (x.isEmpty())
             return null;*/
-        return newCompound(setType, Terms.toArray(x),
+        return the(setType, Terms.toArray(x),
                 -1, false /* already sorted here via the Set */);
     }
 
-    private static boolean validEquivalenceTerm(Term t) {
+    static boolean validEquivalenceTerm(Term t) {
         return !t.isAny(InvalidEquivalenceTerm);
 //        if ( instanceof Implication) || (subject instanceof Equivalence)
 //                || (predicate instanceof Implication) || (predicate instanceof Equivalence) ||
@@ -314,7 +316,7 @@ public class Compounds {
 //        }
     }
 
-    private static Term impl2Conj(Op op, Term subject, Term predicate, Term oldCondition) {
+    default Term impl2Conj(Op op, Term subject, Term predicate, Term oldCondition) {
         Op conjOp;
         switch (op) {
             case IMPLICATION:
@@ -342,7 +344,10 @@ public class Compounds {
                 pred(predicate));
     }
 
-    public static Term newCompound(Op op, Term[] t, int relation, boolean sort) {
+    default Term the(Op op, Term[] t, int relation, boolean sort) {
+        if (t == null)
+            return null;
+
         if (sort && op.isCommutative())
             t = Terms.toSortedSetArray(t);
 
@@ -356,24 +361,27 @@ public class Compounds {
             return null;
         }
 
-        return new GenericCompound(op, t, relation);
+        return getTerm(op, t, relation);
     }
 
-    public static Term newIntersectINT(Term[] t) {
+    Term getTerm(Op op, Term[] t, int relation);
+
+
+    default Term newIntersectINT(Term[] t) {
         return newIntersection(t,
                 Op.INTERSECT_INT,
                 Op.SET_INT,
                 Op.SET_EXT);
     }
 
-    public static Term newIntersectEXT(Term[] t) {
+    default Term newIntersectEXT(Term[] t) {
         return newIntersection(t,
                 Op.INTERSECT_EXT,
                 Op.SET_EXT,
                 Op.SET_INT);
     }
 
-    private static Term newIntersection(Term[] t, Op intersection, Op setUnion, Op setIntersection) {
+    default Term newIntersection(Term[] t, Op intersection, Op setUnion, Op setIntersection) {
         switch (t.length) {
             case 1:
                 return t[0];
@@ -391,20 +399,20 @@ public class Compounds {
         //return newCompound(intersection, t, -1, true);
     }
 
-    @Deprecated private static Term newIntersection2(Term term1, Term term2, Op intersection, Op setUnion, Op setIntersection) {
+    @Deprecated default Term newIntersection2(Term term1, Term term2, Op intersection, Op setUnion, Op setIntersection) {
 
         Op o1 = term1.op();
         Op o2 = term2.op();
 
         if ((o1 == setUnion) && (o2 == setUnion)) {
             //the set type that is united
-            return TermContainer.union(setUnion, (Compound) term1, (Compound) term2);
+            return the(setUnion, TermContainer.union((Compound) term1, (Compound) term2));
         }
 
 
         if ((o1 == setIntersection) && (o2 == setIntersection)) {
             //the set type which is intersected
-            return TermContainer.intersect(setIntersection, (Compound) term1, (Compound) term2);
+            return intersect(setIntersection, (Compound) term1, (Compound) term2);
         }
 
         if (o2 == intersection && o1!=intersection) {
@@ -430,7 +438,7 @@ public class Compounds {
                 suffix = new Term[]{term2};
             }
 
-            return newCompound(intersection, concat(
+            return the(intersection, concat(
                     ((Compound) term1).terms(), suffix, Term.class
             ), -1, true);
 
@@ -439,12 +447,52 @@ public class Compounds {
         if (term1.equals(term2))
             return term1;
 
-        return newCompound(intersection, new Term[]{term1, term2}, -1, true);
+        return the(intersection, new Term[]{term1, term2}, -1, true);
 
 
     }
 
-    public static Term[] _flatten(Term[] args, Order order, int expandedSize) {
+    default Term intersect(Op resultOp, Compound a, Compound b) {
+        MutableSet<Term> i = TermContainer.intersect(a, b);
+        if (i.isEmpty()) return null;
+        return the(resultOp, i);
+    }
+
+    default Term difference(Compound a, Compound b) {
+
+        if (a.size() == 1) {
+
+            if (b.containsTerm(a.term(0))) {
+                return null;
+            } else {
+                return a;
+            }
+
+        } else {
+            //MutableSet dd = Sets.difference(a.toSet(), b.toSet());
+            MutableSet dd = a.toSet();
+            boolean changed = false;
+            for (Term bb : b.terms()) {
+                changed |= dd.remove(bb);
+            }
+
+            if (!changed) {
+                return a;
+            }
+            else if (dd.isEmpty()) {
+                return null;
+            }
+            else {
+                Term[] i = Terms.toArray(dd);
+                if (i == null) return null;
+                return the(a.op(), i);
+            }
+        }
+
+    }
+
+
+    static Term[] _flatten(Term[] args, Order order, int expandedSize) {
         Term[] ret = new Term[expandedSize];
         int k = 0;
         for (Term a : args) {
@@ -461,7 +509,7 @@ public class Compounds {
         return ret;
     }
 
-    public static int getFlattenedLength(Term[] args, Order order) {
+    static int getFlattenedLength(Term[] args, Order order) {
         int sz = 0;
         for (Term a : args) {
             if (a.op().isConjunctive(order))
@@ -473,29 +521,26 @@ public class Compounds {
     }
 
     /** main compound construction entry-point */
-    public static Term the(Op op, Collection<Term> t) {
+    default  Term the(Op op, Collection<Term> t) {
         return the(op, Terms.toArray(t));
     }
 
     /** main compound construction entry-point */
-    public static Term the(Op op, Term... t) {
-
-        switch (op) {
-            case NEGATE:
-                if (t.length!=1)
-                    return null;
-                return negation(t[0]);
-
-
-            default:
-                return the(op, t, -1);
-        }
+    default Term the(Op op, Term... t) {
+        return the(op, t, -1);
     }
 
-    public static Term the(Op op, Term[] t, int relation) {
+    default Term the(Op op, Term[] t, int relation) {
+
+        if (t == null)
+            return null;
 
         /* special handling */
         switch (op) {
+            case NEGATE:
+                if (t.length!=1)
+                    throw new RuntimeException("invalid negation subterms: " + Arrays.toString(t));
+                return negation(t[0]);
             case SEQUENCE:
                 return Sequence.makeSequence(t);
             case PARALLEL:
@@ -545,13 +590,11 @@ public class Compounds {
 
 
         if (op.isStatement()) {
+            //test for valid statement
             return statement(op, t);
         } else {
-            //product, set, etc..
-            return newCompound(op, t, relation, op.isCommutative());
+            return the(op, t, relation, op.isCommutative());
         }
-
-
 
     }
 

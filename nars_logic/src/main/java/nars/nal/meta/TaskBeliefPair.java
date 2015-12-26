@@ -39,6 +39,10 @@ public final class TaskBeliefPair extends GenericCompound {
         subterms().init(); //not necessary?; TaskBeliefPair is only meant to be a holder
     }
 
+    @Override
+    public Term clone(Term[] replaced) {
+        throw new RuntimeException("n/a");
+    }
 
 
 //    public final boolean substitutesMayExist(final TaskBeliefPair pattern) {

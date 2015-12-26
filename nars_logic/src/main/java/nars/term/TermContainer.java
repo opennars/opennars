@@ -4,8 +4,6 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.MutableSet;
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
-import nars.Op;
-import nars.nal.Compounds;
 import nars.term.compound.Compound;
 import nars.util.utf8.ByteBuf;
 
@@ -53,6 +51,11 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     static MutableSet<Term> intersect(TermContainer a, TermContainer b) {
         return Sets.intersect(a.toSet(),b.toSet());
     }
+    static MutableSet<Term> union(Compound a, Compound b) {
+        MutableSet<Term> s = a.toSet();
+        s.addAll(b.toSet());
+        return s;
+    }
 
     /** returns null if empty set; not sorted */
     static Term[] difference(TermContainer a, TermContainer b) {
@@ -62,7 +65,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
             else return a.terms();
         } else {
             MutableSet dd = Sets.difference(a.toSet(), b.toSet());
-            if (dd.isEmpty()) return null;
+            if (dd.isEmpty()) return Terms.Empty;
             return Terms.toArray(dd);
         }
     }
@@ -199,50 +202,6 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         return true;
     }
 
-    static Term intersect(Op resultOp, Compound a, Compound b) {
-        MutableSet<Term> i = intersect(a, b);
-        if (i.isEmpty()) return null;
-        return Compounds.the(resultOp, i);
-    }
-
-    static Term difference(Compound a, Compound b) {
-
-        if (a.size() == 1) {
-
-            if (b.containsTerm(a.term(0))) {
-                return null;
-            } else {
-                return a;
-            }
-
-        } else {
-            //MutableSet dd = Sets.difference(a.toSet(), b.toSet());
-            MutableSet dd = a.toSet();
-            boolean changed = false;
-            for (Term bb : b.terms()) {
-                changed |= dd.remove(bb);
-            }
-
-            if (!changed) {
-                return a;
-            }
-            else if (dd.isEmpty()) {
-                return null;
-            }
-            else {
-                Term[] i = Terms.toArray(dd);
-                if (i == null) return null;
-                return Compounds.the(a.op(), i);
-            }
-        }
-
-    }
-
-    static Term union(Op op, Compound a, Compound b) {
-        MutableSet<Term> s = a.toSet();
-        s.addAll(b.toSet());
-        return Compounds.the(op, s);
-    }
 
     /** returns true if evaluates true for any terms */
     @Override

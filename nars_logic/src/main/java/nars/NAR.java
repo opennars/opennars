@@ -904,6 +904,8 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
         if (v instanceof Object[])
             v = Arrays.toString((Object[]) v);
+        else if (v instanceof Task)
+            v = ((Task)v).toString(memory, true);
 
         out.append(v.toString());
 

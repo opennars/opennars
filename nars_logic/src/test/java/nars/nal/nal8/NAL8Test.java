@@ -1,29 +1,22 @@
 package nars.nal.nal8;
 
-import nars.$;
 import nars.NAR;
 import nars.Narsese;
 import nars.nal.AbstractNALTester;
-import nars.nal.nal7.Tense;
-import nars.term.Term;
-import nars.util.event.On;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class NAL8Test extends AbstractNALTester {
 
     final int cycles = 700;
     int exeCount = 0;
-    private On exeFunc;
 
     public NAL8Test(Supplier<NAR> b) { super(b); }
 
@@ -36,40 +29,11 @@ public class NAL8Test extends AbstractNALTester {
     public NAR nar() {
         NAR n = super.nar();
 
-        Term v = $.the("a");
-        exeFunc = n.onExecTerm("exe", (Term[] t) -> {
-            exeCount++;
-            return v;
-        });
 
         return n;
     }
 
-    @Test public void testQuest() throws Narsese.NarseseException {
 
-        String term = "<a --> b>";
-
-        NAR nar = nar();
-
-        //nar.stdout();
-
-        nar.goal(nar.term(term), Tense.Eternal, 1.0f, 0.9f);
-
-        nar.should(term);
-
-        AtomicBoolean valid = new AtomicBoolean(false);
-
-        //   eventAnswer: $0.10;0.90;1.00$ <a --> b>@ {0: 2} Input:$0.60;0.90;0.95$ <a --> b>! %1.00;0.90% {0: 1} Input
-        nar.answer(nar.task(term + '@'), a -> {
-            //System.out.println("answer: " + a);
-            if (a.toString().contains("<a --> b>!"))
-                valid.set(true);
-        });
-
-        nar.frame(16);
-
-        assertTrue(valid.get());
-    }
 
     @Test
     public void subsent_1() throws Narsese.NarseseException {

@@ -2,13 +2,11 @@ package nars.nal;
 
 import nars.nar.Default;
 import nars.term.TermContainer;
-import nars.term.compound.Compound;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static nars.$.$;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by me on 12/12/15.
@@ -65,25 +63,25 @@ public class TrieDeriverTest {
 
 
 
-        //test identity does not create new instance, single term
-        Compound b = $("{Mars}");
-        assertTrue(
-                b ==
-                TermContainer.difference(
-                        b,
-                        $("{Pluto}")
-                )
-        );
-
-        //test identity does not create new instance, multiterm
-        Compound a = $("{Mars,Venus}");
-        assertTrue(
-                a ==
-                        TermContainer.difference(
-                                a,
-                                $("{Pluto,PlanetX}")
-                        )
-        );
+//        //test identity does not create new instance, single term
+//        Compound b = $("{Mars}");
+//        assertTrue(
+//                b ==
+//                TermContainer.difference(
+//                        b,
+//                        $("{Pluto}")
+//                )
+//        );
+//
+//        //test identity does not create new instance, multiterm
+//        Compound a = $("{Mars,Venus}");
+//        assertTrue(
+//                a ==
+//                        TermContainer.difference(
+//                                a,
+//                                $("{Pluto,PlanetX}")
+//                        )
+//        );
     }
 
 }

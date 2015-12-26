@@ -45,6 +45,17 @@ public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
 
     }
 
+    @Override
+    public Term getTerm(Op op, Term[] t, int relation) {
+        return $.the(op, t, relation);
+//        return new PatternCompound(op, t, relation) {
+//            @Override
+//            public Term clone(Term[] replaced) {
+//                return MapIndex.this.getTerm(op(), replaced, relation());
+//            }
+//        };
+    }
+
     protected <T extends Termed> T compile(T t) {
 
         if (t instanceof TermMetadata) {

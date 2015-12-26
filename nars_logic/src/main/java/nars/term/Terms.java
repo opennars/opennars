@@ -181,8 +181,7 @@ public class Terms {
         switch (arg.length) {
 
             case 0:
-                throw new RuntimeException("empty"); //catch these conditions as early as possible, so use an exception here to catch
-                //return null;
+                return Terms.Empty;
 
             case 1:
                 return arg; //new Term[] { arg[0] };

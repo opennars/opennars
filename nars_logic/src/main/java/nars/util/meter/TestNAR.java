@@ -8,6 +8,7 @@ import nars.task.Task;
 import nars.task.Tasked;
 import nars.term.atom.Atom;
 import nars.util.event.CycleReaction;
+import nars.util.event.DefaultTopic;
 import nars.util.event.Topic;
 import nars.util.meter.condition.EternalTaskCondition;
 import nars.util.meter.condition.ExecutionCondition;
@@ -62,21 +63,24 @@ public class TestNAR  {
 
     public TestNAR(NAR nar) {
 
+        Topic<Task> answerReceiver = new DefaultTopic();
+
         this.outputEvents = new Topic[] {
             //nar.memory.eventDerived,
             //nar.memory.eventInput,
             nar.memory.eventTaskProcess,
             //nar.memory.eventTaskRemoved,
-            nar.memory.eventRevision
+            nar.memory.eventRevision,
+            answerReceiver
         };
 
         this.nar = nar;
 
-        //HACK sends 'answer' events' answers through derived so they can be detected by TaskCondition
+        //adapt 'answer' events (Twin<Task>) answer task component to the answerReceiver topic
         nar.memory.eventAnswer.on(tt -> {
             Task t = tt.getTwo();
-            t.log("Answer via Derived");
-            nar.memory.eventTaskProcess.emit(t);
+            t.log("Answers " + tt.getOne());
+            answerReceiver.emit(t);
         });
 
         if (exitOnAllSuccess) {

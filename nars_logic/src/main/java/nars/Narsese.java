@@ -872,7 +872,7 @@ public class Narsese extends BaseParser<Object>  {
     /**
      * produce a term from the terms (& <=1 NALOperator's) on the value stack
      */
-    final Term popTerm(Op op /*default */, @Deprecated boolean allowInternalOp) {
+    @Deprecated final Term popTerm(Op op /*default */, @Deprecated boolean allowInternalOp) {
 
 
 
@@ -958,7 +958,7 @@ public class Narsese extends BaseParser<Object>  {
         }
         else {
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
-            return Compounds.the(op, va);
+            return $.the(op, va);
         }
     }
 
