@@ -18,13 +18,13 @@ public class InvalidSyntaxException extends IllegalArgumentException {
         super(unknownErrMsg(), cause);
     }
 
-    public InvalidSyntaxException(Node node) {
-        super(nodeErrMsg(node));
-    }
-
-    public InvalidSyntaxException(Node node, Throwable cause) {
-        super(nodeErrMsg(node), cause);
-    }
+//    public InvalidSyntaxException(Node node) {
+//        super(nodeErrMsg(node));
+//    }
+//
+//    public InvalidSyntaxException(Node node, Throwable cause) {
+//        super(nodeErrMsg(node), cause);
+//    }
 
     private static String unknownErrMsg() {
         return "Invalid syntax found. ";

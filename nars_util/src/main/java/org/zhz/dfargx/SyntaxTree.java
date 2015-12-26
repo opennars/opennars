@@ -1,5 +1,6 @@
 package org.zhz.dfargx;
 
+import nars.util.Texts;
 import nars.util.data.list.FasterList;
 import org.zhz.dfargx.node.*;
 import org.zhz.dfargx.node.bracket.LeftBracket;
@@ -9,7 +10,10 @@ import org.zhz.dfargx.stack.ShuntingStack;
 import org.zhz.dfargx.util.CommonSets;
 import org.zhz.dfargx.util.InvalidSyntaxException;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.EmptyStackException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -60,13 +64,14 @@ public class SyntaxTree {
     private void normalize() {
         int index = 0;
         String r = this.regex;
-        while (index < r.length()) {
+        int len = r.length();
+        while (index < len) {
             char ch = r.charAt(index++);
             FasterList<Node> nodeList = this.nodeList;
             switch (ch) {
                 case '[':
                     tryConcat();
-                    List<Character> all = new ArrayList<>();
+                    List<Character> all = new FasterList<>();
                     boolean isComplementarySet;
                     if (r.charAt(index) == '^') {
                         isComplementarySet = true;
@@ -77,7 +82,7 @@ public class SyntaxTree {
                             String token;
                             if (next == '\\') {
                                 char nextNext = r.charAt(index++);
-                                token = new String(new char[]{next, nextNext});
+                                token = new String(new char[]{'\\', nextNext});
                             } else token = String.valueOf(next);
                             List<Character> tokenSet = CommonSets.interpretToken(token);
                             all.addAll(tokenSet);
@@ -98,7 +103,6 @@ public class SyntaxTree {
                     break;
                 case '{':
                     int least;
-                    int most = -1;
                     boolean deterministicLength = false;
                     StringBuilder sb = new StringBuilder();
                     for (char next = r.charAt(index++); ; ) {
@@ -111,8 +115,10 @@ public class SyntaxTree {
                             break;
                         }
                     }
-                    least = Integer.parseInt(sb.toString());
+                    least = Texts.i(sb.toString());
+                    //least = Integer.parseInt(sb.toString());
 
+                    int most = -1;
                     if (!deterministicLength) {
                         char next = r.charAt(index);
                         if (next != '}') {
@@ -121,7 +127,7 @@ public class SyntaxTree {
                                 sb.append(nextNext);
                             }
                             if (sb.length() != 0) {
-                                most = Integer.parseInt(sb.toString());
+                                most = Texts.i(sb.toString());
                             }
                         }
                     } else most = least;
@@ -160,7 +166,7 @@ public class SyntaxTree {
                         String token;
                         if (ch == '\\') {
                             char next = r.charAt(index++);
-                            token = new String(new char[]{ch, next});
+                            token = new String(new char[]{'\\', next});
                         } else token = String.valueOf(ch);
                         List<Character> tokenSet = CommonSets.interpretToken(token);
                         nodeList.add(LeftBracket.the);
@@ -249,7 +255,7 @@ public class SyntaxTree {
         }
     }
 
-    public List<Node> copyNodes(List<Node> sample) {
+    public static List<Node> copyNodes(List<Node> sample) {
         List<Node> result = new FasterList(sample.size());
         sample.forEach(node -> result.add(node.copy()));
         return result;

@@ -87,13 +87,15 @@ public class CommonSets {
 
     public static List<Character> interpretToken(String token) {
         List<Character> result;
-        if (token.length() == 1) {
-            if (token.charAt(0) == '.') {
+        char c0 = token.charAt(0);
+        int len = token.length();
+        if (len == 1) {
+            if (c0 == '.') {
                 result = DOT_L;
             } else {
-                result = Collections.singletonList(token.charAt(0));
+                result = Collections.singletonList(c0);
             }
-        } else if (token.length() != 2 || token.charAt(0) != '\\') {
+        } else if (len != 2 || c0 != '\\') {
             throw new InvalidSyntaxException("Unrecognized token: " + token);
         } else {
             switch (token.charAt(1)) {
@@ -133,9 +135,9 @@ public class CommonSets {
 
     private static boolean[] emptyBook() {
         boolean[] book = new boolean[ENCODING_LENGTH];
-        for (int i = 0; i < book.length; i++) {
-            book[i] = false;
-        }
+//        for (int i = 0; i < book.length; i++) {
+//            book[i] = false;
+//        }
         return book;
     }
 
@@ -143,8 +145,7 @@ public class CommonSets {
         char[] newSet = new char[ENCODING_LENGTH];
         int i = 0;
         for (char j = 0; j < book.length; j++) {
-            boolean e = book[j];
-            if (e == persistedFlag) {
+            if (book[j] == persistedFlag) {
                 newSet[i++] = j;
             }
         }

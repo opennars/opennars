@@ -56,7 +56,7 @@ public class Default extends AbstractNAR {
         ), numConcepts, conceptsFirePerCycle, termlinkFirePerConcept, tasklinkFirePerConcept);
     }
 
-    public Default(Memory mem, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+    public Default(Memory mem, int activeConcepts, int conceptsFirePerCycle, int termLinksPerConcept, int taskLinksPerConcept) {
         super(mem);
 
         the("input", input = initInput());
@@ -64,7 +64,7 @@ public class Default extends AbstractNAR {
         the("core", core = initCore(
                 activeConcepts,
                 conceptsFirePerCycle,
-                termLinksPerCycle, taskLinksPerCycle
+                termLinksPerConcept, taskLinksPerConcept
         ));
 
         if (core!=null) {
@@ -98,14 +98,14 @@ public class Default extends AbstractNAR {
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
     }
 
-    protected AbstractCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+    protected AbstractCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerConcept, int taskLinksPerConcept) {
 
         AbstractCycle c = new DefaultCycle(this, getDeriver(), newConceptBag(activeConcepts));
 
         //TODO move these to a PremiseGenerator which supplies
         // batches of Premises
-        c.termlinksSelectedPerFiredConcept.set(termLinksPerCycle);
-        c.tasklinksSelectedPerFiredConcept.set(taskLinksPerCycle);
+        c.termlinksSelectedPerFiredConcept.set(termLinksPerConcept);
+        c.tasklinksSelectedPerFiredConcept.set(taskLinksPerConcept);
 
         //tmpConceptsFiredPerCycle[0] = c.conceptsFiredPerCycle;
         c.conceptsFiredPerCycle.set(conceptsFirePerCycle);

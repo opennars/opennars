@@ -29,9 +29,9 @@ public class NFAState {
         directTable.add(state);
     }
 
-    public int getId() {
-        return id;
-    }
+//    public int getId() {
+//        return id;
+//    }
 
     @Override
     public boolean equals(Object o) {

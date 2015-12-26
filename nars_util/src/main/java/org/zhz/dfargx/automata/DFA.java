@@ -66,7 +66,7 @@ public class DFA {
         return minimize(originalDFATransitionMap, closureMap.get(initState), finalState);
     }
 
-    private void constructOriginalDFA(Set<NFAState> stateSet, Map<NFAState, CharObjectHashMap<Set<NFAState>>> nfaTransitionMap, Map<Set<NFAState>, CharObjectHashMap<Set<NFAState>>> originalDFATransitionMap) {
+    private static void constructOriginalDFA(Set<NFAState> stateSet, Map<NFAState, CharObjectHashMap<Set<NFAState>>> nfaTransitionMap, Map<Set<NFAState>, CharObjectHashMap<Set<NFAState>>> originalDFATransitionMap) {
         CharObjectHashMap<Set<NFAState>> subMap = originalDFATransitionMap.get(stateSet);
         if (subMap == null) {
             subMap = new CharObjectHashMap<>();
@@ -89,7 +89,7 @@ public class DFA {
         }
     }
 
-    private Map<NFAState, Set<NFAState>> calculateClosure(List<NFAState> nfaStateList) {
+    private static Map<NFAState, Set<NFAState>> calculateClosure(List<NFAState> nfaStateList) {
         Map<NFAState, Set<NFAState>> map = new HashMap<>();
         for (NFAState state : nfaStateList) {
             Set<NFAState> closure = new HashSet<>();
@@ -99,12 +99,12 @@ public class DFA {
         return map;
     }
 
-    private void dfsClosure(NFAState state, Set<NFAState> closure) {
+    private static void dfsClosure(NFAState state, Set<NFAState> closure) {
         closure.add(state);
         state.getDirectTable().forEach(next -> dfsClosure(next, closure));
     }
 
-    private Set<NFAState> traceReachable(Set<NFAState> closure, char ch, Map<NFAState, Set<NFAState>> closureMap) {
+    private static Set<NFAState> traceReachable(Set<NFAState> closure, char ch, Map<NFAState, Set<NFAState>> closureMap) {
         Set<NFAState> result = new HashSet<>();
         for (NFAState closureState : closure) {
             CharObjectHashMap<Set<NFAState>> transitionMap = closureState.transitions;
@@ -143,9 +143,7 @@ public class DFA {
             int[] state = newRejectState();
             CharObjectHashMap<Set<NFAState>> ev = entry.getValue();
 
-            ev.forEachKeyValue( (k, v) -> {
-                state[k] = stateRenamingMap.get(v);
-            });
+            ev.forEachKeyValue( (k, v) -> state[k] = stateRenamingMap.get(v));
 
             renamedDFATransitionTable.put(renamingStateID, state);
 
@@ -239,13 +237,13 @@ public class DFA {
     }
 
 
-    private int[] newRejectState() {
+    private static int[] newRejectState() {
         int[] state = new int[CommonSets.ENCODING_LENGTH];
         //rejectAll(state);
         return state;
     }
 
-    private void rejectAll(int[] state) {
-        Arrays.fill(state, 0);
-    }
+//    private static void rejectAll(int[] state) {
+//        Arrays.fill(state, 0);
+//    }
 }

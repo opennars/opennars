@@ -3,12 +3,13 @@ package org.zhz.dfargx;
 import org.zhz.dfargx.automata.DFA;
 import org.zhz.dfargx.automata.NFA;
 
+import java.util.Arrays;
 import java.util.Enumeration;
 
 /**
  * Created on 5/25/15.
  */
-public class RegexSearcher implements Enumeration<MatchedText> {
+public class RegexSearcher extends DFA implements Enumeration<MatchedText> {
     private final int[][] transitionTable;
     private final int is;
     private final int rs;
@@ -19,14 +20,22 @@ public class RegexSearcher implements Enumeration<MatchedText> {
     private int startPos;
     private MatchedText text;
 
+    @Override
+    public String toString() {
+        return "RegexSearcher{" +
+                "transitionTable=" + Arrays.deepToString(transitionTable) +
+                ", is=" + is +
+                ", rs=" + rs +
+                ", fs=" + Arrays.toString(fs) +
+                '}';
+    }
+
     public RegexSearcher(String regex) {
-        SyntaxTree syntaxTree = new SyntaxTree(regex);
-        NFA nfa = new NFA(syntaxTree.getRoot());
-        DFA dfa = new DFA(nfa.getStateList());
-        transitionTable = dfa.getTransitionTable();
-        is = dfa.getInitState();
-        fs = dfa.getFinalStates();
-        rs = dfa.getRejectedState();
+        super(new NFA(new SyntaxTree(regex).getRoot()).getStateList());
+        transitionTable = getTransitionTable();
+        is = getInitState();
+        fs = getFinalStates();
+        rs = getRejectedState();
         str = null;
     }
 

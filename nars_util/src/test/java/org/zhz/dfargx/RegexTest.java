@@ -111,6 +111,7 @@ public class RegexTest {
                 MatchedText text = searcher.nextElement();
                 text.getText();
                 text.getPos();
+                //System.out.println(text);
             }
         }
         System.out.println("DFA matcher Cost " + (System.nanoTime() - pre)/1E6 + " ms to do searching");

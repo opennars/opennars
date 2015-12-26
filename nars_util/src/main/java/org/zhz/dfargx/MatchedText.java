@@ -3,7 +3,7 @@ package org.zhz.dfargx;
 /**
  * Created on 5/25/15.
  */
-public class MatchedText {
+public final class MatchedText {
     private final String text;
     private final int Pos;
 
@@ -22,9 +22,9 @@ public class MatchedText {
 
     @Override
     public String toString() {
-        return "MatchedText{" +
-                "text='" + text + '\'' +
-                ", Pos=" + Pos +
-                '}';
+        return "match:(" +
+                "'" + text + '\'' +
+                "," + Pos +
+                ')';
     }
 }

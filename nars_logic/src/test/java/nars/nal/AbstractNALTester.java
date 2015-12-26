@@ -61,7 +61,7 @@ public abstract class AbstractNALTester {
     }
     @After
     public void end() {
-        created.run2();
+        created.test();
     }
 
     @Deprecated public static Iterable<Supplier<NAR>> nars(int level, boolean requireMultistep) {
@@ -72,16 +72,23 @@ public abstract class AbstractNALTester {
 
         List<Supplier<NAR>> l = Global.newArrayList(2);
 
-        int finalLevel = level;
-
         if (multi) {
-            l.add(supply("Default[NAL<=" + level + ']',
-                () -> {
-                    Default d = new Default(768, 2, 2, 3);
-                    d.nal(finalLevel);
-                    return d;
+
+            for (int c : new int[] { 1, 2, 4 }) { ///concepts fired per cycle
+                l.add(supply("Default[NAL<=" + level + ",c=" + c + ']', () -> {
+                            Default d = new Default(768, c, 2, 3);
+                            d.nal(level);
+                            return d;
+                        }
+                ));
+                if (level < 8) {
+                    l.add(supply("Default[NAL8, c=" + c + "]", () -> {
+                                Default d = new Default(768, c, 2, 3);
+                                return d;
+                            }
+                    ));
                 }
-            ));
+            }
 
 //            l.add(supply("Alann[NAL<=" + level + ']',
 //                () -> {

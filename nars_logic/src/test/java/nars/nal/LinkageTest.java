@@ -1,5 +1,6 @@
 package nars.nal;
 
+import com.google.common.collect.Lists;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.nar.AbstractNAR;
@@ -9,7 +10,7 @@ import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.util.graph.TermLinkGraph;
 import nars.util.meter.TestNAR;
-import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.StrongConnectivityInspector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -23,20 +24,26 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class LinkageTest extends AbstractNALTester {
 
-    private final int cycles = 4;
+    public static final int TERM_LINK_BAG_SIZE = 8;
 
     public LinkageTest(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
-    public static Iterable configurations() {
-        return AbstractNALTester.nars(6,true);
+    public static Iterable<Supplier> configurations() {
+        return Lists.newArrayList(() -> {
+            Default d = new Default(0, 0, 0, 0);
+            d.setTermLinkBagSize(TERM_LINK_BAG_SIZE);
+            d.setTaskLinkBagSize(0);
+            d.nal(6);
+            return d;
+        });
     }
 
     public void ProperlyLinkedTest(String premise1, String premise2) throws Exception {
         TestNAR tester = test();
         tester.believe(premise1); //.en("If robin is a type of bird then robin can fly.");
         tester.believe(premise2); //.en("Robin is a type of bird.");
-        tester.run(5);
+        tester.run(1);
 
         Concept ret = tester.nar.concept(premise1);
         boolean passed = false;
@@ -86,7 +93,7 @@ public class LinkageTest extends AbstractNALTester {
 
         nar.believe(premise1,1.0f,0.9f); //.en("If robin is a type of bird then robin can fly.");
         nar.believe(premise2,1.0f,0.9f); //.en("Robin is a type of bird.");
-        nar.frame(cycles); //TODO: why does it take 30 cycles till premise1="<<$1 --> bird> ==> <$1 --> animal>>", premise2="<tiger --> animal>" is conceptualized?
+        nar.frame(1); //TODO: why does it take 30 cycles till premise1="<<$1 --> bird> ==> <$1 --> animal>>", premise2="<tiger --> animal>" is conceptualized?
 
         //List<String> fails = new ArrayList();
 
@@ -97,13 +104,22 @@ public class LinkageTest extends AbstractNALTester {
 
         //System.err.println(premise1 + " not linked with " + premise2);
         TermLinkGraph g = new TermLinkGraph(nar);
+        assertTrue(g.edgeSet().size() > 0);
+        assertTrue(g.vertexSet().size() > 0);
 
         //g.print(System.out);
         //System.out.println(g.isConnected() + " " + g.vertexSet().size() + " " + g.edgeSet().size());
-        if (!g.isConnected()) {
-            ConnectivityInspector ci = new ConnectivityInspector(g);
-            System.out.println("\ndisconnected termlink connectivity sets for " + premise1 + " and " + premise2);
-            ci.connectedSets().forEach( s -> System.out.println("\n\t" + s));
+        //if (!g.isConnected()) {
+        if (!g.isStronglyConnected()) {
+            StrongConnectivityInspector ci =
+                    //new ConnectivityInspector(g);
+                    new StrongConnectivityInspector(g);
+            System.out.println("pemise: " + premise1 + " and " + premise2 + " termlink strongly connected subgraphs");
+            ci
+                //.connectedSets()
+                .stronglyConnectedSubgraphs()
+                .forEach( s -> System.out.println("\t" + s));
+
         }
         assertTrue(g.isConnected());
 
@@ -142,7 +158,7 @@ public class LinkageTest extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe(premise1); //.en("If robin is a type of bird then robin can fly.");
         tester.believe(premise2); //.en("Robin is a type of bird.");
-        tester.nar.frame(10);
+        tester.nar.frame(1);
 
         boolean passed = links(premise1, premise2, tester);
         boolean passed2 = links(premise2, premise1, tester);
@@ -150,8 +166,9 @@ public class LinkageTest extends AbstractNALTester {
         assertTrue(passed2);
 
 
+        //dummy
         tester.believe("<a --> b>");
-        tester.mustBelieve(10,"<a --> b>",0.9f);
+        tester.mustBelieve(1,"<a --> b>",0.9f);
     }
 
     public boolean links(String premise1, String premise2, TestNAR tester) {
@@ -296,7 +313,7 @@ public class LinkageTest extends AbstractNALTester {
     public void testConceptFormed(String s) throws Exception {
         TestNAR tester = test();
         tester.believe(s,1.0f,0.9f);
-        tester.nar.frame(24);
+        tester.nar.frame(1);
         Concept ret = tester.nar.concept(s);
 
         assertNotNull("Failed to create a concept for "+s, ret);
@@ -338,7 +355,7 @@ public class LinkageTest extends AbstractNALTester {
         AbstractNAR tester = new Default(100,1,1,1);
         String nonsense = "<(&&,<#1 --> M>,<#2 --> M>) ==> <#1 --> nonsense>>";
         tester.believe(nonsense); //.en("If robin is a type of bird then robin can fly.");
-        tester.frame(10);
+        tester.frame(1);
         Concept c = tester.concept(nonsense);
         assertNotNull(c);
     }

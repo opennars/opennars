@@ -4,13 +4,13 @@ package org.zhz.dfargx.automata;
  * Created on 2015/5/10.
  */
 public class NFAStateFactory {
-    private static int nextID;
+    private static int nextID = 0;
 
     public NFAStateFactory() {
-        nextID = 0;
+
     }
 
-    public NFAState create() {
+    public static NFAState create() {
         return new NFAState(nextID++);
     }
 }

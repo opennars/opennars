@@ -720,7 +720,9 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * Exits an iteration loop if running
      */
     public void stop() {
-        running.set(false);
+        if (!running.compareAndSet(true, false)) {
+            throw new RuntimeException("wasnt running");
+        }
     }
 
 //    /**

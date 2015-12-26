@@ -57,6 +57,8 @@ public class TestNAR  {
      */
     static final boolean collectTrace = false;
 
+    boolean finished = false;
+
 
     public TestNAR(NAR nar) {
 
@@ -115,24 +117,28 @@ public class TestNAR  {
 
     /** returns a new TestNAR continuing with the current nar */
     public TestNAR next() {
+        finished = false;
         return new TestNAR(nar);
     }
 
     public TestNAR input(String s) {
+        finished = false;
         nar.input(s);
         return this;
     }
 
     public void inputAt(long time, String s) {
+        finished = false;
         nar.inputAt(time, s);
     }
 
     public void believe(String t, Tense tense, float f, float c) {
+        finished = false;
         nar.believe(t, tense, f, c);
     }
 
 
-    class EarlyExit extends CycleReaction {
+    final class EarlyExit extends CycleReaction {
 
         final int checkResolution; //every # cycles to check for completion
         int cycle = 0;
@@ -171,10 +177,7 @@ public class TestNAR  {
 
 
     public void stop() {
-        nar.stop();
-        /*if (resetOnStop) {
-            nar.memory.delete();
-        }*/
+        finished = true;
     }
 
     //TODO initialize this once in constructor
@@ -243,6 +246,7 @@ public class TestNAR  {
             cc.on(tc);
         }
 
+        finished = false;
         requires.add(tc);
 
         return this;
@@ -448,7 +452,7 @@ public class TestNAR  {
 
     }
 
-    public TestNAR run2() {
+    public TestNAR test() {
         return run(true);
     }
 
@@ -535,7 +539,10 @@ public class TestNAR  {
 
 
         //try {
-        nar.frame((int)(finalCycle - time()));
+        int frames = (int) (finalCycle - time());
+        while (frames-- > 0 && !finished)
+            nar.frame();
+
         /*}
         catch (Exception e) {
             error = e;

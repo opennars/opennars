@@ -6,6 +6,7 @@ import nars.concept.Concept;
 import nars.term.Term;
 import nars.term.Termed;
 import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.StrongConnectivityInspector;
 import org.jgrapht.graph.DirectedPseudograph;
 
 import java.io.PrintStream;
@@ -140,6 +141,10 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
     public boolean isConnected() {
         ConnectivityInspector<Term, String> ci = new ConnectivityInspector(this);
         return ci.isGraphConnected();
+    }
+    public boolean isStronglyConnected() {
+        StrongConnectivityInspector<Term, String> ci = new StrongConnectivityInspector(this);
+        return ci.isStronglyConnected();
     }
 
 //    public void add(Memory memory) {
