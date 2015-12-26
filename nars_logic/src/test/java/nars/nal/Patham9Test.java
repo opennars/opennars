@@ -194,6 +194,7 @@
 package nars.nal;
 
 import nars.$;
+import nars.Global;
 import nars.NAR;
 import nars.Narsese;
 import nars.concept.Concept;
@@ -413,7 +414,8 @@ public class Patham9Test extends AbstractNALTester {
     public void grouped_events_1() throws Narsese.NarseseException {
         NAR nar = new Default2(1000, 1, 1, 3);
 
-        Anticipate.testing = false;
+        Global.TESTING = false;
+        Global.TESTSTRING = "";
 
         for(int i=0;i<10;i++) {
             nar.input("<{0} --> pixel1>. :|:");
@@ -439,7 +441,7 @@ public class Patham9Test extends AbstractNALTester {
 
 
 
-        Anticipate.testing = true;
+        Global.TESTING = true;
         nar.frame(5000);
 
         throw new Narsese.NarseseException("finished test");

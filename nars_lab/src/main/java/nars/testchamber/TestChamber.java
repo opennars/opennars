@@ -36,8 +36,8 @@ public class TestChamber {
 
 
     public static void main(String[] args) {
-        Default nar = new Default2(1024, 1, 1, 3);
-        Anticipate.testing = true;
+        Default nar = new Default2(1000, 1, 1, 3);
+        Global.TESTING = true;
         //set NAR architecture parameters:
         //builder...
         Global.DEFAULT_JUDGMENT_DURABILITY = 0.99f; //try to don't forget the input in TestChamber domain

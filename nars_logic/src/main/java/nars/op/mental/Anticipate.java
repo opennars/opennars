@@ -98,10 +98,10 @@ public class Anticipate {
 
         TaskTime taskTime = new TaskTime(t, t.getCreationTime());
 
-        if(testing) {
+        if(Global.TESTING) {
             String s = "anticipating: "+taskTime.task.getTerm().toString();
             System.out.println(s);
-            teststring += s + "\n";
+            Global.TESTSTRING += s + "\n";
         }
 
         anticipations.put(tt, taskTime);
@@ -117,10 +117,10 @@ public class Anticipate {
 
     protected void deriveDidntHappen(Compound prediction, TaskTime tt) {
 
-        if(testing) {
+        if(Global.TESTING) {
             String s = "did not happen: " + prediction.toString();
             System.out.println(s);
-            teststring += s + "\n";
+            Global.TESTSTRING += s + "\n";
         }
 
         long expectedOccurrenceTime = tt.occurrTime;
@@ -163,10 +163,10 @@ public class Anticipate {
                 toRemove.add(tt);
 
                 happeneds++;
-                if(testing) {
+                if(Global.TESTING) {
                     String s = "happened as expected: "+tt.task.getTerm().toString();
                     System.out.println(s);
-                    teststring += s + "\n";
+                    Global.TESTSTRING += s + "\n";
                 }
             }
         }
@@ -177,8 +177,7 @@ public class Anticipate {
     /** called each cycle to update calculations of anticipations */
     int happeneds = 0, didnts = 0;
 
-    public static boolean testing = false;
-    public static String teststring = "";
+
     protected void updateAnticipations() {
 
         long now = nar.memory.time();

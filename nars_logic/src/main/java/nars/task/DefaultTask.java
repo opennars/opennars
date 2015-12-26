@@ -640,7 +640,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      */
     @Override
     public final void setBestSolution(final Task judg, final Memory memory) {
-        if(Anticipate.testing && this.isInput()) {
+        if(Global.TESTING && this.isInput()) {
             System.out.println(this);
             System.out.println("has new best solution:");
             System.out.println(judg);

@@ -14,7 +14,7 @@ public class NARfxDefaultIterative {
     public static void main(String[] arg) {
 
         Global.DEBUG = false;
-        Anticipate.testing = true;
+        Global.TESTING = true;
         NARide.show(new Default2(1000, 1, 1, 3).loop(), (i) -> {
             /*try {
                 i.nar.input(new File("/tmp/h.nal"));

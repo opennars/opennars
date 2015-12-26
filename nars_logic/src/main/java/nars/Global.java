@@ -135,9 +135,12 @@ public class Global {
      public static final float DEFAULT_QUEST_PRIORITY = 0.5f;
      /** Default durability of input question */
      public static final float DEFAULT_QUEST_DURABILITY = 0.9f;
- 
 
-    
+
+    //custom test functionality for some components
+    public static boolean TESTING = true;
+    public static String TESTSTRING = "";
+    //end tests
     
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */
@@ -313,8 +316,6 @@ public class Global {
     public static float ANTICIPATION_CONFIDENCE=0.95f;
     
     public static float EXECUTION_SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
-
-
 
 }
 
