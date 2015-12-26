@@ -32,6 +32,7 @@ import nars.nal.meta.TruthFunction;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
+import nars.nal.nal8.Operation;
 import nars.task.FluentTask;
 import nars.task.Task;
 import nars.term.Compound;
@@ -71,8 +72,13 @@ public class Anticipate {
     }
 
     public void onInput(Task t) {
-        if (t.isInput())
+        if (t.isInput()) {
+            //increase task priority if its an operation
+            if(t instanceof Operation) {
+                t.getBudget().setPriority(Math.min(1,t.getBudget().getPriority()*1.5f));
+            }
                mayHaveHappenedAsExpected(t);
+        }
       }
 
     public void anticipate(Premise premise, Task t) {
