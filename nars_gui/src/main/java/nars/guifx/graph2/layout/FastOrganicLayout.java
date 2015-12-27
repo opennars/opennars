@@ -135,11 +135,11 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
      */
     public FastOrganicLayout() {
         
-        setInitialTemp(13f);
-        setMinDistanceLimit(1f);
+        setInitialTemp(9f);
+        setMinDistanceLimit(10f);
         setMaxDistanceLimit(200f);
         
-        setMaxIterations(1);
+        setMaxIterations(2);
     }
 
     /**

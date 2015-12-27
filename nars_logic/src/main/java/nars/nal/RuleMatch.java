@@ -5,7 +5,6 @@ import nars.Global;
 import nars.Op;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.Solve;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
@@ -151,7 +150,7 @@ public class RuleMatch extends FindSubst {
             p.getBelief().get()
             : p.getTermLink().get(); //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
 
-        term.set( new TaskBeliefPair(
+        term.set( $.p(
             taskTerm.term(),
             beliefTerm.term()
         ) );

@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 
 import static org.junit.Assert.*;
 
@@ -152,18 +153,39 @@ public class CurveBagTest  {
         System.out.println(Arrays.toString(bag.getPriorityHistogram(4)));
         System.out.println(Arrays.toString(bag.getPriorityHistogram(8)));
 
-        EmpiricalDistribution f = getSamplingDistribution(n.core.active, 1000);
-        System.out.println(f.getSampleStats());
-        f.getBinStats().forEach(
-                s -> { if (s.getN() > 0) System.out.println(
-                    s.getMin() + ".." + s.getMax() + ":\t" + s.getN()); }
-                );
-        List<SummaryStatistics> l = f.getBinStats();
-        assertTrue(l.get(0).getN() < l.get(l.size()-1).getN());
+        Consumer<EmpiricalDistribution> print = (EmpiricalDistribution f) -> {
+
+
+            System.out.println(f.getSampleStats());
+            f.getBinStats().forEach(
+                    s -> {
+                        if (s.getN() > 0) System.out.println(
+                                s.getMin() + ".." + s.getMax() + ":\t" + s.getN());
+                    }
+            );
+        };
+
+        System.out.print("Sampling: " );
+        print.accept(getSamplingDistribution((CurveBag) n.core.active, 1000));
+        System.out.print("Priority: " );
+        EmpiricalDistribution pri;
+        print.accept(pri = getPriorityDistribution(n.core.active, 1000));
+
+        List<SummaryStatistics> l = pri.getBinStats();
+        assertTrue(l.get(0).getN() < l.get(l.size() - 1).getN());
 
     }
 
-    private EmpiricalDistribution getSamplingDistribution(Bag b, int n) {
+    private EmpiricalDistribution getSamplingDistribution(CurveBag b, int n) {
+        DoubleArrayList f = new DoubleArrayList(n);
+        for (int i = 0; i < n; i++)
+            f.add( b.sample() );
+        EmpiricalDistribution e =new EmpiricalDistribution(10 /* bins */);
+        e.load(f.toArray());
+        return e;
+    }
+
+    private EmpiricalDistribution getPriorityDistribution(Bag b, int n) {
         DoubleArrayList f = new DoubleArrayList(n);
         for (int i = 0; i < n; i++)
             f.add( b.peekNext().getPriority() );

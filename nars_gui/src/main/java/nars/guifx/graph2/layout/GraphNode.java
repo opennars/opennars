@@ -54,7 +54,7 @@ public class GraphNode extends Group {
 	}
 
 	public void moveDelta(float dx, float dy) {
-		move(tx + dx, ty + dy);
+		move(x() + dx, y() + dy);
 	}
 
 

@@ -44,7 +44,7 @@ public class CurveBag<V> extends Bag<V> {
     public CurveBag(int capacity, Random rng) {
         this(
             //CurveBag.power6BagCurve,
-            power6BagCurve,
+            power4BagCurve,
             capacity, rng);
     }
 
@@ -123,7 +123,7 @@ public class CurveBag<V> extends Bag<V> {
             begin = 0;
             end = ss;
         } else {
-            begin = random.nextInt(ss - n);
+            begin = Math.min(sample(), ss-n);
             end = begin + n;
         }
 
@@ -409,12 +409,12 @@ public class CurveBag<V> extends Bag<V> {
     static final int index(float y, int size) {
         size--;
 
-        int i = Math.round((1-y) * size); //invert order = select highest pri most frequently
+        int i = Math.round(y * size); //invert order = select highest pri most frequently
 
         if (i > size) return size;
         if (i < 0) return 0;
 
-        return i;
+        return i; //size - i;
 
             /*if (result == size) {
                 //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
@@ -444,7 +444,6 @@ public class CurveBag<V> extends Bag<V> {
 
         float min = getPriorityMin();
         float max = getPriorityMax();
-        boolean normalizing = (min != max);
         if (Util.equal(min, max, Global.BUDGET_PROPAGATION_EPSILON)) { //TODO epsilon
             //if there isnt any difference between min and max, just pick element at random
             return sampleRandomly(s);
