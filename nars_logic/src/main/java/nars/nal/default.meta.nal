@@ -447,13 +447,14 @@
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
 
-    P, S, after(Task,Belief), measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction, Eternalize:Immediate),
-                                                                                                                       (P =\> (&/,S,I)), (Truth:Abduction),
+    P, S, after(Task,Belief), measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction, Eternalize:Immediate)
+    P, S, after(Task,Belief), measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (P =\> (&/,S,I)), (Truth:Abduction),
                                                                                                                        ((&/,S,I) </> P), (Truth:Comparison),
                                                                                                                        (&/,S,I,P), (Truth:Intersection)
 
-    P, S, concurrent(Task,Belief), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction, Eternalize:Immediate),
-                                                                                                           (P =|> S), (Truth:Induction),
+
+    P, S, concurrent(Task,Belief), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction, Eternalize:Immediate)
+    P, S, concurrent(Task,Belief), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (P =|> S), (Truth:Induction),
                                                                                                            (S <|> P), (Truth:Comparison)
 
     P, S, concurrent(Task,Belief), not_conjunction(P), not_conjunction(S), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (&|,S,P), (Truth:Intersection)
