@@ -791,6 +791,12 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return this;
     }
 
+    public static final class AlreadyRunningException extends RuntimeException {
+        public AlreadyRunningException() {
+            super("already running");
+        }
+    }
+
     /**
      * Runs multiple frames, unless already running (then it return -1).
      *
@@ -800,7 +806,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
 
         if (!running.compareAndSet(false, true)) {
-            throw new RuntimeException("already running");
+            throw new AlreadyRunningException();
         }
 
         Memory memory = this.memory;
@@ -918,10 +924,9 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
     }
 
 
-    //    /** creates a new loop which begins paused */
-    @Deprecated
+    /** creates a new loop which begins paused */
     public final NARLoop loop() {
-        return loop((int) 1000);
+        return loop((int)-1);
     }
 
     public final NARLoop loop(float initialFPS) {

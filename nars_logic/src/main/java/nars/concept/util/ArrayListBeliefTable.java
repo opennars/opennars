@@ -165,7 +165,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
     static void onChanged(Concept c, Memory memory) {
-        memory.eventConceptChange.emit(c);
+        memory.eventConceptChanged.emit(c);
     }
 
 

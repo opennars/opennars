@@ -1,10 +1,12 @@
 package nars.guifx;
 
+import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import nars.$;
 import nars.NAR;
 import nars.util.data.list.CircularArrayList;
 import nars.util.data.list.FasterList;
@@ -12,6 +14,7 @@ import nars.util.event.Active;
 import nars.util.event.ArraySharingList;
 import nars.util.event.On;
 import nars.util.event.Topic;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
@@ -25,7 +28,7 @@ abstract public class TracePane extends LogPane implements ChangeListener, Consu
 
     public final NAR nar;
 
-    final static org.slf4j.Logger logger = LoggerFactory.getLogger(TracePane.class);
+    final static Logger logger = LoggerFactory.getLogger(TracePane.class);
 
     /**
      * threshold for minimum displayable priority
@@ -34,12 +37,12 @@ abstract public class TracePane extends LogPane implements ChangeListener, Consu
     private Active events;
     private On reg;
     protected Node prev; //last node added
-    ActivationTreeMap activationSet = null;
     //Pane cycleSet = null; //either displays one cycle header, or a range of cycles, including '...' waiting for next output while they queue
     boolean trace = false;
     ArraySharingList<Node> pending;
 
     final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
+    private UnsynchronizedAppenderBase appender;
 
     public TracePane(NAR nar, DoubleProperty volume) {
 
@@ -66,21 +69,18 @@ abstract public class TracePane extends LogPane implements ChangeListener, Consu
 
     protected void output(Object channel, Object signal) {
 
-
         //double f = filter.value(channel);
-
-        //temporary until filter working
-        if (!trace && ("eventDerived".equals(channel) ||
-                "eventTaskRemoved".equals(channel) ||
-                "eventConceptChange".equals(channel)
-        ))
-            return;
 
         Node n = getNode(channel, signal);
 
         if (n != null) {
             append(n);
         }
+    }
+
+    public void commit(String message) {
+        append(message);
+        commit();
     }
 
     public void append(String message) {
@@ -106,12 +106,12 @@ abstract public class TracePane extends LogPane implements ChangeListener, Consu
 
         if (reg==null && getParent()!=null) {
             appear();
-            logger.info("on");
+            return;
         }
 
         if (reg!=null && (getParent()==null || getScene() == null)) {
             disappear();
-            logger.info("off");
+            return;
         }
 
     }
@@ -121,7 +121,11 @@ abstract public class TracePane extends LogPane implements ChangeListener, Consu
     @Override
     public void accept(NAR n) {
 
+        commit();
 
+    }
+
+    public void commit() {
         if (pending == null)
             return;
 
@@ -158,12 +162,11 @@ abstract public class TracePane extends LogPane implements ChangeListener, Consu
             //this.toShow = new CircularArrayList<>(maxLines);
         }
         //}
-
     }
 
     public void disappear() {
         if (events!=null || reg!=null) {
-            append("Silence.");
+            logger.info("silence");
 
             if (events!=null) {
                 events.off();
@@ -174,16 +177,43 @@ abstract public class TracePane extends LogPane implements ChangeListener, Consu
                 reg.off();
                 reg = null;
             }
+
+            if (appender!=null) {
+                $.logRoot.detachAppender(appender);
+                appender.stop();
+                appender = null;
+            }
         }
     }
     public void appear() {
         if (reg==null && events == null) {
             reg = nar.memory.eventFrameStart.on(this);
             events = Topic.all(nar.memory, this::output,
-                    (k) -> !k.equals("eventConceptProcess") &&
-                            !k.equals("eventConceptActivated")
+                    (k) ->  !k.equals("eventConceptProcess") &&
+                            !k.equals("eventConceptActivated") &&
+                            !k.equals("eventConceptChanged") &&
+                            !k.equals("eventTaskRemoved") &&
+                            !k.equals("eventDerived")
             );
-            append("Active.");
+
+            appender = new UnsynchronizedAppenderBase() {
+
+                @Override
+                public void start() {
+                    super.start();
+                }
+
+                @Override
+                protected void append(Object eventObject) {
+                    TracePane.this.append(eventObject.toString());
+                }
+            };
+            appender.setContext($.logRoot.getLoggerContext());
+            //appender.setEncoder(encoder);
+            appender.start();
+            $.logRoot.addAppender(appender);
+
+            logger.info("active");
         }
         //if reg==null || events==null WTF
     }

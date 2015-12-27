@@ -1,17 +1,13 @@
 package nars.guifx.demo;
 
-import javafx.scene.Node;
-import nars.concept.Concept;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
-import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.impl.HalfHalfRightTriangleCanvasEdgeRenderer;
-import nars.guifx.graph2.scene.DefaultNodeVis;
+import nars.guifx.graph2.impl.HexButtonVis;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.guifx.util.TabX;
 import nars.nar.Default;
-import nars.term.Termed;
 
 /**
  * Created by me on 8/15/15.
@@ -61,32 +57,8 @@ public class NARGraph1Test {
                     }
                 },*/
 
-                new DefaultNodeVis() {
-
-                    @Override
-                    public TermNode newNode(Termed term) {
-                        return new LabeledCanvasNode(term, 32, e-> { }, e-> { }) {
-                            @Override
-                            protected Node newBase() {
-                                SubButton s = SubButton.make(
-                                    n, (Concept) term
-                                    //n, $.the(term.toString())
-                                );
-
-                                s.setScaleX(0.02f);
-                                s.setScaleY(0.02f);
-                                s.shade(1f);
-
-                                s.setManaged(false);
-                                s.setCenterShape(false);
-
-                                return s;
-                            }
-                        };
-                        //return new HexTermNode(term.term(), 32, e-> { }, e-> { });
-                        //return super.newNode(term);
-                    }
-                },
+                //new SubButtonVis(n),
+                new HexButtonVis(n),
                 //new DefaultNodeVis.HexTermNode(),
 
                 (A, B) -> {

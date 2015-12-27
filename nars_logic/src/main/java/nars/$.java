@@ -354,27 +354,33 @@ public abstract class $  {
 //        //loggerContext.stop();
     }
 
+    public static final Logger logRoot;
+
+    /** NALogging non-axiomatic logging encoder. log events expressed in NAL terms */
+    public static final PatternLayoutEncoder logEncoder;
+
     static {
         Thread.currentThread().setName("$");
 
         //http://logback.qos.ch/manual/layouts.html
 
-        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        LoggerContext loggerContext = rootLogger.getLoggerContext();
+        logRoot = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+
+        LoggerContext loggerContext = logRoot.getLoggerContext();
         // we are not interested in auto-configuration
         loggerContext.reset();
 
-        PatternLayoutEncoder encoder = new PatternLayoutEncoder();
-        encoder.setContext(loggerContext);
-        encoder.setPattern("%highlight(%-5level) %green(%thread) %message%n");
-        encoder.start();
+        logEncoder = new PatternLayoutEncoder();
+        logEncoder.setContext(loggerContext);
+        logEncoder.setPattern("\\( %highlight(%level),%green(%thread),%yellow(%logger{0}) \\): \"%message\".%n");
+        logEncoder.start();
+
 
         ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<>();
         appender.setContext(loggerContext);
-        appender.setEncoder(encoder);
+        appender.setEncoder(logEncoder);
         appender.start();
-
-        rootLogger.addAppender(appender);
+        logRoot.addAppender(appender);
 
 //        rootLogger.debug("Message 1");
 //        rootLogger.info("Message 1");

@@ -27,7 +27,7 @@ abstract public class ActiveConceptsLog extends LogPane {
             if (displayed!=null)
                 displayed.forEach(this::update);
         });
-        n.memory.eventConceptChange.on((Concept c) -> {
+        n.memory.eventConceptChanged.on((Concept c) -> {
             //TODO more efficient:
             display.remove(c);
             display.add(c);

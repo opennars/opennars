@@ -7,18 +7,13 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontSmoothingType;
-import javafx.scene.text.TextAlignment;
 import nars.data.Range;
-import nars.guifx.JFX;
 import nars.guifx.NARfx;
 import nars.guifx.graph2.NodeVis;
 import nars.guifx.graph2.TermNode;
@@ -98,7 +93,7 @@ public class DefaultNodeVis implements NodeVis {
 //            d.setFill(Color.hsb(v*360,1,1));
 //            d.fillRect(0,0,10,10);
 
-        t.scale( nodeScaleCache * (minSize + (maxSize - minSize) * t.priNorm) );
+        t.scale(nodeScaleCache * (minSize + (maxSize - minSize) * t.priNorm));
     }
 
     static final Font mono = NARfx.mono(8);
@@ -107,6 +102,10 @@ public class DefaultNodeVis implements NodeVis {
             (op, activation) -> Color.hsb(op * 360.0,
                     0.35 + 0.64 * activation,
                     0.25 + activation * 0.74));
+    public static final ColorMatrix colorsTransparent = new ColorMatrix(17 /* op hashcode color, hopefully prime */, 17 /* activation  */,
+            (op, p) -> Color.hsb(op * 360.0,
+                    0.35 + 0.64 * p,
+                    0.25 + p * 0.74).interpolate(Color.TRANSPARENT, 1f-p));
 
 
     private final AtomicReference<Node> selected = new AtomicReference();
@@ -241,251 +240,250 @@ public class DefaultNodeVis implements NodeVis {
         graph = null;
     }
 
-public static class LabeledCanvasNode<N extends Termed> extends TermNode {
+    public static class LabeledCanvasNode<N extends Termed> extends TermNode {
 
 
-    protected final Node base;
+        protected final Node base;
 
-    private GraphicsContext g = null;
+        private GraphicsContext g = null;
 
-    public LabeledCanvasNode(N t, int maxEdges, EventHandler<MouseEvent> mouseActivity, EventHandler<MouseEvent> mouseUntivity) {
-        super(t, maxEdges);
+        public LabeledCanvasNode(N t, int maxEdges, EventHandler<MouseEvent> mouseActivity, EventHandler<MouseEvent> mouseUntivity) {
+            super(t, maxEdges);
 
-        base = newBase();
-        setManaged(false);
+            base = newBase();
+            setManaged(false);
 
-        base.setOnMouseClicked(e -> {
-            //System.out.println("click " + e.getClickCount());
-            if (e.getClickCount() == 2) {
-                if (c != null) {
-                    //NARfx.run((a, b) -> {
-                    System.out.println("doubleclicked " + t);
-                    //});
+            base.setOnMouseClicked(e -> {
+                //System.out.println("click " + e.getClickCount());
+                if (e.getClickCount() == 2) {
+                    if (c != null) {
+                        //NARfx.run((a, b) -> {
+                        System.out.println("doubleclicked " + t);
+                        //});
+                    }
                 }
-            }
-        });
+            });
 
-        base.setOnMouseEntered(mouseActivity);
+            base.setOnMouseEntered(mouseActivity);
 
-        base.setOnMouseExited(mouseUntivity);
+            base.setOnMouseExited(mouseUntivity);
 
-        setPickOnBounds(false);
+            setPickOnBounds(false);
 
-        //update();
+            //update();
 
 //            base.setLayoutX(-0.5f);
 //            base.setLayoutY(-0.5f);
 
-        getChildren().setAll(base);
+            getChildren().setAll(base);
 
 
-        render(128, 24); //TODO call this lazily as it is being shown
+            render(128, 24); //TODO call this lazily as it is being shown
 
 
-    }
+        }
 
-    protected Node newBase() {
-        Canvas base = new Canvas();
-        base.setLayoutX(-0.5f);
-        base.setLayoutY(-0.5f);
+        protected Node newBase() {
+            Canvas base = new Canvas();
+            base.setLayoutX(-0.5f);
+            base.setLayoutY(-0.5f);
 
-        g = base.getGraphicsContext2D();
-        g.setFontSmoothingType(FontSmoothingType.LCD);
+            g = base.getGraphicsContext2D();
+            g.setFontSmoothingType(FontSmoothingType.LCD);
 
-        return base;
-    }
-
-
-    /**
-     * re-render to image buffer
-     */
-    public void render(double w, double h) {
+            return base;
+        }
 
 
-
-        //HACK
-        if (base instanceof Canvas) {
-            Canvas cbase = (Canvas)base;
-            cbase.setWidth(w);
-            cbase.setHeight(h);
-            g.clearRect(0, 0, w, h);
+        /**
+         * re-render to image buffer
+         */
+        public void render(double w, double h) {
 
 
+            //HACK
+            if (base instanceof Canvas) {
+                Canvas cbase = (Canvas) base;
+                cbase.setWidth(w);
+                cbase.setHeight(h);
+                g.clearRect(0, 0, w, h);
 
-            Color color = TermNode.getTermColor(term, colors, 0.5);
-            //TODO move nodeScaleCache elsewhere
-            double s = (1.0 * 4.0) / w; //scaled to width
 
-            //if (term instanceof Term) {
-            g.setFill(color); /*colors.get(
+                Color color = TermNode.getTermColor(term, colors, 0.5);
+                //TODO move nodeScaleCache elsewhere
+                double s = (1.0 * 4.0) / w; //scaled to width
+
+                //if (term instanceof Term) {
+                g.setFill(color); /*colors.get(
                         ,
                         //c==null ? 0 : c.getPriority()) //this can work if re-rendered
                         0.5 //otherwise jus use medium
                 ));*/
-            //}
-            g.fillRect(0, 0, w, h);
+                //}
+                g.fillRect(0, 0, w, h);
 
 
-            g.setFont(mono);
-            g.setFill(Color.BLACK);
+                g.setFont(mono);
+                g.setFill(Color.BLACK);
 
-            g.fillText(term.toString(), 0, h / 2);
+                g.fillText(term.toString(), 0, h / 2);
 
-            base.setScaleX(s);
-            base.setScaleY(s);
-            //base.setScaleZ(s);
+                base.setScaleX(s);
+                base.setScaleY(s);
+                //base.setScaleZ(s);
 
-            base.setLayoutX(-w / 2);
-            base.setLayoutY(-h / 2);
+                base.setLayoutX(-w / 2);
+                base.setLayoutY(-h / 2);
+            }
+
+
         }
 
-
     }
-
 }
 
 
-/**
- * original
- */
-public static class HexTermNode extends LabeledCanvasNode<Termed> {
-
-    private final Labeled label;
-
-    private boolean hover = false;
-
-    @Override
-    protected Node newBase() {
-        Polygon p = JFX.newPoly(6, 1);
-        p.setStrokeType(StrokeType.INSIDE);
-        return p;
-    }
-
-
-    @Override
-    public void render(double w, double h) {
-        //HACK
-    }
-
-    public HexTermNode(Termed t, int maxEdges, EventHandler<MouseEvent> mouseActivity, EventHandler<MouseEvent> mouseUntivity) {
-        super(t, maxEdges, mouseActivity, mouseUntivity);
-
-        Color color = TermNode.getTermColor(term, colors, 0.5);
-
-        Polygon p = (Polygon)base;
-        p.setFill(color);
-
-
-        //this.label = new Text(t.getTerm().toStringCompact());
-        label = new Label(t.term().toString());
-
-        //label.setFill(Color.WHITE);
-        //label.setBoundsType(TextBoundsType.VISUAL);
-
-        label.setPickOnBounds(false);
-        label.setMouseTransparent(true);
-        label.setFont(nodeFont);
-        label.setTextAlignment(TextAlignment.CENTER);
-        label.setScaleX(0.1f);
-        label.setScaleY(0.1f);
-
-        //label.setCenterShape(true);
-        //label.setWrapText(true);
-        //label.setTextOverrun(OverrunStyle.CLIP);
-        //label.prefWidth(4f);
-
-        //label.setSmooth(false);
-        //titleBar.setManaged(false);
-        //label.setBoundsType(TextBoundsType.VISUAL);
-
-
-
-//        base.setOnMouseClicked(e -> {
-//            //System.out.println("click " + e.getClickCount());
-//            if ((c != null) && (e.getClickCount() == 2)) {
-//                    NARfx.run((a, b) -> {
-//                        //...
-//                    });
+///**
+// * original
+// */
+//public static class HexTermNode extends LabeledCanvasNode<Termed> {
 //
-//            }
-//        });
-
-//        EventHandler<MouseEvent> mouseActivity = e -> {
-//            if (!hover) {
-//                base.setStroke(Color.ORANGE);
-//                base.setStrokeWidth(0.05);
-//                hover = true;
-//            }
-//        };
-//        //base.setOnMouseMoved(mouseActivity);
-//        base.setOnMouseEntered(mouseActivity);
-//        base.setOnMouseExited(e -> {
-//            if (hover) {
-//                base.setStroke(null);
-//                base.setStrokeWidth(0);
-//                hover = false;
-//            }
-//        });
-
-        setPickOnBounds(false);
-        //setManaged(false);
-
-        getChildren().setAll(base, label);//, titleBar);
-
-
-        //update();
-
-        //base.setLayoutX(0.5f);
-        //base.setLayoutY(0.5f);
-
-
-        //label.setTranslateX(-5.0);
-        label.setLayoutX(-getLayoutBounds().getWidth() / (2) + 0.25);
-
-//        base.setCacheHint(CacheHint.SPEED);
-//        base.setCache(true);
-
-        //setCacheHint(CacheHint.DEFAULT);
-        //setCache(true);
-
-
-    }
-
-}
-
-
+//    private final Labeled label;
 //
-//    public double getVertexScaleByPri(Concept c) {
-//        return c.getPriority();
-//        //return (c != null ? c.getPriority() : 0);
+//    private boolean hover = false;
+//
+//    @Override
+//    protected Node newBase() {
+//        Polygon p = JFX.newPoly(6, 1);
+//        p.setStrokeType(StrokeType.INSIDE);
+//        return p;
 //    }
 //
-//    public double getVertexScaleByConf(Concept c) {
-//        if (c.hasBeliefs()) {
-//            double conf = c.getBeliefs().getConfidenceMax(0, 1);
-//            if (Double.isFinite(conf)) return conf;
-//        }
-//        return 0;
-//    }
-
-
 //
-//    public Color getEdgeColor(double termMean, double taskMean) {
-////            // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
+//    @Override
+//    public void render(double w, double h) {
+//        //HACK
+//    }
+//
+//    public HexTermNode(Termed t, int maxEdges, EventHandler<MouseEvent> mouseActivity, EventHandler<MouseEvent> mouseUntivity) {
+//        super(t, maxEdges, mouseActivity, mouseUntivity);
+//
+//        Color color = TermNode.getTermColor(term, colors, 0.5);
+//
+//        Polygon p = (Polygon)base;
+//        p.setFill(color);
+//
+//
+//        //this.label = new Text(t.getTerm().toStringCompact());
+//        label = new Label(t.term().toString());
+//
+//        //label.setFill(Color.WHITE);
+//        //label.setBoundsType(TextBoundsType.VISUAL);
+//
+//        label.setPickOnBounds(false);
+//        label.setMouseTransparent(true);
+//        label.setFont(nodeFont);
+//        label.setTextAlignment(TextAlignment.CENTER);
+//        label.setScaleX(0.1f);
+//        label.setScaleY(0.1f);
+//
+//        //label.setCenterShape(true);
+//        //label.setWrapText(true);
+//        //label.setTextOverrun(OverrunStyle.CLIP);
+//        //label.prefWidth(4f);
+//
+//        //label.setSmooth(false);
+//        //titleBar.setManaged(false);
+//        //label.setBoundsType(TextBoundsType.VISUAL);
+//
+//
+//
+////        base.setOnMouseClicked(e -> {
+////            //System.out.println("click " + e.getClickCount());
+////            if ((c != null) && (e.getClickCount() == 2)) {
+////                    NARfx.run((a, b) -> {
+////                        //...
+////                    });
 ////
-////            return Color.hsb(25.0 + 180.0 * (1.0 + (termMean - taskMean)),
-////                    0.95f,
-////                    Math.min(0.75f + 0.25f * (termMean + taskMean) / 2f, 1f)
-////                    //,0.5 * (termMean + taskMean)
-////            );
+////            }
+////        });
+//
+////        EventHandler<MouseEvent> mouseActivity = e -> {
+////            if (!hover) {
+////                base.setStroke(Color.ORANGE);
+////                base.setStrokeWidth(0.05);
+////                hover = true;
+////            }
+////        };
+////        //base.setOnMouseMoved(mouseActivity);
+////        base.setOnMouseEntered(mouseActivity);
+////        base.setOnMouseExited(e -> {
+////            if (hover) {
+////                base.setStroke(null);
+////                base.setStrokeWidth(0);
+////                hover = false;
+////            }
+////        });
+//
+//        setPickOnBounds(false);
+//        //setManaged(false);
+//
+//        getChildren().setAll(base, label);//, titleBar);
+//
+//
+//        //update();
+//
+//        //base.setLayoutX(0.5f);
+//        //base.setLayoutY(0.5f);
+//
+//
+//        //label.setTranslateX(-5.0);
+//        label.setLayoutX(-getLayoutBounds().getWidth() / (2) + 0.25);
+//
+////        base.setCacheHint(CacheHint.SPEED);
+////        base.setCache(true);
+//
+//        //setCacheHint(CacheHint.DEFAULT);
+//        //setCache(true);
+//
+//
+//    }
+//
+//}
+//
+//
 ////
-//////            return new Color(
-//////                    0.5f + 0.5f * termMean,
-//////                    0,
-//////                    0.5f + 0.5f * taskMean,
-//////                    0.5f + 0.5f * (termMean + taskMean)/2f
+////    public double getVertexScaleByPri(Concept c) {
+////        return c.getPriority();
+////        //return (c != null ? c.getPriority() : 0);
+////    }
+////
+////    public double getVertexScaleByConf(Concept c) {
+////        if (c.hasBeliefs()) {
+////            double conf = c.getBeliefs().getConfidenceMax(0, 1);
+////            if (Double.isFinite(conf)) return conf;
+////        }
+////        return 0;
+////    }
+//
+//
+////
+////    public Color getEdgeColor(double termMean, double taskMean) {
+//////            // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
+//////
+//////            return Color.hsb(25.0 + 180.0 * (1.0 + (termMean - taskMean)),
+//////                    0.95f,
+//////                    Math.min(0.75f + 0.25f * (termMean + taskMean) / 2f, 1f)
+//////                    //,0.5 * (termMean + taskMean)
 //////            );
-//        return null;
-//    }
-
-}
+//////
+////////            return new Color(
+////////                    0.5f + 0.5f * termMean,
+////////                    0,
+////////                    0.5f + 0.5f * taskMean,
+////////                    0.5f + 0.5f * (termMean + taskMean)/2f
+////////            );
+////        return null;
+////    }
+//
+//}

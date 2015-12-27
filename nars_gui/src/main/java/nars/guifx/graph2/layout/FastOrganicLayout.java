@@ -1,13 +1,15 @@
 package nars.guifx.graph2.layout;
 
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
+import javafx.beans.property.SimpleDoubleProperty;
 import nars.Global;
+import nars.data.Range;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.source.SpaceGrapher;
+import nars.util.data.list.FasterList;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +17,9 @@ import java.util.List;
  */
 public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V> {
 
-    public static final float speed = 0.2f;
+    @Range(min = 0, max = 1f)
+    public final SimpleDoubleProperty nodeSpeed = new SimpleDoubleProperty(0.4);
+
     /**
      * Specifies if the top left corner of the input cells should be the origin
      * of the layout result. Default is true.
@@ -34,7 +38,13 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
      * replusive forces are multiple by the square of. The value equates to the
      * average radius there is of free space around each node. Default is 50.
      */
-    protected double forceConstant = 50;
+
+    @Range(min = 0, max = 300f)
+    public final SimpleDoubleProperty forceConstant = new SimpleDoubleProperty(100);
+
+    @Range(min = 0.5f, max = 4f)
+    public final SimpleDoubleProperty spacing = new SimpleDoubleProperty(1f);
+
 
     /**
      * Cache of <forceConstant>^2 for performance.
@@ -55,7 +65,7 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
      * The maximum distance between vertex, beyond which their repulsion no
  longer has an effect
      */
-    protected double maxDistanceLimit = 500;
+    protected double maxDistanceLimit = 1000;
 
     /**
      * Start value of temperature. Default is 200.
@@ -130,6 +140,7 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
 
     /** final normalization step to center all nodes */
     private boolean center = false;
+    private final FasterList<TermNode> cells = new FasterList();
 
 
     /**
@@ -203,20 +214,7 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
         maxIterations = value;
     }
 
-    /**
-     *
-     */
-    public double getForceConstant() {
-        return forceConstant;
-    }
 
-    /**
-     *
-     * @param value
-     */
-    public void setForceConstant(double value) {
-        forceConstant = value;
-    }
 
     /**
      *
@@ -304,6 +302,7 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
             dispY = new double[n];
             cellLocation = new double[n][];
             isMoveable = new boolean[n];
+            //if (neighbors == null || neighbors.length<n)
             neighbors = new int[n][];
             radius = new double[n];
             radiusSquared = new double[n];
@@ -311,6 +310,7 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
         
         minDistanceLimitSquared = minDistanceLimit * minDistanceLimit;
 
+        double forceConstant = this.forceConstant.doubleValue();
         if (forceConstant < 0.001) {
             forceConstant = 0.001;
         }
@@ -321,7 +321,9 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
         // arrays called neighbours which holds, for each vertex, a list of
         // ints which represents the neighbours cells to that vertex as
         // the indices into vertexArray
-        
+
+        final double spacing = this.spacing.get();
+
         for (int i = 0; i < n; i++) {
             TermNode vd = vertexArray.get(i);
             
@@ -343,7 +345,7 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
 
 			// Set the X,Y value of the internal version of the cell to
             // the center point of the vertex for better positioning
-            double ww = vd.width(); /*getRadius()*/
+            double ww = Math.max(vd.width(), vd.height()); /*getRadius()*/
             double width = ww*2f; //bounds.getWidth();
             double height = ww*2f; //bounds.getHeight();
 
@@ -389,8 +391,16 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
             TermEdge[] edges = vd.getEdges();
             if (edges!=null) {
 
-                List<TermNode> cells = new ArrayList(edges.length);
 
+                final Object[] ccells;
+                int cellsSize = edges.length;
+                {
+                    cells.clear();
+                    cells.ensureCapacity(cellsSize);
+                    ccells = cells.array();
+                }
+
+                int cn = 0;
                 for (TermEdge e : edges) {
                     //for (E e : edges) {
 //                    if (isResetEdges()) {
@@ -404,25 +414,30 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
 
                     TermNode source = e.aSrc; //graph.getEdgeSource(e);
                     TermNode target = e.bSrc; //graph.getEdgeTarget(e);
-                    cells.add(source!=vd ? source : target);
+                    ccells[cn++] = (source!=vd ? source : target);
                     //else if (target!=vd)  cells.add(target);
                 }
 
-                neighbors[i] = new int[cells.size()];
+                int[] ni;// = neighbors[i];
+                //if (ni == null || ni.length != cellsSize)
+                    ni = neighbors[i] = new int[cellsSize];
+//                else {
+//                    Arrays.fill(neighbors[i], -1);
+//                }
 
-                for (int j = 0; j < cells.size(); j++) {
-                    Integer index = indices.get(cells.get(j));
+                for (int j = 0; j < cellsSize; j++) {
+                    int index = indices.getIfAbsent(ccells[j], -1);
 
-                                        // Check the connected cell in part of the vertex list to be
+                    // Check the connected cell in part of the vertex list to be
                     // acted on by this layout
-                    if (index != null) {
-                        neighbors[i][j] = index.intValue();
+                    if (index != -1) {
+                        ni[j] = index;
                     } // Else if index of the other cell doesn't correspond to
                     // any cell listed to be acted upon in this layout. Set
                     // the index to the value of this vertex (a dummy self-loop)
                     // so the attraction force of the edge is not calculated
                     else {
-                        neighbors[i][j] = i;
+                        ni[j] = i;
                     }
                 }
             }
@@ -457,16 +472,22 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
 
         double minx = 0, miny = 0, maxx = 0, maxy = 0;
 
+        double speed = nodeSpeed.get();
+
         for (int i = 0; i < vertexArray.size(); i++) {
-            TermNode vd = vertexArray.get(i);                
+            TermNode vd = vertexArray.get(i);
 
             if (vd != null) {
+                double[] ci = cellLocation[i];
+
                 //cellLocation[i][0] -= 1/2.0; //geo.getWidth() / 2.0;
                 //cellLocation[i][1] -= 1/2.0; //geo.getHeight() / 2.0;
 
                 float r = (float)vd.width(); //getRadius();
-                double x = /*graph.snap*/(cellLocation[i][0] - r);
-                double y = /*graph.snap*/(cellLocation[i][1] - r);
+
+                double x = /*graph.snap*/(ci[0] - r);
+                double y = /*graph.snap*/(ci[1] - r);
+
 
                 vd.move((float)x, (float)y, speed);
 
@@ -544,12 +565,19 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
     protected void calcAttraction() {
 		// Check the neighbours of each vertex and calculate the attractive
         // force of the edge connecting them
+        final double forceConstant = this.forceConstant.doubleValue();
+        final double spacing = this.spacing.doubleValue();
+        double[][] cellLocation = this.cellLocation;
+        double[] radiusSquared = this.radiusSquared;
+
         for (int i = 0; i < vertexArray.size(); i++) {
-            if (neighbors[i]==null) continue;
+            int[] neighbor = neighbors[i];
+            if (neighbor ==null) continue;
             if (cellLocation[i] == null) continue;
-            for (int k = 0; k < neighbors[i].length; k++) {
+            for (int k = 0; k < neighbor.length; k++) {
                 // Get the index of the othe cell in the vertex array
-                int j = neighbors[i][k];
+                int j = neighbor[k];
+
 
                 if (cellLocation[j] == null) continue;
                 
@@ -559,8 +587,9 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
                     double yDelta = cellLocation[i][1] - cellLocation[j][1];
 
                     // The distance between the nodes
+
                     double deltaLengthSquared = xDelta * xDelta + yDelta
-                            * yDelta - radiusSquared[i] - radiusSquared[j];
+                            * yDelta - (spacing * (radiusSquared[i] + radiusSquared[j]));
 
                     if (deltaLengthSquared < minDistanceLimitSquared) {
                         deltaLengthSquared = minDistanceLimitSquared;
@@ -592,16 +621,26 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
     protected void calcRepulsion() {
         int vertexCount = vertexArray.size();
 
+        double[] radius = this.radius;
+        double[] dispX = this.dispX;
+        double[] dispY = this.dispY;
+        boolean[] movable = this.isMoveable;
+
         for (int i = 0; i < vertexCount; i++) {
+
+            double[] ci = cellLocation[i];
+
             for (int j = i; j < vertexCount; j++) {
                 // Exits if the layout is no longer allowed to run
                 if (!allowedToRun) {
                     return;
                 }
 
-                if ((j != i) && (cellLocation[i]!=null) && (cellLocation[j]!=null)) {
-                    double xDelta = cellLocation[i][0] - cellLocation[j][0];
-                    double yDelta = cellLocation[i][1] - cellLocation[j][1];
+                double[] cj = cellLocation[j];
+
+                if ((j != i) && (ci !=null) && (cj !=null)) {
+                    double xDelta = ci[0] - cj[0];
+                    double yDelta = ci[1] - cj[1];
 
                     if (xDelta == 0) {
                         xDelta = 0.01 + Math.random();
@@ -615,7 +654,8 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
                     double deltaLength = Math.sqrt((xDelta * xDelta)
                             + (yDelta * yDelta));
 
-                    double deltaLengthWithRadius = deltaLength - radius[i]
+
+                    double deltaLengthWithRadius =  deltaLength - radius[i]
                             - radius[j];
 
                     if (deltaLengthWithRadius > maxDistanceLimit) {
@@ -632,12 +672,12 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
                     double displacementX = (xDelta / deltaLength) * force;
                     double displacementY = (yDelta / deltaLength) * force;
 
-                    if (isMoveable[i]) {
+                    if (movable[i]) {
                         dispX[i] += displacementX;
                         dispY[i] += displacementY;
                     }
 
-                    if (isMoveable[j]) {
+                    if (movable[j]) {
                         dispX[j] -= displacementX;
                         dispY[j] -= displacementY;
                     }

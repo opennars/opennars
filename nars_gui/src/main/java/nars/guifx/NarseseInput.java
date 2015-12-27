@@ -2,7 +2,6 @@ package nars.guifx;
 
 import nars.NAR;
 import nars.guifx.util.CodeInput;
-import nars.task.in.TextInput;
 
 /**
  * TODO use looping state, not nar.running() likely to be false
@@ -16,24 +15,17 @@ public class NarseseInput extends CodeInput {
 
     @Override
     public boolean onInput(String s) {
-        TextInput i = null;
 
-        boolean running = nar.running();
+        nar.beforeNextFrame(() -> {
+           nar.input(s);
+        });
 
-        if (!s.isEmpty()) {
-            if (!running) {
-                i = nar.input(s);
-            } else {
-                nar.beforeNextFrame(() -> {
-                    nar.input(s);
-                });
-            }
-
+        try {
+            nar.frame();
+        } catch (NAR.AlreadyRunningException e) {
+            //no problem it is already running and will get the queued event
         }
 
-        if (!running)
-            nar.frame();
-
-        return i != null;
+        return true;
     }
 }

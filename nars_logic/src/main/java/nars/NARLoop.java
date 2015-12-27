@@ -3,7 +3,7 @@ package nars;
 import nars.util.data.Util;
 import net.openhft.affinity.AffinityLock;
 
-import java.util.logging.Logger;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * self managed set of processes which run a NAR
@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  */
 public class NARLoop implements Runnable {
 
-    static final Logger logger = Logger.getLogger(NARLoop.class.getSimpleName());
+    static final org.slf4j.Logger logger = getLogger(NARLoop.class);
 
     public final NAR nar;
 
@@ -69,8 +69,7 @@ public class NARLoop implements Runnable {
 
         thread = new Thread(this, n.self + ":loop");
         thread.start();
-        logger.info(() -> (this + " started thread " + thread + " with priority=" + thread.getPriority()) );
-
+        logger.info("starting {}", thread);
     }
 
 
@@ -80,6 +79,15 @@ public class NARLoop implements Runnable {
         if (prevPeriod == period) return false;
 
         periodMS = period;
+        if (period == -1) {
+            logger.info("pause");
+        } else {
+            if (prevPeriod == -1)
+                logger.info("resume:period={}", period);
+            else {
+                //dont log change in period, too noisy
+            }
+        }
 
         //thread priority control
         if (thread != null) {
@@ -100,7 +108,7 @@ public class NARLoop implements Runnable {
     }
 
     public void stop() {
-        logger.info(() -> (this + " stop requested") );
+        logger.info("stopping {}", this);
         stopped = true;
     }
 
@@ -130,33 +138,31 @@ public class NARLoop implements Runnable {
             NAR nar = this.nar;
 
             try {
+
+                if (periodMS != -1)
+                    logger.info("started, period={}", periodMS);
+
                 while (!stopped) {
 
                     int periodMS = this.periodMS;
 
                     if (periodMS < 0) {
-                        //        try {
-//            Thread.sleep(sleepTime);
-//        } catch (InterruptedException e) {
-//            //e.printStackTrace();
-//        }
-
+                        //idle
                         Util.pause(sleepTimeMS);
                         continue;
                     }
-
 
                     long start = System.currentTimeMillis();
 
                     if (!nar.running.get()) {
                         nar.frame(cyclesPerFrame);
                     } else {
-                        //wait until nar is free
+                        logger.warn("nar began running before this frame attempted to start");
+                        stop();
                     }
 
 
                     long frameTimeMS = System.currentTimeMillis() - start;
-
 
                     throttle(periodMS, frameTimeMS);
 
@@ -170,7 +176,7 @@ public class NARLoop implements Runnable {
                 al.release();
         }
 
-        logger.info(() -> (this + " stopped") );
+        logger.info("stopped");
     }
 
     protected static long throttle(long minFramePeriodMS, long frameTimeMS) {
@@ -190,7 +196,7 @@ public class NARLoop implements Runnable {
 
             Thread.yield();
 
-            //System.err.println(Thread.currentThread() + " loop lag: " + remainingTime + "ms too slow");
+            logger.warn("lag {}ms", remainingTime);
 
             //minFramePeriodMS++;
             //; incresing frame period to " + minFramePeriodMS + "ms");

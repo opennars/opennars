@@ -3,6 +3,7 @@ package nars.guifx.graph2.impl;
 import javafx.scene.canvas.GraphicsContext;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
+import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.term.Termed;
 
 /** (fast, simple rendering) half edges are drawn as lines of certain thickness, meeting at the center point */
@@ -33,7 +34,10 @@ public class HalfHalfLineCanvasEdgeRenderer extends CanvasEdgeRenderer {
         //HACK specific to Term instances
         if (t.term instanceof Termed) {
             gfx.setStroke(
-                    TermNode.getTermColor(t.term, colors, p)
+                    TermNode.getTermColor(t.term,
+                        DefaultNodeVis.colorsTransparent,
+                        0.25 /* baesOpacity */ +
+                        0.75f * 0.5f * (i.pri + t.priNorm) )
             );
         }
 

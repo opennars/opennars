@@ -23,7 +23,7 @@ import nars.guifx.*;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.impl.HalfHalfLineCanvasEdgeRenderer;
-import nars.guifx.graph2.scene.DefaultNodeVis;
+import nars.guifx.graph2.impl.HexButtonVis;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.nars.LoopPane;
 import nars.guifx.remote.VncClientApp;
@@ -125,11 +125,15 @@ public class NARide extends BorderPane {
             ni.addTool("Task Tree", () -> new TreePane(nar));
             ni.addTool("Concept Network", () -> new DefaultGrapher(
                 new ConceptsSource(nar),
-                    new DefaultNodeVis(),
+
+                //new DefaultNodeVis(),
+                new HexButtonVis(nar),
+
+
                 (A,B) -> {
                     TermEdge te = new TermEdge(A,B) {
                         @Override public double getWeight() {
-                            return 0.25;
+                            return pri;
                         }
                     };
                     return te;
