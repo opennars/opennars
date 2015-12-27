@@ -1,5 +1,6 @@
 package nars.guifx.util;
 
+import javafx.beans.InvalidationListener;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -18,6 +19,7 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import nars.guifx.NARfx;
+import nars.util.Texts;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -53,14 +55,31 @@ public class NSlider extends NControl {
         addLabel(label);
     }
 
-    private void addLabel(StringProperty t) {
+    /** adds a label which is automatically displays an updated string representation of the value */
+    public void addValueLabel() {
+        StringProperty s = new SimpleStringProperty();
+        SimpleDoubleProperty v = value[0];
+        InvalidationListener valuer = (c) -> {
+            s.setValue(Texts.n4(v.floatValue()));
+        };
+        v.addListener(valuer);
+        valuer.invalidated(null);
+        addLabel(s);
+    }
+
+    public void addLabel(StringProperty t) {
         //final StringProperty label;
 
         Text text = new Text(t.getValue());
 
 
         text.textProperty().bind(t);
+        addLabel(text);
 
+
+    }
+
+    public void addLabel(Text text) {
         //label = text.textProperty();
         //final SimpleDoubleProperty fontScale = new SimpleDoubleProperty(0.05);
         DoubleBinding wp = widthProperty().multiply(0.01);
@@ -82,7 +101,6 @@ public class NSlider extends NControl {
         //text.setCache(true);
 
         getChildren().add(text);
-
     }
 
     @Deprecated
@@ -421,24 +439,23 @@ public class NSlider extends NControl {
 
             canvas.setOnMouseDragged(this);
             canvas.setOnMousePressed(this); //could also work as released
+            canvas.setOnMouseReleased(this);
 
             canvas.setCursor(Cursor.CROSSHAIR);
-
-            canvas.setOnMouseReleased(
-                    e -> canvas.setCursor(Cursor.CROSSHAIR));
 
         }
 
         @Override
         public void stop() {
-            //TODO remove handlers
+            throw new RuntimeException("unimpl");
         }
 
         @Override
         public void handle(MouseEvent e) {
 
-
-            canvas.setCursor(Cursor.MOVE);
+            canvas.setCursor(
+                (e.getEventType()==MouseEvent.MOUSE_RELEASED) ? Cursor.CROSSHAIR : Cursor.MOVE
+            );
 
             n.denormalized(e.getX() / canvas.getWidth());
 

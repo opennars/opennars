@@ -1,6 +1,5 @@
 package nars.task.in;
 
-import nars.$;
 import nars.NAR;
 import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
@@ -16,6 +15,8 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static nars.$.*;
 
 /**
  * Created by me on 6/4/15.
@@ -241,10 +242,19 @@ public abstract class NQuadsRDF {
     static final Atom domain = Atom.the("domain");
     static final Atom range = Atom.the("range");
     static final Atom sameAs = Atom.the("sameAs");
+    static final Atom differentFrom = Atom.the("differentFrom");
     static final Atom dataTypeProperty = Atom.the("DatatypeProperty");
 
-    static final Term subjCondition(Term subject) { return $.inh($.sete($.p($.varDep("subj"), $.varDep("obj"))),
-            $.seti(subject)); }
+    static final Term subjObjInst(Term subject) {
+        return inst(
+                p(varDep("subj"), varDep("obj")),
+                subject);
+    }
+    static final Term objSubjInst(Term subject) {
+        return inst(
+                p(varDep("subj"), varDep("obj")),
+                subject);
+    }
 
     /**
      * Saves the relation into the database. Both entities must exist if the
@@ -273,32 +283,36 @@ public abstract class NQuadsRDF {
                 }
             //}
 
-            belief = (Compound) $.inh(subject, object);
+            belief = (Compound) inst(subject, object);
 
         }
         else if (predicate.equals(equivalentClass)) {
 
-            belief = $.equiv(subject, object);
+            belief = equiv(
+                inst(varDep(1), subject),
+                inst(varDep(1), object)
+            );
         }
         else if (predicate.equals(sameAs)) {
-
-            belief = $.sim(subject, object);
-            //belief = (Equivalence.make(subject, object));
+            belief = sim(subject, object);
+        }
+        else if (predicate.equals(differentFrom)) {
+            belief = neg(sim(subject, object));
         }
         else if (predicate.equals(domain)) {
             // PROPERTY domain CLASS
             //<PROPERTY($subj, $obj) ==> <$subj {-- CLASS>>.
 
 
-            Term b = $.inh($.sete($.varDep("subj")), $.seti(object));
-            belief = $.conj(subjCondition(subject),b);
+            Term b = inst(varDep("subj"), object);
+            belief = conj(subjObjInst(subject),b);
         }
         else if (predicate.equals(range)) {
             // PROPERTY range CLASS
             //<PROPERTY($subj, $obj) ==> <$obj {-- CLASS>>.
 
-            Term b = $.inh($.sete($.varDep("obj")), $.seti(object));
-            belief = $.conj(subjCondition(subject),b);
+            Term b = inst(varDep("obj"), object);
+            belief = conj(subjObjInst(subject),b);
 
 //            belief = nar.term(
 //                    //"<" + subject + "($subj,$obj) ==> <$obj {-- " + object + ">>"
@@ -308,30 +322,36 @@ public abstract class NQuadsRDF {
         }
         else if (predicate.equals(equivalentProperty)) {
 
-            belief = $.equiv(subject, object);
+            belief = sim(subject, object);
         }
         else if (predicate.equals(inverseOf)) {
 
-            //TODO: PREDSUBJ(#subj, #obj) <=> PREDOBJ(#obj, #subj)
+            //PREDSUBJ(#subj, #obj) <=> PREDOBJ(#obj, #subj)
+            belief = equiv(subjObjInst(subject), objSubjInst(object));
+
         }
         else if (predicate.equals(disjointWith)) {
             //System.out.println(subject + " " + predicate + " " + object);
 
-            belief = $.neg($.sim(subject, object));
+            //disjoint classes have no common instances:
+            // (--, (&&, {#x} --> subject, {#x} --> object ) ).
+            Term x = varDep(1);
+            belief = neg(conj(inst(x, subject), inst(x,object)));
         }
         else {
-            //System.out.println(subject + " " + predicate + " " + object);
             if (subject!=null && object!=null && predicate!=null) {
-                belief = (Compound) $.inh(
-                        $.p(subject, object),
+                belief = (Compound) inst(
+                        p(subject, object),
                         predicate
                 );
             }
         }
 
         if (belief instanceof Compound) {
+            System.out.println(subject + " " + predicate + " " + object + " :: " + belief);
+
             return new MutableTask().term((Compound)belief).
-                    belief().truth(1.0f,0.9f)
+                    belief().truth(1.0f,0.95f)
                     .time(nar.time(),
                     Tense.ETERNAL //TODO Tense parameter
                     );

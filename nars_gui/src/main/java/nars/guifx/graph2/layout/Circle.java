@@ -1,7 +1,7 @@
 package nars.guifx.graph2.layout;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import nars.guifx.annotation.Range;
+import nars.data.Range;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.source.SpaceGrapher;
 

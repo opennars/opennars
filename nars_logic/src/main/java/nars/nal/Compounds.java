@@ -549,7 +549,7 @@ public interface Compounds {
             case PARALLEL:
                 return Parallel.makeParallel(t);
             case INSTANCE:
-                return $.instance(t[0], t[1]);
+                return $.inst(t[0], t[1]);
             case PROPERTY:
                 return $.property(t[0], t[1]);
             case INSTANCE_PROPERTY:

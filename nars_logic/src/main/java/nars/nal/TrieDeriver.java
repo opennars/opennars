@@ -3,6 +3,7 @@ package nars.nal;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.RuleBranch;
 import nars.nal.meta.RuleTrie;
+import nars.term.compile.TermIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +19,9 @@ public class TrieDeriver extends RuleTrie {
         super(new PremiseRuleSet(Collections.singleton(rule)));
     }
 
-    public TrieDeriver(PremiseRuleSet rules) {
+    public TrieDeriver(PremiseRuleSet rules, TermIndex target) {
         super(rules);
+        rules.patterns.setTarget(target);
     }
 
     @Override public final void run(RuleMatch m) {

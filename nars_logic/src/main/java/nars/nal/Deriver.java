@@ -2,6 +2,7 @@ package nars.nal;
 
 import nars.process.ConceptProcess;
 import nars.task.Task;
+import nars.term.compile.TermIndex;
 
 import java.util.function.Consumer;
 
@@ -14,6 +15,7 @@ import java.util.function.Consumer;
  */
 public abstract class Deriver  {
 
+    public static final TermIndex terms = TermIndex.memory(16384);
     private static Deriver defaultDeriver = null;
     private static PremiseRuleSet defaultRules = null;
 
@@ -30,7 +32,7 @@ public abstract class Deriver  {
     }
     public static synchronized Deriver getDefaultDeriver() {
         if (defaultDeriver == null) {
-            defaultDeriver = new TrieDeriver( getDefaultRules() );
+            defaultDeriver = new TrieDeriver( getDefaultRules(), terms );
             //defaultDeriver = new SimpleDeriver( getDefaultRules() );
         }
         return defaultDeriver;

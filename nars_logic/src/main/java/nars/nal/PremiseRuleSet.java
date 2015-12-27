@@ -3,7 +3,6 @@ package nars.nal;
 import com.gs.collections.impl.list.mutable.FastList;
 import nars.$;
 import nars.Global;
-import nars.MapIndex;
 import nars.term.compile.TermIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,18 +50,23 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
 
 
     /** for compiling and de-duplicating pattern term components */
-    final MapIndex patterns = new PatternIndex();
+    public final PatternIndex patterns;
 
     static final Logger logger = LoggerFactory.getLogger(PremiseRuleSet.class);
+
+
 
 
     public PremiseRuleSet(Collection<String> ruleStrings) {
         final int[] errors = {0};
 
+        patterns = new PatternIndex();
+
         Set<PremiseRule> r = parse(load(ruleStrings), patterns);
         r.forEach(s -> {
-                add(s);
+            add(s);
         });
+
 
 
         logger.info("indexed " + size() + " total rules, consisting of " + patterns.size() + " unique pattern components terms");

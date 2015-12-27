@@ -245,10 +245,17 @@ public class ArrayBag<V> extends Bag<V> {
             }
 
             BagBudget<V> displaced = index.put((V) i, newBudget);
-            if (displaced == newBudget)
-                return null; //wasnt inserted
-            else
-                return newBudget;
+            if (displaced!=null) {
+                if (displaced == newBudget)
+                    return null; //wasnt inserted
+                else {
+                    //remove what was been removed from the items list
+                    index.removeKey(displaced.get());
+                }
+            }
+
+            return newBudget;
+
         }
 
 //        //TODO optional displacement until next update, allowing sub-threshold to grow beyond threshold
@@ -285,7 +292,10 @@ public class ArrayBag<V> extends Bag<V> {
 
         int currentIndex = ii.locate(v);
         if (currentIndex == -1) {
-            throw new RuntimeException("bag fault");
+            //an update for an item which has been removed already. must be re-inserted
+            v.commit();
+            put(v);
+            return;
         }
 
         v.commit();

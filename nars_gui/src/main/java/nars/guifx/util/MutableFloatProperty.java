@@ -29,10 +29,10 @@ public class MutableFloatProperty extends SimpleDoubleProperty {
         this(a::doubleValue, a::set);
     }
     public MutableFloatProperty(AtomicInteger a) {
-        this(a::doubleValue, (v) -> a.set((int)v));
+        this(a::doubleValue, (v) -> a.set((int)Math.round(v)));
     }
     public MutableFloatProperty(MutableInteger a) {
-        this(a::doubleValue, (v) -> a.set((int)v));
+        this(a::doubleValue, (v) -> a.set(Math.round(v)));
     }
 
     public MutableFloatProperty(DoubleSupplier getter, DoubleProcedure setter) {

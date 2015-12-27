@@ -21,7 +21,7 @@ public abstract class DeriveletContext implements Consumer<NAR> {
     /** current concept, next concept */
     public final Supplier<Concept> conceptSupply;
     public final NAR nar;
-    public static final Deriver deriver = new TrieDeriver(Deriver.getDefaultRules());
+    public static final Deriver deriver = new TrieDeriver(Deriver.getDefaultRules(), Deriver.terms);
 
     //private float forgetCycles;
 

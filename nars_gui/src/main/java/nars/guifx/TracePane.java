@@ -4,13 +4,15 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import nars.NAR;
 import nars.util.data.list.CircularArrayList;
 import nars.util.data.list.FasterList;
+import nars.util.event.Active;
 import nars.util.event.ArraySharingList;
 import nars.util.event.On;
 import nars.util.event.Topic;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
@@ -19,19 +21,22 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 10/15/15.
  */
-abstract public class TracePane extends LogPane implements ChangeListener<Parent>, Consumer<NAR> {
+abstract public class TracePane extends LogPane implements ChangeListener, Consumer<NAR> {
 
     public final NAR nar;
+
+    final static org.slf4j.Logger logger = LoggerFactory.getLogger(TracePane.class);
+
     /**
      * threshold for minimum displayable priority
      */
     public final DoubleProperty volume;
+    private Active events;
     private On reg;
     protected Node prev; //last node added
     ActivationTreeMap activationSet = null;
     //Pane cycleSet = null; //either displays one cycle header, or a range of cycles, including '...' waiting for next output while they queue
     boolean trace = false;
-    boolean visible = false;
     ArraySharingList<Node> pending;
 
     final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
@@ -40,15 +45,20 @@ abstract public class TracePane extends LogPane implements ChangeListener<Parent
 
         this.volume = volume;
         this.nar = nar;
-        Topic.all(nar.memory, this::output,
-            (k) -> !k.equals("eventConceptProcess") &&
-                    !k.equals("eventConceptActivated")
-        );
 
 //            for (Object o : enabled)
 //                filter.value(o, 1);
 
-        parentProperty().addListener(this);
+        volume.addListener((v, p, n) -> {
+            if (p.floatValue()!=0 && n.floatValue()==0) {
+                disappear();
+            } else {
+                appear();
+            }
+        });
+
+        sceneProperty().addListener(this);
+        //parentProperty().addListener(this);
 
 
     }
@@ -73,6 +83,10 @@ abstract public class TracePane extends LogPane implements ChangeListener<Parent
         }
     }
 
+    public void append(String message) {
+        append(new Label(message));
+    }
+
     public void append(Node n) {
         //synchronized (toShow) {
         if (pending == null)
@@ -87,14 +101,17 @@ abstract public class TracePane extends LogPane implements ChangeListener<Parent
     abstract public Node getNode(Object channel, Object signal);
 
 
-
-
     @Override
-    public void changed(ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) {
-        visible = (getParent() != null);
-        if (reg == null) {
-            appear();
+    public void changed(ObservableValue observable, Object oldValue, Object newValue) {
 
+        if (reg==null && getParent()!=null) {
+            appear();
+            logger.info("on");
+        }
+
+        if (reg!=null && (getParent()==null || getScene() == null)) {
+            disappear();
+            logger.info("off");
         }
 
     }
@@ -104,10 +121,6 @@ abstract public class TracePane extends LogPane implements ChangeListener<Parent
     @Override
     public void accept(NAR n) {
 
-        if (!visible) {
-            disappear();
-            return;
-        }
 
         if (pending == null)
             return;
@@ -149,10 +162,29 @@ abstract public class TracePane extends LogPane implements ChangeListener<Parent
     }
 
     public void disappear() {
-        reg.off();
-        reg = null;
+        if (events!=null || reg!=null) {
+            append("Silence.");
+
+            if (events!=null) {
+                events.off();
+                events =  null;
+            }
+
+            if (reg!=null) {
+                reg.off();
+                reg = null;
+            }
+        }
     }
     public void appear() {
-        reg = nar.memory.eventFrameStart.on(this);
+        if (reg==null && events == null) {
+            reg = nar.memory.eventFrameStart.on(this);
+            events = Topic.all(nar.memory, this::output,
+                    (k) -> !k.equals("eventConceptProcess") &&
+                            !k.equals("eventConceptActivated")
+            );
+            append("Active.");
+        }
+        //if reg==null || events==null WTF
     }
 }

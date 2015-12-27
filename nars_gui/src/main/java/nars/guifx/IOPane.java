@@ -27,7 +27,7 @@ import static javafx.application.Platform.runLater;
  */
 public class IOPane extends BorderPane /*implements FXIconPaneBuilder*/ {
 
-    final NSlider vs = new NSlider("Volume", 100, 45, NSlider.BarSlider, 0.0);
+    final NSlider vs = new NSlider("Volume", 100, 45, NSlider.BarSlider, 1f);
     final DoubleProperty volume = vs.value[0];
 
     private final NAR nar;
@@ -79,7 +79,7 @@ public class IOPane extends BorderPane /*implements FXIconPaneBuilder*/ {
                 case "eventRevision":
                 case "eventTaskProcess":
                     Task t = (Task) signal;
-                    return t.getTask().getPriority() >= volume.get()
+                    return t.getTask().getPriority() > (1f-volume.floatValue())
                             //? new TaskLabel(t, nar) : null;
                             ?
                             getTaskNode(t) : null;

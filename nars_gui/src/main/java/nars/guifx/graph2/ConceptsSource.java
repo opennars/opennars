@@ -30,8 +30,8 @@ public class ConceptsSource extends GraphSource {
     public final NAR nar;
     private Active regs = null;
 
-    final int maxNodes = 64;
-    final int maxNodeLinks = 24; //per type
+    final int maxNodes = 128;
+    final int maxNodeLinks = 16; //per type
 
     public final SimpleDoubleProperty maxPri = new SimpleDoubleProperty(1.0);
     public final SimpleDoubleProperty minPri = new SimpleDoubleProperty(0.0);

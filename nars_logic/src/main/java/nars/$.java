@@ -204,7 +204,7 @@ public abstract class $  {
      * @param pred The second component
      * @return A compound generated or null
      */
-    public static Compound instance(Term subj, Term pred) {
+    public static Compound inst(Term subj, Term pred) {
         return (Compound) $.inh($.sete(subj), pred);
     }
 

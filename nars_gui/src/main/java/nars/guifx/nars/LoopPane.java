@@ -89,7 +89,7 @@ public class LoopPane extends VBox {
         //cpuSlider.value(-1);
         cpuSlider.setOpacity(1.0);
 
-        cpuLabel.setValue("ON " + cpuSlider.v());
+        cpuLabel.setValue("");
 
 
         //-2 here is a magic number to indicate that nothing is pending and can be changed now

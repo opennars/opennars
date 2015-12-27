@@ -2,6 +2,7 @@ package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.budget.BudgetFunctions;
+import nars.data.Range;
 import nars.nal.Level;
 import nars.task.MutableTask;
 import nars.truth.DefaultTruth;
@@ -22,6 +23,19 @@ public abstract class Param extends Container implements Level {
 
 
     public final MutableInteger cyclesPerFrame = new MutableInteger(1);
+
+    /**
+     * Perfection determines a minimum budget prioritization of items
+     * in proportion to the budgeted quality. This means that the
+     * attention of a reasoner in higher perfection state
+     * will be more dominated by high-quality items.  In other words,
+     * it is driven more towards maximization of quality rather than
+     * allowing for exploration of that which has less quality.
+     *
+     * previously called "bag threshold" and had default value = 0.1
+     */
+    @Range(min=0, max=1f)
+    public MutableFloat perfection = new MutableFloat(0.1);
 
 
     public Param() {    }
@@ -65,10 +79,10 @@ public abstract class Param extends Container implements Level {
     
     /** TermLink decay rate in TermLinkBag, in [1, 99]. originally: TERM_LINK_FORGETTING_CYCLE */
     //TODO use separate termlink forget rates whether the termlink was actually selected for firing or not.
-    @Deprecated public final MutableFloat termLinkForgetDurations = new MutableFloat();
+    //@Deprecated public final MutableFloat termLinkForgetDurations = new MutableFloat();
     
     /** TaskLink decay rate in TaskLinkBag, in [1, 99]. originally: TASK_LINK_FORGETTING_CYCLE */
-    @Deprecated public final MutableFloat taskLinkForgetDurations = new MutableFloat();
+    @Deprecated public final MutableFloat linkForgetDurations = new MutableFloat();
     
 
      /*

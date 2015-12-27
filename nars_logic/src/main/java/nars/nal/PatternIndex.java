@@ -4,6 +4,7 @@ import nars.MapIndex;
 import nars.term.Term;
 import nars.term.TermVector;
 import nars.term.Termed;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
 import java.util.HashMap;
@@ -15,9 +16,15 @@ public class PatternIndex extends MapIndex {
 
     public PatternIndex() {
         super(new HashMap(1024),new HashMap(1024));
+
+        setTarget(this); //default to this as its own target
     }
 
+    TermIndex target = null;
 
+    public void setTarget(TermIndex t) {
+        target = t;
+    }
 
 
     @Override
@@ -44,9 +51,12 @@ public class PatternIndex extends MapIndex {
 
 
                     @Override public Term clone(Term[] replaced) {
-                        if (subterms().equals(replaced))
-                            return this;
-                        return the(op, replaced, relation);
+//                        if (subterms().equals(replaced))
+//                            return this;
+//                        return the(op, replaced, relation);
+
+
+                        return target.the(op, replaced, relation);
                     }
                 };
 //                    return new LinearCompoundPattern(x, (TermVector) subs);

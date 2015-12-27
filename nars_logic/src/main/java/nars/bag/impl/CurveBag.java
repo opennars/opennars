@@ -44,7 +44,7 @@ public class CurveBag<V> extends Bag<V> {
     public CurveBag(int capacity, Random rng) {
         this(
             //CurveBag.power6BagCurve,
-            power4BagCurve,
+            power6BagCurve,
             capacity, rng);
     }
 
@@ -404,25 +404,17 @@ public class CurveBag<V> extends Bag<V> {
 //        }
 
     /**
-     * maps y in 0..1.0 to an index in 0..size
+     * maps y in 0..1.0 to an index in [0..size)
      */
     static final int index(float y, int size) {
         size--;
 
-        int i = Math.round(y * size); //invert order = select highest pri most frequently
+        int i = Math.round(y * size);
 
         if (i > size) return size;
         if (i < 0) return 0;
 
-        return i; //size - i;
-
-            /*if (result == size) {
-                //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
-                return (size - 1);
-            }*/
-
-        //return result;
-
+        return i;
     }
 
     @Override

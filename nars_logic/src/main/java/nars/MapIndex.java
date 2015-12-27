@@ -16,7 +16,7 @@ import java.util.function.Consumer;
  */
 public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
 
-    private final Map<TermContainer, TermContainer> subterms;
+    public final Map<TermContainer, TermContainer> subterms;
 
 
     public MapIndex(Map<Termed, Termed> data, Map<TermContainer, TermContainer> subterms) {

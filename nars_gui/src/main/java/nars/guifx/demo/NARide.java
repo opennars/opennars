@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import nars.Global;
+import nars.MapIndex;
 import nars.NAR;
 import nars.NARLoop;
 import nars.budget.Budget;
@@ -21,7 +22,7 @@ import nars.concept.Concept;
 import nars.guifx.*;
 import nars.guifx.graph2.ConceptsSource;
 import nars.guifx.graph2.TermEdge;
-import nars.guifx.graph2.impl.HalfHalfRightTriangleCanvasEdgeRenderer;
+import nars.guifx.graph2.impl.HalfHalfLineCanvasEdgeRenderer;
 import nars.guifx.graph2.scene.DefaultNodeVis;
 import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.nars.LoopPane;
@@ -34,6 +35,7 @@ import nars.guifx.util.TabX;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.time.FrameClock;
 import nars.time.RealtimeMSClock;
 import nars.util.data.Util;
@@ -75,6 +77,8 @@ public class NARide extends BorderPane {
         //SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
 
         NARfx.run((a, b) -> {
+
+            Thread.currentThread().setName("NARide");
 
             NAR nar = loop.nar;
             NARide ni = new NARide(loop);
@@ -132,8 +136,8 @@ public class NARide extends BorderPane {
                     //return $.pro(A.getTerm(), B.getTerm());
                 },
 
-                new HalfHalfRightTriangleCanvasEdgeRenderer()
-                //new HalfHalfLineCanvasEdgeRenderer()
+                //new HalfHalfRightTriangleCanvasEdgeRenderer()
+                new HalfHalfLineCanvasEdgeRenderer()
 
             ));
             ni.addTool("Fractal Workspace", () -> new NARspace(nar));
@@ -331,7 +335,7 @@ public class NARide extends BorderPane {
         icon(FrameClock.class, (c) -> new NARMenu.CycleClockPane(nar));
         icon(RealtimeMSClock.class, (c) -> new NARMenu.RTClockPane(nar));
         //icon(NARLoop.class, (ll) -> loopPane);
-        icon(Default.AbstractCycle.class, (c) ->
+        icon(Default.DefaultCycle.class, (c) ->
                 new DefaultCyclePane((Default.AbstractCycle) c) //cast is hack
         );
 
@@ -487,6 +491,27 @@ public class NARide extends BorderPane {
         public DefaultCyclePane(Default.AbstractCycle l) {
             cycle = l;
             nar = l.nar;
+
+            Label status = new Label();
+            StringBuilder sb = new StringBuilder();
+            nar.onEachFrame(c -> {
+
+                int activeConcepts = l.active.size();
+                TermIndex index = nar.memory.index;
+                int totalConcepts = index.size();
+                int uniqueSubterms = (index instanceof MapIndex) ? ((MapIndex) index).subterms.size() : -1;
+
+                runLater(() -> {
+                    sb.append("Active Concepts: ").append(activeConcepts).append('\n');
+                    sb.append("Total Concepts: ").append(totalConcepts).append('\n');
+                    if (uniqueSubterms!=-1)
+                        sb.append("Unique Subterms: ").append(uniqueSubterms).append('\n');
+                    status.setText(sb.toString());
+                    sb.setLength(0);
+                });
+
+            });
+            setTop(status);
 
             setCenter(new POJOPane(l));
         }

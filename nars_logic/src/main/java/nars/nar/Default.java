@@ -9,6 +9,7 @@ import nars.bag.BagBudget;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
 import nars.concept.Concept;
+import nars.data.Range;
 import nars.nal.Deriver;
 import nars.nal.RuleMatch;
 import nars.nar.experimental.Derivelet;
@@ -22,6 +23,7 @@ import nars.time.FrameClock;
 import nars.util.data.MutableInteger;
 import nars.util.data.list.FasterList;
 import nars.util.event.Active;
+import org.apache.commons.lang3.mutable.MutableFloat;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -105,8 +107,8 @@ public class Default extends AbstractNAR {
 
         //TODO move these to a PremiseGenerator which supplies
         // batches of Premises
-        c.termlinksSelectedPerFiredConcept.set(termLinksPerConcept);
-        c.tasklinksSelectedPerFiredConcept.set(taskLinksPerConcept);
+        c.termlinksFiredPerFiredConcept.set(termLinksPerConcept);
+        c.tasklinksFiredPerFiredConcept.set(taskLinksPerConcept);
 
         //tmpConceptsFiredPerCycle[0] = c.conceptsFiredPerCycle;
         c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
@@ -183,17 +185,22 @@ public class Default extends AbstractNAR {
 
         final Active handlers = new Active();
 
+        public final Deriver  deriver;
+
         /**
          * How many concepts to fire each cycle; measures degree of parallelism in each cycle
          */
+        @Range(min=0,max=512,unit="Concept")
         public final MutableInteger conceptsFiredPerCycle;
 
+        @Range(min=0,max=16,unit="TaskLink") //TODO use float percentage
+        public final MutableInteger tasklinksFiredPerFiredConcept = new MutableInteger(1);
 
-        public final Deriver  deriver;
+        @Range(min=0,max=16,unit="TermLink")
+        public final MutableInteger termlinksFiredPerFiredConcept = new MutableInteger(1);
 
-
-        public final MutableInteger tasklinksSelectedPerFiredConcept = new MutableInteger(1);
-        public final MutableInteger termlinksSelectedPerFiredConcept = new MutableInteger(1);
+        @Range(min=0.01f,max=16,unit="Duration")
+        public final MutableFloat linkRemembering;
 
         //public final MutableFloat activationFactor = new MutableFloat(1.0f);
 
@@ -212,11 +219,16 @@ public class Default extends AbstractNAR {
         @Deprecated
         public final transient NAR nar;
 
+        @Range(min=0,max=8192,unit="Concept")
         public final MutableInteger capacity = new MutableInteger();
 
         /** activated concepts pending (re-)insert to bag */
         public final LinkedHashSet<Concept> activated = new LinkedHashSet();
+
         final Derivelet der = new Derivelet();
+
+        @Range(min=0, max=1f,unit="Perfection")
+        private final MutableFloat perfection;
 
 
 //        @Deprecated
@@ -232,6 +244,8 @@ public class Default extends AbstractNAR {
 
             this.deriver = deriver;
 
+            this.linkRemembering = nar.memory.linkForgetDurations;
+            this.perfection = nar.memory.perfection;
 
             conceptsFiredPerCycle = new MutableInteger(1);
             active = concepts;
@@ -263,9 +277,9 @@ public class Default extends AbstractNAR {
                 float currentPriority = budget.getPriorityIfNaNThenZero();
 
                 Memory m = nar.memory;
-                final float forgetPeriod =    m.termLinkForgetDurations.floatValue() * m.duration(); //TODO cache
+                final float forgetPeriod = linkRemembering.floatValue() * m.duration(); //TODO cache
 
-                float relativeThreshold = 0.1f; //BAG THRESHOLD
+                float relativeThreshold = perfection.floatValue();
 
                 float expDecayed = currentPriority * (float) Math.exp(
                         -((1.0f - budget.getDurability()) / forgetPeriod) * dt
@@ -330,8 +344,8 @@ public class Default extends AbstractNAR {
                 //if above firing threshold
                 //fireConcept(c);
                 der.firePremiseSquare(nar, processor, c,
-                        tasklinksSelectedPerFiredConcept.intValue(),
-                        termlinksSelectedPerFiredConcept.intValue(),
+                        tasklinksFiredPerFiredConcept.intValue(),
+                        termlinksFiredPerFiredConcept.intValue(),
                         //simpleForgetDecay
                         alannForget
                 );

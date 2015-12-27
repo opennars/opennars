@@ -137,8 +137,7 @@ public class CurveBagTest  {
 
     @Test public void testDistribution() {
         Default n = new Default(1000, 8, 4, 4);
-        n.memory.termLinkForgetDurations.setValue(100); //slow forget
-        n.memory.taskLinkForgetDurations.setValue(100); //slow forget
+        n.memory.linkForgetDurations.setValue(100); //slow forget
         n.input("$0.9$ a:b.");
         n.input("$0.9$ b:c.");
         n.frame(8);

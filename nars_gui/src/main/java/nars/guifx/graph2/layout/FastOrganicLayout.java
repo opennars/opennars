@@ -127,8 +127,10 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
      * Maps from vertex to indices.
      */
     protected ObjectIntHashMap<TermNode> indices;
-    
-    
+
+    /** final normalization step to center all nodes */
+    private boolean center = false;
+
 
     /**
      * Constructs a new fast organic layout for the specified graph.
@@ -481,20 +483,22 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
             }
         }
 
-        // Modifies the cloned geometries in-place. Not needed
-        // to clone the geometries again as we're in the same
-        // undoable change.
-        double dx = -(maxx+minx)/2f;
-        double dy = -(maxy+miny)/2f;
+        if (center) {
+            // Modifies the cloned geometries in-place. Not needed
+            // to clone the geometries again as we're in the same
+            // undoable change.
+            double dx = -(maxx + minx) / 2f;
+            double dy = -(maxy + miny) / 2f;
 
-        if (initialBounds != null) {
-            dx += initialBounds.getX();
-            dy += initialBounds.getY();
-        }
-        
-        for (int i = 0; i < vertexArray.size(); i++) { 
-            TermNode vd = vertexArray.get(i);          
-            vd.moveDelta((float)dx, (float)dy);
+            if (initialBounds != null) {
+                dx += initialBounds.getX();
+                dy += initialBounds.getY();
+            }
+
+            for (int i = 0; i < vertexArray.size(); i++) {
+                TermNode vd = vertexArray.get(i);
+                vd.moveDelta((float) dx, (float) dy);
+            }
         }
     }
 

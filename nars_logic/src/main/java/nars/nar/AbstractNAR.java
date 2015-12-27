@@ -137,8 +137,7 @@ public abstract class AbstractNAR extends NAR {
         m.conceptGoalsMax.set(8);
         m.conceptQuestionsMax.set(5);
 
-        m.taskLinkForgetDurations.setValue(2.0);
-        m.termLinkForgetDurations.setValue(2.0); //not currently used, tasklink is
+        m.linkForgetDurations.setValue(6.0);
 
 
         m.derivationThreshold.set(0);

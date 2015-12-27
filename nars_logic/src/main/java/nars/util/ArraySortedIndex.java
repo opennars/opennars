@@ -239,9 +239,9 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> {
 //            return true;
 //        }
 
-        String err = this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s;
-        throw new RuntimeException(err);
-        //return false;
+        //String err = this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s;
+        //throw new RuntimeException(err);
+        return -1;
     }
 
     private final boolean attemptEqual(Object o, /*final Object oName, */ int i) {

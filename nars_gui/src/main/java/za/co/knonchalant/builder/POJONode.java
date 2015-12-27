@@ -20,10 +20,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import nars.data.Range;
 import nars.guifx.annotation.Implementation;
 import nars.guifx.annotation.ImplementationProperty;
 import nars.guifx.annotation.Implementations;
-import nars.guifx.annotation.Range;
 import nars.guifx.graph2.layout.None;
 import nars.guifx.util.MutableFloatProperty;
 import nars.guifx.util.NSlider;
@@ -598,9 +598,11 @@ public class POJONode {
             chi.add(w);
         }
 
+        final int nSliderHeight = 25;
+        final int nSliderWidth = 75;
         if (obj instanceof AtomicDouble) {
             NSlider w;
-            chi.add( w = new NSlider(150, 50, (((AtomicDouble)obj).doubleValue()) ) {
+            chi.add( w = new NSlider(nSliderWidth, nSliderHeight, (((AtomicDouble)obj).doubleValue()) ) {
                 @Override public SimpleDoubleProperty newValueEntry(int i) {
                     return new MutableFloatProperty(((AtomicDouble)obj));
                 }
@@ -609,7 +611,7 @@ public class POJONode {
         }
         if (obj instanceof MutableFloat) {
             NSlider w;
-            chi.add( w = new NSlider(150, 50, (((MutableFloat)obj).doubleValue())) {
+            chi.add( w = new NSlider(nSliderWidth, nSliderHeight, (((MutableFloat)obj).doubleValue())) {
                 @Override public SimpleDoubleProperty newValueEntry(int i) {
                     return new MutableFloatProperty(((MutableFloat)obj));
                 }
@@ -619,11 +621,12 @@ public class POJONode {
         if (obj instanceof MutableInteger) {
 
             NSlider w;
-            chi.add( w = new NSlider(150, 50, (((MutableInteger)obj).intValue())) {
+            chi.add( w = new NSlider(nSliderWidth, nSliderHeight, (((MutableInteger)obj).intValue())) {
                 @Override public SimpleDoubleProperty newValueEntry(int i) {
                     return new MutableFloatProperty((MutableInteger)obj);
                 }
             });
+
             applyFieldAnnotationsToNSlider(parentValue, w);
         }
         /*if (chi.isEmpty()) {
@@ -652,6 +655,7 @@ public class POJONode {
         }
         w.min.set(min);
         w.max.set(max);
+        w.addValueLabel();
     }
 
     private static String shortLabel(Object v) {
