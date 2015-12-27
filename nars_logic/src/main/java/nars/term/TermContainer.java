@@ -61,7 +61,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     static Term[] difference(TermContainer a, TermContainer b) {
         if (a.size() == 1 && b.size() == 1) {
             //special case
-            if (a.term(0).equals(b.term(0))) return null;
+            if (a.term(0).equals(b.term(0))) return Terms.Empty;
             else return a.terms();
         } else {
             MutableSet dd = Sets.difference(a.toSet(), b.toSet());
@@ -70,10 +70,10 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         }
     }
 
-    static TreeSet<Term> differenceSorted(TermContainer a, TermContainer b) {
+    static TreeSet<Term> differenceSorted(TermContainer<?> a, TermContainer<?> b) {
         TreeSet<Term> t = new TreeSet();
-        a.addAllTo(t);
-        b.addAllTo(t);
+        a.forEach(t::add);
+        b.forEach(t::remove);
         return t;
     }
 

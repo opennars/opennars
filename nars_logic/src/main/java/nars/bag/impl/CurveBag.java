@@ -33,6 +33,7 @@ public class CurveBag<V> extends Bag<V> {
 
     final ArrayBag<V> arrayBag;
 
+    public static final BagCurve power2BagCurve = new Power2BagCurve();
     public static final BagCurve power4BagCurve = new Power4BagCurve();
     public static final BagCurve power6BagCurve = new Power6BagCurve();
 
@@ -41,7 +42,10 @@ public class CurveBag<V> extends Bag<V> {
     private final Random random;
 
     public CurveBag(int capacity, Random rng) {
-        this(CurveBag.power6BagCurve, capacity, rng);
+        this(
+            //CurveBag.power6BagCurve,
+            power6BagCurve,
+            capacity, rng);
     }
 
 
@@ -490,9 +494,8 @@ public class CurveBag<V> extends Bag<V> {
 
         @Override
         public final float valueOf(float x) {
-            float nx = 1 - x;
-            float nnx = nx * nx;
-            return 1 - (nnx * nnx);
+            float nnx = x * x;
+            return (nnx * nnx);
         }
 
         @Override
@@ -516,34 +519,29 @@ public class CurveBag<V> extends Bag<V> {
         }
     }
 
-    /**
-     * Approximates priority -> probability fairness with an exponential curve
-     */
-    @Deprecated
-    public static class FairPriorityProbabilityCurve implements BagCurve {
+//    /**
+//     * Approximates priority -> probability fairness with an exponential curve
+//     */
+//    @Deprecated
+//    public static class FairPriorityProbabilityCurve implements BagCurve {
+//
+//        @Override
+//        public final float valueOf(float x) {
+//            return (float) (1.0f - Math.exp(-5.0f * x));
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return "FairPriorityProbabilityCurve";
+//        }
+//
+//    }
+
+    public static class Power2BagCurve implements BagCurve {
 
         @Override
         public final float valueOf(float x) {
-            return (float) (1.0f - Math.exp(-5.0f * x));
-        }
-
-        @Override
-        public String toString() {
-            return "FairPriorityProbabilityCurve";
-        }
-
-    }
-
-    public static class QuadraticBagCurve implements BagCurve {
-
-        @Override
-        public final float valueOf(float x) {
-            //1.0 - ((1.0-x)^2)
-            // a function which has domain and range between 0..1.0 but
-            //   will result in values above 0.5 more often than not.  see the curve:
-            //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-
-            float nx = 1.0f - x;
-            return 1.0f - (nx * nx);
+            return (x * x);
         }
 
         @Override

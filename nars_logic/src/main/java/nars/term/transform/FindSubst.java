@@ -166,10 +166,7 @@ abstract public class FindSubst extends Versioning implements Subst {
      * null to disable exclusions
      */
     public void setConstraints(ImmutableMap<Term, MatchConstraint> constraints) {
-        if (constraints == null || constraints.isEmpty())
-            constraints = null;
-        else
-            this.constraints = constraints;
+        this.constraints = constraints;
     }
 
 

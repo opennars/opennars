@@ -148,14 +148,15 @@ public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
 //        return (Compound<T>) c.clone(subs);
 //    }
 
-    private TermContainer compileSubterms(TermVector subs) {
-        Term[] ss = subs.term;
-        int s = ss.length;
-        //modifies in place, since the items will be equal
-        for (int i = 0; i < s; i++) {
-            ss[i] = getTerm(ss[i]);
-        }
-        return subs;
+
+    protected <X extends Term> TermContainer<X> compileSubterms(TermVector<X> subs) {
+        return new TermVector<>(subs.terms(), this::getTerm);
+//        Term[] ss = subs.term;
+//        int s = ss.length;
+//        for (int i = 0; i < s; i++) {
+//            ss[i] = getTerm(ss[i]);
+//        }
+//        return subs;
     }
 
 

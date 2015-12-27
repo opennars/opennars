@@ -140,6 +140,28 @@ public class TermReductionsTest {
         Term d = diffExt(p, p);
         assertNull(d);
     }
+    @Test public void testDifferenceSorted() {
+        assertArrayEquals(
+            new Term[] { r, s },
+            Terms.toArray(TermContainer.differenceSorted(sete(r, p, q, s), sete(p, q)))
+        );
+        //check consistency with differenceSorted
+        assertArrayEquals(
+            new Term[] { r, s },
+            Terms.toSortedSetArray(TermContainer.difference(sete(r, p, q, s), sete(p, q)))
+        );
+    }
+    @Test public void testDifferenceSortedEmpty() {
+        assertArrayEquals(
+                new Term[] { },
+                Terms.toArray(TermContainer.differenceSorted(sete(p, q), sete(p, q)))
+        );
+        //check consistency with differenceSorted
+        assertArrayEquals(
+                new Term[] { },
+                Terms.toSortedSetArray(TermContainer.difference(sete(p, q), sete(p, q)))
+        );
+    }
 
     @Test
     public void testDifferenceImmediate() {

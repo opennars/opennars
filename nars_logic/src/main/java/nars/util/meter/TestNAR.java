@@ -84,7 +84,7 @@ public class TestNAR  {
         });
 
         if (exitOnAllSuccess) {
-            new EarlyExit(1);
+            new EarlyExit(3);
         }
 
         eventMeters = new EventCount(nar).eventMeters;

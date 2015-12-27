@@ -1,5 +1,6 @@
 package nars.term;
 
+import com.gs.collections.api.block.function.Function;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.term.compound.Compound;
 import nars.term.visit.SubtermVisitor;
@@ -70,6 +71,15 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     @SafeVarargs
     public TermVector(T... t) {
         term = t;
+        init();
+    }
+
+    public TermVector(T[] source, Function<T,T> mapping) {
+        int len = source.length;
+        Term[] t = this.term = (T[]) new Term[len];
+        for (int i = 0; i < len; i++) {
+            t[i] = mapping.valueOf(source[i]);
+        }
         init();
     }
 

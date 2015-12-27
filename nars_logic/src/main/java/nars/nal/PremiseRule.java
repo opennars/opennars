@@ -8,7 +8,6 @@ import nars.Global;
 import nars.Op;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
-import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.Solve;
 import nars.nal.meta.pre.*;
 import nars.nal.op.*;
@@ -74,7 +73,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
     public PostCondition[] postconditions;
 
-    public TaskBeliefPair pattern;
+    public PatternCompound pattern;
 
     //it has certain pre-conditions, all given as predicates after the two input premises
 
@@ -302,7 +301,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
 
-        pattern = new TaskBeliefPair(taskTermPattern, beliefTermPattern);
+        pattern = new PatternCompound((Compound)$.p(taskTermPattern, beliefTermPattern));
 
 
         ListMultimap<Term, MatchConstraint> constraints = MultimapBuilder.treeKeys().arrayListValues().build();

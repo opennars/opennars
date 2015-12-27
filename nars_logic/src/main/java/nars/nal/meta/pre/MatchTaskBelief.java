@@ -3,9 +3,9 @@ package nars.nal.meta.pre;
 import com.google.common.collect.ListMultimap;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
-import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.TermPattern;
 import nars.term.Term;
+import nars.term.compound.Compound;
 import nars.term.constraint.MatchConstraint;
 
 import java.util.Collections;
@@ -20,7 +20,7 @@ import java.util.List;
 
     final String id;
 
-    public MatchTaskBelief(TaskBeliefPair pattern, ListMultimap<Term, MatchConstraint> constraints) {
+    public MatchTaskBelief(Compound pattern, ListMultimap<Term, MatchConstraint> constraints) {
 
         //this.pattern = pattern;
         compiled = new TermPattern(pattern, constraints);
