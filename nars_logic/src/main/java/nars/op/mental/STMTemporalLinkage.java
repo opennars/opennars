@@ -112,7 +112,7 @@ public class STMTemporalLinkage {
                     Concept previousConcept = nal.nar.concept(previousTask.getTerm());
                     if (previousConcept != null) {
                         nal.link(previousConcept, currentTask);
-                        nal.link(concept, previousTask);
+                        //nal.link(concept, previousTask);
                         remaining = true;
                     }
                 }
