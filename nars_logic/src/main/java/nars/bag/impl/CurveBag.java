@@ -285,26 +285,13 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
     /**
      * maps y in 0..1.0 to an index in 0..size
      */
-    static final int index(float y, final int size) {
+    static final int index(float y, int size) {
+       int sizeMin1 = size - 1;
+       int i = Math.round((1 - y) * sizeMin1); //invert order = select highest pri most frequently
 
-        if (y <= 0) return 0;
-
-        int i = Util.floorInt(y * size);
-
-        if (i >= size) return size - 1;
-        if (i < 0) return 0;
-
-        i = (size - 1) - i; //invert order = select highest pri most frequently
-
-        return i;
-
-            /*if (result == size) {
-                //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
-                return (size - 1);
-            }*/
-
-        //return result;
-
+       if (i >= size) return sizeMin1;
+       if (i < 0) return 0;
+     return i;
     }
 
 
@@ -325,12 +312,6 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
         final BagCurve curve = this.curve;
         float y = curve.valueOf(x);
-
-        if (normalizing) {
-            final float yMin = curve.valueOf(min);
-            final float yMax = curve.valueOf(max);
-            y = (y - yMin) / (yMax - yMin);
-        }
 
         return index(y, s);
     }
@@ -358,8 +339,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
         @Override
         public final float valueOf(final float x) {
-            float nx = 1 - x;
-            float nnx = nx * nx;
+            float nnx = x * x;
             return 1 - (nnx * nnx);
         }
 
@@ -374,9 +354,15 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
         @Override
         public final float valueOf(final float x) {
             /** x=0, y=0 ... x=1, y=1 */
-            float nx = 1 - x;
-            float nnx = nx * nx;
-            return 1 - (nnx * nnx * nnx);
+            //return x;
+
+            // float nx = 1.0f - x;
+           // return 1.0f - (nx * nx * nx * nx * nx * nx);
+
+            // return (float) (1.0f/(1.0f+Math.exp(-(10.0f*(x-0.5f)))));
+
+            return x; //linear for now
+
         }
 
         @Override
