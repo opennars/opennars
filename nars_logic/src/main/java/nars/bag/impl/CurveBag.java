@@ -29,7 +29,7 @@ import java.util.Random;
  */
 public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
-    public final static BagCurve power4BagCurve = new Power4BagCurve();
+    public final static BagCurve power2BagCurve = new Power2BagCurve();
     public final static BagCurve power6BagCurve = new Power6BagCurve();
 
     //TODO move sampler features to subclass of CurveBag which specifically provides sampling
@@ -38,7 +38,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
 
     public CurveBag(int capacity, Random rng) {
-        this(CurveBag.power6BagCurve, capacity, rng);
+        this(CurveBag.power2BagCurve, capacity, rng);
     }
 
 
@@ -287,11 +287,11 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
      */
     static final int index(float y, int size) {
        int sizeMin1 = size - 1;
-       int i = Math.round((1 - y) * sizeMin1); //invert order = select highest pri most frequently
+       int i = Math.round(y * size); //invert order = select highest pri most frequently
 
        if (i >= size) return sizeMin1;
        if (i < 0) return 0;
-     return i;
+       return i;
     }
 
 
@@ -335,12 +335,26 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
         }
     }
 
+    public static class Power2BagCurve implements BagCurve {
+
+        @Override
+        public final float valueOf(final float x) {
+            float nnx = x;
+            return (nnx * nnx);
+        }
+
+        @Override
+        public String toString() {
+            return "Power2BagCurve";
+        }
+    }
+
     public static class Power4BagCurve implements BagCurve {
 
         @Override
         public final float valueOf(final float x) {
-            float nnx = x * x;
-            return 1 - (nnx * nnx);
+            float nnx = x;
+            return (nnx * nnx);
         }
 
         @Override
@@ -356,12 +370,17 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
             /** x=0, y=0 ... x=1, y=1 */
             //return x;
 
-            // float nx = 1.0f - x;
-           // return 1.0f - (nx * nx * nx * nx * nx * nx);
+            /*
+http://sagecell.sagemath.org/?z=eJxdks1qwzAQhO8Gv4OOUqMEyf8uVZ8h91KWQuvU0NrGDdR--66khO3KATMzfIHZXQ9yU84epbTHTT2EtxJ5lmcTGLDOeGGhiKKAMooSqigqqKOooYmigTaKFrooOuij6MEar-JvmFcxinES69t0-
+ZCFMUY95pnAZwPhfPw-f0sVo90NcoObGQexPxuBgNifnDnZ2__8E3ofnP1PniyxBWNxtJQtiC0Zi9OnbElsxVhcUMpWxNaMxR2mbE1sw1hcc8o2xLaMxUukbEtsx1g8Vsp2xPaMxXumbH9n-SX8wQNKYZ4t6zhd45nI4B3I4KLJ4CbJ4KrI4C
+7I4LBkcBoyWJeMb-TrnN0yYyJfXvGTOh_uzujQi4dWh348LHToycNSh748rHTozcNah_48bHSYg4etDvPwsNNhLh72Os7n05_P-VcuX_NVnpX6A9Vf8ck=&lang=sage
+             */
+            float nx = x;
+            return (nx * nx * nx * nx * nx * nx);
 
             // return (float) (1.0f/(1.0f+Math.exp(-(10.0f*(x-0.5f)))));
 
-            return x; //linear for now
+            //return x*x; //linear for now
 
         }
 

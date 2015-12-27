@@ -1,23 +1,32 @@
 package nars.bag;
 
+import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import nars.Global;
 import nars.Memory;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.LevelBag;
 import nars.budget.Item;
+import nars.concept.Concept;
 import nars.nar.Default;
+import nars.nar.Default2;
+import nars.task.Task;
+import nars.term.Term;
 import nars.util.ArraySortedIndex;
 import nars.util.data.Util;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.meter.bag.NullItem;
+import org.apache.commons.math3.random.EmpiricalDistribution;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.util.MathArrays;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 
 import static org.junit.Assert.*;
 
@@ -216,6 +225,68 @@ public class CurveBagTest extends AbstractBagTest {
 
         return count;
     }
+
+    @Test public void testDistribution() {
+        Default2 n = new Default2(1000, 8, 4, 4);
+        n.memory.termLinkForgetDurations.setValue(100); //slow forget
+        n.memory.taskLinkForgetDurations.setValue(100); //slow forget
+        n.input("$0.9$ a:b.");
+        n.input("$0.9$ b:c.");
+        n.frame(8);
+        Bag bag = n.core.active;
+
+        //bag.forEachEntry(System.out::println);
+        bag.forEach(1000,System.out::println);
+        System.out.println(bag.size() + " " + bag.getPriorityMax() + " " + bag.getPriorityMin());
+
+        //TODO verify the histogram resulting from the above execution is relatively flat:
+        //ex: [0.21649484536082475, 0.2268041237113402, 0.28865979381443296, 0.26804123711340205]
+        //the tests below assume that it begins with a relatively flat distribution
+        System.out.println(Arrays.toString(bag.getPriorityHistogram(4)));
+        System.out.println(Arrays.toString(bag.getPriorityHistogram(8)));
+
+        Consumer<EmpiricalDistribution> print = (EmpiricalDistribution f) -> {
+
+
+            System.out.println(f.getSampleStats());
+            f.getBinStats().forEach(
+                    s -> {
+                        if (s.getN() > 0) System.out.println(
+                                s.getMin() + ".." + s.getMax() + ":\t" + s.getN());
+                    }
+            );
+        };
+
+        System.out.print("Sampling: " );
+        print.accept(getSamplingDistribution((CurveBag) n.core.active, 1000));
+        System.out.print("Priority: " );
+        EmpiricalDistribution pri;
+        print.accept(pri = getPriorityDistribution(n.core.active, 1000));
+
+        List<SummaryStatistics> l = pri.getBinStats();
+        assertTrue(l.get(0).getN() < l.get(l.size() - 1).getN());
+
+    }
+
+    private EmpiricalDistribution getSamplingDistribution(CurveBag b, int n) {
+        DoubleArrayList f = new DoubleArrayList(n);
+        for (int i = 0; i < n; i++)
+            f.add( b.sample() );
+        EmpiricalDistribution e =new EmpiricalDistribution(10 /* bins */);
+        e.load(f.toArray());
+        return e;
+    }
+
+    private EmpiricalDistribution getPriorityDistribution(Bag b, int n) {
+        DoubleArrayList f = new DoubleArrayList(n);
+        for (int i = 0; i < n; i++)
+            f.add( b.peekNext().getPriority() );
+        EmpiricalDistribution e =new EmpiricalDistribution(10 /* bins */);
+        e.load(f.toArray());
+        return e;
+    }
+
+
 
     public void testAveragePriority(int capacity, SortedIndex<NullItem> items) {
         
