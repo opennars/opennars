@@ -9,10 +9,10 @@ import nars.nal.Compounds;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.GenericCompound;
+import nars.util.WeakValueHashMap;
 
 import java.io.PrintStream;
 import java.util.HashMap;
-import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
 /**
@@ -33,7 +33,7 @@ public interface TermIndex extends Compounds, CacheBag<Termed, Termed> {
     class UncachedTermIndex implements TermIndex {
 
         /** build a new instance on the heap */
-        @Override public Term getTerm(Op op, Term[] t, int relation) {
+        @Override public Termed compile(Op op, Term[] t, int relation) {
             return new UncachedGenericCompound(op, t, relation);
         }
 
@@ -80,6 +80,8 @@ public interface TermIndex extends Compounds, CacheBag<Termed, Termed> {
 
             @Override
             public Term clone(Term[] replaced) {
+                if (subterms().equals(replaced))
+                    return this;
                 return the(op(), replaced, relation);
             }
         }
@@ -120,8 +122,8 @@ public interface TermIndex extends Compounds, CacheBag<Termed, Termed> {
     }
     static TermIndex memoryWeak(int capacity) {
         return new MapIndex(
-                new WeakHashMap(capacity),
-                new WeakHashMap(capacity*2)
+                new WeakValueHashMap(capacity),
+                new WeakValueHashMap(capacity*2)
         );
     }
     default void print(PrintStream out) {

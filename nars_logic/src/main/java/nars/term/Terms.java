@@ -391,7 +391,7 @@ public class Terms {
     public static Term[] toArray(Collection<Term> l) {
         int s = l.size();
         if (s == 0)
-            return null;
+            return Terms.Empty;
         return l.toArray(new Term[s]);
     }
 

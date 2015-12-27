@@ -11,6 +11,7 @@ import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.term.Term;
+import nars.term.Terms;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
@@ -425,6 +426,9 @@ public abstract class $  {
     }
     public static Term the(Op op, Term[] subterms, int relation) {
         return terms.the(op, subterms, relation);
+    }
+    public static Term the(Op op, Collection<Term> subterms, int relation) {
+        return terms.the(op, Terms.toArray(subterms), relation);
     }
 
 }

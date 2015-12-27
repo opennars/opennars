@@ -612,7 +612,7 @@ public class TermTest {
     @Test public void testStatemntString() {
         assertTrue( inh("a", "b").op().isStatement() );
         Term aInhB = $("<a-->b>");
-        assertEquals(GenericCompound.class, aInhB.getClass());
+        assertTrue(aInhB instanceof GenericCompound);
         assertEquals("<a-->b>",
                      aInhB.toString());
     }

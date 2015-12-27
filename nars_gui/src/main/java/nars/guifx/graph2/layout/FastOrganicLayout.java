@@ -342,8 +342,8 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
 			// Set the X,Y value of the internal version of the cell to
             // the center point of the vertex for better positioning
             double ww = vd.width(); /*getRadius()*/
-            double width = ww;//*2f; //bounds.getWidth();
-            double height = ww;//*2f; //bounds.getHeight();
+            double width = ww*2f; //bounds.getWidth();
+            double height = ww*2f; //bounds.getHeight();
 
             // Randomize (0, 0) locations
             //TODO re-use existing location

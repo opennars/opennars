@@ -6,6 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static nars.$.$;
+import static nars.$.sete;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -53,12 +54,14 @@ public class TrieDeriverTest {
         /*tester.believe("<planetX --> {Mars,Pluto,Venus}>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
         tester.believe("<planetX --> {Pluto,Saturn}>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
         tester.mustBelieve(cycles, "<planetX --> {Mars,Venus}>", 0.81f ,0.81f); //.en("PlanetX is either Mars or Venus.");*/
+
+
         assertEquals(
             $("{Mars,Venus}"),
-            TermContainer.difference(
+            sete(TermContainer.difference(
                 $("{Mars,Pluto,Venus}"),
                 $("{Pluto,Saturn}")
-            )
+            ))
         );
 
 

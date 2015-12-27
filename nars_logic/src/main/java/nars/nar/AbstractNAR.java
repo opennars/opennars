@@ -8,7 +8,6 @@ import nars.bag.impl.CurveBag;
 import nars.concept.AtomConcept;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
-import nars.java.jclass;
 import nars.nal.Deriver;
 import nars.nal.PremiseRule;
 import nars.nal.nal8.AbstractOperator;
@@ -198,7 +197,7 @@ public abstract class AbstractNAR extends NAR {
 
             //Meta
             new reflect(),
-            new jclass(),
+            //new jclass(),
 
             // feeling operations
             new feelHappy(),

@@ -16,7 +16,7 @@ import java.util.function.Predicate;
 import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
-public abstract class GenericCompound<T extends Term> implements Compound<T> {
+public class GenericCompound<T extends Term> implements Compound<T> {
 
     public final TermVector<T> terms;
     public final Op op;
@@ -120,7 +120,10 @@ public abstract class GenericCompound<T extends Term> implements Compound<T> {
         terms.addAllTo(set);
     }
 
-    abstract public Term clone(Term[] replaced);
+    @Override
+    public Term clone(Term[] replaced) {
+        throw new RuntimeException(this + " does not support cloning");
+    }
 
 //    @Override
 //    public Term clone(Term[] replaced) {

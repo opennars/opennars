@@ -80,6 +80,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     void addAllTo(Collection<Term> set);
 
 
+
     /** expected to provide a non-copy reference to an internal array,
      *  if it exists. otherwise it should create such array.
      *  if this creates a new array, consider using .term(i) to access

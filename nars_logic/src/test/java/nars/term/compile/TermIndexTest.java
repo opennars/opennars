@@ -9,6 +9,7 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
+import nars.time.FrameClock;
 import nars.util.data.map.UnifriedMap;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class TermIndexTest {
 
 
     public void testTermSharing(TermIndex tt) {
-        NAR n = new Terminal(tt);
+        NAR n = new Terminal(tt, new FrameClock());
 
         testShared(n, "<<x-->w> --> <y-->z>>");
         testShared(n, "<a --> b>");

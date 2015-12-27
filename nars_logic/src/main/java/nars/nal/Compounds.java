@@ -10,10 +10,7 @@ import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.task.MutableTask;
 import nars.task.Task;
-import nars.term.Statement;
-import nars.term.Term;
-import nars.term.TermContainer;
-import nars.term.Terms;
+import nars.term.*;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.truth.Truth;
@@ -38,7 +35,13 @@ public interface Compounds {
     /**
      * universal zero-length product
      */
-    Compound Empty = (Compound)$.p(Terms.Empty);
+    Compound Empty = new GenericCompound(Op.PRODUCT, Terms.Empty, -1) {
+        @Override
+        public Term clone(Term[] replaced) {
+            if (replaced.length == 0) return this;
+            return super.clone(replaced);
+        }
+    };
 
     /**
      * implications, equivalences, and interval
@@ -361,10 +364,10 @@ public interface Compounds {
             return null;
         }
 
-        return getTerm(op, t, relation);
+        return compile(op, t, relation).term();
     }
 
-    Term getTerm(Op op, Term[] t, int relation);
+    Termed compile(Op op, Term[] t, int relation);
 
 
     default Term newIntersectINT(Term[] t) {

@@ -46,6 +46,8 @@ public class EllipsisTest {
             Set<Term> selectedFixed = Global.newHashSet(arity);
 
             Compound y = getMatchable(arity);
+            assertNotNull(y);
+
             Compound r = getResult();
 
             Compound x = getPattern();

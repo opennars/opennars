@@ -1,6 +1,7 @@
 package nars.bag.impl;
 
 import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
+import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.budget.Budget;
@@ -407,12 +408,14 @@ public class CurveBag<V> extends Bag<V> {
 
         int i = Util.floorInt(y * size);
 
-        if (i >= size) return size - 1;
+        int sizeMin1 = size - 1;
+
+        if (i >= size) return sizeMin1;
         if (i < 0) return 0;
 
-        i = (size - 1) - i; //invert order = select highest pri most frequently
+        i = sizeMin1 - i; //invert order = select highest pri most frequently
 
-        return i;
+        return sizeMin1 - i;
 
             /*if (result == size) {
                 //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
@@ -432,32 +435,42 @@ public class CurveBag<V> extends Bag<V> {
         return arrayBag.getPriorityMax();
     }
 
+    int sampleRandomly(int size) {
+        return random.nextInt(size);
+    }
+
     public final int sample() {
         int s = size();
         if (s == 1) return 0;
 
-        float x = random.nextFloat();
-
-        //TODO cache these curvepoints when min/max dont change
         float min = getPriorityMin();
         float max = getPriorityMax();
         boolean normalizing = (min != max);
-        if (normalizing) {
-            //rescale to dynamic range
-            x = min + (x * (max - min));
+        if (Util.equal(min, max, Global.BUDGET_PROPAGATION_EPSILON)) { //TODO epsilon
+            //if there isnt any difference between min and max, just pick element at random
+            return sampleRandomly(s);
         }
+
+        float x = random.nextFloat();
+
+        //TODO cache these curvepoints when min/max dont change
+
+        //rescale to dynamic range
+        x = min + (x * (max - min));
+
 
         BagCurve curve = this.curve;
         float y = curve.valueOf(x);
 
-        if (normalizing) {
-            float yMin = curve.valueOf(min);
-            float yMax = curve.valueOf(max);
-            y = (y - yMin) / (yMax - yMin);
-        }
+//        float yMin = curve.valueOf(min);
+//        float yMax = curve.valueOf(max);
+//        y = (y - yMin) / (yMax - yMin);
 
-        return index(y, s);
+
+        return  index(y, s);
     }
+
+
 
 
     public static class CubicBagCurve implements BagCurve {
@@ -498,9 +511,8 @@ public class CurveBag<V> extends Bag<V> {
         @Override
         public final float valueOf(float x) {
             /** x=0, y=0 ... x=1, y=1 */
-            float nx = 1 - x;
-            float nnx = nx * nx;
-            return 1 - (nnx * nnx * nnx);
+            float nnx = x * x;
+            return (nnx * nnx * nnx);
         }
 
         @Override

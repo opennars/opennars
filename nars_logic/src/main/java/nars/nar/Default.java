@@ -51,8 +51,9 @@ public class Default extends AbstractNAR {
                    int tasklinkFirePerConcept,
                    int termlinkFirePerConcept) {
         this(new Memory(new FrameClock(),
+                //TermIndex.memoryWeak(numConcepts * 2)
                 TermIndex.memory(numConcepts * 2)
-                //TermIndex.memoryWeak(numConcepts * 8)
+
         ), numConcepts, conceptsFirePerCycle, termlinkFirePerConcept, tasklinkFirePerConcept);
     }
 
@@ -130,11 +131,14 @@ public class Default extends AbstractNAR {
 
                 float p =
                         //Math.max(
-                        c.getTaskLinks().getSummarySum()/taskLinkBagSize
+                        //c.getTaskLinks().getSummarySum()/taskLinkBagSize
                         //(
                         //c.getTaskLinks().getSummaryMean()
                         //+c.getTermLinks().getSummaryMean()) * 0.5f
-                         //c.getTermLinks().getPriorityMax()
+                        c.getTaskLinks().getPriorityMax()
+
+                        // c.getTermLinks().getPriorityMax()
+
                         //)
                         ;
 
@@ -531,9 +535,10 @@ public class Default extends AbstractNAR {
                 Task.normalize(
                         buffer,
                         //p.getMeanPriority()
-                        //p.getTask().getPriority()
+                        p.getTask().getPriority()
                         //p.getTask().getPriority()/buffer.size()
-                        p.getTaskLink().getPriority()/buffer.size()
+                        //p.getTaskLink().getPriority()
+                        //p.getTaskLink().getPriority()/buffer.size()
                 );
 
                 buffer.forEach(narInput);

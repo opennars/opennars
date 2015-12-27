@@ -2,7 +2,7 @@ package nars.io;
 
 import nars.*;
 import nars.nal.nal8.Operator;
-import nars.nar.Default;
+import nars.nar.Terminal;
 import nars.op.io.echo;
 import nars.task.Task;
 import nars.term.Term;
@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 
 public class NarseseTest {
 
-    static final NAR n = new Default();
+    static final NAR n = new Terminal();
     static final Narsese p = Narsese.the();
 
     static <T extends Term> T term(String s) throws Narsese.NarseseException {

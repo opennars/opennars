@@ -1,10 +1,8 @@
 package nars.util.meter;
 
-import nars.$;
 import nars.Global;
 import nars.Memory;
 import nars.task.Task;
-import nars.term.compound.Compound;
 import nars.util.event.FrameReaction;
 import nars.util.meter.event.DoubleMeter;
 
@@ -37,7 +35,7 @@ public class EmotionMeter extends FrameReaction implements Serializable {
     public final DoubleMeter busyMeter = new DoubleMeter("busy");
 
 
-    static final Compound satisfiedSetInt = $.seti($.the("satisfied"));
+    //static final Compound satisfiedSetInt = $.seti($.the("satisfied"));
 
     public EmotionMeter(Memory memory) {
         super(memory);

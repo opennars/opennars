@@ -939,8 +939,6 @@ public class Narsese extends BaseParser<Object>  {
 //            op = NALOperator.OPERATION;
 //        }
 
-        if (op == null) op = Op.PRODUCT;
-
 
 
         if (op == OPERATOR) {
@@ -957,8 +955,8 @@ public class Narsese extends BaseParser<Object>  {
             );
         }
         else {
-            Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
-            return $.the(op, va);
+
+            return $.the(op, vectorterms, -1);
         }
     }
 

@@ -2,9 +2,9 @@ package nars.nal;
 
 import nars.MapIndex;
 import nars.term.Term;
-import nars.term.TermContainer;
 import nars.term.TermMetadata;
 import nars.term.TermVector;
+import nars.term.Termed;
 import nars.term.compound.Compound;
 
 import java.util.HashMap;
@@ -20,8 +20,9 @@ public class PatternIndex extends MapIndex {
 
 
 
+
     @Override
-    protected <T extends Term> Compound<T> compileCompound(Compound<T> x, TermContainer subs) {
+    protected Termed compileCompound(Compound x) {
 
         /*if (!(x instanceof AbstractCompoundPattern)) {
             if (x instanceof Compound) {
@@ -39,7 +40,7 @@ public class PatternIndex extends MapIndex {
         if (!(x instanceof TermMetadata)) {
 //            if (!Ellipsis.hasEllipsis(x)) {
 //            if (!x.isCommutative()) {
-                return new PatternCompound(x, (TermVector) subs) {
+                return new PatternCompound(x, (TermVector) x.subterms()) {
                     @Override public Term clone(Term[] replaced) {
                         return the(op, replaced, relation());
                     }
@@ -52,7 +53,7 @@ public class PatternIndex extends MapIndex {
         }
         //}
 
-        return super.compileCompound(x, subs);
+        return super.compileCompound(x);
     }
 
 

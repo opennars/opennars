@@ -4,6 +4,7 @@ import nars.bag.impl.MapCacheBag;
 import nars.term.*;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 
 import java.io.PrintStream;
 import java.util.Map;
@@ -45,15 +46,32 @@ public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
 
     }
 
+    private final class InternGenericCompound extends GenericCompound {
+
+        public InternGenericCompound(Op op, TermVector subterms, int relation) {
+            super(op, subterms, relation);
+        }
+
+        //equals ==
+
+        @Override
+        public Term clone(Term[] replaced) {
+            if (subterms().equals(replaced))
+                return this;
+            return the(op(), replaced, relation);
+        }
+    }
+
+
     @Override
-    public Term getTerm(Op op, Term[] t, int relation) {
-        return $.the(op, t, relation);
-//        return new PatternCompound(op, t, relation) {
-//            @Override
-//            public Term clone(Term[] replaced) {
-//                return MapIndex.this.getTerm(op(), replaced, relation());
-//            }
-//        };
+    public Termed compile(Op op, Term[] t, int relation) {
+        if ((op == Op.SEQUENCE) || (op == Op.PARALLEL)) {
+            //intermval metadata, handle special
+            return $.the(op, t, relation);
+        } else {
+            //TODO find existing instance and don't construct a duplciate which will get unified on re-entry
+            return compileCompound(op, new TermVector(t), relation);
+        }
     }
 
     protected <T extends Termed> T compile(T t) {
@@ -66,9 +84,22 @@ public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
             return t;
         }
 
-        T compiled = t instanceof Compound ? (T) compileCompound((Compound) t) : t;
-        data.put(t, compiled);
-        return compiled;
+        Termed compiled = t.term() instanceof Compound ?
+                compileCompound((Compound) t)
+                : t;
+
+        data.put(compiled, compiled);
+        return (T)compiled;
+    }
+
+    protected Termed compileCompound(Compound t) {
+        return compileCompound(t.op(), t.subterms(), t.relation());
+    }
+
+    protected Termed compileCompound(Op op, TermContainer subterms, int relation) {
+        return new InternGenericCompound(
+            op, (TermVector) get(subterms), relation
+        );
     }
 
     @Override
@@ -79,41 +110,43 @@ public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
         subterms.forEach(itemPrinter);
     }
 
-    protected <T extends Term> Compound<T> compileCompound(Compound<T> c) {
-        return compileCompound(c, get(c.subterms()));
-    }
+//    protected <T extends Term> Compound<T> compileCompound(Compound<T> c) {
+//        return compileCompound(c, get(c.subterms()));
+//    }
 
     private <T extends Term> TermContainer get(TermContainer<T> s) {
         Map<TermContainer, TermContainer> st = subterms;
         TermContainer existing = st.get(s);
         if (existing == null) {
-            st.put(s, existing = compileSubterms((TermVector) s));
+            s = compileSubterms((TermVector) s);
+            st.put(s, s);
+            return s;
         }
         return existing;
     }
 
-    protected <T extends Term> Compound<T> compileCompound(Compound<T> c, TermContainer subs) {
-//        if ((c instanceof GenericCompound) && (!(c instanceof TermMetadata))) {
-//            //special case, fast clone
-//            return new GenericCompound(c.op(), (TermVector)subs, ((GenericCompound) c).relation) {
-//                @Override
-//                public Term clone(Term[] replaced) {
-//                    //TODO use a table with the following lookup
-//                    //before needing to construct a term:
-//                    // (op,relation), (subterm) --> compound
-//                    //this way an existing op+relation+subterm
-//                    //can be retrieved without constructing
-//                    //the term that will eventually match with it
-//
-//                    return MapIndex.this.getTerm(
-//                            compileCompound(this,
-//                                get(new TermVector(replaced)))
-//                           );
-//                }
-//            };
-//        }
-        return (Compound<T>) c.clone(subs);
-    }
+//    protected <T extends Term> Compound<T> compileCompound(Compound<T> c, TermContainer subs) {
+////        if ((c instanceof GenericCompound) && (!(c instanceof TermMetadata))) {
+////            //special case, fast clone
+////            return new GenericCompound(c.op(), (TermVector)subs, ((GenericCompound) c).relation) {
+////                @Override
+////                public Term clone(Term[] replaced) {
+////                    //TODO use a table with the following lookup
+////                    //before needing to construct a term:
+////                    // (op,relation), (subterm) --> compound
+////                    //this way an existing op+relation+subterm
+////                    //can be retrieved without constructing
+////                    //the term that will eventually match with it
+////
+////                    return MapIndex.this.getTerm(
+////                            compileCompound(this,
+////                                get(new TermVector(replaced)))
+////                           );
+////                }
+////            };
+////        }
+//        return (Compound<T>) c.clone(subs);
+//    }
 
     private TermContainer compileSubterms(TermVector subs) {
         Term[] ss = subs.term;

@@ -331,7 +331,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
                     if (submods == -1) return -1;
                     if (submods > 0) {
                         x = cx.clone(yy);
-                        modifications++;
+                        modifications+= (cx!=x) ? 1 : 0;
                     }
                 }
             }
@@ -593,6 +593,8 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
     default Term clone(TermContainer subs) {
+        if (subterms().equals(subs))
+            return this;
         return clone(subs.terms());
     }
 

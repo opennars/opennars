@@ -1,5 +1,6 @@
 package nars.bag;
 
+import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import nars.Global;
 import nars.bag.impl.ArrayBag;
 import nars.bag.impl.CurveBag;
@@ -7,10 +8,13 @@ import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.nar.Default;
 import nars.util.data.random.XorShift128PlusRandom;
+import org.apache.commons.math3.random.EmpiricalDistribution;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -131,17 +135,41 @@ public class CurveBagTest  {
     }
 
     @Test public void testDistribution() {
-        Default n = new Default(1000, 2, 3, 4);
-        n.input("a:b.");
-        n.input("b:c.");
-        n.frame(60);
+        Default n = new Default(1000, 8, 4, 4);
+        n.memory.termLinkForgetDurations.setValue(100); //slow forget
+        n.memory.taskLinkForgetDurations.setValue(100); //slow forget
+        n.input("$0.9$ a:b.");
+        n.input("$0.9$ b:c.");
+        n.frame(8);
         Bag<Concept> bag = n.core.active;
 
         bag.forEachEntry(System.out::println);
         System.out.println(bag.size() + " " + bag.getPriorityMax() + " " + bag.getPriorityMin());
 
+        //TODO verify the histogram resulting from the above execution is relatively flat:
+        //ex: [0.21649484536082475, 0.2268041237113402, 0.28865979381443296, 0.26804123711340205]
+        //the tests below assume that it begins with a relatively flat distribution
         System.out.println(Arrays.toString(bag.getPriorityHistogram(4)));
         System.out.println(Arrays.toString(bag.getPriorityHistogram(8)));
+
+        EmpiricalDistribution f = getSamplingDistribution(n.core.active, 1000);
+        System.out.println(f.getSampleStats());
+        f.getBinStats().forEach(
+                s -> { if (s.getN() > 0) System.out.println(
+                    s.getMin() + ".." + s.getMax() + ":\t" + s.getN()); }
+                );
+        List<SummaryStatistics> l = f.getBinStats();
+        assertTrue(l.get(0).getN() < l.get(l.size()-1).getN());
+
+    }
+
+    private EmpiricalDistribution getSamplingDistribution(Bag b, int n) {
+        DoubleArrayList f = new DoubleArrayList(n);
+        for (int i = 0; i < n; i++)
+            f.add( b.peekNext().getPriority() );
+        EmpiricalDistribution e =new EmpiricalDistribution(10 /* bins */);
+        e.load(f.toArray());
+        return e;
     }
 
 

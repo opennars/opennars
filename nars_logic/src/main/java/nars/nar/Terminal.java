@@ -8,7 +8,8 @@ import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
 import nars.term.Term;
 import nars.term.compile.TermIndex;
-import nars.time.RealtimeMSClock;
+import nars.time.Clock;
+import nars.time.FrameClock;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -24,9 +25,9 @@ public class Terminal extends AbstractNAR {
     final Predicate<Task> taskFilter =
             Task::isCommand;
 
-    public Terminal(TermIndex termIndex) {
+    public Terminal(TermIndex termIndex, Clock c) {
         super(new Memory(
-                new RealtimeMSClock(),
+                c,
                 termIndex
                 //new TrieCacheBag()
         ));
@@ -36,7 +37,14 @@ public class Terminal extends AbstractNAR {
     }
 
     public Terminal() {
-        this(TermIndex.memory(1024));
+        this(
+            new FrameClock()
+        );
+        //new RealtimeMSClock());
+    }
+
+    public Terminal(Clock c) {
+        this(TermIndex.memory(1024), c);
     }
 
     @Override

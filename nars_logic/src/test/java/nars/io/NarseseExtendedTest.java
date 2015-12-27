@@ -34,7 +34,7 @@ public class NarseseExtendedTest {
             switch (w) {
                 case Past: assertTrue(t.getOccurrenceTime() < 0); break;
                 case Future: assertTrue(t.getOccurrenceTime() > 0); break;
-                case Present: assertTrue(t.getOccurrenceTime() == 0); break;
+                case Present: assertEquals(0, t.getOccurrenceTime()); break;
             }
         }
     }

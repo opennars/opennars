@@ -83,6 +83,10 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
         return term[i];
     }
 
+    public boolean equals(Term[] t) {
+        return Arrays.equals(term, t);
+    }
+
     @Override
     public final Term termOr(int index, Term resultIfInvalidIndex) {
         Term[] term = this.term;
