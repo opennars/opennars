@@ -26,11 +26,14 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.Decider;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
+import nars.truth.DefaultTruth;
+import nars.truth.TruthFunctions;
 import nars.util.event.Reaction;
 
 import java.io.Serializable;
@@ -219,8 +222,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
 
         Budget b;
         if (!operation.isDeleted()) {
-            b = operation.getBudget().clone();
-            b.setPriority(b.getPriority()*Global.OPERATION_EXECUTION_PRIORITY_BOOST);
+            b = new Budget(0.75f, 0.5f, BudgetFunctions.truthToQuality(new DefaultTruth(1.0f,0.9f)));
         }
         else
             b = Budget.zero;//if operation was cancelled, at least provide some result feedback

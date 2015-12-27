@@ -317,7 +317,5 @@ public class Global {
     
     public static float EXECUTION_SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
 
-    public static float OPERATION_EXECUTION_PRIORITY_BOOST = 1.5f;
-
 }
 
