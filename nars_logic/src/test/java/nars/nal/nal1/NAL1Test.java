@@ -123,7 +123,7 @@ public class NAL1Test extends AbstractNALTester {
     @Test
     public void conversion() throws Narsese.NarseseException {
 
-        long time = 16;
+        long time = 64;
         TestNAR test = test();
         test.believe("<bird --> swimmer>")
             .ask("<swimmer --> bird>") //.en("Is swimmer a type of bird?");

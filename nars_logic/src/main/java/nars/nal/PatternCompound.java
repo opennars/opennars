@@ -8,7 +8,7 @@ import nars.term.compound.GenericCompound;
 import nars.term.match.Ellipsis;
 import nars.term.transform.FindSubst;
 
-abstract public class PatternCompound extends GenericCompound {
+public class PatternCompound extends GenericCompound {
 
 
     public final int sizeCached;

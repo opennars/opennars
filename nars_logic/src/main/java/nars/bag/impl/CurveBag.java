@@ -403,19 +403,14 @@ public class CurveBag<V> extends Bag<V> {
      * maps y in 0..1.0 to an index in 0..size
      */
     static final int index(float y, int size) {
+        size--;
 
-        if (y <= 0) return 0;
+        int i = Math.round((1-y) * size); //invert order = select highest pri most frequently
 
-        int i = Util.floorInt(y * size);
-
-        int sizeMin1 = size - 1;
-
-        if (i >= size) return sizeMin1;
+        if (i > size) return size;
         if (i < 0) return 0;
 
-        i = sizeMin1 - i; //invert order = select highest pri most frequently
-
-        return sizeMin1 - i;
+        return i;
 
             /*if (result == size) {
                 //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
