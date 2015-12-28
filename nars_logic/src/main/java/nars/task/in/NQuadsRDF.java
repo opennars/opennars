@@ -245,14 +245,11 @@ public abstract class NQuadsRDF {
     static final Atom differentFrom = Atom.the("differentFrom");
     static final Atom dataTypeProperty = Atom.the("DatatypeProperty");
 
-    static final Term subjObjInst(Term subject) {
+    static final Term subjObjInst(Term subject, char subjType, char objType, boolean reverse) {
+        String a = reverse ? "subj" : "obj";
+        String b = reverse ? "obj" : "subj";
         return inst(
-                p(varDep("subj"), varDep("obj")),
-                subject);
-    }
-    static final Term objSubjInst(Term subject) {
-        return inst(
-                p(varDep("subj"), varDep("obj")),
+                p(v(subjType, a), v(objType, b)),
                 subject);
     }
 
@@ -270,9 +267,8 @@ public abstract class NQuadsRDF {
         Term belief = null;
 
         //noinspection IfStatementWithTooManyBranches
-        if (predicate.equals(parentOf) || predicate.equals(type)
+        if (predicate.equals(type)
                 ||predicate.equals(subClassOf)||predicate.equals(subPropertyOf)) {
-
             if (object.equals(owlClass)) {
                 return null;
             }
@@ -283,14 +279,16 @@ public abstract class NQuadsRDF {
                 }
             //}
 
-            belief = (Compound) inst(subject, object);
+            belief = (Compound) inh(subject, object);
 
+        } else if ((predicate.equals(parentOf))) {
+            //.. parentOf is probably redundant
         }
         else if (predicate.equals(equivalentClass)) {
 
             belief = equiv(
-                inst(varDep(1), subject),
-                inst(varDep(1), object)
+                inst(varIndep(1), subject),
+                inst(varIndep(1), object)
             );
         }
         else if (predicate.equals(sameAs)) {
@@ -304,15 +302,15 @@ public abstract class NQuadsRDF {
             //<PROPERTY($subj, $obj) ==> <$subj {-- CLASS>>.
 
 
-            Term b = inst(varDep("subj"), object);
-            belief = conj(subjObjInst(subject),b);
+            Term b = inst(varIndep("subj"), object);
+            belief = conj(subjObjInst(subject, '$', '#', false),b);
         }
         else if (predicate.equals(range)) {
             // PROPERTY range CLASS
             //<PROPERTY($subj, $obj) ==> <$obj {-- CLASS>>.
 
-            Term b = inst(varDep("obj"), object);
-            belief = conj(subjObjInst(subject),b);
+            Term b = inst(varIndep("obj"), object);
+            belief = conj(subjObjInst(subject, '#', '$', false),b);
 
 //            belief = nar.term(
 //                    //"<" + subject + "($subj,$obj) ==> <$obj {-- " + object + ">>"
@@ -327,7 +325,9 @@ public abstract class NQuadsRDF {
         else if (predicate.equals(inverseOf)) {
 
             //PREDSUBJ(#subj, #obj) <=> PREDOBJ(#obj, #subj)
-            belief = equiv(subjObjInst(subject), objSubjInst(object));
+            belief = equiv(
+                    subjObjInst(subject, '$', '$', false),
+                    subjObjInst(object, '$', '$', true));
 
         }
         else if (predicate.equals(disjointWith)) {

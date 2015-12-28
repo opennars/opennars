@@ -74,21 +74,21 @@ public abstract class AbstractNALTester {
 
         if (multi) {
 
-            for (int c : new int[] {  1, 2, 4 }) { ///concepts fired per cycle
+            for (int c : new int[] {  1/*, 2, 4 */}) { ///concepts fired per cycle
                 l.add(supply("Default[NAL<=" + level + ",c=" + c + ']', () -> {
-                            Default d = new Default(512, c, 2, 3);
+                            Default d = new Default(1512, c, 3, 3);
                             d.nal(level);
                             return d;
                         }
                 ));
-                if (level < 8) {
+                /*if (level < 8) {
                     l.add(supply("Default[NAL8, c=" + c + "]", () -> {
                                 Default d = new Default(512, c, 2, 3);
                                 d.nal(8);
                                 return d;
                             }
                     ));
-                }
+                }*/
             }
 
 //            l.add(supply("Alann[NAL<=" + level + ']',

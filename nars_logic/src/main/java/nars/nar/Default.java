@@ -549,8 +549,8 @@ public class Default extends AbstractNAR {
                 Task.normalize(
                         buffer,
                         //p.getMeanPriority()
-                        p.getTask().getPriority()
-                        //p.getTask().getPriority()/buffer.size()
+                        //p.getTask().getPriority()
+                        p.getTask().getPriority()/buffer.size()
                         //p.getTaskLink().getPriority()
                         //p.getTaskLink().getPriority()/buffer.size()
                 );

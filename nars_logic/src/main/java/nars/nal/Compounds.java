@@ -373,11 +373,7 @@ public interface Compounds {
     default Term subtractSet(Op setType, Compound A, Compound B) {
         if (A.equals(B))
             return null; //empty set
-        TreeSet<Term> x = TermContainer.differenceSorted(A, B);
-        /*if (x.isEmpty())
-            return null;*/
-        return the(setType, Terms.toArray(x),
-                -1, false /* already sorted here via the Set */);
+        return the(setType, TermContainer.difference(A, B));
     }
 
     static boolean validEquivalenceTerm(Term t) {

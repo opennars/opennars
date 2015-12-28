@@ -9,7 +9,6 @@ import nars.util.utf8.ByteBuf;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -71,12 +70,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         }
     }
 
-    static TreeSet<Term> differenceSorted(TermContainer<?> a, TermContainer<?> b) {
-        TreeSet<Term> t = new TreeSet();
-        a.forEach(t::add);
-        b.forEach(t::remove);
-        return t;
-    }
+
 
     void addAllTo(Collection<Term> set);
 

@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class Cons<T> implements Iterable<T> {
+    private static final Cons EMPTY = new Empty();
 
     private T car;
     private Cons<T> cdr;
@@ -76,7 +77,24 @@ public class Cons<T> implements Iterable<T> {
     }
 
     @Override public Iterator<T> iterator() {
-        return new MyIterator();
+        return new Iterator<T>() {
+            private Cons<T> cons = Cons.this;
+
+            @Override public boolean hasNext() {
+                return cons != empty();
+            }
+
+            @Override public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+
+                T next = cons.car;
+                cons = cons.cdr;
+
+                return next;
+            }
+        };
     }
 
     @Override public void forEach(Consumer<? super T> action) {
@@ -153,35 +171,12 @@ public class Cons<T> implements Iterable<T> {
         return result;
     }
 
-    public final class MyIterator implements Iterator<T> {
 
-        private Iterable<T> cons = Cons.this;
+    private static class Empty extends Cons<Object> {
 
-        @Override public boolean hasNext() {
-            return Cons.this != empty();
-        }
 
-        @Override public T next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-
-            T next = Cons.this.car;
-            cons = Cons.this.cdr;
-
-            return next;
-        }
-    }
-
-    private static final Cons EMPTY = new Cons<Object>(null, null) {
-        @Override
-        public int hashCode() {
-            return 0;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return o == this;
+        public Empty() {
+            super(null, null);
         }
 
         @Override public Iterator<Object> iterator() {
@@ -225,6 +220,7 @@ public class Cons<T> implements Iterable<T> {
         public void append(Cons<Object> tail) {
             throw new UnsupportedOperationException();
         }
-    };
+    }
+
 
 }
