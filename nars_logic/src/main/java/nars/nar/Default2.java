@@ -7,6 +7,7 @@ import nars.bag.impl.CacheBag;
 import nars.concept.Concept;
 import nars.concept.util.ConceptActivator;
 import nars.nal.Deriver;
+import nars.process.BagForgettingEnhancer;
 import nars.task.Task;
 import nars.task.flow.ImmediateTaskPerception;
 import nars.task.flow.SortedTaskPerception;
@@ -39,9 +40,9 @@ public class Default2 extends Default {
 
         //new QueryVariableExhaustiveResults(this.memory());
 
-        /*
+
         the("memory_sharpen", new BagForgettingEnhancer(memory, core.active));
-        */
+
 
     }
 
@@ -93,9 +94,9 @@ public class Default2 extends Default {
                 if (!derivedTasksBuffer.isEmpty()) {
 
 
-                    Task.normalize(
-                            derivedTasksBuffer,
-                            p.getMeanPriority());
+                   // Task.normalize(
+                   //         derivedTasksBuffer,
+                   //         p.getMeanPriority());
 
                     derivedTasksBuffer.forEach(
                         t -> nar.input(t)

@@ -78,6 +78,10 @@ public class PluginPanel extends VBox {
 
             }
             else
+            if(k.equals("memory_sharpen")) {
+
+            }
+            else
             if(k.equals("TaskSheet")) {
 
             }
@@ -140,6 +144,10 @@ public class PluginPanel extends VBox {
             }
             else
             if(k.equals("TaskSheet")) {
+
+            }
+            else
+            if(k.equals("memory_sharpen")) {
 
             }
             else {

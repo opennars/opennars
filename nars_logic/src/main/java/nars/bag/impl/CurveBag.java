@@ -38,7 +38,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
 
     public CurveBag(int capacity, Random rng) {
-        this(CurveBag.power2BagCurve, capacity, rng);
+        this(CurveBag.power6BagCurve, capacity, rng);
     }
 
 

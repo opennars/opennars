@@ -208,7 +208,7 @@ public class Default extends NAR {
 
         m.executionExpectationThreshold.set(0.5);
 
-        m.shortTermMemoryHistory.set(1);
+        m.shortTermMemoryHistory.set(4);
     }
 
 
@@ -356,10 +356,10 @@ public class Default extends NAR {
     public Concept apply(final Term t) {
 
         Bag<Task, TaskLink> taskLinks =
-                new CurveBag<>(taskLinkBagSize, rng).mergeAverage();
+                new CurveBag<>(taskLinkBagSize, rng).mergePlus();
 
         Bag<TermLinkKey, TermLink> termLinks =
-                new CurveBag<>(termLinkBagSize, rng).mergeAverage();
+                new CurveBag<>(termLinkBagSize, rng).mergePlus();
 
         if (t instanceof Atom) {
             return new AtomConcept(t, termLinks, taskLinks);
