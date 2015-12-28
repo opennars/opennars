@@ -27,23 +27,22 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
 
     protected GenericCompound(Op op, T... subterms) {
-        this(op, 0, subterms);
+        this(op, -1, subterms);
     }
 
     public GenericCompound(Op op, int relation, T... subterms) {
 
-        this.op = op;
-
         TermVector<T> terms = this.terms = op.isCommutative() ?
                 TermSet.newTermSetPresorted(subterms) :
                 new TermVector(subterms);
-        this.hash = Compounds.hash(terms, op, relation+1);
+        this.op = op;
         this.relation = relation;
+        this.hash = Compounds.hash(terms, op, relation+1);
     }
 
-    protected GenericCompound(Op op, TermVector subterms, int relation) {
-        this.op = op;
+    public GenericCompound(TermVector subterms, Op op, int relation) {
         this.terms = subterms;
+        this.op = op;
         this.relation = relation;
         this.hash = Compounds.hash(terms, op, relation+1);
     }

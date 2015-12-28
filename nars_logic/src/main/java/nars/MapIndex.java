@@ -18,7 +18,6 @@ public class MapIndex extends MapCacheBag<Term,Termed> implements TermIndex {
 
     public final Map<TermContainer, TermContainer> subterms;
 
-
     public MapIndex() {
         this(Global.newHashMap(), Global.newHashMap());
     }
@@ -27,8 +26,6 @@ public class MapIndex extends MapCacheBag<Term,Termed> implements TermIndex {
         super(data);
         this.subterms = subterms;
     }
-
-    //new ConcurrentHashMap(4096); //TODO try weakref identity hash map etc
 
 
     @Override
@@ -40,29 +37,12 @@ public class MapIndex extends MapCacheBag<Term,Termed> implements TermIndex {
     public Termed get(Object t) {
         if (t instanceof Termed) {
             Term tt = ((Termed)t).term();
-            return get(tt, this::intern);
+            return apply(tt, this::intern);
         } else {
             throw new RuntimeException("invalid key");
         }
     }
 
-
-
-    private final class InternGenericCompound extends GenericCompound {
-
-        public InternGenericCompound(Op op, TermVector subterms, int relation) {
-            super(op, subterms, relation);
-        }
-
-        //equals ==
-//
-//        @Override
-//        public Term clone(Term[] replaced) {
-//            if (subterms().equals(replaced))
-//                return this;
-//            return term(op(), relation, replaced);
-//        }
-    }
 
     public Termed intern(Term tt) {
         Term t = tt.term();
@@ -103,8 +83,8 @@ public class MapIndex extends MapCacheBag<Term,Termed> implements TermIndex {
     }
 
     protected Termed make(Op op, TermContainer subterms, int relation) {
-        return new InternGenericCompound(
-            op, (TermVector) get(subterms), relation
+        return new GenericCompound(
+            (TermVector)get(subterms), op, relation
         );
     }
 

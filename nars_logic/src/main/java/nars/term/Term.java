@@ -31,9 +31,6 @@ import java.io.IOException;
 public interface Term extends Termed, Comparable, Termlike {
 
 
-    @Deprecated default Term get() {
-        return this;
-    }
 
     @Override default Term term() {
         return this;

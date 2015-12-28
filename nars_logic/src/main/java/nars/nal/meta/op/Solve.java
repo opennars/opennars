@@ -238,10 +238,6 @@ public final class Solve extends PreCondition {
             if(null==derivedTerm)
                 return null;
 
-            if (!true && Variable.hasPatternVariable(derivedTerm))
-                return null;
-
-
             Compound pattern = (Compound) rule.term(0);
             Term taskpart = pattern.term(0);
             Term beliefpart = pattern.term(1);

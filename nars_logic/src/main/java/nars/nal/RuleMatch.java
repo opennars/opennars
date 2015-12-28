@@ -204,6 +204,28 @@ public class RuleMatch extends FindSubst {
 
         return budget;
     }
+
+    @Override public final Term apply(Term t) {
+        //TODO make a half resolve that only does xy?
+
+//        Term ret = getXY(t);
+//        if (ret != null) {
+//            ret = getYX(ret);
+//        }
+//
+//        if (ret != null) return ret;
+//        return t;
+            Term ret = premise.memory().index.apply(this, t);
+
+//            if ((ret != null) /*&& (!yx.isEmpty())*/) {
+//                ret = ret.apply(yx, fullMatch);
+//            }
+            return ret;
+
+
+    }
+
+
 }
 
 

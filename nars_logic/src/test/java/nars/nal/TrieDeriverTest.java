@@ -38,7 +38,7 @@ public class TrieDeriverTest {
 
         Default x = new Default() {
             @Override
-            protected Deriver getDeriver() {
+            protected Deriver newDeriver() {
                 return d;
             }
         };

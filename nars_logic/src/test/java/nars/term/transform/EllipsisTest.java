@@ -75,14 +75,14 @@ public class EllipsisTest {
                         TestCase.assertEquals(getExpectedUniqueTerms(arity), varArgs.size());
 
                         Set<Term> varArgTerms = Global.newHashSet(1);
-                        index.get(varArgs, this, varArgTerms);
+                        index.apply(varArgs, this, varArgTerms);
 
                         TestCase.assertEquals(getExpectedUniqueTerms(arity), varArgTerms.size());
 
                         testFurther(selectedFixed, this, varArgTerms);
 
                         //2. test substitution
-                        Term s = index.term(r, this, false);
+                        Term s = index.apply(r, this, false);
                         //System.out.println(s);
 
                         selectedFixed.add(s);
@@ -256,7 +256,7 @@ public class EllipsisTest {
         TermIndex i = TermIndex.memory(128);
 
         Term u = i.term(
-                $.p(t), new PremiseRule.TaskRuleVariableNormalization()).get();
+                $.p(t), new PremiseRule.TaskRuleVariableNormalization());
         t = (EllipsisTransform)((Compound)u).term(0);
         assertEquals("(%1..%2=C..+)", u.toString());
         assertEquals($("%2"), t.from);

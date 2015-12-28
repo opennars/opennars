@@ -39,7 +39,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
     Termed _get(Termed t);
 
     /** gets an existing item or applies the builder to produce something to return */
-    default <K extends Term> Termed<K>  get(K key, Function<K, Termed> builder) {
+    default <K extends Term> Termed<K> apply(K key, Function<K, Termed> builder) {
         Termed existing = _get(key);
         return existing == null ?
                 builder.apply(key) : existing;
@@ -53,7 +53,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
     }
 
     /** returns the resolved term according to the substitution    */
-    default Term term(Compound src, Subst f, boolean fullMatch) {
+    default Term apply(Compound src, Subst f, boolean fullMatch) {
 
         Term y = f.getXY(this);
         if (y!=null)
@@ -64,7 +64,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
         for (int i = 0; i < len; i++) {
             Term t = src.term(i);
-            if (!get(t, f, sub)) {
+            if (!apply(t, f, sub)) {
                 if (fullMatch)
                     return null;
             }
@@ -96,18 +96,19 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
     }
 
 
-    default Term get(Subst f, Term src) {
+    default Term apply(Subst f, Term src) {
         if (src instanceof Compound) {
-            Term y = f.getXY(src);
-
-            //attempt 1: apply known substitution
-            //containsTerm prevents infinite recursion
-            if ((y == null || y.containsTerm(src)))
-                return null;
-
-            return y;
+            return apply((Compound)src, f, false);
+//            Term y = f.getXY(src);
+//
+//            //attempt 1: apply known substitution
+//            //containsTerm prevents infinite recursion
+//            if ((y == null || y.containsTerm(src)))
+//                return null;
+//
+//            return y;
         } else if (src instanceof Variable) {
-            Term x = f.getXY(this);
+            Term x = f.getXY(src);
             if (x != null)
                 return x;
         }
@@ -119,8 +120,8 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
     /** resolve the this term according to subst by appending to sub.
      * return false if this term fails the substitution */
-    default boolean get(Term src, Subst f, Collection<Term> sub) {
-        Term u = get(f, src);
+    default boolean apply(Term src, Subst f, Collection<Term> sub) {
+        Term u = apply(f, src);
         if (u == null) {
             u = src;
         }
@@ -144,7 +145,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
         /** build a new instance on the heap */
         @Override public Termed make(Op op, int relation, Term... t) {
-            return new UncachedGenericCompound(op, t, relation);
+            return new GenericCompound(op, relation, t);
         }
 
 
@@ -191,19 +192,6 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         }
 
 
-        private class UncachedGenericCompound extends GenericCompound {
-
-            public UncachedGenericCompound(Op op, Term[] t, int relation) {
-                super(op, relation, t);
-            }
-
-//            @Override
-//            public Term clone(Term[] replaced) {
-//                if (subterms().equals(replaced))
-//                    return this;
-//                return term(op(), relation, replaced);
-//            }
-        }
     }
 
 //    class GuavaIndex extends GuavaCacheBag<Term,Termed> implements TermIndex {

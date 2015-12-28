@@ -25,12 +25,12 @@ public class PatternCompound extends GenericCompound {
     }
 
     public PatternCompound(Compound seed, TermVector subterms) {
-        super(seed.op(), subterms, seed.relation());
+        super(subterms, seed.op(), seed.relation());
 
         sizeCached = seed.size();
         structureCachedWithoutVars =
-                //seed.structure() & ~(Op.VariableBits);
-                seed.structure() & ~(Op.VAR_PATTERN.bit());
+                seed.structure() & ~(Op.VariableBits);
+                //seed.structure() & ~(Op.VAR_PATTERN.bit());
 
         this.ellipsis = Ellipsis.hasEllipsis(this);
         this.ellipsisTransform = Ellipsis.hasEllipsisTransform(this);
@@ -64,6 +64,7 @@ public class PatternCompound extends GenericCompound {
     }
 
     final public boolean prematch(Compound y) {
+
         int yStructure = y.structure();
         if ((yStructure | structureCachedWithoutVars) != yStructure)
             return false;
@@ -75,6 +76,7 @@ public class PatternCompound extends GenericCompound {
 
         if (volCached > y.volume())
             return false;
+
 
         if (!ellipsisTransform) {
             if (relation != y.relation())

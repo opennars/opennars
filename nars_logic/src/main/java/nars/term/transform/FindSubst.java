@@ -795,23 +795,10 @@ abstract public class FindSubst extends Versioning implements Subst {
         yx.put(y, x);
     }
 
-
-    public final Term apply(Term t) {
-        //TODO make a half resolve that only does xy?
-
-        Term ret = getXY(t);
-        if (ret != null) {
-            ret = getYX(ret);
-        }
-        return ret;
-//        Term ret = t.apply(this, fullMatch);
-//
-//        if ((ret != null) /*&& (!yx.isEmpty())*/) {
-//            ret = ret.apply(yx, fullMatch);
-//        }
-//        return ret;
-
+    public Term apply(Term t) {
+        throw new RuntimeException("unimpl");
     }
+
 
 
 }

@@ -121,7 +121,7 @@ public interface Premise extends Level, Tasked {
                     //no change needed
                     return t;
                 }
-                return memory.index.get( new MapSubst(subs), t );
+                return memory.index.apply( new MapSubst(subs), t );
             }
 
         };

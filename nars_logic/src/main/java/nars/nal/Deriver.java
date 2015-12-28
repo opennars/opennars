@@ -30,6 +30,7 @@ public abstract class Deriver  {
         }
         return defaultRules;
     }
+
     public static synchronized Deriver getDefaultDeriver() {
         if (defaultDeriver == null) {
             defaultDeriver = new TrieDeriver( getDefaultRules(), terms );

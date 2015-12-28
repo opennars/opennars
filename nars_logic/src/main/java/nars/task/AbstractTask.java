@@ -205,7 +205,7 @@ public abstract class AbstractTask extends Item<Task>
 
 
         if (t instanceof Sequence)  {
-            throw new RuntimeException("seq not impl yet");
+            //TODO seq not re-impl yet
 //            long[] offset = new long[1];
 //            Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
 //            t = Task.validTaskTerm(st);

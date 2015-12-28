@@ -129,7 +129,7 @@ public abstract class AbstractNAR extends NAR {
         m.conceptGoalsMax.set(8);
         m.conceptQuestionsMax.set(5);
 
-        m.linkForgetDurations.setValue(1.0);
+        m.linkForgetDurations.setValue(3.0);
 
 
         m.derivationThreshold.set(0);
@@ -318,7 +318,7 @@ public abstract class AbstractNAR extends NAR {
         return getClass().getSimpleName() + '[' + nal() + ']';
     }
 
-    protected Deriver getDeriver() {
+    protected Deriver newDeriver() {
         return Deriver.getDefaultDeriver();
     }
 

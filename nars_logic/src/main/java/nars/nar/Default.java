@@ -104,7 +104,7 @@ public class Default extends AbstractNAR {
 
     protected AbstractCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerConcept, int taskLinksPerConcept) {
 
-        AbstractCycle c = new DefaultCycle(this, getDeriver(), newConceptBag(activeConcepts));
+        AbstractCycle c = new DefaultCycle(this, newDeriver(), newConceptBag(activeConcepts));
 
         //TODO move these to a PremiseGenerator which supplies
         // batches of Premises
@@ -130,7 +130,7 @@ public class Default extends AbstractNAR {
                     b = new BagBudget(c, 0,1,1);
 
                 c.getTaskLinks().commit();
-                //c.getTermLinks().commit();
+                c.getTermLinks().commit();
 
                 float p =
                         //Math.max(

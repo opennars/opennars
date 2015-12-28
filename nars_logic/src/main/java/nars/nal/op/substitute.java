@@ -40,7 +40,7 @@ public class substitute extends ImmediateTermTransform {
     }
 
     public static Term subst(TermIndex i, Subst m, Term term) {
-        return i.get(m, term);
+        return i.apply(m, term);
     }
 
 //    protected boolean substitute(Compound p, MapSubst m, Term a, Term b) {

@@ -114,7 +114,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
         ObjectIntHashMap<Term> unique = new ObjectIntHashMap();
 
         PremiseKey premise = newPremise(tasklink.getTask(),
-                termlink.get(), belief, unique, now);
+                termlink, belief, unique, now);
 
         addVertex(premise);
 
@@ -130,7 +130,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
         addEdge(taskLinkTerm, premise);
 
         if (termlink!=null) {
-            TermPattern termLinkTerm = addTermPattern(termlink.get(), unique);
+            TermPattern termLinkTerm = addTermPattern(termlink, unique);
             addEdge(termLinkTerm, premise);
         }
 

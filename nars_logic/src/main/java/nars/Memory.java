@@ -289,7 +289,7 @@ public class Memory extends Param {
             return c;
 
         };
-        Termed exists = index.get(t.term(), build);
+        Termed exists = index.apply(t.term(), build);
 
         if (exists instanceof Concept) {
             Concept c = ((Concept)exists);
