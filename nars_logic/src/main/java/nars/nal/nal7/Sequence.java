@@ -156,21 +156,21 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
     }
 
 
-    @Override
-    public Term clone(Term[] t) {
-
-//        if (Variable.hasPatternVariable(this)) {
-//            // this is a pattern, in which case all intervals will be zero.
-//            // so do a direct instantiation ignoring the all-zero intervals here
-//            // because due to varargs, the sizes may not match anyway
+//    @Override
+//    public Term clone(Term[] t) {
 //
-//        }
-
-
-        //return cloneIntervals(t);
-        //return makeSequence(t, false);
-        return size() != t.length ? makeSequence(t) : cloneIntervals(t);
-    }
+////        if (Variable.hasPatternVariable(this)) {
+////            // this is a pattern, in which case all intervals will be zero.
+////            // so do a direct instantiation ignoring the all-zero intervals here
+////            // because due to varargs, the sizes may not match anyway
+////
+////        }
+//
+//
+//        //return cloneIntervals(t);
+//        //return makeSequence(t, false);
+//        return size() != t.length ? makeSequence(t) : cloneIntervals(t);
+//    }
 
     /** only works if the # of terms are the same as this */
     protected Term cloneIntervals(Term[] t) {

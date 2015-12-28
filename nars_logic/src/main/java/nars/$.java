@@ -45,8 +45,9 @@ public abstract class $  {
         //        catch (InvalidInputException e) { }
     }
 
-    public static final <C extends Compound> MutableTask $(String term, char punc) {
-        Term t = Narsese.the().concept(term, terms).term();
+    @Deprecated public static final <C extends Compound> MutableTask $(String term, char punc) {
+        Term t = Narsese.the().term(term).term();
+        //TODO normalize etc
         if (!Task.validTaskTerm(t))
             return null;
 

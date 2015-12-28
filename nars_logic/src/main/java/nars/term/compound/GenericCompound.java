@@ -114,10 +114,6 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         terms.addAllTo(set);
     }
 
-    @Override
-    public Term clone(Term[] replaced) {
-        throw new RuntimeException(this + " does not support cloning");
-    }
 
 //    @Override
 //    public Term clone(Term[] replaced) {

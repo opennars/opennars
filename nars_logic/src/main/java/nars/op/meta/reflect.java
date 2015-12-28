@@ -8,6 +8,7 @@ import nars.$;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
 /**
@@ -23,7 +24,7 @@ public class reflect extends TermFunction {
 
     
     @Override
-    public Term function(Compound x) {
+    public Term function(Compound x, TermIndex i) {
 
         Term content = x.term(0);
 

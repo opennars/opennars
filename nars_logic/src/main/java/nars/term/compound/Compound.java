@@ -23,23 +23,15 @@ package nars.term.compound;
 import nars.Global;
 import nars.Op;
 import nars.nal.Compounds;
-import nars.nal.PremiseAware;
-import nars.nal.RuleMatch;
-import nars.nal.nal8.Operator;
-import nars.nal.op.ImmediateTermTransform;
 import nars.term.Term;
 import nars.term.TermContainer;
-import nars.term.Terms;
 import nars.term.match.Ellipsis;
-import nars.term.transform.CompoundTransform;
 import nars.term.transform.FindSubst;
-import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
@@ -50,13 +42,6 @@ import static nars.Symbols.ARGUMENT_SEPARATOR;
  * TODO make this an interface extending Subterms
  */
 public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> {
-
-
-
-    /**
-     * Must be Term return type because the type of Term may change with different arguments
-     */
-    Term clone(Term[] replaced);
 
 
     /** gets the set of unique recursively contained terms of a specific type
@@ -88,57 +73,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
 
 
-    /** returns the resolved term according to the substitution    */
-    @Override default Term apply(Subst f, boolean fullMatch) {
 
-        Term y = f.getXY(this);
-        if (y!=null)
-            return y;
-
-        int len = size();
-        List<Term> sub = Global.newArrayList(len /* estimate */);
-
-        for (int i = 0; i < len; i++) {
-            Term t = term(i);
-            if (!t.applyTo(f, sub, fullMatch)) {
-                if (fullMatch)
-                    return null;
-            }
-        }
-
-        Term result = apply(sub);
-
-        //apply any known immediate transform operators
-        if (Op.isOperation(result)) {
-            ImmediateTermTransform tf = f.getTransform(Operator.operatorTerm((Compound)result));
-            if (tf!=null) {
-                return applyImmediateTransform(f, result, tf);
-            }
-        }
-
-        return result;
-    }
-
-
-    default Term applyImmediateTransform(Subst f, Term result, ImmediateTermTransform tf) {
-
-        //Compound args = (Compound) Operator.opArgs((Compound) result).apply(f);
-        Compound args = Operator.opArgs((Compound) result);
-
-        return ((tf instanceof PremiseAware) && (f instanceof RuleMatch)) ?
-                ((PremiseAware) tf).function(args, (RuleMatch) f) :
-                tf.function(args);
-    }
-
-    default Term apply(List<Term> sub) {
-        /*if (subterms().equivalent(sub))
-            return this;*/
-
-        Term[] r = Terms.toArray(sub);
-        if (r == null) return null;
-
-        return clone(r);
-    }
 
 
 
@@ -229,49 +164,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return sb;
     }
 
-    /** returns how many subterms were modified, or -1 if failure (ex: results in invalid term) */
-    default <T extends Term> int get(CompoundTransform<Compound<T>, T> trans, Term[] target, int level) {
-        int n = size();
-
-        int modifications = 0;
-
-        for (int i = 0; i < n; i++) {
-            Term x = term(i);
-            if (x == null)
-                throw new RuntimeException("null subterm");
-
-            if (trans.test(x)) {
-
-                Term y = trans.apply( (Compound<T>)this, (T) x, level);
-                if (y == null)
-                    return -1;
-
-                if (!x.equals(y)) {
-                    modifications++;
-                    x = y;
-                }
-
-            } else if (x instanceof Compound) {
-                //recurse
-                Compound cx = (Compound) x;
-                if (trans.testSuperTerm(cx)) {
-
-                    Term[] yy = new Term[cx.size()];
-                    int submods = cx.get(trans, yy, level + 1);
-
-                    if (submods == -1) return -1;
-                    if (submods > 0) {
-                        x = cx.clone(yy);
-                        modifications+= (cx!=x) ? 1 : 0;
-                    }
-                }
-            }
-            target[i] = x;
-        }
-
-        return modifications;
-    }
-
 
     /**
      * extracts a subterm provided by the address tuple
@@ -323,27 +215,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 //    }
 
 
-    default <X extends Compound> X get(CompoundTransform t) {
-        return get(t, true);
-    }
-
-    default <X extends Compound> X get(CompoundTransform t, boolean requireEqualityForNewInstance) {
-        if (t.testSuperTerm(this)) {
-
-            Term[] cls = new Term[size()];
-
-            int mods = get(t, cls, 0);
-
-            if (mods == -1) {
-                return null;
-            }
-            else if (!requireEqualityForNewInstance || (mods > 0)) {
-                return (X) clone(cls);
-            }
-            //else if mods==0, fall through:
-        }
-        return (X) this; //nothing changed
-    }
 
 
 
@@ -493,11 +364,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return true;
     }
 
-    default Term clone(TermContainer subs) {
-        if (subterms().equals(subs))
-            return this;
-        return clone(subs.terms());
-    }
+
 
     default Term last() {
         return term(size()-1);

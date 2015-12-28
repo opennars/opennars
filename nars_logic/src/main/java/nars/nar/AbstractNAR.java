@@ -3,11 +3,7 @@ package nars.nar;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.bag.Bag;
-import nars.bag.impl.CurveBag;
-import nars.concept.AtomConcept;
 import nars.concept.Concept;
-import nars.concept.DefaultConcept;
 import nars.nal.Deriver;
 import nars.nal.PremiseRule;
 import nars.nal.nal8.AbstractOperator;
@@ -26,10 +22,6 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
-import nars.task.Task;
-import nars.term.Term;
-import nars.term.Termed;
-import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.time.Clock;
 import nars.util.data.random.XorShift128PlusRandom;
@@ -297,33 +289,7 @@ public abstract class AbstractNAR extends NAR {
         return this;
     }
 
-    /** ConceptBuilder: */
-    public Concept apply(Term t) {
-        return newDefaultConcept(t, termLinkBagSize, taskLinkBagSize, memory);
-    }
 
-    public static Concept newDefaultConcept(Term t, int termLinkBagSize, int taskLinkBagSize, Memory memory) {
-
-        Bag<Task> taskLinks =
-                new CurveBag<Task>(taskLinkBagSize, memory.random).mergePlus();
-
-        Bag<Termed> termLinks =
-                new CurveBag<Termed>(termLinkBagSize, memory.random).mergePlus();
-
-        //Budget b = new UnitBudget();
-        //Budget b = new BagAggregateBudget(taskLinks);
-
-        return t instanceof Atom ?
-
-                new AtomConcept(
-                        t,
-                        termLinks, taskLinks) :
-
-                new DefaultConcept(
-                        t,
-                        taskLinks, termLinks, memory);
-
-    }
 
     //    /**
 //     * rank function used for concept belief and goal tables

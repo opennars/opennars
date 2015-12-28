@@ -10,7 +10,6 @@ import java.io.PrintStream;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Created by me on 12/7/15.
@@ -28,19 +27,16 @@ public class MapIndex extends MapCacheBag<Term,Termed> implements TermIndex {
     //new ConcurrentHashMap(4096); //TODO try weakref identity hash map etc
 
 
-
-    /** gets an existing item or applies the builder to produce something to return */
-    <K extends Term> Termed<K> the(K key, Function<K, Termed> builder) {
-        Termed existing = super.get(key);
-        return existing == null ?
-                builder.apply(key) : existing;
+    @Override
+    public Termed _get(Termed t) {
+        return super.get(t);
     }
 
     @Override
     public Termed get(Object t) {
         if (t instanceof Termed) {
             Term tt = ((Termed)t).term();
-            return the(tt, this::intern);
+            return get(tt, this::intern);
         } else {
             throw new RuntimeException("invalid key");
         }

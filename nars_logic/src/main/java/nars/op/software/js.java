@@ -9,6 +9,7 @@ import nars.op.mental.Mental;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
 import javax.script.Bindings;
@@ -50,7 +51,7 @@ public class js extends TermFunction implements Mental {
             }
         }
 
-        @Override public Object function(Compound o) {
+        @Override public Object function(Compound o, TermIndex i) {
             Term[] args = Operator.opArgsArray(o);
             Bindings bindings = newBindings(null, args);
             bindings.put("_o", fnCompiled);
@@ -186,7 +187,7 @@ public class js extends TermFunction implements Mental {
     }
 
 
-    @Override public Object function(Compound o) {
+    @Override public Object function(Compound o, TermIndex i) {
         Term[] args = Operator.opArgsArray(o);
         if (args.length < 1) {
             return null;

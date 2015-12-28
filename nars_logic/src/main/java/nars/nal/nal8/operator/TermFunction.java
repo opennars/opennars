@@ -10,6 +10,7 @@ import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -55,8 +56,9 @@ public abstract class TermFunction<O> extends SyncOperator {
     /** y = function(x) 
      * @return y, or null if unsuccessful
      * @param x
+     * @param i
      */
-    public abstract O function(Compound x);
+    public abstract O function(Compound x, TermIndex i);
 
 
     protected List<Task> result(NAR nar, Task opTask, Term y/*, Term[] x0, Term lastTerm*/) {
@@ -208,7 +210,7 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Term[] x0 = operation.getArgumentTerms(false, memory);
 
 
-        Object y = function(Operator.opArgs(operation));
+        Object y = function(Operator.opArgs(operation), e.nar.index());
 
         if (y == null) {
             return;

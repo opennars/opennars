@@ -1,24 +1,29 @@
 package nars.term.compile;
 
 import javassist.scopedpool.SoftValueHashMap;
+import nars.Global;
 import nars.MapIndex;
 import nars.Memory;
 import nars.Op;
 import nars.bag.impl.CacheBag;
-import nars.concept.Concept;
 import nars.nal.Compounds;
-import nars.nal.nal7.CyclesInterval;
+import nars.nal.PremiseAware;
+import nars.nal.RuleMatch;
+import nars.nal.nal8.Operator;
+import nars.nal.op.ImmediateTermTransform;
 import nars.term.Term;
+import nars.term.TermContainer;
 import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
-import nars.term.transform.CompoundTransform;
-import nars.term.variable.Variable;
+import nars.term.transform.Subst;
 import nars.util.WeakValueHashMap;
 
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  *
@@ -28,6 +33,14 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
     void forEach(Consumer<? super Termed> c);
 
+    Termed _get(Termed t);
+
+    /** gets an existing item or applies the builder to produce something to return */
+    default <K extends Term> Termed<K>  get(K key, Function<K, Termed> builder) {
+        Termed existing = _get(key);
+        return existing == null ?
+                builder.apply(key) : existing;
+    }
 
 
     default Term term(Object t) {
@@ -36,27 +49,49 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         return tt.term();
     }
 
-    default Termed term(Compound c, CompoundTransform transform) {
-        throw new RuntimeException("unimpl");
+    /** returns the resolved term according to the substitution    */
+    default Term term(Compound src, Subst f, boolean fullMatch) {
+
+        Term y = f.getXY(this);
+        if (y!=null)
+            return y;
+
+        int len = src.size();
+        List<Term> sub = Global.newArrayList(len /* estimate */);
+
+        for (int i = 0; i < len; i++) {
+            Term t = src.term(i);
+            if (!t.applyTo(f, sub, fullMatch)) {
+                if (fullMatch)
+                    return null;
+            }
+        }
+
+        Term result = term(src, (TermContainer) sub);
+
+        //apply any known immediate transform operators
+        if (Op.isOperation(result)) {
+            ImmediateTermTransform tf = f.getTransform(Operator.operatorTerm((Compound)result));
+            if (tf!=null) {
+                return applyImmediateTransform(f, result, tf);
+            }
+        }
+
+        return result;
     }
 
-    default Concept concept(Compound c, CompoundTransform transform) {
-        return concept(term(c, transform));
+
+
+    default Term applyImmediateTransform(Subst f, Term result, ImmediateTermTransform tf) {
+
+        //Compound args = (Compound) Operator.opArgs((Compound) result).apply(f);
+        Compound args = Operator.opArgs((Compound) result);
+
+        return ((tf instanceof PremiseAware) && (f instanceof RuleMatch)) ?
+                ((PremiseAware) tf).function(args, (RuleMatch) f) :
+                tf.function(args, this);
     }
 
-    static boolean validConceptTerm(Term term) {
-        return !((term instanceof Variable) || (term instanceof CyclesInterval));
-    }
-
-    default Concept concept(Termed t) {
-        if (t instanceof Concept) return ((Concept)t);
-
-        if (!validConceptTerm(t.term())) return null;
-
-        Termed u = get(t);
-        if (u instanceof Concept) return ((Concept)u);
-        return null;
-    }
 
 
     class ImmediateTermIndex implements TermIndex {
@@ -76,6 +111,11 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         @Override
         public void forEach(Consumer<? super Termed> c) {
 
+        }
+
+        @Override
+        public Termed _get(Termed t) {
+            return t;
         }
 
 

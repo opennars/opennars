@@ -22,7 +22,12 @@ package nars;
 
 
 import com.gs.collections.api.tuple.Twin;
+import nars.bag.Bag;
+import nars.bag.impl.CurveBag;
+import nars.concept.AtomConcept;
 import nars.concept.Concept;
+import nars.concept.DefaultConcept;
+import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal8.Execution;
 import nars.process.ConceptProcess;
 import nars.task.Task;
@@ -30,6 +35,9 @@ import nars.term.Term;
 import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
+import nars.term.compound.Compound;
+import nars.term.transform.CompoundTransform;
+import nars.term.variable.Variable;
 import nars.time.Clock;
 import nars.util.data.random.XorShift128PlusRandom;
 import nars.util.event.DefaultTopic;
@@ -222,16 +230,65 @@ public class Memory extends Param {
     }
 
 
-    /**
-     * Get an existing (active OR forgotten) Concept identified
-     * by the provided Term
-     */
-    public final Concept concept(Termed t) {
-        return index.concept(t);
+    Concept concept(Compound c, CompoundTransform transform) {
+        return concept(index.term(c, transform));
     }
 
+    static boolean validConceptTerm(Term term) {
+        return !((term instanceof Variable) || (term instanceof CyclesInterval));
+    }
+
+    Concept newDefaultConcept(Term t) {
+
+        int termLinkBagSize = 32;
+        int taskLinkBagSize = 32;
+
+        Bag<Task> taskLinks =
+                new CurveBag<Task>(taskLinkBagSize, random).mergePlus();
+
+        Bag<Termed> termLinks =
+                new CurveBag<Termed>(termLinkBagSize, random).mergePlus();
+
+        //Budget b = new UnitBudget();
+        //Budget b = new BagAggregateBudget(taskLinks);
+
+        return t instanceof Atom ?
+
+                new AtomConcept(
+                        t,
+                        termLinks, taskLinks) :
+
+                new DefaultConcept(
+                        t,
+                        taskLinks, termLinks, this);
+
+    }
+
+    public Concept concept(Termed t) {
+        if (t instanceof Concept) return ((Concept)t);
+
+        Termed exists = index.get(t.term(), (u) -> {
+            Term v = index.get(index.normalized(u)).term();
+            if (v == null || !validConceptTerm(v)) return null;
+
+            return index.get(v, (w) -> {
+                Concept c = newDefaultConcept(w);
+                index.put(c.term(), c);
+                //TODO put the unnormalized term for fasttrack normalization?
+
+                return c;
+            });
+        });
+        if (exists instanceof Concept) {
+            Concept c = ((Concept)exists);
+            return c;
+        }
+        return null;
+    }
+
+
     public final Concept taskConcept(Termed t) {
-        Concept c = index.concept(t);
+        Concept c = concept(t);
         if (!Task.validTaskTerm(c.term()))
             return null;
         return c;

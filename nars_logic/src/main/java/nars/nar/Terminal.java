@@ -3,10 +3,8 @@ package nars.nar;
 import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.concept.DefaultConcept;
 import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
-import nars.term.Term;
 import nars.term.compile.TermIndex;
 import nars.time.Clock;
 import nars.time.FrameClock;
@@ -46,13 +44,6 @@ public class Terminal extends AbstractNAR {
     public Terminal(Clock c) {
         this(TermIndex.memory(1024), c);
     }
-
-    @Override
-    public Concept apply(Term t) {
-        return new DefaultConcept(t, memory);
-    }
-
-
 
 //    @Override
 //    protected Concept doConceptualize(Term term, Budget b, float scale) {

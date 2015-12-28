@@ -1,11 +1,11 @@
 package nars.link;
 
 import nars.Global;
+import nars.Memory;
 import nars.Op;
 import nars.nal.nal7.CyclesInterval;
 import nars.term.Term;
 import nars.term.Termed;
-import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
@@ -24,12 +24,12 @@ public class TermLinkBuilder  {
 //    protected float forgetCycles;
 //    protected long now;
 
-    public static Termed[] build(Term host, TermIndex index) {
+    public static Termed[] build(Term host, Memory memory) {
 
         if (host instanceof Compound) {
 
             Set<Termed> components = Global.newHashSet(host.complexity());
-            prepareComponentLinks((Compound)host, components, index);
+            prepareComponentLinks((Compound)host, components, memory);
 
             return components.toArray(new Termed[components.size()]);
         }
@@ -48,7 +48,7 @@ public class TermLinkBuilder  {
      * @param t The CompoundTerm for which to build links
      * @param components set of components being accumulated, to avoid duplicates
      */
-    static void prepareComponentLinks(Compound t, Set<Termed> components, TermIndex index) {
+    static void prepareComponentLinks(Compound t, Set<Termed> components, Memory memory) {
 
         ///** add self link for structural transform: */
         //components.add(t);
@@ -59,7 +59,7 @@ public class TermLinkBuilder  {
 
         int ni = t.size();
         for (int i = 0; i < ni; i++) {
-            Term ti = index.concept(t.term(i)).term();
+            Term ti = memory.concept(t.term(i)).term();
             if (!growComponent(ti)) {
                 continue;
             }
@@ -77,7 +77,7 @@ public class TermLinkBuilder  {
             if ((tEquivalence || (tImplication && (i == 0))) &&
                     (ti.isAny(NegationOrConjunctive))) {
 
-                prepareComponentLinks((Compound) ti, components, index);
+                prepareComponentLinks((Compound) ti, components, memory);
 
             } else if (ti instanceof Compound) {
                 Compound cti = (Compound)ti;
@@ -86,7 +86,7 @@ public class TermLinkBuilder  {
 
                 int nj = cti.size();
                 for (int j = 0; j < nj; j++) {
-                    Term tj = index.concept(t.term(j)).term();
+                    Term tj = memory.concept(t.term(j)).term();
 
                     if (!(tj instanceof Variable)) {
                         components.add(tj);
@@ -98,7 +98,7 @@ public class TermLinkBuilder  {
                             Compound cctj = (Compound) tj;
                             int nk = cctj.size();
                             for (int k = 0; k < nk; k++) {
-                                Term tk = index.concept(t.term(k)).term();
+                                Term tk = memory.concept(t.term(k)).term();
 
                                 if (!(tk instanceof Variable)) {
                                     components.add(tk);

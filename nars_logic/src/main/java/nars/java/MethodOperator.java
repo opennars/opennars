@@ -8,6 +8,7 @@ import nars.nal.nal8.operator.TermFunction;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
 import java.lang.reflect.Method;
@@ -63,7 +64,7 @@ public class MethodOperator extends TermFunction {
 
 
     @Override
-    public Object function(Compound o) {
+    public Object function(Compound o, TermIndex ti) {
         Term[] x = o.terms();
 
         //System.out.println("method: " + method + " w/ " + x);

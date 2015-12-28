@@ -67,34 +67,18 @@ public class VariableNormalization extends VariableTransform {
 
     final Map<Variable, Variable> rename = Global.newHashMap(8);
 
-    protected final Compound result;
     boolean renamed = false;
 
 
-    public static VariableNormalization normalize(Compound target) {
-        return new VariableNormalization(target, null);
-    }
 
     /** allows using the single variable normalization,
      * which is safe if the term doesnt contain pattern variables */
-    public static VariableNormalization normalizeFast(Compound target) {
-        return new VariableNormalization(target, target.vars() == 1 ?
-                singleVariableNormalization : null);
+    public static VariableTransform normalizeFast(Compound target) {
+        return target.vars() == 1 ? singleVariableNormalization : new VariableNormalization();
     }
 
 
-    public VariableNormalization(Compound target) {
-        this(target, null);
-    }
 
-    public VariableNormalization(Compound target, CompoundTransform tx) {
-
-        if (tx == null) tx = this;
-
-
-        result = target.get(tx);
-
-    }
 
     public Variable apply(Variable v) {
         return apply(null, v, -1);
@@ -125,7 +109,4 @@ public class VariableNormalization extends VariableTransform {
         return $.v(v.op(), serial);  //type + id
     }
 
-    public final Compound get() {
-        return result;
-    }
 }

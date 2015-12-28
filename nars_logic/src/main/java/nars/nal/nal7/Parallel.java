@@ -56,10 +56,10 @@ public class Parallel extends GenericCompound implements Intermval {
     }
 
 
-    @Override
-    public Term clone(Term[] replaced) {
-        return Parallel.makeParallel(replaced);
-    }
+//    @Override
+//    public Term clone(Term[] replaced) {
+//        return Parallel.makeParallel(replaced);
+//    }
 
     @Override
     public final int bytesLength() {

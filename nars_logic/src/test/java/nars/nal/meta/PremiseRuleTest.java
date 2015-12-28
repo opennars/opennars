@@ -2,6 +2,7 @@ package nars.nal.meta;
 
 import junit.framework.TestCase;
 import nars.Narsese;
+import nars.nal.PatternIndex;
 import nars.nal.PremiseRule;
 import nars.term.Terms;
 import nars.term.compound.Compound;
@@ -77,8 +78,10 @@ public class PremiseRuleTest extends TestCase {
     @Test public void testNotSingleVariableRule1() {
         //tests an exceptional case that should now be fixed
 
+        PatternIndex i = new PatternIndex();
+
         String l = "<((B,P) --> ?X) ,(B --> A), task(\"?\") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)>";
-        Compound x = ((PremiseRule)p.term(l)).normalizeRule();
+        Compound x = ((PremiseRule)p.term(l)).normalizeRule(i);
         assertTrue(!x.toString().contains("%B"));
     }
 
@@ -92,10 +95,11 @@ public class PremiseRuleTest extends TestCase {
 //
 //        assertEquals("((<%A --> b>), ((&, %X, y)))", x.toString());
 
+        PatternIndex i = new PatternIndex();
 
 
         Compound y = (Compound)p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion)>");
-        y = ((PremiseRule)y).normalizeRule();
+        y = ((PremiseRule)y).normalizeRule(i);
         Terms.printRecursive(y);
 
         assertEquals("((<%1-->%2>,(--,%1)),(<%2-->%1>,(<Conversion-->Truth>)))", y.toString());

@@ -4,9 +4,11 @@ import junit.framework.TestCase;
 import nars.$;
 import nars.Global;
 import nars.Op;
+import nars.nal.PatternIndex;
 import nars.nal.PremiseRule;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.match.*;
 import nars.term.variable.Variable;
@@ -45,6 +47,8 @@ public class EllipsisTest {
         default Set<Term> test(int arity, int repeats) {
             Set<Term> selectedFixed = Global.newHashSet(arity);
 
+            TermIndex index = TermIndex.memory(128);
+
             Compound y = getMatchable(arity);
             assertNotNull(y);
 
@@ -53,8 +57,6 @@ public class EllipsisTest {
             Compound x = getPattern();
 
             Term ellipsisTerm = $(getEllipsis());
-
-            int power = 128;
 
             for (int seed = 0; seed < Math.max(1,repeats*arity) /* enough chances to select all combinations */; seed++) {
 
@@ -80,7 +82,7 @@ public class EllipsisTest {
                         testFurther(selectedFixed, this, varArgTerms);
 
                         //2. test substitution
-                        Term s = r.apply(this, false);
+                        Term s = index.term(r, this, false);
                         //System.out.println(s);
 
                         selectedFixed.add(s);
@@ -251,7 +253,10 @@ public class EllipsisTest {
         assertEquals($("%B"), t.from);
         assertEquals($("C"), t.to);
 
-        Term u = new PremiseRule.TaskRuleVariableNormalization($.p(t)).get();
+        TermIndex i = TermIndex.memory(128);
+
+        Term u = i.term(
+                $.p(t), new PremiseRule.TaskRuleVariableNormalization()).get();
         t = (EllipsisTransform)((Compound)u).term(0);
         assertEquals("(%1..%2=C..+)", u.toString());
         assertEquals($("%2"), t.from);
@@ -269,7 +274,7 @@ public class EllipsisTest {
         String rule = "(%S ==> %M), ((&&,%S,%A..+) ==> %M) |- ((&&,%A..+,..) ==> %M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromBelief)";
         Compound x = $.$('<' + rule + '>');
         //System.out.println(x);
-        x = ((PremiseRule)x).normalizeRule();
+        x = ((PremiseRule)x).normalizeRule(new PatternIndex());
         //System.out.println(x);
 
         assertEquals(

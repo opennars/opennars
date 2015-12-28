@@ -1121,8 +1121,8 @@ public class Narsese extends BaseParser<Object>  {
         return t.term(term(s));
     }
 
-    public Termed concept(String s, TermIndex t) {
-        return t.concept(term(s));
+    public Termed concept(String s, Memory m) {
+        return m.concept(term(s));
     }
 
 //    public TaskRule taskRule(String input) {

@@ -4,7 +4,6 @@ package nars;
 import com.google.common.collect.Sets;
 import com.gs.collections.impl.tuple.Tuples;
 import nars.concept.Concept;
-import nars.concept.util.ConceptBuilder;
 import nars.nal.Level;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.AbstractOperator;
@@ -57,7 +56,7 @@ import static nars.nal.nal7.Tense.ETERNAL;
  * * step mode - controlled by an outside system, such as during debugging or testing
  * * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public abstract class NAR implements Serializable, Level, ConceptBuilder {
+public abstract class NAR implements Serializable, Level {
 
 
     /**
@@ -122,7 +121,6 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         memory = m;
 
         m.the(NAR.class, this);
-        m.the(ConceptBuilder.class, this);
 
         if (running())
             throw new RuntimeException("NAR must be stopped to change memory");
@@ -569,7 +567,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return onExec(operator, new TermFunction(operator) {
 
             @Override
-            public Object function(Compound x) {
+            public Object function(Compound x, TermIndex i) {
                 return func.apply( x.terms() );
             }
 
@@ -1186,7 +1184,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * @return an existing Concept, or a new one, or null
      */
     public Concept conceptualize(Termed termed) {
-        return index().concept(termed);
+        return memory.concept(termed);
     }
 
     //protected abstract Concept doConceptualize(Term term);

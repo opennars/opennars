@@ -83,7 +83,7 @@ public class DefaultConcept extends AtomConcept {
         questions = new ArrayListTaskTable(maxQuestions);
         quests = new ArrayListTaskTable(maxQuestions);
 
-        this.termLinkTemplates = TermLinkBuilder.build(term, p.index);
+        this.termLinkTemplates = TermLinkBuilder.build(term, p);
 
     }
 

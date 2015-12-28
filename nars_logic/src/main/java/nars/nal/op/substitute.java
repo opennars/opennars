@@ -3,6 +3,7 @@ package nars.nal.op;
 import nars.Op;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.transform.MapSubst;
 import nars.term.transform.Subst;
@@ -16,7 +17,7 @@ public class substitute extends ImmediateTermTransform {
 
 
 
-    @Override public Term function(Compound p) {
+    @Override public Term function(Compound p, TermIndex i) {
         final Term[] xx = p.terms();
 
         //term to possibly transform

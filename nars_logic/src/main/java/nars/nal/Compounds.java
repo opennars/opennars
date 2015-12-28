@@ -13,6 +13,8 @@ import nars.task.Task;
 import nars.term.*;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
+import nars.term.transform.CompoundTransform;
+import nars.term.transform.VariableNormalization;
 import nars.truth.Truth;
 import nars.util.utf8.ByteBuf;
 
@@ -37,13 +39,7 @@ public interface Compounds {
     /**
      * universal zero-length product
      */
-    Compound Empty = new GenericCompound(Op.PRODUCT, -1, Terms.Empty) {
-        @Override
-        public Term clone(Term[] replaced) {
-            if (replaced.length == 0) return this;
-            return super.clone(replaced);
-        }
-    };
+    Compound Empty = new GenericCompound(Op.PRODUCT, -1, Terms.Empty);
 
     /**
      * implications, equivalences, and interval
@@ -599,6 +595,12 @@ public interface Compounds {
         return term(op, -1, t);
     }
 
+    /** "clone"  */
+    default Term term(Compound src, Term... replacingSubterms) {
+        return term(src.op(), src.relation(), replacingSubterms);
+    }
+
+
     default Term term(Op op, int relation, Term... t) {
 
         if (t == null)
@@ -666,6 +668,90 @@ public interface Compounds {
         }
 
     }
+
+    default Term term(Compound src, TermContainer subs) {
+        //COMPOUND:
+        if (src.subterms().equals(subs))
+            return src;
+        return term(src, subs.terms());
+    }
+
+    /** returns how many subterms were modified, or -1 if failure (ex: results in invalid term) */
+    default <T extends Term> int term(Compound src, CompoundTransform<Compound<T>, T> trans, Term[] target, int level) {
+        int n = src.size();
+
+        int modifications = 0;
+
+        for (int i = 0; i < n; i++) {
+            Term x = src.term(i);
+            if (x == null)
+                throw new RuntimeException("null subterm");
+
+            if (trans.test(x)) {
+
+                Term y = trans.apply( (Compound<T>)src, (T) x, level);
+                if (y == null)
+                    return -1;
+
+                if (!x.equals(y)) {
+                    modifications++;
+                    x = y;
+                }
+
+            } else if (x instanceof Compound) {
+                //recurse
+                Compound cx = (Compound) x;
+                if (trans.testSuperTerm(cx)) {
+
+                    Term[] yy = new Term[cx.size()];
+                    int submods = term(cx, trans, yy, level + 1);
+
+                    if (submods == -1) return -1;
+                    if (submods > 0) {
+                        x = term(cx, yy);
+                        modifications+= (cx!=x) ? 1 : 0;
+                    }
+                }
+            }
+            target[i] = x;
+        }
+
+        return modifications;
+    }
+
+    default <X extends Compound> X term(Compound src, CompoundTransform t) {
+        return term(src, t, true);
+    }
+
+    default <X extends Compound> X term(Compound src, CompoundTransform t, boolean requireEqualityForNewInstance) {
+        if (t.testSuperTerm(src)) {
+
+            Term[] cls = new Term[src.size()];
+
+            int mods = term(src, t, cls, 0);
+
+            if (mods == -1) {
+                return null;
+            }
+            else if (!requireEqualityForNewInstance || (mods > 0)) {
+                return (X) term(src, cls);
+            }
+            //else if mods==0, fall through:
+        }
+        return (X) this; //nothing changed
+    }
+
+
+    default Termed normalized(Term t) {
+        if (!(t instanceof Compound) || !t.hasVar()) {
+            return t;
+        }
+        return term((Compound)t, VariableNormalization.normalizeFast((Compound)t));
+    }
+
+
+
+
 
 
 //    /**

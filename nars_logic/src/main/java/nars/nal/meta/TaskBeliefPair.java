@@ -18,7 +18,7 @@ public final class TaskBeliefPair extends GenericCompound {
     //public final static Variable any = new Variable("%1"); //just use the first pattern variable because it will overlap with it
 
     public TaskBeliefPair(Term a, Term b) {
-        super(Op.PRODUCT, new Term[] { a, b } );
+        super(Op.PRODUCT, a, b);
 
         t = terms();
 
@@ -37,11 +37,6 @@ public final class TaskBeliefPair extends GenericCompound {
         t[0] = a;
         t[1] = b;
         subterms().init();
-    }
-
-    @Override
-    public Term clone(Term[] replaced) {
-        throw new RuntimeException("n/a");
     }
 
 

@@ -12,6 +12,7 @@ import nars.process.ConceptProcess;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
 /**
@@ -41,7 +42,7 @@ public class occurrsForward extends ImmediateTermTransform implements PremiseAwa
     }
 
     //HACK
-    @Override public Term function(Compound p) {
+    @Override public Term function(Compound p, TermIndex i) {
         throw new RuntimeException("should only be called during RuleMatch");
     }
 

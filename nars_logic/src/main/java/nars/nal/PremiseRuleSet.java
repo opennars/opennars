@@ -3,7 +3,6 @@ package nars.nal;
 import com.gs.collections.impl.list.mutable.FastList;
 import nars.$;
 import nars.Global;
-import nars.term.compile.TermIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -208,7 +207,7 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
     }
 
 
-    static Set<PremiseRule> parse(Collection<String> rawRules, TermIndex index) {
+    static Set<PremiseRule> parse(Collection<String> rawRules, PatternIndex index) {
 
 
         Set<String> expanded = new HashSet(rawRules.size() * 4); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
@@ -245,7 +244,7 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
 
                 eachRule(ur, r, src, index);
 
-                eachRule(ur, r.forwardPermutation(), src, index);
+                eachRule(ur, r.forwardPermutation(index), src, index);
 
 
             } catch (Exception ex) {
@@ -257,7 +256,7 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
         return ur;
     }
 
-    static private PremiseRule eachRule(Collection<PremiseRule> target, PremiseRule r, String src, TermIndex patterns) {
+    static private PremiseRule eachRule(Collection<PremiseRule> target, PremiseRule r, String src, PatternIndex patterns) {
 //        if (rNorm == null)
 //            throw new RuntimeException("invalid rule, detected after normalization: " + s);
 //
@@ -276,11 +275,11 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
         return add(target, r, src, patterns);
     }
 
-    static PremiseRule add(Collection<PremiseRule> target, PremiseRule q, String src, TermIndex patterns) {
+    static PremiseRule add(Collection<PremiseRule> target, PremiseRule q, String src, PatternIndex index) {
         if (q == null)
             throw new RuntimeException("null: " + q + " " + src);
 
-        q = q.normalizeRule().setup(patterns);
+        q = q.normalizeRule(index).setup(index);
         q.setSource(src);
         target.add(q);
         return q;

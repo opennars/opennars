@@ -1,7 +1,6 @@
 package nars.nal;
 
 import nars.MapIndex;
-import nars.term.Term;
 import nars.term.TermVector;
 import nars.term.Termed;
 import nars.term.compile.TermIndex;
@@ -46,19 +45,7 @@ public class PatternIndex extends MapIndex {
 //        if (!(x instanceof TermMetadata)) {
 ////            if (!Ellipsis.hasEllipsis(x)) {
 ////            if (!x.isCommutative()) {
-                return new PatternCompound(x, (TermVector) compileSubterms( (TermVector) x.subterms() )) {
-
-
-
-                    @Override public Term clone(Term[] replaced) {
-//                        if (subterms().equals(replaced))
-//                            return this;
-//                        return the(op, replaced, relation);
-
-
-                        return target.term(op, relation, replaced);
-                    }
-                };
+                return new PatternCompound(x, (TermVector) compileSubterms( (TermVector) x.subterms() ));
 //                    return new LinearCompoundPattern(x, (TermVector) subs);
 //                } else {
 //                    return new CommutiveCompoundPattern(x, (TermVector) subs);

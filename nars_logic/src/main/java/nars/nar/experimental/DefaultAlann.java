@@ -5,7 +5,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.task.Task;
-import nars.term.Term;
 import nars.term.Termed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,17 +71,16 @@ public class DefaultAlann extends AbstractAlann  {
     @Override
     protected void processConcepts() {
 
-        /*if (concepts().size() > 0)*/ {
+        /*if (concepts().size() > 0)*/
 
-            final long now = memory.time();
+        final long now = memory.time();
 
-            final List<Derivelet> derivers = this.derivers;
-            derivers.forEach(d -> {
-                if (!d.cycle(now)) {
-                    restart(d); //recycle this derivelet
-                }
-            });
-        }
+        final List<Derivelet> derivers = this.derivers;
+        derivers.forEach(d -> {
+            if (!d.cycle(now)) {
+                restart(d); //recycle this derivelet
+            }
+        });
 
 
     }
@@ -102,13 +100,6 @@ public class DefaultAlann extends AbstractAlann  {
             d.start(next, defaultTTL, context);
         }
     }
-
-
-    @Override
-    public Concept apply(Term t) {
-        return newDefaultConcept(t, 24, 24, memory);
-    }
-
 
 
     @Override
