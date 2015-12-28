@@ -1,6 +1,7 @@
 package nars.concept;
 
 import nars.term.Term;
+import nars.term.Termed;
 
 import java.util.Map;
 
@@ -53,8 +54,8 @@ public abstract class AbstractConcept implements Concept {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Concept)) return false;
-        return ((Concept) obj).term().equals(term);
+        if (!(obj instanceof Termed)) return false;
+        return ((Termed) obj).term().equals(term);
     }
 
     @Override

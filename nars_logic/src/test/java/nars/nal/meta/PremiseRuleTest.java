@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import nars.Narsese;
 import nars.nal.PatternIndex;
 import nars.nal.PremiseRule;
+import nars.nal.PremiseRuleSet;
 import nars.term.Terms;
 import nars.term.compound.Compound;
 import org.junit.Test;
@@ -45,20 +46,23 @@ public class PremiseRuleTest extends TestCase {
 
         {
             PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> B>, (Truth:Revision, Desire:Weak)>");
+            x = normalize(x);
             assertEquals(19, x.volume());
-            assertEquals("((<%A-->%B>,<%B-->%A>),(<%A<->%B>,(<Revision-->Truth>,<Weak-->Desire>)))", x.toString());
+            assertEquals("((<%1-->%2>,<%2-->%1>),(<%1<->%2>,(<Revision-->Truth>,<Weak-->Desire>)))", x.toString());
 
         }
         {
             PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> nonvar>, (Truth:Revision, Desire:Weak)>");
+            x = normalize(x);
             assertEquals(19, x.volume()); //same volume as previous block
-            assertEquals("((<%A-->%B>,<%B-->%A>),(<nonvar<->%A>,(<Revision-->Truth>,<Weak-->Desire>)))", x.toString());
+            assertEquals("((<%1-->%2>,<%2-->%1>),(<nonvar<->%1>,(<Revision-->Truth>,<Weak-->Desire>)))", x.toString());
         }
 
         {
-            PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> B>, (<Nonsense --> Test>)>");
-            assertEquals(16, x.volume());
-            assertEquals("((<%A-->%B>,<%B-->%A>),(<%A<->%B>,(<%Nonsense-->%Test>)))", x.toString());
+            PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> B>,  (Truth:Conversion, Punctuation:Judgment)>");
+            x = normalize(x);
+            assertEquals(19, x.volume());
+            assertEquals("((<%1-->%2>,<%2-->%1>),(<%1<->%2>,(<Conversion-->Truth>,<Judgment-->Punctuation>)))", x.toString());
         }
 
 //        {
@@ -67,12 +71,18 @@ public class PremiseRuleTest extends TestCase {
 //            assertEquals(9, x.getVolume());
 //        }
 
-        //and the first complete rule:
-        PremiseRule x = (PremiseRule) p.term("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
-        assertEquals("((<%S-->%M>,<%P-->%M>),(<%P<->%S>,(%TruthComparison,%DesireStrong)))", x.toString());
-        assertEquals(15, x.volume());
+        {
+            //and the first complete rule:
+            PremiseRule x = (PremiseRule) p.term("<(S --> M), (P --> M) |- (P <-> S), (Truth:Comparison,Desire:Strong)>");
+            x = normalize(x);
+            assertEquals("((<%1-->%2>,<%3-->%2>),(<%1<->%3>,(<Comparison-->Truth>,<Strong-->Desire>)))", x.toString());
+            assertEquals(19, x.volume());
+        }
 
+    }
 
+    private PremiseRule normalize(PremiseRule x) {
+        return new PremiseRuleSet(true, x).get(0);
     }
 
     @Test public void testNotSingleVariableRule1() {

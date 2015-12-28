@@ -279,7 +279,7 @@ public class Memory extends Param {
                     return possibleExistingConcept;
             }
 
-            Concept c = newDefaultConcept(u);
+            Concept c = newDefaultConcept(v);
             if (c!=null) {
                 index.put(c.term(), c);
 

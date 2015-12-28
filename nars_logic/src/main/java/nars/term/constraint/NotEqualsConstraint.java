@@ -23,6 +23,6 @@ final public class NotEqualsConstraint implements MatchConstraint {
 
     @Override
     public String toString() {
-        return "!=" + b;
+        return "notEqual:" + b;
     }
 }

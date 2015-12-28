@@ -21,8 +21,10 @@ public class MatchTerm extends PatternOp {
 
     public MatchTerm(Term term, ListMultimap<Term, MatchConstraint> c) {
         x = term;
+
+        String iid;
         if (c == null || c.isEmpty()) {
-            this.id = x.toString();
+            iid = x.toString();
             this.constraints = null;
         } else {
             Map<Term,MatchConstraint> con = Global.newHashMap();
@@ -39,7 +41,7 @@ public class MatchTerm extends PatternOp {
 
 
             this.constraints = Maps.immutable.ofAll(con);
-            this.id = x.toStringCompact() + '^' + con;
+            iid = x.toStringCompact() + '^' + con;
 
 //                this.id = new StringBuilder(x.toString() + "∧neq(").append(
 //                    Joiner.on(",").join(notEquals.stream().map(v -> {
@@ -47,6 +49,7 @@ public class MatchTerm extends PatternOp {
 //                    }).collect(Collectors.toList()))
 //                ).append(")").toString();
         }
+        this.id = "Match:(" + iid + ")";
     }
 
     @Override

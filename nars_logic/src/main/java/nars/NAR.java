@@ -223,7 +223,7 @@ public abstract class NAR implements Serializable, Level {
         TextInput i = new TextInput(this, text);
         if (i.size() == 0) {
             //TODO replace with real parser error
-            error(new Narsese.NarseseException("Syntax error: " + text));
+            error(new Narsese.NarseseException("Input syntax error: " + text));
         }
         input((Input) i);
         return i;
@@ -231,8 +231,8 @@ public abstract class NAR implements Serializable, Level {
 
     public final <T extends Termed> T term(String t) throws Narsese.NarseseException {
         T x = (T)Narsese.the().term(t, index());
-        if (x != null) {
-            logger.error("Syntax error: '{}'", t);
+        if (x == null) {
+            logger.error("Term syntax error: '{}'", t);
         } else {
 
             //this is applied automatically when a task is entered.

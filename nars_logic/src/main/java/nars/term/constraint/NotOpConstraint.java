@@ -25,7 +25,7 @@ public final class NotOpConstraint implements MatchConstraint {
     }
     @Override
     public String toString() {
-        return "op!=" + Integer.toHexString(op);
+        return "notOp:" + Integer.toHexString(op);
     }
 }
 

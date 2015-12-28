@@ -22,6 +22,6 @@ public abstract class PreCondition1 extends PreCondition {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + ":(" + arg1 + ')';
+        return getClass().getSimpleName() + ":" + arg1;
     }
 }

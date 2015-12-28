@@ -95,6 +95,10 @@ public class PremiseRule extends GenericCompound implements Level {
     }
 
 
+    PremiseRule(Compound raw) {
+        this((Compound)raw.term(0), (Compound)raw.term(1));
+    }
+
     public PremiseRule(Compound premises, Compound result) {
         super(Op.PRODUCT, premises, result  );
         str = super.toString();

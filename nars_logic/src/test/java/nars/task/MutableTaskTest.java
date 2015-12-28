@@ -15,7 +15,7 @@ public class MutableTaskTest {
     @Test public void testTenseEternality() {
         NAR n = new Default();
 
-        String s = "<a --> b>.";
+        String s = "<a --> b>";
 
         assertTrue(Tense.isEternal(new MutableTask(n.term(s)).eternal().getOccurrenceTime()));
 
@@ -31,7 +31,7 @@ public class MutableTaskTest {
 
         NAR n = new Default();
 
-        String s = "<a --> b>.";
+        String s = "<a --> b>";
 
         //the final occurr() or tense() is the value applied
         assertTrue(!Tense.isEternal(new MutableTask(n.term(s)).eternal().occurr(100).getOccurrenceTime()));

@@ -2,6 +2,7 @@ package nars.nal;
 
 import com.gs.collections.impl.list.mutable.FastList;
 import nars.Global;
+import nars.term.compound.Compound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static nars.$.$;
 
 /**
  * Holds an array of derivation rules
@@ -48,17 +51,21 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
 
 
     /** for compiling and de-duplicating pattern term components */
-    public final PatternIndex patterns;
+    public final PatternIndex patterns = new PatternIndex();;
 
     static final Logger logger = LoggerFactory.getLogger(PremiseRuleSet.class);
 
 
-
+    public PremiseRuleSet(boolean normalize, PremiseRule... rules) {
+        for (PremiseRule p : rules) {
+            if (normalize)
+                p = p.normalizeRule(patterns);
+            add(p);
+        }
+    }
 
     public PremiseRuleSet(Collection<String> ruleStrings) {
         final int[] errors = {0};
-
-        patterns = new PatternIndex();
 
         Set<PremiseRule> r = parse(load(ruleStrings), patterns);
         r.forEach(s -> {
@@ -237,7 +244,7 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
             try {
 
 
-                PremiseRule preNorm = (PremiseRule) nars.$.$(src);
+                PremiseRule preNorm = new PremiseRule((Compound) $(src));
 
                 PremiseRule r = eachRule(ur, preNorm, src, index);
 

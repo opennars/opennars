@@ -172,21 +172,21 @@ public final class Solve extends PreCondition {
             this.anticipate = anticipate;
             this.eternalize = eternalize;
 
-            String i = "Derive:(";
+            String i = "Derive:((";
             if (eternalize || anticipate) {
                 if (eternalize && anticipate) {
-                    i += "{eternalize,anticipate},";
+                    i += "{eternalize,anticipate}, ";
                 } else if (eternalize && !anticipate) {
-                    i += "{eternalize},";
+                    i += "{eternalize}, ";
                 } else if (anticipate && !eternalize) {
-                    i += "{anticipate},";
+                    i += "{anticipate}, ";
                 }
             }
 
             i += term.toString();
 
             if (postMatch.length > 0) {
-                i += ',' + Arrays.toString(postMatch);
+                i += ", " + Arrays.toString(postMatch);
             }
 
             i += ")";
