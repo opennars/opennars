@@ -72,15 +72,15 @@ public interface Truth extends MetaTruth<Float> {
         return getExpectationPositive();
     }
 
-    /** expectation inverse, ie. the expectation of freq=1 */
+    /** expectation, the expectation of freq=1 */
     default float getExpectationPositive() {
         return expectation(getFrequency(), getConfidence());
     }
 
 
-    /** expectation inverse, ie. the expectation of freq=0  */
+    /** expectation inverse, the expectation of freq=0  */
     default float getExpectationNegative() {
-        return expectation(1.0f -getFrequency(), getConfidence());
+        return expectation(1.0f - getFrequency(), getConfidence());
     }
 
     static float expectation(float frequency, float confidence) {

@@ -138,9 +138,6 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
 
-    public final PremiseRule normalize(TermIndex index) {
-        return (PremiseRule)(index.term(this, uppercaseAtomsToPatternVariables).term());
-    }
 
 
 
@@ -250,10 +247,17 @@ public class PremiseRule extends GenericCompound implements Level {
     static final UppercaseAtomsToPatternVariables uppercaseAtomsToPatternVariables = new UppercaseAtomsToPatternVariables();
 
 
-
     public final PremiseRule normalizeRule(PatternIndex index) {
-        Compound c = (Compound)
-                index.term(this, new TaskRuleVariableNormalization());
+        //HACK this can be streamlined a lot
+
+        //use tmp index to not pollute the real index with the uppercase variable forms
+        final TermIndex tmpIndex = new TermIndex.ImmediateTermIndex();
+        Compound postNorm = (Compound)tmpIndex.term(this,
+                uppercaseAtomsToPatternVariables);
+
+        Compound c = (Compound)index.term(postNorm,
+                new TaskRuleVariableNormalization());
+
         return new PremiseRule((Compound)c.term(0), (Compound)c.term(1)); //HACK
     }
 

@@ -19,6 +19,10 @@ public class MapIndex extends MapCacheBag<Term,Termed> implements TermIndex {
     public final Map<TermContainer, TermContainer> subterms;
 
 
+    public MapIndex() {
+        this(Global.newHashMap(), Global.newHashMap());
+    }
+
     public MapIndex(Map<Term, Termed> data, Map<TermContainer, TermContainer> subterms) {
         super(data);
         this.subterms = subterms;

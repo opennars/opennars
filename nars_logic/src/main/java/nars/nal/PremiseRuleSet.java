@@ -1,7 +1,6 @@
 package nars.nal;
 
 import com.gs.collections.impl.list.mutable.FastList;
-import nars.$;
 import nars.Global;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,12 +231,15 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
         Set<PremiseRule> ur = Global.newHashSet(rawRules.size()*4);
         //ListMultimap<TaskRule, TaskRule> ur = MultimapBuilder.linkedHashKeys().arrayListValues().build();
 
+
         //accumulate these in a set to eliminate duplicates
         expanded.forEach(src -> {
             try {
 
 
-                PremiseRule r = eachRule(ur, (PremiseRule)$.$(src), src, index);
+                PremiseRule preNorm = (PremiseRule) nars.$.$(src);
+
+                PremiseRule r = eachRule(ur, preNorm, src, index);
 
                 if (r == null)
                     throw new RuntimeException("unnormalizable task: " + src);

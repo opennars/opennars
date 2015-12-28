@@ -697,7 +697,7 @@ public interface Compounds {
                 if (y == null)
                     return -1;
 
-                if (!x.equals(y)) {
+                if (x!=y) {
                     modifications++;
                     x = y;
                 }
