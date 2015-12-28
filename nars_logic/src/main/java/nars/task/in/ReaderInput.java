@@ -55,7 +55,7 @@ public class ReaderInput extends TaskQueue {
         }
     }
 
-    protected String readAll() throws IOException {
+    protected String readAll() {
         return input.lines().collect(Collectors.joining("\n"));
     }
 

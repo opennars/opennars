@@ -112,6 +112,7 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
+    @Override
     public Term getXY(Object t) {
         return xy.getXY(t);
     }
@@ -152,7 +153,7 @@ abstract public class FindSubst extends Versioning implements Subst {
 
     }
 
-    private final void print(String prefix, Term a, Term b) {
+    private void print(String prefix, Term a, Term b) {
         System.out.print(prefix);
         if (a != null)
             System.out.println(" " + a + " ||| " + b);
@@ -222,13 +223,9 @@ abstract public class FindSubst extends Versioning implements Subst {
     public boolean matchXvar(Variable x, Term y) {
         Term xSubst = getXY(x);
 
-        if (xSubst != null) {
-            /*if (xSubst.equals(x))
-                throw new RuntimeException("loop");*/
-            return match(xSubst, y);
-        } else {
-            return nextVarX(x, y);
-        }
+        return (xSubst != null) ?
+                match(xSubst, y) :
+                nextVarX(x, y);
     }
 
 //    private static void printComparison(int power, Compound cx, Compound cy) {
@@ -239,7 +236,7 @@ abstract public class FindSubst extends Versioning implements Subst {
 //    }
 
 
-    private final boolean nextVarX(Variable xVar, Term y) {
+    private boolean nextVarX(Variable xVar, Term y) {
         Op xOp = xVar.op();
 
         if (xOp == type) {
@@ -408,10 +405,10 @@ abstract public class FindSubst extends Versioning implements Subst {
                 //insert b before a since it is more specific
                 termutes.add(i, t);
                 return true;
-            } else if (b.containsTerm((Term) a)) {
+            } /*else if (b.containsTerm((Term) a)) {
                 //a contained by b; append to end (after a)
                 continue;
-            }
+            } */
 
         }
 
@@ -422,15 +419,13 @@ abstract public class FindSubst extends Versioning implements Subst {
 
     public final boolean matchPermute(TermContainer x, Compound y) {
         //SPECIAL CASE: no variables
-        {
-            if
-                    (((type != Op.VAR_PATTERN && (0 == (x.structure() & type.bit()))) ||
-                    ((type == Op.VAR_PATTERN) && !Variable.hasPatternVariable(x))))
+        if
+                (((type != Op.VAR_PATTERN && (0 == (x.structure() & type.bit()))) ||
+                ((type == Op.VAR_PATTERN) && !Variable.hasPatternVariable(x))))
 
-            {
-                return matchLinear(x, y, 0, x.size());
-                //return x.equals(y);
-            }
+        {
+            return matchLinear(x, y, 0, x.size());
+            //return x.equals(y);
         }
 
         return addTermutator(new CommutivePermutations(this, x, y));
@@ -668,7 +663,7 @@ abstract public class FindSubst extends Versioning implements Subst {
     /**
      * elimination
      */
-    private final boolean putVarX(Variable x, Term y) {
+    private boolean putVarX(Variable x, Term y) {
         if (putXY(x, y)) {
             if (x instanceof CommonVariable) {
                 putYX(x, y);
@@ -772,13 +767,9 @@ abstract public class FindSubst extends Versioning implements Subst {
         VarCachedVersionMap xy = this.xy;
 
         Versioned<Term> v = xy.map.get(x);
-        Term vv = v != null ? v.get() : null;
+        Term vv = (v != null) ? v.get() : null;
         if (vv != null) {
-            if (y.equals(vv)) {
-                return true; //same value
-            } else {
-                return false; //already assigned
-            }
+            return y.equals(vv);
         }
         if (!assignable(x, y))
             return false;

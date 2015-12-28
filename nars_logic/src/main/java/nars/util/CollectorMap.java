@@ -113,8 +113,7 @@ public abstract class CollectorMap<K, V extends Supplier<K>> implements Serializ
 
 
     public final V removeKey(K key) {
-        V e = map.remove(key);
-        return e;
+        return map.remove(key);
     }
 
 

@@ -43,9 +43,9 @@ public class TestNAR  {
     public final List<NARCondition> requires = new ArrayList();
     //public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
-    private final transient boolean exitOnAllSuccess = true;
+    private static final transient boolean exitOnAllSuccess = true;
     public List<Task> inputs = new ArrayList();
-    private final int temporalTolerance = 0;
+    private static final int temporalTolerance = 0;
     protected static final float truthTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
     private StringWriter trace;
 

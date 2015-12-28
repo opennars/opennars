@@ -53,11 +53,6 @@ public class UnitBudget implements Budget {
     public static final Budget zero = new UnitBudget();
     static {  zero.zero();    }
 
-    @Override
-    public Budget getBudget() {
-        return this;
-    }
-
     /**
      * The relative share of time resource to be allocated
      */
@@ -407,7 +402,7 @@ public class UnitBudget implements Budget {
 
     /**
      * linear interpolate the priority value to another value
-     * @see https://en.wikipedia.org/wiki/Linear_interpolation
+     * https://en.wikipedia.org/wiki/Linear_interpolation
      */
     /*public void lerpPriority(final float targetValue, final float momentum) {
         if (momentum == 1.0) 

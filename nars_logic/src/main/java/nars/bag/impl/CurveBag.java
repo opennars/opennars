@@ -168,10 +168,9 @@ public class CurveBag<V> extends Bag<V> {
 
     @Override public BagBudget<V> put(Object v) {
         BagBudget<V> existing = get(v);
-        if (existing!=null)
-            return existing;
-        else
-            return put((V)v, getDefaultBudget((V)v));
+        return (existing != null) ?
+                existing :
+                put((V) v, getDefaultBudget((V) v));
     }
 
     protected BagBudget<V> getDefaultBudget(V v) {

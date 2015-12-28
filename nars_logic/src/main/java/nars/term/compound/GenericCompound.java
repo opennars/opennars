@@ -27,17 +27,17 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
 
     protected GenericCompound(Op op, T... subterms) {
-        this(op, subterms, 0);
+        this(op, 0, subterms);
     }
 
-    public GenericCompound(Op op, T[] subterms, int relation) {
+    public GenericCompound(Op op, int relation, T... subterms) {
 
         this.op = op;
 
         TermVector<T> terms = this.terms = op.isCommutative() ?
                 TermSet.newTermSetPresorted(subterms) :
                 new TermVector(subterms);
-        this.hash = Compound.hash(terms, op, relation+1);
+        this.hash = Compounds.hash(terms, op, relation+1);
         this.relation = relation;
     }
 
@@ -45,7 +45,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         this.op = op;
         this.terms = subterms;
         this.relation = relation;
-        this.hash = Compound.hash(terms, op, relation+1);
+        this.hash = Compounds.hash(terms, op, relation+1);
     }
 
     @Override
@@ -58,6 +58,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return op.isCommutative();
     }
 
+    @Override
     public void append(Appendable p, boolean pretty) throws IOException {
 
         switch (op) {
@@ -81,7 +82,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                         Statement.append(this, p, pretty);
                     }
                 } else {
-                    Compound.appendCompound(this, p, pretty);
+                    Compounds.appendCompound(this, p, pretty);
                 }
                 break;
         }
@@ -89,13 +90,6 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
 
     }
-
-
-    @Override
-    public String toStringCompact() {
-        return toString(false);
-    }
-
 
 
     @Override
@@ -108,8 +102,8 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         if (diff != 0) return diff;
 
         Compound c = (Compound)t;
-        diff = Integer.compare(relation(), c.relation());
-        if (diff != 0) return diff;
+        int diff2 = Integer.compare(relation(), c.relation());
+        if (diff2 != 0) return diff2;
 
         return subterms().compareTo( c.subterms() );
     }

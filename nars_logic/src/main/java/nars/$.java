@@ -305,9 +305,9 @@ public abstract class $  {
 
     public static Variable v(Op type, int counter) {
         if (counter < Variable.MAX_VARIABLE_CACHED_PER_TYPE) {
-            Variable[] vct = Variable.varCache[Variable.typeIndex(type)];
+            Variable[] vct = Variable.varCache[typeIndex(type)];
             Variable existing = vct[counter];
-            return existing != null ? existing : (vct[counter] = Variable._the(type, counter));
+            return existing != null ? existing : (vct[counter] = v(type.ch, String.valueOf(counter)));
         }
 
         return v(type.ch, String.valueOf(counter));
@@ -387,9 +387,6 @@ public abstract class $  {
 //        rootLogger.warn("Message 2");
 //        rootLogger.error("Message 2");
     }
-    public static void main(String[] args) {
-
-    }
 
     public static Term equiv(Term subject, Term pred) {
         return the(EQUIV, subject, pred);
@@ -437,4 +434,17 @@ public abstract class $  {
         return terms.the(op, Terms.toArray(subterms), relation);
     }
 
+    public static int typeIndex(Op o) {
+        switch (o) {
+            case VAR_PATTERN:
+                return 0;
+            case VAR_DEP:
+                return 1;
+            case VAR_INDEP:
+                return 2;
+            case VAR_QUERY:
+                return 3;
+        }
+        throw new RuntimeException(o + " not a variable");
+    }
 }

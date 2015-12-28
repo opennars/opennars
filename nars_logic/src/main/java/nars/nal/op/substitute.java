@@ -31,14 +31,14 @@ public class substitute extends ImmediateTermTransform {
         return subst(term, x, y);
     }
 
-    public Term subst(Term term, Term x, Term y) {
+    public static Term subst(Term term, Term x, Term y) {
         if (x.equals(y))
             return term;
 
         return subst(new MapSubst(x, y), term);
     }
 
-    public Term subst(Subst m, Term term) {
+    public static Term subst(Subst m, Term term) {
         return term.apply(m, false);
     }
 

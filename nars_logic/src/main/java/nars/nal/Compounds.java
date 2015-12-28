@@ -2,10 +2,10 @@ package nars.nal;
 
 import com.gs.collections.api.set.MutableSet;
 import nars.$;
+import nars.Global;
 import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.nal7.Order;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.task.MutableTask;
@@ -14,6 +14,7 @@ import nars.term.*;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.truth.Truth;
+import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ import static nars.Op.*;
 import static nars.Symbols.*;
 import static nars.term.Statement.pred;
 import static nars.term.Statement.subj;
+import static nars.util.data.Util.hashCombine;
 
 /**
  * static compound builder support
@@ -35,7 +37,7 @@ public interface Compounds {
     /**
      * universal zero-length product
      */
-    Compound Empty = new GenericCompound(Op.PRODUCT, Terms.Empty, -1) {
+    Compound Empty = new GenericCompound(Op.PRODUCT, -1, Terms.Empty) {
         @Override
         public Term clone(Term[] replaced) {
             if (replaced.length == 0) return this;
@@ -55,6 +57,74 @@ public interface Compounds {
      */
     int InvalidImplicationPredicate =
             or(EQUIV, EQUIV_AFTER, EQUIV_WHEN, INTERVAL);
+
+    static void ensureFeasibleVolume(int vol, TermContainer c) {
+        if (vol > Global.COMPOUND_VOLUME_MAX) {
+            //$.logger.error("Term volume overflow");
+            /*c.forEach(x -> {
+                Terms.printRecursive(x, (String line) ->
+                    $.logger.error(line)
+                );
+            });*/
+            throw new RuntimeException("Term volume overflow: " + c);
+        }
+    }
+
+    static void appendSeparator(Appendable p, boolean pretty) throws IOException {
+        p.append(ARGUMENT_SEPARATOR);
+        if (pretty) p.append(' ');
+    }
+
+    static void writeCompound1(Op op, Term singleTerm, Appendable writer, boolean pretty) throws IOException {
+        writer.append(COMPOUND_TERM_OPENER);
+        writer.append(op.str);
+        writer.append(ARGUMENT_SEPARATOR);
+        singleTerm.append(writer, pretty);
+        writer.append(COMPOUND_TERM_CLOSER);
+    }
+
+    static byte[] newCompound1Key(Op op, Term singleTerm) {
+
+        byte opByte = (byte) op.ordinal();
+
+        byte[] termBytes = singleTerm.bytes();
+
+        return ByteBuf.create(1 + termBytes.length)
+                .add(opByte)
+                .add(termBytes)
+                .toBytes();
+    }
+
+    static void appendCompound(Compound c, Appendable p, boolean pretty) throws IOException {
+
+        boolean opener = c.appendTermOpener();
+        if (opener)
+            p.append(COMPOUND_TERM_OPENER);
+
+
+        boolean appendedOperator = c.appendOperator(p);
+
+        if (c.size() == 1)
+            p.append(ARGUMENT_SEPARATOR);
+
+        c.appendArgs(p, pretty, appendedOperator);
+
+
+        appendCloser(p);
+
+    }
+
+    static void appendCloser(Appendable p) throws IOException {
+        p.append(COMPOUND_TERM_CLOSER);
+    }
+
+    /** universal compound hash function */
+    static <T extends Term> int hash(TermVector subterms, Op op, int hashSalt) {
+        int h = hashCombine( subterms.hashCode(), op.ordinal() );
+        if (hashSalt!=0)
+            h = hashCombine(h, hashSalt);
+        return h;
+    }
 
     default Term negation(Term t) {
         if (t.op() == Op.NEGATE) {
@@ -183,18 +253,18 @@ public interface Compounds {
         p.append(COMPOUND_TERM_CLOSER);
     }
 
-    /**
-     * recursively flatten a embedded conjunction subterms if they are of a specific order
-     */
-    static Term[] flatten(Term[] args, Order order) {
-        //determine how many there are with same order
-
-        int expandedSize;
-        while ((expandedSize = getFlattenedLength(args, order)) != args.length) {
-            args = _flatten(args, order, expandedSize);
-        }
-        return args;
-    }
+//    /**
+//     * recursively flatten a embedded conjunction subterms if they are of a specific order
+//     */
+//    static Term[] flatten(Term[] args, Order order) {
+//        //determine how many there are with same order
+//
+//        int expandedSize;
+//        while ((expandedSize = getFlattenedLength(args, order)) != args.length) {
+//            args = _flatten(args, order, expandedSize);
+//        }
+//        return args;
+//    }
 
     static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
         return spawn(parent, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
@@ -495,33 +565,33 @@ public interface Compounds {
     }
 
 
-    static Term[] _flatten(Term[] args, Order order, int expandedSize) {
-        Term[] ret = new Term[expandedSize];
-        int k = 0;
-        for (Term a : args) {
-            if (a.op().isConjunctive(order)) {
-                //arraycopy?
-                for (Term t : ((Compound) a).terms()) {
-                    ret[k++] = t;
-                }
-            } else {
-                ret[k++] = a;
-            }
-        }
-
-        return ret;
-    }
-
-    static int getFlattenedLength(Term[] args, Order order) {
-        int sz = 0;
-        for (Term a : args) {
-            if (a.op().isConjunctive(order))
-                sz += a.size();
-            else
-                sz++;
-        }
-        return sz;
-    }
+//    static Term[] _flatten(Term[] args, Order order, int expandedSize) {
+//        Term[] ret = new Term[expandedSize];
+//        int k = 0;
+//        for (Term a : args) {
+//            if (a.op().isConjunctive(order)) {
+//                //arraycopy?
+//                for (Term t : ((Compound) a).terms()) {
+//                    ret[k++] = t;
+//                }
+//            } else {
+//                ret[k++] = a;
+//            }
+//        }
+//
+//        return ret;
+//    }
+//
+//    static int getFlattenedLength(Term[] args, Order order) {
+//        int sz = 0;
+//        for (Term a : args) {
+//            if (a.op().isConjunctive(order))
+//                sz += a.size();
+//            else
+//                sz++;
+//        }
+//        return sz;
+//    }
 
     /** main compound construction entry-point */
     default  Term the(Op op, Collection<Term> t) {

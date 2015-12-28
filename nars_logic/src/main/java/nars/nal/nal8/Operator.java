@@ -2,6 +2,7 @@ package nars.nal.nal8;
 
 import nars.$;
 import nars.Op;
+import nars.nal.Compounds;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
@@ -119,7 +120,7 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
 
         if ((predTerm.volume() != 1) || (predTerm.hasVar())) {
             //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format
-            Compound.appendSeparator(p, pretty);
+            Compounds.appendSeparator(p, pretty);
             return;
         }
 
@@ -187,7 +188,7 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
 
     @Override
     public byte[] bytes() {
-        return Compound.newCompound1Key(op(), term);
+        return Compounds.newCompound1Key(op(), term);
     }
 
     @Override

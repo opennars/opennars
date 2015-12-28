@@ -38,16 +38,10 @@ public class TextInput extends TaskQueue {
     }
 
     protected int process(NAR nar, String input) {
-        int n = Narsese.the().tasks(process(input),
-                (Collection<Task>)this, nar.memory);
         //..
 
-        return n;
-    }
-
-    /** can be overridden in subclasses to preprocess addInput */
-    public String process(String input) {
-        return input;
+        return Narsese.the().tasks(input,
+                (Collection<Task>) this, nar.memory);
     }
 
 

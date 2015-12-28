@@ -262,6 +262,15 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
         public String name() { return key; }
 
         @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj instanceof PremiseKey) {
+                return name().equals(((PremiseKey)obj).name());
+            }
+            return false;
+        }
+
+        @Override
         public int compareTo(Keyed o) {
             if (o instanceof PremiseKey) {
                 PremiseKey pk = (PremiseKey)o;

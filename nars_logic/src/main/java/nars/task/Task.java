@@ -181,7 +181,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     boolean equivalentTo(Task that, boolean punctuation, boolean term, boolean truth, boolean stamp, boolean creationTime);
 
     /** called when a Concept processes this Task */
-    void onConcept(Concept/*<T>*/ equivalentInstance);
+    void onConcept(Concept c);
 
     default <X extends Compound> MutableTask solution(X t, char newPunc, Truth newTruth, long newOcc, Task question, Memory memory) {
 
@@ -508,7 +508,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     void discountConfidence();
 
 
-    void setBestSolution(Task belief, Memory memory);
+    void setBestSolution(Task belief);
 
 
 

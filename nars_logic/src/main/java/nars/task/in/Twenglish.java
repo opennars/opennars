@@ -42,9 +42,8 @@ public class Twenglish {
     
     /** substitutions */
     public final Map<String,String> sub = new HashMap();
-    private Memory memory;
 
-    
+
     //boolean languageBooted = true; //set to false to initialize on first twenglish input
     boolean inputProduct = true;
     boolean inputConjSeq = true;
@@ -99,7 +98,6 @@ public class Twenglish {
     }
 
     public Twenglish(Memory memory) {
-        this.memory = memory;
     }
 
 
@@ -256,9 +254,7 @@ public class Twenglish {
     }
 
     public static List<Term> tokenize(String msg) {
-        List<Twokenize.Span> sp = Twokenize.tokenize(msg);
-
-        List<Term> ll = Lists.transform(sp, Twenglish::spanToTerm);
-        return ll;
+        return Lists.transform(Twokenize.tokenize(msg),
+                Twenglish::spanToTerm);
     }
 }

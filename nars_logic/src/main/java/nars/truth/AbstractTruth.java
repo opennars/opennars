@@ -11,10 +11,6 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
     protected float confidence;
 
 
-    public AbstractTruth() {
-        //freq and conf will begin at 0
-    }
-
     @Override
     public final float getConfidence() {
         return confidence;

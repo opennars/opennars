@@ -30,9 +30,6 @@ public class TrieMap {
             mVal = val;
         }
     }
-    
-    public TrieMap() {
-    }
 
     public boolean isEmpty() {
         if(mPrefixVal != null) {

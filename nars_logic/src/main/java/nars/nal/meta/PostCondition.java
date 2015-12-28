@@ -81,7 +81,6 @@ public class PostCondition implements Serializable, Level //since there can be m
     /**
      * @param rule             rule which contains and is constructing this postcondition
      * @param term
-     * @param afterConclusions
      * @param modifiers
      * @throws RuntimeException
      */

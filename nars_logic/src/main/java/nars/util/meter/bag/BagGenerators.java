@@ -36,10 +36,6 @@ public class BagGenerators {
 //        });
 
 
-        float accessFraction = fractionToRemove;
-
-
-
         for (int l = 0; l < loops; l++) {
 
 
@@ -77,7 +73,7 @@ public class BagGenerators {
 
 
             //remove last than was inserted so the bag never gets empty
-            for (int i= 0; i < insertsPerLoop * accessFraction; i++) {
+            for (int i = 0; i < insertsPerLoop * fractionToRemove; i++) {
                 int sizeBefore = f.size();
 
                 CharSequence t = f.peekNext().get();

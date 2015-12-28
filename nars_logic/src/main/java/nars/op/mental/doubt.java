@@ -28,8 +28,6 @@ public class doubt extends SyncOperator implements Mental {
     /**
      * To activate a concept as if a question has been asked about it
      *
-     * @param args Arguments, a Statement followed by an optional tense
-     * @param memory
      * @return Immediate results as Tasks
      */
     @Override

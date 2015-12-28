@@ -44,7 +44,7 @@ public abstract class feel extends SyncOperator implements Mental {
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
-    protected ArrayList<Task> feeling(float value, Memory memory, Term feeling) {
+    protected static ArrayList<Task> feeling(float value, Memory memory, Term feeling) {
 
 
         Compound content = $.instprop(memory.self(), feeling);

@@ -10,7 +10,7 @@ import static nars.op.software.scheme.cons.Cons.copyOf;
 
 
 public class ListExpression implements Expression, Iterable<Expression> {
-    public static class Nil extends ListExpression {
+    public static final class Nil extends ListExpression {
         private static final Nil NIL = new Nil();
 
         private Nil() {

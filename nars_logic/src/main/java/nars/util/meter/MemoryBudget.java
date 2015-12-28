@@ -152,7 +152,8 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
     }
 
     public static Signals on(String prefix, Consumer<MemoryBudget> c) {
-        Signals s = new Signals() {
+
+        return new Signals() {
 
             MemoryBudget b = new MemoryBudget();
 
@@ -170,8 +171,6 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
                 };
             }
         };
-
-        return s;
     }
 
 

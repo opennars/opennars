@@ -28,7 +28,7 @@ public final class substituteIfUnifies extends substitute {
         return term;
     }
 
-    FindSubst unifies(Term op, Term x, Term y) {
+    static FindSubst unifies(Term op, Term x, Term y) {
         Op o = getOp(op);
         Random rng = new XorShift128PlusRandom(1);
         FindSubst sub = new FindSubst(o, rng) {

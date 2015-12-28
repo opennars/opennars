@@ -75,24 +75,7 @@ public class Cons<T> implements Iterable<T> {
     }
 
     @Override public Iterator<T> iterator() {
-        return new Iterator<T>() {
-            private Cons<T> cons = Cons.this;
-
-            @Override public boolean hasNext() {
-                return cons != empty();
-            }
-
-            @Override public T next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-
-                T next = cons.car;
-                cons = cons.cdr;
-
-                return next;
-            }
-        };
+        return new MyIterator();
     }
 
     @Override public void forEach(Consumer<? super T> action) {
@@ -167,5 +150,25 @@ public class Cons<T> implements Iterable<T> {
         int result = car.hashCode();
         result = 31 * result + cdr.hashCode();
         return result;
+    }
+
+    public final class MyIterator implements Iterator<T> {
+
+        private Iterable<T> cons = Cons.this;
+
+        @Override public boolean hasNext() {
+            return Cons.this != empty();
+        }
+
+        @Override public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            T next = Cons.this.car;
+            cons = Cons.this.cdr;
+
+            return next;
+        }
     }
 }

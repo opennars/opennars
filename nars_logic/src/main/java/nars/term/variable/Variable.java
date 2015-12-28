@@ -72,39 +72,21 @@ public abstract class Variable extends AbstractStringAtom {
      */
     public static final Variable[][] varCache = new Variable[4][MAX_VARIABLE_CACHED_PER_TYPE];
 
-    public static Variable _the(Op type, int counter) {
-        return $.v(type.ch, String.valueOf(counter));
-    }
+//    public static Op typeIndex(char c) {
+//        switch (c) {
+//            case '%':
+//                return Op.VAR_PATTERN;
+//            case '#':
+//                return Op.VAR_DEP;
+//            case '$':
+//                return Op.VAR_INDEP;
+//            case '?':
+//                return Op.VAR_QUERY;
+//        }
+//        throw new RuntimeException(c + " not a variable");
+//    }
 
-    public static Op typeIndex(char c) {
-        switch (c) {
-            case '%':
-                return Op.VAR_PATTERN;
-            case '#':
-                return Op.VAR_DEP;
-            case '$':
-                return Op.VAR_INDEP;
-            case '?':
-                return Op.VAR_QUERY;
-        }
-        throw new RuntimeException(c + " not a variable");
-    }
-
-    public static int typeIndex(Op o) {
-        switch (o) {
-            case VAR_PATTERN:
-                return 0;
-            case VAR_DEP:
-                return 1;
-            case VAR_INDEP:
-                return 2;
-            case VAR_QUERY:
-                return 3;
-        }
-        throw new RuntimeException(o + " not a variable");
-    }
-
-//    //TODO replace this with a generic counting method of how many subterms there are present
+    //    //TODO replace this with a generic counting method of how many subterms there are present
 //    public static int numPatternVariables(Term t) {
 //        t.value(new TermToInt()) //..
 ////        final int[] has = {0};

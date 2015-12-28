@@ -46,7 +46,6 @@ public final class TruthFunctions extends UtilityFunctions {
     /* ----- Single argument functions, called in StructuralRules ----- */
     /**
      * {A} |- (--A)
-     * @param t Truth value of the premise
      * @return Truth value of the conclusion
      */
     public static Truth negation(Truth v1) {
@@ -364,8 +363,6 @@ public final class TruthFunctions extends UtilityFunctions {
 
     /**
      * {(--, (&&, A, B)), B} |- (--, A)
-     * @param a Truth value of the first premise
-     * @param b Truth value of the second premise
      * @return Truth value of the conclusion
      */
     public static Truth reduceConjunction(Truth v1, Truth v2) {
@@ -460,7 +457,6 @@ public final class TruthFunctions extends UtilityFunctions {
 
     /**
      * From one moment to eternal
-     * @param t Truth value of the premise
      * @return Truth value of the conclusion
      */
     public static ProjectedTruth eternalize(float freq, float conf) {

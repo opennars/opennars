@@ -8,9 +8,6 @@ import nars.nal.nal8.operator.ImmediateOperator;
  */
 public class reset extends ImmediateOperator {
 
-    public reset() {
-    }
-
     @Override
     public String toString() {
         return "Reset";

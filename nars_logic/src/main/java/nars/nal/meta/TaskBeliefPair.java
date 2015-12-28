@@ -18,7 +18,7 @@ public final class TaskBeliefPair extends GenericCompound {
     //public final static Variable any = new Variable("%1"); //just use the first pattern variable because it will overlap with it
 
     public TaskBeliefPair(Term a, Term b) {
-        super(Op.PRODUCT, a, b);
+        super(Op.PRODUCT, new Term[] { a, b } );
 
         t = terms();
 

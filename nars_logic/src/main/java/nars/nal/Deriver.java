@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  */
 public abstract class Deriver  {
 
-    public static final TermIndex terms = TermIndex.memory(16384);
+    @Deprecated public static final TermIndex terms = TermIndex.memory(16384);
     private static Deriver defaultDeriver = null;
     private static PremiseRuleSet defaultRules = null;
 

@@ -12,7 +12,7 @@ public class TemporalTaskCondition extends EternalTaskCondition {
     /**
      * occurrence time (absolute) valid range
      */
-    public long occStart, occEnd;
+    public final long occStart, occEnd;
 
 
     public TemporalTaskCondition(NAR n, long cycleStart, long cycleEnd,

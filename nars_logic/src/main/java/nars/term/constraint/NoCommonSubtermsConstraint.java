@@ -32,11 +32,11 @@ final public class NoCommonSubtermsConstraint implements MatchConstraint {
     }
 
     static boolean sharedSubterms(Term a, Term b, Set<Term> s) {
-        addSubtermsRecursivelyUntilFirstMatch(a, s, null);
-        return !addSubtermsRecursivelyUntilFirstMatch(b, null, s); //we stop early this way (efficiency)
+        addUnmatchedSubterms(a, s, null);
+        return !addUnmatchedSubterms(b, null, s); //we stop early this way (efficiency)
     }
 
-    static boolean addSubtermsRecursivelyUntilFirstMatch(Term x, Set<Term> AX, Set<Term> BX) {
+    static boolean addUnmatchedSubterms(Term x, Set<Term> AX, Set<Term> BX) {
         if (BX != null && BX.contains(x)) { //by this we can stop early
             return false;
         }
@@ -50,8 +50,8 @@ final public class NoCommonSubtermsConstraint implements MatchConstraint {
                     int l = c.size();
                     for (int i = 0; i < l; i++) {
                         Term d = c.term(i);
-                        boolean ret = addSubtermsRecursivelyUntilFirstMatch(d, AX, BX);
-                        if (!ret) { //by this we can stop early
+                        if (!addUnmatchedSubterms(d, AX, BX)) {
+                            //by this we can stop early
                             return false;
                         }
                     }

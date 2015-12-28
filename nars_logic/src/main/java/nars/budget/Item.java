@@ -147,10 +147,5 @@ public abstract class Item<K> extends UnitBudget  {
         
     }
 
-    @Override
-    public final Budget getBudget() {
-        return this;
-    }
-    
-    
+
 }

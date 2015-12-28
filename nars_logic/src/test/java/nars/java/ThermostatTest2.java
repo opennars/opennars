@@ -6,7 +6,6 @@ import nars.nar.Default;
 import nars.task.Task;
 import nars.task.Tasked;
 import nars.util.data.random.XORShiftRandom;
-import nars.util.meter.TaskRemovalReasons;
 
 import java.util.Random;
 
@@ -151,7 +150,7 @@ public class ThermostatTest2 {
         }
 
 
-        TaskRemovalReasons taskStats = new TaskRemovalReasons(n);
+        //TaskRemovalReasons taskStats = new TaskRemovalReasons(n);
 
         /*n.input("Thermostat_valid(t, #1)! :|: %0.50;0.99%");
         n.input("Thermostat_up(t, #1)! :|: %0.50;0.99%");
@@ -250,6 +249,6 @@ public class ThermostatTest2 {
 
         System.out.println(n.index().size() + " total concepts cached");
 
-        System.out.println(taskStats);
+        //System.out.println(taskStats);
     }
 }

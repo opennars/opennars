@@ -9,7 +9,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.util.event.On;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -30,7 +29,6 @@ public class Abbreviation implements Consumer<Task> {
     public final AtomicInteger abbreviationComplexityMin = new AtomicInteger(24);
     public final AtomicDouble abbreviationQualityMin = new AtomicDouble(0.7f);
     private final NAR nar;
-    private final On reg;
 
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
@@ -38,14 +36,14 @@ public class Abbreviation implements Consumer<Task> {
 
     public Abbreviation(NAR n) {
 
-        reg = n.memory.eventInput.on(this);
-
+        n.memory.eventInput.on(this);
         nar = n;
+
     }
 
     private static final AtomicInteger currentTermSerial = new AtomicInteger(1);
 
-    public Term newSerialTerm() {
+    public static Term newSerialTerm() {
         return Atom.the(Symbols.TERM_PREFIX + Integer.toHexString(currentTermSerial.incrementAndGet()));
     }
 

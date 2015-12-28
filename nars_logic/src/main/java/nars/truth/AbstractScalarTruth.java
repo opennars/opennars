@@ -14,9 +14,6 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
     private float frequency;
 
 
-    public AbstractScalarTruth() {
-    }
-
     @Override
     public void setConfidence(float b) {
         float e = DefaultTruth.DEFAULT_TRUTH_EPSILON; //getEpsilon();

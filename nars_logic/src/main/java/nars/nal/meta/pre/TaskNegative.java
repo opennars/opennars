@@ -10,9 +10,6 @@ import nars.task.Task;
  */
 public final class TaskNegative extends PreCondition {
 
-    public TaskNegative() {
-    }
-
     @Override
     public boolean test(RuleMatch m) {
         Task task = m.premise.getTask();

@@ -252,7 +252,7 @@ public class Default extends AbstractNAR {
 
             handlers.add(
                     nar.memory.eventCycleEnd.on((m) -> {
-                        fireConcepts(conceptsFiredPerCycle.intValue(), c->process(c));
+                        fireConcepts(conceptsFiredPerCycle.intValue(), this::process);
 
                         /*System.out.println(nar.time());
                         System.out.println(activated);*/
@@ -589,20 +589,4 @@ public class Default extends AbstractNAR {
     }
 
 
-
-    @Override
-    protected void initNAL9() {
-        super.initNAL9();
-
-//        new EpoxParser(true).nodes.forEach((k,v)->{
-//            on(Atom.the(k), (Term[] t) -> {
-//                Node n = v.clone(); //TODO dont use Epox's prototype pattern if possible
-//                for (int i = 0; i < t.length; i++) {
-//                    Term p = t[i];
-//                    n.setChild(i, new Literal(Float.parseFloat(p.toString())));
-//                }
-//                return Atom.the(n.evaluate());
-//            });
-//        });
-    }
 }

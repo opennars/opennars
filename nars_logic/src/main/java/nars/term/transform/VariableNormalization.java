@@ -107,8 +107,9 @@ public class VariableNormalization extends VariableTransform {
 
         return rename.computeIfAbsent(resolve(v), (_vname) -> {
             Variable rvv = newVariable(v, rename.size()+1);
-            if (!renamed) //test for any rename to know if we need to rehash
-                renamed |= rvv.equals(v);//!Byted.equals(rvv, v);
+            if (!renamed) {//test for any rename to know if we need to rehash
+                renamed = rvv.equals(v);//!Byted.equals(rvv, v);
+            }
             return rvv;
         });
 

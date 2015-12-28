@@ -17,11 +17,7 @@ import java.util.Set;
  */
 public abstract class EllipsisMatch extends ShadowAtom implements Iterable<Term> {
 
-    public EllipsisMatch() {
-        super();
-    }
-
-//    public static ArrayEllipsisMatch matchedSubterms(Compound Y, IntObjectPredicate<Term> filter) {
+    //    public static ArrayEllipsisMatch matchedSubterms(Compound Y, IntObjectPredicate<Term> filter) {
 //        Function<IntObjectPredicate,Term[]> arrayGen =
 //                !(Y instanceof Sequence) ?
 //                        Y::terms :
@@ -35,6 +31,14 @@ public abstract class EllipsisMatch extends ShadowAtom implements Iterable<Term>
     public boolean equals(Object obj) {
         if (this == obj) return true;
         return Iterables.elementsEqual(this, ((Iterable)obj));
+    }
+
+    @Override
+    public int hashCode() {
+        throw new RuntimeException("unimpl");
+    }
+    @Override public int compareTo(Object that) {
+        throw new RuntimeException("unimpl");
     }
 
     /**

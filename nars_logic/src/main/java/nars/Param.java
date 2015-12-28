@@ -38,9 +38,7 @@ public abstract class Param extends Container implements Level {
     public MutableFloat perfection = new MutableFloat(0.1);
 
 
-    public Param() {    }
-
-//    /** Silent threshold for task reporting, in [0, 100].
+    //    /** Silent threshold for task reporting, in [0, 100].
 //     *  Noise level = 100 - silence level; noise 0 = always silent, noise 100 = never silent
 //     */
 //    public final AtomicInteger outputVolume = new AtomicInteger();

@@ -99,6 +99,11 @@ public final class ShuffledSubterms extends ShuffledPermutations implements Term
     }
 
     @Override
+    public int hashCode() {
+        return compound.hashCode();
+    }
+
+    @Override
     public int compareTo(Object o) {
         return compound.compareTo(o);
     }

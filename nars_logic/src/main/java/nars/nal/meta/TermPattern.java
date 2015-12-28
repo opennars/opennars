@@ -81,7 +81,7 @@ public class TermPattern {
         this.code = code.toArray(new PreCondition[code.size()]);
     }
 
-    private void compileTaskBeliefPair(TaskBeliefPair pattern, List<PreCondition> pre, List<PreCondition> code) {
+    private static void compileTaskBeliefPair(TaskBeliefPair pattern, List<PreCondition> pre, List<PreCondition> code) {
         Term x0 = pattern.term(0);
         Term x1 = pattern.term(1);
         if (x0.op()!=Op.VAR_PATTERN) {

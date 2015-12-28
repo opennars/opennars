@@ -83,7 +83,7 @@ public class Narsese extends BaseParser<Object>  {
         }
 
         MutableTask ttt =
-                new MutableTask((Compound)content)
+                new MutableTask(content)
                                 .punctuation(p)
                                 .truth(t)
                                 .time(
@@ -1138,7 +1138,7 @@ public class Narsese extends BaseParser<Object>  {
 
 
         //if (!r.isSuccess()) {
-            return new NarseseException("input: " + input + " (" + r.toString() + ")  " +
+            return new NarseseException("input: " + input + " (" + r + ")  " +
                     (e!=null ? e.toString() + ' ' + Arrays.toString(e.getStackTrace()) : ""));
 
         //}

@@ -36,9 +36,7 @@ public class CommutivePermutations extends Termutator {
         //if (perm.hasNext())
         perm.next();
 
-        boolean b = f.matchLinear(perm, y, 0, perm.size());
-
-        return b;
+        return f.matchLinear(perm, y, 0, perm.size());
     }
 
     @Override

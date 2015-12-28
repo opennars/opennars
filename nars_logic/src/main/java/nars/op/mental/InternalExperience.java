@@ -55,11 +55,11 @@ public class InternalExperience {
      * */
     public AtomicDouble conceptCreationExpectation = new AtomicDouble(0.66);
 
-    public boolean isAllowNewStrategy() {
+    public static boolean isAllowNewStrategy() {
         return !OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
     }
 
-    public void setAllowNewStrategy(boolean val) {
+    public static void setAllowNewStrategy(boolean val) {
         OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY = !val;
     }
 
@@ -70,19 +70,19 @@ public class InternalExperience {
 //        enableWantBelieve =val;
 //    }
 
-    public double getMinCreationBudgetSummary() {
+    public static double getMinCreationBudgetSummary() {
         return MINIMUM_BUDGET_SUMMARY_TO_CREATE;
     }
 
-    public void setMinCreationBudgetSummary(double val) {
+    public static void setMinCreationBudgetSummary(double val) {
         MINIMUM_BUDGET_SUMMARY_TO_CREATE = (float) val;
     }
 
-    public double getMinCreationBudgetSummaryWonderEvaluate() {
+    public static double getMinCreationBudgetSummaryWonderEvaluate() {
         return MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE;
     }
 
-    public void setMinCreationBudgetSummaryWonderEvaluate(double val) {
+    public static void setMinCreationBudgetSummaryWonderEvaluate(double val) {
         MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE = (float) val;
     }
 
@@ -259,13 +259,12 @@ public class InternalExperience {
             Operator.the("want")
     };
 
-    private void internalizeImplication(Task task, Premise nal, Compound beliefImpl) {
+    private static void internalizeImplication(Task task, Premise nal, Compound beliefImpl) {
         Term taskTerm = task.term();
-        Compound imp = beliefImpl;
-        if (imp.getTemporalOrder() == Tense.ORDER_FORWARD) {
+        if (beliefImpl.getTemporalOrder() == Tense.ORDER_FORWARD) {
             //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
             boolean valid = true;
-            Term impsub = imp.term(0);
+            Term impsub = beliefImpl.term(0);
             if (impsub.op() == Op.CONJUNCTION) {
                 Compound conj = (Compound) impsub;
                 if (!conj.term(0).equals(taskTerm)) {
@@ -284,13 +283,13 @@ public class InternalExperience {
                 long interval = (impsub instanceof Interval ? ((Interval)impsub).duration() : 0);
 
                 beliefReasonDerive(task,
-                        $.oper(anticipate, $.p(imp.term(1))),
+                        $.oper(anticipate, $.p(beliefImpl.term(1))),
                         nal, interval);
             }
         }
     }
 
-    private void nonInnate(Task belief, Task task, Premise nal, Operator op) {
+    private static void nonInnate(Task belief, Task task, Premise nal, Operator op) {
         //the operators which dont have a innate belief
         //also get a chance to reveal its effects to the system this way
 
@@ -320,12 +319,12 @@ public class InternalExperience {
         None, Minimal, Full
     }*/
 
-
-    //TODO
-    public static void experienceFromBelief(Memory memory, Task task, Task belief) {
-        //Task T=new Task(belief.clone(),new Budget(task),null);
-        ///InternalExperienceFromTask(memory,T,false);
-    }
+//
+//    //TODO
+//    public static void experienceFromBelief(Memory memory, Task task, Task belief) {
+//        //Task T=new Task(belief.clone(),new Budget(task),null);
+//        ///InternalExperienceFromTask(memory,T,false);
+//    }
 
 //    public static void InternalExperienceFromTask(Memory memory, Task task, boolean full) {
 //        if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {

@@ -201,8 +201,7 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
      * @param x a compound which contains one or more ellipsis terms */
     public static int countNumNonEllipsis(Compound x) {
         //TODO depending on the expression, determine the sufficient # of terms Y must contain
-        int numNonVarArgs = Ellipsis.numNonEllipsisSubterms(x);
-        return numNonVarArgs;
+        return Ellipsis.numNonEllipsisSubterms(x);
     }
 //
 //    @Deprecated public boolean valid(int numNonVarArgs, int ysize) {

@@ -3,7 +3,6 @@ package nars.nar.experimental;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.nal.Deriver;
-import nars.nal.TrieDeriver;
 import nars.term.Termed;
 
 import java.util.Random;
@@ -21,7 +20,7 @@ public abstract class DeriveletContext implements Consumer<NAR> {
     /** current concept, next concept */
     public final Supplier<Concept> conceptSupply;
     public final NAR nar;
-    public static final Deriver deriver = new TrieDeriver(Deriver.getDefaultRules(), Deriver.terms);
+    public static final Deriver deriver = Deriver.getDefaultDeriver();
 
     //private float forgetCycles;
 

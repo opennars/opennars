@@ -141,91 +141,87 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
             return super.getTarget();
         }
 
-        @Override
-        public Object clone() {
-            return super.clone();
-        }
 
     }
 
-    public static class TermBelief extends NAREdge {
-
-        @Override
-        public String toString() {
-            return "belief";
-        }
-
-        @Override
-        public Object clone() {
-            return super.clone();
-        }
-    }
-
-
-    public static class TermQuestion extends NAREdge {
-
-        @Override
-        public String toString() {
-            return "question";
-        }
-
-        @Override
-        public Object clone() {
-            return super.clone();
-        }
-    }
-
-    public static class TermDerivation extends NAREdge {
-
-        @Override
-        public String toString() {
-            return "derives";
-        }
-
-        @Override
-        public Object clone() {
-            return super.clone();
-        }
-    }
-
-    public static class TermContent extends NAREdge {
-
-        @Override
-        public String toString() {
-            return "has";
-        }
-
-        @Override
-        public Object clone() {
-            return super.clone();
-        }
-    }
-
-    public static class TermType extends NAREdge {
-
-        @Override
-        public String toString() {
-            return "type";
-        }
-
-        @Override
-        public Object clone() {
-            return super.clone();
-        }
-    }
-
-    public static class SentenceContent extends NAREdge {
-
-        @Override
-        public String toString() {
-            return "sentence";
-        }
-
-        @Override
-        public Object clone() {
-            return super.clone();
-        }
-    }
+//    public static class TermBelief extends NAREdge {
+//
+//        @Override
+//        public String toString() {
+//            return "belief";
+//        }
+//
+//        @Override
+//        public Object clone() {
+//            return super.clone();
+//        }
+//    }
+//
+//
+//    public static class TermQuestion extends NAREdge {
+//
+//        @Override
+//        public String toString() {
+//            return "question";
+//        }
+//
+//        @Override
+//        public Object clone() {
+//            return super.clone();
+//        }
+//    }
+//
+//    public static class TermDerivation extends NAREdge {
+//
+//        @Override
+//        public String toString() {
+//            return "derives";
+//        }
+//
+//        @Override
+//        public Object clone() {
+//            return super.clone();
+//        }
+//    }
+//
+//    public static class TermContent extends NAREdge {
+//
+//        @Override
+//        public String toString() {
+//            return "has";
+//        }
+//
+//        @Override
+//        public Object clone() {
+//            return super.clone();
+//        }
+//    }
+//
+//    public static class TermType extends NAREdge {
+//
+//        @Override
+//        public String toString() {
+//            return "type";
+//        }
+//
+//        @Override
+//        public Object clone() {
+//            return super.clone();
+//        }
+//    }
+//
+//    public static class SentenceContent extends NAREdge {
+//
+//        @Override
+//        public String toString() {
+//            return "sentence";
+//        }
+//
+//        @Override
+//        public Object clone() {
+//            return super.clone();
+//        }
+//    }
 
     public NARGraph() {
         super(new MyEdgeFactory());

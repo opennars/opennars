@@ -24,7 +24,7 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
         super(buffer);
         this.context = context;
         this.value = value;
-        id = context.track(this);
+        id = context.track();
     }
 
     /** called when this versioned is removed/deleted from a context */
@@ -153,22 +153,26 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
 
     public X getIfAbsent(X valueIfMissing) {
         if (isEmpty()) return valueIfMissing;
-        return get();
+        X x = get();
+        if (x == null) return valueIfMissing;
+        return x;
     }
 
-    public long getIfAbsent(long valueIfMissing) {
+//    public long getIfAbsent(long valueIfMissing) {
+//        if (isEmpty()) return valueIfMissing;
+//        return ((Long) get());
+//    }
+
+    @Deprecated public int getIfAbsent(int valueIfMissing) {
         if (isEmpty()) return valueIfMissing;
-        return ((Long) get());
+        Integer i  = (Integer) get();
+        if (i == null) return valueIfMissing;
+        return i;
     }
 
-    public int getIfAbsent(int valueIfMissing) {
-        if (isEmpty()) return valueIfMissing;
-        return ((Integer) get()).intValue();
-    }
-
-    public char getIfAbsent(char valueIfMissing) {
-        if (isEmpty()) return valueIfMissing;
-        return ((Character) get());
-    }
+//    public char getIfAbsent(char valueIfMissing) {
+//        if (isEmpty()) return valueIfMissing;
+//        return ((Character) get());
+//    }
 
 }

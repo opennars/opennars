@@ -138,7 +138,7 @@ public class EmotionMeter extends FrameReaction implements Serializable {
     }
 
     /** @return -1 if no significant change, 0 if decreased, 1 if increased */
-    private float changeSignificance(float prev, float current, float proportionChangeThreshold) {
+    private static float changeSignificance(float prev, float current, float proportionChangeThreshold) {
         float range = Math.max(prev, current);
         if (range == 0) return -1;
         if (prev - current > range * proportionChangeThreshold)

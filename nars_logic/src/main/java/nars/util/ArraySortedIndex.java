@@ -244,7 +244,7 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> {
         return -1;
     }
 
-    private final boolean attemptEqual(Object o, /*final Object oName, */ int i) {
+    private boolean attemptEqual(Object o, /*final Object oName, */ int i) {
         List<E> l = list;
         return o == l.get(i);
     }

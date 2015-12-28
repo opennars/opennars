@@ -2,6 +2,7 @@ package nars.term;
 
 import com.gs.collections.api.block.function.Function;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
+import nars.nal.Compounds;
 import nars.term.compound.Compound;
 import nars.term.visit.SubtermVisitor;
 import nars.util.data.Util;
@@ -22,7 +23,7 @@ import static java.util.Arrays.copyOf;
  * TODO make this class immutable and term field private
  * provide a MutableTermVector that holds any write/change methods
  */
-public class TermVector<T extends Term> implements TermContainer<T>, Comparable, Serializable {
+public class TermVector<T extends Term> implements TermContainer<T>, Serializable {
 
     /**
      * list of (direct) term
@@ -135,6 +136,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     /**
      * (shallow) Clone the component list
      */
+    @Override
     public final T[] termsCopy() {
         return copyOf(term, size());
     }
@@ -155,18 +157,22 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     }
 
 
+    @Override
     public final int varDep() {
         return hasVarDeps;
     }
 
+    @Override
     public final int varIndep() {
         return hasVarIndeps;
     }
 
+    @Override
     public final int varQuery() {
         return hasVarQueries;
     }
 
+    @Override
     public final int vars() {
         return varTotal;
     }
@@ -199,6 +205,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     }
 
 
+    @Override
     public final void forEach(Consumer<? super T> action, int start, int stop) {
         T[] tt = term;
         for (int i = start; i < stop; i++) {
@@ -258,7 +265,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
             subt |= t.structure();
         }
 
-        Compound.ensureFeasibleVolume(vol, this);
+        Compounds.ensureFeasibleVolume(vol, this);
 
         hasVarDeps = (byte) deps;
         hasVarIndeps = (byte) indeps;
@@ -306,7 +313,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
                 equalTerms(c);
     }
 
-    private final boolean equalTerms(TermContainer c) {
+    private boolean equalTerms(TermContainer c) {
         int s = size();
         if (s!=c.size())
             return false;

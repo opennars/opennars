@@ -232,7 +232,7 @@ public class LocalRules {
         //else, new solution is btter
         memory.emotion.happy(newQ - oldQ, question);
 
-        question.setBestSolution(sol, memory);
+        question.setBestSolution(sol);
 
         memory.logic.SOLUTION_BEST.set(newQ);
 

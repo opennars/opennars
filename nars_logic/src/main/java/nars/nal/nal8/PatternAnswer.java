@@ -38,9 +38,9 @@ public abstract class PatternAnswer implements Function<Task, List<Task>> {
     }
 
     private List<Task> process(Task question, List<Task> answers) {
-//        answers.forEach(a -> {
+        answers.forEach(a -> {
 //            a.setParentTask(question);
-//        });
+        });
         return answers;
     }
 

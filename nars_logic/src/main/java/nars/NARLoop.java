@@ -2,6 +2,7 @@ package nars;
 
 import nars.util.data.Util;
 import net.openhft.affinity.AffinityLock;
+import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -11,7 +12,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class NARLoop implements Runnable {
 
-    static final org.slf4j.Logger logger = getLogger(NARLoop.class);
+    static final Logger logger = getLogger(NARLoop.class);
 
     public final NAR nar;
 

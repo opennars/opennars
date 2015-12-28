@@ -64,8 +64,8 @@ public final class Solve extends PreCondition {
 
         String sn = getClass().getSimpleName();
         String i = puncOverride == 0 ?
-                sn + ":(" + beliefLabel + "," + desireLabel  :
-                sn + ":(" + beliefLabel + "," + desireLabel + ",punc:\"" + puncOverride + '\"';
+                sn + ":(" + beliefLabel + ',' + desireLabel  :
+                sn + ":(" + beliefLabel + ',' + desireLabel + ",punc:\"" + puncOverride + '\"';
 
         i += ')';
 
@@ -185,7 +185,7 @@ public final class Solve extends PreCondition {
             i += term.toString();
 
             if (postMatch.length > 0) {
-                i += "," + Arrays.toString(postMatch);
+                i += ',' + Arrays.toString(postMatch);
             }
 
             i += ")";
@@ -231,14 +231,13 @@ public final class Solve extends PreCondition {
 //        }
 
         public Term solve(RuleMatch match) {
-            boolean partial = true; //secondLayer != null;
 
-            Term derivedTerm = match.apply(term, !partial);
+            Term derivedTerm = match.apply(term, false);
 
             if(null==derivedTerm)
                 return null;
 
-            if (!partial && Variable.hasPatternVariable(derivedTerm))
+            if (!true && Variable.hasPatternVariable(derivedTerm))
                 return null;
 
 

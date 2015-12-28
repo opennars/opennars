@@ -52,7 +52,7 @@ public class Parallel extends GenericCompound implements Intermval {
     }
 
     protected Parallel(Term[] arg) {
-        super(Op.PARALLEL, Terms.toSortedSetArray(arg), -1);
+        super(Op.PARALLEL, -1, Terms.toSortedSetArray(arg));
     }
 
 

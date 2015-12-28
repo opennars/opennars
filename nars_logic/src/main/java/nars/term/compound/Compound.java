@@ -22,13 +22,13 @@ package nars.term.compound;
 
 import nars.Global;
 import nars.Op;
+import nars.nal.Compounds;
 import nars.nal.PremiseAware;
 import nars.nal.RuleMatch;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
 import nars.term.Term;
 import nars.term.TermContainer;
-import nars.term.TermVector;
 import nars.term.Terms;
 import nars.term.match.Ellipsis;
 import nars.term.transform.CompoundTransform;
@@ -38,15 +38,13 @@ import nars.term.transform.VariableNormalization;
 import nars.term.visit.SubtermVisitor;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
-import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import static nars.Symbols.*;
-import static nars.util.data.Util.hashCombine;
+import static nars.Symbols.ARGUMENT_SEPARATOR;
 
 /**
  * a compound term
@@ -60,46 +58,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
      * Must be Term return type because the type of Term may change with different arguments
      */
     Term clone(Term[] replaced);
-
-
-
-    static void ensureFeasibleVolume(int vol, TermContainer c) {
-        if (vol > Global.COMPOUND_VOLUME_MAX) {
-            //$.logger.error("Term volume overflow");
-            /*c.forEach(x -> {
-                Terms.printRecursive(x, (String line) ->
-                    $.logger.error(line)
-                );
-            });*/
-            throw new RuntimeException("Term volume overflow: " + c);
-        }
-    }
-
-
-    static void appendSeparator(Appendable p, boolean pretty) throws IOException {
-        p.append(ARGUMENT_SEPARATOR);
-        if (pretty) p.append(' ');
-    }
-
-    static void writeCompound1(Op op, Term singleTerm, Appendable writer, boolean pretty) throws IOException {
-        writer.append(COMPOUND_TERM_OPENER);
-        writer.append(op.str);
-        writer.append(ARGUMENT_SEPARATOR);
-        singleTerm.append(writer, pretty);
-        writer.append(COMPOUND_TERM_CLOSER);
-    }
-
-    static byte[] newCompound1Key(Op op, Term singleTerm) {
-
-        byte opByte = (byte) op.ordinal();
-
-        byte[] termBytes = singleTerm.bytes();
-
-        return ByteBuf.create(1 + termBytes.length)
-                .add(opByte)
-                .add(termBytes)
-                .toBytes();
-    }
 
 
     /** gets the set of unique recursively contained terms of a specific type
@@ -168,12 +126,9 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         //Compound args = (Compound) Operator.opArgs((Compound) result).apply(f);
         Compound args = Operator.opArgs((Compound) result);
 
-        if ((tf instanceof PremiseAware) && (f instanceof RuleMatch)) {
-            return ((PremiseAware)tf).function(args, (RuleMatch)f);
-        } else {
-            return tf.function(args);
-        }
-
+        return ((tf instanceof PremiseAware) && (f instanceof RuleMatch)) ?
+                ((PremiseAware) tf).function(args, (RuleMatch) f) :
+                tf.function(args);
     }
 
     default Term apply(List<Term> sub) {
@@ -227,26 +182,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     @Override
     default void append(Appendable p, boolean pretty) throws IOException {
-        appendCompound(this, p, pretty);
-    }
-
-    static void appendCompound(Compound c, Appendable p, boolean pretty) throws IOException {
-
-        boolean opener = c.appendTermOpener();
-        if (opener)
-            p.append(COMPOUND_TERM_OPENER);
-
-
-        boolean appendedOperator = c.appendOperator(p);
-
-        if (c.size() == 1)
-            p.append(ARGUMENT_SEPARATOR);
-
-        c.appendArgs(p, pretty, appendedOperator);
-
-
-        appendCloser(p);
-
+        Compounds.appendCompound(this, p, pretty);
     }
 
     default void appendArgs(Appendable p, boolean pretty, boolean appendedOperator) throws IOException {
@@ -265,10 +201,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     default boolean appendOperator(Appendable p) throws IOException {
         p.append(op().str);
         return true;
-    }
-
-    static void appendCloser(Appendable p) throws IOException {
-        p.append(COMPOUND_TERM_CLOSER);
     }
 
     default boolean appendTermOpener() {
@@ -502,14 +434,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
 
-    /** universal compound hash function */
-    static <T extends Term> int hash(TermVector subterms, Op op, int hashSalt) {
-        int h = hashCombine( subterms.hashCode(), op.ordinal() );
-        if (hashSalt!=0)
-            h = hashCombine(h, hashSalt);
-        return h;
-    }
-
     /**
      * unification matching entry point (default implementation)
      *
@@ -527,11 +451,9 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         //# vars of the expected pattern are zero,
         //and since it doesnt equal, there is no match to test
 
-        if (!Ellipsis.hasEllipsis(this)) { //PRECOMPUTABLE
-            return matchCompoundEx(y) && matchSubterms(y, subst);
-        } else {
-            return subst.matchCompoundWithEllipsis(this, y);
-        }
+        return Ellipsis.hasEllipsis(this) ?
+                subst.matchCompoundWithEllipsis(this, y) :
+                (matchCompoundEx(y) && matchSubterms(y, subst));
     }
 
     /**

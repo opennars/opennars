@@ -101,7 +101,7 @@ public class PremiseRule extends GenericCompound implements Level {
     }
 
     public PremiseRule(Compound premises, Compound result) {
-        super(Op.PRODUCT, premises, result );
+        super(Op.PRODUCT, premises, result  );
         str = super.toString();
     }
 

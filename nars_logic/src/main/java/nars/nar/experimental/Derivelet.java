@@ -131,11 +131,12 @@ public class Derivelet {
         } else {
             final BagBudget tl;
             float rem = 1.0f - stayProb;
-            if (x > stayProb + rem / 2) {
-                tl = concept.getTermLinks().peekNext();
-            } else {
-                tl = concept.getTaskLinks().peekNext();
-            }
+
+            tl = ((x > (stayProb + (rem / 2))) ?
+                    concept.getTermLinks() :
+                    concept.getTaskLinks())
+                        .peekNext();
+
             if (tl != null) {
                 Concept c = context.concept(((Termed) tl.get()));
                 if (c != null) return c;
@@ -181,11 +182,8 @@ public class Derivelet {
             n.process(derived);
     };
 
-    final Consumer<ConceptProcess> perPremise = p -> {
-
-        context.deriver.run(p, matcher, perDerivation);
-
-    };
+    final Consumer<ConceptProcess> perPremise = p ->
+            DeriveletContext.deriver.run(p, matcher, perDerivation);
 
 
     public final void start(final Concept concept, int ttl, final DeriveletContext context) {

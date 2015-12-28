@@ -77,16 +77,11 @@ public class DefaultAlann extends AbstractAlann  {
             final long now = memory.time();
 
             final List<Derivelet> derivers = this.derivers;
-
-            int numDerivers = derivers.size();
-            for (int i = 0; i < numDerivers; i++) {
-
-                final Derivelet d = derivers.get(i);
-
+            derivers.forEach(d -> {
                 if (!d.cycle(now)) {
                     restart(d); //recycle this derivelet
                 }
-            }
+            });
         }
 
 

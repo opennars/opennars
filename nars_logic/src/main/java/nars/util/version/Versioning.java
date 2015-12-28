@@ -67,23 +67,15 @@ public class Versioning extends FasterList<Versioned> {
     }
 
     /** assigns a new serial ID to a versioned item for its use as a hashcode */
-    public final int track(Versioned v) {
+    public final int track() {
         return nextID++;
     }
 
     static final int initiALPOOL_CAPACITY = 16;
     static final int stackLimit = 12;
 
-    final DequePool<FasterList> valueStackPool = new DequePool<FasterList>(initiALPOOL_CAPACITY) {
-        @Override public FasterList create() {
-            return new FasterList(8);
-        }
-    };
-    final DequePool<int[]> intStackPool = new DequePool<int[]>(initiALPOOL_CAPACITY) {
-        @Override public int[] create() {
-            return new int[stackLimit];
-        }
-    };
+    final DequePool<FasterList> valueStackPool = new FasterListDequePool();
+    final DequePool<int[]> intStackPool = new intDequePool();
 
     public final <X> FasterList<X> newValueStack() {
         //from heap:
@@ -109,7 +101,25 @@ public class Versioning extends FasterList<Versioned> {
         intStackPool.put(v.array());
     }
 
+    private final static class FasterListDequePool extends DequePool<FasterList> {
+        public FasterListDequePool() {
+            super(Versioning.initiALPOOL_CAPACITY);
+        }
 
+        @Override public FasterList create() {
+            return new FasterList(8);
+        }
+    }
+
+    private final static class intDequePool extends DequePool<int[]> {
+        public intDequePool() {
+            super(Versioning.initiALPOOL_CAPACITY);
+        }
+
+        @Override public int[] create() {
+            return new int[stackLimit];
+        }
+    }
 
 
 //    public boolean toStackString() {

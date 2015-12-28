@@ -83,13 +83,13 @@ public interface Stamp  {
         }
 
         //3. de-duplicate
-        lastValue = -1;
+        long lastValue2 = -1;
         long[] deduplicated = new long[uniques];
         uniques = 0;
         for (long v : sorted) {
-            if (lastValue != v)
+            if (lastValue2 != v)
                 deduplicated[uniques++] = v;
-            lastValue = v;
+            lastValue2 = v;
         }
         return deduplicated;
     }

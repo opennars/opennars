@@ -14,7 +14,7 @@ public class ExecutionCondition implements NARCondition {
     private final long start, end;
     private final float minExpect, maxExpect;
     private boolean success = false;
-    private final long successTime = Tense.TIMELESS;
+    private long successTime = Tense.TIMELESS;
 
     public ExecutionCondition(NAR n, long start, long end, Atom opTerm, float minExpect, float maxExpect) {
 
@@ -32,6 +32,7 @@ public class ExecutionCondition implements NARCondition {
                     float expect = t.task.getExpectation();
                     if ((expect >= minExpect) && (expect <= maxExpect)) {
                         success = true;
+                        successTime = now;
                     }
                 }
             }

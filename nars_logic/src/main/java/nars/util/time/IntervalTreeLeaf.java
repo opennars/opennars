@@ -148,9 +148,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 
 	@Override
 	public V setValue(V value) {
-		V ret = value;
-		this.value = value;
-		return ret;
+		return this.value = value;
 	}
 
 	@Override

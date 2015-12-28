@@ -143,7 +143,7 @@ public enum Op {
     public final byte[] bytes;
 
     private final boolean commutative;
-    private Order temporalOrder;
+    private final Order temporalOrder;
 
 
 //    Op(char c, int minLevel) {
@@ -192,6 +192,22 @@ public enum Op {
 
         this.minSize= size.getOne();
         this.maxSize = size.getTwo();
+
+        Order o = Order.None;
+        switch (this) {
+            case IMPLICATION_AFTER:
+            case EQUIV_AFTER:
+            case SEQUENCE:
+                    o = Order.Forward; break;
+            case IMPLICATION_WHEN:
+            case EQUIV_WHEN:
+            case PARALLEL:
+                    o = Order.Concurrent; break;
+            case IMPLICATION_BEFORE:
+                    o = Order.Backward; break;
+
+        }
+        this.temporalOrder = o;
 
     }
 
@@ -281,9 +297,6 @@ public enum Op {
         return isA(ConjunctivesBits);
     }
 
-    public boolean isConjunctive(Order order) {
-        return (getTemporalOrder() == order && isConjunctive());
-    }
 
     public boolean isStatement() {
         return isA(StatementBits);

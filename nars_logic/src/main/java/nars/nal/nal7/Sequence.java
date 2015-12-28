@@ -4,9 +4,9 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.$;
 import nars.Global;
 import nars.Op;
+import nars.nal.Compounds;
 import nars.term.Term;
 import nars.term.Terms;
-import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.util.utf8.ByteBuf;
 
@@ -20,7 +20,7 @@ import static nars.nal.nal7.Tense.appendInterval;
 /**
  * Sequential Conjunction (&/)
  */
-public class Sequence<T extends Term> extends GenericCompound<T> implements Intermval {
+public final class Sequence<T extends Term> extends GenericCompound<T> implements Intermval {
 
     protected final int[] intervals;
 
@@ -39,7 +39,7 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
      *
      */
     private Sequence(T[] subterms, int[] intervals) {
-        super(Op.SEQUENCE, subterms, -1);
+        super(Op.SEQUENCE, -1, subterms);
 
         if (intervals == null) {
             //TODO leave as null, avoiding allocating this array if all zeros
@@ -329,7 +329,7 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
 
         appendOperator(p);
 
-        Compound.appendSeparator(p, pretty);
+        Compounds.appendSeparator(p, pretty);
 
         int nterms = size();
 
@@ -348,7 +348,7 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
             if (c != 0) {
 
                 if (i == nterms)
-                    Compound.appendSeparator(p, pretty);
+                    Compounds.appendSeparator(p, pretty);
 
                 //insert Interval virtual term
                 appendInterval(p, c);
@@ -356,7 +356,7 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
                 if (i == nterms)
                     break;
                 else
-                    Compound.appendSeparator(p, pretty);
+                    Compounds.appendSeparator(p, pretty);
 
             }
 
@@ -365,13 +365,13 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
             }
 
             if (i < nterms-1) {
-                Compound.appendSeparator(p, pretty);
+                Compounds.appendSeparator(p, pretty);
             }
 
         }
 
 
-        Compound.appendCloser(p);
+        Compounds.appendCloser(p);
 
 
     }

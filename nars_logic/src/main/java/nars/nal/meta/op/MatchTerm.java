@@ -39,7 +39,7 @@ public class MatchTerm extends PatternOp {
 
 
             this.constraints = Maps.immutable.ofAll(con);
-            this.id = x.toStringCompact() + "^" + con;
+            this.id = x.toStringCompact() + '^' + con;
 
 //                this.id = new StringBuilder(x.toString() + "∧neq(").append(
 //                    Joiner.on(",").join(notEquals.stream().map(v -> {

@@ -20,13 +20,12 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
         this.id = id;
     }
 
-    /*
-        this.id = id;
-        this.hash = Atom.hash(
-            id, op().ordinal()
-        );
-     */
-    public abstract int hashCode();
+
+    @Override
+    public int hashCode() {
+        /** for Op.ATOM, we use String hashCode() as-is, avoiding need to calculate or store a hash mutated by the Op */
+        return id.hashCode();
+    }
 
     @Override
     public abstract Op op();
@@ -68,7 +67,7 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
      * @param that The Term to be compared with the current Term
      */
     @Override
-    public final int compareTo(Object that) {
+    public int compareTo(Object that) {
         if (that==this) return 0;
 
         Term t = (Term)that;

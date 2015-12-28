@@ -5,6 +5,7 @@
 package nars.process;
 
 import nars.NAR;
+import nars.Premise;
 import nars.bag.BagBudget;
 import nars.concept.Concept;
 import nars.nal.nal7.Tense;
@@ -21,12 +22,12 @@ import java.util.function.Consumer;
  *     TermLinks
  *
  * */
-public abstract class ConceptProcess extends AbstractPremise {
-
+public class ConceptProcess extends AbstractPremise {
 
 
     protected final BagBudget<Task> taskLink;
     protected final Concept concept;
+    protected final BagBudget<Termed> termLink;
 
     private Task currentBelief = null;
     private transient boolean cyclic;
@@ -45,20 +46,66 @@ public abstract class ConceptProcess extends AbstractPremise {
     }
 
 
-    public ConceptProcess(NAR nar, Concept concept, BagBudget<Task> taskLink) {
+    public ConceptProcess(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Task belief) {
         super(nar);
 
         this.taskLink = taskLink;
         this.concept = concept;
 
+        this.termLink = termLink;
+
+        //belief can be null:
+        if (belief!=null)
+            updateBelief(belief);
     }
 
-    @Override
-    public String toString() {
-        return new StringBuilder().append(getClass().getSimpleName())
-                .append('[').append(concept.toString()).append(':').append(taskLink).append(']')
-                .toString();
+
+    public static int fireAll(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Consumer<ConceptProcess> cp) {
+
+
+        int[] beliefAttempts = new int[1];
+
+        Task belief;
+
+        Concept beliefConcept = nar.concept(termLink.get());
+        if (beliefConcept != null) {
+            Task task = taskLink.get();
+
+            belief = beliefConcept.getBeliefs().top(task, nar.time());
+
+            if (belief != null) {
+                Premise.match(task, belief, nar, beliefResolved -> {
+                    beliefAttempts[0]++;
+                    cp.accept(new ConceptProcess(
+                            nar, concept,
+                            taskLink, termLink,
+                            beliefResolved));
+                });
+            }
+
+        } else {
+            belief = null;
+        }
+
+        if (beliefAttempts[0] == 0) {
+            //belief = null
+            cp.accept(new ConceptProcess(nar, concept,
+                    taskLink, termLink, belief));
+            return 1;
+        }
+
+        return beliefAttempts[0];
+
     }
+
+    /**
+     * @return the current termLink aka BeliefLink
+     */
+    @Override
+    public final BagBudget<Termed> getTermLink() {
+        return termLink;
+    }
+
 
 
 
@@ -111,13 +158,26 @@ public abstract class ConceptProcess extends AbstractPremise {
                 if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.get().term(), termLink.get().term()))
                     continue;
 
-                total+= ConceptTaskTermLinkProcess.fireAll(
+                total+= ConceptProcess.fireAll(
                     nar, concept, taskLink, termLink, proc);
             }
         }
 
         return total;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append(
+                getClass().getSimpleName())
+                .append('[').append(getConcept()).append(',')
+                            .append(getTaskLink()).append(',')
+                            .append(getTermLink()).append(',')
+                            .append(getBelief())
+                .append(']')
+                .toString();
+    }
+
 
 
     //    /** supplies at most 1 premise containing the pair of next tasklink and termlink into a premise */

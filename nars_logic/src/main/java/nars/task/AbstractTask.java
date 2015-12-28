@@ -632,7 +632,7 @@ public abstract class AbstractTask extends Item<Task>
      * @param judg The solution to be remembered
      */
     @Override
-    public final void setBestSolution(Task judg, Memory memory) {
+    public final void setBestSolution(Task judg) {
         bestSolution = reference(judg);
         //InternalExperience.experienceFromBelief(memory, this, judg);
     }

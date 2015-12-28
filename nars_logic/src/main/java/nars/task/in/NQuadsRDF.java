@@ -70,7 +70,7 @@ public abstract class NQuadsRDF {
         input(nar, StreamSupport.stream(nxp.spliterator(), false));
     }
 
-    public static void input(NAR nar, Stream<Node[]> nxp) throws Exception {
+    public static void input(NAR nar, Stream<Node[]> nxp) {
 
         nar.input(
             nxp.map( (Node[] nx) -> {

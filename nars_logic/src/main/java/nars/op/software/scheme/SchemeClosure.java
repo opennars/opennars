@@ -35,13 +35,17 @@ public class SchemeClosure {
 
 
     public Expression get(SymbolExpression symbol) {
-        if (bindings.containsKey(symbol)) {
-            return bindings.get(symbol);
+        SchemeClosure other = this;
+        while (true) {
+            if (other.bindings.containsKey(symbol)) {
+                return other.bindings.get(symbol);
+            }
+            if (other.enclosingEnvironment != null) {
+                other = other.enclosingEnvironment;
+                continue;
+            }
+            throw new VariableNotDefinedException(symbol.toString());
         }
-        if (enclosingEnvironment != null) {
-            return enclosingEnvironment.get(symbol);
-        }
-        throw new VariableNotDefinedException(symbol.toString());
     }
 
     public void set(SymbolExpression symbol, Expression value) {

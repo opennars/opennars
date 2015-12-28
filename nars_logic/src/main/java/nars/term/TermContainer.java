@@ -61,8 +61,9 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     static Term[] difference(TermContainer a, TermContainer b) {
         if (a.size() == 1 && b.size() == 1) {
             //special case
-            if (a.term(0).equals(b.term(0))) return Terms.Empty;
-            else return a.terms();
+            return a.term(0).equals(b.term(0)) ?
+                    Terms.Empty :
+                    a.terms();
         } else {
             MutableSet dd = Sets.difference(a.toSet(), b.toSet());
             if (dd.isEmpty()) return Terms.Empty;

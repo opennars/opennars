@@ -17,14 +17,6 @@ public abstract class Atomic implements Term, Byted {
     }
 
 
-
-
-
-
-    public final void rehash() {
-        /** do nothing */
-    }
-
     @Override public final boolean isCommutative() {
         return false;
     }
@@ -47,9 +39,7 @@ public abstract class Atomic implements Term, Byted {
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
     @Override
     public StringBuilder toStringBuilder(boolean pretty) {
-        StringBuilder sb = new StringBuilder(toString());
-//        Utf8.fromUtf8ToStringBuilder(bytes(), sb);
-        return sb;
+        return new StringBuilder(toString());
     }
 
 

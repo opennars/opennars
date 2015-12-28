@@ -40,8 +40,8 @@ public class DeductiveChainTest extends TestNAR {
 
         q = b.apply(0, length);
 
-        for (int x = 0; x < beliefs.length; x++) {
-            n.believe( beliefs[x]  );
+        for (Compound belief : beliefs) {
+            n.believe(belief);
         }
         n.ask( q );
 
@@ -113,7 +113,7 @@ public class DeductiveChainTest extends TestNAR {
         System.out.println(
                 (r.isSuccess() ? "OK" : "ERR") +
                 "\t@" + time + " (" + ts + "ms) " +
-                nc + "C");
+                nc + 'C');
 
 
         //TextOutput.out(n).setOutputPriorityMin(0.85f);

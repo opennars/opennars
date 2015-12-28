@@ -80,10 +80,9 @@ public class Terminal extends AbstractNAR {
     }
 
     public FIFOTaskPerception initInput() {
-        FIFOTaskPerception input = new FIFOTaskPerception(this,
+        return new FIFOTaskPerception(this,
                 taskFilter,
                 this::process
         );
-        return input;
     }
 }

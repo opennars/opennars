@@ -31,8 +31,6 @@ public class feelHappy extends feel {
 
     /**
      * To get the current value of an internal sensor
-     * @param args Arguments, a set and a variable
-     * @param memory
      * @return Immediate results as Tasks
      */
     @Override

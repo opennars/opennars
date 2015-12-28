@@ -75,7 +75,7 @@ public interface TermIndex extends Compounds, CacheBag<Termed, Termed> {
         private class UncachedGenericCompound extends GenericCompound {
 
             public UncachedGenericCompound(Op op, Term[] t, int relation) {
-                super(op, t, relation);
+                super(op, relation, t);
             }
 
             @Override

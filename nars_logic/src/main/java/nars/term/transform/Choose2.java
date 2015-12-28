@@ -24,7 +24,7 @@ public class Choose2 extends Termutator {
             return "Choose2{" +
                     "yFree=" + yFree +
                     ", xEllipsis=" + xEllipsis +
-                    ", x=" + x[0] + "," + x[1] +
+                    ", x=" + x[0] + ',' + x[1] +
                     '}';
 
     }

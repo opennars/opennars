@@ -1,6 +1,5 @@
 package nars.op.software.scheme;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import nars.$;
@@ -16,6 +15,7 @@ import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -24,39 +24,35 @@ public class scheme extends TermFunction {
 
     public static final SchemeClosure env = DefaultEnvironment.newInstance();
 
-    static final Function<Term,Expression> narsToScheme = term -> {
 
-        if (term instanceof Compound) {
-            //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));
-            return new SchemeProduct((Compound)term);
-        }
-        if (term instanceof Atom) {
-
-            String s = term.toString();
-
-            //attempt to parse as number
-            try {
-                double d = Double.parseDouble(s);
-                return new NumberExpression((long)d);
-            }
-            catch (NumberFormatException e) { }
-            //atomic symbol
-            return new SymbolExpression(s);
-        }
-        throw new RuntimeException("Invalid term for scheme: " + term);
-    };
 
     /** adapter class for NARS term -> Scheme expression; temporary until the two API are merged better */
     public static class SchemeProduct extends ListExpression {
 
 
         public SchemeProduct(Compound p) {
-            super(Cons.copyOf(Iterables.transform(p, narsToScheme)));
-        }
-    }
+            super(Cons.copyOf(Iterables.transform(p, term -> {
 
-    public Expression eval(Compound p) {
-        return Evaluator.evaluate(new SchemeProduct(p), env);
+                if (term instanceof Compound) {
+                    //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));
+                    return new SchemeProduct((Compound)term);
+                }
+                if (term instanceof Atom) {
+
+                    String s = term.toString();
+
+                    //attempt to parse as number
+                    try {
+                        double d = Double.parseDouble(s);
+                        return new NumberExpression((long)d);
+                    }
+                    catch (NumberFormatException e) { }
+                    //atomic symbol
+                    return new SymbolExpression(s);
+                }
+                throw new RuntimeException("Invalid term for scheme: " + term);
+            })));
+        }
     }
 
     //TODO make narsToScheme method
@@ -83,7 +79,7 @@ public class scheme extends TermFunction {
         Term[] x = Operator.opArgsArray(o);
         Term code = x[0];
 
-        return code instanceof Compound ? schemeToNars.apply(eval(((Compound) code))) : schemeToNars.apply(eval($.p(x)));
+        return code instanceof Compound ? schemeToNars.apply(Evaluator.evaluate(new SchemeProduct(((Compound) code)), env)) : schemeToNars.apply(Evaluator.evaluate(new SchemeProduct($.p(x)), env));
         //Set = evaluate as a cond?
 //        else {
 //
