@@ -41,11 +41,16 @@ public class PatternIndex extends MapIndex {
         ///** only compile top-level terms, not their subterms */
         //if (!(x instanceof AbstractCompoundPattern)) {
 
+        if (x instanceof PremiseRule) {
+            return new PremiseRule((Compound)x.term(0), (Compound)x.term(1));
+        }
 
 //        if (!(x instanceof TermMetadata)) {
 ////            if (!Ellipsis.hasEllipsis(x)) {
 ////            if (!x.isCommutative()) {
-                return new PatternCompound(x, (TermVector) compileSubterms( (TermVector) x.subterms() ));
+
+        return new PatternCompound(x, (TermVector) compileSubterms((TermVector) x.subterms()));
+
 //                    return new LinearCompoundPattern(x, (TermVector) subs);
 //                } else {
 //                    return new CommutiveCompoundPattern(x, (TermVector) subs);

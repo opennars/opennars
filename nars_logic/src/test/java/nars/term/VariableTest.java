@@ -39,12 +39,12 @@ public class VariableTest {
         assertEquals(0, p.term("%x").vars());
 
         //the pattern variable is not counted toward # vars
-        assertEquals(1, p.term("<$x <-> %y>").vars());
+        assertEquals(1, $.$("<$x <-> %y>").vars());
     }
 
     @Test
     public void testIndpVarNorm() {
-        assertEquals(2, p.term("<$x <-> $y>").vars());
+        assertEquals(2, $.$("<$x <-> $y>").vars());
 
         testIndpVarNorm("$x", "$y", "($1,$2)");
         testIndpVarNorm("$x", "$x", "($1,$1)");
@@ -64,8 +64,8 @@ public class VariableTest {
     public void testIndpVarNorm(String vara, String varb, String expect) {
 
 
-        Term a = p.term(vara);
-        Term b = p.term(varb);
+        Term a = $.$(vara);
+        Term b = $.$(varb);
         //System.out.println(a + " " + b + " "  + Product.make(a, b).normalized().toString());
 
         assertEquals(

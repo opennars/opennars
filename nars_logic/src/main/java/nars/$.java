@@ -12,6 +12,7 @@ import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.Terms;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
@@ -40,7 +41,11 @@ public abstract class $  {
     public static final org.slf4j.Logger logger = LoggerFactory.getLogger($.class);
 
     public static final <T extends Term> T $(String term) {
-        return (T)Narsese.the().term(term);
+        Termed normalized = Narsese.the().term(term, terms);
+        if (normalized!=null)
+            return (T)(normalized.term());
+        return null;
+
         //        try { }
         //        catch (InvalidInputException e) { }
     }

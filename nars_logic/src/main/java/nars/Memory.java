@@ -52,6 +52,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -267,22 +268,39 @@ public class Memory extends Param {
     public Concept concept(Termed t) {
         if (t instanceof Concept) return ((Concept)t);
 
-        Termed exists = index.get(t.term(), (u) -> {
+        Function<Term, Termed> build = (u) -> {
             Term v = index.get(index.normalized(u)).term();
             if (v == null || !validConceptTerm(v)) return null;
+            if (!v.equals(u)) {
+                //normalization changed to a different term:
+                //look up if that concept exists
+                Termed possibleExistingConcept = index.get(v);
+                if (possibleExistingConcept instanceof Concept)
+                    return possibleExistingConcept;
+            }
 
-            return index.get(v, (w) -> {
-                Concept c = newDefaultConcept(w);
+            Concept c = newDefaultConcept(u);
+            if (c!=null) {
                 index.put(c.term(), c);
-                //TODO put the unnormalized term for fasttrack normalization?
 
-                return c;
-            });
-        });
+                //TODO put the unnormalized term for cached future normalizations?
+            }
+
+            return c;
+
+        };
+        Termed exists = index.get(t.term(), build);
+
         if (exists instanceof Concept) {
             Concept c = ((Concept)exists);
             return c;
+        } else if (exists!=null) {
+            //attempt replace entry from term to concept
+            Termed c = build.apply(exists.term());
+            if (c instanceof Concept)
+                return ((Concept)c);
         }
+
         return null;
     }
 

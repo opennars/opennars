@@ -104,8 +104,8 @@ public class DefaultNodeVis implements NodeVis {
                     0.25 + activation * 0.74));
     public static final ColorMatrix colorsTransparent = new ColorMatrix(17 /* op hashcode color, hopefully prime */, 17 /* activation  */,
             (op, p) -> Color.hsb(op * 360.0,
-                    0.35 + 0.64 * p,
-                    0.25 + p * 0.74).interpolate(Color.TRANSPARENT, 1f-p));
+                    0.8 + 0.2 * p,
+                    0.5 + p * 0.5).interpolate(Color.TRANSPARENT, 1f-p));
 
 
     private final AtomicReference<Node> selected = new AtomicReference();

@@ -252,8 +252,9 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
     public final PremiseRule normalizeRule(PatternIndex index) {
-        return (PremiseRule)
+        Compound c = (Compound)
                 index.term(this, new TaskRuleVariableNormalization());
+        return new PremiseRule((Compound)c.term(0), (Compound)c.term(1)); //HACK
     }
 
 

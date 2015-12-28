@@ -742,7 +742,7 @@ public interface Compounds {
             }
             //else if mods==0, fall through:
         }
-        return (X) this; //nothing changed
+        return (X) src; //nothing changed
     }
 
 

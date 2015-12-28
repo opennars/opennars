@@ -12,7 +12,7 @@ import nars.nal.RuleMatch;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
 import nars.term.Term;
-import nars.term.TermContainer;
+import nars.term.TermVector;
 import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
@@ -70,7 +70,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
             }
         }
 
-        Term result = term(src, (TermContainer) sub);
+        Term result = term(src, new TermVector(sub));
 
         //apply any known immediate transform operators
         if (Op.isOperation(result)) {

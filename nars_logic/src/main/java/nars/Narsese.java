@@ -1118,7 +1118,14 @@ public class Narsese extends BaseParser<Object>  {
     }
 
     public Termed term(String s, TermIndex t) {
-        return t.term(term(s));
+        return term(s, t, true);
+    }
+
+    public Termed term(String s, TermIndex t, boolean normalize) {
+        Termed u = t.term(term(s));
+        if (u==null) return null;
+        if (normalize) return t.normalized(u.term());
+        return u;
     }
 
     public Termed concept(String s, Memory m) {

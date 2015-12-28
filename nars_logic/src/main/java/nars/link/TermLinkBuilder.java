@@ -3,6 +3,7 @@ package nars.link;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
+import nars.concept.Concept;
 import nars.nal.nal7.CyclesInterval;
 import nars.term.Term;
 import nars.term.Termed;
@@ -12,7 +13,7 @@ import nars.term.variable.Variable;
 import java.util.Set;
 
 
-public class TermLinkBuilder  {
+public class TermLinkBuilder {
 
 //    public final transient Termed concept;
 //
@@ -29,23 +30,22 @@ public class TermLinkBuilder  {
         if (host instanceof Compound) {
 
             Set<Termed> components = Global.newHashSet(host.complexity());
-            prepareComponentLinks((Compound)host, components, memory);
+            prepareComponentLinks((Compound) host, components, memory);
 
             return components.toArray(new Termed[components.size()]);
-        }
-        else {
+        } else {
             return null;
         }
     }
 
-    final static int NegationOrConjunctive = Op.or(Op.ConjunctivesBits,Op.NEGATE);
+    final static int NegationOrConjunctive = Op.or(Op.ConjunctivesBits, Op.NEGATE);
 
     /**
      * Collect TermLink templates into a list, go down one level except in
      * special cases
      * <p>
      *
-     * @param t The CompoundTerm for which to build links
+     * @param t          The CompoundTerm for which to build links
      * @param components set of components being accumulated, to avoid duplicates
      */
     static void prepareComponentLinks(Compound t, Set<Termed> components, Memory memory) {
@@ -59,16 +59,11 @@ public class TermLinkBuilder  {
 
         int ni = t.size();
         for (int i = 0; i < ni; i++) {
-            Term ti = memory.concept(t.term(i)).term();
-            if (!growComponent(ti)) {
-                continue;
-            }
 
-            if (ti == null) {
-                throw new RuntimeException("prepareComponentLinks: " + t.term(i) + " normalized to null in superterm " + t);
-                //System.err.println("prepareComponentLinks: " + t + " normalized to null");// in superterm " + t);
-                //continue;
-            }
+            Term ti = growComponent(t.term(i), 0, memory);
+            if (ti == null)
+                continue;
+
 
             if (!(ti instanceof Variable)) {
                 components.add(ti);
@@ -80,32 +75,36 @@ public class TermLinkBuilder  {
                 prepareComponentLinks((Compound) ti, components, memory);
 
             } else if (ti instanceof Compound) {
-                Compound cti = (Compound)ti;
+                Compound cti = (Compound) ti;
 
-                if (!growLevel1(ti)) continue;
 
                 int nj = cti.size();
                 for (int j = 0; j < nj; j++) {
-                    Term tj = memory.concept(t.term(j)).term();
+                    Term tj = growComponent(cti.term(j), 1, memory);
+                    if (tj == null)
+                        continue;
+
 
                     if (!(tj instanceof Variable)) {
                         components.add(tj);
                     }
 
-                    if (growLevel2(tj)) {
 
-                        if(tj instanceof Compound) {
-                            Compound cctj = (Compound) tj;
-                            int nk = cctj.size();
-                            for (int k = 0; k < nk; k++) {
-                                Term tk = memory.concept(t.term(k)).term();
+                    if (tj instanceof Compound) {
+                        Compound cctj = (Compound) tj;
+                        int nk = cctj.size();
+                        for (int k = 0; k < nk; k++) {
 
-                                if (!(tk instanceof Variable)) {
-                                    components.add(tk);
-                                }
+                            Term tk = growComponent(cctj.term(k), 2, memory);
+                            if (tk == null)
+                                continue;
+
+                            if (!(tk instanceof Variable)) {
+                                components.add(tk);
                             }
                         }
                     }
+
 
                 }
             }
@@ -115,18 +114,25 @@ public class TermLinkBuilder  {
     }
 
 
-    /** determines whether to grow a 1st-level termlink to a subterm */
-    protected static boolean growComponent(Term t) {
+    /**
+     * determines whether to grow a 1st-level termlink to a subterm
+     */
+    protected static Term growComponent(Term t, int level, Memory memory) {
         if /*Global.DEBUG ... */ (t instanceof CyclesInterval) {
             throw new RuntimeException("interval terms should not exist at this point");
         }
-        return true;
+
+        Concept tti = memory.concept(t);
+        if (tti == null)
+            return null;
+
+        return tti.term();
     }
 
-    static final boolean growLevel1(Term t) {
-        return growComponent(t) /*&&
-                ( growProductOrImage(t) || (t instanceof SetTensional)) */;
-    }
+//    static final boolean growLevel1(Term t) {
+//        return growComponent(t) /*&&
+//                ( growProductOrImage(t) || (t instanceof SetTensional)) */;
+//    }
 
 //    /** original termlink growth policy */
 //    static boolean growProductOrImage(Term t) {
@@ -134,12 +140,12 @@ public class TermLinkBuilder  {
 //    }
 
 
-    static final boolean growLevel2(Term t) {
-        return growComponent(t); //growComponent(t); leads to failures, why?
-        //return growComponent(t) && growProductOrImage(t);
-        //if ((t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional)) {
-        //return (t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional) || (t instanceof Junction);
-    }
+//    static final boolean growLevel2(Term t) {
+//        return growComponent(t); //growComponent(t); leads to failures, why?
+//        //return growComponent(t) && growProductOrImage(t);
+//        //if ((t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional)) {
+//        //return (t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional) || (t instanceof Junction);
+//    }
 
 
 }
