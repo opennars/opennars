@@ -34,7 +34,7 @@ public class ImageMatch /*extends ArrayEllipsisMatch<Term>*/ {
             t2[j++] = x;
         }
         if (j < l+1)
-            t2[j++] = relationTerm; //it replaces the final position
+            t2[j] = relationTerm; //it replaces the final position
 
         return new ArrayEllipsisMatch(t2);
     }

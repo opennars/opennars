@@ -14,7 +14,7 @@ public class CycleClock implements Clock, Consumer<Memory> {
     private On handler = null;
 
     @Override
-    public synchronized void clear(Memory m) {
+    public void clear(Memory m) {
 
         if (this.memory!=null && this.memory!=m) {
             handler.off();

@@ -27,7 +27,7 @@ import static javafx.application.Platform.runLater;
  */
 public class IOPane extends BorderPane /*implements FXIconPaneBuilder*/ {
 
-    final NSlider vs = new NSlider("Volume", 100, 45, NSlider.BarSlider, 1f);
+    final NSlider vs = new NSlider("Volume", 100, 25, NSlider.BarSlider, 1f);
     final DoubleProperty volume = vs.value[0];
 
     private final NAR nar;

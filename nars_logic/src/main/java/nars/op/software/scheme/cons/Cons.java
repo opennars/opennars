@@ -1,5 +1,7 @@
 package nars.op.software.scheme.cons;
 
+import com.google.common.collect.Iterators;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
@@ -8,7 +10,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class Cons<T> implements Iterable<T> {
-    private static final Cons EMPTY = new Empty();
 
     private T car;
     private Cons<T> cdr;
@@ -171,4 +172,59 @@ public class Cons<T> implements Iterable<T> {
             return next;
         }
     }
+
+    private static final Cons EMPTY = new Cons<Object>(null, null) {
+        @Override
+        public int hashCode() {
+            return 0;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o == this;
+        }
+
+        @Override public Iterator<Object> iterator() {
+            return Iterators.emptyIterator();
+        }
+
+        @Override public void forEach(Consumer action) {
+        }
+
+        @Override public Spliterator<Object> spliterator() {
+            return Spliterators.emptySpliterator();
+        }
+
+        @Override
+        public Object car() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Cons<Object> cdr() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setCar(Object car) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setCdr(Cons<Object> cdr) {
+            throw new UnsupportedOperationException();
+
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+
+        @Override
+        public void append(Cons<Object> tail) {
+            throw new UnsupportedOperationException();
+        }
+    };
+
 }

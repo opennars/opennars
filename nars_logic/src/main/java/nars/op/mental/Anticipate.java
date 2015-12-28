@@ -188,7 +188,7 @@ public final class Anticipate {
 
         /** cached locally, same value as in task */
         public final long occurrTime;
-        public long creationTime;
+        public final long creationTime;
 
         /** cached locally, same value as in task */
         private final int hash;

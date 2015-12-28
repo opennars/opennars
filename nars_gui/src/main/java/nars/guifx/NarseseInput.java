@@ -16,9 +16,11 @@ public class NarseseInput extends CodeInput {
     @Override
     public boolean onInput(String s) {
 
-        nar.beforeNextFrame(() -> {
-           nar.input(s);
-        });
+        if (!s.isEmpty()) {
+            nar.beforeNextFrame(() -> {
+                nar.input(s);
+            });
+        }
 
         try {
             nar.frame();

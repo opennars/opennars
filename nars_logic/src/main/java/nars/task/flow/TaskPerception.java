@@ -2,7 +2,6 @@ package nars.task.flow;
 
 import nars.Memory;
 import nars.task.Task;
-import nars.util.event.Active;
 
 import java.util.function.Consumer;
 
@@ -14,26 +13,26 @@ public abstract class TaskPerception implements Consumer<Task> {
     /**
      * where to send output
      */
-    private final Active active = new Active();
+    //private final Active active = new Active();
     private final Memory memory;
 
     public TaskPerception(Memory m) {
 
         this.memory = m;
 
-        active.add(
-            m.eventInput.on(this),
+        //active.add(
+            m.eventInput.on(this);
 
-            m.eventReset.on((M) -> clear() )
-        );
+            m.eventReset.on((M) -> clear() );
+        //);
 
     }
 
     public TaskPerception(Memory m, Consumer<Task> eachFrameSupplyTo) {
         this(m);
-        active.add(
-            m.eventFrameStart.on((M) -> nextFrame(eachFrameSupplyTo))
-        );
+        //active.add(
+            m.eventFrameStart.on((M) -> nextFrame(eachFrameSupplyTo));
+        //);
     }
 
     abstract public void forEach(Consumer<? super Task> each);

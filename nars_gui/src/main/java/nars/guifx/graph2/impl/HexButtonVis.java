@@ -56,7 +56,7 @@ public class HexButtonVis extends DefaultNodeVis {
             base.setCacheHint(CacheHint.SCALE_AND_ROTATE);
             base.setCache(true);
 
-            setCacheHint(CacheHint.SCALE_AND_ROTATE);
+
             setCache(true);
 
 

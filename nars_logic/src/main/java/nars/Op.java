@@ -194,16 +194,16 @@ public enum Op {
         this.maxSize = size.getTwo();
 
         Order o = Order.None;
-        switch (this) {
-            case IMPLICATION_AFTER:
-            case EQUIV_AFTER:
-            case SEQUENCE:
+        switch (string) { //has to be done by string..
+            case "=/>":
+            case "</>":
+            case "&/":
                     o = Order.Forward; break;
-            case IMPLICATION_WHEN:
-            case EQUIV_WHEN:
-            case PARALLEL:
+            case "=|>":
+            case "<|>":
+            case "&|":
                     o = Order.Concurrent; break;
-            case IMPLICATION_BEFORE:
+            case "=\\>":
                     o = Order.Backward; break;
 
         }

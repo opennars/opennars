@@ -10,7 +10,6 @@ import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.Termlike;
 import nars.term.compound.Compound;
-import nars.term.compound.GenericCompound;
 import nars.term.constraint.MatchConstraint;
 import nars.term.match.*;
 import nars.term.variable.CommonVariable;
@@ -212,9 +211,9 @@ abstract public class FindSubst extends Versioning implements Subst {
         if (ySubst != null) {
             return match(x, ySubst); //loop
         } else {
-            putYX((Variable) y, x);
+            putYX(/*(Variable)*/ y, x);
             if (y instanceof CommonVariable) {
-                return putXY((Variable) y, x);
+                return putXY(/*(Variable)*/ y, x);
             }
             return true;
         }
@@ -352,8 +351,8 @@ abstract public class FindSubst extends Versioning implements Subst {
                 if (Ellipsis.countNumNonEllipsis(X) > 0) {
 
                     int xEllipseIndex = X.indexOf(e);
-                    int xRelationIndex = ((GenericCompound) X).relation();
-                    int yRelationIndex = ((GenericCompound) Y).relation();
+                    int xRelationIndex = X.relation();
+                    int yRelationIndex = Y.relation();
 
                     if (xEllipseIndex >= xRelationIndex) {
                         //compare relation from beginning as in non-ellipsis case
