@@ -12,6 +12,7 @@ import nars.nal.RuleMatch;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
 import nars.term.Term;
+import nars.term.TermContainer;
 import nars.term.TermVector;
 import nars.term.Termed;
 import nars.term.compound.Compound;
@@ -45,6 +46,16 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
                 builder.apply(key) : existing;
     }
 
+    default Term term(Term src, TermContainer subs) {
+        if (src instanceof Compound) {
+            Compound csrc = (Compound)src;
+            if (csrc.subterms().equals(subs))
+                return src;
+            return term(csrc, subs.terms());
+        } else {
+            return src;
+        }
+    }
 
     default Term term(Object t) {
         Termed tt = get(t);
@@ -73,6 +84,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         Term result = term(src, new TermVector(sub));
 
         //apply any known immediate transform operators
+        //TODO decide if this is evaluated incorrectly somehow in reverse
         if (Op.isOperation(result)) {
             ImmediateTermTransform tf = f.getTransform(Operator.operatorTerm((Compound)result));
             if (tf!=null) {
@@ -80,7 +92,9 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
             }
         }
 
-        return result;
+        if (result == null) return null;
+
+        return get(result).term();
     }
 
 
@@ -99,14 +113,6 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
     default Term apply(Subst f, Term src) {
         if (src instanceof Compound) {
             return apply((Compound)src, f, false);
-//            Term y = f.getXY(src);
-//
-//            //attempt 1: apply known substitution
-//            //containsTerm prevents infinite recursion
-//            if ((y == null || y.containsTerm(src)))
-//                return null;
-//
-//            return y;
         } else if (src instanceof Variable) {
             Term x = f.getXY(src);
             if (x != null)

@@ -74,9 +74,9 @@ public abstract class AbstractNALTester {
 
         if (multi) {
 
-            for (int c : new int[] {  2/*, 2, 4 */}) { ///concepts fired per cycle
+            for (int c : new int[] {  1/*, 2, 4 */}) { ///concepts fired per cycle
                 l.add(supply("Default[NAL<=" + level + ",c=" + c + ']', () -> {
-                            Default d = new Default(512, c, 1, 3);
+                            Default d = new Default(768, c, 1, 3);
                             d.nal(level);
                             return d;
                         }

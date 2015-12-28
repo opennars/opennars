@@ -669,16 +669,7 @@ public interface Compounds {
 
     }
 
-    default Term term(Term src, TermContainer subs) {
-        if (src instanceof Compound) {
-            Compound csrc = (Compound)src;
-            if (csrc.subterms().equals(subs))
-                return src;
-            return term(csrc, subs.terms());
-        } else {
-            return src;
-        }
-    }
+
 
     /** returns how many subterms were modified, or -1 if failure (ex: results in invalid term) */
     default <T extends Term> int term(Compound src, CompoundTransform<Compound<T>, T> trans, Term[] target, int level) {
