@@ -21,7 +21,7 @@ public class ImageMatch /*extends ArrayEllipsisMatch<Term>*/ {
      * @param y the (concrete) image being matched against the pattern
      * @return
      */
-    public static ArrayEllipsisMatch put(Term[] t, Term relationTerm, Compound y) {
+    public static EllipsisMatch put(Term[] t, Term relationTerm, Compound y) {
 
         int l = t.length;
         Term[] t2 = new Term[l + 1];
@@ -36,16 +36,17 @@ public class ImageMatch /*extends ArrayEllipsisMatch<Term>*/ {
         if (j < l+1)
             t2[j] = relationTerm; //it replaces the final position
 
-        return new ArrayEllipsisMatch(t2);
+        return new EllipsisMatch(t2);
     }
 
-    public static ArrayEllipsisMatch take(ArrayEllipsisMatch m, int imageIndex) {
+    public static EllipsisMatch take(EllipsisMatch m, int imageIndex) {
 
         //this.imageIndex = imageIndex;
 
         //mask the relation term
         Term[] t = m.term;
         t[imageIndex] = Op.Imdex;
+        m.init();//rehash because it changed
         return m;
     }
 

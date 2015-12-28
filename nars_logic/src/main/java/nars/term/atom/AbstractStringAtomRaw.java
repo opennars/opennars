@@ -3,16 +3,13 @@ package nars.term.atom;
 import nars.Op;
 import nars.term.Term;
 
-import java.io.Externalizable;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
 /** implemented with a native Java string.
  *  this should be the ideal choice for JDK9
  *  since it does Utf8 internally and many
  *  string operations are intrinsics.  */
-public abstract class AbstractStringAtomRaw extends Atomic implements Externalizable {
+public abstract class AbstractStringAtomRaw extends Atomic  {
 
     public final String id;
 
@@ -83,14 +80,6 @@ public abstract class AbstractStringAtomRaw extends Atomic implements Externaliz
     }
 
 
-    @Override
-    public final void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(id);
-    }
 
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        throw new RuntimeException("unimpl");
-    }
 
 }

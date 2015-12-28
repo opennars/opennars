@@ -199,7 +199,7 @@ public class Default extends AbstractNAR {
         /**
          * How many concepts to fire each cycle; measures degree of parallelism in each cycle
          */
-        @Range(min=0,max=512,unit="Concept")
+        @Range(min=0,max=64,unit="Concept")
         public final MutableInteger conceptsFiredPerCycle;
 
         @Range(min=0,max=16,unit="TaskLink") //TODO use float percentage
@@ -208,7 +208,7 @@ public class Default extends AbstractNAR {
         @Range(min=0,max=16,unit="TermLink")
         public final MutableInteger termlinksFiredPerFiredConcept = new MutableInteger(1);
 
-        @Range(min=0.01f,max=16,unit="Duration")
+        @Range(min=0.01f,max=8,unit="Duration")
         public final MutableFloat linkRemembering;
 
         //public final MutableFloat activationFactor = new MutableFloat(1.0f);
@@ -237,7 +237,7 @@ public class Default extends AbstractNAR {
         final Derivelet der = new Derivelet();
 
         @Range(min=0, max=1f,unit="Perfection")
-        private final MutableFloat perfection;
+        public final MutableFloat perfection;
 
 
 //        @Deprecated

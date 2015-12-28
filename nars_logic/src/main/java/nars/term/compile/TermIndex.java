@@ -17,6 +17,7 @@ import nars.term.TermVector;
 import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
+import nars.term.match.Ellipsis;
 import nars.term.match.EllipsisMatch;
 import nars.term.transform.Subst;
 import nars.term.variable.Variable;
@@ -71,6 +72,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
             return y;
 
         int len = src.size();
+
         List<Term> sub = Global.newArrayList(len /* estimate */);
 
         for (int i = 0; i < len; i++) {
@@ -79,6 +81,12 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
                 if (fullMatch)
                     return null;
             }
+        }
+
+        if (sub.size() > 0) {
+            //check if last item is a shim, if so, remove it
+            if (sub.get(sub.size()-1).equals(Ellipsis.Shim))
+                sub = sub.subList(0, sub.size()-1);
         }
 
         Term result = term(src, new TermVector(sub));
@@ -136,7 +144,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
         if (u instanceof EllipsisMatch) {
             EllipsisMatch m = (EllipsisMatch)u;
-            m.forEach(sub::add);
+            m.apply(sub);
         } else {
             sub.add(u);
         }

@@ -43,6 +43,7 @@ import nars.video.WebcamFX;
 import org.jewelsea.willow.browser.WebBrowser;
 
 import javax.sound.sampled.LineUnavailableException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -188,6 +189,16 @@ public class NARide extends BorderPane {
 //                }*/
 //                return () -> ni;
 //            });
+
+            nar.onExec("memstat", (c) -> {
+                String report = "";
+                report += "Busy: " + nar.memory.emotion.busy() + "<br/>";
+                report += "Index Size (Terms): " + nar.memory.index.size() + "<br/>";
+                report += "Active Concept Bag Histogram: " +
+                        Arrays.toString(((Default)nar).core.active.getPriorityHistogram(10)) + "<br/>";
+                nar.input("html(\"" + report + "\");");
+            });
+
             Scene scene = new Scene(ni, 900, 700,
                     false, SceneAntialiasing.DISABLED);
 

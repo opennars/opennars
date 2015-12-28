@@ -68,6 +68,9 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
     public TermVector(Collection<T> t) {
         this((T[]) t.toArray(new Term[t.size()]));
     }
+    public TermVector(Collection<T> t, int n) {
+        this((T[]) t.toArray(new Term[t.size()]));
+    }
 
     @SafeVarargs
     public TermVector(T... t) {

@@ -37,7 +37,7 @@ public class EllipsisTransform extends EllipsisOneOrMore {
                 to instanceof Variable ? vnn.applyAfter((Variable)to) : to);
     }
 
-    public ArrayEllipsisMatch collect(Compound y, int a, int b, FindSubst subst) {
+    public EllipsisMatch collect(Compound y, int a, int b, FindSubst subst) {
         if (from.equals(Op.Imdex) && (y.op().isImage())) {
 
             int rel = y.relation();
@@ -49,11 +49,12 @@ public class EllipsisTransform extends EllipsisOneOrMore {
                 t[i++] = i == rel ? subst.apply(to) : y.term(ab);
                 ab++;
             }
-            return new ArrayEllipsisMatch(t);
-        }
+            return new EllipsisMatch(t);
 
-        return new ArrayEllipsisMatch(
-                y, a, b
-        );
+        } else {
+            return new EllipsisMatch(
+                    y, a, b
+            );
+        }
     }
 }

@@ -1,11 +1,15 @@
 package nars.term.transform;
 
+import nars.Global;
 import nars.Op;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.match.Ellipsis;
 import nars.term.variable.Variable;
+
+import java.util.List;
 
 
 public interface Subst  {
@@ -16,16 +20,20 @@ public interface Subst  {
 
     void clear();
 
-    /** match a range of subterms of Y */
-    static Term[] collect(Compound y, int from, int to) {
+    /** match a range of subterms of Y.  */
+    static List<Term> collect(Compound y, int from, int to) {
         int s = to-from;
-        Term[] m = new Term[s];
+
+        List<Term> l = Global.newArrayList(s);
+
         for (int i = 0; i < s; i++) {
-            int k = i+from;
-            m[i] = y.term(k);
+            Term e = y.term(i+from);
+            if (e.equals(Ellipsis.Shim))
+                continue;
+            l.add(e);
         }
 
-        return m;
+        return l;
     }
 
 

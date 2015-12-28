@@ -36,6 +36,7 @@ public final class TaskBeliefPair extends GenericCompound {
         Term[] t = this.t;
         t[0] = a;
         t[1] = b;
+
         subterms().init();
     }
 

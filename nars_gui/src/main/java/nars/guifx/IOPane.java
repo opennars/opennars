@@ -105,13 +105,20 @@ public class IOPane extends BorderPane /*implements FXIconPaneBuilder*/ {
             On commands = nar.onExec("html", (e) -> {
 
                 Term[] a = e.argArray();
-                WebView w = new WebView();
-                //w.resize(400,200);
-                w.getEngine().loadContent(
-                        ((Atom)a[0]).toStringUnquoted()
-                );
+                String content = ((Atom)a[0]).toStringUnquoted();
 
-                runLater(() -> { append(w); } );
+                runLater(() -> {
+                    WebView w = new WebView();
+                    //w.resize(400,200);
+                    w.getEngine().loadContent(
+                            content
+                    );
+                    w.setMinHeight(100);
+
+                    w.autosize();
+                    w.layout();
+                    append(w);
+                } );
             });
         }
 

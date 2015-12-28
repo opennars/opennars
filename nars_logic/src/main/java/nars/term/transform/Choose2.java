@@ -1,7 +1,7 @@
 package nars.term.transform;
 
 import nars.term.Term;
-import nars.term.match.CollectionEllipsisMatch;
+import nars.term.match.EllipsisMatch;
 
 import java.util.Set;
 
@@ -91,7 +91,7 @@ public class Choose2 extends Termutator {
 
             Term y2 = yy[yb];
             if (f.match(x[1], y2)) {
-                return f.putXY(xEllipsis, new CollectionEllipsisMatch(yFree, y1, y2));
+                return f.putXY(xEllipsis, new EllipsisMatch(yFree, y1, y2));
             }
         }
         return false;

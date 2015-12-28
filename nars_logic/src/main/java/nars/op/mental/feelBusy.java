@@ -41,7 +41,6 @@ public class feelBusy extends feel {
     public void execute(Execution e) {
         Memory m = e.nar.memory;
         float busy = m.emotion.busy();
-        logger.info("busy=" + busy + ", terms=" + m.index.size());
 
         e.feedback(
             feeling(busy, m, business)

@@ -146,6 +146,7 @@ public abstract class NQuadsRDF {
 //
 //            if (items.size() >= 3) {
 //
+//
 //                Atom subj = resource(items.get(0));
 //                Atom pred = resource(items.get(1));
 //                Term obj = resourceOrValue(items.get(2));
@@ -348,7 +349,7 @@ public abstract class NQuadsRDF {
         }
 
         if (belief instanceof Compound) {
-            System.out.println(subject + " " + predicate + " " + object + " :: " + belief);
+            //System.out.println(subject + " " + predicate + " " + object + " :: " + belief);
 
             return new MutableTask().term((Compound)belief).
                     belief().truth(1.0f,0.95f)

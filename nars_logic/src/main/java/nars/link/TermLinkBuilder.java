@@ -27,14 +27,14 @@ public class TermLinkBuilder {
 
     public static Termed[] build(Term host, Memory memory) {
 
-        if (host instanceof Compound) {
+        if (!(host instanceof Compound)) {
+            return null;
+        } else {
 
             Set<Termed> components = Global.newHashSet(host.complexity());
             prepareComponentLinks((Compound) host, components, memory);
 
             return components.toArray(new Termed[components.size()]);
-        } else {
-            return null;
         }
     }
 

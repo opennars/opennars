@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 @RunWith(Parameterized.class)
 public class NAL3Test extends AbstractNALTester {
 
-    public static final int cycles = 500;
+    public static final int cycles = 100;
 
     public NAL3Test(Supplier<NAR> b) { super(b); }
 
@@ -113,7 +113,13 @@ public class NAL3Test extends AbstractNALTester {
         tester.believe("<planetX --> [marsy,earthly,venusy]>",1.0f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
         tester.believe("<planetX --> [earthly,saturny]>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
         tester.mustBelieve(cycles, "<planetX --> [marsy,venusy]>", 0.90f ,0.81f); //.en("PlanetX is either Mars or Venus.");
-
+    }
+    @Test
+    public void set_operations3_difference_simpler() throws Narsese.NarseseException {
+        TestNAR tester = test();
+        tester.believe("<planetX --> [marsy,earthly]>",1.0f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
+        tester.believe("<planetX --> [earthly]>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
+        tester.mustBelieve(cycles, "<planetX --> [marsy]>", 0.90f ,0.81f); //.en("PlanetX is either Mars or Venus.");
     }
 
     @Test

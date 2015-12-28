@@ -1,11 +1,17 @@
 package nars.term.match;
 
-import com.google.common.collect.Iterables;
-import nars.nal.nal7.ShadowAtom;
+import nars.Op;
 import nars.term.Term;
+import nars.term.TermVector;
 import nars.term.compound.Compound;
+import nars.term.transform.Subst;
+import nars.term.visit.SubtermVisitor;
 
-import java.util.Set;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Holds results of an ellipsis match and
@@ -13,7 +19,7 @@ import java.util.Set;
  * subterm collection, and post-filter before
  * forming a resulting substituted term.
  */
-public abstract class EllipsisMatch extends ShadowAtom implements Iterable<Term> {
+final public class EllipsisMatch extends TermVector<Term> implements Term {
 
     //    public static ArrayEllipsisMatch matchedSubterms(Compound Y, IntObjectPredicate<Term> filter) {
 //        Function<IntObjectPredicate,Term[]> arrayGen =
@@ -24,25 +30,85 @@ public abstract class EllipsisMatch extends ShadowAtom implements Iterable<Term>
 //        return new ArrayEllipsisMatch(arrayGen.apply( filter ));
 //    }
 
+    public EllipsisMatch(Compound y, int from, int to) {
+        this(Subst.collect(y, from, to));
+    }
+    public EllipsisMatch(Collection<Term> term) {
+        this(term.toArray(new Term[term.size()]));
+    }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        return Iterables.elementsEqual(this, ((Iterable)obj));
+    public EllipsisMatch(Collection<Term> term, Term except) {
+        this(term.stream().filter(t -> {
+            return ((t!=except) && (!t.equals(Ellipsis.Shim)));
+        }).collect(toList()));
+    }
+
+    public EllipsisMatch(Collection<Term> term, Term except, Term except2) {
+        this(term.stream().filter(t -> {
+            return ((t!=except) && (t!=except2) && (!t.equals(Ellipsis.Shim)));
+        }).collect(toList()));
+    }
+
+    public EllipsisMatch(Term[] t) {
+        super(t);
+    }
+
+    //abstract public boolean addContained(Compound Y, Set<Term> target);
+
+    /** expand the matched results to a target buffer */
+    public void apply(Collection<Term> sub) {
+        for (Term x : term)
+            if (x.equals(Ellipsis.Shim))
+                throw new RuntimeException("shim caught");
+        Collections.addAll(sub, term);
     }
 
     @Override
-    public int hashCode() {
-        throw new RuntimeException("unimpl");
+    public Op op() {
+        return Op.NONE;
     }
-    @Override public int compareTo(Object that) {
-        throw new RuntimeException("unimpl");
-    }
-
 
     @Override
-    public abstract int size();
+    public void recurseTerms(SubtermVisitor v, Term parent) {
+        v.accept(parent, this);
+        forEach(x -> v.accept(this, x));
+    }
 
-    abstract public boolean addContained(Compound Y, Set<Term> target);
+    @Override
+    public boolean isCommutative() {
+        return false;
+    }
 
+    @Override
+    public byte[] bytes() {
+        return new byte[0];
+    }
+
+    @Override
+    public int bytesLength() {
+        return 0;
+    }
+
+    @Override
+    public void append(Appendable w, boolean pretty) throws IOException {
+        w.append(toString());
+    }
+
+    @Override
+    public StringBuilder toStringBuilder(boolean pretty) {
+        return new StringBuilder(toString());
+    }
+
+    @Override
+    public String toString(boolean pretty) {
+        return toString();
+    }
+
+    public boolean addWhileMatching(Compound y, Collection<Term> target) {
+        for (Term e : term) {
+            if (!y.containsTerm(e)) return false;
+            target.add(e);
+        }
+        return true;
+    }
 }

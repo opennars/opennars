@@ -158,8 +158,8 @@ public class NARLoop implements Runnable {
                     if (!nar.running.get()) {
                         nar.frame(cyclesPerFrame);
                     } else {
-                        logger.warn("nar began running before this frame attempted to start");
-                        stop();
+                        //logger.warn("nar began running before this frame attempted to start");
+                        Thread.yield();
                     }
 
 

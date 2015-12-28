@@ -11,7 +11,10 @@ import nars.term.TermContainer;
 import nars.term.Termlike;
 import nars.term.compound.Compound;
 import nars.term.constraint.MatchConstraint;
-import nars.term.match.*;
+import nars.term.match.Ellipsis;
+import nars.term.match.EllipsisMatch;
+import nars.term.match.EllipsisTransform;
+import nars.term.match.ImageMatch;
 import nars.term.variable.CommonVariable;
 import nars.term.variable.Variable;
 import nars.util.version.Versioned;
@@ -313,7 +316,7 @@ abstract public class FindSubst extends Versioning implements Subst {
                     //being processed. (this is the opposite
                     //of the other condition of this if { })
                     if (matchEllipsedLinear(X, e, Y)) {
-                        ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
+                        EllipsisMatch raw = (EllipsisMatch) getXY(e);
                         xy.put(e, null); //HACK clear it to replace with a new value
                         return putXY(e, ImageMatch.put(raw.term, n, Y));
                     }
@@ -335,7 +338,7 @@ abstract public class FindSubst extends Versioning implements Subst {
                     }
 
                     if (matchEllipsedLinear(X, e, Y)) {
-                        ArrayEllipsisMatch raw = (ArrayEllipsisMatch) getXY(e);
+                        EllipsisMatch raw = (EllipsisMatch) getXY(e);
                         //clear not necessary as in above block because ImageTakeMatch just modifies the array already present, so it will be equal
                         return putXY(e, ImageMatch.take(
                                 raw, imageIndex)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
@@ -485,7 +488,7 @@ abstract public class FindSubst extends Versioning implements Subst {
                     Xellipsis = null;
 
                     //check that Y contains all of these
-                    if (!((EllipsisMatch) v).addContained(Y, ineligible))
+                    if (!((EllipsisMatch) v).addWhileMatching(Y, ineligible))
                         return false;
                 } else if (!xVar) {
                     if (!Y.containsTerm(v))
@@ -532,7 +535,7 @@ abstract public class FindSubst extends Versioning implements Subst {
 
         switch (xs) {
             case 0:
-                return putXY(xEllipsis, new CollectionEllipsisMatch(yFree));
+                return putXY(xEllipsis, new EllipsisMatch(yFree));
             case 1:
                 return addTermutator(new Choose1(this,
                         xEllipsis, x.iterator().next(), yFree));
@@ -623,7 +626,7 @@ abstract public class FindSubst extends Versioning implements Subst {
                         //TODO special handling to extract intermvals from Sequence terms here
 
                         if (!putXY(Xellipsis,
-                                new ArrayEllipsisMatch(
+                                new EllipsisMatch(
                                         Y, j, j + available
                                 ))) {
                             return false;
@@ -637,8 +640,8 @@ abstract public class FindSubst extends Versioning implements Subst {
                     //previous match exists, match against what it had
                     if (i == xsize) {
                         //SUFFIX - match the remaining terms against what the ellipsis previously collected
-                        //HACK this only works with ArrayEllipsisMatch type
-                        Term[] sp = ((ArrayEllipsisMatch) eMatched).term;
+                        //HACK this only works with EllipsisMatch type
+                        Term[] sp = ((EllipsisMatch) eMatched).term;
                         for (Term aSp : sp) {
                             if (!match(aSp, Y.term(j++)))
                                 return false;
