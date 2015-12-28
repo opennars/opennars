@@ -86,8 +86,6 @@ public class RuleMatch extends FindSubst {
 
         Term tt = dd.solve(this);
         if (tt == null) return true;
-        tt = tt.normalized();
-        if (tt == null) return true;
 
         if (!dd.post(this))
             return false;

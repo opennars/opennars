@@ -5,6 +5,7 @@ import nars.Op;
 import nars.Premise;
 import nars.Symbols;
 import nars.budget.Budget;
+import nars.concept.Concept;
 import nars.nal.PremiseRule;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
@@ -378,11 +379,11 @@ public final class Solve extends PreCondition {
             if (t==null || Variable.hasPatternVariable(t))
                 return false;
 
-            Compound c = Task.validTaskTerm(t);
+            Concept c = m.premise.memory().taskConcept(t);
             if (c == null)
                 return false;
 
-            derive(m, c);
+            derive(m, (Compound)c.term());
 
             return false; //match finish
         }

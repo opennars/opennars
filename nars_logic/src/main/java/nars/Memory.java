@@ -227,17 +227,14 @@ public class Memory extends Param {
      * by the provided Term
      */
     public final Concept concept(Termed t) {
-        //careful with this if multiple nars share termed's they may introduce conflicting concepts into each other's reasoners
-        if (t instanceof Concept)
-            return ((Concept)t);
+        return index.concept(t);
+    }
 
-        Term u = t.term().normalized();
-        if (u == null) return null;
-
-        Termed tt = index.get(u);
-        if (tt instanceof Concept)
-            return ((Concept)tt);
-        return null;
+    public final Concept taskConcept(Termed t) {
+        Concept c = index.concept(t);
+        if (!Task.validTaskTerm(c.term()))
+            return null;
+        return c;
     }
 
 
@@ -424,10 +421,6 @@ public class Memory extends Param {
 //    public final void put(final Concept c) {
 //        concepts.put(c);
 //    }
-
-    public final TermIndex getIndex() {
-        return index;
-    }
 
     public final void cycle(int num) {
 

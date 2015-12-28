@@ -10,16 +10,17 @@ import java.io.PrintStream;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by me on 12/7/15.
  */
-public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
+public class MapIndex extends MapCacheBag<Term,Termed> implements TermIndex {
 
     public final Map<TermContainer, TermContainer> subterms;
 
 
-    public MapIndex(Map<Termed, Termed> data, Map<TermContainer, TermContainer> subterms) {
+    public MapIndex(Map<Term, Termed> data, Map<TermContainer, TermContainer> subterms) {
         super(data);
         this.subterms = subterms;
     }
@@ -28,23 +29,24 @@ public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
 
 
 
-    @Override
-    public final Termed get(Object t) {
-
-        Map<Termed, Termed> d = data;
-        Termed existing = d.get(t);
-        if (existing ==null) {
-            return compile((Termed)t);
-        }
-        return existing;
-
-//        return data.compute(t, (k, vExist) -> {
-//            if (vExist == null) return k.index(this);
-//            else
-//                return vExist;
-//        });
-
+    /** gets an existing item or applies the builder to produce something to return */
+    <K extends Term> Termed<K> the(K key, Function<K, Termed> builder) {
+        Termed existing = super.get(key);
+        return existing == null ?
+                builder.apply(key) : existing;
     }
+
+    @Override
+    public Termed get(Object t) {
+        if (t instanceof Termed) {
+            Term tt = ((Termed)t).term();
+            return the(tt, this::intern);
+        } else {
+            throw new RuntimeException("invalid key");
+        }
+    }
+
+
 
     private final class InternGenericCompound extends GenericCompound {
 
@@ -53,50 +55,54 @@ public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
         }
 
         //equals ==
-
-        @Override
-        public Term clone(Term[] replaced) {
-            if (subterms().equals(replaced))
-                return this;
-            return the(op(), replaced, relation);
-        }
+//
+//        @Override
+//        public Term clone(Term[] replaced) {
+//            if (subterms().equals(replaced))
+//                return this;
+//            return term(op(), relation, replaced);
+//        }
     }
 
-
-    @Override
-    public Termed compile(Op op, Term[] t, int relation) {
-        if ((op == Op.SEQUENCE) || (op == Op.PARALLEL)) {
-            //intermval metadata, handle special
-            return $.the(op, t, relation);
-        } else {
-            //TODO find existing instance and don't construct a duplciate which will get unified on re-entry
-            return compileCompound(op, new TermVector(t), relation);
-        }
-    }
-
-    protected <T extends Termed> T compile(T t) {
+    public Termed intern(Term tt) {
+        Term t = tt.term();
 
         if (t instanceof TermMetadata) {
 
             //the term instance will remain unique
             // as determined by TermData's index method
             // however we can potentially index its subterms
-            return t;
+            return tt;
         }
 
-        Termed compiled = t.term() instanceof Compound ?
-                compileCompound((Compound) t)
+        Termed compiled = t instanceof Compound ?
+                make((Compound) t)
                 : t;
 
-        data.put(compiled, compiled);
-        return (T)compiled;
+        Termed existing = data.put(compiled.term(), compiled);
+        if (existing!=null)
+            throw new RuntimeException("displaced: " + existing + " with " + compiled);
+
+        return compiled;
     }
 
-    protected Termed compileCompound(Compound t) {
-        return compileCompound(t.op(), t.subterms(), t.relation());
+
+    @Override
+    public Termed make(Op op, int relation, Term... t) {
+        if ((op == Op.SEQUENCE) || (op == Op.PARALLEL)) {
+            //intermval metadata, handle special
+            return $.the(op, t, relation);
+        } else {
+            //TODO find existing instance and don't construct a duplciate which will get unified on re-entry
+            return make(op, new TermVector(t), relation);
+        }
     }
 
-    protected Termed compileCompound(Op op, TermContainer subterms, int relation) {
+    protected Termed make(Compound t) {
+        return make(t.op(), t.subterms(), t.relation());
+    }
+
+    protected Termed make(Op op, TermContainer subterms, int relation) {
         return new InternGenericCompound(
             op, (TermVector) get(subterms), relation
         );
@@ -149,8 +155,8 @@ public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
 //    }
 
 
-    protected <X extends Term> TermContainer<X> compileSubterms(TermVector<X> subs) {
-        return new TermVector<>(subs.terms(), this::getTerm);
+    protected TermContainer compileSubterms(TermVector subs) {
+        return new TermVector(subs.terms(), this::term);
 //        Term[] ss = subs.term;
 //        int s = ss.length;
 //        for (int i = 0; i < s; i++) {

@@ -6,7 +6,6 @@ import com.gs.collections.impl.tuple.Tuples;
 import nars.concept.Concept;
 import nars.concept.util.ConceptBuilder;
 import nars.nal.Level;
-import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.AbstractOperator;
 import nars.nal.nal8.Execution;
@@ -25,7 +24,6 @@ import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
-import nars.term.variable.Variable;
 import nars.time.Clock;
 import nars.util.data.Util;
 import nars.util.event.*;
@@ -233,24 +231,18 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return i;
     }
 
-    public final <S extends Term, T extends S> T term(String t) throws Narsese.NarseseException {
-        T x = Narsese.the().term(t);
-        if (x == null) {
+    public final <T extends Termed> T term(String t) throws Narsese.NarseseException {
+        T x = (T)Narsese.the().term(t, index());
+        if (x != null) {
             logger.error("Syntax error: '{}'", t);
-            return null;
+        } else {
+
+            //this is applied automatically when a task is entered.
+            //it's only necessary here where a term is requested
+            //TODO apply this in index on the original copy only
+            x.term().setDuration(memory.duration());
         }
-
-        T x2 = (T) memory.index.getTerm(x);
-        if (x2 == null) {
-            logger.error("Unindexed: '{}' ", x2);
-        }
-
-        //this is applied automatically when a task is entered.
-        //it's only necessary here where a term is requested
-        //TODO apply this in index on the original copy only
-        x2.setDuration(memory.duration());
-
-        return x2;
+        return x;
     }
 
 
@@ -530,7 +522,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * returns the global concept index
      */
     public final TermIndex index() {
-        return memory.getIndex();
+        return memory.index;
     }
 
     public TaskQueue input(Collection<Task> t) {
@@ -1193,44 +1185,12 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      *
      * @return an existing Concept, or a new one, or null
      */
-    public final Concept conceptualize(Termed termed) {
-
-        Concept c;
-        if (termed instanceof Concept) {
-            c = (Concept) termed;
-        } else {
-
-            /*if (termed == null)
-                return null;*/
-
-            Term term = termed.term();
-
-            if ((term = term.normalized()) == null) {
-                //throw new RuntimeException("unnormalized term attempts to conceptualize: " + term);
-                return null;
-            }
-
-            if (!validConceptTerm(term)) {
-                throw new RuntimeException("invalid term attempts to conceptualize: " + term);
-                //return null;
-            }
-
-            c = doConceptualize(term);
-        }
-
-        activate(c);
-
-        return c;
+    public Concept conceptualize(Termed termed) {
+        return index().concept(termed);
     }
 
+    //protected abstract Concept doConceptualize(Term term);
 
-
-    protected abstract Concept doConceptualize(Term term);
-    protected abstract void activate(Concept c);
-
-    static boolean validConceptTerm(Term term) {
-        return !((term instanceof Variable) || (term instanceof CyclesInterval));
-    }
 
 
 //    public NAR resetIf(Predicate<NAR> resetCondition) {

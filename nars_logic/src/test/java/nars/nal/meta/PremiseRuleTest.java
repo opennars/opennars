@@ -37,25 +37,25 @@ public class PremiseRuleTest extends TestCase {
         assertEquals(1, p.term("<%A --> %B>").complexity());
 
         {
-            PremiseRule x = p.termRaw("< A, A |- A, (Truth:Revision, Desire:Weak)>");
+            PremiseRule x = (PremiseRule)p.termRaw("< A, A |- A, (Truth:Revision, Desire:Weak)>");
             assertEquals("((A,A),(A,(<Revision-->Truth>,<Weak-->Desire>)))", x.toString());
             // assertEquals(12, x.getVolume());
         }
 
         {
-            PremiseRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B>, (Truth:Revision, Desire:Weak)>");
+            PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> B>, (Truth:Revision, Desire:Weak)>");
             assertEquals(19, x.volume());
             assertEquals("((<%A-->%B>,<%B-->%A>),(<%A<->%B>,(<Revision-->Truth>,<Weak-->Desire>)))", x.toString());
 
         }
         {
-            PremiseRule x = p.term("< <A --> B>, <B --> A> |- <A <-> nonvar>, (Truth:Revision, Desire:Weak)>");
+            PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> nonvar>, (Truth:Revision, Desire:Weak)>");
             assertEquals(19, x.volume()); //same volume as previous block
             assertEquals("((<%A-->%B>,<%B-->%A>),(<nonvar<->%A>,(<Revision-->Truth>,<Weak-->Desire>)))", x.toString());
         }
 
         {
-            PremiseRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B>, (<Nonsense --> Test>)>");
+            PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> B>, (<Nonsense --> Test>)>");
             assertEquals(16, x.volume());
             assertEquals("((<%A-->%B>,<%B-->%A>),(<%A<->%B>,(<%Nonsense-->%Test>)))", x.toString());
         }
@@ -67,7 +67,7 @@ public class PremiseRuleTest extends TestCase {
 //        }
 
         //and the first complete rule:
-        PremiseRule x = p.term("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
+        PremiseRule x = (PremiseRule) p.term("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
         assertEquals("((<%S-->%M>,<%P-->%M>),(<%P<->%S>,(%TruthComparison,%DesireStrong)))", x.toString());
         assertEquals(15, x.volume());
 
@@ -94,7 +94,7 @@ public class PremiseRuleTest extends TestCase {
 
 
 
-        Compound y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion)>");
+        Compound y = (Compound)p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion)>");
         y = ((PremiseRule)y).normalizeRule();
         Terms.printRecursive(y);
 
@@ -105,7 +105,7 @@ public class PremiseRuleTest extends TestCase {
 
 
     @Test public void printTermRecursive() {
-        Compound y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
+        Compound y = (Compound)p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
         Terms.printRecursive(y);
     }
 

@@ -10,6 +10,7 @@ import nars.nal.Compounds;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
+import nars.task.Task;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.atom.Atom;
@@ -33,7 +34,7 @@ import static nars.Op.*;
  */
 public abstract class $  {
 
-    public final static TermIndex terms = new TermIndex.UncachedTermIndex();
+    public final static TermIndex terms = new TermIndex.ImmediateTermIndex();
 
 
     public static final org.slf4j.Logger logger = LoggerFactory.getLogger($.class);
@@ -45,8 +46,10 @@ public abstract class $  {
     }
 
     public static final <C extends Compound> MutableTask $(String term, char punc) {
-        C t = Narsese.the().term(term);
-        if (t == null) return null;
+        Term t = Narsese.the().concept(term, terms).term();
+        if (!Task.validTaskTerm(t))
+            return null;
+
         return new MutableTask(t)
                 .punctuation(punc)
                 .eternal();
@@ -425,13 +428,13 @@ public abstract class $  {
 
 
     public static Term the(Op op, Term... subterms) {
-        return terms.the(op, subterms);
+        return terms.term(op, subterms);
     }
     public static Term the(Op op, Term[] subterms, int relation) {
-        return terms.the(op, subterms, relation);
+        return terms.term(op, relation, subterms);
     }
     public static Term the(Op op, Collection<Term> subterms, int relation) {
-        return terms.the(op, Terms.toArray(subterms), relation);
+        return terms.term(op, relation, Terms.toArray(subterms));
     }
 
     public static int typeIndex(Op o) {

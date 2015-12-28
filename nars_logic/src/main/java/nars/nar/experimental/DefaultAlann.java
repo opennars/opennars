@@ -117,10 +117,7 @@ public class DefaultAlann extends AbstractAlann  {
         return this;
     }
 
-    @Override
-    protected void activate(Concept c) {
-        //...
-    }
+
 
     private final class MyDeriveletContext extends DeriveletContext {
         public MyDeriveletContext(NAR nar) {

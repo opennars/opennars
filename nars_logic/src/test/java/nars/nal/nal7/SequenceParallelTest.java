@@ -2,6 +2,7 @@ package nars.nal.nal7;
 
 import nars.NAR;
 import nars.Op;
+import nars.concept.Concept;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -331,7 +332,7 @@ public class SequenceParallelTest {
     @Test public void testDoesntLoseInfo() {
         NAR nar = new Terminal();
         Term t = nar.term("<(&/, <$1 --> (/, open, _, door)>, /5) =/> <$1 --> (/, enter, _, room)>>");
-        Term t2 = t.normalized();
+        Concept t2 = nar.concept(t);
         String s1 = t.toString();
         String s2 = t2.toString();
         assert s1.contains("/5");

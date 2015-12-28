@@ -107,17 +107,17 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
      * returns the compound valid for a Task if so,
      * otherwise returns null
      * */
-    static Compound validTaskTerm(Term t) {
+    static boolean validTaskTerm(Term t) {
 
         if (!(t instanceof Compound))//(t instanceof CyclesInterval) || (t instanceof Variable)
-            return null;
+            return false;
 
         Compound st = (Compound) t;
         if (t.op().isStatement()) {
 
             /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
             if (Statement.subjectOrPredicateIsIndependentVar(st))
-                return null;
+                return false;
 
             if (Global.DEBUG_PARANOID) {
                 //should be checked on statement construction
@@ -128,7 +128,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
         }
 
-        return st;
+        return true;
     }
 
 

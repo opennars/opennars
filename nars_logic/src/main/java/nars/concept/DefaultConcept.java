@@ -1,6 +1,9 @@
 package nars.concept;
 
-import nars.*;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
+import nars.Symbols;
 import nars.bag.Bag;
 import nars.bag.NullBag;
 import nars.budget.Budget;
@@ -59,7 +62,7 @@ public class DefaultConcept extends AtomConcept {
     static final BudgetMerge duplicateQuestionMerge = Budget.plus;
     private final Termed[] termLinkTemplates;
 
-    public DefaultConcept(Term term, Param p) {
+    public DefaultConcept(Term term, Memory p) {
         this(term, new NullBag(), new NullBag(), p);
     }
 
@@ -69,7 +72,7 @@ public class DefaultConcept extends AtomConcept {
      * @param taskLinks
      * @param termLinks
      */
-    public DefaultConcept(Term term, Bag<Task> taskLinks, Bag<Termed> termLinks, Param p) {
+    public DefaultConcept(Term term, Bag<Task> taskLinks, Bag<Termed> termLinks, Memory p) {
         super(term, termLinks, taskLinks);
 
         //TODO lazy instantiate?
@@ -80,7 +83,7 @@ public class DefaultConcept extends AtomConcept {
         questions = new ArrayListTaskTable(maxQuestions);
         quests = new ArrayListTaskTable(maxQuestions);
 
-        this.termLinkTemplates = TermLinkBuilder.build(term);
+        this.termLinkTemplates = TermLinkBuilder.build(term, p.index);
 
     }
 

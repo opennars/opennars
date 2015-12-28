@@ -70,11 +70,6 @@ public class Terminal extends AbstractNAR {
 
 
     @Override
-    protected void activate(Concept c) {
-        //nothing
-    }
-
-    @Override
     public NAR forEachConcept(Consumer<Concept> recip) {
         return null;
     }

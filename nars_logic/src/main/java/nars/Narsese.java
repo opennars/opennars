@@ -22,7 +22,9 @@ import nars.op.io.echo;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.match.*;
 import nars.term.variable.Variable;
@@ -1080,14 +1082,48 @@ public class Narsese extends BaseParser<Object>  {
         return makeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
     }
 
-    /** parse one term and normalize it if successful */
-    public <T extends Term> T term(String s) {
-        Term x = termRaw(s);
-        if (x==null) return null;
+    /** parse one term unnormalized */
+    public Term term(String s) {
 
-        return x.normalized();
+        ParsingResult r = singleTermParser.run(s);
+
+        DefaultValueStack stack = (DefaultValueStack) r.getValueStack();
+        FasterList sstack = stack.stack;
+
+        switch (sstack.size()) {
+            case 1:
+
+
+                Object x = sstack.get(0);
+
+                if (x instanceof String)
+                    x = $.$((String) x);
+
+                if (x != null) {
+
+                    try {
+                        return (Term) x;
+                    } catch (ClassCastException cce) {
+                        throw new NarseseException("Term mismatch: " + x.getClass(), cce);
+                    }
+                }
+                break;
+            case 0:
+                return null;
+            default:
+                throw new RuntimeException("Invalid parse stack: " + sstack);
+        }
+
+        return null;
     }
 
+    public Termed term(String s, TermIndex t) {
+        return t.term(term(s));
+    }
+
+    public Termed concept(String s, TermIndex t) {
+        return t.concept(term(s));
+    }
 
 //    public TaskRule taskRule(String input) {
 //        Term x = termRaw(input, singleTaskRuleParser);

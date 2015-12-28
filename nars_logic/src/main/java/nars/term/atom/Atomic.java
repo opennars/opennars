@@ -102,10 +102,7 @@ public abstract class Atomic implements Term, Byted {
     @Override
     public abstract int varQuery();
 
-    @Override
-    public final Atomic normalized() {
-        return this;
-    }
+
 
     @Override
     public Term apply(Subst f, boolean fullMatch) {

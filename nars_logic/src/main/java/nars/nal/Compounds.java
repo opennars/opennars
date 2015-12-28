@@ -131,7 +131,7 @@ public interface Compounds {
             // (--,(--,P)) = P
             return ((Compound) t).term(0);
         }
-        return the(Op.NEGATE, new Term[]{t}, -1, false);
+        return term(Op.NEGATE, -1, false, t);
     }
 
     static void setAppend(Compound set, Appendable p, boolean pretty) throws IOException {
@@ -211,9 +211,9 @@ public interface Compounds {
             res = ser;
         }
 
-        return the(
+        return term(
                 o,
-                res, index);
+                index, res);
     }
 
     static boolean hasImdex(Term[] r) {
@@ -311,7 +311,7 @@ public interface Compounds {
 
         if (sa.length == 1) return sa[0];
 
-        return the(op, sa, -1, false /* already sorted via TreeSet */);
+        return term(op, -1, false, sa   /* already sorted via TreeSet */);
 
     }
 
@@ -362,7 +362,7 @@ public interface Compounds {
                 if (t.length == 1) return t[0]; //reduced to one
 
                 if (!Statement.invalidStatement(t[0], t[1]))
-                    return the(op, t, -1, false); //already sorted
+                    return term(op, -1, false, t); //already sorted
 
                 return null;
             default:
@@ -373,7 +373,7 @@ public interface Compounds {
     default Term subtractSet(Op setType, Compound A, Compound B) {
         if (A.equals(B))
             return null; //empty set
-        return the(setType, TermContainer.difference(A, B));
+        return term(setType, TermContainer.difference(A, B));
     }
 
     static boolean validEquivalenceTerm(Term t) {
@@ -408,12 +408,12 @@ public interface Compounds {
                 throw new RuntimeException("invalid case");
         }
 
-        return the(op,
-                the(conjOp, subject, oldCondition),
+        return term(op,
+                term(conjOp, subject, oldCondition),
                 pred(predicate));
     }
 
-    default Term the(Op op, Term[] t, int relation, boolean sort) {
+    default Term term(Op op, int relation, boolean sort, Term... t) {
         if (t == null)
             return null;
 
@@ -430,10 +430,10 @@ public interface Compounds {
             return null;
         }
 
-        return compile(op, t, relation).term();
+        return make(op, relation, t).term();
     }
 
-    Termed compile(Op op, Term[] t, int relation);
+    Termed make(Op op, int relation, Term... t);
 
 
     default Term newIntersectINT(Term[] t) {
@@ -475,7 +475,7 @@ public interface Compounds {
 
         if ((o1 == setUnion) && (o2 == setUnion)) {
             //the set type that is united
-            return the(setUnion, TermContainer.union((Compound) term1, (Compound) term2));
+            return term(setUnion, TermContainer.union((Compound) term1, (Compound) term2));
         }
 
 
@@ -507,16 +507,16 @@ public interface Compounds {
                 suffix = new Term[]{term2};
             }
 
-            return the(intersection, concat(
+            return term(intersection, -1, true, concat(
                     ((Compound) term1).terms(), suffix, Term.class
-            ), -1, true);
+            ));
 
         }
 
         if (term1.equals(term2))
             return term1;
 
-        return the(intersection, new Term[]{term1, term2}, -1, true);
+        return term(intersection, -1, true, term1, term2);
 
 
     }
@@ -524,7 +524,7 @@ public interface Compounds {
     default Term intersect(Op resultOp, Compound a, Compound b) {
         MutableSet<Term> i = TermContainer.intersect(a, b);
         if (i.isEmpty()) return null;
-        return the(resultOp, i);
+        return term(resultOp, i);
     }
 
     default Term difference(Compound a, Compound b) {
@@ -554,7 +554,7 @@ public interface Compounds {
             else {
                 Term[] i = Terms.toArray(dd);
                 if (i == null) return null;
-                return the(a.op(), i);
+                return term(a.op(), i);
             }
         }
 
@@ -590,16 +590,16 @@ public interface Compounds {
 //    }
 
     /** main compound construction entry-point */
-    default  Term the(Op op, Collection<Term> t) {
-        return the(op, Terms.toArray(t));
+    default  Term term(Op op, Collection<Term> t) {
+        return term(op, Terms.toArray(t));
     }
 
     /** main compound construction entry-point */
-    default Term the(Op op, Term... t) {
-        return the(op, t, -1);
+    default Term term(Op op, Term... t) {
+        return term(op, -1, t);
     }
 
-    default Term the(Op op, Term[] t, int relation) {
+    default Term term(Op op, int relation, Term... t) {
 
         if (t == null)
             return null;
@@ -662,7 +662,7 @@ public interface Compounds {
             //test for valid statement
             return statement(op, t);
         } else {
-            return the(op, t, relation, op.isCommutative());
+            return term(op, relation, op.isCommutative(), t);
         }
 
     }

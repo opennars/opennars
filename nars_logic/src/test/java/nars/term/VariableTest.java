@@ -2,6 +2,7 @@ package nars.term;
 
 import nars.$;
 import nars.Narsese;
+import nars.nar.Terminal;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import org.junit.Test;
@@ -12,6 +13,8 @@ import static org.junit.Assert.*;
  * Created by me on 8/28/15.
  */
 public class VariableTest {
+
+    Terminal t = new Terminal();
 
     static final Narsese p = Narsese.the();
 
@@ -64,10 +67,10 @@ public class VariableTest {
         Term a = p.term(vara);
         Term b = p.term(varb);
         //System.out.println(a + " " + b + " "  + Product.make(a, b).normalized().toString());
-      assertEquals(
+
+        assertEquals(
             expect,
-            $.p(a, b).normalized()
-                    .toString()
+            t.concept($.p(a, b)).toString()
         );
     }
 

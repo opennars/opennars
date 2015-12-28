@@ -34,7 +34,6 @@ import nars.term.match.Ellipsis;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
-import nars.term.transform.VariableNormalization;
 import nars.term.visit.SubtermVisitor;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
@@ -231,7 +230,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
     /** returns how many subterms were modified, or -1 if failure (ex: results in invalid term) */
-    default <T extends Term> int transform(CompoundTransform<Compound<T>, T> trans, Term[] target, int level) {
+    default <T extends Term> int get(CompoundTransform<Compound<T>, T> trans, Term[] target, int level) {
         int n = size();
 
         int modifications = 0;
@@ -258,7 +257,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
                 if (trans.testSuperTerm(cx)) {
 
                     Term[] yy = new Term[cx.size()];
-                    int submods = cx.transform(trans, yy, level + 1);
+                    int submods = cx.get(trans, yy, level + 1);
 
                     if (submods == -1) return -1;
                     if (submods > 0) {
@@ -324,36 +323,16 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 //    }
 
 
-
-
-    /**
-     * Normalizes if contain variables which need to be finalized for use in a Sentence
-     * May return null if the resulting compound term is invalid
-     */
-    @Override
-    default <T extends Term> T normalized() {
-        if (isNormalized())
-            return (T) this;
-
-        Compound result = VariableNormalization.normalizeFast(this).get();
-        if (result == null)
-            return null;
-
-        result.setNormalized(true);
-
-        return (T) result;
+    default <X extends Compound> X get(CompoundTransform t) {
+        return get(t, true);
     }
 
-    default <X extends Compound> X transform(CompoundTransform t) {
-        return transform(t, true);
-    }
-
-    default <X extends Compound> X transform(CompoundTransform t, boolean requireEqualityForNewInstance) {
+    default <X extends Compound> X get(CompoundTransform t, boolean requireEqualityForNewInstance) {
         if (t.testSuperTerm(this)) {
 
             Term[] cls = new Term[size()];
 
-            int mods = transform(t, cls, 0);
+            int mods = get(t, cls, 0);
 
             if (mods == -1) {
                 return null;

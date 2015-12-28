@@ -5,10 +5,15 @@ import nars.MapIndex;
 import nars.Memory;
 import nars.Op;
 import nars.bag.impl.CacheBag;
+import nars.concept.Concept;
 import nars.nal.Compounds;
+import nars.nal.nal7.CyclesInterval;
 import nars.term.Term;
 import nars.term.Termed;
+import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
+import nars.term.transform.CompoundTransform;
+import nars.term.variable.Variable;
 import nars.util.WeakValueHashMap;
 
 import java.io.PrintStream;
@@ -18,34 +23,61 @@ import java.util.function.Consumer;
 /**
  *
  */
-public interface TermIndex extends Compounds, CacheBag<Termed, Termed> {
+public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
 
     void forEach(Consumer<? super Termed> c);
 
-    default <T extends Termed> T getTerm(Termed t) {
-        Termed u = get(t);
-        if (u == null)
-            return null;
-        return (T)u.term();
+
+
+    default Term term(Object t) {
+        Termed tt = get(t);
+        if (tt == null) return null;
+        return tt.term();
     }
 
-    class UncachedTermIndex implements TermIndex {
+    default Termed term(Compound c, CompoundTransform transform) {
+        throw new RuntimeException("unimpl");
+    }
+
+    default Concept concept(Compound c, CompoundTransform transform) {
+        return concept(term(c, transform));
+    }
+
+    static boolean validConceptTerm(Term term) {
+        return !((term instanceof Variable) || (term instanceof CyclesInterval));
+    }
+
+    default Concept concept(Termed t) {
+        if (t instanceof Concept) return ((Concept)t);
+
+        if (!validConceptTerm(t.term())) return null;
+
+        Termed u = get(t);
+        if (u instanceof Concept) return ((Concept)u);
+        return null;
+    }
+
+
+    class ImmediateTermIndex implements TermIndex {
 
         /** build a new instance on the heap */
-        @Override public Termed compile(Op op, Term[] t, int relation) {
+        @Override public Termed make(Op op, int relation, Term... t) {
             return new UncachedGenericCompound(op, t, relation);
         }
+
 
         @Override
         public Termed get(Object key) {
             return (Termed)key;
         }
 
+
         @Override
         public void forEach(Consumer<? super Termed> c) {
 
         }
+
 
         @Override
         public void clear() {
@@ -53,12 +85,12 @@ public interface TermIndex extends Compounds, CacheBag<Termed, Termed> {
         }
 
         @Override
-        public Object remove(Termed key) {
+        public Object remove(Term key) {
             throw new RuntimeException("n/a");
         }
 
         @Override
-        public Termed put(Termed termed, Termed termed2) {
+        public Termed put(Term termed, Termed termed2) {
             throw new RuntimeException("n/a");
         }
 
@@ -72,18 +104,19 @@ public interface TermIndex extends Compounds, CacheBag<Termed, Termed> {
             throw new RuntimeException("should not be used by Memory");
         }
 
+
         private class UncachedGenericCompound extends GenericCompound {
 
             public UncachedGenericCompound(Op op, Term[] t, int relation) {
                 super(op, relation, t);
             }
 
-            @Override
-            public Term clone(Term[] replaced) {
-                if (subterms().equals(replaced))
-                    return this;
-                return the(op(), replaced, relation);
-            }
+//            @Override
+//            public Term clone(Term[] replaced) {
+//                if (subterms().equals(replaced))
+//                    return this;
+//                return term(op(), relation, replaced);
+//            }
         }
     }
 

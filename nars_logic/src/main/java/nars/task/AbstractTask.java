@@ -8,7 +8,6 @@ import nars.concept.Concept;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
-import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
@@ -174,14 +173,12 @@ public abstract class AbstractTask extends Item<Task>
         }
 
         if (t == null) throw new RuntimeException("null term");
-        Term tNorm = t.normalized();
+        Concept tNorm = memory.concept(t);
         if (tNorm == null)
             throw new RuntimeException("term not normalized");
 
 
-
-        t = Task.validTaskTerm(tNorm);
-        if (t == null) {
+        if (!Task.validTaskTerm(tNorm.term())) {
             throw new RuntimeException("invalid sentence term: " + tNorm);
         }
 
@@ -206,14 +203,16 @@ public abstract class AbstractTask extends Item<Task>
             setTime(now, oc);
         }
 
+
         if (t instanceof Sequence)  {
-            long[] offset = new long[1];
-            Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
-            t = Task.validTaskTerm(st);
-            if (t == null)
-                return null; //it was reduced to something which is invalid as a task term
-            if (!isEternal())
-                occurrenceTime -= offset[0];
+            throw new RuntimeException("seq not impl yet");
+//            long[] offset = new long[1];
+//            Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
+//            t = Task.validTaskTerm(st);
+//            if (t == null)
+//                return null; //it was reduced to something which is invalid as a task term
+//            if (!isEternal())
+//                occurrenceTime -= offset[0];
         }
 
 

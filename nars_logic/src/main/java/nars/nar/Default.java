@@ -18,6 +18,7 @@ import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
 import nars.task.flow.SetTaskPerception;
 import nars.task.flow.TaskPerception;
+import nars.term.Termed;
 import nars.term.compile.TermIndex;
 import nars.time.FrameClock;
 import nars.util.data.MutableInteger;
@@ -158,10 +159,18 @@ public class Default extends AbstractNAR {
         }.mergeNull();
     }
 
+
     @Override
-    protected final void activate(Concept c) {
-        core.activate(c);
+    public Concept conceptualize(Termed termed) {
+        Concept c = super.conceptualize(termed);
+        if (c!=null) {
+            core.activate(c);
+            return c;
+        }
+        return null;
     }
+
+
 
     @Override
     public NAR forEachConcept(Consumer<Concept> recip) {

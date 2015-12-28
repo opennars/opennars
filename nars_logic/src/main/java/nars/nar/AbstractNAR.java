@@ -335,18 +335,6 @@ public abstract class AbstractNAR extends NAR {
 //
 //    }
 
-    @Override
-    protected Concept doConceptualize(Term term) {
-        Termed c = memory.index.get(term);
-        if (!(c instanceof Concept)) {
-            c = apply(term);
-            if (c == null)
-                return null; //unconceptualizable
-            memory.index.put(term, c);
-        }
-
-        return (Concept)c;
-    }
 
 
     public AbstractNAR setTaskLinkBagSize(int taskLinkBagSize) {

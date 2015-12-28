@@ -357,7 +357,7 @@ public class TermTest {
 
         Term a = n.term(s);
 
-        //NAR n2 = new Terminal();
+        NAR n2 = new Terminal();
         Term b = n.term(s);
 
         //assertTrue(a != b);
@@ -373,9 +373,9 @@ public class TermTest {
         assertEquals(a.compareTo(a), a.compareTo(b));
         assertEquals(0, b.compareTo(a));
 
-        assertEquals(a.normalized().toString(), b.toString());
-        assertEquals(a.normalized().hashCode(), b.hashCode());
-        assertEquals(a.normalized(), b);
+        assertEquals(n2.concept(a).toString(), b.toString());
+        assertEquals(n2.concept(a).hashCode(), b.hashCode());
+        assertEquals(n2.concept(a), b);
 
     }
 
@@ -434,10 +434,10 @@ public class TermTest {
         assertEquals(a, b);
 
         //todo: method results ignored ?
-        b.equals(a.normalized());
+        b.equals(n2.concept(a));
 
-        assertEquals("re-normalizing doesn't affect: " + a.normalized(), b,
-                a.normalized());
+        assertEquals("re-normalizing doesn't affect: " + n2.concept(a), b,
+                n2.concept(a));
 
     }
 
@@ -725,13 +725,13 @@ public class TermTest {
     public void testSubTermStructure() {
 
         assertTrue(
-                n.term("<a --> b>").impossibleSubterm(
+                n.term("<a --> b>").term().impossibleSubterm(
                         n.term("<a-->b>")
                 )
         );
         assertTrue(
-                n.term("<a --> b>").impossibleStructureMatch(
-                        n.term("<a-->#b>").structure()
+                n.term("<a --> b>").term().impossibleStructureMatch(
+                        n.term("<a-->#b>").term().structure()
                 )
         );
 

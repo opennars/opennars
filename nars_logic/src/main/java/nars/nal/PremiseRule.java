@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import nars.$;
 import nars.Global;
 import nars.Op;
+import nars.concept.Concept;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.op.Solve;
@@ -27,7 +28,6 @@ import nars.term.transform.VariableNormalization;
 import nars.term.variable.Variable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -142,9 +142,9 @@ public class PremiseRule extends GenericCompound implements Level {
     }
 
 
-    @Override
-    public final Compound normalized() {
-        return transform(uppercaseAtomsToPatternVariables);
+
+    public final Concept normalize(TermIndex index) {
+        return index.concept(this, uppercaseAtomsToPatternVariables);
     }
 
 
@@ -219,23 +219,13 @@ public class PremiseRule extends GenericCompound implements Level {
     }
 
     /** deduplicate and generate match-optimized compounds for rules */
-    public void compile(TermIndex patterns) {
+    public void compile(TermIndex index) {
         Term[] premisePattern = ((Compound) term(0)).terms();
         Term taskPattern = premisePattern[0];
         Term beliefPattern = premisePattern[1];
-        premisePattern[0] = compilePattern(taskPattern, patterns);
-        premisePattern[1] = compilePattern(beliefPattern, patterns);
+        premisePattern[0] = index.term(taskPattern);
+        premisePattern[1] = index.term(beliefPattern);
     }
-
-    static Term compilePattern(Term c, TermIndex patterns) {
-        Term x = patterns.getTerm(c);
-        if (Global.DEBUG) {
-            if (!Objects.equals(x, c))
-                throw new RuntimeException("index fault");
-        }
-        return x;
-    }
-
 
     static final class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {
 

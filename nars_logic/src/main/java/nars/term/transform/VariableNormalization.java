@@ -92,7 +92,7 @@ public class VariableNormalization extends VariableTransform {
         if (tx == null) tx = this;
 
 
-        result = target.transform(tx);
+        result = target.get(tx);
 
     }
 

@@ -28,7 +28,7 @@ public class PatternIndex extends MapIndex {
 
 
     @Override
-    protected Termed compileCompound(Compound x) {
+    protected Termed make(Compound x) {
 
         /*if (!(x instanceof AbstractCompoundPattern)) {
             if (x instanceof Compound) {
@@ -56,7 +56,7 @@ public class PatternIndex extends MapIndex {
 //                        return the(op, replaced, relation);
 
 
-                        return target.the(op, replaced, relation);
+                        return target.term(op, relation, replaced);
                     }
                 };
 //                    return new LinearCompoundPattern(x, (TermVector) subs);

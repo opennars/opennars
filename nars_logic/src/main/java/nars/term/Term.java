@@ -67,8 +67,6 @@ public interface Term extends Termed, Comparable, Termlike {
     @Override
     int size();
 
-    /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
-    <T extends Term> T normalized();
 
 
     default void recurseTerms(SubtermVisitor v) {
