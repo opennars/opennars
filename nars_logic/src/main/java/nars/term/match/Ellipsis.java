@@ -5,11 +5,8 @@ import nars.nal.nal7.ShadowAtom;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.compound.Compound;
-import nars.term.transform.Subst;
 import nars.term.transform.VariableNormalization;
 import nars.term.variable.Variable;
-
-import java.util.Collection;
 
 /**
  * Meta-term of the form:
@@ -37,31 +34,11 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
         @Override public Op op() {
             return Op.INTERVAL;
         }
-
-        @Override public boolean applyTo(Subst f, Collection<Term> sub, boolean fullMatch) {
-            //do nothing, just continue
-            return true;
-        }
     };
 
     public abstract Variable clone(Variable newVar, VariableNormalization normalizer);
 
-    @Override
-    public boolean applyTo(Subst f, Collection<Term> sub, boolean fullMatch) {
-        Term u = f.getXY(this);
 
-        if (u == null) {
-            //ellipsis allows 0, subst can NOT continue
-            //ellipsis required at least one, subst can continue
-            return valid(0);
-        }
-
-//        if (!(am instanceof EllipsisMatch)) {
-//            throw new RuntimeException("expected ellipsis match: " + am);
-//        }
-
-        return u.applyTo(f, sub, fullMatch);
-    }
 
     //public final Variable target;
 

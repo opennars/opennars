@@ -17,8 +17,8 @@ public abstract class PreCondition2 extends PreCondition {
 
     @Override public final boolean test(RuleMatch m) {
         return test(m,
-                m.apply(arg1, false),
-                m.apply(arg2, false));
+                m.apply(arg1),
+                m.apply(arg2));
     }
 
     public abstract boolean test(RuleMatch m, Term a, Term b);

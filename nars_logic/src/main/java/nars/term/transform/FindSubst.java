@@ -304,7 +304,7 @@ abstract public class FindSubst extends Versioning implements Subst {
                 EllipsisTransform et = (EllipsisTransform) e;
                 if (et.from.equals(Op.Imdex)) {
 
-                    Term n = apply(et.to, false);
+                    Term n = apply(et.to);
                     if (n == null)
                         return false;
 
@@ -318,7 +318,7 @@ abstract public class FindSubst extends Versioning implements Subst {
                         return putXY(e, ImageMatch.put(raw.term, n, Y));
                     }
                 } else {
-                    Term n = apply(et.from, false);
+                    Term n = apply(et.from);
                     if (n == null)
                         return false;
 
@@ -796,16 +796,20 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-    public final Term apply(Term t, boolean fullMatch) {
+    public final Term apply(Term t) {
         //TODO make a half resolve that only does xy?
 
-
-        Term ret = t.apply(this, fullMatch);
-
-        if ((ret != null) /*&& (!yx.isEmpty())*/) {
-            ret = ret.apply(yx, fullMatch);
+        Term ret = getXY(t);
+        if (ret != null) {
+            ret = getYX(ret);
         }
         return ret;
+//        Term ret = t.apply(this, fullMatch);
+//
+//        if ((ret != null) /*&& (!yx.isEmpty())*/) {
+//            ret = ret.apply(yx, fullMatch);
+//        }
+//        return ret;
 
     }
 

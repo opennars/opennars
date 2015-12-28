@@ -183,7 +183,7 @@ public class LocalRules {
 
             Term[] u = {question.term(), solTerm};
 
-            Premise.unify(Op.VAR_INDEP, u, nal.memory.random, (st) -> {
+            Premise.unify(Op.VAR_INDEP, u, nal.memory, (st) -> {
 
                 MutableTask ss = sol.solution((Compound) st,
                         sol.getPunctuation(),

@@ -3,7 +3,6 @@ package nars.term.match;
 import nars.Global;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.transform.Subst;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -41,11 +40,6 @@ public class CollectionEllipsisMatch extends EllipsisMatch {
         return getClass().getSimpleName() + ':' + term;
     }
 
-    @Override
-    public boolean applyTo(Subst f, Collection<Term> target, boolean fullMatch) {
-        target.addAll(term);
-        return true;
-    }
 
     @Override
     public int size() {

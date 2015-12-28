@@ -16,7 +16,6 @@ import nars.term.transform.MapSubst;
 import nars.truth.DefaultTruth;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Consumer;
 
 /**
@@ -38,7 +37,7 @@ public interface Premise extends Level, Tasked {
         if (question.isQuestion() || question.isGoal()) {
             if (Tense.matchingOrder(question, solution)) {
                 Term[] u = {question.term(), solution.term()};
-                unify(Op.VAR_QUERY, u, nar.memory.random, (st) -> {
+                unify(Op.VAR_QUERY, u, nar.memory, (st) -> {
                     Task s;
                     if (!st.equals(solution.term())) {
                         s = MutableTask.clone(solution).term((Compound)st);
@@ -62,9 +61,9 @@ public interface Premise extends Level, Tasked {
      * <p>
      * only sets the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
      */
-    static void unify(Op varType, Term[] t, Random random, Consumer<Term> solution) {
+    static void unify(Op varType, Term[] t, Memory memory, Consumer<Term> solution) {
 
-        FindSubst f = new FindSubst(varType, random) {
+        FindSubst f = new FindSubst(varType, memory.random) {
 
             @Override public boolean onMatch() {
 
@@ -76,7 +75,13 @@ public interface Premise extends Level, Tasked {
                 //FORWARD
                 if (a instanceof Compound) {
 
-                    aa = a.applyOrSelf(this);
+                    Term result;
+                    Term y = getXY(a);
+                    if (y == null)
+                        result = a;
+                    else
+                        result = y;
+                    aa = result;
 
                     if (aa == null) return false;
 
@@ -116,7 +121,7 @@ public interface Premise extends Level, Tasked {
                     //no change needed
                     return t;
                 }
-                return t.apply(new MapSubst(subs));
+                return memory.index.get( new MapSubst(subs), t );
             }
 
         };

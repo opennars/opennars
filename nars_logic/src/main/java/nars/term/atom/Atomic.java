@@ -1,7 +1,6 @@
 package nars.term.atom;
 
 import nars.term.Term;
-import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 import nars.util.utf8.Byted;
 
@@ -103,11 +102,6 @@ public abstract class Atomic implements Term, Byted {
     public abstract int varQuery();
 
 
-
-    @Override
-    public Term apply(Subst f, boolean fullMatch) {
-        return this;
-    }
 
     @Override public final boolean containsTermRecursively(Term target) {
         return false;

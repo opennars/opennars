@@ -26,7 +26,6 @@ import nars.Op;
 import nars.term.Term;
 import nars.term.Termlike;
 import nars.term.atom.AbstractStringAtom;
-import nars.term.transform.Subst;
 
 import java.io.IOException;
 import java.util.Map;
@@ -127,13 +126,7 @@ public abstract class Variable extends AbstractStringAtom {
         return this;
     }
 
-    @Override
-    public Term apply(Subst s, boolean fullMatch) {
-        Term x = s.getXY(this);
-        if (x != null)
-            return x;
-        return this;
-    }
+
 
     /**
      * The syntactic complexity of a variable is 0, because it does not refer to

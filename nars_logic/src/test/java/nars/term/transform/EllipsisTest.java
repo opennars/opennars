@@ -75,7 +75,7 @@ public class EllipsisTest {
                         TestCase.assertEquals(getExpectedUniqueTerms(arity), varArgs.size());
 
                         Set<Term> varArgTerms = Global.newHashSet(1);
-                        varArgs.applyTo(this, varArgTerms, true);
+                        index.get(varArgs, this, varArgTerms);
 
                         TestCase.assertEquals(getExpectedUniqueTerms(arity), varArgTerms.size());
 

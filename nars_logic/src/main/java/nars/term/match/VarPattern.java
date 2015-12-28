@@ -1,8 +1,6 @@
 package nars.term.match;
 
 import nars.Op;
-import nars.term.Term;
-import nars.term.transform.Subst;
 import nars.term.variable.Variable;
 
 /**
@@ -49,14 +47,7 @@ public class VarPattern extends Variable {
         return 0;
     }
 
-    @Override
-    public Term apply(Subst f, boolean fullMatch) {
-        Term y = f.getXY(this);
-        if (y == null) {
-            return fullMatch ? null : this;
-        }
-        return y;
-    }
+
 
 
 }

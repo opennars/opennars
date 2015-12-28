@@ -233,7 +233,7 @@ public final class Solve extends PreCondition {
 
         public Term solve(RuleMatch match) {
 
-            Term derivedTerm = match.apply(term, false);
+            Term derivedTerm = match.apply(term);
 
             if(null==derivedTerm)
                 return null;

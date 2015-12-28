@@ -13,7 +13,7 @@ public abstract class PreCondition1 extends PreCondition {
     }
 
     @Override public boolean test(RuleMatch m) {
-        Term a = m.apply(arg1, false);
+        Term a = m.apply(arg1);
         if (a == null) return false;
         return test(m, a);
     }

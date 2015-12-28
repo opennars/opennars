@@ -23,7 +23,7 @@ public final class substituteIfUnifies extends substitute {
         FindSubst umap = unifies(op, x, y);
         if (umap!=null) {
             //umap.putXY(term, y);
-            return subst(umap, term);
+            return subst(i, umap, term);
         }
 
         return term;

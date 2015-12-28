@@ -23,12 +23,9 @@ package nars.term;
 
 import nars.Op;
 import nars.nal.nal7.Order;
-import nars.term.transform.FindSubst;
-import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 
 import java.io.IOException;
-import java.util.Collection;
 
 
 public interface Term extends Termed, Comparable, Termlike {
@@ -277,47 +274,6 @@ public interface Term extends Termed, Comparable, Termlike {
     default boolean containsTemporal() {
         //TODO construct bit vector for one comparison
         return isAny(Op.TemporalBits);
-    }
-
-
-    default Term apply(Subst f) {
-        return apply(f, false);
-    }
-
-    default Term apply(Subst f, boolean fullMatch) {
-        Term y = f.getXY(this);
-
-        //attempt 1: apply known substitution
-        //containsTerm prevents infinite recursion
-        if ((y == null || y.containsTerm(this)))
-            return null;
-
-        return y;
-    }
-
-    default Term applyOrSelf(FindSubst f) {
-        Term y = f.getXY(this);
-        if (y == null)
-            return this;
-        return y;
-    }
-
-
-    /** resolve the this term according to subst by appending to sub.
-     * return false if this term fails the substitution */
-    default boolean applyTo(Subst f, Collection<Term> sub, boolean fullMatch) {
-        Term u = apply(f, fullMatch);
-        if (u == null) {
-            if (!fullMatch)
-                u = this;
-            else
-                return false;
-        }
-        /*else
-            changed |= (u!=this);*/
-
-        sub.add(u);
-        return true;
     }
 
 

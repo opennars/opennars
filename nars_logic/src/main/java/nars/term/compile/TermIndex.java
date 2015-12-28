@@ -16,10 +16,13 @@ import nars.term.TermContainer;
 import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
+import nars.term.match.EllipsisMatch;
 import nars.term.transform.Subst;
+import nars.term.variable.Variable;
 import nars.util.WeakValueHashMap;
 
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -61,7 +64,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
         for (int i = 0; i < len; i++) {
             Term t = src.term(i);
-            if (!t.applyTo(f, sub, fullMatch)) {
+            if (!get(t, f, sub)) {
                 if (fullMatch)
                     return null;
             }
@@ -91,6 +94,49 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
                 ((PremiseAware) tf).function(args, (RuleMatch) f) :
                 tf.function(args, this);
     }
+
+
+    default Term get(Subst f, Term src) {
+        if (src instanceof Compound) {
+            Term y = f.getXY(src);
+
+            //attempt 1: apply known substitution
+            //containsTerm prevents infinite recursion
+            if ((y == null || y.containsTerm(src)))
+                return null;
+
+            return y;
+        } else if (src instanceof Variable) {
+            Term x = f.getXY(this);
+            if (x != null)
+                return x;
+        }
+
+        return src;
+
+    }
+
+
+    /** resolve the this term according to subst by appending to sub.
+     * return false if this term fails the substitution */
+    default boolean get(Term src, Subst f, Collection<Term> sub) {
+        Term u = get(f, src);
+        if (u == null) {
+            u = src;
+        }
+        /*else
+            changed |= (u!=this);*/
+
+        if (u instanceof EllipsisMatch) {
+            EllipsisMatch m = (EllipsisMatch)u;
+            m.forEach(sub::add);
+        } else {
+            sub.add(u);
+        }
+
+        return true;
+    }
+
 
 
 

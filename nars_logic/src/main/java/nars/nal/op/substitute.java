@@ -29,18 +29,18 @@ public class substitute extends ImmediateTermTransform {
         //replacement term (y)
         final Term y = xx[2];
 
-        return subst(term, x, y);
+        return subst(i, term, x, y);
     }
 
-    public static Term subst(Term term, Term x, Term y) {
+    public static Term subst(TermIndex i, Term term, Term x, Term y) {
         if (x.equals(y))
             return term;
 
-        return subst(new MapSubst(x, y), term);
+        return subst(i, new MapSubst(x, y), term);
     }
 
-    public static Term subst(Subst m, Term term) {
-        return term.apply(m, false);
+    public static Term subst(TermIndex i, Subst m, Term term) {
+        return i.get(m, term);
     }
 
 //    protected boolean substitute(Compound p, MapSubst m, Term a, Term b) {

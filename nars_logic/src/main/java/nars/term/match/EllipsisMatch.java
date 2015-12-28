@@ -4,9 +4,7 @@ import com.google.common.collect.Iterables;
 import nars.nal.nal7.ShadowAtom;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.transform.Subst;
 
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -41,17 +39,6 @@ public abstract class EllipsisMatch extends ShadowAtom implements Iterable<Term>
         throw new RuntimeException("unimpl");
     }
 
-    /**
-     * yields the expanded terms used in a substitution
-     * when constructing a compound containing the ellipsis result.
-     *
-     * by default, just return the terms held,
-     * although it can perform late matching by
-     * using the Substitution parameters .getXY() method
-     *
-     * */
-    @Override
-    public abstract boolean applyTo(Subst substitution, Collection<Term> target, boolean fullMatch);
 
     @Override
     public abstract int size();

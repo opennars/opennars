@@ -21,11 +21,11 @@ public abstract class PreCondition3 extends PreCondition {
     @Override
     public boolean test(RuleMatch m) {
         //these should not resolve to null
-        Term a = m.apply(arg1, false);
+        Term a = m.apply(arg1);
         if (a == null) return false;
-        Term b = m.apply(arg2, false);
+        Term b = m.apply(arg2);
         if (b == null) return false;
-        Term c = m.apply(arg3, false);
+        Term c = m.apply(arg3);
         if (c == null) return false;
 
         return test(m, a, b, c);
