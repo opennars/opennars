@@ -267,10 +267,13 @@ public class Memory extends Param {
 
     public Concept concept(Termed t) {
         if (t instanceof Concept) return ((Concept)t);
+        Term tt = t.term();
+
+        if (!validConceptTerm(tt)) return null;
 
         Function<Term, Termed> build = (u) -> {
             Term v = index.get(index.normalized(u)).term();
-            if (v == null || !validConceptTerm(v)) return null;
+            if (v == null) return null;
             if (!v.equals(u)) {
                 //normalization changed to a different term:
                 //look up if that concept exists
@@ -289,7 +292,7 @@ public class Memory extends Param {
             return c;
 
         };
-        Termed exists = index.apply(t.term(), build);
+        Termed exists = index.apply(tt, build);
 
         if (exists instanceof Concept) {
             Concept c = ((Concept)exists);
@@ -307,7 +310,7 @@ public class Memory extends Param {
 
     public final Concept taskConcept(Termed t) {
         Concept c = concept(t);
-        if (!Task.validTaskTerm(c.term()))
+        if (c == null || !Task.validTaskTerm(c.term()))
             return null;
         return c;
     }

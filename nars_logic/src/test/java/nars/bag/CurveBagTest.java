@@ -136,11 +136,13 @@ public class CurveBagTest  {
     }
 
     @Test public void testDistribution() {
-        Default n = new Default(1000, 8, 4, 4);
-        n.memory.linkForgetDurations.setValue(100); //slow forget
-        n.input("$0.9$ a:b.");
-        n.input("$0.9$ b:c.");
-        n.frame(8);
+        Default n = new Default(48, 4, 2, 4);
+        n.memory.linkForgetDurations.setValue(100);
+        n.memory.perfection.setValue(1f);
+        n.input("$1$ a:b.");
+        n.input("$1$ b:c.");
+        n.input("$1$ c:d.");
+        n.frame(4);
         Bag<Concept> bag = n.core.active;
 
         bag.forEachEntry(System.out::println);

@@ -42,7 +42,7 @@ public class CurveBag<V> extends Bag<V> {
     public CurveBag(int capacity, Random rng) {
         this(
             //CurveBag.power6BagCurve,
-            power2BagCurve,
+            power4BagCurve,
             capacity, rng);
     }
 
