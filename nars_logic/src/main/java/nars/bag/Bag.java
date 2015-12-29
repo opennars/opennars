@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements Consumer<V>, Supplier<BagBudget<V>>, Iterable<V> {
+public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implements Consumer<V>, Supplier<BagBudget<V>>, Iterable<V> {
 
 
     protected BudgetMerge mergeFunction = null;
@@ -35,7 +35,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
      * gets the next value without removing changing it or removing it from any index.  however
      * the bag is cycled so that subsequent elements are different.
      */
-    public abstract BagBudget<V> peekNext();
+    public abstract BagBudget<V> sample();
 
 
     /**
@@ -46,7 +46,6 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
      */
     @Override
     public abstract BagBudget<V> remove(V key);
-
 
 
     /**
@@ -67,30 +66,37 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
     public abstract BagBudget<V> put(Object i, Budget b, float scale);
 
 
-    /** continues sampling until the predicate returns false */
-    public void next(Predicate<BagBudget<V>> each) {
-        while ( each.test(peekNext()) ) { }
+    /**
+     * iterates in sequence starting from the top until the predicate returns false
+     */
+    public void top(Predicate<BagBudget<V>> each) {
+        while (each.test(sample())) {
+        }
     }
 
-    /** continues sampling until predicate returns false, limited by max iterations (n) */
-    public void next(int n, Predicate<BagBudget<V>> each) {
-        int[] toFire = { n };
-        next(c -> each.test(c) && ((--toFire[0]) > 0));
-    }
+//    /**
+//     * iterates in sequence starting from the top until predicate returns false, limited by max iterations (n)
+//     */
+//    abstract public void top(int n, Predicate<BagBudget<V>> each);
+//        int[] toFire = { n };
+//        top(c -> (each.test(c) && (toFire[0]--) > 0));
 
-    /** fills a collection with at-most N items, if an item passes the predicate.
-     *  returns how many items added
-     * */
-    public int next(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
-        int startSize = target.size();
-        next(n, c-> {
-           if (each.test(c)) {
-                target.add(c);
-           }
-            return true;
-        });
-        return target.size() - startSize;
-    }
+
+    abstract public int sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target);
+//    /**
+//     * fills a collection with at-most N items, if an item passes the predicate.
+//     * returns how many items added
+//     */
+//    public int sample(int n, Predicate<BagBudget<V>> each, Collection<BagBudget<V>> target) {
+//        int startSize = target.size();
+//        sample(n, x -> {
+//            if (each.test(x)) {
+//                target.add(x);
+//            }
+//            return true;
+//        });
+//        return target.size() - startSize;
+//    }
 
 
     public Bag<V> setMergeFunction(BudgetMerge mergeFunction) {
@@ -106,8 +112,10 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
         return setMergeFunction(Budget.plus);
     }
 
-    /** sets a null merge function, which can be used to detect
-     * merging which should not happen (it will throw null pointer exception) */
+    /**
+     * sets a null merge function, which can be used to detect
+     * merging which should not happen (it will throw null pointer exception)
+     */
     public Bag<V> mergeNull() {
         return setMergeFunction(null);
     }
@@ -154,6 +162,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
         if (s == 0) return 0;
         return getPrioritySum() / s;
     }
+
     public float getSummaryMean() {
         int s = size();
         if (s == 0) return 0;
@@ -178,7 +187,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
      * @return Whether the Item is in the Bag
      */
     public boolean contains(V it) {
-        return get(it)!=null;
+        return get(it) != null;
     }
 
 
@@ -197,7 +206,9 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
 //    }
 
 
-    /** commits the next set of changes and updates any sorting */
+    /**
+     * commits the next set of changes and updates any sorting
+     */
     abstract public void commit();
 
     /**
@@ -239,20 +250,24 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
         forEachEntry(v -> total[0] += v.getPriority());
         return total[0];
     }
+
     public float getSummarySum() {
         float[] total = {0};
         forEachEntry(v -> total[0] += v.summary());
         return total[0];
     }
 
-    @Deprecated public void forEachEntry(Consumer<BagBudget> each) {
+    @Deprecated
+    public void forEachEntry(Consumer<BagBudget> each) {
         whileEachEntry(e -> {
             each.accept(e);
             return true;
         });
     }
 
-    /** if predicate evaluates false, it terminates the iteration */
+    /**
+     * if predicate evaluates false, it terminates the iteration
+     */
     abstract public void whileEachEntry(Predicate<BagBudget<V>> each);
 
     //TODO provide default impl
@@ -271,8 +286,6 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
 //    }
 
 
-
-
     @Override
     public String toString() {
         return getClass().getSimpleName();// + "(" + size() + "/" + getCapacity() +")";
@@ -282,18 +295,19 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
      * slow, probably want to override in subclasses
      */
     public float getPriorityMin() {
-        float[] min = { Float.POSITIVE_INFINITY };
+        float[] min = {Float.POSITIVE_INFINITY};
         forEachEntry(b -> {
             float p = b.getPriority();
             if (p < min[0]) min[0] = p;
         });
         return min[0];
     }
+
     /**
      * slow, probably want to override in subclasses
      */
     public float getPriorityMax() {
-        float[] max = { Float.NEGATIVE_INFINITY};
+        float[] max = {Float.NEGATIVE_INFINITY};
         forEachEntry(b -> {
             float p = b.getPriority();
             if (p > max[0]) max[0] = p;
@@ -314,7 +328,6 @@ public abstract class Bag<V> extends AbstractCacheBag<V,BagBudget<V>> implements
         }
 
     }
-
 
 
     public abstract void setCapacity(int c);

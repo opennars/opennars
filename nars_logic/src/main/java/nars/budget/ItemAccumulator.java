@@ -22,7 +22,7 @@ public class ItemAccumulator<V extends Budgeted> extends ArrayBag<V> {
     }
 
     @Override
-    public final BagBudget<V> peekNext() {
+    public final BagBudget<V> sample() {
         return items.getFirst();
     }
 

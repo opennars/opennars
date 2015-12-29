@@ -89,12 +89,12 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         private final X object;
         private final int hash;
 
-        public NAREdge(X x) {
+        protected NAREdge(X x) {
             object = x;
             hash = getHash();
         }
 
-        public NAREdge() {
+        protected NAREdge() {
             object = (X)getClass();
             hash = getHash();
         }

@@ -21,7 +21,7 @@ public abstract class ConceptMap  {
 
     public void reset() { }
 
-    public ConceptMap(NAR nar) {
+    protected ConceptMap(NAR nar) {
 
         regs = new Active(
         nar.memory.eventReset.on(n -> {

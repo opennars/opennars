@@ -45,7 +45,7 @@ public abstract class Deriver  {
     public final PremiseRuleSet rules;
 
 
-    public Deriver(PremiseRuleSet rules) {
+    protected Deriver(PremiseRuleSet rules) {
         this.rules = rules;
     }
 

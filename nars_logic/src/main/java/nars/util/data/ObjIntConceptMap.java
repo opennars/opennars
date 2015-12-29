@@ -14,7 +14,7 @@ public abstract class ObjIntConceptMap<T extends Term> extends MutableConceptMap
     public final ObjectIntHashMap<T> values = new ObjectIntHashMap();
 
 
-    public ObjIntConceptMap(NAR nar) {
+    protected ObjIntConceptMap(NAR nar) {
         super(nar);
     }
 

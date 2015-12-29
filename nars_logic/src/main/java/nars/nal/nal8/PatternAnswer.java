@@ -16,7 +16,7 @@ public abstract class PatternAnswer implements Function<Task, List<Task>> {
     final Random rng = new XorShift128PlusRandom(1);
     public final Term pattern;
 
-    public PatternAnswer(String pattern) {
+    protected PatternAnswer(String pattern) {
         this.pattern = Narsese.the().termRaw(pattern);
     }
 

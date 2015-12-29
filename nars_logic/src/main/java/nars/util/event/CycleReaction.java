@@ -10,11 +10,11 @@ public abstract class CycleReaction implements Consumer<Memory> {
 
     private final On cycleReg;
 
-    public CycleReaction(NAR nar) {
+    protected CycleReaction(NAR nar) {
         this(nar.memory);
     }
 
-    public CycleReaction(Memory memory) {
+    protected CycleReaction(Memory memory) {
         cycleReg = memory.eventCycleEnd.on(this);
 
     }

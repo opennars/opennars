@@ -9,7 +9,7 @@ public abstract class Termutator /* implements BooleanIterator */ {
 
     public final Termlike resultKey;
 
-    public Termutator(Termlike resultKey) {
+    protected Termutator(Termlike resultKey) {
         this.resultKey = resultKey;
     }
 

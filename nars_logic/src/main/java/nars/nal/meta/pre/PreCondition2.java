@@ -9,7 +9,7 @@ public abstract class PreCondition2 extends PreCondition {
     public final Term arg1, arg2;
     private final String str;
 
-    public PreCondition2(Term var1, Term var2) {
+    protected PreCondition2(Term var1, Term var2) {
         arg1 = var1;
         arg2 = var2;
         str = getClass().getSimpleName() + ":(" + arg1 + ',' + arg2 + ')';

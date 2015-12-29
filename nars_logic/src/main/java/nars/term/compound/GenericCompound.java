@@ -132,24 +132,23 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         //early test:
         if (hash!=that.hashCode()) return false;
 
+        //use separate method to help this inline
+        return equalsFurther((Termed)that);
+    }
+
+    private boolean equalsFurther(Termed thatTerm) {
         //assume it will be compared to Termed
         /*if (!(that instanceof Termed))
             return false;*/
-
-        Termed thatTerm = (Termed)that;
-        if (!(thatTerm instanceof Compound))
+        Term t = thatTerm.term();
+        if ((op != t.op()) || (!(t instanceof Compound)))
             return false;
 
-        //use separate method to help this inline
-        return equalsFurther((Compound) thatTerm);
-    }
-
-    private boolean equalsFurther(Compound thatTerm) {
-        Compound c = thatTerm;
+        Compound c = (Compound) t;
         return
-            (terms.equals(c.subterms())) &&
-            (op == c.op()) &&
-            (relation == c.relation());
+                terms.equals(c.subterms())
+                        &&
+                        (relation == c.relation());
     }
 
 

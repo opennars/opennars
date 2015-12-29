@@ -15,7 +15,7 @@ public abstract class AbstractConcept implements Concept {
     protected Map meta = null;
     protected boolean constant = false;
 
-    public AbstractConcept(Term term) {
+    protected AbstractConcept(Term term) {
         this.term = term;
     }
 

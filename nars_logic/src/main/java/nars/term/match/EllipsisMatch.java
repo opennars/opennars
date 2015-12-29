@@ -81,7 +81,7 @@ final public class EllipsisMatch extends TermVector<Term> implements Term {
 
     @Override
     public byte[] bytes() {
-        return new byte[0];
+        return null;
     }
 
     @Override

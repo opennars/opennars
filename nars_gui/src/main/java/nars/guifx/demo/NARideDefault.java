@@ -6,7 +6,7 @@ import nars.nar.Default;
 /**
  * Created by me on 9/7/15.
  */
-public class NARfxDefaultIterative {
+public class NARideDefault {
 
     public static void main(String[] arg) {
 

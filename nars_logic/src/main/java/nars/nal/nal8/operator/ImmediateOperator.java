@@ -15,7 +15,7 @@ public abstract class ImmediateOperator extends NullOperator  {
 
     public final Operator op;
 
-    public ImmediateOperator() {
+    protected ImmediateOperator() {
         op = Operator.the(getOperatorTerm());
     }
 

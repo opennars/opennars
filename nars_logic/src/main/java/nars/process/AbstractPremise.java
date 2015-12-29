@@ -11,7 +11,7 @@ public abstract class AbstractPremise implements Premise {
 
     public final NAR nar;
 
-    public AbstractPremise(NAR m) {
+    protected AbstractPremise(NAR m) {
         nar = m;
     }
 

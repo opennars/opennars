@@ -74,15 +74,15 @@ abstract public class FindSubst extends Versioning implements Subst {
     }
 
 
-    public FindSubst(Op type, NAR nar) {
+    protected FindSubst(Op type, NAR nar) {
         this(type, nar.memory);
     }
 
-    public FindSubst(Op type, Memory memory) {
+    protected FindSubst(Op type, Memory memory) {
         this(type, memory.random);
     }
 
-    public FindSubst(Op type, Random random) {
+    protected FindSubst(Op type, Random random) {
         this.random = random;
         this.type = type;
 

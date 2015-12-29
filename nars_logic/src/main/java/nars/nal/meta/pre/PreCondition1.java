@@ -8,7 +8,7 @@ import nars.term.Term;
 public abstract class PreCondition1 extends PreCondition {
     public final Term arg1;
 
-    public PreCondition1(Term var1) {
+    protected PreCondition1(Term var1) {
         arg1 = var1;
     }
 

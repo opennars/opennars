@@ -15,11 +15,11 @@ public abstract class ConceptGraph<E> extends ConceptMap implements EdgeFactory<
 
     public final Graph<Concept,E> graph;
 
-    public ConceptGraph(NAR nar) {
+    protected ConceptGraph(NAR nar) {
         this(nar, true);
     }
 
-    public ConceptGraph(NAR nar, boolean directed) {
+    protected ConceptGraph(NAR nar, boolean directed) {
         super(nar);
         graph = directed ? new DefaultDirectedGraph<>(this) : new AsUndirectedGraph(new DefaultDirectedGraph<>(this));
 

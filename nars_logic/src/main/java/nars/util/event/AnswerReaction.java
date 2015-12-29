@@ -24,17 +24,17 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
 
 
     /** reacts to all questions */
-    public AnswerReaction(NAR n) {
+    protected AnswerReaction(NAR n) {
         this(n, (Task)null);
     }
 
 
-    public AnswerReaction(NAR n, String questionTask) throws Narsese.NarseseException {
+    protected AnswerReaction(NAR n, String questionTask) throws Narsese.NarseseException {
         this(n, n.task(questionTask));
     }
 
     /** reacts to a specific question or quest */
-    public AnswerReaction(NAR n, Task question) {
+    protected AnswerReaction(NAR n, Task question) {
 
         nar = n;
         this.question = question;

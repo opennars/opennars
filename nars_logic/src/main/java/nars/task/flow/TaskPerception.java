@@ -16,7 +16,7 @@ public abstract class TaskPerception implements Consumer<Task> {
     //private final Active active = new Active();
     private final Memory memory;
 
-    public TaskPerception(Memory m) {
+    protected TaskPerception(Memory m) {
 
         this.memory = m;
 
@@ -28,7 +28,7 @@ public abstract class TaskPerception implements Consumer<Task> {
 
     }
 
-    public TaskPerception(Memory m, Consumer<Task> eachFrameSupplyTo) {
+    protected TaskPerception(Memory m, Consumer<Task> eachFrameSupplyTo) {
         this(m);
         //active.add(
             m.eventFrameStart.on((M) -> nextFrame(eachFrameSupplyTo));

@@ -74,7 +74,7 @@ public class Derivelet {
         /* dur, now,
             taskLinkForgetDurations * dur,
             tasks); */
-        int tasksCount = concept.getTaskLinks().next(tasklinks, each, tasks);
+        int tasksCount = concept.getTaskLinks().sample(tasklinks, each, tasks);
         if (tasksCount == 0) return 0;
         concept.getTaskLinks().commit();
 
@@ -83,7 +83,7 @@ public class Derivelet {
         /*int termsCount = concept.nextTermLinks(dur, now,
             m.termLinkForgetDurations.floatValue(),
             terms);*/
-        int termsCount = concept.getTermLinks().next(termlinks, each, terms);
+        int termsCount = concept.getTermLinks().sample(termlinks, each, terms);
         if (termsCount == 0) return 0;
         concept.getTermLinks().commit();
 
@@ -129,13 +129,12 @@ public class Derivelet {
             //stay here
             return concept;
         } else {
-            final BagBudget tl;
             float rem = 1.0f - stayProb;
 
-            tl = ((x > (stayProb + (rem / 2))) ?
+            final BagBudget tl = ((x > (stayProb + (rem / 2))) ?
                     concept.getTermLinks() :
                     concept.getTaskLinks())
-                        .peekNext();
+                    .sample();
 
             if (tl != null) {
                 Concept c = context.concept(((Termed) tl.get()));

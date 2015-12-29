@@ -11,7 +11,7 @@ public abstract class SeedConceptMap extends ConceptMap {
 
     public final Set<Term> terms;
 
-    public SeedConceptMap(NAR nar, Set<Term> terms) {
+    protected SeedConceptMap(NAR nar, Set<Term> terms) {
         super(nar);
         this.terms = terms;
     }

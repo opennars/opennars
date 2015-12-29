@@ -14,7 +14,7 @@ public abstract class ConceptSet<T extends Term> extends MutableConceptMap<T> {
     public final Map<T,Concept> values = new LinkedHashMap();
 
 
-    public ConceptSet(NAR nar) {
+    protected ConceptSet(NAR nar) {
         super(nar);
     }
 

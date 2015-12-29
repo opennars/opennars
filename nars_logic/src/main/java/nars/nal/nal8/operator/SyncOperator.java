@@ -10,16 +10,16 @@ import nars.term.Term;
  */
 public abstract class SyncOperator extends AbstractOperator {
 
-    public SyncOperator(Term term) {
+    protected SyncOperator(Term term) {
         super(term);
     }
 
-    public SyncOperator(String name) {
+    protected SyncOperator(String name) {
         super(name);
     }
 
     /** uses the implementation class's simpleName as the term */
-    public SyncOperator() {
+    protected SyncOperator() {
         super((Term)null);
     }
 

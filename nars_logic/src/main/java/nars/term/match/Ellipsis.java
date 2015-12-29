@@ -43,7 +43,7 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
     //public final Variable target;
 
 
-    public Ellipsis(Variable target, String suffix) {
+    protected Ellipsis(Variable target, String suffix) {
         super(
             target.toString().substring(1) /* exclude variable type char */
                     + suffix
@@ -72,20 +72,20 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
         return false;
     }
 
-    /** recursively */
-    public static boolean containsEllipsis(Compound x) {
-        int xs = x.size();
-
-        for (int i = 0; i < xs; i++) {
-            Term y = x.term(i);
-            if (y instanceof Ellipsis) return true;
-            if (y instanceof Compound) {
-                if (containsEllipsis((Compound)y))
-                    return true;
-            }
-        }
-        return false;
-    }
+//    /** recursively */
+//    public static boolean containsEllipsis(Compound x) {
+//        int xs = x.size();
+//
+//        for (int i = 0; i < xs; i++) {
+//            Term y = x.term(i);
+//            if (y instanceof Ellipsis) return true;
+//            if (y instanceof Compound) {
+//                if (containsEllipsis((Compound)y))
+//                    return true;
+//            }
+//        }
+//        return false;
+//    }
 
 //    public static int numUnmatchedEllipsis(Compound x, FindSubst ff) {
 //

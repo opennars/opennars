@@ -9,7 +9,7 @@ public abstract class DecideAboveDecisionThreshold extends DecideAllGoals {
 
     public final Memory memory;
 
-    public DecideAboveDecisionThreshold(Memory m) {
+    protected DecideAboveDecisionThreshold(Memory m) {
         memory = m;
     }
 

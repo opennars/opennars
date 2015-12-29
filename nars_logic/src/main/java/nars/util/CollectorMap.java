@@ -14,7 +14,7 @@ public abstract class CollectorMap<K, V extends Supplier<K>> implements Serializ
 
     public final Map<K, V> map;
 
-    public CollectorMap(Map<K, V> map) {
+    protected CollectorMap(Map<K, V> map) {
         this.map = map;
     }
 

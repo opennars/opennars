@@ -24,7 +24,7 @@ public abstract class DeriveletContext implements Consumer<NAR> {
 
     //private float forgetCycles;
 
-    public DeriveletContext(NAR nar, Random rng, Supplier<Concept> conceptSupply) {
+    protected DeriveletContext(NAR nar, Random rng, Supplier<Concept> conceptSupply) {
         this.nar = nar;
         this.rng = rng;
         this.conceptSupply = conceptSupply;

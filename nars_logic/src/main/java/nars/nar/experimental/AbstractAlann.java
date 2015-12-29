@@ -15,7 +15,7 @@ public abstract class AbstractAlann extends AbstractNAR {
     final Random rng = new XorShift128PlusRandom(1);
     final Commander commander;
 
-    public AbstractAlann(Memory m, int commanderCapacity) {
+    protected AbstractAlann(Memory m, int commanderCapacity) {
         super(m);
 
         commander = new Commander(this, commanderCapacity);

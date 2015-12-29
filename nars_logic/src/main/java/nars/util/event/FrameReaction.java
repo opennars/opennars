@@ -10,10 +10,10 @@ public abstract class FrameReaction implements Consumer<NAR> {
 
     private On reg;
 
-    public FrameReaction(NAR nar) {
+    protected FrameReaction(NAR nar) {
         this(nar.memory);
     }
-    public FrameReaction(Memory m) {
+    protected FrameReaction(Memory m) {
         reg = m.eventFrameStart.on(this);
     }
 

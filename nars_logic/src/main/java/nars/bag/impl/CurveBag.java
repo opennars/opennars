@@ -88,12 +88,14 @@ public class CurveBag<V> extends Bag<V> {
 
     public BagBudget<V> peekNext(boolean remove) {
 
+        ArrayBag<V> b = this.arrayBag;
+
         while (!isEmpty()) {
 
-            int index = sample();
+            int index = sampleIndex();
 
             BagBudget<V> i = remove ?
-                    arrayBag.removeItem(index) : arrayBag.getItem(index);
+                    b.removeItem(index) : b.getItem(index);
 
             if (!i.getBudget().isDeleted()) {
                 return i;
@@ -114,7 +116,7 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     /** optimized batch fill, using consecutive array elements, also ensuring uniqueness */
-    @Override public int next(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
+    @Override public int sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
 
         int ss = size();
         final int begin, end;
@@ -123,7 +125,7 @@ public class CurveBag<V> extends Bag<V> {
             begin = 0;
             end = ss;
         } else {
-            begin = Math.min(sample(), ss-n);
+            begin = Math.min(sampleIndex(), ss-n);
             end = begin + n;
         }
 
@@ -150,7 +152,7 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public final BagBudget<V> peekNext() {
+    public final BagBudget<V> sample() {
         return peekNext(false);
     }
 
@@ -425,11 +427,8 @@ public class CurveBag<V> extends Bag<V> {
         return arrayBag.getPriorityMax();
     }
 
-    int sampleRandomly(int size) {
-        return random.nextInt(size);
-    }
-
-    public final int sample() {
+    /** provides a next index to sample from */
+    public final int sampleIndex() {
         int s = size();
         if (s == 1) return 0;
 
@@ -437,7 +436,7 @@ public class CurveBag<V> extends Bag<V> {
         float max = getPriorityMax();
         if (Util.equal(min, max, Global.BUDGET_PROPAGATION_EPSILON)) { //TODO epsilon
             //if there isnt any difference between min and max, just pick element at random
-            return sampleRandomly(s);
+            return random.nextInt(s);
         }
 
         float x = random.nextFloat();

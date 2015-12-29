@@ -51,7 +51,7 @@ public abstract class SentenceGraph extends ConceptGraph<SentenceGraph.ConceptRe
 
 
 
-    public SentenceGraph(NAR nar, boolean directed) {
+    protected SentenceGraph(NAR nar, boolean directed) {
         super(nar);
         edgeConcepts = new ConceptSet(nar) {
 

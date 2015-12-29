@@ -28,12 +28,7 @@ public interface Budget extends Prioritized, Budgeted {
 
         /* current proportion */
         final float cp;
-        if (currentNextPrioritySum != 0) {
-            cp = (currentPriority / currentNextPrioritySum);
-        } else {
-            //both equal to zero
-            cp = 0.5f;
-        }
+        cp = currentNextPrioritySum != 0 ? currentPriority / currentNextPrioritySum : 0.5f;
 
         /* next proportion = 1 - cp */
         float np = 1.0f - cp;

@@ -12,7 +12,7 @@ public abstract class MutableConceptMap<T extends Term> extends ConceptMap imple
 
     public final Set<T> inclusions = Global.newHashSet(16);
 
-    public MutableConceptMap(NAR n) {
+    protected MutableConceptMap(NAR n) {
         super(n);
     }
 

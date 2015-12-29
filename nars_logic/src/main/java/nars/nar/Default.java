@@ -239,6 +239,7 @@ public class Default extends AbstractNAR {
         @Range(min=0, max=1f,unit="Perfection")
         public final MutableFloat perfection;
 
+        final List<BagBudget<Concept>> firing = Global.newArrayList(1);
 
 //        @Deprecated
 //        int tasklinks = 2; //TODO use MutableInteger for this
@@ -247,7 +248,7 @@ public class Default extends AbstractNAR {
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
-        public AbstractCycle(NAR nar, Deriver deriver, Bag<Concept> concepts) {
+        protected AbstractCycle(NAR nar, Deriver deriver, Bag<Concept> concepts) {
 
             this.nar = nar;
 
@@ -323,7 +324,7 @@ public class Default extends AbstractNAR {
          * samples an active concept
          */
         public Concept next() {
-            return active.peekNext().get();
+            return active.sample().get();
         }
 
 
@@ -344,7 +345,8 @@ public class Default extends AbstractNAR {
 
             if (conceptsToFire == 0 || b.isEmpty()) return;
 
-            b.next(conceptsToFire, cb -> {
+            b.sample(conceptsToFire, (c) -> true, firing);
+            firing.forEach(cb -> {
                 Concept c = cb.get();
 
                 //c.getTermLinks().up(simpleForgetDecay);
@@ -360,9 +362,8 @@ public class Default extends AbstractNAR {
                 );
 
                 activated.add(c); //update at end of cycle
-
-                return true;
             });
+            firing.clear();
 
         }
 

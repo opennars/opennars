@@ -178,7 +178,7 @@ public class CurveBagTest  {
     private EmpiricalDistribution getSamplingDistribution(CurveBag b, int n) {
         DoubleArrayList f = new DoubleArrayList(n);
         for (int i = 0; i < n; i++)
-            f.add( b.sample() );
+            f.add( b.sampleIndex() );
         EmpiricalDistribution e =new EmpiricalDistribution(10 /* bins */);
         e.load(f.toArray());
         return e;
@@ -187,7 +187,7 @@ public class CurveBagTest  {
     private EmpiricalDistribution getPriorityDistribution(Bag b, int n) {
         DoubleArrayList f = new DoubleArrayList(n);
         for (int i = 0; i < n; i++)
-            f.add( b.peekNext().getPriority() );
+            f.add( b.sample().getPriority() );
         EmpiricalDistribution e =new EmpiricalDistribution(10 /* bins */);
         e.load(f.toArray());
         return e;

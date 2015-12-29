@@ -114,9 +114,9 @@ public abstract class Item<K> extends UnitBudget  {
 
     public abstract static class StringKeyItem extends Item<CharSequence> {
         
-        public StringKeyItem(Budget budget) { super(budget);         }
-        public StringKeyItem(float p, float d, float q) { super(p, d, q);         }
-        public StringKeyItem(float p) { this(p, p, p);         }
+        protected StringKeyItem(Budget budget) { super(budget);         }
+        protected StringKeyItem(float p, float d, float q) { super(p, d, q);         }
+        protected StringKeyItem(float p) { this(p, p, p);         }
 
     }
 

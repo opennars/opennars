@@ -76,7 +76,7 @@ public class BagGenerators {
             for (int i = 0; i < insertsPerLoop * fractionToRemove; i++) {
                 int sizeBefore = f.size();
 
-                CharSequence t = f.peekNext().get();
+                CharSequence t = f.sample().get();
 
                 if (t == null) {
                     //Assert.assertTrue(sizeAfter == 0);

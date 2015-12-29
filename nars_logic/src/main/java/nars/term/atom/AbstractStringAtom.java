@@ -10,23 +10,23 @@ public abstract class AbstractStringAtom extends AbstractStringAtomRaw {
 
     final int hash;
 
-    public AbstractStringAtom() {
+    protected AbstractStringAtom() {
         super(null);
         this.hash = 0;
     }
 
-    public AbstractStringAtom(byte[] id) {
+    protected AbstractStringAtom(byte[] id) {
         this(id, null);
     }
-    public AbstractStringAtom(String id) {
+    protected AbstractStringAtom(String id) {
         this(id, null);
     }
 
-    public AbstractStringAtom(byte[] id, Op specificOp) {
+    protected AbstractStringAtom(byte[] id, Op specificOp) {
         this( new String(id), specificOp);
     }
 
-    public AbstractStringAtom(String id, Op specificOp) {
+    protected AbstractStringAtom(String id, Op specificOp) {
         super(id);
         hash = Atom.hash(
             id.hashCode(),

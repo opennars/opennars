@@ -83,9 +83,9 @@ public interface Stamp  {
         }
 
         //3. de-duplicate
-        long lastValue2 = -1;
         long[] deduplicated = new long[uniques];
         uniques = 0;
+        long lastValue2 = -1;
         for (long v : sorted) {
             if (lastValue2 != v)
                 deduplicated[uniques++] = v;

@@ -80,7 +80,7 @@ public abstract class ConceptGraph2<E> extends ConceptMap implements DirectedGra
         }
     }
 
-    public ConceptGraph2(NAR nar) {
+    protected ConceptGraph2(NAR nar) {
         super(nar);
     }
 

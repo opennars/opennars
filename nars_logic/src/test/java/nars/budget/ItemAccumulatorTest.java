@@ -42,7 +42,7 @@ public class ItemAccumulatorTest {
         ii.forEach(c -> System.out.println(c));
 
         //mergePlus:
-        assertEquals(0.1f+0.1f, ii.peekNext().getPriority(), 0.001f);
+        assertEquals(0.1f+0.1f, ii.sample().getPriority(), 0.001f);
 
     }
 

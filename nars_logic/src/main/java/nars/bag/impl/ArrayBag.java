@@ -102,7 +102,12 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     @Override
-    public BagBudget<V> peekNext() {
+    public BagBudget<V> sample() {
+        throw new RuntimeException("unimpl");
+    }
+
+    @Override
+    public int sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
         throw new RuntimeException("unimpl");
     }
 

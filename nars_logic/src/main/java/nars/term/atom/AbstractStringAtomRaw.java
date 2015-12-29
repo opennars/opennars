@@ -13,7 +13,7 @@ public abstract class AbstractStringAtomRaw extends Atomic  {
 
     public final String id;
 
-    public AbstractStringAtomRaw(String id) {
+    protected AbstractStringAtomRaw(String id) {
         this.id = id;
     }
 

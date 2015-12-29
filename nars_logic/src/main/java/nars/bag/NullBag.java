@@ -2,6 +2,7 @@ package nars.bag;
 
 import nars.budget.Budget;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -21,7 +22,7 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public BagBudget<V> peekNext() {
+    public BagBudget<V> sample() {
         return null;
     }
 
@@ -40,6 +41,11 @@ public final class NullBag<V> extends Bag<V> {
     @Override
     public BagBudget<V> put(Object i, Budget b, float scale) {
         return null;
+    }
+
+    @Override
+    public int sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
+        throw new RuntimeException("unimpl");
     }
 
     @Override

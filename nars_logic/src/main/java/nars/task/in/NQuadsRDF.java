@@ -66,7 +66,7 @@ public abstract class NQuadsRDF {
 //        }
     }
 
-    public static void input(NAR nar, Iterable<Node[]> nxp) throws Exception {
+    public static void input(NAR nar, Iterable<Node[]> nxp) {
         input(nar, StreamSupport.stream(nxp.spliterator(), false));
     }
 
