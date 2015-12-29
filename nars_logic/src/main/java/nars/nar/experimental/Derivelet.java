@@ -66,30 +66,13 @@ public class Derivelet {
             Concept concept,
             int tasklinks, int termlinks, Predicate<BagBudget> each) {
 
-        //Memory m = nar.memory;
-        //int dur = m.duration();
-
-        //long now = nar.time();
-
-        /* dur, now,
-            taskLinkForgetDurations * dur,
-            tasks); */
-        int tasksCount = concept.getTaskLinks().sample(tasklinks, each, tasks);
-        if (tasksCount == 0) return 0;
+        concept.getTaskLinks().sample(tasklinks, each, tasks);
         concept.getTaskLinks().commit();
+        if (tasks.isEmpty()) return 0;
 
-
-
-        /*int termsCount = concept.nextTermLinks(dur, now,
-            m.termLinkForgetDurations.floatValue(),
-            terms);*/
-        int termsCount = concept.getTermLinks().sample(termlinks, each, terms);
-        if (termsCount == 0) return 0;
+        concept.getTermLinks().sample(termlinks, each, terms);
         concept.getTermLinks().commit();
-
-
-        /*System.out.println(tasks.size() + "," + terms.size() + ": "
-                + tasks + " " + terms);*/
+        if (terms.isEmpty()) return 0;
 
         //convert to array for fast for-within-for iterations
         tasksArray = this.tasks.toArray(tasksArray);

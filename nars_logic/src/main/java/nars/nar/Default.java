@@ -345,7 +345,11 @@ public class Default extends AbstractNAR {
 
             if (conceptsToFire == 0 || b.isEmpty()) return;
 
-            b.sample(conceptsToFire, (c) -> true, firing);
+            b.sample(conceptsToFire, firing);
+
+            int tasklinksToFire = tasklinksFiredPerFiredConcept.intValue();
+            int termlnksToFire = termlinksFiredPerFiredConcept.intValue();
+
             firing.forEach(cb -> {
                 Concept c = cb.get();
 
@@ -355,8 +359,8 @@ public class Default extends AbstractNAR {
                 //if above firing threshold
                 //fireConcept(c);
                 der.firePremiseSquare(nar, processor, c,
-                        tasklinksFiredPerFiredConcept.intValue(),
-                        termlinksFiredPerFiredConcept.intValue(),
+                        tasklinksToFire,
+                        termlnksToFire,
                         //simpleForgetDecay
                         alannForget
                 );

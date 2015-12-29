@@ -1,13 +1,11 @@
 package nars.bag.impl;
 
 import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
-import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.budget.BudgetMerge;
 import nars.util.ArraySortedIndex;
-import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
 
 import java.util.Collection;
@@ -44,7 +42,7 @@ public class CurveBag<V> extends Bag<V> {
     public CurveBag(int capacity, Random rng) {
         this(
             //CurveBag.power6BagCurve,
-            power6BagCurve,
+            power2BagCurve,
             capacity, rng);
     }
 
@@ -116,7 +114,7 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     /** optimized batch fill, using consecutive array elements, also ensuring uniqueness */
-    @Override public int sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
+    @Override public void sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
 
         int ss = size();
         final int begin, end;
@@ -129,15 +127,14 @@ public class CurveBag<V> extends Bag<V> {
             end = begin + n;
         }
 
-        int startSize = target.size();
-
         for (int i = begin; i < end; i++) {
             BagBudget<V> ii = get(i);
-            if (each.test(ii)) {
+            if (each == null || each.test(ii)) {
                 target.add(ii);
             }
         }
-        return target.size() - startSize;
+
+        //System.out.println("(of " + ss + ") select " + n + ": " + begin + ".." + end + " = " + target);
 
     }
 
@@ -432,30 +429,14 @@ public class CurveBag<V> extends Bag<V> {
         int s = size();
         if (s == 1) return 0;
 
-        float min = getPriorityMin();
-        float max = getPriorityMax();
-        if (Util.equal(min, max, Global.BUDGET_PROPAGATION_EPSILON)) { //TODO epsilon
-            //if there isnt any difference between min and max, just pick element at random
-            return random.nextInt(s);
-        }
-
         float x = random.nextFloat();
-
-        //TODO cache these curvepoints when min/max dont change
-
-        //rescale to dynamic range
-        x = min + (x * (max - min));
-
 
         BagCurve curve = this.curve;
         float y = curve.valueOf(x);
 
-//        float yMin = curve.valueOf(min);
-//        float yMax = curve.valueOf(max);
-//        y = (y - yMin) / (yMax - yMin);
-
-
-        return  index(y, s);
+        int index = index(y, s);
+        //System.out.println("\t range:" +  min + ".." + max + " -> f(" + x + ")=" + y + "-> " + index);
+        return index;
     }
 
 

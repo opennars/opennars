@@ -107,7 +107,7 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     @Override
-    public int sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
+    public void sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
         throw new RuntimeException("unimpl");
     }
 

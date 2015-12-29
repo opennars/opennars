@@ -82,7 +82,11 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
 //        top(c -> (each.test(c) && (toFire[0]--) > 0));
 
 
-    abstract public int sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target);
+    public void sample(int n, Collection<BagBudget<V>> target) {
+        sample(n, null, target);
+    }
+
+    abstract public void sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target);
 //    /**
 //     * fills a collection with at-most N items, if an item passes the predicate.
 //     * returns how many items added
