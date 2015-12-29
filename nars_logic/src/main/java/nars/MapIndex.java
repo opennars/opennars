@@ -1,6 +1,5 @@
 package nars;
 
-import nars.bag.impl.MapCacheBag;
 import nars.term.*;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
@@ -14,37 +13,53 @@ import java.util.function.Consumer;
 /**
  * Created by me on 12/7/15.
  */
-public class MapIndex extends MapCacheBag<Term,Termed> implements TermIndex {
+public class MapIndex implements TermIndex {
 
+    public final Map<Term, Termed> data;
     public final Map<TermContainer, TermContainer> subterms;
+
 
     public MapIndex() {
         this(Global.newHashMap(), Global.newHashMap());
     }
 
     public MapIndex(Map<Term, Termed> data, Map<TermContainer, TermContainer> subterms) {
-        super(data);
+        super();
+        this.data = data;
         this.subterms = subterms;
     }
 
 
     @Override
-    public Termed _get(Termed t) {
-        return super.get(t);
+    public final Termed _get(Termed t) {
+        return data.get(t);
     }
 
     @Override
-    public Termed get(Object t) {
-        if (t instanceof Termed) {
-            Term tt = ((Termed)t).term();
-            return apply(tt, this::intern);
-        } else {
-            throw new RuntimeException("invalid key");
-        }
+    public void clear() {
+        data.clear();
+        subterms.clear();
     }
 
 
-    public Termed intern(Term tt) {
+    @Override
+    public Object remove(Term key) {
+        return data.remove(key);
+    }
+
+    @Override
+    public Termed put(Term term, Termed termed) {
+        return data.put(term, termed);
+    }
+
+    @Override
+    public int size() {
+        return data.size();
+    }
+
+
+
+    @Override public Termed intern(Term tt) {
         Term t = tt.term();
 
         if (t instanceof TermMetadata) {
@@ -55,38 +70,53 @@ public class MapIndex extends MapCacheBag<Term,Termed> implements TermIndex {
             return tt;
         }
 
-        Termed compiled = t instanceof Compound ?
-                make((Compound) t)
-                : t;
+        Termed interned = t instanceof Compound ?
+                internCompound((Compound) t)
+                : internAtomic(t);
 
-        Termed existing = data.put(compiled.term(), compiled);
+        Termed existing = data.putIfAbsent(interned.term(), interned);
         if (existing!=null)
-            throw new RuntimeException("displaced: " + existing + " with " + compiled);
+            throw new RuntimeException("displaced: " + existing + " with " + interned);
 
-        return compiled;
+        return interned;
     }
 
 
-    @Override
-    public Termed make(Op op, int relation, Term... t) {
+
+    public Termed internCompound(Op op, int relation, TermContainer t) {
         if ((op == Op.SEQUENCE) || (op == Op.PARALLEL)) {
             //intermval metadata, handle special
-            return $.the(op, t, relation);
+            return $.the(op, relation, t);
         } else {
             //TODO find existing instance and don't construct a duplciate which will get unified on re-entry
-            return make(op, new TermVector(t), relation);
+            return internCompound(op, internSubterms(t), relation);
         }
     }
 
-    protected Termed make(Compound t) {
-        return make(t.op(), t.subterms(), t.relation());
+    public Termed internAtomic(Term t) {
+        return t;
+    }
+    protected TermContainer internSubterms(TermContainer s) {
+        Map<TermContainer, TermContainer> st = subterms;
+        TermContainer existing = st.get(s);
+        if (existing == null) {
+            s = internSubterms(s.terms());
+            st.put(s, s);
+            return s;
+        }
+        return existing;
     }
 
-    protected Termed make(Op op, TermContainer subterms, int relation) {
+
+
+
+
+    protected Termed internCompound(Op op, TermContainer subterms, int relation) {
         return new GenericCompound(
-            (TermVector)get(subterms), op, relation
+            (TermVector) subterms, op, relation
         );
     }
+
 
     @Override
     public void print(PrintStream out) {
@@ -100,16 +130,7 @@ public class MapIndex extends MapCacheBag<Term,Termed> implements TermIndex {
 //        return compileCompound(c, get(c.subterms()));
 //    }
 
-    private <T extends Term> TermContainer get(TermContainer<T> s) {
-        Map<TermContainer, TermContainer> st = subterms;
-        TermContainer existing = st.get(s);
-        if (existing == null) {
-            s = compileSubterms((TermVector) s);
-            st.put(s, s);
-            return s;
-        }
-        return existing;
-    }
+
 
 //    protected <T extends Term> Compound<T> compileCompound(Compound<T> c, TermContainer subs) {
 ////        if ((c instanceof GenericCompound) && (!(c instanceof TermMetadata))) {
@@ -134,16 +155,6 @@ public class MapIndex extends MapCacheBag<Term,Termed> implements TermIndex {
 //        return (Compound<T>) c.clone(subs);
 //    }
 
-
-    protected TermContainer compileSubterms(TermVector subs) {
-        return new TermVector(subs.terms(), this::term);
-//        Term[] ss = subs.term;
-//        int s = ss.length;
-//        for (int i = 0; i < s; i++) {
-//            ss[i] = getTerm(ss[i]);
-//        }
-//        return subs;
-    }
 
 
     @Override

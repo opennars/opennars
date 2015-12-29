@@ -26,8 +26,9 @@ public class PatternIndex extends MapIndex {
     }
 
 
+
     @Override
-    protected Termed make(Compound x) {
+    public Termed internCompound(Compound x) {
 
         /*if (!(x instanceof AbstractCompoundPattern)) {
             if (x instanceof Compound) {
@@ -49,7 +50,9 @@ public class PatternIndex extends MapIndex {
 ////            if (!Ellipsis.hasEllipsis(x)) {
 ////            if (!x.isCommutative()) {
 
-        return new PatternCompound(x, (TermVector) compileSubterms((TermVector) x.subterms()));
+        return new PatternCompound(x,
+            (TermVector) internSubterms(x.subterms())
+        );
 
 //                    return new LinearCompoundPattern(x, (TermVector) subs);
 //                } else {

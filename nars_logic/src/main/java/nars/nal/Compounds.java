@@ -426,11 +426,20 @@ public interface Compounds {
             return null;
         }
 
-        return make(op, relation, t).term();
+        return internCompound(op, relation, internSubterms(t)).term();
     }
 
-    Termed make(Op op, int relation, Term... t);
+    Term term(Object t);
 
+    default TermContainer internSubterms(Term[] t) {
+        return new TermVector(t, this::term);
+    }
+
+    Termed internCompound(Op op, int relation, TermContainer subterms);
+
+    default Termed internCompound(Compound t) {
+        return internCompound(t.op(), t.relation(), t.subterms());
+    }
 
     default Term newIntersectINT(Term[] t) {
         return newIntersection(t,

@@ -1,14 +1,9 @@
 package nars.bag.impl;
 
-import nars.Memory;
-
 /**
  * Created by me on 9/1/15.
  */
 public abstract class AbstractCacheBag<K,V> implements CacheBag<K,V> {
-
-    protected Memory memory = null;
-
 
     //private Consumer<V> onRemoval;
 
@@ -19,10 +14,6 @@ public abstract class AbstractCacheBag<K,V> implements CacheBag<K,V> {
     public Consumer<V> getOnRemoval() {
         return onRemoval;
     }*/
-
-    @Override public void start(Memory n) {
-        memory = n;
-    }
 
 
 

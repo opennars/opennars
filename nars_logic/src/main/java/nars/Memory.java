@@ -593,7 +593,6 @@ public class Memory extends Param {
 //    }
 
     public void start() {
-        index.start(this);
 
     }
 

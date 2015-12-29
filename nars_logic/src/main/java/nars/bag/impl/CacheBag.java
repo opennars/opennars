@@ -1,7 +1,5 @@
 package nars.bag.impl;
 
-import nars.Memory;
-
 /** nearly a Map */
 public interface CacheBag<K,V>  {
 
@@ -17,10 +15,6 @@ public interface CacheBag<K,V>  {
 
     int size();
 
-    /** called when memory is ready to begin using this,
-     *  allows letting the cache be aware of the memory
-     */
-    void start(Memory n);
 
 //    void setOnRemoval(Consumer<V> onRemoval);
 //    Consumer<V> getOnRemoval();

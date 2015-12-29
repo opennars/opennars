@@ -12,6 +12,7 @@ import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.TermContainer;
 import nars.term.Termed;
 import nars.term.Terms;
 import nars.term.atom.Atom;
@@ -438,6 +439,9 @@ public abstract class $  {
     }
     public static Term the(Op op, Term[] subterms, int relation) {
         return terms.term(op, relation, subterms);
+    }
+    public static Term the(Op op, int relation, TermContainer subterms) {
+        return terms.term(op, relation, subterms.terms());
     }
     public static Term the(Op op, Collection<Term> subterms, int relation) {
         return terms.term(op, relation, Terms.toArray(subterms));

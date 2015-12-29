@@ -3,7 +3,6 @@ package nars.term.compile;
 import javassist.scopedpool.SoftValueHashMap;
 import nars.Global;
 import nars.MapIndex;
-import nars.Memory;
 import nars.Op;
 import nars.bag.impl.CacheBag;
 import nars.nal.Compounds;
@@ -39,6 +38,18 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
     void forEach(Consumer<? super Termed> c);
 
     Termed _get(Termed t);
+    Termed intern(Term tt);
+
+
+    @Override
+    default Termed get(Object t) {
+        if (t instanceof Termed) {
+            Term tt = ((Termed)t).term();
+            return apply(tt, this::intern);
+        } else {
+            throw new RuntimeException("invalid key");
+        }
+    }
 
     /** gets an existing item or applies the builder to produce something to return */
     default <K extends Term> Termed<K> apply(K key, Function<K, Termed> builder) {
@@ -46,6 +57,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         return existing == null ?
                 builder.apply(key) : existing;
     }
+
 
     default Term term(Term src, TermContainer subs) {
         if (src instanceof Compound) {
@@ -157,11 +169,6 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
     class ImmediateTermIndex implements TermIndex {
 
-        /** build a new instance on the heap */
-        @Override public Termed make(Op op, int relation, Term... t) {
-            return new GenericCompound(op, relation, t);
-        }
-
 
         @Override
         public Termed get(Object key) {
@@ -177,6 +184,11 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         @Override
         public Termed _get(Termed t) {
             return t;
+        }
+
+        @Override
+        public Termed intern(Term tt) {
+            return tt;
         }
 
 
@@ -200,11 +212,11 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
             return 0;
         }
 
-        @Override
-        public void start(Memory n) {
-            throw new RuntimeException("should not be used by Memory");
-        }
 
+        @Override
+        public Termed internCompound(Op op, int relation, TermContainer subterms) {
+            return new GenericCompound((TermVector)subterms, op, relation);
+        }
 
     }
 
