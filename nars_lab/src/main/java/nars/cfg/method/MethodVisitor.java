@@ -25,7 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package nars.analyze.cfg.method;
+package nars.cfg.method;
+
 
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.*;
@@ -57,7 +58,7 @@ public class MethodVisitor extends EmptyVisitor {
         }
         stack.clear();
         for (InstructionHandle ih = mg.getInstructionList().getStart();
-                ih != null; ih = ih.getNext()) {
+             ih != null; ih = ih.getNext()) {
             Instruction i = ih.getInstruction();
 
             if (stack.isEmpty())

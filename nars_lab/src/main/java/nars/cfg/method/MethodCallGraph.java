@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nars.analyze.cfg.method;
+package nars.cfg.method;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;

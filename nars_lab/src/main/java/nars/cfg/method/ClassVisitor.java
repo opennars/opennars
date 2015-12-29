@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package nars.analyze.cfg.method;
+package nars.cfg.method;
 
 
 import org.apache.bcel.classfile.EmptyVisitor;

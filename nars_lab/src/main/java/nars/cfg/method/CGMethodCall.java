@@ -1,4 +1,4 @@
-package nars.analyze.cfg.method;
+package nars.cfg.method;
 
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InvokeInstruction;

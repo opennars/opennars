@@ -1,7 +1,7 @@
-package nars.analyze.cfg;
+package nars.cfg;
 
-import nars.analyze.cfg.method.CGMethod;
-import nars.analyze.cfg.method.MethodCallGraph;
+import nars.cfg.method.CGMethod;
+import nars.cfg.method.MethodCallGraph;
 import org.jgrapht.alg.KShortestPaths;
 
 /**

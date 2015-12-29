@@ -1,6 +1,6 @@
-package nars.analyze.cfg;
+package nars.cfg;
 
-import nars.analyze.cfg.bytecode.ControlFlowGraph;
+import nars.cfg.bytecode.ControlFlowGraph;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;

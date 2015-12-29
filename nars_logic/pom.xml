@@ -287,12 +287,6 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>org.apache.bcel</groupId>
-            <artifactId>bcel</artifactId>
-            <scope>test</scope>
-        </dependency>
-
 
         <dependency>
             <groupId>junit</groupId>

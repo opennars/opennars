@@ -1,4 +1,4 @@
-package nars.analyze.cfg.bytecode;
+package nars.cfg.bytecode;
 
 /***
  * ASM examples: examples showing how ASM can be used
