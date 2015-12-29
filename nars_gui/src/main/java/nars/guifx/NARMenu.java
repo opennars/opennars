@@ -31,6 +31,7 @@ public class NARMenu extends HBox {
     final NAR nar;
 
     public final Menu tool;
+    public final Menu main;
 
 
     public NARMenu(NAR n) {
@@ -68,7 +69,7 @@ public class NARMenu extends HBox {
             Button iconButton = JFX.newIconButton(FontAwesomeIcon.GEAR);
             iconButton.setMouseTransparent(true);
 
-            Menu main = new Menu("", iconButton);
+            main = new Menu("", iconButton);
 
             main.getStyleClass().add("nar_main_menu");
             main.getItems().add(new MenuItem("", fontSlider));

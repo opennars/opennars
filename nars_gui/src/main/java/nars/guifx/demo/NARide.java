@@ -1,11 +1,13 @@
 package nars.guifx.demo;
 
+
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -28,10 +30,7 @@ import nars.guifx.graph2.source.DefaultGrapher;
 import nars.guifx.nars.LoopPane;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
-import nars.guifx.util.NControl;
-import nars.guifx.util.POJOPane;
-import nars.guifx.util.TabPaneDetacher;
-import nars.guifx.util.TabX;
+import nars.guifx.util.*;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -69,6 +68,8 @@ public class NARide extends BorderPane {
 
     public final Map<Class, Function<Object,Node>> nodeBuilders = Global.newHashMap();
     public final LoopPane loopPane;
+    //private final CornerMenu cornerMenu;
+
     private Map<Term, Supplier<? extends Node>> tools = new HashMap();
 
 
@@ -81,8 +82,12 @@ public class NARide extends BorderPane {
 
             Thread.currentThread().setName("NARide");
 
+
             NAR nar = loop.nar;
             NARide ni = new NARide(loop);
+
+            Scene scene = new Scene(ni, 1000, 800,
+                    false, SceneAntialiasing.DISABLED);
 
             {
                 //ni.addView(new TaskSheet(nar));
@@ -100,13 +105,13 @@ public class NARide extends BorderPane {
             }
 
             ni.addTool("I/O", () -> new IOPane(nar));
-            ni.addTool("Active Concepts Buttons", () -> new ActiveConceptsLog(nar) {
+            ni.addTool("Active Concepts (Buttons)", () -> new ActiveConceptsLog(nar) {
 
                 @Override public Node make(Concept cc) {
                     return SubButton.make(nar, cc);
                 }
             });
-            ni.addTool("Active Concepts Log", () -> new ActiveConceptsLog(nar) {
+            ni.addTool("Active Concepts (Log)", () -> new ActiveConceptsLog(nar) {
 
                 final EventHandler<? super MouseEvent> clickHandler =
                         e -> {
@@ -168,6 +173,14 @@ public class NARide extends BorderPane {
             ni.addTool(new Menu("Cognition..."));
             ni.addTool(new Menu("Sensor..."));
 
+            ni.controlPane.main.getItems().addAll(
+                new SimpleMenuItem("Full-Screen", () -> {
+                    b.setFullScreenExitHint("F11 to release full-screen");
+                    b.setFullScreenExitKeyCombination(KeyCombination.keyCombination("F11"));
+
+                    b.setFullScreen(true);
+                })
+            );
 
             //Button summaryPane = new Button(":D");
 
@@ -199,16 +212,11 @@ public class NARide extends BorderPane {
                 nar.input("html(\"" + report + "\");");
             });
 
-            Scene scene = new Scene(ni, 900, 700,
-                    false, SceneAntialiasing.DISABLED);
 
             scene.getStylesheets().setAll(NARfx.css);
             b.setScene(scene);
-
-
-            b.setScene(scene);
-
             b.show();
+            scene.getWindow().centerOnScreen();
 
             if (ide != null)
                 ide.accept(ni);
@@ -341,8 +349,21 @@ public class NARide extends BorderPane {
     public NARide(NARLoop l) {
 
         loopPane = new LoopPane(l);
-
         nar = l.nar;
+
+
+        controlPane = new NARMenu(nar);
+
+//        cornerMenu = new CornerMenu(CornerMenu.Location.BOTTOM_RIGHT, content, false)
+//            .withAutoShowAndHide(true);
+//
+//        cornerMenu.getItems().setAll(
+//
+//                new SimpleMenuItem(
+//                GlyphsDude.createIcon(FontAwesomeIcon.CODE),null,
+//                () -> { controlPane.setVisible(!controlPane.isVisible()); }));
+
+
 
 
         //default node builders
@@ -354,10 +375,10 @@ public class NARide extends BorderPane {
                 new DefaultCyclePane((Default.AbstractCycle) c) //cast is hack
         );
 
-
         spp = scrolled(pp = new PluginPanel(this));
 
-        controlPane = new NARMenu(nar);
+
+
         controlPane.getChildren().add(loopPane);
 
 //        Button addIcon = new Button("++");
@@ -621,7 +642,7 @@ public class NARide extends BorderPane {
         }
     }
 
-//    public class NARReactionPane extends NARCollectionPane<Reaction> {
+    //    public class NARReactionPane extends NARCollectionPane<Reaction> {
 //
 //        public NARReactionPane() {
 //            super(nar, r ->

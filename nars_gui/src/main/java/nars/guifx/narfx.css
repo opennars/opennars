@@ -137,10 +137,10 @@
 }
 
 .plugin_button {
-    -fx-padding: 4px;
+    -fx-padding: 3px;
     -fx-background-color: rgb(45,45,45) !important;
     -fx-control-inner-background:  transparent !important;
-    -fx-border-width: 0px 0px 0px 12px;
+    -fx-border-width: 0px 0px 0px 6px;
     -fx-border-color: gray;
     -fx-border-insets: 4px 4px 4px 0px;
 }
@@ -151,11 +151,11 @@
 }
 .plugin_button:armed {
     -fx-background-color: rgb(65,65,65) !important;
-    -fx-border-color: blue !important;
+    -fx-border-color: yellow !important;
 }
 .plugin_button:selected {
     -fx-background-color: rgb(55,55,55) !important;
-    -fx-border-color: green;
+    -fx-border-color: orange;
 }
 
 
@@ -411,7 +411,7 @@
 }
 
 .h1 {
-    -fx-font-size: 150% !important;
+    -fx-font-size: 120% !important;
     -fx-font-weight: bolder !important;
 }
 

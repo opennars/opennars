@@ -147,6 +147,16 @@
         </dependency>
         <dependency>
             <groupId>org.jfxtras</groupId>
+            <artifactId>jfxtras-menu</artifactId>
+            <version>8.0-r4</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.jfxtras</groupId>-->
+            <!--<artifactId>jfxtras-window</artifactId>-->
+            <!--<version>8.0-r4</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-labs</artifactId>
             <version>8.0-r4</version>
         </dependency>
