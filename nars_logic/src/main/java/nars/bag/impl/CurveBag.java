@@ -29,7 +29,7 @@ import java.util.Random;
  */
 public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
-    public final static BagCurve power2BagCurve = new Power2BagCurve();
+    public final static BagCurve xsqrtxBagCurve = new XPowerSqrtXBagCurve();
     public final static BagCurve power6BagCurve = new Power6BagCurve();
 
     //TODO move sampler features to subclass of CurveBag which specifically provides sampling
@@ -38,7 +38,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
 
     public CurveBag(int capacity, Random rng) {
-        this(CurveBag.power6BagCurve, capacity, rng);
+        this(CurveBag.xsqrtxBagCurve, capacity, rng);
     }
 
 
@@ -335,12 +335,24 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
         }
     }
 
+    public static class XPowerSqrtXBagCurve implements BagCurve {
+
+        @Override
+        public final float valueOf(final float x) {
+            return (float) (x * Math.sqrt(x));
+        }
+
+        @Override
+        public String toString() {
+            return "Power2BagCurve";
+        }
+    }
+
     public static class Power2BagCurve implements BagCurve {
 
         @Override
         public final float valueOf(final float x) {
-            float nnx = x;
-            return (nnx * nnx);
+            return x * x;
         }
 
         @Override
@@ -353,8 +365,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
         @Override
         public final float valueOf(final float x) {
-            float nnx = x;
-            return (nnx * nnx);
+            return x * x * x * x;
         }
 
         @Override
