@@ -305,10 +305,10 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
         final float min = getPriorityMin();
         final float max = getPriorityMax();
         final boolean normalizing = (min != max);
-        if (normalizing) {
+        /*if (normalizing) { //evil ^^
             //rescale to dynamic range
             x = min + (x * (max - min));
-        }
+        }*/
 
         final BagCurve curve = this.curve;
         float y = curve.valueOf(x);
