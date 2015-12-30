@@ -138,46 +138,46 @@ public class NARLoop implements Runnable {
         try {
             NAR nar = this.nar;
 
-            try {
+            if (periodMS != -1)
+                logger.info("started, period={}", periodMS);
 
-                if (periodMS != -1)
-                    logger.info("started, period={}", periodMS);
-
-                while (!stopped) {
-
-                    int periodMS = this.periodMS;
-
-                    if (periodMS < 0) {
-                        //idle
-                        Util.pause(sleepTimeMS);
-                        continue;
-                    }
-
-                    long start = System.currentTimeMillis();
-
-                    if (!nar.running.get()) {
-                        nar.frame(cyclesPerFrame);
-                    } else {
-                        //logger.warn("nar began running before this frame attempted to start");
-                        Thread.yield();
-                    }
-
-
-                    long frameTimeMS = System.currentTimeMillis() - start;
-
-                    throttle(periodMS, frameTimeMS);
-
+            do {
+                try {
+                    while (!stopped)
+                        frame(nar);
+                } catch (Exception e) {
+                    nar.memory.eventError.emit(e);
+                    if (Global.DEBUG) stopped = true;
                 }
-            } catch (Exception e) {
-                nar.memory.eventError.emit(e);
-                stopped = true;
-            }
+            } while (!stopped);
+
         } finally {
             if (al!=null)
                 al.release();
         }
 
         logger.info("stopped");
+    }
+
+    public void frame(NAR nar) {
+        int periodMS = this.periodMS;
+
+        if (periodMS < 0) {
+            //idle
+            Util.pause(sleepTimeMS);
+        } else {
+
+            long start = System.currentTimeMillis();
+
+            if (!nar.running.get()) {
+                nar.frame(cyclesPerFrame);
+                throttle(periodMS, System.currentTimeMillis() - start);
+            } else {
+                //logger.warn("nar began running before this frame attempted to start");
+                Thread.yield();
+            }
+        }
+
     }
 
     protected static long throttle(long minFramePeriodMS, long frameTimeMS) {
@@ -197,7 +197,10 @@ public class NARLoop implements Runnable {
 
             Thread.yield();
 
-            logger.warn("lag {}ms", remainingTime);
+            if (Global.DEBUG) {
+                //TODO blink a non-intrusive indicator in GUI
+                logger.warn("lag {}ms", remainingTime);
+            }
 
             //minFramePeriodMS++;
             //; incresing frame period to " + minFramePeriodMS + "ms");
