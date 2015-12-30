@@ -1,6 +1,6 @@
 package nars.nal;
 
-import nars.nal.meta.PremiseBranch;
+import nars.nal.meta.ProcTerm;
 import nars.nal.meta.RuleTrie;
 import nars.term.compile.TermIndex;
 
@@ -25,7 +25,7 @@ public class TrieDeriver extends RuleTrie {
 
         //int now = m.now();
 
-        for (PremiseBranch r : root) {
+        for (ProcTerm<PremiseMatch> r : root) {
             r.accept(m);
         }
 

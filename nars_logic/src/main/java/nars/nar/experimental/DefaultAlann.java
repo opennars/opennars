@@ -20,9 +20,9 @@ public class DefaultAlann extends AbstractAlann  {
 
     //private Iterator<Concept> indexIterator = null;
 
-    private int defaultTTL;
+    private final int defaultTTL;
     List<Derivelet> derivers = Global.newArrayList();
-    private DeriveletContext context;
+    private final DeriveletContext context;
 
     private final Logger log = LoggerFactory.getLogger(DefaultAlann.class);
 

@@ -16,12 +16,6 @@ public abstract class AbstractStringAtomRaw extends Atomic  {
 
 
     @Override
-    public int hashCode() {
-        /** for Op.ATOM, we use String hashCode() as-is, avoiding need to calculate or store a hash mutated by the Op */
-        return id.hashCode();
-    }
-
-    @Override
     public abstract Op op();
 
     @Override public String toString() {

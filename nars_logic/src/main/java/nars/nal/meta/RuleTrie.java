@@ -30,7 +30,7 @@ public class RuleTrie extends Deriver {
         printSummary(trie.root);
     }
 
-    public final PremiseBranch[] root;
+    public final ProcTerm<PremiseMatch>[] root;
 
     public RuleTrie(PremiseRuleSet R) {
         super(R);
@@ -110,17 +110,22 @@ public class RuleTrie extends Deriver {
     }
 
 
-    private static PremiseBranch[] getBranches(TrieNode<List<BooleanCondition<PremiseMatch>>, PremiseRule> node) {
+    private static ProcTerm<PremiseMatch>[] getBranches(TrieNode<List<BooleanCondition<PremiseMatch>>, PremiseRule> node) {
 
-        List<PremiseBranch> bb = Global.newArrayList(node.getChildCount());
+        List<ProcTerm<PremiseMatch>> bb = Global.newArrayList(node.getChildCount());
 
         node.forEach(n -> {
-            bb.add(new PremiseBranch(
-                    n.getSequence().subList(n.getStart(), n.getEnd())
-                        .toArray(new BooleanCondition[n.getSequence().subList(n.getStart(), n.getEnd()).size()]),
-                    getBranches(n)));
+            List<BooleanCondition<PremiseMatch>> seq = n.getSequence();
+
+            int from = n.getStart();
+            int to = n.getEnd();
+
+            List<BooleanCondition<PremiseMatch>> sub = seq.subList(from, to);
+
+            BooleanCondition[] subseq = sub.toArray(new BooleanCondition[sub.size()]);
+            bb.add(new PremiseBranch(subseq, getBranches(n)));
         });
 
-        return bb.toArray(new PremiseBranch[bb.size()]);
+        return bb.toArray(new ProcTerm[bb.size()]);
     }
 }

@@ -7,8 +7,6 @@ import nars.Op;
  */
 public abstract class AbstractStringAtom extends AbstractStringAtomRaw {
 
-    final int hash;
-
     protected AbstractStringAtom(byte[] id) {
         this(id, null);
     }
@@ -22,16 +20,10 @@ public abstract class AbstractStringAtom extends AbstractStringAtomRaw {
 
     protected AbstractStringAtom(String id, Op specificOp) {
         super(id);
-        hash = Atom.hash(
-            id.hashCode(),
-            specificOp!=null ? specificOp : op()
-        );
-    }
-
-
-    @Override
-    public int hashCode() {
-        return hash;
+//        hash = Atom.hash(
+//            id.hashCode(),
+//            specificOp!=null ? specificOp : op()
+//        );
     }
 
 

@@ -19,6 +19,11 @@ public abstract class Atomic implements Term, Byted {
         return toString().equals(obj.toString());
     }
 
+    @Override
+    public final int hashCode() {
+        return toString().hashCode();
+    }
+
     /**
      * @param that The Term to be compared with the current Term
      */

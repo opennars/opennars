@@ -1,9 +1,9 @@
 package nars.term.constraint;
 
+import com.google.common.base.Joiner;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 public class AndConstraint implements MatchConstraint {
@@ -28,6 +28,6 @@ public class AndConstraint implements MatchConstraint {
 
     @Override
     public String toString() {
-        return "(&&," + Arrays.toString(subConst) + ")";
+        return "(&&," + Joiner.on(",").join(subConst) + ")";
     }
 }

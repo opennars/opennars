@@ -2,7 +2,6 @@ package nars.term;
 
 import com.gs.collections.api.block.function.Function;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
-import nars.nal.Compounds;
 import nars.term.compound.Compound;
 import nars.term.visit.SubtermVisitor;
 import nars.util.data.Util;
@@ -268,7 +267,6 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
             subt |= t.structure();
         }
 
-        Compounds.ensureFeasibleVolume(vol, this);
 
         hasVarDeps = (byte) deps;
         hasVarIndeps = (byte) indeps;

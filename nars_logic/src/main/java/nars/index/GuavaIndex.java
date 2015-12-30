@@ -68,7 +68,7 @@ public class GuavaIndex implements TermIndex {
 
     @Override
     public int subtermsCount() {
-        return (int) subterms.size();
+        return subterms.size();
     }
 
     @Override
@@ -79,6 +79,7 @@ public class GuavaIndex implements TermIndex {
     }
 
     /** gets an existing item or applies the builder to produce something to return */
+    @Override
     public <K extends Term> Termed<K> apply(K key, Function<K, Termed> builder)  {
         try {
             return data.get(key, () -> builder.apply(key));

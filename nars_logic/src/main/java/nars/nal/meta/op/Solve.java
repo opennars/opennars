@@ -1,5 +1,6 @@
 package nars.nal.meta.op;
 
+import com.google.common.base.Joiner;
 import nars.Global;
 import nars.Op;
 import nars.Premise;
@@ -22,8 +23,6 @@ import nars.term.variable.Variable;
 import nars.truth.BeliefFunction;
 import nars.truth.DesireFunction;
 import nars.truth.Truth;
-
-import java.util.Arrays;
 
 import static nars.term.Statement.pred;
 import static nars.term.Statement.subj;
@@ -63,10 +62,10 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
         String desireLabel = desire == null ? "_" :
                 desireTerm.toString();
 
-        String sn = getClass().getSimpleName();
+        String sn = "Truth:(";
         String i = puncOverride == 0 ?
-                sn + ":(" + beliefLabel + ',' + desireLabel  :
-                sn + ":(" + beliefLabel + ',' + desireLabel + ",punc:\"" + puncOverride + '\"';
+                sn + beliefLabel + ',' + desireLabel  :
+                sn + beliefLabel + ',' + desireLabel + ",punc:\"" + puncOverride + '\"';
 
         i += ')';
 
@@ -172,7 +171,7 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
             this.anticipate = anticipate;
             this.eternalize = eternalize;
 
-            String i = "Derive:((";
+            String i = "Derive:(";
             if (eternalize || anticipate) {
                 if (eternalize && anticipate) {
                     i += "{eternalize,anticipate}, ";
@@ -186,7 +185,7 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
             i += term.toString();
 
             if (postMatch.length > 0) {
-                i += ", " + Arrays.toString(postMatch);
+                i += ", {" + Joiner.on(',').join(postMatch) + '}';
             }
 
             i += ")";

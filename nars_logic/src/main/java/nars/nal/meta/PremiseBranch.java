@@ -3,44 +3,39 @@ package nars.nal.meta;
 import com.gs.collections.api.block.function.primitive.BooleanFunction;
 import nars.Op;
 import nars.nal.PremiseMatch;
+import nars.term.atom.Atom;
 import nars.term.compound.GenericCompound;
-
-import java.util.function.Consumer;
 
 /**
 
  < (&&, cond1, cond2, ...) ==> (&|, fork1, fork2, ... ) >
  < (&&, cond1, cond2, ...) ==> end >
  */
-public final class PremiseBranch extends GenericCompound implements Consumer<PremiseMatch>{
+public final class PremiseBranch extends GenericCompound implements ProcTerm<PremiseMatch> {
 
-    public PremiseBranch(BooleanCondition<PremiseMatch>[] precondition, PremiseBranch[] children) {
-        super(Op.IMPLICATION, new AndCondition(precondition),
-                children != null ? new ThenFork(children) : Return.the);
-    }
+    public final transient BooleanFunction<PremiseMatch> cond;
+    public final transient ProcTerm<PremiseMatch> conseq;
 
-//    public BooleanCondition<PremiseMatch>[] getConditions() {
-//        return (BooleanCondition<PremiseMatch>[]) ((Compound)term(0)).terms();
-//    }
-
-
-
-    @Override public void accept(PremiseMatch m) {
-
-        if (getCondition().booleanValueOf(m)) {
-            getConsequences().accept(m);
+    public static ProcTerm<PremiseMatch> branch(BooleanCondition<PremiseMatch>[] condition, ProcTerm<PremiseMatch>[] conseq) {
+        if (conseq!=null && conseq.length > 0) {
+            return new PremiseBranch(condition,conseq);
+        } else {
+            return Return.the;
         }
-
     }
 
-    public final BooleanFunction<PremiseMatch> getCondition() {
-        return (BooleanFunction<PremiseMatch>) term(0);
+
+    protected PremiseBranch(BooleanCondition<PremiseMatch>[] cond, ProcTerm<PremiseMatch>[] conseq) {
+        super(Op.IMPLICATION, new AndCondition(cond),  new ThenFork(conseq));
+        this.cond = (BooleanFunction<PremiseMatch>) term(0);
+        this.conseq = (ProcTerm<PremiseMatch>) term(1);
     }
 
-    public final Consumer<PremiseMatch> getConsequences() {
-        return (Consumer<PremiseMatch>) term(1);
+    @Override public final void accept(PremiseMatch m) {
+        if (cond.booleanValueOf(m)) {
+            conseq.accept(m);
+        }
     }
-
 
     public static final class AndCondition<C> extends GenericCompound<BooleanCondition<C>> implements BooleanFunction<C>  {
 
@@ -58,9 +53,9 @@ public final class PremiseBranch extends GenericCompound implements Consumer<Pre
         }
     }
 
-    public static final class ThenFork extends GenericCompound<PremiseBranch> implements Consumer<PremiseMatch> {
+    public static final class ThenFork extends GenericCompound<ProcTerm<PremiseMatch>> implements ProcTerm<PremiseMatch> {
 
-        public ThenFork(PremiseBranch[] children) {
+        public ThenFork(ProcTerm<PremiseMatch>[] children) {
             super(Op.PARALLEL, children);
         }
 
@@ -70,36 +65,26 @@ public final class PremiseBranch extends GenericCompound implements Consumer<Pre
 
             int now = m.now();
 
-            for (PremiseBranch s : terms()) {
+            for (ProcTerm<PremiseMatch> s : terms()) {
                 s.accept(m);
                 m.revert(now);
             }
         }
     }
 
-    public static final class Return extends BooleanCondition<PremiseMatch> implements Consumer<PremiseMatch> {
+    public static final class Return extends Atom implements ProcTerm<PremiseMatch> {
 
         public static final Return the = new Return();
 
         private Return() {
-            super();
+            super("return");
         }
-
-        @Override
-        public String toString() {
-            return "return";
-        }
-
 
         @Override
         public void accept(PremiseMatch versioneds) {
 
         }
 
-        @Override
-        public boolean booleanValueOf(PremiseMatch versioneds) {
-            return false;
-        }
     }
 
 }

@@ -38,6 +38,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
     void forEach(Consumer<? super Termed> c);
 
+    @Override
     Termed get(Object t);
     Termed getIfPresent(Termed t);
 
@@ -63,6 +64,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         }
     }
 
+    @Override
     default Term term(Object t) {
         Termed tt = get(t);
         if (tt == null) return null;

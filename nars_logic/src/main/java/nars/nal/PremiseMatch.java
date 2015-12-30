@@ -90,6 +90,8 @@ public class PremiseMatch extends FindSubst {
         if (!dd.post(this))
             return false;
 
+        Compounds.ensureFeasibleVolume(tt);
+
         dd.derive(this, tt);
 
         return true;
