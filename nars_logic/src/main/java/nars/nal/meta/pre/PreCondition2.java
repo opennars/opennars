@@ -5,7 +5,7 @@ import nars.nal.meta.BooleanCondition;
 import nars.term.Term;
 
 /** tests the resolved terms specified by pattern variable terms */
-public abstract class PreCondition2 extends BooleanCondition {
+public abstract class PreCondition2 extends BooleanCondition<PremiseMatch> {
     public final Term arg1, arg2;
     private final String str;
 
@@ -15,7 +15,8 @@ public abstract class PreCondition2 extends BooleanCondition {
         str = getClass().getSimpleName() + ":(" + arg1 + ',' + arg2 + ')';
     }
 
-    @Override public final boolean eval(PremiseMatch m) {
+    @Override
+    public boolean booleanValueOf(PremiseMatch m) {
         return test(m,
                 m.apply(arg1),
                 m.apply(arg2));

@@ -10,7 +10,7 @@ import nars.task.Temporal;
  * %X is after %Y
  * TODO use less confusing terminology and order convention
  */
-public class After extends BooleanCondition {
+public class After extends BooleanCondition<PremiseMatch> {
 
     public static final After the = new After();
 
@@ -23,7 +23,7 @@ public class After extends BooleanCondition {
     }
 
     @Override
-    public final boolean eval(PremiseMatch m) {
+    public boolean booleanValueOf(PremiseMatch m) {
         Premise premise = m.premise;
 
         if (!premise.isEvent())

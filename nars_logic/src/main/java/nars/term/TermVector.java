@@ -102,8 +102,8 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
     }
 
     @Override
-    public final Term termOr(int index, Term resultIfInvalidIndex) {
-        Term[] term = this.term;
+    public final T termOr(int index, T resultIfInvalidIndex) {
+        T[] term = this.term;
         if (term.length <= index)
             return resultIfInvalidIndex;
         return term[index];

@@ -1,7 +1,6 @@
 package nars.nal;
 
-import nars.nal.meta.BooleanCondition;
-import nars.nal.meta.RuleBranch;
+import nars.nal.meta.PremiseBranch;
 import nars.nal.meta.RuleTrie;
 import nars.term.compile.TermIndex;
 
@@ -24,49 +23,18 @@ public class TrieDeriver extends RuleTrie {
 
     @Override public final void run(PremiseMatch m) {
 
-        int now = m.now();
+        //int now = m.now();
 
-        for (RuleBranch r : root) {
-            forEachRule(r, m);
+        for (PremiseBranch r : root) {
+            r.accept(m);
         }
 
-        m.revert(now);
+        //m.revert(now);
 
     }
 
     //final static Logger logger = LoggerFactory.getLogger(TrieDeriver.class);
 
-    private static void forEachRule(RuleBranch r, PremiseMatch match) {
-
-        //logger.info("BRANCH {}",r);
-
-        for (BooleanCondition<PremiseMatch> x : r.getConditions()) {
-
-            //logger.info("{}: {}",x, match.xy);
-
-
-            if (!x.eval(match)) {
-                return;
-            }
-        }
-
-        int now = match.now(); //RESTORE POINT ----
-
-        RuleBranch[] children = r.getConsequences();
-
-//        int branchingFactor = children.length;
-//        //limit each branch to an equal fraction of the input power
-//        Versioned<Integer> branchPower = match.branchPower;
-//        branchPower.set( branchPower.get() / branchingFactor );
-//        //System.out.println("    branch power: " + branchPower + " x " + branchingFactor);
-
-
-        for (RuleBranch s : children) {
-            forEachRule(s, match);
-            match.revert(now);
-        }
-
-    }
 
 
 //    final static void run(RuleMatch m, List<TaskRule> rules, int level, Consumer<Task> t) {

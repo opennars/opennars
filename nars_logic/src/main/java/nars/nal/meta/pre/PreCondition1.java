@@ -5,14 +5,15 @@ import nars.nal.meta.BooleanCondition;
 import nars.term.Term;
 
 /** tests the resolved terms specified by pattern variable terms */
-public abstract class PreCondition1 extends BooleanCondition {
+public abstract class PreCondition1 extends BooleanCondition<PremiseMatch> {
     public final Term arg1;
 
     protected PreCondition1(Term var1) {
         arg1 = var1;
     }
 
-    @Override public boolean eval(PremiseMatch m) {
+    @Override
+    public boolean booleanValueOf(PremiseMatch m) {
         Term a = m.apply(arg1);
         if (a == null) return false;
         return test(m, a);

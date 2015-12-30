@@ -3,6 +3,7 @@ package nars.nal.meta;
 import com.google.common.collect.ListMultimap;
 import nars.Global;
 import nars.Op;
+import nars.nal.PremiseMatch;
 import nars.nal.meta.op.MatchTerm;
 import nars.nal.meta.op.SubTermOp;
 import nars.term.Term;
@@ -14,8 +15,8 @@ import java.util.List;
 /** represents the "program" that the matcher will execute */
 public class TermPattern {
 
-    public final BooleanCondition[] pre;
-    public final BooleanCondition[] code;
+    public final BooleanCondition<PremiseMatch>[] pre;
+    public final BooleanCondition<PremiseMatch>[] code;
     public final Term term;
 
     private final ListMultimap<Term, MatchConstraint> constraints;

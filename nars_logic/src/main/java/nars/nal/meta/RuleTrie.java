@@ -19,7 +19,7 @@ import static com.sun.org.apache.xerces.internal.impl.xs.opti.SchemaDOM.indent;
 
 public class RuleTrie extends Deriver {
 
-    private final Trie<List<BooleanCondition>, PremiseRule> trie;
+    private final Trie<List<BooleanCondition<PremiseMatch>>, PremiseRule> trie;
 
     @Override
     protected void run(PremiseMatch match) {
@@ -30,7 +30,7 @@ public class RuleTrie extends Deriver {
         printSummary(trie.root);
     }
 
-    public final RuleBranch[] root;
+    public final PremiseBranch[] root;
 
     public RuleTrie(PremiseRuleSet R) {
         super(R);
@@ -85,14 +85,14 @@ public class RuleTrie extends Deriver {
             }
         });
 
-        root = compile(trie.root);
+        root = getBranches(trie.root);
 
     }
 
-    public static void printSummary(TrieNode<List<BooleanCondition>,PremiseRule> node) {
+    public static void printSummary(TrieNode<List<BooleanCondition<PremiseMatch>>,PremiseRule> node) {
 
         node.forEach(n -> {
-            List<BooleanCondition> seq = n.getSequence();
+            List<BooleanCondition<PremiseMatch>> seq = n.getSequence();
 
             int from = n.getStart();
             int to = n.getEnd();
@@ -110,22 +110,17 @@ public class RuleTrie extends Deriver {
     }
 
 
-    private static RuleBranch[] compile(TrieNode<List<BooleanCondition>, PremiseRule> node) {
+    private static PremiseBranch[] getBranches(TrieNode<List<BooleanCondition<PremiseMatch>>, PremiseRule> node) {
 
-        List<RuleBranch> bb = Global.newArrayList(node.getChildCount());
+        List<PremiseBranch> bb = Global.newArrayList(node.getChildCount());
 
         node.forEach(n -> {
-            List<BooleanCondition> seq = n.getSequence();
-
-            int from = n.getStart();
-            int to = n.getEnd();
-
-            List<BooleanCondition> sub = seq.subList(from, to);
-
-            BooleanCondition[] subseq = sub.toArray(new BooleanCondition[sub.size()]);
-            bb.add(new RuleBranch(subseq, compile(n)));
+            bb.add(new PremiseBranch(
+                    n.getSequence().subList(n.getStart(), n.getEnd())
+                        .toArray(new BooleanCondition[n.getSequence().subList(n.getStart(), n.getEnd()).size()]),
+                    getBranches(n)));
         });
 
-        return bb.toArray(new RuleBranch[bb.size()]);
+        return bb.toArray(new PremiseBranch[bb.size()]);
     }
 }

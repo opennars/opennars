@@ -9,7 +9,7 @@ import nars.task.Task;
 /**
  * Created by me on 8/15/15.
  */
-public class Concurrent extends BooleanCondition {
+public class Concurrent extends BooleanCondition<PremiseMatch> {
 
     public static final Concurrent the = new Concurrent();
 
@@ -22,7 +22,7 @@ public class Concurrent extends BooleanCondition {
     }
 
     @Override
-    public final boolean eval(PremiseMatch m) {
+    public boolean booleanValueOf(PremiseMatch m) {
         Premise premise = m.premise;
 
         if (!premise.isEvent())

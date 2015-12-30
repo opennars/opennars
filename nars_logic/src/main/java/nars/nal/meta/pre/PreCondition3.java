@@ -7,7 +7,7 @@ import nars.term.Term;
 /**
  * Created by me on 8/15/15.
  */
-public abstract class PreCondition3 extends BooleanCondition {
+public abstract class PreCondition3 extends BooleanCondition<PremiseMatch> {
     public Term arg1=null, arg2=null, arg3=null;
 
 
@@ -19,7 +19,7 @@ public abstract class PreCondition3 extends BooleanCondition {
     }
 
     @Override
-    public boolean eval(PremiseMatch m) {
+    public boolean booleanValueOf(PremiseMatch m) {
         //these should not resolve to null
         Term a = m.apply(arg1);
         if (a == null) return false;

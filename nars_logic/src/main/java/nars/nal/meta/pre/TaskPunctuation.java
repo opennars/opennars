@@ -9,7 +9,7 @@ import nars.term.Term;
 /**
  * Created by me on 8/27/15.
  */
-public class TaskPunctuation extends BooleanCondition {
+public class TaskPunctuation extends BooleanCondition<PremiseMatch> {
 
     public final char punc;
     public final String id;
@@ -50,7 +50,7 @@ public class TaskPunctuation extends BooleanCondition {
     }
 
     @Override
-    public final boolean eval(PremiseMatch r) {
+    public boolean booleanValueOf(PremiseMatch r) {
         char taskPunc = r.premise.getTask().getPunctuation();
         return test(taskPunc);
     }

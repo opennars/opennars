@@ -1,5 +1,6 @@
 package nars.nal.meta;
 
+import com.gs.collections.api.block.function.primitive.BooleanFunction;
 import nars.Op;
 import nars.term.atom.Atomic;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * WARNING: no preconditions should store any state so that their instances may be used by
  * different contexts (ex: NAR's)
  */
-public abstract class BooleanCondition<C> extends Atomic{
+public abstract class BooleanCondition<C> extends Atomic implements BooleanFunction<C>  {
 
     public BooleanCondition() {
         super();
@@ -25,8 +26,6 @@ public abstract class BooleanCondition<C> extends Atomic{
         l.add(this);
     }
 
-    /** evaluates condition in a context */
-    abstract public boolean eval(C context);
 
     @Override
     public int complexity() {

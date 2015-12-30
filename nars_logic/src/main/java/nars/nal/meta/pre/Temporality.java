@@ -3,17 +3,17 @@ package nars.nal.meta.pre;
 import nars.nal.PremiseMatch;
 import nars.nal.meta.BooleanCondition;
 
-public abstract class Temporality extends BooleanCondition {
+public abstract class Temporality extends BooleanCondition<PremiseMatch> {
 
     /** both task and belief are temporal (non-eternal) */
-    public static final BooleanCondition both = new Temporality() {
+    public static final BooleanCondition<PremiseMatch> both = new Temporality() {
 
         @Override public String toString() {
             return "Event";
         }
 
         @Override
-        public boolean eval(PremiseMatch m) {
+        public boolean booleanValueOf(PremiseMatch m) {
             return m.premise.isEvent();
         }
 

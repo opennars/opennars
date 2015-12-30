@@ -47,9 +47,11 @@ public class PremiseRule extends GenericCompound implements Level {
     };
 
     /** blank marker trie node indicating the derivation and terminating the branch */
-    public static final BooleanCondition END = new BooleanCondition() {
+    public static final BooleanCondition END = new BooleanCondition<PremiseMatch>() {
 
-        @Override public boolean eval(Object versioneds) {
+
+        @Override
+        public boolean booleanValueOf(PremiseMatch versioneds) {
             return false;
         }
 

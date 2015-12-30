@@ -32,7 +32,7 @@ import static nars.truth.TruthFunctions.eternalizedConfidence;
 /**
  * Evaluates the truth of a premise
  */
-public final class Solve extends BooleanCondition {
+public final class Solve extends BooleanCondition<PremiseMatch> {
     public final TruthOperator belief;
     public final TruthOperator desire;
     public final char puncOverride;
@@ -106,7 +106,7 @@ public final class Solve extends BooleanCondition {
 //        }
 
     @Override
-    public boolean eval(PremiseMatch m) {
+    public boolean booleanValueOf(PremiseMatch m) {
 
         Premise premise = m.premise;
 
@@ -198,8 +198,9 @@ public final class Solve extends BooleanCondition {
             return id;
         }
 
+
         @Override
-        public boolean eval(PremiseMatch m) {
+        public boolean booleanValueOf(PremiseMatch m) {
             //set derivation handlers
             m.derived.set(this);
             return true;
@@ -263,7 +264,7 @@ public final class Solve extends BooleanCondition {
         public boolean post(PremiseMatch match) {
 
             for (BooleanCondition p : postMatch) {
-                if (!p.eval(match))
+                if (!p.booleanValueOf(match))
                     return false;
             }
 

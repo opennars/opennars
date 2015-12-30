@@ -57,7 +57,7 @@ import java.util.List;
     }
 
     @Override
-    public final boolean eval(PremiseMatch m) {
+    public boolean booleanValueOf(PremiseMatch m) {
         throw new RuntimeException("this should not be called");
     }
 

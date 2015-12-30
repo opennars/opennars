@@ -244,7 +244,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final Term termOr(int index, Term resultIfInvalidIndex) {
+    public final T termOr(int index, T resultIfInvalidIndex) {
         return terms.termOr(index, resultIfInvalidIndex);
     }
 

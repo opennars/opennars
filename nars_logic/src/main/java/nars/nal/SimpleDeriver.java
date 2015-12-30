@@ -9,12 +9,12 @@ import java.util.List;
 
 public class SimpleDeriver extends Deriver  {
 
-    private final List<List<BooleanCondition>> unrolled;
+    private final List<List<BooleanCondition<PremiseMatch>>> unrolled;
 
     public SimpleDeriver(PremiseRuleSet rules) {
         super(rules);
 
-        List<List<BooleanCondition>> u = Global.newArrayList();
+        List<List<BooleanCondition<PremiseMatch>>> u = Global.newArrayList();
         for (PremiseRule r : rules) {
             for (PostCondition p : r.postconditions)
                 u.add( r.getConditions(p) );
@@ -29,11 +29,12 @@ public class SimpleDeriver extends Deriver  {
 
         int now = m.now();
 
-        for (List<BooleanCondition> r : unrolled) {
+        for (List<BooleanCondition<PremiseMatch>> r : unrolled) {
             for (BooleanCondition p : r) {
                 try {
-                    if (!p.eval(m))
+                    if (!p.booleanValueOf(m))
                         break;
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     break;

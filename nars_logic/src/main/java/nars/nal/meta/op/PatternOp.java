@@ -11,7 +11,7 @@ public abstract class PatternOp extends BooleanCondition<PremiseMatch> {
     abstract public boolean run(FindSubst ff);
 
     @Override
-    public final boolean eval(PremiseMatch premiseMatch) {
-        return run(premiseMatch);
+    public final boolean booleanValueOf(PremiseMatch m) {
+        return run(m);
     }
 }
