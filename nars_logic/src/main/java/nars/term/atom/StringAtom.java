@@ -1,7 +1,6 @@
 package nars.term.atom;
 
 import nars.Op;
-import nars.util.utf8.Utf8;
 
 
 /** atom backed by a native java String */
@@ -30,10 +29,7 @@ public class StringAtom extends AbstractStringAtomRaw {
         return Op.ATOM.bit();
     }
 
-    @Override
-    public byte[] bytes() {
-        return Utf8.toUtf8(id);
-    }
+
 
 
     @Override

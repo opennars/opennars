@@ -32,7 +32,7 @@ public class SimpleDeriver extends Deriver  {
         for (List<PreCondition> r : unrolled) {
             for (PreCondition p : r) {
                 try {
-                    if (!p.test(m))
+                    if (!p.eval(m))
                         break;
                 } catch (Exception e) {
                     e.printStackTrace();

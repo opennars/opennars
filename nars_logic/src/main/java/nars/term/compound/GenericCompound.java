@@ -346,11 +346,11 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final boolean and(Predicate<Term> v) {
+    public final boolean and(Predicate<? super Term> v) {
         return v.test(this) && terms.and(v);
     }
     @Override
-    public final boolean or(Predicate<Term> v) {
+    public final boolean or(Predicate<? super Term> v) {
         return v.test(this) || terms.or(v);
     }
 

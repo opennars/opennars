@@ -3,8 +3,6 @@ package nars.nal.nal7;
 import nars.Op;
 import nars.term.atom.AbstractStringAtom;
 
-import java.io.IOException;
-
 /**
  * Interval represented directly as a measure of cycles encoded as an integer in some # of bits
  *
@@ -63,11 +61,6 @@ public final class CyclesInterval extends AbstractStringAtom implements Interval
     @Override
     public int structure() {
         return 0;
-    }
-
-    @Override
-    public void append(Appendable output, boolean pretty) throws IOException {
-        output.append('/').append(Long.toString(cyc));//.append('/');
     }
 
     @Override

@@ -12,7 +12,7 @@ public abstract class PreCondition1 extends PreCondition {
         arg1 = var1;
     }
 
-    @Override public boolean test(RuleMatch m) {
+    @Override public boolean eval(RuleMatch m) {
         Term a = m.apply(arg1);
         if (a == null) return false;
         return test(m, a);

@@ -6,8 +6,8 @@ import nars.nal.Compounds;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.atom.AbstractStringAtom;
 import nars.term.atom.Atom;
-import nars.term.atom.Atomic;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
@@ -27,7 +27,7 @@ import static nars.Symbols.*;
  * as shown above, but is not an "Operator").
  *
  */
-public final class Operator<T extends Term> extends Atomic { //implements Term {
+public final class Operator<T extends Term> extends AbstractStringAtom { //implements Term {
 
 
     //final static byte[] opPrefix = new byte[] { (byte)'^' };
@@ -35,7 +35,7 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
     private final T term;
 
     public Operator(T the) {
-
+        super(Op.OPERATOR.ch + the.toString());
         term = the;
     }
 
@@ -154,12 +154,6 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
         return Op.OPERATOR;
     }
 
-//defined in abstractatomic
-//    @Override
-//    public final int volume() {
-//        return 1;
-//    }
-
     @Override
     public int complexity() {
         return 1;
@@ -186,57 +180,6 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
     }
 
 
-    @Override
-    public byte[] bytes() {
-        return Compounds.newCompound1Key(op(), term);
-    }
-
-    @Override
-    public int bytesLength() {
-        return 1 + term.bytesLength();
-    }
-
-    @Override
-    public int structure() {
-        return (1 << Op.OPERATOR.ordinal());
-    }
-
-
-    @Override
-    public void append(Appendable p, boolean pretty) throws IOException {
-        p.append(op().ch);
-        term.append(p, pretty);
-    }
-
-    @Override
-    public StringBuilder toStringBuilder(boolean pretty) {
-        //copied from Atomic.java:
-        String tString = term.toString();
-        StringBuilder sb = new StringBuilder(tString.length()+1);
-        return sb.append('^').append(tString);
-    }
-
-    @Override
-    public String toString() {
-        return '^' + term.toString();
-    }
-
-
-
-    @Override
-    public int hashCode() {
-        return term.hashCode() ^ 0xAADEADAA;
-    }
-
-    //
-//    @Override
-//    protected final void init(T... term) {
-//        super.init(term);
-//        this.structureHash = operatorOrdinal;
-//        this.volume = 1;
-//        this.complexity = 1;
-//    }
-
     public static Operator the(String name) {
         return the(Atom.the(name));
     }
@@ -245,28 +188,8 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
     }
 
 
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        Term t = (Term)obj;
-        return (t.op() == Op.OPERATOR) && term.equals(((Operator)t).term);
-    }
-
     public Term identifier() {
         return term;
     }
 
-    @Override
-    public int compareTo(Object that) {
-        if (that == this) return 0;
-
-
-        Term t = (Term)that;
-        int d = Integer.compare(op().ordinal(), t.op().ordinal());
-        if (d!=0) return d;
-
-
-        return term.compareTo( ((Operator)that).term );
-    }
 }

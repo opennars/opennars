@@ -199,9 +199,10 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     }
 
 
-    /** returns true if evaluates true for any terms */
+    /** returns true if evaluates true for any terms
+     * @param p*/
     @Override
-    default boolean or(Predicate<Term> p) {
+    default boolean or(Predicate<? super Term> p) {
         for (Term t : terms()) {
             if (t.or(p))
                 return true;
@@ -209,9 +210,10 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         return false;
     }
 
-    /** returns true if evaluates true for all terms */
+    /** returns true if evaluates true for all terms
+     * @param p*/
     @Override
-    default boolean and(Predicate<Term> p) {
+    default boolean and(Predicate<? super Term> p) {
         for (Term t : terms()) {
             if (!p.test(t))
                 return false;

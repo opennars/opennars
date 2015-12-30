@@ -10,9 +10,8 @@ public class VarPattern extends Variable {
 
 
     public VarPattern(String name) {
-        super(name);
+        super(Op.VAR_PATTERN.ch + name);
     }
-
 
     @Override
     public final int structure() {

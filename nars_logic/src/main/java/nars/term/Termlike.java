@@ -71,11 +71,13 @@ public interface Termlike  {
 
     /** recurses all subterms while the result of the predicate is true;
      *  returns true if all true
-     *  */
-    boolean and(Predicate<Term> v);
+     *
+     * @param v*/
+    boolean and(Predicate<? super Term> v);
 
     /** recurses all subterms until the result of the predicate becomes true;
      *  returns true if any true
-     * */
-    boolean or(Predicate<Term> v);
+     *
+     * @param v*/
+    boolean or(Predicate<? super Term> v);
 }

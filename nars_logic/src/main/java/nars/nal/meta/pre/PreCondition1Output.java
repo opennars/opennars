@@ -13,7 +13,7 @@ public abstract class PreCondition1Output extends PreCondition1 {
     }
 
     @Override
-    public final boolean test(RuleMatch m) {
+    public final boolean eval(RuleMatch m) {
         return test(m, arg1);
     }
 }

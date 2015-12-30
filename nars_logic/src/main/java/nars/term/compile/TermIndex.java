@@ -44,8 +44,10 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
     /** gets an existing item or applies the builder to produce something to return */
     default <K extends Term> Termed<K> apply(K key, Function<K,Termed> builder) {
         Termed existing = getIfPresent(key);
-        return existing == null ?
-                put(key, builder.apply(key)) : existing;
+        if (existing == null) {
+            put(key, existing = builder.apply(key));
+        }
+        return existing;
     }
 
     TermContainer internSubterms(TermContainer s);

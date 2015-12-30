@@ -6,7 +6,6 @@ import nars.nal.nal7.Order;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
-import nars.util.utf8.Utf8;
 
 import java.io.IOException;
 
@@ -180,7 +179,7 @@ public enum Op {
         str = string;
         this.commutative = commutative;
 
-        bytes = Utf8.toUtf8(string);
+        bytes = string.getBytes();
 
         this.minLevel = minLevel;
         this.type = type;

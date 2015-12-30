@@ -15,7 +15,7 @@ public abstract class PreCondition2 extends PreCondition {
         str = getClass().getSimpleName() + ":(" + arg1 + ',' + arg2 + ')';
     }
 
-    @Override public final boolean test(RuleMatch m) {
+    @Override public final boolean eval(RuleMatch m) {
         return test(m,
                 m.apply(arg1),
                 m.apply(arg2));

@@ -1,10 +1,10 @@
 package nars.nal.meta;
 
+import nars.Op;
 import nars.nal.RuleMatch;
+import nars.term.atom.Atomic;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * each precondition is testesd for equality by its toString() method reprsenting an immutable key.
@@ -14,26 +14,54 @@ import java.util.function.Predicate;
  * WARNING: no preconditions should store any state so that their instances may be used by
  * different contexts (ex: NAR's)
  */
-public abstract class PreCondition implements Predicate<RuleMatch>, Comparable<PreCondition>, Serializable {
+public abstract class PreCondition extends Atomic{
+
+    public PreCondition() {
+        super();
+    }
 
     public abstract String toString();
-
-    @Override
-    public final int hashCode() {
-        return toString().hashCode();
-    }
-
-    @Override
-    public final boolean equals(Object obj) {
-        return toString().equals(obj.toString());
-    }
 
     public void addConditions(List<PreCondition> l) {
         l.add(this);
     }
 
+    /** evaluates condition in a context */
+    abstract public boolean eval(RuleMatch context);
+
     @Override
-    public final int compareTo(PreCondition p) {
-        return toString().compareTo(p.toString());
+    public int complexity() {
+        return 1;
     }
+
+    @Override
+    public int volume() {
+        return 1;
+    }
+
+    @Override
+    public int vars() {
+        return 0;
+    }
+
+    @Override
+    public int varQuery() {
+        return 0;
+    }
+
+    @Override
+    public int varDep() {
+        return 0;
+    }
+
+    @Override
+    public int varIndep() {
+        return 0;
+    }
+
+    @Override
+    public Op op() {
+        return Op.ATOM;
+    }
+
 }

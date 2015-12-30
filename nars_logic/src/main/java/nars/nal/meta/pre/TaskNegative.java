@@ -11,7 +11,7 @@ import nars.task.Task;
 public final class TaskNegative extends PreCondition {
 
     @Override
-    public boolean test(RuleMatch m) {
+    public boolean eval(RuleMatch m) {
         Task task = m.premise.getTask();
         return (task.isJudgmentOrGoal() && task.getFrequency() < PostCondition.HALF);
     }

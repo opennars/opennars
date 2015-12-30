@@ -50,7 +50,7 @@ public class TaskPunctuation extends PreCondition {
     }
 
     @Override
-    public final boolean test(RuleMatch r) {
+    public final boolean eval(RuleMatch r) {
         char taskPunc = r.premise.getTask().getPunctuation();
         return test(taskPunc);
     }

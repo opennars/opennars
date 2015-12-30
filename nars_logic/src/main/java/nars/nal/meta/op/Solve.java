@@ -106,7 +106,7 @@ public final class Solve extends PreCondition {
 //        }
 
     @Override
-    public boolean test(RuleMatch m) {
+    public boolean eval(RuleMatch m) {
 
         Premise premise = m.premise;
 
@@ -199,7 +199,7 @@ public final class Solve extends PreCondition {
         }
 
         @Override
-        public boolean test(RuleMatch m) {
+        public boolean eval(RuleMatch m) {
             //set derivation handlers
             m.derived.set(this);
             return true;
@@ -263,7 +263,7 @@ public final class Solve extends PreCondition {
         public boolean post(RuleMatch match) {
 
             for (PreCondition p : postMatch) {
-                if (!p.test(match))
+                if (!p.eval(match))
                     return false;
             }
 

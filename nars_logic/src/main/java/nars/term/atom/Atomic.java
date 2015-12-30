@@ -7,67 +7,50 @@ import nars.util.utf8.Byted;
 import java.io.IOException;
 import java.util.function.Predicate;
 
-
+/** Base class for Atomic types. */
 public abstract class Atomic implements Term, Byted {
 
-    @Override
-    public final boolean containsTerm(Term t) {
-        return false;
-    }
 
-
-    @Override public final boolean isCommutative() {
-        return false;
-    }
-
-//    @Override
-//    public final Term term(int n) {
-//        throw new RuntimeException("Atoms have no subterms");
-//    }
-//    @Override
-//    public final Term termOr(int n, Term x) {
-//        return term(n);
-//    }
-
-    @Override
-    public void append(Appendable w, boolean pretty) throws IOException {
-        //Utf8.fromUtf8ToAppendable(bytes(), w);
-        w.append(toString());
-    }
-//
-    /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
-    @Override
-    public StringBuilder toStringBuilder(boolean pretty) {
-        return new StringBuilder(toString());
-    }
-
-
-
-    @Override public int bytesLength() {
-        return bytes().length;
+    /** Assumes that the op()
+     *  is encoded within its string such that additional op()
+     *  comparison would be redundant. */
+    @Override public boolean equals(Object obj) {
+        if (this == obj) return true;
+        return toString().equals(obj.toString());
     }
 
     /**
-     * Atoms are singular, so it is useless to clone them
+     * @param that The Term to be compared with the current Term
      */
-    @Override
-    public final Term clone() {
-        return this;
+    @Override public final int compareTo(Object that) {
+        if (that==this) return 0;
+
+        Term t = (Term)that;
+        //TODO compare
+        //int d = op().compareTo(t.op());
+        int d = Integer.compare(op().ordinal(), t.op().ordinal());
+        if (d!=0) return d;
+
+        //if the op is the same, it is required to be a subclass of Atomic
+        //which should have an ordering determined by its toString()
+        return toString().compareTo((/*(Atomic)*/that).toString());
     }
 
 
+    @Override public final int bytesLength() {
+        return bytes().length;
+    }
 
     @Override
     public final void recurseTerms(SubtermVisitor v, Term parent) {
         v.accept(this, parent);
     }
 
-
-    @Override public boolean and(Predicate<Term> v) {
+    @Override public final boolean and(Predicate<? super Term> v) {
         return v.test(this);
     }
 
-    @Override public boolean or(Predicate<Term> v) {
+    @Override public final boolean or(Predicate<? super Term> v) {
         return and(v); //re-use and, even though it's so similar
     }
 
@@ -76,21 +59,45 @@ public abstract class Atomic implements Term, Byted {
         return toString();
     }
 
-
     @Override
-    public int size() {
+    public final void append(Appendable w, boolean pretty) throws IOException {
+        w.append(toString());
+    }
+
+    /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
+    @Override
+    public final StringBuilder toStringBuilder(boolean pretty) {
+        return new StringBuilder(toString());
+    }
+
+    /** number of subterms; for atoms this must be zero */
+    @Override public final int size() {
         return 0;
     }
 
-    @Override public int volume() { return 1; }
-
-    @Override
-    public final boolean impossibleSubTermVolume(int otherTermVolume) {
+    /** atoms contain no subterms so impossible for anything to fit "inside" it */
+    @Override public final boolean impossibleSubTermVolume(int otherTermVolume) {
         return true;
     }
+    @Override public final boolean containsTermRecursively(Term target) {
+        return false;
+    }
+    @Override public final boolean containsTerm(Term t) {
+        return false;
+    }
 
-    @Override public abstract byte[] bytes();
+    @Override public final boolean isCommutative() {
+        return false;
+    }
 
+
+    /** default volume = 1 */
+    @Override public int volume() { return 1; }
+
+
+    @Override public final byte[] bytes() {
+        return toString().getBytes();
+    }
 
     @Override
     public abstract int varIndep();
@@ -101,12 +108,9 @@ public abstract class Atomic implements Term, Byted {
     @Override
     public abstract int varQuery();
 
-
-
-    @Override public final boolean containsTermRecursively(Term target) {
-        return false;
+    @Override
+    public int structure() {
+        return op().bit();
     }
 
-
-    //public abstract Term apply(Subst s, boolean fullMatch);
 }

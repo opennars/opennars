@@ -76,7 +76,7 @@ public class CommonVariable extends Variable  {
             throw new RuntimeException("variables equal");
         }
 
-        return new CommonVariable(type, a + type + b);
+        return new CommonVariable(type, a + b);
     }
 
     //TODO use a 2d array not an enum map, just flatten the 4 op types to 0,1,2,3

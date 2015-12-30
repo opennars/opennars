@@ -47,7 +47,7 @@ public class TrieDeriver extends RuleTrie {
             //logger.info("{}: {}",x, match.xy);
 
 
-            if (!x.test(match)) {
+            if (!x.eval(match)) {
                 return;
             }
         }

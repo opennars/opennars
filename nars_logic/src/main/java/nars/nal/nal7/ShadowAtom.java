@@ -11,12 +11,6 @@ import nars.term.atom.AbstractStringAtom;
  */
 public class ShadowAtom extends AbstractStringAtom {
 
-    private static final byte[] empty = new byte[0];
-
-    public ShadowAtom() {
-        super();
-    }
-
     public ShadowAtom(String id) {
         super(id);
     }
@@ -24,11 +18,6 @@ public class ShadowAtom extends AbstractStringAtom {
     @Override
     public boolean equals(Object obj) {
         return this == obj;
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
     }
 
     @Override
@@ -46,27 +35,19 @@ public class ShadowAtom extends AbstractStringAtom {
         return 0;
     }
 
-    @Override
-    public byte[] bytes() {
-        return empty;
-    }
 
-
-    @Override
-    public final int structure() { return 0;     }
+//    @Override
+//    public final int structure() { return 0;     }
 
     @Override
     public Op op() {
         return Op.NONE;
     }
 
-
-
     @Override
     public int vars() {
         return 0;
     }
-
 
     @Override
     public int complexity() {

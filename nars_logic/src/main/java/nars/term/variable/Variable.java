@@ -23,12 +23,8 @@ package nars.term.variable;
 
 import nars.$;
 import nars.Op;
-import nars.term.Term;
 import nars.term.Termlike;
 import nars.term.atom.AbstractStringAtom;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * A variable term, which does not correspond to a concept
@@ -46,14 +42,6 @@ public abstract class Variable extends AbstractStringAtom {
     protected Variable(String n, Op specificOp) {
         super(n, specificOp);
     }
-    protected Variable(byte[] n, Op specificOp) {
-        super(n, specificOp);
-    }
-
-//    Variable(final String name) {
-//        super(Utf8.toUtf8(name));
-//    }
-
 
     public static Variable v(Op varType, byte[] baseName) {
         return v(varType.ch, baseName);
@@ -102,30 +90,8 @@ public abstract class Variable extends AbstractStringAtom {
      * necessary because VAR_PATTERN are hidden from substructure
      */
     public static boolean hasPatternVariable(Termlike t) {
-        return t.or(x ->
-                x.op() == Op.VAR_PATTERN
-        );
+        return t.or(x -> x.op() == Op.VAR_PATTERN);
     }
-
-
-    @Override
-    public final void append(Appendable w, boolean pretty) throws IOException {
-        w.append(op().ch).append(id);
-    }
-
-    @Override
-    public String toString() {
-        return op().ch + id;
-    }
-
-
-    public final Term apply(Map<Term, Term> subs) {
-        Term x = subs.get(this);
-        if (x != null)
-            return x;
-        return this;
-    }
-
 
 
     /**
@@ -143,12 +109,7 @@ public abstract class Variable extends AbstractStringAtom {
     public static final class VarDep extends Variable {
 
         public VarDep(String name) {
-            super(name);
-        }
-
-        @Override
-        public int structure() {
-            return Op.VAR_DEP.bit();
+            super(Op.VAR_DEP.ch + name);
         }
 
         @Override
@@ -181,12 +142,7 @@ public abstract class Variable extends AbstractStringAtom {
 
 
         public VarIndep(String name) {
-            super(name);
-        }
-
-        @Override
-        public int structure() {
-            return Op.VAR_INDEP.bit();
+            super(Op.VAR_INDEP.ch + name);
         }
 
         @Override
@@ -220,12 +176,7 @@ public abstract class Variable extends AbstractStringAtom {
 
 
         public VarQuery(String name) {
-            super(name);
-        }
-
-        @Override
-        public int structure() {
-            return Op.VAR_QUERY.bit();
+            super(Op.VAR_QUERY.ch + name);
         }
 
         @Override

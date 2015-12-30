@@ -49,7 +49,7 @@ public class PremiseRule extends GenericCompound implements Level {
     /** blank marker trie node indicating the derivation and terminating the branch */
     public static final PreCondition END = new PreCondition() {
 
-        @Override public boolean test(RuleMatch versioneds) {
+        @Override public boolean eval(RuleMatch versioneds) {
             return false;
         }
 

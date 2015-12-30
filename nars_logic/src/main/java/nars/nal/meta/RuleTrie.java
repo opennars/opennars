@@ -35,8 +35,6 @@ public class RuleTrie extends Deriver {
     public RuleTrie(PremiseRuleSet R) {
         super(R);
 
-        //SimpleDeriver d = new SimpleDeriver(SimpleDeriver.standard);
-
         ObjectIntHashMap<PreCondition> conds = new ObjectIntHashMap<>();
 
         trie = new Trie(new TrieSequencer<List<PreCondition>>() {
@@ -48,11 +46,6 @@ public class RuleTrie extends Deriver {
                     PreCondition b = sequenceB.get(i + indexB);
                     if (!a.equals(b))
                         return i;
-                /*
-                int c = a.compareTo(b);
-                if (c!=0)
-                    return c;
-                    */
                 }
 
                 return count;
@@ -73,13 +66,10 @@ public class RuleTrie extends Deriver {
         });
 
         R.forEach((Consumer<? super PremiseRule>) s -> {
-            if (s == null)
-                return;
-            if (s.postconditions==null)
+
+            if (s == null || s.postconditions==null)
                 return;
 
-            //List<PreCondition> ll = s.getConditions();
-            //System.out.println(ll);
             for (PostCondition p : s.postconditions) {
 
                 PremiseRule existing = trie.put(s.getConditions(p), s);
@@ -93,32 +83,9 @@ public class RuleTrie extends Deriver {
                     }
                 }
             }
-            //System.out.println(trie.size());
         });
 
-
-        //System.out.println("unique conditions: " + conds.size());
-
-    /*trie.root.forEach((p,c) -> {
-        System.out.println(p + " " + c);
-    });*/
-        //System.out.println("root size: " + trie.root.getChildCount());
-
         root = compile(trie.root);
-
-//        //System.out.println(trie);
-//        trie.nodes.forEach(n -> {
-//            int from = n.getStart();
-//            int to = n.getEnd();
-//            List<PreCondition> sub = n.getSequence().subList(from, to);
-//            System.out.println(
-//                    sub
-//            );
-//            //System.out.println(n);
-//        });
-
-        //System.out.println(trie.nodes);
-
 
     }
 
