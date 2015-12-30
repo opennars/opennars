@@ -425,7 +425,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         }
 
         if (t.isCommand()) {
-            int n = execute(t);
+            int n = execute((DefaultTask) t);
             if (n == 0) {
                 m.remove(t, "Unknown Command");
             }
@@ -448,12 +448,13 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      *
      * @return number of invoked handlers
      */
-    public final int execute(final Task goal) {
+    public final int execute(final DefaultTask goal) {
         Term term = goal.getTerm();
 
-        if (term instanceof Operation) {
+        if (term instanceof Operation && !goal.executed) {
             final Operation o = (Operation) term;
 
+            goal.executed = true;
             //enqueue
             beforeNextFrame(()-> {
                 if (!goal.isDeleted()) //it may be deleted by the time this runs

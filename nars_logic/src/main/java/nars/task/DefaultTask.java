@@ -48,6 +48,8 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     public Truth truth;
 
+    public boolean executed = false;
+
     private long[] evidentialSet = LongArrays.EMPTY_ARRAY;
 
     long creationTime = Stamp.TIMELESS;

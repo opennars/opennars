@@ -17,6 +17,7 @@ import nars.link.TermLinkBuilder;
 import nars.link.TermLinkKey;
 import nars.nal.nal1.LocalRules;
 import nars.op.mental.Anticipate;
+import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.Global;
@@ -268,7 +269,7 @@ public class DefaultConcept extends AtomConcept {
 
             if(Math.abs(delta)>=Global.EXECUTION_SATISFACTION_TRESHOLD) {
                 if (strongest.getTruth().getExpectation() > Global.EXECUTION_DESIRE_EXPECTATION_THRESHOLD) {
-                    nal.nar().execute(goal);
+                    nal.nar().execute((DefaultTask) goal);
                 }
             }
 
