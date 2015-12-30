@@ -175,7 +175,7 @@ public abstract class AbstractTask extends Item<Task>
         if (t == null) throw new RuntimeException("null term");
         Concept tNorm = memory.concept(t);
         if (tNorm == null)
-            throw new RuntimeException("term not normalized");
+            throw new RuntimeException("unconceptualizable:" + t);
 
 
         if (!Task.validTaskTerm(tNorm.term())) {

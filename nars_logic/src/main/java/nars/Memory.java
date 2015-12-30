@@ -283,13 +283,18 @@ public class Memory extends Param {
         if (exists instanceof Concept) {
             Concept c = ((Concept)exists);
             return c;
-        } else if (exists!=null) {
-            //attempt replace entry from term to concept
-            Termed tx = build.apply(exists.term());
-            if (tx instanceof Concept) {
-                index.put(tx.term(), tx);
-            }
         }
+
+        if (exists==null)
+            exists = t;
+
+        //attempt replace entry from term to concept
+        Termed tx = build.apply(exists.term());
+        if (tx instanceof Concept) {
+            index.put(tx.term(), tx);
+            return (Concept) tx;
+        }
+
 
         return null;
     }
