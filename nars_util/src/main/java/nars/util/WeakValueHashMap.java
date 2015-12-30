@@ -1,7 +1,8 @@
 package nars.util;
 
+import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ import java.util.function.Function;
  */
 public class WeakValueHashMap extends AbstractMap {
 
-    private static class WeakValueRef extends WeakReference {
+    private static class WeakValueRef extends SoftReference {
         public final Object key;
 
         private WeakValueRef(Object key, Object val, ReferenceQueue q) {
@@ -176,7 +177,7 @@ public class WeakValueHashMap extends AbstractMap {
     @Override
     public Object get(Object key) {
         processQueue();
-        WeakReference ref = (WeakReference) hash.get(key);
+        Reference ref = (Reference) hash.get(key);
         if (ref != null) return ref.get();
         return null;
     }
@@ -187,7 +188,7 @@ public class WeakValueHashMap extends AbstractMap {
 
         Object v, vv;
         if ((v = hash.get(key)) != null) {
-            vv = ((WeakReference) v).get();
+            vv = ((Reference) v).get();
             if (vv != null)
                 return vv;
         }
@@ -218,7 +219,7 @@ public class WeakValueHashMap extends AbstractMap {
     public Object put(Object key, Object value) {
         processQueue();
         Object rtn = _put(key, value);
-        if (rtn != null) rtn = ((WeakReference) rtn).get();
+        if (rtn != null) rtn = ((Reference) rtn).get();
         return rtn;
     }
 

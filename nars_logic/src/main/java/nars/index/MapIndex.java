@@ -48,7 +48,7 @@ public class MapIndex implements TermIndex {
         Termed y = d.get(x);
         if (y == null) {
             y = intern(x);
-            d.put(x, y);
+            d.put(y.term(), y);
         }
         return y;
 
@@ -84,7 +84,7 @@ public class MapIndex implements TermIndex {
 
     @Override
     public Termed put(Term term, Termed termed) {
-        return data.put(term, termed);
+        return data.put(termed.term(), termed);
     }
 
     @Override
