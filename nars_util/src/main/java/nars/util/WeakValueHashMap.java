@@ -6,6 +6,7 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 /* /***************************************
  *                                     *
@@ -48,7 +49,7 @@ public class WeakValueHashMap extends AbstractMap {
     }
 
     /* Hash table mapping WeakKeys to values */
-    private final Map hash;
+    private final HashMap hash;
 
     /* Reference queue for cleared WeakKeys */
     private final ReferenceQueue queue = new ReferenceQueue();
@@ -59,15 +60,16 @@ public class WeakValueHashMap extends AbstractMap {
     private void processQueue() {
         WeakValueRef ref;
         ReferenceQueue q = this.queue;
-        Map h = this.hash;
+        HashMap h = this.hash;
 
         while ((ref = (WeakValueRef) q.poll()) != null) {
-            Object k = ref.key;
-            if (ref == h.get(k)) {
+            final Object rref = ref;
+            h.computeIfPresent(ref.key, (kk, existingRef) -> {
                 // only remove if it is the *exact* same WeakValueRef
-                //
-                h.remove(k);
-            }
+                if (rref == existingRef)
+                    return null; //remove entry
+                return existingRef; //keep
+            });
         }
     }
 
@@ -179,6 +181,26 @@ public class WeakValueHashMap extends AbstractMap {
         return null;
     }
 
+    @Override
+    public Object computeIfAbsent(Object key, Function mappingFunction) {
+        processQueue();
+
+        Object v, vv;
+        if ((v = hash.get(key)) != null) {
+            vv = ((WeakReference) v).get();
+            if (vv != null)
+                return vv;
+        }
+
+        Object newValue;
+        if ((newValue = mappingFunction.apply(key)) != null) {
+            hash.put(WeakValueRef.create(newValue, newValue, queue), newValue);
+            return newValue;
+        }
+
+        return null;
+    }
+
     /**
      * Updates this map so that the given <code>key</code> maps to the given
      * <code>value</code>.  If the map previously contained a mapping for
@@ -195,11 +217,15 @@ public class WeakValueHashMap extends AbstractMap {
     @Override
     public Object put(Object key, Object value) {
         processQueue();
-        Object rtn = hash.computeIfAbsent(key, (k) -> {
-            return WeakValueRef.create(k, value, queue);
-        });
+        Object rtn = _put(key, value);
         if (rtn != null) rtn = ((WeakReference) rtn).get();
         return rtn;
+    }
+
+    private Object _put(Object key, Object value) {
+        return hash.computeIfAbsent(key, (k) -> {
+                return WeakValueRef.create(k, value, queue);
+            });
     }
 
     /**

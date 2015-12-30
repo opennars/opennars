@@ -21,6 +21,7 @@ import nars.term.match.EllipsisMatch;
 import nars.term.transform.Subst;
 import nars.term.variable.Variable;
 import nars.time.Clock;
+import nars.util.WeakValueHashMap;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -266,7 +267,14 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 //                new SoftValueHashMap(capacity*2)
 //        );
 //    }
-    static TermIndex memoryWeak(Clock c, int expirationCycles) {
+    static TermIndex memoryWeak(int capacity) {
+        return new MapIndex(
+            new WeakValueHashMap(capacity),
+            new WeakValueHashMap(capacity*2)
+        );
+    }
+
+    static TermIndex memoryGuava(Clock c, int expirationCycles) {
         return new GuavaIndex(c, expirationCycles);
 //        return new MapIndex(
 //

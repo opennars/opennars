@@ -19,7 +19,8 @@ public class NARideDefault {
         NARide.show(new Default(
                 new Memory(
                     clock,
-                    TermIndex.memoryWeak(clock, 100)),
+                    //TermIndex.memoryGuava(clock, 100)),
+                    TermIndex.memoryWeak(1024*128)),
                 1024, 1, 2, 3).loop(), (i) -> {
             /*try {
                 i.nar.input(new File("/tmp/h.nal"));

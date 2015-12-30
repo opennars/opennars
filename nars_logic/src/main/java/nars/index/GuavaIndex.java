@@ -8,6 +8,7 @@ import nars.term.TermContainer;
 import nars.term.Termed;
 import nars.term.compile.TermIndex;
 import nars.time.Clock;
+import nars.util.WeakValueHashMap;
 
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -21,7 +22,7 @@ import java.util.function.Function;
 public class GuavaIndex implements TermIndex {
 
     final Cache<Term,Termed> data;
-    final Cache<TermContainer,TermContainer> subterms;
+    final WeakValueHashMap subterms;
 
 
     public GuavaIndex() {
@@ -41,7 +42,7 @@ public class GuavaIndex implements TermIndex {
 //                })
 
                 //.weakValues()
-                .softValues()
+                //.softValues()
 
                 //.recordStats()
 //                .removalListener((e) -> {
@@ -54,14 +55,15 @@ public class GuavaIndex implements TermIndex {
 
     public GuavaIndex(CacheBuilder cb) {
         this.data = cb.build();
-        subterms = CacheBuilder.newBuilder()
-                //.maximumSize(capacity)
-                .weakValues()
-//                .removalListener((e) -> {
-//                    if (e.getCause()!= RemovalCause.REPLACED)
-//                        System.err.println("guava remove: " + e + " : " + e.getCause() );
-//                })
-              .build();
+        this.subterms = new WeakValueHashMap();
+//        subterms = CacheBuilder.newBuilder()
+//                //.maximumSize(capacity)
+//                .softValues()
+////                .removalListener((e) -> {
+////                    if (e.getCause()!= RemovalCause.REPLACED)
+////                        System.err.println("guava remove: " + e + " : " + e.getCause() );
+////                })
+//              .build();
     }
 
     @Override
@@ -97,8 +99,8 @@ public class GuavaIndex implements TermIndex {
     public void clear() {
         data.invalidateAll();
         data.cleanUp();
-        subterms.invalidateAll();
-        subterms.cleanUp();
+//        subterms.invalidateAll();
+//        subterms.cleanUp();
     }
 
     @Override
@@ -129,12 +131,14 @@ public class GuavaIndex implements TermIndex {
 
     @Override
     public TermContainer internSubterms(TermContainer s) {
-        try {
-            return subterms.get(s, () -> internSubterms(s.terms()));
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            //return subterms.get(s, () -> internSubterms(s.terms()));
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e);
+//        }
+        return (TermContainer) subterms.computeIfAbsent(s, (ss) -> internSubterms(((TermContainer) ss).terms()));
     }
+
     @Override
     public Termed get(Object t) {
 
