@@ -18,6 +18,9 @@ public interface Termlike  {
      * */
     boolean containsTerm(Term t);
 
+    default boolean isNormalized() {
+        return true;
+    }
 
     default boolean impossibleStructureMatch(int possibleSubtermStructure) {
         return impossibleStructureMatch(

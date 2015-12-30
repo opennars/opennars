@@ -1,9 +1,9 @@
 package nars.term.compile;
 
-import javassist.scopedpool.SoftValueHashMap;
 import nars.Global;
 import nars.Op;
 import nars.bag.impl.CacheBag;
+import nars.index.GuavaIndex;
 import nars.index.MapIndex;
 import nars.nal.Compounds;
 import nars.nal.PremiseAware;
@@ -20,7 +20,7 @@ import nars.term.match.Ellipsis;
 import nars.term.match.EllipsisMatch;
 import nars.term.transform.Subst;
 import nars.term.variable.Variable;
-import nars.util.WeakValueHashMap;
+import nars.time.Clock;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -44,7 +44,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
     default <K extends Term> Termed<K> apply(K key, Function<K,Termed> builder) {
         Termed existing = getIfPresent(key);
         return existing == null ?
-                builder.apply(key) : existing;
+                put(key, builder.apply(key)) : existing;
     }
 
     TermContainer internSubterms(TermContainer s);
@@ -260,17 +260,19 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
             //new UnifriedMap()
         );
     }
-    static TermIndex memorySoft(int capacity) {
-        return new MapIndex(
-                new SoftValueHashMap(capacity),
-                new SoftValueHashMap(capacity*2)
-        );
-    }
-    static TermIndex memoryWeak(int capacity) {
-        return new MapIndex(
-                new WeakValueHashMap(capacity),
-                new WeakValueHashMap(capacity*2)
-        );
+//    static TermIndex memorySoft(int capacity) {
+//        return new MapIndex(
+//                new SoftValueHashMap(capacity),
+//                new SoftValueHashMap(capacity*2)
+//        );
+//    }
+    static TermIndex memoryWeak(Clock c, int expirationCycles) {
+        return new GuavaIndex(c, expirationCycles);
+//        return new MapIndex(
+//
+//                new WeakValueHashMap(capacity),
+//                new WeakValueHashMap(capacity*2)
+//        );
     }
     default void print(PrintStream out) {
         forEach(out::println);

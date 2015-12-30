@@ -70,10 +70,6 @@ public interface Term extends Termed, Comparable, Termlike {
     void recurseTerms(SubtermVisitor v, Term parent);
 
 
-
-
-
-
     /**
      * Commutivity in NARS means that a Compound term's
      * subterms will be unique and arranged in order (compareTo)

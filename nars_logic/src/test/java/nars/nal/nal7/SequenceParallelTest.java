@@ -7,6 +7,7 @@ import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import org.junit.Test;
@@ -188,12 +189,13 @@ public class SequenceParallelTest {
     }
 
     private static void assertEqualTerms(String abnormal, String normalized) {
-        Term ta = t.term(abnormal);
-        Term tb = t.term(normalized);
+        //TODO use termRaw for additional comparison
+        Termed ta = t.term(abnormal);
+        Termed tb = t.term(normalized);
         assertEquals(tb, ta);
         assertEquals(ta.toString(), tb.toString());
         assertEquals(normalized, tb.toString());
-        assertArrayEquals(ta.bytes(), tb.bytes());
+        assertArrayEquals(ta.term().bytes(), tb.term().bytes());
     }
 
 

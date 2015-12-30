@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import nars.$;
 import nars.Global;
 import nars.NAR;
 import nars.NARLoop;
@@ -202,6 +203,14 @@ public class NARide extends BorderPane {
 //                }*/
 //                return () -> ni;
 //            });
+            nar.onExec("gc", (c) -> {
+                nar.beforeNextFrame(() -> {
+                    long before = Runtime.getRuntime().freeMemory();
+                    System.gc();
+                    long after = Runtime.getRuntime().freeMemory();
+                    $.logger.info("GarbageCollect:\"" + (after - before)/1024 + "k collected, " + after/1024 + "k available\".");
+                });
+            });
 
             nar.onExec("memstat", (c) -> {
                 String report = "";

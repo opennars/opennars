@@ -19,7 +19,7 @@ public class NARideRealtimeDefault {
         Memory mem = new Memory(new RealtimeMSClock(),
             //new MapCacheBag(
                     //new WeakValueHashMap<>()
-                TermIndex.memoryWeak(1024*64)
+                TermIndex.memory(1024)
                 //GuavaCacheBag.make(1024*1024)
                 /*new InfiniCacheBag(
                     InfiniPeer.tmp().getCache()

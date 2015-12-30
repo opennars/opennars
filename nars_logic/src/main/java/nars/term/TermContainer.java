@@ -37,7 +37,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     T[] termsCopy();
 
     void setNormalized(boolean b);
-    boolean isNormalized();
+
 
     default Term[] termsCopy(Term... additional) {
         if (additional.length == 0) return termsCopy();

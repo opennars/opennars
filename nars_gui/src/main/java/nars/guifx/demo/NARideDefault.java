@@ -1,7 +1,10 @@
 package nars.guifx.demo;
 
 import nars.Global;
+import nars.Memory;
 import nars.nar.Default;
+import nars.term.compile.TermIndex;
+import nars.time.FrameClock;
 
 /**
  * Created by me on 9/7/15.
@@ -12,7 +15,12 @@ public class NARideDefault {
 
         Global.DEBUG = false;
 
-        NARide.show(new Default(1024, 2, 2, 3).loop(), (i) -> {
+        FrameClock clock = new FrameClock();
+        NARide.show(new Default(
+                new Memory(
+                    clock,
+                    TermIndex.memoryWeak(clock, 100)),
+                1024, 1, 2, 3).loop(), (i) -> {
             /*try {
                 i.nar.input(new File("/tmp/h.nal"));
             } catch (Throwable e) {

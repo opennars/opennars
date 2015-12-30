@@ -19,7 +19,6 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.WeakHashMap;
 
 import static org.junit.Assert.*;
 
@@ -45,20 +44,19 @@ public class TermIndexTest {
         testSequenceNotShared(i);
     }
 
-
     @Test public void testTermSharing1() {
         testIndex(new MapIndex(new HashMap(), new HashMap()));
     }
-
     @Test public void testTermSharing2() {
         testIndex(new MapIndex(new UnifriedMap(), new UnifriedMap()));
     }
     @Test public void testTermSharing3() {
         testIndex(new MapIndex(new SoftValueHashMap(), new SoftValueHashMap()));
     }
-    @Test public void testTermSharing4() {
-        testIndex(new MapIndex(new WeakHashMap(), new WeakHashMap()));
-    }
+
+//    @Test public void testTermSharing4() {
+//        testIndex(new MapIndex(new WeakHashMap(), new WeakHashMap()));
+//    }
     @Test public void testTermSharingGuava() {
         testIndex(new GuavaIndex());
     }
@@ -69,11 +67,11 @@ public class TermIndexTest {
 
         testShared(n, "<<x-->w> --> <y-->z>>");
         testShared(n, "<a --> b>");
-        testShared(n, "(x, y)");
-        testShared(n, "<a <=> b>");
+        testShared(n, "(c, d)");
+        testShared(n, "<e <=> f>");
 
-        tt.print(System.out);
-        System.out.println();
+        //tt.print(System.out);
+        //System.out.println();
 
     }
 
@@ -116,12 +114,19 @@ public class TermIndexTest {
         testShared(a, a2);
 
         assertEquals(i.size(), t1 /* unchanged */);
+        assertEquals(i.subtermsCount(), s1 /* unchanged */);
+
+        //i.print(System.out); System.out.println();
 
         //create by composition
         Compound b = n.term('(' + s + ')');
         testShared(a, b.term(0));
 
         assertEquals(i.size(), t1 + 1 /* one more for the product container */);
+
+        //i.print(System.out); System.out.println();
+
+        assertEquals(i.subtermsCount(), s1 + 1 /* unchanged */);
 
         //create by transformation (substitution)
         //testShared(a, n.term(..).substMap(..

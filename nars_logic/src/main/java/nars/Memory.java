@@ -270,28 +270,14 @@ public class Memory extends Param {
         Term tt = t.term();
 
         if (!validConceptTerm(tt)) return null;
+        if (!tt.isNormalized()) {
+            tt = index.normalized(tt).term();
+        }
 
-        Function<Term, Termed> build = (u) -> {
-            Term v = index.get(index.normalized(u)).term();
-            if (v == null) return null;
-            if (!v.equals(u)) {
-                //normalization changed to a different term:
-                //look up if that concept exists
-                Termed possibleExistingConcept = index.get(v);
-                if (possibleExistingConcept instanceof Concept)
-                    return possibleExistingConcept;
-            }
+        Function<Term, Termed> build = this::newDefaultConcept;
 
-            Concept c = newDefaultConcept(v);
-            if (c!=null) {
-                index.put(c.term(), c);
+        //TODO ? put the unnormalized term for cached future normalizations?
 
-                //TODO put the unnormalized term for cached future normalizations?
-            }
-
-            return c;
-
-        };
         Termed exists = index.apply(tt, build);
 
         if (exists instanceof Concept) {
@@ -299,9 +285,10 @@ public class Memory extends Param {
             return c;
         } else if (exists!=null) {
             //attempt replace entry from term to concept
-            Termed c = build.apply(exists.term());
-            if (c instanceof Concept)
-                return ((Concept)c);
+            Termed tx = build.apply(exists.term());
+            if (tx instanceof Concept) {
+                index.put(tx.term(), tx);
+            }
         }
 
         return null;

@@ -205,7 +205,7 @@ public class TermTest {
         n.input(statement2);
         n.frame(4);
 
-        Term a2 = n.term("a");
+        Termed a2 = n.term("a");
         assertTrue(a2 != null);
 
         Concept ca = n.concept(a2);

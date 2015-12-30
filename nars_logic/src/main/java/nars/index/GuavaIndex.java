@@ -7,6 +7,7 @@ import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.Termed;
 import nars.term.compile.TermIndex;
+import nars.time.Clock;
 
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -22,16 +23,45 @@ public class GuavaIndex implements TermIndex {
     final Cache<Term,Termed> data;
     final Cache<TermContainer,TermContainer> subterms;
 
+
     public GuavaIndex() {
-        data = CacheBuilder.newBuilder()
+        this(CacheBuilder.newBuilder());
+    }
+
+    public GuavaIndex(Clock reasonerClock, int expirationCycles) {
+        this(CacheBuilder.newBuilder()
                 //.maximumSize(capacity)
-                .weakValues()
-                .build();
+
+//                .expireAfterWrite(expirationCycles, TimeUnit.NANOSECONDS)
+//                .expireAfterAccess(expirationCycles, TimeUnit.NANOSECONDS)
+//                .ticker(new Ticker() {
+//                    @Override public long read() {
+//                        return reasonerClock.time();
+//                    }
+//                })
+
+                //.weakValues()
+                .softValues()
+
+                //.recordStats()
+//                .removalListener((e) -> {
+//                    if (e.getCause()!= RemovalCause.REPLACED)
+//                        System.err.println("guava remove: " + e + " : " + e.getCause() );
+//                }));
+        );
+
+    }
+
+    public GuavaIndex(CacheBuilder cb) {
+        this.data = cb.build();
         subterms = CacheBuilder.newBuilder()
                 //.maximumSize(capacity)
                 .weakValues()
-                .build();
-
+//                .removalListener((e) -> {
+//                    if (e.getCause()!= RemovalCause.REPLACED)
+//                        System.err.println("guava remove: " + e + " : " + e.getCause() );
+//                })
+              .build();
     }
 
     @Override
@@ -79,6 +109,9 @@ public class GuavaIndex implements TermIndex {
 
     @Override
     public Termed put(Term term, Termed termed) {
+        if (termed == null) {
+            throw new RuntimeException("null value for " + term);
+        }
         data.put(term, termed);
         //??
         return null;

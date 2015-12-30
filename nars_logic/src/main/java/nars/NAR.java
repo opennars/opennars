@@ -251,7 +251,7 @@ public abstract class NAR implements Serializable, Level {
      * gets a concept if it exists, or returns null if it does not
      */
     public final Concept concept(String conceptTerm) throws Narsese.NarseseException {
-        return concept((Term) term(conceptTerm));
+        return memory.concept((Termed)term(conceptTerm));
     }
 
     /** ask question */
@@ -294,16 +294,16 @@ public abstract class NAR implements Serializable, Level {
 //        return believe(priority, termString, when, freq, conf);
 //    }
 
-    public NAR believe(Compound term, Tense tense, float freq, float conf) throws Narsese.NarseseException {
+    public NAR believe(Termed term, Tense tense, float freq, float conf) throws Narsese.NarseseException {
         believe(memory.getDefaultPriority(JUDGMENT), term, time(tense), freq, conf);
         return this;
     }
 
-    public Task believe(float priority, Compound term, long when, float freq, float conf) throws Narsese.NarseseException {
+    public Task believe(float priority, Termed term, long when, float freq, float conf) throws Narsese.NarseseException {
         return believe(priority, memory.getDefaultDurability(JUDGMENT), term, when, freq, conf);
     }
 
-    public NAR believe(Compound term, float freq, float conf) throws Narsese.NarseseException {
+    public NAR believe(Termed term, float freq, float conf) throws Narsese.NarseseException {
         return believe(term, Tense.Eternal, freq, conf);
     }
 
@@ -319,15 +319,15 @@ public abstract class NAR implements Serializable, Level {
     }
 
     public NAR believe(String termString, float freq, float conf) throws Narsese.NarseseException {
-        return believe((Compound) term(termString), freq, conf);
+        return believe((Termed)term(termString), freq, conf);
     }
 
 
     public NAR believe(String termString) throws Narsese.NarseseException {
-        return believe((Compound) term(termString));
+        return believe((Termed)term(termString));
     }
 
-    public NAR believe(Compound term) throws Narsese.NarseseException {
+    public NAR believe(Termed term) throws Narsese.NarseseException {
         return believe(term, 1.0f, memory.getDefaultConfidence(JUDGMENT));
     }
 
@@ -376,18 +376,18 @@ public abstract class NAR implements Serializable, Level {
 //        return believe(pri, NAR.defaultJudgmentDurability, (Compound) term(beliefTerm), occurrenceTime, freq, conf);
 //    }
 
-    public <C extends Compound> Task believe(float pri, float dur, C term, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
+    public Task believe(float pri, float dur, Termed term, long occurrenceTime, float freq, float conf) throws Narsese.NarseseException {
         return input(pri, dur, term, JUDGMENT, occurrenceTime, freq, conf);
     }
 
     /**
      * TODO add parameter for Tense control. until then, default is Now
      */
-    public <T extends Compound> Task goal(float pri, float dur, T goal, long occurrence, float freq, float conf) throws Narsese.NarseseException {
+    public Task goal(float pri, float dur, Termed goal, long occurrence, float freq, float conf) throws Narsese.NarseseException {
         return input(pri, dur, goal, GOAL, occurrence, freq, conf);
     }
 
-    public final <C extends Compound> Task input(float pri, float dur, C term, char punc, long occurrenceTime, float freq, float conf)  {
+    public final Task input(float pri, float dur, Termed term, char punc, long occurrenceTime, float freq, float conf)  {
 
         if (term == null) {
             return null;
