@@ -1,8 +1,10 @@
-package nars;
+package nars.index;
 
+import nars.$;
+import nars.Global;
+import nars.Op;
 import nars.term.*;
 import nars.term.compile.TermIndex;
-import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 
 import java.io.PrintStream;
@@ -29,9 +31,38 @@ public class MapIndex implements TermIndex {
         this.subterms = subterms;
     }
 
+    public Termed get(Object t) {
+        if (!(t instanceof Termed)) {
+            throw new RuntimeException("invalid key");
+        }
+
+        Termed xx = (Termed) t;
+        Term x = xx.term();
+
+        if (!isInternable(x)) {
+            return xx;
+        }
+
+        Map<Term, Termed> d = this.data;
+
+        Termed y = d.get(x);
+        if (y == null) {
+            y = intern(x);
+            d.put(x, y);
+        }
+        return y;
+
+        //requires concurrent:
+        //return data.computeIfAbsent(tt.term(), this::intern);
+
+    }
+
+    public static boolean isInternable(Term t) {
+        return !(t instanceof TermMetadata);
+    }
 
     @Override
-    public final Termed _get(Termed t) {
+    public final Termed getIfPresent(Termed t) {
         return data.get(t);
     }
 
@@ -41,6 +72,10 @@ public class MapIndex implements TermIndex {
         subterms.clear();
     }
 
+    @Override
+    public int subtermsCount() {
+        return subterms.size();
+    }
 
     @Override
     public Object remove(Term key) {
@@ -59,44 +94,27 @@ public class MapIndex implements TermIndex {
 
 
 
-    @Override public Termed intern(Term tt) {
-        Term t = tt.term();
-
-        if (t instanceof TermMetadata) {
-
-            //the term instance will remain unique
-            // as determined by TermData's index method
-            // however we can potentially index its subterms
-            return tt;
-        }
-
-        Termed interned = t instanceof Compound ?
-                internCompound((Compound) t)
-                : internAtomic(t);
-
-        Termed existing = data.putIfAbsent(interned.term(), interned);
-        if (existing!=null)
-            throw new RuntimeException("displaced: " + existing + " with " + interned);
-
-        return interned;
-    }
-
 
 
     public Termed internCompound(Op op, int relation, TermContainer t) {
+        return makeDefault(op, relation, internSubterms(t));
+    }
+
+    public static Termed makeDefault(Op op, int relation, TermContainer t) {
         if ((op == Op.SEQUENCE) || (op == Op.PARALLEL)) {
             //intermval metadata, handle special
             return $.the(op, relation, t);
         } else {
             //TODO find existing instance and don't construct a duplciate which will get unified on re-entry
-            return internCompound(op, internSubterms(t), relation);
+            return internCompound(op, t, relation);
         }
     }
 
-    public Termed internAtomic(Term t) {
+    @Override public Termed internAtomic(Term t) {
         return t;
     }
-    protected TermContainer internSubterms(TermContainer s) {
+
+    public TermContainer internSubterms(TermContainer s) {
         Map<TermContainer, TermContainer> st = subterms;
         TermContainer existing = st.get(s);
         if (existing == null) {
@@ -108,10 +126,7 @@ public class MapIndex implements TermIndex {
     }
 
 
-
-
-
-    protected Termed internCompound(Op op, TermContainer subterms, int relation) {
+    protected static Termed internCompound(Op op, TermContainer subterms, int relation) {
         return new GenericCompound(
             (TermVector) subterms, op, relation
         );

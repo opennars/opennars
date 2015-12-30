@@ -41,6 +41,10 @@ public class Terminal extends AbstractNAR {
         //new RealtimeMSClock());
     }
 
+    public Terminal(TermIndex i) {
+        this (i, new FrameClock());
+    }
+
     public Terminal(Clock c) {
         this(TermIndex.memory(1024), c);
     }

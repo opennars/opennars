@@ -2,9 +2,9 @@ package nars.term.compile;
 
 import javassist.scopedpool.SoftValueHashMap;
 import nars.Global;
-import nars.MapIndex;
 import nars.Op;
 import nars.bag.impl.CacheBag;
+import nars.index.MapIndex;
 import nars.nal.Compounds;
 import nars.nal.PremiseAware;
 import nars.nal.RuleMatch;
@@ -37,27 +37,17 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
     void forEach(Consumer<? super Termed> c);
 
-    Termed _get(Termed t);
-    Termed intern(Term tt);
-
-
-    @Override
-    default Termed get(Object t) {
-        if (t instanceof Termed) {
-            Term tt = ((Termed)t).term();
-            return apply(tt, this::intern);
-        } else {
-            throw new RuntimeException("invalid key");
-        }
-    }
+    Termed get(Object t);
+    Termed getIfPresent(Termed t);
 
     /** gets an existing item or applies the builder to produce something to return */
-    default <K extends Term> Termed<K> apply(K key, Function<K, Termed> builder) {
-        Termed existing = _get(key);
+    default <K extends Term> Termed<K> apply(K key, Function<K,Termed> builder) {
+        Termed existing = getIfPresent(key);
         return existing == null ?
                 builder.apply(key) : existing;
     }
 
+    TermContainer internSubterms(TermContainer s);
 
     default Term term(Term src, TermContainer subs) {
         if (src instanceof Compound) {
@@ -74,6 +64,16 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         Termed tt = get(t);
         if (tt == null) return null;
         return tt.term();
+    }
+
+    default Termed internAtomic(Term t) {
+        return t; /* as-is */
+    }
+
+    default Termed intern(Term t) {
+        return t instanceof Compound ?
+                internCompound((Compound) t)
+                : internAtomic(t);
     }
 
     /** returns the resolved term according to the substitution    */
@@ -164,17 +164,25 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         return true;
     }
 
-
+    int subtermsCount();
 
 
     class ImmediateTermIndex implements TermIndex {
-
 
         @Override
         public Termed get(Object key) {
             return (Termed)key;
         }
 
+        @Override
+        public TermContainer internSubterms(TermContainer s) {
+            return s;
+        }
+
+        @Override
+        public Termed internAtomic(Term t) {
+            return t;
+        }
 
         @Override
         public void forEach(Consumer<? super Termed> c) {
@@ -182,13 +190,18 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         }
 
         @Override
-        public Termed _get(Termed t) {
+        public Termed getIfPresent(Termed t) {
             return t;
         }
 
         @Override
         public Termed intern(Term tt) {
             return tt;
+        }
+
+        @Override
+        public int subtermsCount() {
+            return 0;
         }
 
 

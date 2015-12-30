@@ -1,8 +1,10 @@
 package nars.term.compile;
 
 import javassist.scopedpool.SoftValueHashMap;
-import nars.MapIndex;
 import nars.NAR;
+import nars.index.GuavaIndex;
+import nars.index.MapIndex;
+import nars.nal.nal7.Sequence;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -19,8 +21,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class TermIndexTest {
@@ -39,21 +40,31 @@ public class TermIndexTest {
 
     }
 
-    @Test public void testTermSharing1() {
-        testTermSharing(new MapIndex(new HashMap(), new HashMap()));
+    void testIndex(TermIndex i) {
+        testTermSharing(i);
+        testSequenceNotShared(i);
     }
+
+
+    @Test public void testTermSharing1() {
+        testIndex(new MapIndex(new HashMap(), new HashMap()));
+    }
+
     @Test public void testTermSharing2() {
-        testTermSharing(new MapIndex(new UnifriedMap(), new UnifriedMap()));
+        testIndex(new MapIndex(new UnifriedMap(), new UnifriedMap()));
     }
     @Test public void testTermSharing3() {
-        testTermSharing(new MapIndex(new SoftValueHashMap(), new SoftValueHashMap()));
+        testIndex(new MapIndex(new SoftValueHashMap(), new SoftValueHashMap()));
     }
     @Test public void testTermSharing4() {
-        testTermSharing(new MapIndex(new WeakHashMap(), new WeakHashMap()));
+        testIndex(new MapIndex(new WeakHashMap(), new WeakHashMap()));
+    }
+    @Test public void testTermSharingGuava() {
+        testIndex(new GuavaIndex());
     }
 
 
-    public void testTermSharing(TermIndex tt) {
+    void testTermSharing(TermIndex tt) {
         NAR n = new Terminal(tt, new FrameClock());
 
         testShared(n, "<<x-->w> --> <y-->z>>");
@@ -66,10 +77,17 @@ public class TermIndexTest {
 
     }
 
-    @Test
-    public void testSequenceNotShared() {
-        NAR n = new Terminal();
-        testNotShared(n, "(&/, 1, 2, /2, 3, /4)");
+
+    public void testSequenceNotShared(TermIndex i) {
+        NAR n = new Terminal(i);
+
+        Termed a = n.term("(&/, 1, /2)");
+        assertNull(n.memory.index.getIfPresent(a));
+
+        Termed b = n.term("(&/, 1, /3)");
+        assertNull(n.memory.index.getIfPresent(b));
+
+        assertFalse(((Sequence)a).equals2((Sequence) b.term()));
 
     }
 
@@ -81,13 +99,29 @@ public class TermIndexTest {
     }
 
     private void testShared(NAR n, String s) {
+        TermIndex i = n.memory.index;
+        int t0 = i.size();
+        int s0 = i.subtermsCount();
+
         Term a = n.term(s); //create by parsing
+
+        int t1 = i.size();
+        int s1 = i.subtermsCount();
+
+        //some terms and subterms were added
+        assertTrue(t0 < t1);
+        assertTrue(s1 + " subterms indexed for " + t0 + " terms", s0 < s1);
+
         Term a2 = n.term(s); //create by parsing again
         testShared(a, a2);
+
+        assertEquals(i.size(), t1 /* unchanged */);
 
         //create by composition
         Compound b = n.term('(' + s + ')');
         testShared(a, b.term(0));
+
+        assertEquals(i.size(), t1 + 1 /* one more for the product container */);
 
         //create by transformation (substitution)
         //testShared(a, n.term(..).substMap(..
@@ -98,7 +132,7 @@ public class TermIndexTest {
 
         assertEquals(t1.term(), t2.term());
         if (t1 != t2)
-            System.err.println("share failed: " + t1);
+            System.err.println("share failed: " + t1 + " " + t1.getClass() + " " + t2 + " "+ t2.getClass());
 
         assertTrue(t1 == t2);
 

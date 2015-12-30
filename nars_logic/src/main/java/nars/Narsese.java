@@ -1121,11 +1121,18 @@ public class Narsese extends BaseParser<Object>  {
         return term(s, t, true);
     }
 
-    public Termed term(String s, TermIndex t, boolean normalize) {
-        Termed u = t.term(term(s));
-        if (u==null) return null;
-        if (normalize) return t.normalized(u.term());
-        return u;
+    public Termed term(String s, TermIndex index, boolean normalize) {
+        Term raw = term(s);
+        if (raw == null) return null;
+
+        Termed u;
+        if (normalize) {
+            u = index.normalized(raw);
+            if (u == null) return null;
+        } else {
+            u = raw;
+        }
+        return index.get(u);
     }
 
     public Termed concept(String s, Memory m) {

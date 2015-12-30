@@ -127,7 +127,7 @@ public class OperatorTest {
         assertNotNull("should have conceptualized or linked to ^exe",
                 n.concept("^exe"));
         assertNull("^exe should not conceptualize or link to atom exe",
-                n.memory.index._get($.the("exe")));
+                n.memory.index.getIfPresent($.the("exe")));
 
 
     }

@@ -1,6 +1,6 @@
 package nars.nal;
 
-import nars.MapIndex;
+import nars.index.MapIndex;
 import nars.term.TermVector;
 import nars.term.Termed;
 import nars.term.compile.TermIndex;

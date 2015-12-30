@@ -230,7 +230,9 @@ public abstract class NAR implements Serializable, Level {
     }
 
     public final <T extends Termed> T term(String t) throws Narsese.NarseseException {
+
         T x = (T)Narsese.the().term(t, index());
+
         if (x == null) {
             logger.error("Term syntax error: '{}'", t);
         } else {
