@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 /**
  * rule matching context, re-recyclable as thread local
  */
-public class RuleMatch extends FindSubst {
+public class PremiseMatch extends FindSubst {
 
     /** Global Context */
     public Consumer<Task> receiver;
@@ -46,7 +46,7 @@ public class RuleMatch extends FindSubst {
     final Map<Operator, ImmediateTermTransform> transforms =
             Global.newHashMap();
 
-    public RuleMatch(Random r) {
+    public PremiseMatch(Random r) {
         super(Op.VAR_PATTERN, r );
 
         for (Class<? extends ImmediateTermTransform> c : PremiseRule.Operators) {

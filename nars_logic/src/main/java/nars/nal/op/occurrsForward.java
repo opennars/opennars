@@ -6,7 +6,7 @@ import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.$;
 import nars.Op;
 import nars.nal.PremiseAware;
-import nars.nal.RuleMatch;
+import nars.nal.PremiseMatch;
 import nars.nal.nal7.Sequence;
 import nars.process.ConceptProcess;
 import nars.term.Statement;
@@ -47,7 +47,7 @@ public class occurrsForward extends ImmediateTermTransform implements PremiseAwa
     }
 
     @Override
-    public Term function(Compound p, RuleMatch r) {
+    public Term function(Compound p, PremiseMatch r) {
         final Term[] xx = p.terms();
 
         Term term = xx[0];

@@ -1,7 +1,6 @@
 package nars.nal.meta;
 
 import nars.Op;
-import nars.nal.RuleMatch;
 import nars.term.atom.Atomic;
 
 import java.util.List;
@@ -14,20 +13,20 @@ import java.util.List;
  * WARNING: no preconditions should store any state so that their instances may be used by
  * different contexts (ex: NAR's)
  */
-public abstract class PreCondition extends Atomic{
+public abstract class BooleanCondition<C> extends Atomic{
 
-    public PreCondition() {
+    public BooleanCondition() {
         super();
     }
 
     public abstract String toString();
 
-    public void addConditions(List<PreCondition> l) {
+    public void addConditions(List<BooleanCondition<C>> l) {
         l.add(this);
     }
 
     /** evaluates condition in a context */
-    abstract public boolean eval(RuleMatch context);
+    abstract public boolean eval(C context);
 
     @Override
     public int complexity() {

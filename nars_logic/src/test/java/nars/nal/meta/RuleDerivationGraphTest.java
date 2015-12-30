@@ -44,10 +44,10 @@ public class RuleDerivationGraphTest {
 
         assertEquals("no duplicates", registeredRules, setRules.size());
 
-        Set<PreCondition> preconds = new HashSet();
+        Set<BooleanCondition> preconds = new HashSet();
         int totalPrecond = 0;
         for (PremiseRule t : R) {
-            for (PreCondition p : t.postPreconditions) {
+            for (BooleanCondition p : t.postPreconditions) {
                 totalPrecond++;
                 preconds.add(p);
             }

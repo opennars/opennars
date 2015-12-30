@@ -1,17 +1,17 @@
 package nars.nal.meta.op;
 
-import nars.nal.RuleMatch;
-import nars.nal.meta.PreCondition;
+import nars.nal.PremiseMatch;
+import nars.nal.meta.BooleanCondition;
 import nars.term.transform.FindSubst;
 
 /**
  * Created by me on 12/1/15.
  */
-public abstract class PatternOp extends PreCondition {
+public abstract class PatternOp extends BooleanCondition<PremiseMatch> {
     abstract public boolean run(FindSubst ff);
 
     @Override
-    public final boolean eval(RuleMatch ruleMatch) {
-        return run(ruleMatch);
+    public final boolean eval(PremiseMatch premiseMatch) {
+        return run(premiseMatch);
     }
 }

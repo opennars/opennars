@@ -1,8 +1,8 @@
 package nars.nal.meta.pre;
 
 import com.google.common.collect.ListMultimap;
-import nars.nal.RuleMatch;
-import nars.nal.meta.PreCondition;
+import nars.nal.PremiseMatch;
+import nars.nal.meta.BooleanCondition;
 import nars.nal.meta.TermPattern;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-@Deprecated public class MatchTaskBelief extends PreCondition {
+@Deprecated public class MatchTaskBelief extends BooleanCondition<PremiseMatch> {
 
     //public final TaskBeliefPair pattern;
 
@@ -47,17 +47,17 @@ import java.util.List;
 
     }
 
-    public void addPreConditions(List<PreCondition> l) {
+    public void addPreConditions(List<BooleanCondition<PremiseMatch>> l) {
         Collections.addAll(l, compiled.pre);
     }
 
     @Override
-    public void addConditions(List<PreCondition> l) {
+    public void addConditions(List<BooleanCondition<PremiseMatch>> l) {
         Collections.addAll(l, compiled.code);
     }
 
     @Override
-    public final boolean eval(RuleMatch m) {
+    public final boolean eval(PremiseMatch m) {
         throw new RuntimeException("this should not be called");
     }
 

@@ -1,19 +1,19 @@
 package nars.nal.meta.pre;
 
-import nars.nal.RuleMatch;
-import nars.nal.meta.PreCondition;
+import nars.nal.PremiseMatch;
+import nars.nal.meta.BooleanCondition;
 
-public abstract class Temporality extends PreCondition {
+public abstract class Temporality extends BooleanCondition {
 
     /** both task and belief are temporal (non-eternal) */
-    public static final PreCondition both = new Temporality() {
+    public static final BooleanCondition both = new Temporality() {
 
         @Override public String toString() {
             return "Event";
         }
 
         @Override
-        public boolean eval(RuleMatch m) {
+        public boolean eval(PremiseMatch m) {
             return m.premise.isEvent();
         }
 

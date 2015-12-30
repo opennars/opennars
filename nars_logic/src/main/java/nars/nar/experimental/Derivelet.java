@@ -4,7 +4,7 @@ import nars.Global;
 import nars.NAR;
 import nars.bag.BagBudget;
 import nars.concept.Concept;
-import nars.nal.RuleMatch;
+import nars.nal.PremiseMatch;
 import nars.nar.Default;
 import nars.process.ConceptProcess;
 import nars.task.Task;
@@ -41,7 +41,7 @@ public class Derivelet {
      */
     public DeriveletContext context;
 
-    RuleMatch matcher;
+    PremiseMatch matcher;
 
     /**
      * temporary re-usable array for batch firing
@@ -172,7 +172,7 @@ public class Derivelet {
         this.context = context;
         this.concept = concept;
         this.ttl = ttl;
-        this.matcher = new RuleMatch(context.rng);
+        this.matcher = new PremiseMatch(context.rng);
     }
 
     @Override

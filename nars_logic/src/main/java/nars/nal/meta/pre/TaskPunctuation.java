@@ -2,14 +2,14 @@ package nars.nal.meta.pre;
 
 import nars.$;
 import nars.Symbols;
-import nars.nal.RuleMatch;
-import nars.nal.meta.PreCondition;
+import nars.nal.PremiseMatch;
+import nars.nal.meta.BooleanCondition;
 import nars.term.Term;
 
 /**
  * Created by me on 8/27/15.
  */
-public class TaskPunctuation extends PreCondition {
+public class TaskPunctuation extends BooleanCondition {
 
     public final char punc;
     public final String id;
@@ -50,7 +50,7 @@ public class TaskPunctuation extends PreCondition {
     }
 
     @Override
-    public final boolean eval(RuleMatch r) {
+    public final boolean eval(PremiseMatch r) {
         char taskPunc = r.premise.getTask().getPunctuation();
         return test(taskPunc);
     }

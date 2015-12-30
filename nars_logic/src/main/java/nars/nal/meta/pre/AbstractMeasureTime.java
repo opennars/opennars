@@ -1,7 +1,7 @@
 package nars.nal.meta.pre;
 
 import nars.Premise;
-import nars.nal.RuleMatch;
+import nars.nal.PremiseMatch;
 import nars.term.Term;
 
 /**
@@ -15,7 +15,7 @@ public abstract class AbstractMeasureTime extends PreCondition1Output {
     }
 
     @Override
-    public boolean test(RuleMatch m, Term target) {
+    public boolean test(PremiseMatch m, Term target) {
         Premise premise = m.premise;
 
         if (!premise.isEvent())
@@ -24,5 +24,5 @@ public abstract class AbstractMeasureTime extends PreCondition1Output {
         return testEvents(m, target);
     }
 
-    protected abstract boolean testEvents(RuleMatch m, Term target);
+    protected abstract boolean testEvents(PremiseMatch m, Term target);
 }

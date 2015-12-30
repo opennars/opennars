@@ -4,9 +4,9 @@ import com.google.common.base.Joiner;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.Global;
 import nars.nal.Deriver;
+import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
 import nars.nal.PremiseRuleSet;
-import nars.nal.RuleMatch;
 import org.magnos.trie.Trie;
 import org.magnos.trie.TrieNode;
 import org.magnos.trie.TrieSequencer;
@@ -19,10 +19,10 @@ import static com.sun.org.apache.xerces.internal.impl.xs.opti.SchemaDOM.indent;
 
 public class RuleTrie extends Deriver {
 
-    private final Trie<List<PreCondition>, PremiseRule> trie;
+    private final Trie<List<BooleanCondition>, PremiseRule> trie;
 
     @Override
-    protected void run(RuleMatch match) {
+    protected void run(PremiseMatch match) {
         throw new RuntimeException("impl in subclass");
     }
 
@@ -35,15 +35,15 @@ public class RuleTrie extends Deriver {
     public RuleTrie(PremiseRuleSet R) {
         super(R);
 
-        ObjectIntHashMap<PreCondition> conds = new ObjectIntHashMap<>();
+        ObjectIntHashMap<BooleanCondition> conds = new ObjectIntHashMap<>();
 
-        trie = new Trie(new TrieSequencer<List<PreCondition>>() {
+        trie = new Trie(new TrieSequencer<List<BooleanCondition>>() {
 
             @Override
-            public int matches(List<PreCondition> sequenceA, int indexA, List<PreCondition> sequenceB, int indexB, int count) {
+            public int matches(List<BooleanCondition> sequenceA, int indexA, List<BooleanCondition> sequenceB, int indexB, int count) {
                 for (int i = 0; i < count; i++) {
-                    PreCondition a = sequenceA.get(i + indexA);
-                    PreCondition b = sequenceB.get(i + indexB);
+                    BooleanCondition a = sequenceA.get(i + indexA);
+                    BooleanCondition b = sequenceB.get(i + indexB);
                     if (!a.equals(b))
                         return i;
                 }
@@ -52,15 +52,15 @@ public class RuleTrie extends Deriver {
             }
 
             @Override
-            public int lengthOf(List<PreCondition> sequence) {
+            public int lengthOf(List<BooleanCondition> sequence) {
                 return sequence.size();
             }
 
             @Override
-            public int hashOf(List<PreCondition> sequence, int index) {
+            public int hashOf(List<BooleanCondition> sequence, int index) {
                 //return sequence.get(index).hashCode();
 
-                PreCondition pp = sequence.get(index);
+                BooleanCondition pp = sequence.get(index);
                 return conds.getIfAbsentPutWithKey(pp, (p) -> 1 + conds.size());
             }
         });
@@ -89,10 +89,10 @@ public class RuleTrie extends Deriver {
 
     }
 
-    public static void printSummary(TrieNode<List<PreCondition>,PremiseRule> node) {
+    public static void printSummary(TrieNode<List<BooleanCondition>,PremiseRule> node) {
 
         node.forEach(n -> {
-            List<PreCondition> seq = n.getSequence();
+            List<BooleanCondition> seq = n.getSequence();
 
             int from = n.getStart();
             int to = n.getEnd();
@@ -110,19 +110,19 @@ public class RuleTrie extends Deriver {
     }
 
 
-    private static RuleBranch[] compile(TrieNode<List<PreCondition>, PremiseRule> node) {
+    private static RuleBranch[] compile(TrieNode<List<BooleanCondition>, PremiseRule> node) {
 
         List<RuleBranch> bb = Global.newArrayList(node.getChildCount());
 
         node.forEach(n -> {
-            List<PreCondition> seq = n.getSequence();
+            List<BooleanCondition> seq = n.getSequence();
 
             int from = n.getStart();
             int to = n.getEnd();
 
-            List<PreCondition> sub = seq.subList(from, to);
+            List<BooleanCondition> sub = seq.subList(from, to);
 
-            PreCondition[] subseq = sub.toArray(new PreCondition[sub.size()]);
+            BooleanCondition[] subseq = sub.toArray(new BooleanCondition[sub.size()]);
             bb.add(new RuleBranch(subseq, compile(n)));
         });
 

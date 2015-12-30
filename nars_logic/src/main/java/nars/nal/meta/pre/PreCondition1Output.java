@@ -1,6 +1,6 @@
 package nars.nal.meta.pre;
 
-import nars.nal.RuleMatch;
+import nars.nal.PremiseMatch;
 import nars.term.Term;
 
 /**
@@ -13,7 +13,7 @@ public abstract class PreCondition1Output extends PreCondition1 {
     }
 
     @Override
-    public final boolean eval(RuleMatch m) {
+    public final boolean eval(PremiseMatch m) {
         return test(m, arg1);
     }
 }

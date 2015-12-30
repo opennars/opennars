@@ -2,7 +2,7 @@ package nars.nal.meta;
 
 import nars.Memory;
 import nars.Premise;
-import nars.nal.RuleMatch;
+import nars.nal.PremiseMatch;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
@@ -12,7 +12,7 @@ public interface TruthOperator {
     Truth apply(Truth task, Truth belief, Memory m);
     boolean allowOverlap();
 
-    default boolean apply(RuleMatch m) {
+    default boolean apply(PremiseMatch m) {
         Premise premise = m.premise;
         Truth truth = apply(
                 premise.getTask().getTruth(),

@@ -1,6 +1,6 @@
 package nars.nal.meta.pre;
 
-import nars.nal.RuleMatch;
+import nars.nal.PremiseMatch;
 import nars.term.Term;
 
 /**
@@ -13,7 +13,7 @@ public class InputPremises extends PreCondition2 {
     }
 
     @Override
-    public final boolean test(RuleMatch m, Term a, Term b) {
+    public final boolean test(PremiseMatch m, Term a, Term b) {
         return m.premise.getTask().isInput() && m.premise.getBelief() != null && m.premise.getBelief().isInput();
     }
 

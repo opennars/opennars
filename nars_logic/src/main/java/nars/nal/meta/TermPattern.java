@@ -14,8 +14,8 @@ import java.util.List;
 /** represents the "program" that the matcher will execute */
 public class TermPattern {
 
-    public final PreCondition[] pre;
-    public final PreCondition[] code;
+    public final BooleanCondition[] pre;
+    public final BooleanCondition[] code;
     public final Term term;
 
     private final ListMultimap<Term, MatchConstraint> constraints;
@@ -69,19 +69,19 @@ public class TermPattern {
         //this.type = type;
         this.constraints = constraints;
 
-        List<PreCondition> pre = Global.newArrayList();
-        List<PreCondition> code = Global.newArrayList();
+        List<BooleanCondition> pre = Global.newArrayList();
+        List<BooleanCondition> code = Global.newArrayList();
 
         if (pattern instanceof TaskBeliefPair) {
             compileTaskBeliefPair((TaskBeliefPair)pattern, pre, code);
         }
         compile(pattern, code);
 
-        this.pre = pre.toArray(new PreCondition[pre.size()]);
-        this.code = code.toArray(new PreCondition[code.size()]);
+        this.pre = pre.toArray(new BooleanCondition[pre.size()]);
+        this.code = code.toArray(new BooleanCondition[code.size()]);
     }
 
-    private static void compileTaskBeliefPair(TaskBeliefPair pattern, List<PreCondition> pre, List<PreCondition> code) {
+    private static void compileTaskBeliefPair(TaskBeliefPair pattern, List<BooleanCondition> pre, List<BooleanCondition> code) {
         Term x0 = pattern.term(0);
         Term x1 = pattern.term(1);
         if (x0.op()!=Op.VAR_PATTERN) {
@@ -95,7 +95,7 @@ public class TermPattern {
 
     }
 
-    private void compile(Term x, List<PreCondition> code) {
+    private void compile(Term x, List<BooleanCondition> code) {
         code.add(new MatchTerm(x, constraints));
     }
 

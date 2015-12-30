@@ -1,8 +1,8 @@
 package nars.nal.meta.pre;
 
 import nars.Premise;
-import nars.nal.RuleMatch;
-import nars.nal.meta.PreCondition;
+import nars.nal.PremiseMatch;
+import nars.nal.meta.BooleanCondition;
 import nars.task.Temporal;
 
 /**
@@ -10,7 +10,7 @@ import nars.task.Temporal;
  * %X is after %Y
  * TODO use less confusing terminology and order convention
  */
-public class After extends PreCondition {
+public class After extends BooleanCondition {
 
     public static final After the = new After();
 
@@ -23,7 +23,7 @@ public class After extends PreCondition {
     }
 
     @Override
-    public final boolean eval(RuleMatch m) {
+    public final boolean eval(PremiseMatch m) {
         Premise premise = m.premise;
 
         if (!premise.isEvent())

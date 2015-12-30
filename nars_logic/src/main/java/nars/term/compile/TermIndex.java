@@ -7,7 +7,7 @@ import nars.index.GuavaIndex;
 import nars.index.MapIndex;
 import nars.nal.Compounds;
 import nars.nal.PremiseAware;
-import nars.nal.RuleMatch;
+import nars.nal.PremiseMatch;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
 import nars.term.Term;
@@ -127,8 +127,8 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         //Compound args = (Compound) Operator.opArgs((Compound) result).apply(f);
         Compound args = Operator.opArgs((Compound) result);
 
-        return ((tf instanceof PremiseAware) && (f instanceof RuleMatch)) ?
-                ((PremiseAware) tf).function(args, (RuleMatch) f) :
+        return ((tf instanceof PremiseAware) && (f instanceof PremiseMatch)) ?
+                ((PremiseAware) tf).function(args, (PremiseMatch) f) :
                 tf.function(args, this);
     }
 

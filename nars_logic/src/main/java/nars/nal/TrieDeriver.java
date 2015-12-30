@@ -1,11 +1,9 @@
 package nars.nal;
 
-import nars.nal.meta.PreCondition;
+import nars.nal.meta.BooleanCondition;
 import nars.nal.meta.RuleBranch;
 import nars.nal.meta.RuleTrie;
 import nars.term.compile.TermIndex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 
@@ -24,7 +22,7 @@ public class TrieDeriver extends RuleTrie {
         rules.patterns.setTarget(target);
     }
 
-    @Override public final void run(RuleMatch m) {
+    @Override public final void run(PremiseMatch m) {
 
         int now = m.now();
 
@@ -36,13 +34,13 @@ public class TrieDeriver extends RuleTrie {
 
     }
 
-    final static Logger logger = LoggerFactory.getLogger(TrieDeriver.class);
+    //final static Logger logger = LoggerFactory.getLogger(TrieDeriver.class);
 
-    private static void forEachRule(RuleBranch r, RuleMatch match) {
+    private static void forEachRule(RuleBranch r, PremiseMatch match) {
 
         //logger.info("BRANCH {}",r);
 
-        for (PreCondition x : r.precondition) {
+        for (BooleanCondition<PremiseMatch> x : r.getConditions()) {
 
             //logger.info("{}: {}",x, match.xy);
 
@@ -54,7 +52,7 @@ public class TrieDeriver extends RuleTrie {
 
         int now = match.now(); //RESTORE POINT ----
 
-        RuleBranch[] children = r.children;
+        RuleBranch[] children = r.getConsequences();
 
 //        int branchingFactor = children.length;
 //        //limit each branch to an equal fraction of the input power

@@ -1,13 +1,13 @@
 package nars.nal.meta.pre;
 
-import nars.nal.RuleMatch;
-import nars.nal.meta.PreCondition;
+import nars.nal.PremiseMatch;
+import nars.nal.meta.BooleanCondition;
 import nars.term.Term;
 
 /**
  * Created by me on 8/15/15.
  */
-public abstract class PreCondition3 extends PreCondition {
+public abstract class PreCondition3 extends BooleanCondition {
     public Term arg1=null, arg2=null, arg3=null;
 
 
@@ -19,7 +19,7 @@ public abstract class PreCondition3 extends PreCondition {
     }
 
     @Override
-    public boolean eval(RuleMatch m) {
+    public boolean eval(PremiseMatch m) {
         //these should not resolve to null
         Term a = m.apply(arg1);
         if (a == null) return false;
@@ -31,7 +31,7 @@ public abstract class PreCondition3 extends PreCondition {
         return test(m, a, b, c);
     }
 
-    public abstract boolean test(RuleMatch m, Term a, Term b, Term c);
+    public abstract boolean test(PremiseMatch m, Term a, Term b, Term c);
 
     @Override
     public String toString() {

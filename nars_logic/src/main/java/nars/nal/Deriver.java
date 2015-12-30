@@ -75,7 +75,7 @@ public abstract class Deriver  {
 //    }
 
     /** run an initialized rule matcher */
-    protected abstract void run(RuleMatch matcher);
+    protected abstract void run(PremiseMatch matcher);
 
 
     /** initialize a rule matcher with a Premise to supply
@@ -83,7 +83,7 @@ public abstract class Deriver  {
      *  this method does not provide a way to stop or interrupt
      *  the process once it begins.
      */
-    public final void run(ConceptProcess premise, RuleMatch m, Consumer<Task> t) {
+    public final void run(ConceptProcess premise, PremiseMatch m, Consumer<Task> t) {
         premise.memory().eventConceptProcess.emit(premise);
 
         m.start(premise, t, this);

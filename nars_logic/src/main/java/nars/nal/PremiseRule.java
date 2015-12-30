@@ -6,8 +6,8 @@ import com.google.common.collect.Sets;
 import nars.$;
 import nars.Global;
 import nars.Op;
+import nars.nal.meta.BooleanCondition;
 import nars.nal.meta.PostCondition;
-import nars.nal.meta.PreCondition;
 import nars.nal.meta.op.Solve;
 import nars.nal.meta.pre.*;
 import nars.nal.op.*;
@@ -47,9 +47,9 @@ public class PremiseRule extends GenericCompound implements Level {
     };
 
     /** blank marker trie node indicating the derivation and terminating the branch */
-    public static final PreCondition END = new PreCondition() {
+    public static final BooleanCondition END = new BooleanCondition() {
 
-        @Override public boolean eval(RuleMatch versioneds) {
+        @Override public boolean eval(Object versioneds) {
             return false;
         }
 
@@ -65,10 +65,10 @@ public class PremiseRule extends GenericCompound implements Level {
     public boolean sequenceIntervalsFromBelief = false;
 
     /** conditions which can be tested before term matching */
-    public PreCondition[] prePreconditions;
+    public BooleanCondition[] prePreconditions;
 
     /** conditions which are tested after term matching, including term matching itself */
-    public PreCondition[] postPreconditions;
+    public BooleanCondition[] postPreconditions;
 
     public PostCondition[] postconditions;
 
@@ -146,14 +146,14 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
     /** add the sequence of involved conditions to a list, for one given postcondition (ex: called for each this.postconditions)  */
-    public List<PreCondition> getConditions(PostCondition post) {
+    public List<BooleanCondition<PremiseMatch>> getConditions(PostCondition post) {
 
         int n = prePreconditions.length + postPreconditions.length;
 
-        List<PreCondition> l = Global.newArrayList(n+4 /* estimate */);
+        List<BooleanCondition<PremiseMatch>> l = Global.newArrayList(n+4 /* estimate */);
 
         ///--------------
-        for (PreCondition p : prePreconditions)
+        for (BooleanCondition p : prePreconditions)
             p.addConditions(l);
 
         match.addPreConditions(l); //pre-conditions
@@ -278,8 +278,8 @@ public class PremiseRule extends GenericCompound implements Level {
         Term[] postcons = ((Compound) term(1)).terms();
 
 
-        List<PreCondition> prePreConditionsList = Global.newArrayList(precon.length);
-        List<PreCondition> preConditionsList = Global.newArrayList(precon.length);
+        List<BooleanCondition> prePreConditionsList = Global.newArrayList(precon.length);
+        List<BooleanCondition> preConditionsList = Global.newArrayList(precon.length);
 
 
         Term taskTermPattern = getTaskTermPattern();
@@ -313,7 +313,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
             String predicateNameStr = predicate_name.toString().substring(1);//.replace("^", "");
 
-            PreCondition next = null, preNext = null;
+            BooleanCondition next = null, preNext = null;
 
             Term[] args;
             Term arg1, arg2;
@@ -463,8 +463,8 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
         //store to arrays
-        prePreconditions = prePreConditionsList.toArray(new PreCondition[prePreConditionsList.size()]);
-        postPreconditions = preConditionsList.toArray(new PreCondition[preConditionsList.size()]);
+        prePreconditions = prePreConditionsList.toArray(new BooleanCondition[prePreConditionsList.size()]);
+        postPreconditions = preConditionsList.toArray(new BooleanCondition[preConditionsList.size()]);
 
 
         List<PostCondition> postConditions = Global.newArrayList();

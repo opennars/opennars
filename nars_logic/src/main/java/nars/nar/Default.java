@@ -11,7 +11,7 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.data.Range;
 import nars.nal.Deriver;
-import nars.nal.RuleMatch;
+import nars.nal.PremiseMatch;
 import nars.nar.experimental.Derivelet;
 import nars.process.ConceptProcess;
 import nars.task.Task;
@@ -495,7 +495,7 @@ public class Default extends AbstractNAR {
         /**
          * re-used, not to be used outside of this
          */
-        private final RuleMatch matcher;
+        private final PremiseMatch matcher;
 
         /**
          * holds the resulting tasks of one derivation so they can
@@ -508,7 +508,7 @@ public class Default extends AbstractNAR {
         public DefaultCycle(NAR nar, Deriver deriver, Bag<Concept> concepts) {
             super(nar, deriver, concepts);
 
-            matcher = new RuleMatch(nar.memory.random);
+            matcher = new PremiseMatch(nar.memory.random);
             /* if detecting duplicates, use a list. otherwise use a set to deduplicate anyway */
             derivedTasksBuffer =
                     Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS ?

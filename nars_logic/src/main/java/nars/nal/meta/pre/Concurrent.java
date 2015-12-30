@@ -1,15 +1,15 @@
 package nars.nal.meta.pre;
 
 import nars.Premise;
-import nars.nal.RuleMatch;
-import nars.nal.meta.PreCondition;
+import nars.nal.PremiseMatch;
+import nars.nal.meta.BooleanCondition;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
 
 /**
  * Created by me on 8/15/15.
  */
-public class Concurrent extends PreCondition {
+public class Concurrent extends BooleanCondition {
 
     public static final Concurrent the = new Concurrent();
 
@@ -22,7 +22,7 @@ public class Concurrent extends PreCondition {
     }
 
     @Override
-    public final boolean eval(RuleMatch m) {
+    public final boolean eval(PremiseMatch m) {
         Premise premise = m.premise;
 
         if (!premise.isEvent())

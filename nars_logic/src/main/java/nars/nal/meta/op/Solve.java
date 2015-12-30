@@ -6,9 +6,9 @@ import nars.Premise;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.concept.Concept;
+import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
-import nars.nal.RuleMatch;
-import nars.nal.meta.PreCondition;
+import nars.nal.meta.BooleanCondition;
 import nars.nal.meta.TruthOperator;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
@@ -32,7 +32,7 @@ import static nars.truth.TruthFunctions.eternalizedConfidence;
 /**
  * Evaluates the truth of a premise
  */
-public final class Solve extends PreCondition {
+public final class Solve extends BooleanCondition {
     public final TruthOperator belief;
     public final TruthOperator desire;
     public final char puncOverride;
@@ -46,7 +46,7 @@ public final class Solve extends PreCondition {
     public Solve(Term beliefTerm, Term desireTerm, char puncOverride,
                  PremiseRule rule, boolean anticipate, boolean eternalize, Term term,
 
-                 PreCondition[] postPreconditions
+                 BooleanCondition[] postPreconditions
     ) {
         this.puncOverride = puncOverride;
 
@@ -106,7 +106,7 @@ public final class Solve extends PreCondition {
 //        }
 
     @Override
-    public boolean eval(RuleMatch m) {
+    public boolean eval(PremiseMatch m) {
 
         Premise premise = m.premise;
 
@@ -135,7 +135,7 @@ public final class Solve extends PreCondition {
         return true;
     }
 
-    public boolean measureTruth(RuleMatch m, char punct) {
+    public boolean measureTruth(PremiseMatch m, char punct) {
         TruthOperator tf = (punct == Symbols.JUDGMENT) ? belief : desire;
         if (tf == null)
             return false;
@@ -155,7 +155,7 @@ public final class Solve extends PreCondition {
         return derive;
     }
 
-    public static class Derive extends PreCondition {
+    public static class Derive extends BooleanCondition<PremiseMatch> {
 
         private final String id;
 
@@ -163,9 +163,9 @@ public final class Solve extends PreCondition {
         private final boolean eternalize;
         private final PremiseRule rule;
         private final Term term;
-        private final PreCondition[] postMatch;
+        private final BooleanCondition[] postMatch;
 
-        public Derive(PremiseRule rule, Term term, PreCondition[] postMatch, boolean anticipate, boolean eternalize ) {
+        public Derive(PremiseRule rule, Term term, BooleanCondition[] postMatch, boolean anticipate, boolean eternalize ) {
             this.rule = rule;
             this.postMatch = postMatch;
             this.term = term;
@@ -199,7 +199,7 @@ public final class Solve extends PreCondition {
         }
 
         @Override
-        public boolean eval(RuleMatch m) {
+        public boolean eval(PremiseMatch m) {
             //set derivation handlers
             m.derived.set(this);
             return true;
@@ -231,7 +231,7 @@ public final class Solve extends PreCondition {
 //            derive(match, dt);
 //        }
 
-        public Term solve(RuleMatch match) {
+        public Term solve(PremiseMatch match) {
 
             Term derivedTerm = match.apply(term);
 
@@ -260,9 +260,9 @@ public final class Solve extends PreCondition {
             return derivedTerm;
         }
 
-        public boolean post(RuleMatch match) {
+        public boolean post(PremiseMatch match) {
 
-            for (PreCondition p : postMatch) {
+            for (BooleanCondition p : postMatch) {
                 if (!p.eval(match))
                     return false;
             }
@@ -270,7 +270,7 @@ public final class Solve extends PreCondition {
             return true;
         }
 
-        public void processSequence(RuleMatch match, Term derivedTerm, Term toInvestigate) {
+        public void processSequence(PremiseMatch match, Term derivedTerm, Term toInvestigate) {
             int TermIsSequence = 1;
             int TermSubjectIsSequence = 2;
             int TermPredicateIsSequence = 3;
@@ -370,7 +370,7 @@ public final class Solve extends PreCondition {
             }
         }
 
-        public boolean derive(RuleMatch m, Term t) {
+        public boolean derive(PremiseMatch m, Term t) {
 
             if (t==null || Variable.hasPatternVariable(t))
                 return false;
@@ -384,7 +384,7 @@ public final class Solve extends PreCondition {
             return false; //match finish
         }
 
-        private void derive(RuleMatch m, Compound c) {
+        private void derive(PremiseMatch m, Compound c) {
 
             ConceptProcess premise = m.premise;
 

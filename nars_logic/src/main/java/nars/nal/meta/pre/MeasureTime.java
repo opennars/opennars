@@ -2,7 +2,7 @@ package nars.nal.meta.pre;
 
 import nars.$;
 import nars.Premise;
-import nars.nal.RuleMatch;
+import nars.nal.PremiseMatch;
 import nars.nal.nal7.Tense;
 import nars.task.Temporal;
 import nars.term.Term;
@@ -24,7 +24,7 @@ public class MeasureTime extends AbstractMeasureTime {
      * term representing the time difference will be
      * substituted.
      */
-    @Override protected final boolean testEvents(RuleMatch m, Term target) {
+    @Override protected final boolean testEvents(PremiseMatch m, Term target) {
         Premise p = m.premise;
 
         int time = Tense.between(

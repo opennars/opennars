@@ -1,24 +1,24 @@
 package nars.nal.meta.pre;
 
-import nars.nal.RuleMatch;
-import nars.nal.meta.PreCondition;
+import nars.nal.PremiseMatch;
+import nars.nal.meta.BooleanCondition;
 import nars.term.Term;
 
 /** tests the resolved terms specified by pattern variable terms */
-public abstract class PreCondition1 extends PreCondition {
+public abstract class PreCondition1 extends BooleanCondition {
     public final Term arg1;
 
     protected PreCondition1(Term var1) {
         arg1 = var1;
     }
 
-    @Override public boolean eval(RuleMatch m) {
+    @Override public boolean eval(PremiseMatch m) {
         Term a = m.apply(arg1);
         if (a == null) return false;
         return test(m, a);
     }
 
-    public abstract boolean test(RuleMatch m, Term a);
+    public abstract boolean test(PremiseMatch m, Term a);
 
     @Override
     public String toString() {
