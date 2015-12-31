@@ -46,6 +46,7 @@
 
         <module>nars_util</module>
         <module>nars_data</module>
+        <module>nars_layer0</module>
         <module>nars_logic</module>
         <module>nars_lab</module>
         <module>nars_web</module>
@@ -221,6 +222,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>opennars</groupId>
+                <artifactId>nars_layer0</artifactId>
+                <version>1.7-SNAPSHOT</version>
+            </dependency>
             <dependency>
                 <groupId>opennars</groupId>
                 <artifactId>nars_util</artifactId>
