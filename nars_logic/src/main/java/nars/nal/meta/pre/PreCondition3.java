@@ -22,13 +22,15 @@ public abstract class PreCondition3 extends BooleanCondition<PremiseMatch> {
     public boolean booleanValueOf(PremiseMatch m) {
         //these should not resolve to null
         Term a = m.apply(arg1);
-        if (a == null) return false;
-        Term b = m.apply(arg2);
-        if (b == null) return false;
-        Term c = m.apply(arg3);
-        if (c == null) return false;
-
-        return test(m, a, b, c);
+        boolean r=false;
+        if (a != null) {
+            Term b = m.apply(arg2);
+            if (b != null) {
+                Term c = m.apply(arg3);
+                r=c != null && test(m, a, b, c);
+            }
+        }
+        return r;
     }
 
     public abstract boolean test(PremiseMatch m, Term a, Term b, Term c);

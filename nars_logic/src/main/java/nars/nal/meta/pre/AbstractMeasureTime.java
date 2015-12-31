@@ -18,10 +18,8 @@ public abstract class AbstractMeasureTime extends PreCondition1Output {
     public boolean test(PremiseMatch m, Term target) {
         Premise premise = m.premise;
 
-        if (!premise.isEvent())
-            return false;
+        return premise.isEvent() && testEvents(m, target);
 
-        return testEvents(m, target);
     }
 
     protected abstract boolean testEvents(PremiseMatch m, Term target);
