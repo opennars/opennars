@@ -37,13 +37,11 @@ public class NARtop extends BorderPane {
         active = new SetTaskPerception(d.memory, f -> {
             update();
         });
-        d.memory.eventTaskProcess.on(tp -> {
-            Task t = tp.getTask();
+        d.memory.eventTaskProcess.on(t -> {
             if (t.isInput()) {
                 runLater( () -> {
                     addInput(t);
                 });
-
             }
         });
 

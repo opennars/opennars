@@ -60,10 +60,6 @@ public class TermPattern {
 //        this.code = code.toArray(new PreCondition[code.size()]);
 //    }
 
-    public TermPattern(Term pattern) {
-        this(pattern, null);
-    }
-
     public TermPattern(Term pattern, ListMultimap<Term, MatchConstraint> constraints) {
 
         term = pattern;
@@ -97,7 +93,7 @@ public class TermPattern {
     }
 
     private void compile(Term x, List<BooleanCondition> code) {
-        code.add(new MatchTerm(x, constraints));
+        code.add(MatchTerm.get(x, constraints));
     }
 
 //    private void compileRisky(Term x, List<PreCondition> code) {

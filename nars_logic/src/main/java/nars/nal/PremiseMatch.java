@@ -39,7 +39,7 @@ public class PremiseMatch extends FindSubst {
     public final Versioned<Integer> occurrenceShift;
     public final Versioned<Truth> truth;
     public final Versioned<Character> punct;
-    @Deprecated public final Versioned<Derive> derived;
+    public final Versioned<Derive> derived;
 
     public boolean cyclic;
 
@@ -80,21 +80,7 @@ public class PremiseMatch extends FindSubst {
 
     @Override
     public boolean onMatch() {
-
-
-        Derive dd = derived.get();
-
-        Term tt = dd.solve(this);
-        if (tt == null) return true;
-
-        if (!dd.post(this))
-            return false;
-
-        Compounds.ensureFeasibleVolume(tt);
-
-        dd.derive(this, tt);
-
-        return true;
+        return derived.get().onMatch(this);
     }
 
     public Task derive(Task derived) {
@@ -135,26 +121,20 @@ public class PremiseMatch extends FindSubst {
 
     }
 
-
     /**
      * set the next premise
      */
     public final void start(ConceptProcess p, Consumer<Task> receiver, Deriver d) {
-        clear();
 
         premise = p;
         this.receiver = receiver;
 
         Compound taskTerm = p.getTask().term();
-        Termed beliefTerm = p.getBelief() != null ?
-            p.getBelief().get()
-            : p.getTermLink().get(); //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
+        Task pBelief = p.getBelief();
+        Termed beliefTerm = pBelief != null ? pBelief.get() : p.getTermLink().get(); //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
 
-        term.set( $.p(
-            taskTerm.term(),
-            beliefTerm.term()
-        ) );
-        cyclic = premise.isCyclic();
+        term.set( $.p(  taskTerm.term(), beliefTerm.term() ) );
+        cyclic = p.isCyclic();
 
 //        //set initial power which will be divided by branch
 //        setPower(
@@ -166,6 +146,9 @@ public class PremiseMatch extends FindSubst {
         //setPower(branchPower.get()); //HACK is this where it should be assigned?
 
         d.run(this);
+
+        clear();
+
     }
 
 
@@ -228,6 +211,9 @@ public class PremiseMatch extends FindSubst {
     }
 
 
+    public final void matchAll(Term x /* pattern */) {
+        matchAll(x, term.get() /* current term */);
+    }
 }
 
 

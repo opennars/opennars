@@ -83,7 +83,7 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
 
     static List<String> load(Iterable<String> lines) {
 
-        List<String> unparsed_rules = Global.newArrayList(2048);
+        List<String> unparsed_rules = Global.newArrayList(1024);
 
         StringBuilder current_rule = new StringBuilder();
         boolean single_rule_test = false;

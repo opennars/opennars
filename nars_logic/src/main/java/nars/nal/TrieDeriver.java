@@ -1,5 +1,6 @@
 package nars.nal;
 
+import com.google.common.collect.Lists;
 import javassist.*;
 import nars.nal.meta.ProcTerm;
 import nars.nal.meta.RuleTrie;
@@ -14,18 +15,20 @@ import java.util.Date;
 public class TrieDeriver extends Deriver {
 
     public final ProcTerm<PremiseMatch>[] roots;
+    public final RuleTrie trie;
 
     public TrieDeriver(String rule) {
         this(new PremiseRuleSet(Collections.singleton(rule)));
     }
 
-    public TrieDeriver(PremiseRuleSet ruleset) {
-        this(new RuleTrie(ruleset).roots);
+    public TrieDeriver(String... rule) {
+        this(new PremiseRuleSet(Lists.newArrayList(rule)));
     }
 
-    public TrieDeriver(ProcTerm<PremiseMatch>[] roots) {
+    public TrieDeriver(PremiseRuleSet ruleset) {
         super();
-        this.roots = roots;
+        this.trie = new RuleTrie(ruleset);
+        this.roots = trie.roots;
 
         /*
         for (ProcTerm<PremiseMatch> p : roots) {

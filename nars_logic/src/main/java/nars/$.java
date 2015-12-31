@@ -326,6 +326,9 @@ public abstract class $  {
     public static Term conj(Term... a) {
         return the(CONJUNCTION, a);
     }
+    public static Term para(Term... a) {
+        return the(PARALLEL, a);
+    }
 
     public static Term disj(Term... a) {
         return the(DISJUNCTION, a);

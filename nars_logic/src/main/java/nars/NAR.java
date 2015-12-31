@@ -1117,7 +1117,7 @@ public abstract class NAR implements Serializable, Level {
             if (includeConceptQuests && c.hasQuests()) c.getQuests().top(maxPerConcept, recip);
 
             if (includeTaskLinks && c.getTaskLinks() != null)
-                c.getTaskLinks().forEach(maxPerConcept, tl -> recip.accept(tl.getTask()));
+                c.getTaskLinks().forEach(maxPerConcept, recip::accept);
         });
 
         return this;
@@ -1374,8 +1374,7 @@ public abstract class NAR implements Serializable, Level {
     }
 
     public On onQuestion(PatternAnswer p) {
-        return memory.eventTaskProcess.on(tp -> {
-            Task question = tp.getTask();
+        return memory.eventTaskProcess.on(question -> {
             if (question.getPunctuation() == '?') {
                 beforeNextFrame(() -> {
                     List<Task> l = p.apply(question);

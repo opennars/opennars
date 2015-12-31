@@ -377,9 +377,8 @@ public class DefaultConcept extends AtomConcept {
      * @return true if the quest/question table changed
      */
     @Override
-    public boolean processQuestion(Task task, NAR nar) {
+    public boolean processQuestion(Task q, NAR nar) {
 
-        Task q = task.getTask();
         TaskTable table = q.isQuestion() ? getQuestions() : getQuests();
 
 //        //if (Global.DEBUG) {

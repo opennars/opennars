@@ -79,7 +79,7 @@ public class IOPane extends BorderPane /*implements FXIconPaneBuilder*/ {
                 case "eventRevision":
                 case "eventTaskProcess":
                     Task t = (Task) signal;
-                    return t.getTask().getPriority() > (1f-volume.floatValue())
+                    return t.getPriority() > (1f-volume.floatValue())
                             //? new TaskLabel(t, nar) : null;
                             ?
                             getTaskNode(t) : null;

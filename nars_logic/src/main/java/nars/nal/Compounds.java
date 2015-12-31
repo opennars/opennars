@@ -2,7 +2,6 @@ package nars.nal;
 
 import com.gs.collections.api.set.MutableSet;
 import nars.$;
-import nars.Global;
 import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
@@ -54,17 +53,6 @@ public interface Compounds {
     int InvalidImplicationPredicate =
             or(EQUIV, EQUIV_AFTER, EQUIV_WHEN, INTERVAL);
 
-    static void ensureFeasibleVolume(Termlike c) {
-        if (c.volume() > Global.COMPOUND_VOLUME_MAX) {
-            //$.logger.error("Term volume overflow");
-            /*c.forEach(x -> {
-                Terms.printRecursive(x, (String line) ->
-                    $.logger.error(line)
-                );
-            });*/
-            throw new RuntimeException("Term volume overflow: " + c);
-        }
-    }
 
     static void appendSeparator(Appendable p, boolean pretty) throws IOException {
         p.append(ARGUMENT_SEPARATOR);

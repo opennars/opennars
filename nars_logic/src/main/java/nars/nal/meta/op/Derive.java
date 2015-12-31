@@ -1,6 +1,7 @@
 package nars.nal.meta.op;
 
 import com.google.common.base.Joiner;
+import nars.$;
 import nars.Global;
 import nars.Op;
 import nars.Premise;
@@ -9,6 +10,7 @@ import nars.concept.Concept;
 import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
 import nars.nal.meta.BooleanCondition;
+import nars.nal.meta.ProcTerm;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
 import nars.process.ConceptProcess;
@@ -25,9 +27,9 @@ import static nars.term.Statement.subj;
 import static nars.truth.TruthFunctions.eternalizedConfidence;
 
 /**
- * Created by me on 12/30/15.
+ * Handles matched derivation results
  */
-public class Derive extends BooleanCondition<PremiseMatch> {
+public class Derive extends ProcTerm<PremiseMatch> {
 
     private final String id;
 
@@ -47,23 +49,38 @@ public class Derive extends BooleanCondition<PremiseMatch> {
         String i = "Derive:(";
         if (eternalize || anticipate) {
             if (eternalize && anticipate) {
-                i += "{eternalize,anticipate}, ";
+                i += "{eternalize,anticipate},";
             } else if (eternalize && !anticipate) {
-                i += "{eternalize}, ";
+                i += "{eternalize},";
             } else if (anticipate && !eternalize) {
-                i += "{anticipate}, ";
+                i += "{anticipate},";
             }
         }
 
         i += term.toString();
 
         if (postMatch.length > 0) {
-            i += ", {" + Joiner.on(',').join(postMatch) + '}';
+            i += ",{" + Joiner.on(',').join(postMatch) + '}';
         }
 
         i += ")";
         this.id = i;
     }
+
+    /** main entry point for derivation result handler.
+     * @return true to allow the matcher to continue matching,
+     * false to stop it */
+    public final boolean onMatch(PremiseMatch m) {
+
+        Term tt = solve(m);
+
+        if ((tt != null) && (post(m))) {
+            derive(m, tt);
+        }
+
+        return true;
+    }
+
 
     @Override
     public String toString() {
@@ -75,66 +92,52 @@ public class Derive extends BooleanCondition<PremiseMatch> {
         return getClass().getName() + ".set(m)";
     }
 
-    /** set derivation callback */
-    public static boolean set(PremiseMatch m) {
-        throw new RuntimeException("unimpl");
-    }
 
     @Override
     public boolean booleanValueOf(PremiseMatch m) {
-        m.derived.set(this);
+        //START THE MATCH
+
         return true;
     }
 
-//        public void partial(RuleMatch match) {
-//            Term dt = solve(match);
-//            if (dt == null) return ;
-//
-//            //maybe this needs applied somewhre diferent
-//            if (!post(match))
-//                return ;
-//
-//            VarCachedVersionMap secondary = match.secondary;
-//
-//            if (!secondary.isEmpty()) {
-//
-//                Term rederivedTerm = dt.apply(secondary, true);
-//
-//                //its possible that the substitution produces an invalid term, ex: an invalid statement
-//                dt = rederivedTerm;
-//                if (dt == null) return;
-//            }
-//
-//            dt = dt.normalized();
-//            if (dt == null) return;
-//
-//
-//            derive(match, dt);
-//        }
 
     public Term solve(PremiseMatch match) {
 
         Term derivedTerm = match.apply(term);
 
-        if (null == derivedTerm)
-            return null;
+//        if (null == derivedTerm)
+//            return null;
 
-        Compound pattern = (Compound) rule.term(0);
-        Term taskpart = pattern.term(0);
-        Term beliefpart = pattern.term(1);
-
-        Term possibleSequenceHolder = null;
-
-        if (rule.sequenceIntervalsFromBelief) {
-            possibleSequenceHolder = beliefpart;
+        //HARD VOLUME LIMIT
+        if (derivedTerm.volume() > Global.COMPOUND_VOLUME_MAX) {
+            //$.logger.error("Term volume overflow");
+            /*c.forEach(x -> {
+                Terms.printRecursive(x, (String line) ->$.logger.error(line) );
+            });*/
+            String message = "Term volume overflow: " + derivedTerm;
+            if (Global.DEBUG)
+                throw new RuntimeException(message);
+            else {
+                $.logger.error(message);
+                return null;
+            }
         }
-        if (rule.sequenceIntervalsFromTask) {
-            possibleSequenceHolder = taskpart;
-        }
 
-        if (possibleSequenceHolder != null && possibleSequenceHolder.hasAny(Op.SEQUENCE)) {
-            processSequence(match, derivedTerm, possibleSequenceHolder);
 
+        //SPECIAL SEQUENCE HANDLING
+        {
+            Compound pattern = (Compound) rule.term(0);
+            Term taskpart = pattern.term(0);
+            Term beliefpart = pattern.term(1);
+
+            Term possibleSequenceHolder = null;
+
+            if (rule.sequenceIntervalsFromBelief)
+                possibleSequenceHolder = beliefpart;
+            if (rule.sequenceIntervalsFromTask)
+                possibleSequenceHolder = taskpart;
+            if (possibleSequenceHolder != null && possibleSequenceHolder.hasAny(Op.SEQUENCE))
+                processSequence(match, derivedTerm, possibleSequenceHolder);
         }
 
 
@@ -333,3 +336,29 @@ public class Derive extends BooleanCondition<PremiseMatch> {
 
 
 }
+
+//        public void partial(RuleMatch match) {
+//            Term dt = solve(match);
+//            if (dt == null) return ;
+//
+//            //maybe this needs applied somewhre diferent
+//            if (!post(match))
+//                return ;
+//
+//            VarCachedVersionMap secondary = match.secondary;
+//
+//            if (!secondary.isEmpty()) {
+//
+//                Term rederivedTerm = dt.apply(secondary, true);
+//
+//                //its possible that the substitution produces an invalid term, ex: an invalid statement
+//                dt = rederivedTerm;
+//                if (dt == null) return;
+//            }
+//
+//            dt = dt.normalized();
+//            if (dt == null) return;
+//
+//
+//            derive(match, dt);
+//        }
