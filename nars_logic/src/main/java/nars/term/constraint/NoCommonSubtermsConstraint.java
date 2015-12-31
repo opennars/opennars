@@ -8,7 +8,7 @@ import nars.term.transform.FindSubst;
 import java.util.Set;
 
 
-final public class NoCommonSubtermsConstraint implements MatchConstraint {
+public final class NoCommonSubtermsConstraint implements MatchConstraint {
 
     private final Term b;
 

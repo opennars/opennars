@@ -88,7 +88,7 @@ public abstract class SgBehavior {
         return Collections.unmodifiableList(arguments);
     }
 
-    private static final String commaSeparated(List<SgArgument> args) {
+    private static String commaSeparated(List<SgArgument> args) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < args.size(); i++) {
             if (i > 0) {

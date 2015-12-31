@@ -404,7 +404,7 @@ public class CurveBag<V> extends Bag<V> {
     /**
      * maps y in 0..1.0 to an index in [0..size)
      */
-    static final int index(float y, int size) {
+    static int index(float y, int size) {
         size--;
 
         int i = Math.round(y * size);

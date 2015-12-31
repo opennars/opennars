@@ -206,12 +206,9 @@ public class Product extends Operation {
             //if (i == exprs.size() - 1 && expr.isFunction()) parens = false;
             
             String exprString = expr.pretty();
-            
-            if (i != 0) {
-                if (lastMinus || parens || lastParens || exprString.charAt(0) == '(' || lastExpr.isNumberPrinted() && (expr instanceof Var || expr instanceof Constant || expr.isFunction() || !(expr.firstAtom() instanceof Num)) && !(expr instanceof Num)) {}
-                else {
-                    string = string + "*";
-                }
+
+            if (i != 0 && !lastMinus && !parens && !lastParens && exprString.charAt(0) != '(' && (!lastExpr.isNumberPrinted() || (!(expr instanceof Var) && !(expr instanceof Constant) && !expr.isFunction() && expr.firstAtom() instanceof Num) || (expr instanceof Num))) {
+                string = string + "*";
             }
             
             if (i == 0 && expr instanceof Num && ((Num) expr).val() == -1) {

@@ -36,12 +36,12 @@ import static nars.Op.*;
  */
 public abstract class $  {
 
-    public final static TermIndex terms = new TermIndex.ImmediateTermIndex();
+    public static final TermIndex terms = new TermIndex.ImmediateTermIndex();
 
 
     public static final org.slf4j.Logger logger = LoggerFactory.getLogger($.class);
 
-    public static final <T extends Term> T $(String term) {
+    public static <T extends Term> T $(String term) {
         Termed normalized = Narsese.the().term(term, terms);
         if (normalized!=null)
             return (T)(normalized.term());
@@ -51,7 +51,7 @@ public abstract class $  {
         //        catch (InvalidInputException e) { }
     }
 
-    @Deprecated public static final <C extends Compound> MutableTask $(String term, char punc) {
+    @Deprecated public static <C extends Compound> MutableTask $(String term, char punc) {
         Term t = Narsese.the().term(term).term();
         //TODO normalize etc
         if (!Task.validTaskTerm(t))
@@ -227,7 +227,7 @@ public abstract class $  {
      * @param predicate The second component
      * @return A compound generated or null
      */
-    public static final Compound instprop(Term subject, Term predicate) {
+    public static Compound instprop(Term subject, Term predicate) {
         return (Compound) $.inh( $.sete(subject), $.seti(predicate));
     }
 

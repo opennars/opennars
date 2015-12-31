@@ -1429,7 +1429,7 @@ public class IndexedTreeMap<K, V>
      * Test two values for equality.  Differs from o1.equals(o2) only in
      * that it copes with <tt>null</tt> o1 properly.
      */
-    static final boolean valEquals(Object o1, Object o2) {
+    static boolean valEquals(Object o1, Object o2) {
         return (o1 == null ? o2 == null : o1.equals(o2));
     }
 
@@ -2833,11 +2833,11 @@ public class IndexedTreeMap<K, V>
      * @param redLevel the level at which nodes should be red.
      *                 Must be equal to computeRedLevel for tree of this size.
      */
-    private final Entry<K, V> buildFromSorted(int level, int lo, int hi,
-                                              int redLevel,
-                                              Iterator it,
-                                              java.io.ObjectInputStream str,
-                                              V defaultVal)
+    private Entry<K, V> buildFromSorted(int level, int lo, int hi,
+                                        int redLevel,
+                                        Iterator it,
+                                        java.io.ObjectInputStream str,
+                                        V defaultVal)
             throws java.io.IOException, ClassNotFoundException {
         /*
          * Strategy: The root is the middlemost element. To get to it, we

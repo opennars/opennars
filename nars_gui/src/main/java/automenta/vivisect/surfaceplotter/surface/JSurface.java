@@ -669,7 +669,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * Draws the bounding box of surface.
 	 */
 
-	private final void drawBoundingBox() {
+	private void drawBoundingBox() {
 		Point startingpoint, projection;
 
 		startingpoint = projector.project(factor_x * 10, factor_y * 10, 10);
@@ -695,7 +695,7 @@ public class JSurface extends javax.swing.JComponent {
 	 *            method.
 	 */
 
-	private final void drawBase(Graphics g, int[] x, int[] y) {
+	private void drawBase(Graphics g, int[] x, int[] y) {
 		Point projection = projector.project(-10, -10, -10);
 		x[0] = projection.x;
 		y[0] = projection.y;
@@ -728,7 +728,7 @@ public class JSurface extends javax.swing.JComponent {
 	 *            if <code>true</code>, only draws base plane and z axis
 	 */
 
-	private final void drawBoxGridsTicksLabels(Graphics g, boolean draw_axes) {
+	private void drawBoxGridsTicksLabels(Graphics g, boolean draw_axes) {
 		Point projection, tickpos;
 		boolean x_left = false, y_left = false;
 		int[] x;
@@ -938,7 +938,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * of bounding box.
 	 */
 
-	private final void setAxesScale() {
+	private void setAxesScale() {
 		float scale_x, scale_y, scale_z, divisor;
 		int longest;
 
@@ -1036,7 +1036,7 @@ public class JSurface extends javax.swing.JComponent {
 	 *            the alignment in y direction
 	 */
 
-	private final void outString(Graphics g, int x, int y, String s, int x_align, int y_align) {
+	private void outString(Graphics g, int x, int y, String s, int x_align, int y_align) {
 		switch (y_align) {
 		case TOP:
 			y += g.getFontMetrics(g.getFont()).getAscent();
@@ -1075,7 +1075,7 @@ public class JSurface extends javax.swing.JComponent {
 	 *            the alignment in y direction
 	 */
 
-	private final void outFloat(Graphics g, int x, int y, float f, int x_align, int y_align) {
+	private void outFloat(Graphics g, int x, int y, float f, int x_align, int y_align) {
 		// String s = Float.toString(f);
 		String s = format(f);
 		outString(g, x, y, s, x_align, y_align);
@@ -1101,7 +1101,7 @@ public class JSurface extends javax.swing.JComponent {
 	 *            number of vertices to process
 	 */
 
-	private final void plotPlane(SurfaceVertex[] vertex, int verticescount) {
+	private void plotPlane(SurfaceVertex[] vertex, int verticescount) {
 		int count, loop, index;
 		float z, result;
 		boolean low1, low2;
@@ -1180,7 +1180,7 @@ public class JSurface extends javax.swing.JComponent {
 	 *            vertices array of second plane
 	 */
 
-	private final void splitPlotPlane(SurfaceVertex[] values1, SurfaceVertex[] values2) {
+	private void splitPlotPlane(SurfaceVertex[] values1, SurfaceVertex[] values2) {
 		int trackposition = COINCIDE;
 		int uppercount = 0, lowercount = 0;
 		boolean coincide = true;
@@ -1393,7 +1393,7 @@ public class JSurface extends javax.swing.JComponent {
 	 *            vertices array of the plane
 	 */
 
-	private final boolean plottable(SurfaceVertex[] values) {
+	private boolean plottable(SurfaceVertex[] values) {
 		return (!values[0].isInvalid() && !values[1].isInvalid() && !values[2].isInvalid() && !values[3].isInvalid());
 	}
 
@@ -1417,7 +1417,7 @@ public class JSurface extends javax.swing.JComponent {
 	 *            step in y direction
 	 */
 
-	private final void plotArea(int start_lx, int start_ly, int end_lx, int end_ly, int sx, int sy) {
+	private void plotArea(int start_lx, int start_ly, int end_lx, int end_ly, int sx, int sy) {
 
 		start_lx *= calc_divisions + 1;
 		sx *= calc_divisions + 1;
@@ -1488,7 +1488,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * Creates a surface plot
 	 */
 
-	private final void plotSurface() {
+	private void plotSurface() {
 		float zi, zx;
 		int sx, sy;
 		int start_lx, end_lx;
@@ -1626,7 +1626,7 @@ public class JSurface extends javax.swing.JComponent {
 	 *            the normalized x coordinate
 	 */
 
-	private final int contourConvertX(float x) {
+	private int contourConvertX(float x) {
 		return Math.round(x * contour_width_x + contour_center_x);
 	}
 
@@ -1638,7 +1638,7 @@ public class JSurface extends javax.swing.JComponent {
 	 *            the normalized x coordinate
 	 */
 
-	private final int contourConvertY(float y) {
+	private int contourConvertY(float y) {
 		return Math.round(-y * contour_width_y + contour_center_y);
 	}
 
@@ -1646,7 +1646,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * Creates bounding box for images of contour plot or density plot
 	 */
 
-	private final void drawBoundingRect() {
+	private void drawBoundingRect() {
 		graphics.setColor(colors.getLineBoxColor());
 		int x1 = contourConvertX(-10);
 		int y1 = contourConvertY(+10);
@@ -1754,7 +1754,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * plot area size and position.
 	 */
 
-	private final void computePlotArea() {
+	private void computePlotArea() {
 		setAxesScale();
 		contour_lines = model.getContourLines();
 
@@ -1882,7 +1882,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * @see #plotContour
 	 */
 
-	private final void createContour() {
+	private void createContour() {
 		float z = zmin;
 
 		int xmin = xpoints[0] = contourConvertX(contour_vertex[0].x);
@@ -2021,7 +2021,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * Creates contour plot
 	 */
 
-	private final void plotContour() {
+	private void plotContour() {
 		float zi, zx;
 		
 		accumulator.clearAccumulator();
@@ -2091,7 +2091,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * Creates density plot
 	 */
 
-	private final void plotDensity() {
+	private void plotDensity() {
 		float zi, zx, z;
 
 		try {
@@ -2186,7 +2186,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * Creates wireframe plot
 	 */
 
-	private final void plotWireframe() {
+	private void plotWireframe() {
 		int i, j, k;
 		int plot_density, multiple_factor;
 		int counter;

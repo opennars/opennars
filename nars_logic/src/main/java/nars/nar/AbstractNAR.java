@@ -323,7 +323,7 @@ public abstract class AbstractNAR extends NAR {
     }
 
     /** reports all active concepts or those which can be reached */
-    abstract public NAR forEachConcept(Consumer<Concept> recip);
+    public abstract NAR forEachConcept(Consumer<Concept> recip);
 
 
 

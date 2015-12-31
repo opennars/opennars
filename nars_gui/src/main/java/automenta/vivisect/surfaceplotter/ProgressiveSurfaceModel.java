@@ -234,7 +234,7 @@ public class ProgressiveSurfaceModel extends AbstractSurfaceModel implements Sur
 	 * @param def
 	 * @return
 	 */
-	public static final int faces(int def) {
+	public static int faces(int def) {
 		int segPerDim = segments(def);
 		return segPerDim * segPerDim;
 	}
@@ -245,7 +245,7 @@ public class ProgressiveSurfaceModel extends AbstractSurfaceModel implements Sur
 	 * @param def
 	 * @return
 	 */
-	public static final int segments(int def) {
+	public static int segments(int def) {
 		return 1 << def; // 2 ^ def +1
 	}
 
@@ -255,7 +255,7 @@ public class ProgressiveSurfaceModel extends AbstractSurfaceModel implements Sur
 	 * @param def
 	 * @return
 	 */
-	public static final int vertices(int def) {
+	public static int vertices(int def) {
 		int dotsPerDim = segments(def) + 1;
 		return dotsPerDim * dotsPerDim;
 	}

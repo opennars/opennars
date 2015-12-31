@@ -44,11 +44,11 @@ public class NARfx  {
     /** Object instances -> GUI windows */
     public static Map<Object, Stage> window = Global.newHashMap();
 
-    public static final ScrollPane scrolled(Node n) {
+    public static ScrollPane scrolled(Node n) {
         return scrolled(n, true, true);
     }
 
-    public static final ScrollPane scrolled(Node n, boolean stretchwide, boolean stretchhigh) {
+    public static ScrollPane scrolled(Node n, boolean stretchwide, boolean stretchhigh) {
         ScrollPane s = new ScrollPane();
         s.setHbarPolicy(stretchwide ? ScrollPane.ScrollBarPolicy.AS_NEEDED : ScrollPane.ScrollBarPolicy.NEVER);
         s.setVbarPolicy(stretchwide ? ScrollPane.ScrollBarPolicy.AS_NEEDED : ScrollPane.ScrollBarPolicy.NEVER);
@@ -363,15 +363,15 @@ public class NARfx  {
     public static final Color hashColor(Object op, float intensity, ColorMatrix ca) {
 
     }*/
-    public static final Color hashColor(Object op, ColorMatrix ca) {
+    public static Color hashColor(Object op, ColorMatrix ca) {
         return hashColor(op.hashCode(), ca);
     }
 
-    public static final Color hashColor(int h, ColorMatrix ca) {
+    public static Color hashColor(int h, ColorMatrix ca) {
         return hashColor(h, 0, ca);
     }
 
-    public static final Color hashColor(int h, double b, ColorMatrix ca) {
+    public static Color hashColor(int h, double b, ColorMatrix ca) {
         int cl = ca.cc.length;
         int i = (h % cl);
         if (i < 0) i = -i;

@@ -127,7 +127,7 @@ public class ArraySharingList<C> implements Iterable<C> {
         return getCachedNullTerminatedArray();
     }
 
-    private final C[] updateArray() {
+    private C[] updateArray() {
 
         //TODO for safe atomicity while the events are populated, buffer additions to a sub-list,
         //and apply them if a flag is set on the next read

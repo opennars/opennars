@@ -50,7 +50,7 @@ public class Granulator {
         return sample * ww;
     }
 
-    public static final boolean isFading(long[] grain, long now) {
+    public static boolean isFading(long[] grain, long now) {
         long length = grain[1];
         long showTime = grain[2];
         return now > showTime + length;

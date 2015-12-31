@@ -108,7 +108,7 @@ public abstract class AbstractOperator implements Consumer<Execution> {
         }
     }
 
-    abstract public void execute(Execution execution);
+    public abstract void execute(Execution execution);
 
 //    {
 //        try {

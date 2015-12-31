@@ -124,7 +124,7 @@ public final class InstructionGraphNode
         return ILOAD_INSN_RANGE.contains(instruction.getOpcode());
     }
 
-    public final boolean isXStore() {
+    public boolean isXStore() {
         return ISTORE_INSN_RANGE.contains(instruction.getOpcode());
     }
 
@@ -137,7 +137,7 @@ public final class InstructionGraphNode
         }
     }
 
-    public final void addPredecessor(InstructionGraphNode node) {
+    public void addPredecessor(InstructionGraphNode node) {
         //if (!predecessors.contains(node)):
         Object[] pl = predecessors.array();
         for (Object in : pl) {
@@ -147,13 +147,13 @@ public final class InstructionGraphNode
     }
 
     @Override
-    public final boolean equals(@Nullable Object value) {
+    public boolean equals(@Nullable Object value) {
         // TODO: what the...
         return value == this;
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         // TODO: what the...
         return id; //System.identityHashCode(this);
     }

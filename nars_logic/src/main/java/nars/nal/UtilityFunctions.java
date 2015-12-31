@@ -39,7 +39,7 @@ public class UtilityFunctions extends Util {
      * @param arr The inputs, each in [0, 1]
      * @return The output that is no larger than each input
      */
-    public static final float and(float... arr) {
+    public static float and(float... arr) {
         float product = 1;
         for (float f : arr) {
             product *= f;
@@ -48,11 +48,11 @@ public class UtilityFunctions extends Util {
     }
     
     //may be more efficient than the for-loop version above, for 2 params
-    public static final float and(float a, float b) {
+    public static float and(float a, float b) {
         return a*b;
     }
 
-    public static final float and(float a, float b, float c) {
+    public static float and(float a, float b, float c) {
         return a*b*c;
     }
 
@@ -62,7 +62,7 @@ public class UtilityFunctions extends Util {
      * @param arr The inputs, each in [0, 1]
      * @return The output that is no smaller than each input
      */
-    public static final float or(float... arr) {
+    public static float or(float... arr) {
         float product = 1;
         for (float f : arr) {
             product *= (1 - f);
@@ -70,7 +70,7 @@ public class UtilityFunctions extends Util {
         return 1.0f - product;
     }
     
-    public static final float or(float a, float b) {
+    public static float or(float a, float b) {
         return 1.0f -((1.0f -a)*(1.0f -b));
     }
     
@@ -79,7 +79,7 @@ public class UtilityFunctions extends Util {
      * @param arr The inputs, each in [0, 1]
      * @return The arithmetic average the inputs
      */
-    public static final float aveAri(float... arr) {
+    public static float aveAri(float... arr) {
         float sum = 0;
         for (float f : arr) {
             sum += f;
@@ -88,7 +88,7 @@ public class UtilityFunctions extends Util {
     }
     
     //may be more efficient than the for-loop version above, for 2 params
-    public static final float aveAri(float a, float b) {
+    public static float aveAri(float a, float b) {
         return (a + b)/ 2.0f;
     }
 
@@ -97,7 +97,7 @@ public class UtilityFunctions extends Util {
      * @param arr The inputs, each in [0, 1]
      * @return The geometric average the inputs
      */
-    public static final float aveGeo(float... arr) {
+    public static float aveGeo(float... arr) {
         float product = 1;
         for (float f : arr) {
             if (f == 0) return 0;
@@ -107,13 +107,13 @@ public class UtilityFunctions extends Util {
     }
 
     //may be more efficient than the for-loop version above, for 2 params
-    public static final float aveGeo(float a, float b) {
+    public static float aveGeo(float a, float b) {
         if ((a == 0)||(b==0)) return 0; //early result avoiding pow()
         return (float)sqrt(a*b);
     }
     
     //may be more efficient than the for-loop version above, for 3 params
-    public static final float aveGeo(float a, float b, float c) {
+    public static float aveGeo(float a, float b, float c) {
         //final float m = Global.BUDGET_EPSILON
 
         float base = a*b*c;
@@ -121,7 +121,7 @@ public class UtilityFunctions extends Util {
         return (float)pow(base, 1.0/3.0);
     }
 
-    public static final boolean aveGeoNotLessThan(float min, float a, float b, float c) {
+    public static boolean aveGeoNotLessThan(float min, float a, float b, float c) {
         float minCubed = min*min*min; //cube both sides
         return (a*b*c) >= minCubed;
     }
@@ -131,7 +131,7 @@ public class UtilityFunctions extends Util {
      * @param w Weight of evidence, a non-negative real number
      * @return The corresponding confidence, in [0, 1)
      */
-    public static final float w2c(float w) {
+    public static float w2c(float w) {
         return w / (w + Global.HORIZON);
     }
 
@@ -140,7 +140,7 @@ public class UtilityFunctions extends Util {
      * @param c confidence, in [0, 1)
      * @return The corresponding weight of evidence, a non-negative real number
      */
-    public static final float c2w(float c) {
+    public static float c2w(float c) {
         return Global.HORIZON * c / (1 - c);
     }
 

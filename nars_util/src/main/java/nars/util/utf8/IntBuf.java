@@ -35,21 +35,21 @@ public class IntBuf {
 
 
 
-    public static final void p(int[] x, int i, int v) {
+    public static void p(int[] x, int i, int v) {
         p(x, i , (byte)v);
     }
-    static final void p(int[] x, int i, byte v) {
+    static void p(int[] x, int i, byte v) {
         int e = i / 4; //>> 2
         int o = i % 4;
         int b = 8 * o;
         p(x, e, b, v);
     }
-    static final void p(int[] x, int e, int b, byte v) {
+    static void p(int[] x, int e, int b, byte v) {
         int c = x[e] & ~(((int)0xff) << b);
         x[e] = c | (v << b);
     }
 
-    public static final int encode(String src, int[] dst) {
+    public static int encode(String src, int[] dst) {
 
         int dp = 0;
         int dl = dst.length;

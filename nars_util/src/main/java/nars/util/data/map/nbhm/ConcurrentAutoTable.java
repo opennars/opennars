@@ -104,7 +104,7 @@ public class ConcurrentAutoTable implements Serializable {
   private boolean CAS_cat( CAT oldcat, CAT newcat ) { return _catUpdater.compareAndSet(this,oldcat,newcat); }
 
   // Hash spreader
-  private static final int hash() {
+  private static int hash() {
     int h = (int)Thread.currentThread().getId();
     //int hash = (((int) (id ^ (id >>> 32))) ^ 0x811c9dc5) * 0x01000193;
     //
@@ -136,7 +136,7 @@ public class ConcurrentAutoTable implements Serializable {
       assert i >= 0 && i < ary.length;
       return _Lbase + i * _Lscale;
     }
-    private static final boolean CAS(long[] A, int idx, long old, long nnn ) {
+    private static boolean CAS(long[] A, int idx, long old, long nnn ) {
       return _unsafe.compareAndSwapLong( A, rawIndex(A,idx), old, nnn );
     }
    

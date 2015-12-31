@@ -63,7 +63,7 @@ public class PatternCompound extends GenericCompound {
 
     }
 
-    final public boolean prematch(Compound y) {
+    public final boolean prematch(Compound y) {
 
         int yStructure = y.structure();
         if ((yStructure | structureCachedWithoutVars) != yStructure)

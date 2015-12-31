@@ -86,11 +86,11 @@ public class Util {
         ));
     }
 
-    public static final int hash(int a, int b) {
+    public static int hash(int a, int b) {
         return PRIME2 * (PRIME2 + a) + b;
     }
 
-    public static final int hash(int a, int b, int c) {
+    public static int hash(int a, int b, int c) {
         return PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c;
     }
 
@@ -103,11 +103,11 @@ public class Util {
 //        return (int)x;
 //    }
 
-    public static final int hash(Object a, Object b) {
+    public static int hash(Object a, Object b) {
         return hash(a.hashCode(), b.hashCode());
     }
 
-    public static final int hash(Object a, Object b, Object c) {
+    public static int hash(Object a, Object b, Object c) {
         return hash(a.hashCode(), b.hashCode(), c.hashCode());
     }
 
@@ -524,11 +524,11 @@ public class Util {
     /**
      * maximum, simpler and faster than Math.max without its additional tests
      */
-    public static final float max(float a, float b) {
+    public static float max(float a, float b) {
         return (a > b) ? a : b;
     }
 
-    public static final float mean(float a, float b) {
+    public static float mean(float a, float b) {
         return (a + b) * 0.5f;
     }
 
@@ -670,7 +670,7 @@ public class Util {
     /** applies a quick, non-lexicographic ordering compare
      * by first testing their lengths
      */
-    public static final int compare(long[] x, long[] y) {
+    public static int compare(long[] x, long[] y) {
         if (x == y) return 0;
 
         int xlen = x.length;

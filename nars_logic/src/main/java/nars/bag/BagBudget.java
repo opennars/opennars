@@ -38,7 +38,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
     }
 
     @Override
-    public final X get() {
+    public X get() {
         return id;
     }
 

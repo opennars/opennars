@@ -497,7 +497,7 @@ public class InjectionUtils {
         return null;
     }
 
-    private static final boolean isBlank(Object value) {
+    private static boolean isBlank(Object value) {
 
         if (value instanceof String) {
 

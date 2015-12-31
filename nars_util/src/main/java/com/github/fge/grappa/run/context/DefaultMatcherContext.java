@@ -149,7 +149,7 @@ public final class DefaultMatcherContext<V>
     }
 
     @Override
-    public final Matcher getMatcher()
+    public Matcher getMatcher()
     {
         return matcher;
     }
@@ -247,7 +247,7 @@ public final class DefaultMatcherContext<V>
     }
 
     @Override
-    public final ValueStack<V> getValueStack()
+    public ValueStack<V> getValueStack()
     {
         return valueStack;
     }

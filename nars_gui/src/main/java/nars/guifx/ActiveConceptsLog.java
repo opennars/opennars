@@ -13,7 +13,7 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 10/15/15.
  */
-abstract public class ActiveConceptsLog extends LogPane {
+public abstract class ActiveConceptsLog extends LogPane {
 
     private List<Node> displayed;
     LinkedHashSet<Concept> display = new LinkedHashSet();

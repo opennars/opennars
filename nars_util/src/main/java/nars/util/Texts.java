@@ -295,32 +295,32 @@ public abstract class Texts {
 
     static final ThreadLocal<Format> oneDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.0") );
 
-    public static final String n1(float x) {
+    public static String n1(float x) {
         return oneDecimal.get().format(x);
     }
 
-    public static final String n1char(double x) {
+    public static String n1char(double x) {
         return oneDecimal.get().format(x);
     }
 
 
     static final ThreadLocal<Format> threeDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.000") );
 
-    public static final String n3(float x) {
+    public static String n3(float x) {
         return threeDecimal.get().format(x);
     }
 
-    public static final String n3(double x) {
+    public static String n3(double x) {
         return threeDecimal.get().format(x);
     }
 
     static final ThreadLocal<Format> fourDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.0000") );
 
-    public static final String n4(float x) {
+    public static String n4(float x) {
         return fourDecimal.get().format(x);
     }
 
-    public static final String n4(double x) {
+    public static String n4(double x) {
         return fourDecimal.get().format(x);
     }
 
@@ -348,14 +348,14 @@ public abstract class Texts {
      * for compact display.
      * if the value=1.0, then 'aa' is the result
      */
-    public static final String n2u(float x) {
+    public static String n2u(float x) {
         if ((x < 0) || (x > 1)) throw new RuntimeException("values >=0 and <=1");
         int hundreds = (int) hundredths(x);
         if (x == 100) return "aa";
         return hundreds < 10 ? "0" + hundreds : Integer.toString(hundreds);
     }
 
-    public static final CharSequence n2(float x) {
+    public static CharSequence n2(float x) {
         if ((x < 0) || (x > 1.0f))
             return twoDecimal.format(x);
 
@@ -390,7 +390,7 @@ public abstract class Texts {
      * 1 character representing a 1 decimal of a value between 0..1.0;
      * representation; 0..9 //, A=1.0
      */
-    public static final char n1char(float x) {
+    public static char n1char(float x) {
         int i = tens(x);
         if (i >= 10)
             i = 9; //return 'A';

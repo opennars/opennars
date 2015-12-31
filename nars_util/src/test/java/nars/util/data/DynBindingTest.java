@@ -27,13 +27,13 @@ public class DynBindingTest {
     }
 
 
-    public static final boolean rng() {
+    public static boolean rng() {
         int i = (int) (random() * 10);
         System.out.println(i);
         return i != 1;
     }
 
-    public static final void print() {
+    public static void print() {
         System.out.println("loop ");
     }
 

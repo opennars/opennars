@@ -91,18 +91,18 @@ public class Atom extends StringAtom {
 //        return atoms.computeIfAbsent(name, AtomInterner);
 //    }
 
-    public static final Atom the(String name, boolean quoteIfNecessary) {
+    public static Atom the(String name, boolean quoteIfNecessary) {
         if (quoteIfNecessary && quoteNecessary(name))
             return quote(name);
 
         return the(name);
     }
 
-    public static final Term the(Term x) {
+    public static Term the(Term x) {
         return x;
     }
 
-    public static final Atom the(Number o) {
+    public static Atom the(Number o) {
 
         if (o instanceof Byte) return the(o.intValue());
         if (o instanceof Short) return the(o.intValue());
@@ -116,12 +116,12 @@ public class Atom extends StringAtom {
     }
 
     /** gets the atomic term of an integer */
-    public static final Atom the(int i) {
+    public static Atom the(int i) {
         return the(i, 10);
     }
 
     /** gets the atomic term of an integer, with specific radix (up to 36) */
-    public static final Atom the(int i, int radix) {
+    public static Atom the(int i, int radix) {
         //fast lookup for single digits
         if ((i >= 0) && (i <= 9)) {
             Atom a = digits[i];
@@ -132,7 +132,7 @@ public class Atom extends StringAtom {
         return the(Integer.toString(i, radix));
     }
 
-    public static final Atom the(float v) {
+    public static Atom the(float v) {
         if (Util.equal( (float)Math.floor(v), v, Float.MIN_VALUE*2 )) {
             //close enough to be an int, so it doesnt need to be quoted
             return the((int)v);
@@ -141,7 +141,7 @@ public class Atom extends StringAtom {
     }
 
     /** gets the atomic term given a name */
-    public static final Atom the(String name) {
+    public static Atom the(String name) {
         //return Atom.the(Utf8.toUtf8(name));
         return new Atom(name);
 
@@ -162,12 +162,12 @@ public class Atom extends StringAtom {
       //  }
     }
 
-    public static final Atom the(byte[] id) {
+    public static Atom the(byte[] id) {
         return new Atom(id);
     }
 
 
-    public static final Atom the(byte c) {
+    public static Atom the(byte c) {
         return Atom.the(new byte[] { c });
     }
 
@@ -202,7 +202,7 @@ public class Atom extends StringAtom {
         return null;
     }
 
-    final static int AtomBit = Op.ATOM.bit();
+    static final int AtomBit = Op.ATOM.bit();
 
     @Override
     public final int structure() {

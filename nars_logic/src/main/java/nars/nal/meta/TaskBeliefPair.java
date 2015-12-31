@@ -32,7 +32,7 @@ public final class TaskBeliefPair extends GenericCompound {
 
 
 
-    public final void set(Term a, Term b) {
+    public void set(Term a, Term b) {
         Term[] t = this.t;
         t[0] = a;
         t[1] = b;

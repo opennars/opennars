@@ -101,7 +101,7 @@ public class Versioning extends FasterList<Versioned> {
         intStackPool.put(v.array());
     }
 
-    private final static class FasterListDequePool extends DequePool<FasterList> {
+    private static final class FasterListDequePool extends DequePool<FasterList> {
         public FasterListDequePool() {
             super(Versioning.initiALPOOL_CAPACITY);
         }
@@ -111,7 +111,7 @@ public class Versioning extends FasterList<Versioned> {
         }
     }
 
-    private final static class intDequePool extends DequePool<int[]> {
+    private static final class intDequePool extends DequePool<int[]> {
         public intDequePool() {
             super(Versioning.initiALPOOL_CAPACITY);
         }

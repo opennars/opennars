@@ -32,7 +32,7 @@ public class feelBusy extends feel {
 
     public static final Term business = $.the(feelBusy.class.getSimpleName());
 
-    final static Logger logger = LoggerFactory.getLogger(feelBusy.class);
+    static final Logger logger = LoggerFactory.getLogger(feelBusy.class);
 
     /**
      * To get the current value of an internal sensor

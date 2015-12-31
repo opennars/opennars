@@ -35,7 +35,7 @@ public abstract class TaskPerception implements Consumer<Task> {
         //);
     }
 
-    abstract public void forEach(Consumer<? super Task> each);
+    public abstract void forEach(Consumer<? super Task> each);
 
     public static class TaskBufferStats implements Consumer<Task> {
         public long time;

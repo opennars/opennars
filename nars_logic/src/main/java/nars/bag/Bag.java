@@ -53,7 +53,6 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
      */
     public abstract BagBudget<V> put(Object newItem);
 
-
     public final BagBudget<V> put(Object i, Budget b) {
         return put(i, b, 1f);
     }
@@ -86,7 +85,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
         sample(n, null, target);
     }
 
-    abstract public void sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target);
+    public abstract void sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target);
 //    /**
 //     * fills a collection with at-most N items, if an item passes the predicate.
 //     * returns how many items added
@@ -213,13 +212,13 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
     /**
      * commits the next set of changes and updates any sorting
      */
-    abstract public void commit();
+    public abstract void commit();
 
     /**
      * implements the Consumer<V> interface; invokes a put()
      */
     @Override
-    final public void accept(V v) {
+    public final void accept(V v) {
         put(v);
     }
 
@@ -227,11 +226,11 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
      * implements the Supplier<V> interface; invokes a remove()
      */
     @Override
-    final public BagBudget<V> get() {
+    public final BagBudget<V> get() {
         return pop();
     }
 
-    final public boolean isEmpty() {
+    public final boolean isEmpty() {
         return size() == 0;
     }
 
@@ -272,10 +271,10 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
     /**
      * if predicate evaluates false, it terminates the iteration
      */
-    abstract public void whileEachEntry(Predicate<BagBudget<V>> each);
+    public abstract void whileEachEntry(Predicate<BagBudget<V>> each);
 
     //TODO provide default impl
-    abstract public void forEachEntry(int limit, Consumer<BagBudget> each);
+    public abstract void forEachEntry(int limit, Consumer<BagBudget> each);
 
 
 //    final public int forgetNext(float forgetCycles, final V[] batch, final long now) {

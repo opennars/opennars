@@ -6,6 +6,6 @@ import nars.term.Term;
 /**
  * Created by me on 12/12/15.
  */
-abstract public class ImmediateTermTransform extends TermFunction<Term>  {
+public abstract class ImmediateTermTransform extends TermFunction<Term>  {
 
 }

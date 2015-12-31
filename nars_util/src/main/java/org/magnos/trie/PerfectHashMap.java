@@ -265,7 +265,7 @@ public class PerfectHashMap<T>
     * @return 0 if the key is the minimum key in this map, a positive value
     *         less than {@link #capacity()} of the map otherwise.
     */
-   private final int relativeIndex( int key )
+   private int relativeIndex(int key )
    {
       return (key - min);
    }

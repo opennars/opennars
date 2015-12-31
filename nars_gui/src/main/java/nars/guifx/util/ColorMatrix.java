@@ -45,7 +45,7 @@ public class ColorMatrix {
     }
 
     /** p = 0..1.0 */
-    public static final int p(double p, int range) {
+    public static int p(double p, int range) {
 //        if ((p < 0) || (p > 1))
 //            throw new RuntimeException("Out of bounds color range: " + p);
         int i = (int) /*FastMath.round*/(p*(range-1));

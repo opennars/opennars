@@ -80,7 +80,7 @@ public abstract class NAR implements Serializable, Level {
 //    float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;
 //    float defaultQuestionDurability = Global.DEFAULT_QUESTION_DURABILITY;
 
-    final static Logger logger = LoggerFactory.getLogger(NAR.class);
+    static final Logger logger = LoggerFactory.getLogger(NAR.class);
 
 
 

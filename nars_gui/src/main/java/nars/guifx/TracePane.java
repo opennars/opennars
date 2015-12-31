@@ -24,11 +24,11 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 10/15/15.
  */
-abstract public class TracePane extends LogPane implements ChangeListener, Consumer<NAR> {
+public abstract class TracePane extends LogPane implements ChangeListener, Consumer<NAR> {
 
     public final NAR nar;
 
-    final static Logger logger = LoggerFactory.getLogger(TracePane.class);
+    static final Logger logger = LoggerFactory.getLogger(TracePane.class);
 
     /**
      * threshold for minimum displayable priority
@@ -98,7 +98,7 @@ abstract public class TracePane extends LogPane implements ChangeListener, Consu
     }
 
 
-    abstract public Node getNode(Object channel, Object signal);
+    public abstract Node getNode(Object channel, Object signal);
 
 
     @Override

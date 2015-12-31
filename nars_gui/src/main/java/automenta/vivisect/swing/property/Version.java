@@ -19,7 +19,7 @@ public class Version {
     * Get buildDate (set during build process to Sat Nov 10 10:56:08 CET 2012).
     * @return Date buildDate
     */
-   public static final Date getBuildDate() { return buildDate; }
+   public static Date getBuildDate() { return buildDate; }
 
 
    /** year (set during build process to "2005-2009"). */
@@ -29,7 +29,7 @@ public class Version {
     * Get year (set during build process to "2005-2009").
     * @return String year
     */
-   public static final String getYear() { return year; }
+   public static String getYear() { return year; }
 
 
    /** project (set during build process to "l2fprod-common"). */
@@ -39,7 +39,7 @@ public class Version {
     * Get project (set during build process to "l2fprod-common").
     * @return String project
     */
-   public static final String getProject() { return project; }
+   public static String getProject() { return project; }
 
 
    /** buildTimestamp (set during build process to "11/10/2012 10:56 AM"). */
@@ -50,7 +50,7 @@ public class Version {
     * Get buildTimestamp (set during build process to "11/10/2012 10:56 AM").
     * @return String buildTimestamp
     */
-   public static final String getBuildTimestamp() { return buildTimestamp; }
+   public static String getBuildTimestamp() { return buildTimestamp; }
 
 
    /** version (set during build process to "9.2"). */
@@ -60,6 +60,6 @@ public class Version {
     * Get version (set during build process to "9.2").
     * @return String version
     */
-   public static final String getVersion() { return version; }
+   public static String getVersion() { return version; }
 
 }

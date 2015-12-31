@@ -131,7 +131,7 @@ public class Derivelet {
     /**
      * run next iteration; true if still alive by end, false if died and needs recycled
      */
-    final public boolean cycle(final long now) {
+    public final boolean cycle(final long now) {
 
         if (this.ttl-- == 0) {
             //died
