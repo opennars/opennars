@@ -185,6 +185,7 @@ public class ConceptProcess implements Premise {
     }
 
 
+
     //    /** supplies at most 1 premise containing the pair of next tasklink and termlink into a premise */
 //    public static Stream<Task> nextPremise(NAR nar, final Concept concept, float taskLinkForgetDurations, Function<ConceptProcess,Stream<Task>> proc) {
 //

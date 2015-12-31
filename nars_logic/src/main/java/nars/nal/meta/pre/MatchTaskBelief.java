@@ -2,7 +2,7 @@ package nars.nal.meta.pre;
 
 import com.google.common.collect.ListMultimap;
 import nars.nal.PremiseMatch;
-import nars.nal.meta.BooleanCondition;
+import nars.nal.meta.AtomicBooleanCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.TermPattern;
 import nars.term.Term;
@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-@Deprecated public class MatchTaskBelief extends BooleanCondition<PremiseMatch> {
+@Deprecated public class MatchTaskBelief extends AtomicBooleanCondition<PremiseMatch> {
 
     //public final TaskBeliefPair pattern;
 

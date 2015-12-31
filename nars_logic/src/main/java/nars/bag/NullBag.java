@@ -44,7 +44,7 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public void sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
+    public NullBag<V> sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
         throw new RuntimeException("unimpl");
     }
 

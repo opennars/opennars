@@ -85,7 +85,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
         sample(n, null, target);
     }
 
-    public abstract void sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target);
+    public abstract Bag<V> sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target);
 //    /**
 //     * fills a collection with at-most N items, if an item passes the predicate.
 //     * returns how many items added

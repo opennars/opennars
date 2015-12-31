@@ -3,13 +3,13 @@ package nars.nal.meta.pre;
 import nars.$;
 import nars.Symbols;
 import nars.nal.PremiseMatch;
-import nars.nal.meta.BooleanCondition;
+import nars.nal.meta.AtomicBooleanCondition;
 import nars.term.Term;
 
 /**
  * Created by me on 8/27/15.
  */
-public class TaskPunctuation extends BooleanCondition<PremiseMatch> {
+public class TaskPunctuation extends AtomicBooleanCondition<PremiseMatch> {
 
     public final char punc;
     public final String id;

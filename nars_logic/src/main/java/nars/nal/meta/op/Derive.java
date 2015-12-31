@@ -11,6 +11,7 @@ import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
 import nars.nal.meta.AndCondition;
 import nars.nal.meta.BooleanCondition;
+import nars.nal.meta.ProcTerm;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
 import nars.process.ConceptProcess;
@@ -31,7 +32,7 @@ import static nars.truth.TruthFunctions.eternalizedConfidence;
  * Handles matched derivation results
  * < (&&, postMatch1, postMatch2) ==> derive(term) >
  */
-public class Derive extends Atom {
+public class Derive extends Atom implements ProcTerm<PremiseMatch> {
 
     private final String id;
 
@@ -83,14 +84,13 @@ public class Derive extends Atom {
     /** main entry point for derivation result handler.
      * @return true to allow the matcher to continue matching,
      * false to stop it */
-    public final boolean onMatch(PremiseMatch m) {
+    @Override public final void accept(PremiseMatch m) {
 
         Term tt = solve(m);
 
-        if ((tt != null) && (postMatch.booleanValueOf(m)))
+        if ((tt != null) && ((postMatch==null) || (postMatch.booleanValueOf(m))))
             derive(m, tt);
 
-        return true;
     }
 
 
@@ -98,9 +98,9 @@ public class Derive extends Atom {
     public Term solve(PremiseMatch match) {
 
         Term derivedTerm = match.apply(term);
+        if (derivedTerm == null)
+            return null;
 
-//        if (null == derivedTerm)
-//            return null;
 
         //HARD VOLUME LIMIT
         if (derivedTerm.volume() > Global.COMPOUND_VOLUME_MAX) {
@@ -293,7 +293,7 @@ public class Derive extends Atom {
                 .parent(task, belief /* null if single */)
                 .anticipate(occ != Tense.ETERNAL && anticipate);
 
-        if ((derived = m.derive(derived)) == null)
+        if ((derived = derive(m, derived)) == null)
             return;
 
         //--------- TASK WAS DERIVED if it reaches here
@@ -301,7 +301,7 @@ public class Derive extends Atom {
 
         if (truth != null && eternalize && !derived.isEternal()) {
 
-            m.derive(
+            derive(m,
                     new MutableTask(derived.term())
                             .punctuation(punct)
                             .truth(
@@ -317,6 +317,24 @@ public class Derive extends Atom {
 
     }
 
+
+    public Task derive(PremiseMatch p, Task derived) {
+
+        //HACK this should exclude the invalid rules which form any of these
+
+        ConceptProcess premise = p.premise;
+
+
+        //pre-normalize to avoid discovering invalidity after having consumed space and survived the input queue
+        derived = derived.normalize(premise.memory());
+
+        if ((null!=derived) && (null!= premise.derive(derived))) {
+            p.receiver.accept(derived);
+            return derived;
+        }
+
+        return null;
+    }
 
 
 }

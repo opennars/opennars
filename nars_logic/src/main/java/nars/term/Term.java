@@ -236,6 +236,7 @@ public interface Term extends Termed, Comparable, Termlike {
 //        return this;
 //    }
 //
+
     default boolean levelValid(int nal) {
 
         if (nal >= 8) return true;
@@ -243,7 +244,6 @@ public interface Term extends Termed, Comparable, Termlike {
         int mask = Op.NALLevelEqualAndAbove[nal];
         return (structure() | mask) == mask;
     }
-
 
     default String structureString() {
         return String.format("%16s",

@@ -2,7 +2,7 @@ package nars.nal.meta.pre;
 
 import nars.Premise;
 import nars.nal.PremiseMatch;
-import nars.nal.meta.BooleanCondition;
+import nars.nal.meta.AtomicBooleanCondition;
 import nars.task.Temporal;
 
 /**
@@ -10,7 +10,7 @@ import nars.task.Temporal;
  * %X is after %Y
  * TODO use less confusing terminology and order convention
  */
-public class After extends BooleanCondition<PremiseMatch> {
+public class After extends AtomicBooleanCondition<PremiseMatch> {
 
     public static final After the = new After();
 

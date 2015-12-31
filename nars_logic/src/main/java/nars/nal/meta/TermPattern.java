@@ -6,6 +6,7 @@ import nars.Op;
 import nars.nal.PremiseMatch;
 import nars.nal.meta.op.MatchTerm;
 import nars.nal.meta.op.SubTermOp;
+import nars.nal.meta.op.SubTermStructure;
 import nars.term.Term;
 import nars.term.constraint.MatchConstraint;
 
@@ -86,11 +87,11 @@ public class TermPattern {
         Term x1 = pattern.term(1);
         if (x0.op()!=Op.VAR_PATTERN) {
             pre.add(new SubTermOp(0, x0.op()));
-            //code.add(new FindSubst.SubTermStructure(type, 0, x0.structure()));
+            code.add(new SubTermStructure(Op.VAR_PATTERN, 0, x0.structure()));
         }
         if (x1.op()!=Op.VAR_PATTERN) {
             pre.add(new SubTermOp(1, x1.op()));
-            //code.add(new FindSubst.SubTermStructure(type, 1, x1.structure()));
+            code.add(new SubTermStructure(Op.VAR_PATTERN, 1, x1.structure()));
         }
 
         code.add(MatchTerm.get(pattern, constraints));
