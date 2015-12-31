@@ -118,7 +118,7 @@ public class RuleTrie  {
             List<BooleanCondition<PremiseMatch>> sub = seq.subList(from, to);
 
             BooleanCondition[] subseq = sub.toArray(new BooleanCondition[sub.size()]);
-            bb.add(new PremiseBranch(subseq, getBranches(n)));
+            bb.add(PremiseBranch.branch(subseq, getBranches(n)));
         });
 
         return bb.toArray(new ProcTerm[bb.size()]);

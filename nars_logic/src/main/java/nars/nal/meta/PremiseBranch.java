@@ -19,11 +19,11 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
     public final transient AndCondition<PremiseMatch> cond;
     public final transient ProcTerm<PremiseMatch> conseq;
 
-    public static ProcTerm<PremiseMatch> branch(BooleanCondition<PremiseMatch>[] condition, ProcTerm<PremiseMatch>[] conseq) {
+    public static ProcTerm<PremiseMatch> branch(BooleanCondition<PremiseMatch>[] condition, ProcTerm<PremiseMatch>... conseq) {
         if (conseq!=null && conseq.length > 0) {
-            return new PremiseBranch(condition,conseq);
+            return new PremiseBranch( condition, conseq);
         } else {
-            return Return.the;
+            return new PremiseBranch(condition, Return.the );
         }
     }
 
@@ -37,7 +37,7 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
         s.append("\n}");
     }
 
-    protected PremiseBranch(BooleanCondition<PremiseMatch>[] cond, ProcTerm<PremiseMatch>[] conseq) {
+    protected PremiseBranch(BooleanCondition<PremiseMatch>[] cond, ProcTerm<PremiseMatch>... conseq) {
         super(Op.IMPLICATION, new AndCondition(cond),  new ThenFork(conseq));
         this.cond = (AndCondition<PremiseMatch>) term(0);
         this.conseq = (ProcTerm<PremiseMatch>) term(1);
@@ -102,7 +102,7 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
 
     public static final class Return extends Atom implements ProcTerm<PremiseMatch> {
 
-        public static final Return the = new Return();
+        public static final ProcTerm<PremiseMatch> the = new Return();
 
         private Return() {
             super("return");

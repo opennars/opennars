@@ -19,9 +19,13 @@ import com.google.common.primitives.Longs;
 import nars.util.utf8.Utf8;
 import sun.misc.Unsafe;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Consumer;
+
+import static java.util.Arrays.stream;
 
 /**
  *
@@ -738,4 +742,34 @@ public class Util {
         }
         return choices[c];
     }
+
+
+    public static MethodHandle mhRef(Class<?> type, String name) {
+        try {
+            return MethodHandles
+                    .lookup()
+                    //.publicLookup(
+                    .unreflect(stream(type.getMethods()).filter(m -> m.getName().equals(name)).findFirst().get());
+        } catch (IllegalAccessException e) {
+            throw new Error(e);
+        }
+    }
+
+    public static <F> MethodHandle mh(String name, F fun) {
+        return mh(name, fun.getClass(), fun);
+    }
+
+    public static <F> MethodHandle mh(String name, Class<? extends F> type, F fun) {
+        return mhRef(type, name).bindTo(fun);
+    }
+    public static <F> MethodHandle mh(String name, F... fun) {
+        F fun0 = fun[0];
+        MethodHandle m = mh(name, fun0.getClass(), fun0);
+        for (int i = 1; i < fun.length; i++) {
+            m = m.bindTo(fun[i]);
+        }
+        return m;
+    }
+
+
 }

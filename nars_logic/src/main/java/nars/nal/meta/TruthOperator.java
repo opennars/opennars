@@ -12,7 +12,7 @@ public interface TruthOperator {
     Truth apply(Truth task, Truth belief, Memory m);
     boolean allowOverlap();
 
-    default boolean apply(PremiseMatch m) {
+    default boolean  apply(PremiseMatch m) {
         Premise premise = m.premise;
         Truth truth = apply(
                 premise.getTask().getTruth(),

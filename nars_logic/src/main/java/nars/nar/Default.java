@@ -489,7 +489,6 @@ public class Default extends AbstractNAR {
         @Override
         public void process(ConceptProcess p) {
             Collection<Task> buffer = derivedTasksBuffer;
-            Consumer<Task> narInput = nar::input;
 
             Deriver deriver = this.der;
             deriver.run(p, matcher, buffer::add);
@@ -511,8 +510,7 @@ public class Default extends AbstractNAR {
                         //p.getTaskLink().getPriority()/buffer.size()
                 );
 
-                buffer.forEach(narInput);
-
+                buffer.forEach(nar::input);
                 buffer.clear();
             }
 
