@@ -10,6 +10,7 @@ import nars.term.compound.GenericCompound;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 /**
@@ -60,12 +61,13 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
 
         @Override
         public boolean booleanValueOf(C m) {
-            for (BooleanCondition<C> x : terms()) {
-                if (!x.booleanValueOf(m))
-                    return false;
-            }
-            return true;
+
+            works:
+            return Arrays.stream(terms())/*.parallel()*/.allMatch(cBooleanCondition -> cBooleanCondition.booleanValueOf(m));
+            //doesnt:
+            //return Arrays.stream(terms()).parallel().allMatch(cBooleanCondition -> cBooleanCondition.booleanValueOf(m));
         }
+
 
         public void appendJavaCondition(StringBuilder s) {
             Joiner.on(" && ").appendTo(s, Stream.of(terms()).map(
