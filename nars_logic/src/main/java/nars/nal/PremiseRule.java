@@ -51,6 +51,11 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
         @Override
+        public String toJavaConditionString() {
+            return "true";
+        }
+
+        @Override
         public boolean booleanValueOf(PremiseMatch versioneds) {
             return false;
         }
@@ -594,6 +599,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
         Term[] newConclusion = getConclusion().terms().clone();
         newConclusion[0] = newR;
+
 
         return new PremiseRule(newPremise, $.p( newConclusion ));
     }

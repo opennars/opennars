@@ -3,7 +3,6 @@ package nars.nal.meta;
 import com.google.common.base.Joiner;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.Global;
-import nars.nal.Deriver;
 import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
 import nars.nal.PremiseRuleSet;
@@ -17,23 +16,19 @@ import java.util.function.Consumer;
 import static com.sun.org.apache.xerces.internal.impl.xs.opti.SchemaDOM.indent;
 
 
-public class RuleTrie extends Deriver {
+public class RuleTrie  {
 
-    private final Trie<List<BooleanCondition<PremiseMatch>>, PremiseRule> trie;
+    public final Trie<List<BooleanCondition<PremiseMatch>>, PremiseRule> trie;
+    public final ProcTerm<PremiseMatch>[] roots;
 
-    @Override
-    protected void run(PremiseMatch match) {
-        throw new RuntimeException("impl in subclass");
-    }
 
     public void printSummary() {
         printSummary(trie.root);
     }
 
-    public final ProcTerm<PremiseMatch>[] root;
 
     public RuleTrie(PremiseRuleSet R) {
-        super(R);
+        super();
 
         ObjectIntHashMap<BooleanCondition> conds = new ObjectIntHashMap<>();
 
@@ -85,7 +80,7 @@ public class RuleTrie extends Deriver {
             }
         });
 
-        root = getBranches(trie.root);
+        roots = getBranches(trie.root);
 
     }
 

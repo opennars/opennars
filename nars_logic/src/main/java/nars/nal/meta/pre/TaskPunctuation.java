@@ -50,8 +50,8 @@ public class TaskPunctuation extends BooleanCondition<PremiseMatch> {
     }
 
     @Override
-    public boolean booleanValueOf(PremiseMatch r) {
-        char taskPunc = r.premise.getTask().getPunctuation();
+    public boolean booleanValueOf(PremiseMatch m) {
+        char taskPunc = m.premise.getTask().getPunctuation();
         return test(taskPunc);
     }
 
@@ -59,4 +59,8 @@ public class TaskPunctuation extends BooleanCondition<PremiseMatch> {
         return taskPunc == punc;
     }
 
+    @Override
+    public String toJavaConditionString() {
+        return "'" + punc + "' == p.getTask().getPunctuation()";
+    }
 }

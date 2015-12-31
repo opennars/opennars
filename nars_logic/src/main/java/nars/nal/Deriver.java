@@ -33,7 +33,7 @@ public abstract class Deriver  {
 
     public static synchronized Deriver getDefaultDeriver() {
         if (defaultDeriver == null) {
-            defaultDeriver = new TrieDeriver( getDefaultRules(), terms );
+            defaultDeriver = new TrieDeriver( getDefaultRules());
             //defaultDeriver = new SimpleDeriver( getDefaultRules() );
         }
         return defaultDeriver;
@@ -45,9 +45,14 @@ public abstract class Deriver  {
     public final PremiseRuleSet rules;
 
 
-    protected Deriver(PremiseRuleSet rules) {
+    public Deriver() {
+        this.rules = null;
+    }
+
+    public Deriver(PremiseRuleSet rules) {
         this.rules = rules;
     }
+
 
 //    //not ready yet
 //    static void loadCachedRules() {

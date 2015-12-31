@@ -5,7 +5,7 @@ import nars.Global;
 import nars.Op;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.meta.op.Solve;
+import nars.nal.meta.op.Derive;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
@@ -39,7 +39,7 @@ public class PremiseMatch extends FindSubst {
     public final Versioned<Integer> occurrenceShift;
     public final Versioned<Truth> truth;
     public final Versioned<Character> punct;
-    @Deprecated public final Versioned<Solve.Derive> derived;
+    @Deprecated public final Versioned<Derive> derived;
 
     public boolean cyclic;
 
@@ -82,7 +82,7 @@ public class PremiseMatch extends FindSubst {
     public boolean onMatch() {
 
 
-        Solve.Derive dd = derived.get();
+        Derive dd = derived.get();
 
         Term tt = dd.solve(this);
         if (tt == null) return true;

@@ -1,10 +1,13 @@
 package nars.nal.meta;
 
+import com.google.common.base.Joiner;
 import com.gs.collections.api.block.function.primitive.BooleanFunction;
 import nars.Op;
 import nars.nal.PremiseMatch;
 import nars.term.atom.Atom;
 import nars.term.compound.GenericCompound;
+
+import java.util.stream.Stream;
 
 /**
 
@@ -13,7 +16,7 @@ import nars.term.compound.GenericCompound;
  */
 public final class PremiseBranch extends GenericCompound implements ProcTerm<PremiseMatch> {
 
-    public final transient BooleanFunction<PremiseMatch> cond;
+    public final transient AndCondition<PremiseMatch> cond;
     public final transient ProcTerm<PremiseMatch> conseq;
 
     public static ProcTerm<PremiseMatch> branch(BooleanCondition<PremiseMatch>[] condition, ProcTerm<PremiseMatch>[] conseq) {
@@ -24,10 +27,19 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
         }
     }
 
+    @Override
+    public void appendJavaProcedure(StringBuilder s) {
+        s.append("if (");
+        cond.appendJavaCondition(s);
+        s.append(") {\n");
+        s.append("\t ");
+        conseq.appendJavaProcedure(s);
+        s.append("\n}");
+    }
 
     protected PremiseBranch(BooleanCondition<PremiseMatch>[] cond, ProcTerm<PremiseMatch>[] conseq) {
         super(Op.IMPLICATION, new AndCondition(cond),  new ThenFork(conseq));
-        this.cond = (BooleanFunction<PremiseMatch>) term(0);
+        this.cond = (AndCondition<PremiseMatch>) term(0);
         this.conseq = (ProcTerm<PremiseMatch>) term(1);
     }
 
@@ -51,6 +63,13 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
             }
             return true;
         }
+
+        public void appendJavaCondition(StringBuilder s) {
+            Joiner.on(" && ").appendTo(s, Stream.of(terms()).map(
+                b -> ('(' + b.toJavaConditionString() + ')'))
+                    .iterator()
+            );
+        }
     }
 
     public static final class ThenFork extends GenericCompound<ProcTerm<PremiseMatch>> implements ProcTerm<PremiseMatch> {
@@ -59,6 +78,15 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
             super(Op.PARALLEL, children);
         }
 
+        @Override
+        public void appendJavaProcedure(StringBuilder s) {
+            //s.append("/* " + this + "*/");
+            for (ProcTerm<PremiseMatch> p : terms()) {
+                s.append("\t\t");
+                p.appendJavaProcedure(s);
+                s.append("\n");
+            }
+        }
 
         @Override
         public final void accept(PremiseMatch m) {
@@ -78,6 +106,12 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
 
         private Return() {
             super("return");
+        }
+
+
+        @Override
+        public void appendJavaProcedure(StringBuilder s) {
+            s.append("return;");
         }
 
         @Override

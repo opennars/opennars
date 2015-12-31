@@ -22,7 +22,7 @@ public class RuleDerivationGraphTest {
         x.printSummary();
 
 
-        for (ProcTerm<PremiseMatch> p : x.root) {
+        for (ProcTerm<PremiseMatch> p : x.roots) {
             System.out.println();
             System.out.println(p);
         }

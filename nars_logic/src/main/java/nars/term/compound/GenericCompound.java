@@ -157,7 +157,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
      */
     @Override
     public void setDuration(int duration) {
-        if (TermMetadata.hasTemporals(this)) {
+        if (TermMetadata.hasMetadata(this)) {
             int n = size();
             for (int i = 0; i < n; i++)
                 term(i).setDuration(duration);

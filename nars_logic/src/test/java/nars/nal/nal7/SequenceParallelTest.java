@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 /** various tests of the Sequence and Parallel term types */
 public class SequenceParallelTest {
 
-    static final NAR t = new Default(); //DURATION=5 by default
+    static final NAR t = new Terminal(); //DURATION=5 by default
     static final int DURATION = t.memory.duration();
 
     @Test public void testSequenceTaskNormalization() {
@@ -337,7 +337,7 @@ public class SequenceParallelTest {
         Concept t2 = nar.concept(t);
         String s1 = t.toString();
         String s2 = t2.toString();
-        assert s1.contains("/5");
+        assertTrue( s1, s1.contains("/5") );
         assertEquals(s1,s2);
     }
 

@@ -23,7 +23,14 @@ public abstract class BooleanCondition<C> extends Atomic implements BooleanFunct
     public abstract String toString();
 
     public void addConditions(List<BooleanCondition<C>> l) {
+        //default: just add this
         l.add(this);
+    }
+
+    public String toJavaConditionString() {
+        return ("(/* TODO: " +
+                this.toString() +
+                " */ false)\t");
     }
 
 

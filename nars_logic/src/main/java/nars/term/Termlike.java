@@ -22,6 +22,11 @@ public interface Termlike  {
         return true;
     }
 
+    default boolean hasAny(int structuralVector) {
+        return (structure() & structuralVector) != 0;
+    }
+
+
     default boolean impossibleStructureMatch(int possibleSubtermStructure) {
         return impossibleStructureMatch(
                 structure(),

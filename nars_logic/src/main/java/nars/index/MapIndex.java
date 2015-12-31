@@ -58,7 +58,7 @@ public class MapIndex implements TermIndex {
     }
 
     public static boolean isInternable(Term t) {
-        return !(t instanceof TermMetadata);
+        return !TermMetadata.hasMetadata(t);
     }
 
     @Override
@@ -101,7 +101,8 @@ public class MapIndex implements TermIndex {
     }
 
     public static Termed makeDefault(Op op, int relation, TermContainer t) {
-        if ((op == Op.SEQUENCE) || (op == Op.PARALLEL)) {
+        if ((TermMetadata.hasMetadata(t))) {
+
             //intermval metadata, handle special
             return $.the(op, relation, t);
         } else {

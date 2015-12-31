@@ -3,7 +3,6 @@ package nars.nal;
 import nars.index.MapIndex;
 import nars.term.TermVector;
 import nars.term.Termed;
-import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
 import java.util.HashMap;
@@ -15,16 +14,7 @@ public class PatternIndex extends MapIndex {
 
     public PatternIndex() {
         super(new HashMap(1024),new HashMap(1024));
-
-        setTarget(this); //default to this as its own target
     }
-
-    TermIndex target = null;
-
-    public void setTarget(TermIndex t) {
-        target = t;
-    }
-
 
 
     @Override

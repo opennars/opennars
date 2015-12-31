@@ -8,6 +8,7 @@ import nars.concept.Concept;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
+import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
@@ -172,6 +173,22 @@ public abstract class AbstractTask extends Item<Task>
             throw new RuntimeException("invalid punctuation: " + punc);
         }
 
+
+        if (t instanceof Sequence)  {
+            //TODO seq not re-impl yet
+            long[] offset = new long[1];
+            Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
+
+            if (!Task.validTaskTerm(st)) {
+                //it was reduced to something which is invalid as a task term
+                return null;
+            }
+
+            t = (Compound)st;
+            if (!isEternal())
+                occurrenceTime -= offset[0];
+        }
+
         if (t == null) throw new RuntimeException("null term");
         Concept tNorm = memory.concept(t);
         if (tNorm == null)
@@ -204,16 +221,7 @@ public abstract class AbstractTask extends Item<Task>
         }
 
 
-        if (t instanceof Sequence)  {
-            //TODO seq not re-impl yet
-//            long[] offset = new long[1];
-//            Term st = ((Sequence)t).cloneRemovingSuffixInterval(offset);
-//            t = Task.validTaskTerm(st);
-//            if (t == null)
-//                return null; //it was reduced to something which is invalid as a task term
-//            if (!isEternal())
-//                occurrenceTime -= offset[0];
-        }
+
 
 
 

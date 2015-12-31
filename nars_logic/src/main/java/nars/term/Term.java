@@ -116,10 +116,6 @@ public interface Term extends Termed, Comparable, Termlike {
 //    }
 //
 
-    default boolean hasAny(int structuralVector) {
-        int s = structure();
-        return (s | structuralVector) == s;
-    }
     @Override
     default boolean isAny(int structuralVector) {
         int s = op().bit();
