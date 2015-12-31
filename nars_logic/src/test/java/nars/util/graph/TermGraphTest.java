@@ -124,12 +124,7 @@ public class TermGraphTest {
                         s1.op(Op.VAR_PATTERN) || (s2.op(Op.VAR_PATTERN)))
                     return true;
                 else {
-                    if (s1 instanceof Compound) {
-                        return s1.op() == s2.op(); //etc
-                    } else {
-                        //atomic
-                        return s1.equals(s2);
-                    }
+                    return s1 instanceof Compound ? s1.op() == s2.op() : s1.equals(s2);
                 }
             }
 
@@ -137,11 +132,7 @@ public class TermGraphTest {
             public int equivalenceHashcode(Term t, Graph<Term, ObjectIntPair<Compound>> g) {
                 if (isRoot(t))
                     return 0;
-                if (t instanceof Compound) {
-                    return t.op().hashCode();
-                } else {
-                    return t.hashCode();
-                }
+                return t instanceof Compound ? t.op().hashCode() : t.hashCode();
                 //return Util.hashCombine(t.hashCode(), g.hashCode());
             }
         };
@@ -154,18 +145,12 @@ public class TermGraphTest {
                                                       ObjectIntPair<Compound> e2,
                                                       Graph<Term, ObjectIntPair<Compound>> g1,
                                                       Graph<Term, ObjectIntPair<Compound>> g2) {
-                        if (e1.getOne().isCommutative())
-                            return true; //order irrelevant
-                        else
-                            return e1.getTwo() == e2.getTwo(); //order matters
+                        return e1.getOne().isCommutative() ? true : e1.getTwo() == e2.getTwo();
                     }
 
                     @Override
                     public int equivalenceHashcode(ObjectIntPair<Compound> e, Graph<Term, ObjectIntPair<Compound>> context) {
-                        if (e.getOne().isCommutative())
-                            return 0;
-                        else
-                            return e.getTwo();
+                        return e.getOne().isCommutative() ? 0 : e.getTwo();
                     }
                 }
                 ;
@@ -420,11 +405,7 @@ public class TermGraphTest {
             this.graph1 = graph1;
             this.graph2 = graph2;
 
-            if (vertexChecker != null) {
-                this.vertexComparator = vertexChecker;
-            } else {
-                this.vertexComparator = vertexDefaultIsomorphismComparator;
-            }
+            this.vertexComparator = vertexChecker != null ? vertexChecker : vertexDefaultIsomorphismComparator;
 
             // Unlike vertexes, edges have better performance, when not tested for
             // Equivalence, so if the user did not supply one, use null
@@ -600,11 +581,7 @@ public class TermGraphTest {
                 }
             }
 
-            if (result == true) {
-                return resultRelation;
-            } else {
-                return null;
-            }
+            return result == true ? resultRelation : null;
         }
 
         /**

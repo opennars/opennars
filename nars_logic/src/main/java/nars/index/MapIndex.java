@@ -101,14 +101,7 @@ public class MapIndex implements TermIndex {
     }
 
     public static Termed makeDefault(Op op, int relation, TermContainer t) {
-        if ((TermMetadata.hasMetadata(t))) {
-
-            //intermval metadata, handle special
-            return $.the(op, relation, t);
-        } else {
-            //TODO find existing instance and don't construct a duplciate which will get unified on re-entry
-            return internCompound(op, t, relation);
-        }
+        return TermMetadata.hasMetadata(t) ? $.the(op, relation, t) : internCompound(op, t, relation);
     }
 
     @Override public Termed internAtomic(Term t) {

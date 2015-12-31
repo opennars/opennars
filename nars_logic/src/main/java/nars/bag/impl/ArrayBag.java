@@ -55,10 +55,7 @@ public class ArrayBag<V> extends Bag<V> {
     @Override public BagBudget<V> put(Object v) {
         //TODO combine with CurveBag.put(v)
         BagBudget<V> existing = get(v);
-        if (existing!=null)
-            return existing;
-        else
-            return put((V)v, UnitBudget.zero);
+        return existing != null ? existing : put((V) v, UnitBudget.zero);
     }
 
 

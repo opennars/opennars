@@ -24,11 +24,7 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
     public final transient ProcTerm<PremiseMatch> conseq;
 
     public static ProcTerm<PremiseMatch> branch(BooleanCondition<PremiseMatch>[] condition, ProcTerm<PremiseMatch>... conseq) {
-        if (conseq!=null && conseq.length > 0) {
-            return new PremiseBranch( condition, conseq);
-        } else {
-            return new PremiseBranch(condition, Return.the );
-        }
+        return conseq != null && conseq.length > 0 ? new PremiseBranch(condition, conseq) : new PremiseBranch(condition, Return.the);
     }
 
     @Override
@@ -97,10 +93,7 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
                             .append(ProcTerm.class, p))
                             .foldStatic(ThenFork.class, "fork").dropLast(2);
 
-                    if (b!=null)
-                        b = a.to(b);
-                    else
-                        b = a;
+                    b = b != null ? a.to(b) : a;
 
                 }
                 this.method = b!=null ? b.identity() : null;
