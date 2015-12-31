@@ -41,7 +41,7 @@ public class FasterList<X> extends FastList<X> {
      * if index==-1, then size will be zero, similar to calling clear(),
      * except the array items will not be null
      * */
-    public void popTo(int index) {
+    public final void popTo(int index) {
         size = index+1;
     }
 

@@ -91,7 +91,7 @@ public class GuavaIndex implements TermIndex {
 
 
     @Override
-    public Termed getIfPresent(Termed t) {
+    public Termed getTermIfPresent(Termed t) {
         return data.getIfPresent(t.term());
     }
 
@@ -111,13 +111,8 @@ public class GuavaIndex implements TermIndex {
     }
 
     @Override
-    public Termed put(Term term, Termed termed) {
-        if (termed == null) {
-            throw new RuntimeException("null value for " + term);
-        }
-        data.put(term, termed);
-        //??
-        return null;
+    public void putTerm(Termed termed) {
+        data.put(termed.term(), termed);
     }
 
     @Override
@@ -127,11 +122,11 @@ public class GuavaIndex implements TermIndex {
 
     @Override
     public Termed internCompound(Op op, int relation, TermContainer subterms) {
-        return MapIndex.makeDefault(op, relation, internSubterms(subterms));
+        return MapIndex.intern(op, relation, getIfAbsentIntern(subterms));
     }
 
     @Override
-    public TermContainer internSubterms(TermContainer s) {
+    public TermContainer getIfAbsentIntern(TermContainer s) {
 //        try {
 //            //return subterms.get(s, () -> internSubterms(s.terms()));
 //        } catch (ExecutionException e) {

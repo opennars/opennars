@@ -1,21 +1,18 @@
 package nars.index;
 
-import nars.$;
 import nars.Global;
-import nars.Op;
-import nars.term.*;
-import nars.term.compile.TermIndex;
-import nars.term.compound.GenericCompound;
+import nars.term.Term;
+import nars.term.TermContainer;
+import nars.term.Termed;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.PrintStream;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
  * Created by me on 12/7/15.
  */
-public class MapIndex implements TermIndex {
+public class MapIndex extends AbstractMapIndex {
 
     public final Map<Term, Termed> data;
     public final Map<TermContainer, TermContainer> subterms;
@@ -31,38 +28,19 @@ public class MapIndex implements TermIndex {
         this.subterms = subterms;
     }
 
-    public Termed get(Object t) {
-        if (!(t instanceof Termed)) {
-            throw new RuntimeException("invalid key");
-        }
 
-        Termed xx = (Termed) t;
-        Term x = xx.term();
-
-        if (!isInternable(x)) {
-            return xx;
-        }
-
-        Map<Term, Termed> d = this.data;
-
-        Termed y = d.get(x);
+    @Override @NotNull
+    public Termed getIfAbsentIntern(Term x) {
+        Termed y = getTermIfPresent(x);
         if (y == null) {
             y = intern(x);
-            d.put(y.term(), y);
+            putTerm(y);
         }
         return y;
-
-        //requires concurrent:
-        //return data.computeIfAbsent(tt.term(), this::intern);
-
-    }
-
-    public static boolean isInternable(Term t) {
-        return !TermMetadata.hasMetadata(t);
     }
 
     @Override
-    public final Termed getIfPresent(Termed t) {
+    public final Termed getTermIfPresent(Termed t) {
         return data.get(t);
     }
 
@@ -82,9 +60,11 @@ public class MapIndex implements TermIndex {
         return data.remove(key);
     }
 
+
+
     @Override
-    public Termed put(Term term, Termed termed) {
-        return data.put(termed.term(), termed);
+    public void putTerm(Termed termed) {
+        data.put(termed.term(), termed);
     }
 
     @Override
@@ -93,84 +73,23 @@ public class MapIndex implements TermIndex {
     }
 
 
-
-
-
-    public Termed internCompound(Op op, int relation, TermContainer t) {
-        return makeDefault(op, relation, internSubterms(t));
-    }
-
-    public static Termed makeDefault(Op op, int relation, TermContainer t) {
-        if ((TermMetadata.hasMetadata(t))) {
-
-            //intermval metadata, handle special
-            return $.the(op, relation, t);
-        } else {
-            //TODO find existing instance and don't construct a duplciate which will get unified on re-entry
-            return internCompound(op, t, relation);
-        }
-    }
-
-    @Override public Termed internAtomic(Term t) {
-        return t;
-    }
-
-    public TermContainer internSubterms(TermContainer s) {
-        Map<TermContainer, TermContainer> st = subterms;
-        TermContainer existing = st.get(s);
+    @Override public TermContainer getIfAbsentIntern(TermContainer s) {
+        TermContainer existing = getSubtermsIfPresent(s);
         if (existing == null) {
             s = internSubterms(s.terms());
-            st.put(s, s);
+            putSubterms(s);
             return s;
         }
         return existing;
     }
 
-
-    protected static Termed internCompound(Op op, TermContainer subterms, int relation) {
-        return new GenericCompound(
-            (TermVector) subterms, op, relation
-        );
+    protected void putSubterms(TermContainer subterms) {
+        this.subterms.put(subterms,subterms);
     }
 
-
-    @Override
-    public void print(PrintStream out) {
-        BiConsumer itemPrinter = (k, v) -> System.out.println(v.getClass().getSimpleName() + ": " + v);
-        data.forEach(itemPrinter);
-        System.out.println("--");
-        subterms.forEach(itemPrinter);
+    protected TermContainer getSubtermsIfPresent(TermContainer subterms) {
+        return this.subterms.get(subterms);
     }
-
-//    protected <T extends Term> Compound<T> compileCompound(Compound<T> c) {
-//        return compileCompound(c, get(c.subterms()));
-//    }
-
-
-
-//    protected <T extends Term> Compound<T> compileCompound(Compound<T> c, TermContainer subs) {
-////        if ((c instanceof GenericCompound) && (!(c instanceof TermMetadata))) {
-////            //special case, fast clone
-////            return new GenericCompound(c.op(), (TermVector)subs, ((GenericCompound) c).relation) {
-////                @Override
-////                public Term clone(Term[] replaced) {
-////                    //TODO use a table with the following lookup
-////                    //before needing to construct a term:
-////                    // (op,relation), (subterm) --> compound
-////                    //this way an existing op+relation+subterm
-////                    //can be retrieved without constructing
-////                    //the term that will eventually match with it
-////
-////                    return MapIndex.this.getTerm(
-////                            compileCompound(this,
-////                                get(new TermVector(replaced)))
-////                           );
-////                }
-////            };
-////        }
-//        return (Compound<T>) c.clone(subs);
-//    }
-
 
 
     @Override

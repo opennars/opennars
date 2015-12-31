@@ -40,18 +40,18 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
     @Override
     Termed get(Object t);
-    Termed getIfPresent(Termed t);
+    Termed getTermIfPresent(Termed t);
 
     /** gets an existing item or applies the builder to produce something to return */
     default <K extends Term> Termed<K> apply(K key, Function<K,Termed> builder) {
-        Termed existing = getIfPresent(key);
+        Termed existing = getTermIfPresent(key);
         if (existing == null) {
-            put(key, existing = builder.apply(key));
+            putTerm(existing = builder.apply(key));
         }
         return existing;
     }
 
-    TermContainer internSubterms(TermContainer s);
+    TermContainer getIfAbsentIntern(TermContainer s);
 
     default Term term(Term src, TermContainer subs) {
         if (src instanceof Compound) {
@@ -63,6 +63,14 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
             return src;
         }
     }
+
+    @Deprecated @Override
+    default Termed put(Term term, Termed termed) {
+        throw new RuntimeException("n/a");
+    }
+
+    void putTerm(Termed termed);
+
 
     @Override
     default Term term(Object t) {
@@ -180,7 +188,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         }
 
         @Override
-        public TermContainer internSubterms(TermContainer s) {
+        public TermContainer getIfAbsentIntern(TermContainer s) {
             return s;
         }
 
@@ -195,7 +203,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         }
 
         @Override
-        public Termed getIfPresent(Termed t) {
+        public Termed getTermIfPresent(Termed t) {
             return t;
         }
 
@@ -223,6 +231,11 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
         @Override
         public Termed put(Term termed, Termed termed2) {
             throw new RuntimeException("n/a");
+        }
+
+        @Override
+        public void putTerm(Termed termed) {
+
         }
 
         @Override

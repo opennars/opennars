@@ -1,4 +1,4 @@
-package nars.term.compile;
+package nars.term;
 
 import javassist.scopedpool.SoftValueHashMap;
 import nars.NAR;
@@ -8,8 +8,7 @@ import nars.nal.nal7.Sequence;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
-import nars.term.Term;
-import nars.term.Termed;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.time.FrameClock;
 import nars.util.data.map.UnifriedMap;
@@ -80,10 +79,10 @@ public class TermIndexTest {
         NAR n = new Terminal(i);
 
         Termed a = n.term("(&/, 1, /2)");
-        assertNull(n.memory.index.getIfPresent(a));
+        assertNull(n.memory.index.getTermIfPresent(a));
 
         Termed b = n.term("(&/, 1, /3)");
-        assertNull(n.memory.index.getIfPresent(b));
+        assertNull(n.memory.index.getTermIfPresent(b));
 
         assertFalse(((Sequence)a).equals2((Sequence) b.term()));
 

@@ -17,7 +17,7 @@ public class Versioning extends FasterList<Versioned> {
         return now + ":" + super.toString();
     }
 
-    public int now() {
+    public final int now() {
         return now;
     }
 
@@ -47,7 +47,13 @@ public class Versioning extends FasterList<Versioned> {
     /** reverts/undo to previous state */
     public final void revert(int when) {
         int was = now;
-        if (was == when) return; //nothing
+        if (was == when)
+            return; //no change
+
+        doRevert(when, was);
+    }
+
+    public void doRevert(int when, int was) {
         if (was < when)
             throw new RuntimeException("reverting to future time");
         now = when;
@@ -56,14 +62,11 @@ public class Versioning extends FasterList<Versioned> {
         if (s == -1) return; //empty
 
         while (get(s).revertNext(when)) {
-            --s;
-            if (s < 0) break;
-            //break; //HACK for now, 1 at a time
+            if (--s < 0)
+                break;
         }
 
         popTo(s);
-
-
     }
 
     /** assigns a new serial ID to a versioned item for its use as a hashcode */
