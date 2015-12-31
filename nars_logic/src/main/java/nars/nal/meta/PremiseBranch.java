@@ -2,11 +2,14 @@ package nars.nal.meta;
 
 import com.google.common.base.Joiner;
 import com.gs.collections.api.block.function.primitive.BooleanFunction;
+import com.headius.invokebinder.Binder;
 import nars.Op;
 import nars.nal.PremiseMatch;
 import nars.term.atom.Atom;
 import nars.term.compound.GenericCompound;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.util.stream.Stream;
 
 /**
@@ -74,8 +77,36 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
 
     public static final class ThenFork extends GenericCompound<ProcTerm<PremiseMatch>> implements ProcTerm<PremiseMatch> {
 
+        private final MethodHandle method;
+
         public ThenFork(ProcTerm<PremiseMatch>[] children) {
             super(Op.PARALLEL, children);
+
+
+            try {
+                MethodHandles.Lookup l = MethodHandles.publicLookup();
+
+                Binder b = null;
+                for (ProcTerm p : children) {
+                    //MethodHandle ph = l.findVirtual(p.getClass(), "accept", methodType(PremiseMatch.class));
+
+
+                    Binder a = new Binder(Binder.from(PremiseMatch.class, PremiseMatch.class)
+                            .append(ProcTerm.class, p))
+                            .foldStatic(ThenFork.class, "fork").dropLast(2);
+
+                    if (b!=null)
+                        b = a.to(b);
+                    else
+                        b = a;
+
+                }
+                this.method = b!=null ? b.identity() : null;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
@@ -88,15 +119,27 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
             }
         }
 
+        public static PremiseMatch fork(PremiseMatch m, ProcTerm proc) {
+            int revertTime = m.now();
+            proc.accept(m);
+            m.revert(revertTime);
+            return m;
+        }
+
         @Override
         public void accept(PremiseMatch m) {
 
-            int now = m.now();
-
-            for (ProcTerm<PremiseMatch> s : terms()) {
-                s.accept(m);
-                m.revert(now);
+            if (method == null) return;
+            try {
+                method.invoke(m);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
             }
+
+//            for (ProcTerm<PremiseMatch> s : terms()) {
+//                s.accept(m);
+//                m.revert(now);
+//            }
         }
     }
 
