@@ -48,7 +48,7 @@ public class UnificationTest  {
         Term t2 = nar.concept(s2).get();
 
         //a somewhat strict lower bound
-        int power = 4 * (1 + t1.volume() * t2.volume());
+        //int power = 4 * (1 + t1.volume() * t2.volume());
         //power*=power;
 
         AtomicBoolean subbed = new AtomicBoolean(false);

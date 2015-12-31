@@ -83,6 +83,7 @@ public final class Symbols {
 
     /* special characters in argument list */
     public static final char ARGUMENT_SEPARATOR = ',';
+    public static final String ARGUMENT_SEPARATOR_PRETTY = ", ";
     public static final byte ARGUMENT_SEPARATORbyte = (byte)',';
     public static final char IMAGE_PLACE_HOLDER = '_';
     
@@ -90,6 +91,7 @@ public final class Symbols {
     public static final char INTERVAL_PREFIX = '/'; //TODO switch to: ????
     public static final char TERM_PREFIX = 'T';
     public static final char QUOTE = '\"';
+
 
 
 

@@ -1,5 +1,6 @@
 package nars.term;
 
+import com.google.common.base.Joiner;
 import com.gs.collections.api.block.function.Function;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.term.compound.Compound;
@@ -31,29 +32,19 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
     public final T[] term;
 
 
-    @Override public T[] terms() {
-        return term;
-    }
-
-
-
-    @Override public final Term[] terms(IntObjectPredicate<T> filter) {
-        return Terms.filter(term, filter);
-    }
-
 
     /**
      * bitvector of subterm types, indexed by NALOperator's .ordinal() and OR'd into by each subterm
      */
     protected transient int structureHash;
     protected transient int contentHash;
-    protected transient int varTotal;
-    protected transient int volume;
-    protected transient int complexity;
+    protected transient short volume;
+    protected transient short complexity;
 
     /**
-     * # variables contained, of each type
+     * # variables contained, of each type & total
      */
+    protected transient byte varTotal;
     protected transient byte hasVarQueries;
     protected transient byte hasVarIndeps;
     protected transient byte hasVarDeps;
@@ -80,11 +71,22 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
     public TermVector(T[] source, Function<T,T> mapping) {
         int len = source.length;
         Term[] t = this.term = (T[]) new Term[len];
-        for (int i = 0; i < len; i++) {
+        for (int i = 0; i < len; i++)
             t[i] = mapping.valueOf(source[i]);
-        }
         init();
     }
+
+
+    @Override public T[] terms() {
+        return term;
+    }
+
+
+
+    @Override public final Term[] terms(IntObjectPredicate<T> filter) {
+        return Terms.filter(term, filter);
+    }
+
 
     @Override
     public final int structure() {
@@ -103,17 +105,14 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
     @Override
     public final T termOr(int index, T resultIfInvalidIndex) {
         T[] term = this.term;
-        if (term.length <= index)
-            return resultIfInvalidIndex;
-        return term[index];
+        return term.length <= index ?
+                resultIfInvalidIndex : term[index];
     }
 
     @Override
     public final int volume() {
         return volume;
     }
-
-
 
     /**
      * report the term's syntactic complexity
@@ -131,7 +130,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
      * @return the size of the component list
      */
     @Override
-    public int size() {
+    public final int size() {
         return term.length;
     }
 
@@ -155,9 +154,8 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
 
     @Override
     public String toString() {
-        return '(' + Arrays.toString(term) + ')';
+        return '(' + Joiner.on(',').join(term) + ')';
     }
-
 
     @Override
     public final int varDep() {
@@ -179,13 +177,11 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
         return varTotal;
     }
 
-    public Term[] cloneTermsReplacing(int index, Term replaced) {
-        Term[] y = termsCopy();
-        y[index] = replaced;
-        return y;
-    }
-
-
+//    public Term[] cloneTermsReplacing(int index, Term replaced) {
+//        Term[] y = termsCopy();
+//        y[index] = replaced;
+//        return y;
+//    }
 
     public final boolean isEmpty() {
         return size() != 0;
@@ -196,9 +192,8 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
      * first level only, not recursive
      */
     public final boolean contains(Object o) {
-        if (o instanceof Term)
-            return containsTerm((Term) o);
-        return false;
+        return o instanceof Term ?
+                containsTerm((Term) o) : false;
     }
 
     @Override
@@ -210,9 +205,8 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
     @Override
     public final void forEach(Consumer<? super T> action, int start, int stop) {
         T[] tt = term;
-        for (int i = start; i < stop; i++) {
+        for (int i = start; i < stop; i++)
             action.accept(tt[i]);
-        }
     }
 
     @Override
@@ -230,9 +224,8 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
      */
     @Override
     public final boolean containsTerm(Term t) {
-        if (impossibleSubterm(t))
-            return false;
-        return Terms.contains(term, t);
+        return impossibleSubterm(t) ? false :
+                Terms.contains(term, t);
     }
 
 
@@ -244,7 +237,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
 
 
     /** returns hashcode */
-    public int init() {
+    public final int init() {
 
         int deps = 0, indeps = 0, queries = 0;
         int compl = 1, vol = 1;
@@ -255,7 +248,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
         for (Term t : term) {
 
             if (t == this)
-                throw new RuntimeException("term can not contain itself");
+                throw new RecursiveTermContentException(t);
 
             contentHash = Util.hashCombine(contentHash, t.hashCode());
 
@@ -267,13 +260,13 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
             subt |= t.structure();
         }
 
-
+        //MAX 255 variables
         hasVarDeps = (byte) deps;
         hasVarIndeps = (byte) indeps;
         hasVarQueries = (byte) queries;
         structureHash = subt;
         normalized =
-                (varTotal = (short) (deps + indeps + queries)) == 0;
+                (varTotal = (byte) (deps + indeps + queries)) == 0;
 
         complexity = (short) compl;
         volume = (short) vol;
@@ -331,6 +324,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
 
     @Override
     public final int compareTo(Object o) {
+        if (this == o) return 0;
 
         int diff;
         if ((diff = Integer.compare(hashCode(), o.hashCode())) != 0)
@@ -338,19 +332,23 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
 
         //TODO dont assume it's a TermVector
         TermVector c = (TermVector) o;
-        if ((diff = Integer.compare(structure(), c.structure())) != 0)
-            return diff;
+        int diff2;
+        if ((diff2 = Integer.compare(structure(), c.structure())) != 0)
+            return diff2;
 
+        return compareContent(c);
+    }
 
-        int s = size();
+    public int compareContent(TermVector c) {
+
+        int s = size(), diff;
         if ((diff = Integer.compare(s, c.size())) != 0)
             return diff;
 
-
+        T[] thisTerms = this.term;
+        final Term[] thatTerms = c.term;
         for (int i = 0; i < s; i++) {
-            Term a = term(i);
-            Term b = c.term(i);
-            int d = a.compareTo(b);
+            int d = thisTerms[i].compareTo(thatTerms[i]);
 
         /*
         if (Global.DEBUG) {
@@ -372,6 +370,14 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
     }
 
 
+    /** thrown if a compound term contains itself as an immediate subterm */
+    public static final class RecursiveTermContentException extends RuntimeException {
 
+        public final Term term;
 
+        public RecursiveTermContentException(Term t) {
+            super(t.toString());
+            this.term = t;
+        }
+    }
 }

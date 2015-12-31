@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import static nars.Symbols.ARGUMENT_SEPARATOR;
+import static nars.Symbols.ARGUMENT_SEPARATOR_PRETTY;
 
 /**
  * a compound term
@@ -48,10 +49,10 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
      * TODO generalize to a provided lambda predicate selector
      * */
     default Set<Term> unique(Op type) {
-        Set<Term> t = Global.newHashSet(0);
+        Set<Term> t = Global.newHashSet(size());
         //final int[] has = {0};
         recurseTerms((t1, superterm) -> {
-            if (t1.op() == type)
+            if (t1.op(type))
                 t.add(t1);
         });
         return t;
@@ -66,16 +67,8 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     @Override
     default void recurseTerms(SubtermVisitor v, Term parent) {
         v.accept(this, parent);
-        Term[] x = terms();
-        for (Term a : x) {
-            a.recurseTerms(v, this);
-        }
+        subterms().forEach(a -> a.recurseTerms(v, this));
     }
-
-
-
-
-
 
 
 //    /**
@@ -124,13 +117,18 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         int nterms = size();
         for (int i = 0; i < nterms; i++) {
              if ((i != 0) || (/*i == 0 &&*/ nterms > 1 && appendedOperator)) {
-                p.append(ARGUMENT_SEPARATOR);
-                if (pretty)
-                    p.append(' ');
-            }
+                 argSep(p, pretty);
+             }
 
             term(i).append(p, pretty);
         }
+    }
+
+    default void argSep(Appendable p, boolean pretty) throws IOException {
+        if (pretty)
+            p.append(ARGUMENT_SEPARATOR_PRETTY);
+        else
+            p.append(ARGUMENT_SEPARATOR);
     }
 
     default boolean appendOperator(Appendable p) throws IOException {
@@ -360,10 +358,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
                 (size()==y.size()) && (relation()==y.relation());
     }
 
-    default boolean matchCompoundExEllipsis(Compound y, Ellipsis e) {
-        //TODO a more careful handling when an Ellipsis term is involved in the match
-        return true;
-    }
 
     default int opRel() {
         return op().ordinal() | (relation() << 16);
