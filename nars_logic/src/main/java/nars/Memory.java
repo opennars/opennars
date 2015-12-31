@@ -302,8 +302,10 @@ public class Memory extends Param {
 
     public final Concept taskConcept(Termed t) {
         Concept c = concept(t);
-        if (c == null || !Task.validTaskTerm(c.term()))
+
+        if (c == null || (!c.levelValid( nal()) ) || (!Task.validTaskTerm(c.term())))
             return null;
+
         return c;
     }
 

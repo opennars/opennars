@@ -113,8 +113,10 @@ public class CurveBag<V> extends Bag<V> {
         arrayBag.whileEachEntry(each);
     }
 
-    /** optimized batch fill, using consecutive array elements, also ensuring uniqueness */
-    @Override public void sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
+    /** optimized batch fill, using consecutive array elements, also ensuring uniqueness
+     * returns the instance for fluentcy
+     * */
+    @Override public CurveBag<V> sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
 
         int ss = size();
         final int begin, end;
@@ -134,6 +136,7 @@ public class CurveBag<V> extends Bag<V> {
             }
         }
 
+        return this;
         //System.out.println("(of " + ss + ") select " + n + ": " + begin + ".." + end + " = " + target);
 
     }

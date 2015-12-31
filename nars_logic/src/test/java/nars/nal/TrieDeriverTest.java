@@ -32,15 +32,16 @@ public class TrieDeriverTest {
     }
 
     @Test public void testTriePreconditions0() {
-        TrieDeriver d = testRule(r0);
+        TrieDeriver d = testRule(rN);
 
-        assertEquals(1, d.roots.length);
-        assertEquals(2, d.rules.size());
+//        assertEquals(1, d.roots.length);
+//        assertEquals(2, d.rules.size());
 
 
         out.println(d.trie);
 
         d.trie.printSummary();
+        d.derivationLinks.entries().forEach( System.out::println/*("\t" + k + "\t" + v)*/);
 
         for (Term p : d.roots)
             out.println(p);

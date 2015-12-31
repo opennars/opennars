@@ -5,7 +5,7 @@ import nars.Global;
 import nars.Op;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.meta.op.Derive;
+import nars.nal.meta.op.MatchTerm;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
@@ -39,7 +39,7 @@ public class PremiseMatch extends FindSubst {
     public final Versioned<Integer> occurrenceShift;
     public final Versioned<Truth> truth;
     public final Versioned<Character> punct;
-    public final Versioned<Derive> derived;
+    public final Versioned<MatchTerm> pattern;
 
     public boolean cyclic;
 
@@ -57,7 +57,7 @@ public class PremiseMatch extends FindSubst {
         occurrenceShift = new Versioned(this);
         truth = new Versioned(this);
         punct = new Versioned(this);
-        derived = new Versioned(this);
+        pattern = new Versioned(this);
     }
 
     private void addTransform(Class<? extends ImmediateTermTransform> c) {
@@ -78,30 +78,17 @@ public class PremiseMatch extends FindSubst {
     public void onPartial() {
     }
 
-    @Override
-    public boolean onMatch() {
-        return derived.get().onMatch(this);
+
+    public final void match(MatchTerm pattern /* callback */) {
+        this.pattern.set(pattern); //to notify of matches
+        this.constraints = constraints;
+        matchAll(pattern.x, term.get() /* current term */);
+        this.constraints = null;
     }
 
-    public Task derive(Task derived) {
-
-        //HACK this should exclude the invalid rules which form any of these
-        ConceptProcess p = this.premise;
-
-
-        if (!derived.term().levelValid( p.nal()) )
-            return null;
-
-        //pre-normalize to avoid discovering invalidity after having consumed space and survived the input queue
-        derived = derived.normalize(p.memory());
-        if (derived == null)
-            return null;
-
-        derived = p.derive(derived);
-        if (derived!=null) {
-            receiver.accept(derived);
-        }
-        return derived;
+    @Override
+    public boolean onMatch() {
+        return pattern.get().onMatch(this);
     }
 
 
@@ -112,7 +99,7 @@ public class PremiseMatch extends FindSubst {
         return "RuleMatch:{" +
                 "premise:" + premise +
                 ", subst:" + super.toString() +
-                (derived.get()!=null ? (", derived:" + derived) : "")+
+                (pattern.get()!=null ? (", derived:" + pattern) : "")+
                 (truth.get()!=null ? (", truth:" + truth) : "")+
                 (!secondary.isEmpty() ? (", secondary:" + secondary) : "")+
                 (occurrenceShift.get()!=null ? (", occShift:" + occurrenceShift) : "")+
@@ -211,9 +198,6 @@ public class PremiseMatch extends FindSubst {
     }
 
 
-    public final void matchAll(Term x /* pattern */) {
-        matchAll(x, term.get() /* current term */);
-    }
 }
 
 

@@ -1,9 +1,12 @@
 package nars.nal;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import javassist.*;
 import nars.Global;
 import nars.nal.meta.*;
+import nars.nal.meta.op.Derive;
+import nars.nal.meta.op.MatchTerm;
 import nars.term.Term;
 import org.magnos.trie.TrieNode;
 
@@ -12,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +25,10 @@ public class TrieDeriver extends Deriver {
 
     public final ProcTerm<PremiseMatch>[] roots;
     public final TermTrie<Term, PremiseRule> trie;
+
+    /** derivation term graph, gathered for analysis */
+    public final HashMultimap<MatchTerm,Derive> derivationLinks = HashMultimap.create();
+
 
     public TrieDeriver(String rule) {
         this(new PremiseRuleSet(Collections.singleton(rule)));
@@ -76,10 +84,13 @@ public class TrieDeriver extends Deriver {
             r.accept(m);
     }
 
+    /** HACK warning: use of this singular matchParent tracker is not thread-safe. assumes branches will be processed in a linear, depth first order */
+    final transient AtomicReference<MatchTerm> matchParent = new AtomicReference<MatchTerm>(null);
 
-    private static List<Term> getBranches(TrieNode<List<Term>, PremiseRule> node) {
+    private List<Term> getBranches(TrieNode<List<Term>, PremiseRule> node) {
 
         List<Term> bb = Global.newArrayList(node.getChildCount());
+
 
         node.forEach(n -> {
             List<Term> seq = n.getSequence();
@@ -87,28 +98,38 @@ public class TrieDeriver extends Deriver {
             int from = n.getStart();
             int to = n.getEnd();
 
-            bb.add(branch(
-                    compileConditions(seq.subList(from, to)),
-                    new ThenFork<PremiseMatch>(compileActions(getBranches(n)).toArray(new ProcTerm[0])) {
 
-                @Override public void accept(PremiseMatch m) {
-                    int revertTime = m.now();
-                    for (ProcTerm<PremiseMatch> s : terms()) {
-                        s.accept(m);
-                        m.revert(revertTime);
-                    }
-                }
-            }));
+            bb.add(branch(
+                    compileConditions(seq.subList(from, to), matchParent),
+                    new PremiseMatchFork(compileActions(TrieDeriver.this.getBranches(n)).toArray(new ProcTerm[0]))));
         });
 
         return bb;
     }
 
-    private static Collection<BooleanCondition<PremiseMatch>> compileConditions(List<Term> t) {
+
+    private Collection<BooleanCondition<PremiseMatch>> compileConditions(List<Term> t, AtomicReference<MatchTerm> matchParent) {
+
         return t.stream().filter(x -> {
-            System.out.println(x.getClass() + " " + x);
             if (x instanceof BooleanCondition) {
+                if (x instanceof MatchTerm) {
+                    matchParent.set((MatchTerm) x);
+                }
                 return true;
+            } if (x instanceof Derive) {
+                //link this derivation action to the previous Match,
+                //allowing multiple derivations to fold within a Match's actions
+                MatchTerm mt = matchParent.get();
+                if (mt == null) {
+                    //throw new RuntimeException("detached Derive action: " + x + " in branch: " + t);
+                    System.err.println("detached Derive action: " + x + " in branch: " + t);
+                }
+                else {
+                    Derive dx = (Derive) x;
+                    mt.derive(dx);
+                    derivationLinks.put(mt, dx);
+                }
+                return false;
             } else {
                 System.out.println("\tnot boolean condition");
                 return false;
@@ -177,6 +198,7 @@ public class TrieDeriver extends Deriver {
         //System.out.println(cc.toBytecode());
         System.out.println(cc);
     }
+
 
     //final static Logger logger = LoggerFactory.getLogger(TrieDeriver.class);
 

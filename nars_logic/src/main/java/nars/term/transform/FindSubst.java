@@ -166,14 +166,6 @@ public abstract class FindSubst extends Versioning implements Subst {
 
 
     /**
-     * null to disable exclusions
-     */
-    public void setConstraints(ImmutableMap<Term, MatchConstraint> constraints) {
-        this.constraints = constraints;
-    }
-
-
-    /**
      * recurses into the next sublevel of the term
      */
     public final boolean match(Term x, Term y) {

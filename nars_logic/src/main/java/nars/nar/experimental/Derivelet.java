@@ -66,12 +66,10 @@ public class Derivelet {
             Concept concept,
             int tasklinks, int termlinks, Predicate<BagBudget> each) {
 
-        concept.getTaskLinks().sample(tasklinks, each, tasks);
-        concept.getTaskLinks().commit();
+        concept.getTaskLinks().sample(tasklinks, each, tasks).commit();
         if (tasks.isEmpty()) return 0;
 
-        concept.getTermLinks().sample(termlinks, each, terms);
-        concept.getTermLinks().commit();
+        concept.getTermLinks().sample(termlinks, each, terms).commit();
         if (terms.isEmpty()) return 0;
 
         //convert to array for fast for-within-for iterations

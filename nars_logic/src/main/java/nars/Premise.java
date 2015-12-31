@@ -388,26 +388,26 @@ public interface Premise extends Level, Tasked {
         Memory memory = nar().memory;
 
         Object invalidationReason = validate(task);
-        if (invalidationReason==null) {
-            return task;
+        if (invalidationReason != null) {
+            memory.remove(task, invalidationReason);
+            task = null;
         }
-        memory.remove(task, invalidationReason);
 
-        return null;
+        return task;
     }
 
     /** returns a string indicating a reason why it is invalid, or null if it actually is valid */
-    default String validate(Task task) {
+    static String validate(Task derived) {
 
-        if (task.term() == null) {
+        if (derived.term() == null) {
             throw new RuntimeException("task has null term");
         }
 
-        if (task.isInput()) {
-            throw new RuntimeException("Derived task must have a parent task or belief: " + task + " via " + this);
+        if (derived.isInput()) {
+            throw new RuntimeException("Derived task must have a parent task or belief: " + derived);
         }
 
-        if (task.isJudgmentOrGoal() && task.getConfidence() < DefaultTruth.DEFAULT_TRUTH_EPSILON) {
+        if (derived.isJudgmentOrGoal() && derived.getConfidence() < DefaultTruth.DEFAULT_TRUTH_EPSILON) {
             return "Insufficient confidence";
         }
 
