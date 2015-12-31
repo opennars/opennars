@@ -5,8 +5,8 @@ import nars.Symbols;
 import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
 import nars.nal.meta.BooleanCondition;
+import nars.nal.meta.PostCondition;
 import nars.nal.meta.TruthOperator;
-import nars.term.Term;
 import nars.truth.BeliefFunction;
 import nars.truth.DesireFunction;
 
@@ -28,25 +28,24 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
     private final MethodHandle method;
 
 
-    public Solve(Term beliefTerm, Term desireTerm, char puncOverride,
-                 PremiseRule rule, boolean anticipate, boolean eternalize, Term term,
+    public Solve(PostCondition p, PremiseRule rule, boolean anticipate, boolean eternalize,
+                 BooleanCondition[] postPreconditions) {
 
-                 BooleanCondition[] postPreconditions
-    ) {
-        this.puncOverride = puncOverride;
+        this.puncOverride = p.puncOverride;
 
-        belief = BeliefFunction.get(beliefTerm);
+        this.belief = BeliefFunction.get(p.beliefTruth);
+
 //        if (belief == null &&
 //                !((puncOverride==Symbols.GOAL) || (puncOverride==Symbols.QUEST) || (puncOverride==Symbols.QUESTION)))
 //            throw new RuntimeException("unknown belief function " + beliefTerm);
 
-        desire = DesireFunction.get(desireTerm);
+        this.desire = DesireFunction.get(p.goalTruth);
 
 
         String beliefLabel = belief == null ? "_" :
-                beliefTerm.toString();
+                p.beliefTruth.toString();
         String desireLabel = desire == null ? "_" :
-                desireTerm.toString();
+                p.goalTruth.toString();
 
         String sn = "Truth:(";
         String i = puncOverride == 0 ?
@@ -59,7 +58,7 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
 
 
         this.id = i;
-        this.derive = new Derive(rule, term,
+        this.derive = new Derive(rule, p.term,
                 postPreconditions,
                 anticipate,
                 eternalize);

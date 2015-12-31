@@ -4,12 +4,12 @@ import com.google.common.collect.ListMultimap;
 import com.gs.collections.api.map.ImmutableMap;
 import nars.$;
 import nars.Global;
-import nars.Op;
 import nars.nal.PremiseMatch;
+import nars.nal.meta.BooleanCondition;
 import nars.nal.meta.ProcTerm;
+import nars.nal.meta.TaskBeliefPair;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.compound.GenericCompound;
 import nars.term.constraint.AndConstraint;
 import nars.term.constraint.MatchConstraint;
 import org.jetbrains.annotations.NotNull;
@@ -17,42 +17,36 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 import static com.gs.collections.impl.factory.Maps.immutable;
-import static nars.$.para;
 
 /**
  * Establishes conditions for the Term match
  *
  * < (|, match [, constraints]) ==> (&|, derivation1, ... derivationN)>
  */
-public final class MatchTerm extends GenericCompound implements ProcTerm<PremiseMatch> {
+public final class MatchTerm extends BooleanCondition<PremiseMatch> implements ProcTerm<PremiseMatch> {
 
-    public final Term x;
+    public final TaskBeliefPair x;
     public final ImmutableMap<Term, MatchConstraint> constraints;
 
-    public final Derive[] derivations;
+    private final Compound id;
 
-    private MatchTerm(Term x, ImmutableMap<Term, MatchConstraint> constraints,
-                     Compound condition, Derive[] derivations) {
-        super(Op.IMPLICATION, condition, para(derivations));
+    private MatchTerm(TaskBeliefPair x, ImmutableMap<Term, MatchConstraint> constraints) {
+        this.id = (constraints == null) ?
+                (Compound) x : //no constraints
+                (Compound) ($.sect(x, $.the(constraints.toString()))); //constraints stored in atomic string
 
         this.x = x;
         this.constraints = constraints;
-        this.derivations = derivations;
     }
 
-    public static MatchTerm get(Term x, ListMultimap<Term, MatchConstraint> c, Derive[] derivations) {
+    public static MatchTerm get(TaskBeliefPair x, ListMultimap<Term, MatchConstraint> c) {
 
         ImmutableMap<Term, MatchConstraint> constraints =
                 ((c == null) || c.isEmpty()) ?
                         null :
                         immutable.ofAll(initConstraints(c));
 
-        return new MatchTerm(x, constraints,
-                (constraints == null) ?
-                        (Compound) x : //no constraints
-                        (Compound) ($.conj(x, $.the(constraints.toString()))), //constraints stored in atomic string
-                derivations
-        );
+        return new MatchTerm(x, constraints);
     }
 
     @NotNull
@@ -79,4 +73,13 @@ public final class MatchTerm extends GenericCompound implements ProcTerm<Premise
         p.matchAll(x);
     }
 
+    @Override
+    @Deprecated public boolean booleanValueOf(PremiseMatch versioneds) {
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return id.toString();
+    }
 }

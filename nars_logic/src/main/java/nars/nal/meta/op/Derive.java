@@ -9,8 +9,8 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
+import nars.nal.meta.AndCondition;
 import nars.nal.meta.BooleanCondition;
-import nars.nal.meta.ProcTerm;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
 import nars.process.ConceptProcess;
@@ -18,6 +18,7 @@ import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Statement;
 import nars.term.Term;
+import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
@@ -28,20 +29,25 @@ import static nars.truth.TruthFunctions.eternalizedConfidence;
 
 /**
  * Handles matched derivation results
+ * < (&&, postMatch1, postMatch2) ==> derive(term) >
  */
-public class Derive extends ProcTerm<PremiseMatch> {
+public class Derive extends Atom {
 
     private final String id;
 
     private final boolean anticipate;
     private final boolean eternalize;
     private final PremiseRule rule;
+
+    /** result pattern */
     private final Term term;
-    private final BooleanCondition[] postMatch;
+
+    public final AndCondition<PremiseMatch> postMatch; //TODO use AND condition
 
     public Derive(PremiseRule rule, Term term, BooleanCondition[] postMatch, boolean anticipate, boolean eternalize) {
+        super(term.toString() /* TODO */);
         this.rule = rule;
-        this.postMatch = postMatch;
+        this.postMatch = postMatch.length>0 ? new AndCondition(postMatch) : null;
         this.term = term;
         this.anticipate = anticipate;
         this.eternalize = eternalize;
@@ -67,6 +73,13 @@ public class Derive extends ProcTerm<PremiseMatch> {
         this.id = i;
     }
 
+
+    @Override
+    public String toString() {
+        return id;
+    }
+
+
     /** main entry point for derivation result handler.
      * @return true to allow the matcher to continue matching,
      * false to stop it */
@@ -74,31 +87,12 @@ public class Derive extends ProcTerm<PremiseMatch> {
 
         Term tt = solve(m);
 
-        if ((tt != null) && (post(m))) {
+        if ((tt != null) && (postMatch.booleanValueOf(m)))
             derive(m, tt);
-        }
 
         return true;
     }
 
-
-    @Override
-    public String toString() {
-        return id;
-    }
-
-    @Override
-    public String toJavaConditionString() {
-        return getClass().getName() + ".set(m)";
-    }
-
-
-    @Override
-    public boolean booleanValueOf(PremiseMatch m) {
-        //START THE MATCH
-
-        return true;
-    }
 
 
     public Term solve(PremiseMatch match) {
@@ -144,24 +138,13 @@ public class Derive extends ProcTerm<PremiseMatch> {
         return derivedTerm;
     }
 
-    public boolean post(PremiseMatch match) {
 
-        for (BooleanCondition p : postMatch) {
-            if (!p.booleanValueOf(match))
-                return false;
-        }
-
-        return true;
-    }
-
-    public void processSequence(PremiseMatch match, Term derivedTerm, Term toInvestigate) {
+    void processSequence(PremiseMatch match, Term derivedTerm, Term toInvestigate) {
         int TermIsSequence = 1;
         int TermSubjectIsSequence = 2;
         int TermPredicateIsSequence = 3;
 
-        int mode = 0; //nothing
-        //int sequence_term_amount = 0;
-
+        final int mode; //nothing
 
         if (rule.sequenceIntervalsFromBelief || rule.sequenceIntervalsFromTask) {
             if (toInvestigate instanceof Sequence) {
@@ -175,99 +158,99 @@ public class Derive extends ProcTerm<PremiseMatch> {
                 } else if (pred(toInvestigate) instanceof Sequence) {
                     //sequence_term_amount = ((Sequence) st.getPredicate()).terms().length;
                     mode = TermPredicateIsSequence;
+                } else {
+                    mode = 0;
                 }
+            } else {
+                mode = 0;
             }
+        } else {
+            return;
         }
 
-        int Nothing = 0;
-        if (mode != Nothing) {
+        Sequence paste = null; //where to paste it to
 
-            Sequence paste = null; //where to paste it to
+        //TODO: THIS CODE EXISTS TWICE WITH DIFFERENT PARAMETERS, PLACE1
+        if (mode == TermIsSequence && derivedTerm instanceof Sequence) {
+            paste = (Sequence) derivedTerm;
+        } else if (mode == TermSubjectIsSequence && derivedTerm instanceof Statement && subj(derivedTerm) instanceof Sequence) {
+            paste = (Sequence) subj(derivedTerm);
+        } else if (mode == TermPredicateIsSequence && derivedTerm instanceof Statement && pred(derivedTerm) instanceof Sequence) {
+            paste = (Sequence) pred(derivedTerm);
+        }
+        //END CODE
 
-            //TODO: THIS CODE EXISTS TWICE WITH DIFFERENT PARAMETERS, PLACE1
-            if (mode == TermIsSequence && derivedTerm instanceof Sequence) {
-                paste = (Sequence) derivedTerm;
-            } else if (mode == TermSubjectIsSequence && derivedTerm instanceof Statement && subj(derivedTerm) instanceof Sequence) {
-                paste = (Sequence) subj(derivedTerm);
-            } else if (mode == TermPredicateIsSequence && derivedTerm instanceof Statement && pred(derivedTerm) instanceof Sequence) {
-                paste = (Sequence) pred(derivedTerm);
+        Term lookat = null;
+        Premise premise = match.premise;
+
+        if (rule.sequenceIntervalsFromTask) {
+            lookat = premise.getTaskTerm();
+        } else if (rule.sequenceIntervalsFromBelief) {
+            lookat = premise.getBeliefTerm();
+        }
+
+        //TODO: THIS CODE EXISTS TWICE WITH DIFFERENT PARAMETERS, PLACE2
+        Sequence copy = null; //where to copy the interval data from
+        if (mode == TermIsSequence && lookat instanceof Sequence) {
+            copy = (Sequence) lookat;
+        } else if (lookat != null && lookat.op().isStatement()) {
+
+            if (mode == TermSubjectIsSequence && subj(lookat) instanceof Sequence) {
+                copy = (Sequence) subj(lookat);
+            } else if (mode == TermPredicateIsSequence && pred(lookat) instanceof Sequence) {
+                copy = (Sequence) pred(lookat);
             }
-            //END CODE
 
-            Term lookat = null;
-            Premise premise = match.premise;
+        }
+        //END CODE
 
-            if (rule.sequenceIntervalsFromTask) {
-                lookat = premise.getTask().term();
-            } else if (rule.sequenceIntervalsFromBelief) {
-                lookat = premise.getBelief() != null ?
-                        premise.getBelief().term() : null;
-            }
+        //ok now we can finally copy the intervals.
 
-            //TODO: THIS CODE EXISTS TWICE WITH DIFFERENT PARAMETERS, PLACE2
-            Sequence copy = null; //where to copy the interval data from
-            if (mode == TermIsSequence && lookat instanceof Sequence) {
-                copy = (Sequence) lookat;
-            } else if (lookat != null && lookat.op().isStatement()) {
+        if (copy != null) {
 
-                if (mode == TermSubjectIsSequence && subj(lookat) instanceof Sequence) {
-                    copy = (Sequence) subj(lookat);
-                } else if (mode == TermPredicateIsSequence && pred(lookat) instanceof Sequence) {
-                    copy = (Sequence) pred(lookat);
+            int[] copyIntervals = copy.intervals();
+
+            if (paste != null) {
+
+
+                int a = copy.terms().length;
+                int b = paste.terms().length;
+                boolean sameLength = a == b;
+                boolean OneLess = a - 1 == b;
+
+                if (!sameLength && !OneLess) {
+                    System.err.println("result Sequence insufficient elements; rule:" + rule);
                 }
 
-            }
-            //END CODE
+                int[] pasteIntervals = paste.intervals();
 
-            //ok now we can finally copy the intervals.
-
-            if (copy != null) {
-
-                int[] copyIntervals = copy.intervals();
-
-                if (paste != null) {
-
-
-                    int a = copy.terms().length;
-                    int b = paste.terms().length;
-                    boolean sameLength = a == b;
-                    boolean OneLess = a - 1 == b;
-
-                    if (!sameLength && !OneLess) {
-                        System.err.println("result Sequence insufficient elements; rule:" + rule);
-                    }
-
-                    int[] pasteIntervals = paste.intervals();
-
-                    if (OneLess) {
-                        match.occurrenceShift.set(copyIntervals[1]); //we shift according to first interval
-                        System.arraycopy(copyIntervals, 2, pasteIntervals, 1, copyIntervals.length - 2);
-                    } else if (sameLength) {
-                        System.arraycopy(copyIntervals, 0, pasteIntervals, 0, copyIntervals.length);
-                    }
-                } else /* if (paste == null)  */ {
-                    //ok we reduced to a single element, so its a one less case
-                    match.occurrenceShift.set(copyIntervals[1]);
+                if (OneLess) {
+                    match.occurrenceShift.set(copyIntervals[1]); //we shift according to first interval
+                    System.arraycopy(copyIntervals, 2, pasteIntervals, 1, copyIntervals.length - 2);
+                } else if (sameLength) {
+                    System.arraycopy(copyIntervals, 0, pasteIntervals, 0, copyIntervals.length);
                 }
+            } else /* if (paste == null)  */ {
+                //ok we reduced to a single element, so its a one less case
+                match.occurrenceShift.set(copyIntervals[1]);
             }
         }
     }
 
-    public boolean derive(PremiseMatch m, Term t) {
+    /** part 1 */
+    private void derive(PremiseMatch m, Term t) {
 
-        if (t == null || Variable.hasPatternVariable(t))
-            return false;
+        if (t != null && !Variable.hasPatternVariable(t)) {
+            Concept c = m.premise.memory().taskConcept(t);
+            if (c != null) {
+                derive(m, c);
+            }
+        }
 
-        Concept c = m.premise.memory().taskConcept(t);
-        if (c == null)
-            return false;
-
-        derive(m, (Compound) c.term());
-
-        return false; //match finish
     }
 
-    private void derive(PremiseMatch m, Compound c) {
+    /** part 2 */
+    private void derive(PremiseMatch m, Concept c) {
 
         ConceptProcess premise = m.premise;
 
@@ -333,6 +316,7 @@ public class Derive extends ProcTerm<PremiseMatch> {
         }
 
     }
+
 
 
 }

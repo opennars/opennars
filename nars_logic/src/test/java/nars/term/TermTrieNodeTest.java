@@ -20,7 +20,7 @@ public class TermTrieNodeTest  {
 
     static Term t(String s) { return n.term(s); }
 
-    @Test public void testTrieHard() {
+    @Test public void testByteTrie() {
         Trie<byte[], String> mapper = Tries.forBytes();
         mapper.setDefaultMatch( TrieMatch.EXACT );
 

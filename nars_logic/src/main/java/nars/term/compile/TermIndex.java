@@ -246,7 +246,7 @@ public interface TermIndex extends Compounds, CacheBag<Term, Termed> {
 
         @Override
         public Termed internCompound(Op op, int relation, TermContainer subterms) {
-            return new GenericCompound((TermVector)subterms, op, relation);
+            return new GenericCompound(op, relation, (TermVector)subterms);
         }
 
     }

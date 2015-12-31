@@ -2,12 +2,17 @@ package nars.nal;
 
 import com.google.common.collect.Lists;
 import javassist.*;
-import nars.nal.meta.ProcTerm;
-import nars.nal.meta.RuleTrie;
+import nars.Global;
+import nars.nal.meta.*;
+import nars.term.Term;
+import org.magnos.trie.TrieNode;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * separates rules according to task/belief term type but otherwise involves significant redundancy we'll eliminate in other Deriver implementations
@@ -15,7 +20,7 @@ import java.util.Date;
 public class TrieDeriver extends Deriver {
 
     public final ProcTerm<PremiseMatch>[] roots;
-    public final RuleTrie trie;
+    public final TermTrie<Term, PremiseRule> trie;
 
     public TrieDeriver(String rule) {
         this(new PremiseRuleSet(Collections.singleton(rule)));
@@ -26,9 +31,32 @@ public class TrieDeriver extends Deriver {
     }
 
     public TrieDeriver(PremiseRuleSet ruleset) {
-        super();
-        this.trie = new RuleTrie(ruleset);
-        this.roots = trie.roots;
+        super(ruleset);
+
+        this.trie = new TermTrie<Term, PremiseRule>(ruleset) {
+
+            @Override
+            public void index(PremiseRule s) {
+
+                if (s == null || s.postconditions == null)
+                    return;
+
+                for (PostCondition p : s.postconditions) {
+
+                    PremiseRule existing = trie.put(s.getConditions(p), s);
+
+                    if (existing != null && s != existing && existing.equals(s)) {
+                        System.err.println("DUPL: " + existing);
+                        System.err.println("      " + existing.getSource());
+                        System.err.println("EXST: " + s.getSource());
+                        System.err.println();
+                    }
+                }
+            }
+        };
+
+        this.roots = getBranches(trie.trie.root).toArray(new ProcTerm[0]);
+
 
         /*
         for (ProcTerm<PremiseMatch> p : roots) {
@@ -42,16 +70,79 @@ public class TrieDeriver extends Deriver {
         */
     }
 
+    @Override
+    public final void run(PremiseMatch m) {
+        for (ProcTerm<PremiseMatch> r : roots)
+            r.accept(m);
+    }
 
+
+    private static List<Term> getBranches(TrieNode<List<Term>, PremiseRule> node) {
+
+        List<Term> bb = Global.newArrayList(node.getChildCount());
+
+        node.forEach(n -> {
+            List<Term> seq = n.getSequence();
+
+            int from = n.getStart();
+            int to = n.getEnd();
+
+            bb.add(branch(
+                    compileConditions(seq.subList(from, to)),
+                    new ThenFork<PremiseMatch>(compileActions(getBranches(n)).toArray(new ProcTerm[0])) {
+
+                @Override public void accept(PremiseMatch m) {
+                    int revertTime = m.now();
+                    for (ProcTerm<PremiseMatch> s : terms()) {
+                        s.accept(m);
+                        m.revert(revertTime);
+                    }
+                }
+            }));
+        });
+
+        return bb;
+    }
+
+    private static Collection<BooleanCondition<PremiseMatch>> compileConditions(List<Term> t) {
+        return t.stream().filter(x -> {
+            System.out.println(x.getClass() + " " + x);
+            if (x instanceof BooleanCondition) {
+                return true;
+            } else {
+                System.out.println("\tnot boolean condition");
+                return false;
+            }
+        }).map(x -> (BooleanCondition<PremiseMatch>)x).collect(Collectors.toList());
+    }
+
+
+
+    private static Collection<ProcTerm<PremiseMatch>> compileActions(List<Term> t) {
+        t.forEach(x -> System.out.println(x.getClass() + " " + x));
+        return (Collection)t;
+    }
+
+
+    public static ProcTerm<PremiseMatch> branch(
+            Collection<BooleanCondition<PremiseMatch>> condition,
+            ThenFork<PremiseMatch> conseq) {
+
+        if ((conseq != null) && (conseq.size() > 0)) {
+            return new PremiseBranch(condition, conseq);
+        } else {
+            return new PremiseBranch(condition, Return.the);
+        }
+    }
 
     protected void compile(ProcTerm<PremiseMatch> p) throws IOException, CannotCompileException, NotFoundException {
         StringBuilder s = new StringBuilder();
 
         final String header = "public final static String wtf=" +
-            "\"" + this + " " + new Date() + "\"+\n" +
-            "\"COPYRIGHT (C) OPENNARS. ALL RIGHTS RESERVED.\"+\n" +
-            "\"THIS SOURCE CODE AND ITS GENERATOR IS PROTECTED BY THE AFFERO GENERAL PUBLIC LICENSE: https://gnu.org/licenses/agpl.html\"+\n" +
-            "\"http://github.com/opennars/opennars\";\n";
+                "\"" + this + " " + new Date() + "\"+\n" +
+                "\"COPYRIGHT (C) OPENNARS. ALL RIGHTS RESERVED.\"+\n" +
+                "\"THIS SOURCE CODE AND ITS GENERATOR IS PROTECTED BY THE AFFERO GENERAL PUBLIC LICENSE: https://gnu.org/licenses/agpl.html\"+\n" +
+                "\"http://github.com/opennars/opennars\";\n";
 
         //System.out.print(header);
         p.appendJavaProcedure(s);
@@ -80,27 +171,14 @@ public class TrieDeriver extends Deriver {
         System.out.println(m);
 
 
-        cc.addMethod(CtNewMethod.make( m, cc ));
+        cc.addMethod(CtNewMethod.make(m, cc));
         cc.writeFile("/tmp");
 
         //System.out.println(cc.toBytecode());
         System.out.println(cc);
     }
 
-    @Override public final void run(PremiseMatch m) {
-
-        //int now = m.now();
-
-        for (ProcTerm<PremiseMatch> r : roots) {
-            r.accept(m);
-        }
-
-        //m.revert(now);
-
-    }
-
     //final static Logger logger = LoggerFactory.getLogger(TrieDeriver.class);
-
 
 
 //    final static void run(RuleMatch m, List<TaskRule> rules, int level, Consumer<Task> t) {

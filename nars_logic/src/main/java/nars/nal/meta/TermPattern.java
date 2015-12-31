@@ -15,8 +15,8 @@ import java.util.List;
 /** represents the "program" that the matcher will execute */
 public class TermPattern {
 
-    public final BooleanCondition<PremiseMatch>[] pre;
-    public final BooleanCondition<PremiseMatch>[] code;
+    public final Term[] pre;
+    public final Term[] code;
     public final Term term;
 
     private final ListMultimap<Term, MatchConstraint> constraints;
@@ -62,23 +62,26 @@ public class TermPattern {
 
     public TermPattern(Term pattern, ListMultimap<Term, MatchConstraint> constraints) {
 
-        term = pattern;
-        //this.type = type;
         this.constraints = constraints;
+        this.term = pattern;
 
-        List<BooleanCondition> pre = Global.newArrayList();
-        List<BooleanCondition> code = Global.newArrayList();
+        List<BooleanCondition<PremiseMatch>> pre = Global.newArrayList();
+        List<BooleanCondition<PremiseMatch>> code = Global.newArrayList();
 
         if (pattern instanceof TaskBeliefPair) {
-            compileTaskBeliefPair((TaskBeliefPair)pattern, pre, code);
+            compileTaskBeliefPair((TaskBeliefPair)pattern, pre, code, constraints);
+        } else {
+            //compile(pattern, code);
         }
-        compile(pattern, code);
 
         this.pre = pre.toArray(new BooleanCondition[pre.size()]);
         this.code = code.toArray(new BooleanCondition[code.size()]);
     }
 
-    private static void compileTaskBeliefPair(TaskBeliefPair pattern, List<BooleanCondition> pre, List<BooleanCondition> code) {
+    private static void compileTaskBeliefPair(TaskBeliefPair pattern,
+                                      List<BooleanCondition<PremiseMatch>> pre,
+                                      List<BooleanCondition<PremiseMatch>> code,
+                                      ListMultimap<Term, MatchConstraint> constraints) {
         Term x0 = pattern.term(0);
         Term x1 = pattern.term(1);
         if (x0.op()!=Op.VAR_PATTERN) {
@@ -90,10 +93,12 @@ public class TermPattern {
             //code.add(new FindSubst.SubTermStructure(type, 1, x1.structure()));
         }
 
+        code.add(MatchTerm.get(pattern, constraints));
+
     }
 
-    private void compile(Term x, List<BooleanCondition> code) {
-        code.add(MatchTerm.get(x, constraints));
+    private void compile(Term x, List<BooleanCondition<PremiseMatch>> code) {
+        //??
     }
 
 //    private void compileRisky(Term x, List<PreCondition> code) {

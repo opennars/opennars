@@ -166,7 +166,7 @@ public class PremiseMatch extends FindSubst {
 
     /** calculates Budget used in a derived task,
      *  returns null if invalid / insufficient */
-    public final Budget getBudget(Truth truth, Compound c) {
+    public final Budget getBudget(Truth truth, Termed c) {
 
         ConceptProcess p = this.premise;
 

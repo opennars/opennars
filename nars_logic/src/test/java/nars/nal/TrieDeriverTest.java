@@ -1,8 +1,8 @@
 package nars.nal;
 
 import nars.NAR;
-import nars.nal.meta.ProcTerm;
 import nars.nar.Default;
+import nars.term.Term;
 import org.junit.Test;
 
 import static java.lang.System.out;
@@ -12,6 +12,8 @@ import static org.junit.Assert.assertEquals;
  * Created by me on 12/12/15.
  */
 public class TrieDeriverTest {
+
+    final String r0 = "(S --> P), (S <-> P), task(\"?\") |- (S --> P), (Truth:StructuralIntersection, Punctuation:Judgment)";
 
     final String r1 = "((|,X,A..+) --> M), M, task(\".\") |- (X --> M), (Truth:StructuralDeduction)";
     final String r1Case = "<(|, puppy, kitten) --> animal>.";
@@ -29,14 +31,18 @@ public class TrieDeriverTest {
         x.log().frame(4);
     }
 
-    @Test public void testTriePreconditions() {
-        TrieDeriver d = testRule(rN);
+    @Test public void testTriePreconditions0() {
+        TrieDeriver d = testRule(r0);
+
+        assertEquals(1, d.roots.length);
+        assertEquals(2, d.rules.size());
+
 
         out.println(d.trie);
 
         d.trie.printSummary();
 
-        for (ProcTerm p : d.roots)
+        for (Term p : d.roots)
             out.println(p);
     }
 

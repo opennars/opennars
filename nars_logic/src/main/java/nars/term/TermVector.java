@@ -8,6 +8,7 @@ import nars.term.visit.SubtermVisitor;
 import nars.util.data.Util;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -55,11 +56,17 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
 //        this(null);
 //    }
 
+    public TermVector(Collection<T> t, Class c) {
+        this((T[]) t.toArray((T[]) Array.newInstance(c, t.size())));
+    }
+
     public TermVector(Collection<T> t) {
         this((T[]) t.toArray(new Term[t.size()]));
     }
+
+    /** first n items */
     public TermVector(Collection<T> t, int n) {
-        this((T[]) t.toArray(new Term[t.size()]));
+        this((T[]) t.toArray(new Term[n]));
     }
 
     @SafeVarargs

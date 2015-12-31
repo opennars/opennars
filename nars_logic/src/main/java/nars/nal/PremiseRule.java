@@ -6,8 +6,10 @@ import com.google.common.collect.Sets;
 import nars.$;
 import nars.Global;
 import nars.Op;
+import nars.nal.meta.AndCondition;
 import nars.nal.meta.BooleanCondition;
 import nars.nal.meta.PostCondition;
+import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.Solve;
 import nars.nal.meta.pre.*;
 import nars.nal.op.*;
@@ -153,11 +155,11 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
     /** add the sequence of involved conditions to a list, for one given postcondition (ex: called for each this.postconditions)  */
-    public List<BooleanCondition<PremiseMatch>> getConditions(PostCondition post) {
+    public List<Term> getConditions(PostCondition post) {
 
         int n = prePreconditions.length + postPreconditions.length;
 
-        List<BooleanCondition<PremiseMatch>> l = Global.newArrayList(n+4 /* estimate */);
+        List<Term> l = Global.newArrayList(n+4 /* estimate */);
 
         ///--------------
         for (BooleanCondition p : prePreconditions)
@@ -165,14 +167,20 @@ public class PremiseRule extends GenericCompound implements Level {
 
         match.addPreConditions(l); //pre-conditions
 
-        Solve truth = new Solve(post.beliefTruth, post.goalTruth, post.puncOverride,
-            this, anticipate, immediate_eternalize, post.term,
-                postPreconditions
+        Solve truth = new Solve(post,
+            this, anticipate, immediate_eternalize,  postPreconditions
         );
         l.add(truth);
-        l.add(truth.getDerive());
 
         match.addConditions(l); //the match itself
+
+        { /* FOR EACH MATCH */
+            AndCondition<PremiseMatch> pm = truth.getDerive().postMatch;
+            if (pm!=null)
+                l.add(pm);
+
+            l.add(truth.getDerive()); //will be invoked by match callbacks
+        }
 
 
         l.add(END);
@@ -466,7 +474,9 @@ public class PremiseRule extends GenericCompound implements Level {
         }
 
 
-        this.match = new MatchTaskBelief(pattern, constraints);
+        this.match = new MatchTaskBelief(
+                            new TaskBeliefPair(pattern.term(0), pattern.term(1)), //HACK
+                            constraints);
 
 
         //store to arrays

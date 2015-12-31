@@ -305,12 +305,12 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return The budget of the conclusion
      */
-    public static Budget compoundForward(Truth truth, Term content, ConceptProcess nal) {
+    public static Budget compoundForward(Truth truth, Termed content, ConceptProcess nal) {
         return compoundForward(new UnitBudget(), truth, content, nal);
     }
 
-    public static Budget compoundForward(Budget target, Truth truth, Term content, ConceptProcess nal) {
-        int complexity = content.complexity();
+    public static Budget compoundForward(Budget target, Truth truth, Termed content, ConceptProcess nal) {
+        int complexity = content.term().complexity();
         return budgetInference(target, truthToQuality(truth), complexity, nal);
     }
 
@@ -322,8 +322,8 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param content The content of the conclusion
      * @return The budget of the conclusion
      */
-    public static Budget compoundBackward(Term content, ConceptProcess nal) {
-        return budgetInference(1.0f, content.complexity(), nal);
+    public static Budget compoundBackward(Termed content, ConceptProcess nal) {
+        return budgetInference(1.0f, content.term().complexity(), nal);
     }
 
     /**

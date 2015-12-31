@@ -25,7 +25,7 @@ public class PatternCompound extends GenericCompound {
     }
 
     public PatternCompound(Compound seed, TermVector subterms) {
-        super(subterms, seed.op(), seed.relation());
+        super(seed.op(), seed.relation(), subterms);
 
         sizeCached = seed.size();
         structureCachedWithoutVars =

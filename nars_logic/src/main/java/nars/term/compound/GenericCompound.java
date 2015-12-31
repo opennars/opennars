@@ -40,7 +40,11 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         this.hash = Compounds.hash(terms, op, relation+1);
     }
 
-    public GenericCompound(TermVector subterms, Op op, int relation) {
+    public GenericCompound(Op op, TermVector subterms) {
+        this(op, -1, subterms);
+    }
+
+    public GenericCompound(Op op, int relation, TermVector subterms) {
         this.terms = subterms;
         this.op = op;
         this.relation = relation;

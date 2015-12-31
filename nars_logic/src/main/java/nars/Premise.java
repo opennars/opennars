@@ -601,4 +601,14 @@ public interface Premise extends Level, Tasked {
         return derived;
     }
 
+    default Term getTaskTerm() {
+        return getTask().term();
+    }
+
+    default Term getBeliefTerm() {
+        Task x = getBelief();
+        return x== null ? null :
+                x.term();
+    }
+
 }

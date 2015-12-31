@@ -2,8 +2,9 @@ package nars.nal.meta;
 
 import com.google.common.collect.Sets;
 import nars.nal.Deriver;
-import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
+import nars.nal.TrieDeriver;
+import nars.term.Term;
 import org.apache.commons.math3.stat.Frequency;
 import org.junit.Test;
 
@@ -18,11 +19,11 @@ import static org.junit.Assert.assertEquals;
 public class RuleDerivationGraphTest {
 
     @Test public void testRuleTrie() {
-        RuleTrie x = new RuleTrie(Deriver.getDefaultRules());
-        x.printSummary();
+        TrieDeriver x = new TrieDeriver(Deriver.getDefaultRules());
+        x.trie.printSummary();
 
 
-        for (ProcTerm<PremiseMatch> p : x.roots) {
+        for (Term p : x.roots) {
             System.out.println();
             System.out.println(p);
         }

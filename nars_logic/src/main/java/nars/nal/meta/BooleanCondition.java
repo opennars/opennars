@@ -2,6 +2,7 @@ package nars.nal.meta;
 
 import com.gs.collections.api.block.function.primitive.BooleanFunction;
 import nars.Op;
+import nars.term.Term;
 import nars.term.atom.Atomic;
 
 import java.util.List;
@@ -22,7 +23,8 @@ public abstract class BooleanCondition<C> extends Atomic implements BooleanFunct
 
     public abstract String toString();
 
-    public void addConditions(List<BooleanCondition<C>> l) {
+    /** add this or subconditions to expand in a rule */
+    public void addConditions(List<Term> l) {
         //default: just add this
         l.add(this);
     }

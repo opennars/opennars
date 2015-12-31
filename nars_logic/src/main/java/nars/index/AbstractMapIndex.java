@@ -34,7 +34,7 @@ public abstract class AbstractMapIndex implements TermIndex {
 
     protected static Termed newInternCompound(Op op, TermContainer subterms, int relation) {
         return new GenericCompound(
-            (TermVector) subterms, op, relation
+                op, relation, (TermVector) subterms
         );
     }
 
