@@ -64,10 +64,14 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
                 anticipate,
                 eternalize);
 
+
+
+
         try {
             MethodHandles.Lookup l = MethodHandles.publicLookup();
 
             if (puncOverride != 0) {
+
                 this.method = Binder.from(boolean.class, PremiseMatch.class)
                         .append(puncOverride)
                         .append(TruthOperator.class, belief)
@@ -80,6 +84,7 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
                         .append(TruthOperator.class, desire)
                         .invokeStatic(l, Solve.class, "measureTruthInherit");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -108,22 +113,16 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
     }
 
     @Override
-    public boolean booleanValueOf(PremiseMatch m) {
-        //Premise p = m.premise;
-
-        /** calculate derived task punctuation,
-         possibly using a default policy determined by parent task */
-        //TODO avoid using puncOverride in the argList if its not used
-        //likewise the other params
-        //return measureTruth(m, puncOverride, belief, desire);
-
+    public final boolean booleanValueOf(PremiseMatch m) {
         try {
             return (boolean)method.invokeExact(m);
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
             return false;
+            //throw new RuntimeException(throwable);
+            // throwable.printStackTrace();  // return false;
         }
     }
+
 
     public static boolean measureTruthInherit(PremiseMatch m, TruthOperator belief, TruthOperator desire) {
         char punct = m.premise.getTask().getPunctuation();
