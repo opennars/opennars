@@ -12,7 +12,6 @@ import nars.concept.util.ArrayListBeliefTable;
 import nars.concept.util.ArrayListTaskTable;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
-import nars.link.TermLinkBuilder;
 import nars.nal.LocalRules;
 import nars.task.Task;
 import nars.term.Term;

@@ -1,9 +1,8 @@
-package nars.link;
+package nars.concept;
 
 import nars.Global;
 import nars.Memory;
 import nars.Op;
-import nars.concept.Concept;
 import nars.nal.nal7.CyclesInterval;
 import nars.term.Term;
 import nars.term.Termed;

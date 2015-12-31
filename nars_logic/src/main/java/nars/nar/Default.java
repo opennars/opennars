@@ -15,7 +15,6 @@ import nars.nal.PremiseMatch;
 import nars.nar.experimental.Derivelet;
 import nars.process.ConceptProcess;
 import nars.task.Task;
-import nars.task.flow.FIFOTaskPerception;
 import nars.task.flow.SetTaskPerception;
 import nars.task.flow.TaskPerception;
 import nars.term.Termed;
@@ -26,7 +25,6 @@ import nars.util.data.list.FasterList;
 import nars.util.event.Active;
 import org.apache.commons.lang3.mutable.MutableFloat;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -84,9 +82,9 @@ public class Default extends AbstractNAR {
 
     }
 
-    public TaskPerception _initInput() {
-        return new FIFOTaskPerception(this, null, this::process);
-    }
+//    public TaskPerception _initInput() {
+//        return new FIFOTaskPerception(this, null, this::process);
+//    }
 
     public TaskPerception initInput() {
 
@@ -111,7 +109,6 @@ public class Default extends AbstractNAR {
         c.termlinksFiredPerFiredConcept.set(termLinksPerConcept);
         c.tasklinksFiredPerFiredConcept.set(taskLinksPerConcept);
 
-        //tmpConceptsFiredPerCycle[0] = c.conceptsFiredPerCycle;
         c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
 
         c.capacity.set(activeConcepts);
@@ -150,12 +147,6 @@ public class Default extends AbstractNAR {
                 return put(c, b);
             }
 
-//            @Override
-//            protected BagBudget<Concept> getDefaultBudget(Concept o) {
-//                return new BagBudget<>(o,
-//                        o.getTaskLinks().getSummaryMean(), 0.5f, 0.5f);
-//            }
-
         }.mergeNull();
     }
 
@@ -190,11 +181,11 @@ public class Default extends AbstractNAR {
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
      */
-    public abstract static class AbstractCycle implements Serializable {
+    public abstract static class AbstractCycle implements Consumer<BagBudget<Concept>> {
 
-        final Active handlers = new Active();
+        final Active handlers;
 
-        public final Deriver  deriver;
+        public final Deriver  der;
 
         /**
          * How many concepts to fire each cycle; measures degree of parallelism in each cycle
@@ -234,12 +225,15 @@ public class Default extends AbstractNAR {
         /** activated concepts pending (re-)insert to bag */
         public final LinkedHashSet<Concept> activated = new LinkedHashSet();
 
-        final Derivelet der = new Derivelet();
+        final Derivelet deriver = new Derivelet();
 
         @Range(min=0, max=1f,unit="Perfection")
         public final MutableFloat perfection;
 
         final List<BagBudget<Concept>> firing = Global.newArrayList(1);
+
+        //cached
+        transient private int termlnksToFire, tasklinksToFire;
 
 //        @Deprecated
 //        int tasklinks = 2; //TODO use MutableInteger for this
@@ -252,27 +246,20 @@ public class Default extends AbstractNAR {
 
             this.nar = nar;
 
-            this.deriver = deriver;
+            this.der = deriver;
 
-            this.linkRemembering = nar.memory.linkForgetDurations;
-            this.perfection = nar.memory.perfection;
+
+            Memory m = nar.memory;
+
+            this.linkRemembering = m.linkForgetDurations;
+            this.perfection = m.perfection;
 
             conceptsFiredPerCycle = new MutableInteger(1);
             active = concepts;
 
-            handlers.add(
-                    nar.memory.eventCycleEnd.on((m) -> {
-                        fireConcepts(conceptsFiredPerCycle.intValue(), this::process);
-
-                        /*System.out.println(nar.time());
-                        System.out.println(activated);*/
-
-                        activateConcepts();
-
-                        //active.printAll();
-
-                    }),
-                    nar.memory.eventReset.on((m) -> reset())
+            this.handlers = new Active(
+                m.eventCycleEnd.on(this::onCycle),
+                m.eventReset.on((mem) -> onReset())
             );
 
             alannForget = (budget) -> {
@@ -286,7 +273,6 @@ public class Default extends AbstractNAR {
 
                 float currentPriority = budget.getPriorityIfNaNThenZero();
 
-                Memory m = nar.memory;
                 final float forgetPeriod = linkRemembering.floatValue() * m.duration(); //TODO cache
 
                 float relativeThreshold = perfection.floatValue();
@@ -305,30 +291,35 @@ public class Default extends AbstractNAR {
             };
         }
 
-        private void activateConcepts() {
+        private void onCycle(Memory memory) {
+            fireConcepts(conceptsFiredPerCycle.intValue(), this::process);
+            updateActivated();
+        }
+
+        private void updateActivated() {
             active.commit();
 
-            if (!activated.isEmpty()) {
-                activated.forEach(this::updateConcept);
-                activated.clear();
+            //active.printAll();
+
+            LinkedHashSet<Concept> a = this.activated;
+            if (!a.isEmpty()) {
+                a.forEach(active::put);
+                a.clear();
             }
         }
 
-        protected void updateConcept(Concept c) {
-            active.put(c);
-        }
-
+        /** processes derivation result */
         abstract protected void process(ConceptProcess cp);
 
         /**
          * samples an active concept
          */
-        public Concept next() {
+        public final Concept next() {
             return active.sample().get();
         }
 
 
-        public void reset() {
+        private void onReset() {
             active.clear();
             activated.clear();
         }
@@ -342,88 +333,39 @@ public class Default extends AbstractNAR {
             Bag<Concept> b = this.active;
 
             b.setCapacity(capacity.intValue()); //TODO share the MutableInteger so that this doesnt need to be called ever
-
             if (conceptsToFire == 0 || b.isEmpty()) return;
 
-            b.sample(conceptsToFire, firing);
+            List<BagBudget<Concept>> f = this.firing;
+            b.sample(conceptsToFire, f);
 
-            int tasklinksToFire = tasklinksFiredPerFiredConcept.intValue();
-            int termlnksToFire = termlinksFiredPerFiredConcept.intValue();
+            tasklinksToFire = tasklinksFiredPerFiredConcept.intValue();
+            termlnksToFire = termlinksFiredPerFiredConcept.intValue();
 
-            firing.forEach(cb -> {
-                Concept c = cb.get();
+            f.forEach(this);
+            f.clear();
 
-                //c.getTermLinks().up(simpleForgetDecay);
-                //c.getTaskLinks().update(simpleForgetDecay);
-
-                //if above firing threshold
-                //fireConcept(c);
-                der.firePremiseSquare(nar, processor, c,
-                        tasklinksToFire,
-                        termlnksToFire,
-                        //simpleForgetDecay
-                        alannForget
-                );
-
-                activated.add(c); //update at end of cycle
-            });
-            firing.clear();
-
-        }
-
-        /*{
-            fireConcept(c, p -> {
-                //direct: just input to nar
-                deriver.run(p, nar::input);
-            });
-        }*/
-
-
-
-
-//        protected final void fireConceptSquare(Concept c, Consumer<ConceptProcess> withResult) {
-//
-//
-//            {
-//                int num = termlinksSelectedPerFiredConcept.intValue();
-//                if (firingTermLinks == null ||
-//                        firingTermLinks.length != num)
-//                    firingTermLinks = new BagBudget[num];
-//            }
-//            {
-//                int num = tasklinksSelectedPerFiredConcept.intValue();
-//                if (firingTaskLinks == null ||
-//                        firingTaskLinks.length != num)
-//                    firingTaskLinks = new BagBudget[num];
-//            }
-//
-//            firePremiseSquare(
-//                nar,
-//                withResult,
-//                c,
-//                firingTaskLinks,
-//                firingTermLinks,
-//                nar.memory.taskLinkForgetDurations.intValue()
-//            );
-//        }
-
-
-//        public final Concept activate(Term term, Budget b) {
-//            Bag<Term, Concept> active = this.active;
-//            active.setCapacity(capacity.intValue());
-//
-////            ConceptActivator ca = conceptActivator;
-////            ca.setActivationFactor( activationFactor.floatValue() );
-////            return ca.update(term, b, nar.time(), 1.0f, active);
-//        }
-
-        public final Bag<Concept> concepts() {
-            return active;
         }
 
         public final void activate(Concept c) {
             activated.add(c);
             //core.active.put(c);
+        }
+
+        /** fires a concept selected by the bag */
+        @Override public final void accept(BagBudget<Concept> cb) {
+            Concept c = cb.get();
+
+            //c.getTermLinks().up(simpleForgetDecay);
+            //c.getTaskLinks().update(simpleForgetDecay);
+
+            deriver.firePremiseSquare(nar, this::process, c,
+                tasklinksToFire,
+                termlnksToFire,
+                //simpleForgetDecay
+                alannForget
+            );
+
+            activate(c);
         }
 
 
@@ -549,7 +491,7 @@ public class Default extends AbstractNAR {
             Collection<Task> buffer = derivedTasksBuffer;
             Consumer<Task> narInput = nar::input;
 
-            Deriver deriver = this.deriver;
+            Deriver deriver = this.der;
             deriver.run(p, matcher, buffer::add);
 
             if (Global.DEBUG_DETECT_DUPLICATE_DERIVATIONS) {

@@ -22,9 +22,10 @@ import java.util.function.Consumer;
  *     TermLinks
  *
  * */
-public class ConceptProcess extends AbstractPremise {
+public class ConceptProcess implements Premise {
 
 
+    public final NAR nar;
     protected final BagBudget<Task> taskLink;
     protected final Concept concept;
     protected final BagBudget<Termed> termLink;
@@ -47,7 +48,7 @@ public class ConceptProcess extends AbstractPremise {
 
 
     public ConceptProcess(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Task belief) {
-        super(nar);
+        this.nar = nar;
 
         this.taskLink = taskLink;
         this.concept = concept;
@@ -178,6 +179,10 @@ public class ConceptProcess extends AbstractPremise {
                 .toString();
     }
 
+    @Override
+    public NAR nar() {
+        return nar;
+    }
 
 
     //    /** supplies at most 1 premise containing the pair of next tasklink and termlink into a premise */

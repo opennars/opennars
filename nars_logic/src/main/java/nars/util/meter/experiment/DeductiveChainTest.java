@@ -99,7 +99,7 @@ public class DeductiveChainTest extends TestNAR {
         //n.stdout();
         //n.frame(5000);
 
-        int nc = ((Default)n).core.concepts().size();
+        int nc = ((Default) n).core.active.size();
         String ts = timestamp(start);
         long time = n.time();
 

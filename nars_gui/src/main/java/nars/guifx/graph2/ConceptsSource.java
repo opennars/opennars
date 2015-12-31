@@ -83,7 +83,7 @@ public class ConceptsSource extends GraphSource {
 
 
     public float getConceptPriority(Termed cc) {
-        BagBudget<Concept> ccc = ((Default) nar).core.concepts().get(cc);
+        BagBudget<Concept> ccc = ((Default) nar).core.active.get(cc);
         if (ccc == null) return 0;
         return ccc.getPriorityIfNaNThenZero();
     }
@@ -178,7 +178,7 @@ public class ConceptsSource extends GraphSource {
     @Override
     public void commit() {
 
-        Bag<Concept> x = ((Default) nar).core.concepts();
+        Bag<Concept> x = ((Default) nar).core.active;
 
         String _keywordFilter = includeString.get();
         this.keywordFilter = _keywordFilter != null && _keywordFilter.isEmpty() ? null : _keywordFilter;

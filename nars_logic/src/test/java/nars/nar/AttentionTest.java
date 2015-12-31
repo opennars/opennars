@@ -43,8 +43,8 @@ public class AttentionTest {
         }
 
         assertTrue(uniqueconcepts.size() > 1);
-        
-        int c2 = Iterables.size(n.core.concepts());
+
+        int c2 = Iterables.size(n.core.active);
         assertEquals("does not affect # of concepts", c, c2);
     }
     
