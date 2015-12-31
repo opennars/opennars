@@ -39,11 +39,7 @@ public interface Premise extends Level, Tasked {
                 Term[] u = {question.term(), solution.term()};
                 unify(Op.VAR_QUERY, u, nar.memory, (st) -> {
                     Task s;
-                    if (!st.equals(solution.term())) {
-                        s = MutableTask.clone(solution).term((Compound)st);
-                    } else {
-                        s = solution;
-                    }
+                    s = !st.equals(solution.term()) ? MutableTask.clone(solution).term((Compound) st) : solution;
                     LocalRules.trySolution(question, s, nar, eachSolution);
                 });
             }
@@ -77,10 +73,7 @@ public interface Premise extends Level, Tasked {
 
                     Term result;
                     Term y = getXY(a);
-                    if (y == null)
-                        result = a;
-                    else
-                        result = y;
+                    result = y == null ? a : y;
                     aa = result;
 
                     if (aa == null) return false;

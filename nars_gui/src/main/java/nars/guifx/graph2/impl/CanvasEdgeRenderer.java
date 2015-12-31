@@ -15,7 +15,7 @@ import nars.guifx.util.ColorMatrix;
 /**
  * Created by me on 9/6/15.
  */
-abstract public class CanvasEdgeRenderer implements EdgeRenderer<TermEdge> {
+public abstract class CanvasEdgeRenderer implements EdgeRenderer<TermEdge> {
 
 //    ColorArray colors = new ColorArray(
 //            32,
@@ -72,7 +72,7 @@ abstract public class CanvasEdgeRenderer implements EdgeRenderer<TermEdge> {
 
     }
 
-    abstract public void draw(TermEdge i, TermNode aSrc, TermNode bSrc, double x1, double y1, double x2, double y2);
+    public abstract void draw(TermEdge i, TermNode aSrc, TermNode bSrc, double x1, double y1, double x2, double y2);
 
 
 

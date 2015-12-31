@@ -503,14 +503,7 @@ public interface Compounds {
         if (o1 == intersection) {
             Term[] suffix;
 
-            if (o2 == intersection) {
-                // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                suffix = ((Compound) term2).terms();
-
-            } else {
-                // (&,(&,P,Q),R) = (&,P,Q,R)
-                suffix = new Term[]{term2};
-            }
+            suffix = o2 == intersection ? ((Compound) term2).terms() : new Term[]{term2};
 
             return term(intersection, -1, true, concat(
                     ((Compound) term1).terms(), suffix, Term.class
@@ -536,11 +529,7 @@ public interface Compounds {
 
         if (a.size() == 1) {
 
-            if (b.containsTerm(a.term(0))) {
-                return null;
-            } else {
-                return a;
-            }
+            return b.containsTerm(a.term(0)) ? null : a;
 
         } else {
             //MutableSet dd = Sets.difference(a.toSet(), b.toSet());
@@ -669,12 +658,7 @@ public interface Compounds {
         }
 
 
-        if (op.isStatement()) {
-            //test for valid statement
-            return statement(op, t);
-        } else {
-            return term(op, relation, op.isCommutative(), t);
-        }
+        return op.isStatement() ? statement(op, t) : term(op, relation, op.isCommutative(), t);
 
     }
 

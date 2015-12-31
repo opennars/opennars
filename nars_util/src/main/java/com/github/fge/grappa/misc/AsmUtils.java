@@ -321,10 +321,12 @@ public final class AsmUtils
     public static boolean isBooleanValueOfZ(AbstractInsnNode insn)
     {
         Objects.requireNonNull(insn, "insn");
-        if (insn.getOpcode() != Opcodes.INVOKESTATIC)
-            return false;
-        MethodInsnNode mi = (MethodInsnNode) insn;
-        return isBooleanValueOfZ(mi.owner, mi.name, mi.desc);
+        boolean r=false;
+        if (insn.getOpcode() == Opcodes.INVOKESTATIC) {
+            MethodInsnNode mi = (MethodInsnNode) insn;
+            r=isBooleanValueOfZ(mi.owner, mi.name, mi.desc);
+        }
+        return r;
     }
 
     public static boolean isBooleanValueOfZ(String methodOwner,
@@ -343,10 +345,12 @@ public final class AsmUtils
     public static boolean isActionRoot(AbstractInsnNode insn)
     {
         Objects.requireNonNull(insn, "insn");
-        if (insn.getOpcode() != Opcodes.INVOKESTATIC)
-            return false;
-        MethodInsnNode mi = (MethodInsnNode) insn;
-        return isActionRoot(mi.owner, mi.name);
+        boolean r=false;
+        if (insn.getOpcode() == Opcodes.INVOKESTATIC) {
+            MethodInsnNode mi = (MethodInsnNode) insn;
+            r= isActionRoot(mi.owner, mi.name);
+        }
+        return r;
     }
 
     public static boolean isActionRoot(String methodOwner,
@@ -361,10 +365,12 @@ public final class AsmUtils
     public static boolean isVarRoot(AbstractInsnNode insn)
     {
         Objects.requireNonNull(insn, "insn");
-        if (insn.getOpcode() != Opcodes.INVOKESPECIAL)
-            return false;
-        MethodInsnNode mi = (MethodInsnNode) insn;
-        return isVarRoot(mi.owner, mi.name, mi.desc);
+        boolean r=false;
+        if (insn.getOpcode() == Opcodes.INVOKESPECIAL) {
+            MethodInsnNode mi = (MethodInsnNode) insn;
+            r=isVarRoot(mi.owner, mi.name, mi.desc);
+        }
+        return r;
     }
 
     public static boolean isVarRoot(String methodOwner,
@@ -382,10 +388,8 @@ public final class AsmUtils
     public static boolean isCallOnContextAware(AbstractInsnNode insn)
     {
         Objects.requireNonNull(insn, "insn");
-        if (insn.getOpcode() != Opcodes.INVOKEVIRTUAL
-            && insn.getOpcode() != Opcodes.INVOKEINTERFACE)
-            return false;
-        MethodInsnNode mi = (MethodInsnNode) insn;
-        return isAssignableTo(mi.owner, ContextAware.class);
+        return (insn.getOpcode() == Opcodes.INVOKEVIRTUAL //
+                || insn.getOpcode() == Opcodes.INVOKEINTERFACE) //
+                && isAssignableTo(((MethodInsnNode) insn).owner, ContextAware.class);//
     }
 }

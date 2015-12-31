@@ -37,7 +37,7 @@ public class TermLinkBuilder {
         }
     }
 
-    final static int NegationOrConjunctive = Op.or(Op.ConjunctivesBits, Op.NEGATE);
+    static final int NegationOrConjunctive = Op.or(Op.ConjunctivesBits, Op.NEGATE);
 
     /**
      * Collect TermLink templates into a list, go down one level except in

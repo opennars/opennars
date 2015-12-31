@@ -233,7 +233,7 @@ public class Default extends AbstractNAR {
         final List<BagBudget<Concept>> firing = Global.newArrayList(1);
 
         //cached
-        transient private int termlnksToFire, tasklinksToFire;
+        private transient int termlnksToFire, tasklinksToFire;
 
 //        @Deprecated
 //        int tasklinks = 2; //TODO use MutableInteger for this
@@ -309,7 +309,7 @@ public class Default extends AbstractNAR {
         }
 
         /** processes derivation result */
-        abstract protected void process(ConceptProcess cp);
+        protected abstract void process(ConceptProcess cp);
 
         /**
          * samples an active concept

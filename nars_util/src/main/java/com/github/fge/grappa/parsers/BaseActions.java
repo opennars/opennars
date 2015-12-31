@@ -449,7 +449,7 @@ public abstract class BaseActions<V>
     }
 
     // TODO: pain point here
-    private final void check()
+    private void check()
     {
         if (context == null /*|| context.getMatcher() == null*/)
             throw new InvalidGrammarException("rule has an unwrapped action"

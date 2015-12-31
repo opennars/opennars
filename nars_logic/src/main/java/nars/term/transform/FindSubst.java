@@ -29,7 +29,7 @@ import java.util.Set;
 across a hierarchy of sequential and permutative fanouts
 where valid matches are discovered, backtracked,
 and collected until power is depleted. */
-abstract public class FindSubst extends Versioning implements Subst {
+public abstract class FindSubst extends Versioning implements Subst {
 
 
     public final Random random;
@@ -98,7 +98,7 @@ abstract public class FindSubst extends Versioning implements Subst {
     /**
      * called each time all variables are satisfied in a unique way
      */
-    abstract public boolean onMatch();
+    public abstract boolean onMatch();
 
     /**
      * called each time a match is not fully successful

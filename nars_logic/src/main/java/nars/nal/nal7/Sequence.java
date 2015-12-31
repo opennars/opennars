@@ -100,7 +100,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
 
     /** compares 2nd-order "metadata" components: intervals, duration
      */
-    public final boolean equals2(Sequence that) {
+    public boolean equals2(Sequence that) {
         if (this == that) return true;
         return Arrays.equals(intervals, that.intervals)
                 &&
@@ -111,7 +111,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
 
 
     @Override
-    public final void setDuration(int duration) {
+    public void setDuration(int duration) {
         super.setDuration(duration);
         //if (this.eventDuration!=duration) {
         eventDuration = duration;
@@ -120,7 +120,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
     }
 
     @Override
-    public final int duration() {
+    public int duration() {
         int duration = this.duration;
         if (duration < 0) {
             return this.duration = duration(eventDuration);
@@ -129,7 +129,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
     }
 
     @Override
-    public final int duration(int eventDuration) {
+    public int duration(int eventDuration) {
         if (duration >= 0 && this.eventDuration==eventDuration)
             return duration; //return the cached value because it will be the same as recalculating
 
@@ -217,7 +217,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
     }
 
     @Override
-    public final int[] intervals() {
+    public int[] intervals() {
         return intervals;
     }
 
@@ -413,12 +413,12 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
     }
 
 
-    public final Term[] toArrayWithIntervals() {
+    public Term[] toArrayWithIntervals() {
         return toArrayWithIntervals( (x,y) -> true );
     }
 
     /** constructs a subterm array with the relevant intervals included */
-    public final Term[] toArrayWithIntervals(IntObjectPredicate filter) {
+    public Term[] toArrayWithIntervals(IntObjectPredicate filter) {
         List<Term> l = Global.newArrayList();
         Term[] s = terms();
         int[] i = intervals();

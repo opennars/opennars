@@ -266,7 +266,9 @@ public interface Term extends Termed, Comparable, Termlike {
     }
 
 
-
+    default int opRel() {
+        return op().ordinal();
+    }
 
 //    default public boolean hasAll(final Op... op) {
 //        //TODO

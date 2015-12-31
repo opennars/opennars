@@ -121,7 +121,7 @@ public class Video {
     }
 
     
-  public static final int color(int x, int y, int z, int a) {
+  public static int color(int x, int y, int z, int a) {
     
       if (a > 255) a = 255; else if (a < 0) a = 0;
       if (x > 255) x = 255; else if (x < 0) x = 0;
@@ -132,7 +132,7 @@ public class Video {
   }
 
 
-  public static final int color(float x, float y, float z, float a) {
+  public static int color(float x, float y, float z, float a) {
       if (a > 255) a = 255; else if (a < 0) a = 0;
       if (x > 255) x = 255; else if (x < 0) x = 0;
       if (y > 255) y = 255; else if (y < 0) y = 0;
@@ -161,35 +161,35 @@ public class Video {
         return monofont.deriveFont(size);
     }
 
-    public static final float hashFloat(int h) {
+    public static float hashFloat(int h) {
         int max = 32;
         return Math.abs(h % max) / ((float)max);
 
         //return (h) / (((float) Integer.MAX_VALUE) - ((float) Integer.MIN_VALUE));
     }
 
-    @Deprecated public static final Color getColor(String s, float saturation, float brightness) {
+    @Deprecated public static Color getColor(String s, float saturation, float brightness) {
         return getColor(s.hashCode(), saturation, brightness);
     }
 
-    @Deprecated public static final Color getColor(int hashCode, float saturation, float brightness) {
+    @Deprecated public static Color getColor(int hashCode, float saturation, float brightness) {
         float hue = hashFloat(hashCode);
         return Color.getHSBColor(hue, saturation, brightness);
     }
-    @Deprecated public static final Color getColorA(int hashCode, float saturation, float brightness, float alpha) {
+    @Deprecated public static Color getColorA(int hashCode, float saturation, float brightness, float alpha) {
         float hue = hashFloat(hashCode);
         return getColor(Color.getHSBColor(hue, saturation, brightness), alpha);
     }
 
-    public static final int getColor(int hashCode, float saturation, float brightness, float alpha) {
+    public static int getColor(int hashCode, float saturation, float brightness, float alpha) {
         return colorHSB(hashCode, saturation, brightness, alpha);
     }
 
-    @Deprecated public static final Color getColor(Color c, float alpha) {
+    @Deprecated public static Color getColor(Color c, float alpha) {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (255.0 * alpha));
     }
 
-    public static final int getColor(String s, float sat, float bright, float alpha) {
+    public static int getColor(String s, float sat, float bright, float alpha) {
         return colorHSB( hashFloat(s.hashCode()), sat, bright, alpha);
     }
     //    //NOT WORKING YET

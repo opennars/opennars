@@ -51,7 +51,7 @@ public final class Anticipate {
 
     private final NAR nar;
 
-    private final static boolean debug = false;
+    private static final boolean debug = false;
     //private long nextUpdateTime = -1;
 
     /** called each cycle to update calculations of anticipations */

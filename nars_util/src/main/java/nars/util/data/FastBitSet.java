@@ -526,7 +526,7 @@ public class FastBitSet {
      *
      * @param newLength the new length of the table.
      */
-    private final void setLength(int newLength) {
+    private void setLength(int newLength) {
         if (bits.length < newLength) { // Resizes array.
             int arrayLength = bits.length;
             while (arrayLength < newLength) {

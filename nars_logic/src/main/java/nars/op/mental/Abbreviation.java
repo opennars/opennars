@@ -75,39 +75,33 @@ public class Abbreviation implements Consumer<Task> {
 
         //is it complex and also important? then give it a name:
         if (canAbbreviate(task)) {
-
-            if ((nar.memory.random.nextFloat() < abbreviationProbability))
-                return;
+            if ((nar.memory.random.nextFloat() >= abbreviationProbability)) {
 
 
-            Compound termAbbreviating = task.term();
+                Compound termAbbreviating = task.term();
 
             /*Operation compound = Operation.make(
                     Product.make(termArray(termAbbreviating)), abbreviate);*/
 
-            Concept concept = nar.concept(termAbbreviating);
+                Concept concept = nar.concept(termAbbreviating);
 
-            if (concept!=null && concept.get(Abbreviation.class)==null) {
+                if (concept != null && concept.get(Abbreviation.class) == null) {
 
-                Term atomic = newSerialTerm();
+                    Term atomic = newSerialTerm();
 
-                concept.put(Abbreviation.class, atomic);
+                    concept.put(Abbreviation.class, atomic);
 
-                Compound c = (Compound) $.sim(termAbbreviating, atomic);
-                if (c!=null) {
+                    Compound c = (Compound) $.sim(termAbbreviating, atomic);
+                    if (c != null) {
 
-                    Memory m = nar.memory;
-                    nar.input(
-                        new MutableTask(c)
-                            .judgment().truth(1, abbreviationConfidence)
-                            .parent(task).present(m)
-                    );
+                        Memory m = nar.memory;
+                        nar.input(
+                                new MutableTask(c)
+                                        .judgment().truth(1, abbreviationConfidence)
+                                        .parent(task).present(m)
+                        );
+                    }
                 }
-
-            }
-            else {
-                //already abbreviated, remember it
-                //remind.remind(termAbbreviating, nar);
             }
         }
     }

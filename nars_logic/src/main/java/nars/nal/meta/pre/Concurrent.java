@@ -25,14 +25,14 @@ public class Concurrent extends BooleanCondition<PremiseMatch> {
     public boolean booleanValueOf(PremiseMatch m) {
         Premise premise = m.premise;
 
-        if (!premise.isEvent())
-            return false;
+        boolean r = false   ;
+        if (premise.isEvent()) {
 
-        Task task = premise.getTask();
-        Task belief = premise.getBelief();
-
-        //return task.concurrent(belief, m.premise.duration());
-        return Tense.overlaps(task, belief);
+            Task task = premise.getTask();
+            Task belief = premise.getBelief();
+            r=Tense.overlaps(task, belief);
+        }
+        return r;
     }
 
 }

@@ -274,7 +274,7 @@ public abstract class AbstractTask extends Item<Task>
     }
 
     /** includes: evidentialset, occurrencetime, truth, term, punctuation */
-    private final int rehash() {
+    private int rehash() {
 
         int h = Objects.hash(
                 Arrays.hashCode(getEvidence()),

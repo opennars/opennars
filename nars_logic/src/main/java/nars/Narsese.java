@@ -59,7 +59,7 @@ public class Narsese extends BaseParser<Object>  {
 
     static final ThreadLocal<Narsese> parsers = ThreadLocal.withInitial(() -> Grappa.createParser(Narsese.class) );
 
-    public static final Narsese the() {
+    public static Narsese the() {
         return parsers.get();
     }
 

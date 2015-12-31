@@ -246,7 +246,7 @@ public abstract class NQuadsRDF {
     static final Atom differentFrom = Atom.the("differentFrom");
     static final Atom dataTypeProperty = Atom.the("DatatypeProperty");
 
-    static final Term subjObjInst(Term subject, char subjType, char objType, boolean reverse) {
+    static Term subjObjInst(Term subject, char subjType, char objType, boolean reverse) {
         String a = reverse ? "subj" : "obj";
         String b = reverse ? "obj" : "subj";
         return inst(

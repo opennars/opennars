@@ -4,7 +4,7 @@ import nars.term.Term;
 import nars.term.transform.FindSubst;
 
 
-final public class NotEqualsConstraint implements MatchConstraint {
+public final class NotEqualsConstraint implements MatchConstraint {
 
     private final Term b;
 

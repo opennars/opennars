@@ -243,14 +243,14 @@ public enum Op {
             w.append(ch);
     }
 
-    public static final int or(int... i) {
+    public static int or(int... i) {
         int bits = 0;
         for (int x : i) {
             bits |= x;
         }
         return bits;
     }
-    public static final int or(Op... o) {
+    public static int or(Op... o) {
         int bits = 0;
         for (Op n : o)
             bits |= n.bit();
@@ -261,7 +261,7 @@ public enum Op {
         return (1 << ordinal());
     }
 
-    public static final int or(int bits, Op o) {
+    public static int or(int bits, Op o) {
         return bits | o.bit();
     }
 

@@ -34,7 +34,7 @@ public class SCanvas extends Canvas {
     }
     
     
-    private final boolean updateDoubleBuffer() {
+    private boolean updateDoubleBuffer() {
         int w = getWidth();
         int h = getHeight();
         if ((w == 0) || (h == 0)) {

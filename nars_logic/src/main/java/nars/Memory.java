@@ -291,7 +291,7 @@ public class Memory extends Param {
         //attempt replace entry from term to concept
         Termed tx = build.apply(exists.term());
         if (tx instanceof Concept) {
-            index.put(tx.term(), tx);
+            index.putTerm(tx);
             return (Concept) tx;
         }
 

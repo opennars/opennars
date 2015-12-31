@@ -13,7 +13,7 @@ import org.cache2k.Cache;
  * principles
  * TODO
  * */
-abstract public class Cache2KIndex implements TermIndex {
+public abstract class Cache2KIndex implements TermIndex {
     //http://cache2k.org/#Getting_started
 
     Cache<Term,Termed> data;

@@ -20,7 +20,7 @@ public abstract class FastByteComparisons {
     /**
      * Lexicographically compare two byte arrays.
      */
-    public static final int compareTo(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
+    public static int compareTo(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
         int x = LexicographicalComparerHolder.PureJavaComparercompareTo(
                 b1, s1, l1, b2, s2, l2);
         if (x > 0) return 1;
@@ -28,7 +28,7 @@ public abstract class FastByteComparisons {
         return 0;
     }
 
-    public static final int compare(byte[] a, byte[] b) {
+    public static int compare(byte[] a, byte[] b) {
         if (a == b) return 0;
         return compareTo(a, 0, a.length, b, 0, b.length);
     }

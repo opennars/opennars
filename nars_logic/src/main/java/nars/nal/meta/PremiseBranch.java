@@ -43,7 +43,7 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
         this.conseq = (ProcTerm<PremiseMatch>) term(1);
     }
 
-    @Override public final void accept(PremiseMatch m) {
+    @Override public void accept(PremiseMatch m) {
         if (cond.booleanValueOf(m)) {
             conseq.accept(m);
         }
@@ -56,7 +56,7 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
         }
 
         @Override
-        public final boolean booleanValueOf(C m) {
+        public boolean booleanValueOf(C m) {
             for (BooleanCondition<C> x : terms()) {
                 if (!x.booleanValueOf(m))
                     return false;
@@ -124,7 +124,7 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
         }
 
         @Override
-        public final void accept(PremiseMatch m) {
+        public void accept(PremiseMatch m) {
 
 //            try {
 //                method.invoke(m);

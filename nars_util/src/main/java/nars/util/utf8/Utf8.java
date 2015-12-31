@@ -93,10 +93,10 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
      * use fromUtf8ToChars when possible, because fromUtf8 creates a String
      * which creates an unnecessary duplicate of the decode buffer
      */
-    public static final String fromUtf8toString(byte[] bytes) {
+    public static String fromUtf8toString(byte[] bytes) {
         return fromUtf8toString(bytes, bytes.length);
     }
-    public static final String fromUtf8toString(char prefix, byte[] bytes) {
+    public static String fromUtf8toString(char prefix, byte[] bytes) {
         return fromUtf8toString(prefix, bytes, bytes.length);
     }
 
@@ -150,7 +150,7 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
         return x;
     }
 
-    public static final byte[] toUtf8JDK(CharBuffer c) {
+    public static byte[] toUtf8JDK(CharBuffer c) {
         CharsetEncoder uu = utf8Encoder();
         uu.reset();
         try {
@@ -166,12 +166,12 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
     private static final ThreadLocal<StringDecoder> sbbd =
             ThreadLocal.withInitial(StringDecoder::new);
 
-    public static final byte[] toUtf8(String s) {
+    public static byte[] toUtf8(String s) {
         return sbbe.get().toNewArray(s);
     }
 
     /** # bytes must be even */
-    public static final char[] bytesToChars(byte[] b) {
+    public static char[] bytesToChars(byte[] b) {
         int blen = b.length;
         //boolean odd = blen % 2 == 1;
         //int slen = odd ? (blen /2)+1 : (blen/2);
@@ -187,7 +187,7 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
         return c;
     }
 
-    public static final byte[] charsToBytes(char[] s) {
+    public static byte[] charsToBytes(char[] s) {
         int slen = s.length;
         byte[] b = new byte[slen *2];
         int j = 0;
@@ -198,7 +198,7 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
         return b;
     }
 
-    public static final byte[] charsToBytes(CharSequence s) {
+    public static byte[] charsToBytes(CharSequence s) {
         int slen = s.length();
 
         //boolean odd = slen%2==1 && (s.charAt(slen-1) & 0x00FF) == 0; //is last byte 0?
@@ -216,18 +216,18 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
     }
 
     /** packs a String as UTF8 into a new String */
-    public static final String fromStringtoStringUtf8(String s) {
+    public static String fromStringtoStringUtf8(String s) {
         return new String(bytesToChars(toUtf8(s)));
     }
 
-    public static final String fromStringUtf8(String s) {
+    public static String fromStringUtf8(String s) {
         return Utf8.fromUtf8toString(charsToBytes(s));
     }
 
-    public static final String fromUtf8toString(byte[] bytes, int length) {
+    public static String fromUtf8toString(byte[] bytes, int length) {
         return sbbd.get().newString(bytes, 0, length);
     }
-    public static final String fromUtf8toString(char prefix, byte[] bytes, int length) {
+    public static String fromUtf8toString(char prefix, byte[] bytes, int length) {
         return sbbd.get().newString(prefix, bytes, 0, length);
     }
 
@@ -247,14 +247,14 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
         fromUtf8ToStringBuilder(bytes, bytes.length, a);
     }
 
-    public static final byte[] toUtf8JDK(String str) {
+    public static byte[] toUtf8JDK(String str) {
         return toUtf8JDK(CharBuffer.wrap(str));
 
         //unsafe version;
         //return toUtf8(StringHack.chars(str));
     }
 
-    public static final byte[] toUtf8(char[] str) {
+    public static byte[] toUtf8(char[] str) {
         return toUtf8JDK(CharBuffer.wrap(str));
     }
 

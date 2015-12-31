@@ -53,9 +53,7 @@ public abstract class AbstractConcept implements Concept {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Termed)) return false;
-        return ((Termed) obj).term().equals(term);
+        return this == obj || obj instanceof Termed && ((Termed) obj).term().equals(term);
     }
 
     @Override

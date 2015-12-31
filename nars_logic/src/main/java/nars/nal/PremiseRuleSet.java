@@ -265,7 +265,7 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
         return ur;
     }
 
-    static private PremiseRule eachRule(Collection<PremiseRule> target, PremiseRule r, String src, PatternIndex patterns) {
+    private static PremiseRule eachRule(Collection<PremiseRule> target, PremiseRule r, String src, PatternIndex patterns) {
 //        if (rNorm == null)
 //            throw new RuntimeException("invalid rule, detected after normalization: " + s);
 //

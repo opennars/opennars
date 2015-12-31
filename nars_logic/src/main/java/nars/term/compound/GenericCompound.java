@@ -126,29 +126,18 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public final boolean equals(Object that) {
-        if (this == that)
-            return true;
-
-        //early test:
-        if (hash!=that.hashCode()) return false;
-
-        //use separate method to help this inline
-        return equalsFurther((Termed)that);
+        return this == that || hash == that.hashCode() && equalsFurther((Termed) that);
     }
 
     private boolean equalsFurther(Termed thatTerm) {
-        //assume it will be compared to Termed
-        /*if (!(that instanceof Termed))
-            return false;*/
-        Term t = thatTerm.term();
-        if ((op != t.op()) || (!(t instanceof Compound)))
-            return false;
 
-        Compound c = (Compound) t;
-        return
-                terms.equals(c.subterms())
-                        &&
-                        (relation == c.relation());
+        boolean r=false;
+        Term t = thatTerm.term();
+        if ((op == t.op()) && (((t instanceof Compound)))) {
+            Compound c = (Compound) t;
+            r=terms.equals(c.subterms()) && (relation == c.relation());
+        }
+        return r;
     }
 
 
@@ -157,7 +146,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
      */
     @Override
     public void setDuration(int duration) {
-        if (TermMetadata.hasMetadata(this)) {
+            if (TermMetadata.hasMetadata(this)) {
             int n = size();
             for (int i = 0; i < n; i++)
                 term(i).setDuration(duration);
@@ -279,10 +268,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
      */
     @Override
     public final boolean containsTermRecursively(Term target) {
-
-        if (impossibleSubterm(target)) return false;
-
-        return terms.containsTermRecursively(target);
+        return !impossibleSubterm(target) && terms.containsTermRecursively(target);
     }
 
 

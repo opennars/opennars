@@ -205,7 +205,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
         return result;
     }
 
-    private final Compound getMethodInvocationTerms(Method method, Object instance, Object[] args) {
+    private Compound getMethodInvocationTerms(Method method, Object instance, Object[] args) {
 
         //TODO handle static methods
 

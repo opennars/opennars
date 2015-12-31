@@ -284,7 +284,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         return index(key, table.length);
     }
 
-    protected static final int index(Object key, int tl) {
+    protected static int index(Object key, int tl) {
         // This function ensures that hashCodes that differ only by
         // constant multiples at each bit position have a bounded
         // number of collisions (approximately 8 at default load factor).
@@ -810,7 +810,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         return (V)v;
     }
 
-    private static final Object getFromChain(Object[] chain, Object key) {
+    private static Object getFromChain(Object[] chain, Object key) {
         int cl = chain.length;
         for (int i = 0; i < cl; i += 2) {
             Object k = chain[i];
@@ -880,7 +880,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         return false;
     }
 
-    private static final boolean chainedContainsValue(Object[] chain, Object value) {
+    private static boolean chainedContainsValue(Object[] chain, Object value) {
         for (int i = 0; i < chain.length; i += 2) {
             if (chain[i] == null) {
                 return false;
@@ -976,7 +976,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
         }
     }
 
-    private final void chainedForEachKey(Object[] chain, Procedure<? super K> procedure) {
+    private void chainedForEachKey(Object[] chain, Procedure<? super K> procedure) {
         int cl = chain.length;
         for (int i = 0; i < cl; i += 2) {
             Object cur = chain[i];
@@ -1976,7 +1976,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             return getEntry(entry) != null;
         }
 
-        private final Entry<K, V> getEntry(Entry<?, ?> entry) {
+        private Entry<K, V> getEntry(Entry<?, ?> entry) {
             Object key = entry.getKey();
             Object value = entry.getValue();
             int index = index(key);
@@ -2155,7 +2155,7 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
             }
         }
 
-        private final void chainedForEachEntry(Object[] chain, Procedure<? super Entry<K, V>> procedure) {
+        private void chainedForEachEntry(Object[] chain, Procedure<? super Entry<K, V>> procedure) {
             for (int i = 0; i < chain.length; i += 2) {
                 Object cur = chain[i];
                 if (cur == null) {
@@ -2560,11 +2560,11 @@ public class UnifriedMap<K, V> extends AbstractMutableMap<K, V>
     }
 
 
-    private static final Object nonSentinel(Object key) {
+    private static Object nonSentinel(Object key) {
         return key == NULL_KEY ? null : key;
     }
 
-    private static final Object toSentinelIfNull(Object key) {
+    private static Object toSentinelIfNull(Object key) {
         if (key == null) {
             return NULL_KEY;
         }

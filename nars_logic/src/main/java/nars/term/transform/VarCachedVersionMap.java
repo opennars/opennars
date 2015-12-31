@@ -22,20 +22,20 @@ public final class VarCachedVersionMap extends VersionMap<Term, Term> implements
     }
 
     @Override
-    public final boolean cache(Term key) {
+    public boolean cache(Term key) {
         //since these should always be normalized variables, they will not exceed a predictable range of entries (ex: $1, $2, .. $n)
         return key instanceof Variable;
     }
 
     @Override
-    public final Term getXY(Object t) {
+    public Term getXY(Object t) {
         Versioned<Term> v = map.get(t);
         if (v == null) return null;
         return v.get();
     }
 
     /** must inspect elements because the entries will be there but possibly null */
-    @Override public final boolean isEmpty() {
+    @Override public boolean isEmpty() {
         if (super.isEmpty())
             return true;
         for (Versioned x : map.values()) {

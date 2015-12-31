@@ -94,8 +94,7 @@ public interface Concept extends Termed, Supplier<Term> {
 
     default boolean hasQuests() {
         TaskTable s = getQuests();
-        if (s == null) return false;
-        return !s.isEmpty();
+        return s != null && !s.isEmpty();
     }
 
     boolean isConstant();
@@ -139,40 +138,23 @@ public interface Concept extends Termed, Supplier<Term> {
 
     /** like Map.gett for getting data stored in meta map */
     default <C> C get(Object key) {
-        Map<Object, Object> m = getMeta();
-        if (m == null) return null;
-        return (C) m.get(key);
+        Map<Object, Object> m;
+        return null == (m = getMeta()) ? null : (C) m.get(key);
     }
 
     /**
      * Get the current overall desire value. TODO to be refined
      */
     default Truth getDesire() {
-        if (!hasGoals()) {
-            return null;
-        }
-        return getGoals().top().getTruth();
+        return hasGoals() ? getGoals().top().getTruth() : null;
     }
 
     /** satisfaction/success metric:
      * if desire exists, returns 1.0 / (1 + Math.abs(belief - desire))
      *  otherwise zero */
     default float getSuccess() {
-        if (hasBeliefs() && hasGoals()) {
-
-            Truth d = getDesire();
-            if (d == null) return 0;
-
-            float de = d.getExpectation();
-
-            Truth b = getBeliefs().top().getTruth();
-            float be = b.getExpectation();
-
-
-            return 1.0f / (1.0f + Math.abs(be - de));
-        }
-
-        return 0;
+        Truth d;
+        return hasBeliefs() && hasGoals() && null != (d = getDesire()) ? 1.0f / (1.0f + Math.abs(getBeliefs().top().getTruth().getExpectation() - d.getExpectation())) : 0;
     }
 
     BeliefTable getBeliefs();

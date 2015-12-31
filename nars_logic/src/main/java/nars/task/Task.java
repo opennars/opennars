@@ -170,7 +170,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     Reference<Task> getParentBeliefRef();
 
     /** may reference the concept directly */
-    default public Termed<Compound> get() { return term(); }
+    default Termed<Compound> get() { return term(); }
 
     /**
      * Check whether different aspects of sentence are equivalent to another one

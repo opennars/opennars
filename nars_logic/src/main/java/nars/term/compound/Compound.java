@@ -365,7 +365,9 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return true;
     }
 
-
+    default int opRel() {
+        return op().ordinal() | (relation() << 16);
+    }
 
     default Term last() {
         return term(size()-1);

@@ -25,12 +25,7 @@ public class After extends BooleanCondition<PremiseMatch> {
     @Override
     public boolean booleanValueOf(PremiseMatch m) {
         Premise premise = m.premise;
+        return premise.isEvent() && ((Temporal) premise.getTask()).startsAfter((Temporal) premise.getBelief());
 
-        if (!premise.isEvent())
-            return false;
-
-        return ((Temporal) premise.getTask()).startsAfter(
-            (Temporal) premise.getBelief()
-        );
     }
 }

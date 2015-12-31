@@ -589,7 +589,7 @@ public class PremiseRule extends GenericCompound implements Level {
         return clone1.normalizeRule(index);
     }
 
-    private final PremiseRule clone(Term newT, Term newB, Term newR, boolean question) {
+    private PremiseRule clone(Term newT, Term newB, Term newR, boolean question) {
 
         Compound newPremise = null;
         newPremise = question ? $.p(getPremise().termsCopy(TaskPunctuation.TaskQuestionTerm)) : $.p(getPremise().terms());

@@ -70,20 +70,14 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
         try {
             MethodHandles.Lookup l = MethodHandles.publicLookup();
 
-            if (puncOverride != 0) {
-
-                this.method = Binder.from(boolean.class, PremiseMatch.class)
-                        .append(puncOverride)
-                        .append(TruthOperator.class, belief)
-                        .append(TruthOperator.class, desire)
-                        .invokeStatic(l, Solve.class, "measureTruthOverride");
-
-            } else {
-                this.method = Binder.from(boolean.class, PremiseMatch.class)
-                        .append(TruthOperator.class, belief)
-                        .append(TruthOperator.class, desire)
-                        .invokeStatic(l, Solve.class, "measureTruthInherit");
-            }
+            this.method = puncOverride != 0 ? Binder.from(boolean.class, PremiseMatch.class)
+                    .append(puncOverride)
+                    .append(TruthOperator.class, belief)
+                    .append(TruthOperator.class, desire)
+                    .invokeStatic(l, Solve.class, "measureTruthOverride") : Binder.from(boolean.class, PremiseMatch.class)
+                    .append(TruthOperator.class, belief)
+                    .append(TruthOperator.class, desire)
+                    .invokeStatic(l, Solve.class, "measureTruthInherit");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,11 +95,7 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
         String s = "";
         String solver = Solve.class.getName();
         s += solver + ".measureTruth(m, ";
-        if (puncOverride == 0) {
-            s += "p.getTask().getPunctuation()";
-        } else {
-            s += "'" + puncOverride + "'";
-        }
+        s += puncOverride == 0 ? "p.getTask().getPunctuation()" : "'" + puncOverride + "'";
         s += ", nars.truth.BeliefFunction." + belief + ", ";
         s += desire != null ? "nars.truth.DesireFunction." + desire : "null";
         s += ")";

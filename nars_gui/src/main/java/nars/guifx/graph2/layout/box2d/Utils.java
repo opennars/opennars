@@ -20,7 +20,7 @@ import org.jbox2d.dynamics.World;
  */
 public class Utils {
     //Create a JBox2D world. 
-    public final static World world = new World(
+    public static final World world = new World(
         new Vec2(0.0f, 25.0f)
     );
     
@@ -32,10 +32,10 @@ public class Utils {
     public static final int BALL_SIZE = 8;
     
     //Total number of balls
-    public final static int NO_OF_BALLS = 16;
+    public static final int NO_OF_BALLS = 16;
     
     //Ball gradient
-    private final static LinearGradient BALL_GRADIENT = new LinearGradient(0.0, 0.0, 1.0, 0.0, true, CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, Color.WHITE), new Stop(1, Color.RED)});
+    private static final LinearGradient BALL_GRADIENT = new LinearGradient(0.0, 0.0, 1.0, 0.0, true, CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, Color.WHITE), new Stop(1, Color.RED)});
     
     //This method adds a ground to the screen. 
     public static void addGround(float width, float height){

@@ -104,7 +104,7 @@ public class Permutations  {
         return ind[index];
     }
 
-    private static final void swap(int[] arr, int i, int j){
+    private static void swap(int[] arr, int i, int j){
         int t = arr[i];
         arr[i] = arr[j];
         arr[j] = t;

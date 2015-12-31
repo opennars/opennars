@@ -36,13 +36,13 @@ public final class FirstOfMatcher
     }
 
     @Override
-    public final MatcherType getType()
+    public MatcherType getType()
     {
         return MatcherType.COMPOSITE;
     }
 
     @Override
-    public final <V> boolean match(MatcherContext<V> context) {
+    public <V> boolean match(MatcherContext<V> context) {
 
         Matcher[] children = getChildren().array();
         for (Matcher matcher : children) {
