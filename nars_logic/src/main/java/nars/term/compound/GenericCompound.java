@@ -63,7 +63,6 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public void append(Appendable p, boolean pretty) throws IOException {
-
         switch (op) {
             case SET_INT_OPENER:
             case SET_EXT_OPENER:
@@ -97,18 +96,23 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     @Override
     public final int compareTo(Object o) {
-        if (this == o) return 0;
+        int r=0;
+        if (this != o) {
+            Term t = (Term) o;
+            //int diff = op().compareTo(t.op());
+            int diff = Integer.compare(op().ordinal(), t.op().ordinal());
+            if (diff != 0) r = diff;
+            else {
 
-        Term t = (Term) o;
-        //int diff = op().compareTo(t.op());
-        int diff = Integer.compare(op().ordinal(), t.op().ordinal());
-        if (diff != 0) return diff;
+                Compound c = (Compound) t;
+                int diff2 = Integer.compare(relation(), c.relation());
+                if (diff2 != 0) return diff2;
 
-        Compound c = (Compound)t;
-        int diff2 = Integer.compare(relation(), c.relation());
-        if (diff2 != 0) return diff2;
+                r=subterms().compareTo(c.subterms());
+            }
+        }
 
-        return subterms().compareTo( c.subterms() );
+        return r;
     }
 
 
@@ -116,12 +120,6 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     public final void addAllTo(Collection<Term> set) {
         terms.addAllTo(set);
     }
-
-
-//    @Override
-//    public Term clone(Term[] replaced) {
-//        return Compounds.the(op(), replaced, relation);
-//    }
 
     @Override
     public final TermVector<T> subterms() {

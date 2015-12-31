@@ -103,13 +103,14 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
 
     @Override
     public final boolean booleanValueOf(PremiseMatch m) {
+        boolean r = false;
         try {
-            return (boolean)method.invokeExact(m);
+            r=(boolean)method.invokeExact(m);
         } catch (Throwable throwable) {
-            return false;
             //throw new RuntimeException(throwable);
             // throwable.printStackTrace();  // return false;
         }
+        return r;
     }
 
 
@@ -120,28 +121,17 @@ public final class Solve extends BooleanCondition<PremiseMatch> {
 
     public static boolean measureTruthOverride(PremiseMatch m, char punct, TruthOperator belief, TruthOperator desire) {
         TruthOperator tf;
-        if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
-            tf = (punct == Symbols.JUDGMENT) ? belief : desire;
-
-            if (tf == null)
-                return false;
-
-            /** filter cyclic double-premise results  */
-            if (m.cyclic && !tf.allowOverlap()) {
-                //                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
-                //                    match.removeCyclic(outcome, premise, truth, punct);
-                //                }
-                return false;
-            }
-
-            boolean b = tf.apply(m);
-            if (!b)
-                return false;
-
+        boolean r=false;
+        switch (punct) {
+            case Symbols.JUDGMENT:
+            case Symbols.GOAL:
+                tf = (punct == Symbols.JUDGMENT) ? belief : desire;
+                if (tf != null && (!m.cyclic || tf.allowOverlap())) r = (tf.apply(m));
+                break;
         }
 
         m.punct.set(punct);
-        return true;
+        return r;
     }
 
     public Derive getDerive() {
