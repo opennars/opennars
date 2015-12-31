@@ -16,13 +16,13 @@ public final class SubTermStructure extends PatternOp {
     public SubTermStructure(Op matchingType, int subterm, int bits) {
         this.subterm = subterm;
 
-//            if (matchingType != Op.VAR_PATTERN)
-//                bits &= (~matchingType.bit());
-        bits &= ~(Op.VariableBits);
+        if (matchingType != Op.VAR_PATTERN)
+            bits &= (~matchingType.bit());
+        //bits &= ~(Op.VariableBits);
 
         this.bits = bits;
-        id = "t" + subterm + ':' +
-                Integer.toString(bits, 16);
+        id = "term" + subterm + ":(" +
+                Integer.toString(bits, 16) + ",struct)";
     }
 
 

@@ -1,9 +1,10 @@
 package nars.nal.meta.pre;
 
 import nars.nal.PremiseMatch;
+import nars.nal.meta.AtomicBooleanCondition;
 import nars.nal.meta.BooleanCondition;
 
-public abstract class Temporality extends BooleanCondition<PremiseMatch> {
+public abstract class Temporality extends AtomicBooleanCondition<PremiseMatch> {
 
     /** both task and belief are temporal (non-eternal) */
     public static final BooleanCondition<PremiseMatch> both = new Temporality() {

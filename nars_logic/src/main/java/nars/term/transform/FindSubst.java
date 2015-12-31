@@ -131,28 +131,31 @@ public abstract class FindSubst extends Versioning implements Subst {
         term.set(pp);
     }
 
-    public void matchAll(Term x, Term y) {
-        boolean b = match(x, y);
-        if (b && !termutes.isEmpty()) {
+    public final void matchAll(Term x, Term y) {
+        matchAll(x, y, true);
+    }
 
-            //repeat until # of termutes stabilizes
-            int termutesPre;
-            //System.out.println("termutes start");
-            do {
-                //System.out.println("  termutes: " + termutes);
-                termutesPre = termutes.size();
-                matchTermutations(0, termutesPre);
-            } while (termutes.size() != termutesPre);
-
-            termutes.clear();
-
-        } else {
-            if (b)
-                onMatch();
+    /** setting finish=false allows matching in pieces before finishing */
+    public final void matchAll(Term x, Term y, boolean finish) {
+        if (match(x, y) && finish) {
+            if (!termutes.isEmpty())
+                matchTermutes();
             else
-                onPartial();
+                onMatch(); //no termutations, it matched, we're done
         }
+    }
 
+    private void matchTermutes() {
+        //repeat until # of termutes stabilizes
+        int termutesPre;
+        //System.out.println("termutes start");
+        do {
+            //System.out.println("  termutes: " + termutes);
+            termutesPre = termutes.size();
+            matchTermutations(0, termutesPre);
+        } while (termutes.size() != termutesPre);
+
+        termutes.clear();
     }
 
     private void print(String prefix, Term a, Term b) {

@@ -6,10 +6,7 @@ import com.google.common.collect.Sets;
 import nars.$;
 import nars.Global;
 import nars.Op;
-import nars.nal.meta.AndCondition;
-import nars.nal.meta.BooleanCondition;
-import nars.nal.meta.PostCondition;
-import nars.nal.meta.TaskBeliefPair;
+import nars.nal.meta.*;
 import nars.nal.meta.op.Solve;
 import nars.nal.meta.pre.*;
 import nars.nal.op.*;
@@ -49,7 +46,7 @@ public class PremiseRule extends GenericCompound implements Level {
     };
 
     /** blank marker trie node indicating the derivation and terminating the branch */
-    public static final BooleanCondition END = new BooleanCondition<PremiseMatch>() {
+    public static final BooleanCondition END = new AtomicBooleanCondition<PremiseMatch>() {
 
 
         @Override
@@ -170,7 +167,7 @@ public class PremiseRule extends GenericCompound implements Level {
         Solve truth = new Solve(post,
             this, anticipate, immediate_eternalize,  postPreconditions
         );
-        l.add(truth);
+        truth.addConditions(l);
 
         match.addConditions(l); //the match itself
 

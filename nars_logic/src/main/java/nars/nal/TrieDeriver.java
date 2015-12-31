@@ -121,8 +121,8 @@ public class TrieDeriver extends Deriver {
                 //allowing multiple derivations to fold within a Match's actions
                 MatchTerm mt = matchParent.get();
                 if (mt == null) {
-                    //throw new RuntimeException("detached Derive action: " + x + " in branch: " + t);
-                    System.err.println("detached Derive action: " + x + " in branch: " + t);
+                    throw new RuntimeException("detached Derive action: " + x + " in branch: " + t);
+                    //System.err.println("detached Derive action: " + x + " in branch: " + t);
                 }
                 else {
                     Derive dx = (Derive) x;
@@ -131,8 +131,9 @@ public class TrieDeriver extends Deriver {
                 }
                 return false;
             } else {
-                System.out.println("\tnot boolean condition");
-                return false;
+                throw new RuntimeException("not boolean condition" + x + " in branch: " + t + " (" + x.getClass() + ")");
+                //System.out.println("\tnot boolean condition");
+                //return false;
             }
         }).map(x -> (BooleanCondition<PremiseMatch>)x).collect(Collectors.toList());
     }
@@ -140,7 +141,7 @@ public class TrieDeriver extends Deriver {
 
 
     private static Collection<ProcTerm<PremiseMatch>> compileActions(List<Term> t) {
-        t.forEach(x -> System.out.println(x.getClass() + " " + x));
+        //t.forEach(x -> System.out.println(x.getClass() + " " + x));
         return (Collection)t;
     }
 

@@ -2,14 +2,14 @@ package nars.nal.meta.pre;
 
 import nars.Premise;
 import nars.nal.PremiseMatch;
-import nars.nal.meta.BooleanCondition;
+import nars.nal.meta.AtomicBooleanCondition;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
 
 /**
  * Created by me on 8/15/15.
  */
-public class Concurrent extends BooleanCondition<PremiseMatch> {
+public class Concurrent extends AtomicBooleanCondition<PremiseMatch> {
 
     public static final Concurrent the = new Concurrent();
 

@@ -1,13 +1,13 @@
 package nars.nal.meta.pre;
 
 import nars.nal.PremiseMatch;
-import nars.nal.meta.BooleanCondition;
+import nars.nal.meta.AtomicBooleanCondition;
 import nars.term.Term;
 
 /**
  * Created by me on 8/15/15.
  */
-public abstract class PreCondition3 extends BooleanCondition<PremiseMatch> {
+public abstract class PreCondition3 extends AtomicBooleanCondition<PremiseMatch> {
     public Term arg1=null, arg2=null, arg3=null;
 
 

@@ -4,6 +4,7 @@ import com.headius.invokebinder.Binder;
 import nars.Symbols;
 import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
+import nars.nal.meta.AtomicBooleanCondition;
 import nars.nal.meta.BooleanCondition;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.TruthOperator;
@@ -16,7 +17,7 @@ import java.lang.invoke.MethodHandles;
 /**
  * Evaluates the truth of a premise
  */
-public final class Solve extends BooleanCondition<PremiseMatch> {
+public final class Solve extends AtomicBooleanCondition<PremiseMatch> {
     public final TruthOperator belief;
     public final TruthOperator desire;
     public final char puncOverride;

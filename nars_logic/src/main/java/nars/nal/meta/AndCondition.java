@@ -1,18 +1,17 @@
 package nars.nal.meta;
 
-import com.google.common.base.Joiner;
-import com.gs.collections.api.block.function.primitive.BooleanFunction;
 import nars.Op;
+import nars.term.Term;
 import nars.term.TermVector;
 import nars.term.compound.GenericCompound;
 
 import java.util.Collection;
-import java.util.stream.Stream;
+import java.util.List;
 
 /**
  * Created by me on 12/31/15.
  */
-public final class AndCondition<C> extends GenericCompound<BooleanCondition<C>> implements BooleanFunction<C> {
+public final class AndCondition<C> extends GenericCompound<BooleanCondition<C>> implements BooleanCondition<C> {
 
     public AndCondition(BooleanCondition<C>[] p) {
         super(Op.CONJUNCTION, p);
@@ -31,9 +30,14 @@ public final class AndCondition<C> extends GenericCompound<BooleanCondition<C>> 
     }
 
     public void appendJavaCondition(StringBuilder s) {
-        Joiner.on(" && ").appendTo(s, Stream.of(terms()).map(
-                b -> ('(' + b.toJavaConditionString() + ')'))
-                .iterator()
-        );
+//        Joiner.on(" && ").appendTo(s, Stream.of(terms()).map(
+//                b -> ('(' + b.toJavaConditionString() + ')'))
+//                .iterator()
+//        );
+    }
+
+    @Override
+    public void addConditions(List<Term> l) {
+        l.add(this);
     }
 }

@@ -6,7 +6,7 @@ import nars.$;
 import nars.Global;
 import nars.nal.PremiseMatch;
 import nars.nal.PremiseMatchFork;
-import nars.nal.meta.BooleanCondition;
+import nars.nal.meta.AtomicBooleanCondition;
 import nars.nal.meta.ProcTerm;
 import nars.nal.meta.TaskBeliefPair;
 import nars.term.Term;
@@ -25,7 +25,7 @@ import static com.gs.collections.impl.factory.Maps.immutable;
  *
  * < (|, match [, constraints]) ==> (&|, derivation1, ... derivationN)>
  */
-public final class MatchTerm extends BooleanCondition<PremiseMatch> implements ProcTerm<PremiseMatch> {
+public final class MatchTerm extends AtomicBooleanCondition<PremiseMatch> implements ProcTerm<PremiseMatch> {
 
     public final TaskBeliefPair x;
     public final ImmutableMap<Term, MatchConstraint> constraints;
@@ -38,7 +38,7 @@ public final class MatchTerm extends BooleanCondition<PremiseMatch> implements P
 
     private MatchTerm(TaskBeliefPair x, ImmutableMap<Term, MatchConstraint> constraints) {
         this.id = (constraints == null) ?
-                (Compound) x : //no constraints
+                x : //no constraints
                 (Compound) ($.sect(x, $.the(constraints.toString()))); //constraints stored in atomic string
 
         this.x = x;
@@ -101,7 +101,7 @@ public final class MatchTerm extends BooleanCondition<PremiseMatch> implements P
 
         //TODO HACK dont lazily instantiate this but do it after the TrieDeriver has finished building the rule trie by iterating all known MatchTerm's (in the LinkGraph)
         if (onMatch == null) {
-            onMatch = new PremiseMatchFork((Derive[]) derive.toArray(new Derive[derive.size()]));
+            onMatch = new PremiseMatchFork(derive.toArray(new Derive[derive.size()]));
         }
 
         onMatch.accept(m);

@@ -2,10 +2,8 @@ package nars.nal;
 
 import nars.NAR;
 import nars.nar.Default;
-import nars.term.Term;
 import org.junit.Test;
 
-import static java.lang.System.out;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -32,19 +30,21 @@ public class TrieDeriverTest {
     }
 
     @Test public void testTriePreconditions0() {
-        TrieDeriver d = testRule(rN);
+        TrieDeriver d = testRule(r0);
+        TrieDeriver e = testRule(r1);
+        TrieDeriver f = testRule(rN);
 
 //        assertEquals(1, d.roots.length);
 //        assertEquals(2, d.rules.size());
 
-
-        out.println(d.trie);
-
-        d.trie.printSummary();
-        d.derivationLinks.entries().forEach( System.out::println/*("\t" + k + "\t" + v)*/);
-
-        for (Term p : d.roots)
-            out.println(p);
+//
+//        out.println(d.trie);
+//
+//        d.trie.printSummary();
+//        d.derivationLinks.entries().forEach( System.out::println/*("\t" + k + "\t" + v)*/);
+//
+//        for (Term p : d.roots)
+//            out.println(p);
     }
 
     public Default testRule(String rule, String... inputs) {

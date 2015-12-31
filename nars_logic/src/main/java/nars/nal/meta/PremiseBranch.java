@@ -39,4 +39,5 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
         }
     }
 
+
 }

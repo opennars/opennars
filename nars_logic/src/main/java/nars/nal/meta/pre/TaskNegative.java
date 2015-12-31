@@ -1,14 +1,14 @@
 package nars.nal.meta.pre;
 
 import nars.nal.PremiseMatch;
-import nars.nal.meta.BooleanCondition;
+import nars.nal.meta.AtomicBooleanCondition;
 import nars.nal.meta.PostCondition;
 import nars.task.Task;
 
 /**
  * Created by me on 8/15/15.
  */
-public final class TaskNegative extends BooleanCondition<PremiseMatch> {
+public final class TaskNegative extends AtomicBooleanCondition<PremiseMatch> {
 
     @Override
     public boolean booleanValueOf(PremiseMatch m) {
