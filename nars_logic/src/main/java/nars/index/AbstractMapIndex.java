@@ -22,14 +22,9 @@ public abstract class AbstractMapIndex implements TermIndex {
 
     /** get the instance that will be internalized */
     public static Termed intern(Op op, int relation, TermContainer t) {
-        if ((TermMetadata.hasMetadata(t))) {
-
-            //intermval metadata, handle special
-            return $.the(op, relation, t);
-        } else {
-            //TODO find existing instance and don't construct a duplciate which will get unified on re-entry
-            return newInternCompound(op, t, relation);
-        }
+        return TermMetadata.hasMetadata(t) ?
+                $.the(op, relation, t) :
+                newInternCompound(op, t, relation);
     }
 
     protected static Termed newInternCompound(Op op, TermContainer subterms, int relation) {

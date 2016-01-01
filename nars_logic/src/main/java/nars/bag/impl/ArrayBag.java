@@ -49,7 +49,7 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     public ArrayBag(int capacity) {
-        this(new ArraySortedIndex(capacity));
+        this(new ArraySortedIndex<>(capacity));
     }
 
     @Override public BagBudget<V> put(Object v) {

@@ -942,24 +942,11 @@ public class Narsese extends BaseParser<Object>  {
 //        }
 
 
-
-        if (op == OPERATOR) {
-            //temporary
-            //final Term self = Atom.the("SELF");//memory.self();
-
-            //automatically add SELF term to operations if in NAL8+
-            /*if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
-                vectorterms.add(self);*/ //SELF in final argument
-
-            return $.oper(
-                new Operator(vectorterms.get(0)),
-                $.p(vectorterms, 1, vectorterms.size())
-            );
-        }
-        else {
-
-            return $.the(op, vectorterms, -1);
-        }
+        return (op == OPERATOR) ?
+                $.oper(new Operator(vectorterms.get(0)),
+                        $.p(vectorterms, 1, vectorterms.size())
+                ) :
+                $.the(op, vectorterms, -1);
     }
 
 

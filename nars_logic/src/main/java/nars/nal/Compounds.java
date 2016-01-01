@@ -527,17 +527,18 @@ public interface Compounds {
                 changed |= dd.remove(bb);
             }
 
+            Term r;
             if (!changed) {
-                return a;
+                r = a;
             }
             else if (dd.isEmpty()) {
-                return null;
+                r = null;
             }
             else {
                 Term[] i = Terms.toArray(dd);
-                if (i == null) return null;
-                return term(a.op(), i);
+                r = (i == null) ? null : term(a.op(), i);
             }
+            return r;
         }
 
     }

@@ -110,11 +110,9 @@ public interface Premise extends Level, Tasked {
             }
 
             Term applySubstituteAndRenameVariables(Compound t, Map<Term,Term> subs) {
-                if ((subs == null) || (subs.isEmpty())) {
-                    //no change needed
-                    return t;
-                }
-                return memory.index.apply( new MapSubst(subs), t );
+                return (subs == null) || (subs.isEmpty()) ?
+                        t /* no chane necessary */ :
+                        memory.index.apply(new MapSubst(subs), t);
             }
 
         };
