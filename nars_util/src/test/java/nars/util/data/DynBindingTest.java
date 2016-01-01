@@ -1,12 +1,8 @@
 package nars.util.data;
 
 import com.gs.collections.api.block.function.primitive.BooleanFunction;
-import com.headius.invokebinder.Binder;
 import org.apache.commons.math3.primes.Primes;
 import org.junit.Test;
-
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 
 import static java.lang.Math.random;
 
@@ -36,7 +32,7 @@ public class DynBindingTest {
     public static void print() {
         System.out.println("loop ");
     }
-
+/*
     @Test
     public void testBranch() throws Throwable {
         MethodHandles.Lookup LOOKUP = MethodHandles.publicLookup();
@@ -74,5 +70,5 @@ public class DynBindingTest {
 //        assertEquals(MethodType.methodType(String.class, String.class), handle.type());
 //        assertEquals("foobar", (String)handle.invokeExact("foo"));
 //        assertEquals("quuxbaz", (String)handle.invokeExact("quux"));
-    }
+    }*/
 }

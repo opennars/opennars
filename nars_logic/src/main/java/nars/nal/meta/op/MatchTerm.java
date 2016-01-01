@@ -13,7 +13,6 @@ import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.constraint.AndConstraint;
 import nars.term.constraint.MatchConstraint;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +54,6 @@ public final class MatchTerm extends AtomicBooleanCondition<PremiseMatch> implem
         return new MatchTerm(x, constraints);
     }
 
-    @NotNull
     public static Map<Term, MatchConstraint> initConstraints(ListMultimap<Term, MatchConstraint> c) {
         Map<Term, MatchConstraint> con = Global.newHashMap();
         c.asMap().forEach((t, cc) -> {
