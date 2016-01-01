@@ -11,6 +11,7 @@ import nars.nal.nal7.Sequence;
 import nars.process.ConceptProcess;
 import nars.term.Statement;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
@@ -68,9 +69,9 @@ public class occurrsForward extends ImmediateTermTransform implements PremiseAwa
 
         if (positive) {
             //Term ret = xx[1];
-            Term ret = premise.getTermLink().get().term();
+            Termed ret = premise.termLink.get();
 
-            if (ret.op(Op.IMPLICATION)) {
+            if (ret.op() == Op.IMPLICATION) {
                 Term impSubj = Statement.subj(ret);
                 if (impSubj.op(Op.SEQUENCE)) {
                     Sequence seq = (Sequence)impSubj;

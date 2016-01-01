@@ -22,30 +22,26 @@ import java.util.function.Consumer;
  *     TermLinks
  *
  * */
-public class ConceptProcess implements Premise {
+public final class ConceptProcess implements Premise {
 
 
     public final NAR nar;
-    protected final BagBudget<Task> taskLink;
-    protected final Concept concept;
-    protected final BagBudget<Termed> termLink;
+    public final BagBudget<Task> taskLink;
+    public final Concept concept;
+    public final BagBudget<Termed> termLink;
 
     private Task currentBelief = null;
     private transient boolean cyclic;
 
     @Override
     public final Task getTask() {
-        return getTaskLink().get();
+        return taskLink.get();
     }
 
-    public final BagBudget<Task> getTaskLink() {
-        return taskLink;
-    }
-
-    @Override public final Concept getConcept() {
+    @Override
+    public Concept getConcept() {
         return concept;
     }
-
 
     public ConceptProcess(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Task belief) {
         this.nar = nar;
@@ -171,9 +167,9 @@ public class ConceptProcess implements Premise {
     public String toString() {
         return new StringBuilder().append(
                 getClass().getSimpleName())
-                .append('[').append(getConcept()).append(',')
-                            .append(getTaskLink()).append(',')
-                            .append(getTermLink()).append(',')
+                .append('[').append(concept).append(',')
+                            .append(taskLink).append(',')
+                            .append(termLink).append(',')
                             .append(getBelief())
                 .append(']')
                 .toString();

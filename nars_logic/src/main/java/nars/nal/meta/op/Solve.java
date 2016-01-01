@@ -1,6 +1,5 @@
 package nars.nal.meta.op;
 
-import com.headius.invokebinder.Binder;
 import nars.Symbols;
 import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
@@ -11,36 +10,37 @@ import nars.nal.meta.TruthOperator;
 import nars.truth.BeliefFunction;
 import nars.truth.DesireFunction;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-
 /**
  * Evaluates the truth of a premise
  */
-public final class Solve extends AtomicBooleanCondition<PremiseMatch> {
-    public final TruthOperator belief;
-    public final TruthOperator desire;
-    public final char puncOverride;
+abstract public class Solve extends AtomicBooleanCondition<PremiseMatch> {
+    //public final TruthOperator belief;
+    //public final TruthOperator desire;
+    //public final char puncOverride;
 
     private final transient String id;
 
-    public final PremiseRule rule;
+    //public final PremiseRule rule;
     private final Derive derive;
-    private final MethodHandle method;
 
+    public Solve(String id, Derive derive) {
+        super();
+        this.id = id;
+        this.derive = derive;
+    }
 
-    public Solve(PostCondition p, PremiseRule rule, boolean anticipate, boolean eternalize,
-                 BooleanCondition[] postPreconditions) {
+    public static Solve the(PostCondition p, PremiseRule rule, boolean anticipate, boolean eternalize,
+                            BooleanCondition[] postPreconditions) {
 
-        this.puncOverride = p.puncOverride;
+        char puncOverride = p.puncOverride;
 
-        this.belief = BeliefFunction.get(p.beliefTruth);
+        BeliefFunction belief = BeliefFunction.get(p.beliefTruth);
 
 //        if (belief == null &&
 //                !((puncOverride==Symbols.GOAL) || (puncOverride==Symbols.QUEST) || (puncOverride==Symbols.QUESTION)))
 //            throw new RuntimeException("unknown belief function " + beliefTerm);
 
-        this.desire = DesireFunction.get(p.goalTruth);
+        DesireFunction desire = DesireFunction.get(p.goalTruth);
 
 
         String beliefLabel = belief == null ? "_" :
@@ -55,34 +55,49 @@ public final class Solve extends AtomicBooleanCondition<PremiseMatch> {
 
         i += ')';
 
-        this.rule = rule;
+        //this.rule = rule;
 
 
-        this.id = i;
-        this.derive = new Derive(rule, p.term,
+        Derive der = new Derive(rule, p.term,
                 postPreconditions,
                 anticipate,
                 eternalize);
 
-
-
-
-        try {
-            MethodHandles.Lookup l = MethodHandles.publicLookup();
-
-            this.method = puncOverride != 0 ? Binder.from(boolean.class, PremiseMatch.class)
-                    .append(puncOverride)
-                    .append(TruthOperator.class, belief)
-                    .append(TruthOperator.class, desire)
-                    .invokeStatic(l, Solve.class, "measureTruthOverride") : Binder.from(boolean.class, PremiseMatch.class)
-                    .append(TruthOperator.class, belief)
-                    .append(TruthOperator.class, desire)
-                    .invokeStatic(l, Solve.class, "measureTruthInherit");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+        if (puncOverride == 0) {
+            //Inherit from task
+            return new Solve(i, der) {
+                @Override public boolean booleanValueOf(PremiseMatch m) {
+                    char punct = m.premise.getTask().getPunctuation();
+                    return measureTruthOverride(m, punct, belief, desire);
+                }
+            };
+        } else {
+            //Override
+            return new Solve(i, der) {
+                @Override public boolean booleanValueOf(PremiseMatch m) {
+                    return measureTruthOverride(m, puncOverride, belief, desire);
+                }
+            };
         }
+
+
+//
+//        try {
+//            MethodHandles.Lookup l = MethodHandles.publicLookup();
+//
+//            this.method = puncOverride != 0 ? Binder.from(boolean.class, PremiseMatch.class)
+//                    .append(puncOverride)
+//                    .append(TruthOperator.class, belief)
+//                    .append(TruthOperator.class, desire)
+//                    .invokeStatic(l, Solve.class, "measureTruthOverride") : Binder.from(boolean.class, PremiseMatch.class)
+//                    .append(TruthOperator.class, belief)
+//                    .append(TruthOperator.class, desire)
+//                    .invokeStatic(l, Solve.class, "measureTruthInherit");
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Override
@@ -90,35 +105,49 @@ public final class Solve extends AtomicBooleanCondition<PremiseMatch> {
         return id;
     }
 
-    @Override
-    public String toJavaConditionString() {
-        String s = "";
-        String solver = Solve.class.getName();
-        s += solver + ".measureTruth(m, ";
-        s += puncOverride == 0 ? "p.getTask().getPunctuation()" : "'" + puncOverride + "'";
-        s += ", nars.truth.BeliefFunction." + belief + ", ";
-        s += desire != null ? "nars.truth.DesireFunction." + desire : "null";
-        s += ")";
-        return s;
-    }
+//    @Override
+//    public String toJavaConditionString() {
+//        String s = "";
+//        String solver = Solve.class.getName();
+//        s += solver + ".measureTruth(m, ";
+//        s += puncOverride == 0 ? "p.getTask().getPunctuation()" : "'" + puncOverride + "'";
+//        s += ", nars.truth.BeliefFunction." + belief + ", ";
+//        s += desire != null ? "nars.truth.DesireFunction." + desire : "null";
+//        s += ")";
+//        return s;
+//    }
 
-    @Override
-    public final boolean booleanValueOf(PremiseMatch m) {
-        boolean r = false;
-        try {
-            r=(boolean)method.invokeExact(m);
-        } catch (Throwable throwable) {
-            //throw new RuntimeException(throwable);
-            // throwable.printStackTrace();  // return false;
-        }
-        return r;
-    }
+//    @Override
+//    public final boolean booleanValueOf(PremiseMatch m) {
+//        boolean r = false;
+//        try {
+//            r=(boolean)method.invokeExact(m);
+//        } catch (Throwable throwable) {
+//            //throw new RuntimeException(throwable);
+//            // throwable.printStackTrace();  // return false;
+//        }
+//        return r;
+//    }
 
 
-    public static boolean measureTruthInherit(PremiseMatch m, TruthOperator belief, TruthOperator desire) {
-        char punct = m.premise.getTask().getPunctuation();
-        return measureTruthOverride(m, punct, belief, desire);
-    }
+//    /** inherits punctuation from task */
+//    public static class SolveInherit extends Solve {
+//
+//        @Override public boolean booleanValueOf(PremiseMatch m) {
+//            char punct = m.premise.getTask().getPunctuation();
+//            return measureTruthOverride(m, punct, belief, desire);
+//        }
+//    }
+//
+//    /** overrides punctuation */
+//    public static class SolveOverride extends Solve {
+//
+//    }
+
+//    public static boolean measureTruthInherit(PremiseMatch m, TruthOperator belief, TruthOperator desire) {
+//        char punct = m.premise.getTask().getPunctuation();
+//        return measureTruthOverride(m, punct, belief, desire);
+//    }
 
     public static boolean measureTruthOverride(PremiseMatch m, char punct, TruthOperator belief, TruthOperator desire) {
         TruthOperator tf;

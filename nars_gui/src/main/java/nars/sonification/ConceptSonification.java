@@ -65,7 +65,7 @@ public class ConceptSonification extends FrameReaction {
 
         updateSamples();
 
-        nar.memory.eventConceptProcess.on(c -> update(c.getConcept()));
+        nar.memory.eventConceptProcess.on(c -> update(c.concept));
         //TODO update all existing concepts on start?
     }
 

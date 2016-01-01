@@ -45,23 +45,33 @@ public class TermPattern {
                                       List<BooleanCondition<PremiseMatch>> code,
                                       ListMultimap<Term, MatchConstraint> constraints) {
         Term x0 = pattern.term(0);
+        boolean x0Pattern = x0.op(Op.VAR_PATTERN);
         Term x1 = pattern.term(1);
-        if (x0.op()!=Op.VAR_PATTERN) {
+        boolean x1Pattern = x1.op(Op.VAR_PATTERN);
+
+        if (!x0Pattern)
             pre.add(new SubTermOp(0, x0.op()));
-            code.add(new SubTermStructure(Op.VAR_PATTERN, 0, x0.structure()));
-        }
-        if (x1.op()!=Op.VAR_PATTERN) {
+        if (!x1Pattern)
             pre.add(new SubTermOp(1, x1.op()));
-            code.add(new SubTermStructure(Op.VAR_PATTERN, 1, x1.structure()));
-        }
+
+        if (!x0Pattern)
+            pre.add(new SubTermStructure(Op.VAR_PATTERN, 0, x0.structure()));
+        if (!x1Pattern)
+            pre.add(new SubTermStructure(Op.VAR_PATTERN, 1, x1.structure()));
+
+//        } else {
+//            if (x0.containsTermRecursively(x1)) {
+//                //pre.add(new TermContainsRecursively(x0, x1));
+//            }
+//        }
 
         code.add(MatchTerm.get(pattern, constraints));
 
     }
 
-    private void compile(Term x, List<BooleanCondition<PremiseMatch>> code) {
-        //??
-    }
+//    private void compile(Term x, List<BooleanCondition<PremiseMatch>> code) {
+//        //??
+//    }
 
 //    private void compileRisky(Term x, List<PreCondition> code) {
 //

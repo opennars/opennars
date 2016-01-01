@@ -279,14 +279,14 @@ public interface Statement {
 
 
 
-    static boolean is(Term t) {
+    static boolean is(Termed t) {
         return t.op().isStatement();
     }
 
-    static Term subj(Term t) {
+    static Term subj(Termed t) {
         return ((Compound)t).term(0);
     }
-    static Term pred(Term t) {
+    static Term pred(Termed t) {
         return ((Compound)t).term(1);
     }
 

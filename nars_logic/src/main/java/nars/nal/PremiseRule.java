@@ -164,7 +164,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
         match.addPreConditions(l); //pre-conditions
 
-        Solve truth = new Solve(post,
+        Solve truth = Solve.the(post,
             this, anticipate, immediate_eternalize,  postPreconditions
         );
         truth.addConditions(l);

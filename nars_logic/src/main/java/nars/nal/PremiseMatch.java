@@ -118,7 +118,7 @@ public class PremiseMatch extends FindSubst {
 
         Compound taskTerm = p.getTask().term();
         Task pBelief = p.getBelief();
-        Termed beliefTerm = pBelief != null ? pBelief.get() : p.getTermLink().get(); //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
+        Termed beliefTerm = pBelief != null ? pBelief.get() : p.termLink.get(); //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
 
         term.set( $.p(  taskTerm.term(), beliefTerm.term() ) );
         cyclic = p.isCyclic();

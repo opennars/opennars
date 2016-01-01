@@ -21,8 +21,8 @@ public final class SubTermStructure extends PatternOp {
         //bits &= ~(Op.VariableBits);
 
         this.bits = bits;
-        id = "term" + subterm + ":(" +
-                Integer.toString(bits, 16) + ",struct)";
+        id = "(subterm:" + subterm + "):(struct:" +
+                Integer.toString(bits, 16) + ")";
     }
 
 
