@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <prerequisites>
@@ -52,9 +53,20 @@
         <module>nars_web</module>
         <module>nars_gui</module>
         <module>nars_perf</module>
-  </modules>
+    </modules>
 
     <build>
+
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/java/</directory>
+                <includes>
+                    <include>**/*.nal</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
         <plugins>
 
             <plugin>
@@ -106,30 +118,30 @@
 
 
             <!--<plugin>-->
-                <!--&lt;!&ndash; mvn jacoco:report &ndash;&gt;-->
-                <!--<groupId>org.jacoco</groupId>-->
-                <!--<artifactId>jacoco-maven-plugin</artifactId>-->
-                <!--<version>0.7.4.201502262128</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>prepare-agent</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                    <!--<execution>-->
+            <!--&lt;!&ndash; mvn jacoco:report &ndash;&gt;-->
+            <!--<groupId>org.jacoco</groupId>-->
+            <!--<artifactId>jacoco-maven-plugin</artifactId>-->
+            <!--<version>0.7.4.201502262128</version>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<goals>-->
+            <!--<goal>prepare-agent</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--<execution>-->
 
-                        <!--<id>report</id>-->
-                        <!--<phase>prepare-package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>report</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<configuration>-->
-                    <!--<haltOnFailure>false</haltOnFailure>-->
-                    <!--<detail>true</detail>-->
-                    <!--<dumpOnExit>true</dumpOnExit>-->
-                <!--</configuration>-->
+            <!--<id>report</id>-->
+            <!--<phase>prepare-package</phase>-->
+            <!--<goals>-->
+            <!--<goal>report</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--<configuration>-->
+            <!--<haltOnFailure>false</haltOnFailure>-->
+            <!--<detail>true</detail>-->
+            <!--<dumpOnExit>true</dumpOnExit>-->
+            <!--</configuration>-->
             <!--</plugin>-->
 
             <!--<plugin>-->
@@ -207,12 +219,12 @@
 
 
             <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-pmd-plugin</artifactId>-->
-                <!--<version>3.5</version>-->
-                <!--<configuration>-->
-                    <!--<verbose>true</verbose>-->
-                <!--</configuration>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-pmd-plugin</artifactId>-->
+            <!--<version>3.5</version>-->
+            <!--<configuration>-->
+            <!--<verbose>true</verbose>-->
+            <!--</configuration>-->
 
             <!--</plugin>-->
 
@@ -309,9 +321,9 @@
                 <version>4.12</version>
             </dependency>
             <!--<dependency>-->
-                <!--<groupId>com.github.fge</groupId>-->
-                <!--<artifactId>grappa</artifactId>-->
-                <!--<version>2.0.3</version>-->
+            <!--<groupId>com.github.fge</groupId>-->
+            <!--<artifactId>grappa</artifactId>-->
+            <!--<version>2.0.3</version>-->
             <!--</dependency>-->
             <dependency>
                 <groupId>org.apache.bcel</groupId>
@@ -340,21 +352,20 @@
             </dependency>
 
             <!--<dependency>-->
-                <!--<groupId>org.jogamp.gluegen</groupId>-->
-                <!--<artifactId>gluegen-rt-main</artifactId>-->
-                <!--<version>2.3.1</version>-->
+            <!--<groupId>org.jogamp.gluegen</groupId>-->
+            <!--<artifactId>gluegen-rt-main</artifactId>-->
+            <!--<version>2.3.1</version>-->
             <!--</dependency>-->
             <!--<dependency>-->
-                <!--<groupId>org.jogamp.jogl</groupId>-->
-                <!--<artifactId>jogl-all-main</artifactId>-->
-                <!--<version>2.3.1</version>-->
+            <!--<groupId>org.jogamp.jogl</groupId>-->
+            <!--<artifactId>jogl-all-main</artifactId>-->
+            <!--<version>2.3.1</version>-->
             <!--</dependency>-->
             <!--<dependency>-->
-                <!--<groupId>net.sf.sociaal</groupId>-->
-                <!--<artifactId>vecmath</artifactId>-->
-                <!--<version>3.0.0.20130526</version>-->
+            <!--<groupId>net.sf.sociaal</groupId>-->
+            <!--<artifactId>vecmath</artifactId>-->
+            <!--<version>3.0.0.20130526</version>-->
             <!--</dependency>-->
-
 
 
             <!--<dependency>-->
@@ -368,19 +379,19 @@
             <!--<version>2.0.0-986</version>-->
             <!--</dependency>-->
             <!--<dependency>-->
-                <!--<groupId>org.encog</groupId>-->
-                <!--<artifactId>encog-core</artifactId>-->
-                <!--<version>3.3.0</version>-->
+            <!--<groupId>org.encog</groupId>-->
+            <!--<artifactId>encog-core</artifactId>-->
+            <!--<version>3.3.0</version>-->
             <!--</dependency>-->
             <!--<dependency>-->
-                <!--<groupId>net.sourceforge.tess4j</groupId>-->
-                <!--<artifactId>tess4j</artifactId>-->
-                <!--<version>2.0.1</version>-->
+            <!--<groupId>net.sourceforge.tess4j</groupId>-->
+            <!--<artifactId>tess4j</artifactId>-->
+            <!--<version>2.0.1</version>-->
             <!--</dependency>-->
             <!--<dependency>-->
-                <!--<groupId>org.processing</groupId>-->
-                <!--<artifactId>core</artifactId>-->
-                <!--<version>2.2.1 &lt;!&ndash;3.0a10&ndash;&gt;</version>-->
+            <!--<groupId>org.processing</groupId>-->
+            <!--<artifactId>core</artifactId>-->
+            <!--<version>2.2.1 &lt;!&ndash;3.0a10&ndash;&gt;</version>-->
             <!--</dependency>-->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -388,9 +399,9 @@
                 <version>1.7.13</version>
             </dependency>
             <!--<dependency>-->
-                <!--<groupId>org.tinyjee.jgraphx</groupId>-->
-                <!--<artifactId>jgraphx</artifactId>-->
-                <!--<version>2.3.0.5</version>-->
+            <!--<groupId>org.tinyjee.jgraphx</groupId>-->
+            <!--<artifactId>jgraphx</artifactId>-->
+            <!--<version>2.3.0.5</version>-->
             <!--</dependency>-->
             <dependency>
                 <groupId>org.abego.treelayout</groupId>
@@ -441,7 +452,7 @@
                 <groupId>com.github.0xCopy.prautobeans</groupId>
                 <artifactId>prautobeans-lib</artifactId>
                 <version>1.0-pre1</version>
-        </dependency>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

@@ -9,6 +9,19 @@
     </parent>
     <artifactId>nars_logic</artifactId>
     <name>OpenNARS Logic Reasoner</name>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/java/</directory>
+                <includes>
+                    <include>**/*.nal</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>opennars</groupId>

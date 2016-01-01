@@ -1,6 +1,7 @@
 package nars.bag;
 
 import nars.budget.Budget;
+import nars.budget.Budgeted;
 import nars.budget.UnitBudget;
 import nars.nal.nal7.Tense;
 
@@ -27,12 +28,12 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
         init(p, d, q);
     }
 
-    public BagBudget(X id, Budget b) {
+    public BagBudget(X id, Budgeted b) {
         this(id);
         init(b, 1f);
     }
 
-    public BagBudget(X id, Budget b, float scale) {
+    public BagBudget(X id, Budgeted b, float scale) {
         this(id);
         init(b, scale);
     }
@@ -42,7 +43,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
         return id;
     }
 
-    private void init(Budget c, float scale) {
+    private void init(Budgeted c, float scale) {
         //this.lastForget = c.getLastForgetTime();
         this.lastForget = Tense.TIMELESS;
 
@@ -124,7 +125,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
 
 
     @Override
-    public Budget clone() {
+    public UnitBudget clone() {
         return new UnitBudget(this);
     }
 

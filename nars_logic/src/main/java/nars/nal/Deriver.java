@@ -24,6 +24,7 @@ public abstract class Deriver  {
             try {
                 defaultRules = new PremiseRuleSet();
             } catch (Exception e) {
+                e.printStackTrace();
                 System.exit(1);  //e.printStackTrace();
             }
 
