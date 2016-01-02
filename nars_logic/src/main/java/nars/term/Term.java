@@ -23,6 +23,7 @@ package nars.term;
 
 import nars.Op;
 import nars.nal.nal7.Order;
+import nars.term.compound.Compound;
 import nars.term.match.VarPattern;
 import nars.term.visit.SubtermVisitor;
 
@@ -68,7 +69,7 @@ public interface Term extends Termed, Comparable, Termlike {
         recurseTerms(v, null);
     }
 
-    void recurseTerms(SubtermVisitor v, Term parent);
+    void recurseTerms(SubtermVisitor v, Compound parent);
 
 
     /**

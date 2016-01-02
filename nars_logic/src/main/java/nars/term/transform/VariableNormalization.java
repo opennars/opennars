@@ -84,12 +84,13 @@ public class VariableNormalization extends VariableTransform {
         return apply(null, v, -1);
     }
 
+
     @Override
     public Variable apply(Compound ct, Variable v, int depth) {
 
         Map<Variable, Variable> rename = this.rename;
 
-        return rename.computeIfAbsent(resolve(v), (_vname) -> {
+        return rename.computeIfAbsent(v, (_vname) -> {
             Variable rvv = newVariable(v, rename.size()+1);
             if (!renamed) {//test for any rename to know if we need to rehash
                 renamed = rvv.equals(v);//!Byted.equals(rvv, v);
@@ -99,10 +100,6 @@ public class VariableNormalization extends VariableTransform {
 
     }
 
-    /** allows subclasses to provide a different name of a variable */
-    protected Variable resolve(Variable v) {
-        return v;
-    }
 
     /** if already normalized, alreadyNormalized will be non-null with the value */
     protected Variable newVariable(Variable v, int serial) {

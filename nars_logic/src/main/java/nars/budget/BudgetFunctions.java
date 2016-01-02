@@ -24,8 +24,8 @@ import nars.bag.BagBudget;
 import nars.nal.UtilityFunctions;
 import nars.process.ConceptProcess;
 import nars.task.Task;
-import nars.term.Term;
 import nars.term.Termed;
+import nars.term.Termlike;
 import nars.truth.Truth;
 
 
@@ -132,7 +132,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param factor to scale dur and qua
      * @return Budget value for each tlink
      */
-    public static UnitBudget clonePriorityMultiplied(Budget b, float factor) {
+    public static UnitBudget clonePriorityMultiplied(Budgeted b, float factor) {
         float newPriority = b.getPriority() * factor;
         return new UnitBudget(newPriority, b.getDurability(), b.getQuality());
     }
@@ -333,7 +333,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return The budget of the conclusion
      */
-    public static Budget compoundBackwardWeak(Term content, ConceptProcess nal) {
+    public static Budget compoundBackwardWeak(Termlike content, ConceptProcess nal) {
         return budgetInference(w2c(1), content.complexity(), nal);
     }
 

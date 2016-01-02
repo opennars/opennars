@@ -69,9 +69,8 @@ public final class EllipsisMatch extends TermVector<Term> implements Term {
     }
 
     @Override
-    public void recurseTerms(SubtermVisitor v, Term parent) {
-        v.accept(parent, this);
-        forEach(x -> v.accept(this, x));
+    public void recurseTerms(SubtermVisitor v, Compound parent) {
+        forEach(x -> v.accept(x, parent));
     }
 
     @Override

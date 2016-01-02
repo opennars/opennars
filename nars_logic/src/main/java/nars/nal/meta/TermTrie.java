@@ -7,7 +7,6 @@ import org.magnos.trie.Trie;
 import org.magnos.trie.TrieNode;
 import org.magnos.trie.TrieSequencer;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -26,7 +25,7 @@ abstract public class TermTrie<K extends Term, V> {
     }
 
 
-    public TermTrie(Collection<V> R) {
+    public TermTrie(Iterable<V> R) {
         super();
 
         ObjectIntHashMap<Term> conds = new ObjectIntHashMap<>();

@@ -2,6 +2,7 @@ package nars.term.atom;
 
 import nars.term.Term;
 import nars.term.Termed;
+import nars.term.compound.Compound;
 import nars.term.visit.SubtermVisitor;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ public abstract class Atomic implements Term {
 
 
     @Override
-    public final void recurseTerms(SubtermVisitor v, Term parent) {
+    public final void recurseTerms(SubtermVisitor v, Compound parent) {
         v.accept(this, parent);
     }
 

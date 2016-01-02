@@ -23,7 +23,7 @@ public class Terms {
     public static final Term[] Empty = new Term[0];
     public static final IntFunction<Term[]> TermArrayBuilder = Term[]::new;
 
-    public static boolean equalSubTermsInRespectToImageAndProduct(Term a, Term b) {
+    public static boolean equalSubTermsInRespectToImageAndProduct(Termed a, Termed b) {
 
         if (a == null || b == null) {
             return false;
@@ -68,7 +68,7 @@ public class Terms {
         return equalSubjectPredicateInRespectToImageAndProduct(a, b, true);
     }
 
-    static boolean equalSubjectPredicateInRespectToImageAndProduct(Compound A, Compound B, boolean requireEqualImageRelation) {
+    static boolean equalSubjectPredicateInRespectToImageAndProduct(Termed A, Termed B, boolean requireEqualImageRelation) {
 
 
         if (A.equals(B)) {
@@ -140,7 +140,7 @@ public class Terms {
 
     }
 
-    private static boolean containsAll(Compound sat, Term ta, Compound sbt, Term tb) {
+    private static boolean containsAll(TermContainer sat, Term ta, TermContainer sbt, Term tb) {
         //set for fast containment check
         Set<Term> componentsA = sat.toSet();
         componentsA.add(ta);
@@ -343,7 +343,7 @@ public class Terms {
         return max[0];
     }
 
-    public static Term[] concat(Term[] a, Term[] b) {
+    public static Term[] concat(Term[] a, Term... b) {
 
         if (a == null) {
             return null;

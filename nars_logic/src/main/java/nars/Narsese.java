@@ -999,7 +999,7 @@ public class Narsese extends BaseParser<Object>  {
 
 
     /** supplies the source array of objects that can construct a Task */
-    public static void tasksRaw(String input, Consumer<Object[]> c) {
+    public static void tasksRaw(CharSequence input, Consumer<Object[]> c) {
 
         ParsingResult r = the().inputParser.run(input);
 
@@ -1069,7 +1069,7 @@ public class Narsese extends BaseParser<Object>  {
     }
 
     /** parse one term unnormalized */
-    public Term term(String s) {
+    public Term term(CharSequence s) {
 
         ParsingResult r = singleTermParser.run(s);
 
@@ -1133,7 +1133,7 @@ public class Narsese extends BaseParser<Object>  {
 //    }
 
 
-    public <T extends Term> T termRaw(String input) throws NarseseException {
+    public <T extends Term> T termRaw(CharSequence input) throws NarseseException {
 
         ParsingResult r = singleTermParser.run(input);
 

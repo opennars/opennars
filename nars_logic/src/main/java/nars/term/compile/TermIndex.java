@@ -800,10 +800,15 @@ public interface TermIndex extends CacheBag<Term, Termed> {
     }
 
     default Termed normalized(Term t) {
-        if (!(t instanceof Compound) || !t.hasVar()) {
+        if (t.isNormalized()) {
             return t;
         }
-        return term((Compound)t, VariableNormalization.normalizeFast((Compound)t));
+        Compound x = term((Compound) t, VariableNormalization.normalizeFast((Compound) t));
+        if (x != t) {
+            //if modified, set normalization flag HACK
+            ((GenericCompound)x).setNormalized();
+        }
+        return x;
     }
 
 

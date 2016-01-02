@@ -54,11 +54,6 @@ public final class ShuffledSubterms extends ShuffledPermutations implements Term
     }
 
     @Override
-    public Term termOr(int index, Term resultIfInvalidIndex) {
-        throw new RuntimeException("unimpl yet");
-    }
-
-    @Override
     public boolean impossibleSubTermVolume(int otherTermVolume) {
         return compound.impossibleSubTermVolume(otherTermVolume);
     }
@@ -111,16 +106,6 @@ public final class ShuffledSubterms extends ShuffledPermutations implements Term
     @Override
     public Iterator iterator() {
         return compound.iterator();
-    }
-
-    @Override
-    public Term[] termsCopy() {
-        return TermContainer.copyByIndex(this);
-    }
-
-    @Override
-    public void setNormalized(boolean b) {
-
     }
 
     @Override

@@ -11,7 +11,6 @@ import nars.term.compound.Compound;
 import nars.util.event.Topic;
 
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Execution context which Operator implementations
@@ -68,7 +67,7 @@ public class Execution implements Runnable {
     /**
      * called after execution completed
      */
-    public void feedback(List<Task> feedback) {
+    public void feedback(Iterable<Task> feedback) {
 
         //Display a message in the output stream to indicate the reportExecution of an operation
 

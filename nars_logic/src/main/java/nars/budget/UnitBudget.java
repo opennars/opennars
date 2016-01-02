@@ -46,7 +46,7 @@ public class UnitBudget implements Budget {
 
 
     //common instance for a 'deleted budget'.  TODO use a wrapper class to make it unmodifiable
-    public static final UnitBudget deleted = new UnitBudget();
+    public static final Budget deleted = new UnitBudget();
     static {  deleted.delete(); }
 
     //common instance for a 'zero budget'.  TODO use a wrapper class to make it unmodifiable

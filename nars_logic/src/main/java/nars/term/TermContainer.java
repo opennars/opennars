@@ -29,18 +29,6 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     /** gets subterm at index i */
     T term(int i);
 
-    T termOr(int index, T resultIfInvalidIndex);
-
-    T[] termsCopy();
-
-    void setNormalized(boolean b);
-
-
-    default Term[] termsCopy(Term... additional) {
-        if (additional.length == 0) return termsCopy();
-        return Terms.concat(terms(), additional);
-    }
-
     default MutableSet<Term> toSet() {
         return Sets.mutable.of(terms());
     }
@@ -97,14 +85,14 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     void forEach(Consumer<? super T> action, int start, int stop);
 
 
-    static Term[] copyByIndex(TermContainer c) {
-        int s = c.size();
-        Term[] x = new Term[s];
-        for (int i = 0; i < s; i++) {
-            x[i] = c.term(i);
-        }
-        return x;
-    }
+//    static Term[] copyByIndex(TermContainer c) {
+//        int s = c.size();
+//        Term[] x = new Term[s];
+//        for (int i = 0; i < s; i++) {
+//            x[i] = c.term(i);
+//        }
+//        return x;
+//    }
 
 
     static String toString(TermContainer t) {

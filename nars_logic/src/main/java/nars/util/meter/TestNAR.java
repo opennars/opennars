@@ -40,7 +40,7 @@ public class TestNAR  {
     static final Logger logger = LoggerFactory.getLogger(TestNAR.class);
 
     /** "must" requirement conditions specification */
-    public final List<NARCondition> requires = new ArrayList();
+    public final Collection<NARCondition> requires = new ArrayList();
     //public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
     private static final transient boolean exitOnAllSuccess = true;

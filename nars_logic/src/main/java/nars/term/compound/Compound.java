@@ -65,7 +65,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
     @Override
-    default void recurseTerms(SubtermVisitor v, Term parent) {
+    default void recurseTerms(SubtermVisitor v, Compound parent) {
         v.accept(this, parent);
         subterms().forEach(a -> a.recurseTerms(v, this));
     }

@@ -258,8 +258,8 @@ public interface Statement {
 
 
         if ((Statement.is(subject)) && (Statement.is(predicate))) {
-            Compound s1 = (Compound) subject;
-            Compound s2 = (Compound) predicate;
+            Termed s1 = subject;
+            Termed s2 = predicate;
 
             Term t11 = Statement.subj(s1);
             Term t22 = Statement.pred(s2);
@@ -304,8 +304,7 @@ public interface Statement {
         if ((t1.op().isImage()/*Ext) || (t1 instanceof ImageInt*/)) {
             return false;
         }
-        Compound ct1 = (Compound) t1;
-        return ct1.containsTerm(t2);
+        return t1.containsTerm(t2);
     }
 
 

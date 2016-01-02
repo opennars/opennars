@@ -31,7 +31,7 @@ public class scheme extends TermFunction {
     public static class SchemeProduct extends ListExpression {
 
 
-        public SchemeProduct(Compound p) {
+        public SchemeProduct(Iterable p) {
             super(Cons.copyOf(Iterables.transform(p, term -> {
 
                 if (term instanceof Compound) {

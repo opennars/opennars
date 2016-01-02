@@ -28,6 +28,8 @@ import nars.term.variable.Variable;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import static nars.term.Terms.concat;
+
 /**
  * A rule which matches a Premise and produces a Task
  * contains: preconditions, predicates, postconditions, post-evaluations and metainfo
@@ -599,7 +601,15 @@ public class PremiseRule extends GenericCompound implements Level {
     private PremiseRule clone(Term newT, Term newB, Term newR, boolean question) {
 
         Compound newPremise = null;
-        newPremise = question ? $.p(getPremise().termsCopy(TaskPunctuation.TaskQuestionTerm)) : $.p(getPremise().terms());
+        newPremise = question ?
+                $.p(
+                    concat(getPremise().terms(), TaskPunctuation.TaskQuestionTerm)
+                ) :
+                $.p(getPremise().terms());
+
+        /*if (StringUtils.countMatches(newPremise.toString(), "task(\"") > 1) {
+            System.err.println(newPremise);
+        }*/
 
         newPremise.terms()[0] = newT;
         newPremise.terms()[1] = newB;
@@ -635,15 +645,6 @@ public class PremiseRule extends GenericCompound implements Level {
     public final int nal() { return minNAL; }
 
     public static class TaskRuleVariableNormalization extends VariableNormalization {
-
-
-        @Override protected Variable resolve(Variable v) {
-//            if (v instanceof Ellipsis) {
-//                return ((Ellipsis) v).target;
-//            }
-            return v;
-        }
-
 
 
         int offset = 0;

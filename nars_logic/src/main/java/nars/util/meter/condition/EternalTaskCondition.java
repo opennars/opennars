@@ -12,6 +12,7 @@ import nars.term.Terms;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import nars.truth.Truthed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,7 +178,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 
     }
 
-    private boolean truthMatches(Task task) {
+    private boolean truthMatches(Truthed task) {
         char punc = getPunctuation();
         if ((punc == '.') || (punc == '!')) {
             if (task.getTruth() == null) {

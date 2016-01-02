@@ -15,8 +15,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-import static java.util.Arrays.copyOf;
-
 /**
  * Holds a vector or tuple of terms.
  * Useful for storing a fixed number of subterms
@@ -51,8 +49,6 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
     protected transient byte hasVarQueries;
     protected transient byte hasVarIndeps;
     protected transient byte hasVarDeps;
-
-    transient boolean normalized;
 
     //    public TermVector() {
 //        this(null);
@@ -111,12 +107,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
         return Arrays.equals(term, t);
     }
 
-    @Override
-    public final T termOr(int index, T resultIfInvalidIndex) {
-        T[] term = this.term;
-        return term.length <= index ?
-                resultIfInvalidIndex : term[index];
-    }
+
 
     @Override
     public final int volume() {
@@ -143,23 +134,12 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
         return term.length;
     }
 
-    /**
-     * (shallow) Clone the component list
-     */
-    @Override
-    public final T[] termsCopy() {
-        return copyOf(term, size());
-    }
+//
+//    @Override
+//    public void setNormalized(boolean b) {
+//        normalized = true;
+//    }
 
-    @Override
-    public void setNormalized(boolean b) {
-        normalized = true;
-    }
-
-    @Override
-    public boolean isNormalized() {
-        return normalized;
-    }
 
     @Override
     public String toString() {
@@ -276,8 +256,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
         hasVarIndeps = (byte) indeps;
         hasVarQueries = (byte) queries;
         structureHash = subt;
-        normalized =
-                (varTotal = (byte) (deps + indeps + queries)) == 0;
+        varTotal = (byte) (deps + indeps + queries);
 
         complexity = (short) compl;
         volume = (short) vol;

@@ -145,7 +145,7 @@ public class TermGraphTest {
                                                       ObjectIntPair<Compound> e2,
                                                       Graph<Term, ObjectIntPair<Compound>> g1,
                                                       Graph<Term, ObjectIntPair<Compound>> g2) {
-                        return e1.getOne().isCommutative() ? true : e1.getTwo() == e2.getTwo();
+                        return e1.getOne().isCommutative() || e1.getTwo() == e2.getTwo();
                     }
 
                     @Override

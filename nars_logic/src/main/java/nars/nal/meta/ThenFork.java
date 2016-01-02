@@ -1,7 +1,6 @@
 package nars.nal.meta;
 
 import nars.Op;
-import nars.nal.PremiseMatch;
 import nars.term.compound.GenericCompound;
 
 /**
@@ -51,12 +50,12 @@ abstract public class ThenFork<C> extends GenericCompound<ProcTerm<C>> implement
         }
     }
 
-    public static PremiseMatch fork(PremiseMatch m, ProcTerm<PremiseMatch> proc) {
-        int revertTime = m.now();
-        proc.accept(m);
-        m.revert(revertTime);
-        return m;
-    }
+//    public static PremiseMatch fork(PremiseMatch m, ProcTerm<PremiseMatch> proc) {
+//        int revertTime = m.now();
+//        proc.accept(m);
+//        m.revert(revertTime);
+//        return m;
+//    }
 
 //        @Override public void accept(C m) {
 //

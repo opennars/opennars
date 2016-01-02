@@ -94,13 +94,13 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     public final int compareTo(Object o) {
         int r=0;
         if (this != o) {
-            Term t = (Term) o;
+            Termed t = (Term) o;
             //int diff = op().compareTo(t.op());
             int diff = Integer.compare(op().ordinal(), t.op().ordinal());
             if (diff != 0) r = diff;
             else {
 
-                Compound c = (Compound) t;
+                Compound c = (Compound) (t.term());
                 int diff2 = Integer.compare(relation(), c.relation());
                 if (diff2 != 0) return diff2;
 
@@ -131,7 +131,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
         boolean r=false;
         Term t = thatTerm.term();
-        if ((op == t.op()) && (((t instanceof Compound)))) {
+        if ((op == t.op()) /*&& (((t instanceof Compound))*/) {
             Compound c = (Compound) t;
             r=terms.equals(c.subterms()) && (relation == c.relation());
         }
@@ -144,10 +144,10 @@ public class GenericCompound<T extends Term> implements Compound<T> {
      */
     @Override
     public void setDuration(int duration) {
-            if (TermMetadata.hasMetadata(this)) {
-            int n = size();
-            for (int i = 0; i < n; i++)
-                term(i).setDuration(duration);
+        if (TermMetadata.hasMetadata(this)) {
+            Term[] y = terms();
+            for (Term x : y)
+                x.setDuration(duration);
         }
     }
 
@@ -216,23 +216,13 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final  T[] termsCopy() {
-        return terms.termsCopy();
-    }
-
-    @Override
     public int structure() {
-        return terms.structure() | (1 << op.ordinal());
+        return terms.structure() | op.bit();
     }
 
     @Override
     public final T term(int i) {
         return terms.term(i);
-    }
-
-    @Override
-    public final T termOr(int index, T resultIfInvalidIndex) {
-        return terms.termOr(index, resultIfInvalidIndex);
     }
 
     @Override
@@ -269,27 +259,23 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return !impossibleSubterm(target) && terms.containsTermRecursively(target);
     }
 
-
-
     @Override public final boolean isNormalized() {
         return normalized;
     }
 
-
-    @Override
-    public final void setNormalized(boolean b) {
-        normalized = b;
-    }
-
-
     @Override
     public String toString() {
-        return toString(false); //TODO make this default to false
+        return toString(false);
     }
 
     @Override
     public int relation() {
         return relation;
+    }
+
+    /** do not call this manually, it will be set by VariableNormalization only */
+    public final void setNormalized() {
+        this.normalized = true;
     }
 
 

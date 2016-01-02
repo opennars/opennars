@@ -39,7 +39,7 @@ public class PremiseRuleTest extends TestCase {
         assertEquals(1, p.term("<%A --> %B>").complexity());
 
         {
-            PremiseRule x = (PremiseRule)p.termRaw("< A, A |- A, (Truth:Revision, Desire:Weak)>");
+            PremiseRule x = p.termRaw("< A, A |- A, (Truth:Revision, Desire:Weak)>");
             assertEquals("((A,A),(A,(<Revision-->Truth>,<Weak-->Desire>)))", x.toString());
             // assertEquals(12, x.getVolume());
         }
@@ -71,13 +71,11 @@ public class PremiseRuleTest extends TestCase {
 //            assertEquals(9, x.getVolume());
 //        }
 
-        {
-            //and the first complete rule:
-            PremiseRule x = (PremiseRule) p.term("<(S --> M), (P --> M) |- (P <-> S), (Truth:Comparison,Desire:Strong)>");
-            x = normalize(x);
-            assertEquals("((<%1-->%2>,<%3-->%2>),(<%1<->%3>,(<Comparison-->Truth>,<Strong-->Desire>)))", x.toString());
-            assertEquals(19, x.volume());
-        }
+        //and the first complete rule:
+        PremiseRule x = (PremiseRule) p.term("<(S --> M), (P --> M) |- (P <-> S), (Truth:Comparison,Desire:Strong)>");
+        x = normalize(x);
+        assertEquals("((<%1-->%2>,<%3-->%2>),(<%1<->%3>,(<Comparison-->Truth>,<Strong-->Desire>)))", x.toString());
+        assertEquals(19, x.volume());
 
     }
 

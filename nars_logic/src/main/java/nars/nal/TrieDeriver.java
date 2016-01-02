@@ -108,7 +108,7 @@ public class TrieDeriver extends Deriver {
     }
 
 
-    private Collection<BooleanCondition<PremiseMatch>> compileConditions(List<Term> t, AtomicReference<MatchTerm> matchParent) {
+    private Collection<BooleanCondition<PremiseMatch>> compileConditions(Collection<Term> t, AtomicReference<MatchTerm> matchParent) {
 
         return t.stream().filter(x -> {
             if (x instanceof BooleanCondition) {

@@ -9,6 +9,7 @@ import nars.nal.UtilityFunctions;
 import nars.task.Task;
 import nars.task.Temporal;
 import nars.term.Termed;
+import nars.truth.Stamp;
 import nars.truth.Truth;
 
 import java.io.IOException;
@@ -310,7 +311,7 @@ public enum Tense  {
         return false;
     }
 
-    public static boolean overlapping(Task a, Task b) {
+    public static boolean overlapping(Stamp a, Stamp b) {
 
 
         if (a == b) return true;

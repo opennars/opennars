@@ -8,6 +8,7 @@ import nars.nal.meta.TermPattern;
 import nars.term.Term;
 import nars.term.constraint.MatchConstraint;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +48,7 @@ import java.util.List;
 
     }
 
-    public void addPreConditions(List<Term> l) {
+    public void addPreConditions(Collection<Term> l) {
         Collections.addAll(l, compiled.pre);
     }
 
