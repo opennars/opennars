@@ -4,7 +4,7 @@ import javassist.scopedpool.SoftValueHashMap;
 import nars.Global;
 import nars.Op;
 import nars.budget.Budget;
-import nars.index.MapIndex;
+import nars.index.MapIndex2;
 import nars.nal.PremiseAware;
 import nars.nal.PremiseMatch;
 import nars.nal.nal8.Operator;
@@ -326,9 +326,13 @@ public interface TermIndex extends TermBuilder {
     static TermIndex memory(int capacity) {
 //        CacheBuilder builder = CacheBuilder.newBuilder()
 //            .maximumSize(capacity);
-        return new MapIndex(
-            new HashMap(capacity),new HashMap(capacity*2)
-            //new UnifriedMap()
+//        return new MapIndex(
+//            new HashMap(capacity),new HashMap(capacity*2)
+//            //new UnifriedMap()
+//        );
+        return new MapIndex2(
+                new HashMap(capacity)
+                //new UnifriedMap()
         );
     }
 //    static TermIndex memorySoft(int capacity) {
@@ -338,9 +342,12 @@ public interface TermIndex extends TermBuilder {
 //        );
 //    }
     static TermIndex memoryWeak(int capacity) {
-        return new MapIndex(
-            new SoftValueHashMap(capacity),
-            new SoftValueHashMap(capacity*2)
+//        return new MapIndex(
+//            new SoftValueHashMap(capacity),
+//            new SoftValueHashMap(capacity*2)
+//        );
+        return new MapIndex2(
+            new SoftValueHashMap(capacity)
         );
     }
 

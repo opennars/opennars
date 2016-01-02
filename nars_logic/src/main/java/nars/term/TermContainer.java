@@ -37,11 +37,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     static MutableSet<Term> intersect(TermContainer a, TermContainer b) {
         return Sets.intersect(a.toSet(),b.toSet());
     }
-    static MutableSet<Term> union(Compound a, Compound b) {
-        MutableSet<Term> s = a.toSet();
-        s.addAll(b.toSet());
-        return s;
-    }
+
 
 
     static TermSet differ(TermSet a, TermSet b) {

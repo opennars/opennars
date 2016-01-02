@@ -53,17 +53,17 @@ public abstract class AbstractMapIndex implements TermIndex {
         return y;
     }
 
-    @Override
-    public abstract Termed getTermIfPresent(Termed t);
+//    @Override
+//    public abstract Termed getTermIfPresent(Termed t);
 
-    @Override
-    public abstract void clear();
+//    @Override
+//    public abstract void clear();
 
-    @Override
-    public abstract int subtermsCount();
+//    @Override
+//    public abstract int subtermsCount();
 
-    @Override
-    public abstract int size();
+//    @Override
+//    public abstract int size();
 
     @Override
     public Termed internCompound(Op op, int relation, TermContainer t) {

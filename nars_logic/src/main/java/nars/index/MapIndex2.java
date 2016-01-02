@@ -8,6 +8,7 @@ import nars.term.compound.Compound;
 
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by me on 1/2/16.
@@ -28,10 +29,23 @@ public class MapIndex2 extends AbstractMapIndex {
         return t;
     }
 
+    static final Function<Object, IntObjectHashMap> groupBuilder =
+            (k) -> new IntObjectHashMap(2);
+
     /** returns previous value */
     public Object putItem(Object vv, int index, Object value) {
-        return data.computeIfAbsent(vv,
-                (k) -> new IntObjectHashMap(2)).put(index, value);
+
+        IntObjectHashMap g = group(vv);
+        Object res = g.put(index, value);
+        if (res==null) {
+            //insertion
+            g.compact();
+        }
+        return res;
+    }
+
+    public IntObjectHashMap group(Object vv) {
+        return data.computeIfAbsent(vv, groupBuilder);
     }
 
 
@@ -80,6 +94,7 @@ public class MapIndex2 extends AbstractMapIndex {
 
     @Override
     public int size() {
+        /** WARNING: not accurate */
         return count;
     }
 
@@ -87,6 +102,6 @@ public class MapIndex2 extends AbstractMapIndex {
 
     @Override
     public void forEach(Consumer<? super Termed> c) {
-
+        throw new RuntimeException("unimpl");
     }
 }

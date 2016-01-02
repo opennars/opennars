@@ -418,6 +418,8 @@ public interface TermBuilder {
 
     default Term newIntersection(Term[] t, Op intersection, Op setUnion, Op setIntersection) {
         switch (t.length) {
+            case 0:
+                return null;
             case 1:
                 return t[0];
             case 2:
@@ -436,13 +438,16 @@ public interface TermBuilder {
 
     @Deprecated default Term newIntersection2(Term term1, Term term2, Op intersection, Op setUnion, Op setIntersection) {
 
+        if(term2 == null) {
+            throw new NullPointerException();
+        }
 
         Op o1 = term1.op();
         Op o2 = term2.op();
 
         if ((o1 == setUnion) && (o2 == setUnion)) {
             //the set type that is united
-            return newTerm(setUnion, TermContainer.union((Compound) term1, (Compound) term2));
+            return newTerm(setUnion, TermSet.union((Compound) term1, (Compound) term2));
         }
 
 

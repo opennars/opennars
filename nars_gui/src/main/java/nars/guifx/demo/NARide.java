@@ -31,7 +31,6 @@ import nars.guifx.nars.LoopPane;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.*;
-import nars.index.MapIndex;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -542,7 +541,7 @@ public class NARide extends BorderPane {
                 int activeConcepts = l.active.size();
                 TermIndex index = nar.memory.index;
                 int totalConcepts = index.size();
-                int uniqueSubterms = (index instanceof MapIndex) ? ((MapIndex) index).subterms.size() : -1;
+                int uniqueSubterms = index.subtermsCount();
 
                 runLater(() -> {
                     sb.append("Active Concepts: ").append(activeConcepts).append('\n');
