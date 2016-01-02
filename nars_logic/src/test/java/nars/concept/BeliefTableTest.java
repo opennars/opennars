@@ -48,8 +48,8 @@ public class BeliefTableTest extends TestCase {
 //
 //    }
 
-    public Default newNAR(int maxBeliefs) {
-        Default d = new Default2(256,1,2,3).nal(7);// {
+    public Default2 newNAR(int maxBeliefs) {
+        Default2 d = new Default2(256,1,2,3).nal(7);// {
 
             /*
             @Override
@@ -80,7 +80,7 @@ public class BeliefTableTest extends TestCase {
     void testRevision(int delay1) {
         Global.DEBUG = true;
 
-        Default n = newNAR(6);
+        Default2 n = newNAR(6);
 
 
         //arbitrary time delays in which to observe that certain behavior does not happen

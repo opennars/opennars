@@ -167,7 +167,7 @@ public class BitmapRecognition {
         //Global.DEBUG = true;
         int size = 2;
 
-        Default n = new Default2(1000, 1, 2, 3);
+        Default2 n = new Default2(1000, 1, 2, 3);
         n.nal(8);
         n.setTaskLinkBagSize(32);
         n.setTermLinkBagSize(64);

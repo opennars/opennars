@@ -55,7 +55,7 @@ public class UniqueInputSerialTest {
     @Test
     public void testDoublePremiseMultiEvidence() {
 
-        Default d = new Default2(100,1,1,3).nal(2);
+        Default2 d = new Default2(100,1,1,3).nal(2);
         d.input("<a --> b>.", "<b --> c>.");
 
         final long ev[] = {1 , 2};

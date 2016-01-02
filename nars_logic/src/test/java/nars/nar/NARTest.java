@@ -43,7 +43,7 @@ public class NARTest {
     @Test
     public void testMemoryTransplant() {
 
-        Default nar = new Default2(1000, 1, 5, 5);
+        Default2 nar = new Default2(1000, 1, 5, 5);
         //DefaultAlann nar = new DefaultAlann(m, 32);
 
         //TextOutput.out(nar);
@@ -61,7 +61,7 @@ public class NARTest {
 
         //a new nar with the same memory is allowed to
         //take control of it after the first stops
-        Default nar2 = new Default2(nar.memory, 1000, 1, 1, 3);
+        Default2 nar2 = new Default2(nar.memory, 1000, 1, 1, 3);
 
         assertTrue(nar2.memory.time() > 1);
 
