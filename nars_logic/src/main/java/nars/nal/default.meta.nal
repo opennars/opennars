@@ -298,17 +298,11 @@
     (S ==> M), ((||,S,A_1..n) ==> M) |- ((||,A_1..n) ==> M), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
     (S ==> M), ((&/,S,A_1..n) ==> M) |- ((&/,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromPremises)
     (S ==> M), ((&|,S,A_1..n) ==> M) |- ((&|,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
-    (S ==> M), ((&&,S,A_1..n) ==> M) |- ((&&,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive)
-    (S =/> M), ((&&,S,A_1..n) =/> M) |- ((&&,A_1..n) =/> M), (Truth:DecomposeNegativePositivePositive)
-    (S =|> M), ((&&,S,A_1..n) =|> M) |- ((&&,A_1..n) =|> M), (Truth:DecomposeNegativePositivePositive)
-    (S =\> M), ((&&,S,A_1..n) =\> M) |- ((&&,A_1..n) =\> M), (Truth:DecomposeNegativePositivePositive)
+    (S ==> M), ((&&,S,A_1..n) ==> M) |- ((&&,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
 
     (M ==> S), (M ==> (&/,S,A_1..n)) |- (M ==> (&/,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame, SequenceIntervals:FromPremises)
     (M ==> S), (M ==> (&|,S,A_1..n)) |- (M ==> (&|,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
-    (M ==> S), (M ==> (&&,S,A_1..n)) |- (M ==> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =/> S), (M =/> (&&,S,A_1..n)) |- (M =/> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =|> S), (M =|> (&&,S,A_1..n)) |- (M =|> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =\> S), (M =\> (&&,S,A_1..n)) |- (M =\> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
+    (M ==> S), (M ==> (&&,S,A_1..n)) |- (M ==> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
     (M ==> S), (M ==> (||,S,A_1..n)) |- (M ==> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
 
 //// conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
@@ -357,10 +351,7 @@
 
     Y, ((&/,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&/,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
     Y, ((&|,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&|,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    Y, ((&&,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction)
-    Y, ((&&,X,A_1..n) =/> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) =/> B), (Truth:Deduction)
-    Y, ((&&,X,A_1..n) =|> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) =|> B), (Truth:Deduction)
-    Y, ((&&,X,A_1..n) =\> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) =\> B), (Truth:Deduction)
+    Y, ((&&,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
     ((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
     ((&/,M,A_1..n) ==> C), ((&/,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
     ((&|,M,A_1..n) ==> C), ((&|,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
@@ -374,19 +365,13 @@
     ((&&,A_1..n) =\> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =\> C), (Truth:Induction)
     (A ==> M), ((&/,M,A_1..n) ==> C) |- ((&/,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
     (A ==> M), ((&|,M,A_1..n) ==> C) |- ((&|,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
-    (A ==> M), ((&&,M,A_1..n) ==> C) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction)
-    (A =/> M), ((&&,M,A_1..n) =/> C) |- ((&&,A,A_1..n) =/> C), (Truth:Deduction)
-    (A =|> M), ((&&,M,A_1..n) =|> C) |- ((&&,A,A_1..n) =|> C), (Truth:Deduction)
-    (A =\> M), ((&&,M,A_1..n) =\> C) |- ((&&,A,A_1..n) =\> C), (Truth:Deduction)
+    (A ==> M), ((&&,M,A_1..n) ==> C) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
     ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
     ((&/,M,A_1..n) ==> C), ((&/,A,A_1..n) ==> C) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
     ((&|,M,A_1..n) ==> C), ((&|,A,A_1..n) ==> C) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
     (A ==> M), ((&/,A,A_1..n) ==> C)  |- ((&/,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame, SequenceIntervals:FromPremises)
     (A ==> M), ((&|,A,A_1..n) ==> C)  |- ((&|,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame)
-    (A ==> M), ((&&,A,A_1..n) ==> C)  |- ((&&,M,A_1..n) ==> C), (Truth:Abduction)
-    (A =/> M), ((&&,A,A_1..n) =/> C)  |- ((&&,M,A_1..n) =/> C), (Truth:Abduction)
-    (A =|> M), ((&&,A,A_1..n) =|> C)  |- ((&&,M,A_1..n) =|> C), (Truth:Abduction)
-    (A =\> M), ((&&,A,A_1..n) =\> C)  |- ((&&,M,A_1..n) =\> C), (Truth:Abduction)
+    (A ==> M), ((&&,A,A_1..n) ==> C)  |- ((&&,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame)
 
 //// variable introduction ////////////////////////////////////////////////////////////////////////////////////
 //Introduce variables by common subject or predicate
