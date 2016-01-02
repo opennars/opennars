@@ -21,10 +21,10 @@
 
 //Set Definition Similarity to Inheritance
 
-    (S <-> {P}),  S  |- (S --> {P}), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
+    (S <-> {P}),  S |- (S --> {P}), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
     (S <-> {P}), {P} |- (S --> {P}), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
     ([S] <-> P), [S] |- ([S] --> P), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
-    ([S] <-> P),  P  |- ([S] --> P), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
+    ([S] <-> P),  P |- ([S] --> P), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
 
     ({S} <-> {P}), {S} |- ({P} --> {S}), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
     ({S} <-> {P}), {P} |- ({P} --> {S}), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
@@ -40,13 +40,13 @@
 
 //Nothing is more specific than a instance, so its similar
 
-    (S --> {P}),  S  |- (S <-> {P}), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
+    (S --> {P}),  S |- (S <-> {P}), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
     (S --> {P}), {P} |- (S <-> {P}), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
 
 //nothing is more general than a property, so its similar
 
     ([S] --> P), [S] |- ([S] <-> P), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
-    ([S] --> P),  P  |- ([S] <-> P), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
+    ([S] --> P),  P |- ([S] <-> P), (Truth:Identity, Desire:Identity, Derive:AllowBackward)
 
 ////// Truth-value functions: see TruthFunctions.java
 
@@ -296,22 +296,18 @@
 //Same as for inheritance again
 
     (S ==> M), ((||,S,A_1..n) ==> M) |- ((||,A_1..n) ==> M), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
-    (S ==> M), ((&/,S,A_1..n) ==> M), concurrent_or_one_eternal(Task,Belief) |- ((&/,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromPremises)
-    (S ==> M), ((&|,S,A_1..n) ==> M), concurrent_or_one_eternal(Task,Belief) |- ((&|,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
-    (S ==> M), ((&&,S,A_1..n) ==> M) |- ((&&,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
+    (S ==> M), ((&&,S,A_1..n) ==> M) |- ((&&,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromPremises)
 
-    (M ==> S), (M ==> (&/,S,A_1..n)), concurrent_or_one_eternal(Task,Belief) |- (M ==> (&/,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame, SequenceIntervals:FromPremises)
-    (M ==> S), (M ==> (&|,S,A_1..n)), concurrent_or_one_eternal(Task,Belief) |- (M ==> (&|,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
-    (M ==> S), (M ==> (&&,S,A_1..n)) |- (M ==> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
+    (M ==> S), (M ==> (&&,S,A_1..n)) |- (M ==> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame, SequenceIntervals:FromPremises)
     (M ==> S), (M ==> (||,S,A_1..n)) |- (M ==> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
 
 //// conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //If after M, P usually happens, and M happens, it means P is expected to happen
 
-    M, (M ==> P), shift_occurrence_forward(unused,"==>")  |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    M, (M ==> P), shift_occurrence_forward(unused,"==>") |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     M, (P ==> M), shift_occurrence_backward(unused,"==>") |- P, (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
     M, (S <=> M), shift_occurrence_backward(unused,"<=>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
-    M, (M <=> S), shift_occurrence_forward(unused,"==>")  |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
+    M, (M <=> S), shift_occurrence_forward(unused,"==>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
 
 //// conditional composition: ////////////////////////////////////////////////////////////////////////////////////
 //They are let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
@@ -329,32 +325,28 @@
     (&&,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong)
     (&/,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong)
     (&|,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong)
-    (&/,B,A_1..n), B, concurrent_or_one_eternal(Task,Belief) |- (&/,A_1..n), (Truth:Deduction, Desire:Strong, SequenceIntervals:FromPremises)
+    (&/,B,A_1..n), B |- (&/,A_1..n), (Truth:Deduction, Desire:Strong, SequenceIntervals:FromPremises)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A_1..n) is not the case, it can't be that (&&,A_1..n) is the case
 
-    S, (&/,S,A_1..n), concurrent_or_one_eternal(Task,Belief) |- (&/,A_1..n), (Truth:DecomposePositiveNegativeNegative, SequenceIntervals:FromPremises)
-    S, (&|,S,A_1..n), concurrent_or_one_eternal(Task,Belief) |- (&|,A_1..n), (Truth:DecomposePositiveNegativeNegative)
+    S, (&/,S,A_1..n) |- (&/,A_1..n), (Truth:DecomposePositiveNegativeNegative, SequenceIntervals:FromPremises)
+    S, (&|,S,A_1..n) |- (&|,A_1..n), (Truth:DecomposePositiveNegativeNegative)
     S, (&&,S,A_1..n) |- (&&,A_1..n), (Truth:DecomposePositiveNegativeNegative)
     S, (||,S,A_1..n) |- (||,A_1..n), (Truth:DecomposeNegativePositivePositive)
 
 //Additional for negation: https://groups.google.com/forum/#!topic/open-nars/g-7r0jjq2Vc
 
-    S, (&/,(--,S),A_1..n), concurrent_or_one_eternal(Task,Belief) |- (&/,A_1..n), (Truth:DecomposeNegativeNegativeNegative, SequenceIntervals:FromPremises)
-    S, (&|,(--,S),A_1..n), concurrent_or_one_eternal(Task,Belief) |- (&|,A_1..n), (Truth:DecomposeNegativeNegativeNegative)
+    S, (&/,(--,S),A_1..n) |- (&/,A_1..n), (Truth:DecomposeNegativeNegativeNegative, SequenceIntervals:FromPremises)
+    S, (&|,(--,S),A_1..n) |- (&|,A_1..n), (Truth:DecomposeNegativeNegativeNegative)
     S, (&&,(--,S),A_1..n) |- (&&,A_1..n), (Truth:DecomposeNegativeNegativeNegative)
     S, (||,(--,S),A_1..n) |- (||,A_1..n), (Truth:DecomposePositivePositivePositive)
 
 //// multi-conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //Inference about the pre/postconditions
 
-    Y, ((&/,X,A_1..n) ==> B), concurrent_or_one_eternal(Task,Belief), substitute_if_unifies("$",X,Y) |- ((&/,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
-    Y, ((&|,X,A_1..n) ==> B), concurrent_or_one_eternal(Task,Belief), substitute_if_unifies("$",X,Y) |- ((&|,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    Y, ((&&,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
+    Y, ((&&,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
     ((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
-    ((&/,M,A_1..n) ==> C), ((&/,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- M, (Truth:Abduction, Order:ForAllSame)
-    ((&|,M,A_1..n) ==> C), ((&|,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- M, (Truth:Abduction, Order:ForAllSame)
 
 //Can be derived by NAL7 rules so this won't be necessary there (Order:ForAllSame left out here)
 
@@ -363,15 +355,9 @@
     ((&&,A_1..n) =|> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =|> C), (Truth:Induction)
     ((&&,A_1..n) =/> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =/> C), (Truth:Induction)
     ((&&,A_1..n) =\> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =\> C), (Truth:Induction)
-    (A ==> M), ((&/,M,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- ((&/,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
-    (A ==> M), ((&|,M,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- ((&|,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
-    (A ==> M), ((&&,M,A_1..n) ==> C) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
+    (A ==> M), ((&&,M,A_1..n) ==> C) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
     ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
-    ((&/,M,A_1..n) ==> C), ((&/,A,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
-    ((&|,M,A_1..n) ==> C), ((&|,A,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
-    (A ==> M), ((&/,A,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief)  |- ((&/,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame, SequenceIntervals:FromPremises)
-    (A ==> M), ((&|,A,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief)  |- ((&|,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame)
-    (A ==> M), ((&&,A,A_1..n) ==> C)  |- ((&&,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame)
+    (A ==> M), ((&&,A,A_1..n) ==> C) |- ((&&,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame, SequenceIntervals:FromPremises)
 
 //// variable introduction ////////////////////////////////////////////////////////////////////////////////////
 //Introduce variables by common subject or predicate
@@ -426,9 +412,7 @@
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    B, (&/,A, A_1..n), concurrent_or_one_eternal(Task,Belief), substitute_if_unifies("#",A,B) |- (&/,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong, SequenceIntervals:FromPremises)
-    B, (&&,A, A_1..n), substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong)
-    B, (&|,A, A_1..n), concurrent_or_one_eternal(Task,Belief), substitute_if_unifies("#",A,B) |- (&|,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong)
+    B, (&&,A, A_1..n), substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong, Order:ForAllSame, SequenceIntervals:FromPremises)
 
 //conditional abduction by dependent variable
 
@@ -442,11 +426,11 @@
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 
-    B, (A ==> C), substitute_if_unifies("$",A,B), shift_occurrence_forward(A,"==>")  |- C, (Truth:Deduction, Order:ForAllSame)
-    B, (C ==> A), substitute_if_unifies("$",A,B), shift_occurrence_backward(A,"==>") |- C, (Truth:Abduction, Order:ForAllSame)
+    B, (A ==> C), substitute_if_unifies("$",A,B), shift_occurrence_forward(unused,"==>") |- C, (Truth:Deduction, Order:ForAllSame)
+    B, (C ==> A), substitute_if_unifies("$",A,B), shift_occurrence_backward(unused,"==>") |- C, (Truth:Abduction, Order:ForAllSame)
 
-    B, (A <=> C), substitute_if_unifies("$",A,B), shift_occurrence_backward(C,"<=>") |- C, (Truth:Deduction, Order:ForAllSame)
-    B, (C <=> A), substitute_if_unifies("$",A,B), shift_occurrence_forward(C,"<=>") |- C, (Truth:Deduction, Order:ForAllSame)
+    B, (A <=> C), substitute_if_unifies("$",A,B), shift_occurrence_backward(unused,"<=>") |- C, (Truth:Deduction, Order:ForAllSame)
+    B, (C <=> A), substitute_if_unifies("$",A,B), shift_occurrence_forward(unused,"<=>") |- C, (Truth:Deduction, Order:ForAllSame)
 
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
 //second level variable elimination (termlink level2 growth needed in order for these rules to work)

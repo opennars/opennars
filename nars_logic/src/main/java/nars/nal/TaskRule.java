@@ -35,6 +35,7 @@ public class TaskRule extends ProductN implements Level {
     //match first rule pattern with task
 
     public boolean immediate_eternalize = false;
+    public boolean project_eternalize = true;
 
 
     public boolean sequenceIntervalsFromTask = false;
@@ -435,6 +436,8 @@ public class TaskRule extends ProductN implements Level {
                     if (args.length!=1)
                         throw new RuntimeException("measure_time requires 1 component");
 
+
+                    project_eternalize = false;
                     preNext = Temporality.both;
                     next = new MeasureTime(arg1);
                     break;

@@ -139,7 +139,7 @@ public class DerivationRules extends FastList<TaskRule> {
 
     final static String[] equFull = {"<=>", "</>", "<|>"};
     final static String[] implFull = {"==>", "=/>", "=|>", "=\\>"};
-    final static String[] conjFull = {"&&"};
+    final static String[] conjFull = {"&&", "&|", "&/"};
     final static String[] unchanged = {null};
 
     /**
