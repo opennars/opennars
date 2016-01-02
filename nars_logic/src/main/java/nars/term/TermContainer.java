@@ -4,6 +4,7 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.MutableSet;
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
+import nars.Op;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
@@ -215,7 +216,35 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     @Override
     default boolean and(Predicate<? super Term> p) {
         for (Term t : terms()) {
-            if (!p.test(t))
+            if (!p.test(t)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** produces the correct TermContainer for the given Op,
+     * according to the existing type
+     */
+    static TermContainer the(Op op, TermContainer tt) {
+        return (op.isCommutative() && !tt.isSorted()) ?
+            TermSet.the(tt.terms()) : tt;
+    }
+    static TermContainer the(Op op, Collection<Term> tt) {
+        return (op.isCommutative() && (tt.size() > 1)) ?
+                TermSet.the(tt) : new TermVector(tt);
+    }
+    static TermContainer the(Op op, Term[] tt) {
+        return op.isCommutative() ? TermSet.the(tt) :
+                new TermVector(tt);
+    }
+
+    default boolean isSorted() {
+        int s = size();
+        if (s < 2) return true;
+
+        for (int i = 1; i < s; i++) {
+            if (term(i-1).compareTo(term(i))!=-1)
                 return false;
         }
         return true;

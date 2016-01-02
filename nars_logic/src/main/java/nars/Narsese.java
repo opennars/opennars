@@ -946,7 +946,7 @@ public class Narsese extends BaseParser<Object>  {
                 $.oper(new Operator(vectorterms.get(0)),
                         $.p(vectorterms, 1, vectorterms.size())
                 ) :
-                $.the(op, vectorterms, -1);
+                $.the(op, -1, vectorterms);
     }
 
 

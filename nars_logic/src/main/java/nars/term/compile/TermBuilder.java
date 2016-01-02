@@ -140,19 +140,15 @@ public interface TermBuilder {
         return modifications;
     }
 
-    default Term newTerm(Compound csrc, TermContainer<?> subs) {
+    default Term newTerm(Compound csrc, TermContainer subs) {
         if (csrc.subterms().equals(subs))
             return csrc;
         return newTerm(csrc.op(), csrc.relation(), subs);
     }
-    default Term newTerm(Op op, TermContainer<?> subs) {
+    default Term newTerm(Op op, TermContainer subs) {
         return newTerm(op, -1, subs);
     }
-    default Term newTerm(Op op, int relation, TermContainer<?> subs) {
-        return newTerm(op, relation,
-            subs.terms() //TODO use subs directly not Term[] in callee
-        );
-    }
+
 
 
 //    /** "clone"  */
@@ -162,8 +158,13 @@ public interface TermBuilder {
 //        return newTerm(csrc.op(), csrc.relation(), subs);
 //    }
 
-    default Term newTerm(Op op, int relation, Term... t) {
+    default Term newTerm(Op op, int relation, Term[] t) {
+        return newTerm(op, relation, new TermVector(t));
+    }
 
+    default Term newTerm(Op op, int relation, TermContainer tt) {
+
+        Term[] t = tt.terms();
         if (t == null)
             return null;
 
@@ -184,9 +185,9 @@ public interface TermBuilder {
             case INSTANCE_PROPERTY:
                 return instprop(t[0], t[1]);
             case CONJUNCTION:
-                return junction(CONJUNCTION, t);
+                return junction(CONJUNCTION, tt);
             case DISJUNCTION:
-                return junction(DISJUNCTION, t);
+                return junction(DISJUNCTION, tt);
             case IMAGE_INT:
             case IMAGE_EXT:
                 //if no relation was specified and it's an Image,
@@ -235,8 +236,7 @@ public interface TermBuilder {
                 return null;
             }
 
-            return internCompound(op, relation, op.isCommutative() ?
-                    TermSet.the(t) : new TermVector(t)).term();
+            return internCompound(op, relation, TermContainer.the(op, tt)).term();
         }
 
     }
@@ -286,34 +286,34 @@ public interface TermBuilder {
                 index, res);
     }
 
-    default Term junction(Op op, Term[] t) {
-        if (t.length == 0) return null;
+    default Term junction(Op op, Iterable<Term> t) {
 
-        boolean done = true;
+
+        final boolean[] done = {true};
 
         //TODO use a more efficient flattening that doesnt involve recursion and multiple array creations
         TreeSet<Term> s = new TreeSet();
-        for (Term x : t) {
+        t.forEach(x -> {
             if (x.op(op)) {
                 for (Term y : ((TermContainer) x).terms()) {
-                    s.add(y);
-                    if (y.op(op))
-                        done = false;
+                    if (s.add(y))
+                        if (y.op(op))
+                            done[0] = false;
                 }
             } else {
                 s.add(x);
             }
+        });
+
+        if (!done[0]) {
+            return junction(op, s);
         }
 
-        Term[] sa = s.toArray(new Term[s.size()]);
 
-        if (!done) {
-            return junction(op, sa);
-        }
+        TermSet<?> ss = TermSet.the(s);
+        if (ss.size() == 1) return ss.iterator().next();
 
-        if (sa.length == 1) return sa[0];
-
-        return internCompound(op, -1, TermSet.the(sa)).term();
+        return internCompound(op, -1, ss).term();
 
     }
 
@@ -358,13 +358,8 @@ public interface TermBuilder {
                         break;
                 }
 
-                if (t.length == 1)
-                    return theTerm(t[0]); //reduced to one
-
                 if (!Statement.invalidStatement(t[0], t[1])) {
-                    return internCompound(op, -1,
-                        op.isCommutative() ? TermSet.the(t) : new TermVector(t)
-                    ).term();
+                    return internCompound(op, -1, TermContainer.the(op, t)).term();
                 }
 
                 return null;
@@ -515,7 +510,7 @@ public interface TermBuilder {
                 r = null;
             }
             else {
-                r = newTerm(a.op(),  new TermVector(dd));
+                r = newTerm(a.op(), TermSet.the(dd));
             }
             return r;
         }

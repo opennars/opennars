@@ -438,16 +438,16 @@ public abstract class $  {
 
 
     public static Term the(Op op, Term... subterms) {
-        return terms.newTerm(op, new TermVector(subterms));
+        return the(op, -1, subterms);
     }
-    public static Term the(Op op, Term[] subterms, int relation) {
-        return terms.newTerm(op, relation, subterms);
+    public static Term the(Op op, int relation, Term[] subterms) {
+        return the(op, relation, new TermVector(subterms));
     }
     public static Term the(Op op, int relation, TermContainer subterms) {
         return terms.newTerm(op, relation, subterms.terms());
     }
-    public static Term the(Op op, Collection<Term> subterms, int relation) {
-        return terms.newTerm(op, relation, subterms);
+    public static Term the(Op op, int relation, Collection<Term> subterms) {
+        return the(op, relation, new TermVector(subterms));
     }
 
     public static int typeIndex(Op o) {

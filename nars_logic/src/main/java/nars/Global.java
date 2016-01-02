@@ -28,7 +28,6 @@ import nars.util.data.map.UnifriedMap;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -205,9 +204,7 @@ public class Global {
 
     public static <C> Reference<C> reference(C s) {
         if (s == null) return null;
-        return Global.DEBUG ?
-                new SoftReference(s) :
-                new WeakReference(s);
+        return new SoftReference(s);
     }
     public static <C> C dereference(Reference<C> s) {
         if (s == null) return null;

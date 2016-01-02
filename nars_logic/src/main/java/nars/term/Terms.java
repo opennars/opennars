@@ -210,10 +210,13 @@ public class Terms {
         }
     }
 
-//    public static <T extends Term> T[] toSortedSetArray(Collection<T> c) {
-//        TreeSet<T> t = new TreeSet<>(c);
-//        return t.toArray((T[]) new Term[t.size()]);
-//    }
+    public static Term[] toSortedSetArray(Collection<Term> c) {
+        if (c instanceof TreeSet) {
+            return c.toArray(new Term[c.size()]); //already sorted
+        }
+        TreeSet<Term> t = new TreeSet(c);
+        return t.toArray(new Term[t.size()]);
+    }
 
     /**
      * for printing complex terms as a recursive tree

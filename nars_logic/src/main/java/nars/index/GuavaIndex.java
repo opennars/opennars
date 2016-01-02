@@ -2,13 +2,13 @@ package nars.index;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import javassist.scopedpool.SoftValueHashMap;
 import nars.Op;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.Termed;
 import nars.term.compile.TermIndex;
 import nars.time.Clock;
-import nars.util.WeakValueHashMap;
 
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -22,7 +22,7 @@ import java.util.function.Function;
 public class GuavaIndex implements TermIndex {
 
     final Cache<Term,Termed> data;
-    final WeakValueHashMap subterms;
+    final SoftValueHashMap subterms;
 
 
     public GuavaIndex() {
@@ -55,7 +55,7 @@ public class GuavaIndex implements TermIndex {
 
     public GuavaIndex(CacheBuilder cb) {
         this.data = cb.build();
-        this.subterms = new WeakValueHashMap();
+        this.subterms = new SoftValueHashMap();
 //        subterms = CacheBuilder.newBuilder()
 //                //.maximumSize(capacity)
 //                .softValues()

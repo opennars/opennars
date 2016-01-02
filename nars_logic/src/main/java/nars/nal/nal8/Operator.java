@@ -98,7 +98,7 @@ public final class Operator<T extends Term> extends AbstractStringAtom { //imple
         argument[0] = relation;
         System.arraycopy(product.terms(), 0, argument, 1, pl - 1);
 
-        return $.the(Op.IMAGE_EXT, argument, index + 1);
+        return $.the(Op.IMAGE_EXT, index + 1, argument);
     }
 
     /**

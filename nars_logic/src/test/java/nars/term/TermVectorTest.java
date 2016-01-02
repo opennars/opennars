@@ -5,8 +5,7 @@ import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 /**
  * Created by me on 11/12/15.
@@ -37,5 +36,15 @@ public class TermVectorTest {
 
     }
 
+    @Test public void testSortedTermContainer() {
+        TermVector a = new TermVector((Atom)$.$("a"), (Atom)$.$("b"));
+        assertTrue(a.isSorted());
+        TermVector b = new TermVector((Atom)$.$("b"), (Atom)$.$("a"));
+        assertFalse(b.isSorted());
+        TermVector s = TermSet.the(b.terms());
+        assertTrue(s.isSorted());
+        assertEquals(a, s);
+        assertNotEquals(b, s);
+    }
 
 }

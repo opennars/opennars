@@ -1,5 +1,6 @@
 package nars.term.compile;
 
+import javassist.scopedpool.SoftValueHashMap;
 import nars.Global;
 import nars.Op;
 import nars.budget.Budget;
@@ -18,7 +19,6 @@ import nars.term.match.EllipsisMatch;
 import nars.term.transform.Subst;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
-import nars.util.WeakValueHashMap;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -167,7 +167,7 @@ public interface TermIndex extends TermBuilder {
                 sub = sub.subList(0, sub.size()-1);
         }
 
-        Term result = newTerm(src, new TermVector(sub));
+        Term result = newTerm(src, TermContainer.the(src.op(), sub));
 
         //apply any known immediate transform operators
         //TODO decide if this is evaluated incorrectly somehow in reverse
@@ -339,8 +339,8 @@ public interface TermIndex extends TermBuilder {
 //    }
     static TermIndex memoryWeak(int capacity) {
         return new MapIndex(
-            new WeakValueHashMap(capacity),
-            new WeakValueHashMap(capacity*2)
+            new SoftValueHashMap(capacity),
+            new SoftValueHashMap(capacity*2)
         );
     }
 
