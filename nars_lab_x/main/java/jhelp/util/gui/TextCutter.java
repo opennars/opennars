@@ -1,6 +1,5 @@
 package jhelp.util.gui;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**

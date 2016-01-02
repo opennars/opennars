@@ -13,8 +13,6 @@ import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.shape.Drawable;
 import automenta.spacegraph.video.SGPanel;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;

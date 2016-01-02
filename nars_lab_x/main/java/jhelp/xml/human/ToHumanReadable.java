@@ -13,8 +13,6 @@ import jhelp.util.text.UtilText;
 import jhelp.util.xml.DynamicWriteXML;
 import jhelp.xml.*;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

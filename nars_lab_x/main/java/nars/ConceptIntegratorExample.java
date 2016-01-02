@@ -32,8 +32,6 @@ import nars.nal.entity.Concept;
 import nars.util.NARTrace;
 import nars.util.TreeMLData;
 
-import java.util.*;
-
 /**
  *
  */

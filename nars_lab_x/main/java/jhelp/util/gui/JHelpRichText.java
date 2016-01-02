@@ -10,7 +10,6 @@ import jhelp.util.resources.Resources;
 import jhelp.util.text.StringExtractor;
 import jhelp.util.text.UtilText;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 

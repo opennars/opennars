@@ -1,9 +1,6 @@
 /** Ben F Rayfield offers this software opensource GNU GPL 2+ */
 package smartblob.blobs.layeredzigzag;
 
-import java.awt.*;
-
-
 /** Mutable data about a specific triangle in a specific polygon mesh
 of shape the same as LayeredZigzag.
 <br><br>

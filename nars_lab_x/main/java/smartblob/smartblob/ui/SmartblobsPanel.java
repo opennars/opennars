@@ -20,8 +20,6 @@ import smartblob.smartblob.physics.SmartblobSim;
 import smartblob.smartblob.physics.globalparts.BounceOnSimpleWall;
 import smartblob.smartblob.physics.smartblobparts.Push;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;

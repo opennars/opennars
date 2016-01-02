@@ -4,7 +4,6 @@ import raytracer.basic.ColorEx;
 import raytracer.basic.RaytracerConstants;
 
 import javax.vecmath.Vector2d;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Texture

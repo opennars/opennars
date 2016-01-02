@@ -12,7 +12,6 @@ import boofcv.gui.feature.VisualizeShapes;
 import boofcv.io.webcamcapture.UtilWebcamCapture;
 import boofcv.struct.ConnectRule;
 import boofcv.struct.PointIndex_I32;
-import boofcv.struct.image.*;
 import com.github.sarxos.webcam.Webcam;
 import georegression.geometry.UtilPolygons2D_F64;
 import georegression.struct.point.Point2D_I32;
@@ -20,8 +19,6 @@ import georegression.struct.shapes.Quadrilateral_F64;
 import georegression.struct.shapes.Rectangle2D_F64;
 import nars.util.data.random.XORShiftRandom;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;

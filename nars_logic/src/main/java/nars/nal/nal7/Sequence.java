@@ -4,9 +4,9 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.$;
 import nars.Global;
 import nars.Op;
-import nars.nal.Compounds;
 import nars.term.Term;
 import nars.term.Terms;
+import nars.term.compile.TermIndex;
 import nars.term.compound.GenericCompound;
 
 import java.io.IOException;
@@ -328,7 +328,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
 
         appendOperator(p);
 
-        Compounds.appendSeparator(p, pretty);
+        TermIndex.appendSeparator(p, pretty);
 
         int nterms = size();
 
@@ -347,7 +347,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
             if (c != 0) {
 
                 if (i == nterms)
-                    Compounds.appendSeparator(p, pretty);
+                    TermIndex.appendSeparator(p, pretty);
 
                 //insert Interval virtual term
                 appendInterval(p, c);
@@ -355,7 +355,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
                 if (i == nterms)
                     break;
                 else
-                    Compounds.appendSeparator(p, pretty);
+                    TermIndex.appendSeparator(p, pretty);
 
             }
 
@@ -364,13 +364,13 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
             }
 
             if (i < nterms-1) {
-                Compounds.appendSeparator(p, pretty);
+                TermIndex.appendSeparator(p, pretty);
             }
 
         }
 
 
-        Compounds.appendCloser(p);
+        TermIndex.appendCloser(p);
 
 
     }

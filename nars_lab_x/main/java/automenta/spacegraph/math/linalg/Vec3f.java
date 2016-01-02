@@ -39,8 +39,6 @@
 
 package automenta.spacegraph.math.linalg;
 
-import java.awt.*;
-
 /** 3-element single-precision vector */
 
 public class Vec3f {

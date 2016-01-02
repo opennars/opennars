@@ -1,6 +1,6 @@
 package jhelp.util.gui;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * Utilities for image manipulation

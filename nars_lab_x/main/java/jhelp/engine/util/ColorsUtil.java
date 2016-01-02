@@ -2,8 +2,6 @@
  */
 package jhelp.engine.util;
 
-import java.awt.*;
-
 /**
  * Utilities for color manipulation <br>
  * <br>

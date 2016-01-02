@@ -43,7 +43,6 @@ import com.jogamp.opengl.GLDrawable;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.util.awt.TextRenderer;
 
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 

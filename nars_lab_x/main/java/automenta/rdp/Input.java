@@ -38,7 +38,6 @@ import automenta.rdp.rdp.RdesktopFrame_Localised;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import java.awt.event.*;
 import java.util.Vector;
 
 public abstract class Input {

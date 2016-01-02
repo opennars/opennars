@@ -15,8 +15,6 @@ import jhelp.engine.gui.ComponentView3D;
 import jhelp.engine.gui.events.InternalFrameListener;
 import jhelp.util.text.UtilText;
 
-import javax.swing.*;
-import java.awt.event.*;
 import java.util.ArrayList;
 
 /**

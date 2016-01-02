@@ -1,6 +1,5 @@
 package jhelp.util.gui;
 
-import java.awt.Color;
 import java.awt.*;
 import java.awt.font.LineMetrics;
 import java.awt.image.BufferedImage;

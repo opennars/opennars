@@ -6,8 +6,6 @@
 
 package raytracer.main;
 
-import javax.swing.*;
-
 /**
  * Dieses Hauptprogramm startet den Raytracing-Vorgang zu einer vordefinierten
  * Szene und Kamera und zeigt dabei ein Vorschaubild an.

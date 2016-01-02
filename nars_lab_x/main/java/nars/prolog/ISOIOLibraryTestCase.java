@@ -5,8 +5,6 @@ import nars.tuprolog.event.OutputListener;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.*;
-
 import static org.junit.Assert.*;
 
 // Based on the work of Sara Sabioni

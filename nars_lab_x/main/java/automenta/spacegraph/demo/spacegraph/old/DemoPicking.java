@@ -11,14 +11,11 @@ package automenta.spacegraph.demo.spacegraph.old;
 //        * This version should handle overlapping objects correctly.
 //---------------------------------------------------------------------------------
 
-import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.Animator;
 import com.sun.prism.impl.BufferUtil;
 
-import java.awt.*;
-import java.awt.event.*;
 import java.nio.IntBuffer;
 
 

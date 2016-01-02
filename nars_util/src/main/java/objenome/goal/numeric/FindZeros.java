@@ -8,7 +8,6 @@ package objenome.goal.numeric;
 import objenome.Objenome;
 import objenome.solution.SetNumericValue;
 import objenome.solver.NumericSolver;
-import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.BisectionSolver;
 
 import java.util.List;

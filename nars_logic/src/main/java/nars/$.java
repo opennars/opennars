@@ -6,7 +6,6 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import nars.java.AtomObject;
-import nars.nal.Compounds;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
@@ -123,7 +122,7 @@ public abstract class $  {
     public static Compound oper(Operator opTerm, Compound arg) {
         return (Compound) the(
                 INHERIT,
-                arg == null ? Compounds.Empty : arg,
+                arg == null ? TermIndex.Empty : arg,
                 opTerm
         );
     }
@@ -146,11 +145,11 @@ public abstract class $  {
 
     public static Compound p(Term... t) {
         if (t == null)
-            return Compounds.Empty;
+            return TermIndex.Empty;
 
         int l = t.length;
         if (l == 0) //length 0 product are allowd and shared
-            return Compounds.Empty;
+            return TermIndex.Empty;
 
         return (Compound) the(PRODUCT, t);
     }

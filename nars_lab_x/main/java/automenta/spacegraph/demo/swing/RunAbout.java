@@ -8,8 +8,6 @@ package automenta.spacegraph.demo.swing;
 
 import automenta.spacegraph.demo.Demo;
 
-import javax.swing.*;
-
 /**
  *
  * @author seh

@@ -40,12 +40,10 @@
 package automenta.spacegraph.math;
 
 import automenta.spacegraph.math.linalg.Vec3f;
-import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.AWTGLAutoDrawable;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
 
-import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 

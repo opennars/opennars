@@ -34,8 +34,6 @@ import automenta.rdp.Options;
 import org.apache.log4j.Logger;
 
 import java.awt.event.KeyEvent;
-import java.io.*;
-import java.util.*;
 
 public abstract class KeyCode_FileBased {
 

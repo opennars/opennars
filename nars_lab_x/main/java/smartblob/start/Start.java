@@ -3,8 +3,6 @@ package smartblob.start;
 import smartblob.common.CoreUtil;
 import smartblob.smartblob.ui.SmartblobsPanel;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 

@@ -19,8 +19,6 @@ import nars.nal.entity.Task;
 import nars.nal.language.Term;
 import nars.narsese.Narsese;
 
-import java.awt.*;
-
 /**
  *
  * https://github.com/encog/encog-java-examples/blob/master/src/main/java/org/encog/examples/neural/predict/sunspot/PredictSunspotElman.java

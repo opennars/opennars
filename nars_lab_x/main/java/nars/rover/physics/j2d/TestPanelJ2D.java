@@ -29,9 +29,6 @@ import nars.rover.physics.PhysicsController;
 import nars.rover.physics.TestbedPanel;
 import nars.rover.physics.TestbedState;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
  * @author Daniel Murphy
  */

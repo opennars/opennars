@@ -22,7 +22,6 @@ import raytracer.util.FloatingPoint;
 
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
-import java.util.*;
 
 /**
  * Diese Sammlung von Szenen-Objekten implementiert einen schnellen KD-Tree.

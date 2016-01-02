@@ -7,8 +7,6 @@
  */
 package jhelp.xml.io;
 
-import java.lang.annotation.*;
-
 /**
  * Mark a field to be XML serializable <br>
  * <br>

@@ -5,7 +5,6 @@
 package nars.rover.world;
 
 import nars.rover.Material;
-import nars.rover.PhysicsModel;
 import nars.rover.RoverWorld;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.MathUtils;

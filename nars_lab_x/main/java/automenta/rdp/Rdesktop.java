@@ -46,7 +46,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import java.awt.*;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.SocketException;

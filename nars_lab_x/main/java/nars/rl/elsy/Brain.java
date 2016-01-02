@@ -2,8 +2,6 @@ package nars.rl.elsy;
 
 import nars.rl.elsy.QLearner.Action;
 
-import java.io.*;
-
 
 /**
  * Main class of the framework, contains the whole Connectionist Q-learning

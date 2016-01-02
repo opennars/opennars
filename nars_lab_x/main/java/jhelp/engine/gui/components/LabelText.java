@@ -9,7 +9,6 @@ package jhelp.engine.gui.components;
 
 import jhelp.engine.Texture;
 
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 /**

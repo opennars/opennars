@@ -36,9 +36,6 @@ import automenta.rdp.rdp.RdesktopCanvas_Localised;
 import automenta.rdp.rdp5.cliprdr.ClipChannel;
 import org.apache.log4j.Logger;
 
-import java.awt.*;
-import java.awt.event.*;
-
 // import javax.swing.Box;
 
 public abstract class RdesktopFrame extends Frame {

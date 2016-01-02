@@ -12,8 +12,6 @@ import automenta.spacegraph.ui.PointerLayer;
 import automenta.spacegraph.ui.TextButton;
 import automenta.vivisect.swing.NWindow;
 
-import java.awt.*;
-
 /**
  *
  * @author seh

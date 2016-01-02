@@ -25,12 +25,9 @@ import jhelp.util.thread.ThreadedSimpleTask;
 import jhelp.xml.MarkupXML;
 
 import javax.swing.event.EventListenerList;
-import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;

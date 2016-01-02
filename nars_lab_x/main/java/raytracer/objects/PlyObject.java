@@ -19,7 +19,6 @@ import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.util.*;
 
 /**
  * Erzeugt ein neues PLY-Objekt aus einer PLY-Datei.

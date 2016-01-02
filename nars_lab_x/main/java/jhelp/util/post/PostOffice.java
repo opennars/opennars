@@ -5,8 +5,6 @@ import jhelp.util.list.SortedArray;
 import jhelp.util.thread.ThreadManager;
 import jhelp.util.thread.ThreadedSimpleTask;
 
-import java.util.*;
-
 /**
  * Post office for deliver {@link Message} between {@link User users}.<br>
  * Each {@link User} have to register for be able receive {@link Message}.<br>

@@ -33,8 +33,6 @@ import automenta.rdp.Common;
 import automenta.rdp.Options;
 import automenta.rdp.RdesktopFrame;
 
-import java.awt.*;
-
 public class RdpMenu extends MenuBar {
 
 	private static final long serialVersionUID = 4400808258398800489L;

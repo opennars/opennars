@@ -11,7 +11,6 @@ import jhelp.engine.Texture;
 import jhelp.util.debug.Debug;
 import jhelp.util.io.UtilIO;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
 import java.io.IOException;

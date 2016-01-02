@@ -13,7 +13,6 @@ import boofcv.io.webcamcapture.UtilWebcamCapture;
 import boofcv.struct.image.ImageFloat32;
 import com.github.sarxos.webcam.Webcam;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 

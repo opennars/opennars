@@ -33,8 +33,6 @@ package automenta.rdp.rdp;
 import automenta.rdp.Options;
 import automenta.rdp.RdesktopFrame;
 
-import java.awt.*;
-
 public class RdesktopFrame_Localised extends RdesktopFrame {
 
 	private static final long serialVersionUID = 8966796397221900303L;

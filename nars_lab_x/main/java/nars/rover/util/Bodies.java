@@ -7,7 +7,6 @@ import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.contacts.Contact;
 
 public abstract class Bodies implements BodyDefCallback, FixtureDefCallback {

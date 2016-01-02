@@ -10,8 +10,6 @@ package jhelp.engine.gui.layout;
 import jhelp.engine.gui.components.Component;
 import jhelp.util.math.UtilMath;
 
-import java.awt.*;
-
 /**
  * Border layout<br>
  * <br>

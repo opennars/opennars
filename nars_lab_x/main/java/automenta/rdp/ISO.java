@@ -33,7 +33,6 @@ import automenta.rdp.crypto.CryptoException;
 import automenta.rdp.rdp.RdpPacket;
 import org.apache.log4j.Logger;
 
-import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 

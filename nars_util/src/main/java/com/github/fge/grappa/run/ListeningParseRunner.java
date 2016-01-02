@@ -24,8 +24,6 @@ import com.github.fge.grappa.rules.Rule;
 import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.run.events.*;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.SubscriberExceptionContext;
-import com.google.common.eventbus.SubscriberExceptionHandler;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;

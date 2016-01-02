@@ -18,12 +18,9 @@ import raytracer.objects.*;
 import raytracer.shader.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
-import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 

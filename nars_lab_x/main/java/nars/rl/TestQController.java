@@ -3,12 +3,10 @@ package nars.nal;
 
 import nars.NAR;
 import nars.Param;
-
 import nars.nar.Default2;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
-import java.util.*;
 
 /**
  * Dynamic logic controller experiment, using QLearning

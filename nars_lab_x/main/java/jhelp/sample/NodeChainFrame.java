@@ -10,7 +10,6 @@ import jhelp.engine.util.Math3D;
 import jhelp.engine.util.PositionNode;
 import jhelp.util.math.formal.Function;
 
-import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 

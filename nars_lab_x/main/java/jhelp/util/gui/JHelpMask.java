@@ -2,7 +2,6 @@ package jhelp.util.gui;
 
 import jhelp.util.io.UtilIO;
 
-import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.io.IOException;

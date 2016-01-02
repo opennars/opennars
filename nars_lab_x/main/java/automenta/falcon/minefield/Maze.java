@@ -2,8 +2,6 @@ package automenta.falcon.minefield;
 
 import jurls.reinforcementlearning.domains.RLEnvironment;
 
-import java.awt.*;
-
 class Maze implements RLEnvironment  {
     final int size = 16;
     final int numMines = 10;

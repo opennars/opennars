@@ -1,7 +1,5 @@
 package nars.rl.elsy;
 
-import java.io.*;
-
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 import static java.lang.System.arraycopy;

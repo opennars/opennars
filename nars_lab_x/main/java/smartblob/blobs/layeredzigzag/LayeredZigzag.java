@@ -6,7 +6,6 @@ import smartblob.SmartblobUtil;
 import smartblob.datastruct.Statsys;
 import smartblob.smartblob.physics.ChangeSpeed;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

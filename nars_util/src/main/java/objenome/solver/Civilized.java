@@ -7,7 +7,6 @@ import objenome.solver.evolve.Fitness;
 import objenome.solver.evolve.TypedOrganism;
 
 import java.util.Iterator;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 /**

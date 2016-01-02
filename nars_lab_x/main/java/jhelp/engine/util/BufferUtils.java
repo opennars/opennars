@@ -1,7 +1,5 @@
 package jhelp.engine.util;
 
-import java.nio.*;
-
 /**
  * Buffer utilities.<br>
  * To not take too much memory, we reuse always the same ByteBuffer and see it like IntBuffer, FloatBuffer or DoubleBuffer

@@ -39,10 +39,8 @@
 
 package automenta.spacegraph.demo.spacegraph.old;
 
-import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 
-import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;

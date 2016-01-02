@@ -9,11 +9,9 @@ package jhelp.util.gui;
 
 import jhelp.util.debug.Debug;
 
-import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
-import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.security.Permission;

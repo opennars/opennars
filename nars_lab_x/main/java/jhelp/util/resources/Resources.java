@@ -5,9 +5,7 @@ import jhelp.util.gui.JHelpImage;
 import jhelp.util.io.UtilIO;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;

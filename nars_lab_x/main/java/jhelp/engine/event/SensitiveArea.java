@@ -14,7 +14,6 @@ import jhelp.xml.ExceptionXML;
 import jhelp.xml.ParseXMLlistener;
 import jhelp.xml.ParserXML;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

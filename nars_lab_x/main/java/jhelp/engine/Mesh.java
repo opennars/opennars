@@ -16,7 +16,6 @@ import jhelp.util.text.UtilText;
 import jhelp.util.thread.ThreadedSimpleTask;
 import jhelp.xml.MarkupXML;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

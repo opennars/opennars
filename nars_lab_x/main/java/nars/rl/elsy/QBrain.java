@@ -2,8 +2,6 @@ package nars.rl.elsy;
 
 import nars.rl.elsy.QLearner.Action;
 
-import java.io.*;
-
 import static java.lang.Math.abs;
 import static java.lang.Math.exp;
 import static java.lang.System.arraycopy;

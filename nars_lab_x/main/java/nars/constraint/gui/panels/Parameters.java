@@ -28,7 +28,6 @@ package nars.constraint.gui.panels;
 
 import nars.constraint.gui.GUI;
 
-import javax.swing.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.LinkedList;

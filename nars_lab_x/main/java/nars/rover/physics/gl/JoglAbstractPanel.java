@@ -1,6 +1,5 @@
 package nars.rover.physics.gl;
 
-import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -11,7 +10,6 @@ import nars.rover.physics.j2d.AWTPanelHelper;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.dynamics.World;
 
-import javax.swing.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 

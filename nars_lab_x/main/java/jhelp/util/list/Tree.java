@@ -1,7 +1,5 @@
 package jhelp.util.list;
 
-import java.util.*;
-
 /**
  * A generic tree
  * 

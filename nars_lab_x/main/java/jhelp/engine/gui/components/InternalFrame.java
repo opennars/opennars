@@ -16,7 +16,6 @@ import jhelp.engine.gui.layout.HorizontalLayout;
 import jhelp.engine.gui.layout.HorizontalLayoutConstraints;
 import jhelp.util.debug.Debug;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 /**

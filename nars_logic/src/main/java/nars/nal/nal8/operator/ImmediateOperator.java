@@ -2,11 +2,11 @@ package nars.nal.nal8.operator;
 
 
 import nars.$;
-import nars.nal.Compounds;
 import nars.nal.nal8.Operator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
 /** an operation that executes immediately, and without logical consequences;
@@ -25,7 +25,7 @@ public abstract class ImmediateOperator extends NullOperator  {
 
     /** apply Atom.quoteI */
     static Compound termizedProduct(Object... args) {
-        if (args.length == 0) return Compounds.Empty;
+        if (args.length == 0) return TermIndex.Empty;
         return $.p(termized(args));
     }
 

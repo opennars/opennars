@@ -32,7 +32,6 @@ package automenta.rdp.rdp5.cliprdr;
 import automenta.rdp.Input;
 import org.apache.log4j.Logger;
 
-import java.awt.*;
 import java.awt.image.MemoryImageSource;
 import java.awt.image.PixelGrabber;
 import java.io.ByteArrayOutputStream;

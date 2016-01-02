@@ -22,9 +22,9 @@ package nars.term.compound;
 
 import nars.Global;
 import nars.Op;
-import nars.nal.Compounds;
 import nars.term.Term;
 import nars.term.TermContainer;
+import nars.term.compile.TermIndex;
 import nars.term.match.Ellipsis;
 import nars.term.transform.FindSubst;
 import nars.term.visit.SubtermVisitor;
@@ -116,7 +116,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     @Override
     default void append(Appendable p, boolean pretty) throws IOException {
-        Compounds.appendCompound(this, p, pretty);
+        TermIndex.appendCompound(this, p, pretty);
     }
 
     default void appendArgs(Appendable p, boolean pretty, boolean appendedOperator) throws IOException {

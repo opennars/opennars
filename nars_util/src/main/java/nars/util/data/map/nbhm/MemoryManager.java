@@ -5,8 +5,6 @@
 
 package nars.util.data.map.nbhm;
 
-import sun.misc.Cleaner;
-
 import javax.management.Notification;
 import javax.management.NotificationEmitter;
 import javax.management.NotificationFilter;

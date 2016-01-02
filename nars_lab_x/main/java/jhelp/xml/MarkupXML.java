@@ -9,7 +9,6 @@ package jhelp.xml;
 
 import jhelp.util.list.EnumerationIterator;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;

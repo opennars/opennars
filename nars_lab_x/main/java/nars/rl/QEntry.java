@@ -3,7 +3,6 @@ package nars.rl;
 import nars.Memory;
 import nars.Symbols;
 import nars.concept.Concept;
-
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;

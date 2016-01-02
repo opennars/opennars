@@ -9,8 +9,6 @@ import smartblob.blobs.layeredzigzag.TriData;
 import smartblob.smartblob.physics.GlobalChangeSpeed;
 import smartblob.smartblob.physics.SmartblobSim;
 
-import java.awt.*;
-
 /** First all pairs of Smartblob.boundingRectangle() are checked for possible collision.
 Then of those which may collide, more detailed checks are done. For all outer point
 found to collide past a surface line, speeds of the 2 points on those lines are updated.

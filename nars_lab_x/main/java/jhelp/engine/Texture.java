@@ -13,8 +13,6 @@ import jhelp.util.gui.JHelpImage;
 import jhelp.util.list.EnumerationIterator;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;

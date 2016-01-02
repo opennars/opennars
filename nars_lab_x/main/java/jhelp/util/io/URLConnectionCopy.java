@@ -7,7 +7,6 @@
  */
 package jhelp.util.io;
 
-import java.io.*;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;

@@ -39,7 +39,6 @@ import automenta.rdp.rdp.RdpPacket;
 import nars.Global;
 import org.apache.log4j.Logger;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.MemoryImageSource;

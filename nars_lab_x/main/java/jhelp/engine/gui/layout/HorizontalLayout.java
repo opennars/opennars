@@ -9,7 +9,6 @@ package jhelp.engine.gui.layout;
 
 import jhelp.engine.gui.components.Component;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
 

@@ -35,8 +35,6 @@ import automenta.rdp.Rdesktop;
 import automenta.rdp.RdesktopException;
 
 import java.applet.Applet;
-import java.awt.*;
-import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 

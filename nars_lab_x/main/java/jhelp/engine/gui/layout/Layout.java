@@ -7,8 +7,6 @@
  */
 package jhelp.engine.gui.layout;
 
-import java.awt.*;
-
 /**
  * Layout components<br>
  * <br>

@@ -21,8 +21,6 @@ import nars.nar.Default;
 import nars.task.TaskSeed;
 import nars.term.Atom;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;

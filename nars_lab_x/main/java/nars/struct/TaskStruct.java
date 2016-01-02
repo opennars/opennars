@@ -2,7 +2,6 @@ package nars.struct;
 
 import nars.Memory;
 import nars.budget.Budget;
-
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.stamp.Stamp;

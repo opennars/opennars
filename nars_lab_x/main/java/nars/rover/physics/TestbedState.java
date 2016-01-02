@@ -27,7 +27,6 @@ import nars.rover.PhysicsModel;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.common.IViewportTransform;
 
-import javax.swing.*;
 import java.util.List;
 import java.util.Vector;
 

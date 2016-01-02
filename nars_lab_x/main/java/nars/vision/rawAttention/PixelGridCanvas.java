@@ -1,7 +1,5 @@
 package nars.vision.rawAttention;
 
-import java.awt.*;
-
 /**
  * Canvas which shows big pixels and the pixels which are "seen" by nars
  */

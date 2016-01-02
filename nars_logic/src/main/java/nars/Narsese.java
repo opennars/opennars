@@ -13,7 +13,6 @@ import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.DefaultValueStack;
 import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
-import nars.nal.Compounds;
 import nars.nal.PremiseRule;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
@@ -463,7 +462,7 @@ public class Narsese extends BaseParser<Object>  {
                         seq( COMPOUND_TERM_OPENER,
                                 firstOf(
                                         //empty product
-                                        seq( s(), COMPOUND_TERM_CLOSER, push(Compounds.Empty) ),
+                                        seq( s(), COMPOUND_TERM_CLOSER, push(TermIndex.Empty) ),
 
                                         MultiArgTerm(null, COMPOUND_TERM_CLOSER, true, false, false, false),
 

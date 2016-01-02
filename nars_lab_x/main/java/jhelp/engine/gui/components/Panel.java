@@ -12,7 +12,6 @@ import jhelp.engine.gui.layout.Constraints;
 import jhelp.engine.gui.layout.Layout;
 import jhelp.engine.gui.layout.LayoutElement;
 
-import java.awt.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 

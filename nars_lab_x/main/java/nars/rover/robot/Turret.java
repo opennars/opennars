@@ -11,7 +11,6 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.contacts.Contact;
 
-import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Turret extends Robotic {

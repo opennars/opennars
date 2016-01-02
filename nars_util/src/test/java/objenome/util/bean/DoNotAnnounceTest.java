@@ -5,9 +5,7 @@ import objenome.util.bean.anno.Unbound;
 import objenome.util.bean.util.DefaultVetoablePropertyChangeEventProvider;
 import org.junit.Test;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
-import java.beans.VetoableChangeListener;
 
 import static org.junit.Assert.assertEquals;
 

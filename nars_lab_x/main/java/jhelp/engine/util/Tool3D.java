@@ -18,7 +18,6 @@ import jhelp.util.debug.Debug;
 import jhelp.util.text.UtilText;
 import jhelp.xml.MarkupXML;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;

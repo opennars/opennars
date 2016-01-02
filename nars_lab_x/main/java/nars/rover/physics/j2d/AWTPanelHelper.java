@@ -7,8 +7,6 @@ import nars.rover.physics.PhysicsController;
 import nars.rover.physics.TestbedState;
 import org.jbox2d.common.Vec2;
 
-import java.awt.*;
-import java.awt.event.*;
 import java.util.List;
 
 public class AWTPanelHelper {

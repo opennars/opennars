@@ -39,8 +39,6 @@ import nars.rover.physics.gl.JoglPanel;
 import nars.rover.physics.j2d.TestPanelJ2D;
 import nars.rover.physics.j2d.TestbedSidePanel;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 

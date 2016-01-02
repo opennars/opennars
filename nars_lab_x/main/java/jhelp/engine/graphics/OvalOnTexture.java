@@ -9,7 +9,6 @@ package jhelp.engine.graphics;
 
 import jhelp.engine.Texture;
 
-import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
 /**

@@ -4,8 +4,6 @@ import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
 import nars.Video;
-import nars.time.SimulatedClock;
-import nars.util.event.CycleReaction;
 import nars.nar.experimental.Equalized;
 import nars.rover.RoverWorld;
 import nars.rover.Sim;
@@ -14,6 +12,8 @@ import nars.rover.robot.Rover;
 import nars.rover.robot.Spider;
 import nars.rover.robot.Turret;
 import nars.rover.world.FoodSpawnWorld1;
+import nars.time.SimulatedClock;
+import nars.util.event.CycleReaction;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /**

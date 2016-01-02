@@ -12,7 +12,6 @@ import jhelp.util.debug.Debug;
 import jhelp.util.list.Queue;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

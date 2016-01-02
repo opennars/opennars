@@ -3,7 +3,6 @@ package nars.rover.robot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-
 import nars.nal.nal8.operator.NullOperator;
 import nars.rover.obj.VisionRay;
 import nars.task.Task;

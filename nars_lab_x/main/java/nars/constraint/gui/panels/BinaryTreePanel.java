@@ -31,8 +31,6 @@ import org.chocosolver.solver.search.loop.monitors.IMonitorDownBranch;
 import org.chocosolver.solver.search.loop.monitors.IMonitorRestart;
 import org.chocosolver.solver.search.loop.monitors.IMonitorUpBranch;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.Arrays;
 
 /**

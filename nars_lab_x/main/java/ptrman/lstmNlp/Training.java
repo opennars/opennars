@@ -2,8 +2,6 @@ package ptrman.lstmNlp;
 
 import nars.rl.lstm.AbstractTraining;
 
-import java.util.*;
-
 // Comingling of consciousness and computer technology is a prevalent dream.
 // + of + and + + is + + +.
 

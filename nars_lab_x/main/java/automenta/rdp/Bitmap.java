@@ -34,7 +34,6 @@ package automenta.rdp;
 import automenta.rdp.rdp.RdpPacket;
 import org.apache.log4j.Logger;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 

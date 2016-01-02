@@ -45,7 +45,6 @@ import org.chocosolver.util.ESat;
 import org.kohsuke.args4j.Option;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
 import java.util.regex.Pattern;
 
 /**

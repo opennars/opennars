@@ -8,8 +8,6 @@ import org.jbox2d.common.Color3f;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 
-import java.awt.*;
-
 /**
  * Created by me on 7/18/15.
  */

@@ -6,10 +6,8 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
-import nars.util.event.FrameReaction;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.OpReaction;
-
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.DecideAllGoals;
@@ -20,6 +18,7 @@ import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.Truth;
+import nars.util.event.FrameReaction;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 

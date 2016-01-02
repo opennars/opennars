@@ -23,9 +23,6 @@ import nars.nal.language.Inheritance;
 import nars.nal.language.Term;
 import nars.util.TreeMLData;
 
-import java.awt.*;
-import java.util.*;
-
 import static nars.io.Texts.n2;
 
 /**

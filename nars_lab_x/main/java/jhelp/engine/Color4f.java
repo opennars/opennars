@@ -8,7 +8,6 @@ import jhelp.engine.util.Math3D;
 import jhelp.util.text.StringCutter;
 import jhelp.util.text.UtilText;
 
-import java.awt.*;
 import java.nio.FloatBuffer;
 
 /**

@@ -8,9 +8,6 @@ import jhelp.util.preference.Preferences;
 import jhelp.util.resources.ResourceText;
 import jhelp.util.resources.Resources;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 
 /**

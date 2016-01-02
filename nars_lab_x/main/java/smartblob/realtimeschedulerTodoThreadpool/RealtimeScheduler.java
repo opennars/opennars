@@ -5,8 +5,6 @@ package smartblob.realtimeschedulerTodoThreadpool;
 //import jselfmodify.JSelfModify;
 //import jsoundcard.JSoundCard;
 
-import java.util.*;
-
 import static smartblob.commonfuncs.CommonFuncs.log;
 
 /** TODO Use higher priority threads and sleep more often? Will system permissions allow it? */

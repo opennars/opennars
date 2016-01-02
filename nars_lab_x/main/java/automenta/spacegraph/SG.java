@@ -3,7 +3,6 @@ package automenta.spacegraph;
 import automenta.spacegraph.control.Repeat;
 import com.jogamp.opengl.GLEventListener;
 
-import java.awt.event.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;

@@ -8,7 +8,6 @@ import automenta.spacegraph.math.linalg.Vec4f;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.awt.TextRenderer;
 
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 /**

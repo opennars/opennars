@@ -29,8 +29,6 @@ package nars.constraint.gui.panels;
 import nars.constraint.gui.GUI;
 import org.chocosolver.solver.search.loop.monitors.IMonitorOpenNode;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**

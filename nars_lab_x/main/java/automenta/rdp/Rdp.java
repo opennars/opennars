@@ -34,7 +34,6 @@ import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.rdp5.VChannels;
 import org.apache.log4j.Logger;
 
-import java.awt.*;
 import java.awt.image.IndexColorModel;
 import java.io.EOFException;
 import java.io.IOException;

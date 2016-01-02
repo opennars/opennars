@@ -12,7 +12,6 @@ import jhelp.util.debug.DebugLevel;
 import jhelp.util.list.EnumerationIterator;
 import jhelp.util.text.UtilText;
 
-import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;

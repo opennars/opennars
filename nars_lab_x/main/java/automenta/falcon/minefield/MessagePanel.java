@@ -1,8 +1,5 @@
 package automenta.falcon.minefield;// MessagePanel.java: Display a message on a JPanel
 
-import javax.swing.*;
-import java.awt.*;
-
 public class MessagePanel extends JPanel {
     /**
      * The message to be displayed

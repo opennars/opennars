@@ -2,8 +2,6 @@ package jhelp.util.io.pipe;
 
 import jhelp.util.io.UtilIO;
 
-import java.io.*;
-
 /**
  * Pipe common operations, <br>
  * 1) What is a pipe ?<br>

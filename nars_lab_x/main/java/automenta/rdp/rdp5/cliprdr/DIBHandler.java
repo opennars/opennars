@@ -35,7 +35,6 @@ import automenta.rdp.Input;
 import automenta.rdp.rdp.Utilities_Localised;
 import org.apache.log4j.Logger;
 
-import java.awt.*;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.ImageObserver;

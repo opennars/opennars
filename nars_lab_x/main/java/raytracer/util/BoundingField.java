@@ -7,7 +7,6 @@
 package raytracer.util;
 
 import javax.vecmath.Vector3d;
-import java.util.*;
 
 /**
  * Umschlie�ende K�rper werden benutzt, um die Dimensionen einer Menge von

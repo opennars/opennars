@@ -28,9 +28,6 @@ import nars.nal.language.Term;
 import nars.narsese.Narsese;
 import nars.task.task.filter.LimitDerivationPriority;
 
-import javax.swing.*;
-import java.awt.*;
-
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.WEST;
 

@@ -14,8 +14,6 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
-import javax.swing.*;
-
 public class RDPCV  {
     private final RdesktopCanvas canvas;
     private Image backgroundImage;

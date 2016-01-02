@@ -11,8 +11,6 @@ import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.video.SGPanel;
 
-import java.awt.event.*;
-
 /**
  *
  * @author seh

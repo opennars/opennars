@@ -1,11 +1,11 @@
 package nars.rover;
 
 import nars.Global;
-import nars.time.SimulatedClock;
 import nars.rover.physics.TestbedPanel;
 import nars.rover.physics.TestbedSettings;
 import nars.rover.physics.gl.JoglAbstractDraw;
 import nars.rover.robot.Robotic;
+import nars.time.SimulatedClock;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;

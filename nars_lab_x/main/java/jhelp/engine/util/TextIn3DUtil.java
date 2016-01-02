@@ -12,7 +12,6 @@ import jhelp.engine.twoD.Object2D;
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
 
-import java.awt.*;
 import java.util.StringTokenizer;
 
 /**

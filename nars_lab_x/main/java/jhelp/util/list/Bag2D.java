@@ -4,7 +4,6 @@ import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
 import jhelp.util.text.UtilText;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 

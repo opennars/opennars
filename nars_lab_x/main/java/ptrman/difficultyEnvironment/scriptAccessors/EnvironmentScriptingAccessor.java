@@ -4,7 +4,6 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.*;
 import ptrman.difficultyEnvironment.EntityDescriptor;
 import ptrman.difficultyEnvironment.Environment;
 import ptrman.difficultyEnvironment.physics.Physics2dBody;

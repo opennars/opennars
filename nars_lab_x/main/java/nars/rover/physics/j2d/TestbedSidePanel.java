@@ -31,11 +31,9 @@ import nars.rover.physics.TestbedSettings;
 import nars.rover.physics.TestbedState;
 import nars.rover.physics.TestbedState.ListItem;
 
-import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

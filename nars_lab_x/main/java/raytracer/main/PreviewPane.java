@@ -6,9 +6,6 @@
 
 package raytracer.main;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
  * Dieses Panel zeigt ein Vorschaubild an.
  * 

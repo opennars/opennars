@@ -1,7 +1,6 @@
 /** Ben F Rayfield offers this "common" software to everyone opensource GNU LGPL */
 package smartblob.common;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;

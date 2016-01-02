@@ -2,9 +2,9 @@ package nars.term.compound;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Op;
-import nars.nal.Compounds;
 import nars.nal.nal8.Operator;
 import nars.term.*;
+import nars.term.compile.TermIndex;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -33,7 +33,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                 new TermVector(subterms);
         this.op = op;
         this.relation = relation;
-        this.hash = Compounds.hash(terms, op, relation+1);
+        this.hash = TermIndex.hash(terms, op, relation+1);
     }
 
     public GenericCompound(Op op, TermVector subterms) {
@@ -44,7 +44,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         this.terms = subterms;
         this.op = op;
         this.relation = relation;
-        this.hash = Compounds.hash(terms, op, relation+1);
+        this.hash = TermIndex.hash(terms, op, relation+1);
     }
 
     @Override
@@ -62,14 +62,14 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         switch (op) {
             case SET_INT_OPENER:
             case SET_EXT_OPENER:
-                Compounds.setAppend(this, p, pretty);
+                TermIndex.setAppend(this, p, pretty);
                 break;
             case PRODUCT:
-                Compounds.productAppend(this, p, pretty);
+                TermIndex.productAppend(this, p, pretty);
                 break;
             case IMAGE_INT:
             case IMAGE_EXT:
-                Compounds.imageAppend(this, p, pretty);
+                TermIndex.imageAppend(this, p, pretty);
                 break;
             default:
                 if (op.isStatement()) {
@@ -80,7 +80,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                         Statement.append(this, p, pretty);
                     }
                 } else {
-                    Compounds.appendCompound(this, p, pretty);
+                    TermIndex.appendCompound(this, p, pretty);
                 }
                 break;
         }

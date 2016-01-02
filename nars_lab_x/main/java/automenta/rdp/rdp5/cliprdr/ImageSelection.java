@@ -31,7 +31,6 @@ package automenta.rdp.rdp5.cliprdr;
 
 import automenta.rdp.rdp.Utilities_Localised;
 
-import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;

@@ -7,7 +7,6 @@
  */
 package jhelp.engine;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 /**

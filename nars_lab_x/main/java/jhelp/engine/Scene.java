@@ -10,7 +10,6 @@ import jhelp.engine.util.NodeComparatorZorder;
 import jhelp.engine.util.Tool3D;
 import jhelp.xml.MarkupXML;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;

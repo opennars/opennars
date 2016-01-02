@@ -36,7 +36,6 @@ import automenta.rdp.rdp5.VChannel;
 import automenta.rdp.rdp5.VChannels;
 import org.apache.log4j.Logger;
 
-import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;

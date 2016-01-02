@@ -2,12 +2,12 @@ package nars.nal.nal8;
 
 import nars.$;
 import nars.Op;
-import nars.nal.Compounds;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.AbstractStringAtom;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
@@ -120,7 +120,7 @@ public final class Operator<T extends Term> extends AbstractStringAtom { //imple
 
         if ((predTerm.volume() != 1) || (predTerm.hasVar())) {
             //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format
-            Compounds.appendSeparator(p, pretty);
+            TermIndex.appendSeparator(p, pretty);
             return;
         }
 

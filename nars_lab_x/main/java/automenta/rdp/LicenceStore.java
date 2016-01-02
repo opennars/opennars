@@ -31,8 +31,6 @@ package automenta.rdp;
 
 import org.apache.log4j.Logger;
 
-import java.io.*;
-
 public abstract class LicenceStore {
 
 	static Logger logger = Logger.getLogger(Licence.class);

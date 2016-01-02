@@ -5,7 +5,6 @@ package smartblob;
 import smartblob.datastruct.Statsys;
 import smartblob.smartblob.physics.ChangeSpeed;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 /** A smartblob is a changing polygon which has a statsys observing and moving it

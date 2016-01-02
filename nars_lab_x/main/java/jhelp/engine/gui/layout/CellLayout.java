@@ -9,8 +9,6 @@ package jhelp.engine.gui.layout;
 
 import jhelp.engine.gui.components.Component;
 
-import java.awt.*;
-
 /**
  * Layout by cells<br>
  * <br>

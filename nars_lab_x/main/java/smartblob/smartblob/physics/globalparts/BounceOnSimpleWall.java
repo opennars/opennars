@@ -8,8 +8,6 @@ import smartblob.blobs.layeredzigzag.LayeredZigzag;
 import smartblob.smartblob.physics.GlobalChangeSpeed;
 import smartblob.smartblob.physics.SmartblobSim;
 
-import java.awt.*;
-
 public class BounceOnSimpleWall implements GlobalChangeSpeed {
 	
 	//TODO optimize collisions by checking boundingRectangle

@@ -10,7 +10,6 @@ package jhelp.engine.twoD;
 import jhelp.engine.Font3D;
 import jhelp.engine.util.Math3D;
 
-import java.awt.*;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 

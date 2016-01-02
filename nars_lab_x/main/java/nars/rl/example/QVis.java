@@ -6,14 +6,11 @@ import jurls.core.utils.MatrixImage;
 import nars.Symbols;
 import nars.Video;
 import nars.concept.Concept;
-
 import nars.rl.QEntry;
 import nars.rl.QLAgent;
 import nars.term.Term;
 import org.apache.commons.math3.util.FastMath;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 

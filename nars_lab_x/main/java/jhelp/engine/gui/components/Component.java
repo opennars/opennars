@@ -10,8 +10,6 @@ package jhelp.engine.gui.components;
 import jhelp.engine.Texture;
 import jhelp.engine.util.ColorsUtil;
 
-import java.awt.*;
-
 /**
  * Generic component<br>
  * <br>

@@ -9,8 +9,6 @@ package jhelp.engine.gui.layout;
 
 import jhelp.util.debug.Debug;
 
-import java.awt.*;
-
 /**
  * Relative layout<br>
  * <br>

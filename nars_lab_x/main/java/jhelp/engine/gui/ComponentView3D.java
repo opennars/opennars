@@ -13,8 +13,6 @@ import com.jogamp.opengl.awt.GLCanvas;
 import jhelp.engine.JHelpSceneRenderer;
 import jhelp.engine.util.CanvasOpenGLMaker;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;

@@ -10,7 +10,6 @@ package jhelp.engine;
 import jhelp.engine.twoD.BorderIterator;
 import jhelp.engine.util.Math3D;
 
-import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;

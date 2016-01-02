@@ -1,8 +1,6 @@
 /** Ben F Rayfield offers Wavetree opensource GNU LGPL 2+ */
 package smartblob.wavetree.scalar;
 
-import javax.sound.sampled.*;
-
 /** Generates audio (a simple equation of sines), buffers it with a Wave tree,
 and plays it by sending bytes to the sound-card which are played on the computer's speakers.
 <br><br>

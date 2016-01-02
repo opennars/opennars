@@ -6,7 +6,6 @@ import jhelp.util.text.StringCutter;
 import jhelp.util.text.UtilText;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;

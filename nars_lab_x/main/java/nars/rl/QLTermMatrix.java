@@ -9,7 +9,6 @@ import nars.Symbols;
 import nars.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
-
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.term.Compound;

@@ -21,8 +21,6 @@ import ptrman.difficultyEnvironment.view.DrawerRunnable;
 import ptrman.difficultyEnvironment.view.JoglDraw;
 import ptrman.difficultyEnvironment.view.JoglPanel;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
