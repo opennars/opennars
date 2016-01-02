@@ -5,6 +5,7 @@ import nars.Global;
 import nars.Op;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.MatchTerm;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
@@ -41,6 +42,7 @@ public class PremiseMatch extends FindSubst {
     public final Versioned<Character> punct;
     public final Versioned<MatchTerm> pattern;
 
+    private TaskBeliefPair termPattern = new TaskBeliefPair();
     public boolean cyclic;
 
     final Map<Operator, ImmediateTermTransform> transforms =
@@ -73,10 +75,6 @@ public class PremiseMatch extends FindSubst {
         return transforms.get(t);
     }
 
-
-    @Override
-    public void onPartial() {
-    }
 
 
     public final void match(MatchTerm pattern /* callback */) {
@@ -120,7 +118,9 @@ public class PremiseMatch extends FindSubst {
         Task pBelief = p.getBelief();
         Termed beliefTerm = pBelief != null ? pBelief.get() : p.termLink.get(); //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
 
-        term.set( $.p(  taskTerm.term(), beliefTerm.term() ) );
+        termPattern.set( taskTerm.term(), beliefTerm.term() );
+        term.set( termPattern );
+
         cyclic = p.isCyclic();
 
 //        //set initial power which will be divided by branch

@@ -1,6 +1,7 @@
 package nars.term.atom;
 
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.visit.SubtermVisitor;
 
 import java.io.IOException;
@@ -13,10 +14,11 @@ public abstract class Atomic implements Term {
     /** Assumes that the op()
      *  is encoded within its string such that additional op()
      *  comparison would be redundant. */
-    @Override public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Atomic)) return false;
-        return toString().equals(obj.toString());
+    @Override public final boolean equals(Object u) {
+        if (this == u) return true;
+        if (!(u instanceof Termed)) return false;
+        Termed t = ((Termed)u).term();
+        return (t.op() == op()) && toString().equals(t.toString());
     }
 
     @Override
@@ -30,7 +32,7 @@ public abstract class Atomic implements Term {
     @Override public final int compareTo(Object that) {
         if (that==this) return 0;
 
-        Term t = (Term)that;
+        Termed t = (Termed)that;
         //TODO compare
         //int d = op().compareTo(t.op());
         int d = Integer.compare(op().ordinal(), t.op().ordinal());

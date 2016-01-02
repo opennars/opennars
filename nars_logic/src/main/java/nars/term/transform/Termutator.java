@@ -27,13 +27,13 @@ public abstract class Termutator /* implements BooleanIterator */ {
 
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         if (this == obj) return true;
         return resultKey.equals(((Termutator)obj).resultKey);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return resultKey.hashCode();
     }
 

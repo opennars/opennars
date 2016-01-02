@@ -14,13 +14,9 @@ import nars.truth.DesireFunction;
  * Evaluates the truth of a premise
  */
 abstract public class Solve extends AtomicBooleanCondition<PremiseMatch> {
-    //public final TruthOperator belief;
-    //public final TruthOperator desire;
-    //public final char puncOverride;
 
     private final transient String id;
 
-    //public final PremiseRule rule;
     private final Derive derive;
 
     public Solve(String id, Derive derive) {
@@ -35,13 +31,7 @@ abstract public class Solve extends AtomicBooleanCondition<PremiseMatch> {
         char puncOverride = p.puncOverride;
 
         BeliefFunction belief = BeliefFunction.get(p.beliefTruth);
-
-//        if (belief == null &&
-//                !((puncOverride==Symbols.GOAL) || (puncOverride==Symbols.QUEST) || (puncOverride==Symbols.QUESTION)))
-//            throw new RuntimeException("unknown belief function " + beliefTerm);
-
         DesireFunction desire = DesireFunction.get(p.goalTruth);
-
 
         String beliefLabel = belief == null ? "_" :
                 p.beliefTruth.toString();
@@ -67,15 +57,16 @@ abstract public class Solve extends AtomicBooleanCondition<PremiseMatch> {
             //Inherit from task
             return new Solve(i, der) {
                 @Override public boolean booleanValueOf(PremiseMatch m) {
-                    char punct = m.premise.getTask().getPunctuation();
-                    return measureTruthOverride(m, punct, belief, desire);
+                    return measure(m,
+                            m.premise.getTask().getPunctuation(),
+                            belief, desire);
                 }
             };
         } else {
             //Override
             return new Solve(i, der) {
                 @Override public boolean booleanValueOf(PremiseMatch m) {
-                    return measureTruthOverride(m, puncOverride, belief, desire);
+                    return measure(m, puncOverride, belief, desire);
                 }
             };
         }
@@ -149,7 +140,7 @@ abstract public class Solve extends AtomicBooleanCondition<PremiseMatch> {
 //        return measureTruthOverride(m, punct, belief, desire);
 //    }
 
-    public static boolean measureTruthOverride(PremiseMatch m, char punct, TruthOperator belief, TruthOperator desire) {
+    static boolean measure(PremiseMatch m, char punct, TruthOperator belief, TruthOperator desire) {
         TruthOperator tf;
         boolean r=false;
         switch (punct) {

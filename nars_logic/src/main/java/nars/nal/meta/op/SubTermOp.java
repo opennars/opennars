@@ -16,7 +16,7 @@ public final class SubTermOp extends PatternOp {
     public SubTermOp(int subterm, Op op) {
         this.subterm = subterm;
         this.op = op;
-        id = "t" + subterm + ':' + op;
+        id = "(subterm:" + subterm + "):\"" + op + '"';
     }
 
     @Override

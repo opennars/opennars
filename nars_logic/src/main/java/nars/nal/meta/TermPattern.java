@@ -20,11 +20,9 @@ public class TermPattern {
     public final Term[] code;
     public final Term term;
 
-    private final ListMultimap<Term, MatchConstraint> constraints;
 
     public TermPattern(Term pattern, ListMultimap<Term, MatchConstraint> constraints) {
 
-        this.constraints = constraints;
         this.term = pattern;
 
         List<BooleanCondition<PremiseMatch>> pre = Global.newArrayList();

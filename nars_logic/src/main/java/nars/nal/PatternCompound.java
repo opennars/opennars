@@ -8,12 +8,11 @@ import nars.term.compound.GenericCompound;
 import nars.term.match.Ellipsis;
 import nars.term.transform.FindSubst;
 
-public class PatternCompound extends GenericCompound {
-
+public final class PatternCompound extends GenericCompound {
 
     public final int sizeCached;
     public final int volCached;
-    public final int structureCachedWithoutVars;
+    public final int structureCached;
     public final Term[] termsCached;
     protected final boolean ellipsis;
     private final boolean commutative;
@@ -28,15 +27,20 @@ public class PatternCompound extends GenericCompound {
         super(seed.op(), seed.relation(), subterms);
 
         sizeCached = seed.size();
-        structureCachedWithoutVars =
-                seed.structure() & ~(Op.VariableBits);
-                //seed.structure() & ~(Op.VAR_PATTERN.bit());
+        structureCached =
+                //seed.structure() & ~(Op.VariableBits);
+                seed.structure() & ~(Op.VAR_PATTERN.bit());
 
-        this.ellipsis = Ellipsis.hasEllipsis(this);
+        this.ellipsis = seed.hasEllipsis();
         this.ellipsisTransform = Ellipsis.hasEllipsisTransform(this);
         this.volCached = seed.volume();
         this.termsCached = subterms.terms();
         this.commutative = isCommutative();
+    }
+
+    @Override
+    public boolean hasEllipsis() {
+        return ellipsis;
     }
 
     @Override
@@ -45,9 +49,14 @@ public class PatternCompound extends GenericCompound {
     }
 
     @Override
-    public boolean match(Compound y, FindSubst subst) {
-        if (!prematch(y)) return false;
+    public final int structure() {
+        return structureCached;
+    }
 
+    @Override
+    public boolean match(Compound y, FindSubst subst) {
+
+        if (!prematch(y)) return false;
 
         if (!ellipsis) {
 
@@ -55,7 +64,7 @@ public class PatternCompound extends GenericCompound {
                 return subst.matchPermute(this, y);
             }
 
-            return matchLinear(y, subst);
+            return subst.matchLinear(this, y);
 
         } else {
             return subst.matchCompoundWithEllipsis(this, y);
@@ -66,7 +75,7 @@ public class PatternCompound extends GenericCompound {
     public final boolean prematch(Compound y) {
 
         int yStructure = y.structure();
-        if ((yStructure | structureCachedWithoutVars) != yStructure)
+        if ((yStructure | structureCached) != yStructure)
             return false;
 
         if (!ellipsis) {

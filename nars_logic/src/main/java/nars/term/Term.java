@@ -23,6 +23,7 @@ package nars.term;
 
 import nars.Op;
 import nars.nal.nal7.Order;
+import nars.term.match.VarPattern;
 import nars.term.visit.SubtermVisitor;
 
 import java.io.IOException;
@@ -141,6 +142,14 @@ public interface Term extends Termed, Comparable, Termlike {
         return varIndep()!=0;
     }
 
+    default boolean hasEllipsis() {
+        return false;
+    }
+
+    default boolean hasVarPattern() {
+        return VarPattern.hasPatternVariable(this);
+    }
+
     default boolean hasVarDep() {
         return varDep()!=0;
     }
@@ -203,7 +212,13 @@ public interface Term extends Termed, Comparable, Termlike {
     }
 
 
-    /** op() | (relation+1)<<16 */
+
+    default boolean containsTemporal() {
+        //TODO construct bit vector for one comparison
+        return isAny(Op.TemporalBits);
+    }
+
+
     default int opRel() {
         return op().ordinal() | (-1 << 16);
     }

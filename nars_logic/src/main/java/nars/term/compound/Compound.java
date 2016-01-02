@@ -70,6 +70,12 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         subterms().forEach(a -> a.recurseTerms(v, this));
     }
 
+    default boolean hasEllipsis() {
+        return Ellipsis.hasEllipsis(this);
+    }
+
+
+
 
 //    /**
 //     * from: http://stackoverflow.com/a/19333201
@@ -300,9 +306,9 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         //# vars of the expected pattern are zero,
         //and since it doesnt equal, there is no match to test
 
-        return Ellipsis.hasEllipsis(this) ?
+        return hasEllipsis() ?
                 subst.matchCompoundWithEllipsis(this, y) :
-                (matchCompoundEx(y) && matchSubterms(y, subst));
+                matchSubterms(y, subst);
     }
 
     /**
@@ -313,33 +319,15 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
      * any additional metadata checks are performed in matchCompoundEx() which by default returns true
      */
     default boolean matchSubterms(Compound Y, FindSubst subst) {
-
-        int size = Y.size();
-
-        if (size == 1) {
-            return matchSubterm(0, Y, subst);
-        } else {
-            return isCommutative() ? subst.matchPermute(this, Y) : matchLinear(Y.subterms(), subst);
+        if (matchCompoundEx(Y)) {
+            int s = size();
+            return ((isCommutative() && (s > 1))) ?
+                    subst.matchPermute(this, Y) :
+                    subst.matchLinear(subterms(), Y.subterms());
         }
+        return false;
     }
 
-    default boolean matchLinear(TermContainer y, FindSubst subst) {
-//        int s = size();
-//        if (s == 2) {
-//            //HACK - match smallest (least specific) first
-//            int v0 = term(0).volume();
-//            int v1 = term(1).volume();
-//            return v0 <= v1 ? matchSubterm(0, y, subst) &&
-//                    matchSubterm(1, y, subst) : matchSubterm(1, y, subst) &&
-//                    matchSubterm(0, y, subst);
-//        } else {
-            return subst.matchLinear(this, y, 0, size());
-//        }
-    }
-
-    default boolean matchSubterm(int Xn, TermContainer Y, FindSubst subst) {
-        return subst.match(term(Xn), Y.term(Xn));
-    }
 
     /** implementatoins may assume that y has:
      *      equal op()
@@ -360,7 +348,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
 
     default int opRel() {
-        return op().ordinal() | ((1+relation()) << 16);
+        return op().ordinal() | (relation() << 16);
     }
 
     default Term last() {

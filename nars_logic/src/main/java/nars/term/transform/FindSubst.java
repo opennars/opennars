@@ -99,13 +99,12 @@ public abstract class FindSubst extends Versioning implements Subst {
      * called each time all variables are satisfied in a unique way
      */
     public abstract boolean onMatch();
-
-    /**
-     * called each time a match is not fully successful
-     */
-    public void onPartial() {
-
-    }
+//    /**
+//     * called each time a match is not fully successful
+//     */
+//    public void onPartial() {
+//
+//    }
 
     @Override
     public void clear() {
@@ -125,10 +124,7 @@ public abstract class FindSubst extends Versioning implements Subst {
 
 
     public final void goSubterm(int index) {
-        Term pp = parent.get().term(index);
-        /*if (pp == null)
-            throw new RuntimeException("null subterm");*/
-        term.set(pp);
+        term.set(parent.get().term(index));
     }
 
     public final void matchAll(Term x, Term y) {
@@ -324,20 +320,9 @@ public abstract class FindSubst extends Versioning implements Subst {
                     //Y and et.from are components of ImageShrinkEllipsisMatch
 
                     int imageIndex = Y.indexOf(n);
-                    if (imageIndex == -1) {
-                        //this specified term that should be
-                        //substituted with the relation index
-                        //is not contained in this compound;
-                        //does not match
-                        return false;
-                    }
+                    return ((imageIndex != -1) && matchEllipsedLinear(X, e, Y)) &&
+                            putXY(e, ImageMatch.take((EllipsisMatch) getXY(e), imageIndex));
 
-                    if (matchEllipsedLinear(X, e, Y)) {
-                        EllipsisMatch raw = (EllipsisMatch) getXY(e);
-                        //clear not necessary as in above block because ImageTakeMatch just modifies the array already present, so it will be equal
-                        return putXY(e, ImageMatch.take(
-                                raw, imageIndex)); //HACK somehow just create this in the first place without the intermediate ShadowProduct
-                    }
                 }
                 return false;
             }
@@ -421,7 +406,7 @@ public abstract class FindSubst extends Versioning implements Subst {
                 ((type == Op.VAR_PATTERN) && !Variable.hasPatternVariable(x))))
 
         {
-            return matchLinear(x, y, 0, x.size());
+            return matchLinear(x, y);
             //return x.equals(y);
         }
 
@@ -683,38 +668,38 @@ public abstract class FindSubst extends Versioning implements Subst {
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    public boolean matchLinear(TermContainer X, TermContainer Y, int start, int stop) {
-
-        //special case
-        if ((X.size() == 2) && (X.term(1).op(type))) {
-            return matchLinearReverse(X, Y, start, stop);
+    public boolean matchLinear(TermContainer X, TermContainer Y) {
+        int s = X.size();
+        switch (s) {
+            case 0: return true;
+            case 1: return matchSub(X, Y, 0);
+            case 2:
+                if (X.term(1).op(type))
+                    return matchLinearReverse(X, Y);
         }
-
-        boolean success = true;
-        for (int i = start; i < stop; i++) {
-            if (!match(X.term(i), Y.term(i))) {
-                success = false;
-                break;
-            }
-        }
-
-        //success
-        return success;
+        return matchLinearForward(X, Y);
     }
 
-    public boolean matchLinearReverse(TermContainer X, TermContainer Y, int start, int stop) {
 
-        boolean success = true;
-        for (int i = stop - 1; i >= start; i--) {
-            if (!match(X.term(i), Y.term(i))) {
-                success = false;
-                break;
-            }
+    public boolean matchLinearForward(TermContainer X, TermContainer Y) {
+        final int s = X.size();
+        for (int i = 0; i < s; i++) {
+            if (!matchSub(X, Y, i)) return false;
         }
-
-        //success
-        return success;
+        return true;
     }
+
+    public boolean matchSub(TermContainer X, TermContainer Y, int i) {
+        return match(X.term(i), Y.term(i));
+    }
+
+    public boolean matchLinearReverse(TermContainer X, TermContainer Y) {
+        for (int i = X.size() - 1; i >= 0; i--) {
+            if (!matchSub(X, Y, i)) return false;
+        }
+        return true;
+    }
+
 
 
     private void matchTermutations(int i, int max) {

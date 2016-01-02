@@ -26,6 +26,8 @@ import static java.util.Arrays.copyOf;
  */
 public class TermVector<T extends Term> implements TermContainer<T>, Serializable {
 
+    public final static TermVector Empty = new TermVector();
+
     /**
      * list of (direct) term
      * TODO make not public

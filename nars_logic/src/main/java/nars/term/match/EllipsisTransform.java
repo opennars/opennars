@@ -1,10 +1,10 @@
 package nars.term.match;
 
 import nars.Op;
+import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.transform.FindSubst;
 import nars.term.transform.VariableNormalization;
 import nars.term.variable.Variable;
 
@@ -37,7 +37,7 @@ public class EllipsisTransform extends EllipsisOneOrMore {
                 to instanceof Variable ? vnn.applyAfter((Variable)to) : to);
     }
 
-    public EllipsisMatch collect(Compound y, int a, int b, FindSubst subst) {
+    public EllipsisMatch collect(Compound y, int a, int b, PremiseMatch subst) {
         if (from.equals(Op.Imdex) && (y.op().isImage())) {
 
             int rel = y.relation();

@@ -33,16 +33,13 @@ public class CommutivePermutations extends Termutator {
 
     @Override
     public boolean next() {
-        //if (perm.hasNext())
         perm.next();
-
-        return f.matchLinear(perm, y, 0, perm.size());
+        return f.matchLinear(perm, y);
     }
 
     @Override
     public void reset() {
         perm.reset();
-        //perm.next();
     }
 
     @Override

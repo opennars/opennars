@@ -15,10 +15,6 @@ public class ShadowAtom extends AbstractStringAtom {
         super(id);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return this == obj;
-    }
 
     @Override
     public int varIndep() {

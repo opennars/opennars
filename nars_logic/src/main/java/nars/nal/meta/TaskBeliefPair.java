@@ -3,42 +3,39 @@ package nars.nal.meta;
 import nars.Op;
 import nars.term.Term;
 import nars.term.compound.GenericCompound;
+import nars.term.match.Ellipsis;
 
 /**
  * just holds two terms, not really necessary
  */
 public final class TaskBeliefPair extends GenericCompound {
 
-    public final int volA;
-    public final int volB;
-    public final int structureA;
-    public final int structureB; //should use the long stuctureHash?
+    int actualStructure;
 
-    private final Term[] t;
-    //public final static Variable any = new Variable("%1"); //just use the first pattern variable because it will overlap with it
-
-    public TaskBeliefPair(Term a, Term b) {
-        super(Op.PRODUCT, a, b);
-
-        t = terms();
-
-
-        volA = a.volume();
-        structureA = a.structure();
-
-        volB = b.volume();
-        structureB = b.structure();
+    public TaskBeliefPair() {
+        super(Op.PRODUCT, Ellipsis.Shim, Ellipsis.Shim);
     }
 
+    public TaskBeliefPair(Term a, Term b) {
+        this();
+        set(a, b);
+    }
 
 
     public void set(Term a, Term b) {
-        Term[] t = this.t;
+        Term[] t = terms();
         t[0] = a;
         t[1] = b;
 
+        this.actualStructure = a.structure() | b.structure();
         subterms().init();
     }
+
+    @Override
+    public int structure() {
+        return actualStructure;
+    }
+
 
 
 //    public final boolean substitutesMayExist(final TaskBeliefPair pattern) {

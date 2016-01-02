@@ -282,10 +282,10 @@ public interface Statement {
     }
 
     static Term subj(Termed t) {
-        return ((Compound)t).term(0);
+        return ((Compound)t.term()).term(0);
     }
     static Term pred(Termed t) {
-        return ((Compound)t).term(1);
+        return ((Compound)t.term()).term(1);
     }
 
     /**

@@ -1,8 +1,6 @@
 package nars.nal.meta;
 
-import nars.Op;
 import nars.term.Term;
-import nars.term.atom.Atomic;
 
 import java.util.List;
 
@@ -14,7 +12,7 @@ import java.util.List;
  * WARNING: no preconditions should store any state so that their instances may be used by
  * different contexts (ex: NAR's)
  */
-public abstract class AtomicBooleanCondition<C> extends Atomic implements BooleanCondition<C> {
+public abstract class AtomicBooleanCondition<C> extends AbstractLiteral implements BooleanCondition<C> {
 
     public AtomicBooleanCondition() {
         super();
@@ -35,40 +33,5 @@ public abstract class AtomicBooleanCondition<C> extends Atomic implements Boolea
                 " */ false)\t");
     }
 
-
-    @Override
-    public int complexity() {
-        return 1;
-    }
-
-    @Override
-    public int volume() {
-        return 1;
-    }
-
-    @Override
-    public int vars() {
-        return 0;
-    }
-
-    @Override
-    public int varQuery() {
-        return 0;
-    }
-
-    @Override
-    public int varDep() {
-        return 0;
-    }
-
-    @Override
-    public int varIndep() {
-        return 0;
-    }
-
-    @Override
-    public Op op() {
-        return Op.ATOM;
-    }
 
 }

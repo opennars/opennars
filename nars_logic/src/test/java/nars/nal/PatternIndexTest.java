@@ -6,7 +6,6 @@ import nars.Global;
 import nars.Op;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.match.Ellipsis;
 import nars.term.variable.Variable;
 import org.junit.Test;
 import org.zhz.dfargx.MatchedText;
@@ -69,7 +68,7 @@ public class PatternIndexTest {
             //sb.append( (char)c.structure()  ) //TODO needs special regex opcode to compare since it's not just equals
 
             sb.append( (char)c.op().ordinal() );
-            if (Ellipsis.hasEllipsis(c)) {
+            if (c.hasEllipsis()) {
                 sb.append('?'); //any size , TODO min bounds
             } else {
                 sb.append( 'a' + c.size() ); //specific size

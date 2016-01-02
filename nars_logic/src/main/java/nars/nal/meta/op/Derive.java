@@ -1,7 +1,6 @@
 package nars.nal.meta.op;
 
 import com.google.common.base.Joiner;
-import nars.$;
 import nars.Global;
 import nars.Op;
 import nars.Premise;
@@ -9,6 +8,7 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
+import nars.nal.meta.AbstractLiteral;
 import nars.nal.meta.AndCondition;
 import nars.nal.meta.BooleanCondition;
 import nars.nal.meta.ProcTerm;
@@ -19,7 +19,6 @@ import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Statement;
 import nars.term.Term;
-import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
@@ -32,7 +31,7 @@ import static nars.truth.TruthFunctions.eternalizedConfidence;
  * Handles matched derivation results
  * < (&&, postMatch1, postMatch2) ==> derive(term) >
  */
-public class Derive extends Atom implements ProcTerm<PremiseMatch> {
+public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
 
     private final String id;
 
@@ -46,28 +45,25 @@ public class Derive extends Atom implements ProcTerm<PremiseMatch> {
     public final AndCondition<PremiseMatch> postMatch; //TODO use AND condition
 
     public Derive(PremiseRule rule, Term term, BooleanCondition[] postMatch, boolean anticipate, boolean eternalize) {
-        super(term.toString() /* TODO */);
         this.rule = rule;
         this.postMatch = postMatch.length>0 ? new AndCondition(postMatch) : null;
         this.term = term;
         this.anticipate = anticipate;
         this.eternalize = eternalize;
 
-        String i = "Derive:(";
+        String i = "Derive:(" + term;
         if (eternalize || anticipate) {
             if (eternalize && anticipate) {
-                i += "{eternalize,anticipate},";
+                i += ", {eternalize,anticipate}";
             } else if (eternalize && !anticipate) {
-                i += "{eternalize},";
+                i += ", {eternalize}";
             } else if (anticipate && !eternalize) {
-                i += "{anticipate},";
+                i += ", {anticipate}";
             }
         }
 
-        i += term.toString();
-
         if (postMatch.length > 0) {
-            i += ",{" + Joiner.on(',').join(postMatch) + '}';
+            i += ", {" + Joiner.on(',').join(postMatch) + '}';
         }
 
         i += ")";
@@ -108,11 +104,13 @@ public class Derive extends Atom implements ProcTerm<PremiseMatch> {
             /*c.forEach(x -> {
                 Terms.printRecursive(x, (String line) ->$.logger.error(line) );
             });*/
-            String message = "Term volume overflow: " + derivedTerm;
-            if (Global.DEBUG)
-                throw new RuntimeException(message);
-            else {
-                $.logger.error(message);
+
+            if (Global.DEBUG) {
+                String message = "Term volume overflow: " + derivedTerm;
+                System.err.println(message);
+                System.exit(1);
+                //throw new RuntimeException(message);
+            } else {
                 return null;
             }
         }

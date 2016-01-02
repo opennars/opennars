@@ -221,7 +221,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final int structure() {
+    public int structure() {
         return terms.structure() | (1 << op.ordinal());
     }
 

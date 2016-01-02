@@ -198,7 +198,7 @@ public class Terms {
 //                    }
 //                }
 
-                if (c < 0) return new Term[]{a, b};
+                if (c < 0) return arg; //same as input //new Term[]{a, b};
                 else if (c > 0) return new Term[]{b, a};
                 else /*if (c == 0)*/ return new Term[]{a}; //equal
 
@@ -210,10 +210,10 @@ public class Terms {
         }
     }
 
-    public static <T extends Term> T[] toSortedSetArray(Collection<T> c) {
-        TreeSet<T> t = new TreeSet<>(c);
-        return t.toArray((T[]) new Term[t.size()]);
-    }
+//    public static <T extends Term> T[] toSortedSetArray(Collection<T> c) {
+//        TreeSet<T> t = new TreeSet<>(c);
+//        return t.toArray((T[]) new Term[t.size()]);
+//    }
 
     /**
      * for printing complex terms as a recursive tree

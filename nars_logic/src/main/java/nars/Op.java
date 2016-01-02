@@ -355,6 +355,8 @@ public enum Op {
 
     public static final int VariableBits =
         Op.or(Op.VAR_PATTERN,Op.VAR_INDEP,Op.VAR_DEP,Op.VAR_QUERY);
+    public static final int WildVariableBits =
+            Op.or(Op.VAR_PATTERN,Op.VAR_QUERY);
 
     public static final int TemporalBits =  Op.or(
         Op.PARALLEL, Op.SEQUENCE,
