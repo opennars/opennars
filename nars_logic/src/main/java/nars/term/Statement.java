@@ -21,9 +21,7 @@
 package nars.term;
 
 import nars.Op;
-import nars.Symbols;
 import nars.term.compound.Compound;
-import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 
@@ -195,24 +193,24 @@ public interface Statement {
 //    }
 
 
-
-    static byte[] bytes(Op op, Term subject, Term predicate) {
-        byte[] subjBytes = subject.bytes();
-        byte[] predBytes = predicate.bytes();
-        byte[] relationBytes = op.bytes;
-
-        ByteBuf b = ByteBuf.create(
-                subjBytes.length + predBytes.length + relationBytes.length +
-                        1 + 1 //separator and end closers
-        );
-
-        return b.add(relationBytes)
-                .add(subjBytes)
-                .add((byte) Symbols.ARGUMENT_SEPARATOR)
-                .add(predBytes)
-                .add((byte) STATEMENT_CLOSER).toBytes();
-    }
-
+//
+//    static byte[] bytes(Op op, Term subject, Term predicate) {
+//        byte[] subjBytes = subject.bytes();
+//        byte[] predBytes = predicate.bytes();
+//        byte[] relationBytes = op.bytes;
+//
+//        ByteBuf b = ByteBuf.create(
+//                subjBytes.length + predBytes.length + relationBytes.length +
+//                        1 + 1 //separator and end closers
+//        );
+//
+//        return b.add(relationBytes)
+//                .add(subjBytes)
+//                .add((byte) Symbols.ARGUMENT_SEPARATOR)
+//                .add(predBytes)
+//                .add((byte) STATEMENT_CLOSER).toBytes();
+//    }
+//
 
 
     static void append(Appendable w, Op op, Term subject, Term predicate, boolean pretty) throws IOException {

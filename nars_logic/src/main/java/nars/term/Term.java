@@ -161,25 +161,6 @@ public interface Term extends Termed, Comparable, Termlike {
     }
 
 
-    /** return the Universal NAL byte encoding of the term */
-    byte[] bytes();
-
-    /** # of bytes the encoding will consume. a term needs to be able to know this in advance whether or not the bytes are generated */
-    int bytesLength();
-
-
-//    /** like hashCode except it permits the Term to recompute the hash (to be used in certain controlled situations, otherwise use hashCode() since it's is simpler  */
-//    default int rehashCode() { return hashCode(); }
-
-//    default public byte[] bytes() {
-//        return name().bytes();
-//    }
-
-
-//    /** self+subterm types bitvector */
-//    @Override
-//    int structure();
-
 
     void append(Appendable w, boolean pretty) throws IOException;
 
@@ -207,36 +188,6 @@ public interface Term extends Termed, Comparable, Termlike {
     }
 
 
-    //@Deprecated Term substituted(final Map<Term, Term> subs);
-
-//    default Term substituted(final Map<Term, Term> subs) {
-//        if (subs.isEmpty()) return this;
-//        return substituted(new MapSubstitution(subs));
-//    }
-
-
-
-//    /** returns the effective term as substituted by the set of subs */
-//    default Term substituted(final Map<Variable, Term> subs) {
-//
-//        //TODO hypothesis: if # of variables of the specified type
-//        //exceeds entries in subs, then match is probably
-//        //impossible
-//
-//        if (this instanceof Compound) {
-//            return ((Compound) this).applySubstitute(subs);
-//        }
-//        else if (op()==Op.VAR_PATTERN) { //this instanceof Variable) {
-//            /*if (this.op()!=Op.VAR_PATTERN) {
-//                throw new RuntimeException("variable is not pattern");
-//            }*/
-//            return subs.get(this);
-//        }
-//
-//        return this;
-//    }
-//
-
     default boolean levelValid(int nal) {
 
         if (nal >= 8) return true;
@@ -252,22 +203,9 @@ public interface Term extends Termed, Comparable, Termlike {
     }
 
 
-
-//    //TODO
-//    static final int TemporalStructure =
-//            hasAny(Op.PARALLEL) || hasAny(Op.SEQUENCE) ||
-//                    hasAny(Op.EQUIVALENCE_AFTER) || hasAny(Op.EQUIVALENCE_WHEN) ||
-//                    hasAny(Op.IMPLICATION_AFTER) || hasAny(Op.IMPLICATION_WHEN) || hasAny(Op.IMPLICATION_BEFORE);
-
-
-    default boolean containsTemporal() {
-        //TODO construct bit vector for one comparison
-        return isAny(Op.TemporalBits);
-    }
-
-
+    /** op() | (relation+1)<<16 */
     default int opRel() {
-        return op().ordinal();
+        return op().ordinal() | (-1 << 16);
     }
 
 //    default public boolean hasAll(final Op... op) {

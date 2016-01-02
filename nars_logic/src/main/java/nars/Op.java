@@ -313,6 +313,9 @@ public enum Op {
         return isA(Op.SetsBits);
     }
 
+    public boolean isTemporal() {
+        return isA(TemporalBits);
+    }
 
 
     /** top-level Op categories */

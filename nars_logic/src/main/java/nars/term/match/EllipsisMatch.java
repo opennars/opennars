@@ -80,16 +80,6 @@ public final class EllipsisMatch extends TermVector<Term> implements Term {
     }
 
     @Override
-    public byte[] bytes() {
-        return null;
-    }
-
-    @Override
-    public int bytesLength() {
-        return 0;
-    }
-
-    @Override
     public void append(Appendable w, boolean pretty) throws IOException {
         w.append(toString());
     }

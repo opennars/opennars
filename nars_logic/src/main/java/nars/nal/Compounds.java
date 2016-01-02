@@ -15,7 +15,6 @@ import nars.term.compound.GenericCompound;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 import nars.truth.Truth;
-import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -66,18 +65,18 @@ public interface Compounds {
         singleTerm.append(writer, pretty);
         writer.append(COMPOUND_TERM_CLOSER);
     }
-
-    static byte[] newCompound1Key(Op op, Term singleTerm) {
-
-        byte opByte = (byte) op.ordinal();
-
-        byte[] termBytes = singleTerm.bytes();
-
-        return ByteBuf.create(1 + termBytes.length)
-                .add(opByte)
-                .add(termBytes)
-                .toBytes();
-    }
+//
+//    static byte[] newCompound1Key(Op op, Term singleTerm) {
+//
+//        byte opByte = (byte) op.ordinal();
+//
+//        byte[] termBytes = singleTerm.bytes();
+//
+//        return ByteBuf.create(1 + termBytes.length)
+//                .add(opByte)
+//                .add(termBytes)
+//                .toBytes();
+//    }
 
     static void appendCompound(Compound c, Appendable p, boolean pretty) throws IOException {
 

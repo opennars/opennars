@@ -5,14 +5,11 @@ import com.gs.collections.api.set.MutableSet;
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
 import nars.term.compound.Compound;
-import nars.util.utf8.ByteBuf;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
-import static nars.Symbols.ARGUMENT_SEPARATORbyte;
 
 
 /**
@@ -147,30 +144,30 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     }
 
 
-    /** writes subterm bytes, including any attached metadata preceding or following it */
-    default void appendSubtermBytes(ByteBuf b) {
-
-        int n = size();
-
-        for (int i = 0; i < n; i++) {
-            Term t = term(i);
-
-            if (i != 0) {
-                b.add(ARGUMENT_SEPARATORbyte);
-            }
-
-            try {
-                byte[] bb = t.bytes();
-                if (bb.length!=t.bytesLength())
-                    System.err.println("wtf");
-                b.add(bb);
-            }
-            catch (ArrayIndexOutOfBoundsException a) {
-                System.err.println("Wtf");
-            }
-        }
-
-    }
+//    /** writes subterm bytes, including any attached metadata preceding or following it */
+//    default void appendSubtermBytes(ByteBuf b) {
+//
+//        int n = size();
+//
+//        for (int i = 0; i < n; i++) {
+//            Term t = term(i);
+//
+//            if (i != 0) {
+//                b.add(ARGUMENT_SEPARATORbyte);
+//            }
+//
+//            try {
+//                byte[] bb = t.bytes();
+//                if (bb.length!=t.bytesLength())
+//                    System.err.println("wtf");
+//                b.add(bb);
+//            }
+//            catch (ArrayIndexOutOfBoundsException a) {
+//                System.err.println("Wtf");
+//            }
+//        }
+//
+//    }
 
     @Override
     default boolean containsTermRecursively(Term target) {

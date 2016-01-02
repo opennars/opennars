@@ -5,15 +5,11 @@ import nars.Op;
 import nars.nal.Compounds;
 import nars.nal.nal8.Operator;
 import nars.term.*;
-import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
-
-import static nars.Symbols.COMPOUND_TERM_CLOSERbyte;
 
 
 public class GenericCompound<T extends Term> implements Compound<T> {
@@ -285,17 +281,6 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         normalized = b;
     }
 
-    @Override
-    public int bytesLength() {
-        int len = /* opener byte */1 + (op.isImage() ? 1 : 0);
-
-        int n = size();
-        for (int i = 0; i < n; i++) {
-            len += term(i).bytesLength() + 1 /* separator or closer if end*/;
-        }
-
-        return len;
-    }
 
     @Override
     public String toString() {
@@ -307,40 +292,53 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return relation;
     }
 
-    @Override
-    public final byte[] bytes() {
 
-        ByteBuf b = ByteBuf.create(bytesLength());
+//    @Override
+//    public int bytesLength() {
+//        int len = /* opener byte */1 + (op.isImage() ? 1 : 0);
+//
+//        int n = size();
+//        for (int i = 0; i < n; i++) {
+//            len += term(i).bytesLength() + 1 /* separator or closer if end*/;
+//        }
+//
+//        return len;
+//    }
 
-        b.add((byte) op().ordinal()); //header
-
-        if (op().isImage()) {
-            b.add((byte) relation); //header
-        }
-
-        appendSubtermBytes(b);
-
-        if (op().maxSize != 1) {
-            b.add(COMPOUND_TERM_CLOSERbyte); //closer
-        }
-
-        return b.toBytes();
-    }
-
-
-    @Override
-    public void appendSubtermBytes(ByteBuf b) {
-        terms.appendSubtermBytes(b);
-    }
-
-    @Override
-    public final boolean and(Predicate<? super Term> v) {
-        return v.test(this) && terms.and(v);
-    }
-    @Override
-    public final boolean or(Predicate<? super Term> v) {
-        return v.test(this) || terms.or(v);
-    }
+//    @Override
+//    public final byte[] bytes() {
+//
+//        ByteBuf b = ByteBuf.create(bytesLength());
+//
+//        b.add((byte) op().ordinal()); //header
+//
+//        if (op().isImage()) {
+//            b.add((byte) relation); //header
+//        }
+//
+//        appendSubtermBytes(b);
+//
+//        if (op().maxSize != 1) {
+//            b.add(COMPOUND_TERM_CLOSERbyte); //closer
+//        }
+//
+//        return b.toBytes();
+//    }
+//
+//
+//    @Override
+//    public void appendSubtermBytes(ByteBuf b) {
+//        terms.appendSubtermBytes(b);
+//    }
+//
+//    @Override
+//    public final boolean and(Predicate<? super Term> v) {
+//        return v.test(this) && terms.and(v);
+//    }
+//    @Override
+//    public final boolean or(Predicate<? super Term> v) {
+//        return v.test(this) || terms.or(v);
+//    }
 
 
 

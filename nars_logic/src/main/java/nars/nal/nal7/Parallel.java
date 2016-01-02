@@ -4,7 +4,6 @@ import nars.Op;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.compound.GenericCompound;
-import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 
@@ -61,20 +60,20 @@ public class Parallel extends GenericCompound implements Intermval {
 //        return Parallel.makeParallel(replaced);
 //    }
 
-    @Override
-    public final int bytesLength() {
-        return super.bytesLength()
-                + 4 /* for storing eventDuration */
-                ;
-    }
-
-    @Override
-    public final void appendSubtermBytes(ByteBuf b) {
-        super.appendSubtermBytes(b);
-
-        //add intermval suffix
-        b.addUnsignedInt(eventDuration);
-    }
+//    @Override
+//    public final int bytesLength() {
+//        return super.bytesLength()
+//                + 4 /* for storing eventDuration */
+//                ;
+//    }
+//
+//    @Override
+//    public final void appendSubtermBytes(ByteBuf b) {
+//        super.appendSubtermBytes(b);
+//
+//        //add intermval suffix
+//        b.addUnsignedInt(eventDuration);
+//    }
 
 
     @Override public void appendArgs(Appendable p, boolean pretty, boolean appendedOperator) throws IOException {

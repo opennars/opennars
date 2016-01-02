@@ -119,10 +119,10 @@ public class PremiseRule extends GenericCompound implements Level {
 
     protected final void ensureValid() {
 
-        if (getConclusionTerm().containsTemporal()) {
-            if ((!getTaskTermPattern().containsTemporal())
+        if (getConclusionTerm().op().isTemporal()) {
+            if ((!getTaskTermPattern().op().isTemporal())
                     &&
-                    (!getBeliefTermPattern().containsTemporal())) {
+                    (!getBeliefTermPattern().op().isTemporal())) {
                 //if conclusion is temporal term but the premise has none:
 
                 String s = toString();
@@ -256,7 +256,7 @@ public class PremiseRule extends GenericCompound implements Level {
                     ((Compound) containingCompound).term(1)))
                 return v;
 
-            return Variable.v(Op.VAR_PATTERN, v.bytes());
+            return Variable.v(Op.VAR_PATTERN, v.toString());
         }
     }
 

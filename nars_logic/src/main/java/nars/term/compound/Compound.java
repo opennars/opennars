@@ -360,7 +360,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
 
     default int opRel() {
-        return op().ordinal() | (relation() << 16);
+        return op().ordinal() | ((1+relation()) << 16);
     }
 
     default Term last() {

@@ -2,13 +2,12 @@ package nars.term.atom;
 
 import nars.term.Term;
 import nars.term.visit.SubtermVisitor;
-import nars.util.utf8.Byted;
 
 import java.io.IOException;
 import java.util.function.Predicate;
 
 /** Base class for Atomic types. */
-public abstract class Atomic implements Term, Byted {
+public abstract class Atomic implements Term {
 
 
     /** Assumes that the op()
@@ -16,6 +15,7 @@ public abstract class Atomic implements Term, Byted {
      *  comparison would be redundant. */
     @Override public boolean equals(Object obj) {
         if (this == obj) return true;
+        if (!(obj instanceof Atomic)) return false;
         return toString().equals(obj.toString());
     }
 
@@ -42,9 +42,6 @@ public abstract class Atomic implements Term, Byted {
     }
 
 
-    @Override public final int bytesLength() {
-        return bytes().length;
-    }
 
     @Override
     public final void recurseTerms(SubtermVisitor v, Term parent) {
@@ -99,10 +96,6 @@ public abstract class Atomic implements Term, Byted {
     /** default volume = 1 */
     @Override public int volume() { return 1; }
 
-
-    @Override public final byte[] bytes() {
-        return toString().getBytes();
-    }
 
     @Override
     public abstract int varIndep();

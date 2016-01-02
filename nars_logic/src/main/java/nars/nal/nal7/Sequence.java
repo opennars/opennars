@@ -8,7 +8,6 @@ import nars.nal.Compounds;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.compound.GenericCompound;
-import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -375,25 +374,25 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
 
 
     }
-
-    @Override
-    public int bytesLength() {
-
-        int add = intervals.length * 4;
-        add += 4; //eventDuration int
-        return super.bytesLength() + add;
-    }
-
-    @Override
-    public void appendSubtermBytes(ByteBuf b) {
-        super.appendSubtermBytes(b);
-
-        b.addUnsignedInt(eventDuration);
-
-        //add intermval suffix
-        for (int i : intervals) //the intermval array
-            b.addUnsignedInt(i);
-    }
+//
+//    @Override
+//    public int bytesLength() {
+//
+//        int add = intervals.length * 4;
+//        add += 4; //eventDuration int
+//        return super.bytesLength() + add;
+//    }
+//
+//    @Override
+//    public void appendSubtermBytes(ByteBuf b) {
+//        super.appendSubtermBytes(b);
+//
+//        b.addUnsignedInt(eventDuration);
+//
+//        //add intermval suffix
+//        for (int i : intervals) //the intermval array
+//            b.addUnsignedInt(i);
+//    }
 
 
 

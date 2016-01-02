@@ -43,12 +43,12 @@ public abstract class Variable extends AbstractStringAtom {
         super(n, specificOp);
     }
 
-    public static Variable v(Op varType, byte[] baseName) {
+    public static Variable v(Op varType, String baseName) {
         return v(varType.ch, baseName);
     }
 
-    public static Variable v(char ch, byte[] name) {
-        return $.v(ch, new String(name));
+    public static Variable v(char ch, String name) {
+        return $.v(ch, name);
     }
 
 
