@@ -1,7 +1,10 @@
 package nars.term.transform;
 
 import nars.term.Term;
+import nars.term.TermVector;
 import nars.term.match.EllipsisMatch;
+import nars.util.data.array.IntArrays;
+import nars.util.math.Combinations;
 
 import java.util.Set;
 
@@ -10,13 +13,13 @@ import java.util.Set;
  */
 public class Choose2 extends Termutator {
 
+    final Combinations comb;
     private final Set<Term> yFree;
     private final Term[] x;
     private final Term xEllipsis;
     private final FindSubst f;
-    private int shuffle, shuffle2;
-    private final Term[] yy;
-    private int a, b;
+    private final ShuffledSubterms yy;
+    boolean state;
 
     @Override
     public String toString() {
@@ -36,64 +39,52 @@ public class Choose2 extends Termutator {
         this.yFree = yFree;
         this.xEllipsis = xEllipsis;
         int ysize = yFree.size();
-        yy = yFree.toArray(new Term[ysize]);
+        //yy = yFree.toArray(new Term[ysize]);
+        yy = new ShuffledSubterms(f.random, new TermVector(yFree));
+        comb = new Combinations(yy.size(), 2);
     }
 
     @Override
     public int getEstimatedPermutations() {
-        int n = yFree.size();
-        return (n) * (n - 1);
+        return comb.getTotal()*2;
     }
 
     @Override
     public void reset() {
-        int l = yFree.size();
-        this.shuffle = f.random.nextInt(l - 1); //randomize starting offset
-        this.shuffle2 = f.random.nextInt(l - 1); //randomize starting offset
-        this.a = l;
-        this.b = l;
+        comb.reset();
+        state = true;
     }
 
     @Override
     public boolean hasNext() {
-        return (a > 0);
+        return comb.hasNext() || !state;
     }
 
     @Override
     public boolean next() {
-        final int ysize = yy.length;
 
+        int[] c = state ? comb.next() : comb.prev();
+        state = !state;
 
-        int ya;
+        Term y1 = yy.term(c[0]);
+        int c1 = c[1];
+        IntArrays.reverse(c); //swap to try the reverse next iteration
 
-        int yb;
-        do {
-
-            ya = (a + shuffle) % ysize;
-
-            yb = (b + shuffle2 ) % ysize;
-
-            //System.out.println(a + " (" + shuffle + ") " + b + "(" + shuffle + ") ---> " + ya + " " + yb);
-
-            b--;
-
-            if (b <= 0) {
-                a--;
-                b = ysize;
-            }
-
-        }while (yb == ya);
-
-
-        Term y1 = yy[ya];
+        FindSubst f = this.f;
+        Term[] x = this.x;
 
         if (f.match(x[0], y1)) {
 
-            Term y2 = yy[yb];
+
+            Term y2 = yy.term(c1);
+
             if (f.match(x[1], y2)) {
-                return f.putXY(xEllipsis, new EllipsisMatch(yFree, y1, y2));
+                return f.putXY(xEllipsis,
+                            new EllipsisMatch(yFree, y1, y2));
             }
         }
+
+
         return false;
     }
 }

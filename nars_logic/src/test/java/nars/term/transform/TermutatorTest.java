@@ -1,16 +1,18 @@
 package nars.term.transform;
 
-import nars.Global;
 import nars.Op;
 import nars.term.Term;
 import nars.util.data.random.XorShift128PlusRandom;
 import org.junit.Test;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static nars.$.$;
 import static nars.$.p;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by me on 12/22/15.
@@ -63,6 +65,22 @@ public class TermutatorTest {
                         new Term[] { $("%X"), $("%Y") },
                         p("a", "b", "c").toSet()), 6);
     }
+    @Test public void testChoose2_4() {
+
+        Set<String> series = new HashSet();
+        for (int i = 0; i < 4; i++) {
+            series.add(
+                testChoice(
+                    new Choose2(f, $("%A..+"),
+                            new Term[]{$("%X"), $("%Y")},
+                            p("a", "b", "c", "d").toSet()), 12)
+            );
+        }
+
+        assertTrue(series.size() > 1); //shuffling works
+    }
+
+
 
     @Test public void testComm2() {
         testChoice(
@@ -80,12 +98,12 @@ public class TermutatorTest {
                         $("{w,x,y,z}")), 24);
     }
 
-    void testChoice(Termutator t, int num) {
+    String testChoice(Termutator t, int num) {
 
         t.reset();
         assertEquals(num, t.getEstimatedPermutations());
 
-        Set<String> s = Global.newHashSet(num);
+        Set<String> s = new LinkedHashSet(); //record the order
         int actual = 0;
         int blocked = 0;
         int duplicates = 0;
@@ -107,13 +125,15 @@ public class TermutatorTest {
             }
         }
 
-        System.out.println(s);
+        String res = s.toString();
+        System.out.println(res);
 
         assertEquals(num, s.size());
         assertEquals(num, actual);
         assertEquals(0, blocked);
         assertEquals(0, duplicates);
 
+        return res;
     }
 
 }

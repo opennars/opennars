@@ -258,6 +258,8 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
 
             if (t == this)
                 throw new RecursiveTermContentException(t);
+            if (t == null)
+                throw new NullPointerException();
 
             contentHash = Util.hashCombine(contentHash, t.hashCode());
 
