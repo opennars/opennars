@@ -239,20 +239,6 @@ public interface Concept extends Termed, Itemized<Term> {
     boolean processQuest(Premise nal);
 
 
-
-
-
-//    /** returns the best belief of the specified types */
-//    default public Task getStrongestBelief(boolean eternal, boolean nonEternal) {
-//        return getBeliefs().top(eternal, nonEternal);
-//    }
-//
-//
-//    default public Task getStrongestGoal(boolean eternal, boolean nonEternal) {
-//        return getGoals().top(eternal, nonEternal);
-//    }
-
-
     default Iterator<? extends Termed> getTermedAdjacents(boolean termLinks, boolean taskLinks) {
         if (termLinks && taskLinks) {
             return concat(
@@ -329,21 +315,6 @@ public interface Concept extends Termed, Itemized<Term> {
         return getMemory().time();
     }
 
-//    default Iterator<Term> adjacentTerms(boolean termLinks, boolean taskLinks) {
-//        return transform(adjacentTermables(termLinks, taskLinks), Termed::getTerm);
-//    }
-
-//    default Iterator<Concept> adjacentConcepts(boolean termLinks, boolean taskLinks) {
-//        final Iterator<Concept> termToConcept = transform(adjacentTerms(termLinks, taskLinks), new Function<Termed, Concept>() {
-//            @Override
-//            public Concept apply(final Termed term) {
-//                return getMemory().concept(term.getTerm());
-//            }
-//        });
-//        return filter(termToConcept, Concept.class); //should remove null's (unless they never get included anyway), TODO Check that)
-//    }
-
-
 
     List<TermLinkTemplate> getTermLinkTemplates();
 
@@ -374,12 +345,5 @@ public interface Concept extends Termed, Itemized<Term> {
     void setMemory(Memory m);
 
     void setCreationTime(long l);
-
-
-//    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, List<Task>... lists);
-//
-//    default public Task getTask(Sentence query, List<Task>... lists) {
-//        return getTask(query.hasQueryVar(), query.getOccurrenceTime(), query.getTruth(), lists);
-//    }
 
 }
