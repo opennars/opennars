@@ -78,7 +78,9 @@ abstract public class Deriver  {
      *  the process once it begins.
      */
     public final void run(Premise premise, Consumer<Task> t) {
-        premise.memory().eventConceptProcess.emit((ConceptProcess)premise);
+        if(premise instanceof ConceptProcess) {
+            premise.memory().eventConceptProcess.emit((ConceptProcess) premise);
+        }
 
         RuleMatch m = RuleMatch.matchers.get();
         m.start(premise, t);

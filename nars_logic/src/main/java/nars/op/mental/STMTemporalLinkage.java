@@ -62,7 +62,6 @@ public class STMTemporalLinkage {
 //        return stmSize;
 //    }
 
-
     public boolean inductionOnSucceedingEvents(TaskProcess nal, boolean anticipation) {
 
         final Task currentTask = nal.getTask();
@@ -100,114 +99,34 @@ public class STMTemporalLinkage {
             Task previousTask = ss.next();
 
 
-            /*if (!equalSubTermsInRespectToImageAndProduct(term, t.getTerm())) {
-                continue;
-            }*/
-
-
             if (numToRemoveFromBeginning > 0) {
                 ss.remove();
                 numToRemoveFromBeginning--;
             }
             else {
-                boolean remaining = false;
                 if (!previousTask.isDeleted()) {
                     Concept previousConcept = nal.nar.concept(previousTask.getTerm());
+
                     if (previousConcept != null) {
                         nal.link(previousConcept, currentTask);
+
                         //nal.link(concept, previousTask);
 
                         // ConceptTaskTermLinkProcess = new ConceptTaskTermLinkProcess(nal.nar, previousConcept, );
-                       /* Default nar = (Default) nal.nar;
+                        /*Default nar = (Default) nal.nar;
                         TaskBeliefProcess tbp = new TaskBeliefProcess(nal.nar, previousTask, currentTask);
                         nar.getDeriver().run(tbp, nar.core.derivedTasksBuffer::add);*/
 
-                        remaining = true;
                     }
                 }
-                if (!remaining)
-                    ss.remove();
             }
-
-
-           /* continue;
-            //nal.setBelief(previousTask);
-
-            //if(currentTask.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-            //TemporalRules.temporalInduction(currentTask, previousTask,
-                    //nal.newStamp(currentTask.sentence, previousTask.sentence),
-            //        nal);
-            final Premise premise = new STMPremise(nal, previousTask);
-            ///final Task task, final Sentence belief, Term beliefterm,
-            //tLink.getTask(), belief, bLink.getTerm(),
-
-
-
-
-            m.start(premise);
-
-            final Task task = premise.getTask();
-
-            if (task.isJudgment() || task.isGoal()) {
-
-                deriver.forEachRule(m);
-
-                //TODO also allow backward inference by traversing
-            }
-
-            m.clear();*/
-
         }
 
-        ////for this heuristic, only use input events & task effects of operations
-        ////if(currentTask.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-        //stmLast = currentTask;
-        ////}
-//        while (stm.size() > stmSize) {
-//            stm.removeFirst();
-//        }
+        int a = stm.size();
+
         stm.add(currentTask);
 
         return true;
     }
 
-
-//    public static class STMPremise extends AbstractPremise {
-//
-//        private final Task previousTask;
-//        private final NAL parent;
-//
-//        //deriver.reason(new STMPremise(currentTask, previousTask.getSentence(), previousTask.getTerm())
-//        public STMPremise(NAL parent, Task previousTask) {
-//            super(parent.nar());
-//            this.parent = parent;
-//            this.previousTask = previousTask;
-//        }
-//
-//
-//        @Override
-//        public Concept getConcept() {
-//            return nar().concept(getTask().getTerm());
-//        }
-//
-//        @Override
-//        public Task getBelief() {
-//            return previousTask;
-//        }
-//
-//        @Override
-//        public TermLink getTermLink() {
-//            return parent.getTermLink();
-//        }
-//
-//        @Override
-//        public TaskLink getTaskLink() {
-//            return parent.getTaskLink();
-//        }
-//
-//        @Override
-//        public Task getTask() {
-//            return parent.getTask();
-//        }
-//    }
 }

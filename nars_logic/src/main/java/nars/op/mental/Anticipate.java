@@ -107,6 +107,15 @@ public class Anticipate {
             Global.TESTSTRING += s + "\n";
         }
 
+        //dont allow anticipation of same thing happen twice
+        //TODO probably max size buffer, altough it shouldnt be an issue since
+        //its about the future
+        for(Term tu : anticipations.keys()) {
+            if(tu.equals(tt.getTerm())) {
+                return;
+            }
+        }
+
         anticipations.put(tt, taskTime);
     }
 

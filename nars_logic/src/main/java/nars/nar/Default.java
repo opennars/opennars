@@ -300,7 +300,7 @@ public class Default extends NAR {
 
         m.executionExpectationThreshold.set(0.5);
 
-        m.shortTermMemoryHistory.set(4);
+        m.shortTermMemoryHistory.set(5);
     }
 
     public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {

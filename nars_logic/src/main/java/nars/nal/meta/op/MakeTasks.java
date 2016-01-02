@@ -85,10 +85,10 @@ public final class MakeTasks extends PreCondition {
 
         final Task belief = premise.getBelief();
 
-      //  boolean valid_excuse=derivedTerm instanceof Implication && derivedTerm.complexity()<=17 && ((Implication) derivedTerm).getPredicate() instanceof Inheritance && derivedTerm.getTemporalOrder()== Tense.ORDER_FORWARD;
-       // if(!valid_excuse && derivedTerm.complexity()>8) { //17
-       //     return false;
-       // }
+        /*boolean valid_excuse=derivedTerm instanceof Implication && derivedTerm.complexity()<=17 && ((Implication) derivedTerm).getPredicate() instanceof Inheritance && derivedTerm.getTemporalOrder()== Tense.ORDER_FORWARD;
+        if(!valid_excuse && derivedTerm.complexity()>11) { //17
+            return false;
+        }*/
 
 
         final char punct = post.punct;

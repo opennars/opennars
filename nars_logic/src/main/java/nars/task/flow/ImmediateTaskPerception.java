@@ -78,7 +78,10 @@ public class ImmediateTaskPerception extends TaskPerception {
             }catch(Exception ex) {} //no crash on concurrent exception ^^
             Task t = (Task) bag.pop();
 
-            //todo create a bag of the buffer, sample one element with probability determmined by budget priority, and then clear the buffer
+            //accept all for now:
+            //buffer.stream().filter(tt -> true).forEach(receiver::accept);
+
+            //accept only input and the selected one from the bag:
             if (t!=null) {
                 receiver.accept(t);
             }
