@@ -294,9 +294,7 @@ public class Global {
 
     public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=true;
     public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=true;
-    
-    public static float ANTICIPATION_CONFIDENCE=0.95f;
-    
+
     public static float EXECUTION_SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
 
 }
