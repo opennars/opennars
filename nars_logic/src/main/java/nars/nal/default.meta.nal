@@ -296,12 +296,12 @@
 //Same as for inheritance again
 
     (S ==> M), ((||,S,A_1..n) ==> M) |- ((||,A_1..n) ==> M), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
-    (S ==> M), ((&/,S,A_1..n) ==> M) |- ((&/,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromPremises)
-    (S ==> M), ((&|,S,A_1..n) ==> M) |- ((&|,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
+    (S ==> M), ((&/,S,A_1..n) ==> M), concurrent_or_one_eternal(Task,Belief) |- ((&/,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromPremises)
+    (S ==> M), ((&|,S,A_1..n) ==> M), concurrent_or_one_eternal(Task,Belief) |- ((&|,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
     (S ==> M), ((&&,S,A_1..n) ==> M) |- ((&&,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
 
-    (M ==> S), (M ==> (&/,S,A_1..n)) |- (M ==> (&/,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame, SequenceIntervals:FromPremises)
-    (M ==> S), (M ==> (&|,S,A_1..n)) |- (M ==> (&|,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
+    (M ==> S), (M ==> (&/,S,A_1..n)), concurrent_or_one_eternal(Task,Belief) |- (M ==> (&/,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame, SequenceIntervals:FromPremises)
+    (M ==> S), (M ==> (&|,S,A_1..n)), concurrent_or_one_eternal(Task,Belief) |- (M ==> (&|,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
     (M ==> S), (M ==> (&&,S,A_1..n)) |- (M ==> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
     (M ==> S), (M ==> (||,S,A_1..n)) |- (M ==> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
 
@@ -329,32 +329,32 @@
     (&&,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong)
     (&/,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong)
     (&|,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong)
-    (&/,B,A_1..n), B |- (&/,A_1..n), (Truth:Deduction, Desire:Strong, SequenceIntervals:FromPremises)
+    (&/,B,A_1..n), B, concurrent_or_one_eternal(Task,Belief) |- (&/,A_1..n), (Truth:Deduction, Desire:Strong, SequenceIntervals:FromPremises)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A_1..n) is not the case, it can't be that (&&,A_1..n) is the case
 
-    S, (&/,S,A_1..n) |- (&/,A_1..n), (Truth:DecomposePositiveNegativeNegative, SequenceIntervals:FromPremises)
-    S, (&|,S,A_1..n) |- (&|,A_1..n), (Truth:DecomposePositiveNegativeNegative)
+    S, (&/,S,A_1..n), concurrent_or_one_eternal(Task,Belief) |- (&/,A_1..n), (Truth:DecomposePositiveNegativeNegative, SequenceIntervals:FromPremises)
+    S, (&|,S,A_1..n), concurrent_or_one_eternal(Task,Belief) |- (&|,A_1..n), (Truth:DecomposePositiveNegativeNegative)
     S, (&&,S,A_1..n) |- (&&,A_1..n), (Truth:DecomposePositiveNegativeNegative)
     S, (||,S,A_1..n) |- (||,A_1..n), (Truth:DecomposeNegativePositivePositive)
 
 //Additional for negation: https://groups.google.com/forum/#!topic/open-nars/g-7r0jjq2Vc
 
-    S, (&/,(--,S),A_1..n) |- (&/,A_1..n), (Truth:DecomposeNegativeNegativeNegative, SequenceIntervals:FromPremises)
-    S, (&|,(--,S),A_1..n) |- (&|,A_1..n), (Truth:DecomposeNegativeNegativeNegative)
+    S, (&/,(--,S),A_1..n), concurrent_or_one_eternal(Task,Belief) |- (&/,A_1..n), (Truth:DecomposeNegativeNegativeNegative, SequenceIntervals:FromPremises)
+    S, (&|,(--,S),A_1..n), concurrent_or_one_eternal(Task,Belief) |- (&|,A_1..n), (Truth:DecomposeNegativeNegativeNegative)
     S, (&&,(--,S),A_1..n) |- (&&,A_1..n), (Truth:DecomposeNegativeNegativeNegative)
     S, (||,(--,S),A_1..n) |- (||,A_1..n), (Truth:DecomposePositivePositivePositive)
 
 //// multi-conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //Inference about the pre/postconditions
 
-    Y, ((&/,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&/,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
-    Y, ((&|,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&|,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
+    Y, ((&/,X,A_1..n) ==> B), concurrent_or_one_eternal(Task,Belief), substitute_if_unifies("$",X,Y) |- ((&/,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
+    Y, ((&|,X,A_1..n) ==> B), concurrent_or_one_eternal(Task,Belief), substitute_if_unifies("$",X,Y) |- ((&|,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
     Y, ((&&,X,A_1..n) ==> B), substitute_if_unifies("$",X,Y) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
     ((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
-    ((&/,M,A_1..n) ==> C), ((&/,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
-    ((&|,M,A_1..n) ==> C), ((&|,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
+    ((&/,M,A_1..n) ==> C), ((&/,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- M, (Truth:Abduction, Order:ForAllSame)
+    ((&|,M,A_1..n) ==> C), ((&|,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- M, (Truth:Abduction, Order:ForAllSame)
 
 //Can be derived by NAL7 rules so this won't be necessary there (Order:ForAllSame left out here)
 
@@ -363,14 +363,14 @@
     ((&&,A_1..n) =|> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =|> C), (Truth:Induction)
     ((&&,A_1..n) =/> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =/> C), (Truth:Induction)
     ((&&,A_1..n) =\> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) =\> C), (Truth:Induction)
-    (A ==> M), ((&/,M,A_1..n) ==> C) |- ((&/,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
-    (A ==> M), ((&|,M,A_1..n) ==> C) |- ((&|,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
+    (A ==> M), ((&/,M,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- ((&/,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame, SequenceIntervals:FromPremises)
+    (A ==> M), ((&|,M,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- ((&|,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
     (A ==> M), ((&&,M,A_1..n) ==> C) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
     ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
-    ((&/,M,A_1..n) ==> C), ((&/,A,A_1..n) ==> C) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
-    ((&|,M,A_1..n) ==> C), ((&|,A,A_1..n) ==> C) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
-    (A ==> M), ((&/,A,A_1..n) ==> C)  |- ((&/,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame, SequenceIntervals:FromPremises)
-    (A ==> M), ((&|,A,A_1..n) ==> C)  |- ((&|,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame)
+    ((&/,M,A_1..n) ==> C), ((&/,A,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
+    ((&|,M,A_1..n) ==> C), ((&|,A,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief) |- (A ==> M), (Truth:Induction, Order:ForAllSame)
+    (A ==> M), ((&/,A,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief)  |- ((&/,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame, SequenceIntervals:FromPremises)
+    (A ==> M), ((&|,A,A_1..n) ==> C), concurrent_or_one_eternal(Task,Belief)  |- ((&|,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame)
     (A ==> M), ((&&,A,A_1..n) ==> C)  |- ((&&,M,A_1..n) ==> C), (Truth:Abduction, Order:ForAllSame)
 
 //// variable introduction ////////////////////////////////////////////////////////////////////////////////////
@@ -426,13 +426,9 @@
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    B, (&/,A, A_1..n), substitute_if_unifies("#",A,B) |- (&/,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong, SequenceIntervals:FromPremises)
-
-//when time is not an issue, the premises can be switched this is why this rule is also stated for non-temporal and parallel as:
-//TODO possibly improve rule language so that the rules before this commit can directly be used? TODO think through
-
+    B, (&/,A, A_1..n), concurrent_or_one_eternal(Task,Belief), substitute_if_unifies("#",A,B) |- (&/,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong, SequenceIntervals:FromPremises)
     B, (&&,A, A_1..n), substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong)
-    B, (&|,A, A_1..n), substitute_if_unifies("#",A,B) |- (&|,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong)
+    B, (&|,A, A_1..n), concurrent_or_one_eternal(Task,Belief), substitute_if_unifies("#",A,B) |- (&|,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong)
 
 //conditional abduction by dependent variable
 

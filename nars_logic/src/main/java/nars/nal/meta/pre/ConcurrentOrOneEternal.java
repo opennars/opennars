@@ -30,6 +30,10 @@ public class ConcurrentOrOneEternal extends PreCondition {
         final Task task = premise.getTask();
         final Task belief = premise.getBelief();
 
+        if(task == null || belief == null) {
+            return false;
+        }
+
         boolean concurrent_or_one_eternal = task.isEternal() || belief.isEternal() || !(task.startsAfter(belief) || belief.startsAfter(task));
         return concurrent_or_one_eternal;
     }
