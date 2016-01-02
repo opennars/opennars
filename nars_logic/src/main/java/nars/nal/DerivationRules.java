@@ -284,7 +284,7 @@ public class DerivationRules extends FastList<TaskRule> {
                 final TaskRule rNorm = rUnnorm.normalizeRule();
                 AcceptRule(ur, s, rNorm);
 
-                if(rNorm!=null && !s.contains("task(") && !s.contains("after(") && !s.contains("Structural") && !s.contains("Identity") && !s.contains("Negation") && !s.contains("SequenceIntervals")) {
+                if(rNorm!=null && !s.contains("task(") && !s.contains("after(") && !s.contains("Structural") && !s.contains("Identity") && !s.contains("Negation")) {
                     final TaskRule rNorm2 = rNorm.forwardPermutation();
                     if(rNorm2 != null) {
                         AcceptRule(ur, s, rNorm2);

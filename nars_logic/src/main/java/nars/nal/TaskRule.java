@@ -416,6 +416,10 @@ public class TaskRule extends ProductN implements Level {
                     preNext = After.the;
                     break;
 
+                case "concurrent_or_one_eternal":
+                    preNext = ConcurrentOrOneEternal.the;
+                    break;
+
                 case "concurrent":
                     preNext = Concurrent.the;
                     break;
@@ -616,12 +620,6 @@ public class TaskRule extends ProductN implements Level {
         Term T = this.getTask();
         Term B = this.getBelief();
         Term C = this.getConclusionTerm();
-
-        for(PreCondition post : this.prePreconditions) {
-           if(post instanceof After) {
-               return null;
-           }
-        }
 
         //      B, T, [pre], task_is_question() |- T, [post]
 
