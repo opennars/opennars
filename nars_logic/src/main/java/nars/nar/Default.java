@@ -284,9 +284,9 @@ public class Default extends NAR {
         m.conceptGoalsMax.set(7);
         m.conceptQuestionsMax.set(5);
 
-        m.conceptForgetDurations.setValue(2.0);
-        m.taskLinkForgetDurations.setValue(2.0);
-        m.termLinkForgetDurations.setValue(3.0);
+        m.conceptForgetDurations.setValue(2.0); //better for declarative reasoning tasks: 2
+        m.taskLinkForgetDurations.setValue(2.0); //better for declarative reasoning tasks: 4
+        m.termLinkForgetDurations.setValue(3.0); //better for declarative reasoning tasks: 10
 
 
         m.derivationThreshold.set(0);
@@ -329,7 +329,7 @@ public class Default extends NAR {
         //new QueryVariableExhaustiveResults(this.memory());
 
 
-        the("memory_sharpen", new BagForgettingEnhancer(memory, core.active));
+       // the("memory_sharpen", new BagForgettingEnhancer(memory, core.active));
 
 
     }
