@@ -100,74 +100,6 @@ abstract public class NQuadsRDF {
 
 
 
-
-//    /**
-//     * These parsing rules were devised by physically looking at the OWL file
-//     * and figuring out what goes where. This should by no means be considered a
-//     * generalized way to parse OWL files.
-//     *
-//     * Parsing rules:
-//     *
-//     * owl:Class@rdf:ID = entity (1), type=Wine optional:
-//     * owl:Class/rdfs:subClassOf@rdf:resource = entity (2), type=Wine (2) --
-//     * parent --> (1) if owl:Class/rdfs:subClassOf has no attributes, ignore if
-//     * no owl:Class/rdfs:subClassOf entity, ignore it
-//     * owl:Class/owl:Restriction/owl:onProperty@rdf:resource related to
-//     * owl:Class/owl:Restriction/owl:hasValue@rdf:resource
-//     *
-//     * Region@rdf:ID = entity, type=Region optional:
-//     * Region/locatedIn@rdf:resource=entity (2), type=Region (2) -- parent --
-//     * (1) owl:Class/rdfs:subClassOf/owl:Restriction - ignore
-//     *
-//     * WineBody@rdf:ID = entity, type=WineBody WineColor@rdf:ID = entity,
-//     * type=WineColor WineFlavor@rdf:ID = entity, type=WineFlavor
-//     * WineSugar@rdf:ID = entity, type=WineSugar Winery@rdf:ID = entity,
-//     * type=Winery WineGrape@rdf:ID = entity, type=WineGrape
-//     *
-//     * Else if no namespace, this must be a wine itself, capture as entity:
-//     * ?@rdf:ID = entity, type=Wine all subtags are relations: tagname =
-//     * relation_name tag@rdf:resource = target entity
-//     */
-//    public static void input(NAR nar, Scanner f) throws Exception {
-//
-//        List<String> items = Global.newArrayList(4);
-//
-//        f.useDelimiter("\n").forEachRemaining(s -> {
-//            s = s.trim();
-////            if (s.startsWith("#")) //?
-////                return;
-////            if (s.startsWith("@")) //@prefix not handled yet?
-////                return;
-//
-//            Matcher m = nQuads.matcher(s);
-//            items.clear();
-//            while(m.find()) {
-//                String t = s.substring(m.start(), m.end());
-//                items.add(t);
-//            }
-//
-//            System.out.println(s + " " + m.toMatchResult());
-//
-//            if (items.size() >= 3) {
-//
-//                Atom subj = resource(items.get(0));
-//                Atom pred = resource(items.get(1));
-//                Term obj = resourceOrValue(items.get(2));
-//                if (subj != null && obj != null && pred != null) {
-//                    if (!subj.equals(obj))  { //avoid equal subj & obj, if only namespace differs
-//                        //try {
-//                            input(nar, subj, pred, obj);
-//                        //}
-////                        catch (InvalidInputException iie) {
-////                            System.err.println(iie);
-////                            //iie.printStackTrace();
-////                        }
-//                    }
-//                }
-//            }
-//        });
-//    }
-
     //TODO interpret Node subclasses in special ways, possibly returning Compounds not only Atom's
     public static Atom resource(Node n) {
         String s = n.getLabel();
@@ -192,20 +124,6 @@ abstract public class NQuadsRDF {
         //else
           //  return null;
     }
-//    public static Term resourceOrValue(String s) {
-//        Atom a = resource(s);
-//        if (a == null) {
-//            //...
-//        }
-//        return a;
-//    }
-
-//
-//
-//    abstract public static class TagProcessor {
-//
-//        abstract protected void execute(XMLStreamReader parser);
-//    }
 
 
     static public Term atom(String uri) {
@@ -384,46 +302,5 @@ abstract public class NQuadsRDF {
         return englishNameBuilder.toString();
     }
 
-//    public static void main(String[] args) throws Exception {
-//        Default n = new Default(1000,16,3);
-//        //Solid d = new Solid(32, 4096,1,3,1,2);
-//        //d.setInternalExperience(null).level(7);
-//        //d.inputsMaxPerCycle.set(256);
-//        //d.setTermLinkBagSize(64);
-//
-//
-//
-//        //n.input("schizo(I)!"); //needs nal8
-//
-//
-//
-//        new NQuadsRDF(n, "/home/me/Downloads/dbpedia.n4", 0.94f /* conf */) {
-//
-//            @Override
-//            protected void believe(Compound assertion) {
-//                float freq = 1.0f;
-//
-//                //insert with zero priority to bypass main memory go directly to subconcepts
-//                n.believe(0.01f, Global.DEFAULT_JUDGMENT_DURABILITY, assertion, Tense.Eternal, freq, beliefConfidence);
-//            }
-//        };
-//
-//
-//        //new TextOutput(n, System.out).setShowStamp(false).setOutputPriorityMin(0.25f);
-//
-//        n.frame(1);
-//        n.frame(1); //one more to be sure
-//
-//
-///*
-//        //n.frame(100);
-//        n.believe(0.75f, 0.8f, n.term("<Spacecraft <-> PopulatedPlace>!"),
-//                Tense.Eternal, 1.0f, 0.95f);
-//        n.believe(0.75f, 0.8f, n.term("(&&,SpaceMission,Work). :|:"),
-//                Tense.Eternal, 1.0f, 0.95f);
-//        //n.frame(5000);
-//*/
-//        //n.run();
-//    }
 }
 
