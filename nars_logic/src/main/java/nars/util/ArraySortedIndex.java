@@ -42,7 +42,11 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> {
     }
 
     public ArraySortedIndex(int capacity) {
-        this(Global.newArrayList(capacity), capacity);
+        this(capacity, capacity);
+    }
+
+    public ArraySortedIndex(int initialCapacity, int maxCapacity) {
+        this(Global.newArrayList(initialCapacity), maxCapacity);
     }
     
     public ArraySortedIndex(List<E> list, int capacity) {

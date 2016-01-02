@@ -35,8 +35,8 @@ public class ArrayBag<V> extends Bag<V> {
 
     public ArrayBag(SortedIndex<BagBudget<V>> items) {
         this(items,
-            //Global.newHashMap(items.capacity())
-            new HashMap(items.capacity())
+            //Global.newHashMap(items.capacity()/2)
+            new HashMap(items.capacity()/2)
         );
     }
 

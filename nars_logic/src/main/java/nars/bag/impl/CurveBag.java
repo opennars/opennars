@@ -48,7 +48,7 @@ public class CurveBag<V> extends Bag<V> {
 
 
     public CurveBag(BagCurve curve, int capacity, Random rng) {
-        this(new ArraySortedIndex(capacity), curve, rng);
+        this(new ArraySortedIndex(capacity/4, capacity), curve, rng);
 
                                 /*if (capacity < 128)*/
         //items = new ArraySortedItemList<>(capacity);

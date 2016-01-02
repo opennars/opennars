@@ -685,6 +685,8 @@ public interface Compounds {
                     if (submods == -1) return -1;
                     if (submods > 0) {
                         x = term(cx, yy);
+                        if (x == null)
+                            return -1;
                         modifications+= (cx!=x) ? 1 : 0;
                     }
                 }

@@ -22,10 +22,10 @@ import java.util.function.BiPredicate;
 
 public class DefaultConcept extends AtomConcept {
 
-    protected final TaskTable questions;
-    protected final TaskTable quests;
-    protected final BeliefTable beliefs;
-    protected final BeliefTable goals;
+    protected TaskTable questions = null;
+    protected TaskTable quests = null;
+    protected BeliefTable beliefs = null;
+    protected BeliefTable goals = null;
 
 
 
@@ -102,15 +102,16 @@ public class DefaultConcept extends AtomConcept {
      */
     @Override
     public final BeliefTable getBeliefs() {
-        return beliefs;
+        return beliefs == null ? BeliefTable.EMPTY : beliefs;
     }
+
 
     /**
      * Desire values on the term, similar to the above one
      */
     @Override
     public final BeliefTable getGoals() {
-        return goals;
+        return goals == null ? BeliefTable.EMPTY : goals;
     }
 
 
@@ -208,6 +209,8 @@ public class DefaultConcept extends AtomConcept {
 
         float successBefore = getSuccess();
 
+        if (beliefs == null) beliefs = new ArrayListBeliefTable(nar.memory.conceptBeliefsMax.intValue());
+
         Task strongest = getBeliefs().add( belief,
                 new BeliefTable.SolutionQualityMatchingOrderRanker(belief, nar.memory.time()),
                 this, nar.memory);
@@ -252,6 +255,8 @@ public class DefaultConcept extends AtomConcept {
         float successBefore = getSuccess();
 
         Memory memory = nar.memory;
+
+        if (goals == null) goals = new ArrayListBeliefTable(nar.memory.conceptGoalsMax.intValue());
 
         Task strongest = getGoals().add( goal,
                 new BeliefTable.SolutionQualityMatchingOrderRanker(goal, memory.time()),
@@ -379,7 +384,15 @@ public class DefaultConcept extends AtomConcept {
     @Override
     public boolean processQuestion(Task q, NAR nar) {
 
-        TaskTable table = q.isQuestion() ? getQuestions() : getQuests();
+        final TaskTable table;
+        if (q.isQuestion()) {
+            if (questions == null) questions = new ArrayListBeliefTable(nar.memory.conceptQuestionsMax.intValue());
+            table = getQuestions();
+
+        } else  { // else if (q.isQuest())
+            if (quests == null) quests = new ArrayListBeliefTable(nar.memory.conceptQuestionsMax.intValue());
+            table = getQuests();
+        }
 
 //        //if (Global.DEBUG) {
 //            if (q.getTruth() != null) {
