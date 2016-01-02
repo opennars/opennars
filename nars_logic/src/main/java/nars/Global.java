@@ -259,24 +259,6 @@ public class Global {
         return s;
     }
 
-
-//    public static <X,Y> HugeHashMap<X,Y> newHugeMap(int size, Class<? extends X> xClass, Class<? extends Y> yClass) {
-//
-//        HugeConfig config = HugeConfig.DEFAULT.clone()
-//                .setSegments(128)
-//                .setSmallEntrySize(128)
-//                .setCapacity(size);
-//
-//        return new HugeHashMap(config, xClass, yClass);
-//    }
-
-
-
-//    public static Reference<Task> reference(Task t) {
-//        if (t == null) return null;
-//        return new SoftReference(t);
-//    }
-
     public static <C> Reference<C> reference(C s) {
         if (s == null) return null;
         return new SoftReference(s);

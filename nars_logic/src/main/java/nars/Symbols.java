@@ -39,9 +39,6 @@ abstract public class Symbols {
     public static final char QUEST = '@';
     public static final char COMMAND = ';';
 
-    
-    
-    
     /* Tense markers */
     public static final String TENSE_SEPARATOR = ":";
 
@@ -70,13 +67,7 @@ abstract public class Symbols {
         $it $eth $1 $sth,   #sth #1    ?what      
         $it #sth ?what
     */
-    
-    
-    
-    
 
-    
-    
     /* numerical value delimitors, must be different from the Term delimitors */
     public static final char BUDGET_VALUE_MARK = '$';
     public static final char TRUTH_VALUE_MARK = '%';
@@ -109,23 +100,6 @@ abstract public class Symbols {
     public final static char STATEMENT_CLOSER = '>';
 
 
-//    public static Op symbol(final byte b) {
-//        if (b > byteSymbols.length)
-//            throw new RuntimeException("value of " + b + " exceeds special character range");
-//        return byteSymbols[b];
-//    }
-
-//
-//
-//    public static void compact(final ByteBuf b, final Op n) {
-//        if (n.has8BitRepresentation()) {
-//            b.append(n.byt);
-//        }
-//        else {
-//            b.append(n.str); //ordinary character
-//        }
-//    }
-
     private static final Map<String,Op> _stringToOperator
             = new HashMap(Op.values().length * 2);
 
@@ -145,8 +119,6 @@ abstract public class Symbols {
             }
         }
 
-        //System.out.println(Arrays.toString(byteSymbols));
-
         //VERIFICATION: Look for any empty holes in the byteSymbols table, indicating that the representation is not contigous
         //index 0 is always 0 to maintain \0's semantics
         //if # of operators are reduced in the future, then this will report that the table size should be reduced (avoiding unnecessary array lookups)
@@ -165,12 +137,6 @@ abstract public class Symbols {
 
     protected static final Map<String,Op> stringToOperator
             = Collections.unmodifiableMap(_stringToOperator);
-
-//    protected static final CharObjectHashMap<Op> charToOperator
-//            = (_charToOperator);
-//    public static Op getOperator(final char c) {
-//        return charToOperator.get(c);
-//    }
     
     public static Op getOperator(final String s) {
         return stringToOperator.get(s);
@@ -193,74 +159,5 @@ abstract public class Symbols {
         }
         return false;
     }
-
-
-//    public static String getPunctuationWord(char punctuation) {
-//        switch (punctuation) {
-//            case '.': return "BELIEF";
-//            case '!': return "GOAL";
-//            case '@': return "QUEST";
-//            case '?': return "QUESTION";
-//        }
-//        return "UNKNOWN";
-//    }
-
-    /** expands a byte to multi-char representation, for output.
-     //     * if a special character, it prints the expanded string and returns true.
-     //     * otherwise it does nothing and returns false.;
-     //     *  */
-//    public static boolean expand(final PrintWriter p, final byte b) {
-//        if (b < numByteSymbols) {
-//            p.write(symbol(b).str);
-//            return true;
-//        }
-//        else {
-//            //ordinary character,
-//            return false;
-//        }
-//    }
-
-
-    /*
-    @Deprecated public static NativeOperator opInnate(final String op) {
-        NativeOperator i = getOperator(op);
-        if (i == null) return null;
-
-        final int length = op.length();
-        if (length == 1) {
-            final char c = op.charAt(0);
-            switch (c) {
-                case Symbols.SET_EXT_OPENER:
-                case Symbols.SET_INT_OPENER:
-                case Symbols.INTERSECTION_EXT_OPERATORc:
-                case Symbols.INTERSECTION_INT_OPERATORc:
-                case Symbols.DIFFERENCE_EXT_OPERATORc:
-                case Symbols.DIFFERENCE_INT_OPERATORc:
-                case Symbols.PRODUCT_OPERATORc:
-                case Symbols.IMAGE_EXT_OPERATORc:
-                case Symbols.IMAGE_INT_OPERATORc:
-                    return true;
-            }
-        }
-        else if (length == 2) {
-            //since these symbols are the same character repeated, we only need to compare the first character
-            final char c1 = op.charAt(0);
-            final char c2 = op.charAt(1);
-            if (c1 == c2) {
-                switch (c1) {
-                    case Symbols.NEGATION_OPERATORc:
-                    case Symbols.DISJUNCTION_OPERATORc:
-                    case Symbols.CONJUNCTION_OPERATORc:
-                        return true;
-                }
-            } else if ((op.equals(Symbols.SEQUENCE_OPERATOR)) || (op.equals(Symbols.PARALLEL_OPERATOR))) {
-                return true;
-            }
-
-        }
-
-        return false;
-    }
-    */
 
 }

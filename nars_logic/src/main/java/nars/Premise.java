@@ -243,13 +243,6 @@ public interface Premise extends Level, Tasked {
         return memory().duration();
     }
 
-//    default public CyclesInterval newInterval(final long cycles) {
-//        //return Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
-//        return CyclesInterval.make(cycles, duration());
-//
-//    }
-
-
 
     /* --------------- new task building --------------- */
 
@@ -261,120 +254,6 @@ public interface Premise extends Level, Tasked {
     default public <T extends Compound> Task<Compound<?>> newTask(final T term, final char punc) {
         return newTask(term).punctuation(punc);
     }
-
-
-
-
-
-
-
-
-//    default public <C extends Compound> TaskSeed newTask(C content, Task task, Task belief, boolean allowOverlap) {
-//        content = Sentence.termOrNull(content);
-//        if (content == null)
-//            return null;
-//        TaskSeed s = newDoublePremise(task, belief, allowOverlap);
-//        if (s == null) return null;
-//        return s.term(content);
-//    }
-
-//    default public boolean unify(Op varType, Term a, Term b, Term[] u) {
-//        return Variables.unify(varType, a, b, u, getRandom());
-//    }
-
-//    default public boolean unify(Op varType, Term a, Term b) {
-//        return unify(varType, a, b, new Term[] { a, b } );
-//    }
-
-
-
-
-
-//    /**
-//     * TEMPORARY ADAPTER FOR OLD API
-//     */
-//    @Deprecated
-//    public Task derive(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
-//        return derive(new TaskSeed(memory, task), revised, single, currentTask, allowOverlap);
-//    }
-
-//
-//    default public Task deriveSingle(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
-//        return deriveSingle(newContent, punctuation, newTruth, newBudget, 1f, 1f);
-//    }
-//
-//    default public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, float priMult, float durMult) {
-//        final Task parentTask = getTask();
-//        //final Task grandParentTask = parentTask.getParentTask();
-//        /*if (parentTask != null) {
-//            final Compound parentTaskTerm = parentTask.getTerm();
-//            if (parentTaskTerm == null) {
-//                return null;
-//            }
-//            if (parentTaskTerm.equals(newContent)) {
-//                return null;
-//            }
-//        }*/
-//
-//        newContent = Sentence.termOrNull(newContent);
-//        if (newContent == null)
-//            return null;
-//
-//
-////        final Task ptask;
-////        final Task currentBelief = getBelief();
-////        if (parentTask.isJudgment() || currentBelief == null) {
-////            ptask = parentTask;
-////        } else { //Unspecified cheat we need to get rid of.
-////            // to answer a question with negation in NAL-5 --- move to activated task?
-////            ptask = currentBelief;
-////        }
-//
-//
-//        return deriveSingle(newTask(newContent, punctuation)
-//                .truth(newTruth)
-//                .budget(newBudget, priMult, durMult)
-//                .parent(parentTask, null));
-//
-//    }
-//
-//    default public Task deriveSingle(Task t) {
-//        return derive(t, false, true);
-//    }
-
-    /**
-     * Shared final operations by all double-premise rules, called from the
-     * rules except StructuralRules
-     *
-     * @param newTaskContent The content of the sentence in task
-     * @param newTruth       The truth value of the sentence in task
-     * @param newBudget      The budget value in task
-     */
-
-
-//    default public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Task parentTask, Task parentBelief, final boolean temporalAdd, boolean allowOverlap) {
-//
-//
-//        newTaskContent = Sentence.termOrNull(newTaskContent);
-//        if (newTaskContent == null)
-//            return null;
-//
-//        if ((parentTask == null) || (parentBelief == null))
-//            throw new RuntimeException("should not derive doublePremiseTask with non-double Stamp");
-//
-//        TaskSeed task = newTask(newTaskContent)
-//                .punctuation(punctuation)
-//                .truth(newTruth)
-//                .parent(parentTask, parentBelief)
-//                .temporalInductable(!temporalAdd)
-//                .budget(newBudget);
-//
-//        return deriveDouble(task, allowOverlap);
-//    }
-
-//    default public Task deriveDouble(TaskSeed task, boolean allowOverlap) {
-//        return derive(task, false, false);
-//    }
 
 
     /**
@@ -416,92 +295,6 @@ public interface Premise extends Level, Tasked {
         memory.eventDerived.emit(task);
         return task;
     }
-
-
-//    @Deprecated
-//    public static long inferOccurrenceTime(Stamp t, Stamp b) {
-//
-//
-//        if ((t == null) && (b == null))
-//            throw new RuntimeException("Both sentence parameters null");
-//        if (t == null)
-//            return b.getOccurrenceTime();
-//        else if (b == null)
-//            return t.getOccurrenceTime();
-//
-//
-//        final long tOc = t.getOccurrenceTime();
-//        final boolean tEternal = (tOc == Stamp.ETERNAL);
-//        final long bOc = b.getOccurrenceTime();
-//        final boolean bEternal = (bOc == Stamp.ETERNAL);
-//
-//        /* see: https://groups.google.com/forum/#!searchin/open-nars/eternal$20belief/open-nars/8KnAbKzjp4E/rBc-6V5pem8J) */
-//
-//        final long oc;
-//        if (tEternal && bEternal) {
-//            /* eternal belief, eternal task => eternal conclusion */
-//            oc = Stamp.ETERNAL;
-//        } else if (tEternal /*&& !bEternal*/) {
-//            /*
-//            The task is eternal, while the belief is tensed.
-//            In this case, the conclusion will be eternal, by generalizing the belief
-//            on a moment to the general situation.
-//            According to the semantics of NARS, each truth-value provides a piece of
-//            evidence for the general statement, so this inference can be taken as a
-//            special case of abduction from the belief B<f,c> and G==>B<1,1> to G<f,c/(c+k)>
-//            where G is the eternal form of B."
-//            */
-//            oc = Stamp.ETERNAL;
-//        } else if (bEternal /*&& !tEternal*/) {
-//            /*
-//            The belief is eternal, while the task is tensed.
-//            In this case, the conclusion will get the occurrenceTime of the task,
-//            because an eternal belief applies to every moment
-//
-//            ---
-//
-//            If the task is not tensed but the belief is,
-//            then an eternalization rule is used to take the belief as
-//            providing evidence for the sentence in the task.
-//            */
-//            oc = tOc;
-//        } else {
-//            /*
-//            Both premises are tensed.
-//            In this case, the truth-value of the belief B<f,c> will be "projected" from
-//            its previous OccurrenceTime t1 to the time of the task t2 to become B<f,d*c>,
-//            using the discount factor d = 1 - |t1-t2| / (|t0-t1| + |t0-t2|), where t0 is
-//            the current time.
-//            This formula is cited in https://code.google.com/p/open-nars/wiki/OpenNarsOneDotSix.
-//            Here the idea is that if a tensed belief is projected to a different time
-//            */
-//            /*
-//            If both premises are tensed, then the belief is "projected" to the occurrenceTime of the task. Ideally, temporal inference is valid only when
-//            the premises are about the same moment, i.e., have the same occurrenceTime or no occurrenceTime (i.e., eternal). However, since
-//            occurrenceTime is an approximation and the system is adaptive, a conclusion about one moment (that of the belief) can be projected to
-//            another (that of the task), at the cost of a confidence discount. Let t0 be the current time, and t1 and t2 are the occurrenceTime of the
-//            premises, then the discount factor is d = 1 - |t1-t2| / (|t0-t1| + |t0-t2|), which is in [0,1]. This factor d is multiplied to the confidence of a
-//            promise as a "temporal discount" to project it to the occurrence of the other promise, so as to derive a conclusion about that moment. In
-//            this way, if there are conflicting conclusions, the temporally closer one will be preferred by the choice rule.
-//             */
-//            oc = tOc;
-//        }
-//
-//
-//        /*
-//        //OLD occurence code:
-//        if (currentTaskSentence != null && !currentTaskSentence.isEternal()) {
-//            ocurrence = currentTaskSentence.getOccurenceTime();
-//        }
-//        if (currentBelief != null && !currentBelief.isEternal()) {
-//            ocurrence = currentBelief.getOccurenceTime();
-//        }
-//        task.sentence.setOccurrenceTime(ocurrence);
-//        */
-//
-//        return oc;
-//    }
-
 
 
 
@@ -577,17 +370,6 @@ public interface Premise extends Level, Tasked {
         return total/n;
     }
 
-//    default Task input(Task t) {
-//        if (((t = validate(t))!=null)) {
-//            nar().input(t);
-//            return t;
-//        }
-//        return null;
-//    }
-
-//    default void input(Stream<Task> t) {
-//        t.forEach(this::input);
-//    }
 
     /** may be called during inference to update the premise
      * with a better belief than what it had previously. */
