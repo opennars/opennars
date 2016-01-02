@@ -1,7 +1,6 @@
 package automenta.vivisect.surfaceplotter;
 
 import automenta.vivisect.surfaceplotter.surface.AbstractSurfaceModel;
-import automenta.vivisect.surfaceplotter.surface.SurfaceModel;
 import automenta.vivisect.surfaceplotter.surface.SurfaceVertex;
 
 import javax.swing.*;
@@ -12,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * {@link DefaultSurfaceModel} provides a simple way to fill the {@link AbstractSurfaceModel} using the Plotter interface.
  */
-public class DefaultSurfaceModel extends AbstractSurfaceModel implements SurfaceModel {
+public class DefaultSurfaceModel extends AbstractSurfaceModel {
 
 	
 
@@ -150,7 +149,7 @@ public class DefaultSurfaceModel extends AbstractSurfaceModel implements Surface
 		} catch (OutOfMemoryError e) {
 			setMessage("Not enough memory");
 		} catch (Exception e) {
-			setMessage("Error: " + e.toString());
+			setMessage("Error: " + e);
 		}
 		return vertex;
 	}
@@ -168,6 +167,7 @@ public class DefaultSurfaceModel extends AbstractSurfaceModel implements Surface
 	}
 
 
+	@Override
 	public SurfaceVertex[][] getSurfaceVertex() {
 		return surfaceVertex;
 	}

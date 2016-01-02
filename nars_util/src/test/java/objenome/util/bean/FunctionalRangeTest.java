@@ -58,7 +58,7 @@ public class FunctionalRangeTest {
     }
 
     @Test
-    public void testExternalize() throws FileNotFoundException, IOException, ClassNotFoundException {
+    public void testExternalize() throws IOException, ClassNotFoundException {
         String testString = "Externalizable is working!"; //$NON-NLS-1$
 
         FooBar ifaceOut = BeanProxyBuilder.on(FooBar.class).build();

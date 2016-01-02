@@ -4,10 +4,10 @@ import nars.audio.SoundProducer;
 
 
 public class SamplePlayer implements SoundProducer {
-    private SonarSample sample;
+    private final SonarSample sample;
     private float pos = 0;
     public boolean alive = true;
-    private float rate;
+    private final float rate;
 
     
     public SamplePlayer(SonarSample sample, float rate)
@@ -16,6 +16,7 @@ public class SamplePlayer implements SoundProducer {
         this.sample = sample;
     }
     
+    @Override
     public float read(float[] buf, int readRate)
     {
         float step = (sample.rate*rate)/readRate;
@@ -39,6 +40,7 @@ public class SamplePlayer implements SoundProducer {
         return 1;
     }
 
+    @Override
     public void skip(int samplesToSkip, int readRate)
     {
         float step = sample.rate/readRate;
@@ -50,11 +52,13 @@ public class SamplePlayer implements SoundProducer {
         }
     }
 
+    @Override
     public boolean isLive()
     {
         return alive;
     }
 
+    @Override
     public void stop() {
         alive = false;
     }

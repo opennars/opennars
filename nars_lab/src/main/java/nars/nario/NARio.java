@@ -283,48 +283,47 @@ public class NARio extends Run implements RLEnvironment {
         }
 
                     /*if (movement)*/
-        {
-            //predict next type of block at next current position
+        //predict next type of block at next current position
 
 
-            int rr = 0;
+        int rr = 0;
 
-            for (int i = -rad; i <= rad; i++) {
-                for (int j = -rad; j <= rad; j++) {
+        for (int i = -rad; i <= rad; i++) {
+            for (int j = -rad; j <= rad; j++) {
 
-                    if ((i == 0) && (j == 0)) continue;
+                if ((i == 0) && (j == 0)) continue;
 
-                    int block = level.level.getBlock(x + i * 16.0f - 8, y + j * 16.0f - 8);
-                    int data = level.level.getData(x + i * 16 - 8, y + j * 16 - 8);
+                int block = level.level.getBlock(x + i * 16.0f - 8, y + j * 16.0f - 8);
+                int data = level.level.getData(x + i * 16 - 8, y + j * 16 - 8);
 
-                    boolean blocked
-                            = ((block & Level.BIT_BLOCK_ALL) > 0)
-                            || ((block & Level.BIT_BLOCK_LOWER) > 0)
-                            || ((block & Level.BIT_BLOCK_UPPER) > 0);
+                boolean blocked
+                        = ((block & Level.BIT_BLOCK_ALL) > 0)
+                        || ((block & Level.BIT_BLOCK_LOWER) > 0)
+                        || ((block & Level.BIT_BLOCK_UPPER) > 0);
 
 //                            String s = " <(*," +
 //                                            (blocked ? "solid" : "empty") +
 //                                            "," + data + ",(*," + i + "," + j +
 //                                            ")) --> space>. :|:";
-                    String direction = direction(i, j);
+                String direction = direction(i, j);
 
-                    //char datachar = (char) ('r' + block);
-                    //String s = "<" + direction + " --> [solid]>. :|: %" + (blocked ? 1.0 : 0.0) + ";0.90%";
+                //char datachar = (char) ('r' + block);
+                //String s = "<" + direction + " --> [solid]>. :|: %" + (blocked ? 1.0 : 0.0) + ";0.90%";
 
 
-                    float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(i * i + j * j)));
+                float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(i * i + j * j)));
 
-                    if (t % radarPeriod == 0) {
-                        String s2 = "$" + sightPriority + '$' + '<' + direction + "--> [b" + Integer.toHexString(128 + block) + "]>. :|:";
-                        //System.out.println(blocked + " " + s2);
-                        input(s2);
-                    } else {
-                        //System.out.println(blocked);
-                    }
+                if (t % radarPeriod == 0) {
+                    String s2 = "$" + sightPriority + '$' + '<' + direction + "--> [b" + Integer.toHexString(128 + block) + "]>. :|:";
+                    //System.out.println(blocked + " " + s2);
+                    input(s2);
+                } else {
+                    //System.out.println(blocked);
+                }
 
-                    radar.set(rr++, blocked ? -1 : 1);
+                radar.set(rr++, blocked ? -1 : 1);
 
-                    //System.out.println(i + " " + j + " " +  s2);
+                //System.out.println(i + " " + j + " " +  s2);
 
 
 //                            if ((sight[k] != null) && (sight[k].equals(s))) {
@@ -334,46 +333,44 @@ public class NARio extends Run implements RLEnvironment {
 //                            sight[k] = s;
 
 
-                    //chg.set(/*"$" + sightPriority + "$" +*/s);
+                //chg.set(/*"$" + sightPriority + "$" +*/s);
 
 
-                }
+            }
+        }
+
+        ArrayList<Sprite> sprites = new ArrayList(level.sprites);
+        for (Sprite s : sprites) {
+            if (s instanceof Mario) {
+                continue;
+            }
+            if ((s instanceof Sparkle) || (s instanceof Particle)) {
+                continue;
+                //priority/=2f;
             }
 
-            ArrayList<Sprite> sprites = new ArrayList(level.sprites);
-            for (Sprite s : sprites) {
-                if (s instanceof Mario) {
-                    continue;
-                }
-                if ((s instanceof Sparkle) || (s instanceof Particle)) {
-                    continue;
-                    //priority/=2f;
-                }
+            double senseRadius = 32;
+            double dist = Math.sqrt((x - s.x) * (x - s.x) + (y - s.y) * (y - s.y)) / 16.0;
+            if (dist <= senseRadius) {
+                double priority = 0.5f + 0.5f * (senseRadius - dist) / senseRadius;
 
-                double senseRadius = 32;
-                double dist = Math.sqrt((x - s.x) * (x - s.x) + (y - s.y) * (y - s.y)) / 16.0;
-                if (dist <= senseRadius) {
-                    double priority = 0.5f + 0.5f * (senseRadius - dist) / senseRadius;
-
-                    //sparkles are common and not important
-                    String type = s.getClass().getSimpleName();
-                    if (s instanceof Enemy) {
-                        type = s.toString();
-                    }
-
-                    int dx = Math.round((s.x - x) / 16.0f);
-                    int dy = Math.round((s.y - y) / 16.0f);
-
-                    float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(dx * dx + dy * dy)));
-
-                    String sees = "$" + sightPriority + '$' +
-                            " <" + direction(dx, dy) + " --> [" + type + "]>. :|:";
-                    //System.out.println(sees);
-                    input(sees);
-
-                    //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
+                //sparkles are common and not important
+                String type = s.getClass().getSimpleName();
+                if (s instanceof Enemy) {
+                    type = s.toString();
                 }
 
+                int dx = Math.round((s.x - x) / 16.0f);
+                int dy = Math.round((s.y - y) / 16.0f);
+
+                float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(dx * dx + dy * dy)));
+
+                String sees = "$" + sightPriority + '$' +
+                        " <" + direction(dx, dy) + " --> [" + type + "]>. :|:";
+                //System.out.println(sees);
+                input(sees);
+
+                //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
             }
 
         }
@@ -739,7 +736,7 @@ public class NARio extends Run implements RLEnvironment {
         float ff = (float) (f / 2.0f + 0.5f);
         double precision = 0.25; //reduction to discretized scale
         //updateMovement(direction((int)(-tx * ff * precision),  (int)(-ty* ff * precision)), 1.0f); //for some reason the sign needs negated
-        updateMovement(direction((int) (-tx), (int) (-ty)), ff); //for some reason the sign needs negated
+        updateMovement(direction(-tx, -ty), ff); //for some reason the sign needs negated
     }
 
 

@@ -86,7 +86,7 @@ public class SarsaLearner {
         lastFeatures = null;
         traces = null;
 
-        this.features = (double[])features.clone();
+        this.features = features.clone();
         
         return actAndLearn(features, 0.0);
     }
@@ -100,7 +100,7 @@ public class SarsaLearner {
      */
     public int agent_step(double pReward, double[] features) {
         lastFeatures = this.features;
-        this.features = (double[])features.clone();
+        this.features = features.clone();
 
         return actAndLearn(this.features, pReward);
     }
@@ -183,7 +183,7 @@ public class SarsaLearner {
     public void updateTraces(double[] features, int lastAction) {
         if (traces == null) {
             traces = new double[numActions][];
-            traces[lastAction] = (double[])features.clone();
+            traces[lastAction] = features.clone();
 
             for (int a = 0; a < numActions; a++)
                 if (a != lastAction)

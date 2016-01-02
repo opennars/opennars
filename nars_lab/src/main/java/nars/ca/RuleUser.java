@@ -85,16 +85,16 @@ public class RuleUser {
 
 		switch (RuleIdx) {
 		case RIDX_RUG: // Rug
-			sBff = "RUG,C" + String.valueOf(iClo);
-			sBff = sBff + ",I" + String.valueOf(Increment);
+			sBff = "RUG,C" + iClo;
+			sBff = sBff + ",I" + Increment;
 			break;
 		case RIDX_DIB: // Digital Inkblots
-			sBff = "DIB,C" + String.valueOf(iClo);
-			sBff = sBff + ",I" + String.valueOf(Increment);
+			sBff = "DIB,C" + iClo;
+			sBff = sBff + ",I" + Increment;
 			break;
 		case RIDX_HOD: // Hodge
-			sBff = "HOD,C" + String.valueOf(iClo);
-			sBff = sBff + ",I" + String.valueOf(Increment);
+			sBff = "HOD,C" + iClo;
+			sBff = sBff + ",I" + Increment;
 			break;
 		case RIDX_GRH: // GreenHast
 			sBff = "GRH";
@@ -154,7 +154,6 @@ public class RuleUser {
 					break;
 
 				case RIDX_HOD: // Hodge
-				{
 					int sum8 = crrState[lurd[0]][lurd[1]]
 							+ crrState[lurd[0]][j] + crrState[lurd[0]][lurd[3]]
 							+ crrState[i][lurd[1]] + crrState[i][lurd[3]]
@@ -178,11 +177,9 @@ public class RuleUser {
 					if (bOldVal == (iClo - 1)) {
 						bNewVal = 0;
 					}
-				}
 					break;
 
 				case RIDX_GRH: // GreenHast
-				{
 					int r = 0, d = 0;
 					int prevState;
 
@@ -211,7 +208,6 @@ public class RuleUser {
 						break;
 					}
 					bNewVal = (short) ((r + d - prevState + 3) % 3 + (bOldVal << 2)); // store Me for next calls
-				}
 					break;
 				} // switch
 

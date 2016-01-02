@@ -368,11 +368,13 @@ public class Windget extends DefaultWindow  {
         autosize();
     }
 
+    @Override
     public final Windget move(double x, double y) {
         setLayoutX(x);
         setLayoutY(y);
         return this;
     }
+    @Override
     public final boolean move(double[] v, double threshold) {
         double x = getLayoutX();
         double y = getLayoutY();

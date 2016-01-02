@@ -12,10 +12,12 @@ public class FakeSoundEngine extends Audio
         super(maxChannels);
     }
 
+    @Override
     public void setListener(SoundListener soundListener)
     {
     }
 
+    @Override
     public void shutDown()
     {
     }
@@ -29,14 +31,17 @@ public class FakeSoundEngine extends Audio
     {
     }
 
+    @Override
     public void clientTick(float alpha)
     {
     }
 
+    @Override
     public void tick()
     {
     }
 
+    @Override
     public void run()
     {
     }

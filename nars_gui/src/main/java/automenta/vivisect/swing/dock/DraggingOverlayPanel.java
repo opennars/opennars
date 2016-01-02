@@ -25,6 +25,8 @@ import automenta.vivisect.swing.dock.DockingRegionTabbed.PathRecordTabbed;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 import static javax.swing.SwingUtilities.convertPoint;
 import static javax.swing.SwingUtilities.convertRectangle;
@@ -33,7 +35,7 @@ import static javax.swing.SwingUtilities.convertRectangle;
  *
  * @author kitfox
  */
-public class DraggingOverlayPanel extends javax.swing.JPanel {
+public class DraggingOverlayPanel extends JPanel {
 
     final DockingRegionContainer container;
     final DockingImportTransferHandler xferHandler;
@@ -164,25 +166,25 @@ public class DraggingOverlayPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         setOpaque(false);
-        addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        addMouseMotionListener(new MouseMotionAdapter() {
             @Override
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
+            public void mouseDragged(MouseEvent evt) {
                 formMouseDragged(evt);
             }
 
             @Override
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
+            public void mouseMoved(MouseEvent evt) {
                 formMouseMoved(evt);
             }
         });
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formMouseDragged(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMouseDragged
+    private void formMouseDragged(MouseEvent evt)//GEN-FIRST:event_formMouseDragged
     {//GEN-HEADEREND:event_formMouseDragged
         System.err.println("Overlay drag");
     }//GEN-LAST:event_formMouseDragged
 
-    private void formMouseMoved(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMouseMoved
+    private void formMouseMoved(MouseEvent evt)//GEN-FIRST:event_formMouseMoved
     {//GEN-HEADEREND:event_formMouseMoved
         System.err.println("Overlay move");
     }//GEN-LAST:event_formMouseMoved

@@ -358,7 +358,7 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
     }*/
 
     private EnumSet<_ptrait> traits;
-    private _ptrait[] as;
+    private final _ptrait[] as;
 
     /**
      * uses its own name as a composition of traits, as well as adding from that which is passed in.
@@ -373,26 +373,32 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
     }
 
 
+    @Override
     public boolean is(_ptrait ptrait) {
         return false;
     }
 
+    @Override
     public EnumSet<_ptrait> getPrimaryTraits() {
         return null;
     }
 
+    @Override
     public int $as$extent$offset$int() {
         return 0;
     }
 
+    @Override
     public int $as$extent$length$int() {
         return 0;
     }
 
+    @Override
     public _ref<?> $() {
         return ref;
     }
 
+    @Override
     public _ref reify(_ptr void$) {
         return ref;  //todo: verify for a purpose
     }
@@ -473,7 +479,7 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
             traits = EnumSet.of(this);
             Collections.addAll(traits, as);
 
-            System.err.println("" + String.valueOf(traits) + "");
+            System.err.println("" + traits + "");
             String[] strings = name().split("$");
             for (String string : strings) {
                 _ptrait ptrait = null;
@@ -484,7 +490,7 @@ public enum _ptrait implements _vtable<_ptrait>, _proto<_ref> {
                 }
             }
         }
-        System.err.println("" + String.valueOf(traits) + "");
+        System.err.println("" + traits + "");
         return traits;
     }
 }

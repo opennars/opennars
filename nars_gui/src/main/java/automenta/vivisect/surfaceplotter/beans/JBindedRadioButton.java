@@ -106,7 +106,7 @@ public class JBindedRadioButton extends JRadioButton {
 	
 	/**
 	 * @param value
-	 * @see net.ericaro.surfaceplotter.beans.BeanProperty#setProperty(java.lang.Object)
+	 * @see net.ericaro.surfaceplotter.beans.BeanProperty#setProperty(Object)
 	 */
 	public void setProperty(Boolean value) {
 		property.setProperty(value);
@@ -122,7 +122,7 @@ public class JBindedRadioButton extends JRadioButton {
 
 	/**
 	 * @param propertyName
-	 * @see net.ericaro.surfaceplotter.beans.BeanProperty#setPropertyName(java.lang.String)
+	 * @see net.ericaro.surfaceplotter.beans.BeanProperty#setPropertyName(String)
 	 */
 	public void setPropertyName(String propertyName) {
 		property.setPropertyName(propertyName);
@@ -138,7 +138,7 @@ public class JBindedRadioButton extends JRadioButton {
 	
 	/**
 	 * @param modelSource
-	 * @see net.ericaro.surfaceplotter.beans.ModelBindedBeanProperty#setSourceBean(java.lang.Object)
+	 * @see net.ericaro.surfaceplotter.beans.ModelBindedBeanProperty#setSourceBean(Object)
 	 */
 	public void setSourceBean(ModelSource modelSource) {
 		property.setSourceBean(modelSource);

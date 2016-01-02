@@ -28,7 +28,7 @@ public class ConceptSonification extends FrameReaction {
     public final Audio sound;
     //TODO use bag
     public Map<Concept, SoundProducer> playing;
-    private int polyphony;
+    private final int polyphony;
 
     static class PlayingMap extends LinkedHashMap<Concept, SoundProducer> {
         private final int maxSize;
@@ -42,7 +42,7 @@ public class ConceptSonification extends FrameReaction {
         protected boolean removeEldestEntry(Map.Entry<Concept, SoundProducer> eldest) {
             return size() > maxSize;
         }
-    };
+    }
     //Global.newHashMap();
 
     float audiblePriorityThreshold = 0.0f;

@@ -6,13 +6,13 @@ import static com.google.common.math.IntMath.factorial;
 /** from: http://stackoverflow.com/a/5578494 */
 public final class Combinations {
 
-    private int[] a;
-    private int n;
-    private int r;
+    private final int[] a;
+    private final int n;
+    private final int r;
 
     //TODO avoid BigInteger, maybe long
     private int numLeft;
-    private int total;
+    private final int total;
 
 
     //------------

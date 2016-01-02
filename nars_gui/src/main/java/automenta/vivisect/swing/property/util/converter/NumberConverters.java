@@ -41,7 +41,7 @@ public class NumberConverters implements Converter {
 
   private static NumberFormat defaultFormat;
 
-  private NumberFormat format;
+  private final NumberFormat format;
 
   public NumberConverters() {
     this(getDefaultFormat());
@@ -122,6 +122,7 @@ public class NumberConverters implements Converter {
     registry.addConverter(String.class, Byte.class, this);
   }
 
+  @Override
   public Object convert(Class targetType, Object value) {
     // are we dealing with a number to number conversion?
     if ((value instanceof Number) && Number.class.isAssignableFrom(targetType)) {

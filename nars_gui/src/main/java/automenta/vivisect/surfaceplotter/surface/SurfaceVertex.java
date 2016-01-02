@@ -95,10 +95,9 @@ public final class SurfaceVertex {
    */
    
   public Point projection(Projector projector) {
-    /*if (project_index != master_project_index)*/ {
-      projection = projector.project(x,y,(z-projector.zmin)*projector.zfactor-10);
-      project_index = master_project_index;
-    }
+    /*if (project_index != master_project_index)*/
+    projection = projector.project(x,y,(z-projector.zmin)*projector.zfactor-10);
+    project_index = master_project_index;
     return projection;
   }
   

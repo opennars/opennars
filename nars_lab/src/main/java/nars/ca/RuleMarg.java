@@ -82,8 +82,8 @@ public class RuleMarg {
 		String sBff = "MS,D";
 
 		for (int i = 0; i <= 14; i++)
-			sBff = sBff + String.valueOf(swapArray[i]) + ';';
-		sBff = sBff + String.valueOf(swapArray[15]);
+			sBff = sBff + swapArray[i] + ';';
+		sBff = sBff + swapArray[15];
 
 		return sBff;
 	}

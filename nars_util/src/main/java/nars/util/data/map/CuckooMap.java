@@ -50,7 +50,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
     private V[] valueTable;
     private int capacity, stashSize;
 
-    private float loadFactor;
+    private final float loadFactor;
     private int hashShift, mask, threshold;
     private int stashCapacity;
     private int pushIterations;

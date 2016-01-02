@@ -172,11 +172,9 @@ public class WaveCapture implements Runnable {
 
 
                 //1d haar wavelet transform
-                {
-                    //OneDHaar.displayOrderedFreqsFromInPlaceHaar(x);
-                    OneDHaar.inPlaceFastHaarWaveletTransform(samples);
-                    //OneDHaar.displayOrderedFreqsFromInPlaceHaar(samples, System.out);
-                }
+                //OneDHaar.displayOrderedFreqsFromInPlaceHaar(x);
+                OneDHaar.inPlaceFastHaarWaveletTransform(samples);
+                //OneDHaar.displayOrderedFreqsFromInPlaceHaar(samples, System.out);
 
 //                //apache commons math - discrete cosine transform
 //                {

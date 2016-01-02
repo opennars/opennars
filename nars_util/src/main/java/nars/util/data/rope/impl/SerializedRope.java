@@ -61,8 +61,7 @@ final class SerializedRope implements Externalizable {
     }
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException,
-            ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException {
         // Read the UTF string and build a rope from it. This should
         // result in a FlatRope.
         rope = Rope.build(in.readUTF());

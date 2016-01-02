@@ -97,9 +97,9 @@ public class NSliderSwing extends JLabel implements MouseListener, MouseMotionLi
         float p = (value.floatValue() - min) / (max-min);
         if (barColor == null) {
             //Green->Yellow->Red
-            g.setColor(Color.getHSBColor( (1.0f - (float)p) / 2.5f + 0.15f ,
-                    (0.2f *((float)p)) + 0.7f,
-                    (0.2f *((float)p)) + 0.7f));
+            g.setColor(Color.getHSBColor( (1.0f - p) / 2.5f + 0.15f ,
+                    (0.2f * p) + 0.7f,
+                    (0.2f * p) + 0.7f));
             // g.setColor(Color.getHSBColor( (1f - p) / 3.0f , 0.2f, 0.8f + 0.15f));
         }
         else {

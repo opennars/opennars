@@ -62,13 +62,15 @@ public class BaseDialog extends JDialog {
   private JButton cancelOrCloseButton;
   private int mode;
 
-  private Action okAction = new AbstractAction() {
+  private final Action okAction = new AbstractAction() {
+    @Override
     public void actionPerformed(ActionEvent e) {
       ok();
     }
   };
 
-  private Action cancelOrCloseAction = new AbstractAction() {
+  private final Action cancelOrCloseAction = new AbstractAction() {
+    @Override
     public void actionPerformed(ActionEvent e) {
       cancel();
     }
@@ -163,6 +165,7 @@ public class BaseDialog extends JDialog {
     return banner;
   }
 
+  @Override
   public final Container getContentPane() {
     return contentPane;
   }
@@ -257,6 +260,7 @@ public class BaseDialog extends JDialog {
     UIUtilities.centerOnScreen(this);
   }
 
+  @Override
   protected String paramString() {
     return super.paramString()
       + ",dialogMode="
@@ -296,6 +300,7 @@ public class BaseDialog extends JDialog {
       JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     addWindowListener(new WindowAdapter() {
+      @Override
       public void windowClosing(WindowEvent e) {
         cancel();
       }

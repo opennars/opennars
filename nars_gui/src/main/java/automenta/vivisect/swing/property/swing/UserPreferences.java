@@ -142,11 +142,13 @@ public class UserPreferences {
     window.addComponentListener(windowDimension);
   }
 
-  private static ComponentListener windowDimension = new ComponentAdapter() {
+  private static final ComponentListener windowDimension = new ComponentAdapter() {
+    @Override
     public void componentMoved(ComponentEvent e) {
       store((Window) e.getComponent());
     }
 
+    @Override
     public void componentResized(ComponentEvent e) {
       store((Window) e.getComponent());
     }
@@ -160,7 +162,7 @@ public class UserPreferences {
 
   private static class TableWidthTracker implements TableColumnModelListener {
 
-    private JTable table;
+    private final JTable table;
 
     public TableWidthTracker(JTable table) {
       this.table = table;
@@ -182,22 +184,27 @@ public class UserPreferences {
       }
     }
 
+    @Override
     public void columnAdded(TableColumnModelEvent event) {
       saveColumnWidths();
     }
 
+    @Override
     public void columnMarginChanged(ChangeEvent event) {
       saveColumnWidths();
     }
 
+    @Override
     public void columnMoved(TableColumnModelEvent event) {
       saveColumnWidths();
     }
 
+    @Override
     public void columnRemoved(TableColumnModelEvent event) {
       saveColumnWidths();
     }
 
+    @Override
     public void columnSelectionChanged(ListSelectionEvent event) {
       saveColumnWidths();
     }
@@ -240,7 +247,7 @@ public class UserPreferences {
   }
 
   private static class TextListener implements DocumentListener {
-    private JTextComponent text;
+    private final JTextComponent text;
 
     public TextListener(JTextComponent text) {
       this.text = text;
@@ -248,15 +255,18 @@ public class UserPreferences {
       text.getDocument().addDocumentListener(this);
     }
 
-    public void changedUpdate(javax.swing.event.DocumentEvent e) {
+    @Override
+    public void changedUpdate(DocumentEvent e) {
       store();
     }
 
-    public void insertUpdate(javax.swing.event.DocumentEvent e) {
+    @Override
+    public void insertUpdate(DocumentEvent e) {
       store();
     }
 
-    public void removeUpdate(javax.swing.event.DocumentEvent e) {
+    @Override
+    public void removeUpdate(DocumentEvent e) {
       store();
     }
 
@@ -286,7 +296,7 @@ public class UserPreferences {
         splitPaneListener);
   }
 
-  private static PropertyChangeListener splitPaneListener = evt -> {
+  private static final PropertyChangeListener splitPaneListener = evt -> {
     JSplitPane split = (JSplitPane) evt.getSource();
     node().node("JSplitPane").put(split.getName() + ".dividerLocation",
         String.valueOf(split.getDividerLocation()));

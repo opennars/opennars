@@ -65,48 +65,46 @@ public class NARMenu extends HBox {
             });
 
         }
+        Button iconButton = JFX.newIconButton(FontAwesomeIcon.GEAR);
+        iconButton.setMouseTransparent(true);
+
+        main = new Menu("", iconButton);
+
+        main.getStyleClass().add("nar_main_menu");
+        main.getItems().add(new MenuItem("", fontSlider));
+        main.getItems().add(new MenuItem("New..."));
+
+        Menu loadMenu;
+        main.getItems().add(loadMenu = new Menu("Load..."));
         {
-            Button iconButton = JFX.newIconButton(FontAwesomeIcon.GEAR);
-            iconButton.setMouseTransparent(true);
-
-            main = new Menu("", iconButton);
-
-            main.getStyleClass().add("nar_main_menu");
-            main.getItems().add(new MenuItem("", fontSlider));
-            main.getItems().add(new MenuItem("New..."));
-
-            Menu loadMenu;
-            main.getItems().add(loadMenu = new Menu("Load..."));
-            {
-                loadMenu.getItems().add(new AsyncMenuItem(n, ".n3 RDF") {
-                    @Override public void run(NAR n) {
-                        FileChooser fileChooser = new FileChooser();
-                        fileChooser.setTitle("Load RDF File");
-                        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("n3","n4","turtle","rdf" /* .. */));
-                        File f = fileChooser.showOpenDialog(null);
-                        if (f!=null) {
-                            try {
-                                NQuadsRDF.input(n, new FileInputStream(f));
-                            } catch (Exception e) {
-                                n.memory.eventError.emit(e);
-                            }
+            loadMenu.getItems().add(new AsyncMenuItem(n, ".n3 RDF") {
+                @Override public void run(NAR n) {
+                    FileChooser fileChooser = new FileChooser();
+                    fileChooser.setTitle("Load RDF File");
+                    fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("n3","n4","turtle","rdf" /* .. */));
+                    File f = fileChooser.showOpenDialog(null);
+                    if (f!=null) {
+                        try {
+                            NQuadsRDF.input(n, new FileInputStream(f));
+                        } catch (Exception e) {
+                            n.memory.eventError.emit(e);
                         }
                     }
-                });
-            }
-
-            main.getItems().add(new MenuItem("Save..."));
-            main.getItems().add(new MenuItem("Fork..."));
-            main.getItems().add(new MenuItem("Discard..."));
-            main.getItems().add(new SeparatorMenuItem());
-            main.getItems().add(new MenuItem("Exit..."));
-
-            Button button2 = JFX.newIconButton(FontAwesomeIcon.NAVICON);
-            button2.setMouseTransparent(true);
-            tool = new Menu("", button2);
-
-            getChildren().add(new MenuBar(main, tool));
+                }
+            });
         }
+
+        main.getItems().add(new MenuItem("Save..."));
+        main.getItems().add(new MenuItem("Fork..."));
+        main.getItems().add(new MenuItem("Discard..."));
+        main.getItems().add(new SeparatorMenuItem());
+        main.getItems().add(new MenuItem("Exit..."));
+
+        Button button2 = JFX.newIconButton(FontAwesomeIcon.NAVICON);
+        button2.setMouseTransparent(true);
+        tool = new Menu("", button2);
+
+        getChildren().add(new MenuBar(main, tool));
 
 
         //getChildren().add(threadControl = new CycleClockPane(nar));
@@ -211,9 +209,9 @@ public class NARMenu extends HBox {
         ////TODO: public final SimpleBooleanProperty pendingClockUpdate
 
 
+        @Override
         public void run() {
 //            if (pendingClockUpdate.compareAndSet(false, true))
-             {
 
 //                runLater(() -> {
 //                    pendingClockUpdate.set(false);
@@ -225,8 +223,7 @@ public class NARMenu extends HBox {
 //
 //
 //                });
-                clock.setText("" + nar.time());
-            }
+            clock.setText("" + nar.time());
         }
 
         public CycleClockPane(NAR n) {

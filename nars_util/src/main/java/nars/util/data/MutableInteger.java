@@ -80,7 +80,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
   @Override
   public void setValue(Object value) {
       if (value instanceof Integer)
-        set((Integer)value);
+        set(value);
       throw new RuntimeException("not integer");
   }
 

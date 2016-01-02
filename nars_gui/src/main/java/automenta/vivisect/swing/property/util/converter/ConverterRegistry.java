@@ -28,9 +28,9 @@ import java.util.Map;
  */
 public class ConverterRegistry implements Converter {
 
-	private static ConverterRegistry sharedInstance = new ConverterRegistry();
+	private static final ConverterRegistry sharedInstance = new ConverterRegistry();
 
-	private Map fromMap;
+	private final Map fromMap;
 
 	public ConverterRegistry() {
 		fromMap = new HashMap();

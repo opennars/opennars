@@ -209,7 +209,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             for (int i = 0; i < arity; i++) {
                 if (current + 1 == n) {
                     Node old = result.getChild(i);
-                    result.setChild(i, (X) newNode);
+                    result.setChild(i, newNode);
                     return old;
                 }
 
@@ -812,7 +812,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             if (c == null) {
                 builder.append('X');
             } else {
-                builder.append(c.toString());
+                builder.append(c);
             }
         }
         builder.append(')');

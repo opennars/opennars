@@ -31,8 +31,8 @@ import java.util.Arrays;
  */
 public class RepeatedCharacterSequence implements CharSequence {
 
-    private char character;
-    private int repeat;
+    private final char character;
+    private final int repeat;
 
     public RepeatedCharacterSequence(char character, int repeat) {
         this.character = character;

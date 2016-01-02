@@ -362,10 +362,12 @@ public class Sokoban extends Applet {
 	
         
 		
+	@Override
 	public void paint(Graphics g) {
 		update(g);
 	}
 	
+	@Override
 	public synchronized void update(Graphics g) {
 		Dimension d = size();
 		if (d.width * d.height == 0) return; // supposedly this can happen!
@@ -420,6 +422,7 @@ public class Sokoban extends Applet {
 		repaint(lastrect.x, lastrect.y, lastrect.width, lastrect.height);
 	}
 		
+	@Override
 	public boolean keyDown(Event e, int key) {
 		uc = false;
 		switch (e.key) {
@@ -539,6 +542,7 @@ public class Sokoban extends Applet {
 		}
 	}
 			
+	@Override
 	public String getAppletInfo() {
 		return "Sokoban 1.0, Written by Yossie Silverman.";
 	}

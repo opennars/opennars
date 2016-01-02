@@ -34,11 +34,11 @@ public class AbstractPrototainer implements Prototainer  {
     
     public AbstractPrototainer(boolean concurrent) {
         this(
-                (Map)(concurrent ? new ConcurrentHashMap() : new UnifiedMap(0)),
-                (Map)(concurrent ? new ConcurrentHashMap() : new UnifiedMap(0)),
-                (Set)(concurrent ? Collections.synchronizedSet(new HashSet()) : new UnifiedSet(0)),
-                (Set)(concurrent ? Collections.synchronizedSet(new HashSet()) : new UnifiedSet(0)),
-                (Set)(concurrent ? Collections.synchronizedSet(new HashSet()) : new UnifiedSet(0))
+                concurrent ? new ConcurrentHashMap() : new UnifiedMap(0),
+                concurrent ? new ConcurrentHashMap() : new UnifiedMap(0),
+                concurrent ? Collections.synchronizedSet(new HashSet()) : new UnifiedSet(0),
+                concurrent ? Collections.synchronizedSet(new HashSet()) : new UnifiedSet(0),
+                concurrent ? Collections.synchronizedSet(new HashSet()) : new UnifiedSet(0)
         );
     }
 

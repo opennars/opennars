@@ -4,8 +4,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.SwingPropertyChangeSupport;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /** Abstract implementation that handles everything but the surfaceVertex array
@@ -41,7 +43,7 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 	 */
 	public static synchronized double ceil(double d, int digits) {
 		if (d == 0)
-			return d;
+			return 0;
 		long og = (long) Math.ceil((Math.log(Math.abs(d)) / Math.log(10)));
 		double factor = Math.pow(10, digits - og);
 		double res = Math.ceil((d * factor)) / factor;
@@ -57,7 +59,7 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 	 */
 	public static synchronized double floor(double d, int digits) {
 		if (d == 0)
-			return d;
+			return 0;
 		// computes order of magnitude
 		long og = (long) Math.ceil((Math.log(Math.abs(d)) / Math.log(10)));
 
@@ -204,15 +206,18 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		setPlotColor(PlotColor.SPECTRUM);
 	}
 
+	@Override
 	public void addChangeListener(ChangeListener ol) {
 		listenerList.add(ChangeListener.class, ol);
 	}
 
-	public void addPropertyChangeListener(java.beans.PropertyChangeListener listener) {
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		property.addPropertyChangeListener(listener);
 	}
 
-	public void addPropertyChangeListener(String propertyName, java.beans.PropertyChangeListener listener) {
+	@Override
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 		property.addPropertyChangeListener(propertyName, listener);
 	}
 
@@ -245,7 +250,7 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		 SurfaceVertex[][] surfaceVertex = getSurfaceVertex();
 		if (file == null)
 			return;
-		java.io.FileWriter w = new java.io.FileWriter(file);
+		FileWriter w = new FileWriter(file);
 		float stepx, stepy, x, y;
 		float xi, xx, yi, yx;
 		int i, j, k;
@@ -353,18 +358,22 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		}
 	}
 
+	@Override
 	public int getCalcDivisions() {
 		return calcDivisions;
 	}
 
+	@Override
 	public SurfaceColor getColorModel() {
 		return colorModel;
 	}
 
+	@Override
 	public int getContourLines() {
 		return contourLines;
 	}
 
+	@Override
 	public int getDispDivisions() {
 		if (dispDivisions > calcDivisions)
 			dispDivisions = calcDivisions;
@@ -373,14 +382,17 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		return dispDivisions;
 	}
 
+	@Override
 	public PlotColor getPlotColor() {
 		return plotColor;
 	}
 
+	@Override
 	public PlotType getPlotType() {
 		return plotType;
 	}
 
+	@Override
 	public Projector getProjector() {
 		if (projector == null) {
 			projector = new Projector();
@@ -398,30 +410,37 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		return property;
 	}
 
+	@Override
 	public float getXMax() {
 		return xMax;
 	}
 
+	@Override
 	public float getXMin() {
 		return xMin;
 	}
 
+	@Override
 	public float getYMax() {
 		return yMax;
 	}
 
+	@Override
 	public float getYMin() {
 		return yMin;
 	}
 
+	@Override
 	public float getZMax() {
 		return zMax;
 	}
 
+	@Override
 	public float getZMin() {
 		return zMin;
 	}
 
+	@Override
 	public boolean isAutoScaleZ() {
 		return autoScaleZ;
 	}
@@ -430,6 +449,7 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		return plotFunction1 && plotFunction2;
 	}
 
+	@Override
 	public boolean isBoxed() {
 		return boxed;
 	}
@@ -438,6 +458,7 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		return plotType == PlotType.CONTOUR;
 	}
 
+	@Override
 	public boolean isDataAvailable() {
 		return dataAvailable;
 	}
@@ -446,14 +467,17 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		return plotType == PlotType.DENSITY;
 	}
 
+	@Override
 	public boolean isDisplayGrids() {
 		return displayGrids;
 	}
 
+	@Override
 	public boolean isDisplayXY() {
 		return displayXY;
 	}
 
+	@Override
 	public boolean isDisplayZ() {
 		return displayZ;
 	}
@@ -462,6 +486,7 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		return plotColor == PlotColor.DUALSHADE;
 	}
 
+	@Override
 	public boolean isExpectDelay() {
 		return expectDelay;
 	}
@@ -482,18 +507,22 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		return plotColor == PlotColor.OPAQUE;
 	}
 
+	@Override
 	public boolean isMesh() {
 		return mesh;
 	}
 
+	@Override
 	public boolean isPlotFunction1() {
 		return plotFunction1;
 	}
 
+	@Override
 	public boolean isPlotFunction2() {
 		return plotFunction2;
 	}
 
+	@Override
 	public boolean isScaleBox() {
 		return scaleBox;
 	}
@@ -514,15 +543,18 @@ public abstract class AbstractSurfaceModel implements SurfaceModel{
 		return plotType == PlotType.WIREFRAME;
 	}
 
+	@Override
 	public void removeChangeListener(ChangeListener ol) {
 		listenerList.remove(ChangeListener.class, ol);
 	}
 
-	public void removePropertyChangeListener(java.beans.PropertyChangeListener listener) {
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		property.removePropertyChangeListener(listener);
 	}
 
-	public void removePropertyChangeListener(String propertyName, java.beans.PropertyChangeListener listener) {
+	@Override
+	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 		property.removePropertyChangeListener(propertyName, listener);
 	}
 

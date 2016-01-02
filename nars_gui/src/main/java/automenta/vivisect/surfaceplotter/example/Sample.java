@@ -15,7 +15,7 @@ import java.awt.*;
  * @author User #1
  */
 public class Sample extends JPanel {
-	private ProgressiveSurfaceModel model;
+	private final ProgressiveSurfaceModel model;
 	public Sample() {
 		initComponents();
 		
@@ -24,7 +24,8 @@ public class Sample extends JPanel {
 		surfacePanel1.setModel(model);
 		
 		model.setMapper(new Mapper() {
-			public  float f1( float x, float y)
+			@Override
+			public  float f1(float x, float y)
 			{
 				float r = x*x+y*y;
 				
@@ -32,7 +33,8 @@ public class Sample extends JPanel {
 				return (float)( Math.sin(r)/(r));
 			}
 			
-			public  float f2( float x, float y)
+			@Override
+			public  float f2(float x, float y)
 			{
 				return (float)(Math.sin(x*y));
 			}
@@ -82,24 +84,22 @@ public class Sample extends JPanel {
 		add(surfacePanel1, BorderLayout.CENTER);
 
 		//======== toolBar1 ========
-		{
 
-			//---- button1 ----
-			button1.setText("export SVG");
-			button1.addActionListener(e -> button1ActionPerformed());
-			toolBar1.add(button1);
+		//---- button1 ----
+		button1.setText("export SVG");
+		button1.addActionListener(e -> button1ActionPerformed());
+		toolBar1.add(button1);
 
-			//---- slider1 ----
-			slider1.setMaximum(6);
-			slider1.setValue(0);
-			slider1.setPaintTicks(true);
-			slider1.setSnapToTicks(true);
-			slider1.setMinorTickSpacing(1);
-			slider1.setMajorTickSpacing(1);
-			slider1.setPaintLabels(true);
-			slider1.addChangeListener(this::slider1StateChanged);
-			toolBar1.add(slider1);
-		}
+		//---- slider1 ----
+		slider1.setMaximum(6);
+		slider1.setValue(0);
+		slider1.setPaintTicks(true);
+		slider1.setSnapToTicks(true);
+		slider1.setMinorTickSpacing(1);
+		slider1.setMajorTickSpacing(1);
+		slider1.setPaintLabels(true);
+		slider1.addChangeListener(this::slider1StateChanged);
+		toolBar1.add(slider1);
 		add(toolBar1, BorderLayout.NORTH);
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}

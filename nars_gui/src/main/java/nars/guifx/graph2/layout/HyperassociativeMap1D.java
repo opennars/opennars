@@ -57,19 +57,17 @@ public class HyperassociativeMap1D<N extends Termed> extends HyperassociativeMap
 //            }
 
         //radiating circle
-        {
-            Term term = node.c.get();
-            double theta = (term.hashCode() % 64) / 64.0 * (3.14159 * 2);
-            int complexity = term.volume();
+        Term term = node.c.get();
+        double theta = (term.hashCode() % 64) / 64.0 * (3.14159 * 2);
+        int complexity = term.volume();
 
-            double r = 100 * complexity + 200;
+        double r = 100 * complexity + 200;
 
-            xTarget = r * Math.cos( theta);
-            yTarget = r * Math.sin( theta);
+        xTarget = r * Math.cos( theta);
+        yTarget = r * Math.sin( theta);
 
-            speedX = 0.05f;
-            speedY = 0.05f;
-        }
+        speedX = 0.05f;
+        speedY = 0.05f;
 
 
         vv[0] = Util.lerp(xTarget, vv[0], speedX);

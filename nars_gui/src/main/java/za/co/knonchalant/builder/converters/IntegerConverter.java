@@ -1,9 +1,11 @@
 package za.co.knonchalant.builder.converters;
 
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.input.KeyEvent;
 import za.co.knonchalant.JavaFXHelper;
 import za.co.knonchalant.builder.TaggedParameters;
 
@@ -22,7 +24,7 @@ public class IntegerConverter extends BaseConverter<Integer> {
 
             returned = build;
             if (isTagSet()) {
-                returned.setOnKeyReleased((javafx.event.EventHandler<? super javafx.scene.input.KeyEvent>) parameters.get(getTag()));
+                returned.setOnKeyReleased((EventHandler<? super KeyEvent>) parameters.get(getTag()));
             }
         } else {
             returned = new Label(stringVersion);

@@ -20,7 +20,7 @@ public class LevelEditView extends JComponent implements MouseListener, MouseMot
 
     private int xTile = -1;
     private int yTile = -1;
-    private TilePicker tilePicker;
+    private final TilePicker tilePicker;
 
     public LevelEditView(TilePicker tilePicker)
     {
@@ -51,6 +51,7 @@ public class LevelEditView extends JComponent implements MouseListener, MouseMot
         return level;
     }
 
+    @Override
     public void addNotify()
     {
         super.addNotify();
@@ -59,6 +60,7 @@ public class LevelEditView extends JComponent implements MouseListener, MouseMot
         levelRenderer.renderBehaviors = true;
     }
 
+    @Override
     public void paintComponent(Graphics g)
     {
         g.setColor(new Color(0x8090ff));
@@ -68,14 +70,17 @@ public class LevelEditView extends JComponent implements MouseListener, MouseMot
         g.drawRect(xTile * 16 - 1, yTile * 16 - 1, 17, 17);
     }
 
+    @Override
     public void mouseClicked(MouseEvent e)
     {
     }
 
+    @Override
     public void mouseEntered(MouseEvent e)
     {
     }
 
+    @Override
     public void mouseExited(MouseEvent e)
     {
         xTile = -1;
@@ -83,6 +88,7 @@ public class LevelEditView extends JComponent implements MouseListener, MouseMot
         repaint();
     }
 
+    @Override
     public void mousePressed(MouseEvent e)
     {
         xTile = e.getX() / 16;
@@ -101,10 +107,12 @@ public class LevelEditView extends JComponent implements MouseListener, MouseMot
         }
     }
 
+    @Override
     public void mouseReleased(MouseEvent e)
     {
     }
 
+    @Override
     public void mouseDragged(MouseEvent e)
     {
         xTile = e.getX() / 16;
@@ -116,6 +124,7 @@ public class LevelEditView extends JComponent implements MouseListener, MouseMot
         repaint();
     }
 
+    @Override
     public void mouseMoved(MouseEvent e)
     {
         xTile = e.getX() / 16;

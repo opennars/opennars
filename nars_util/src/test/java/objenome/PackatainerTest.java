@@ -49,7 +49,7 @@ public class PackatainerTest {
                 System.out.println(ci + ": " + g.random(ci).getSolutions());
             }
             catch (Exception e) {
-                System.out.println("  unable: " + ci + ": " + e.toString());
+                System.out.println("  unable: " + ci + ": " + e);
             }
         }
             

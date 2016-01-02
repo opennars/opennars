@@ -121,7 +121,7 @@ public class MNISTWorld extends MNIST implements World {
     static final double noise = 0.01;
     
     @SuppressWarnings("HardcodedFileSeparator")
-    public static void main(String[] args) throws IOException, Exception {
+    public static void main(String[] args) throws Exception {
         
         MNISTWorld m = new MNISTWorld("/home/me/Downloads", 800, maxDigit);
 //        

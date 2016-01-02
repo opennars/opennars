@@ -69,7 +69,8 @@ public class NumericAnalysisTest {
         Objenome o = Objenome.solve(new FindZeros(ExampleScalarFunction.class, 
                 
                 new Function<ExampleScalarFunction, Double>() {            
-                    public Double apply(ExampleScalarFunction s) {                
+                    @Override
+                    public Double apply(ExampleScalarFunction s) {
                         return s.output(0.0) + s.output(0.5) + s.output(1.0);
                     }
                     

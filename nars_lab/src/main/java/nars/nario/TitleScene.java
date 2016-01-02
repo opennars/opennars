@@ -8,10 +8,10 @@ import java.awt.*;
 
 public class TitleScene extends Scene
 {
-    private MarioComponent component;
+    private final MarioComponent component;
     private int tick;
-    private BgRenderer bgLayer0;
-    private BgRenderer bgLayer1;
+    private final BgRenderer bgLayer0;
+    private final BgRenderer bgLayer1;
     
     public TitleScene(MarioComponent component, GraphicsConfiguration gc)
     {
@@ -20,11 +20,13 @@ public class TitleScene extends Scene
         bgLayer1 = new BgRenderer(BgLevelGenerator.createLevel(2048, 15, true, LevelGenerator.TYPE_OVERGROUND), gc, 320, 240, 2);
     }
 
+    @Override
     public void init()
     {
         Art.startMusic(4);
     }
 
+    @Override
     public void render(Graphics g, float alpha)
     {
         bgLayer0.setCam(tick+160, 0);
@@ -49,6 +51,7 @@ public class TitleScene extends Scene
 
 
     private boolean wasDown = true;
+    @Override
     public void tick()
     {
         tick++;
@@ -62,11 +65,13 @@ public class TitleScene extends Scene
         }
     }
 
+    @Override
     public float getX(float alpha)
     {
         return 0;
     }
 
+    @Override
     public float getY(float alpha)
     {
         return 0;

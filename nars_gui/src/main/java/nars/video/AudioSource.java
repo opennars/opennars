@@ -21,7 +21,7 @@ public class AudioSource implements WaveSource {
     private short[] samples;
 
 
-    public AudioSource(int device, float frameRate) throws LineUnavailableException {
+    public AudioSource(int device, float frameRate) {
         this.frameRate = frameRate;
 
         // Pick a format...

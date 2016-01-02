@@ -45,7 +45,7 @@ public abstract class InitialisationEvent implements Event {
         /**
          * The population at the end of the initialisation.
          */
-        private Population population;
+        private final Population population;
 
         /**
          * Constructs a <code>EndInitialisation</code>.

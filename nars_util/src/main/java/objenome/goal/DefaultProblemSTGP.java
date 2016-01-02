@@ -40,17 +40,15 @@ public abstract class DefaultProblemSTGP extends ProblemSTGP {
         //the(Breeder.SELECTOR, new TournamentSelector(7));
 
         List<OrganismOperator> operators = new ArrayList<>();
-        {
-            operators.add(new PointMutation());
-            the(PointMutation.PROBABILITY, 0.1);
-            the(PointMutation.POINT_PROBABILITY, 0.02);
-            operators.add(new OnePointCrossover());
-            the(OnePointCrossover.PROBABILITY, 0.1);
-            operators.add(new SubtreeCrossover());
-            the(SubtreeCrossover.PROBABILITY, 0.1);
-            operators.add(new SubtreeMutation());
-            the(SubtreeMutation.PROBABILITY, 0.1);
-        }
+        operators.add(new PointMutation());
+        the(PointMutation.PROBABILITY, 0.1);
+        the(PointMutation.POINT_PROBABILITY, 0.02);
+        operators.add(new OnePointCrossover());
+        the(OnePointCrossover.PROBABILITY, 0.1);
+        operators.add(new SubtreeCrossover());
+        the(SubtreeCrossover.PROBABILITY, 0.1);
+        operators.add(new SubtreeMutation());
+        the(SubtreeMutation.PROBABILITY, 0.1);
         the(Breeder.OPERATORS, operators);
 
         double elitismRate = 0.2;

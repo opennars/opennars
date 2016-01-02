@@ -20,6 +20,7 @@ public class CoinAnim extends Sprite
         yPic = 2;
     }
 
+    @Override
     public void move()
     {
         if (life-- < 0)

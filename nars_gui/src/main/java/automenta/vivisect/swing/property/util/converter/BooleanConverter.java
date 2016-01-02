@@ -29,6 +29,7 @@ public class BooleanConverter implements Converter {
     registry.addConverter(boolean.class, String.class, this);
   }
   
+  @Override
   public Object convert(Class type, Object value) {
     if (String.class.equals(type) && Boolean.class.equals(value.getClass())) {
       return String.valueOf(value);

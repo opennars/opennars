@@ -79,27 +79,33 @@ public class ColorModelSet implements SurfaceColor
 	/* (non-Javadoc)
 	 * @see net.ericaro.surfaceplotter.SurfaceColor#getBackgroundColor()
 	 */
+	@Override
 	public Color getBackgroundColor(){return lightColor;}
 	/* (non-Javadoc)
 	 * @see net.ericaro.surfaceplotter.SurfaceColor#getLineBoxColor()
 	 */
+	@Override
 	public Color getLineBoxColor() {return lineboxColor;}
 	/* (non-Javadoc)
 	 * @see net.ericaro.surfaceplotter.SurfaceColor#getBoxColor()
 	 */
+	@Override
 	public Color getBoxColor() {return boxColor;}
 	/* (non-Javadoc)
 	 * @see net.ericaro.surfaceplotter.SurfaceColor#getLineColor()
 	 */
+	@Override
 	public Color getLineColor(){return lineColor;}
 	/* (non-Javadoc)
 	 * @see net.ericaro.surfaceplotter.SurfaceColor#getTextColor()
 	 */
+	@Override
 	public Color getTextColor() {return lineColor;}
 	
 	/* (non-Javadoc)
 	 * @see net.ericaro.surfaceplotter.SurfaceColor#getLineColor(int, float)
 	 */
+	@Override
 	public Color getLineColor(int curve, float z)
 	{
 		return Color.BLACK;
@@ -132,6 +138,7 @@ public class ColorModelSet implements SurfaceColor
 	/* (non-Javadoc)
 	 * @see net.ericaro.surfaceplotter.SurfaceColor#getPolygonColor(int, float)
 	 */
+	@Override
 	public Color getPolygonColor(int curve, float z)
 	{
 		if (curve==1) return getFirstPolygonColor(z);
@@ -142,6 +149,7 @@ public class ColorModelSet implements SurfaceColor
 	/* (non-Javadoc)
 	 * @see net.ericaro.surfaceplotter.SurfaceColor#getFirstPolygonColor(float)
 	 */
+	@Override
 	public Color getFirstPolygonColor(float z)
 	{
 		//contour,density  plot does not fit with opaque color 
@@ -165,6 +173,7 @@ public class ColorModelSet implements SurfaceColor
 	/* (non-Javadoc)
 	 * @see net.ericaro.surfaceplotter.SurfaceColor#getSecondPolygonColor(float)
 	 */
+	@Override
 	public Color getSecondPolygonColor(float z)
 	{
 		//contour,density  plot does not fit with opaque color 

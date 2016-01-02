@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 public interface ProcTerm<C> extends Term, Consumer<C> {
 
     default void appendJavaProcedure(StringBuilder s) {
-        s.append("/* TODO: " + this.toString() + " */\n");
+        s.append("/* TODO: " + this + " */\n");
     }
 
 }

@@ -50,9 +50,11 @@ public class KeyboardControl implements KeyListener {
         quit = false;
     }
 
+    @Override
     public void keyTyped(KeyEvent e) {
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
         // Parse different key presses by setting the relevant boolean flags
         switch (e.getKeyCode()) {
@@ -84,6 +86,7 @@ public class KeyboardControl implements KeyListener {
         }
     }
 
+    @Override
     public void keyReleased(KeyEvent e) {
         // Opposite of keyPressed; sets the relevant boolean flag to false
         switch (e.getKeyCode()) {
@@ -121,7 +124,7 @@ public class KeyboardControl implements KeyListener {
       * -1 indicate an invalid combination, e.g. left/right or up/down. These should
       * be filtered out in toALEAction.
       */
-    private int[] bitKeysMap =  {
+    private final int[] bitKeysMap =  {
         0, 1, 2, 10, 3, 11, 6, 14, 4, 12, 7, 15, -1, -1, -1, -1,
         5, 13, -1, -1, 8, 16, -1, -1, 9, 17, -1, -1, -1, -1, -1, -1
     };

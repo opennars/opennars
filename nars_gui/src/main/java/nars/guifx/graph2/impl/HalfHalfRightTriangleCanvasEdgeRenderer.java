@@ -34,14 +34,12 @@ public class HalfHalfRightTriangleCanvasEdgeRenderer extends CanvasEdgeRenderer 
             X[2] = 0.5;
             Y[2] = 0d;
         }*/
-        {
-            X[0] = -0.5;
-            Y[0] = -0.5;
-            X[1] = -0.5;
-            Y[1] = 0.5;
-            X[2] = 0.5;
-            Y[2] = 0d;
-        }
+        X[0] = -0.5;
+        Y[0] = -0.5;
+        X[1] = -0.5;
+        Y[1] = 0.5;
+        X[2] = 0.5;
+        Y[2] = 0d;
 
     }
 

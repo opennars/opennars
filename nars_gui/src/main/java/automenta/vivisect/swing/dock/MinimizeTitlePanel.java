@@ -23,6 +23,11 @@ package automenta.vivisect.swing.dock;
 
 import automenta.vivisect.swing.dock.DockingRegionContainer.MinMaxRecord;
 
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+
 import static javax.swing.BorderFactory.createBevelBorder;
 import static javax.swing.BorderFactory.createEmptyBorder;
 
@@ -30,15 +35,15 @@ import static javax.swing.BorderFactory.createEmptyBorder;
  *
  * @author kitfox
  */
-@Deprecated public class MinimizeTitlePanel extends javax.swing.JPanel {
+@Deprecated public class MinimizeTitlePanel extends JPanel {
 
     final MinMaxRecord record;
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton bn_close;
-    private javax.swing.JButton bn_maximize;
-    private javax.swing.JLabel label_title;
+    private JButton bn_close;
+    private JButton bn_maximize;
+    private JLabel label_title;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -58,36 +63,36 @@ import static javax.swing.BorderFactory.createEmptyBorder;
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        label_title = new javax.swing.JLabel();
-        bn_maximize = new javax.swing.JButton();
-        bn_close = new javax.swing.JButton();
-        setBorder(createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
-        label_title.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        label_title = new JLabel();
+        bn_maximize = new JButton();
+        bn_close = new JButton();
+        setBorder(createBevelBorder(BevelBorder.RAISED));
+        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        label_title.setHorizontalAlignment(SwingConstants.LEFT);
         label_title.setText("jLabel1");
         label_title.setBorder(createEmptyBorder(0, 0, 0, 4));
         add(label_title);
-        bn_maximize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/maximize.png"))); // NOI18N
+        bn_maximize.setIcon(new ImageIcon(getClass().getResource("/icons/maximize.png"))); // NOI18N
         bn_maximize.setBorderPainted(false);
         bn_maximize.setContentAreaFilled(false);
-        bn_maximize.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        bn_maximize.setMargin(new Insets(0, 0, 0, 0));
         bn_maximize.addActionListener(this::bn_maximizeActionPerformed);
         add(bn_maximize);
-        bn_close.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/close.png"))); // NOI18N
+        bn_close.setIcon(new ImageIcon(getClass().getResource("/icons/close.png"))); // NOI18N
         bn_close.setBorderPainted(false);
         bn_close.setContentAreaFilled(false);
-        bn_close.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        bn_close.setMargin(new Insets(0, 0, 0, 0));
         bn_close.addActionListener(this::bn_closeActionPerformed);
         add(bn_close);
     } // </editor-fold>//GEN-END:initComponents
 
-    private void bn_closeActionPerformed(java.awt.event.ActionEvent evt) //GEN-FIRST:event_bn_closeActionPerformed
+    private void bn_closeActionPerformed(ActionEvent evt) //GEN-FIRST:event_bn_closeActionPerformed
     {
         //GEN-HEADEREND:event_bn_closeActionPerformed
         record.getContainer().closeMinimized(record);
     } //GEN-LAST:event_bn_closeActionPerformed
 
-    private void bn_maximizeActionPerformed(java.awt.event.ActionEvent evt) //GEN-FIRST:event_bn_maximizeActionPerformed
+    private void bn_maximizeActionPerformed(ActionEvent evt) //GEN-FIRST:event_bn_maximizeActionPerformed
     {
         //GEN-HEADEREND:event_bn_maximizeActionPerformed
         record.getContainer().restoreMinimized(record);

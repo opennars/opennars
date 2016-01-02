@@ -42,6 +42,7 @@ public class ColorCellRenderer extends DefaultCellRenderer {
     return ('#' + red + green + blue).toUpperCase();
   }
 
+  @Override
   protected String convertToString(Object value) {
     if (value instanceof Integer) {
       value = new Color((Integer) value);
@@ -53,6 +54,7 @@ public class ColorCellRenderer extends DefaultCellRenderer {
       + color.getBlue() + " - " + toHex(color);
   }
 
+  @Override
   protected Icon convertToIcon(Object value) {
     if (value == null) { return null; }
     if (value instanceof Integer) {
@@ -76,12 +78,15 @@ public class ColorCellRenderer extends DefaultCellRenderer {
       this.height = height;
     }
 
+    @Override
     public int getIconHeight() {
       return height;
     }
+    @Override
     public int getIconWidth() {
       return width;
     }
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       Graphics2D g2d = (Graphics2D)g;
       Paint oldPaint = g2d.getPaint();

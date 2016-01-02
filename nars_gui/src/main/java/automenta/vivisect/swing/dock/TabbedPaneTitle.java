@@ -22,7 +22,11 @@
 package automenta.vivisect.swing.dock;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 /**
  *
@@ -93,34 +97,34 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
     private void initComponents() {
 
         setOpaque(false);
-        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 4, 0));
-        label_title.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
+        label_title.setHorizontalAlignment(SwingConstants.LEFT);
         label_title.setText("jLabel1");
-        label_title.addMouseListener(new java.awt.event.MouseAdapter() {
+        label_title.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+            public void mouseClicked(MouseEvent evt) {
                 label_titleMouseClicked(evt);
             }
 
             @Override
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+            public void mousePressed(MouseEvent evt) {
                 label_titleMousePressed(evt);
             }
 
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
+            public void mouseReleased(MouseEvent evt) {
                 label_titleMouseReleased(evt);
             }
         });
-        label_title.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        label_title.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
+            public void mouseDragged(MouseEvent evt) {
                 label_titleMouseDragged(evt);
             }
         });
         bn_float.setBorderPainted(false);
         bn_float.setContentAreaFilled(false);
-        bn_float.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        bn_float.setMargin(new Insets(0, 0, 0, 0));
         bn_float.addActionListener(this::bn_floatActionPerformed);
         add(label_title);
         add(bn_float);
@@ -151,36 +155,36 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
         //bn_close.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/close.png"))); // NOI18N
         bn_close.setBorderPainted(false);
         bn_close.setContentAreaFilled(false);
-        bn_close.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        bn_close.setMargin(new Insets(0, 0, 0, 0));
         bn_close.addActionListener(this::bn_closeActionPerformed);
         add(bn_close);
     } // </editor-fold>//GEN-END:initComponents
 
-    private void bn_floatActionPerformed(java.awt.event.ActionEvent evt) //GEN-FIRST:event_bn_floatActionPerformed
+    private void bn_floatActionPerformed(ActionEvent evt) //GEN-FIRST:event_bn_floatActionPerformed
         {
         //GEN-HEADEREND:event_bn_floatActionPerformed
         dockRegion.floatTab(content);
     } //GEN-LAST:event_bn_floatActionPerformed
 
-    private void bn_maximizeActionPerformed(java.awt.event.ActionEvent evt) //GEN-FIRST:event_bn_maximizeActionPerformed
+    private void bn_maximizeActionPerformed(ActionEvent evt) //GEN-FIRST:event_bn_maximizeActionPerformed
         {
         //GEN-HEADEREND:event_bn_maximizeActionPerformed
         dockRegion.maximizeTab(content);
     } //GEN-LAST:event_bn_maximizeActionPerformed
 
-    private void bn_minimizeActionPerformed(java.awt.event.ActionEvent evt) //GEN-FIRST:event_bn_minimizeActionPerformed
+    private void bn_minimizeActionPerformed(ActionEvent evt) //GEN-FIRST:event_bn_minimizeActionPerformed
         {
         //GEN-HEADEREND:event_bn_minimizeActionPerformed
         dockRegion.minimizeTab(content);
     } //GEN-LAST:event_bn_minimizeActionPerformed
 
-    private void bn_closeActionPerformed(java.awt.event.ActionEvent evt) //GEN-FIRST:event_bn_closeActionPerformed
+    private void bn_closeActionPerformed(ActionEvent evt) //GEN-FIRST:event_bn_closeActionPerformed
         {
         //GEN-HEADEREND:event_bn_closeActionPerformed
         dockRegion.removeTab(content);
     } //GEN-LAST:event_bn_closeActionPerformed
 
-    private void label_titleMouseDragged(java.awt.event.MouseEvent evt) //GEN-FIRST:event_label_titleMouseDragged
+    private void label_titleMouseDragged(MouseEvent evt) //GEN-FIRST:event_label_titleMouseDragged
     {
         //GEN-HEADEREND:event_label_titleMouseDragged
 //        System.err.println("Dragging " + evt);
@@ -196,13 +200,13 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
 //        getRootPane().repaint();
     } //GEN-LAST:event_label_titleMouseDragged
 
-    private void label_titleMouseClicked(java.awt.event.MouseEvent evt) //GEN-FIRST:event_label_titleMouseClicked
+    private void label_titleMouseClicked(MouseEvent evt) //GEN-FIRST:event_label_titleMouseClicked
         {
         //GEN-HEADEREND:event_label_titleMouseClicked
         dockRegion.selectTab(content);
     } //GEN-LAST:event_label_titleMouseClicked
 
-    private void label_titleMousePressed(java.awt.event.MouseEvent evt) //GEN-FIRST:event_label_titleMousePressed
+    private void label_titleMousePressed(MouseEvent evt) //GEN-FIRST:event_label_titleMousePressed
     {
         //GEN-HEADEREND:event_label_titleMousePressed
         //      System.err.println("Press");
@@ -210,7 +214,7 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
         mouseBegin = evt;
     } //GEN-LAST:event_label_titleMousePressed
 
-    private void label_titleMouseReleased(java.awt.event.MouseEvent evt) //GEN-FIRST:event_label_titleMouseReleased
+    private void label_titleMouseReleased(MouseEvent evt) //GEN-FIRST:event_label_titleMouseReleased
     {
         //GEN-HEADEREND:event_label_titleMouseReleased
 //        System.err.println("Released");

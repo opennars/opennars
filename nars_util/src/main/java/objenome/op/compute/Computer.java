@@ -69,7 +69,7 @@ public interface Computer<I,P extends Organism,O> extends Function<ComputerInput
         try {
             return eval(input.program, input.argNames, input.argValues);
         } catch (MalformedProgramException ex) {
-            throw new RuntimeException(ex.toString() + ": " + this + " with input " + input.toString(), ex);
+            throw new RuntimeException(ex + ": " + this + " with input " + input, ex);
         }
     }
     

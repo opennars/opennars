@@ -104,6 +104,7 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
         return this;
     }
 
+    @Override
     public void run() {
 
         List<Series> series = this.series;

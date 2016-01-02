@@ -50,34 +50,42 @@ public final class AgentGUI extends JFrame implements AbstractUI {
     }
 
     /** When die() is called, we want to safely close the GUI */
+    @Override
     public void die() {
         dispose();
     }
 
+    @Override
     public void setImage(BufferedImage img) {
         panel.setImage(img);
     }
 
+    @Override
     public void setCenterString(String s) {
         panel.setCenterString(s);
     }
 
+    @Override
     public void addMessage(String s) {
         panel.addMessage(s);
     }
 
+    @Override
     public int getKeyboardAction() {
         return keyboard.toALEAction();
     }
 
+    @Override
     public void updateFrameCount() {
         panel.updateFrameCount();
     }
 
+    @Override
     public boolean quitRequested() {
         return (keyboard.quit);
     }
 
+    @Override
     public void refresh() {
         repaint();
     }

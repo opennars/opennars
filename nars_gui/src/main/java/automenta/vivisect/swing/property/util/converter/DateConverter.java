@@ -14,6 +14,7 @@ public class DateConverter implements Converter {
 		registry.addConverter(Date.class, String.class, this);
 	}
 
+	@Override
 	public Object convert(Class type, Object value) {
 		if (value == null)
 			return null;

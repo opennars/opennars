@@ -92,13 +92,13 @@ public class RuleLife {
 		for (i = 0; i <= 8; i++)
 			// S
 			if (RulesS[i])
-				sBff = sBff + String.valueOf(i);
+				sBff = sBff + i;
 		sBff = sBff + '/';
 
 		for (i = 0; i <= 8; i++)
 			// B
 			if (RulesB[i])
-				sBff = sBff + String.valueOf(i);
+				sBff = sBff + i;
 
 		return sBff;
 	}

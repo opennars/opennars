@@ -40,7 +40,7 @@ public class Phenotainer extends Container {
      *  instanced objects */
     public Phenotainer commit() {
         //remove all builders with ambiguosity
-        Collection<String> toRemove = builders.entrySet().stream().filter(e -> e.getValue() instanceof Problem).map(Map.Entry<String, Builder>::getKey).collect(Collectors.toCollection(ArrayList::new));
+        Collection<String> toRemove = builders.entrySet().stream().filter(e -> e.getValue() instanceof Problem).map(Map.Entry::getKey).collect(Collectors.toCollection(ArrayList::new));
         toRemove.forEach(builders::remove);
 
         for (Solution g : objenome.genes.values()) {
@@ -59,7 +59,7 @@ public class Phenotainer extends Container {
 
     @Override
     public String toString() {
-        return parameterValues + ",  " + constructorDependencies.toString() + ",  " + setterDependencies.toString() + ", ";
+        return parameterValues + ",  " + constructorDependencies + ",  " + setterDependencies + ", ";
     }
     
     
@@ -80,7 +80,7 @@ public class Phenotainer extends Container {
                 
             } catch (Exception ex) {                                
                 ex.printStackTrace();
-                throw new RuntimeException("Unable to implement " + c + "; " + ex.toString(), ex);
+                throw new RuntimeException("Unable to implement " + c + "; " + ex, ex);
                 
             }
         }

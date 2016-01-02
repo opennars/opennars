@@ -536,7 +536,7 @@ public class AdaptiveResonanceTheory2
         results.fluctuation = fluctuation_best;
     }
 
-    private Random random = new Random();
+    private final Random random = new Random();
 }
 
 

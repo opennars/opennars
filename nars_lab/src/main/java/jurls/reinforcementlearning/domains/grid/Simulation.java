@@ -20,7 +20,7 @@ public class Simulation {
     private int time = 1;
 
     public static boolean DISPLAY = true;
-    private boolean displayRewardChart = DISPLAY;    
+    private final boolean displayRewardChart = DISPLAY;
     
     long displayPeriodMS = 1000;
     

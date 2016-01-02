@@ -105,6 +105,7 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
      * <li>{@link TypedOrganism#MAXIMUM_DEPTH}
      * </ul>
      */
+    @Override
     public void setConfig(GPContainer config) {
         super.setConfig(config);
         

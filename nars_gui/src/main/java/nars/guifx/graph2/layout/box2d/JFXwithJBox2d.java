@@ -117,6 +117,7 @@ public class JFXwithJBox2d extends Application {
         
         //Draw hurdles on mouse event.
         EventHandler<MouseEvent> addHurdle = new EventHandler<MouseEvent>(){
+            @Override
             public void handle(MouseEvent me) {
                     //Get mouse's x and y coordinates on the scene
                     float dragX = (float)me.getSceneX();

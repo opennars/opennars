@@ -17,7 +17,7 @@ public class RenderParameterizedFunction2D implements RenderFunction2D {
 
     private ParameterizedFunction parameterizedFunction = null;
     private final Color color;
-    private double[] xs = new double[2];
+    private final double[] xs = new double[2];
 
     public RenderParameterizedFunction2D(Color color) {
         this.color = color;

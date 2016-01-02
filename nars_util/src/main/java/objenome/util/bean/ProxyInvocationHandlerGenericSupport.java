@@ -83,6 +83,7 @@ public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
         return annotationType.getMethod("value"); //$NON-NLS-1$
     }
 
+    @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         //noinspection IfStatementWithTooManyBranches
         if (isAnnotated(method, GENERIC_GET)) {

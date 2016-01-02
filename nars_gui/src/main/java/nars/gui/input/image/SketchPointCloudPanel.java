@@ -126,6 +126,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
 
     public String lastdrawing="";
     public String drawing="";
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == clearCanvas) {
             clearCanvas();
@@ -192,14 +193,17 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         lastdrawing="";
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) //mouse entered canvas
     {
     }
 
+    @Override
     public void mouseExited(MouseEvent e) //mouse left canvas
     {
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) //mouse pressed-depressed (no motion in between), if there's motion -> mouseDragged
     {
         if(e.getButton()==MouseEvent.BUTTON3) {
@@ -225,11 +229,12 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
     int coordy=0;
     int lastcoordx=-1;
     int lastcoordy=-1;
+    @Override
     public void mousePressed(MouseEvent e) {
         int button = e.getButton();
 
         switch (button) {
-            case MouseEvent.BUTTON1: {
+            case MouseEvent.BUTTON1:
                 if (state == GESTURE_PROCESSED) {
                     //_currentGesture = new ArrayList<PointCloudPoint>();
                     lastcoordx=coordx;
@@ -243,9 +248,8 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
                 caption.setText("Capturing stroke: " + (_currentStrokeId + 1));
                 update(e);
                 return;
-            }
 
-            case MouseEvent.BUTTON3: {
+            case MouseEvent.BUTTON3:
                 _currentStrokeId++;
                 if (state != STROKE_COMPLETE) {
                     return;
@@ -266,35 +270,34 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
                 addStandard.setEnabled(true);
                 _currentStrokeId++;
                 return;
-            }
 
-            default: {
+            default:
                 _currentStrokeId++;
-            }
         }
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         int button = e.getButton();
         _currentStrokeId++;
         switch (button) {
-            case MouseEvent.BUTTON1: {
+            case MouseEvent.BUTTON1:
                 state = STROKE_COMPLETE;
                 caption.setForeground(lineColors[_currentStrokeId]);
                 caption.setText("Stroke " + (_currentStrokeId + 1) + " recorded");
                 update(e);
                 return;
-            }
 
-            default: {
+            default:
                 _currentStrokeId++;
-            }
         }
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         state = STROKE_IN_PROGRESS;
         update(e);
@@ -302,6 +305,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
             _currentStrokeId++;
     }
 
+    @Override
     public void paint(Graphics _g) {
         Graphics2D g = (Graphics2D)_g;
         

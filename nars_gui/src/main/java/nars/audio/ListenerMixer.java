@@ -15,7 +15,7 @@ public class ListenerMixer implements StereoSoundProducer
 
     private float[] buf = new float[0];
 
-    private int maxChannels;
+    private final int maxChannels;
 
     private SoundListener soundListener;
 
@@ -67,6 +67,7 @@ public class ListenerMixer implements StereoSoundProducer
 //        }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public float read(float[] leftBuf, float[] rightBuf, int readRate)
     {
@@ -122,6 +123,7 @@ public class ListenerMixer implements StereoSoundProducer
         return maxAmplitude;
     }
 
+    @Override
     public void skip(int samplesToSkip, int readRate)
     {
         for (Sound sound : sounds) {

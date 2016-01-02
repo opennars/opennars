@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class BgLevelGenerator
 {
-    private static Random levelSeedRandom = new Random();
+    private static final Random levelSeedRandom = new Random();
 
     public static Level createLevel(int width, int height, boolean distant, int type)
     {
@@ -13,10 +13,10 @@ public class BgLevelGenerator
         return levelGenerator.createLevel(levelSeedRandom.nextLong());
     }
 
-    private int width;
-    private int height;
-    private boolean distant;
-    private int type;
+    private final int width;
+    private final int height;
+    private final boolean distant;
+    private final int type;
 
     private BgLevelGenerator(int width, int height, boolean distant, int type)
     {
@@ -34,7 +34,6 @@ public class BgLevelGenerator
         switch (type)
         {
             case LevelGenerator.TYPE_OVERGROUND:
-            {
 
                 int range = distant ? 4 : 6;
                 int offs = distant ? 2 : 1;
@@ -87,9 +86,7 @@ public class BgLevelGenerator
                     }
                 }
                 break;
-            }
             case LevelGenerator.TYPE_UNDERGROUND:
-            {
                 if (distant)
                 {
                     int tt = 0;
@@ -132,9 +129,7 @@ public class BgLevelGenerator
                     }
                 }
                 break;
-            }
             case LevelGenerator.TYPE_CASTLE:
-            {
                 if (distant)
                 {
                     for (int x = 0; x < width; x++)
@@ -217,7 +212,6 @@ public class BgLevelGenerator
                     }
                 }
                 break;
-            }
         }
         return level;
     }

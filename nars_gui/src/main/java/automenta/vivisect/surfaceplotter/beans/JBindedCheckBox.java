@@ -10,7 +10,7 @@ import java.beans.PropertyChangeEvent;
  * @author Eric
  *
  */
-public class JBindedCheckBox extends javax.swing.JCheckBox {
+public class JBindedCheckBox extends JCheckBox {
 
 	
 	ModelBindedBeanProperty<Boolean> property = new ModelBindedBeanProperty<Boolean>("surfaceModel") {
@@ -111,7 +111,7 @@ public class JBindedCheckBox extends javax.swing.JCheckBox {
 	
 	/**
 	 * @param value
-	 * @see net.ericaro.surfaceplotter.beans.BeanProperty#setProperty(java.lang.Object)
+	 * @see net.ericaro.surfaceplotter.beans.BeanProperty#setProperty(Object)
 	 */
 	public void setProperty(Boolean value) {
 		property.setProperty(value);
@@ -127,7 +127,7 @@ public class JBindedCheckBox extends javax.swing.JCheckBox {
 
 	/**
 	 * @param propertyName
-	 * @see net.ericaro.surfaceplotter.beans.BeanProperty#setPropertyName(java.lang.String)
+	 * @see net.ericaro.surfaceplotter.beans.BeanProperty#setPropertyName(String)
 	 */
 	public void setPropertyName(String propertyName) {
 		property.setPropertyName(propertyName);
@@ -143,7 +143,7 @@ public class JBindedCheckBox extends javax.swing.JCheckBox {
 	
 	/**
 	 * @param modelSource
-	 * @see net.ericaro.surfaceplotter.beans.ModelBindedBeanProperty#setSourceBean(java.lang.Object)
+	 * @see net.ericaro.surfaceplotter.beans.ModelBindedBeanProperty#setSourceBean(Object)
 	 */
 	public void setSourceBean(ModelSource modelSource) {
 		property.setSourceBean(modelSource);

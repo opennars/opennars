@@ -46,7 +46,8 @@ import java.util.Locale;
  */
 public class NumberEditor extends AbstractPropertyEditor {
 
-	private double minVal, maxVal;
+	private final double minVal;
+    private final double maxVal;
 	private Object lastGoodValue;
 	protected NumberFormat format;
 	    
@@ -69,6 +70,7 @@ public class NumberEditor extends AbstractPropertyEditor {
 	}
 	
    
+    @Override
     public Object getValue() {
         String text = ((JTextField) editor).getText();
         if (text == null || text.trim().isEmpty()) {
@@ -106,6 +108,7 @@ public class NumberEditor extends AbstractPropertyEditor {
         return lastGoodValue;
     }
 
+    @Override
     public void setValue(Object value) {
         if (value instanceof Number) {
             ((JTextField) editor).setText(format.format(((Number)value).doubleValue()));

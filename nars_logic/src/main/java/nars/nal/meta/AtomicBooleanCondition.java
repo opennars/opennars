@@ -29,7 +29,7 @@ public abstract class AtomicBooleanCondition<C> extends AbstractLiteral implemen
 
     public String toJavaConditionString() {
         return ("(/* TODO: " +
-                this.toString() +
+                this +
                 " */ false)\t");
     }
 

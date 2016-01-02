@@ -27,7 +27,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
     private int tick;
     private int renderedFrames;
     boolean antialias = false;
-    private boolean soundEnabled = false;
+    private final boolean soundEnabled = false;
     private double time;
     private double now;
     private double averagePassedTime;
@@ -35,7 +35,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
     private Graphics og;
     private float alpha;
     protected BufferedImage imageBuffer;
-    private float bufferScale = 0.5f;
+    private final float bufferScale = 0.5f;
 
 
     public MarioComponent() {
@@ -73,6 +73,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
         return image;
     }
 
+    @Override
     public void paint(Graphics g) {
 
             /*          drawString(og, "FPS: " + fps, 5, 5, 0);
@@ -103,6 +104,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 
     }
 
+    @Override
     public void update(Graphics g) {
     }
 
@@ -162,6 +164,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
     int lastTick = -1;
     int fps = 0;
 
+    @Override
     public void run() {
         graphicsConfiguration = getGraphicsConfiguration();
 
@@ -266,10 +269,12 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
         }
     }
 
+    @Override
     public void keyPressed(KeyEvent arg0) {
         toggleKey(arg0.getKeyCode(), true);
     }
 
+    @Override
     public void keyReleased(KeyEvent arg0) {
         toggleKey(arg0.getKeyCode(), false);
     }
@@ -294,13 +299,16 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
         }
     }
 
+    @Override
     public void keyTyped(KeyEvent arg0) {
     }
 
+    @Override
     public void focusGained(FocusEvent arg0) {
         focused = true;
     }
 
+    @Override
     public void focusLost(FocusEvent arg0) {
         focused = false;
     }

@@ -111,7 +111,7 @@ public class OS {
    * Returns the name of the current Windows visual style.
    * <ul>
    * <li>it looks for a property name "win.xpstyle.name" in UIManager and if not found
-   * <li>it queries the win.xpstyle.colorName desktop property ({@link Toolkit#getDesktopProperty(java.lang.String)})
+   * <li>it queries the win.xpstyle.colorName desktop property ({@link Toolkit#getDesktopProperty(String)})
    * </ul>
    * 
    * @return the name of the current Windows visual style if any. 

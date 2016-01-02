@@ -13,11 +13,11 @@ public class LevelRenderer
     private int xCam;
     private int yCam;
     protected BufferedImage image;
-    private Graphics2D g;
+    private final Graphics2D g;
     private static final Color transparent = new Color(0, 0, 0, 0);
     private Level level;
 
-    private Random random = new XORShiftRandom();
+    private final Random random = new XORShiftRandom();
     public boolean renderBehaviors = false;
 
     int width;

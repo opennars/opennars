@@ -42,12 +42,16 @@ public class BitVectors {
  	
 	/** An immutable, singleton empty bit vector. */
 	public static final BitVector EMPTY_VECTOR = new AbstractBitVector() {
+		@Override
 		public long length() { return 0; }
+		@Override
 		public BitVector copy(long from, long to ) {
 			ensureFromTo( 0, from, to );
 			return EMPTY_VECTOR; 
 		}
+		@Override
 		public boolean getBoolean(long index ) { throw new IndexOutOfBoundsException(); }
+		@Override
 		public BitVector copy() {
 			return this;
 		}
@@ -58,12 +62,16 @@ public class BitVectors {
 
 	/** An immutable bit vector of length one containing a zero. */
 	public static final BitVector ZERO = new AbstractBitVector() {
+		@Override
 		public long length() { return 1; }
+		@Override
 		public BitVector copy(long from, long to ) {
 			ensureFromTo( 1, from, to );
 			return from == to ? EMPTY_VECTOR : this; 
 		}
+		@Override
 		public boolean getBoolean(long index ) { if ( index > 0 ) throw new IndexOutOfBoundsException(); else return false; }
+		@Override
 		public BitVector copy() {
 			return this;
 		}
@@ -74,12 +82,16 @@ public class BitVectors {
 
 	/** An immutable bit vector of length one containing a one. */
 	public static final BitVector ONE = new AbstractBitVector() {
+		@Override
 		public long length() { return 1; }
+		@Override
 		public BitVector copy(long from, long to ) {
 			ensureFromTo( 1, from, to );
 			return from == to ? EMPTY_VECTOR : this; 
 		}
+		@Override
 		public boolean getBoolean(long index ) { if ( index > 0 ) throw new IndexOutOfBoundsException(); else return true; }
+		@Override
 		public BitVector copy() {
 			return this;
 		}

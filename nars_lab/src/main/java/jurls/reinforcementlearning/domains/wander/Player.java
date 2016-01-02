@@ -24,7 +24,7 @@ public class Player {
     public double r;
     public double angle;
     public double vx, vy;
-    private World world;
+    private final World world;
     public final Action[] actions;
     private int currentAction;
     private double yOld;

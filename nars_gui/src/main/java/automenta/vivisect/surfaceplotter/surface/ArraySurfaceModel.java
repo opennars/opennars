@@ -83,6 +83,7 @@ public class ArraySurfaceModel extends AbstractSurfaceModel {
 
     }
 
+    @Override
     public SurfaceVertex[][] getSurfaceVertex() {
         return surfaceVertex;
     }

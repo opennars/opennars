@@ -379,7 +379,7 @@ public class OWLInput  {
     }
 
     public static final Atom owlClass = Atom.the("class");
-    public static Compound isAClass(Term clas) {
+    public static Term isAClass(Term clas) {
         return $.inst(clas, owlClass);
     }
 

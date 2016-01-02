@@ -7,8 +7,8 @@ import java.io.IOException;
 
 public class Replayer
 {
-    private ByteArrayInputStream bais;
-    private DataInputStream dis;
+    private final ByteArrayInputStream bais;
+    private final DataInputStream dis;
 
     private byte tick = 0;
     private int tickCount = -99999999;

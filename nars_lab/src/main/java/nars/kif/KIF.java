@@ -347,7 +347,7 @@ public class KIF {
                     {
                         expression.append(' ');
                     }
-                    expression.append(String.valueOf(st.sval));
+                    expression.append(st.sval);
                     if (expression.length() > 64000) {
                         //System.out.print("Error in KIF.parse(): Parsing error: Sentence Over 64000 characters.");
                         //System.out.println(new Integer(lineStart + totalLinesForComments).toString());
@@ -453,7 +453,7 @@ public class KIF {
 
         if (!inAntecedent && !inConsequent && (parenLevel == 1)) {
             key = key + "arg-";
-            key = key + String.valueOf(argumentNum);
+            key = key + argumentNum;
             key = key + "-";
             key = key + sval;
         }

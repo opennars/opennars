@@ -127,7 +127,7 @@ public class RuleGenBin {
 			else if (iCnt == 2)
 				sRetStr = sChr + sChr;
 			else
-				sRetStr = String.valueOf(iCnt) + sChr;
+				sRetStr = iCnt + sChr;
 		}
 		return sRetStr;
 	}

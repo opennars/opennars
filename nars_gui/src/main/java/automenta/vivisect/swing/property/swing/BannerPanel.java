@@ -29,11 +29,11 @@ import java.awt.*;
  */
 public class BannerPanel extends JPanel {
 
-  private JLabel titleLabel;
+  private final JLabel titleLabel;
 
-  private JTextComponent subtitleLabel;
+  private final JTextComponent subtitleLabel;
 
-  private JLabel iconLabel;
+  private final JLabel iconLabel;
 
   public BannerPanel() {
     setBorder(

@@ -71,6 +71,7 @@ public class FrameHistory implements Cloneable {
         return frames.get(frames.size() - t - 1);
     }
 
+    @Override
     @SuppressWarnings("CloneReturnsClassType")
     public Object clone() {
         try {

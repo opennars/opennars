@@ -92,7 +92,7 @@ public class Grid1D implements World {
         }
         
         //# Ensure that the world state falls between 0 and 9
-        worldState -= size * Math.floor( ((double)worldState) / (size) );
+        worldState -= size * Math.floor( worldState / (size) );
         simpleState = (int)Math.floor(worldState);
         if (simpleState == 9) simpleState = 0;
         

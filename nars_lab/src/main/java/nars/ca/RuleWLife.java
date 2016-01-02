@@ -105,21 +105,21 @@ public class RuleWLife {
 
 		ih = isHist ? iClo : 0;
 
-		sBff = "NW" + String.valueOf(wgtAry[1]) + ",NN"
-				+ String.valueOf(wgtAry[2]) + ",NE" + String.valueOf(wgtAry[3])
-				+ ",WW" + String.valueOf(wgtAry[4]) + ",ME"
-				+ String.valueOf(wgtAry[5]) + ",EE" + String.valueOf(wgtAry[6])
-				+ ",SW" + String.valueOf(wgtAry[7]) + ",SS"
-				+ String.valueOf(wgtAry[8]) + ",SE" + String.valueOf(wgtAry[9])
-				+ ",HI" + String.valueOf(ih);
+		sBff = "NW" + wgtAry[1] + ",NN"
+				+ wgtAry[2] + ",NE" + wgtAry[3]
+				+ ",WW" + wgtAry[4] + ",ME"
+				+ wgtAry[5] + ",EE" + wgtAry[6]
+				+ ",SW" + wgtAry[7] + ",SS"
+				+ wgtAry[8] + ",SE" + wgtAry[9]
+				+ ",HI" + ih;
 
 		for (i = 0; i < IMAXWLIFERUL; i++)
 			if (rulesS[i])
-				sBff = sBff + ",RS" + String.valueOf(i);
+				sBff = sBff + ",RS" + i;
 
 		for (i = 0; i < IMAXWLIFERUL; i++)
 			if (rulesB[i])
-				sBff = sBff + ",RB" + String.valueOf(i);
+				sBff = sBff + ",RB" + i;
 
 		return sBff;
 	}

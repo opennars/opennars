@@ -27,6 +27,7 @@ import java.awt.*;
  */
 public class InsetsPropertyEditor extends StringConverterPropertyEditor {
 
+  @Override
   protected Object convertFromString(String text) {
     return ConverterRegistry.instance().convert(Insets.class, text);
   }

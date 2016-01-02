@@ -36,7 +36,7 @@ public class TetrisState {
 
     float fallingBLockColor = 0.5f;
 
-    private Random randomGenerator = new Random();
+    private final Random randomGenerator = new Random();
     
     public boolean blockMobile = true;
     public int currentBlockId;/*which block we're using in the block table*/
@@ -418,7 +418,7 @@ public class TetrisState {
         //2 lines == 2
         //3 lines == 4
         //4 lines == 8
-        score += java.lang.Math.pow(2.0d, numRowsCleared-1);
+        score += Math.pow(2.0d, numRowsCleared-1);
     }
 
     /**

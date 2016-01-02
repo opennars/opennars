@@ -40,7 +40,7 @@ public class OptimizeMultivariate<C> extends NumericSolver<C> implements Multiva
     //double convergeRel = 0.01;
     //double convergeAbs = 0.02;
     private Double bestValue;
-    private int evaluations = 200;
+    private final int evaluations = 200;
     private GoalType goal = MAXIMIZE;
     private List<SetNumericValue> variables;
     private Objenome objenome;

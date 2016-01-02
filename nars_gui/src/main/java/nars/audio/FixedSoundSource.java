@@ -5,8 +5,8 @@ package nars.audio;
  */
 public class FixedSoundSource implements SoundSource
 {
-	private float x;
-	private float y;
+	private final float x;
+	private final float y;
 
 	public FixedSoundSource(float x, float y)
 	{
@@ -20,12 +20,14 @@ public class FixedSoundSource implements SoundSource
 		y = soundSource.getY(1);
 	}
 
-    public float getX(float alpha)
+    @Override
+	public float getX(float alpha)
     {
         return x;
     }
 
-    public float getY(float alpha)
+    @Override
+	public float getY(float alpha)
     {
         return y;
     }

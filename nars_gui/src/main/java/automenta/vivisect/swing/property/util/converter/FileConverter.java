@@ -9,6 +9,7 @@ public class FileConverter implements Converter {
 		registry.addConverter(File.class, String.class, this);
 	}
 
+	@Override
 	public Object convert(Class type, Object value) {
 		if (value == null)
 			return null;

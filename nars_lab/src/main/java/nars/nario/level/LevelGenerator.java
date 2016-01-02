@@ -11,7 +11,7 @@ public class LevelGenerator
     public static final int TYPE_UNDERGROUND = 1;
     public static final int TYPE_CASTLE = 2;
 
-    private static Random levelSeedRandom = new Random();
+    private static final Random levelSeedRandom = new Random();
     public static long lastSeed;
 
     public static Level createLevel(int width, int height, long seed, int difficulty, int type)
@@ -30,7 +30,7 @@ public class LevelGenerator
     private static final int ODDS_TUBES = 2;
     private static final int ODDS_JUMP = 3;
     private static final int ODDS_CANNONS = 4;
-    private int[] odds = new int[5];
+    private final int[] odds = new int[5];
     private int totalOdds;
     private int difficulty;
     private int type;

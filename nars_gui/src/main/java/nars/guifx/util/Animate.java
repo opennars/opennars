@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 public final class Animate extends AnimationTimer {
 
     private final Consumer<Animate> run;
-    private int periodMS;
+    private final int periodMS;
     private long last;
 
     public Animate(int periodMS, Consumer<Animate> r) {

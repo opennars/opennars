@@ -71,9 +71,9 @@ import java.beans.PropertyChangeListener;
  * 
  * <p>
  * Note: <code>JCollapsiblePane</code> requires its parent container to have a
- * {@link java.awt.LayoutManager} using {@link #getPreferredSize()} when
- * calculating its layout (example {@link automenta.vivisect.swing.property.swing.PercentLayout},
- * {@link java.awt.BorderLayout}). 
+ * {@link LayoutManager} using {@link #getPreferredSize()} when
+ * calculating its layout (example {@link PercentLayout},
+ * {@link BorderLayout}).
  * 
  * @javabean.attribute
  *          name="isContainer"
@@ -127,7 +127,7 @@ public class JCollapsiblePane extends JPanel {
    * Timer used for doing the transparency animation (fade-in)
    */
   private Timer animateTimer;
-  private AnimationListener animator;
+  private final AnimationListener animator;
   private int currentHeight = -1;
   private WrapperContainer wrapper;
   private boolean useAnimation = true;
@@ -164,15 +164,18 @@ public class JCollapsiblePane extends JPanel {
       // icon
       JCollapsiblePane.this.addPropertyChangeListener("collapsed", this);
     }
+    @Override
     public void putValue(String key, Object newValue) {
       super.putValue(key, newValue);
       if (EXPAND_ICON.equals(key) || COLLAPSE_ICON.equals(key)) {
         updateIcon();
       }
     }
-    public void actionPerformed(ActionEvent e) {      
+    @Override
+    public void actionPerformed(ActionEvent e) {
       setCollapsed(!isCollapsed());
     }
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
       updateIcon();
     }
@@ -215,6 +218,7 @@ public class JCollapsiblePane extends JPanel {
   /**
    * Overriden to redirect call to the content pane.
    */
+  @Override
   public void setLayout(LayoutManager mgr) {
     // wrapper can be null when setLayout is called by "super()" constructor
     if (wrapper != null) {
@@ -225,6 +229,7 @@ public class JCollapsiblePane extends JPanel {
   /**
    * Overriden to redirect call to the content pane.
    */
+  @Override
   protected void addImpl(Component comp, Object constraints, int index) {
     getContentPane().add(comp, constraints, index);
   }
@@ -232,6 +237,7 @@ public class JCollapsiblePane extends JPanel {
   /**
    * Overriden to redirect call to the content pane
    */
+  @Override
   public void remove(Component comp) {
     getContentPane().remove(comp);
   }
@@ -239,6 +245,7 @@ public class JCollapsiblePane extends JPanel {
   /**
    * Overriden to redirect call to the content pane.
    */
+  @Override
   public void remove(int index) {
     getContentPane().remove(index);
   }
@@ -246,6 +253,7 @@ public class JCollapsiblePane extends JPanel {
   /**
    * Overriden to redirect call to the content pane.
    */
+  @Override
   public void removeAll() {
     getContentPane().removeAll();
   }
@@ -337,6 +345,7 @@ public class JCollapsiblePane extends JPanel {
     }
   }
 
+  @Override
   public Dimension getMinimumSize() {
     return getPreferredSize();
   }
@@ -349,6 +358,7 @@ public class JCollapsiblePane extends JPanel {
    * 
    * @return this component preferred size
    */
+  @Override
   public Dimension getPreferredSize() {
     /*
      * The preferred size is calculated based on the current position of the
@@ -461,6 +471,7 @@ public class JCollapsiblePane extends JPanel {
      */
     private float animateAlpha = 1.0f;
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       /*
        * Pre-1) If startHeight == finalHeight, then we're done so stop the timer
@@ -575,7 +586,7 @@ public class JCollapsiblePane extends JPanel {
 
   private final class WrapperContainer extends JPanel {
     private BufferedImage img;
-    private Container c;
+    private final Container c;
     float alpha = 1.0f;
 
     public WrapperContainer(Container c) {
@@ -618,6 +629,7 @@ public class JCollapsiblePane extends JPanel {
       }
     }
     
+    @Override
     public void paintComponent(Graphics g) {
       if (!useAnimation || c.isVisible()) {
         super.paintComponent(g);
@@ -636,6 +648,7 @@ public class JCollapsiblePane extends JPanel {
       }
     }
 
+    @Override
     public void paint(Graphics g) {
       Graphics2D g2d = (Graphics2D)g;
       Composite oldComp = g2d.getComposite();

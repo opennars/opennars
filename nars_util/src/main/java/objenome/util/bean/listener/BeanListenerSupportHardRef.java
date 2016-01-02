@@ -8,14 +8,17 @@ public class BeanListenerSupportHardRef<T> implements BeanListenerSupport<T> {
 
     private Collection<T> propertyChangeListeners = new ConcurrentLinkedQueue<>();
 
+    @Override
     public void add(T t) {
         propertyChangeListeners.add(t);
     }
 
+    @Override
     public void remove(T object) {
         propertyChangeListeners.remove(object);
     }
 
+    @Override
     public Iterator<T> iterator() {
         return propertyChangeListeners.iterator();
     }

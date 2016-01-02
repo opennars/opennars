@@ -131,7 +131,7 @@ public class GraphPaneTest {
             gggg.start(50);
 
             runLater(()->{
-                ((JGraphSource)gggg.source.get()).updateGraph();
+                gggg.source.get().updateGraph();
             });
             //gggg.start(35);
 

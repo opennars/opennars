@@ -21,11 +21,13 @@ package jurls.reinforcementlearning.domains.tetris.visualizer;
 import jurls.reinforcementlearning.domains.tetris.Tetris;
 import nars.gui.output.ImagePanel;
 
+import javax.swing.*;
+
 public class TetrisVisualizer extends ImagePanel {
 
     private final int blockSize;
-    private int lastUpdateTimeStep = -1;
-    javax.swing.JCheckBox printGridCheckBox = null;
+    private final int lastUpdateTimeStep = -1;
+    JCheckBox printGridCheckBox = null;
     private final Tetris tetris;
     private final TetrisBlocksComponent blocks;
 

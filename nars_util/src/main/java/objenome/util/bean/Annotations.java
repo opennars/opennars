@@ -14,13 +14,13 @@ public final class Annotations {
     }
 
     public static boolean isAnnotated(Method method,
-                                      objenome.util.bean.anno.GenericBeanMethod.Type type) {
+                                      GenericBeanMethod.Type type) {
         GenericBeanMethod annotation = method.getAnnotation(GenericBeanMethod.class);
         return annotation != null && annotation.value().equals(type);
     }
 
     public static boolean isAnnotated(Method method,
-                                      objenome.util.bean.anno.PropertyChangeEventMethod.Type type) {
+                                      PropertyChangeEventMethod.Type type) {
         PropertyChangeEventMethod annotation = method.getAnnotation(PropertyChangeEventMethod.class);
         return annotation != null && annotation.value().equals(type);
     }

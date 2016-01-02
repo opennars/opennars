@@ -14,9 +14,10 @@ public class DrawGraphAppPanel extends Panel {
         type = i;
     }
 
+    @Override
     public void paint(Graphics g) {
         outer.draw(type);
     }
-    private int type;
-    private GraphApp rent;
+    private final int type;
+    private final GraphApp rent;
 }

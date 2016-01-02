@@ -62,7 +62,7 @@ public class AdjustedFitnessFunction extends AbstractFitnessFunction implements 
     public static final GPKey<Double> MINIMUM_FITNESS_SCORE = new GPKey<>();
 
     // The delegate that fitness calculations will be passed to
-    private AbstractFitnessFunction delegate;
+    private final AbstractFitnessFunction delegate;
 
     // Configuration settings
     private double minFitnessScore;
@@ -100,6 +100,7 @@ public class AdjustedFitnessFunction extends AbstractFitnessFunction implements 
      * <li>{@link #MINIMUM_FITNESS_SCORE}
      * </ul>
      */
+    @Override
     public void setConfig(GPContainer config) {
         if (autoConfig) {
             config.on(ConfigEvent.class, this);

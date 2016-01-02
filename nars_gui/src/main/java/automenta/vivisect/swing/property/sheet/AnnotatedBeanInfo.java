@@ -37,8 +37,8 @@ public class AnnotatedBeanInfo extends BaseBeanInfo {
 
 	private static final class PropertyPair {
 
-		private PropertyInfo property;
-		private Field field;
+		private final PropertyInfo property;
+		private final Field field;
 
 		public PropertyPair(PropertyInfo property, Field field) {
 			this.property = property;

@@ -14,15 +14,20 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author soote
  */
-public class GranularSynthesizer extends javax.swing.JFrame {
+public class GranularSynthesizer extends JFrame {
 
     Granulator wave;
     int sampleCount;
@@ -37,16 +42,16 @@ public class GranularSynthesizer extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager
+            for (UIManager.LookAndFeelInfo info : UIManager
                     .getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
         } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GranularSynthesizer.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Logger.getLogger(GranularSynthesizer.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -56,12 +61,15 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         fileChooser.setFileFilter(filter);
         // Listen for changes in the text
         grainSizeTxt.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
             public void changedUpdate(DocumentEvent e) {
                 warn();
             }
+            @Override
             public void removeUpdate(DocumentEvent e) {
                 warn();
             }
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 warn();
             }
@@ -92,46 +100,46 @@ public class GranularSynthesizer extends javax.swing.JFrame {
     private void initComponents() {
 
         fileChooser = new JFileChooser();
-        modeChoice = new javax.swing.ButtonGroup();
-        envelopeType = new javax.swing.ButtonGroup();
-        jPanel1 = new javax.swing.JPanel();
-        grainDensityTxt = new javax.swing.JTextField();
-        defaultValues = new javax.swing.JButton();
-        userSampleInput = new javax.swing.JTextField();
-        openFile = new javax.swing.JButton();
-        jLabel13 = new javax.swing.JLabel();
-        cloudDurationTxt = new javax.swing.JTextField();
-        grainDistanceTxt = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        pitchSlider = new javax.swing.JSlider();
-        jLabel5 = new javax.swing.JLabel();
-        createGrains = new javax.swing.JButton();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        samplesLoadedLbl = new javax.swing.JLabel();
-        numberOfGrainsTxt = new javax.swing.JTextField();
-        sizeDeviationSlider = new javax.swing.JSlider();
-        granulate = new javax.swing.JButton();
-        maxGrainsLbl = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        pitchDeviationSlider = new javax.swing.JSlider();
-        jLabel4 = new javax.swing.JLabel();
-        grainSizeTxt = new javax.swing.JTextField();
-        syncChoice = new javax.swing.JRadioButton();
-        asyncChoice = new javax.swing.JRadioButton();
-        jLabel9 = new javax.swing.JLabel();
-        noneChoice = new javax.swing.JRadioButton();
-        asrChoice = new javax.swing.JRadioButton();
+        modeChoice = new ButtonGroup();
+        envelopeType = new ButtonGroup();
+        jPanel1 = new JPanel();
+        grainDensityTxt = new JTextField();
+        defaultValues = new JButton();
+        userSampleInput = new JTextField();
+        openFile = new JButton();
+        jLabel13 = new JLabel();
+        cloudDurationTxt = new JTextField();
+        grainDistanceTxt = new JTextField();
+        jLabel6 = new JLabel();
+        pitchSlider = new JSlider();
+        jLabel5 = new JLabel();
+        createGrains = new JButton();
+        jLabel7 = new JLabel();
+        jLabel8 = new JLabel();
+        samplesLoadedLbl = new JLabel();
+        numberOfGrainsTxt = new JTextField();
+        sizeDeviationSlider = new JSlider();
+        granulate = new JButton();
+        maxGrainsLbl = new JLabel();
+        jLabel3 = new JLabel();
+        jLabel2 = new JLabel();
+        jLabel12 = new JLabel();
+        jLabel1 = new JLabel();
+        jLabel11 = new JLabel();
+        pitchDeviationSlider = new JSlider();
+        jLabel4 = new JLabel();
+        grainSizeTxt = new JTextField();
+        syncChoice = new JRadioButton();
+        asyncChoice = new JRadioButton();
+        jLabel9 = new JLabel();
+        noneChoice = new JRadioButton();
+        asrChoice = new JRadioButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setBackground(new java.awt.Color(0, 0, 0));
-        setForeground(java.awt.Color.black);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new Color(0, 0, 0));
+        setForeground(Color.black);
 
-        jPanel1.setForeground(java.awt.Color.cyan);
+        jPanel1.setForeground(Color.cyan);
 
         grainDensityTxt.setText("1");
         grainDensityTxt.setEnabled(false);
@@ -143,8 +151,8 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         openFile.setText("...");
         openFile.addActionListener(this::openFileActionPerformed);
 
-        jLabel13.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel13.setFont(new Font("Dialog", 1, 10)); // NOI18N
+        jLabel13.setForeground(new Color(255, 0, 0));
         jLabel13.setText("Max:");
 
         cloudDurationTxt.setText("44400");
@@ -153,19 +161,19 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         grainDistanceTxt.setText("0");
         grainDistanceTxt.setEnabled(false);
 
-        jLabel6.setForeground(new java.awt.Color(0, 255, 0));
+        jLabel6.setForeground(new Color(0, 255, 0));
         jLabel6.setText("Cloud Duration:");
 
         pitchSlider.setEnabled(false);
 
-        jLabel5.setForeground(new java.awt.Color(0, 255, 0));
+        jLabel5.setForeground(new Color(0, 255, 0));
         jLabel5.setText("Grain Distance:");
 
         createGrains.setText("(Re)Create Grains");
         createGrains.setEnabled(false);
         createGrains.addActionListener(this::createGrainsActionPerformed);
 
-        jLabel7.setForeground(new java.awt.Color(0, 255, 0));
+        jLabel7.setForeground(new Color(0, 255, 0));
         jLabel7.setText("Grain Density:");
 
 
@@ -178,28 +186,28 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         granulate.setEnabled(false);
         granulate.addActionListener(this::granulateActionPerformed);
 
-        maxGrainsLbl.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
-        maxGrainsLbl.setForeground(new java.awt.Color(255, 0, 0));
+        maxGrainsLbl.setFont(new Font("Dialog", 1, 10)); // NOI18N
+        maxGrainsLbl.setForeground(new Color(255, 0, 0));
         maxGrainsLbl.setText("   ");
 
-        jLabel3.setForeground(new java.awt.Color(0, 255, 0));
+        jLabel3.setForeground(new Color(0, 255, 0));
         jLabel3.setText("Grain Size:");
 
-        jLabel2.setForeground(new java.awt.Color(0, 255, 0));
+        jLabel2.setForeground(new Color(0, 255, 0));
         jLabel2.setText("Pitch Deviation:");
 
-        jLabel12.setForeground(new java.awt.Color(0, 255, 0));
+        jLabel12.setForeground(new Color(0, 255, 0));
         jLabel12.setText("# of Grains to Create");
 
-        jLabel1.setForeground(new java.awt.Color(0, 255, 0));
+        jLabel1.setForeground(new Color(0, 255, 0));
         jLabel1.setText("Size Deviation:");
 
-        jLabel11.setForeground(new java.awt.Color(0, 255, 0));
+        jLabel11.setForeground(new Color(0, 255, 0));
         jLabel11.setText("Samples Loaded:");
 
         pitchDeviationSlider.setEnabled(false);
 
-        jLabel4.setForeground(new java.awt.Color(0, 255, 0));
+        jLabel4.setForeground(new Color(0, 255, 0));
         jLabel4.setText("Pitch:");
 
         grainSizeTxt.setText("44400");
@@ -216,7 +224,7 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         asyncChoice.setText("Asynchronous");
         asyncChoice.setEnabled(false);
 
-        jLabel9.setForeground(new java.awt.Color(0, 255, 0));
+        jLabel9.setForeground(new Color(0, 255, 0));
         jLabel9.setText("Envolope Type:");
 
         envelopeType.add(noneChoice);
@@ -228,34 +236,34 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         asrChoice.setText("ASR");
         asrChoice.setEnabled(false);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(syncChoice)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(asyncChoice)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(2, 2, 2)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel11)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(defaultValues))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(userSampleInput, javax.swing.GroupLayout.PREFERRED_SIZE, 564, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(userSampleInput, GroupLayout.PREFERRED_SIZE, 564, GroupLayout.PREFERRED_SIZE)
                                         .addGap(6, 6, 6)
-                                        .addComponent(openFile, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(openFile, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
                                         .addGap(0, 0, Short.MAX_VALUE))))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(30, 30, 30)
                                         .addComponent(jLabel13)
@@ -265,148 +273,148 @@ public class GranularSynthesizer extends javax.swing.JFrame {
                                         .addGap(10, 10, 10)
                                         .addComponent(jLabel4)
                                         .addGap(130, 130, 130)
-                                        .addComponent(pitchSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(pitchSlider, GroupLayout.PREFERRED_SIZE, 420, GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(10, 10, 10)
                                         .addComponent(jLabel2)
                                         .addGap(59, 59, 59)
-                                        .addComponent(pitchDeviationSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(pitchDeviationSlider, GroupLayout.PREFERRED_SIZE, 420, GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(10, 10, 10)
                                         .addComponent(jLabel5)
                                         .addGap(61, 61, 61)
-                                        .addComponent(grainDistanceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 426, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(grainDistanceTxt, GroupLayout.PREFERRED_SIZE, 426, GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(10, 10, 10)
                                         .addComponent(jLabel6)
                                         .addGap(59, 59, 59)
-                                        .addComponent(cloudDurationTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 426, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 601, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(cloudDurationTxt, GroupLayout.PREFERRED_SIZE, 426, GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel8, GroupLayout.PREFERRED_SIZE, 601, GroupLayout.PREFERRED_SIZE)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(10, 10, 10)
                                         .addComponent(jLabel12)
                                         .addGap(31, 31, 31)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(samplesLoadedLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(numberOfGrainsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(samplesLoadedLbl, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(numberOfGrainsTxt, GroupLayout.PREFERRED_SIZE, 420, GroupLayout.PREFERRED_SIZE)))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(10, 10, 10)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                             .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addComponent(jLabel1)
                                                 .addGap(64, 64, 64)
-                                                .addComponent(sizeDeviationSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 426, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(sizeDeviationSlider, GroupLayout.PREFERRED_SIZE, 426, GroupLayout.PREFERRED_SIZE))
                                             .addComponent(jLabel9)))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(10, 10, 10)
                                         .addComponent(jLabel3)
                                         .addGap(103, 103, 103)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                             .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addComponent(noneChoice)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addComponent(asrChoice))
-                                            .addComponent(grainSizeTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                            .addComponent(grainSizeTxt, GroupLayout.PREFERRED_SIZE, 420, GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+                                        .addGroup(GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                             .addComponent(createGrains)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addComponent(granulate))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addGroup(GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                             .addGap(10, 10, 10)
                                             .addComponent(jLabel7)
                                             .addGap(69, 69, 69)
-                                            .addComponent(grainDensityTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 426, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                            .addComponent(grainDensityTxt, GroupLayout.PREFERRED_SIZE, 426, GroupLayout.PREFERRED_SIZE))))
                                 .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel8, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addComponent(userSampleInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(userSampleInput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addComponent(openFile))
                 .addGap(22, 22, 22)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(13, 13, 13)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel11)
-                            .addComponent(samplesLoadedLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(samplesLoadedLbl, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)))
                     .addComponent(defaultValues))
                 .addGap(13, 13, 13)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12)
-                    .addComponent(numberOfGrainsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(numberOfGrainsTxt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(1, 1, 1)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel13)
                     .addComponent(maxGrainsLbl))
                 .addGap(7, 7, 7)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(grainSizeTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(grainSizeTxt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(noneChoice)
                         .addComponent(asrChoice))
                     .addComponent(jLabel9))
                 .addGap(19, 19, 19)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(sizeDeviationSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(sizeDeviationSlider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(4, 4, 4)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addComponent(pitchSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pitchSlider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
-                    .addComponent(pitchDeviationSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pitchDeviationSlider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
-                    .addComponent(grainDistanceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(grainDistanceTxt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
-                    .addComponent(cloudDurationTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cloudDurationTxt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
-                    .addComponent(grainDensityTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(grainDensityTxt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(syncChoice)
                     .addComponent(asyncChoice))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(createGrains)
                     .addComponent(granulate))
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     @SuppressWarnings("HardcodedFileSeparator")
-    private void openFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileActionPerformed
+    private void openFileActionPerformed(ActionEvent evt) {//GEN-FIRST:event_openFileActionPerformed
         fileChooser
                 .setCurrentDirectory(new File(
                                 System.getProperty("user.dir") + "/src/music"));
@@ -461,7 +469,7 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_openFileActionPerformed
 
-    private void createGrainsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createGrainsActionPerformed
+    private void createGrainsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_createGrainsActionPerformed
         //number of grains to create
         int numberOfGrains = Integer.parseInt(numberOfGrainsTxt.getText());
         //Size of grain
@@ -488,19 +496,19 @@ public class GranularSynthesizer extends javax.swing.JFrame {
         asyncChoice.setEnabled(true);
     }//GEN-LAST:event_createGrainsActionPerformed
 
-    private void granulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_granulateActionPerformed
+    private void granulateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_granulateActionPerformed
         synthesize();
     }//GEN-LAST:event_granulateActionPerformed
 
-    private void grainSizeTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grainSizeTxtActionPerformed
+    private void grainSizeTxtActionPerformed(ActionEvent evt) {//GEN-FIRST:event_grainSizeTxtActionPerformed
 
     }//GEN-LAST:event_grainSizeTxtActionPerformed
 
-    private void grainSizeTxtPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_grainSizeTxtPropertyChange
+    private void grainSizeTxtPropertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_grainSizeTxtPropertyChange
         // TODO add your handling code here:
     }//GEN-LAST:event_grainSizeTxtPropertyChange
 
-    private void defaultValuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultValuesActionPerformed
+    private void defaultValuesActionPerformed(ActionEvent evt) {//GEN-FIRST:event_defaultValuesActionPerformed
         grainDistanceTxt.setText("" + 0);
         cloudDurationTxt.setText("" + 0);
         grainDensityTxt.setText("" + 1);
@@ -539,41 +547,41 @@ public class GranularSynthesizer extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JRadioButton asrChoice;
-    private javax.swing.JRadioButton asyncChoice;
-    private javax.swing.JTextField cloudDurationTxt;
-    private javax.swing.JButton createGrains;
-    private javax.swing.JButton defaultValues;
-    private javax.swing.ButtonGroup envelopeType;
+    private JRadioButton asrChoice;
+    private JRadioButton asyncChoice;
+    private JTextField cloudDurationTxt;
+    private JButton createGrains;
+    private JButton defaultValues;
+    private ButtonGroup envelopeType;
     private JFileChooser fileChooser;
-    private javax.swing.JTextField grainDensityTxt;
-    private javax.swing.JTextField grainDistanceTxt;
-    private javax.swing.JTextField grainSizeTxt;
-    private javax.swing.JButton granulate;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JLabel maxGrainsLbl;
-    private javax.swing.ButtonGroup modeChoice;
-    private javax.swing.JRadioButton noneChoice;
-    private javax.swing.JTextField numberOfGrainsTxt;
-    private javax.swing.JButton openFile;
-    private javax.swing.JSlider pitchDeviationSlider;
-    private javax.swing.JSlider pitchSlider;
-    private javax.swing.JLabel samplesLoadedLbl;
-    private javax.swing.JSlider sizeDeviationSlider;
-    private javax.swing.JRadioButton syncChoice;
-    private javax.swing.JTextField userSampleInput;
+    private JTextField grainDensityTxt;
+    private JTextField grainDistanceTxt;
+    private JTextField grainSizeTxt;
+    private JButton granulate;
+    private JLabel jLabel1;
+    private JLabel jLabel11;
+    private JLabel jLabel12;
+    private JLabel jLabel13;
+    private JLabel jLabel2;
+    private JLabel jLabel3;
+    private JLabel jLabel4;
+    private JLabel jLabel5;
+    private JLabel jLabel6;
+    private JLabel jLabel7;
+    private JLabel jLabel8;
+    private JLabel jLabel9;
+    private JPanel jPanel1;
+    private JLabel maxGrainsLbl;
+    private ButtonGroup modeChoice;
+    private JRadioButton noneChoice;
+    private JTextField numberOfGrainsTxt;
+    private JButton openFile;
+    private JSlider pitchDeviationSlider;
+    private JSlider pitchSlider;
+    private JLabel samplesLoadedLbl;
+    private JSlider sizeDeviationSlider;
+    private JRadioButton syncChoice;
+    private JTextField userSampleInput;
     // End of variables declaration//GEN-END:variables
 
 }

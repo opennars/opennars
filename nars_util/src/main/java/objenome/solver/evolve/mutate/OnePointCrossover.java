@@ -112,6 +112,7 @@ public class OnePointCrossover extends AbstractOrganismOperator implements Liste
      * <li>{@link #STRICT}
      * </ul>
      */
+    @Override
     public void setConfig(GPContainer config) {
         if (autoConfig) {
             config.on(ConfigEvent.class, this);

@@ -82,8 +82,8 @@ public class RuleCyclic {
 		Validate();
 
 		// make the string
-		sBff = 'R' + String.valueOf(iRng) + "/T" + String.valueOf(iThr) + "/C"
-				+ String.valueOf(iClo);
+		sBff = 'R' + String.valueOf(iRng) + "/T" + iThr + "/C"
+				+ iClo;
 
 		sBff = iNgh == MJRules.NGHTYP_NEUM ? sBff + "/NN" : sBff + "/NM";
 

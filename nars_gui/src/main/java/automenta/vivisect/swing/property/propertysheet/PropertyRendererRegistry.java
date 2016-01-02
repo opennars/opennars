@@ -40,8 +40,8 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
 	private static final Map<Class<?>, Class<?>> TYPE_TO_CLASS = new HashMap<>();
 	private static final Map<Class<?>, TableCellRenderer> TYPE_TO_RENDERER = new HashMap<>();
 
-	private Map typeToRenderer;
-	private Map propertyToRenderer;
+	private final Map typeToRenderer;
+	private final Map propertyToRenderer;
 
 	public PropertyRendererRegistry() {
 		typeToRenderer = new HashMap();

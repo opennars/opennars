@@ -14,6 +14,7 @@ package nars.util.data.sorted;
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -50,8 +51,8 @@ import java.util.*;
  * @author Josh Bloch
  * @author Neal Gafter
  * @version %I%, %G%
- * @see java.util.Map
- * @see java.util.Collection
+ * @see Map
+ * @see Collection
  * @since 1.2
  */
 
@@ -560,7 +561,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * @since 1.6
      */
     public static class SimpleEntry<K, V>
-            implements Entry<K, V>, java.io.Serializable {
+            implements Entry<K, V>, Serializable {
         private static final long serialVersionUID = -8499721149061103585L;
 
         private final K key;
@@ -692,7 +693,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * @since 1.6
      */
     public static class SimpleImmutableEntry<K, V>
-            implements Entry<K, V>, java.io.Serializable {
+            implements Entry<K, V>, Serializable {
         private static final long serialVersionUID = 7138329143949025153L;
 
         private final K key;

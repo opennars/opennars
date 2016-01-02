@@ -25,29 +25,37 @@ import java.awt.image.BufferedImage;
  * @author Marc G. Bellemare
  */
 public class NullUI implements AbstractUI {
+    @Override
     public void die() {
     }
 
+    @Override
     public void setImage(BufferedImage img) {
     }
 
+    @Override
     public void setCenterString(String s) {
     }
 
+    @Override
     public void addMessage(String s) {
     }
 
+    @Override
     public int getKeyboardAction() {
         return 0;
     }
 
+    @Override
     public void updateFrameCount() {
     }
 
+    @Override
     public boolean quitRequested() {
         return false;
     }
     
+    @Override
     public void refresh() {
     }
 }

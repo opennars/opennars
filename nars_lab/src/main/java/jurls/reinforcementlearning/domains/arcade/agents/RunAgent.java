@@ -10,7 +10,7 @@ public class RunAgent {
 
 
     @SuppressWarnings("HardcodedFileSeparator")
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
 
 
         String rom = "space_invaders";

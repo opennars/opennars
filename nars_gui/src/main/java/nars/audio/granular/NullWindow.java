@@ -5,7 +5,7 @@ package nars.audio.granular;
  */
 public class NullWindow implements GrainWindow {
 
-    private int samples;
+    private final int samples;
 
     public NullWindow(int samples) {
         this.samples = samples;

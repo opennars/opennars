@@ -437,6 +437,7 @@ class MJCellUI extends Frame {
 
 	// ----------------------------------------------------------------
 	// Resize size-sensitive controls
+	@Override
 	public void paint(Graphics g) {
 		btnUserRule.setBounds(0, 0, 20, 20);
 		btnDesc.setBounds(0, 0, 20, 20);
@@ -507,6 +508,7 @@ class MJCellUI extends Frame {
 
 	// ----------------------------------------------------------------
 	// handle events we are interested in
+	@Override
 	public boolean handleEvent(Event e) {
 		if (e.id == Event.WINDOW_DESTROY) {
 			mjb.stop();
@@ -526,6 +528,7 @@ class MJCellUI extends Frame {
 
 	// ----------------------------------------------------------------
 	// button / menu item selected
+	@Override
 	public boolean action(Event e, Object arg) {
 		int i, j;
 		//noinspection IfStatementWithTooManyBranches
@@ -664,6 +667,7 @@ class MJCellUI extends Frame {
 
 	// ----------------------------------------------------------------
 	// Hot keys handling
+	@Override
 	@SuppressWarnings("HardcodedFileSeparator")
 	public boolean keyDown(Event evt, int key) {
 		boolean retVal = false; // event handled?
@@ -866,7 +870,7 @@ class MJCellUI extends Frame {
 	// Input count of states
 	private void InputCountOfStates() {
 		String sDefault = String.valueOf(mjb.StatesCount);
-		String sRange = "2.." + String.valueOf(MJBoard.MAX_CLO + 1);
+		String sRange = "2.." + (MJBoard.MAX_CLO + 1);
 		InputBox ib = new InputBox(new Frame(""), sDefault, "Count of states",
 				"Input the count of states (" + sRange + "):");
 		requestFocus();
@@ -886,7 +890,7 @@ class MJCellUI extends Frame {
 	// Input the active state
 	private void InputActiveState() {
 		String sDefault = String.valueOf(mjb.CrrState);
-		String sRange = "0.." + String.valueOf(mjb.StatesCount - 1);
+		String sRange = "0.." + (mjb.StatesCount - 1);
 		InputBox ib = new InputBox(new Frame(""), sDefault, "Active state",
 				"Input the active state (" + sRange + "):");
 		requestFocus();
@@ -907,7 +911,7 @@ class MJCellUI extends Frame {
 	private void InputBoardSize() {
 		String sDefault = String.valueOf(mjb.UnivSize.x) + 'x'
 				+ String.valueOf(mjb.UnivSize.y);
-		String sMax = "max. " + String.valueOf(MJBoard.MAX_X) + 'x'
+		String sMax = "max. " + MJBoard.MAX_X + 'x'
 				+ String.valueOf(MJBoard.MAX_Y);
 		InputBox ib = new InputBox(new Frame(""), sDefault, "Board size",
 				"Input the new board size (" + sMax + "):");
@@ -941,9 +945,9 @@ class MJCellUI extends Frame {
 		itmCloMtdStd.setState(mjb.ColoringMethod == 1); // standard coloring
 		itmCloMtdAlt.setState(mjb.ColoringMethod == 2); // alternate coloring
 		itmCloStatesCnt.setLabel("Count of states... ("
-				+ String.valueOf(mjb.StatesCount) + ')');
+				+ mjb.StatesCount + ')');
 		itmCloCrrState.setLabel("Active state... ("
-				+ String.valueOf(mjb.CrrState) + ')');
+				+ mjb.CrrState + ')');
 		lblStates.setText("States: " + Integer.toString(mjb.CrrState) + '/'
 				+ Integer.toString(mjb.StatesCount));
 
@@ -1060,6 +1064,7 @@ class MJCellUI extends Frame {
 		msgDlg.add(btnPnl, BorderLayout.SOUTH);
 		btnOk.addActionListener(e -> msgDlg.dispose());
 		msgDlg.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				msgDlg.dispose();
 			}
@@ -1092,13 +1097,13 @@ class MJCellUI extends Frame {
 		ta.append("Rule family: " + mjr.GetGameName(mjb.CrrGame) + '\n');
 		ta.append("Rule name: " + mjb.RuleName + '\n');
 		ta.append("Rule definition: " + mjb.RuleDef + '\n');
-		ta.append("Count of states: " + String.valueOf(mjb.StatesCount) + '\n');
+		ta.append("Count of states: " + mjb.StatesCount + '\n');
 		ta.append("Color palette: " + mjb.mjPal.PalName + '\n');
 		ta.append("\n");
-		ta.append("Board: " + String.valueOf(mjb.UnivSize.x) + 'x'
+		ta.append("Board: " + mjb.UnivSize.x + 'x'
 				+ String.valueOf(mjb.UnivSize.y) + '\n');
-		ta.append("Cell size: " + String.valueOf(mjb.CellSize) + '\n');
-		ta.append("1D current line: " + String.valueOf(mjb.i1DLastRow) + '\n');
+		ta.append("Cell size: " + mjb.CellSize + '\n');
+		ta.append("1D current line: " + mjb.i1DLastRow + '\n');
 		ta.append("\n");
 		ta.append("Speed: " + Integer.toString(mjb.AnimDelay) + '\n');
 		ta.append("Cycle: " + Integer.toString(mjb.Cycle) + '\n');
@@ -1122,6 +1127,7 @@ class MJCellUI extends Frame {
                 mjb.start();
         });
 		msgDlg.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				msgDlg.dispose();
 				if (fOldRun)
@@ -1167,6 +1173,7 @@ class MJCellUI extends Frame {
                 mjb.start();
         });
 		msgDlg.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				msgDlg.dispose();
 				if (fOldRun)

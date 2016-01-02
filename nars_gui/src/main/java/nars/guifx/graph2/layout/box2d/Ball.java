@@ -42,10 +42,10 @@ public class Ball{
      * are used for drawing hurdles and dynamic bodies (BodyType.DYNAMIC–movable bodies) 
      * are used for falling balls
      */
-    private BodyType bodyType;
+    private final BodyType bodyType;
 
     //Gradient effects for balls
-    private LinearGradient gradient;
+    private final LinearGradient gradient;
     
     public Ball(float posX, float posY){
         this(posX, posY, Utils.BALL_SIZE, BodyType.DYNAMIC, Color.RED);

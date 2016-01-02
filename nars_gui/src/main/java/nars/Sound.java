@@ -10,10 +10,10 @@ public class Sound implements SoundSource, Comparable
 {
     private static final double l10 = Math.log(10);
     
-    private SoundProducer producer;
-    private SoundSource source;
-    private float volume;
-    private float priority;
+    private final SoundProducer producer;
+    private final SoundSource source;
+    private final float volume;
+    private final float priority;
     
     private float x, y, z;
     private float score = 0;
@@ -73,6 +73,7 @@ public class Sound implements SoundSource, Comparable
         return producer.isLive();
     }
 
+    @Override
     public int compareTo(Object o)
     {
         Sound s = (Sound)o;

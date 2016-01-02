@@ -17,14 +17,15 @@ import java.util.regex.Pattern;
  */
 public class TerminalWatcher implements Runnable {
     //private static final Logger logger = LoggerFactory.getLogger(TerminalWatcher.class);
-    private InputStream outFromChannel;
-    private TextArea textArea;
+    private final InputStream outFromChannel;
+    private final TextArea textArea;
 
     public TerminalWatcher(InputStream outFromChannel, TextArea textArea) {
         this.outFromChannel = outFromChannel;
         this.textArea = textArea;
     }
 
+    @Override
     public void run() {
         InputStreamReader isr = new InputStreamReader(outFromChannel);
         try {

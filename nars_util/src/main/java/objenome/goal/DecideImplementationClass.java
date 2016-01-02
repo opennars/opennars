@@ -53,7 +53,7 @@ public class DecideImplementationClass implements Problem, Builder {
 
     @Override
     public String toString() {
-        return "MultiClassBuilder(" + implementors.toString() + ')';
+        return "MultiClassBuilder(" + implementors + ')';
     }
     
 }

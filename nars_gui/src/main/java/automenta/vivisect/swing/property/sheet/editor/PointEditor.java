@@ -31,7 +31,7 @@ import java.awt.*;
  */
 public class PointEditor extends StringConverterPropertyEditor {
 
-	private Converter<Dimension> converter = new DimensionConverter();
+	private final Converter<Dimension> converter = new DimensionConverter();
 
 	@Override
 	protected Object convertFromString(String text) {

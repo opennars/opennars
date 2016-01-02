@@ -46,7 +46,7 @@ public class ExampleTrackerObjectQuad extends WebcamFX {
     private BufferedImage bgMotionImage;
     private BackgroundStationaryGaussian background;
     private WritableImage bgConverted;
-    private boolean surf = false;
+    private final boolean surf = false;
 
 
     public static void main(String[] args) {
@@ -129,14 +129,9 @@ public class ExampleTrackerObjectQuad extends WebcamFX {
 
 
         bgMotionImage = VisualizeBinaryData.renderBinary(segmented, true, bgMotionImage);
-        {
 
-            bgConverted = SwingFXUtils.toFXImage(bgMotionImage, bgConverted);
-            motionOverlay.setImage(bgConverted);
-
-        }
-
-
+        bgConverted = SwingFXUtils.toFXImage(bgMotionImage, bgConverted);
+        motionOverlay.setImage(bgConverted);
 
 
         if (surf) {

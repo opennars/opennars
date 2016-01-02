@@ -73,7 +73,7 @@ class VectorN    {
         set(vectorn);   
     }
 
-    private double[] v;
+    private final double[] v;
 }  
 
 class Vector3D extends VectorN   

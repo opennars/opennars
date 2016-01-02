@@ -11,8 +11,8 @@ package jurls.core.approximation;
  */
 public class Product implements DiffableFunctionSource {
 
-    private DiffableFunctionSource a;
-    private DiffableFunctionSource b;
+    private final DiffableFunctionSource a;
+    private final DiffableFunctionSource b;
 
     public Product(DiffableFunctionSource a, DiffableFunctionSource b) {
         this.a = a;

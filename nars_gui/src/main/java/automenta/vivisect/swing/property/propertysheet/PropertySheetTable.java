@@ -657,12 +657,14 @@ public class PropertySheetTable extends JTable {
       insets.left = indentWidth + (showToggle?HOTSPOT_SIZE:0) + 2;
     }
     
+    @Override
     public Insets getBorderInsets(Component c) {
       return insets;
     }
 
+    @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width,
-        int height) {      
+                            int height) {
       if (!isProperty) {
         Color oldColor = g.getColor();      
         g.setColor(c.getBackground());
@@ -678,6 +680,7 @@ public class PropertySheetTable extends JTable {
       }
     }
 
+    @Override
     public boolean isBorderOpaque() {
       return true;
     }
@@ -685,6 +688,7 @@ public class PropertySheetTable extends JTable {
   }
 
   private static class ExpandedIcon implements Icon {
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       Color backgroundColor = c.getBackground();
 
@@ -697,15 +701,18 @@ public class PropertySheetTable extends JTable {
       g.setColor(Color.black);
       g.drawLine(x + 2, y + 4, x + (6), y + 4);
     }
+    @Override
     public int getIconWidth() {
       return 9;
     }
+    @Override
     public int getIconHeight() {
       return 9;
     }
   }
 
   private static class CollapsedIcon extends ExpandedIcon {
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
       super.paintIcon(c, g, x, y);
       g.drawLine(x + 4, y + 2, x + 4, y + 6);
@@ -717,7 +724,7 @@ public class PropertySheetTable extends JTable {
    */
   private class NameRenderer extends DefaultTableCellRenderer {
 
-    private CellBorder border;
+    private final CellBorder border;
     
     public NameRenderer() {
       border = new CellBorder();
@@ -733,8 +740,9 @@ public class PropertySheetTable extends JTable {
         (isSelected ? selectedCategoryBackground : categoryBackground));
     }
 
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value,
-        boolean isSelected, boolean hasFocus, int row, int column) {
+                                                   boolean isSelected, boolean hasFocus, int row, int column) {
       super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
       PropertySheetTableModel.Item item = (Item) value;
 

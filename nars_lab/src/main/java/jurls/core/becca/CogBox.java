@@ -15,9 +15,9 @@ public class CogBox {
     
     Ziptie zip;
     List<Cog> cogs;
-    private int cogInputs;
-    private int inputs;
-    private double[] output;
+    private final int cogInputs;
+    private final int inputs;
+    private final double[] output;
 
     public CogBox(int inputs, int ncogs, int outputs) {
         if (outputs % ncogs!=0)

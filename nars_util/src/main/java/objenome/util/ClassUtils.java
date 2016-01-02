@@ -522,7 +522,7 @@ public class ClassUtils {
      * (the first parameter) are suitably compatible with a set of method parameter types
      * (the second parameter).</p>
      *
-     * <p>Unlike the {@link Class#isAssignableFrom(java.lang.Class)} method, this
+     * <p>Unlike the {@link Class#isAssignableFrom(Class)} method, this
      * method takes into account widenings of primitive classes and
      * {@code null}s.</p>
      *
@@ -562,7 +562,7 @@ public class ClassUtils {
      * (the first parameter) are suitably compatible with a set of method parameter types
      * (the second parameter).</p>
      *
-     * <p>Unlike the {@link Class#isAssignableFrom(java.lang.Class)} method, this
+     * <p>Unlike the {@link Class#isAssignableFrom(Class)} method, this
      * method takes into account widenings of primitive classes and
      * {@code null}s.</p>
      *
@@ -639,7 +639,7 @@ public class ClassUtils {
      * <p>Checks if one {@code Class} can be assigned to a variable of
      * another {@code Class}.</p>
      *
-     * <p>Unlike the {@link Class#isAssignableFrom(java.lang.Class)} method,
+     * <p>Unlike the {@link Class#isAssignableFrom(Class)} method,
      * this method takes into account widenings of primitive classes and
      * {@code null}s.</p>
      *
@@ -674,7 +674,7 @@ public class ClassUtils {
      * <p>Checks if one {@code Class} can be assigned to a variable of
      * another {@code Class}.</p>
      *
-     * <p>Unlike the {@link Class#isAssignableFrom(java.lang.Class)} method,
+     * <p>Unlike the {@link Class#isAssignableFrom(Class)} method,
      * this method takes into account widenings of primitive classes and
      * {@code null}s.</p>
      *

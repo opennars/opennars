@@ -22,10 +22,10 @@ public class LevelEditor extends JFrame implements ActionListener
     private JButton loadButton;
     private JButton saveButton;
     private JTextField nameField;
-    private LevelEditView levelEditView;
-    private TilePicker tilePicker;
+    private final LevelEditView levelEditView;
+    private final TilePicker tilePicker;
     
-    private JCheckBox[] bitmapCheckboxes = new JCheckBox[8];
+    private final JCheckBox[] bitmapCheckboxes = new JCheckBox[8];
 
     public LevelEditor()
     {
@@ -109,6 +109,7 @@ public class LevelEditor extends JFrame implements ActionListener
         return panel;
     }
 
+    @Override
     @SuppressWarnings("HardcodedFileSeparator")
     public void actionPerformed(ActionEvent e)
     {

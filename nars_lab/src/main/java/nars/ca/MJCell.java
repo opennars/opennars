@@ -86,6 +86,7 @@ public class MJCell extends Applet {
 
 	// ----------------------------------------------------------------
 	// The main initialization
+	@Override
 	@SuppressWarnings("HardcodedFileSeparator")
 	public void init() {
 		boolean isApplet = true; // applet or application?
@@ -153,6 +154,7 @@ public class MJCell extends Applet {
 
 	// ----------------------------------------------------------------
 	//
+	@Override
 	public boolean action(Event e, Object arg) {
 		if (e.target == btnStart) {
 			mjcUI.build();
@@ -198,6 +200,7 @@ public class MJCell extends Applet {
 	}
 
 	// ----------------------------------------------------------------
+	@Override
 	@SuppressWarnings("HardcodedFileSeparator")
 	public String getAppletInfo() {
 		return getAppletName() + "\n\n"

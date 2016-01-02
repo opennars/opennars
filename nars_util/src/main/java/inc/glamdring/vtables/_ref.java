@@ -23,6 +23,7 @@ public class _ref<Ω> implements _edge<Ω, _ptr> {
      * @param e
      * @return
      */
+    @Override
     public Ω demote(_edge<Ω, _ptr> e) {
 
         if (e != this)
@@ -41,6 +42,7 @@ public class _ref<Ω> implements _edge<Ω, _ptr> {
      * @param edge
      * @return
      */
+    @Override
     public _ptr promote(_edge<Ω, _ptr> edge) {
         if (edge != this) {
             bind(edge.demote(edge), edge.promote(edge));

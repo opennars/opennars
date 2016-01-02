@@ -4,7 +4,7 @@ public class Granulator {
 
 	private final float[] sourceBuffer;
     public final float sampleRate;
-    private int grainSizeSamples;
+    private final int grainSizeSamples;
 	private final GrainWindow window;
 
 //    public Granulator(SonarSample source, float grainSizeSecs, float windowSizeFactor) {

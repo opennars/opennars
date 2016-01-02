@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 public final class GenericBeanMapper {
 
     private enum OnNull {
-        THROW_EXCEPTION, RETURN_NULL;
+        THROW_EXCEPTION, RETURN_NULL
     }
 
     private GenericBeanMapper() {

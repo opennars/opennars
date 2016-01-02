@@ -108,5 +108,5 @@ class MatrixN
         return s + '}';
     }
 
-    private VectorN[] v;
+    private final VectorN[] v;
 }  

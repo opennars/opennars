@@ -35,7 +35,7 @@ public class Utils {
     public static final int NO_OF_BALLS = 16;
     
     //Ball gradient
-    private static final LinearGradient BALL_GRADIENT = new LinearGradient(0.0, 0.0, 1.0, 0.0, true, CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, Color.WHITE), new Stop(1, Color.RED)});
+    private static final LinearGradient BALL_GRADIENT = new LinearGradient(0.0, 0.0, 1.0, 0.0, true, CycleMethod.NO_CYCLE, new Stop(0, Color.WHITE), new Stop(1, Color.RED));
     
     //This method adds a ground to the screen. 
     public static void addGround(float width, float height){
@@ -72,7 +72,7 @@ public class Utils {
         if(color.equals(Color.RED))
             return BALL_GRADIENT;
         else
-            return new LinearGradient(0.0, 0.0, 1.0, 0.0, true, CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, Color.WHITE), new Stop(1, color)});
+            return new LinearGradient(0.0, 0.0, 1.0, 0.0, true, CycleMethod.NO_CYCLE, new Stop(0, Color.WHITE), new Stop(1, color));
     }
    
     /** Gets a box shape with a given width and height */

@@ -44,6 +44,7 @@ public class SlideAnimator {
                 setCycleDuration(Duration.millis(250));
             }
 
+            @Override
             protected void interpolate(double frac) {
                 double curWidth = startWidth.get() * (1.0 - frac);
                 node.setPrefWidth(curWidth);   // todo resize a spacing underlay to allow the scene to adjust.
@@ -60,6 +61,7 @@ public class SlideAnimator {
                 setCycleDuration(Duration.millis(250));
             }
 
+            @Override
             protected void interpolate(double frac) {
                 double curWidth = startWidth.get() * frac;
                 node.setPrefWidth(curWidth);

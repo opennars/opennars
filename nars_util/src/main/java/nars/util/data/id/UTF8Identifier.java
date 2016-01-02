@@ -15,5 +15,6 @@ public abstract class UTF8Identifier extends Identifier implements Byted {
      */
     @Override public abstract int charsEstimated();
 
+    @Override
     public abstract byte[] bytes();
 }

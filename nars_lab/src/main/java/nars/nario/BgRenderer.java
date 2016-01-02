@@ -10,17 +10,17 @@ public class BgRenderer
 {
     private int xCam;
     private int yCam;
-    private Image image;
-    private Graphics2D g;
+    private final Image image;
+    private final Graphics2D g;
     private static final Color transparent = new Color(0, 0, 0, 0);
     private Level level;
 
-    private Random random = new Random();
+    private final Random random = new Random();
     public boolean renderBehaviors = false;
 
-    private int width;
-    private int height;
-    private int distance;
+    private final int width;
+    private final int height;
+    private final int distance;
 
     public BgRenderer(Level level, GraphicsConfiguration graphicsConfiguration, int width, int height, int distance)
     {

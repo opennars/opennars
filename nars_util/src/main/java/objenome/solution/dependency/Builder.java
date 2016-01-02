@@ -1,6 +1,7 @@
 package objenome.solution.dependency;
 
 import objenome.AbstractContainer;
+import objenome.Prototainer;
 import objenome.solution.dependency.ClassBuilder.DependencyKey;
 
 import java.io.Serializable;
@@ -29,7 +30,7 @@ public interface Builder extends Serializable {
      * supplied collection
      * 
      */
-    <T> T instance(objenome.Prototainer context, Collection<DependencyKey> simulateAndAddExtraProblemsHere);
+    <T> T instance(Prototainer context, Collection<DependencyKey> simulateAndAddExtraProblemsHere);
 
     default <T> T instance(AbstractContainer context) {
         return instance(context, null);

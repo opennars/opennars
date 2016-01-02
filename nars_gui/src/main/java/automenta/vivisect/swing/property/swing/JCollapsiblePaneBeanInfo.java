@@ -14,7 +14,7 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
 
   /** Description of the Field */
   protected BeanDescriptor bd = new BeanDescriptor(
-    automenta.vivisect.swing.property.swing.JCollapsiblePane.class);
+    JCollapsiblePane.class);
   /** Description of the Field */
   protected Image iconMono16;
   /** Description of the Field */
@@ -25,7 +25,7 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
   protected Image iconColor32;
 
   /** Constructor for the JCollapsiblePaneBeanInfo object */
-  public JCollapsiblePaneBeanInfo() throws java.beans.IntrospectionException {
+  public JCollapsiblePaneBeanInfo() throws IntrospectionException {
     // setup bean descriptor in constructor.
     bd.setName("JCollapsiblePane");
 
@@ -52,12 +52,13 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
    * 
    * @return The additionalBeanInfo value
    */
+  @Override
   public BeanInfo[] getAdditionalBeanInfo() {
     Vector bi = new Vector();
     BeanInfo[] biarr = null;
     try {
-      for (Class cl = automenta.vivisect.swing.property.swing.JCollapsiblePane.class
-        .getSuperclass(); !cl.equals(java.awt.Component.class.getSuperclass()); cl = cl
+      for (Class cl = JCollapsiblePane.class
+        .getSuperclass(); !cl.equals(Component.class.getSuperclass()); cl = cl
         .getSuperclass()) {
         bi.addElement(Introspector.getBeanInfo(cl));
       }
@@ -74,6 +75,7 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
    * 
    * @return The beanDescriptor value
    */
+  @Override
   public BeanDescriptor getBeanDescriptor() {
     return bd;
   }
@@ -83,6 +85,7 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
    * 
    * @return The defaultPropertyIndex value
    */
+  @Override
   public int getDefaultPropertyIndex() {
     String defName = "";
     if (defName != null && defName.isEmpty()) { return -1; }
@@ -100,6 +103,7 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
    *          Description of the Parameter
    * @return The icon value
    */
+  @Override
   public Image getIcon(int type) {
     if (type == BeanInfo.ICON_COLOR_16x16) { return iconColor16; }
     if (type == BeanInfo.ICON_MONO_16x16) { return iconMono16; }
@@ -113,6 +117,7 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
    * 
    * @return The propertyDescriptors value
    */
+  @Override
   public PropertyDescriptor[] getPropertyDescriptors() {
     try {
       Vector descriptors = new Vector();
@@ -120,10 +125,10 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
 
       try {
         descriptor = new PropertyDescriptor("animated",
-                automenta.vivisect.swing.property.swing.JCollapsiblePane.class);
+                JCollapsiblePane.class);
       } catch (IntrospectionException e) {
         descriptor = new PropertyDescriptor("animated",
-                automenta.vivisect.swing.property.swing.JCollapsiblePane.class, "getAnimated", null);
+                JCollapsiblePane.class, "getAnimated", null);
       }
 
       descriptor.setPreferred(true);
@@ -133,10 +138,10 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
       descriptors.add(descriptor);
       try {
         descriptor = new PropertyDescriptor("collapsed",
-                automenta.vivisect.swing.property.swing.JCollapsiblePane.class);
+                JCollapsiblePane.class);
       } catch (IntrospectionException e) {
         descriptor = new PropertyDescriptor("collapsed",
-                automenta.vivisect.swing.property.swing.JCollapsiblePane.class, "getCollapsed", null);
+                JCollapsiblePane.class, "getCollapsed", null);
       }
 
       descriptor.setPreferred(true);
@@ -162,6 +167,7 @@ public class JCollapsiblePaneBeanInfo extends SimpleBeanInfo {
    * 
    * @return The methodDescriptors value
    */
+  @Override
   public MethodDescriptor[] getMethodDescriptors() {
     return new MethodDescriptor[0];
   }

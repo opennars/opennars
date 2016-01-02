@@ -35,7 +35,7 @@ public class TerminationFitness implements PopulationTermination, Listener<EndGe
     /**
      * The threshold fitness value.
      */
-    private Fitness threshold;
+    private final Fitness threshold;
 
     /**
      * The current best fitness value.

@@ -119,25 +119,23 @@ public class Cell {
             r=200;
         }
         if ((charge>0) || (chargeFront)) {
-            {
-                float freq = 4;
-                int chargeBright = (int)((Math.cos(s.getRealtime()*freq)+1) * 25);
+            float freq = 4;
+            int chargeBright = (int)((Math.cos(s.getRealtime()*freq)+1) * 25);
 
-                if (charge > 0) {
-                    r += chargeBright;
-                    g += chargeBright/2;                    
-                }
-                else {
-                    g += chargeBright;
-                    r += chargeBright/2;
-                }
-                if (chargeFront) { 
-                    freq = 7;
-                    b += 25;
-                }
-                a += 150;
-
+            if (charge > 0) {
+                r += chargeBright;
+                g += chargeBright/2;
             }
+            else {
+                g += chargeBright;
+                r += chargeBright/2;
+            }
+            if (chargeFront) {
+                freq = 7;
+                b += 25;
+            }
+            a += 150;
+
         }
         if(edge)
         {

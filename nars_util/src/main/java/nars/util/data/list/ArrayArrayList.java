@@ -23,6 +23,7 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
         array = null;
     }
 
+    @Override
     public boolean add(E e) {
         array = ArrayUtils.add(array, e);
         return true;
@@ -77,10 +78,11 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
     @Override
     public E remove(int i) {
         E e = get(i);
-        array = (E[]) ArrayUtils.remove(array, i);
+        array = ArrayUtils.remove(array, i);
         return e;
     }
 
+    @Override
     public boolean remove(Object o) {
         return remove(indexOf(o))!=null;
     }
@@ -99,7 +101,7 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
 
     @Override
     public void addLast(E e) {
-        array = (E[]) ArrayUtils.add(array, e);
+        array = ArrayUtils.add(array, e);
     }
 
 

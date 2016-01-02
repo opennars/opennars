@@ -35,7 +35,7 @@ public class ModelSource {
 
 	/**
 	 * @param listener
-	 * @see java.beans.PropertyChangeSupport#addPropertyChangeListener(java.beans.PropertyChangeListener)
+	 * @see java.beans.PropertyChangeSupport#addPropertyChangeListener(PropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		event.addPropertyChangeListener(listener);
@@ -44,7 +44,7 @@ public class ModelSource {
 	/**
 	 * @param propertyName
 	 * @param listener
-	 * @see java.beans.PropertyChangeSupport#addPropertyChangeListener(java.lang.String, java.beans.PropertyChangeListener)
+	 * @see java.beans.PropertyChangeSupport#addPropertyChangeListener(String, PropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 		event.addPropertyChangeListener(propertyName, listener);
@@ -52,7 +52,7 @@ public class ModelSource {
 
 	/**
 	 * @param listener
-	 * @see java.beans.PropertyChangeSupport#removePropertyChangeListener(java.beans.PropertyChangeListener)
+	 * @see java.beans.PropertyChangeSupport#removePropertyChangeListener(PropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		event.removePropertyChangeListener(listener);
@@ -61,7 +61,7 @@ public class ModelSource {
 	/**
 	 * @param propertyName
 	 * @param listener
-	 * @see java.beans.PropertyChangeSupport#removePropertyChangeListener(java.lang.String, java.beans.PropertyChangeListener)
+	 * @see java.beans.PropertyChangeSupport#removePropertyChangeListener(String, PropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 		event.removePropertyChangeListener(propertyName, listener);

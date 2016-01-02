@@ -26,7 +26,7 @@ package nars.util.data;
  * A mutable integer (key) wrapper with double auxiliary value.
  * 
  */
-public class MutableIntegerDouble extends MutableInteger implements Comparable, Mutable {
+public class MutableIntegerDouble extends MutableInteger {
 
    
   /** The mutable value. */

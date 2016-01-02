@@ -24,7 +24,7 @@ import java.awt.geom.Rectangle2D;
 public class TetrisBlocksComponent {
 
     private TetrisVisualizer tetVis = null;
-    private int lastUpdateTimeStep = -1;
+    private final int lastUpdateTimeStep = -1;
 
     public TetrisBlocksComponent(TetrisVisualizer ev) {
         // TODO Write Constructor

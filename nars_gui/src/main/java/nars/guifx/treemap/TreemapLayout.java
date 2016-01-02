@@ -24,7 +24,7 @@ class TreemapLayout extends Parent {
     }
 
     //private static final Logger LOG = Logger.getLogger(TreemapLayout.class.getName());
-    private AnchorPane anchorPane = new AnchorPane();
+    private final AnchorPane anchorPane = new AnchorPane();
     private double height;
     private double width;
     private double heightLeft;
@@ -32,7 +32,7 @@ class TreemapLayout extends Parent {
     private double left = 0.0;
     private double top = 0.0;
     private LayoutOrient layoutOrient = LayoutOrient.HORIZONTAL;
-    private List<TreemapDtoElement> children = new ArrayList<>();
+    private final List<TreemapDtoElement> children = new ArrayList<>();
 
     public TreemapLayout(double width, double height, SortedSet<Item> children, ColorGroup colorGroup, TreemapElementFactory elementFactory) {
         this.colorGroup = colorGroup;

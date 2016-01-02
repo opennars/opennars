@@ -14,7 +14,7 @@ import java.io.PrintStream;
  * @author sergei.malafeev
  */
 public class TerminalPanel extends StackPane {
-    private TextArea textArea;
+    private final TextArea textArea;
 
 
     public TerminalPanel() {

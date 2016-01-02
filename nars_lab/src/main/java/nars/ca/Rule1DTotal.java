@@ -108,7 +108,7 @@ public class Rule1DTotal {
 
 		// states
 		ih = isHist ? iClo : 0;
-		sBff = sBff + ",C" + String.valueOf(ih);
+		sBff = sBff + ",C" + ih;
 
 		// center cell
 		sBff = isCentr ? sBff + ",M1" : sBff + ",M0";
@@ -116,12 +116,12 @@ public class Rule1DTotal {
 		// S rules
 		for (i = 0; i <= MAX_RANGE * 2 + 1; i++)
 			if (rulesS[i])
-				sBff = sBff + ",S" + String.valueOf(i);
+				sBff = sBff + ",S" + i;
 
 		// B rules
 		for (i = 0; i <= MAX_RANGE * 2 + 1; i++)
 			if (rulesB[i])
-				sBff = sBff + ",B" + String.valueOf(i);
+				sBff = sBff + ",B" + i;
 
 		return sBff;
 	}

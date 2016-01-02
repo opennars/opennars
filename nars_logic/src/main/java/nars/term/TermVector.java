@@ -181,8 +181,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
      * first level only, not recursive
      */
     public final boolean contains(Object o) {
-        return o instanceof Term ?
-                containsTerm((Term) o) : false;
+        return o instanceof Term && containsTerm((Term) o);
     }
 
     @Override
@@ -213,8 +212,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
      */
     @Override
     public final boolean containsTerm(Term t) {
-        return impossibleSubterm(t) ? false :
-                Terms.contains(term, t);
+        return !impossibleSubterm(t) && Terms.contains(term, t);
     }
 
 

@@ -111,7 +111,7 @@ public class NarseseTemplatePanel {
             for (TemplateElement e : forms.get(form)) {
                 if (!"narsese".equals(form) && (!(e instanceof Text) || (e instanceof Concept)))
                     continue;
-                s.append(e.toString()).append(' ');
+                s.append(e).append(' ');
             }
             return s.toString();
         }

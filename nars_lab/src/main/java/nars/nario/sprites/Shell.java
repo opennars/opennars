@@ -6,16 +6,16 @@ import nars.nario.LevelScene;
 
 public class Shell extends Sprite
 {
-    private static float GROUND_INERTIA = 0.89f;
-    private static float AIR_INERTIA = 0.89f;
+    private static final float GROUND_INERTIA = 0.89f;
+    private static final float AIR_INERTIA = 0.89f;
 
     private float runTime;
     private boolean onGround = false;
 
-    private int width = 4;
+    private final int width = 4;
     int height = 24;
 
-    private LevelScene world;
+    private final LevelScene world;
     public int facing;
 
     public boolean avoidCliffs = false;
@@ -45,6 +45,7 @@ public class Shell extends Sprite
         ya = -5;
     }
     
+    @Override
     public boolean fireballCollideCheck(Fireball fireball)
     {
         if (deadTime != 0) return false;
@@ -72,6 +73,7 @@ public class Shell extends Sprite
         return false;
     }    
 
+    @Override
     public void collideCheck()
     {
         if (carried || dead || deadTime>0) return;
@@ -112,6 +114,7 @@ public class Shell extends Sprite
         }
     }
 
+    @Override
     public void move()
     {
         if (carried)
@@ -288,6 +291,7 @@ public class Shell extends Sprite
         return blocking;
     }
 
+    @Override
     public void bumpCheck(int xTile, int yTile)
     {
         if (x + width > xTile * 16 && x - width < xTile * 16 + 16 && yTile == (int) ((y - 1) / 16))
@@ -308,6 +312,7 @@ public class Shell extends Sprite
         deadTime = 100;
     }
 
+    @Override
     public boolean shellCollideCheck(Shell shell)
     {
         if (deadTime != 0) return false;
@@ -335,6 +340,7 @@ public class Shell extends Sprite
     }
 
 
+    @Override
     public void release(Mario mario)
     {
         carried = false;

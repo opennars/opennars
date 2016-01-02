@@ -28,6 +28,7 @@ public class Particle extends Sprite
         life = 10;
     }
 
+    @Override
     public void move()
     {
         if (life--<0) Sprite.spriteContext.removeSprite(this);

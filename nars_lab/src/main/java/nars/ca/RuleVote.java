@@ -78,7 +78,7 @@ public class RuleVote {
 		for (i = 0; i <= 9; i++)
 			// S
 			if (RulesSB[i])
-				sBff = sBff + String.valueOf(i);
+				sBff = sBff + i;
 
 		return sBff;
 	}

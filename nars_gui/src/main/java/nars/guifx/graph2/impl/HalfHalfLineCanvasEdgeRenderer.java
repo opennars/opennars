@@ -9,6 +9,7 @@ import nars.term.Termed;
 /** (fast, simple rendering) half edges are drawn as lines of certain thickness, meeting at the center point */
 public class HalfHalfLineCanvasEdgeRenderer extends CanvasEdgeRenderer {
 
+    @Override
     public void draw(TermEdge i, TermNode aSrc, TermNode bSrc, double x1, double y1, double x2, double y2) {
         double cx = 0.5 * (x1+x2);
         double cy = 0.5 * (y1+y2);

@@ -17,7 +17,7 @@ public class RenderParameterizedFunction1D implements RenderFunction1D {
 
     private ParameterizedFunction parameterizedFunction = null;
     private final Color color;
-    private double[] xs = new double[1];
+    private final double[] xs = new double[1];
 
     public RenderParameterizedFunction1D(Color color) {
         this.color = color;

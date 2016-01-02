@@ -44,7 +44,7 @@ public class ErrorDetectionTest extends TransformationTest {
     @Test
     public synchronized void testRuleWithActionAccessingPrivateField() throws Exception {
         setup(new BaseParser<Object>() {
-            private int privateInt = 5;
+            private final int privateInt = 5;
 
             public Rule RuleWithActionAccessingPrivateField() {
                 return sequence('a', privateInt == 0);

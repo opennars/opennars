@@ -35,7 +35,7 @@ public class DirectArrayList<E> extends ArrayList<E> {
             }
             data = (Object[]) f.get(this);
         } catch (Exception ex) {
-            System.err.println(ex.toString());
+            System.err.println(ex);
             System.exit(1);
         }
     }

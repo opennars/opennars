@@ -8,11 +8,13 @@ import org.junit.Test;
 
 public class SgArgumentTest extends SgVariableTest {
 
+    @Override
     @Before
     public void setup() {
         super.setup();
     }
 
+    @Override
     @After
     public void teardown() {
         super.teardown();

@@ -20,6 +20,7 @@ package automenta.vivisect.swing.property.propertysheet;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Objects;
 
 /**
@@ -34,10 +35,12 @@ public abstract class AbstractProperty implements Property {
   private transient PropertyChangeSupport listeners =
     new PropertyChangeSupport(this);
 
+  @Override
   public Object getValue() {
     return value;
   }
 
+  @Override
   @SuppressWarnings("CloneReturnsClassType")
   public Object clone() {
     AbstractProperty clone = null;
@@ -49,6 +52,7 @@ public abstract class AbstractProperty implements Property {
     }
   }
   
+  @Override
   public void setValue(Object value) {
     Object oldValue = this.value;
     this.value = value;
@@ -60,6 +64,7 @@ public abstract class AbstractProperty implements Property {
     this.value = value;
   }
 
+  @Override
   public void addPropertyChangeListener(PropertyChangeListener listener) {
     listeners.addPropertyChangeListener(listener);
     Property[] subProperties = getSubProperties();
@@ -67,6 +72,7 @@ public abstract class AbstractProperty implements Property {
       for (Property subProperty : subProperties) subProperty.addPropertyChangeListener(listener);
   }
 
+  @Override
   public void removePropertyChangeListener(PropertyChangeListener listener) {
     listeners.removePropertyChangeListener(listener);
     Property[] subProperties = getSubProperties();
@@ -78,16 +84,18 @@ public abstract class AbstractProperty implements Property {
     listeners.firePropertyChange("value", oldValue, newValue);
   }
 
-  private void readObject(java.io.ObjectInputStream in) throws IOException,
+  private void readObject(ObjectInputStream in) throws IOException,
     ClassNotFoundException {
     in.defaultReadObject();
     listeners = new PropertyChangeSupport(this);    
   }
   
+  @Override
   public Property getParentProperty() {
   	return null;
   }
   
+  @Override
   public Property[] getSubProperties() {
   	return null;
   }

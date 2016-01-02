@@ -77,6 +77,7 @@ public class OutputNormalizer implements ParameterizedFunction {
         return denormalizeOutput(parameterizedFunction.maxOutputDebug());
     }
 
+    @Override
     public double getParameter(int i) {
         return parameterizedFunction.getParameter(i);
     }

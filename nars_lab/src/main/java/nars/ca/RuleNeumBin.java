@@ -82,7 +82,7 @@ public class RuleNeumBin {
 				for (int k = 0; k < iClo; k++)
 					for (int l = 0; l < iClo; l++)
 						for (int m = 0; m < iClo; m++) {
-							sBff = sBff + String.valueOf(states[i][j][k][l][m]);
+							sBff = sBff + states[i][j][k][l][m];
 						}
 
 		return sBff;

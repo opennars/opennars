@@ -13,13 +13,17 @@ package nars.util.data.sorted;
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.*;
 
 
 /**
- * A Red-Black tree based {@link java.util.NavigableMap} implementation.
+ * A Red-Black tree based {@link NavigableMap} implementation.
  * The map is sorted according to the {@linkplain Comparable natural
- * ordering} of its keys, or by a {@link java.util.Comparator} provided at map
+ * ordering} of its keys, or by a {@link Comparator} provided at map
  * creation time, depending on which constructor is used.
  * <p/>
  * <p>This implementation provides guaranteed log(n) time cost for the
@@ -48,7 +52,7 @@ import java.util.*;
  * typically accomplished by synchronizing on some object that naturally
  * encapsulates the map.
  * If no such object exists, the map should be "wrapped" using the
- * {@link java.util.Collections#synchronizedSortedMap Collections.synchronizedSortedMap}
+ * {@link Collections#synchronizedSortedMap Collections.synchronizedSortedMap}
  * method.  This is best done at creation time, to prevent accidental
  * unsynchronized access to the map: <pre>
  *   SortedMap m = Collections.synchronizedSortedMap(new IndexedTreeMap(...));</pre>
@@ -58,7 +62,7 @@ import java.util.*;
  * <i>fail-fast</i>: if the map is structurally modified at any time after the
  * iterator is created, in any way except through the iterator's own
  * <tt>remove</tt> method, the iterator will throw a {@link
- * java.util.ConcurrentModificationException}.  Thus, in the face of concurrent
+ * ConcurrentModificationException}.  Thus, in the face of concurrent
  * modification, the iterator fails quickly and cleanly, rather than risking
  * arbitrary, non-deterministic behavior at an undetermined time in the future.
  * <p/>
@@ -84,18 +88,18 @@ import java.util.*;
  * @param <V> the type of mapped values
  * @author Josh Bloch, Doug Lea, Vitaly Sazanovich
  * @version 1.73, 05/10/06
- * @see java.util.Map
- * @see java.util.HashMap
- * @see java.util.Hashtable
+ * @see Map
+ * @see HashMap
+ * @see Hashtable
  * @see Comparable
- * @see java.util.Comparator
- * @see java.util.Collection
+ * @see Comparator
+ * @see Collection
  * @since 1.2
  */
 
 public class IndexedTreeMap<K, V>
         extends AbstractMap<K, V>
-        implements IndexedNavigableMap<K, V>, Cloneable, java.io.Serializable {
+        implements IndexedNavigableMap<K, V>, Cloneable, Serializable {
     /**
      * The comparator used to maintain order in this tree map, or
      * null if it uses the natural ordering of its keys.
@@ -182,7 +186,7 @@ public class IndexedTreeMap<K, V>
         comparator = m.comparator();
         try {
             buildFromSorted(m.size(), m.entrySet().iterator(), null, null);
-        } catch (java.io.IOException | ClassNotFoundException cannotHappen) {
+        } catch (IOException | ClassNotFoundException cannotHappen) {
         }
     }
 
@@ -272,7 +276,7 @@ public class IndexedTreeMap<K, V>
     }
 
     /**
-     * @throws java.util.NoSuchElementException
+     * @throws NoSuchElementException
      *          {@inheritDoc}
      */
     @Override
@@ -281,7 +285,7 @@ public class IndexedTreeMap<K, V>
     }
 
     /**
-     * @throws java.util.NoSuchElementException
+     * @throws NoSuchElementException
      *          {@inheritDoc}
      */
     @Override
@@ -311,7 +315,7 @@ public class IndexedTreeMap<K, V>
                 try {
                     buildFromSorted(mapSize, map.entrySet().iterator(),
                             null, null);
-                } catch (java.io.IOException | ClassNotFoundException cannotHappen) {
+                } catch (IOException | ClassNotFoundException cannotHappen) {
                 }
                 return;
             }
@@ -458,8 +462,8 @@ public class IndexedTreeMap<K, V>
     public void dbg() {
         Entry<K, V> e = getFirstEntry();
         while (e != null) {
-            String l = e.left == null ? "null" : "   " + e.left.key.toString();
-            String r = e.right == null ? "null" : "   " + e.right.key.toString();
+            String l = e.left == null ? "null" : "   " + e.left.key;
+            String r = e.right == null ? "null" : "   " + e.right.key;
             System.out.println(e.key + ":" + l + ':' + r + ':' + e.weight);
             e = successor(e);
         }
@@ -669,7 +673,7 @@ public class IndexedTreeMap<K, V>
         // Initialize clone with our mappings
         try {
             clone.buildFromSorted(size, entrySet().iterator(), null, null);
-        } catch (java.io.IOException | ClassNotFoundException cannotHappen) {
+        } catch (IOException | ClassNotFoundException cannotHappen) {
         }
 
         return clone;
@@ -922,7 +926,7 @@ public class IndexedTreeMap<K, V>
     private transient NavigableMap<K, V> descendingMap = null;
 
     /**
-     * Returns a {@link java.util.Set} view of the keys contained in this map.
+     * Returns a {@link Set} view of the keys contained in this map.
      * The set's iterator returns the keys in ascending order.
      * The set is backed by the map, so changes to the map are
      * reflected in the set, and vice-versa.  If the map is modified
@@ -1466,7 +1470,7 @@ public class IndexedTreeMap<K, V>
      * @serial include
      */
     abstract static class NavigableSubMap<K, V> extends java.util.AbstractMap<K, V>
-            implements NavigableMap<K, V>, java.io.Serializable {
+            implements NavigableMap<K, V>, Serializable {
         /**
          * The backing map.
          */
@@ -2209,9 +2213,10 @@ public class IndexedTreeMap<K, V>
      * @serial include
      */
     private class SubMap extends AbstractMap<K, V>
-            implements SortedMap<K, V>, java.io.Serializable {
+            implements SortedMap<K, V>, Serializable {
         private static final long serialVersionUID = -6520786458950516097L;
-        private boolean fromStart = false, toEnd = false;
+        private final boolean fromStart = false;
+        private final boolean toEnd = false;
         private K fromKey, toKey;
 
         private Object readResolve() {
@@ -2720,8 +2725,8 @@ public class IndexedTreeMap<K, V>
      * or by the keys' natural ordering if the IndexedTreeMap has no
      * Comparator).
      */
-    private void writeObject(java.io.ObjectOutputStream s)
-            throws java.io.IOException {
+    private void writeObject(ObjectOutputStream s)
+            throws IOException {
         // Write out the Comparator and any hidden stuff
         s.defaultWriteObject();
 
@@ -2739,8 +2744,8 @@ public class IndexedTreeMap<K, V>
      * Reconstitute the <tt>IndexedTreeMap</tt> instance from a stream (i.e.,
      * deserialize it).
      */
-    private void readObject(java.io.ObjectInputStream s)
-            throws java.io.IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream s)
+            throws IOException, ClassNotFoundException {
         // Read in the Comparator and any hidden stuff
         s.defaultReadObject();
 
@@ -2753,8 +2758,8 @@ public class IndexedTreeMap<K, V>
     /**
      * Intended to be called only from IndexedTreeSet.readObject
      */
-    void readTreeSet(int size, java.io.ObjectInputStream s, V defaultVal)
-            throws java.io.IOException, ClassNotFoundException {
+    void readTreeSet(int size, ObjectInputStream s, V defaultVal)
+            throws IOException, ClassNotFoundException {
         buildFromSorted(size, null, s, defaultVal);
         if (root!=null){
             updateWeight(root);
@@ -2775,7 +2780,7 @@ public class IndexedTreeMap<K, V>
     void addAllForTreeSet(SortedSet<? extends K> set, V defaultVal) {
         try {
             buildFromSorted(set.size(), set.iterator(), null, defaultVal);
-        } catch (java.io.IOException | ClassNotFoundException cannotHappen) {
+        } catch (IOException | ClassNotFoundException cannotHappen) {
         }
     }
 
@@ -2805,15 +2810,15 @@ public class IndexedTreeMap<K, V>
      * @param defaultVal if non-null, this default value is used for
      *                   each value in the map.  If null, each value is read from
      *                   iterator or stream, as described above.
-     * @throws java.io.IOException    propagated from stream reads. This cannot
+     * @throws IOException    propagated from stream reads. This cannot
      *                                occur if str is null.
      * @throws ClassNotFoundException propagated from readObject.
      *                                This cannot occur if str is null.
      */
     private void buildFromSorted(int size, Iterator it,
-                                 java.io.ObjectInputStream str,
+                                 ObjectInputStream str,
                                  V defaultVal)
-            throws java.io.IOException, ClassNotFoundException {
+            throws IOException, ClassNotFoundException {
         this.size = size;
         root = buildFromSorted(0, 0, size - 1, computeRedLevel(size),
                 it, str, defaultVal);
@@ -2836,9 +2841,9 @@ public class IndexedTreeMap<K, V>
     private Entry<K, V> buildFromSorted(int level, int lo, int hi,
                                         int redLevel,
                                         Iterator it,
-                                        java.io.ObjectInputStream str,
+                                        ObjectInputStream str,
                                         V defaultVal)
-            throws java.io.IOException, ClassNotFoundException {
+            throws IOException, ClassNotFoundException {
         /*
          * Strategy: The root is the middlemost element. To get to it, we
          * have to first recursively construct the entire left subtree,

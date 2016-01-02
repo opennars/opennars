@@ -1115,7 +1115,7 @@ public class WordNet {
             SUMOterm = SUMOterm.replaceAll("[+=@]", "");
         }
         ArrayList result = new ArrayList();
-        result.add((new Integer(POS)).toString() + synset);
+        result.add((new Integer(POS)) + synset);
         result.add(SUMOterm);
         result.add((new Integer(bestTotal)).toString());
         return result;
@@ -1388,7 +1388,7 @@ public class WordNet {
 
         listLength = synsetList != null ? synsetList.length : 0;
         result.append("<i>According to WordNet, the ").append(type).append('"').append(word).append("\" has ");
-        result.append(String.valueOf(listLength)).append(" sense(s).</i><P>\n\n");
+        result.append(listLength).append(" sense(s).</i><P>\n\n");
 
         for (int i = 0; i < listLength; i++) {         // Split apart the SUMO concepts, and store them as an associative array.
             synset = synsetList[i];

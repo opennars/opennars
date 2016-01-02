@@ -97,6 +97,7 @@ public class SubtreeMutation extends AbstractOrganismOperator implements Listene
      * <li>{@link #PROBABILITY}
      * </ul>
      */
+    @Override
     public void setConfig(GPContainer config) {
         if (autoConfig) {
             config.on(ConfigEvent.class, this);

@@ -45,7 +45,7 @@ public class TournamentSelector implements IndividualSelector {
     /**
      * The tournament size.
      */
-    private int size;
+    private final int size;
 
     /**
      * Constructs a <code>TournamentSelector</code>.

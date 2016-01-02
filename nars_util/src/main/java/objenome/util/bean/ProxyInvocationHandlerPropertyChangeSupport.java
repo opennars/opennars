@@ -32,6 +32,7 @@ public class ProxyInvocationHandlerPropertyChangeSupport extends ProxyInvocation
         // PropertyChangeListener/VetoableChangeListener)
     }
 
+    @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (args != null && args.length == 1) {
             if (isAnnotated(method, Type.ADD_LISTENER)) {
@@ -67,6 +68,7 @@ public class ProxyInvocationHandlerPropertyChangeSupport extends ProxyInvocation
         vetoableChangeListeners.remove(listener);
     }
 
+    @Override
     protected Object handleSetter(Object proxy, PropertyDescriptor descriptor, Object[] args) {
         PropertyChangeEvent event = new PropertyChangeEvent(proxy, descriptor.getName(), handleGetter(
                 proxy, descriptor), args[0]);
@@ -112,6 +114,7 @@ public class ProxyInvocationHandlerPropertyChangeSupport extends ProxyInvocation
         }
     }
 
+    @Override
     protected ProxyInvocationHandlerPropertyChangeSupport clone() throws CloneNotSupportedException {
         ProxyInvocationHandlerPropertyChangeSupport result = (ProxyInvocationHandlerPropertyChangeSupport) super
                 .clone();

@@ -45,8 +45,8 @@ public class History {
     private final BrowserWindow browser;      // browser window (contains WebView) managed by this history.
     private int pointer = 0;                  // index into the history list for the currently displayed page from the history.
     private Integer navPointer = null;        // index into the history list for a new page to be displayed page in the history.
-    private ReadOnlyBooleanWrapper canNavForward  = new ReadOnlyBooleanWrapper(false);
-    private ReadOnlyBooleanWrapper canNavBackward = new ReadOnlyBooleanWrapper(false);
+    private final ReadOnlyBooleanWrapper canNavForward  = new ReadOnlyBooleanWrapper(false);
+    private final ReadOnlyBooleanWrapper canNavBackward = new ReadOnlyBooleanWrapper(false);
 
     /**
      * create a new history tracker for the given browser window

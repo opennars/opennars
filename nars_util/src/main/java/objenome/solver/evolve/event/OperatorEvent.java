@@ -32,12 +32,12 @@ public abstract class OperatorEvent implements Event {
     /**
      * The <code>Operator</code> that fired the event.
      */
-    private OrganismOperator operator;
+    private final OrganismOperator operator;
 
     /**
      * The array of individuals undergoing the operator.
      */
-    private Organism[] parents;
+    private final Organism[] parents;
 
     /**
      * Constructs an <code>OperatorEvent</code>.

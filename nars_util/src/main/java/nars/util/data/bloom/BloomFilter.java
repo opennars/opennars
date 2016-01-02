@@ -40,10 +40,10 @@ import java.util.List;
 public class BloomFilter {
     private static final double DEFAULT_FPP = 0.05;
     private AwesomeBitSet bitSet;
-    private int m;
-    private int k;
-    private double fpp;
-    private long n;
+    private final int m;
+    private final int k;
+    private final double fpp;
+    private final long n;
 
     public BloomFilter(long maxNumEntries) {
         this(maxNumEntries, DEFAULT_FPP);

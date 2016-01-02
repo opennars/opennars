@@ -56,7 +56,7 @@ import java.util.List;
  */
 public class LookAndFeelAddons {
 
-  private static List contributedComponents = new ArrayList();
+  private static final List contributedComponents = new ArrayList();
 
   /**
    * Key used to ensure the current UIManager has been populated by the
@@ -307,6 +307,7 @@ public class LookAndFeelAddons {
   // TRACKING OF THE CURRENT LOOK AND FEEL
   //  
   private static class UpdateAddon implements PropertyChangeListener {
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
       try {
         setAddon(getBestMatchAddonClassName());

@@ -38,18 +38,16 @@ public class TetrisPiece {
     public static TetrisPiece makeSquare() {
         TetrisPiece newPiece = new TetrisPiece();
 
-        {
-            //Orientation 0,1,2,3
-            int[] row0 = {0, 0, 0, 0, 0};
-            int[] row1 = {0, 0, 1, 1, 0};
-            int[] row2 = {0, 0, 1, 1, 0};
-            int[] row3 = {0, 0, 0, 0, 0};
-            int[] row4 = {0, 0, 0, 0, 0};
-            newPiece.setShape(0, row0, row1, row2, row3, row4);
-            newPiece.setShape(1, row0, row1, row2, row3, row4);
-            newPiece.setShape(2, row0, row1, row2, row3, row4);
-            newPiece.setShape(3, row0, row1, row2, row3, row4);
-        }
+        //Orientation 0,1,2,3
+        int[] row0 = {0, 0, 0, 0, 0};
+        int[] row1 = {0, 0, 1, 1, 0};
+        int[] row2 = {0, 0, 1, 1, 0};
+        int[] row3 = {0, 0, 0, 0, 0};
+        int[] row4 = {0, 0, 0, 0, 0};
+        newPiece.setShape(0, row0, row1, row2, row3, row4);
+        newPiece.setShape(1, row0, row1, row2, row3, row4);
+        newPiece.setShape(2, row0, row1, row2, row3, row4);
+        newPiece.setShape(3, row0, row1, row2, row3, row4);
 
         return newPiece;
     }
@@ -85,15 +83,13 @@ public class TetrisPiece {
             int[] row4 = {0, 0, 0, 0, 0};
             newPiece.setShape(2, row0, row1, row2, row3, row4);
         }
-        {
-            //Orientation 3
-            int[] row0 = {0, 0, 0, 0, 0};
-            int[] row1 = {0, 0, 1, 0, 0};
-            int[] row2 = {0, 1, 1, 0, 0};
-            int[] row3 = {0, 0, 1, 0, 0};
-            int[] row4 = {0, 0, 0, 0, 0};
-            newPiece.setShape(3, row0, row1, row2, row3, row4);
-        }
+        //Orientation 3
+        int[] row0 = {0, 0, 0, 0, 0};
+        int[] row1 = {0, 0, 1, 0, 0};
+        int[] row2 = {0, 1, 1, 0, 0};
+        int[] row3 = {0, 0, 1, 0, 0};
+        int[] row4 = {0, 0, 0, 0, 0};
+        newPiece.setShape(3, row0, row1, row2, row3, row4);
 
         return newPiece;
     }
@@ -112,16 +108,14 @@ public class TetrisPiece {
             newPiece.setShape(2, row0, row1, row2, row3, row4);
         }
 
-        {
-            //Orientation 1+3
-            int[] row0 = {0, 0, 0, 0, 0};
-            int[] row1 = {0, 0, 0, 0, 0};
-            int[] row2 = {0, 1, 1, 1, 1};
-            int[] row3 = {0, 0, 0, 0, 0};
-            int[] row4 = {0, 0, 0, 0, 0};
-            newPiece.setShape(1, row0, row1, row2, row3, row4);
-            newPiece.setShape(3, row0, row1, row2, row3, row4);
-        }
+        //Orientation 1+3
+        int[] row0 = {0, 0, 0, 0, 0};
+        int[] row1 = {0, 0, 0, 0, 0};
+        int[] row2 = {0, 1, 1, 1, 1};
+        int[] row3 = {0, 0, 0, 0, 0};
+        int[] row4 = {0, 0, 0, 0, 0};
+        newPiece.setShape(1, row0, row1, row2, row3, row4);
+        newPiece.setShape(3, row0, row1, row2, row3, row4);
         return newPiece;
 
     }
@@ -140,16 +134,14 @@ public class TetrisPiece {
             newPiece.setShape(2, row0, row1, row2, row3, row4);
         }
 
-        {
-            //Orientation 1+3
-            int[] row0 = {0, 0, 0, 0, 0};
-            int[] row1 = {0, 0, 1, 1, 0};
-            int[] row2 = {0, 1, 1, 0, 0};
-            int[] row3 = {0, 0, 0, 0, 0};
-            int[] row4 = {0, 0, 0, 0, 0};
-            newPiece.setShape(1, row0, row1, row2, row3, row4);
-            newPiece.setShape(3, row0, row1, row2, row3, row4);
-        }
+        //Orientation 1+3
+        int[] row0 = {0, 0, 0, 0, 0};
+        int[] row1 = {0, 0, 1, 1, 0};
+        int[] row2 = {0, 1, 1, 0, 0};
+        int[] row3 = {0, 0, 0, 0, 0};
+        int[] row4 = {0, 0, 0, 0, 0};
+        newPiece.setShape(1, row0, row1, row2, row3, row4);
+        newPiece.setShape(3, row0, row1, row2, row3, row4);
         return newPiece;
 
     }
@@ -168,16 +160,14 @@ public class TetrisPiece {
             newPiece.setShape(2, row0, row1, row2, row3, row4);
         }
 
-        {
-            //Orientation 1+3
-            int[] row0 = {0, 0, 0, 0, 0};
-            int[] row1 = {0, 1, 1, 0, 0};
-            int[] row2 = {0, 0, 1, 1, 0};
-            int[] row3 = {0, 0, 0, 0, 0};
-            int[] row4 = {0, 0, 0, 0, 0};
-            newPiece.setShape(1, row0, row1, row2, row3, row4);
-            newPiece.setShape(3, row0, row1, row2, row3, row4);
-        }
+        //Orientation 1+3
+        int[] row0 = {0, 0, 0, 0, 0};
+        int[] row1 = {0, 1, 1, 0, 0};
+        int[] row2 = {0, 0, 1, 1, 0};
+        int[] row3 = {0, 0, 0, 0, 0};
+        int[] row4 = {0, 0, 0, 0, 0};
+        newPiece.setShape(1, row0, row1, row2, row3, row4);
+        newPiece.setShape(3, row0, row1, row2, row3, row4);
         return newPiece;
 
     }
@@ -213,15 +203,13 @@ public class TetrisPiece {
             int[] row4 = {0, 0, 0, 0, 0};
             newPiece.setShape(2, row0, row1, row2, row3, row4);
         }
-        {
-            //Orientation 3
-            int[] row0 = {0, 0, 0, 0, 0};
-            int[] row1 = {0, 0, 0, 1, 0};
-            int[] row2 = {0, 1, 1, 1, 0};
-            int[] row3 = {0, 0, 0, 0, 0};
-            int[] row4 = {0, 0, 0, 0, 0};
-            newPiece.setShape(3, row0, row1, row2, row3, row4);
-        }
+        //Orientation 3
+        int[] row0 = {0, 0, 0, 0, 0};
+        int[] row1 = {0, 0, 0, 1, 0};
+        int[] row2 = {0, 1, 1, 1, 0};
+        int[] row3 = {0, 0, 0, 0, 0};
+        int[] row4 = {0, 0, 0, 0, 0};
+        newPiece.setShape(3, row0, row1, row2, row3, row4);
 
         return newPiece;
     }
@@ -257,15 +245,13 @@ public class TetrisPiece {
             int[] row4 = {0, 0, 0, 0, 0};
             newPiece.setShape(2, row0, row1, row2, row3, row4);
         }
-        {
-            //Orientation 3
-            int[] row0 = {0, 0, 0, 0, 0};
-            int[] row1 = {0, 0, 0, 0, 0};
-            int[] row2 = {0, 1, 1, 1, 0};
-            int[] row3 = {0, 0, 0, 1, 0};
-            int[] row4 = {0, 0, 0, 0, 0};
-            newPiece.setShape(3, row0, row1, row2, row3, row4);
-        }
+        //Orientation 3
+        int[] row0 = {0, 0, 0, 0, 0};
+        int[] row1 = {0, 0, 0, 0, 0};
+        int[] row2 = {0, 1, 1, 1, 0};
+        int[] row3 = {0, 0, 0, 1, 0};
+        int[] row4 = {0, 0, 0, 0, 0};
+        newPiece.setShape(3, row0, row1, row2, row3, row4);
 
         return newPiece;
     }

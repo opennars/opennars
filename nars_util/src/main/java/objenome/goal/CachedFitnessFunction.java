@@ -41,10 +41,10 @@ import java.util.Map;
 public class CachedFitnessFunction<I extends Organism> extends AbstractFitnessFunction<I> {
 
     // The cache of fitness scores
-    private Map<I, Fitness> cache;
+    private final Map<I, Fitness> cache;
 
     // The fitness function to delegate to when not in cache
-    private AbstractFitnessFunction<I> delegate;
+    private final AbstractFitnessFunction<I> delegate;
 
     /**
      * Constructs a <code>CachedFitnessFunction</code> fitness function. Fitness

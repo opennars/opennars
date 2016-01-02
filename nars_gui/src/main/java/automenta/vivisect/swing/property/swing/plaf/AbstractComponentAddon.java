@@ -37,20 +37,23 @@ import java.util.ResourceBundle;
 @SuppressWarnings({"AbstractClassWithoutAbstractMethods", "AbstractClassNeverImplemented"})
 public abstract class AbstractComponentAddon implements ComponentAddon {
 
-  private String name;
+  private final String name;
   
   protected AbstractComponentAddon(String name) {
     this.name = name;
   }
   
+  @Override
   public final String getName() {
     return name;
   }
 
+  @Override
   public void initialize(LookAndFeelAddons addon) {
     addon.loadDefaults(getDefaults(addon));
   }
 
+  @Override
   public void uninitialize(LookAndFeelAddons addon) {
     addon.unloadDefaults(getDefaults(addon));
   }

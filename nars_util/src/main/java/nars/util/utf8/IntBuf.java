@@ -45,7 +45,7 @@ public class IntBuf {
         p(x, e, b, v);
     }
     static void p(int[] x, int e, int b, byte v) {
-        int c = x[e] & ~(((int)0xff) << b);
+        int c = x[e] & ~(0xff << b);
         x[e] = c | (v << b);
     }
 

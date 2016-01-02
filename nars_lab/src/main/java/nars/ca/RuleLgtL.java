@@ -131,18 +131,18 @@ public class RuleLgtL {
 
 		// states
 		ih = isHist ? iClo : 0;
-		sBff = sBff + ",C" + String.valueOf(ih);
+		sBff = sBff + ",C" + ih;
 
 		// center cell
 		sBff = isCentr ? sBff + ",M1" : sBff + ",M0";
 
 		// S rules
-		sBff = sBff + ",S" + String.valueOf(iSMin) + ".."
-				+ String.valueOf(iSMax);
+		sBff = sBff + ",S" + iSMin + ".."
+				+ iSMax;
 
 		// B rules
-		sBff = sBff + ",B" + String.valueOf(iBMin) + ".."
-				+ String.valueOf(iBMax);
+		sBff = sBff + ",B" + iBMin + ".."
+				+ iBMax;
 
 		// neighbourhood
 		sBff = iNgh == MJRules.NGHTYP_NEUM ? sBff + ",NN" : sBff + ",NM";

@@ -33,7 +33,7 @@ public class DefaultCellRenderer extends DefaultTableCellRenderer implements Lis
 
 	private static final long serialVersionUID = -6142292027983690799L;
 
-	private ObjectRenderer objectRenderer = new DefaultObjectRenderer();
+	private final ObjectRenderer objectRenderer = new DefaultObjectRenderer();
 
 	@Override
 	public Component getListCellRendererComponent(JList list, Object value, int index, boolean selected, boolean focus) {

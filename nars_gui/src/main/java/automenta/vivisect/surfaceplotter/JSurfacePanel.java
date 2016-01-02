@@ -66,7 +66,8 @@ public class JSurfacePanel extends JPanel {
 		//sm.setPlotColor(PlotColor.FOG);
 		//sm.setPlotColor(PlotColor.OPAQUE);
 		sm.setMapper(new Mapper() {
-			public  float f1( float x, float y)
+			@Override
+			public  float f1(float x, float y)
 			{
 				float r = x*x+y*y;
 				
@@ -74,7 +75,8 @@ public class JSurfacePanel extends JPanel {
 				return (float)( Math.sin(r)/(r));
 			}
 			
-			public  float f2( float x, float y)
+			@Override
+			public  float f2(float x, float y)
 			{
 				return (float)(Math.sin(x*y));
 			}
@@ -110,7 +112,7 @@ public class JSurfacePanel extends JPanel {
 
 	/**
 	 * @return
-	 * @see java.awt.Component#getFont()
+	 * @see Component#getFont()
 	 */
 	public Font getTitleFont() {
 		return title.getFont();
@@ -118,7 +120,7 @@ public class JSurfacePanel extends JPanel {
 
 	/**
 	 * @return
-	 * @see javax.swing.JLabel#getIcon()
+	 * @see JLabel#getIcon()
 	 */
 	public Icon getTitleIcon() {
 		return title.getIcon();
@@ -126,7 +128,7 @@ public class JSurfacePanel extends JPanel {
 
 	/**
 	 * @return
-	 * @see javax.swing.JLabel#getText()
+	 * @see JLabel#getText()
 	 */
 	public String getTitleText() {
 		return title.getText();
@@ -134,7 +136,7 @@ public class JSurfacePanel extends JPanel {
 
 	/**
 	 * @return
-	 * @see java.awt.Component#isVisible()
+	 * @see Component#isVisible()
 	 */
 	public boolean isTitleVisible() {
 		return title.isVisible();
@@ -142,7 +144,7 @@ public class JSurfacePanel extends JPanel {
 
 	/**
 	 * @param font
-	 * @see javax.swing.JComponent#setFont(java.awt.Font)
+	 * @see JComponent#setFont(Font)
 	 */
 	public void setTitleFont(Font font) {
 		title.setFont(font);
@@ -150,7 +152,7 @@ public class JSurfacePanel extends JPanel {
 
 	/**
 	 * @param icon
-	 * @see javax.swing.JLabel#setIcon(javax.swing.Icon)
+	 * @see JLabel#setIcon(Icon)
 	 */
 	public void setTitleIcon(Icon icon) {
 		title.setIcon(icon);
@@ -158,7 +160,7 @@ public class JSurfacePanel extends JPanel {
 
 	/**
 	 * @param text
-	 * @see javax.swing.JLabel#setText(java.lang.String)
+	 * @see JLabel#setText(String)
 	 */
 	public void setTitleText(String text) {
 		title.setText(text);
@@ -166,7 +168,7 @@ public class JSurfacePanel extends JPanel {
 
 	/**
 	 * @param aFlag
-	 * @see javax.swing.JComponent#setVisible(boolean)
+	 * @see JComponent#setVisible(boolean)
 	 */
 	public void setTitleVisible(boolean aFlag) {
 		title.setVisible(aFlag);
@@ -174,7 +176,7 @@ public class JSurfacePanel extends JPanel {
 
 	/**
 	 * @return
-	 * @see java.awt.Component#isVisible()
+	 * @see Component#isVisible()
 	 */
 	public boolean isConfigurationVisible() {
 		return scrollpane.isVisible();
@@ -182,7 +184,7 @@ public class JSurfacePanel extends JPanel {
 
 	/**
 	 * @param aFlag
-	 * @see javax.swing.JComponent#setVisible(boolean)
+	 * @see JComponent#setVisible(boolean)
 	 */
 	public void setConfigurationVisible(boolean aFlag) {
 		scrollpane.setVisible(aFlag);
@@ -224,7 +226,9 @@ public class JSurfacePanel extends JPanel {
 		scrollpane = new JGridBagScrollPane();
 		configurationPanel = new VerticalConfigurationPanel();
 		//noinspection CloneableClassWithoutClone
-		configurationToggler = new AbstractAction(){public void actionPerformed(ActionEvent e){toggleConfiguration();}};
+		configurationToggler = new AbstractAction(){
+			@Override
+			public void actionPerformed(ActionEvent e){toggleConfiguration();}};
 
 		//======== this ========
 		setName("this");
@@ -265,15 +269,13 @@ public class JSurfacePanel extends JPanel {
 			new Insets(0, 0, 0, 0), 0, 0));
 
 		//======== scrollpane ========
-		{
-			scrollpane.setWidthFixed(true);
-			scrollpane.setName("scrollpane");
+		scrollpane.setWidthFixed(true);
+		scrollpane.setName("scrollpane");
 
-			//---- configurationPanel ----
-			configurationPanel.setNextFocusableComponent(this);
-			configurationPanel.setName("configurationPanel");
-			scrollpane.setViewportView(configurationPanel);
-		}
+		//---- configurationPanel ----
+		configurationPanel.setNextFocusableComponent(this);
+		configurationPanel.setName("configurationPanel");
+		scrollpane.setViewportView(configurationPanel);
 		add(scrollpane, new GridBagConstraints(1, 0, 1, 2, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 0, 0), 0, 0));

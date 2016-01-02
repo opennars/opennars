@@ -46,6 +46,6 @@ public enum TrieMatch
     * sequences stored in the Trie. If the sequence "meow" is stored in the
     * Trie, then it can match on "meow", "meowa", "meowab", etc.
     */
-   STARTS_WITH;
+   STARTS_WITH
 
 }

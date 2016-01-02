@@ -93,7 +93,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         double max = Double.NEGATIVE_INFINITY;
 
 
-        for (Object[] objects : (Iterable<Object[]>) this) {
+        for (Object[] objects : this) {
             Object e = objects[signal];
             if (e instanceof Number) {
                 double d = ((Number) e).doubleValue();
@@ -295,7 +295,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
    
         
         for (int i = 0; i < getSignals().size(); i++) {
-            if (i == 0) extremaToInvalidate[i] = true;
+            if (i == 0) extremaToInvalidate[0] = true;
             if (extremaToInvalidate[i]) {        
                 updateBounds(i);
             }

@@ -288,7 +288,7 @@ import java.util.regex.Pattern;
      * Returns <code>true</code> if this rope matches the specified
      * <code>Pattern</code>, or <code>false</code> otherwise.
      *
-     * @see java.util.regex.Pattern
+     * @see Pattern
      * @param regex the specified regular expression.
      * @return <code>true</code> if this rope matches the specified
      * <code>Pattern</code>, or <code>false</code> otherwise.
@@ -299,7 +299,7 @@ import java.util.regex.Pattern;
      * Returns <code>true</code> if this rope matches the specified regular
      * expression, or <code>false</code> otherwise.
      *
-     * @see java.util.regex.Pattern
+     * @see Pattern
      * @param regex the specified regular expression.
      * @return <code>true</code> if this rope matches the specified regular
      * expression, or <code>false</code> otherwise.
@@ -536,49 +536,49 @@ import java.util.regex.Pattern;
         return r;
     }
 
-    /**
-     * Concatenate two ropes. Implements all recommended optimizations in
-     * "Ropes: an Alternative to Strings".
-     *
-     * @param left the first rope.
-     * @param right the second rope.
-     * @return the concatenation of the specified ropes.
-     */
-    static Rope cat(Rope left, Rope right) {
-        if (left.length() == 0) {
-            return right;
-        }
-        if (right.length() == 0) {
-            return left;
-        }
-        if ((long) left.length() + right.length() > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException(
-                    "Left length=" + left.length() + ", right length=" + right.length()
-                    + ". Concatenation would overflow length field.");
-        }
-        int combineLength = 17;
-        if (left.length() + right.length() < combineLength) {
-            return new FlatCharSequenceRope(left.toString() + right.toString());
-        }
-        if (!(left instanceof ConcatenationRope)) {
-            if (right instanceof ConcatenationRope) {
-                ConcatenationRope cRight = (ConcatenationRope) right;
-                if (left.length() + cRight.getLeft().length() < combineLength) {
-                    return autoRebalance(new ConcatenationRope(new FlatCharSequenceRope(left.toString() + cRight.getLeft().toString()), cRight.getRight()));
-                }
-            }
-        }
-        if (!(right instanceof ConcatenationRope)) {
-            if (left instanceof ConcatenationRope) {
-                ConcatenationRope cLeft = (ConcatenationRope) left;
-                if (right.length() + cLeft.getRight().length() < combineLength) {
-                    return autoRebalance(new ConcatenationRope(cLeft.getLeft(), new FlatCharSequenceRope(cLeft.getRight().toString() + right.toString())));
-                }
-            }
-        }
-
-        return autoRebalance(new ConcatenationRope(left, right));
-    }
+//    /**
+//     * Concatenate two ropes. Implements all recommended optimizations in
+//     * "Ropes: an Alternative to Strings".
+//     *
+//     * @param left the first rope.
+//     * @param right the second rope.
+//     * @return the concatenation of the specified ropes.
+//     */
+//    static Rope cat(Rope left, Rope right) {
+//        if (left.length() == 0) {
+//            return right;
+//        }
+//        if (right.length() == 0) {
+//            return left;
+//        }
+//        if ((long) left.length() + right.length() > Integer.MAX_VALUE) {
+//            throw new IllegalArgumentException(
+//                    "Left length=" + left.length() + ", right length=" + right.length()
+//                    + ". Concatenation would overflow length field.");
+//        }
+//        int combineLength = 17;
+//        if (left.length() + right.length() < combineLength) {
+//            return new FlatCharSequenceRope(left + right);
+//        }
+//        if (!(left instanceof ConcatenationRope)) {
+//            if (right instanceof ConcatenationRope) {
+//                ConcatenationRope cRight = (ConcatenationRope) right;
+//                if (left.length() + cRight.getLeft().length() < combineLength) {
+//                    return autoRebalance(new ConcatenationRope(new FlatCharSequenceRope(left + cRight.getLeft()), cRight.getRight()));
+//                }
+//            }
+//        }
+//        if (!(right instanceof ConcatenationRope)) {
+//            if (left instanceof ConcatenationRope) {
+//                ConcatenationRope cLeft = (ConcatenationRope) left;
+//                if (right.length() + cLeft.getRight().length() < combineLength) {
+//                    return autoRebalance(new ConcatenationRope(cLeft.getLeft(), new FlatCharSequenceRope(cLeft.getRight() + right)));
+//                }
+//            }
+//        }
+//
+//        return autoRebalance(new ConcatenationRope(left, right));
+//    }
 
     /**
      * Returns the depth of the specified rope.

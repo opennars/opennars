@@ -508,7 +508,7 @@ public class WordNetUtilities {
                     pw.println(line.trim());
                 }
             }
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             throw new IOException("Error writing file " + fileName + '\n' + e.getMessage());
         } finally {
             if (pw != null) {
@@ -647,7 +647,7 @@ public class WordNetUtilities {
                 }
                 m = p.matcher(line);
             }
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             throw new IOException("Error writing file " + fileName + '\n' + e.getMessage());
         } finally {
             if (pw != null) {
@@ -746,7 +746,7 @@ public class WordNetUtilities {
                     pw.println(line.trim());
                 }
             }
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             throw new IOException("Error writing file " + fileName + '\n' + e.getMessage());
         } finally {
             if (pw != null) {
@@ -784,7 +784,7 @@ public class WordNetUtilities {
                     System.out.println("INFO in WordNetUtilities.updateWNversionReading(): no match for line: " + line);
                 }
             }
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             throw new IOException("Error writing file " + fileName + '\n' + e.getMessage());
         }
     }

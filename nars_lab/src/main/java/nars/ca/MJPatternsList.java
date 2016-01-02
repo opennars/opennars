@@ -13,7 +13,7 @@ public class MJPatternsList extends Dialog implements ActionListener {
 	private final Button btnLoad;
     private final Button btnCcl;
 	private final Label lblPrompt;
-	private final java.awt.List LstFiles = new java.awt.List(10, false);
+	private final List LstFiles = new List(10, false);
 	private final MJCellUI mjUI;
 	private String sRuleName;
 	private String sGameName;
@@ -113,6 +113,7 @@ public class MJPatternsList extends Dialog implements ActionListener {
 	}
 
 	// ----------------------------------------------------------------
+	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == btnLoad) {
 			LoadCurrentPattern();
@@ -122,6 +123,7 @@ public class MJPatternsList extends Dialog implements ActionListener {
 	}
 
 	// ----------------------------------------------------------------
+	@Override
 	public boolean action(Event evt, Object arg) {
 		if (evt.target.equals(LstFiles)) {
 			LoadCurrentPattern();
@@ -131,6 +133,7 @@ public class MJPatternsList extends Dialog implements ActionListener {
 	}
 
 	// ----------------------------------------------------------------
+	@Override
 	public boolean handleEvent(Event evt) {
 		if (evt.id == Event.WINDOW_DESTROY)
 			setVisible(false);

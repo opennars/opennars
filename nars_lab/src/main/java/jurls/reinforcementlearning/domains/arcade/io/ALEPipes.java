@@ -56,7 +56,7 @@ public class ALEPipes {
     protected boolean useRLE = true;
     
     /** Uses stdin/stdout for communication */
-    public ALEPipes() throws IOException {
+    public ALEPipes() {
         this(new BufferedReader(new InputStreamReader(System.in)), System.out);
     }
 

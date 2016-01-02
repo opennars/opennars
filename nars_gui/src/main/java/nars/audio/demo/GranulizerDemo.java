@@ -9,12 +9,10 @@ import nars.audio.sample.SamplePlayer;
 import nars.audio.sample.SonarSample;
 
 import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 
 public class GranulizerDemo {
 
@@ -31,7 +29,7 @@ public class GranulizerDemo {
     }
 
     @SuppressWarnings("HardcodedFileSeparator")
-    public static void main(String[] args) throws IOException, LineUnavailableException, UnsupportedAudioFileException {
+    public static void main(String[] args) throws LineUnavailableException {
 
 
         Audio audio = new Audio(4);
@@ -49,6 +47,7 @@ public class GranulizerDemo {
             public void run() {*/
         JFrame frame = new JFrame("Basic Timestretch Demo");
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 audio.shutDown();
                 System.exit(0);

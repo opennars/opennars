@@ -123,6 +123,7 @@ public class TermNode extends GraphNode {
 //        edges = null;
 //    }
 
+    @Override
     public final TermEdge[] getEdges() {
         return edges;
     }

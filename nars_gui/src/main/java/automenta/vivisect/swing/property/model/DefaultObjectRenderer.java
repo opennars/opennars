@@ -34,6 +34,7 @@ public class DefaultObjectRenderer implements ObjectRenderer {
     idVisible = b;
   }
 
+  @Override
   public String getText(Object object) {
     if (object == null) {
       return null;
@@ -63,7 +64,7 @@ public class DefaultObjectRenderer implements ObjectRenderer {
       buffer.append(((TitledObject)object).getTitle());
     }
     if (!(object instanceof HasId || object instanceof TitledObject)) {
-      buffer.append(String.valueOf(object));
+      buffer.append(object);
     }
     return buffer.toString();
   }

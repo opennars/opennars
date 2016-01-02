@@ -45,6 +45,7 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
         return proxiedIface;
     }
 
+    @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String methodName = method.getName();
         String returnTypeName = method.getReturnType().getName();
@@ -128,6 +129,7 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
         return descriptor != null && data.get(descriptor.getName()) != null;
     }
 
+    @Override
     protected ProxyInvocationHandler clone() throws CloneNotSupportedException {
         ProxyInvocationHandler result = (ProxyInvocationHandler) super.clone();
         result.data = new FixedMap<>(data);

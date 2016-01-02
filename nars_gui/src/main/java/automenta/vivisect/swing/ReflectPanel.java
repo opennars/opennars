@@ -72,7 +72,7 @@ public class ReflectPanel<O> extends JPanel {
         // getLocationOnScreen on the button is throwing an exception, it
         // does not happen when not using Web Start. Load properties one
         // by one as follow will do the trick
-        automenta.vivisect.swing.property.propertysheet.Property[] properties = sheet.getProperties();
+        Property[] properties = sheet.getProperties();
         for (Property property : properties) {
             try {
                 property.readFromObject(instance);

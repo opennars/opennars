@@ -118,53 +118,48 @@ public class Multitainer extends AbstractPrototainer implements AbstractMultitai
         }
         
         //Handle Constructor Dependencies
-        {
-            Set<DependencyKey> possibleConstructorDependencies = new HashSet();
-            if (cb.getInitValues()!=null) {
-                possibleConstructorDependencies.addAll(cb.getInitValues().stream().filter(o -> o instanceof DependencyKey).map(o -> (DependencyKey) o).collect(Collectors.toList()));
+        Set<DependencyKey> possibleConstructorDependencies = new HashSet();
+        if (cb.getInitValues()!=null) {
+            possibleConstructorDependencies.addAll(cb.getInitValues().stream().filter(o -> o instanceof DependencyKey).map(o -> (DependencyKey) o).collect(Collectors.toList()));
+        }
+
+        //simultate instancing to find all possible constructor dependencies
+        cb.instance(this, possibleConstructorDependencies);
+
+        for (DependencyKey dk : possibleConstructorDependencies) {
+
+            List nextPath = new ArrayList(path);
+            nextPath.add(dk);
+
+            Builder bv = getBuilder(dk.key);
+
+            if (bv instanceof DecideImplementationClass) {
+
+                problems.add((Problem)bv);
+
+                //recurse for each choice
+                getProblems(((DecideImplementationClass)bv).implementors, nextPath, problems);
             }
+            else if (bv!=null) {
+                //System.out.println("  Class Builder Init Value Builder: "+ cb + " " + bv);
+                getProblems(bv, nextPath, problems);
+            }
+            else if (dk.param!=null) {
 
-            //simultate instancing to find all possible constructor dependencies
-            cb.instance(this, possibleConstructorDependencies);
+                //this was likely a newly discovered dependency,
+                //from possibleConstructorDependencies,
+                //so recursively discover its problems:
 
-            for (DependencyKey dk : possibleConstructorDependencies) {
+                Class paramClass = dk.param.getType();
+                getProblems(paramClass, nextPath, problems);
 
-                List nextPath = new ArrayList(path);
-                nextPath.add(dk);
-
-                Builder bv = getBuilder(dk.key);
-
-                if (bv instanceof DecideImplementationClass) {
-
-                    problems.add((Problem)bv);
-
-                    //recurse for each choice
-                    getProblems(((DecideImplementationClass)bv).implementors, nextPath, problems);
-                }
-                else if (bv!=null) {
-                    //System.out.println("  Class Builder Init Value Builder: "+ cb + " " + bv);
-                    getProblems(bv, nextPath, problems);
-                }
-                else if (dk.param!=null) {
-                    
-                    //this was likely a newly discovered dependency, 
-                    //from possibleConstructorDependencies,
-                    //so recursively discover its problems:
-                    
-                    Class paramClass = dk.param.getType();                    
-                    getProblems(paramClass, nextPath, problems);
-                    
-                }
             }
         }
-       
+
 
         //TODO handle setters, etc
-        {
-    
-        }
-        
-        
+
+
         //System.out.println("Class Builder: "+ path + " " + cb);
 
         return problems;
@@ -307,7 +302,7 @@ public class Multitainer extends AbstractPrototainer implements AbstractMultitai
     }
 
     public Objenome solve(Object[] targets, Map<Problem,Solution> problemSolutions) throws IncompleteSolutionException {
-        List<Problem> missing = problemSolutions.entrySet().stream().filter(e -> e.getValue() == null).map(Map.Entry<Problem, Solution>::getKey).collect(Collectors.toList());
+        List<Problem> missing = problemSolutions.entrySet().stream().filter(e -> e.getValue() == null).map(Map.Entry::getKey).collect(Collectors.toList());
 
         if (!missing.isEmpty())
             throw new IncompleteSolutionException(missing, targets, this);

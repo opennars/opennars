@@ -37,6 +37,7 @@ public abstract class MathNode extends Node<Node, Double> {
     }
 
     /** the fast double-only version that should be implemented */
+    @Override
     public abstract double asDouble();
 
     @Override

@@ -35,11 +35,11 @@ import java.util.MissingResourceException;
  */
 public class BaseBeanInfo extends SimpleBeanInfo {
 
-	private Class<?> type;
+	private final Class<?> type;
 
 	private BeanDescriptor beanDescriptor;
 
-	private List<PropertyDescriptor> properties = new ArrayList<>();
+	private final List<PropertyDescriptor> properties = new ArrayList<>();
 
 	public BaseBeanInfo(Class<?> type) {
 		this.type = type;

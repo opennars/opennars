@@ -17,7 +17,7 @@ public class Grid1DSimple implements World {
     private final double MATCH_REWARD_FACTOR;
 
     private double focusPosition;
-    private double focusVelocity;
+    private final double focusVelocity;
         
     private double[] action;
 
@@ -100,7 +100,7 @@ public class Grid1DSimple implements World {
             if (sensor[i] < 0)
                 sensor[i] = 0;
             if (i == 0) {
-                min = max = sensor[i];
+                min = max = sensor[0];
             }
             else {
                 if (sensor[i] < min) min = sensor[i];

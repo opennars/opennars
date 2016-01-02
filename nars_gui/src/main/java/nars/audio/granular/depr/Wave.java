@@ -17,11 +17,11 @@ import java.util.List;
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class Wave {
 
-    private int sampleCount,
-            bitsPerSample,
-            channels,
-            sampleRate,
-            frequency;
+    private int sampleCount;
+    private final int bitsPerSample;
+    private final int channels;
+    private final int sampleRate;
+    private final int frequency;
     private List<String> data;
     private final String name;
 

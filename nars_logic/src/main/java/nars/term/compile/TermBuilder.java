@@ -28,6 +28,7 @@ public interface TermBuilder {
     default Termed the(Term t) {
         return t;
     }
+
     default Termed the(Termed t) {
         return the(t.term());
     }
@@ -252,7 +253,7 @@ public interface TermBuilder {
             // (--,(--,P)) = P
             return ((TermContainer) t).term(0);
         }
-        return newTerm(Op.NEGATE, -1, t);
+        return internCompound(Op.NEGATE, -1, new TermVector(t)).term();
     }
 
     default Term image(Op o, Term[] res) {
@@ -307,7 +308,7 @@ public interface TermBuilder {
 
         if (sa.length == 1) return sa[0];
 
-        return newTerm(op, -1, sa);
+        return internCompound(op, -1, TermSet.the(sa)).term();
 
     }
 
@@ -435,9 +436,7 @@ public interface TermBuilder {
 
     @Deprecated default Term newIntersection2(Term term1, Term term2, Op intersection, Op setUnion, Op setIntersection) {
 
-        if (term1==null || term2 == null) {
-            throw new NullPointerException();
-        }
+
         Op o1 = term1.op();
         Op o2 = term2.op();
 
@@ -468,16 +467,17 @@ public interface TermBuilder {
 
             suffix = o2 == intersection ? ((TermContainer) term2).terms() : new Term[]{term2};
 
-            return newTerm(intersection, -1, Terms.concat(
-                    ((TermContainer) term1).terms(), suffix
-            ));
-
+            return internCompound(intersection, -1,
+                    TermSet.the(Terms.concat(
+                        ((TermContainer) term1).terms(), suffix
+                    ))
+            ).term();
         }
 
         if (term1.equals(term2))
             return term1;
 
-        return newTerm(intersection, -1, term1, term2);
+        return internCompound(intersection, -1, TermSet.the(term1, term2)).term();
 
 
     }

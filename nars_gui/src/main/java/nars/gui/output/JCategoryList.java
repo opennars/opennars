@@ -49,6 +49,7 @@ public class JCategoryList extends JList<JButton> {
         Font f = Video.fontMono(16.0f);
         private JButton lastCellFocus;
 
+        @Override
         public Component getListCellRendererComponent(JList<? extends JButton> list, JButton value, int index, boolean isSelected, boolean cellHasFocus) {
             JButton b = value;
             b.setContentAreaFilled(false);

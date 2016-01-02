@@ -23,7 +23,7 @@ public class BasicNumberTypeConverters implements Converter {
 
   private static NumberFormat defaultFormat;
 
-  private NumberFormat format;
+  private final NumberFormat format;
 
   public BasicNumberTypeConverters() {
     this(getDefaultFormat());
@@ -64,6 +64,7 @@ public class BasicNumberTypeConverters implements Converter {
     registry.addConverter(String.class, byte.class, this);
   }
 
+  @Override
   public Object convert(Class targetType, Object value) {
 	  
 	  if (targetType.equals(String.class))

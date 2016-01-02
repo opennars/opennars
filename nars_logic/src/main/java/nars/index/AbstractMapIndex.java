@@ -33,25 +33,19 @@ public abstract class AbstractMapIndex implements TermIndex {
         );
     }
 
-//    @Override
-//    public final Termed get(Object t) {
-//        if (!(t instanceof Termed)) {
-//            throw new RuntimeException("invalid key");
-//        }
-//
-//        Termed xx = (Termed) t;
-//        Term x = xx.term();
-//
-//        if (!isInternable(x)) {
-//            return xx;
-//        }
-//
-//        return getIfAbsentIntern(x);
-//
-//        //requires concurrent:
-//        //return data.computeIfAbsent(tt.term(), this::intern);
-//
-//    }
+    @Override
+    public Termed the(Term x) {
+
+        if (!isInternable(x)) {
+            return x;
+        }
+
+        return getIfAbsentIntern(x);
+
+        //requires concurrent:
+        //return data.computeIfAbsent(tt.term(), this::intern);
+
+    }
 
     public abstract Termed getIfAbsentIntern(Term x);
 
@@ -67,6 +61,7 @@ public abstract class AbstractMapIndex implements TermIndex {
     @Override
     public abstract int size();
 
+    @Override
     public Termed internCompound(Op op, int relation, TermContainer t) {
         return intern(op, relation, getIfAbsentIntern(t));
     }
@@ -75,6 +70,7 @@ public abstract class AbstractMapIndex implements TermIndex {
         return t;
     }
 
+    @Override
     abstract public TermContainer getIfAbsentIntern(TermContainer s);
 
 

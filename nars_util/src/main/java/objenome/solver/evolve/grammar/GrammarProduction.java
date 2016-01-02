@@ -258,7 +258,7 @@ public class GrammarProduction implements Cloneable {
 
         for (GrammarNode s : grammarNodes) {
             if (s instanceof GrammarLiteral) {
-                buffer.append(s.toString());
+                buffer.append(s);
             }
             if (s instanceof GrammarRule) {
                 buffer.append('<');

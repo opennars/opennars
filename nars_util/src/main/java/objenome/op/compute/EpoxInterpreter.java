@@ -48,7 +48,7 @@ import objenome.solver.evolve.source.SourceGenerator;
 public class EpoxInterpreter<T extends Organism> implements Computer<Object,T,Object> {
 
     // The Epox language parser.
-    private EpoxParser parser;
+    private final EpoxParser parser;
 
     private SourceGenerator<T> generator;
 

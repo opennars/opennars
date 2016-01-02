@@ -106,7 +106,7 @@ public abstract class Action {
         public final boolean open;
 
         @Override public String toParamString() {
-            return String.valueOf(open) + ", n" + x + ", n" + y;
+            return open + ", n" + x + ", n" + y;
         }
         
         public Door(int x, int y, boolean open) { this.x = x;  this.y = y;  this.open = open; }

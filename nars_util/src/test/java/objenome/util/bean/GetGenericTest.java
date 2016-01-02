@@ -36,7 +36,7 @@ public class GetGenericTest {
     }
 
     public enum MyKeyEnum {
-        NAME, PRENAME, YEAR_OF_BIRTH, ADDRESS, STREET, ZIP, CITY;
+        NAME, PRENAME, YEAR_OF_BIRTH, ADDRESS, STREET, ZIP, CITY
     }
 
     @Retention(RetentionPolicy.RUNTIME)
@@ -102,7 +102,7 @@ public class GetGenericTest {
 
     @Test
     public void testGeneric() {
-        User user = BeanProxyBuilder.<User> on(User.class).build();
+        User user = BeanProxyBuilder.on(User.class).build();
         // ----------------------------------------------------
         assertFalse(user.notNull(MyKeyEnum.NAME));
         assertFalse(user.notNull(MyKeyEnum.PRENAME));
@@ -113,7 +113,7 @@ public class GetGenericTest {
         user.set(MyKeyEnum.PRENAME, "Peter"); //$NON-NLS-1$
         user.setYearOfBirth(1974); // set it directly for fun :-)
 
-        Address address = BeanProxyBuilder.<Address> on(Address.class).build();
+        Address address = BeanProxyBuilder.on(Address.class).build();
         address.setZip((short) 12345);
         address.setCity("Musterstadt"); //$NON-NLS-1$
         user.setAddress(address);

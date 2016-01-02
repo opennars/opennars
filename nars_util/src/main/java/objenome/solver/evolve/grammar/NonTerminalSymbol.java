@@ -627,7 +627,7 @@ public class NonTerminalSymbol implements Symbol {
     public String toString() {
         StringBuilder buffer = new StringBuilder(children.size());
         for (Symbol c : children) {
-            buffer.append(c.toString());
+            buffer.append(c);
         }
 
         return buffer.toString();

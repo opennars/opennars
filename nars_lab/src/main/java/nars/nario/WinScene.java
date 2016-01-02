@@ -6,19 +6,21 @@ import java.awt.*;
 
 public class WinScene extends Scene
 {
-    private MarioComponent component;
+    private final MarioComponent component;
     private int tick;
-    private String scrollMessage = "Thank you for saving me, Mario!";
+    private final String scrollMessage = "Thank you for saving me, Mario!";
     
     public WinScene(MarioComponent component)
     {
         this.component = component;
     }
 
+    @Override
     public void init()
     {
     }
 
+    @Override
     public void render(Graphics g, float alpha)
     {
         g.setColor(Color.decode("#8080a0"));
@@ -37,6 +39,7 @@ public class WinScene extends Scene
     }
 
     private boolean wasDown = true;
+    @Override
     public void tick()
     {
         tick++;
@@ -50,11 +53,13 @@ public class WinScene extends Scene
         }
     }
 
+    @Override
     public float getX(float alpha)
     {
         return 0;
     }
 
+    @Override
     public float getY(float alpha)
     {
         return 0;

@@ -148,8 +148,8 @@ public class ComboBoxPropertyEditor extends AbstractPropertyEditor {
 
 	public static final class Value {
 
-		private Object value;
-		private Object visualValue;
+		private final Object value;
+		private final Object visualValue;
 
 		public Value(Object value, Object visualValue) {
 			this.value = value;

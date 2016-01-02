@@ -272,89 +272,68 @@ public class MJRules {
 
 		switch (iGame) {
 		case MJRules.GAME_LIFE: // Standard Conway-like game
-		{
 			RuleLife RLife = new RuleLife();
 			RLife.InitFromString(sRuleDef);
 			sRuleDef = RLife.GetAsString(); // get possibly corrected rules string
-		}
 			break;
 		case MJRules.GAME_GENE: // Generations
-		{
 			RuleGene RGene = new RuleGene();
 			RGene.InitFromString(sRuleDef);
 			sRuleDef = RGene.GetAsString(); // get possibly corrected rules string
-		}
 			break;
 
 		case MJRules.GAME_VOTE: // Vote for life
-		{
 			RuleVote RVote = new RuleVote();
 			RVote.InitFromString(sRuleDef);
 			sRuleDef = RVote.GetAsString(); // get possibly corrected rules string
-		}
 			break;
 
 		case MJRules.GAME_WLIF: // Weighted life
-		{
 			RuleWLife RWLife = new RuleWLife();
 			RWLife.InitFromString(sRuleDef);
 			sRuleDef = RWLife.GetAsString(); // get possibly corrected rules string
-		}
 			break;
 		case MJRules.GAME_RTBL: // Rules table
-		{
 			RuleRTab RRtab = new RuleRTab();
 			RRtab.InitFromString(sRuleDef);
 			sRuleDef = RRtab.GetAsString(); // get possibly corrected rules string
-		}
 			break;
 		case MJRules.GAME_CYCL: // Cyclic CA
-		{
 			RuleCyclic RCyclic = new RuleCyclic();
 			RCyclic.InitFromString(sRuleDef);
 			sRuleDef = RCyclic.GetAsString(); // get possibly corrected rules string
-		}
 			break;
 
 		case MJRules.GAME_1DTO: // 1D totalistic
-		{
 			Rule1DTotal R1DTo = new Rule1DTotal();
 			R1DTo.InitFromString(sRuleDef);
 			sRuleDef = R1DTo.GetAsString(); // get possibly corrected rules string
-		}
 			break;
 
 		case MJRules.GAME_1DBI: // 1D binary
-		{
 			Rule1DBin R1DBin = new Rule1DBin();
 			R1DBin.InitFromString(sRuleDef);
 			sRuleDef = R1DBin.GetAsString(); // get possibly corrected rules string
-		}
 			break;
-		case MJRules.GAME_NMBI: {
+		case MJRules.GAME_NMBI:
 			RuleNeumBin RNeumBin = new RuleNeumBin();
 			RNeumBin.InitFromString(sRuleDef);
 			sRuleDef = RNeumBin.GetAsString(); // get possibly corrected rules string
-		}
 			break;
 		case MJRules.GAME_GEBI: // General binary
-		{
 			RuleGenBin RGenBin = new RuleGenBin();
 			RGenBin.InitFromString(sRuleDef);
 			sRuleDef = RGenBin.GetAsString(); // get possibly corrected rules string
-		}
 			break;
-		case MJRules.GAME_LGTL: {
+		case MJRules.GAME_LGTL:
 			RuleLgtL RLgtL = new RuleLgtL();
 			RLgtL.InitFromString(sRuleDef);
 			sRuleDef = RLgtL.GetAsString(); // get possibly corrected rules string
-		}
 			break;
-		case MJRules.GAME_MARG: {
+		case MJRules.GAME_MARG:
 			RuleMarg RMarg = new RuleMarg();
 			RMarg.InitFromString(sRuleDef);
 			sRuleDef = RMarg.GetAsString(); // get possibly corrected rules string
-		}
 			break;
 		case MJRules.GAME_USER:
 			RuleUser RUser = new RuleUser();

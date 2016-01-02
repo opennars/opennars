@@ -18,7 +18,7 @@ public class TilePicker extends JComponent implements MouseListener, MouseMotion
     
     public byte pickedTile;
 
-    private byte paint = 0;
+    private final byte paint = 0;
     private LevelEditor tilePickChangedListener;
 
     public TilePicker()
@@ -32,12 +32,14 @@ public class TilePicker extends JComponent implements MouseListener, MouseMotion
         addMouseMotionListener(this);
     }
 
+    @Override
     public void addNotify()
     {
         super.addNotify();
         Art.init(getGraphicsConfiguration());
     }
 
+    @Override
     public void paintComponent(Graphics g)
     {
         g.setColor(new Color(0x8090ff));
@@ -58,14 +60,17 @@ public class TilePicker extends JComponent implements MouseListener, MouseMotion
         g.drawRect(xTile * 16 - 1, yTile * 16 - 1, 17, 17);
     }
 
+    @Override
     public void mouseClicked(MouseEvent e)
     {
     }
 
+    @Override
     public void mouseEntered(MouseEvent e)
     {
     }
 
+    @Override
     public void mouseExited(MouseEvent e)
     {
         xTile = -1;
@@ -73,6 +78,7 @@ public class TilePicker extends JComponent implements MouseListener, MouseMotion
         repaint();
     }
 
+    @Override
     public void mousePressed(MouseEvent e)
     {
         xTile = e.getX() / 16;
@@ -82,10 +88,12 @@ public class TilePicker extends JComponent implements MouseListener, MouseMotion
         repaint();
     }
 
+    @Override
     public void mouseReleased(MouseEvent e)
     {
     }
 
+    @Override
     public void mouseDragged(MouseEvent e)
     {
         xTile = e.getX() / 16;
@@ -94,6 +102,7 @@ public class TilePicker extends JComponent implements MouseListener, MouseMotion
         repaint();
     }
 
+    @Override
     public void mouseMoved(MouseEvent e)
     {
         xTile = e.getX() / 16;

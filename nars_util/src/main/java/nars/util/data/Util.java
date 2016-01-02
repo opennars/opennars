@@ -317,8 +317,8 @@ public class Util {
 
     public static long PJWHash(String str) {
         long BitsInUnsignedInt = (4 * 8);
-        long ThreeQuarters = (long) ((BitsInUnsignedInt * 3) / 4);
-        long OneEighth = (long) (BitsInUnsignedInt / 8);
+        long ThreeQuarters = (BitsInUnsignedInt * 3) / 4;
+        long OneEighth = BitsInUnsignedInt / 8;
         long HighBits = (0xFFFFFFFFL) << (BitsInUnsignedInt - OneEighth);
         long hash = 0;
         long test = 0;
@@ -660,7 +660,6 @@ public class Util {
                         t.wait(ignore);
                     }
                 } catch (InterruptedException var9) {
-                    ;
                 }
             }
         }

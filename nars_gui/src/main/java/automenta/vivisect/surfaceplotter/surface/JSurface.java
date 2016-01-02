@@ -32,8 +32,14 @@ package automenta.vivisect.surfaceplotter.surface;
 import automenta.vivisect.surfaceplotter.DefaultSurfaceModel;
 import automenta.vivisect.surfaceplotter.surface.SurfaceModel.PlotType;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +53,7 @@ import java.io.IOException;
  * @author Yanto Suryono
  */
 
-public class JSurface extends javax.swing.JComponent {
+public class JSurface extends JComponent {
 	private SurfaceModel model; // the parent, Surface Plotter model
 	private Projector projector; // the projector, controls the point of view
 	private SurfaceVertex[][] surfaceVertex; // vertices array 
@@ -90,7 +96,7 @@ public class JSurface extends javax.swing.JComponent {
 	private static final int LOWER = -1;
 
 	SurfaceColor colors;
-	private JSurfaceChangesListener surfaceChangesListener;
+	private final JSurfaceChangesListener surfaceChangesListener;
 	private static JSurface lastFocused;
 
 	// TODO makes the JSurface works without model, so that it can become a real
@@ -161,10 +167,11 @@ public class JSurface extends javax.swing.JComponent {
 		init(); // fill all availables properties
 	}
 
-	class JSurfaceMouseListener extends MouseAdapter implements MouseMotionListener, MouseWheelListener {
+	class JSurfaceMouseListener extends MouseAdapter {
 
 		int i = 0;
 
+		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			float new_value = 0.0f;
 			float old_value = projector.get2DScaling();
@@ -179,6 +186,7 @@ public class JSurface extends javax.swing.JComponent {
 			}
 		}
 
+		@Override
 		public void mousePressed(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
@@ -199,6 +207,7 @@ public class JSurface extends javax.swing.JComponent {
 		 *            the y coordinate of cursor
 		 */
 
+		@Override
 		public void mouseReleased(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
@@ -225,9 +234,11 @@ public class JSurface extends javax.swing.JComponent {
 		 * @param y
 		 *            the y coordinate of cursor
 		 */
+		@Override
 		public void mouseMoved(MouseEvent e) {
 		}
 
+		@Override
 		public void mouseDragged(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
@@ -279,12 +290,14 @@ public class JSurface extends javax.swing.JComponent {
 
 	}
 
-	class JSurfaceChangesListener implements PropertyChangeListener, javax.swing.event.ChangeListener {
-		public void stateChanged(javax.swing.event.ChangeEvent e) {
+	class JSurfaceChangesListener implements PropertyChangeListener, ChangeListener {
+		@Override
+		public void stateChanged(ChangeEvent e) {
 			destroyImage();
 		}
 
-		public void propertyChange(java.beans.PropertyChangeEvent pe) {
+		@Override
+		public void propertyChange(PropertyChangeEvent pe) {
 			init();
 			destroyImage();
 		}
@@ -429,7 +442,7 @@ public class JSurface extends javax.swing.JComponent {
 		int h, w;
 		w = 50;
 		h = 30;
-		java.awt.image.BufferedImage bf = new java.awt.image.BufferedImage(getWidth(), getHeight(), java.awt.image.BufferedImage.TYPE_INT_RGB);
+		BufferedImage bf = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = bf.createGraphics();
 
 		// g2d.setColor(java.awt.Color.white);
@@ -437,7 +450,7 @@ public class JSurface extends javax.swing.JComponent {
 		// g2d.setColor(java.awt.Color.black);
 		export(g2d);
 		// java.awt.image.BufferedImage bf2=bf.getSubimage(0,0,w,h);
-		boolean b = javax.imageio.ImageIO.write(bf, "PNG", file);
+		boolean b = ImageIO.write(bf, "PNG", file);
 	}
 
 //	/**
@@ -479,6 +492,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * @see #setDataAvailability
 	 */
 
+	@Override
 	public void paintComponent(Graphics g) {
 		if ((getBounds().width <= 0) || (getBounds().height <= 0))
 			return;
@@ -569,6 +583,7 @@ public class JSurface extends javax.swing.JComponent {
 	 * @see #paint
 	 */
 
+	@Override
 	public void update(Graphics g) {
 		paintComponent(g); // do not erase, just paint
 	}
@@ -1602,21 +1617,21 @@ public class JSurface extends javax.swing.JComponent {
 	private Color[] contour_color = null;
 	private String[] ylabels = null;
 
-	private int[] xpoints = new int[8];
-	private int[] ypoints = new int[8];
+	private final int[] xpoints = new int[8];
+	private final int[] ypoints = new int[8];
 
-	private int[] contour_x = new int[8];
-	private int[] contour_y = new int[8];
+	private final int[] contour_x = new int[8];
+	private final int[] contour_y = new int[8];
 	private int contour_n = 0;
 
 	private int contour_lines = 10;
-	private float[] delta = new float[4];
-	private float[] intersection = new float[4];
+	private final float[] delta = new float[4];
+	private final float[] intersection = new float[4];
 
 	private float contour_stepz;
-	private SurfaceVertex[] contour_vertex = new SurfaceVertex[4];
+	private final SurfaceVertex[] contour_vertex = new SurfaceVertex[4];
 
-	private LineAccumulator accumulator = new LineAccumulator();
+	private final LineAccumulator accumulator = new LineAccumulator();
 
 	/**
 	 * Converts normalized x coordinate (-10..+10) to screen x coordinate

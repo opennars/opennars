@@ -297,10 +297,10 @@ public class Grammar {
                         // Ignore DOS newline.
                     } else if (ch == ':') {
                         // Part of ::= token.
-                        buffer.append(ch);
+                        buffer.append(':');
                     } else if (ch == '=') {
                         // Should be end of ::= token.
-                        buffer.append(ch);
+                        buffer.append('=');
 
                         if (!"::=".equals(buffer.toString())) {
                             throw new MalformedGrammarException("Expected '::=' " + "but found: " + buffer);
@@ -356,7 +356,7 @@ public class Grammar {
                         }
                     } else if (ch == '<') {
                         if (quoted) {
-                            buffer.append(ch);
+                            buffer.append('<');
                         } else if (buffer.length() == 0) {
                             terminal = false;
                         } else {
@@ -376,7 +376,7 @@ public class Grammar {
                             special = true;
                         } else {
                             // Otherwise is outside <> so treat as normal char.
-                            buffer.append(ch);
+                            buffer.append('?');
                             /*
                              * throw new
                              * MalformedGrammarException("Non-escaped " +
@@ -386,7 +386,7 @@ public class Grammar {
                     } else if (ch == '>') {
                         //noinspection IfStatementWithTooManyBranches
                         if (quoted) {
-                            buffer.append(ch);
+                            buffer.append('>');
                         } else if (special) {
                             // End of special - no symbol to save.
                             special = false;

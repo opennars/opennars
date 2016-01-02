@@ -36,17 +36,17 @@ public class PropertySheetTableModel
   public static final int VALUE_COLUMN = 1;
   public static final int NUM_COLUMNS = 2;
 
-  private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
-  private List model;
-  private List publishedModel;
-  private List properties;
+  private final PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+  private final List model;
+  private final List publishedModel;
+  private final List properties;
   private int mode;
   private boolean sortingCategories;
   private boolean sortingProperties;
   private boolean restoreToggleStates;
   private Comparator categorySortingComparator;
   private Comparator propertySortingComparator;
-  private Map toggleStates;
+  private final Map toggleStates;
 
   public PropertySheetTableModel() {
     model = new ArrayList();
@@ -62,6 +62,7 @@ public class PropertySheetTableModel
   /* (non-Javadoc)
    * @see com.l2fprod.common.propertysheet.PropertySheet#setProperties(com.l2fprod.common.propertysheet.Property[])
    */
+  @Override
   public void setProperties(Property[] newProperties) {
     // unregister the listeners from previous properties
     for (Object property1 : properties) {
@@ -85,6 +86,7 @@ public class PropertySheetTableModel
   /* (non-Javadoc)
    * @see com.l2fprod.common.propertysheet.PropertySheet#getProperties()
    */
+  @Override
   public Property[] getProperties() {
     return (Property[]) properties.toArray(new Property[properties.size()]);
   }
@@ -92,6 +94,7 @@ public class PropertySheetTableModel
   /* (non-Javadoc)
    * @see com.l2fprod.common.propertysheet.PropertySheet#addProperty(com.l2fprod.common.propertysheet.Property)
    */
+  @Override
   public void addProperty(Property property) {
     properties.add(property);
     property.addPropertyChangeListener(this);
@@ -101,6 +104,7 @@ public class PropertySheetTableModel
   /* (non-Javadoc)
    * @see com.l2fprod.common.propertysheet.PropertySheet#addProperty(int, com.l2fprod.common.propertysheet.Property)
    */
+  @Override
   public void addProperty(int index, Property property) {
     properties.add(index, property);
     property.addPropertyChangeListener(this);
@@ -110,6 +114,7 @@ public class PropertySheetTableModel
   /* (non-Javadoc)
    * @see com.l2fprod.common.propertysheet.PropertySheet#removeProperty(com.l2fprod.common.propertysheet.Property)
    */
+  @Override
   public void removeProperty(Property property) {
     properties.remove(property);
     property.removePropertyChangeListener(this);
@@ -119,6 +124,7 @@ public class PropertySheetTableModel
   /* (non-Javadoc)
    * @see com.l2fprod.common.propertysheet.PropertySheet#getPropertyCount()
    */
+  @Override
   public int getPropertyCount() {
     return properties.size();
   }
@@ -126,6 +132,7 @@ public class PropertySheetTableModel
   /* (non-Javadoc)
    * @see com.l2fprod.common.propertysheet.PropertySheet#propertyIterator()
    */
+  @Override
   public Iterator propertyIterator() {
     return properties.iterator();
   }
@@ -153,6 +160,7 @@ public class PropertySheetTableModel
   /* (non-Javadoc)
    * @see javax.swing.table.TableModel#getColumnClass(int)
    */
+  @Override
   public Class getColumnClass(int columnIndex) {
     return super.getColumnClass(columnIndex);
   }
@@ -160,6 +168,7 @@ public class PropertySheetTableModel
   /* (non-Javadoc)
    * @see javax.swing.table.TableModel#getColumnCount()
    */
+  @Override
   public int getColumnCount() {
     return NUM_COLUMNS;
   }
@@ -167,6 +176,7 @@ public class PropertySheetTableModel
   /* (non-Javadoc)
    * @see javax.swing.table.TableModel#getRowCount()
    */
+  @Override
   public int getRowCount() {
     return publishedModel.size();
   }
@@ -174,6 +184,7 @@ public class PropertySheetTableModel
   /* (non-Javadoc)
    * @see com.l2fprod.common.swing.ObjectTableModel#getObject(int)
    */
+  @Override
   public Object getObject(int rowIndex) {
     return getPropertySheetElement(rowIndex);
   }
@@ -293,6 +304,7 @@ public class PropertySheetTableModel
    * 
    * @see javax.swing.table.TableModel#getValueAt(int, int)
    */
+  @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
     Object result = null;
     Item item = getPropertySheetElement(rowIndex);
@@ -326,8 +338,9 @@ public class PropertySheetTableModel
    * no effect unless the row is a property and the column is
    * {@link #VALUE_COLUMN}.
    * 
-   * @see javax.swing.table.TableModel#setValueAt(java.lang.Object, int, int)
+   * @see javax.swing.table.TableModel#setValueAt(Object, int, int)
    */
+  @Override
   public void setValueAt(Object value, int rowIndex, int columnIndex) {
     Item item = getPropertySheetElement(rowIndex);
     if (item.isProperty() ) {
@@ -352,6 +365,7 @@ public class PropertySheetTableModel
     listeners.removePropertyChangeListener(listener);
   }
 
+  @Override
   public void propertyChange(PropertyChangeEvent evt) {
     // forward the event to registered listeners
     listeners.firePropertyChange(evt);
@@ -398,7 +412,7 @@ public class PropertySheetTableModel
           addPropertiesToModel(sortedProperties, null);
           break;
           
-        case PropertySheet.VIEW_AS_CATEGORIES: {
+        case PropertySheet.VIEW_AS_CATEGORIES:
           // add properties by category
           List categories = sortCategories(getPropertyCategories(sortedProperties));
 
@@ -411,8 +425,7 @@ public class PropertySheetTableModel
                     categoryItem);
           }
           break;
-        }
-        
+
         default:
           // should not happen
       }
@@ -491,9 +504,9 @@ public class PropertySheetTableModel
   }
   
   public class Item {
-    private String name;
+    private final String name;
     private Property property;
-    private Item parent;
+    private final Item parent;
     private boolean hasToggle = true;
     private boolean visible = true;
 
@@ -579,6 +592,7 @@ public class PropertySheetTableModel
    * defined.
    */
   public static class PropertyComparator implements Comparator {
+    @Override
     public int compare(Object o1, Object o2) {
       if (o1 instanceof Property && o2 instanceof Property) {
         Property prop1 = (Property) o1;
@@ -599,6 +613,7 @@ public class PropertySheetTableModel
     new NaturalOrderStringComparator();
 
   public static class NaturalOrderStringComparator implements Comparator {    
+    @Override
     public int compare(Object o1, Object o2) {
       String s1 = (String) o1;
       String s2 = (String) o2;

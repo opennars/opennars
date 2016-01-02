@@ -72,7 +72,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
             public final X x;
             private final Box shape;
-            private PhongMaterial mat;
+            private final PhongMaterial mat;
             private Color color = Color.WHITE;
 
             public DataPoint(X tl) {
@@ -203,7 +203,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
         final Map<X,Node> componentCache = new WeakHashMap<>();
         private final Bag<X> bag;
-        private Function<X, Node> builder;
+        private final Function<X, Node> builder;
         final List<Node> pending = new ArrayList();
         final AtomicBoolean queued = new AtomicBoolean();
 

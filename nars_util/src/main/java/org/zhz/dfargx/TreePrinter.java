@@ -14,7 +14,7 @@ import static java.lang.System.out;
  */
 public class TreePrinter {
 
-    private static TreePrinter instance = new TreePrinter();
+    private static final TreePrinter instance = new TreePrinter();
 
     public static TreePrinter getInstance() {
         return instance;

@@ -31,8 +31,8 @@ public class Mario extends Sprite
     public static final int KEY_JUMP = 4;
     public static final int KEY_SPEED = 5;
 
-    private static float GROUND_INERTIA = 0.89f;
-    private static float AIR_INERTIA = 0.89f;
+    private static final float GROUND_INERTIA = 0.89f;
+    private static final float AIR_INERTIA = 0.89f;
 
     public final boolean[] keys;
     private float runTime;
@@ -49,7 +49,7 @@ public class Mario extends Sprite
     int width = 4;
     int height = 24;
 
-    private LevelScene world;
+    private final LevelScene world;
     public int facing;
     private int powerUpTime = 0;
 
@@ -124,6 +124,7 @@ public class Mario extends Sprite
         blink(true);
     }
 
+    @Override
     public void move()
     {
         if (winTime > 0)
@@ -686,7 +687,7 @@ public class Mario extends Sprite
 
     public static void get1Up()
     {
-        instance.////world.sound.play(Art.samples[Art.SAMPLE_MARIO_1UP], instance, 1, 1);
+        ////world.sound.play(Art.samples[Art.SAMPLE_MARIO_1UP], instance, 1, 1);
         lives++;
         if (lives==99)
         {

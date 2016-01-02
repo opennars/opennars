@@ -6,6 +6,7 @@
 package jurls;
 
 import jurls.core.approximation.ApproxParameters;
+import jurls.examples.approximation.FunctionRenderer1D;
 import jurls.examples.approximation.RenderArrayFunction1D;
 import jurls.examples.approximation.RenderFunction1D;
 import jurls.examples.approximation.RenderParameterizedFunction1D;
@@ -21,7 +22,7 @@ import java.awt.event.ActionListener;
  *
  * @author thorsten
  */
-public class ApproximationDemo1D extends javax.swing.JFrame {
+public class ApproximationDemo1D extends JFrame {
 
     private final ApproxParameters approxParameters = new ApproxParameters(0.01, 0.1);
     private final RenderParameterizedFunction1D renderParameterizedFunction = new RenderParameterizedFunction1D(Color.yellow);
@@ -33,7 +34,7 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
     );
     int components = 16;
     private final RenderFunction1D f;
-    private Timer timer = new Timer(5, new ActionListener() {
+    private final Timer timer = new Timer(5, new ActionListener() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -100,76 +101,76 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        functionButtonGroup = new javax.swing.ButtonGroup();
-        hiddenButtonGroup = new javax.swing.ButtonGroup();
-        outputButtonGroup = new javax.swing.ButtonGroup();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
-        functionRenderer1 = new jurls.examples.approximation.FunctionRenderer1D();
-        jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
-        alphaComboBox = new javax.swing.JComboBox();
-        momentumComboBox = new javax.swing.JComboBox();
-        jPanel7 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jMenuBar1 = new javax.swing.JMenuBar();
+        functionButtonGroup = new ButtonGroup();
+        hiddenButtonGroup = new ButtonGroup();
+        outputButtonGroup = new ButtonGroup();
+        jTabbedPane1 = new JTabbedPane();
+        jPanel1 = new JPanel();
+        functionRenderer1 = new FunctionRenderer1D();
+        jPanel2 = new JPanel();
+        jScrollPane1 = new JScrollPane();
+        jTextArea1 = new JTextArea();
+        jPanel4 = new JPanel();
+        jPanel5 = new JPanel();
+        jPanel6 = new JPanel();
+        alphaComboBox = new JComboBox();
+        momentumComboBox = new JComboBox();
+        jPanel7 = new JPanel();
+        jLabel3 = new JLabel();
+        jLabel4 = new JLabel();
+        jMenuBar1 = new JMenuBar();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(800, 750));
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setPreferredSize(new Dimension(800, 750));
 
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        jPanel1.setLayout(new BorderLayout());
 
-        javax.swing.GroupLayout functionRenderer1Layout = new javax.swing.GroupLayout(functionRenderer1);
+        GroupLayout functionRenderer1Layout = new GroupLayout(functionRenderer1);
         functionRenderer1.setLayout(functionRenderer1Layout);
         functionRenderer1Layout.setHorizontalGroup(
-            functionRenderer1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            functionRenderer1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGap(0, 583, Short.MAX_VALUE)
         );
         functionRenderer1Layout.setVerticalGroup(
-            functionRenderer1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            functionRenderer1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGap(0, 349, Short.MAX_VALUE)
         );
 
-        jPanel1.add(functionRenderer1, java.awt.BorderLayout.CENTER);
+        jPanel1.add(functionRenderer1, BorderLayout.CENTER);
 
         jTabbedPane1.addTab("Demo", jPanel1);
 
-        jPanel2.setLayout(new java.awt.BorderLayout());
+        jPanel2.setLayout(new BorderLayout());
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        jPanel2.add(jScrollPane1, BorderLayout.CENTER);
 
         jTabbedPane1.addTab("Debug 1", jPanel2);
 
-        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jTabbedPane1, BorderLayout.CENTER);
 
-        jPanel4.setLayout(new java.awt.BorderLayout());
+        jPanel4.setLayout(new BorderLayout());
 
-        jPanel5.setLayout(new java.awt.BorderLayout());
+        jPanel5.setLayout(new BorderLayout());
 
-        jPanel6.setLayout(new java.awt.GridLayout(0, 1));
+        jPanel6.setLayout(new GridLayout(0, 1));
 
-        alphaComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0.01", "0.001", "0.0001" }));
+        alphaComboBox.setModel(new DefaultComboBoxModel(new String[] { "0.01", "0.001", "0.0001" }));
         alphaComboBox.setSelectedIndex(1);
         alphaComboBox.addActionListener(this::alphaComboBoxActionPerformed);
         jPanel6.add(alphaComboBox);
 
-        momentumComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0.01", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "0.95", "0.99" }));
+        momentumComboBox.setModel(new DefaultComboBoxModel(new String[] { "0.01", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "0.95", "0.99" }));
         momentumComboBox.setSelectedIndex(9);
         momentumComboBox.addActionListener(this::momentumComboBoxActionPerformed);
         jPanel6.add(momentumComboBox);
 
-        jPanel5.add(jPanel6, java.awt.BorderLayout.CENTER);
+        jPanel5.add(jPanel6, BorderLayout.CENTER);
 
-        jPanel7.setLayout(new java.awt.GridLayout(0, 1));
+        jPanel7.setLayout(new GridLayout(0, 1));
 
         jLabel3.setText("Learning Rate (Alpha)");
         jPanel7.add(jLabel3);
@@ -177,21 +178,21 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
         jLabel4.setText("Momentum");
         jPanel7.add(jLabel4);
 
-        jPanel5.add(jPanel7, java.awt.BorderLayout.WEST);
+        jPanel5.add(jPanel7, BorderLayout.WEST);
 
-        jPanel4.add(jPanel5, java.awt.BorderLayout.CENTER);
+        jPanel4.add(jPanel5, BorderLayout.CENTER);
 
-        getContentPane().add(jPanel4, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(jPanel4, BorderLayout.SOUTH);
         setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void alphaComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alphaComboBoxActionPerformed
+    private void alphaComboBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_alphaComboBoxActionPerformed
         approxParameters.setAlpha(Double.parseDouble(alphaComboBox.getSelectedItem().toString()));
     }//GEN-LAST:event_alphaComboBoxActionPerformed
 
-    private void momentumComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_momentumComboBoxActionPerformed
+    private void momentumComboBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_momentumComboBoxActionPerformed
         approxParameters.setMomentum(Double.parseDouble(momentumComboBox.getSelectedItem().toString()));
     }//GEN-LAST:event_momentumComboBoxActionPerformed
 
@@ -207,27 +208,27 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
     public static void main(String[] args) {
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ApproximationDemo1D().setVisible(true));
+        EventQueue.invokeLater(() -> new ApproximationDemo1D().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox alphaComboBox;
-    private javax.swing.ButtonGroup functionButtonGroup;
-    private jurls.examples.approximation.FunctionRenderer1D functionRenderer1;
-    private javax.swing.ButtonGroup hiddenButtonGroup;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JComboBox momentumComboBox;
-    private javax.swing.ButtonGroup outputButtonGroup;
+    private JComboBox alphaComboBox;
+    private ButtonGroup functionButtonGroup;
+    private FunctionRenderer1D functionRenderer1;
+    private ButtonGroup hiddenButtonGroup;
+    private JLabel jLabel3;
+    private JLabel jLabel4;
+    private JMenuBar jMenuBar1;
+    private JPanel jPanel1;
+    private JPanel jPanel2;
+    private JPanel jPanel4;
+    private JPanel jPanel5;
+    private JPanel jPanel6;
+    private JPanel jPanel7;
+    private JScrollPane jScrollPane1;
+    private JTabbedPane jTabbedPane1;
+    private JTextArea jTextArea1;
+    private JComboBox momentumComboBox;
+    private ButtonGroup outputButtonGroup;
     // End of variables declaration//GEN-END:variables
 }

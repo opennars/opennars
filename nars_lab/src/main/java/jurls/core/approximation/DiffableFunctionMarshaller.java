@@ -135,6 +135,7 @@ public class DiffableFunctionMarshaller implements ParameterizedFunction {
     public void learn(double[] xs, double y) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    @Override
     public double getParameter(int i) {
         return inputValues[i];
     }

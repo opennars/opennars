@@ -72,18 +72,22 @@ public class HumanAgent extends AbstractAgent {
         }
     }
 
+    @Override
     public boolean wantsScreenData() {
         return true;
     }
 
+    @Override
     public boolean wantsRamData() {
         return false;
     }
 
+    @Override
     public boolean wantsRLData() {
         return true;
     }
 
+    @Override
     public boolean shouldTerminate() {
         // Terminate if the 'q' key was pressed on the UI
         return ui.quitRequested();

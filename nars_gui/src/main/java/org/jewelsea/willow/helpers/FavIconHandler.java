@@ -51,7 +51,7 @@ public class FavIconHandler {
     /**
      * least recently used cache of favicons
      */
-    private Map<String, ImageView> faviconCache =
+    private final Map<String, ImageView> faviconCache =
             new ConcurrentHashMap<>(
                     new LruCache<>(200)
             );
@@ -122,9 +122,8 @@ public class FavIconHandler {
                 // if the decoding was successful convert to a JavaFX image and return it.
                 /*if (imgs.size() > 0) {
                     return ResourceUtil.bufferedImageToFXImage(imgs.get(0), 0, 16, true, true);
-                } else */{
-                    return null;
-                }
+                } else */
+                return null;
             }
         };
 

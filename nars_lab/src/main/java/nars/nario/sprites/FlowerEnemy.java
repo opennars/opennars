@@ -5,9 +5,9 @@ import nars.nario.LevelScene;
 public class FlowerEnemy extends Enemy
 {
     private int tick;
-    private int yStart;
+    private final int yStart;
     private int jumpTime = 0;
-    private LevelScene world;
+    private final LevelScene world;
     
     public FlowerEnemy(LevelScene world, int x, int y)
     {
@@ -34,6 +34,7 @@ public class FlowerEnemy extends Enemy
         }
     }
 
+    @Override
     public void move()
     {
         if (deadTime > 0)

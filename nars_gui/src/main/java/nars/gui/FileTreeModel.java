@@ -1,7 +1,9 @@
 
 package nars.gui;
 
+import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 import java.io.File;
 import java.util.Arrays;
 
@@ -17,7 +19,7 @@ public class FileTreeModel implements TreeModel {
     }
 
     @Override
-    public void addTreeModelListener(javax.swing.event.TreeModelListener l) {
+    public void addTreeModelListener(TreeModelListener l) {
         //do nothing
     }
 
@@ -52,12 +54,12 @@ public class FileTreeModel implements TreeModel {
     }
 
     @Override
-    public void removeTreeModelListener(javax.swing.event.TreeModelListener l) {
+    public void removeTreeModelListener(TreeModelListener l) {
         //do nothing
     }
 
     @Override
-    public void valueForPathChanged(javax.swing.tree.TreePath path, Object newValue) {
+    public void valueForPathChanged(TreePath path, Object newValue) {
         //do nothing
     }
 

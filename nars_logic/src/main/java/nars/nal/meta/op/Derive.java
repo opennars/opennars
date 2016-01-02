@@ -117,20 +117,18 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
 
 
         //SPECIAL SEQUENCE HANDLING
-        {
-            Compound pattern = (Compound) rule.term(0);
-            Term taskpart = pattern.term(0);
-            Term beliefpart = pattern.term(1);
+        Compound pattern = (Compound) rule.term(0);
+        Term taskpart = pattern.term(0);
+        Term beliefpart = pattern.term(1);
 
-            Term possibleSequenceHolder = null;
+        Term possibleSequenceHolder = null;
 
-            if (rule.sequenceIntervalsFromBelief)
-                possibleSequenceHolder = beliefpart;
-            if (rule.sequenceIntervalsFromTask)
-                possibleSequenceHolder = taskpart;
-            if (possibleSequenceHolder != null && possibleSequenceHolder.hasAny(Op.SEQUENCE))
-                processSequence(match, derivedTerm, possibleSequenceHolder);
-        }
+        if (rule.sequenceIntervalsFromBelief)
+            possibleSequenceHolder = beliefpart;
+        if (rule.sequenceIntervalsFromTask)
+            possibleSequenceHolder = taskpart;
+        if (possibleSequenceHolder != null && possibleSequenceHolder.hasAny(Op.SEQUENCE))
+            processSequence(match, derivedTerm, possibleSequenceHolder);
 
 
         return derivedTerm;

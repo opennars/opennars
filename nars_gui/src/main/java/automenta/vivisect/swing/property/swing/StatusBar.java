@@ -36,7 +36,7 @@ public class StatusBar extends JComponent {
    */
   public static final String DEFAULT_ZONE = "default";
 
-  private Hashtable idToZones;
+  private final Hashtable idToZones;
   private Border zoneBorder;
 
   /**
@@ -59,7 +59,7 @@ public class StatusBar extends JComponent {
    * @param id
    * @param zone
    * @param constraints one of the constraint support by the
-   *          {@link automenta.vivisect.swing.property.swing.PercentLayout}
+   *          {@link PercentLayout}
    */
   public void addZone(String id, Component zone, String constraints) {
     // is there already a zone with this id?

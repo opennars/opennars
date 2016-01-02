@@ -10,10 +10,10 @@ import java.util.ArrayList;
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class Player
 {
-	private String name;
+	private final String name;
 	private Board board;
 	private boolean hasTurn = false;
-	private ArrayList<PlayerListener> listeners = new ArrayList<>();
+	private final ArrayList<PlayerListener> listeners = new ArrayList<>();
 
 	/**
 	 * Creates a new Player object.

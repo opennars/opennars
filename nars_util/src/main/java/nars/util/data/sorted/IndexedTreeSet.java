@@ -13,13 +13,17 @@ package nars.util.data.sorted;
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.*;
 
 
 /**
- * A {@link java.util.NavigableSet} implementation based on a {@link IndexedTreeMap}.
+ * A {@link NavigableSet} implementation based on a {@link IndexedTreeMap}.
  * The elements are ordered using their {@linkplain Comparable natural
- * ordering}, or by a {@link java.util.Comparator} provided at set creation
+ * ordering}, or by a {@link Comparator} provided at set creation
  * time, depending on which constructor is used.
  * <p/>
  * <p>This implementation provides guaranteed log(n) time cost for the basic
@@ -43,7 +47,7 @@ import java.util.*;
  * externally.  This is typically accomplished by synchronizing on some
  * object that naturally encapsulates the set.
  * If no such object exists, the set should be "wrapped" using the
- * {@link java.util.Collections#synchronizedSortedSet Collections.synchronizedSortedSet}
+ * {@link Collections#synchronizedSortedSet Collections.synchronizedSortedSet}
  * method.  This is best done at creation time, to prevent accidental
  * unsynchronized access to the set: <pre>
  *   SortedSet s = Collections.synchronizedSortedSet(new IndexedTreeSet(...));</pre>
@@ -51,7 +55,7 @@ import java.util.*;
  * <p>The iterators returned by this class's {@code iterator} method are
  * <i>fail-fast</i>: if the set is modified at any time after the iterator is
  * created, in any way except through the iterator's own {@code remove}
- * method, the iterator will throw a {@link java.util.ConcurrentModificationException}.
+ * method, the iterator will throw a {@link ConcurrentModificationException}.
  * Thus, in the face of concurrent modification, the iterator fails quickly
  * and cleanly, rather than risking arbitrary, non-deterministic behavior at
  * an undetermined time in the future.
@@ -71,17 +75,17 @@ import java.util.*;
  * @param <E> the type of elements maintained by this set
  * @author Josh Bloch, Vitaly Sazanovich
  * @version %I%, %G%
- * @see java.util.Collection
- * @see java.util.Set
- * @see java.util.HashSet
+ * @see Collection
+ * @see Set
+ * @see HashSet
  * @see Comparable
- * @see java.util.Comparator
+ * @see Comparator
  * @see IndexedTreeMap
  * @since 1.2
  */
 
 public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
-        implements IndexedNavigableSet<E>, Cloneable, java.io.Serializable {
+        implements IndexedNavigableSet<E>, Cloneable, Serializable {
     /**
      * The backing map.
      */
@@ -514,8 +518,8 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
      * set's Comparator, or by the elements' natural ordering if
      * the set has no Comparator).
      */
-    private void writeObject(java.io.ObjectOutputStream s)
-            throws java.io.IOException {
+    private void writeObject(ObjectOutputStream s)
+            throws IOException {
         // Write out any hidden stuff
         s.defaultWriteObject();
 
@@ -533,8 +537,8 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
      * Reconstitute the {@code IndexedTreeSet} instance from a stream (that is,
      * deserialize it).
      */
-    private void readObject(java.io.ObjectInputStream s)
-            throws java.io.IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream s)
+            throws IOException, ClassNotFoundException {
         // Read in any hidden stuff
         s.defaultReadObject();
 

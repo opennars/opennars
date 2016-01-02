@@ -31,13 +31,13 @@ import java.awt.event.MouseEvent;
  */
 public class HeaderlessColumnResizer extends MouseInputAdapter {
 
-  private static Cursor resizeCursor =
+  private static final Cursor resizeCursor =
     Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
 
   private int mouseXOffset;
   private Cursor otherCursor = resizeCursor;
 
-  private JTable table;
+  private final JTable table;
 
   public HeaderlessColumnResizer(JTable table) {
     this.table = table;
@@ -78,6 +78,7 @@ public class HeaderlessColumnResizer extends MouseInputAdapter {
     return table.getTableHeader().getColumnModel().getColumn(columnIndex);
   }
 
+  @Override
   public void mousePressed(MouseEvent e) {
     table.getTableHeader().setDraggedColumn(null);
     table.getTableHeader().setResizingColumn(null);
@@ -104,6 +105,7 @@ public class HeaderlessColumnResizer extends MouseInputAdapter {
     otherCursor = tmp;
   }
 
+  @Override
   public void mouseMoved(MouseEvent e) {
     if (canResize(getResizingColumn(e.getPoint()))
       != (table.getCursor() == resizeCursor)) {
@@ -111,6 +113,7 @@ public class HeaderlessColumnResizer extends MouseInputAdapter {
     }
   }
 
+  @Override
   public void mouseDragged(MouseEvent e) {
     int mouseX = e.getX();
 
@@ -164,6 +167,7 @@ public class HeaderlessColumnResizer extends MouseInputAdapter {
     }
   }
 
+  @Override
   public void mouseReleased(MouseEvent e) {
     //setDraggedDistance(0, viewIndexForColumn(header.getDraggedColumn()));
 
@@ -171,9 +175,11 @@ public class HeaderlessColumnResizer extends MouseInputAdapter {
     table.getTableHeader().setDraggedColumn(null);
   }
 
+  @Override
   public void mouseEntered(MouseEvent e) {
   }
 
+  @Override
   public void mouseExited(MouseEvent e) {
   }
 

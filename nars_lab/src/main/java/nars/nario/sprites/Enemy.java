@@ -14,8 +14,8 @@ public class Enemy extends Sprite
     public static final int ENEMY_SPIKY = 3;
     public static final int ENEMY_FLOWER = 4;
 
-    private static float GROUND_INERTIA = 0.89f;
-    private static float AIR_INERTIA = 0.89f;
+    private static final float GROUND_INERTIA = 0.89f;
+    private static final float AIR_INERTIA = 0.89f;
 
     private float runTime;
     private boolean onGround = false;
@@ -27,13 +27,13 @@ public class Enemy extends Sprite
     int width = 4;
     int height = 24;
 
-    private LevelScene world;
+    private final LevelScene world;
     public int facing;
     public int deadTime = 0;
     public boolean flyDeath = false;
 
     public boolean avoidCliffs = true;
-    private int type;
+    private final int type;
 
     public boolean winged = true;
     private int wingTime = 0;
@@ -63,6 +63,7 @@ public class Enemy extends Sprite
         wPic = 16;
     }
 
+    @Override
     public void collideCheck()
     {
         if (deadTime != 0)
@@ -111,6 +112,7 @@ public class Enemy extends Sprite
         }
     }
 
+    @Override
     public void move()
     {
         wingTime++;
@@ -282,6 +284,7 @@ public class Enemy extends Sprite
         return blocking;
     }
 
+    @Override
     public boolean shellCollideCheck(Shell shell)
     {
         if (deadTime != 0) return false;
@@ -309,6 +312,7 @@ public class Enemy extends Sprite
         return false;
     }
 
+    @Override
     public boolean fireballCollideCheck(Fireball fireball)
     {
         if (deadTime != 0) return false;
@@ -338,6 +342,7 @@ public class Enemy extends Sprite
         return false;
     }
 
+    @Override
     public void bumpCheck(int xTile, int yTile)
     {
         if (deadTime != 0) return;
@@ -357,6 +362,7 @@ public class Enemy extends Sprite
         }
     }
 
+    @Override
     public void render(Graphics og, float alpha)
     {
         if (winged)

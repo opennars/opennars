@@ -60,7 +60,7 @@ public class LanguageFormatter {
         String[] ar = list.split(" ");
         for (int i = 0; i < ar.length; i++) {
             if (i == 0) {
-                result.append(transliterate(ar[i], language));
+                result.append(transliterate(ar[0], language));
             }
             if (i > 0 && i < ar.length - 1) {
                 result.append(", ").append(transliterate(ar[i], language));

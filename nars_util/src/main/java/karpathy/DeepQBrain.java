@@ -104,9 +104,8 @@ public class DeepQBrain {
 
         //default architecture
         value_net = new Net();
-        {
-            // create a very simple neural net by default
-            value_net.add(new Net.Input(1, 1, net_inputs)); //{type:'input', out_sx:1, out_sy:1, out_depth:this.net_inputs});
+        // create a very simple neural net by default
+        value_net.add(new Net.Input(1, 1, net_inputs)); //{type:'input', out_sx:1, out_sy:1, out_depth:this.net_inputs});
 
             /*if(typeof opt.hidden_layer_sizes !== 'undefined') {
                 // allow user to specify this via the option, for convenience
@@ -116,9 +115,8 @@ public class DeepQBrain {
                 }
             }*/
 
-            // value function output
-            value_net.add(new Net.Regression(num_actions));
-        }
+        // value function output
+        value_net.add(new Net.Regression(num_actions));
 
         // and finally we need a Temporal Difference Learning trainer!
         train = new TrainSGD(value_net);

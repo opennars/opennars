@@ -87,6 +87,7 @@ public class InputNormalizer implements ParameterizedFunction {
         return parameterizedFunction.maxOutputDebug();
     }
 
+    @Override
     public double getParameter(int i) {
         return parameterizedFunction.getParameter(i);
     }

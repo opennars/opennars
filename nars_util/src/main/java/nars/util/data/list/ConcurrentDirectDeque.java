@@ -18,7 +18,7 @@ public abstract class ConcurrentDirectDeque<E> extends AbstractCollection<E> imp
 
     public static <K> ConcurrentDirectDeque<K> newInstance() {
         try {
-            return (ConcurrentDirectDeque)CONSTRUCTOR.newInstance(new Object[0]);
+            return (ConcurrentDirectDeque)CONSTRUCTOR.newInstance();
         } catch (Exception var1) {
             throw new IllegalStateException(var1);
         }
@@ -37,7 +37,6 @@ public abstract class ConcurrentDirectDeque<E> extends AbstractCollection<E> imp
             new FastConcurrentDirectDeque();
             fast = true;
         } catch (Throwable var4) {
-            ;
         }
 
         Class klazz = fast?FastConcurrentDirectDeque.class
@@ -45,7 +44,7 @@ public abstract class ConcurrentDirectDeque<E> extends AbstractCollection<E> imp
                 PortableConcurrentDirectDeque.class;
 
         try {
-            CONSTRUCTOR = klazz.getConstructor(new Class[0]);
+            CONSTRUCTOR = klazz.getConstructor();
         } catch (NoSuchMethodException var3) {
             throw new NoSuchMethodError(var3.getMessage());
         }

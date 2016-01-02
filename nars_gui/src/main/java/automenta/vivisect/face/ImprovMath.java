@@ -490,10 +490,10 @@ public final class ImprovMath
         return d * d * (3.0D - 2.0D * d);
     }
 
-    private static int[] p = new int[514];
-    private static double[][] g3 = new double[514][3];
-    private static double[][] g2 = new double[514][2];
-    private static double[] g1 = new double[514];
+    private static final int[] p = new int[514];
+    private static final double[][] g3 = new double[514][3];
+    private static final double[][] g2 = new double[514][2];
+    private static final double[] g1 = new double[514];
     private static int start = 1;   
     private static final double LOG_HALF = Math.log(0.5D);   
     public static final int XYZ = 0;   

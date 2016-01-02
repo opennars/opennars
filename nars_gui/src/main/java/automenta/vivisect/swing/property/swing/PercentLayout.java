@@ -88,7 +88,7 @@ public class PercentLayout implements LayoutManager2 {
   private int orientation;
   private int gap;
 
-  private Hashtable m_ComponentToConstraint;
+  private final Hashtable m_ComponentToConstraint;
 
   /**
    * Creates a new HORIZONTAL PercentLayout with a gap of 0.
@@ -167,6 +167,7 @@ public class PercentLayout implements LayoutManager2 {
     }    
   }
   
+  @Override
   public void addLayoutComponent(Component component, Object constraints) {
     setConstraint(component, constraints);    
   }
@@ -177,6 +178,7 @@ public class PercentLayout implements LayoutManager2 {
    * a number between 0 and 1 where 0 represents alignment along the origin, 1
    * is aligned the furthest away from the origin, 0.5 is centered, etc.
    */
+  @Override
   public float getLayoutAlignmentX(Container target) {
     return 1.0f / 2.0f;
   }
@@ -187,6 +189,7 @@ public class PercentLayout implements LayoutManager2 {
    * a number between 0 and 1 where 0 represents alignment along the origin, 1
    * is aligned the furthest away from the origin, 0.5 is centered, etc.
    */
+  @Override
   public float getLayoutAlignmentY(Container target) {
     return 1.0f / 2.0f;
   }
@@ -195,6 +198,7 @@ public class PercentLayout implements LayoutManager2 {
    * Invalidates the layout, indicating that if the layout manager has cached
    * information it should be discarded.
    */
+  @Override
   public void invalidateLayout(Container target) {
   }
 
@@ -204,6 +208,7 @@ public class PercentLayout implements LayoutManager2 {
    * @param name the component name
    * @param comp the component to be added
    */
+  @Override
   public void addLayoutComponent(String name, Component comp) {
   }
 
@@ -212,6 +217,7 @@ public class PercentLayout implements LayoutManager2 {
    * 
    * @param comp the component ot be removed
    */
+  @Override
   public void removeLayoutComponent(Component comp) {
     m_ComponentToConstraint.remove(comp);
   }
@@ -223,6 +229,7 @@ public class PercentLayout implements LayoutManager2 {
    * @param parent the component to be laid out
    * @see #preferredLayoutSize
    */
+  @Override
   public Dimension minimumLayoutSize(Container parent) {
     return preferredLayoutSize(parent);
   }
@@ -230,14 +237,16 @@ public class PercentLayout implements LayoutManager2 {
   /**
    * Returns the maximum size of this component.
    * 
-   * @see java.awt.Component#getMinimumSize()
-   * @see java.awt.Component#getPreferredSize()
-   * @see java.awt.LayoutManager
+   * @see Component#getMinimumSize()
+   * @see Component#getPreferredSize()
+   * @see LayoutManager
    */
+  @Override
   public Dimension maximumLayoutSize(Container parent) {
     return new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
   }
 
+  @Override
   public Dimension preferredLayoutSize(Container parent) {
     Component[] components = parent.getComponents();
     Insets insets = parent.getInsets();
@@ -272,6 +281,7 @@ public class PercentLayout implements LayoutManager2 {
       height + insets.top + insets.bottom);
   }
 
+  @Override
   public void layoutContainer(Container parent) {
     Insets insets = parent.getInsets();
     Dimension d = parent.getSize();
@@ -343,7 +353,7 @@ public class PercentLayout implements LayoutManager2 {
     if (!remaining.isEmpty()) {
       int rest = availableSize / remaining.size();
       for (Object aRemaining : remaining) {
-        sizes[((Integer) aRemaining)] = rest;
+        sizes[(Integer)aRemaining] = rest;
       }
     }
 

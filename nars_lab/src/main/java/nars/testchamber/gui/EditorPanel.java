@@ -336,24 +336,24 @@ public class EditorPanel extends JPanel {
                 StringBuilder wr=new StringBuilder();
                 for(int i=0;i<s.cells.h;i++) { //its not python, we have to export it to file ourselves:
                     for(int j=0;j<s.cells.w;j++) {
-                        wr.append(String.valueOf(i)).append(','); //also store coordinates, for case we may change size one day
-                        wr.append(String.valueOf(j)).append(',');
-                        wr.append(String.valueOf(s.cells.readCells[i][j].charge)).append(',');
-                        wr.append(String.valueOf(s.cells.readCells[i][j].chargeFront)).append(',');
-                        wr.append(String.valueOf(s.cells.readCells[i][j].conductivity)).append(',');
-                        wr.append(String.valueOf(s.cells.readCells[i][j].height)).append(',');
-                        wr.append(String.valueOf(s.cells.readCells[i][j].is_solid)).append(',');
-                        wr.append(String.valueOf(s.cells.readCells[i][j].light)).append(',');
-                        wr.append(String.valueOf(s.cells.readCells[i][j].logic.ordinal())).append(',');
+                        wr.append(i).append(','); //also store coordinates, for case we may change size one day
+                        wr.append(j).append(',');
+                        wr.append(s.cells.readCells[i][j].charge).append(',');
+                        wr.append(s.cells.readCells[i][j].chargeFront).append(',');
+                        wr.append(s.cells.readCells[i][j].conductivity).append(',');
+                        wr.append(s.cells.readCells[i][j].height).append(',');
+                        wr.append(s.cells.readCells[i][j].is_solid).append(',');
+                        wr.append(s.cells.readCells[i][j].light).append(',');
+                        wr.append(s.cells.readCells[i][j].logic.ordinal()).append(',');
                         if(s.cells.readCells[i][j].machine!=null) { //wtf enum can be null? kk its java..
-                            wr.append(String.valueOf(s.cells.readCells[i][j].machine.ordinal())).append(',');
+                            wr.append(s.cells.readCells[i][j].machine.ordinal()).append(',');
                         }
                         else
                             wr.append(',');
-                        wr.append(String.valueOf(s.cells.readCells[i][j].material.ordinal())).append(',');
-                        wr.append(String.valueOf(s.cells.readCells[i][j].name)).append(',');
-                        wr.append(String.valueOf(s.cells.readCells[i][j].value)).append(',');
-                        wr.append(String.valueOf(s.cells.readCells[i][j].value2)).append(';');
+                        wr.append(s.cells.readCells[i][j].material.ordinal()).append(',');
+                        wr.append(s.cells.readCells[i][j].name).append(',');
+                        wr.append(s.cells.readCells[i][j].value).append(',');
+                        wr.append(s.cells.readCells[i][j].value2).append(';');
                     }
                 }
                 wr.append("OBJECTS");
@@ -379,12 +379,12 @@ public class EditorPanel extends JPanel {
                             export=true;
                             wr.append("Pizza"+ ',');
                         }
-                        wr.append(String.valueOf(toSave.doorname)).append(',');
-                        wr.append(String.valueOf(toSave.cx)).append(',');
-                        wr.append(String.valueOf(toSave.cy)).append(',');
-                        wr.append(String.valueOf(toSave.cheading)).append(',');
-                        wr.append(String.valueOf(toSave.x)).append(',');
-                        wr.append(String.valueOf(toSave.y)).append(';');
+                        wr.append(toSave.doorname).append(',');
+                        wr.append(toSave.cx).append(',');
+                        wr.append(toSave.cy).append(',');
+                        wr.append(toSave.cheading).append(',');
+                        wr.append(toSave.x).append(',');
+                        wr.append(toSave.y).append(';');
                     }
                 }
                 try {

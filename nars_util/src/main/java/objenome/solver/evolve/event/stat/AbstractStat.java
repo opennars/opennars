@@ -73,7 +73,7 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
      */
     private Listener<T> clearOnListener;
     private GPContainer config;
-    private List<Class<? extends AbstractStat<?>>> dependencies;
+    private final List<Class<? extends AbstractStat<?>>> dependencies;
 
     /**
      * Constructs an <code>AbstractStat</code>.

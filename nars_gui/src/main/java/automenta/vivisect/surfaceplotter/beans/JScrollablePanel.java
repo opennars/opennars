@@ -53,15 +53,18 @@ public class JScrollablePanel extends JPanel implements Scrollable {
 		super(layout);
 	}
 
+	@Override
 	public Dimension getPreferredScrollableViewportSize() {
 		return getPreferredSize();
 	}
 
+	@Override
 	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
 		return blockIncrement *getScrollableUnitIncrement(visibleRect, orientation, direction);
 	}
 	
 	
+	@Override
 	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
 		
 		
@@ -104,6 +107,7 @@ public class JScrollablePanel extends JPanel implements Scrollable {
 		return 1;
 	}
 
+	@Override
 	public boolean getScrollableTracksViewportHeight() {
 		if (getParent() instanceof JViewport) {
 		    return (getParent().getHeight() > getPreferredSize().height);
@@ -111,6 +115,7 @@ public class JScrollablePanel extends JPanel implements Scrollable {
 		return false;
 	}
 
+	@Override
 	public boolean getScrollableTracksViewportWidth() {
 		if (getParent() instanceof JViewport) {
 		    return (getParent().getWidth() > getPreferredSize().width);

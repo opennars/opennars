@@ -51,18 +51,22 @@ class PropertyDescriptorAdapter extends AbstractProperty {
 		return descriptor;
 	}
 
+	@Override
 	public String getName() {
 		return descriptor.getName();
 	}
 
+	@Override
 	public String getDisplayName() {
 		return descriptor.getDisplayName();
 	}
 
+	@Override
 	public String getShortDescription() {
 		return descriptor.getShortDescription();
 	}
 
+	@Override
 	public Class<?> getType() {
 		return descriptor.getPropertyType();
 	}
@@ -75,6 +79,7 @@ class PropertyDescriptorAdapter extends AbstractProperty {
 		return clone;
 	}
 
+	@Override
 	public void readFromObject(Object object) {
 		try {
 			Method method = descriptor.getReadMethod();
@@ -83,11 +88,12 @@ class PropertyDescriptorAdapter extends AbstractProperty {
 			}
 		} catch (Exception e) {
 			String message = "Got exception when reading property " + getName();
-			message += object == null ? ", object was 'null'" : ", object was " + String.valueOf(object);
+			message += object == null ? ", object was 'null'" : ", object was " + object;
 			throw new RuntimeException(message, e);
 		}
 	}
 
+	@Override
 	public void writeToObject(Object object) {
 		try {
 			Method method = descriptor.getWriteMethod();
@@ -102,15 +108,17 @@ class PropertyDescriptorAdapter extends AbstractProperty {
 			}
 
 			String message = "Got exception when writing property " + getName();
-			message += object == null ? ", object was 'null'" : ", object was " + String.valueOf(object);
+			message += object == null ? ", object was 'null'" : ", object was " + object;
 			throw new RuntimeException(message, e);
 		}
 	}
 
+	@Override
 	public boolean isEditable() {
 		return descriptor.getWriteMethod() != null;
 	}
 
+	@Override
 	public String getCategory() {
 		return descriptor instanceof ExtendedPropertyDescriptor ? ((ExtendedPropertyDescriptor) descriptor).getCategory() : null;
 	}

@@ -130,6 +130,7 @@ public class FasterList<X> extends FastList<X> {
 //        return array;
 //    }
 
+    @Override
     public final void forEach(Consumer c) {
         for (Object j : array()) {
             if (j == null) break; //end of list

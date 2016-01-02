@@ -233,12 +233,14 @@ public class GraphApp extends JPanel
     {   
     }   
    
-    public void paint(Graphics g)   
+    @Override
+    public void paint(Graphics g)
     {   
         draw(11);   
     }   
    
-    public synchronized void reshape(int i, int j, int k, int l)   
+    @Override
+    public synchronized void reshape(int i, int j, int k, int l)
     {   
         super.reshape(i, j, k, l);   
         timeArrow = paletteArrow = null;   

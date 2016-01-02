@@ -19,7 +19,7 @@ public class TreemapChart extends Parent {
     public DoubleProperty width = new SimpleDoubleProperty(640.0);
     public DoubleProperty height = new SimpleDoubleProperty(280.0);
 
-    private TreemapElementFactory elementFactory = new TreemapElementFactory();
+    private final TreemapElementFactory elementFactory = new TreemapElementFactory();
     private final TreemapLayout treemapLayouter;
 
     public TreemapChart(Item root) {

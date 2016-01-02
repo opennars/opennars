@@ -42,8 +42,8 @@ import java.util.Map;
  */
 public class PropertyEditorRegistry implements PropertyEditorFactory {
 
-	private Map<Class<?>, Object> typeToEditor;
-	private Map<Property, Object> propertyToEditor;
+	private final Map<Class<?>, Object> typeToEditor;
+	private final Map<Property, Object> propertyToEditor;
 
 	public PropertyEditorRegistry() {
 		typeToEditor = new HashMap<>();

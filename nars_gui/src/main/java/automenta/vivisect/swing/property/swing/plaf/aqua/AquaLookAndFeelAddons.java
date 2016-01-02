@@ -21,11 +21,13 @@ import automenta.vivisect.swing.property.swing.plaf.basic.BasicLookAndFeelAddons
 
 public class AquaLookAndFeelAddons extends BasicLookAndFeelAddons {
 
+  @Override
   public void initialize() {
     super.initialize();
     loadDefaults(getDefaults());
   }
 
+  @Override
   public void uninitialize() {
     super.uninitialize();
     unloadDefaults(getDefaults());

@@ -5,7 +5,7 @@ import java.awt.*;
 import java.util.StringTokenizer;
 
 public class FaceFrame extends Object {
-    private double[][] targets;
+    private final double[][] targets;
     private Image snapshot;
     private double when;
 

@@ -39,7 +39,7 @@ public class BeanProxyBuilder<T> {
     private boolean propertyChangeSupport;
 
     // pre-set by constructor
-    private boolean genericSupport;
+    private final boolean genericSupport;
 
     // -----------------------------------------------------
 

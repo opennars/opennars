@@ -128,6 +128,6 @@ public class SerializableProperty extends DefaultProperty {
 		System.out.println(p.getValue());
 		System.out.println(p);
 		p = getPropertyInstance("test2", Double.class, 12.23, true);
-		System.out.println(p.toString());
+		System.out.println(p);
 	}
 }

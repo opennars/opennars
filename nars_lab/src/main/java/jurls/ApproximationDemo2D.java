@@ -6,6 +6,7 @@
 package jurls;
 
 import jurls.core.approximation.ApproxParameters;
+import jurls.examples.approximation.FunctionRenderer2D;
 import jurls.examples.approximation.RenderArrayFunction2D;
 import jurls.examples.approximation.RenderFunction2D;
 import jurls.examples.approximation.RenderParameterizedFunction2D;
@@ -16,12 +17,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author thorsten
  */
-public class ApproximationDemo2D extends javax.swing.JFrame {
+public class ApproximationDemo2D extends JFrame {
 
     private final ApproxParameters approxParameters = new ApproxParameters(0.01, 0.1);
     private final RenderParameterizedFunction2D renderParameterizedFunction = new RenderParameterizedFunction2D(Color.yellow);
@@ -106,43 +109,43 @@ public class ApproximationDemo2D extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        functionButtonGroup = new javax.swing.ButtonGroup();
-        hiddenButtonGroup = new javax.swing.ButtonGroup();
-        outputButtonGroup = new javax.swing.ButtonGroup();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel8 = new javax.swing.JPanel();
-        functionRenderer2D1 = new jurls.examples.approximation.FunctionRenderer2D();
-        jPanel9 = new javax.swing.JPanel();
-        functionRenderer2D2 = new jurls.examples.approximation.FunctionRenderer2D();
+        functionButtonGroup = new ButtonGroup();
+        hiddenButtonGroup = new ButtonGroup();
+        outputButtonGroup = new ButtonGroup();
+        jTabbedPane1 = new JTabbedPane();
+        jPanel1 = new JPanel();
+        jPanel8 = new JPanel();
+        functionRenderer2D1 = new FunctionRenderer2D();
+        jPanel9 = new JPanel();
+        functionRenderer2D2 = new FunctionRenderer2D();
         //jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
-        alphaComboBox = new javax.swing.JComboBox();
-        momentumComboBox = new javax.swing.JComboBox();
-        jPanel7 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jMenuBar1 = new javax.swing.JMenuBar();
+        jScrollPane1 = new JScrollPane();
+        jTextArea1 = new JTextArea();
+        jPanel4 = new JPanel();
+        jPanel5 = new JPanel();
+        jPanel6 = new JPanel();
+        alphaComboBox = new JComboBox();
+        momentumComboBox = new JComboBox();
+        jPanel7 = new JPanel();
+        jLabel3 = new JLabel();
+        jLabel4 = new JLabel();
+        jMenuBar1 = new JMenuBar();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel1.setLayout(new java.awt.GridLayout(1, 0));
+        jPanel1.setLayout(new GridLayout(1, 0));
 
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("desired"));
-        jPanel8.setLayout(new java.awt.GridLayout(1, 0));
+        jPanel8.setBorder(BorderFactory.createTitledBorder("desired"));
+        jPanel8.setLayout(new GridLayout(1, 0));
 
-        javax.swing.GroupLayout functionRenderer2D1Layout = new javax.swing.GroupLayout(functionRenderer2D1);
+        GroupLayout functionRenderer2D1Layout = new GroupLayout(functionRenderer2D1);
         functionRenderer2D1.setLayout(functionRenderer2D1Layout);
         functionRenderer2D1Layout.setHorizontalGroup(
-            functionRenderer2D1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            functionRenderer2D1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGap(0, 285, Short.MAX_VALUE)
         );
         functionRenderer2D1Layout.setVerticalGroup(
-            functionRenderer2D1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            functionRenderer2D1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGap(0, 327, Short.MAX_VALUE)
         );
 
@@ -150,17 +153,17 @@ public class ApproximationDemo2D extends javax.swing.JFrame {
 
         jPanel1.add(jPanel8);
 
-        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("actual"));
-        jPanel9.setLayout(new java.awt.GridLayout(1, 0));
+        jPanel9.setBorder(BorderFactory.createTitledBorder("actual"));
+        jPanel9.setLayout(new GridLayout(1, 0));
 
-        javax.swing.GroupLayout functionRenderer2D2Layout = new javax.swing.GroupLayout(functionRenderer2D2);
+        GroupLayout functionRenderer2D2Layout = new GroupLayout(functionRenderer2D2);
         functionRenderer2D2.setLayout(functionRenderer2D2Layout);
         functionRenderer2D2Layout.setHorizontalGroup(
-            functionRenderer2D2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            functionRenderer2D2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGap(0, 285, Short.MAX_VALUE)
         );
         functionRenderer2D2Layout.setVerticalGroup(
-            functionRenderer2D2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            functionRenderer2D2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGap(0, 327, Short.MAX_VALUE)
         );
 
@@ -180,27 +183,27 @@ public class ApproximationDemo2D extends javax.swing.JFrame {
 
         //jTabbedPane1.addTab("Debug 1", jPanel2);
 
-        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jTabbedPane1, BorderLayout.CENTER);
 
-        jPanel4.setLayout(new java.awt.BorderLayout());
+        jPanel4.setLayout(new BorderLayout());
 
-        jPanel5.setLayout(new java.awt.BorderLayout());
+        jPanel5.setLayout(new BorderLayout());
 
-        jPanel6.setLayout(new java.awt.GridLayout(0, 1));
+        jPanel6.setLayout(new GridLayout(0, 1));
 
-        alphaComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0.1", "0.01", "0.001", "0.0001" }));
+        alphaComboBox.setModel(new DefaultComboBoxModel(new String[] { "0.1", "0.01", "0.001", "0.0001" }));
         alphaComboBox.setSelectedIndex(2);
         alphaComboBox.addActionListener(this::alphaComboBoxActionPerformed);
         jPanel6.add(alphaComboBox);
 
-        momentumComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0.01", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "0.95", "0.99" }));
+        momentumComboBox.setModel(new DefaultComboBoxModel(new String[] { "0.01", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "0.95", "0.99" }));
         momentumComboBox.setSelectedIndex(9);
         momentumComboBox.addActionListener(this::momentumComboBoxActionPerformed);
         jPanel6.add(momentumComboBox);
 
-        jPanel5.add(jPanel6, java.awt.BorderLayout.CENTER);
+        jPanel5.add(jPanel6, BorderLayout.CENTER);
 
-        jPanel7.setLayout(new java.awt.GridLayout(0, 1));
+        jPanel7.setLayout(new GridLayout(0, 1));
 
         jLabel3.setText("Learning Rate (Alpha)");
         jPanel7.add(jLabel3);
@@ -208,21 +211,21 @@ public class ApproximationDemo2D extends javax.swing.JFrame {
         jLabel4.setText("Momentum");
         jPanel7.add(jLabel4);
 
-        jPanel5.add(jPanel7, java.awt.BorderLayout.WEST);
+        jPanel5.add(jPanel7, BorderLayout.WEST);
 
-        jPanel4.add(jPanel5, java.awt.BorderLayout.CENTER);
+        jPanel4.add(jPanel5, BorderLayout.CENTER);
 
-        getContentPane().add(jPanel4, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(jPanel4, BorderLayout.SOUTH);
         setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void alphaComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alphaComboBoxActionPerformed
+    private void alphaComboBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_alphaComboBoxActionPerformed
         approxParameters.setAlpha(Double.parseDouble(alphaComboBox.getSelectedItem().toString()));
     }//GEN-LAST:event_alphaComboBoxActionPerformed
 
-    private void momentumComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_momentumComboBoxActionPerformed
+    private void momentumComboBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_momentumComboBoxActionPerformed
         approxParameters.setMomentum(Double.parseDouble(momentumComboBox.getSelectedItem().toString()));
     }//GEN-LAST:event_momentumComboBoxActionPerformed
 
@@ -242,14 +245,14 @@ public class ApproximationDemo2D extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
         } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ApproximationDemo2D.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Logger.getLogger(ApproximationDemo2D.class.getName()).log(Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -257,30 +260,30 @@ public class ApproximationDemo2D extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ApproximationDemo2D().setVisible(true));
+        EventQueue.invokeLater(() -> new ApproximationDemo2D().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox alphaComboBox;
-    private javax.swing.ButtonGroup functionButtonGroup;
-    private jurls.examples.approximation.FunctionRenderer2D functionRenderer2D1;
-    private jurls.examples.approximation.FunctionRenderer2D functionRenderer2D2;
-    private javax.swing.ButtonGroup hiddenButtonGroup;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanel1;
+    private JComboBox alphaComboBox;
+    private ButtonGroup functionButtonGroup;
+    private FunctionRenderer2D functionRenderer2D1;
+    private FunctionRenderer2D functionRenderer2D2;
+    private ButtonGroup hiddenButtonGroup;
+    private JLabel jLabel3;
+    private JLabel jLabel4;
+    private JMenuBar jMenuBar1;
+    private JPanel jPanel1;
     //private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JComboBox momentumComboBox;
-    private javax.swing.ButtonGroup outputButtonGroup;
+    private JPanel jPanel4;
+    private JPanel jPanel5;
+    private JPanel jPanel6;
+    private JPanel jPanel7;
+    private JPanel jPanel8;
+    private JPanel jPanel9;
+    private JScrollPane jScrollPane1;
+    private JTabbedPane jTabbedPane1;
+    private JTextArea jTextArea1;
+    private JComboBox momentumComboBox;
+    private ButtonGroup outputButtonGroup;
     // End of variables declaration//GEN-END:variables
 }

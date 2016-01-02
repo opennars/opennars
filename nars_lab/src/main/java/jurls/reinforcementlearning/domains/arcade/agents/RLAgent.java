@@ -76,6 +76,7 @@ public class RLAgent extends AbstractAgent {
         episodeNumber = 1;
     }
 
+    @Override
     public boolean shouldTerminate() {
         // Terminate when we are told to do so by the outside world
         return (io.wantsTerminate() || episodeNumber > maxNumEpisodes);
@@ -156,14 +157,17 @@ public class RLAgent extends AbstractAgent {
             System.err.println (maxNumEpisodes+" episodes, terminating...");
     }
 
+    @Override
     public boolean wantsRamData() {
         return false;
     }
     
+    @Override
     public boolean wantsRLData() {
         return true;
     }
 
+    @Override
     public boolean wantsScreenData() {
         return true;
     }

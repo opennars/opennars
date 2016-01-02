@@ -1,7 +1,6 @@
 package automenta.vivisect.surfaceplotter;
 
 import automenta.vivisect.surfaceplotter.surface.AbstractSurfaceModel;
-import automenta.vivisect.surfaceplotter.surface.SurfaceModel;
 import automenta.vivisect.surfaceplotter.surface.SurfaceVertex;
 
 import javax.swing.*;
@@ -20,7 +19,7 @@ import java.util.List;
  * 
  * variable: def=0 means 1 face, def=1 means 4 faces etc.
  */
-public class ProgressiveSurfaceModel extends AbstractSurfaceModel implements SurfaceModel {
+public class ProgressiveSurfaceModel extends AbstractSurfaceModel {
 
 	protected SurfaceVertex[][] highDefinitionVertex;
 	protected SurfaceVertex[][] surfaceVertex;
@@ -207,7 +206,7 @@ public class ProgressiveSurfaceModel extends AbstractSurfaceModel implements Sur
 		} catch (OutOfMemoryError e) {
 			setMessage("Not enough memory");
 		} catch (Exception e) {
-			setMessage("Error: " + e.toString());
+			setMessage("Error: " + e);
 		}
 		return vertex;
 	}
@@ -260,6 +259,7 @@ public class ProgressiveSurfaceModel extends AbstractSurfaceModel implements Sur
 		return dotsPerDim * dotsPerDim;
 	}
 
+	@Override
 	public SurfaceVertex[][] getSurfaceVertex() {
 		return surfaceVertex;
 	}

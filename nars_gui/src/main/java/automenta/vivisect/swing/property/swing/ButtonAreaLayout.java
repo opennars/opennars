@@ -25,15 +25,17 @@ import java.awt.*;
  */
 public final class ButtonAreaLayout implements LayoutManager {
 
-  private int gap;
+  private final int gap;
 
   public ButtonAreaLayout(int gap) {
     this.gap = gap;
   }
 
+  @Override
   public void addLayoutComponent(String string, Component comp) {
   }
 
+  @Override
   public void layoutContainer(Container container) {
     Insets insets = container.getInsets();
     Component[] children = container.getComponents();
@@ -71,10 +73,12 @@ public final class ButtonAreaLayout implements LayoutManager {
     }
   }
 
+  @Override
   public Dimension minimumLayoutSize(Container c) {
     return preferredLayoutSize(c);
   }
 
+  @Override
   public Dimension preferredLayoutSize(Container container) {
     Insets insets = container.getInsets();
     Component[] children = container.getComponents();
@@ -101,6 +105,7 @@ public final class ButtonAreaLayout implements LayoutManager {
       insets.top + maxHeight + insets.bottom);
   }
 
+  @Override
   public void removeLayoutComponent(Component c) {
   }
 }

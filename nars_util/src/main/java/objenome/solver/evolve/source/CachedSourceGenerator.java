@@ -32,9 +32,9 @@ import java.util.Map;
 public class CachedSourceGenerator<T extends Organism> implements SourceGenerator<T> {
 
     // The cache of fitness scores
-    private Map<Object, String> cache;
+    private final Map<Object, String> cache;
 
-    private SourceGenerator<T> delegate;
+    private final SourceGenerator<T> delegate;
 
     public CachedSourceGenerator(SourceGenerator<T> delegate) {
         this.delegate = delegate;

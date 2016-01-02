@@ -37,6 +37,7 @@ public abstract class Variable<X> {
     public final String name;
 
 
+    @Override
     public Variable<X> clone() {
         return Variable.make(name, datatype);
     }
@@ -84,6 +85,7 @@ public abstract class Variable<X> {
             this.value = value;
         }
 
+        @Override
         public void setValue(X value) {
             if (value != null && !datatype.isAssignableFrom(value.getClass())) {
                 throw new IllegalArgumentException("variables may not change data-type");
@@ -92,6 +94,7 @@ public abstract class Variable<X> {
             this.value = value;
         }
 
+        @Override
         public X getValue() {
             return value;
         }

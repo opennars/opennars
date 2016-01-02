@@ -30,6 +30,7 @@ public class Sparkle extends Sprite
         life = 10+(int)(Math.random()*timeSpan);
     }
 
+    @Override
     public void move()
     {
         xPic = life > 10 ? 7 : xPicStart + (10 - life) * 4 / 10;

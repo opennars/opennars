@@ -28,9 +28,9 @@ import java.util.Map;
  */
 public class IconPool {
 
-  private static IconPool iconPool = new IconPool();
+  private static final IconPool iconPool = new IconPool();
   
-  private Map pool;
+  private final Map pool;
   
   public IconPool() {
     pool = new HashMap();    

@@ -231,7 +231,7 @@ public class TypedOrganism<X extends Node,Y> extends AbstractOrganism {
      */
     @Override
     public String toString() {
-        return root == null ? null : getFitness() + " " + root.toString();
+        return root == null ? null : getFitness() + " " + root;
     }
 
     /**

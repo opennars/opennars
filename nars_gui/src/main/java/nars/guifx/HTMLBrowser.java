@@ -11,7 +11,6 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import netscape.javascript.JSObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
  
@@ -109,7 +108,7 @@ public class HTMLBrowser extends Application {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Application.launch(args);
     }
 }

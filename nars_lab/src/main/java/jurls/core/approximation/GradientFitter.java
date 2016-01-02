@@ -83,6 +83,7 @@ public class GradientFitter implements ParameterizedFunction {
         return parameterizedFunction.maxOutputDebug();
     }
 
+    @Override
     public double getParameter(int i) {
         return parameterizedFunction.getParameter(i);
     }

@@ -530,7 +530,7 @@ public class FaceGUI extends BaseClass {
                         pts[i][j][1] = vertexArray[j][1];
                         pts[i][j][2] = vertexArray[j][2];
                         if (i == 1) {
-                            pts[i][j][0] = -pts[i][j][0];
+                            pts[1][j][0] = -pts[i][j][0];
                         }
                     }
 

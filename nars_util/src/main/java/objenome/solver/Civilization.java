@@ -104,17 +104,15 @@ public abstract class Civilization extends GPContainer<Civilized> implements Run
         the(Breeder.SELECTOR, new TournamentSelector(7));
 
         Collection<OrganismOperator> operators = new ArrayList<>();
-        {
-            operators.add(new PointMutation());
-            the(PointMutation.PROBABILITY, 0.1);
-            the(PointMutation.POINT_PROBABILITY, 0.02);
-            operators.add(new OnePointCrossover());
-            the(OnePointCrossover.PROBABILITY, 0.1);
-            operators.add(new SubtreeCrossover());
-            the(SubtreeCrossover.PROBABILITY, 0.1);
-            operators.add(new SubtreeMutation());
-            the(SubtreeMutation.PROBABILITY, 0.1);
-        }
+        operators.add(new PointMutation());
+        the(PointMutation.PROBABILITY, 0.1);
+        the(PointMutation.POINT_PROBABILITY, 0.02);
+        operators.add(new OnePointCrossover());
+        the(OnePointCrossover.PROBABILITY, 0.1);
+        operators.add(new SubtreeCrossover());
+        the(SubtreeCrossover.PROBABILITY, 0.1);
+        operators.add(new SubtreeMutation());
+        the(SubtreeMutation.PROBABILITY, 0.1);
         the(Breeder.OPERATORS, operators);
 
 
@@ -437,6 +435,7 @@ public abstract class Civilization extends GPContainer<Civilized> implements Run
     /**
      * the involved variables, which are obtained by iterating syntax elements.
      */
+    @Override
     public Variable[] getVariables() {
 
         List<Variable> variables = new ArrayList();

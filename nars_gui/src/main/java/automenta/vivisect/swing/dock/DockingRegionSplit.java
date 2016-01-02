@@ -191,13 +191,11 @@ public class DockingRegionSplit extends JSplitPane
             }
         }
 
-        {
-            Point relPoint = convertPoint(this, containerPoint, rightComponent);
-            Rectangle bounds = right.getComponent().getBounds();
-            bounds.x = bounds.y = 0;
-            if (bounds.contains(relPoint)) {
-                return right.pickContainer(relPoint);
-            }
+        Point relPoint = convertPoint(this, containerPoint, rightComponent);
+        Rectangle bounds = right.getComponent().getBounds();
+        bounds.x = bounds.y = 0;
+        if (bounds.contains(relPoint)) {
+            return right.pickContainer(relPoint);
         }
 
         return null;

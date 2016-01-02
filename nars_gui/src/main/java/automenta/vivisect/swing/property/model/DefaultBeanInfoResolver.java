@@ -30,6 +30,7 @@ public class DefaultBeanInfoResolver implements BeanInfoResolver {
   public DefaultBeanInfoResolver() {
   }
 
+  @Override
   public BeanInfo getBeanInfo(Object object) {
     if (object == null) {
       return null;
@@ -38,6 +39,7 @@ public class DefaultBeanInfoResolver implements BeanInfoResolver {
     return getBeanInfo(object.getClass());
   }
 
+  @Override
   public BeanInfo getBeanInfo(Class clazz) {
     while (true) {
       if (clazz == null) {

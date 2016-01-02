@@ -24,7 +24,7 @@ package nars.term;
 import nars.Op;
 import nars.nal.nal7.Order;
 import nars.term.compound.Compound;
-import nars.term.match.VarPattern;
+import nars.term.variable.Variable;
 import nars.term.visit.SubtermVisitor;
 
 import java.io.IOException;
@@ -148,7 +148,7 @@ public interface Term extends Termed, Comparable, Termlike {
     }
 
     default boolean hasVarPattern() {
-        return VarPattern.hasPatternVariable(this);
+        return Variable.hasPatternVariable(this);
     }
 
     default boolean hasVarDep() {
@@ -198,6 +198,7 @@ public interface Term extends Termed, Comparable, Termlike {
     }
 
 
+    @Override
     default boolean levelValid(int nal) {
 
         if (nal >= 8) return true;
@@ -220,6 +221,7 @@ public interface Term extends Termed, Comparable, Termlike {
     }
 
 
+    @Override
     default int opRel() {
         return op().ordinal() | (-1 << 16);
     }

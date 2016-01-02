@@ -571,75 +571,72 @@ public class ClassBuilder implements ConfigurableBuilder {
 
                 } 
                                 
-                /*else*/ {
-                    
-                    //check for a Phenotainer-supplied get
-                    //TODO move this to a method in phenotainer
-                    if (container instanceof Phenotainer) {
-                        Phenotainer pheno = (Phenotainer)container;
-                        Object v = pheno.get(p);
-                        
-                        //TODO check for assignability?
-                        if (v!=null) {                            
-                            newInitTypes.add(p.getType());
-                            newInitValues.add(v);                            
-                            continue;
-                        }                    
-                        
+                /*else*/
+
+                //check for a Phenotainer-supplied get
+                //TODO move this to a method in phenotainer
+                if (container instanceof Phenotainer) {
+                    Phenotainer pheno = (Phenotainer)container;
+                    Object v = pheno.get(p);
+
+                    //TODO check for assignability?
+                    if (v!=null) {
+                        newInitTypes.add(p.getType());
+                        newInitValues.add(v);
+                        continue;
                     }
 
-
-                    boolean foundMatch = false;
-
-                    // contains auto-wiring...
-                    Iterator<ConstructorDependency> iter = dependencies.iterator();
-                    while (iter.hasNext()) {
-                        
-                        ConstructorDependency d = iter.next();
-                        
-                        if (betterIsAssignableFrom(pc, d.getSourceType())) {
-
-                            
-                            //if phenotyping, first check that it can be instantiated by attempting it. if it works, save it into the context for the parameter
-                            if (container instanceof Phenotainer) {
-                                Phenotainer pheno = (Phenotainer)container;
-                                try {
-                                    Object subinstance = pheno.get(d.getSourceType());
-                                    if (subinstance == null)
-                                        continue;
-                                    
-                                    //use this subinstance
-                                    pheno.use(p, subinstance);           
-                                    newInitValues.add(subinstance);
-                                }
-                                catch (RuntimeException e) {
-                                    //not instantiable, try next dependency
-                                    continue;
-                                
-                                }
-                            }
-                            
-                            
-                            iter.remove();
-
-                            newInitTypes.add(d.getSourceType());
-
-                            newInitValues.add(new DependencyKey(p, d.getSource()));
-
-                            foundMatch = true;
-
-                            break;
-                            
-                        }
-                    }
-
-                    if (foundMatch)
-                        continue; // next constructor param...
                 }
 
-                    
-                
-    
+
+                boolean foundMatch = false;
+
+                // contains auto-wiring...
+                Iterator<ConstructorDependency> iter = dependencies.iterator();
+                while (iter.hasNext()) {
+
+                    ConstructorDependency d = iter.next();
+
+                    if (betterIsAssignableFrom(pc, d.getSourceType())) {
+
+
+                        //if phenotyping, first check that it can be instantiated by attempting it. if it works, save it into the context for the parameter
+                        if (container instanceof Phenotainer) {
+                            Phenotainer pheno = (Phenotainer)container;
+                            try {
+                                Object subinstance = pheno.get(d.getSourceType());
+                                if (subinstance == null)
+                                    continue;
+
+                                //use this subinstance
+                                pheno.use(p, subinstance);
+                                newInitValues.add(subinstance);
+                            }
+                            catch (RuntimeException e) {
+                                //not instantiable, try next dependency
+                                continue;
+
+                            }
+                        }
+
+
+                        iter.remove();
+
+                        newInitTypes.add(d.getSourceType());
+
+                        newInitValues.add(new DependencyKey(p, d.getSource()));
+
+                        foundMatch = true;
+
+                        break;
+
+                    }
+                }
+
+                if (foundMatch)
+                    continue; // next constructor param...
+
+
                 if (!ignorePrimitives) {
                     //record primitives in constructor
                     if (pc.equals(double.class) || pc.equals(int.class) || pc.equals(boolean.class) || pc.equals(long.class) || pc.equals(short.class) ) {

@@ -185,6 +185,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         return e;
     }
 
+    @Override
     public boolean remove(Object o) {
         return remove(indexOf(o)) != null;
     }

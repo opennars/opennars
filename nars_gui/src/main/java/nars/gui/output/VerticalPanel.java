@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -59,7 +60,7 @@ public class VerticalPanel extends NPanel {
     
     }
 
-    public synchronized java.util.List<Component> limit(int maxComponents) {
+    public synchronized List<Component> limit(int maxComponents) {
         int toRemove = content.getComponentCount() - maxComponents;
         if (toRemove <= 0) return Collections.emptyList();
 

@@ -106,6 +106,7 @@ public class HitsCount extends TypedFitnessFunction implements Listener<ConfigEv
      * <li>{@link #POINT_ERROR}
      * </ul>
      */
+    @Override
     public void setConfig(GPContainer config) {
         if (autoConfig) {
             config.on(ConfigEvent.class, this);

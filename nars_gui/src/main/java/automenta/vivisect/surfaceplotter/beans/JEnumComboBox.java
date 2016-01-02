@@ -45,6 +45,7 @@ public abstract class JEnumComboBox<T extends Enum<T>> extends JComboBox {
 		super(values);
 		this.property.setPropertyName(property);
 		setRenderer(new DefaultListCellRenderer() {
+			@Override
 			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 				Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 				setText( getEnumLabel((T) value)  );
@@ -84,7 +85,7 @@ public abstract class JEnumComboBox<T extends Enum<T>> extends JComboBox {
 	
 	/**
 	 * @param value
-	 * @see net.ericaro.surfaceplotter.beans.BeanProperty#setProperty(java.lang.Object)
+	 * @see net.ericaro.surfaceplotter.beans.BeanProperty#setProperty(Object)
 	 */
 	public void setProperty(T value) {
 		property.setProperty(value);
@@ -101,7 +102,7 @@ public abstract class JEnumComboBox<T extends Enum<T>> extends JComboBox {
 	
 	/**
 	 * @param modelSource
-	 * @see net.ericaro.surfaceplotter.beans.ModelBindedBeanProperty#setSourceBean(java.lang.Object)
+	 * @see net.ericaro.surfaceplotter.beans.ModelBindedBeanProperty#setSourceBean(Object)
 	 */
 	public void setSourceBean(ModelSource modelSource) {
 		property.setSourceBean(modelSource);

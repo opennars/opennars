@@ -6,12 +6,11 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 
-public class NumberRenderer extends JFormattedTextField implements TableCellRenderer, Serializable {
+public class NumberRenderer extends JFormattedTextField implements TableCellRenderer {
 
 	private static final long serialVersionUID = -11256720632412870L;
 

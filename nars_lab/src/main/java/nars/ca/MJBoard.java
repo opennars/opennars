@@ -161,6 +161,7 @@ class MJBoard extends Panel implements Runnable {
 
 	// ----------------------------------------------------------------
 	// The animation endless loop
+	@Override
 	public void run() {
 		int iDelay; // in milliseconds
 		boolean doRedraw;
@@ -760,6 +761,7 @@ class MJBoard extends Panel implements Runnable {
 
 	// ----------------------------------------------------------------
 	// handle events we are interested in
+	@Override
 	public boolean handleEvent(Event e) {
 		if ((e.target == hSbar) || (e.target == vSbar)) // one of scrollbars
 		{
@@ -773,6 +775,7 @@ class MJBoard extends Panel implements Runnable {
 
 	// ----------------------------------------------------------------
 	// button action
+	@Override
 	public boolean action(Event e, Object arg) {
 		if (e.target == btnZoomIn) // zoom in - bigger cells
 		{
@@ -789,6 +792,7 @@ class MJBoard extends Panel implements Runnable {
 
 	// ----------------------------------------------------------------
 	// put the pixel buffer to the screen
+	@Override
 	public void paint(Graphics g) {
 		if ((LastPanelSize.x != getSize().width)
 				|| (LastPanelSize.y != getSize().height)) {
@@ -803,6 +807,7 @@ class MJBoard extends Panel implements Runnable {
 
 	// ----------------------------------------------------------------
 	// avoid flickering
+	@Override
 	public void update(Graphics g) {
 		paint(g);
 	}
@@ -999,6 +1004,7 @@ class MJBoard extends Panel implements Runnable {
 
 	// ----------------------------------------------------------------
 	// Mouse click; if inside the board, draw a cell
+	@Override
 	public boolean mouseDown(Event p1, int p2, int p3) {
 		if ((p2 >= OfsX) && (p3 >= OfsY)
 				&& (p2 <= OfsX + UnivSize.x * CellSize)
@@ -1021,6 +1027,7 @@ class MJBoard extends Panel implements Runnable {
 
 	// ----------------------------------------------------------------
 	// Mouse is dragged, draw a line
+	@Override
 	public boolean mouseDrag(Event p1, int p2, int p3) {
 		if ((p2 >= OfsX) && (p3 >= OfsY)
 				&& (p2 <= OfsX + UnivSize.x * CellSize)

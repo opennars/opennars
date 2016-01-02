@@ -34,7 +34,8 @@ public class MartialArts implements RLEnvironment {
     private enum PseudoAIState {
 
         START, WALKAWAY
-    };
+    }
+
     private PseudoAIState pseudoAIState = PseudoAIState.START;
 
     @SuppressWarnings("HardcodedFileSeparator")

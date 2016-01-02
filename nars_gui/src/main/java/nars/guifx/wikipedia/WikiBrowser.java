@@ -126,24 +126,22 @@ public abstract class WikiBrowser extends BorderPane {
 
             //String script = "$(document).ready(function() {";
             String script = "window.setTimeout(function() {";
-            {
 
-                script += "$('body').after('<style>.crb { border: 1px solid #aaa; margin: 2px; padding: 1px; }</style>');";
+            script += "$('body').after('<style>.crb { border: 1px solid #aaa; margin: 2px; padding: 1px; }</style>');";
 
-                script += "$('head, .header, #page-actions, #jump-to-nav, .top-bar, .navigation-drawer, .edit-page').remove();";
+            script += "$('head, .header, #page-actions, #jump-to-nav, .top-bar, .navigation-drawer, .edit-page').remove();";
 
-                //Add tag button to each tlink
-                //String plusLink = "$('<a class=\"crb\" href=\"tag:/' + h + '\">+</a>').click(function() { window.app.tagAdd(h); } )";
+            //Add tag button to each tlink
+            //String plusLink = "$('<a class=\"crb\" href=\"tag:/' + h + '\">+</a>').click(function() { window.app.tagAdd(h); } )";
 
-                String plusLink = "$('<a class=\"crb\" href=\"tag:/' + h + '\">+</a>').click(function() { window.app.tagAdd(h); } ) ";
+            String plusLink = "$('<a class=\"crb\" href=\"tag:/' + h + '\">+</a>').click(function() { window.app.tagAdd(h); } ) ";
 
-                script += "var linkTransform = function() { var t = $(this); var h = t.attr('href'); if (h && h.indexOf('#')!==-1) return; t.after(" + plusLink + " ); }; ";
-                script += "$('a').each(linkTransform);";
-                script += "$('#section_0').each(linkTransform);";
+            script += "var linkTransform = function() { var t = $(this); var h = t.attr('href'); if (h && h.indexOf('#')!==-1) return; t.after(" + plusLink + " ); }; ";
+            script += "$('a').each(linkTransform);";
+            script += "$('#section_0').each(linkTransform);";
 
 
-                script += "if (window.mw) { category.add(window.mw.config.get('wgCategories')); }";
-            }
+            script += "if (window.mw) { category.add(window.mw.config.get('wgCategories')); }";
             script += "}, 0);";
 
             webEngine.executeScript(script);

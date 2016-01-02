@@ -51,16 +51,14 @@ public class TaskButton extends Label {
             setFocused(false);
 
             Popup p = new Popup();
-            {
-                TaskPane tp = new TaskPane(nar,t);
-                tp.setTop(new FlowPane(
-                    new NSlider("pri", 100, 25, 0.5f),
-                    new Button("+")
-                ));
-                tp.setBackground(Background.EMPTY);
-                ((Pane)tp.getTop()).setBackground(Background.EMPTY);
-                p.getContent().add(tp);
-            }
+            TaskPane tp = new TaskPane(nar,t);
+            tp.setTop(new FlowPane(
+                new NSlider("pri", 100, 25, 0.5f),
+                new Button("+")
+            ));
+            tp.setBackground(Background.EMPTY);
+            ((Pane)tp.getTop()).setBackground(Background.EMPTY);
+            p.getContent().add(tp);
 
             p.setOpacity(0.75f);
             p.setAutoHide(true);

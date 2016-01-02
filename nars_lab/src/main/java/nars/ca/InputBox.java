@@ -36,6 +36,7 @@ public class InputBox extends Dialog implements ActionListener {
 		setVisible(true);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == btnOk) {
 			isAccepted = true;
@@ -45,6 +46,7 @@ public class InputBox extends Dialog implements ActionListener {
 		}
 	}
 
+	@Override
 	public boolean handleEvent(Event evt) {
 		if (evt.id == Event.WINDOW_DESTROY)
 			dispose();

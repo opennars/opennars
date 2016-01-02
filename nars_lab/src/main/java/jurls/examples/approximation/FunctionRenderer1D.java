@@ -5,6 +5,7 @@
  */
 package jurls.examples.approximation;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  *
  * @author thorsten
  */
-public class FunctionRenderer1D extends javax.swing.JPanel {
+public class FunctionRenderer1D extends JPanel {
 
     public final List<RenderFunction1D> renderFunctions = new ArrayList<>();
 
@@ -38,7 +39,7 @@ public class FunctionRenderer1D extends javax.swing.JPanel {
                 double y0 =rf.compute(x);
                 double y = (0.5f * y0+0.5)*getHeight();
                 int px = (int)(getWidth() * x);
-                g.drawLine((int) prevX, (int) prevY, (int) px, (int) y);
+                g.drawLine((int) prevX, (int) prevY, px, (int) y);
                 prevX = px;
                 prevY = y;
             }
@@ -54,14 +55,14 @@ public class FunctionRenderer1D extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGap(0, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents

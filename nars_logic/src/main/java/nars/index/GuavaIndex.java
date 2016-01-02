@@ -122,7 +122,7 @@ public class GuavaIndex implements TermIndex {
 
     @Override
     public Termed internCompound(Op op, int relation, TermContainer subterms) {
-        return MapIndex.intern(op, relation, getIfAbsentIntern(subterms));
+        return AbstractMapIndex.intern(op, relation, getIfAbsentIntern(subterms));
     }
 
     @Override
@@ -135,25 +135,18 @@ public class GuavaIndex implements TermIndex {
         return (TermContainer) subterms.computeIfAbsent(s, (ss) -> internSubterms(((TermContainer) ss).terms()));
     }
 
-//    @Override
-//    public Termed get(Object t) {
-//
-//        if (!(t instanceof Termed)) {
-//            throw new RuntimeException("invalid key");
-//        }
-//
-//        Termed xx = (Termed) t;
-//        Term x = xx.term();
-//
-//        if (!MapIndex.isInternable(x)) {
-//            return xx;
-//        }
-//
-//        try {
-//            return data.get(x, () -> intern(x));
-//        } catch (ExecutionException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    @Override
+    public Termed the(Term x) {
+
+        if (!MapIndex.isInternable(x)) {
+            return x;
+        }
+
+        try {
+            return data.get(x, () -> intern(x));
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

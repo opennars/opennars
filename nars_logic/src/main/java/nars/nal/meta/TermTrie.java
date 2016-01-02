@@ -8,7 +8,6 @@ import org.magnos.trie.TrieNode;
 import org.magnos.trie.TrieSequencer;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import static com.sun.org.apache.xerces.internal.impl.xs.opti.SchemaDOM.indent;
 
@@ -58,7 +57,7 @@ abstract public class TermTrie<K extends Term, V> {
             }
         });
 
-        R.forEach((Consumer<? super V>) this::index);
+        R.forEach(this::index);
     }
 
     /** called for each item on insert */

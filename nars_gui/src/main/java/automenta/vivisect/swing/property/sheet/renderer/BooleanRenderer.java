@@ -5,7 +5,6 @@ import automenta.vivisect.swing.property.sheet.I18N;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.io.Serializable;
 
 
 /**
@@ -13,7 +12,7 @@ import java.io.Serializable;
  * 
  * @author Bartosz Firyn (SarXos)
  */
-public class BooleanRenderer extends JPanel implements TableCellRenderer, Serializable {
+public class BooleanRenderer extends JPanel implements TableCellRenderer {
 
 	private static final long serialVersionUID = 8848514762273327844L;
 

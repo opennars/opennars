@@ -6,19 +6,21 @@ import java.awt.*;
 
 public class LoseScene extends Scene
 {
-    private MarioComponent component;
+    private final MarioComponent component;
     private int tick;
-    private String scrollMessage = "Game over!";
+    private final String scrollMessage = "Game over!";
     
     public LoseScene(MarioComponent component)
     {
         this.component = component;
     }
 
+    @Override
     public void init()
     {
     }
 
+    @Override
     public void render(Graphics g, float alpha)
     {
         g.setColor(Color.decode("#a07070"));
@@ -39,6 +41,7 @@ public class LoseScene extends Scene
     }
 
     private boolean wasDown = true;
+    @Override
     public void tick()
     {
         tick++;
@@ -52,11 +55,13 @@ public class LoseScene extends Scene
         }
     }
 
+    @Override
     public float getX(float alpha)
     {
         return 0;
     }
 
+    @Override
     public float getY(float alpha)
     {
         return 0;

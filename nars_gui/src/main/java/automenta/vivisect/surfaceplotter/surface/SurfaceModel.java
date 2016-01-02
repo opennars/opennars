@@ -27,8 +27,9 @@ Modified : Eric : remove every graphical stuff to get rid of Frame
  *----------------------------------------------------------------------------------------*/
 package automenta.vivisect.surfaceplotter.surface;
 
- 
 
+import javax.swing.event.ChangeListener;
+import java.beans.PropertyChangeListener;
 
 /**
  * The model used to display any surface in JSurface
@@ -69,12 +70,12 @@ public interface SurfaceModel
 	// plot color constant
 	
 	//events
-	void addPropertyChangeListener(java.beans.PropertyChangeListener listener);
-	void addPropertyChangeListener(String propertyName, java.beans.PropertyChangeListener listener);
-	void removePropertyChangeListener(java.beans.PropertyChangeListener listener);
-	void removePropertyChangeListener(String propertyName, java.beans.PropertyChangeListener listener);
-	void addChangeListener(javax.swing.event.ChangeListener listener);
-	void removeChangeListener(javax.swing.event.ChangeListener listener);
+	void addPropertyChangeListener(PropertyChangeListener listener);
+	void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+	void removePropertyChangeListener(PropertyChangeListener listener);
+	void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
+	void addChangeListener(ChangeListener listener);
+	void removeChangeListener(ChangeListener listener);
 	
 	
 	

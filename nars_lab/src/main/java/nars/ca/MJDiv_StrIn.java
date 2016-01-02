@@ -104,8 +104,8 @@ public class MJDiv_StrIn {
 
 		sRet = sRet + ",act=" + (m_Active ? "1" : "0");
 		sRet = sRet + ",rep=" + (m_Repeat ? "1" : "0");
-		sRet = sRet + ",x=" + String.valueOf(m_X);
-		sRet = sRet + ",y=" + String.valueOf(m_Y);
+		sRet = sRet + ",x=" + m_X;
+		sRet = sRet + ",y=" + m_Y;
 		sRet = sRet + ",str=" + m_Str;
 
 		return sRet;

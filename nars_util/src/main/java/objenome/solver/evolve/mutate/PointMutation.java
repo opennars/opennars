@@ -112,6 +112,7 @@ public class PointMutation extends AbstractOrganismOperator implements Listener<
      * <li>{@link #PROBABILITY}
      * </ul>
      */
+    @Override
     public void setConfig(GPContainer config) {
         if (autoConfig) {
             config.on(ConfigEvent.class, this);

@@ -70,6 +70,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         subterms().forEach(a -> a.recurseTerms(v, this));
     }
 
+    @Override
     default boolean hasEllipsis() {
         return Ellipsis.hasEllipsis(this);
     }
@@ -347,6 +348,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
 
+    @Override
     default int opRel() {
         return op().ordinal() | (relation() << 16);
     }

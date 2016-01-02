@@ -144,11 +144,10 @@ public class MJDiversities {
 						else if (sTok.startsWith("STT="))
 							m_SNovaState = Integer.valueOf(sTok.substring(4));
 						break;
-					case DIV_STRIN: {
+					case DIV_STRIN:
 						StrIn.SetFromString(sStr);
 						StrIn.m_X += sizX / 2;
 						StrIn.m_Y += sizY / 2;
-					}
 						break;
 					}
 				}
@@ -171,26 +170,26 @@ public class MJDiversities {
 		case DIV_NOISE:
 			sRet = "#NOISE";
 			sRet = sRet + ",act=" + (m_NoiseActive ? "1" : "0");
-			sRet = sRet + ",cycl=" + String.valueOf(m_NoiseCycles);
-			sRet = sRet + ",cell=" + String.valueOf(m_NoiseCells);
-			sRet = sRet + ",stt=" + String.valueOf(m_NoiseState);
+			sRet = sRet + ",cycl=" + m_NoiseCycles;
+			sRet = sRet + ",cell=" + m_NoiseCells;
+			sRet = sRet + ",stt=" + m_NoiseState;
 			break;
 
 		case DIV_BHOLE:
 			sRet = "#BHOLE";
 			sRet = sRet + ",act=" + (m_BHoleActive ? "1" : "0");
-			sRet = sRet + ",x=" + String.valueOf(m_BHoleCtrX);
-			sRet = sRet + ",y=" + String.valueOf(m_BHoleCtrY);
-			sRet = sRet + ",size=" + String.valueOf(m_BHoleSize);
+			sRet = sRet + ",x=" + m_BHoleCtrX;
+			sRet = sRet + ",y=" + m_BHoleCtrY;
+			sRet = sRet + ",size=" + m_BHoleSize;
 			break;
 
 		case DIV_SNOVA:
 			sRet = "#SNOVA";
 			sRet = sRet + ",act=" + (m_SNovaActive ? "1" : "0");
-			sRet = sRet + ",x=" + String.valueOf(m_SNovaCtrX);
-			sRet = sRet + ",y=" + String.valueOf(m_SNovaCtrY);
-			sRet = sRet + ",size=" + String.valueOf(m_SNovaSize);
-			sRet = sRet + ",stt=" + String.valueOf(m_SNovaState);
+			sRet = sRet + ",x=" + m_SNovaCtrX;
+			sRet = sRet + ",y=" + m_SNovaCtrY;
+			sRet = sRet + ",size=" + m_SNovaSize;
+			sRet = sRet + ",stt=" + m_SNovaState;
 			break;
 
 		case DIV_STRIN:

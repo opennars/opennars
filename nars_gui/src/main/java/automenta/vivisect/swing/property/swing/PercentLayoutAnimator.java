@@ -30,9 +30,9 @@ import java.util.List;
 public class PercentLayoutAnimator implements ActionListener {
 
   private Timer animatorTimer;
-  private List tasks = new ArrayList();
-  private PercentLayout layout;
-  private Container container;
+  private final List tasks = new ArrayList();
+  private final PercentLayout layout;
+  private final Container container;
 
   public PercentLayoutAnimator(Container container, PercentLayout layout) {
     this.container = container;
@@ -64,6 +64,7 @@ public class PercentLayoutAnimator implements ActionListener {
     animatorTimer.stop();
   }
   
+  @Override
   public void actionPerformed(ActionEvent e) {
     boolean allCompleted = true;
 

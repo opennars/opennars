@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>> {
 
-    private Holder<T>[] objects;
+    private final Holder<T>[] objects;
 
     private volatile int takePointer;
     private int releasePointer;
@@ -53,6 +53,7 @@ public abstract class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>
         ASHIFT = 31 - Integer.numberOfLeadingZeros((int) INDEXSCALE);
     }
 
+    @Override
     public Holder<T> get() {
         int localTakePointer;
 
@@ -79,6 +80,7 @@ public abstract class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>
     }
 
 
+    @Override
     public void put(Holder<T> object) /*throws InterruptedException*/ {
 
         try {
@@ -103,11 +105,11 @@ public abstract class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>
     }
 
     public static class Holder<T> {
-        private T value;
+        private final T value;
         public static final int FREE = 0;
         public static final int USED = 1;
 
-        private AtomicInteger state = new AtomicInteger(FREE);
+        private final AtomicInteger state = new AtomicInteger(FREE);
 
         public Holder(T value) {
             this.value = value;

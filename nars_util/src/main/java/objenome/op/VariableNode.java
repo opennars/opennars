@@ -124,6 +124,7 @@ public class VariableNode<V> extends Node {
         return (obj instanceof VariableNode) && (((VariableNode) obj).variable.equals(variable));
     }
 
+    @Override
     public boolean isVariable() {
         return true;
     }

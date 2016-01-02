@@ -86,7 +86,7 @@ public class StreamTokenizer_s {
     private boolean slashSlashCommentsP = false;
     private boolean slashStarCommentsP = false;
 
-    private byte[] ctype = new byte[256];
+    private final byte[] ctype = new byte[256];
     private static final byte CT_WHITESPACE = 1;
     private static final byte CT_DIGIT = 2;
     private static final byte CT_ALPHA = 4;
@@ -218,7 +218,7 @@ public class StreamTokenizer_s {
      * @param is an input stream.
      * @see java.io.BufferedReader
      * @see java.io.InputStreamReader
-     * @see java.io.StreamTokenizer_s#StreamTokenizer_s(java.io.Reader)
+     * @see java.io.StreamTokenizer_s#StreamTokenizer_s(Reader)
      */
     public StreamTokenizer_s(InputStream is) {
         this();
@@ -815,7 +815,7 @@ public class StreamTokenizer_s {
             case TT_NOTHING:
                 ret = "NOTHING";
                 break;
-            default: {
+            default:
                 /*
                  * ttype is the first character of either a quoted string or
                  * is an ordinary character. ttype can definitely not be less
@@ -833,7 +833,6 @@ public class StreamTokenizer_s {
                 s[1] = (char) ttype;
                 ret = new String(s);
                 break;
-            }
         }
         return "Token[" + ret + "], line " + LINENO;
     }

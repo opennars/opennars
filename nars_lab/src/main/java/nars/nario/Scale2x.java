@@ -17,15 +17,15 @@ import java.awt.image.DataBufferInt;
 
 public class Scale2x
 {
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
 
-    private BufferedImage sourceImage;
-    private int[] sourcePixels;
-    private Graphics sourceGraphics;
+    private final BufferedImage sourceImage;
+    private final int[] sourcePixels;
+    private final Graphics sourceGraphics;
 
-    private BufferedImage targetImage;
-    private int[] targetPixels;
+    private final BufferedImage targetImage;
+    private final int[] targetPixels;
 
     /**
      * Creates a new Scale2x object. The new object will scale images of the specified size to images

@@ -68,6 +68,7 @@ public class ActionTest extends ParboiledTest<Integer>
                     'c',
                     push(pop()), // no effect
                     new Action() {
+                        @Override
                         public boolean run(Context context) {
                             return getContext() == context;
                         }

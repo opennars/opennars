@@ -94,32 +94,30 @@ public class Graph1 extends SpacenetApp {
 
         RectNode hydrogen1Sphere = new RectNode();
         hydrogen1Sphere.base.setMaterial(redMaterial);
-        {
 
 
-            ObservableList<PieChart.Data> pieChartData =
-                    FXCollections.observableArrayList(
-                            new PieChart.Data("Grapefruit", 13),
-                            new PieChart.Data("Oranges", 25),
-                            new PieChart.Data("Plums", 10),
-                            new PieChart.Data("Pears", 22),
-                            new PieChart.Data("Apples", 30));
-            PieChart wc = new PieChart(pieChartData);
-            wc.setTitle("TEST");
-            //wc.setCacheHint(CacheHint.SPEED);
+        ObservableList<PieChart.Data> pieChartData =
+                FXCollections.observableArrayList(
+                        new PieChart.Data("Grapefruit", 13),
+                        new PieChart.Data("Oranges", 25),
+                        new PieChart.Data("Plums", 10),
+                        new PieChart.Data("Pears", 22),
+                        new PieChart.Data("Apples", 30));
+        PieChart wc = new PieChart(pieChartData);
+        wc.setTitle("TEST");
+        //wc.setCacheHint(CacheHint.SPEED);
 
-            wc.autosize();
+        wc.autosize();
 
-            wc.setTranslateX(40);
-            wc.setTranslateY(40);
+        wc.setTranslateX(40);
+        wc.setTranslateY(40);
 
 
-            wc.setTranslateZ(-0.2);
-            wc.setScaleX(0.08f);
-            wc.setScaleY(0.08f);
-            wc.setScaleZ(0.1f);
-            hydrogen1Sphere.getChildren().setAll(new AnchorPane(wc));
-        }
+        wc.setTranslateZ(-0.2);
+        wc.setScaleX(0.08f);
+        wc.setScaleY(0.08f);
+        wc.setScaleZ(0.1f);
+        hydrogen1Sphere.getChildren().setAll(new AnchorPane(wc));
 
         hydrogen1Sphere.setRotateY(HYDROGEN_ANGLE);
         hydrogen1Sphere.setTx(8.0);

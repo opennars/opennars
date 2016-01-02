@@ -38,7 +38,7 @@ public class SetImplementationClass implements SetNumericValue {
 
     @Override
     public String toString() {
-        return "ClassSelect(" + multiclass.toString() +") => " + getValue();
+        return "ClassSelect(" + multiclass +") => " + getValue();
     }
 
     @Override

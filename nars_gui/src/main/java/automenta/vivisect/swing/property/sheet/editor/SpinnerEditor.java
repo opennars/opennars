@@ -135,7 +135,7 @@ public class SpinnerEditor extends AbstractPropertyEditor {
 
 	public static final class ObjectWrapper {
 
-		private Object value;
+		private final Object value;
 
 		public ObjectWrapper(Object value, Object visualValue) {
 			this.value = value;

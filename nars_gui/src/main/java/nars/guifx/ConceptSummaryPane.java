@@ -22,7 +22,7 @@ public class ConceptSummaryPane extends Text {
     final AtomicBoolean pendingUpdate = new AtomicBoolean(false);
     private ConceptSummaryPaneIcon icon;
     private float lastPri = -1.0f;
-    private ColorMatrix truthColors = new ColorMatrix(11,11,(freq,conf)-> Color.hsb(360.0 * (freq * 0.3 + 0.25),
+    private final ColorMatrix truthColors = new ColorMatrix(11,11,(freq, conf)-> Color.hsb(360.0 * (freq * 0.3 + 0.25),
             conf, //all the way down to gray
             0.1 + 0.9f * conf));
 

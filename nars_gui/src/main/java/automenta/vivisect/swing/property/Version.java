@@ -13,7 +13,7 @@ public class Version {
 
 
    /** buildDate (set during build process to 1352541368640L). */
-   private static Date buildDate = new Date(1352541368640L);
+   private static final Date buildDate = new Date(1352541368640L);
 
    /**
     * Get buildDate (set during build process to Sat Nov 10 10:56:08 CET 2012).
@@ -23,7 +23,7 @@ public class Version {
 
 
    /** year (set during build process to "2005-2009"). */
-   private static String year = new String("2005-2009");
+   private static final String year = new String("2005-2009");
 
    /**
     * Get year (set during build process to "2005-2009").
@@ -33,7 +33,7 @@ public class Version {
 
 
    /** project (set during build process to "l2fprod-common"). */
-   private static String project = new String("l2fprod-common");
+   private static final String project = new String("l2fprod-common");
 
    /**
     * Get project (set during build process to "l2fprod-common").
@@ -44,7 +44,7 @@ public class Version {
 
    /** buildTimestamp (set during build process to "11/10/2012 10:56 AM"). */
    @SuppressWarnings("HardcodedFileSeparator")
-   private static String buildTimestamp = new String("11/10/2012 10:56 AM");
+   private static final String buildTimestamp = new String("11/10/2012 10:56 AM");
 
    /**
     * Get buildTimestamp (set during build process to "11/10/2012 10:56 AM").
@@ -54,7 +54,7 @@ public class Version {
 
 
    /** version (set during build process to "9.2"). */
-   private static String version = new String("9.2");
+   private static final String version = new String("9.2");
 
    /**
     * Get version (set during build process to "9.2").

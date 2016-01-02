@@ -24,12 +24,12 @@ public class MapScene extends Scene
     private int xMarioA, yMarioA;
 
     private int tick;
-    private GraphicsConfiguration graphicsConfiguration;
-    private Image staticBg;
-    private Graphics staticGr;
+    private final GraphicsConfiguration graphicsConfiguration;
+    private final Image staticBg;
+    private final Graphics staticGr;
     private Random random = new Random();
     private int moveTime = 0;
-    private MarioComponent marioComponent;
+    private final MarioComponent marioComponent;
     private long seed;
     private int worldNumber;
 
@@ -49,6 +49,7 @@ public class MapScene extends Scene
         staticGr = staticBg.getGraphics();
     }
 
+    @Override
     public void init()
     {
         worldNumber = -1;
@@ -401,7 +402,8 @@ public class MapScene extends Scene
         }
     }
 
-    private DecimalFormat df = new DecimalFormat("00");
+    private final DecimalFormat df = new DecimalFormat("00");
+    @Override
     public void render(Graphics g, float alpha)
     {
         g.drawImage(staticBg, 0, 0, null);
@@ -493,6 +495,7 @@ public class MapScene extends Scene
 
     private boolean canEnterLevel = false;
 
+    @Override
     public void tick()
     {
         xMario += xMarioA;
@@ -618,11 +621,13 @@ public class MapScene extends Scene
         }
     }
 
+    @Override
     public float getX(float alpha)
     {
         return 160;
     }
 
+    @Override
     public float getY(float alpha)
     {
         return 120;

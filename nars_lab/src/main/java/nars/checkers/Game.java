@@ -14,8 +14,8 @@ public class Game {
 	public final int HEIGHT;
 	public final int WIDTH;
 
-	private ArrayList<int[]> movementHistory = new ArrayList<>();
-	private Piece[][] pieces;
+	private final ArrayList<int[]> movementHistory = new ArrayList<>();
+	private final Piece[][] pieces;
 	private char turn = TURN_DARK;	// dark is basically an alias for player 1
 	private int remainingJumpX = -1, remainingJumpY = -1;
 
@@ -132,7 +132,7 @@ public class Game {
 				if((dstY == HEIGHT - 1) && pieces[dstX][dstY].isLight())
 					pieces[dstX][dstY] = King.createLightKing();
 				else if(dstY == 0 && pieces[dstX][dstY].isDark())
-					pieces[dstX][dstY] = King.createDarkKing();
+					pieces[dstX][0] = King.createDarkKing();
 			}
 
 			movementHistory.add(new int[]{srcX, srcY, dstX, dstY});

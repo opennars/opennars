@@ -53,6 +53,7 @@ public abstract class AbstractOrganismOperator implements OrganismOperator {
     /**
      * override in subclasses
      */
+    @Override
     public void setConfig(GPContainer config) {
 
     }

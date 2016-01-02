@@ -242,7 +242,7 @@ public class GrammarRule implements GrammarNode, Cloneable {
             if (i > 0) {
                 buffer.append(" | ");
             }
-            buffer.append(productions.get(i).toString());
+            buffer.append(productions.get(i));
         }
         return buffer.toString();
     }

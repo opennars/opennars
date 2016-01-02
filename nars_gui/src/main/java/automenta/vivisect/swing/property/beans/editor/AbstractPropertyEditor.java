@@ -29,24 +29,29 @@ import java.beans.PropertyEditor;
 public class AbstractPropertyEditor implements PropertyEditor {
 
   protected Component editor;
-  private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+  private final PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 
+  @Override
   public boolean isPaintable() {
     return false;
   }
 
+  @Override
   public boolean supportsCustomEditor() {
     return false;
   }
 
+  @Override
   public Component getCustomEditor() {
     return editor;
   }
 
+  @Override
   public void addPropertyChangeListener(PropertyChangeListener listener) {
     listeners.addPropertyChangeListener(listener);
   }
 
+  @Override
   public void removePropertyChangeListener(PropertyChangeListener listener) {
     listeners.removePropertyChangeListener(listener);
   }
@@ -55,28 +60,35 @@ public class AbstractPropertyEditor implements PropertyEditor {
     listeners.firePropertyChange("value", oldValue, newValue);
   }
     
+  @Override
   public Object getValue() {
     return null;
   }
 
+  @Override
   public void setValue(Object value) {
   }
 
+  @Override
   public String getAsText() {
     return null;
   }
 
+  @Override
   public String getJavaInitializationString() {
     return null;
   }
 
+  @Override
   public String[] getTags() {
     return null;
   }
 
+  @Override
   public void setAsText(String text) throws IllegalArgumentException {
   }
 
+  @Override
   public void paintValue(Graphics gfx, Rectangle box) {
   }
 

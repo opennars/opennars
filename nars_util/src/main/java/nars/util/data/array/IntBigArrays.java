@@ -562,7 +562,7 @@ public class IntBigArrays {
         StringBuilder b = new StringBuilder();
         b.append('[');
         for (long i = 0; ; i++) {
-            b.append(String.valueOf(get(a, i)));
+            b.append(get(a, i));
             if (i == last) return b.append(']').toString();
             b.append(", ");
         }

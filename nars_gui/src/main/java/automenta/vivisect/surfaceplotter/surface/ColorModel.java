@@ -44,23 +44,15 @@ public class ColorModel
 		switch(mode)
 		{
 		case DUALSHADE:
-			{
-				return color(hue,sat, norm(z));
-			}
-		case SPECTRUM:
-			{
-				return color(norm(1-z),sat, bright);
-				//return color(norm(1-z),0.3f+z*(0.7f), bright);
-			}
-		case FOG:
-			{
-				return color(hue,norm(z), bright);
-			}
-		case OPAQUE:
-			{
-				if (ocolor==null) ocolor=color(hue,sat, bright);
-				return ocolor;
-			}
+			return color(hue,sat, norm(z));
+			case SPECTRUM:
+			return color(norm(1-z),sat, bright);
+			//return color(norm(1-z),0.3f+z*(0.7f), bright);
+			case FOG:
+			return color(hue,norm(z), bright);
+			case OPAQUE:
+			if (ocolor==null) ocolor=color(hue,sat, bright);
+			return ocolor;
 		}
 		return Color.WHITE;//default
 	}

@@ -18,10 +18,10 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 	private static final int SQUARE_HEIGHT = 60;
 	private Square source = null;
 	private Game game;
-	private Square[][] squares;
+	private final Square[][] squares;
 	private boolean mouseListener;
-	private Player player1;
-	private Player player2;
+	private final Player player1;
+	private final Player player2;
 
 	public Board(Player player1, Player player2, int WIDTH, int HEIGHT) {
 		this(player1, player2, new Game(WIDTH, HEIGHT));
@@ -255,8 +255,8 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 		((FlowLayout)boardPane.getLayout()).setAlignment(FlowLayout.CENTER);
 		boardPane.add(b);
 
-		frame.getContentPane().setLayout(new java.awt.BorderLayout());
-		frame.getContentPane().add(boardPane, java.awt.BorderLayout.CENTER);
+		frame.getContentPane().setLayout(new BorderLayout());
+		frame.getContentPane().add(boardPane, BorderLayout.CENTER);
 		frame.pack();
 		frame.setVisible(true);
 
@@ -311,8 +311,8 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 		//((FlowLayout)boardPane.getLayout()).setAlignment();
 		boardPane.add(this, BorderLayout.CENTER);
 
-		frame.getContentPane().setLayout(new java.awt.BorderLayout());
-		frame.getContentPane().add(boardPane, java.awt.BorderLayout.CENTER);
+		frame.getContentPane().setLayout(new BorderLayout());
+		frame.getContentPane().add(boardPane, BorderLayout.CENTER);
 		frame.pack();
 		frame.setVisible(true);
 

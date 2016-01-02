@@ -41,7 +41,7 @@ public class POJOPane<X> extends BorderPane {
             //controls.maxHeight(Double.MAX_VALUE);
             controls.getChildren().addAll(pn);
 
-            ToggleButton toggle = new ToggleButton("[X] " + obj.toString());
+            ToggleButton toggle = new ToggleButton("[X] " + obj);
             toggle.selectedProperty().addListener(e->{
                 setCenter(toggle.isSelected() ? controls : null);
                 layout();

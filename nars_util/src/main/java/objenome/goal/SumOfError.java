@@ -100,6 +100,7 @@ public class SumOfError<I,O> extends TypedFitnessFunction implements Listener<Co
      * <li>{@link #EXPECTED_OUTPUTS}
      * </ul>
      */
+    @Override
     public void setConfig(GPContainer config) {
         if (autoConfig) {
             config.on(ConfigEvent.class, this);

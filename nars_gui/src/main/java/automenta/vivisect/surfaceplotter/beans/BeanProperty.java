@@ -12,6 +12,7 @@ public abstract class BeanProperty<BEAN, PROP> {
 	BEAN bean;
 	String propertyName;
 	PropertyChangeListener propertyObserver = new PropertyChangeListener() {
+		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (propertyName!=null && propertyName.equals(evt.getPropertyName() ) )
 				onPropertyChanged(evt);

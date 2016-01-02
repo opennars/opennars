@@ -23,6 +23,13 @@ package automenta.vivisect.swing.dock;
 
 import automenta.vivisect.swing.AwesomeButton;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+
 import static javax.swing.BorderFactory.createEmptyBorder;
 
 
@@ -30,17 +37,17 @@ import static javax.swing.BorderFactory.createEmptyBorder;
  *
  * @author kitfox
  */
-@Deprecated public class TabbedPaneTitleMax extends javax.swing.JPanel {
+@Deprecated public class TabbedPaneTitleMax extends JPanel {
 
     final DockingRegionMaximized tabPanel;
     final DockingContent content;
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    protected javax.swing.JButton bn_close;
-    protected javax.swing.JButton bn_float;
+    protected JButton bn_close;
+    protected JButton bn_float;
     //protected javax.swing.JButton bn_minimize;
-    protected javax.swing.JLabel label_title;
+    protected JLabel label_title;
 
     // End of variables declaration//GEN-END:variables
     
@@ -68,7 +75,7 @@ import static javax.swing.BorderFactory.createEmptyBorder;
         
         //bn_minimize = new NARSwing.AwesomeButton('\uf0dd');
         bn_close = new AwesomeButton('\uf00d');
-        label_title = new javax.swing.JLabel();        
+        label_title = new JLabel();
         label_title.setText(content.getTitle());
         label_title.setIcon(content.getIcon());
     }
@@ -84,19 +91,19 @@ import static javax.swing.BorderFactory.createEmptyBorder;
         
         
         setOpaque(false);
-        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
-        label_title.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        label_title.setHorizontalAlignment(SwingConstants.LEFT);
         //label_title.setText("jLabel1");
         label_title.setBorder(createEmptyBorder(0, 0, 0, 0));
-        label_title.addMouseListener(new java.awt.event.MouseAdapter() {
+        label_title.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+            public void mouseClicked(MouseEvent evt) {
                 label_titleMouseClicked(evt);
             }
         });
-        label_title.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        label_title.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
+            public void mouseDragged(MouseEvent evt) {
                 label_titleMouseDragged(evt);
             }
         });
@@ -128,31 +135,31 @@ import static javax.swing.BorderFactory.createEmptyBorder;
         add(bn_close);
     } // </editor-fold>//GEN-END:initComponents
 
-    private void bn_floatActionPerformed(java.awt.event.ActionEvent evt) //GEN-FIRST:event_bn_floatActionPerformed
+    private void bn_floatActionPerformed(ActionEvent evt) //GEN-FIRST:event_bn_floatActionPerformed
     {
         //GEN-HEADEREND:event_bn_floatActionPerformed
         tabPanel.floatFromMaximize(content);
     } //GEN-LAST:event_bn_floatActionPerformed
 
-    private void bn_minimizeActionPerformed(java.awt.event.ActionEvent evt) //GEN-FIRST:event_bn_minimizeActionPerformed
+    private void bn_minimizeActionPerformed(ActionEvent evt) //GEN-FIRST:event_bn_minimizeActionPerformed
     {
         //GEN-HEADEREND:event_bn_minimizeActionPerformed
         tabPanel.restoreFromMaximize(content);
     } //GEN-LAST:event_bn_minimizeActionPerformed
 
-    private void bn_closeActionPerformed(java.awt.event.ActionEvent evt) //GEN-FIRST:event_bn_closeActionPerformed
+    private void bn_closeActionPerformed(ActionEvent evt) //GEN-FIRST:event_bn_closeActionPerformed
     {
         //GEN-HEADEREND:event_bn_closeActionPerformed
         tabPanel.closeFromMaximize(content);
     } //GEN-LAST:event_bn_closeActionPerformed
 
-    private void label_titleMouseDragged(java.awt.event.MouseEvent evt) //GEN-FIRST:event_label_titleMouseDragged
+    private void label_titleMouseDragged(MouseEvent evt) //GEN-FIRST:event_label_titleMouseDragged
     {
         //GEN-HEADEREND:event_label_titleMouseDragged
         System.err.println("Dragging");
     } //GEN-LAST:event_label_titleMouseDragged
 
-    private void label_titleMouseClicked(java.awt.event.MouseEvent evt) //GEN-FIRST:event_label_titleMouseClicked
+    private void label_titleMouseClicked(MouseEvent evt) //GEN-FIRST:event_label_titleMouseClicked
     {
         //GEN-HEADEREND:event_label_titleMouseClicked
 //        tabPanel.selectTab(content);

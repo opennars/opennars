@@ -23,12 +23,12 @@ public class Audio implements Runnable
     private final int bufferBytes;
     public final int maxChannels
             ;
-    private SonarSample silentSample;
-    private SourceDataLine sdl;
-    private int rate = 44100;
-    private ListenerMixer listenerMixer;
-    private int bufferSize = rate / 16;
-    private ByteBuffer soundBuffer = ByteBuffer.allocate(bufferSize * 4);
+    private final SonarSample silentSample;
+    private final SourceDataLine sdl;
+    private final int rate = 44100;
+    private final ListenerMixer listenerMixer;
+    private final int bufferSize = rate / 16;
+    private final ByteBuffer soundBuffer = ByteBuffer.allocate(bufferSize * 4);
     private final float[] leftBuf, rightBuf;
     //private float amplitude = 1;
     //private float targetAmplitude = 1;
@@ -200,6 +200,7 @@ public class Audio implements Runnable
             }
     }
 
+    @Override
     public void run()
     {
         while (alive)

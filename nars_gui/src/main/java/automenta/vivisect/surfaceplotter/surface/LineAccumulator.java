@@ -40,7 +40,7 @@ import java.util.List;
  */
  
 public class LineAccumulator {
-  private List<LineRecord> accumulator; 
+  private final List<LineRecord> accumulator;
   
   /**
    * The constructor of <code>LineAccumulator</code>

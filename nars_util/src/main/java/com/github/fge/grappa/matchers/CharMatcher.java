@@ -45,7 +45,7 @@ public final class CharMatcher
     // TODO: remove...
     private static String getLabel(char c)
     {
-        if (c == Chars.EOI) return escape(c);
+        if (c == Chars.EOI) return escape(Chars.EOI);
         //return new String( new char[] { '\'', escapeChar(c), '\'' });
         return '\'' + escape(c) + '\'';
     }

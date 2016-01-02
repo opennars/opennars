@@ -36,12 +36,14 @@ public class CellEditorAdapter
   protected int clickCountToStart = 1;
 
   class CommitEditing implements ActionListener {
+    @Override
     public void actionPerformed(ActionEvent e) {
       stopCellEditing();
     }
   }
 
   class CancelEditing implements ActionListener {
+    @Override
     public void actionPerformed(ActionEvent e) {
       cancelCellEditing();
     }
@@ -51,11 +53,13 @@ public class CellEditorAdapter
    * Select all text when focus gained, deselect when focus lost.
    */
   static class SelectOnFocus implements FocusListener {
+    @Override
     public void focusGained(FocusEvent e) {
       if (! (e.getSource() instanceof JTextField))
         return;
       SwingUtilities.invokeLater(() -> ((JTextField) e.getSource()).selectAll());
     }
+    @Override
     public void focusLost(FocusEvent e) {
       if (! (e.getSource() instanceof JTextField))
         return;
@@ -80,6 +84,7 @@ public class CellEditorAdapter
     editor.addPropertyChangeListener(evt -> stopCellEditing());
   }
   
+  @Override
   public Component getTreeCellEditorComponent(
     JTree tree,
     Object value,
@@ -90,6 +95,7 @@ public class CellEditorAdapter
     return getEditor(value);
   }
 
+  @Override
   public Component getTableCellEditorComponent(
     JTable table,
     Object value,
@@ -107,10 +113,12 @@ public class CellEditorAdapter
     return clickCountToStart;
   }
 
+  @Override
   public Object getCellEditorValue() {
     return editor.getValue();
   }
 
+  @Override
   public boolean isCellEditable(EventObject event) {
     if (event instanceof MouseEvent) {
       return ((MouseEvent)event).getClickCount() >= clickCountToStart;
@@ -118,15 +126,18 @@ public class CellEditorAdapter
     return true;
   }
 
+  @Override
   public boolean shouldSelectCell(EventObject event) {
     return true;
   }
 
+  @Override
   public boolean stopCellEditing() {
     fireEditingStopped();
     return true;
   }
 
+  @Override
   public void cancelCellEditing() {
     fireEditingCanceled();
   }

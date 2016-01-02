@@ -7,7 +7,7 @@ import java.util.Map;
  * List of tagged parameters for the Node.
  */
 public class TaggedParameters {
-    private Map<String, Object> parameters = new HashMap<>();
+    private final Map<String, Object> parameters = new HashMap<>();
 
     /**
      * Add an object as a tag to the set of parameters.

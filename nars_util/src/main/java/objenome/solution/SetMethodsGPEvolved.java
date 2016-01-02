@@ -38,7 +38,7 @@ public class SetMethodsGPEvolved implements Solution {
 
     @Override
     public String key() {
-        return "implement(" + methods.toString() + ')';
+        return "implement(" + methods + ')';
     }
 
     

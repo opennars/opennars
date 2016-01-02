@@ -644,25 +644,25 @@ public class Formula implements Comparable {
         //noinspection IfStatementWithTooManyBranches
         if ("and".equals(pred) || "or".equals(pred)) {
             if (argCount < 2) {
-                return "Too few arguments for 'and' or 'or' in formula: \n" + f.toString() + '\n';
+                return "Too few arguments for 'and' or 'or' in formula: \n" + f + '\n';
             }
         } else if ("forall".equals(pred) || "exists".equals(pred)) {
             if (argCount != 2) {
-                return "Wrong number of arguments for 'exists' or 'forall' in formula: \n" + f.toString() + '\n';
+                return "Wrong number of arguments for 'exists' or 'forall' in formula: \n" + f + '\n';
             } else {
                 Formula quantF = new Formula();
                 quantF.read(rest);
                 if (!listP(quantF.car())) {
-                    return "No parenthesized variable list for 'exists' or 'forall' in formula: \n" + f.toString() + '\n';
+                    return "No parenthesized variable list for 'exists' or 'forall' in formula: \n" + f + '\n';
                 }
             }
         } else if ("<=>".equals(pred) || "=>".equals(pred)) {
             if (argCount != 2) {
-                return "Wrong number of arguments for '<=>' or '=>' in formula: \n" + f.toString() + '\n';
+                return "Wrong number of arguments for '<=>' or '=>' in formula: \n" + f + '\n';
             }
         } else if ("equals".equals(pred)) {
             if (argCount != 2) {
-                return "Wrong number of arguments for 'equals' in formula: \n" + f.toString() + '\n';
+                return "Wrong number of arguments for 'equals' in formula: \n" + f + '\n';
             }
         } else if (// !(isVariable(pred)) 
                 // && 
@@ -677,7 +677,7 @@ public class Formula implements Comparable {
             KBmanager.getMgr().setError(KBmanager.getMgr().getError()
                     + "\n<br/>Maybe too many arguments"
                     + location + ": "
-                    + f.toString()
+                    + f
                     + "\n<br/>");
         }
         return "";
@@ -968,7 +968,7 @@ public class Formula implements Comparable {
                     varend++;
                 }
                 String varname = s.substring(varstart + 1, varend);
-                s = s.replaceAll("\\?" + varname, "?VAR" + (new Integer(varCount++)).toString());
+                s = s.replaceAll("\\?" + varname, "?VAR" + (new Integer(varCount++)));
                 i = varstart;
             }
         }
@@ -982,7 +982,7 @@ public class Formula implements Comparable {
                     varend++;
                 }
                 String varname = s.substring(varstart + 1, varend);
-                s = s.replaceAll("\\@" + varname, "@ROWVAR" + (new Integer(varCount++)).toString());
+                s = s.replaceAll("\\@" + varname, "@ROWVAR" + (new Integer(varCount++)));
                 i = varstart;
             }
         }
@@ -1126,7 +1126,7 @@ public class Formula implements Comparable {
             }
             //System.out.println("INFO in Formula.makeQuantifiersExplicit(): result: " + 
             //    quant.toString() + ") " + theFormula + ")");
-            return quant.toString() + ") " + theFormula + ')';
+            return quant + ") " + theFormula + ')';
         } else {
             return theFormula;
         }
@@ -1316,7 +1316,7 @@ public class Formula implements Comparable {
                             if (!rowReplace.toString().isEmpty()) {
                                 rowReplace = rowReplace.append(' ');
                             }
-                            rowReplace = rowReplace.append('?').append(row).append((new Integer(j)).toString());
+                            rowReplace = rowReplace.append('?').append(row).append((new Integer(j)));
                             if (hasVariableArityRelation) {
                                 rowResult = rowResult.append(result.toString().replaceAll("\\@" + row, rowReplace.toString())).append('\n');
                             }
@@ -2945,7 +2945,7 @@ public class Formula implements Comparable {
                     }
                 }
                 if (theFormula.charAt(i) == '(' && indentLevel == 0 && i == 0) {
-                    formatted = formatted.append(theFormula.charAt(i));
+                    formatted = formatted.append(theFormula.charAt(0));
                 }
                 if (Character.isJavaIdentifierStart(theFormula.charAt(i)) && !inToken && !inVariable) {
                     token = new StringBuilder().append(theFormula.charAt(i));
@@ -3466,9 +3466,9 @@ public class Formula implements Comparable {
                             tptpFormula.append(" )");
                         }
                         if (translatedFormula == null) {
-                            translatedFormula = "( " + tptpFormula.toString() + " )";
+                            translatedFormula = "( " + tptpFormula + " )";
                         } else {
-                            translatedFormula += "& ( " + tptpFormula.toString() + " )";
+                            translatedFormula += "& ( " + tptpFormula + " )";
                         }
                         if ((Integer) (countStack.pop()) != 1) {
                             System.out.println(
@@ -3476,12 +3476,12 @@ public class Formula implements Comparable {
                         }
                     } else if (parenLevel < 0) {
                         System.out.print("ERROR: Extra closing bracket at "
-                                + tptpFormula.toString());
+                                + tptpFormula);
                         throw new ParseException("Parsing error in " + suoString, 0);
                     }
                 } else if (st.ttype != StreamTokenizer.TT_EOF) {
                     System.out.println("ERROR: Illegal character '"
-                            + (char) st.ttype + "' at " + tptpFormula.toString());
+                            + (char) st.ttype + "' at " + tptpFormula);
                     throw new ParseException("Parsing error in " + suoString, 0);
                 }
             } while (st.ttype != StreamTokenizer.TT_EOF);
@@ -5108,9 +5108,9 @@ public class Formula implements Comparable {
                     String newArg0 = arg0F.existentialsOut(evSubs, iUQVs, scopedUQVs).theFormula;
                     return result.cdrAsFormula().existentialsOut(evSubs, iUQVs, scopedUQVs).cons(newArg0);
                 }
-                if (result.isVariable(theFormula)) {
+                if (isVariable(theFormula)) {
                     String newTerm = (String) evSubs.get(result.theFormula);
-                    if (result.isNonEmptyString(newTerm)) {
+                    if (isNonEmptyString(newTerm)) {
                         result.read(newTerm);
                     }
                     return result;
@@ -5267,7 +5267,7 @@ public class Formula implements Comparable {
                         return result;
                     }
                     String arg0 = result.car();
-                    if (result.isCommutative(arg0) || "not".equals(arg0)) {
+                    if (isCommutative(arg0) || "not".equals(arg0)) {
                         ArrayList literals = new ArrayList();
                         Formula restF = result.cdrAsFormula();
                         while (!(restF.empty())) {

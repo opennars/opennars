@@ -5,13 +5,14 @@
  */
 package jurls.reinforcementlearning.domains;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
  *
  * @author thorsten
  */
-public class PhysicsRenderer extends javax.swing.JPanel {
+public class PhysicsRenderer extends JPanel {
 
     public Physics2D physics2D;
 
@@ -56,14 +57,14 @@ public class PhysicsRenderer extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGap(0, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents

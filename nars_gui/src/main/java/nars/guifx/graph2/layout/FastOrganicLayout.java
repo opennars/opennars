@@ -139,7 +139,7 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
     protected ObjectIntHashMap<TermNode> indices;
 
     /** final normalization step to center all nodes */
-    private boolean center = false;
+    private final boolean center = false;
     private final FasterList<TermNode> cells = new FasterList();
 
 
@@ -394,11 +394,9 @@ public class FastOrganicLayout<V extends TermNode> implements IterativeLayout<V>
 
                 final Object[] ccells;
                 int cellsSize = edges.length;
-                {
-                    cells.clear();
-                    cells.ensureCapacity(cellsSize);
-                    ccells = cells.array();
-                }
+                cells.clear();
+                cells.ensureCapacity(cellsSize);
+                ccells = cells.array();
 
                 int cn = 0;
                 for (TermEdge e : edges) {

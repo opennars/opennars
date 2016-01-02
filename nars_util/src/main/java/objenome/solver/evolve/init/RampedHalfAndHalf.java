@@ -84,7 +84,7 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
      */
     public enum Method {
 
-        GROW, FULL;
+        GROW, FULL
     }
 
     /**
@@ -130,6 +130,7 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
      * <li>{@link #RAMPING_START_DEPTH}
      * </ul>
      */
+    @Override
     public void setConfig(GPContainer config) {
         if (autoConfig) {
             config.on(ConfigEvent.class, this);
@@ -513,7 +514,7 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
      */
     public static class EndEvent extends InitialisationEvent.EndInitialisation {
 
-        private Method[] method;
+        private final Method[] method;
 
         /**
          * Constructs an event with the population that was constructed by the

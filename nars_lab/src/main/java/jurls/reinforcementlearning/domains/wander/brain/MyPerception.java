@@ -11,7 +11,7 @@ public class MyPerception  {
     public static final double RADAR_R = Math.PI*2.0 / RADAR_ANGLES; //0.6 = mostly front
     public static final double RADAR_D = 25;
     public static final int RADAR_D0 = 1;
-    private Player player;
+    private final Player player;
 
     public MyPerception(Player player) {
         this.player = player;

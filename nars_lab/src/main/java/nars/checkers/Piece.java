@@ -13,7 +13,7 @@ public class Piece
 	protected static final Color LIGHT = new Color(251, 249, 246);
 	protected static final Color DARK = Color.BLACK;
 
-	private Color color;
+	private final Color color;
 
 	/**
 	 *

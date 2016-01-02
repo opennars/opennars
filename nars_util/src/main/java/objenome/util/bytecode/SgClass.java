@@ -667,12 +667,12 @@ public final class SgClass {
     }
 
     /**
-     * Determines if the class represents a basic type ({@link java.lang.String}
-     * , {@link java.lang.Boolean}, {@link java.lang.Byte},
-     * {@link java.lang.Character}, {@link java.lang.Short},
-     * {@link java.lang.Integer} , {@link java.lang.Long},
-     * {@link java.lang.Float}, {@link java.lang.Double},
-     * {@link java.math.BigDecimal} or {@link java.math.BigInteger}).
+     * Determines if the class represents a basic type ({@link String}
+     * , {@link Boolean}, {@link Byte},
+     * {@link Character}, {@link Short},
+     * {@link Integer} , {@link Long},
+     * {@link Float}, {@link Double},
+     * {@link BigDecimal} or {@link BigInteger}).
      * 
      * @return true if and only if this class represents one of those types.
      */
@@ -983,18 +983,18 @@ public final class SgClass {
 
     /**
      * Returns the name of the conversion method to return a primitive type
-     * value from the following types: {@link java.lang.Boolean},
-     * {@link java.lang.Byte}, {@link java.lang.Character},
-     * {@link java.lang.Short}, {@link java.lang.Integer},
-     * {@link java.lang.Long}, {@link java.lang.Float} or
-     * {@link java.lang.Double}. If this class is not one of the above types a
+     * value from the following types: {@link Boolean},
+     * {@link Byte}, {@link Character},
+     * {@link Short}, {@link Integer},
+     * {@link Long}, {@link Float} or
+     * {@link Double}. If this class is not one of the above types a
      * {@link IllegalArgumentException} will be thrown.
      * 
      * @param clasz
      *            Class to return a conversion method from.
      * 
      * @return Name of the no argument conversion method (like "intValue" for
-     *         converting an {@link java.lang.Integer} into an <code>int</code>
+     *         converting an {@link Integer} into an <code>int</code>
      *         ).
      */
     public static String getToPrimitiveMethod(SgClass clasz) {

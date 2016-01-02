@@ -8,13 +8,11 @@ package nars.util.meter.event;
 import nars.util.meter.FunctionMeter;
 import org.apache.commons.lang3.mutable.MutableLong;
 
-import java.io.Serializable;
-
 /**
  *
  * @author me
  */
-public class HitMeter extends FunctionMeter<Long> implements Serializable {
+public class HitMeter extends FunctionMeter<Long> {
     
     private boolean autoReset;
     public final MutableLong hits = new MutableLong();

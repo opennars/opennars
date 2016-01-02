@@ -28,15 +28,16 @@ import java.awt.*;
 public class BlueishButtonUI
   extends BasicButtonUI {
 
-  private static Color blueishBackgroundOver = new Color(224, 232, 246);
-  private static Color blueishBorderOver = new Color(152, 180, 226);
+  private static final Color blueishBackgroundOver = new Color(224, 232, 246);
+  private static final Color blueishBorderOver = new Color(152, 180, 226);
 
-  private static Color blueishBackgroundSelected = new Color(193, 210, 238);
-  private static Color blueishBorderSelected = new Color(49, 106, 197);
+  private static final Color blueishBackgroundSelected = new Color(193, 210, 238);
+  private static final Color blueishBorderSelected = new Color(49, 106, 197);
 
   public BlueishButtonUI() {
   }
 
+  @Override
   public void installUI(JComponent c) {
     super.installUI(c);
 
@@ -45,6 +46,7 @@ public class BlueishButtonUI
     button.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
   }
 
+  @Override
   public void paint(Graphics g, JComponent c) {
     AbstractButton button = (AbstractButton)c;
     if (button.getModel().isRollover()

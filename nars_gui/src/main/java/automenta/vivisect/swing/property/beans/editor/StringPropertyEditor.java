@@ -33,10 +33,12 @@ public class StringPropertyEditor extends AbstractPropertyEditor {
     ((JTextField)editor).setBorder(LookAndFeelTweaks.EMPTY_BORDER);
   }
   
+  @Override
   public Object getValue() {
     return ((JTextComponent)editor).getText();
   }
   
+  @Override
   public void setValue(Object value) {
     if (value == null) {
       ((JTextComponent)editor).setText("");

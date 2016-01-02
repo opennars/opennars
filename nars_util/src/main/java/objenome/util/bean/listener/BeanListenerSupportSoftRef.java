@@ -33,26 +33,31 @@ public class BeanListenerSupportSoftRef<T> implements BeanListenerSupport<T> {
             prefetched = null;
         }
 
+        @Override
         public boolean hasNext() {
             return prefetched != null;
         }
 
+        @Override
         public T next() {
             T next = prefetched;
             prefetch();
             return next;
         }
 
+        @Override
         public void remove() {
             iterator.remove();
         }
 
     }
 
+    @Override
     public void add(T t) {
         propertyChangeListeners.add(new WeakReference<>(t));
     }
 
+    @Override
     public void remove(T object) {
         for (Iterator<T> it = iterator(); it.hasNext();) {
             T listener = it.next();
@@ -63,6 +68,7 @@ public class BeanListenerSupportSoftRef<T> implements BeanListenerSupport<T> {
         }
     }
 
+    @Override
     public Iterator<T> iterator() {
         return new Itr();
     }

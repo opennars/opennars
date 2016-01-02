@@ -12,7 +12,7 @@ public class JSurfaceApplet extends JApplet {
 			//initComponents();
 			try {
 			
-	        javax.swing.SwingUtilities.invokeAndWait(this::initComponents);
+	        SwingUtilities.invokeAndWait(this::initComponents);
 	    } catch (Exception e) {
 	        System.err.println("createGUI didn't successfully complete"+ e);
 	        e.printStackTrace();

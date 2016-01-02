@@ -141,7 +141,7 @@ public final class WindowManager /*implements ShutdownHandler*/ {
      * @return a List of currently managed windows
      */
     public Collection<Window> getWindows() {
-        return Collections.<Window>unmodifiableCollection(windows.values());
+        return Collections.unmodifiableCollection(windows.values());
     }
 
     /**
@@ -271,6 +271,7 @@ public final class WindowManager /*implements ShutdownHandler*/ {
      * @author Andres Almiray
      */
     private class OnWindowHidingHelper implements EventHandler<WindowEvent> {
+        @Override
         public void handle(WindowEvent event) {
             hide((Window) event.getSource());
             handleClose((Window) event.getSource());
@@ -286,6 +287,7 @@ public final class WindowManager /*implements ShutdownHandler*/ {
         /**
          * Triggers a <tt>WindowShown</tt> event with the window as sole argument
          */
+        @Override
         public void handle(WindowEvent windowEvent) {
             //app.event(GriffonApplication.Event.WINDOW_SHOWN.getName(), Arrays.asList(windowEvent.getSource()));
         }
@@ -300,6 +302,7 @@ public final class WindowManager /*implements ShutdownHandler*/ {
         /**
          * Triggers a <tt>WindowHidden</tt> event with the window as sole argument
          */
+        @Override
         public void handle(WindowEvent windowEvent) {
             //app.event(GriffonApplication.Event.WINDOW_HIDDEN.getName(), Arrays.asList(windowEvent.getSource()));
         }

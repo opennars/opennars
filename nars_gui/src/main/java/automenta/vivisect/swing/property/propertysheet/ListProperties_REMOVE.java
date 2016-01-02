@@ -23,8 +23,8 @@ public class ListProperties_REMOVE {
 
 		private static final long serialVersionUID = -8352295145276923539L;
 
-		private List<Object> keys = new ArrayList<>();
-		private List<Object> values = new ArrayList<>();
+		private final List<Object> keys = new ArrayList<>();
+		private final List<Object> values = new ArrayList<>();
 
 		private static final String[] columnNames = {"Property String", "Value"};
 
@@ -118,13 +118,13 @@ JOptionPane.showMessageDialog(frame,
 	}
 }
 
-class TableSorter extends TableMap implements TableModelListener {
+class TableSorter extends TableMap {
 
 	private static final long serialVersionUID = 6627171931468194200L;
 
 	private int[] indexes = new int[0];
 
-	private List<Object> sortingColumns = new ArrayList<>();
+	private final List<Object> sortingColumns = new ArrayList<>();
 
 	boolean ascending = true;
 
@@ -189,7 +189,7 @@ class TableSorter extends TableMap implements TableModelListener {
 			else
 				return 0;
 		} else //noinspection UseOfObsoleteDateTimeApi
-			if (type == java.util.Date.class) {
+			if (type == Date.class) {
 			@SuppressWarnings("UseOfObsoleteDateTimeApi") Date d1 = (Date) data.getValueAt(row1, column);
 			long n1 = d1.getTime();
 			@SuppressWarnings("UseOfObsoleteDateTimeApi") Date d2 = (Date) data.getValueAt(row2, column);

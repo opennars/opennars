@@ -2,7 +2,6 @@ package nars.util.data.rope.impl;
 
 import nars.util.data.rope.Rope;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Objects;
@@ -164,12 +163,12 @@ public final class PrePostCharRope extends AbstractRope {
     }
 
     @Override
-    public void write(Writer out) throws IOException {
+    public void write(Writer out) {
         //this.write(out, 0, this.length());
     }
 
     @Override
-    public void write(Writer out, int offset, int length) throws IOException {
+    public void write(Writer out, int offset, int length) {
         //out.write(this.sequence, offset, length);
     }
 }

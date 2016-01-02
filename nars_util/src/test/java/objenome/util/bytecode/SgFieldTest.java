@@ -8,6 +8,7 @@ import org.junit.Test;
 
 public class SgFieldTest extends SgVariableTest {
 
+    @Override
     @Before
     public void setup() {
         super.setup();

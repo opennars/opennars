@@ -36,7 +36,7 @@ public class RunBestIndividuals extends AbstractStat<EndGeneration> {
     /**
      * The list of best individuals.
      */
-    private List<Organism> best;
+    private final List<Organism> best;
 
     /**
      * Constructs a <code>RunBestIndividuals</code>.

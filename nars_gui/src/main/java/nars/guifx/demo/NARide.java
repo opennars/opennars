@@ -71,7 +71,7 @@ public class NARide extends BorderPane {
     public final LoopPane loopPane;
     //private final CornerMenu cornerMenu;
 
-    private Map<Term, Supplier<? extends Node>> tools = new HashMap();
+    private final Map<Term, Supplier<? extends Node>> tools = new HashMap();
 
 
     @SuppressWarnings("HardcodedFileSeparator")
@@ -90,9 +90,8 @@ public class NARide extends BorderPane {
             Scene scene = new Scene(ni, 1000, 800,
                     false, SceneAntialiasing.DISABLED);
 
-            {
-                //ni.addView(new TaskSheet(nar));
-                ni.addView(new IOPane(nar));
+            //ni.addView(new TaskSheet(nar));
+            ni.addView(new IOPane(nar));
 
                 /*ni.addView(new UDPPane(new UDPNetwork(
                         10001+(int)(Math.random()*5000) //HACK
@@ -101,9 +100,8 @@ public class NARide extends BorderPane {
                 /*ni.addIcon(() -> {
                     return new InputPane(nar);
                 });*/
-                ni.addIcon(() -> new ConceptSonificationPanel(nar));
-                //ni.addView(additional components);
-            }
+            ni.addIcon(() -> new ConceptSonificationPanel(nar));
+            //ni.addView(additional components);
 
             ni.addTool("I/O", () -> new IOPane(nar));
             ni.addTool("Active Concepts (Buttons)", () -> new ActiveConceptsLog(nar) {

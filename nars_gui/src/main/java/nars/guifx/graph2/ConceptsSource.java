@@ -37,7 +37,7 @@ public class ConceptsSource extends GraphSource {
     public final SimpleDoubleProperty minPri = new SimpleDoubleProperty(0.0);
     public final SimpleStringProperty includeString = new SimpleStringProperty("");
 
-    private BiFunction<TermNode, TermNode, TermEdge> edgeBuilder =
+    private final BiFunction<TermNode, TermNode, TermEdge> edgeBuilder =
             TLinkEdge::new;
 
     private float _maxPri = 0, _minPri = 0;

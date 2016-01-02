@@ -29,7 +29,7 @@ import java.util.Locale;
  */
 public class DateRenderer extends DefaultCellRenderer {
 
-  private DateFormat dateFormat;
+  private final DateFormat dateFormat;
 
   public DateRenderer() {
     this(DateFormat.getDateInstance(DateFormat.SHORT));
@@ -51,6 +51,7 @@ public class DateRenderer extends DefaultCellRenderer {
     this.dateFormat = dateFormat;
   }
 
+  @Override
   public void setValue(Object value) {
     if (value == null) {
       setText("");

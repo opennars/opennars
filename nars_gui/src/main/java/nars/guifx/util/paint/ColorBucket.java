@@ -8,9 +8,9 @@ import java.util.Deque;
 public class ColorBucket {
 
     private static final int DEFAULT_SIZE = 10;
-    private Deque<Color> availableColorGroups = new ArrayDeque<>();
+    private final Deque<Color> availableColorGroups = new ArrayDeque<>();
 
-    private ColorGroupType colorGroupType;
+    private final ColorGroupType colorGroupType;
 
     private ColorBucket(ColorGroupType colorGroupType) {
         this.colorGroupType = colorGroupType;

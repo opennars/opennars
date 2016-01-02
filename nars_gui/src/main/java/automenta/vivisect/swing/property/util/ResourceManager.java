@@ -29,7 +29,7 @@ public class ResourceManager {
 
   static Map nameToRM = new HashMap();
 
-  private ResourceBundle bundle;
+  private final ResourceBundle bundle;
 
   /**
    * Gets the ResourceManager associated with <code>clazz</code>.

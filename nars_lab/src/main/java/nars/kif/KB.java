@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 public class KB {
 
-    private static boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
     /**
      * The name of the knowledge base.
@@ -143,7 +143,7 @@ public class KB {
      * KB. Keys are both the formula itself, and term indexes created in
      * KIF.createKey().
      */
-    private HashMap formulas = new HashMap();
+    private final HashMap formulas = new HashMap();
 
     /**
      * The natural language formatting strings for relations in the KB.
@@ -843,7 +843,7 @@ public class KB {
         return null;
     }
 
-    private HashMap relationValences = new HashMap();
+    private final HashMap relationValences = new HashMap();
 
     private void cacheRelationValences() {
         System.out.println("INFO in KB.cacheRelationValences()");
@@ -1508,7 +1508,7 @@ public class KB {
             fr.write(formula);
             fr.write("\n");
             flen = file.length();
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             System.out.println("Error writing file " + fname);
         } finally {
             if (fr != null) {

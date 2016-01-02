@@ -107,6 +107,7 @@ public final class VarListImplementationFactory {
         /**
          * {@inheritDoc}
          */
+        @Override
         public void afterClassCreated(SgClass clasz) {
 
             // Add all arguments as fields and to the constructor
@@ -127,6 +128,7 @@ public final class VarListImplementationFactory {
         /**
          * {@inheritDoc}
          */
+        @Override
         public List<String> createBody(SgMethod method, Class<?>... intf) {
             // Call user defined listener
             return listener.createBody(method, intf);

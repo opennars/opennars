@@ -391,13 +391,13 @@ public class Grid2DSpace extends PApplet {
 
         private float savepx = 0;
         private float savepy = 0;
-        private int selID = 0;
+        private final int selID = 0;
         private float zoom = 43.0f;
         private float difx = -750;
         private float dify = -1300;
-        private int lastscr = 0;
-        private boolean EnableZooming = true;
-        private float scrollcamspeed = 1.1f;
+        private final int lastscr = 0;
+        private final boolean EnableZooming = true;
+        private final float scrollcamspeed = 1.1f;
 
         float MouseToWorldCoordX(int x) {
             return 1 / zoom * (x - difx - width / 2);
@@ -430,8 +430,8 @@ public class Grid2DSpace extends PApplet {
             }
             drawn = false;
         }
-        private float camspeed = 1.0f;
-        private float scrollcammult = 0.92f;
+        private final float camspeed = 1.0f;
+        private final float scrollcammult = 0.92f;
         boolean keyToo = true;
 
         void keyPressed() {

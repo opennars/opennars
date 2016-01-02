@@ -21,7 +21,7 @@ public class Screenshot {
     }
     
     public BufferedImage capture() {
-        Dimension size = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         return robot.createScreenCapture(new Rectangle(0,0,size.width,size.height));
     }
     

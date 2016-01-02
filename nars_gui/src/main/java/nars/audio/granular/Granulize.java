@@ -81,7 +81,7 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
             long lnow = (long)n;
 			if (cGrain != null) {
 				nextSample = g.getSample(cGrain, lnow);
-				if (g.isFading(cGrain, lnow)) {
+				if (Granulator.isFading(cGrain, lnow)) {
 					fGrain = cGrain;
 					cGrain = p ? nextGrain(cGrain) : null;
 				}
@@ -105,7 +105,8 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
         currentAmplitude = amp;
 	}
 
-    public final void setAmplitude(float amplitude) {
+    @Override
+	public final void setAmplitude(float amplitude) {
         this.amplitude.set(amplitude);
     }
 
@@ -127,6 +128,7 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 		isPlaying = true;
 	}
 
+	@Override
 	public void stop() {
 		isPlaying = false;
 	}

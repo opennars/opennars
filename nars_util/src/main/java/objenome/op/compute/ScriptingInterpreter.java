@@ -58,7 +58,7 @@ import java.util.List;
 public class ScriptingInterpreter<I,T extends Organism,O> implements Computer<I,T,O> {
 
     // The language specific scripting engine.
-    private ScriptEngine engine;
+    private final ScriptEngine engine;
 
     private SourceGenerator<T> generator;
 

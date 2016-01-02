@@ -33,7 +33,7 @@ public class DockingRegionTabbed extends JTabbedPane implements DockingChild {
     HashMap<DockingContent, TabLayout> tabs = new HashMap<>();
 
     public DockingRegionTabbed() {
-        setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 
     public DockingContent getDockingContent(int index) {

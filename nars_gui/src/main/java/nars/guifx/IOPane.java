@@ -87,7 +87,7 @@ public class IOPane extends BorderPane /*implements FXIconPaneBuilder*/ {
                     return new Label(
                             //channel.toString() + ": " +
                             channel + ": " +
-                                    signal.toString());
+                                    signal);
 
             }
 

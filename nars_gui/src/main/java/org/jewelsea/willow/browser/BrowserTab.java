@@ -60,10 +60,12 @@ public class BrowserTab extends UITab<WebView> {
         
     }
     
+    @Override
     public String getLocation() {
         return browser.getLocField().getText();
     }
 
+    @Override
     protected void init() {
         //System.out.println("BrowserTab start" + (System.currentTimeMillis() - WebBrowser.start));
         

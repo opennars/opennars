@@ -244,7 +244,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
     }
 
     public <T> T the(Object value) {    
-        T existing = get((Object)value);
+        T existing = get(value);
         if (existing == null) {
             return the(value.getClass(), new SingletonBuilder(value));
         }
@@ -349,7 +349,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
                 }
                 // and now we remove all thread locals belonging to this thread...
                 // this will only remove of instances related to this thread...
-                threadLocalsCache.values().forEach(ThreadLocal<Object>::remove);
+                threadLocalsCache.values().forEach(ThreadLocal::remove);
             }
             // remove everything inside a non-synchronized block...
             listToClear.forEach(ClearableHolder::clear);

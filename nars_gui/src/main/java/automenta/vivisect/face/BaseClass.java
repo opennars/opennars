@@ -248,7 +248,8 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
    
     public abstract void render(Graphics g);   
    
-    public void run()   
+    @Override
+    public void run()
     {   
         long cycleDelay = 30L;
         try   

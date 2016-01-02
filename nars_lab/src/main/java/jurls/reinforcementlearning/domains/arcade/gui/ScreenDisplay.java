@@ -61,6 +61,7 @@ public class ScreenDisplay extends JPanel {
         messages = new MessageHistory();
     }
 
+    @Override
     public Dimension getPreferredSize() {
         int width, height;
 

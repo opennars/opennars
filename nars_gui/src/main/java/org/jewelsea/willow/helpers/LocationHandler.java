@@ -71,7 +71,7 @@ public class LocationHandler {
 
                 if (saveFile != null) {
                     try (BufferedInputStream is = new BufferedInputStream(new URL(location).openStream());
-                         BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(saveFile));) {
+                         BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(saveFile))) {
                         int b = is.read();
                         while (b != -1) {
                             os.write(b);

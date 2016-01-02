@@ -41,8 +41,9 @@ public class DefaultProperty extends AbstractProperty {
 	private boolean editable = true;
 	private String category;
 	private Property parent;
-	private List<Property> subProperties = new ArrayList<>();
+	private final List<Property> subProperties = new ArrayList<>();
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -51,6 +52,7 @@ public class DefaultProperty extends AbstractProperty {
 		this.name = name;
 	}
 
+	@Override
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -59,6 +61,7 @@ public class DefaultProperty extends AbstractProperty {
 		this.displayName = displayName;
 	}
 
+	@Override
 	public String getShortDescription() {
 		return shortDescription;
 	}
@@ -67,6 +70,7 @@ public class DefaultProperty extends AbstractProperty {
 		this.shortDescription = shortDescription;
 	}
 
+	@Override
 	public Class getType() {
 		return type;
 	}
@@ -75,6 +79,7 @@ public class DefaultProperty extends AbstractProperty {
 		this.type = type;
 	}
 
+	@Override
 	public boolean isEditable() {
 		return editable;
 	}
@@ -83,6 +88,7 @@ public class DefaultProperty extends AbstractProperty {
 		this.editable = editable;
 	}
 
+	@Override
 	public String getCategory() {
 		return category;
 	}
@@ -96,6 +102,7 @@ public class DefaultProperty extends AbstractProperty {
 	 * reflection and looks for a method starting with "is" or "get" followed by
 	 * the capitalized Property name.
 	 */
+	@Override
 	public void readFromObject(Object object) {
 		try {
 			Method method = BeanUtils.getReadMethod(object.getClass(), getName());
@@ -119,6 +126,7 @@ public class DefaultProperty extends AbstractProperty {
 	 * and looks for a method starting with "set" followed by the capitalized
 	 * Property name and with one parameter with the same type as the Property.
 	 */
+	@Override
 	public void writeToObject(Object object) {
 		try {
 			Method method =

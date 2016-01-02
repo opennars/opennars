@@ -20,10 +20,12 @@ package automenta.vivisect.swing.property.swing;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
+import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.View;
 import javax.swing.text.html.HTMLDocument;
 import java.awt.*;
+import java.io.StringReader;
 
 /**
  * LookAndFeelTweaks. <br>
@@ -109,13 +111,13 @@ public class LookAndFeelTweaks {
         }
       } else {
         View v = (View) component
-            .getClientProperty(javax.swing.plaf.basic.BasicHTML.propertyKey);
+            .getClientProperty(BasicHTML.propertyKey);
         if (v != null && v.getDocument() instanceof HTMLDocument) {
           doc = (HTMLDocument) v.getDocument();
         }
       }
       if (doc != null) {
-        doc.getStyleSheet().loadRules(new java.io.StringReader(stylesheet),
+        doc.getStyleSheet().loadRules(new StringReader(stylesheet),
             null);
       } // end of if (doc != null)
     } catch (Exception e) {

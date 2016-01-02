@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  *
  * @author srain@php.net
  */
-public class SimpleHashSet<T> extends AbstractSet<T> implements Set<T>, Cloneable {
+public class SimpleHashSet<T> extends AbstractSet<T> implements Cloneable {
 
     private static final int MINIMUM_CAPACITY = 4;
     private static final int MAXIMUM_CAPACITY = 1 << 30;
@@ -247,7 +247,7 @@ public class SimpleHashSet<T> extends AbstractSet<T> implements Set<T>, Cloneabl
         result.makeTable(mTable.length);
         result.mSize = 0;
 
-        for (T t : (Iterable<T>) this) {
+        for (T t : this) {
             result.add(t);
         }
         return result;
@@ -255,8 +255,8 @@ public class SimpleHashSet<T> extends AbstractSet<T> implements Set<T>, Cloneabl
 
     private static class SimpleHashSetEntry<T> {
 
-        private int mHash;
-        private T mKey;
+        private final int mHash;
+        private final T mKey;
         private SimpleHashSetEntry<T> mNext;
 
         private SimpleHashSetEntry(int hash, T key) {

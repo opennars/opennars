@@ -43,9 +43,9 @@ import java.util.Set;
  * @author Josh Bloch
  * @author Neal Gafter
  * @version %I%, %G%
- * @see java.util.Collection
- * @see java.util.AbstractCollection
- * @see java.util.Set
+ * @see Collection
+ * @see AbstractCollection
+ * @see Set
  * @since 1.2
  */
 
@@ -113,7 +113,7 @@ public abstract class AbstractSet<E> extends AbstractCollection<E> implements Se
      */
     public int hashCode() {
         int h = 0;
-        for (E obj : (Iterable<E>) this) {
+        for (E obj : this) {
             if (obj != null)
                 h += obj.hashCode();
         }

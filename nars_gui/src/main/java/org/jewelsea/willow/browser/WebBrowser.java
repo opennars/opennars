@@ -56,8 +56,8 @@ public class WebBrowser extends BorderPane {
     @Deprecated
     public static final long start = System.currentTimeMillis();
 
-    private AnchorPane overlayLayer;
-    private BorderPane underlayLayer;
+    private final AnchorPane overlayLayer;
+    private final BorderPane underlayLayer;
 
     public abstract static class Route {
         public final String url;
@@ -105,9 +105,9 @@ public class WebBrowser extends BorderPane {
     private static final double INITIAL_SCENE_HEIGHT = 600;
     private static final double INITIAL_SCENE_WIDTH = 1121;
     private Node sidebar;                              // sidebar for controlling the app.
-    private TabManager tabManager;                        // tab manager for managing browser tabs.
-    private BorderPane mainLayout = new BorderPane();     // layout of the browser application.
-    private TextField chromeLocField = new TextField();   // current location of the current browser or a value being updated by the user to change the current browser's location.
+    private final TabManager tabManager;                        // tab manager for managing browser tabs.
+    private final BorderPane mainLayout = new BorderPane();     // layout of the browser application.
+    private final TextField chromeLocField = new TextField();   // current location of the current browser or a value being updated by the user to change the current browser's location.
     // change listeners to tie the location of the current browser to the chromeLocField and vice versa (binding cannot be used because both these values must be read/write).
     private ChangeListener<String> browserLocFieldChangeListener;
     private ChangeListener<String> chromeLocFieldChangeListener;
@@ -323,6 +323,7 @@ public class WebBrowser extends BorderPane {
                 setCycleDuration(Duration.millis(250));
             }
 
+            @Override
             protected void interpolate(double frac) {
                 double curHeight = startHeight.get() * (1.0 - frac);
                 navPane.setPrefHeight(curHeight);   // todo resize a spacing underlay to allow the scene to adjust.
@@ -337,6 +338,7 @@ public class WebBrowser extends BorderPane {
                 setCycleDuration(Duration.millis(250));
             }
 
+            @Override
             protected void interpolate(double frac) {
                 double curHeight = startHeight.get() * frac;
                 navPane.setPrefHeight(curHeight);

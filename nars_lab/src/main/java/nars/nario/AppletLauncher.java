@@ -10,10 +10,12 @@ public class AppletLauncher extends JApplet
     private MarioComponent mario;
     private boolean started = false;
 
+    @Override
     public void init()
     {
     }
 
+    @Override
     public void start()
     {
         if (!started)
@@ -35,6 +37,7 @@ public class AppletLauncher extends JApplet
         }
     }
 
+    @Override
     public void stop()
     {
         if (started)

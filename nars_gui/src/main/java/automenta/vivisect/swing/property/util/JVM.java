@@ -30,7 +30,7 @@ public class JVM {
   public static final int JDK1_5 = 15;
   public static final int JDK1_6 = 16;
 
-  private static JVM current;
+  private static final JVM current;
   static {
     current = new JVM();
   }
@@ -42,7 +42,7 @@ public class JVM {
     return current;
   }
 
-  private int jdkVersion;
+  private final int jdkVersion;
 
   /**
    * Creates a new JVM data from the <code>java.version</code>
