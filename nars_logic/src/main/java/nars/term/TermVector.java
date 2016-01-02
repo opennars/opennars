@@ -73,11 +73,11 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
         init();
     }
 
-    public TermVector(T[] source, Function<T,T> mapping) {
+    public TermVector(T[] source, Function<T,Termed<T>> mapping) {
         int len = source.length;
         Term[] t = this.term = (T[]) new Term[len];
         for (int i = 0; i < len; i++)
-            t[i] = mapping.valueOf(source[i]);
+            t[i] = mapping.valueOf(source[i]).term();
         init();
     }
 

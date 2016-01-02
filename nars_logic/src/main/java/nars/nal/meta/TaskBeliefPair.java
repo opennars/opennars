@@ -2,6 +2,7 @@ package nars.nal.meta;
 
 import nars.Op;
 import nars.term.Term;
+import nars.term.TermVector;
 import nars.term.compound.GenericCompound;
 import nars.term.match.Ellipsis;
 
@@ -13,7 +14,7 @@ public final class TaskBeliefPair extends GenericCompound {
     int actualStructure;
 
     public TaskBeliefPair() {
-        super(Op.PRODUCT, Ellipsis.Shim, Ellipsis.Shim);
+        super(Op.PRODUCT, new TermVector(Ellipsis.Shim, Ellipsis.Shim));
     }
 
     public TaskBeliefPair(Term a, Term b) {

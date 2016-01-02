@@ -23,6 +23,7 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.atom.Atom;
+import nars.term.compile.TermBuilder;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.match.*;
@@ -1103,22 +1104,15 @@ public class Narsese extends BaseParser<Object>  {
         return null;
     }
 
-    public Termed term(String s, TermIndex t) {
+    public Termed term(String s, TermBuilder t) {
         return term(s, t, true);
     }
 
-    public Termed term(String s, TermIndex index, boolean normalize) {
+    public Termed term(String s, TermBuilder index, boolean normalize) {
         Term raw = term(s);
         if (raw == null) return null;
 
-        Termed u;
-        if (normalize) {
-            u = index.normalized(raw);
-            if (u == null) return null;
-        } else {
-            u = raw;
-        }
-        return index.get(u);
+        return normalize ? index.normalized(raw) : index.the(raw);
     }
 
     public Termed concept(String s, Memory m) {

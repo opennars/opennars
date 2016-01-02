@@ -5,6 +5,7 @@ import nars.Op;
 import nars.nal.nal8.Operator;
 import nars.term.*;
 import nars.term.compile.TermIndex;
+import nars.term.compile.TermPrinter;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -22,19 +23,19 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     private transient boolean normalized = false;
 
 
-    protected GenericCompound(Op op, T... subterms) {
-        this(op, -1, subterms);
-    }
-
-    public GenericCompound(Op op, int relation, T... subterms) {
-
-        TermVector<T> terms = this.terms = op.isCommutative() ?
-                TermSet.newTermSetPresorted(subterms) :
-                new TermVector(subterms);
-        this.op = op;
-        this.relation = relation;
-        this.hash = TermIndex.hash(terms, op, relation+1);
-    }
+//    protected GenericCompound(Op op, T... subterms) {
+//        this(op, -1, subterms);
+//    }
+//
+//    public GenericCompound(Op op, int relation, T... subterms) {
+//
+//        TermVector<T> terms = this.terms = op.isCommutative() ?
+//                TermSet.newTermSetPresorted(subterms) :
+//                new TermVector(subterms);
+//        this.op = op;
+//        this.relation = relation;
+//        this.hash = TermIndex.hash(terms, op, relation+1);
+//    }
 
     public GenericCompound(Op op, TermVector subterms) {
         this(op, -1, subterms);
@@ -62,14 +63,14 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         switch (op) {
             case SET_INT_OPENER:
             case SET_EXT_OPENER:
-                TermIndex.setAppend(this, p, pretty);
+                TermPrinter.setAppend(this, p, pretty);
                 break;
             case PRODUCT:
-                TermIndex.productAppend(this, p, pretty);
+                TermPrinter.productAppend(this, p, pretty);
                 break;
             case IMAGE_INT:
             case IMAGE_EXT:
-                TermIndex.imageAppend(this, p, pretty);
+                TermPrinter.imageAppend(this, p, pretty);
                 break;
             default:
                 if (op.isStatement()) {
@@ -80,7 +81,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                         Statement.append(this, p, pretty);
                     }
                 } else {
-                    TermIndex.appendCompound(this, p, pretty);
+                    TermPrinter.appendCompound(this, p, pretty);
                 }
                 break;
         }
@@ -94,7 +95,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     public final int compareTo(Object o) {
         int r=0;
         if (this != o) {
-            Termed t = (Term) o;
+            Termed t = (Termed) o;
             //int diff = op().compareTo(t.op());
             int diff = Integer.compare(op().ordinal(), t.op().ordinal());
             if (diff != 0) r = diff;

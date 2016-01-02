@@ -55,12 +55,10 @@ public class MapIndex extends AbstractMapIndex {
         return subterms.size();
     }
 
-    @Override
-    public Object remove(Term key) {
-        return data.remove(key);
-    }
-
-
+//    @Override
+//    public Object remove(Term key) {
+//        return data.remove(key);
+//    }
 
     @Override
     public void putTerm(Termed termed) {

@@ -24,7 +24,7 @@ import nars.Global;
 import nars.Op;
 import nars.term.Term;
 import nars.term.TermContainer;
-import nars.term.compile.TermIndex;
+import nars.term.compile.TermPrinter;
 import nars.term.match.Ellipsis;
 import nars.term.transform.FindSubst;
 import nars.term.visit.SubtermVisitor;
@@ -116,7 +116,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     @Override
     default void append(Appendable p, boolean pretty) throws IOException {
-        TermIndex.appendCompound(this, p, pretty);
+        TermPrinter.appendCompound(this, p, pretty);
     }
 
     default void appendArgs(Appendable p, boolean pretty, boolean appendedOperator) throws IOException {
@@ -177,8 +177,8 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     default <X extends Term> X subterm(int... address) {
         Term ptr = this;
         for (int i : address) {
-            if (ptr instanceof Compound) {
-                ptr = ((Compound)ptr).term(i);
+            if (ptr instanceof TermContainer) {
+                ptr = ((TermContainer) ptr).term(i);
             }
         }
         return (X) ptr;

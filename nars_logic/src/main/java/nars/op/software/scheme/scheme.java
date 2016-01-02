@@ -34,9 +34,9 @@ public class scheme extends TermFunction {
         public SchemeProduct(Iterable p) {
             super(Cons.copyOf(Iterables.transform(p, term -> {
 
-                if (term instanceof Compound) {
+                if (term instanceof Iterable) {
                     //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));
-                    return new SchemeProduct((Compound)term);
+                    return new SchemeProduct((Iterable) term);
                 }
                 if (term instanceof Atom) {
 
@@ -80,7 +80,7 @@ public class scheme extends TermFunction {
         Term[] x = Operator.opArgsArray(o);
         Term code = x[0];
 
-        return code instanceof Compound ? schemeToNars.apply(Evaluator.evaluate(new SchemeProduct(((Compound) code)), env)) : schemeToNars.apply(Evaluator.evaluate(new SchemeProduct($.p(x)), env));
+        return code instanceof Compound ? schemeToNars.apply(Evaluator.evaluate(new SchemeProduct(((Iterable) code)), env)) : schemeToNars.apply(Evaluator.evaluate(new SchemeProduct($.p(x)), env));
         //Set = evaluate as a cond?
 //        else {
 //

@@ -82,7 +82,7 @@ public class EllipsisTest {
                         testFurther(selectedFixed, this, varArgTerms);
 
                         //2. test substitution
-                        Term s = index.apply(r, this, false);
+                        Term s = index.transform(r, this, false);
                         //System.out.println(s);
 
                         selectedFixed.add(s);
@@ -255,7 +255,7 @@ public class EllipsisTest {
 
         TermIndex i = TermIndex.memory(128);
 
-        Term u = i.term(
+        Term u = i.transform(
                 $.p(t), new PremiseRule.TaskRuleVariableNormalization());
         t = (EllipsisTransform)((Compound)u).term(0);
         assertEquals("(%1..%2=C..+)", u.toString());

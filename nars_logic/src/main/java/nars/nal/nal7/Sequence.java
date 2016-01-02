@@ -5,8 +5,9 @@ import nars.$;
 import nars.Global;
 import nars.Op;
 import nars.term.Term;
+import nars.term.TermVector;
 import nars.term.Terms;
-import nars.term.compile.TermIndex;
+import nars.term.compile.TermPrinter;
 import nars.term.compound.GenericCompound;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
      *
      */
     private Sequence(T[] subterms, int[] intervals) {
-        super(Op.SEQUENCE, -1, subterms);
+        super(Op.SEQUENCE, -1, new TermVector(subterms));
 
         if (intervals == null) {
             //TODO leave as null, avoiding allocating this array if all zeros
@@ -328,7 +329,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
 
         appendOperator(p);
 
-        TermIndex.appendSeparator(p, pretty);
+        TermPrinter.appendSeparator(p, pretty);
 
         int nterms = size();
 
@@ -347,7 +348,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
             if (c != 0) {
 
                 if (i == nterms)
-                    TermIndex.appendSeparator(p, pretty);
+                    TermPrinter.appendSeparator(p, pretty);
 
                 //insert Interval virtual term
                 appendInterval(p, c);
@@ -355,7 +356,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
                 if (i == nterms)
                     break;
                 else
-                    TermIndex.appendSeparator(p, pretty);
+                    TermPrinter.appendSeparator(p, pretty);
 
             }
 
@@ -364,13 +365,13 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
             }
 
             if (i < nterms-1) {
-                TermIndex.appendSeparator(p, pretty);
+                TermPrinter.appendSeparator(p, pretty);
             }
 
         }
 
 
-        TermIndex.appendCloser(p);
+        TermPrinter.appendCloser(p);
 
 
     }

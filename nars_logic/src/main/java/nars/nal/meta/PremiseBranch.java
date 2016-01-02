@@ -2,6 +2,7 @@ package nars.nal.meta;
 
 import nars.Op;
 import nars.nal.PremiseMatch;
+import nars.term.TermVector;
 import nars.term.compound.GenericCompound;
 
 import java.util.Collection;
@@ -28,7 +29,8 @@ public final class PremiseBranch extends GenericCompound implements ProcTerm<Pre
     }
 
     public PremiseBranch(Collection<BooleanCondition<PremiseMatch>> cond, ProcTerm<PremiseMatch> conseq) {
-        super(Op.IMPLICATION, new AndCondition<>(cond), conseq);
+        super(Op.IMPLICATION,
+                new TermVector(new AndCondition(cond), conseq));
         this.cond = (AndCondition<PremiseMatch>) term(0);
         this.conseq = (ProcTerm<PremiseMatch>) term(1);
     }

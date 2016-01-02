@@ -1,6 +1,7 @@
 package nars.nal.meta;
 
 import nars.Op;
+import nars.term.TermVector;
 import nars.term.compound.GenericCompound;
 
 /**
@@ -11,7 +12,7 @@ abstract public class ThenFork<C> extends GenericCompound<ProcTerm<C>> implement
     //private final MethodHandle method;
 
     public ThenFork(ProcTerm<C>... actions) {
-        super(Op.PARALLEL, actions);
+        super(Op.PARALLEL, new TermVector(actions));
 
 
 //            try {

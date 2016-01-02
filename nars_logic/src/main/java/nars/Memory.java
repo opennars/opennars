@@ -35,8 +35,6 @@ import nars.term.Term;
 import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
-import nars.term.compound.Compound;
-import nars.term.transform.CompoundTransform;
 import nars.term.variable.Variable;
 import nars.time.Clock;
 import nars.util.data.random.XorShift128PlusRandom;
@@ -211,29 +209,20 @@ public class Memory extends Param {
     @Override
     public synchronized void clear() {
 
-
         eventReset.emit(this);
 
         clock.clear(this);
 
-        //NOTE: allow stamp serial to continue increasing after reset.
-        //currentStampSerial = ;
-
-        //questionConcepts.clear();
-
         index.clear();
-
-        //goalConcepts.clear();
 
         emotion.clear();
 
-
     }
 
 
-    Concept concept(Compound c, CompoundTransform transform) {
-        return concept(index.term(c, transform));
-    }
+//    Concept concept(Compound c, CompoundTransform transform) {
+//        return concept(index.transform(c, transform));
+//    }
 
     static boolean validConceptTerm(Term term) {
         return !((term instanceof Variable) || (term instanceof CyclesInterval));

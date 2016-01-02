@@ -11,6 +11,7 @@ import nars.nal.meta.op.Solve;
 import nars.nal.meta.pre.*;
 import nars.nal.op.*;
 import nars.term.Term;
+import nars.term.TermVector;
 import nars.term.Terms;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
@@ -108,7 +109,7 @@ public class PremiseRule extends GenericCompound implements Level {
     }
 
     public PremiseRule(Compound premises, Compound result) {
-        super(Op.PRODUCT, premises, result  );
+        super(Op.PRODUCT, new TermVector(premises, result) );
         str = super.toString();
     }
 
@@ -231,10 +232,8 @@ public class PremiseRule extends GenericCompound implements Level {
     /** deduplicate and generate match-optimized compounds for rules */
     public void compile(TermIndex index) {
         Term[] premisePattern = ((Compound) term(0)).terms();
-        Term taskPattern = premisePattern[0];
-        Term beliefPattern = premisePattern[1];
-        premisePattern[0] = index.term(taskPattern);
-        premisePattern[1] = index.term(beliefPattern);
+        premisePattern[0] = index.theTerm(premisePattern[0]); //task pattern
+        premisePattern[1] = index.theTerm(premisePattern[1]); //belief pattern
     }
 
     static final class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {
@@ -266,14 +265,9 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
     public final PremiseRule normalizeRule(PatternIndex index) {
-        //HACK this can be streamlined a lot
 
-        //use tmp index to not pollute the real index with the uppercase variable forms
-        final TermIndex tmpIndex = new TermIndex.ImmediateTermIndex();
-        Compound postNorm = (Compound)tmpIndex.term(this,
-                uppercaseAtomsToPatternVariables);
-
-        Compound c = (Compound)index.term(postNorm,
+        Compound c = (Compound)index.transform(
+                $.terms.transform(this, uppercaseAtomsToPatternVariables),
                 new TaskRuleVariableNormalization());
 
         return new PremiseRule((Compound)c.term(0), (Compound)c.term(1)); //HACK

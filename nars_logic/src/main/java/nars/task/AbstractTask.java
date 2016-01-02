@@ -234,7 +234,7 @@ public abstract class AbstractTask extends Item<Task>
         }
 
         //obtain shared copy of term
-        setTerm((Termed)memory.index.get(t));
+        setTerm((Termed)memory.index.the(t));
 
         setDuration(
             memory.duration() //assume the default perceptual duration?

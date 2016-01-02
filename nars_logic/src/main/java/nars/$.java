@@ -12,11 +12,13 @@ import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.TermContainer;
+import nars.term.TermVector;
 import nars.term.Termed;
-import nars.term.Terms;
 import nars.term.atom.Atom;
+import nars.term.compile.TermBuilder;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
+import nars.term.compound.GenericCompound;
 import nars.term.match.VarPattern;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
@@ -35,7 +37,13 @@ import static nars.Op.*;
  */
 public abstract class $  {
 
-    public static final TermIndex terms = new TermIndex.ImmediateTermIndex();
+    public static final TermBuilder terms = new TermBuilder() {
+
+        @Override
+        public Termed internCompound(Op op, int relation, TermContainer subterms) {
+            return new GenericCompound(op, relation, (TermVector)subterms);
+        }
+    };
 
 
     public static final org.slf4j.Logger logger = LoggerFactory.getLogger($.class);
@@ -213,21 +221,14 @@ public abstract class $  {
      * @param pred The second component
      * @return A compound generated or null
      */
-    public static Compound inst(Term subj, Term pred) {
-        return (Compound) $.inh($.sete(subj), pred);
+    public static Term inst(Term subj, Term pred) {
+        return terms.inst(subj, pred);
     }
-
-
-    /**
-     * Try to make a new compound from two components. Called by the logic rules.
-     * <p>
-     *  A {-] B becomes {A} --> [B]
-     * @param subject The first component
-     * @param predicate The second component
-     * @return A compound generated or null
-     */
-    public static Compound instprop(Term subject, Term predicate) {
-        return (Compound) $.inh( $.sete(subject), $.seti(predicate));
+    public static Term instprop(Term subject, Term predicate) {
+        return terms.instprop(subject, predicate);
+    }
+    public static Term prop(Term subject, Term predicate) {
+        return terms.prop(subject, predicate);
     }
 
 //    public static Term term(final Op op, final Term... args) {
@@ -437,16 +438,16 @@ public abstract class $  {
 
 
     public static Term the(Op op, Term... subterms) {
-        return terms.term(op, subterms);
+        return terms.newTerm(op, new TermVector(subterms));
     }
     public static Term the(Op op, Term[] subterms, int relation) {
-        return terms.term(op, relation, subterms);
+        return terms.newTerm(op, relation, subterms);
     }
     public static Term the(Op op, int relation, TermContainer subterms) {
-        return terms.term(op, relation, subterms.terms());
+        return terms.newTerm(op, relation, subterms.terms());
     }
     public static Term the(Op op, Collection<Term> subterms, int relation) {
-        return terms.term(op, relation, Terms.toArray(subterms));
+        return terms.newTerm(op, relation, subterms);
     }
 
     public static int typeIndex(Op o) {

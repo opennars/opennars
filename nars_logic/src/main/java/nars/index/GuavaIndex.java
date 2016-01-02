@@ -104,11 +104,11 @@ public class GuavaIndex implements TermIndex {
 //        subterms.cleanUp();
     }
 
-    @Override
-    public Object remove(Term key) {
-        data.invalidate(key);
-        return key; //?
-    }
+//    @Override
+//    public Object remove(Term key) {
+//        data.invalidate(key);
+//        return key; //?
+//    }
 
     @Override
     public void putTerm(Termed termed) {
@@ -135,25 +135,25 @@ public class GuavaIndex implements TermIndex {
         return (TermContainer) subterms.computeIfAbsent(s, (ss) -> internSubterms(((TermContainer) ss).terms()));
     }
 
-    @Override
-    public Termed get(Object t) {
-
-        if (!(t instanceof Termed)) {
-            throw new RuntimeException("invalid key");
-        }
-
-        Termed xx = (Termed) t;
-        Term x = xx.term();
-
-        if (!MapIndex.isInternable(x)) {
-            return xx;
-        }
-
-        try {
-            return data.get(x, () -> intern(x));
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @Override
+//    public Termed get(Object t) {
+//
+//        if (!(t instanceof Termed)) {
+//            throw new RuntimeException("invalid key");
+//        }
+//
+//        Termed xx = (Termed) t;
+//        Term x = xx.term();
+//
+//        if (!MapIndex.isInternable(x)) {
+//            return xx;
+//        }
+//
+//        try {
+//            return data.get(x, () -> intern(x));
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
 }

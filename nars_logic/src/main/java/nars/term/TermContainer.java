@@ -4,6 +4,7 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import com.gs.collections.api.set.MutableSet;
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
 import java.util.Collection;
@@ -41,8 +42,22 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         return s;
     }
 
+
+    static TermSet differ(TermSet a, TermSet b) {
+        if (a.size() == 1 && b.size() == 1) {
+            //special case
+            return a.term(0).equals(b.term(0)) ?
+                    TermIndex.EmptySet :
+                    a;
+        } else {
+            MutableSet dd = Sets.difference(a.toSet(), b.toSet());
+            if (dd.isEmpty()) return TermIndex.EmptySet;
+            return TermSet.the(dd);
+        }
+    }
+
     /** returns null if empty set; not sorted */
-    static Term[] difference(TermContainer a, TermContainer b) {
+    @Deprecated static Term[] difference(TermContainer a, TermContainer b) {
         if (a.size() == 1 && b.size() == 1) {
             //special case
             return a.term(0).equals(b.term(0)) ?

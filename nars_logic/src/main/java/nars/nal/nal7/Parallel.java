@@ -2,7 +2,7 @@ package nars.nal.nal7;
 
 import nars.Op;
 import nars.term.Term;
-import nars.term.Terms;
+import nars.term.TermSet;
 import nars.term.compound.GenericCompound;
 
 import java.io.IOException;
@@ -51,7 +51,7 @@ public class Parallel extends GenericCompound implements Intermval {
     }
 
     protected Parallel(Term[] arg) {
-        super(Op.PARALLEL, -1, Terms.toSortedSetArray(arg));
+        super(Op.PARALLEL, -1, TermSet.the(arg));
     }
 
 

@@ -85,8 +85,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 
     @Override
     protected Term termClassInPackage(Term classs, Term packagge) {
-        Compound t =
-                $.inst(classs, packagge);
+        Term t = $.inst(classs, packagge);
         nar.believe(metadataPriority, t,
                 Tense.ETERNAL,
                 metadataBeliefFreq, metadataBeliefConf);

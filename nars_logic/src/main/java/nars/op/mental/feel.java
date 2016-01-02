@@ -25,7 +25,6 @@ import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 
 import java.util.ArrayList;
@@ -46,8 +45,7 @@ public abstract class feel extends SyncOperator implements Mental {
      */
     protected static ArrayList<Task> feeling(float value, Memory memory, Term feeling) {
 
-
-        Compound content = $.instprop(memory.self(), feeling);
+        Term content = $.instprop(memory.self(), feeling);
 
         return Lists.newArrayList(
             new MutableTask(content, Symbols.JUDGMENT)
