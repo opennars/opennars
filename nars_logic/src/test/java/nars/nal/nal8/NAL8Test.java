@@ -229,7 +229,7 @@ public class NAL8Test extends AbstractNALTester {
         TestNAR tester = test();
 
         tester.input("<(*,SELF,{t001}) --> at>. :|: ");
-        tester.inputAt(10, "<(&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))=/><{t001} --> [opened]>>. :|:");
+        tester.inputAt(5, "<(&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))=/><{t001} --> [opened]>>. :|:");
 
         tester.mustBelieve(cycles, "<(^open, {t001}) =/> <{t001} --> [opened]>>", 1.0f, 0.81f, 0); // :|:
         tester.run();
