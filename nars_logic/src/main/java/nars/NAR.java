@@ -215,7 +215,10 @@ public abstract class NAR implements Serializable, Level {
             //this is applied automatically when a task is entered.
             //it's only necessary here where a term is requested
             //TODO apply this in index on the original copy only
-            x.term().setDuration(memory.duration());
+            Term xt = x.term();
+            if (xt.isCompound()) {
+                xt.setDuration(memory.duration());
+            }
         }
         return x;
     }

@@ -1112,7 +1112,8 @@ public class Narsese extends BaseParser<Object>  {
         Term raw = term(s);
         if (raw == null) return null;
 
-        return normalize ? index.normalized(raw) : index.the(raw);
+        return (normalize && !raw.isNormalized()) ?
+                index.normalized(raw) : index.the(raw);
     }
 
     public Termed concept(String s, Memory m) {

@@ -22,14 +22,19 @@ public abstract class AbstractMapIndex implements TermIndex {
 
     /** get the instance that will be internalized */
     public static Termed intern(Op op, int relation, TermContainer t) {
-        return TermMetadata.hasMetadata(t) ?
-                $.the(op, relation, t) :
+        return (TermMetadata.hasMetadata(t) || op.isA(TermMetadata.metadataBits)) ?
+                newMetadataCompound(op, relation, t) :
                 newInternCompound(op, t, relation);
+    }
+
+    public static Term newMetadataCompound(Op op, int relation, TermContainer t) {
+        //create unique
+        return $.the(op, relation, t);
     }
 
     protected static Termed newInternCompound(Op op, TermContainer subterms, int relation) {
         return new GenericCompound(
-                op, relation, (TermVector) subterms
+            op, relation, (TermVector) subterms
         );
     }
 
@@ -37,17 +42,16 @@ public abstract class AbstractMapIndex implements TermIndex {
     public Termed the(Term x) {
 
         if (!isInternable(x)) {
+            //TODO intern any subterms which can be
             return x;
         }
 
-        return getIfAbsentIntern(x);
-
-        //requires concurrent:
-        //return data.computeIfAbsent(tt.term(), this::intern);
-
+        Termed y = getTermIfPresent(x);
+        if (y == null) {
+            putTerm(y = intern(x));
+        }
+        return y;
     }
-
-    public abstract Termed getIfAbsentIntern(Term x);
 
     @Override
     public abstract Termed getTermIfPresent(Termed t);
@@ -63,15 +67,25 @@ public abstract class AbstractMapIndex implements TermIndex {
 
     @Override
     public Termed internCompound(Op op, int relation, TermContainer t) {
-        return intern(op, relation, getIfAbsentIntern(t));
+        return intern(op, relation, internSub(t));
     }
 
     @Override public Termed internAtomic(Term t) {
         return t;
     }
 
-    @Override
-    abstract public TermContainer getIfAbsentIntern(TermContainer s);
+    @Override public TermContainer internSub(TermContainer s) {
+        TermContainer existing = getSubtermsIfPresent(s);
+        if (existing == null) {
+            putSubterms(unifySubterms(s));
+            return s;
+        }
+        return existing;
+    }
+
+
+    abstract protected void putSubterms(TermContainer subterms);
+    abstract protected TermContainer getSubtermsIfPresent(TermContainer subterms);
 
 
 //    @Override

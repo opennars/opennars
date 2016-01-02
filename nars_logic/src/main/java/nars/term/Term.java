@@ -226,6 +226,11 @@ public interface Term extends Termed, Comparable, Termlike {
         return op().ordinal() | (-1 << 16);
     }
 
+    default boolean isCompound() {
+        return size()>0;
+    }
+
+
 //    default public boolean hasAll(final Op... op) {
 //        //TODO
 //    }

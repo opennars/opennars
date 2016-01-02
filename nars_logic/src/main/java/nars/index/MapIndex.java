@@ -1,10 +1,7 @@
 package nars.index;
 
-import nars.Global;
-import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.Termed;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -14,30 +11,21 @@ import java.util.function.Consumer;
  */
 public class MapIndex extends AbstractMapIndex {
 
-    public final Map<Term, Termed> data;
+    public final Map<Termed, Termed> data;
     public final Map<TermContainer, TermContainer> subterms;
 
 
-    public MapIndex() {
-        this(Global.newHashMap(), Global.newHashMap());
-    }
+//    public MapIndex() {
+//        this(Global.newHashMap(), Global.newHashMap());
+//    }
 
-    public MapIndex(Map<Term, Termed> data, Map<TermContainer, TermContainer> subterms) {
+    public MapIndex(Map<Termed, Termed> data, Map<TermContainer, TermContainer> subterms) {
         super();
         this.data = data;
         this.subterms = subterms;
     }
 
 
-    @Override @NotNull
-    public Termed getIfAbsentIntern(Term x) {
-        Termed y = getTermIfPresent(x);
-        if (y == null) {
-            y = intern(x);
-            putTerm(y);
-        }
-        return y;
-    }
 
     @Override
     public final Termed getTermIfPresent(Termed t) {
@@ -62,7 +50,7 @@ public class MapIndex extends AbstractMapIndex {
 
     @Override
     public void putTerm(Termed termed) {
-        data.put(termed.term(), termed);
+        data.put(termed, termed);
     }
 
     @Override
@@ -71,21 +59,12 @@ public class MapIndex extends AbstractMapIndex {
     }
 
 
-    @Override public TermContainer getIfAbsentIntern(TermContainer s) {
-        TermContainer existing = getSubtermsIfPresent(s);
-        if (existing == null) {
-            s = internSubterms(s.terms());
-            putSubterms(s);
-            return s;
-        }
-        return existing;
+    @Override
+    protected void putSubterms(TermContainer s) {
+        this.subterms.put(s,s);
     }
 
-    protected void putSubterms(TermContainer subterms) {
-        this.subterms.put(subterms,subterms);
-    }
-
-    protected TermContainer getSubtermsIfPresent(TermContainer subterms) {
+    @Override protected TermContainer getSubtermsIfPresent(TermContainer subterms) {
         return this.subterms.get(subterms);
     }
 

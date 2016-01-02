@@ -68,6 +68,7 @@ public class TermIndexTest {
         testShared(n, "<a --> b>");
         testShared(n, "(c, d)");
         testShared(n, "<e <=> f>");
+        testShared(n, "g");
 
         //tt.print(System.out);
         //System.out.println();
@@ -106,8 +107,10 @@ public class TermIndexTest {
         int s1 = i.subtermsCount();
 
         //some terms and subterms were added
-        assertTrue(t0 < t1);
-        assertTrue(s1 + " subterms indexed for " + t0 + " terms", s0 < s1);
+        if (a.isCompound()) {
+            assertTrue(t0 < t1);
+            assertTrue(s1 + " subterms indexed for " + t0 + " terms", s0 < s1);
+        }
 
         Term a2 = n.term(s); //create by parsing again
         testShared(a, a2);

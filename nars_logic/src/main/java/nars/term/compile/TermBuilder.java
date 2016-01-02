@@ -24,6 +24,8 @@ import static nars.term.Statement.subj;
  */
 public interface TermBuilder {
 
+    Termed internCompound(Op op, int relation, TermContainer subterms);
+
     /** unifies a term with this; by default it passes through unchanged */
     default Termed the(Term t) {
         return t;
@@ -33,6 +35,9 @@ public interface TermBuilder {
         return the(t.term());
     }
     default Term theTerm(Termed t) {
+        return the(t).term();
+    }
+    default Term theTerm(Term t) {
         return the(t).term();
     }
 
@@ -236,7 +241,7 @@ public interface TermBuilder {
 
     }
 
-    Termed internCompound(Op op, int relation, TermContainer subterms);
+
 
     default Term inst(Term subj, Term pred) {
         return newTerm(Op.INHERIT, newTerm(Op.SET_EXT, subj), pred);

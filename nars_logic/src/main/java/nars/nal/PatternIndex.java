@@ -41,7 +41,7 @@ public class PatternIndex extends MapIndex {
 ////            if (!x.isCommutative()) {
 
         return new PatternCompound(x,
-            (TermVector) getIfAbsentIntern(x.subterms())
+            (TermVector) internSub(x.subterms())
         );
 
 //                    return new LinearCompoundPattern(x, (TermVector) subs);

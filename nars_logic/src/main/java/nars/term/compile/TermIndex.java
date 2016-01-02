@@ -116,12 +116,20 @@ public interface TermIndex extends TermBuilder {
         return existing;
     }
 
-    TermContainer getIfAbsentIntern(TermContainer s);
+    TermContainer internSub(TermContainer s);
 
 
 
     void putTerm(Termed termed);
 
+    default TermContainer unifySubterms(TermContainer s) {
+        TermVector t = (TermVector)s;
+        Term[] x = t.terms();
+        for (int i = 0; i < x.length; i++) {
+            x[i] = theTerm(x[i]); //since they are equal this will not need re-hashed
+        }
+        return s;
+    }
 
 
     default Termed internAtomic(Term t) {
@@ -222,9 +230,10 @@ public interface TermIndex extends TermBuilder {
 
     int subtermsCount();
 
-    default TermContainer internSubterms(Term[] t) {
-        return new TermVector<Term>(t, this::the);
-    }
+//    default TermContainer internSubterms(Term[] t) {
+//        return new TermVector<>(t, this::the);
+//    }
+
 
     default Termed internCompound(Compound t) {
         return internCompound(t.op(), t.relation(), t.subterms());

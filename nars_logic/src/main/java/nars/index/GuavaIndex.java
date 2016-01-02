@@ -122,18 +122,20 @@ public class GuavaIndex implements TermIndex {
 
     @Override
     public Termed internCompound(Op op, int relation, TermContainer subterms) {
-        return AbstractMapIndex.intern(op, relation, getIfAbsentIntern(subterms));
+        return AbstractMapIndex.intern(op, relation, internSub(subterms));
     }
 
     @Override
-    public TermContainer getIfAbsentIntern(TermContainer s) {
+    public TermContainer internSub(TermContainer s) {
 //        try {
 //            //return subterms.get(s, () -> internSubterms(s.terms()));
 //        } catch (ExecutionException e) {
 //            throw new RuntimeException(e);
 //        }
-        return (TermContainer) subterms.computeIfAbsent(s, (ss) -> internSubterms(((TermContainer) ss).terms()));
+        return (TermContainer) subterms.computeIfAbsent(s,
+                (ss) -> unifySubterms((TermContainer) ss));
     }
+
 
     @Override
     public Termed the(Term x) {
