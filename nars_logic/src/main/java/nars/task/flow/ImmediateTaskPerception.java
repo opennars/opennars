@@ -79,7 +79,7 @@ public class ImmediateTaskPerception extends TaskPerception {
             Task t = (Task) bag.pop();
 
             //todo create a bag of the buffer, sample one element with probability determmined by budget priority, and then clear the buffer
-            if (t!=null && !(t.isJudgment() && t.getTruth().getExpectation() < 0.5)) {
+            if (t!=null) {
                 receiver.accept(t);
             }
 
@@ -87,7 +87,7 @@ public class ImmediateTaskPerception extends TaskPerception {
             buffer.clear();
         } else {
             for(Task t: buffer) {
-                if (!(t.isJudgment() && t.getTruth().getExpectation() < 0.5)) {
+                if(t != null) {
                     receiver.accept(t);
                 }
             }

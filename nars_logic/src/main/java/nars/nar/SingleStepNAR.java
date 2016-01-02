@@ -42,7 +42,7 @@ public class SingleStepNAR extends Default {
 //    }
 
     @Override
-    protected Deriver getDeriver() {
+    public Deriver getDeriver() {
 //        if (Global.DEBUG_DERIVATION_GRAPH) {
 //
 //

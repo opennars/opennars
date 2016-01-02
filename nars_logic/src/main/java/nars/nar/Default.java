@@ -148,7 +148,7 @@ public class Default extends NAR {
         return getClass().getSimpleName() + '[' + nal() + ']';
     }
 
-    protected Deriver getDeriver() {
+    public Deriver getDeriver() {
         return Deriver.standardDeriver;
     }
 
@@ -463,7 +463,7 @@ public class Default extends NAR {
          * be normalized or some other filter or aggregation
          * applied collectively.
          */
-        final List<Task> derivedTasksBuffer;
+        public final List<Task> derivedTasksBuffer;
 
         public void reset() {
 

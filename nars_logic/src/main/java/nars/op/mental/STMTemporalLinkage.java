@@ -5,7 +5,10 @@ import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.nal.Deriver;
+import nars.nal.RuleMatch;
+import nars.nar.Default;
 import nars.process.TaskProcess;
+import nars.process.TaskBeliefProcess;
 import nars.task.Task;
 import nars.term.Compound;
 
@@ -113,6 +116,12 @@ public class STMTemporalLinkage {
                     if (previousConcept != null) {
                         nal.link(previousConcept, currentTask);
                         //nal.link(concept, previousTask);
+
+                        // ConceptTaskTermLinkProcess = new ConceptTaskTermLinkProcess(nal.nar, previousConcept, );
+                       /* Default nar = (Default) nal.nar;
+                        TaskBeliefProcess tbp = new TaskBeliefProcess(nal.nar, previousTask, currentTask);
+                        nar.getDeriver().run(tbp, nar.core.derivedTasksBuffer::add);*/
+
                         remaining = true;
                     }
                 }
