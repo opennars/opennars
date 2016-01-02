@@ -139,8 +139,8 @@ public class MutableTask extends AbstractTask {
             throw new RuntimeException("budgetScaled unable to determine original budget values");
         }
 
-        mulPriority(priorityFactor);
-        mulDurability(durFactor);
+        getBudget().mulPriority(priorityFactor);
+        getBudget().mulDurability(durFactor);
         return this;
     }
 

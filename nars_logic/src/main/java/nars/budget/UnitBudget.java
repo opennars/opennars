@@ -310,38 +310,6 @@ public class UnitBudget implements Budget {
         quality = and(quality, v);
     }
 
-//    /**
-//     * Merge one BudgetValue into another
-//     *
-//     * @param that The other Budget
-//     * @return whether the merge had any effect
-//     */
-//    @Override
-//    public void merge(final Prioritized that) {
-//        setPriority(mean(getPriority(), that.getPriority()));
-//    }
-
-
-
-
-//    /**
-//     * applies a merge only if the changes would be significant
-//     * (the difference in value equal to or exceeding the budget epsilon parameter)
-//     *
-//     * @return whether change occurred
-//     */
-//    public boolean mergeIfChanges(Budget target, float budgetEpsilon) {
-//        if (this == target) return false;
-//
-//        final float p = mean(getPriority(), target.getPriority());
-//        final float d = mean(getDurability(), target.getDurability());
-//        final float q = mean(getQuality(), target.getQuality());
-//
-//        return setIfChanges(p, d, q, budgetEpsilon);
-//    }
-
-
-
 //    /* Whether budget is above threshold, with the involvement of additional priority (saved previously, or boosting)
 //     * @param additionalPriority saved credit to contribute to possibly push it over threshold
 //     */
@@ -398,8 +366,6 @@ public class UnitBudget implements Budget {
         return getBudgetString();
     }
 
-
-
     /**
      * linear interpolate the priority value to another value
      * https://en.wikipedia.org/wiki/Linear_interpolation
@@ -414,7 +380,6 @@ public class UnitBudget implements Budget {
     }*/
 
 
-
     @Override
     public final long setLastForgetTime(long currentTime) {
 
@@ -424,85 +389,9 @@ public class UnitBudget implements Budget {
         return period;
     }
 
-//    public Budget budget(final float p, final float d, final float q) {
-//        setPriority(p);
-//        setDurability(d);
-//        setQuality(q);
-//        return this;
-//    }
-
     @Override
     public long getLastForgetTime() {
         return lastForgetTime;
     }
-
-//    /**
-//     * fast version which avoids bounds checking, safe to use if getting values from an existing Budget instance
-//     */
-//    protected final AbstractBudget budgetDirect(float p, float d, float q) {
-//
-//        if (isDeleted(p)) {
-//            throw new RuntimeException("source budget invalid");
-//        }
-//
-//        priority = p;
-//        durability = d;
-//        quality = q;
-//        return this;
-//    }
-
-
-
-
-
-
-//    @Override
-//    public float receive(float amount) {
-//        float maxReceivable = 1.0f - getPriority();
-//
-//        float received = Math.min(amount, maxReceivable);
-//        addPriority(received);
-//
-//        return amount - received;
-//    }
-
-//    /**
-//     * modifies the budget if any of the components are signifiantly different
-//     * returns whether the budget was changed
-//     */
-//    protected boolean setIfChanges(final float p, final float d, final float q, float budgetEpsilon) {
-//        float dp = abs(getPriority() - p);
-//        float dd = abs(getDurability() - d);
-//        float dq = abs(getQuality() - q);
-//
-//        if (dp < budgetEpsilon && dd < budgetEpsilon && dq < budgetEpsilon)
-//            return false;
-//
-//        set(p, d, q);
-//        return true;
-//    }
-
-    @Override
-    public void mulPriority(float factor) {
-        setPriority(getPriority() * factor);
-    }
-
-    public void mulDurability(float factor) {
-        setDurability(getDurability() * factor);
-    }
-
-
-
-
-//    public static void requireNotDeleted(float pri) {
-//        if (isDeleted(pri)) {
-//            throw new RuntimeException("NaN priority");
-//        }
-//
-//    }
-//
-//    public static void requireNotDeleted(Task q) {
-//        requireNotDeleted(q.getPriority());
-//    }
 
 }

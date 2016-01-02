@@ -36,10 +36,7 @@ public class UTF8IdentifierTest {
         assertEquals(y, y);
         assertEquals(b, x.toString());
         assertEquals(b, y.toString());
-        assertEquals(0, x.compareTo(y));
-        assertEquals(0, y.compareTo(x));
-        assertEquals(0, y.compareTo(y));
-        assertEquals(0, x.compareTo(x));
+
 
     }
 

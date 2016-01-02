@@ -124,32 +124,6 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         return Byted.equals(this, (Byted)x);
     }
 
-    @Override
-    public int compareTo(Object o) {
-        if (this == o ) return 0;
-        Class oc = o.getClass();
-        Class c = getClass();
-        if (o.getClass() == getClass()) {
-            return Byted.compare(this, (Byted)o);
-        }
-        return Integer.compare(oc.hashCode(), c.hashCode());
-    }
-
-//    public int compare(final UTF8Identifier o) {
-//        int i = Integer.compare(hashCode(), o.hashCode());
-//        if (i == 0) {
-//            if (o instanceof UTF8Identifier)
-//                //rare case that hash is equal, do a value comparison
-//                return FastByteComparisons.compare(bytes(), ((LiteralUTF8Identifier) o).bytes());
-//            else {
-//                //this case should be avoided
-//                System.err.println(this + " wasteful String comparison");
-//                return toString().compareTo(o.toString());
-//            }
-//        }
-//
-//        return i;
-//    }
 
 
 
