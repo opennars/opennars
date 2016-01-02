@@ -108,10 +108,6 @@ public final class ShuffledSubterms extends ShuffledPermutations implements Term
         return compound.iterator();
     }
 
-    @Override
-    public boolean isNormalized() {
-        return compound.isNormalized();
-    }
 
     @Override
     public Term[] terms() {

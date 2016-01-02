@@ -361,7 +361,8 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return -1; //by default, not relation present except for Images
     }
 
-
+    @Override
+    boolean isNormalized();
 
 
 //    public int countOccurrences(final Term t) {

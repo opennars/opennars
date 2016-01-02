@@ -43,6 +43,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
     public GenericCompound(Op op, int relation, TermVector subterms) {
         this.terms = subterms;
+        this.normalized = (subterms.vars() == 0);
         this.op = op;
         this.relation = relation;
         this.hash = TermIndex.hash(terms, op, relation+1);
@@ -260,7 +261,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return !impossibleSubterm(target) && terms.containsTermRecursively(target);
     }
 
-    @Override public final boolean isNormalized() {
+    public final boolean isNormalized() {
         return normalized;
     }
 

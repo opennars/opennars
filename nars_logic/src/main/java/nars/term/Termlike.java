@@ -18,9 +18,7 @@ public interface Termlike  {
      * */
     boolean containsTerm(Term t);
 
-    default boolean isNormalized() {
-        return true;
-    }
+
 
     default boolean hasAny(int structuralVector) {
         return (structure() & structuralVector) != 0;

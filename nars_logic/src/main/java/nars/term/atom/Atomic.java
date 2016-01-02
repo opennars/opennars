@@ -114,4 +114,5 @@ public abstract class Atomic implements Term {
         return op().bit();
     }
 
+
 }

@@ -4,6 +4,7 @@ import javassist.scopedpool.SoftValueHashMap;
 import nars.NAR;
 import nars.index.GuavaIndex;
 import nars.index.MapIndex;
+import nars.index.MapIndex2;
 import nars.nal.nal7.Sequence;
 import nars.nar.Default;
 import nars.nar.Terminal;
@@ -51,6 +52,9 @@ public class TermIndexTest {
     }
     @Test public void testTermSharing3() {
         testIndex(new MapIndex(new SoftValueHashMap(), new SoftValueHashMap()));
+    }
+    @Test public void testTermSharing5() {
+        testIndex(new MapIndex2(new HashMap()));
     }
 
 //    @Test public void testTermSharing4() {

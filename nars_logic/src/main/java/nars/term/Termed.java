@@ -20,4 +20,7 @@ public interface Termed<TT extends Term>  {
         return term().levelValid(nal);
     }
 
+    default boolean isNormalized() {
+        return term().isNormalized();
+    }
 }

@@ -230,6 +230,10 @@ public interface Term extends Termed, Comparable, Termlike {
         return size()>0;
     }
 
+    @Override
+    default boolean isNormalized() {
+        return true;
+    }
 
 //    default public boolean hasAll(final Op... op) {
 //        //TODO

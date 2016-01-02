@@ -28,6 +28,7 @@ import nars.util.data.rope.impl.FlatCharSequenceRope;
 import nars.util.data.rope.impl.ReverseRope;
 import nars.util.data.rope.impl.SubstringRope;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
@@ -36,6 +37,7 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
+@Ignore
 public class RopeTest  {
 	
 	private String fromRope(Rope rope, int start, int end) {
