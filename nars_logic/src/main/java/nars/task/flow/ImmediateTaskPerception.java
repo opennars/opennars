@@ -79,14 +79,14 @@ public class ImmediateTaskPerception extends TaskPerception {
             Task t = (Task) bag.pop();
 
             //accept all for now:
-            //buffer.stream().filter(tt -> true).forEach(receiver::accept);
+            buffer.stream().forEach(receiver::accept);
 
             //accept only input and the selected one from the bag:
-            if (t!=null) {
+          /* if (t!=null) {
                 receiver.accept(t);
             }
 
-            buffer.stream().filter(tt -> tt.isInput()).forEach(receiver::accept);
+            buffer.stream().filter(tt -> tt.isInput()).forEach(receiver::accept);*/
             buffer.clear();
         } else {
             for(Task t: buffer) {

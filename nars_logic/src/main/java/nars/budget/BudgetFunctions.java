@@ -362,9 +362,13 @@ public final class BudgetFunctions extends UtilityFunctions {
         return compoundForward(new Budget(), truth, content, nal);
     }
 
+    public static int f_complexity(int complexity) {
+        return complexity * complexity;
+    }
+
     public static Budget compoundForward(Budget target, final Truth truth, final Term content, final Premise nal) {
         final int complexity = content.complexity();
-        return budgetInference(target, truthToQuality(truth), complexity, nal);
+        return budgetInference(target, truthToQuality(truth), f_complexity(complexity), nal);
     }
 
 
@@ -377,7 +381,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public static Budget compoundBackward(final Term content, final Premise nal) {
        // return budgetInference(1f, content.complexity(), nal);
-        return budgetInference(new Budget(), truthToQuality(new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE)), content.complexity(), nal);
+        return budgetInference(new Budget(), truthToQuality(new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE)), f_complexity(content.complexity()), nal);
     }
 
     /**

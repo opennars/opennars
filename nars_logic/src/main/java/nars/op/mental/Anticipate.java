@@ -96,16 +96,7 @@ public class Anticipate {
             return;                                            //in the former case CWA can not be applied in general
         }                                                      //and in the latter case anticipation is pointless
 
-        if (debug)
-            System.err.println("Anticipating " + tt + " in " + (t.getOccurrenceTime() - now));
-
         TaskTime taskTime = new TaskTime(t, t.getCreationTime());
-
-        if(Global.TESTING) {
-            String s = "anticipating: "+taskTime.task.getTerm().toString();
-            System.out.println(s);
-            Global.TESTSTRING += s + "\n";
-        }
 
         //dont allow anticipation of same thing happen twice
         //TODO probably max size buffer, altough it shouldnt be an issue since
@@ -114,6 +105,15 @@ public class Anticipate {
             if(tu.equals(tt.getTerm())) {
                 return;
             }
+        }
+
+        if (debug)
+            System.err.println("Anticipating " + tt + " in " + (t.getOccurrenceTime() - now));
+
+        if(Global.TESTING) {
+            String s = "anticipating: "+taskTime.task.getTerm().toString();
+            System.out.println(s);
+            Global.TESTSTRING += s + "\n";
         }
 
         anticipations.put(tt, taskTime);

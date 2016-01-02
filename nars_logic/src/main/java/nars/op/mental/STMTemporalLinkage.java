@@ -108,14 +108,13 @@ public class STMTemporalLinkage {
                     Concept previousConcept = nal.nar.concept(previousTask.getTerm());
 
                     if (previousConcept != null) {
-                        nal.link(previousConcept, currentTask);
+                        //allow inference between these concepts, temporally justified
+                        //nal.link(previousConcept, currentTask);
 
-                        //nal.link(concept, previousTask);
-
-                        // ConceptTaskTermLinkProcess = new ConceptTaskTermLinkProcess(nal.nar, previousConcept, );
-                        /*Default nar = (Default) nal.nar;
+                        Default nar = (Default) nal.nar;
+                        //direct inference between these tasks
                         TaskBeliefProcess tbp = new TaskBeliefProcess(nal.nar, previousTask, currentTask);
-                        nar.getDeriver().run(tbp, nar.core.derivedTasksBuffer::add);*/
+                        nar.getDeriver().run(tbp, nar.core.derivedTasksBuffer::add);
 
                     }
                 }
