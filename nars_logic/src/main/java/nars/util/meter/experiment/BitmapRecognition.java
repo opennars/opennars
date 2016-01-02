@@ -10,7 +10,6 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nar.Default;
-import nars.nar.Default2;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -167,7 +166,7 @@ public class BitmapRecognition {
         //Global.DEBUG = true;
         int size = 2;
 
-        Default2 n = new Default2(1000, 1, 2, 3);
+        Default n = new Default(1000, 1, 2, 3);
         n.nal(8);
         n.setTaskLinkBagSize(32);
         n.setTermLinkBagSize(64);

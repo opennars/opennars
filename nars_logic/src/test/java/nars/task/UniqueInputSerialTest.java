@@ -3,7 +3,6 @@ package nars.task;
 import nars.Global;
 import nars.NAR;
 import nars.nar.Default;
-import nars.nar.Default2;
 import nars.task.flow.TaskQueue;
 import org.junit.Test;
 
@@ -55,7 +54,7 @@ public class UniqueInputSerialTest {
     @Test
     public void testDoublePremiseMultiEvidence() {
 
-        Default2 d = new Default2(100,1,1,3).nal(2);
+        Default d = new Default(100,1,1,3).nal(2);
         d.input("<a --> b>.", "<b --> c>.");
 
         final long ev[] = {1 , 2};

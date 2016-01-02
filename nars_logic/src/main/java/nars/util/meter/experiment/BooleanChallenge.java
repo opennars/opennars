@@ -7,7 +7,7 @@ import nars.Narsese;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
-import nars.nar.Default2;
+import nars.nar.Default;
 import nars.task.Task;
 import nars.task.flow.TaskQueue;
 import nars.term.Atom;
@@ -34,7 +34,7 @@ public class BooleanChallenge  {
 
     public static void main(String[] args) {
         //Global.DEBUG = true;
-        NAR n = new Default2(1024, 2, 2, 3).nal(6);
+        NAR n = new Default(1024, 2, 2, 3).nal(6);
 
         //new Commander(n, true);
 

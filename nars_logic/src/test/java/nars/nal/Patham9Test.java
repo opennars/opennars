@@ -194,17 +194,12 @@
 package nars.nal;
 
 import nars.$;
-import nars.Global;
 import nars.NAR;
 import nars.Narsese;
 import nars.concept.Concept;
 import nars.nal.nal8.operator.TermFunction;
 import nars.nar.Default;
-import nars.nar.Default2;
-import nars.op.mental.Anticipate;
-import nars.task.DefaultTask;
 import nars.term.Term;
-import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -365,7 +360,7 @@ public class Patham9Test extends AbstractNALTester {
 
    @Test
     public void repeated_sequence_learn_implication() throws Narsese.NarseseException {
-        NAR nar = new Default2(1000, 1, 1, 3);
+        NAR nar = new Default(1000, 1, 1, 3);
 
         for(int i=0;i<100;i++) {
             nar.input("<a --> A>. :|:");

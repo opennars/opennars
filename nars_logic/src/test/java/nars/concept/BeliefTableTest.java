@@ -5,7 +5,6 @@ import nars.Global;
 import nars.NAR;
 import nars.nal.nal7.Tense;
 import nars.nar.Default;
-import nars.nar.Default2;
 import nars.util.meter.BeliefAnalysis;
 import nars.util.meter.MemoryBudget;
 import org.junit.Test;
@@ -48,8 +47,8 @@ public class BeliefTableTest extends TestCase {
 //
 //    }
 
-    public Default2 newNAR(int maxBeliefs) {
-        Default2 d = new Default2(256,1,2,3).nal(7);// {
+    public Default newNAR(int maxBeliefs) {
+        Default d = new Default(256,1,2,3).nal(7);// {
 
             /*
             @Override
@@ -80,7 +79,7 @@ public class BeliefTableTest extends TestCase {
     void testRevision(int delay1) {
         Global.DEBUG = true;
 
-        Default2 n = newNAR(6);
+        Default n = newNAR(6);
 
 
         //arbitrary time delays in which to observe that certain behavior does not happen

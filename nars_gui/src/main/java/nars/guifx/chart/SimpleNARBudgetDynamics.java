@@ -10,7 +10,7 @@ import nars.NAR;
 import nars.Narsese;
 import nars.guifx.NARfx;
 import nars.guifx.demo.POJOPane;
-import nars.nar.Default2;
+import nars.nar.Default;
 import nars.task.Task;
 import nars.term.Term;
 import nars.util.meter.MemoryBudget;
@@ -129,7 +129,7 @@ public class SimpleNARBudgetDynamics {
     public final static class Variables {
         public final StringProperty input = new SimpleStringProperty("");
         public final ObjectProperty<NAR> nar = new SimpleObjectProperty(
-                new Default2(1000, 1, 2, 2)
+                new Default(1000, 1, 2, 2)
         );
     }
 

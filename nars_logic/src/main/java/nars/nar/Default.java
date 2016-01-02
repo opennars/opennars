@@ -32,6 +32,7 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
+import nars.process.BagForgettingEnhancer;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.task.flow.ImmediateTaskPerception;
@@ -41,26 +42,37 @@ import nars.term.Term;
 import nars.time.Clock;
 import nars.time.FrameClock;
 import nars.util.data.MutableInteger;
+import nars.util.data.list.FasterList;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.Active;
 import org.apache.commons.lang3.mutable.MutableFloat;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-
 /**
- * Default set of NAR parameters which have been classically used for development.
- * <p>
- * WARNING this Seed is not immutable yet because it extends Param,
- * which is supposed to be per-instance/mutable. So do not attempt
- * to create multiple NAR with the same Default seed model
+ * Various extensions enabled
  */
 public class Default extends NAR {
 
     public final DefaultCycle core;
     public final TaskPerception input;
+    public final Random rng;
+
+    public static final OperatorReaction[] exampleOperators = new OperatorReaction[]{
+            //new Wait(),
+            new NullOperator("break"),
+            new NullOperator("drop"),
+            new NullOperator("goto"),
+            new NullOperator("open"),
+            new NullOperator("pick"),
+            new NullOperator("strike"),
+            new NullOperator("throw"),
+            new NullOperator("activate"),
+            new NullOperator("deactivate")
+    };
 
     /**
      * Size of TaskLinkBag
@@ -71,41 +83,47 @@ public class Default extends NAR {
      */
     int termLinkBagSize;
 
-
-    /**
-     * Default DEFAULTS
-     */
     public Default() {
         this(1024, 1, 2, 3, new FrameClock());
+    }
+
+    public Default(int numConcepts,
+                   int conceptsFirePerCycle,
+                   int tasklinkFirePerConcept,
+                   int termlinkFirePerConcept) {
+        this(new Memory(new FrameClock(),
+                CacheBag.memory(numConcepts)), numConcepts, conceptsFirePerCycle, tasklinkFirePerConcept, termlinkFirePerConcept);
     }
 
     public Default(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle, Clock clock) {
         this(new Memory(clock, CacheBag.memory(activeConcepts)), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
     }
 
-    public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
-        super(memory);
+    public NAR forEachConcept(Consumer<Concept> recip) {
+        this.core.active.forEach(recip);
+        return this;
+    }
 
-        getDeriver().load(memory);
+    /** ConceptBuilder: */
+    public Concept apply(final Term t) {
 
-        rng = new XorShift1024StarRandom(1);
+        Bag<Task, TaskLink> taskLinks =
+                new CurveBag<>(taskLinkBagSize, rng).mergePlus();
 
-        initDefaults(memory);
+        Bag<TermLinkKey, TermLink> termLinks =
+                new CurveBag<>(termLinkBagSize, rng).mergePlus();
 
-        the("input", input = initInput());
-
-        the("core", core = initCore(
-                activeConcepts,
-                conceptsFirePerCycle,
-                termLinksPerCycle, taskLinksPerCycle
-        ));
-
-        if (core!=null) {
-            beforeNextFrame(() -> {
-                initTime();
-            });
+        if (t instanceof Atom) {
+            return new AtomConcept(t, termLinks, taskLinks);
+        } else {
+            return new DefaultConcept(t, taskLinks, termLinks, memory);
         }
 
+    }
+
+    public Default nal(int maxNALlevel) {
+        memory.nal(maxNALlevel);
+        return this;
     }
 
     public void initTime() {
@@ -126,107 +144,24 @@ public class Default extends NAR {
         }
     }
 
-    protected void initNAL9() {
-        //NAL8 plugins
-
-        for (OperatorReaction o : defaultOperators)
-            onExec(o);
-
-        new FullInternalExperience(this);
-        new Abbreviation(this);
-        onExec(Counting.class);
-
-//                /*if (internalExperience == Minimal) {
-//                    new InternalExperience(this);
-//                    new Abbreviation(this);
-//                } else if (internalExperience == Full)*/ {
-//                    on(FullInternalExperience.class);
-//                    on(Counting.class);
-//                }
+    public String toString() {
+        return getClass().getSimpleName() + '[' + nal() + ']';
     }
 
-    public TaskPerception initInput() {
-        ImmediateTaskPerception input = new ImmediateTaskPerception(false, this,
-            task -> true /* allow everything */,
-            task -> process(task)
-        );
-        return input;
+    protected Deriver getDeriver() {
+        return Deriver.standardDeriver;
     }
 
-    protected DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
-
-        DefaultCycle c = initCore(
-            activeConcepts,
-            getDeriver(),
-            newConceptBag(activeConcepts),
-            new ConceptActivator(this, this)
-        );
-
-        //TODO move these to a PremiseGenerator which supplies
-        // batches of Premises
-        c.termlinksSelectedPerFiredConcept.set(termLinksPerCycle);
-        c.tasklinksSelectedPerFiredConcept.set(taskLinksPerCycle);
-
-        //tmpConceptsFiredPerCycle[0] = c.conceptsFiredPerCycle;
-        c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
-
-        c.capacity.set(activeConcepts);
-
-        return c;
+    public Default setTaskLinkBagSize(int taskLinkBagSize) {
+        this.taskLinkBagSize = taskLinkBagSize;
+        return this;
     }
 
-    protected DefaultCycle initCore(int activeConcepts, Deriver deriver, Bag<Term, Concept> conceptBag, ConceptActivator activator) {
-        return new DefaultCycle(this, deriver, conceptBag, activator);
+    public Default setTermLinkBagSize(int termLinkBagSize) {
+        this.termLinkBagSize = termLinkBagSize;
+        return this;
     }
 
-    public void initDefaults(Memory m) {
-        //parameter defaults
-
-        setTaskLinkBagSize(12);
-        setTermLinkBagSize(16);
-
-
-        m.duration.set(5);
-
-        m.conceptBeliefsMax.set(12);
-        m.conceptGoalsMax.set(7);
-        m.conceptQuestionsMax.set(5);
-
-        m.conceptForgetDurations.setValue(2.0);
-        m.taskLinkForgetDurations.setValue(2.0);
-        m.termLinkForgetDurations.setValue(3.0);
-
-
-        m.derivationThreshold.set(0);
-
-
-        m.taskProcessThreshold.set(0); //warning: if this is not zero, it could remove un-TaskProcess-able tasks even if they are stored by a Concept
-
-        //budget propagation thresholds
-        m.termLinkThreshold.set(Global.BUDGET_EPSILON);
-        m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
-
-        m.executionExpectationThreshold.set(0.5);
-
-        m.shortTermMemoryHistory.set(4);
-    }
-
-
-    public static final OperatorReaction[] exampleOperators = new OperatorReaction[]{
-            //new Wait(),
-            new NullOperator("break"),
-            new NullOperator("drop"),
-            new NullOperator("goto"),
-            new NullOperator("open"),
-            new NullOperator("pick"),
-            new NullOperator("strike"),
-            new NullOperator("throw"),
-            new NullOperator("activate"),
-            new NullOperator("deactivate")
-    };
-
-    //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
-    public final Random rng;
 
     public final OperatorReaction[] defaultOperators = new OperatorReaction[]{
 
@@ -332,91 +267,110 @@ public class Default extends NAR {
          */
     };
 
-
-//    static String readFile(String path, Charset encoding)
-//            throws IOException {
-//        byte[] encoded = Files.readAllBytes(Paths.get(path));
-//        return new String(encoded, encoding);
-//    }
-
-//    protected DerivationFilter[] getDerivationFilters() {
-//        return new DerivationFilter[]{
-//                new FilterBelowConfidence(0.01),
-//                new FilterDuplicateExistingBelief()
-//                //param.getDefaultDerivationFilters().add(new BeRational());
-//        };
-//    }
-
-    public Default nal(int maxNALlevel) {
-        memory.nal(maxNALlevel);
-        return this;
-    }
-
-    /** ConceptBuilder: */
-    public Concept apply(final Term t) {
-
-        Bag<Task, TaskLink> taskLinks =
-                new CurveBag<>(taskLinkBagSize, rng).mergePlus();
-
-        Bag<TermLinkKey, TermLink> termLinks =
-                new CurveBag<>(termLinkBagSize, rng).mergePlus();
-
-        if (t instanceof Atom) {
-            return new AtomConcept(t, termLinks, taskLinks);
-        } else {
-            return new DefaultConcept(t, taskLinks, termLinks, memory);
-        }
-
-    }
-
-    //    /**
-//     * rank function used for concept belief and goal tables
-//     */
-//    public BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
-//        return (c, b) ->
-//                BeliefTable.BeliefConfidenceOrOriginality;
-//        //new BeliefTable.BeliefConfidenceAndCurrentTime(c);
-//
-//    }
-
-    @Override
     protected Concept doConceptualize(Term term, Budget b) {
         return core.activate(term, b);
     }
 
+    public void initDefaults(Memory m) {
+        //parameter defaults
 
-    public Bag<Term, Concept> newConceptBag(int initialCapacity) {
-        return new CurveBag<>(initialCapacity, rng).mergePlus();
+        setTaskLinkBagSize(12);
+        setTermLinkBagSize(16);
+
+
+        m.duration.set(5);
+
+        m.conceptBeliefsMax.set(12);
+        m.conceptGoalsMax.set(7);
+        m.conceptQuestionsMax.set(5);
+
+        m.conceptForgetDurations.setValue(2.0);
+        m.taskLinkForgetDurations.setValue(2.0);
+        m.termLinkForgetDurations.setValue(3.0);
+
+
+        m.derivationThreshold.set(0);
+
+
+        m.taskProcessThreshold.set(0); //warning: if this is not zero, it could remove un-TaskProcess-able tasks even if they are stored by a Concept
+
+        //budget propagation thresholds
+        m.termLinkThreshold.set(Global.BUDGET_EPSILON);
+        m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
+
+        m.executionExpectationThreshold.set(0.5);
+
+        m.shortTermMemoryHistory.set(4);
     }
 
-    public Default setTaskLinkBagSize(int taskLinkBagSize) {
-        this.taskLinkBagSize = taskLinkBagSize;
-        return this;
+    public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+        super(memory);
+
+        getDeriver().load(memory);
+
+        rng = new XorShift1024StarRandom(1);
+
+        initDefaults(memory);
+
+        the("input", input = initInput());
+
+        the("core", core = initCore(
+                activeConcepts,
+                conceptsFirePerCycle,
+                termLinksPerCycle, taskLinksPerCycle
+        ));
+
+        if (core!=null) {
+            beforeNextFrame(() -> {
+                initTime();
+            });
+        }
+
+        //new QueryVariableExhaustiveResults(this.memory());
+
+
+        the("memory_sharpen", new BagForgettingEnhancer(memory, core.active));
+
+
     }
 
-    public Default setTermLinkBagSize(int termLinkBagSize) {
-        this.termLinkBagSize = termLinkBagSize;
-        return this;
+    protected DefaultCycle initCore(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+
+        DefaultCycle c = initCore(
+                activeConcepts,
+                getDeriver(),
+                newConceptBag(activeConcepts),
+                new ConceptActivator(this, this)
+        );
+
+        //TODO move these to a PremiseGenerator which supplies
+        // batches of Premises
+        c.termlinksSelectedPerFiredConcept.set(termLinksPerCycle);
+        c.tasklinksSelectedPerFiredConcept.set(taskLinksPerCycle);
+
+        //tmpConceptsFiredPerCycle[0] = c.conceptsFiredPerCycle;
+        c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
+
+        c.capacity.set(activeConcepts);
+
+        return c;
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + '[' + nal() + ']';
-    }
+    protected DefaultCycle initCore(int activeConcepts, Deriver deriver, Bag<Term, Concept> conceptBag, ConceptActivator activator) {
 
-    protected Deriver getDeriver() {
-        return Deriver.standardDeriver;
-    }
+        final int inputCapacity = activeConcepts/8; //HACK heuristic
 
-    public NAR forEachConcept(Consumer<Concept> recip) {
-        this.core.active.forEach(recip);
-        return this;
+        return new DefaultCycle(this, deriver,
+                conceptBag, activator,
+                inputCapacity);
     }
-
 
     /**
-     * The original deterministic memory cycle implementation that is currently used as a standard
-     * for development and testing.
+     * normalizes each derivation's tasks as a group before inputting into
+     * the main perception buffer.
+     * ex: this can ensure that a premise which produces many derived tasks
+     * will not consume budget unfairly relative to another premise
+     * with less tasks but equal budget.
      */
     public static class DefaultCycle implements Serializable {
 
@@ -435,12 +389,6 @@ public class Default extends NAR {
         public final MutableInteger termlinksSelectedPerFiredConcept = new MutableInteger(1);
 
         public final MutableFloat activationFactor = new MutableFloat(1f);
-
-//        final Function<Task, Task> derivationPostProcess = d -> {
-//            return LimitDerivationPriority.limitDerivation(d);
-//        };
-
-
 
         /**
          * concepts active in this cycle
@@ -464,16 +412,21 @@ public class Default extends NAR {
         /** temporary re-usable array for batch firing */
         private TaskLink[] firingTaskLinks = null;
 
-//        @Deprecated
-//        int tasklinks = 2; //TODO use MutableInteger for this
-//        @Deprecated
-//        int termlinks = 3; //TODO use MutableInteger for this
+        public final Concept activate(final Term term, final Budget b) {
+            final Bag<Term, Concept> active = this.active;
+            active.setCapacity(capacity.intValue());
 
-        /* ---------- Short-term workspace for a single cycle ------- */
+            final ConceptActivator ca = this.conceptActivator;
+            ca.setActivationFactor( activationFactor.floatValue() );
+            return ca.update(term, b, nar.time(), 1f, active);
+        }
 
-        public DefaultCycle(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca) {
+        public final Bag<Term,Concept> concepts() {
+            return active;
+        }
+
+        public DefaultCycle(NAR nar, Deriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca, int initialCapacity) {
             super();
-
             this.nar = nar;
             this.conceptActivator = ca;
 
@@ -485,15 +438,17 @@ public class Default extends NAR {
             this.active = concepts;
 
             handlers.add(
-                nar.memory.eventCycleEnd.on((m) -> {
-                    fireConcepts(conceptsFiredPerCycle.intValue());
-                }),
-                nar.memory.eventReset.on((m) -> {
-                    reset();
-                })
+                    nar.memory.eventCycleEnd.on((m) -> {
+                        fireConcepts(conceptsFiredPerCycle.intValue());
+                    }),
+                    nar.memory.eventReset.on((m) -> {
+                        reset();
+                    })
             );
-        }
 
+            derivedTasksBuffer = new FasterList();
+
+        }
 
         /**
          * samples an active concept
@@ -502,6 +457,13 @@ public class Default extends NAR {
             return active.peekNext();
         }
 
+
+        /**
+         * holds the resulting tasks of one derivation so they can
+         * be normalized or some other filter or aggregation
+         * applied collectively.
+         */
+        final List<Task> derivedTasksBuffer;
 
         public void reset() {
 
@@ -533,12 +495,32 @@ public class Default extends NAR {
         }
 
         protected void fireConcept(Concept c) {
-            fireConcept(c, p -> {
-                //direct: just input to nar
-                deriver.run(p, nar::input);
-            });
-        }
 
+            
+            //used to estimate the fraction this batch should be scaled but this is not accurate
+
+            fireConcept(c, p -> {
+
+
+                deriver.run(p, derivedTasksBuffer::add);
+
+                if (!derivedTasksBuffer.isEmpty()) {
+
+
+                   // Task.normalize(
+                   //         derivedTasksBuffer,
+                   //         p.getMeanPriority());
+
+                    derivedTasksBuffer.forEach(
+                        t -> nar.input(t)
+                    );
+
+                    derivedTasksBuffer.clear();
+                }
+
+            });
+
+        }
 
         protected final void fireConcept(Concept concept, Consumer<Premise> withResult) {
 
@@ -556,84 +538,52 @@ public class Default extends NAR {
             }
 
             ConceptProcess.firePremiseSquare(
-                nar,
-                withResult,
-                concept,
-                firingTaskLinks,
-                firingTermLinks,
-                nar.memory.taskLinkForgetDurations.intValue()
+                    nar,
+                    withResult,
+                    concept,
+                    firingTaskLinks,
+                    firingTermLinks,
+                    nar.memory.taskLinkForgetDurations.intValue()
             );
         }
-
-
-        public final Concept activate(final Term term, final Budget b) {
-            final Bag<Term, Concept> active = this.active;
-            active.setCapacity(capacity.intValue());
-
-            final ConceptActivator ca = this.conceptActivator;
-            ca.setActivationFactor( activationFactor.floatValue() );
-            return ca.update(term, b, nar.time(), 1f, active);
-        }
-
-        public final Bag<Term,Concept> concepts() {
-            return active;
-        }
-
-
-
-
-        //try to implement some other way, this is here because of serializability
-
     }
 
-//    @Deprecated
-//    public static class CommandLineNARBuilder extends Default {
-//
-//        List<String> filesToLoad = new ArrayList();
-//
-//        public CommandLineNARBuilder(String[] args) {
-//            super();
-//
-//            for (int i = 0; i < args.length; i++) {
-//                String arg = args[i];
-//                if ("--silence".equals(arg)) {
-//                    arg = args[++i];
-//                    int sl = Integer.parseInt(arg);
-//                    //outputVolume.set(100 - sl);
-//                } else if ("--noise".equals(arg)) {
-//                    arg = args[++i];
-//                    int sl = Integer.parseInt(arg);
-//                    //outputVolume.set(sl);
-//                } else {
-//                    filesToLoad.add(arg);
+    public ImmediateTaskPerception initInput() {
+        int perceptionCapacity = 64;
+
+        ImmediateTaskPerception input = new ImmediateTaskPerception( false,
+                this,
+                task -> true /* allow everything */,
+                task -> process(task)
+        );
+        //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
+        return input;
+    }
+
+    public ImmediateTaskPerception getInput() {
+        return (ImmediateTaskPerception) input;
+    }
+
+    protected void initNAL9() {
+        //NAL8 plugins
+
+        for (OperatorReaction o : defaultOperators)
+            onExec(o);
+
+        new FullInternalExperience(this);
+        new Abbreviation(this);
+        onExec(Counting.class);
+
+//                /*if (internalExperience == Minimal) {
+//                    new InternalExperience(this);
+//                    new Abbreviation(this);
+//                } else if (internalExperience == Full)*/ {
+//                    on(FullInternalExperience.class);
+//                    on(Counting.class);
 //                }
-//            }
-//
-//            for (String x : filesToLoad) {
-//                taskNext(() -> {
-//                    try {
-//                        input(new File(x));
-//                    } catch (FileNotFoundException fex) {
-//                        System.err.println(getClass() + ": " + fex.toString());
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                });
-//
-//                //n.run(1);
-//            }
-//        }
-//
-//        /**
-//         * Decode the silence level
-//         *
-//         * @param param Given argument
-//         * @return Whether the argument is not the silence level
-//         */
-//        public static boolean isReallyFile(String param) {
-//            return !"--silence".equals(param);
-//        }
-//    }
+    }
 
-
+    public Bag<Term, Concept> newConceptBag(int initialCapacity) {
+        return new CurveBag<>(initialCapacity, rng).mergePlus();
+    }
 }

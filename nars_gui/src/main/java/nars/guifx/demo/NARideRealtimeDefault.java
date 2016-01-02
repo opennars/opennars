@@ -3,7 +3,7 @@ package nars.guifx.demo;
 import nars.Memory;
 import nars.bag.impl.MapCacheBag;
 import nars.guifx.NARide;
-import nars.nar.Default2;
+import nars.nar.Default;
 import nars.time.RealtimeMSClock;
 import org.infinispan.commons.util.WeakValueHashMap;
 
@@ -26,7 +26,7 @@ public class NARideRealtimeDefault {
                 )*/
             )
         );
-        Default2 nar = new Default2(mem, 1024, 1, 2, 3);
+        Default nar = new Default(mem, 1024, 1, 2, 3);
         nar.nal(9);
         nar.setTaskLinkBagSize(32);
         nar.setTermLinkBagSize(128);

@@ -7,11 +7,7 @@ import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.LevelBag;
 import nars.budget.Item;
-import nars.concept.Concept;
 import nars.nar.Default;
-import nars.nar.Default2;
-import nars.task.Task;
-import nars.term.Term;
 import nars.util.ArraySortedIndex;
 import nars.util.data.Util;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -227,7 +223,7 @@ public class CurveBagTest extends AbstractBagTest {
     }
 
     @Test public void testDistribution() {
-        Default2 n = new Default2(1000, 8, 4, 4);
+        Default n = new Default(1000, 8, 4, 4);
         n.memory.termLinkForgetDurations.setValue(100); //slow forget
         n.memory.taskLinkForgetDurations.setValue(100); //slow forget
         n.input("$0.9$ a:b.");

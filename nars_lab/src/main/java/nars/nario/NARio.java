@@ -7,7 +7,7 @@ import nars.NAR;
 import nars.Video;
 import nars.guifx.NARide;
 import nars.java.NALObjects;
-import nars.nar.Default2;
+import nars.nar.Default;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
@@ -490,7 +490,7 @@ public class NARio extends Run implements RLEnvironment {
     public static void main(String[] arg) {
         //NAR nar = new Default().realtime().build();
 
-        NAR nar = new Default2(3500, 1, 1, 3);
+        NAR nar = new Default(3500, 1, 1, 3);
 
         Global.EXIT_ON_EXCEPTION = true;
         //Global.TRUTH_EPSILON = 0.01f;

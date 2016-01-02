@@ -4,8 +4,6 @@ import nars.Global;
 import nars.NAR;
 import nars.guifx.NARide;
 import nars.nar.Default;
-import nars.nar.Default2;
-import nars.op.mental.Anticipate;
 import nars.testchamber.Cell.Logic;
 import nars.testchamber.Cell.Material;
 import nars.testchamber.map.Maze;
@@ -36,7 +34,7 @@ public class TestChamber {
 
 
     public static void main(String[] args) {
-        Default nar = new Default2(1000, 1, 1, 3);
+        Default nar = new Default(1000, 1, 1, 3);
         Global.TESTING = true;
         //set NAR architecture parameters:
         //builder...

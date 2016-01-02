@@ -8,7 +8,7 @@ import nars.NAR;
 import nars.bag.impl.MapCacheBag;
 import nars.guifx.NARide;
 import nars.guifx.TracePane;
-import nars.nar.Default2;
+import nars.nar.Default;
 import nars.op.io.UDPNetwork;
 import nars.time.RealtimeMSClock;
 
@@ -35,7 +35,7 @@ public class UDPWidget extends BorderPane {
 
     public static void main(String[] args) {
 
-        NAR n = new Default2(
+        NAR n = new Default(
             new Memory(
                 new RealtimeMSClock(),
                 new MapCacheBag(new HashMap())

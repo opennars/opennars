@@ -6,7 +6,6 @@ import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
 import nars.nar.Default;
-import nars.nar.Default2;
 import nars.nar.SingleStepNAR;
 import nars.term.Term;
 import nars.util.graph.TermLinkGraph;
@@ -166,7 +165,7 @@ public class TermLinkTest {
 
     @Test
     public void testIdentifier() {
-        NAR n = new Default2(100, 1, 1, 3);
+        NAR n = new Default(100, 1, 1, 3);
         n.input("<a --> b>.");
         n.input("<<a --> b> --> d>.");
         n.input("<<a --> b> --> e>.");
