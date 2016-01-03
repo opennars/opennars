@@ -120,8 +120,6 @@ public class Anticipate {
     }
 
     public static boolean isObservable(NAR nar, Term t) {
-        if(true)
-            return true;
         Concept c = nar.concept(t);
         if(c != null && c.get(Anticipate.class) != null) {
             return true;
