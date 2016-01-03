@@ -90,7 +90,8 @@ public class DefaultEnvironment {
                         return Expression.none();
                     }))
             .put(symbol("read"),
-                    procedure(args -> read(args.isEmpty() ? readLine() : args.car().print()).iterator().next()))
+                    procedure(args ->
+                        read(args.isEmpty() ? readLine() : args.car().print()).iterator().next()))
             .put(symbol("error"),
                     procedure(args -> {
                         Repl.OUTPUT_STREAM.println(args.stream().map(Expression::print).collect(Collectors.joining(" ")));
@@ -99,11 +100,14 @@ public class DefaultEnvironment {
             .put(symbol("eval"),
                     procedure(args -> evaluate(args.car(), Repl.ENV)))
             .put(symbol("load"),
-                    procedure(args ->
-                        StreamSupport.stream(read(loadFile(args.car().print())).spliterator(), false)
-                                .map(e -> evaluate(e, Repl.ENV))
-                                .reduce(Expression.none(), (e1, e2) -> e2)))
+                    procedure(args -> load(loadFile(args.car().print()), Repl.ENV)))
             .build();
+
+    public static Expression load(String s, SchemeClosure env) {
+        return StreamSupport.stream(read(s).spliterator(), false)
+                .map(e -> evaluate(e, env))
+                .reduce(Expression.none(), (e1, e2) -> e2);
+    }
 
     private static String readLine() {
         try {

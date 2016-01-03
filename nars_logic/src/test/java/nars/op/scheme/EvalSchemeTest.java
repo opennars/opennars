@@ -4,14 +4,11 @@ package nars.op.scheme;
 import nars.NAR;
 import nars.nal.AbstractNALTester;
 import nars.util.meter.TestNAR;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.function.Supplier;
-
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class EvalSchemeTest extends AbstractNALTester {
@@ -20,23 +17,38 @@ public class EvalSchemeTest extends AbstractNALTester {
         super(build);
     }
 
-    @Parameterized.Parameters(name= "{0}")
+    @Parameterized.Parameters(name = "{0}")
     public static Iterable configurations() {
         return AbstractNALTester.nars(8, false);
     }
 
+    String factorialFunc = "(define factorial (lambda (n) (if (= n 1) 1 (* n (factorial (- n 1))))))";
+    String factorialTest = "(factorial 3)";
 
-    @Ignore
+    @Test
+    public void testSharedSchemeNALRepresentations() {
+
+        TestNAR t = test();
+        t.nar.log();
+        t.nar.input("scheme(\"" + factorialFunc + "\");");
+        t.nar.input("scheme(\"factorial\", #x);");
+        t.nar.input("scheme(\"" + factorialTest + "\");");
+        t.nar.frame(6);
+
+    }
+
     @Test
     public void testCAR() {
 
-        TestNAR tester = test();
-        tester.nar.input("scheme((car, (quote, (*, 2, 3))), #x)!");
+        TestNAR t = test();
+        t.nar.log();
+        t.nar.input("scheme((car, (quote, (2, 3))), #x);");
 
-        assertTrue("test impl unfinished", false);
+        t.run(4);
+
+        //assertTrue("test impl unfinished", false);
         //tester.requires.add(new OutputContainsCondition(tester.nar, "<2 --> (/, scheme, (car, (quote, (2, 3))), _, SELF)>. :|: %1.00;0.99%", 1));
 
-        tester.run(4);
 
     }
 

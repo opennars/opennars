@@ -37,8 +37,9 @@ public class SchemeClosure {
     public Expression get(SymbolExpression symbol) {
         SchemeClosure other = this;
         while (true) {
-            if (other.bindings.containsKey(symbol)) {
-                return other.bindings.get(symbol);
+            Expression exists = other.bindings.get(symbol);
+            if (exists!=null) {
+                return exists;
             }
             if (other.enclosingEnvironment != null) {
                 other = other.enclosingEnvironment;
@@ -49,8 +50,8 @@ public class SchemeClosure {
     }
 
     public void set(SymbolExpression symbol, Expression value) {
-        if (bindings.containsKey(symbol)) {
-            bindings.put(symbol, value);
+        if (bindings.putIfAbsent(symbol, value)!=value) {
+            //..
         } else if (enclosingEnvironment != null) {
             enclosingEnvironment.set(symbol, value);
         } else {

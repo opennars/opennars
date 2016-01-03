@@ -3,13 +3,9 @@ package nars.op.software.scheme;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import nars.$;
-import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.software.scheme.cons.Cons;
-import nars.op.software.scheme.expressions.Expression;
-import nars.op.software.scheme.expressions.ListExpression;
-import nars.op.software.scheme.expressions.NumberExpression;
-import nars.op.software.scheme.expressions.SymbolExpression;
+import nars.op.software.scheme.expressions.*;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compile.TermBuilder;
@@ -20,10 +16,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static nars.op.software.scheme.DefaultEnvironment.load;
+
 
 public class scheme extends TermFunction {
 
-    public static final SchemeClosure env = DefaultEnvironment.newInstance();
+    @Deprecated public static final SchemeClosure env = DefaultEnvironment.newInstance();
 
 
 
@@ -40,7 +38,7 @@ public class scheme extends TermFunction {
                 }
                 if (term instanceof Atom) {
 
-                    String s = term.toString();
+                    String s = ((Atom)term).toStringUnquoted();
 
                     //attempt to parse as number
                     try {
@@ -48,6 +46,7 @@ public class scheme extends TermFunction {
                         return new NumberExpression((long)d);
                     }
                     catch (NumberFormatException e) { }
+
                     //atomic symbol
                     return new SymbolExpression(s);
                 }
@@ -62,8 +61,10 @@ public class scheme extends TermFunction {
         @Override
         public Term apply(Expression schemeObj) {
             if (schemeObj instanceof ListExpression) {
-                List<Term> elements = Lists.newArrayList(StreamSupport.stream(((ListExpression) schemeObj).value.spliterator(), false).map(schemeToNars::apply).collect(Collectors.toList()));
-                return $.p( elements );
+                return apply( ((ListExpression)schemeObj).value );
+            } else if (schemeObj instanceof SymbolicProcedureExpression) {
+                Cons<Expression> exp = ((SymbolicProcedureExpression) schemeObj).exps;
+                return apply(exp);
             }
             //TODO handle other types, like Object[] etc
             else {
@@ -73,14 +74,34 @@ public class scheme extends TermFunction {
             //throw new RuntimeException("Invalid expression for term: " + schemeObj);
 
         }
+
+        public Term apply(Iterable<Expression> e) {
+            List<Term> elements = Lists.newArrayList(StreamSupport.stream(e.spliterator(), false).map(schemeToNars::apply).collect(Collectors.toList()));
+            return $.p( elements );
+        }
     };
 
     @Override
     public Term function(Compound o, TermBuilder i) {
-        Term[] x = Operator.opArgsArray(o);
+        Term[] x = o.terms();
         Term code = x[0];
 
-        return code instanceof Compound ? schemeToNars.apply(Evaluator.evaluate(new SchemeProduct(((Iterable) code)), env)) : schemeToNars.apply(Evaluator.evaluate(new SchemeProduct($.p(x)), env));
+        if (code instanceof Atom) {
+            //interpret as eval string
+            Atom a = (Atom)code;
+
+            return schemeToNars.apply(
+                Evaluator.evaluate(
+                    load(a.toStringUnquoted(), env), env)
+            );
+
+        }
+
+        return code instanceof Compound ?
+                schemeToNars.apply(
+                    Evaluator.evaluate(
+                        new SchemeProduct(((Iterable) code)), env)) :
+                schemeToNars.apply(Evaluator.evaluate(new SchemeProduct($.p(x)), env));
         //Set = evaluate as a cond?
 //        else {
 //

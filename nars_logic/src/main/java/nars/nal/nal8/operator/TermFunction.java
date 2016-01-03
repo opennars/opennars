@@ -211,7 +211,6 @@ public abstract class TermFunction<O> extends SyncOperator {
 
 
         Object y = function(Operator.opArgs(operation), e.nar.index());
-
         if (y == null) {
             return;
         }

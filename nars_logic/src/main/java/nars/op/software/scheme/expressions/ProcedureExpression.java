@@ -13,6 +13,9 @@ public class ProcedureExpression implements Expression, Function<Cons<Expression
         this.lambda = lambda;
     }
 
+    public static ProcedureExpression procedure(Cons<SymbolExpression> names, Cons<Expression> exps, Function<Cons<Expression>, Expression> lambda) {
+        return new SymbolicProcedureExpression(names, exps, lambda);
+    }
     public static ProcedureExpression procedure(Function<Cons<Expression>, Expression> lambda) {
         return new ProcedureExpression(lambda);
     }

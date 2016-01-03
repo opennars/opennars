@@ -133,12 +133,6 @@ public class MutableTask extends AbstractTask {
      * uses default budget generation and multiplies it by gain factors
      */
     public MutableTask budgetScaled(float priorityFactor, float durFactor) {
-
-        //TODO maybe lift this to Budget class
-        if (!isBudgeted()) {
-            throw new RuntimeException("budgetScaled unable to determine original budget values");
-        }
-
         mulPriority(priorityFactor);
         mulDurability(durFactor);
         return this;

@@ -32,7 +32,12 @@ public class Evaluator {
             return analyzeFunctionCall(exp.list());
         }
 
-        throw new IllegalArgumentException(String.format("Unable to evaluate expression '%s'", exp));
+        if (exp instanceof SymbolicProcedureExpression) {
+            return (c) -> exp;
+        }
+
+
+        throw new IllegalArgumentException(String.format("Unable to evaluate expression '%s'", exp + " (" + exp.getClass() + ")"));
     }
 
     private static Function<SchemeClosure, Expression> analyzeSpecialForm(ListExpression exp) {
@@ -202,7 +207,7 @@ public class Evaluator {
     private static Function<SchemeClosure, Expression> analyzeProcedure(Cons<SymbolExpression> names, Cons<Expression> exps) {
         Function<SchemeClosure, Expression> body = analyzeSequence(exps.cdr().cdr());
         return env ->
-                ProcedureExpression.procedure(args ->
+                ProcedureExpression.procedure(names, exps, args ->
                         body.apply(env.extend(makeMap(names, args, new LinkedHashMap<>()))));
     }
 
