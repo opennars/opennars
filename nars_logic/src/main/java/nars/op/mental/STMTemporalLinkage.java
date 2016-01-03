@@ -113,7 +113,7 @@ public class STMTemporalLinkage {
 
                         Default nar = (Default) nal.nar;
                         //direct inference between these tasks
-                        TaskBeliefProcess tbp = new TaskBeliefProcess(nal.nar, previousTask, currentTask);
+                        TaskBeliefProcess tbp = new TaskBeliefProcess(nal.nar, currentTask, previousTask);
                         nar.getDeriver().run(tbp, nar.core.derivedTasksBuffer::add);
 
                     }

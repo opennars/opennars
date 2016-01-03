@@ -363,7 +363,7 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
     public static int f_complexity(int complexity) {
-        return complexity * complexity;
+        return complexity;
     }
 
     public static Budget compoundForward(Budget target, final Truth truth, final Term content, final Premise nal) {

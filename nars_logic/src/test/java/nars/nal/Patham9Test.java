@@ -411,7 +411,7 @@ public class Patham9Test extends AbstractNALTester {
         TestNAR tester = test();
 
         tester.input("<a --> b>. :|:");
-        tester.inputAt(11, "<x --> y>. :|:");
+        tester.inputAt(5, "<x --> y>. :|:");
 
         tester.mustBelieve(cycles*8, "<(&/, <a --> b>, /6) =/> <x --> y>>",
                 1.00f, 0.45f,
