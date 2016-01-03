@@ -231,7 +231,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
 
         nar().input($.belief(operation.getTerm(),
 
-                operation.getTruth()).
+                new DefaultTruth(1.0f,Global.OPERATOR_EXECUTION_CONFIDENCE)).
                 //1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
 
                 budget(b).

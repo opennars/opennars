@@ -200,6 +200,7 @@ import nars.concept.Concept;
 import nars.nal.nal8.operator.TermFunction;
 import nars.nar.Default;
 import nars.term.Term;
+import nars.truth.DefaultTruth;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -359,7 +360,7 @@ public class Patham9Test extends AbstractNALTester {
         float priority_imp_c = priority_safe(c_c);
     }*/
 
-   @Test
+   /*@Test
     public void repeated_sequence_learn_implication() throws Narsese.NarseseException {
         NAR nar = new Default(1000, 1, 1, 3);
 
@@ -371,6 +372,9 @@ public class Patham9Test extends AbstractNALTester {
             nar.input("<c --> C>. :|:");
             nar.frame(100);
         }
+
+       DefaultTruth tru = new DefaultTruth(1.0f,0.03f);
+       float val = tru.getExpectation();
 
         nar.frame(1000);
 
@@ -404,6 +408,17 @@ public class Patham9Test extends AbstractNALTester {
         //Expectation: imp_s should not be null!
         //Expectation: The priority of imp_s is less than the one for imp_a_c, but by far not zero, its highly observable in the input data
         //Expectation: A lot of successful anticipations happening, while at the end a handful of failed ones might occur
+    }*/
+
+    @Test
+    public void goal_ded_2() throws Narsese.NarseseException {
+        TestNAR tester = test();
+
+        tester.input("<(*,SELF,{t001}) --> at>. :|:");
+        tester.inputAt(10, "(&/,<(*,SELF,{t001}) --> at>,open({t001}))!");
+
+        tester.mustDesire(cycles, "(^open,{t001})", 1.0f, 0.81f); // :|:
+        tester.run();
     }
 
     /*@Test
