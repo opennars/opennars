@@ -22,6 +22,7 @@ package nars.nal.nal1;
 
 import com.gs.collections.impl.list.mutable.primitive.IntArrayList;
 import com.gs.collections.impl.tuple.Tuples;
+import nars.Global;
 import nars.Memory;
 import nars.Op;
 import nars.Premise;
@@ -150,7 +151,7 @@ public class LocalRules {
             f(x)=x/2
             plot(f,(x,0,100), axes_labels=['interval', 'tolerance'])
              */
-            int tolerance = bigger_interval/2;
+            int tolerance = (int) (bigger_interval / Global.ANTICIPATION_REVISION_TOLERANCE);
             if(Math.abs(interval1 - interval2) > tolerance) {
                 return false;
             }

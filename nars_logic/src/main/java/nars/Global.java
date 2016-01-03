@@ -297,5 +297,7 @@ public class Global {
 
     public static float EXECUTION_SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
 
+    public static float ANTICIPATION_REVISION_TOLERANCE = 2.0f;
+
 }
 

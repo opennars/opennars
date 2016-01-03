@@ -52,7 +52,6 @@ import java.util.Map;
 public class Anticipate {
 
     public float DEFAULT_CONFIRMATION_EXPECTATION = 0.51f;
-    public static float TOLERANCE_FACTOR=0.5f; //0.5 means if it happens in 2 seconds, up to max 3 seconds is also fine
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     final static Budget expiredBudget = new Budget(0.75f, 0.5f, BudgetFunctions.truthToQuality(TruthFunctions.negation(expiredTruth)));
@@ -239,7 +238,7 @@ public class Anticipate {
             this.hash = (int)(31 * creationTime + occurrTime);
             //expiredate in relation how long we predicted forward
             long prediction_time = this.occurrTime - this.creationTime;
-            tolerance = prediction_time*TOLERANCE_FACTOR;
+            tolerance = prediction_time / Global.ANTICIPATION_REVISION_TOLERANCE;
         }
 
         public boolean tooLate(long occur) {
