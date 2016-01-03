@@ -179,7 +179,7 @@ public class NALObjectsTest  {
         String invocationGoal0 = "TestClass_multiply(obj,(2,3),#1)!";
         assertTrue(1 <= countMatches(bs, invocationGoal0));
 
-        String invocationGoal = "TestClass_multiply(obj,(2,3),#1)! 0+0 %1.0;.90%";
+        String invocationGoal = "TestClass_multiply(obj,(2,3),#1)! :|: %1.0;.90%";
         assertEquals(1, countMatches(bs, invocationGoal));
 
 

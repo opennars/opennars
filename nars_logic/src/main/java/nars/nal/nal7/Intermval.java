@@ -1,6 +1,8 @@
 package nars.nal.nal7;
 
+import nars.term.Term;
 import nars.term.TermMetadata;
+import nars.term.compound.Compound;
 
 /**
  * Stores a sequence of "inner intervals" that quantify the
@@ -49,5 +51,27 @@ interface Intermval extends Interval, TermMetadata {
 
     //TODO: interpolating distance between two terms that start and end at different times. the area they share in common is evaluated for
     // alignment, optionally: absolute, scaled, or translated in time.
+
+    @FunctionalInterface
+    interface IntermvalVisitor {
+        /** return true to continue, false to cancel, prev/next null at the ends, dur is the visited intermval's duration in cycles */
+        boolean onInterval(Compound superterm, Term prev, int dur, Term next);
+    }
+
+    /** UNTESTED */
+    public static void visit(Compound c, IntermvalVisitor v, boolean includeZero, boolean recurse) {
+        if (!c.op().isA(Intermval.metadataBits)) return;
+        int[] x = ((Intermval)c).intervals();
+        Term prev = null;
+        for (int i = 0; i < x.length; i++) {
+            if (!includeZero && x[i]==0) continue;
+            Term next = (i == x.length-1) ? null : c.term(i+1);
+            v.onInterval(c, prev, x[i], next);
+            if (recurse && next instanceof Compound) {
+                visit((Compound)next, v, includeZero, recurse);
+            }
+            prev = next;
+        }
+    }
 
 }

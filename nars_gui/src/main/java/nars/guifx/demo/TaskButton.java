@@ -109,7 +109,7 @@ public class TaskButton extends Label {
     private Color getColor() {
         float pri = task.getPriority();
         return hsb(
-                (task.get().op().ordinal() / 64f) * 360.0,
+                (task.op().ordinal() / 64f) * 360.0,
                 0.4, 0.7, 0.75f + pri * 0.25f
         );
     }

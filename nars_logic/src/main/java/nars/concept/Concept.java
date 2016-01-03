@@ -60,21 +60,21 @@ public interface Concept extends Termed, Supplier<Term> {
     default Term get() { return term(); }
 
 
-    default void discountBeliefConfidence() {
-        if (hasBeliefs()) {
-            discountTaskConfidences(getBeliefs());
-        }
-    }
-
-    default void discountGoalConfidence() {
-        if (hasGoals()) {
-            discountTaskConfidences(getGoals());
-        }
-    }
-
-    default void discountTaskConfidences(Iterable<Task> t) {
-        t.forEach(Task::discountConfidence);
-    }
+//    default void discountBeliefConfidence() {
+//        if (hasBeliefs()) {
+//            discountTaskConfidences(getBeliefs());
+//        }
+//    }
+//
+//    default void discountGoalConfidence() {
+//        if (hasGoals()) {
+//            discountTaskConfidences(getGoals());
+//        }
+//    }
+//
+//    default void discountTaskConfidences(Iterable<Task> t) {
+//        t.forEach(Task::discountConfidence);
+//    }
 
 
     default boolean hasGoals() {
@@ -364,7 +364,7 @@ public interface Concept extends Termed, Supplier<Term> {
 
         link(otherTask, initialScale, nar);
 
-        Concept other = nar.conceptualize(otherTask.get());
+        Concept other = nar.conceptualize(otherTask);
         if (other == null)
             return;
 

@@ -5,9 +5,9 @@ import nars.Global;
 import nars.NAR;
 import nars.Narsese;
 import nars.nal.nal7.Tense;
-import nars.task.AbstractTask;
 import nars.task.Task;
 import nars.task.Tasked;
+import nars.term.Term;
 import nars.term.Terms;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
@@ -23,11 +23,14 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class EternalTaskCondition extends AbstractTask implements NARCondition, Predicate<Task>, Consumer<Tasked> {
+public class EternalTaskCondition implements NARCondition, Predicate<Task>, Consumer<Tasked> {
 
     private static final Logger logger = LoggerFactory.getLogger(EternalTaskCondition.class);
 
     protected final NAR nar;
+    private final char punc;
+    private final Term term;
+    private final int duration;
     boolean succeeded = false;
     long successTime = Tense.TIMELESS;
 
@@ -72,8 +75,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 //    }
 
     public EternalTaskCondition(NAR n, long creationStart, long creationEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws Narsese.NarseseException {
-        super(n.task(sentenceTerm + punc).normalize(n.memory));
-
+        //super(n.task(sentenceTerm + punc).normalize(n.memory));
         nar = n;
 
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
@@ -81,18 +83,15 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
 
         if (creationEnd - creationStart < 1) throw new RuntimeException("cycleEnd must be after cycleStart by at least 1 cycle");
 
-
-        setCreationTime(n.time());
         this.creationStart = creationStart;
         this.creationEnd = creationEnd;
-        setEternal();
         this.freqMax = Math.min(1.0f, freqMax);
         this.freqMin = Math.max(0.0f, freqMin);
         this.confMax = Math.min(1.0f, confMax);
         this.confMin = Math.max(0.0f, confMin);
-        setPunctuation(punc);
-        setTerm(n.term(sentenceTerm));
-        setDuration(n.memory.duration());
+        this.punc = punc;
+        this.term = n.term(sentenceTerm).term();
+        this.duration = n.memory.duration();
     }
 
 //    public double getAcceptableDistanceThreshold() {
@@ -162,9 +161,9 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
             return false;
         }
 
-        if (!task.term().equals(term())) return false;
+        if (!task.term().equals(term)) return false;
 
-        if (task.getPunctuation() != getPunctuation())
+        if (task.getPunctuation() != punc)
             return false;
 
         if (!truthMatches(task))
@@ -179,7 +178,6 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     }
 
     private boolean truthMatches(Truthed task) {
-        char punc = getPunctuation();
         if ((punc == '.') || (punc == '!')) {
             if (task.getTruth() == null) {
                 return false;
@@ -209,7 +207,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     }
 
     @Override
-    public boolean test(Task task) {
+    public final boolean test(Task task) {
 
         if (matches(task)) {
             valid.add(task);
@@ -224,14 +222,13 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
     public void recordSimilar(Task task) {
         final TreeMap<Float, Task> similar = this.similar;
 
-
         //TODO add the levenshtein distance of other task components
         float worstDiff = similar != null && similar.size() >= maxSimilars ? similar.lastKey() : Float.POSITIVE_INFINITY;
 
         float difference = 0;
         Compound tterm = task.term();
         difference +=
-                tterm.equals( term() ) ? 0 : (term().volume());
+                tterm.equals( term ) ? 0 : (term.volume());
         if (difference >= worstDiff)
             return;
 
@@ -252,7 +249,7 @@ public class EternalTaskCondition extends AbstractTask implements NARCondition, 
             return;
 
         float termDifference =
-                Terms.termDistance(tterm, term(), worstDiff);
+                Terms.termDistance(tterm, term, worstDiff);
         difference += 3 * termDifference;
 
         if (difference >= worstDiff)

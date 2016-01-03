@@ -56,11 +56,12 @@ public interface TermBuilder {
             return t;
         }
         Compound x = transform((Compound) t, VariableNormalization.normalizeFast((Compound) t));
-        if (x != t) {
+        Termed tx = the(x);
+        //if (x != t) {
             //if modified, set normalization flag HACK
-            ((GenericCompound)x).setNormalized();
-        }
-        return the(x);
+            ((GenericCompound)tx.term()).setNormalized();
+        //}
+        return tx;
     }
 
 //    default Term newTerm(Op op, Term... t) {
@@ -72,13 +73,13 @@ public interface TermBuilder {
         return newTerm(op, -1, t);
     }
     default Term newTerm(Op op, int relation, Collection<Term> t) {
-        return newTerm(op, relation, new TermVector(t));
+        return newTerm(op, relation, TermContainer.the(op, t));
     }
     default Term newTerm(Op op, Term singleton) {
         return newTerm(op, -1, new TermVector(singleton));
     }
-    default Term newTerm(Op op, Term a, Term b) {
-        return newTerm(op, -1, new TermVector(a, b));
+    default Term newTerm(Op op, Term... x) {
+        return newTerm(op, -1, TermContainer.the(op, x));
     }
 
 
@@ -87,19 +88,18 @@ public interface TermBuilder {
     }
 
     default <X extends Compound> X transform(Compound src, CompoundTransform t, boolean requireEqualityForNewInstance) {
-        if (t.testSuperTerm(src)) {
+        if (!t.testSuperTerm(src)) {
+            return (X) src; //nothing changed
+        }
 
-            Term[] cls = new Term[src.size()];
+        Term[] newSubterms = new Term[src.size()];
 
-            int mods = transform(src, t, cls, 0);
+        int mods = transform(src, t, newSubterms, 0);
 
-            if (mods == -1) {
-                return null;
-            }
-            else if (!requireEqualityForNewInstance || (mods > 0)) {
-                return (X) newTerm(src, new TermVector(cls));
-            }
-            //else if mods==0, fall through:
+        if (mods == -1) {
+            return null;
+        } else if (!requireEqualityForNewInstance || (mods > 0)) {
+            return (X) newTerm(src, TermContainer.the(src.op(), newSubterms));
         }
         return (X) src; //nothing changed
     }
@@ -137,7 +137,7 @@ public interface TermBuilder {
 
                     if (submods == -1) return -1;
                     if (submods > 0) {
-                        x = newTerm(cx, new TermVector(yy));
+                        x = newTerm(cx, TermContainer.the(cx.op(), yy));
                         if (x == null)
                             return -1;
                         modifications+= (cx!=x) ? 1 : 0;
@@ -168,9 +168,6 @@ public interface TermBuilder {
 //        return newTerm(csrc.op(), csrc.relation(), subs);
 //    }
 
-    default Term newTerm(Op op, int relation, Term[] t) {
-        return newTerm(op, relation, new TermVector(t));
-    }
 
     default Term newTerm(Op op, int relation, TermContainer tt) {
 
@@ -293,7 +290,7 @@ public interface TermBuilder {
 
         return newTerm(
                 o,
-                index, res);
+                index, new TermVector(res));
     }
 
     default Term junction(Op op, Iterable<Term> t) {

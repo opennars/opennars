@@ -35,7 +35,7 @@ public class TermIndexTest {
         Task t1 = t.inputTask(term);
         Task t2 = t.inputTask(term);
 
-        testShared(t1.get(), t2.get());
+        testShared(t1, t2);
 
     }
 

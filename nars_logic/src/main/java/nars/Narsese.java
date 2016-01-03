@@ -63,7 +63,7 @@ public class Narsese extends BaseParser<Object>  {
         return parsers.get();
     }
 
-    public static Task makeTask(Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
+    public static Task makeTask(Memory memory, float[] b, Termed content, Character p, Truth t, Tense tense) {
 
 //        if (p == null)
 //            throw new RuntimeException("character is null");
@@ -1064,9 +1064,14 @@ public class Narsese extends BaseParser<Object>  {
 
     /** returns null if the Task is invalid (ex: invalid term) */
     public static Task decodeTask(Memory m, Object[] x) {
-        if (x.length == 1 && x[0] instanceof Task)
-            return (Task)x[0];
-        return makeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
+        if (x.length == 1 && x[0] instanceof Task) {
+            return (Task) x[0];
+        }
+        Term contentRaw = (Term) x[1];
+        Termed content = m.index.normalized(contentRaw);
+        if (content == null)
+            throw new RuntimeException("Task term unnormalizable: " + contentRaw);
+        return makeTask(m, (float[])x[0], content, (Character)x[2], (Truth)x[3], (Tense)x[4]);
     }
 
     /** parse one term unnormalized */

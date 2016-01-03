@@ -44,6 +44,7 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
 
     public final AndCondition<PremiseMatch> postMatch; //TODO use AND condition
 
+
     public Derive(PremiseRule rule, Term term, BooleanCondition[] postMatch, boolean anticipate, boolean eternalize) {
         this.rule = rule;
         this.postMatch = postMatch.length>0 ? new AndCondition(postMatch) : null;

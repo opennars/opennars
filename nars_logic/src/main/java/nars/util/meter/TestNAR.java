@@ -244,7 +244,6 @@ public class TestNAR  {
                         cycleStart, cycleEnd,
                         occTimeAbsolute, occTimeAbsolute,
                         sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
-        tc.normalize(nar.memory);
 
         for (Topic<Tasked> cc : c) {
             cc.on(tc);

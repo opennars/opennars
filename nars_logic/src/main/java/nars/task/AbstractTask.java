@@ -95,7 +95,7 @@ public abstract class AbstractTask extends Item<Task>
 
     /** copy/clone constructor */
     public AbstractTask(Task task) {
-        this(task.get(), task.getPunctuation(), task.getTruth(),
+        this(task, task.getPunctuation(), task.getTruth(),
                 task.getPriority(), task.getDurability(), task.getQuality(),
                 task.getParentTaskRef(), task.getParentBeliefRef(), task.getBestSolutionRef());
     }
@@ -234,12 +234,15 @@ public abstract class AbstractTask extends Item<Task>
         }
 
         //obtain shared copy of term
-        setTerm((Termed)memory.index.the(t));
+        Termed nomalizedTerm = (Termed) memory.index.normalized(t);
+        if (nomalizedTerm == null) {
+            return null;
+        }
+        setTerm(nomalizedTerm);
 
         setDuration(
             memory.duration() //assume the default perceptual duration?
         );
-
 
         //finally, assign a unique stamp if none specified (input)
         if (getEvidence().length== 0) {
@@ -278,7 +281,7 @@ public abstract class AbstractTask extends Item<Task>
 
         int h = Objects.hash(
                 Arrays.hashCode(getEvidence()),
-                get(),
+                term(),
                 getPunctuation(),
                 getTruth(),
                 getOccurrenceTime()
@@ -300,10 +303,7 @@ public abstract class AbstractTask extends Item<Task>
         //term = (Compound) c.getTerm(); //HACK the cast
     }
 
-    @Override
-    public final Termed<Compound> get() {
-        return term;
-    }
+
 
     @Override
     public final Compound term() {
@@ -330,8 +330,10 @@ public abstract class AbstractTask extends Item<Task>
 
     @Override
     public Task setEvidence(long... evidentialSet) {
-        this.evidentialSet = evidentialSet;
-        invalidate();
+        if (this.evidentialSet!=evidentialSet) {
+            this.evidentialSet = evidentialSet;
+            invalidate();
+        }
         return this;
     }
 
@@ -406,29 +408,21 @@ public abstract class AbstractTask extends Item<Task>
         if (this == obj) return 0;
 
         Task o = (Task)obj;
-        int tc = term().compareTo(o.term());
-        if (tc != 0) return tc;
+        int tt = term().compareTo(o.term());
+        if (tt != 0) return tt;
 
-        tc = Character.compare(punctuation, o.getPunctuation());
+        int tc = Character.compare(punctuation, o.getPunctuation());
         if (tc != 0) return tc;
 
         if (truth!=null) {
-
-            Truth otruth = o.getTruth();
-            tc = Truth.compare(otruth, truth);
-            if (tc!=0) return tc;
-
+            int tu = Truth.compare(o.getTruth(), truth);
+            if (tu!=0) return tu;
         }
 
-        tc = Long.compare( getOccurrenceTime(),
-                o.getOccurrenceTime() );
-        if (tc!=0) return tc;
+        int to = Long.compare( getOccurrenceTime(), o.getOccurrenceTime() );
+        if (to!=0) return to;
 
-
-
-        long[] e1 = getEvidence();
-        long[] e2 = o.getEvidence();
-        return Util.compare(e1, e2);
+        return Util.compare(getEvidence(), o.getEvidence());
     }
 
     @Override
@@ -459,10 +453,7 @@ public abstract class AbstractTask extends Item<Task>
             if (bs == null)
                 throw new RuntimeException("parentBelief " + getParentBelief() + " has no evidentialSet");
 
-            long[] zipped = Stamp.zip(as, bs);
-            long[] uniques = Stamp.toSetArray(zipped);
-
-            setEvidence(uniques);
+            setEvidence( Stamp.toSetArray( Stamp.zip(as, bs) ) ) ;
 
                 /*if (getParentTask().isInput() || getParentBelief().isInput()) {
                     setCyclic(false);
@@ -529,14 +520,14 @@ public abstract class AbstractTask extends Item<Task>
     @Override
     public final boolean equals(Object that) {
         if (this == that) return true;
-        if (that instanceof Task) {
+        //if (that instanceof Task) {
 
             //hash test has probably already occurred, coming from a HashMap
-            //if (hashCode() != that.hashCode()) return false;
+            if (hashCode() != that.hashCode()) return false;
 
             return equivalentTo((Task) that, true, true, true, true, false);
-        }
-        return false;
+        //}
+        //return false;
     }
 
     @Override
@@ -564,16 +555,12 @@ public abstract class AbstractTask extends Item<Task>
 
 
         if (term) {
-            if (!this.term.equals(that.get())) return false;
+            if (!term().equals(that.term())) return false;
         }
 
         if (punctuation) {
             if (thisPunc != that.getPunctuation()) return false;
         }
-
-
-
-
 
         return true;
     }
@@ -726,13 +713,6 @@ public abstract class AbstractTask extends Item<Task>
     public long end() {
         return occurrenceTime + duration;
     }
-
-    @Override
-    public void discountConfidence() {
-        setTruth(getTruth().discountConfidence());
-    }
-
-
 
 
 }

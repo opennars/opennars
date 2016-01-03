@@ -408,8 +408,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
             ii[s] = 0;
         }
 
-        Term[] t = terms();
-        return makeSequence(t, ii);
+        return makeSequence(terms(), ii);
     }
 
 

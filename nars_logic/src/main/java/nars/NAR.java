@@ -887,11 +887,15 @@ public abstract class NAR implements Serializable, Level {
      */
     public Concept process(Task task) {
 
+        if (!task.term().isNormalized()) {
+            throw new RuntimeException("Not normalized: " + task);
+        }
 
         Concept c = conceptualize(task.term());
         if (c == null) {
-            memory.remove(task, "Inconceivable");
-            return null;
+            throw new RuntimeException("Inconceivable: " + task);
+            //memory.remove(task, "Inconceivable");
+            //return null;
         }
 
         memory.emotion.busy(task);
@@ -907,7 +911,7 @@ public abstract class NAR implements Serializable, Level {
 
             return c;
         } else {
-            memory.remove(task, null /* "Unprocessable" */);
+            memory.remove(task, "Unprocessed");
             return null;
         }
 

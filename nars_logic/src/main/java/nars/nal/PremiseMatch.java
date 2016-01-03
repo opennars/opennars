@@ -116,7 +116,7 @@ public class PremiseMatch extends FindSubst {
 
         Compound taskTerm = p.getTask().term();
         Task pBelief = p.getBelief();
-        Termed beliefTerm = pBelief != null ? pBelief.get() : p.termLink.get(); //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
+        Termed beliefTerm = pBelief != null ? pBelief : p.termLink.get(); //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
 
         termPattern.set( taskTerm.term(), beliefTerm.term() );
         term.set( termPattern );

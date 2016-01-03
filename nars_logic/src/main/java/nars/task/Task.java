@@ -169,9 +169,6 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
     Reference<Task> getParentBeliefRef();
 
-    /** may reference the concept directly */
-    default Termed<Compound> get() { return term(); }
-
     /**
      * Check whether different aspects of sentence are equivalent to another one
      *
@@ -505,8 +502,6 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     }
 
     void setTruth(Truth t);
-    void discountConfidence();
-
 
     void setBestSolution(Task belief);
 

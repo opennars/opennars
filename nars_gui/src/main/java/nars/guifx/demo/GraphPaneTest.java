@@ -88,8 +88,8 @@ public class GraphPaneTest {
         return g;
     }
 
-    private static DirectedGraph<Term, Compound> newExampleGraph() {
-        DirectedGraph<Term, Compound> g = new SimpleDirectedGraph((EdgeFactory<Term, Compound>) $::inh);
+    private static DirectedGraph<Term, Term> newExampleGraph() {
+        DirectedGraph<Term, Term> g = new SimpleDirectedGraph((EdgeFactory<Term, Term>) $::inh);
 
 
         int n = 16;

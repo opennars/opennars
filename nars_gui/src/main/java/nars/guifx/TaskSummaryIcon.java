@@ -55,7 +55,7 @@ public class TaskSummaryIcon extends SummaryIcon implements Runnable {
 
         GraphicsContext g = getGraphicsContext2D();
 
-        if (task.get() == null || task.isQuestOrQuestion()) {
+        if (task == null || task.isQuestOrQuestion()) {
             //immediate?
         }
         else {

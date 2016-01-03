@@ -220,19 +220,26 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         return true;
     }
 
+
+    static boolean requiresTermSet(Op op, int num) {
+        return op.isCommutative() && (num > 1);
+    }
+
+
     /** produces the correct TermContainer for the given Op,
      * according to the existing type
      */
     static TermContainer the(Op op, TermContainer tt) {
-        return (op.isCommutative() && !tt.isSorted()) ?
-            TermSet.the(tt.terms()) : tt;
+        return (!requiresTermSet(op, tt.size()) || tt.isSorted()) ? tt :
+            TermSet.the(tt.terms());
     }
     static TermContainer the(Op op, Collection<? extends Term> tt) {
-        return (op.isCommutative() && (tt.size() > 1)) ?
+        return requiresTermSet(op, tt.size()) ?
                 TermSet.the(tt) : new TermVector(tt);
     }
+
     static TermContainer the(Op op, Term[] tt) {
-        return op.isCommutative() ? TermSet.the(tt) :
+        return requiresTermSet(op, tt.length) ? TermSet.the(tt) :
                 new TermVector(tt);
     }
 

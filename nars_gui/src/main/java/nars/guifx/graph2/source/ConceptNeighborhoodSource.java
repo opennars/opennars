@@ -35,7 +35,7 @@ public class ConceptNeighborhoodSource extends ConceptsSource {
 
             Concept c = (Concept) r;
             c.getTaskLinks().forEach(termLinkNeighbors, n -> {
-                Termed tn = n.get();
+                Termed tn = n;
                 if (tn instanceof Concept) {
                     conceptsSet.add(tn);
                 } else {

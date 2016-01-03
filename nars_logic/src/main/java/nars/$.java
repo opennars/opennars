@@ -474,14 +474,14 @@ public abstract class $  {
     }
 
     /** construct set_ext of key,value pairs from a Map */
-    public static Compound sete(Map<Term,Term> map) {
+    public static Compound seteMap(Map<Term,Term> map) {
         return $.sete(
             map.entrySet().stream().map(
                 e -> $.p(e.getKey(),e.getValue()))
             .collect( toList())
         );
     }
-    public static <X> Compound sete(Map<Term,? extends X> map, Function<X, Term> toTerm) {
+    public static <X> Compound seteMap(Map<Term,? extends X> map, Function<X, Term> toTerm) {
         return $.sete(
             map.entrySet().stream().map(
                 e -> $.p(e.getKey(), toTerm.apply(e.getValue())))

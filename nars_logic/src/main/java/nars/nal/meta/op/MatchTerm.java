@@ -40,7 +40,7 @@ public final class MatchTerm extends AtomicBooleanCondition<PremiseMatch> implem
                 //no constraints
                 x :
                 //constraints stored in atomic string
-                (Compound) ($.sect(x, $.sete(constraints.castToMap(), $.ToStringToTerm)));
+                (Compound) ($.sect(x, $.seteMap(constraints.castToMap(), $.ToStringToTerm)));
 
         this.x = x;
         this.constraints = constraints;

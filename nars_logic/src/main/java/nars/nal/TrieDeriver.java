@@ -119,6 +119,7 @@ public class TrieDeriver extends Deriver {
                     //System.err.println("detached Derive action: " + x + " in branch: " + t);
                 }
                 else {
+                    //HACK
                     Derive dx = (Derive) x;
                     mt.derive(dx);
                     derivationLinks.put(mt, dx);
