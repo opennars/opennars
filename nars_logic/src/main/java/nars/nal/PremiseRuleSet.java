@@ -1,8 +1,8 @@
 package nars.nal;
 
-import com.gs.collections.impl.list.mutable.FastList;
 import nars.Global;
 import nars.term.compound.Compound;
+import nars.util.data.list.FasterList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ import static nars.$.$;
 /**
  * Holds an array of derivation rules
  */
-public class PremiseRuleSet extends FastList<PremiseRule> {
+public class PremiseRuleSet extends FasterList<PremiseRule> {
 
     private static final Pattern spacePattern = Pattern.compile(" ", Pattern.LITERAL);
     private static final Pattern twoSpacePattern = Pattern.compile("  ", Pattern.LITERAL);

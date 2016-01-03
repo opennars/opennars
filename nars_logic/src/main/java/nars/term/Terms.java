@@ -210,7 +210,7 @@ public class Terms {
         }
     }
 
-    public static Term[] toSortedSetArray(Collection<Term> c) {
+    public static Term[] toSortedSetArray(Collection<? extends Term> c) {
         if (c instanceof TreeSet) {
             return c.toArray(new Term[c.size()]); //already sorted
         }

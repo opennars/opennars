@@ -1,5 +1,6 @@
 package nars.nal.meta.op;
 
+import nars.Op;
 import nars.Symbols;
 import nars.nal.PremiseMatch;
 import nars.nal.PremiseRule;
@@ -141,14 +142,19 @@ abstract public class Solve extends AtomicBooleanCondition<PremiseMatch> {
 //    }
 
     static boolean measure(PremiseMatch m, char punct, TruthOperator belief, TruthOperator desire) {
-        TruthOperator tf;
-        boolean r=false;
+        boolean r;
         switch (punct) {
             case Symbols.JUDGMENT:
             case Symbols.GOAL:
-                tf = (punct == Symbols.JUDGMENT) ? belief : desire;
-                if (tf != null && (!m.cyclic || tf.allowOverlap())) r = (tf.apply(m));
+                TruthOperator tf = (punct == Symbols.JUDGMENT) ? belief : desire;
+                r = (tf != null) && (!m.cyclic || tf.allowOverlap()) && (tf.apply(m));
                 break;
+            case Symbols.QUESTION:
+            case Symbols.QUEST:
+                r = true; //a truth function is not involved, so succeed
+                break;
+            default:
+                throw new Op.InvalidPunctuationException(punct);
         }
 
         m.punct.set(punct);

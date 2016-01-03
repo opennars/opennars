@@ -15,7 +15,7 @@ public class TermVectorTest {
     @Test
     public void testSubtermsEquality() {
 
-        Compound a = $.inh("a", "b");
+        Compound a = (Compound) $.inh("a", "b");
         Compound b = (Compound) $.impl(Atom.the("a"), Atom.the("b"));
 
         assertEquals(a.subterms(), b.subterms());

@@ -69,11 +69,8 @@ public interface Premise extends Level, Tasked {
                 //FORWARD
                 if (a instanceof Compound) {
 
-                    Term result;
-                    Term y = getXY(a);
-                    result = y == null ? a : y;
-                    aa = result;
-
+                    aa = getXY(a);
+                    if (aa == null) aa = a;
                     if (aa == null) return false;
 
                     Op aaop = aa.op();

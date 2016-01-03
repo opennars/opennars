@@ -26,7 +26,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
+import static java.util.stream.Collectors.toList;
 import static nars.Op.*;
 
 /**
@@ -47,6 +50,7 @@ public abstract class $  {
 
 
     public static final org.slf4j.Logger logger = LoggerFactory.getLogger($.class);
+    public static final Function<Object, Term> ToStringToTerm = (x) -> $.the(x.toString());
 
     public static <T extends Term> T $(String term) {
         Termed normalized = Narsese.the().term(term, terms);
@@ -95,17 +99,17 @@ public abstract class $  {
      * Op.INHERITANCE from 2 Terms: subj --> pred
      *  returns a Term if the two inputs are equal to each other
      */
-    public static <T extends Term> T inh(Term subj, Term pred) {
+    public static Term inh(Term subj, Term pred) {
 
 //        if ((predicate instanceof Operator) && if (subject instanceof Product))
 //            return new GenericCompound(Op.INHERITANCE, (Operator)predicate, (Product)subject);
 //        else
 
-        return (T) the(INHERIT, subj, pred);
+        return the(INHERIT, subj, pred);
     }
 
 
-    public static <T extends Term> T inh(String subj, String pred) {
+    public static Term inh(String subj, String pred) {
         return inh((Term)$(subj), $(pred));
     }
 
@@ -251,11 +255,11 @@ public abstract class $  {
         return the(IMPLICATION_AFTER, condition, consequence);
     }
 
-    public static Compound sete(Collection<Term> t) {
-        return $.sete(array(t));
+    public static Compound sete(Collection<? extends Term> t) {
+        return (Compound) the(SET_EXT, t);
     }
 
-   private static Term[] array(Collection<Term> t) {
+   private static Term[] array(Collection<? extends Term> t) {
         return t.toArray(new Term[t.size()]);
     }
 
@@ -440,14 +444,19 @@ public abstract class $  {
     public static Term the(Op op, Term... subterms) {
         return the(op, -1, subterms);
     }
-    public static Term the(Op op, int relation, Term[] subterms) {
-        return the(op, relation, new TermVector(subterms));
+    public static Term the(Op op, int relation, Term... subterms) {
+        return the(op, relation, TermContainer.the(op, subterms));
     }
+
+    public static Term the(Op op, Collection<? extends Term> subterms) {
+        return the(op, -1, subterms);
+    }
+    public static Term the(Op op, int relation, Collection<? extends Term> subterms) {
+        return the(op, relation, TermContainer.the(op, subterms));
+    }
+
     public static Term the(Op op, int relation, TermContainer subterms) {
-        return terms.newTerm(op, relation, subterms.terms());
-    }
-    public static Term the(Op op, int relation, Collection<Term> subterms) {
-        return the(op, relation, new TermVector(subterms));
+        return terms.newTerm(op, relation, subterms);
     }
 
     public static int typeIndex(Op o) {
@@ -462,5 +471,21 @@ public abstract class $  {
                 return 3;
         }
         throw new RuntimeException(o + " not a variable");
+    }
+
+    /** construct set_ext of key,value pairs from a Map */
+    public static Compound sete(Map<Term,Term> map) {
+        return $.sete(
+            map.entrySet().stream().map(
+                e -> $.p(e.getKey(),e.getValue()))
+            .collect( toList())
+        );
+    }
+    public static <X> Compound sete(Map<Term,? extends X> map, Function<X, Term> toTerm) {
+        return $.sete(
+            map.entrySet().stream().map(
+                e -> $.p(e.getKey(), toTerm.apply(e.getValue())))
+            .collect( toList())
+        );
     }
 }

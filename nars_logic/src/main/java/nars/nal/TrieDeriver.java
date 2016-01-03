@@ -12,7 +12,6 @@ import org.magnos.trie.TrieNode;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,11 +27,6 @@ public class TrieDeriver extends Deriver {
 
     /** derivation term graph, gathered for analysis */
     public final HashMultimap<MatchTerm,Derive> derivationLinks = HashMultimap.create();
-
-
-    public TrieDeriver(String rule) {
-        this(new PremiseRuleSet(Collections.singleton(rule)));
-    }
 
     public TrieDeriver(String... rule) {
         this(new PremiseRuleSet(Lists.newArrayList(rule)));

@@ -619,4 +619,10 @@ public interface TermBuilder {
         return true;
     }
 
+    default Compound theCompound(Term x) {
+        Term y = theTerm(x);
+        if (y instanceof Compound) return ((Compound)y);
+        return null;
+    }
+
 }

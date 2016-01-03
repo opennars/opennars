@@ -227,7 +227,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         return (op.isCommutative() && !tt.isSorted()) ?
             TermSet.the(tt.terms()) : tt;
     }
-    static TermContainer the(Op op, Collection<Term> tt) {
+    static TermContainer the(Op op, Collection<? extends Term> tt) {
         return (op.isCommutative() && (tt.size() > 1)) ?
                 TermSet.the(tt) : new TermVector(tt);
     }

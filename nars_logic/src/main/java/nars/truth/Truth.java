@@ -113,7 +113,6 @@ public interface Truth extends MetaTruth<Float> {
      * into the two 16-bit words of a 32-bit integer.
      *
      * Since the same epsilon used in other truth
-     * comparisons and equality tests determines the
      * resolution here (Truth components do not need the full
      * resolution of a floating point value, and also do not
      * need the full resolution of a 16bit number when discretized)

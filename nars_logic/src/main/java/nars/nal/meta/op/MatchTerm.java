@@ -37,8 +37,10 @@ public final class MatchTerm extends AtomicBooleanCondition<PremiseMatch> implem
 
     private MatchTerm(TaskBeliefPair x, ImmutableMap<Term, MatchConstraint> constraints) {
         this.id = (constraints == null) ?
-                x : //no constraints
-                (Compound) ($.sect(x, $.the(constraints.toString()))); //constraints stored in atomic string
+                //no constraints
+                x :
+                //constraints stored in atomic string
+                (Compound) ($.sect(x, $.sete(constraints.castToMap(), $.ToStringToTerm)));
 
         this.x = x;
         this.constraints = constraints;

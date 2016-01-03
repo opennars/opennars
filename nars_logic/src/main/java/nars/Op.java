@@ -386,4 +386,11 @@ public enum Op {
             }
         }
     }
+
+
+    public static class InvalidPunctuationException extends RuntimeException {
+        public InvalidPunctuationException(char c) {
+            super("Invalid punctuation: " + c);
+        }
+    }
 }

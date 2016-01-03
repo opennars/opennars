@@ -22,7 +22,7 @@ public class TrieDeriverTest {
 
     @Test public void testNAL3Rule() {
 
-        NAR x = testRule(r1, r1Case);
+        NAR x = testRuleInputs(r1, r1Case);
 
         assertEquals(1, ((TrieDeriver)(((Default)x).core.der)).roots.length);
 
@@ -47,15 +47,20 @@ public class TrieDeriverTest {
 //            out.println(p);
     }
 
-    public Default testRule(String rule, String... inputs) {
+    public Default testRuleInputs(String rule, String... inputs) {
+        return testRuleInputs(new TrieDeriver(rule), inputs);
+    }
+
+    public Default testRuleInputs(TrieDeriver d, String... inputs) {
         return (Default) new Default() {
             @Override protected Deriver newDeriver() {
-                return new TrieDeriver(rule);
+                return d;
             }
         }.input(inputs);
     }
-    public TrieDeriver testRule(String rule) {
-        TrieDeriver d = new TrieDeriver(rule);
+
+    public TrieDeriver testRule(String... rules) {
+        TrieDeriver d = new TrieDeriver(rules);
         new Default() {
             @Override protected Deriver newDeriver() {
                 return d;
@@ -64,15 +69,22 @@ public class TrieDeriverTest {
         return d;
     }
 
-    @Test public void testBackwardsRules() {
-        String r = "(A --> B), (B --> C), neq(A,C) |- (A --> C), (Truth:Deduction, Desire:Strong, Derive:AllowBackward)";
-        TrieDeriver d = testRule(r);
-        //d.trie.printSummary();
-
-        Default n = testRule(r, "b:a.", "a:c.", "a:b?" );
-        //n.log();
-        n.frame(15);
-
-        //TODO write test
-    }
+//    @Test public void testBackwardsRules() {
+//
+//        TrieDeriver d = testRule(
+//                "(A --> B), (B --> C), neq(A,C) |- (A --> C), (Truth:Deduction, Desire:Strong, Derive:AllowBackward)",
+//                "(A --> B), (A --> C), neq(B,C) |- (C --> B), (Truth:Abduction, Desire:Weak, Derive:AllowBackward)",
+//                "(A --> C), (B --> C), neq(A,B) |- (B --> A), (Truth:Induction, Desire:Weak, Derive:AllowBackward)",
+//                "(A --> B), (B --> C), neq(C,A) |- (C --> A), (Truth:Exemplification, Desire:Weak, Derive:AllowBackward)"
+//        );
+//        d.trie.printSummary();
+//
+//        Default n = testRuleInputs(d,
+//                "<bird --> swimmer>.", "<?1 --> swimmer>?"
+//        );
+//        n.log();
+//        n.frame(64);
+//
+//        //TODO write test
+//    }
 }

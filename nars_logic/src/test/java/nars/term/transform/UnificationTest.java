@@ -47,6 +47,12 @@ public class UnificationTest  {
         Term t1 = nar.concept(s1).get();
         Term t2 = nar.concept(s2).get();
 
+        Set<Term> t1u = ((Compound) t1).unique(type);
+        Set<Term> t2u = ((Compound) t2).unique(type);
+
+        int n1 = Sets.difference(t1u, t2u).size();
+        int n2 = Sets.difference(t2u, t1u).size();
+
         //a somewhat strict lower bound
         //int power = 4 * (1 + t1.volume() * t2.volume());
         //power*=power;
@@ -66,12 +72,6 @@ public class UnificationTest  {
 
                 if (shouldSub) {
                     if ((t2 instanceof Compound) && (t1 instanceof Compound)) {
-                        Set<Term> t1u = ((Compound) t1).unique(type);
-                        Set<Term> t2u = ((Compound) t2).unique(type);
-
-                        int n1 = Sets.difference(t1u, t2u).size();
-                        int n2 = Sets.difference(t2u, t1u).size();
-
                         assertTrue( (n2) <= (yx.size()));
                         assertTrue( (n1) <= (xy.size()));
                     }
@@ -682,5 +682,17 @@ public class UnificationTest  {
         test(Op.VAR_PATTERN,
                 "{{a, %X..+}, %X..+}",
                 "{{a, b, c, d}, b, c, d}", true);
+    }
+    @Test public void patternMatchesQuery1()  {
+        FindSubst f = test(Op.VAR_PATTERN,
+                "(<%1 <-> %2>, <%3 <-> %2>)",
+                "(<x <-> ?1>, <y <-> ?1>)",
+                true);
+    }
+    @Test public void patternMatchesQuery2()  {
+        FindSubst f = test(Op.VAR_PATTERN,
+                "(<%1 <-> %2>, <%3 <-> %2>)",
+                "(<bird <-> {?1}>, <bird <-> {?1}>)",
+                true);
     }
 }

@@ -12,7 +12,7 @@ public class TermSet<X extends Term> extends TermVector<X> {
         return new TermSet(toSortedSetArray(x));
     }
 
-    public static TermSet the(Collection<Term> x) {
+    public static TermSet the(Collection<? extends Term> x) {
         return new TermSet(toSortedSetArray(x));
     }
 

@@ -6,7 +6,10 @@ import com.google.common.collect.Sets;
 import nars.$;
 import nars.Global;
 import nars.Op;
-import nars.nal.meta.*;
+import nars.nal.meta.AtomicBooleanCondition;
+import nars.nal.meta.BooleanCondition;
+import nars.nal.meta.PostCondition;
+import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.Solve;
 import nars.nal.meta.pre.*;
 import nars.nal.op.*;
@@ -106,9 +109,8 @@ public class PremiseRule extends GenericCompound implements Level {
         return (Compound) term(1);
     }
 
-
-    PremiseRule(Compound raw) {
-        this((Compound)raw.term(0), (Compound)raw.term(1));
+    PremiseRule(Compound premisesResultProduct) {
+        this((Compound)premisesResultProduct.term(0), (Compound)premisesResultProduct.term(1));
     }
 
     public PremiseRule(Compound premises, Compound result) {
@@ -178,11 +180,7 @@ public class PremiseRule extends GenericCompound implements Level {
         match.addConditions(l); //the match itself
 
         { /* FOR EACH MATCH */
-            AndCondition<PremiseMatch> pm = truth.getDerive().postMatch;
-            if (pm!=null)
-                l.add(pm);
-
-            l.add(truth.getDerive()); //will be invoked by match callbacks
+            l.add(truth.getDerive()); //will be linked to and invoked by match callbacks
         }
 
 
@@ -264,16 +262,15 @@ public class PremiseRule extends GenericCompound implements Level {
         }
     }
 
-    static final UppercaseAtomsToPatternVariables uppercaseAtomsToPatternVariables = new UppercaseAtomsToPatternVariables();
+    static final UppercaseAtomsToPatternVariables UppercaseAtomsToPatternVariables = new UppercaseAtomsToPatternVariables();
 
 
     public final PremiseRule normalizeRule(PatternIndex index) {
-
-        Compound c = (Compound)index.transform(
-                $.terms.transform(this, uppercaseAtomsToPatternVariables),
-                new TaskRuleVariableNormalization());
-
-        return new PremiseRule((Compound)c.term(0), (Compound)c.term(1)); //HACK
+        return new PremiseRule(
+            index.theCompound(
+                $.terms.transform(
+                    $.terms.transform(this, UppercaseAtomsToPatternVariables),
+                new TaskRuleVariableNormalization()) ) );
     }
 
 
@@ -347,7 +344,7 @@ public class PremiseRule extends GenericCompound implements Level {
                     constraints.put(arg2, new NotEqualsConstraint(arg1));
 
                     //TODO eliminate need for:
-                    next = NotEqual.make(arg1, arg2);
+                    //next = NotEqual.make(arg1, arg2);
 
                     break;
 
