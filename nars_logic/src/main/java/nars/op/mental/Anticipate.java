@@ -92,7 +92,7 @@ public class Anticipate {
             return; //Besides that the task has to be a judgement, if the truth expectation is below confirmation expectation,
         }           //the truth value of the incoming event was too low to confirm that the expected event has happened.
 
-        if(!isObservable(nar, tt) || now > occ) { //it's not observable, or about thee future
+        if(!isObservable(nar, tt) || now+nar.memory.duration() > occ) { //it's not observable, or about thee future
             return;                                            //in the former case CWA can not be applied in general
         }                                                      //and in the latter case anticipation is pointless
 
@@ -120,6 +120,8 @@ public class Anticipate {
     }
 
     public static boolean isObservable(NAR nar, Term t) {
+        if(true)
+            return true;
         Concept c = nar.concept(t);
         if(c != null && c.get(Anticipate.class) != null) {
             return true;

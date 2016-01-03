@@ -70,7 +70,7 @@ public class GetTruth extends PreCondition {
 
         Task belief = premise.getBelief();
         ProjectedTruth projtruth = null;
-        if(belief!=null) {
+        if(belief != null) {
             projtruth = belief.projection(task.getOccurrenceTime(), match.premise.memory().time());
         }
 
