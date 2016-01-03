@@ -204,12 +204,12 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     public final void onConcept(final Concept c) {
 
         //intermval generally contains unique information that should not be replaced
-        if (this.term instanceof TermMetadata)
+        /*if (this.term instanceof TermMetadata)
             return;
 
         //if debug, check that they are equal..
 
-        this.term = (T) c.getTerm(); //HACK the cast
+        this.term = (T) c.getTerm(); //HACK the cast */
     }
 
     @Override

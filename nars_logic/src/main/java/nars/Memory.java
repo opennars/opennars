@@ -314,19 +314,19 @@ public class Memory extends Param {
 
     private static class MyTermIndex implements TermIndex {
 
-        final Map<Term,Term> terms = new HashMap(4096); //TODO try weakref identity hash map etc
+       // final Map<Term,Term> terms = new HashMap(4096); //TODO try weakref identity hash map etc
 
         @Override public final Termed get(Term t) {
 
-            if (t instanceof TermMetadata) {
+            //if (t instanceof TermMetadata) {
                 return t.normalized(this); //term instance will remain unique because it has attached metadata
-            }
+            //}
 
-            return terms.compute(t, (k,vExist) -> {
+           /* return terms.compute(t, (k,vExist) -> {
                 if (vExist == null) return k.normalized(this);
                 else
                     return vExist;
-            });
+            }); */
             //return terms.computeIfAbsent(t, n -> n.normalized(this));
         }
 
@@ -350,7 +350,7 @@ public class Memory extends Param {
 
         @Override
         public void forEachTerm(Consumer<Termed> c) {
-            terms.forEach((k,v)->c.accept(v));
+          //  terms.forEach((k,v)->c.accept(v));
         }
     }
 
