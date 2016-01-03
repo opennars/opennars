@@ -20,12 +20,14 @@
  */
 package nars.nal.nal1;
 
+import com.gs.collections.impl.list.mutable.primitive.IntArrayList;
 import com.gs.collections.impl.tuple.Tuples;
 import nars.Memory;
 import nars.Op;
 import nars.Premise;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -35,6 +37,8 @@ import nars.truth.ProjectedTruth;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
+
+import static org.jgroups.util.Util.assertEquals;
 
 
 /**
@@ -119,6 +123,52 @@ public class LocalRules {
 //        return revised;
 //    }
 
+    //extract the interval information of a term recursively and flatten it into an ArrayList
+    static void ExtractIntervals(IntArrayList intervals, Compound compound) {
+        if(compound instanceof Sequence) {
+            for(int In : ((Sequence) compound).intervals()) {
+                intervals.add(In);
+            }
+        }
+        for(int i=0;i<compound.subterms().size();i++) {
+            Term t = compound.subterms().term(i);
+            if(t instanceof Compound) {
+                ExtractIntervals(intervals, (Compound)t);
+            }
+        }
+    }
+
+    //go through each interval and see if they are compatible judged by tolerance
+    static boolean TemporalSimilar(IntArrayList a, IntArrayList b) {
+        assertEquals("two identical terms have different sized interval info!", a.size(), b.size());
+        for(int i=0;i<a.size();i++) {
+            int interval1 = a.get(i);
+            int interval2 = b.get(i);
+            int bigger_interval = Math.max(interval1, interval2);
+            //http://sagecell.sagemath.org/?z=eJxL06jQtK3QN-LlKsjJL9FI09Go0DHQMTQw0NRRSKxILY7PSUxKzSm2jVbPzCtJLSpLzFHXUVAvyc9JLUrMS05Vj9UEAI_HFK8=&lang=sage
+            /*
+            f(x)=x/2
+            plot(f,(x,0,100), axes_labels=['interval', 'tolerance'])
+             */
+            int tolerance = bigger_interval/2;
+            if(Math.abs(interval1 - interval2) > tolerance) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //judge temporal similarity of the interval infos in two compounds
+    public static boolean TemporalSimilarTerm(Term a, Term b) {
+        if(a instanceof Compound && b instanceof Compound) {
+            IntArrayList intvalsa = new IntArrayList();
+            ExtractIntervals(intvalsa, (Compound) a);
+            IntArrayList intvalsb = new IntArrayList();
+            ExtractIntervals(intvalsb, (Compound) b);
+            return TemporalSimilar(intvalsa,intvalsb);
+        }
+        return true; //nothing to compare, in this case we define it as temporally similar
+    }
 
     /** creates a revision task (but does not input it)
      *  if failed, returns null
@@ -127,6 +177,10 @@ public class LocalRules {
 
         if (newBelief.equals(oldBelief) || Stamp.overlapping(newBelief, oldBelief))
             return null;
+
+        if(!TemporalSimilarTerm(newBelief.getTerm(),oldBelief.getTerm())) {
+            return null;
+        }
 
         Truth newBeliefTruth = newBelief.getTruth();
 

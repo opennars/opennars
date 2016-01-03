@@ -339,6 +339,77 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 
         @Override
         public final float valueOf(final float x) {
+
+               /*
+http://sagecell.sagemath.org/?z=eJxdks1ugzAQhO9IvINvQGNF5h-q0mfIPYosmkKClEKCqQpv37WdaruGy8zoQ5rdpQ_XqFlf1GNeQPme741SyLg
+RWsQysSKRqRWpzKzIZG5FLgsrCllaUcrKikrWVtQyFlrZt59mNrBhZHM7XrowEUJEr77H4Fkla3T8OX2FkY22pg9X-TRDz7Z3wQBg21sj9vHzO_2Y3rsm_k
+_uY2QTwsJoLpsgmxIWpnfZFNmMsLAgl82QzQkLO3TZHNmCsLBmly2QLQkLl3DZEtmKsHAsl62QrQkL93TZ-o-ll9AHNyiGvnefh3GxZ0IDd0ADi0YDm0QDq
+0IDu0ADw6KBadBAXTS6ka5zaO4TJOHxBL_UYffnBDe9aBhz04-GCTc9aZhy05eGGTe9aZhz05-GBTdz0LDkZh4aVtzMRcOa2_l0qq7TT3i_TUt44KxdOyVv
+7Ud3U80xgFVM87BsLBRsUOw6XK6dWqKAs6A9nzulWD93j-9uPG_BKYp-Ab9qBwE=&lang=sage*/
+
+ /*
+f(x)=x*sqrt(x)
+
+n_0_1=0
+n_1_2=0
+n_2_3=0
+n_3_4=0
+n_4_5=0
+n_5_6=0
+n_6_7=0
+n_7_8=0
+n_8_9=0
+n_9_10=0
+
+for i in range(2000):
+    x_ = random()
+    y=f(x_)
+    if y>0 and y<=0.1:
+        n_0_1+=1
+    if y>0.1 and y<=0.2:
+        n_1_2+=1
+    if y>0.2 and y<=0.3:
+        n_2_3+=1
+    if y>0.3 and y<=0.4:
+        n_3_4+=1
+    if y>0.4 and y<=0.5:
+        n_4_5+=1
+    if y>0.5 and y<=0.6:
+        n_5_6+=1
+    if y>0.6 and y<=0.7:
+        n_6_7+=1
+    if y>0.7 and y<=0.8:
+        n_7_8+=1
+    if y>0.8 and y<=0.9:
+        n_8_9+=1
+    if y>0.9 and y<=1:
+        n_9_10+=1
+
+print n_0_1
+print n_1_2
+print n_2_3
+print n_3_4
+print n_4_5
+print n_5_6
+print n_6_7
+print n_7_8
+print n_8_9
+print n_9_10
+
+P=point([])
+P+=point([0,n_0_1])
+P+=point([1,n_1_2])
+P+=point([2,n_2_3])
+P+=point([3,n_3_4])
+P+=point([4,n_4_5])
+P+=point([5,n_5_6])
+P+=point([6,n_6_7])
+P+=point([7,n_7_8])
+P+=point([8,n_8_9])
+P+=point([9,n_9_10])
+show(plot(P, axes_labels=['priority (0 is highest)', 'access frequency']))
+             */
+
             return (float) (x * Math.sqrt(x));
         }
 
@@ -381,11 +452,6 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
             /** x=0, y=0 ... x=1, y=1 */
             //return x;
 
-            /*
-http://sagecell.sagemath.org/?z=eJxdks1qwzAQhO8Gv4OOUqMEyf8uVZ8h91KWQuvU0NrGDdR--66khO3KATMzfIHZXQ9yU84epbTHTT2EtxJ5lmcTGLDOeGGhiKKAMooSqigqqKOooYmigTaKFrooOuij6MEar-JvmFcxinES69t0-
-ZCFMUY95pnAZwPhfPw-f0sVo90NcoObGQexPxuBgNifnDnZ2__8E3ofnP1PniyxBWNxtJQtiC0Zi9OnbElsxVhcUMpWxNaMxR2mbE1sw1hcc8o2xLaMxUukbEtsx1g8Vsp2xPaMxXumbH9n-SX8wQNKYZ4t6zhd45nI4B3I4KLJ4CbJ4KrI4C
-7I4LBkcBoyWJeMb-TrnN0yYyJfXvGTOh_uzujQi4dWh348LHToycNSh748rHTozcNah_48bHSYg4etDvPwsNNhLh72Os7n05_P-VcuX_NVnpX6A9Vf8ck=&lang=sage
-             */
             float nx = x;
             return (nx * nx * nx * nx * nx * nx);
 
