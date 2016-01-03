@@ -84,24 +84,24 @@ public final class ConceptProcess implements Premise {
             belief = null;
         }
 
-        //if (beliefAttempts[0] == 0) {
-            //belief = null
+//        if (beliefAttempts[0] == 0) {
             cp.accept(new ConceptProcess(nar, concept,
                     taskLink, termLink, belief));
-            //return 1;
-        //}
 
-        return beliefAttempts[0]+1;
+//            return 1;
+//        } else {
+            return beliefAttempts[0]+1;
+//        }
 
     }
 
-    /**
-     * @return the current termLink aka BeliefLink
-     */
-    @Override
-    public final BagBudget<Termed> getTermLink() {
-        return termLink;
-    }
+//    /**
+//     * @return the current termLink aka BeliefLink
+//     */
+//    @Override
+//    public final BagBudget<Termed> getTermLink() {
+//        return termLink;
+//    }
 
 
 

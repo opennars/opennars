@@ -1,6 +1,5 @@
 package nars;
 
-import nars.bag.BagBudget;
 import nars.concept.Concept;
 import nars.nal.Level;
 import nars.nal.LocalRules;
@@ -9,7 +8,6 @@ import nars.task.MutableTask;
 import nars.task.Task;
 import nars.task.Tasked;
 import nars.term.Term;
-import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
 import nars.term.transform.MapSubst;
@@ -38,8 +36,8 @@ public interface Premise extends Level, Tasked {
             if (Tense.matchingOrder(question, solution)) {
                 Term[] u = {question.term(), solution.term()};
                 unify(Op.VAR_QUERY, u, nar.memory, (st) -> {
-                    Task s;
-                    s = !st.equals(solution.term()) ? MutableTask.clone(solution).term((Compound) st) : solution;
+                    Task s = !st.equals(solution.term()) ?
+                            MutableTask.clone(solution).term((Compound) st) : solution;
                     LocalRules.trySolution(question, s, nar, eachSolution);
                 });
             }
@@ -106,7 +104,7 @@ public interface Premise extends Level, Tasked {
 
                 solution.accept(t[1]);
 
-                return false; //just the first
+                return true; //determines how many
             }
 
             Term applySubstituteAndRenameVariables(Compound t, Map<Term,Term> subs) {
@@ -116,6 +114,7 @@ public interface Premise extends Level, Tasked {
             }
 
         };
+
         f.matchAll(t[0], t[1]);
     }
 
@@ -135,7 +134,7 @@ public interface Premise extends Level, Tasked {
 
     Concept getConcept();
 
-    BagBudget<Termed> getTermLink();
+    //BagBudget<Termed> getTermLink();
 
     //TaskLink getTaskLink();
 

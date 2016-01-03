@@ -7,9 +7,9 @@ import nars.nar.AbstractNAR;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.term.Termed;
-import nars.term.compound.Compound;
 import nars.util.graph.TermLinkGraph;
 import nars.util.meter.TestNAR;
+import org.jetbrains.annotations.NotNull;
 import org.jgrapht.alg.StrongConnectivityInspector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,24 +76,27 @@ public class LinkageTest extends AbstractNALTester {
 //        tester.mustBelieve(10,"<a --> b>",0.9f);
     }
 
+    public void ProperlyLinkedIndirectlyTest(String spremise1, String spremise2) throws Exception {
+        ProperlyLinkedIndirectlyTest(spremise1, '.',  spremise2);
+    }
 
     //interlinked with an intermediate concept, this is needed in order to select one as task and the other as belief
-    public void ProperlyLinkedIndirectlyTest(String spremise1, String spremise2) throws Exception {
+    public void ProperlyLinkedIndirectlyTest(String spremise1, char punc, String spremise2) throws Exception {
 
 
         NAR nar = test().nar;
 
-        Compound premise1 = nar.term(spremise1);
+        Term premise1 = nar.term(spremise1);
         assertNotNull(premise1);
         assertEquals(nar.term(spremise1), premise1);
 
-        Compound premise2 = nar.term(spremise2);
+        Term premise2 = nar.term(spremise2);
         assertNotNull(premise2);
         assertEquals(nar.term(spremise2), premise2);
 
-        nar.believe(premise1,1.0f,0.9f); //.en("If robin is a type of bird then robin can fly.");
-        nar.believe(premise2,1.0f,0.9f); //.en("Robin is a type of bird.");
-        nar.frame(1); //TODO: why does it take 30 cycles till premise1="<<$1 --> bird> ==> <$1 --> animal>>", premise2="<tiger --> animal>" is conceptualized?
+        nar.input(getTask(punc, premise1));
+        nar.input(getTask(punc, premise2));
+        nar.frame(1);
 
         //List<String> fails = new ArrayList();
 
@@ -128,7 +131,16 @@ public class LinkageTest extends AbstractNALTester {
 
     }
 
-    public boolean linksIndirectly(NAR nar, Compound premise2, Concept ret) {
+    @NotNull
+    public String getTask(char punc, Term premise1) {
+        if (punc=='?') {
+            return premise1.toString() + String.valueOf(punc);
+        } else {
+            return premise1.toString() + String.valueOf(punc) + " %1.0;0.9%";
+        }
+    }
+
+    public boolean linksIndirectly(NAR nar, Term premise2, Concept ret) {
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
             for (Termed entry : ret.getTermLinks()) {
@@ -307,7 +319,15 @@ public class LinkageTest extends AbstractNALTester {
 
     @Test
     public void Indirect_Linkage_Layer2_Basic_WithVar2() throws Exception {
-        ProperlyLinkedIndirectlyTest("<a --> <b --> <#1 --> x>>>", "<k --> x>");
+        ProperlyLinkedIndirectlyTest("<a --> <b --> <#1 --> x>>>", '.', "<k --> x>");
+    }
+    @Test
+    public void Indirect_Linkage_Layer2_Basic_WithVar2_Goal() throws Exception {
+        ProperlyLinkedIndirectlyTest("<a --> <b --> <#1 --> x>>>", '!', "<k --> x>");
+    }
+    @Test
+    public void Indirect_Linkage_Layer2_Basic_WithVar2_Question() throws Exception {
+        ProperlyLinkedIndirectlyTest("<a --> <b --> <#1 --> x>>>", '?', "<k --> x>");
     }
 
     public void testConceptFormed(String s) throws Exception {

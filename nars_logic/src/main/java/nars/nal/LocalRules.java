@@ -277,11 +277,13 @@ public class LocalRules {
         //nal.nar().input(sol); //is this necessary? i cant find any reason for reinserting to input onw that it's part of the concept's belief/goal tables
         //}
 
-        Task finalSol = sol;
+        Task finalSolution = sol;
+        //defer this event until after frame ends so reasoning in this cycle may continue
         nal.beforeNextFrame(() -> {
-            //defer this event until after frame ends so reasoning in this cycle may continue
-            memory.eventAnswer.emit(Tuples.twin(question, finalSol));
+            nal.input(finalSolution);
+            memory.eventAnswer.emit(Tuples.twin(question, finalSolution));
         });
+
     }
 
 
