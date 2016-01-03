@@ -20,7 +20,7 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
 import nars.term.Term;
-import nars.term.compile.TermIndex;
+import nars.term.compile.TermBuilder;
 import nars.term.compound.Compound;
 
 /**
@@ -29,7 +29,7 @@ import nars.term.compound.Compound;
 public class add extends TermFunction<Integer> implements Mental {
 
     @Override
-    public Integer function(Compound o, TermIndex i) {
+    public Integer function(Compound o, TermBuilder i) {
 
         Term[] x = o.terms();
 

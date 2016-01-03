@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 public class NAL6Test extends AbstractNALTester {
 
 
-    final int cycles =150;
+    final int cycles =350;
 
     public NAL6Test(Supplier<NAR> b) {
         super(b);
@@ -260,8 +260,8 @@ public class NAL6Test extends AbstractNALTester {
         tester.believe("(&&,<#x --> key>,<{lock1} --> (/,open,#x,_)>)"); //en("Lock-1 can be opened by some key.");
         tester.believe("<{lock1} --> lock>"); //en("Lock-1 is a lock.");
 
-        //tester.mustBelieve(cycles, "(&&,<#1 --> key>,<#2 --> lock>,<#2 --> (/,open,#1,_)>)", 1.00f, 0.81f); //en("There is a key that can open some lock.");
-        tester.mustBelieve(cycles, "(&&, <#1 --> lock>, <#1 --> (/, open, #2, _)>, <#2 --> key>)", 1.00f, 0.81f); //en("There is a key that can open some lock.");
+        tester.mustBelieve(cycles, "(&&,<#1 --> key>,<#2 --> lock>,<#2 --> (/,open,#1,_)>)", 1.00f, 0.81f); //en("There is a key that can open some lock.");
+        //tester.mustBelieve(cycles, "(&&, <#1 --> lock>, <#1 --> (/, open, #2, _)>, <#2 --> key>)", 1.00f, 0.81f); //en("There is a key that can open some lock.");
 
         tester.mustBelieve(cycles, "<<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>", 1.00f, 0.45f); //en("I guess every lock can be opened by some key.");
 

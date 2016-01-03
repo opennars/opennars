@@ -3,7 +3,7 @@ package nars.nal.op;
 import nars.Op;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.term.compile.TermIndex;
+import nars.term.compile.TermBuilder;
 import nars.term.compound.Compound;
 import nars.term.transform.MapSubst;
 import nars.term.transform.Subst;
@@ -17,7 +17,7 @@ public class substitute extends ImmediateTermTransform {
 
 
 
-    @Override public Term function(Compound p, TermIndex i) {
+    @Override public Term function(Compound p, TermBuilder i) {
         final Term[] xx = p.terms();
 
         //term to possibly transform
@@ -32,14 +32,14 @@ public class substitute extends ImmediateTermTransform {
         return subst(i, term, x, y);
     }
 
-    public static Term subst(TermIndex i, Term term, Term x, Term y) {
+    public static Term subst(TermBuilder i, Term term, Term x, Term y) {
         if (x.equals(y))
             return term;
 
         return subst(i, new MapSubst(x, y), term);
     }
 
-    public static Term subst(TermIndex i, Subst m, Term term) {
+    public static Term subst(TermBuilder i, Subst m, Term term) {
         return i.apply(m, term);
     }
 

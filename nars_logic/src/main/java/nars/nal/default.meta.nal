@@ -367,9 +367,9 @@
 //Introduce variables by common subject or predicate
 
     (S --> M), (P --> M), neq(S,P) |- ((P --> $X) ==> (S --> $X)), (Truth:Abduction),
-                                            ((S --> $X) ==> (P --> $X)), (Truth:Induction),
-                                            ((P --> $X) <=> (S --> $X)), (Truth:Comparison),
-                                            (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection)
+                                      ((S --> $X) ==> (P --> $X)), (Truth:Induction),
+                                      ((P --> $X) <=> (S --> $X)), (Truth:Comparison),
+                                      (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection)
 
     (S --> M), (P --> M), neq(S,P), measure_time(I) |- ((&/,(P --> $X),I) =/> (S --> $X)), (Truth:Abduction),
                                                              ((S --> $X) =\> (&/,(P --> $X),I)), (Truth:Induction),

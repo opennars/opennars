@@ -10,7 +10,7 @@ import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.term.compile.TermIndex;
+import nars.term.compile.TermBuilder;
 import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -58,7 +58,7 @@ public abstract class TermFunction<O> extends SyncOperator {
      * @param x
      * @param i
      */
-    public abstract O function(Compound x, TermIndex i);
+    public abstract O function(Compound x, TermBuilder i);
 
 
     protected List<Task> result(NAR nar, Task opTask, Term y/*, Term[] x0, Term lastTerm*/) {

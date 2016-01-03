@@ -246,14 +246,15 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
 
                 PremiseRule preNorm = new PremiseRule((Compound) $(src));
 
-                PremiseRule r = eachRule(ur, preNorm, src, index);
+                PremiseRule r = add(ur, preNorm, src, index);
 
-                if (r == null)
-                    throw new RuntimeException("unnormalizable task: " + src);
+                if (r.allowBackward)
+                    addQuestions(ur, r, src, index);
 
-                eachRule(ur, r, src, index);
-
-                eachRule(ur, r.forwardPermutation(index), src, index);
+                PremiseRule f = r.forwardPermutation();
+                if (r.allowBackward)
+                    addQuestions(ur, f, src, index);
+                add(ur, f, src, index);
 
 
             } catch (Exception ex) {
@@ -265,7 +266,7 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
         return ur;
     }
 
-    private static PremiseRule eachRule(Collection<PremiseRule> target, PremiseRule r, String src, PatternIndex patterns) {
+    private static void addQuestions(Collection<PremiseRule> target, PremiseRule r, String src, PatternIndex patterns) {
 //        if (rNorm == null)
 //            throw new RuntimeException("invalid rule, detected after normalization: " + s);
 //
@@ -281,7 +282,7 @@ public class PremiseRuleSet extends FastList<PremiseRule> {
         });
 
         //addRule(c, r.normalizeRule(), src);
-        return add(target, r, src, patterns);
+        //return add(target, r, src, patterns);
     }
 
     static PremiseRule add(Collection<PremiseRule> target, PremiseRule q, String src, PatternIndex index) {

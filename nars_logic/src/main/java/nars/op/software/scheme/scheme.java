@@ -12,7 +12,7 @@ import nars.op.software.scheme.expressions.NumberExpression;
 import nars.op.software.scheme.expressions.SymbolExpression;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.term.compile.TermIndex;
+import nars.term.compile.TermBuilder;
 import nars.term.compound.Compound;
 
 import java.util.List;
@@ -76,7 +76,7 @@ public class scheme extends TermFunction {
     };
 
     @Override
-    public Term function(Compound o, TermIndex i) {
+    public Term function(Compound o, TermBuilder i) {
         Term[] x = Operator.opArgsArray(o);
         Term code = x[0];
 

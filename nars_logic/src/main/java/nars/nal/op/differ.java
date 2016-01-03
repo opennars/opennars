@@ -2,15 +2,16 @@ package nars.nal.op;
 
 import nars.term.Term;
 import nars.term.TermContainer;
-import nars.term.TermVector;
-import nars.term.compile.TermIndex;
+import nars.term.TermSet;
+import nars.term.compile.TermBuilder;
 import nars.term.compound.Compound;
 
 public class differ extends BinaryTermOperator/*implements BinaryOperator<Term>*/ {
 
     @Override
-    public Term apply(Term a, Term b, TermIndex i) {
-        return i.newTerm(a.op(), new TermVector(TermContainer.difference(
+    public Term apply(Term a, Term b, TermBuilder i) {
+        //TODO construct TermSet directly
+        return i.newTerm(a.op(), TermSet.the(TermContainer.difference(
                 (Compound) a, (Compound) b
         )));
     }

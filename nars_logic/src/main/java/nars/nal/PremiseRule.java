@@ -23,10 +23,13 @@ import nars.term.constraint.NotEqualsConstraint;
 import nars.term.constraint.NotOpConstraint;
 import nars.term.match.Ellipsis;
 import nars.term.transform.CompoundTransform;
+import nars.term.transform.MapSubst;
 import nars.term.transform.VariableNormalization;
 import nars.term.variable.Variable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import static nars.term.Terms.concat;
@@ -59,7 +62,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
         @Override
         public boolean booleanValueOf(PremiseMatch versioneds) {
-            return false;
+            return true;
         }
 
         @Override public String toString() {
@@ -122,7 +125,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
     protected final void ensureValid() {
 
-        if (getConclusionTerm().containsTemporal()) {
+        if (getConclusionTermPattern().containsTemporal()) {
             if ((!getTaskTermPattern().containsTemporal())
                     &&
                     (!getBeliefTermPattern().containsTemporal())) {
@@ -145,7 +148,7 @@ public class PremiseRule extends GenericCompound implements Level {
             throw new RuntimeException("rule's task term pattern has no pattern variable");
         if (!Variable.hasPatternVariable(getBelief()))
             throw new RuntimeException("rule's task belief pattern has no pattern variable");
-        if (!Variable.hasPatternVariable(getConclusionTerm()))
+        if (!Variable.hasPatternVariable(getConclusionTermPattern()))
             throw new RuntimeException("rule's conclusion belief pattern has no pattern variable");
     }
 
@@ -211,7 +214,7 @@ public class PremiseRule extends GenericCompound implements Level {
         return getPremise().term(1);
     }
 
-    protected final Term getConclusionTerm() {
+    protected final Term getConclusionTermPattern() {
         return getConclusion().term(0);
     }
 
@@ -428,7 +431,7 @@ public class PremiseRule extends GenericCompound implements Level {
                 case "task":
                     switch (arg1.toString()) {
                         case "negative":
-                            preNext = new TaskNegative();
+                            preNext = TaskNegative.the;
                             break;
                         case "\"?\"":
                             preNext = TaskPunctuation.TaskQuestion;
@@ -541,15 +544,15 @@ public class PremiseRule extends GenericCompound implements Level {
             return;
         }*/
 
-        if(!allowBackward) { //explicitely stated in the rules now
-            return;
-        }
+//        if(!allowBackward) { //explicitely stated in the rules now
+//            return;
+//        }
 
         // T, B, [pre] |- C, [post] ||--
 
-        Term T = getTask();
-        Term B = getBelief();
-        Term C = getConclusionTerm();
+        Term T = getTaskTermPattern();
+        Term B = getBeliefTermPattern();
+        Term C = getConclusionTermPattern();
 
         //      C, B, [pre], task_is_question() |- T, [post]
         PremiseRule clone1 = clone(C, B, T, true);
@@ -578,41 +581,51 @@ public class PremiseRule extends GenericCompound implements Level {
      * for each calculable "question reverse" rule,
      * supply to the consumer
      */
-    public final PremiseRule forwardPermutation(PatternIndex index) {
+    public final PremiseRule forwardPermutation() {
 
         // T, B, [pre] |- C, [post] ||--
 
-        Term T = getTask();
-        Term B = getBelief();
-        Term C = getConclusionTerm();
+        Term T = getTaskTermPattern();
+        Term B = getBeliefTermPattern();
+        Term C = getConclusionTermPattern();
 
         //      B, T, [pre], task_is_question() |- T, [post]
 
-        PremiseRule clone1 = clone(B, T, C, false);
-        return clone1.normalizeRule(index);
+        return clone(B, T, C, false);
     }
 
     private PremiseRule clone(Term newT, Term newB, Term newR, boolean question) {
 
-        Compound newPremise = null;
-        newPremise = question ?
-                $.p(
-                    concat(getPremise().terms(), TaskPunctuation.TaskQuestionTerm)
-                ) :
-                $.p(getPremise().terms());
+        Map<Term,Term> m = new HashMap(3);
+        m.put(getTaskTermPattern(), newT);
+        m.put(getBeliefTermPattern(), newB);
+        m.put(getConclusionTermPattern(), newR);
 
-        /*if (StringUtils.countMatches(newPremise.toString(), "task(\"") > 1) {
-            System.err.println(newPremise);
-        }*/
+        Compound remapped = (Compound)$.terms.transform(this, new MapSubst(m), false);
 
-        newPremise.terms()[0] = newT;
-        newPremise.terms()[1] = newB;
+        //Append taskQuestion
+        Compound pc = (Compound) remapped.term(0);
+        Term[] pp = pc.terms(); //premise component
+        Compound newPremise = question ?
+                $.p(concat(pp, TaskPunctuation.TaskQuestionTerm) ) :
+                pc;
 
-        Term[] newConclusion = getConclusion().terms().clone();
-        newConclusion[0] = newR;
+        return new PremiseRule(newPremise, (Compound)remapped.term(1));
 
 
-        return new PremiseRule(newPremise, $.p( newConclusion ));
+//
+//        /*if (StringUtils.countMatches(newPremise.toString(), "task(\"") > 1) {
+//            System.err.println(newPremise);
+//        }*/
+//
+//        newPremise.terms()[0] = newT;
+//        newPremise.terms()[1] = newB;
+//
+//        Term[] newConclusion = getConclusion().terms().clone();
+//        newConclusion[0] = newR;
+//
+//
+//        return new PremiseRule(newPremise, $.p( newConclusion ));
     }
 
 //    /**

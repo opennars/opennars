@@ -4,7 +4,7 @@ import nars.$;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.term.compile.TermIndex;
+import nars.term.compile.TermBuilder;
 import nars.term.compound.Compound;
 
 /**
@@ -14,7 +14,7 @@ public class jclass extends TermFunction {
 
     final Termizer termizer = new DefaultTermizer();
 
-    @Override public Object function(Compound x, TermIndex i) {
+    @Override public Object function(Compound x, TermBuilder i) {
 
         try {
             Term t = x.term(0);

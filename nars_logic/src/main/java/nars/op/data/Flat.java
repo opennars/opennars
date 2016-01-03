@@ -5,7 +5,7 @@ import nars.Op;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
-import nars.term.compile.TermIndex;
+import nars.term.compile.TermBuilder;
 import nars.term.compound.Compound;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.List;
 public abstract class Flat extends TermFunction {
 
     @Override
-    public Term function(Compound op, TermIndex i) {
+    public Term function(Compound op, TermBuilder i) {
         List<Term> l = new ArrayList();
         collect(Operator.opArgsArray(op), l);
         return result(l);

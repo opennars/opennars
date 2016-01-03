@@ -22,6 +22,7 @@ import nars.task.in.TextInput;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.atom.Atom;
+import nars.term.compile.TermBuilder;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.time.Clock;
@@ -477,7 +478,7 @@ public abstract class NAR implements Serializable, Level {
         return onExec(operator, new TermFunction(operator) {
 
             @Override
-            public Object function(Compound x, TermIndex i) {
+            public Object function(Compound x, TermBuilder i) {
                 return func.apply(x.terms());
             }
 

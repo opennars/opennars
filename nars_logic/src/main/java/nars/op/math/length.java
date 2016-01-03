@@ -21,7 +21,7 @@ import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
 import nars.term.Term;
-import nars.term.compile.TermIndex;
+import nars.term.compile.TermBuilder;
 import nars.term.compound.Compound;
 
 /**
@@ -43,7 +43,7 @@ public class length extends TermFunction<Integer> implements Mental {
     //TODO 'volume' of any term
 
     @Override
-    public Integer function(Compound o, TermIndex i) {
+    public Integer function(Compound o, TermBuilder i) {
         Term[] x = Operator.opArgsArray(o);
         Term content = x[0];
         /*if (!(content instanceof SetExt) && !(content instanceof SetInt)) {

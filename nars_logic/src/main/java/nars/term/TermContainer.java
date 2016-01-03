@@ -34,6 +34,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     default MutableSet<Term> toSet() {
         return Sets.mutable.of(terms());
     }
+
     static MutableSet<Term> intersect(TermContainer a, TermContainer b) {
         return Sets.intersect(a.toSet(),b.toSet());
     }

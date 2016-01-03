@@ -10,6 +10,12 @@ import nars.task.Task;
  */
 public final class TaskNegative extends AtomicBooleanCondition<PremiseMatch> {
 
+    public static final TaskNegative the = new TaskNegative();
+
+    private TaskNegative() {
+        super();
+    }
+
     @Override
     public boolean booleanValueOf(PremiseMatch m) {
         Task task = m.premise.getTask();

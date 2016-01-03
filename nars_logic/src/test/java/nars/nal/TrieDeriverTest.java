@@ -64,4 +64,15 @@ public class TrieDeriverTest {
         return d;
     }
 
+    @Test public void testBackwardsRules() {
+        String r = "(A --> B), (B --> C), neq(A,C) |- (A --> C), (Truth:Deduction, Desire:Strong, Derive:AllowBackward)";
+        TrieDeriver d = testRule(r);
+        //d.trie.printSummary();
+
+        Default n = testRule(r, "b:a.", "a:c.", "a:b?" );
+        //n.log();
+        n.frame(15);
+
+        //TODO write test
+    }
 }

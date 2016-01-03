@@ -1,17 +1,27 @@
 package nars.term.compile;
 
 import com.gs.collections.api.set.MutableSet;
+import nars.Global;
 import nars.Op;
+import nars.nal.PremiseAware;
+import nars.nal.PremiseMatch;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
+import nars.nal.nal8.Operator;
+import nars.nal.op.ImmediateTermTransform;
 import nars.term.*;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
+import nars.term.match.Ellipsis;
+import nars.term.match.EllipsisMatch;
 import nars.term.transform.CompoundTransform;
+import nars.term.transform.Subst;
 import nars.term.transform.VariableNormalization;
+import nars.term.variable.Variable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeSet;
 
 import static java.util.Arrays.copyOfRange;
@@ -364,7 +374,8 @@ public interface TermBuilder {
 
                 return null;
             default:
-                throw new RuntimeException("invalid statement arguments");
+                return null;
+                //throw new RuntimeException("invalid statement arguments: " + Arrays.toString(t));
         }
     }
 
@@ -521,4 +532,91 @@ public interface TermBuilder {
         }
 
     }
+
+    /** returns the resolved term according to the substitution    */
+    default Term transform(Compound src, Subst f, boolean fullMatch) {
+
+        Term y = f.getXY(src);
+        if (y!=null)
+            return y;
+
+        int len = src.size();
+
+        List<Term> sub = Global.newArrayList(len /* estimate */);
+
+        for (int i = 0; i < len; i++) {
+            Term t = src.term(i);
+            if (!apply(t, f, sub)) {
+                if (fullMatch)
+                    return null;
+            }
+        }
+
+        if (sub.size() > 0) {
+            //check if last item is a shim, if so, remove it
+            if (sub.get(sub.size()-1).equals(Ellipsis.Shim))
+                sub = sub.subList(0, sub.size()-1);
+        }
+
+        Term result = newTerm(src, TermContainer.the(src.op(), sub));
+
+        //apply any known immediate transform operators
+        //TODO decide if this is evaluated incorrectly somehow in reverse
+        if (Op.isOperation(result)) {
+            ImmediateTermTransform tf = f.getTransform(Operator.operatorTerm((Compound)result));
+            if (tf!=null) {
+                return applyImmediateTransform(f, result, tf);
+            }
+        }
+
+        return result;
+    }
+
+
+
+    default Term applyImmediateTransform(Subst f, Term result, ImmediateTermTransform tf) {
+
+        //Compound args = (Compound) Operator.opArgs((Compound) result).apply(f);
+        Compound args = Operator.opArgs((Compound) result);
+
+        return ((tf instanceof PremiseAware) && (f instanceof PremiseMatch)) ?
+                ((PremiseAware) tf).function(args, (PremiseMatch) f) :
+                tf.function(args, this);
+    }
+
+
+    default Term apply(Subst f, Term src) {
+        if (src instanceof Compound) {
+            return transform((Compound)src, f, false);
+        } else if (src instanceof Variable) {
+            Term x = f.getXY(src);
+            if (x != null)
+                return x;
+        }
+
+        return src;
+
+    }
+
+
+    /** resolve the this term according to subst by appending to sub.
+     * return false if this term fails the substitution */
+    default boolean apply(Term src, Subst f, Collection<Term> sub) {
+        Term u = apply(f, src);
+        if (u == null) {
+            u = src;
+        }
+        /*else
+            changed |= (u!=this);*/
+
+        if (u instanceof EllipsisMatch) {
+            EllipsisMatch m = (EllipsisMatch)u;
+            m.apply(sub);
+        } else {
+            sub.add(u);
+        }
+
+        return true;
+    }
+
 }
