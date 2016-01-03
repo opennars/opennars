@@ -71,7 +71,7 @@ public class GetTruth extends PreCondition {
         Task belief = premise.getBelief();
         ProjectedTruth projtruth = null;
         if(belief!=null) {
-            projtruth = belief.projection(belief.getOccurrenceTime(), match.premise.memory().time());
+            projtruth = belief.projection(task.getOccurrenceTime(), match.premise.memory().time());
         }
 
 
@@ -79,7 +79,7 @@ public class GetTruth extends PreCondition {
         Truth B = belief == null ? null : belief.getTruth();
 
         //we always project the belief truth to the task truth except in case where measure_time is used
-        if(match.rule.project_eternalize && belief!=null) {
+        if(/*match.rule.project_eternalize &&*/ belief!=null) {
             B = projtruth;
         }
 
