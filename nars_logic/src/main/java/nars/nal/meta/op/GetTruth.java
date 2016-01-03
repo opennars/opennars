@@ -8,7 +8,9 @@ import nars.nal.meta.DesireFunction;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TruthFunction;
 import nars.task.Task;
+import nars.truth.ProjectedTruth;
 import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 
 /**
  * Created by me on 11/28/15.
@@ -67,11 +69,19 @@ public class GetTruth extends PreCondition {
 
 
         Task belief = premise.getBelief();
+        ProjectedTruth projtruth = null;
+        if(belief!=null) {
+            projtruth = belief.projection(belief.getOccurrenceTime(), match.premise.memory().time());
+        }
 
 
         final Truth T = task.getTruth();
-        final Truth B = belief == null ? null : belief.getTruth();
+        Truth B = belief == null ? null : belief.getTruth();
 
+        //we always project the belief truth to the task truth except in case where measure_time is used
+        if(match.rule.project_eternalize && belief!=null) {
+            B = projtruth;
+        }
 
         /** calculate derived task punctuation */
         char punct = puncOverride;

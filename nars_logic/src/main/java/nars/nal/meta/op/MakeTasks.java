@@ -104,15 +104,10 @@ public final class MakeTasks extends PreCondition {
         if (deriving != null) {
 
             final long now = premise.time();
-            final long occ;
 
             final long occurence_shift = post.occurence_shift;
-            if (occurence_shift > Stamp.TIMELESS) {
-                occ = task.getOccurrenceTime() + occurence_shift;
-            } else {
-                occ = task.getOccurrenceTime(); //inherit premise task's
-            }
-
+            long shift = (occurence_shift > Stamp.TIMELESS && task.getOccurrenceTime() != Stamp.ETERNAL) ? occurence_shift : 0;
+            final long occ = task.getOccurrenceTime() + shift;
 
             if (occ != Stamp.ETERNAL && premise.isEternal() && !premise.nal(7)) {
                 throw new RuntimeException("eternal premise " + premise + " should not result in non-eternal occurence time: " + deriving + " via rule " + rule);
@@ -125,7 +120,6 @@ public final class MakeTasks extends PreCondition {
                     .time(now, occ)
                     .parent(task, belief /* null if single */)
             );
-
 
             if (derived != null) {
                 //potential anticipation
