@@ -24,9 +24,9 @@ public class TestChamber {
     //TIMING
     static int narFrameRate = 30;
     public static boolean ComplexFeedback = true;
-    int gridUpdatePeriod = 2;
-    int automataPeriod = 2;
-    int agentPeriod = 2;
+    int gridUpdatePeriod = 4;
+    int automataPeriod = 4;
+    int agentPeriod = 4;
     static long guiUpdateTime = 25; /* milliseconds */
 
     //OPTIONS

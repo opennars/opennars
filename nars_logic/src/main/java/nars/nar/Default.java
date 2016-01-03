@@ -298,9 +298,9 @@ public class Default extends NAR {
         m.termLinkThreshold.set(Global.BUDGET_EPSILON);
         m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
 
-        m.executionExpectationThreshold.set(0.3);
+        m.executionExpectationThreshold.set(0.5);
 
-        m.shortTermMemoryHistory.set(2);
+        m.shortTermMemoryHistory.set(3);
     }
 
     public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
