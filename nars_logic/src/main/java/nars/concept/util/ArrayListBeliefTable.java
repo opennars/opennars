@@ -84,7 +84,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
 
-
     /**
      * merges an input task with this belief table.
      * ordinarily this should never return null.
@@ -107,7 +106,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
          * involves 3 potentially unique tasks:
          * input, strongest, revised (created here and returned)
          */
-
 
 
         //empty (special case)
@@ -134,7 +132,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
         //TODO make sure input.isDeleted() can not happen
-        if ( added && revisible(input, top) ) {
+        if (added && revisible(input, top)) {
 
             Task revised = getRevision(input, top, now);
 
@@ -186,33 +184,33 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         int i = 0;
 
-            for (Task b; null != (b = tasks[i++]); ) {
-                if (b == input)
-                    return false;
+        for (Task b; null != (b = tasks[i++]); ) {
+            if (b == input)
+                return false;
 
-                if (b.equals(input)) {
-                    //these should be preventable earlier
-                    onBeliefRemoved(input, "Duplicate", memory);
-                    if (Global.DEBUG) {
-                        checkForDeleted();
-                    }
-                    return false;
+            if (b.equals(input)) {
+                //these should be preventable earlier
+                onBeliefRemoved(input, "Duplicate", memory);
+                if (Global.DEBUG) {
+                    checkForDeleted();
                 }
-
-                float existingRank = r.rank(b, rankInput);
-
-                boolean inputGreater = Float.isNaN(existingRank) || (rankInput > existingRank);
-                if (inputGreater) {
-                    break; //item will be inserted at this index
-                } else if (input.isInput() && Util.equal(rankInput, existingRank, RANK_EPSILON)) {
-                    //allow a newer task to override an older one of the same rank
-                    //if it is input (any other conditions?)
-                    if (input.getCreationTime() > b.getCreationTime())
-                        break; //item will be inserted at this index
-                }
+                return false;
             }
-            i--; //-1 is correct since after the above for loop it will be 1 ahead
 
+            float existingRank = r.rank(b, rankInput);
+
+            boolean inputGreater = Float.isNaN(existingRank) || (rankInput > existingRank);
+            if (inputGreater) {
+                break; //item will be inserted at this index
+            } else if (input.isInput() && Util.equal(rankInput, existingRank, RANK_EPSILON)) {
+                //allow a newer task to override an older one of the same rank
+                //if it is input (any other conditions?)
+                if (input.getCreationTime() > b.getCreationTime())
+                    break; //item will be inserted at this index
+            }
+        }
+
+        i--; //-1 is correct since after the above for loop it will be 1 ahead
 
 
         if (atCapacity) {
@@ -236,7 +234,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
     private void checkForDeleted() {
 
-        data.forEach( (Task dt) -> {
+        data.forEach((Task dt) -> {
 //            if (dt == null)
 //                throw new RuntimeException("wtf");
             if (dt == null || dt.isDeleted()) {
@@ -380,7 +378,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //
 //        return true;
 //    }
-
 
 
 //    /**

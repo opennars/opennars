@@ -22,6 +22,12 @@ public class TemporalTaskCondition extends EternalTaskCondition {
         this.occStart = occStart;
         this.occEnd = occEnd;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + toConditionString();
+    }
+
     @Override
     public String toConditionString() {
         return  "  freq in(" + freqMin + ',' + freqMax +

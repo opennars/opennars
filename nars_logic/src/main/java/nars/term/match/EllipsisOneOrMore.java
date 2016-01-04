@@ -1,5 +1,7 @@
 package nars.term.match;
 
+import nars.$;
+import nars.Op;
 import nars.term.transform.VariableNormalization;
 import nars.term.variable.Variable;
 
@@ -10,6 +12,11 @@ public class EllipsisOneOrMore extends Ellipsis {
 
     public EllipsisOneOrMore(Variable name) {
         this(name, "..+");
+    }
+
+    @Override
+    public Variable normalize(int serial) {
+        return new EllipsisOneOrMore($.v(Op.VAR_PATTERN, serial));
     }
 
     @Override

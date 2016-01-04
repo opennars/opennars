@@ -7,6 +7,8 @@ import org.magnos.trie.Trie;
 import org.magnos.trie.TrieNode;
 import org.magnos.trie.TrieSequencer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 import static com.sun.org.apache.xerces.internal.impl.xs.opti.SchemaDOM.indent;
@@ -18,9 +20,12 @@ abstract public class TermTrie<K extends Term, V> {
 
     public final Trie<List<K>, V> trie;
 
-
     public void printSummary() {
-        printSummary(trie.root);
+        printSummary(System.out);
+    }
+
+    public void printSummary(PrintStream out) {
+        printSummary(trie.root, out);
     }
 
 
@@ -63,7 +68,7 @@ abstract public class TermTrie<K extends Term, V> {
     /** called for each item on insert */
     abstract public void index(V v);
 
-    public static <A, B> void printSummary(TrieNode<List<A>,B> node) {
+    public static <A, B> void printSummary(TrieNode<List<A>,B> node, PrintStream out) {
 
         node.forEach(n -> {
             List<A> seq = n.getSequence();
@@ -72,16 +77,21 @@ abstract public class TermTrie<K extends Term, V> {
             int to = n.getEnd();
 
 
-            System.out.print(n.getChildCount() + "|" + n.getSize() + "  ");
+            out.print(n.getChildCount() + "|" + n.getSize() + "  ");
 
             indent(from * 2);
 
-            System.out.println(Joiner.on(", ").join( seq.subList(from, to)));
+            out.println(Joiner.on(", ").join( seq.subList(from, to)));
 
-            printSummary(n);
+            printSummary(n, out);
         });
 
     }
 
 
+    public String getSummary() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        printSummary(new PrintStream(baos));
+        return baos.toString();
+    }
 }

@@ -105,11 +105,19 @@ public abstract class Variable extends AbstractStringAtom {
         return 0;
     }
 
+    /** produce a normalized version of this identified by the serial integer */
+    public abstract Variable normalize(int serial);
+
 
     public static final class VarDep extends Variable {
 
         public VarDep(String name) {
             super(Op.VAR_DEP.ch + name);
+        }
+
+        @Override
+        public Variable normalize(int serial) {
+            return $.v(Op.VAR_DEP, serial);
         }
 
         @Override
@@ -146,6 +154,11 @@ public abstract class Variable extends AbstractStringAtom {
         }
 
         @Override
+        public Variable normalize(int serial) {
+            return $.v(Op.VAR_INDEP, serial);
+        }
+
+        @Override
         public Op op() {
             return Op.VAR_INDEP;
         }
@@ -177,6 +190,11 @@ public abstract class Variable extends AbstractStringAtom {
 
         public VarQuery(String name) {
             super(Op.VAR_QUERY.ch + name);
+        }
+
+        @Override
+        public Variable normalize(int serial) {
+            return $.v(Op.VAR_QUERY, serial);
         }
 
         @Override

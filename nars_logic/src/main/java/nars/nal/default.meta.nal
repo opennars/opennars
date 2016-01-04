@@ -417,7 +417,7 @@
 
 //conditional abduction by dependent variable
 
-    ((X --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R),A..+) ==> Z) |- (X --> B), (Truth:Abduction)
+    ((X --> R) ==> Z), ((&&,A..+,(#Y --> B),(#Y --> R)) ==> Z) |- (X --> B), (Truth:Abduction)
     ((X --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R)) ==> Z) |- (X --> B), (Truth:Abduction)
 
 // conditional deduction "An inverse inference has been implemented as a form of deduction" https://code.google.com/p/open-nars/issues/detail?id=40&can=1

@@ -4,6 +4,7 @@ import nars.NAR;
 import nars.nar.Default;
 import org.junit.Test;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -19,17 +20,18 @@ public class TrieDeriverTest {
     final String rN = "(C --> {A..+}), (C --> {B..+}) |- (C --> {A..+,B..+}), (Truth:Union), (C --> intersect({A..+},{B..+})), (Truth:Intersection)";
 
 
-
-    @Test public void testNAL3Rule() {
+    @Test
+    public void testNAL3Rule() {
 
         NAR x = testRuleInputs(r1, r1Case);
 
-        assertEquals(1, ((TrieDeriver)(((Default)x).core.der)).roots.length);
+        assertEquals(1, ((TrieDeriver) (((Default) x).core.der)).roots.length);
 
         x.log().frame(4);
     }
 
-    @Test public void testTriePreconditions0() {
+    @Test
+    public void testTriePreconditions0() {
         TrieDeriver d = testRule(r0);
         TrieDeriver e = testRule(r1);
         TrieDeriver f = testRule(rN);
@@ -53,7 +55,8 @@ public class TrieDeriverTest {
 
     public Default testRuleInputs(TrieDeriver d, String... inputs) {
         return (Default) new Default() {
-            @Override protected Deriver newDeriver() {
+            @Override
+            protected Deriver newDeriver() {
                 return d;
             }
         }.input(inputs);
@@ -62,12 +65,39 @@ public class TrieDeriverTest {
     public TrieDeriver testRule(String... rules) {
         TrieDeriver d = new TrieDeriver(rules);
         new Default() {
-            @Override protected Deriver newDeriver() {
+            @Override
+            protected Deriver newDeriver() {
                 return d;
             }
         };
         return d;
     }
+
+    @Test public void testEllipsisRule() {
+        TrieDeriver d = testRule(
+            "(&&, A..+, X), B |- substituteIfUnifies((&&,A..+,..),\"#\",X,B), (Truth:AnonymousAnalogy, Desire:Strong, Order:ForAllSame, SequenceIntervals:FromTask)\n"
+        );
+        //test that A..+ survives as an ellipsis
+        assertTrue(d.trie.getSummary().contains("%1..+"));
+    }
+
+    @Test public void testConditionalAbductionRule() {
+
+        //test that ellipsis survives as an ellipsis after normalization no matter where it occurrs in a premise pattern
+
+        assertTrue(testRule(
+            "((X --> R) ==> Z), ((&&,A..+,(#Y --> B),(#Y --> R)) ==> Z) |- (X --> B), (Truth:Abduction)"
+        ).trie.getSummary().contains("..+"));
+        assertTrue(testRule(
+            "((X --> R) ==> Z), ((&&,A..*,(#Y --> B),(#Y --> R)) ==> Z) |- (X --> B), (Truth:Abduction)"
+        ).trie.getSummary().contains("..*"));
+        assertTrue(testRule(
+            "((X --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R),A..*) ==> Z) |- (X --> B), (Truth:Abduction)"
+        ).trie.getSummary().contains("..*"));
+
+
+    }
+
 
 //    @Test public void testBackwardsRules() {
 //

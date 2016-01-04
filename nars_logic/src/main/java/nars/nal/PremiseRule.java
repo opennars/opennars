@@ -656,7 +656,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
         @Override protected Variable newVariable(Variable v, int serial) {
 
-            Variable newVar = $.v(v.op(), serial+offset);
+            Variable newVar = v.normalize(serial+offset);
 
             if (v instanceof Ellipsis) {
                 Ellipsis e = (Ellipsis)v;
@@ -677,7 +677,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
         public Term applyAfter(Variable secondary) {
             offset++;
-            return apply(secondary);
+            return apply(null, secondary, -1);
         }
     }
 }

@@ -233,8 +233,8 @@ public class NAL8Test extends AbstractNALTester {
     public void condition_goal_deduction_2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(*,{t002},{t003}) --> on>. :|:");
-        tester.inputAt(10, "(&|,<(*,{t002},#1) --> on>,<(*,SELF,#1) --> at>)!");
+        tester.input("<({t002},{t003}) --> on>. :|:");
+        tester.inputAt(10, "(&|,<({t002},#1) --> on>,<(SELF,#1) --> at>)!");
 
         tester.mustDesire(cycles, "<(*,SELF,{t003}) --> at>", 1.0f, 0.81f); // :|:
 
@@ -244,8 +244,8 @@ public class NAL8Test extends AbstractNALTester {
     public void condition_goal_deduction_3() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(*,SELF,{t003}) --> at>!");
-        tester.inputAt(10, "<goto($1)=/><(*,SELF,$1) --> at>>.");
+        tester.input("<(SELF,{t003}) --> at>!");
+        tester.inputAt(10, "<goto($1)=/><(SELF,$1) --> at>>.");
 
         tester.mustDesire(cycles, "goto({t003})", 1.0f, 0.81f); // :|:
 
@@ -266,8 +266,8 @@ public class NAL8Test extends AbstractNALTester {
     public void condition_goal_deduction_3__() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(*,SELF,{t003}) --> at>! :|:");
-        tester.inputAt(10, "<goto($1) =/> <(*,SELF,$1) --> at>>.");
+        tester.input("<(SELF,{t003}) --> at>! :|:");
+        tester.inputAt(10, "<goto($1) =/> <(SELF,$1) --> at>>.");
 
         tester.mustDesire(cycles, "goto({t003})", 1.0f, 0.81f, -5); // :|:
 
@@ -277,8 +277,8 @@ public class NAL8Test extends AbstractNALTester {
     public void conditional_abduction_test() throws Narsese.NarseseException { //maybe to nal7 lets see how we will split these in the future
         TestNAR tester = test();
 
-        tester.input("<(*,SELF,{t003}) --> at>. :|:");
-        tester.inputAt(10, "<(&/,goto($1),/1) =/> <(*,SELF,$1) --> at>>.");
+        tester.input("<(SELF,{t003}) --> at>. :|:");
+        tester.inputAt(10, "<(&/,goto($1),/1) =/> <(SELF,$1) --> at>>.");
 
         tester.mustBelieve(cycles, "goto({t003})", 1.0f, 0.45f, -5); // :|:
 

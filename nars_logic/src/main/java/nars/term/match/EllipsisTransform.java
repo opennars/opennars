@@ -29,6 +29,12 @@ public class EllipsisTransform extends EllipsisOneOrMore {
     }
 
     @Override
+    public Variable normalize(int serial) {
+        //handled in a special way elsewhere
+        return this;
+    }
+
+    @Override
     public Variable clone(Variable v, VariableNormalization normalizer) {
         //normalizes any variable parameter terms of an EllipsisTransform
         PremiseRule.TaskRuleVariableNormalization vnn = (PremiseRule.TaskRuleVariableNormalization) normalizer;

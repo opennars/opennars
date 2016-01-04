@@ -1,5 +1,6 @@
 package nars.term.match;
 
+import nars.$;
 import nars.Op;
 import nars.term.variable.Variable;
 
@@ -11,6 +12,11 @@ public class VarPattern extends Variable {
 
     public VarPattern(String name) {
         super(Op.VAR_PATTERN.ch + name);
+    }
+
+    @Override
+    public Variable normalize(int serial) {
+        return $.v(Op.VAR_PATTERN, serial);
     }
 
     @Override

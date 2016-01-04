@@ -8,17 +8,6 @@ import nars.term.compound.Compound;
 import nars.term.transform.VariableNormalization;
 import nars.term.variable.Variable;
 
-/**
- * Meta-term of the form:
- *      variable..exppression
- * for selecting a range of subterms
- *
- * ex:
- *   A..not(X)
- *   B..not(X,Y)
- *   B..not(first)
- *   B..not(first,last)
- */
 public abstract class Ellipsis extends VarPattern { //TODO use Immutable
 
 

@@ -6,6 +6,7 @@ import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Variable normalization
@@ -17,7 +18,7 @@ import java.util.Map;
  * information - the particular labels the input has attached.
  *
  */
-public class VariableNormalization extends VariableTransform {
+public class VariableNormalization extends VariableTransform implements Function<Variable,Variable> {
 
 //    final static Comparator<Map.Entry<Variable, Variable>> comp = new Comparator<Map.Entry<Variable, Variable>>() {
 //        @Override
@@ -53,7 +54,6 @@ public class VariableNormalization extends VariableTransform {
 ////        }
 //    }
 
-
     /** for use with compounds that have exactly one variable */
     public static final VariableTransform singleVariableNormalization = new VariableTransform() {
 
@@ -64,11 +64,9 @@ public class VariableNormalization extends VariableTransform {
         }
     };
 
-
     final Map<Variable, Variable> rename = Global.newHashMap(8);
 
     boolean renamed = false;
-
 
 
     /** allows using the single variable normalization,
@@ -77,33 +75,23 @@ public class VariableNormalization extends VariableTransform {
         return target.vars() == 1 ? singleVariableNormalization : new VariableNormalization();
     }
 
-
-
-
-    public Variable apply(Variable v) {
-        return apply(null, v, -1);
+    public final Variable apply(Variable v) {
+        Variable rvv = newVariable(v, rename.size()+1);
+        if (!renamed) {
+            //test for any rename to know if modification occurred
+            renamed = !rvv.equals(v);
+        }
+        return rvv;
     }
-
 
     @Override
-    public Variable apply(Compound ct, Variable v, int depth) {
-
-        Map<Variable, Variable> rename = this.rename;
-
-        return rename.computeIfAbsent(v, (_vname) -> {
-            Variable rvv = newVariable(v, rename.size()+1);
-            if (!renamed) {//test for any rename to know if we need to rehash
-                renamed = rvv.equals(v);//!Byted.equals(rvv, v);
-            }
-            return rvv;
-        });
-
+    public final Variable apply(Compound ct, Variable v, int depth) {
+        return rename.computeIfAbsent(v, this);
     }
-
 
     /** if already normalized, alreadyNormalized will be non-null with the value */
     protected Variable newVariable(Variable v, int serial) {
-        return $.v(v.op(), serial);  //type + id
+        return v.normalize(serial);
     }
 
 }
