@@ -21,6 +21,7 @@ import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.Global;
+import nars.truth.DefaultTruth;
 
 
 public class DefaultConcept extends AtomConcept {
@@ -176,7 +177,8 @@ public class DefaultConcept extends AtomConcept {
 
             float expectation_diff = (1-successAfter) / successAfter;
             if(Math.abs(expectation_diff) >= Global.EXECUTION_SATISFACTION_TRESHOLD) {
-                if (strongest.getTruth().getExpectation() > Global.EXECUTION_DESIRE_EXPECTATION_THRESHOLD) {
+                DefaultTruth projected = strongest.projection(memory.time(), memory.time());
+                if (projected.getExpectation() > Global.EXECUTION_DESIRE_EXPECTATION_THRESHOLD) {
                     nal.nar().execute((DefaultTask) goal);
                 }
             }
