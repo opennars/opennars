@@ -407,7 +407,8 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return Budget of the conclusion task
      */
-    static Budget budgetInference(Budget target, final float qual, final int complexity, final Premise nal) {
+    static Budget budgetInference(Budget target, final float qual,  int complexity, final Premise nal) {
+        complexity = f_complexity(complexity);
         final float complexityFactor = complexity > 1 ?
 
                 // sqrt factor (experimental)
