@@ -6,6 +6,7 @@ import nars.Premise;
 import nars.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
+import nars.truth.DefaultTruth;
 import nars.util.data.Util;
 
 import static nars.nal.nal1.LocalRules.getRevision;
@@ -71,12 +72,14 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         float s = Float.NEGATIVE_INFINITY;
         Task b = null;
 
-        Task t;
-        for (int i = 0; null != (t = tasks[i++]); ) {
-            float x = r.rank(t, s);
-            if (x > s) {
-                s = x;
-                b = t;
+        for (int i = tasks.length-1; i>=0; i-- ) {
+            Task t = tasks[i];
+            if(t!=null) {
+                float x = r.rank(t, s);
+                if (x + DefaultTruth.DEFAULT_TRUTH_EPSILON > s) {
+                    s = x;
+                    b = t;
+                }
             }
         }
 
@@ -133,8 +136,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
         //TODO make sure input.isDeleted() can not happen
-        if ( added &&
-                !input.isDeleted() && revisible(input, top) ) {
+        if ( !input.isDeleted() && revisible(input, top) ) {
 
             Task revised = getRevision(input, top, nal, now);
 
@@ -193,14 +195,9 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
                 float existingRank = r.rank(b, rankInput);
 
-                final boolean inputGreater = Float.isNaN(existingRank) || (rankInput > existingRank);
+                final boolean inputGreater = Float.isNaN(existingRank) || (rankInput + DefaultTruth.DEFAULT_TRUTH_EPSILON > existingRank);
                 if (inputGreater) {
                     break; //item will be inserted at this index
-                } else if (input.isInput() && Util.equal(rankInput, existingRank, RANK_EPSILON)) {
-                    //allow a newer task to override an older one of the same rank
-                    //if it is input (any other conditions?)
-                    if (input.getCreationTime() > b.getCreationTime())
-                        break; //item will be inserted at this index
                 }
             }
             i--; //-1 is correct since after the above for loop it will be 1 ahead
@@ -209,8 +206,8 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         if (atCapacity) {
             if (i == siz) {
-                //reached the end of the list and there is no room to add at the end
-                onBeliefRemoved(input, "Unbelievable/Undesirable");
+               //reached the end of the list and there is no room to add at the end
+               // onBeliefRemoved(input, "Unbelievable/Undesirable");
                 return false;
             } else {
                 Task removed = remove(siz - 1);
