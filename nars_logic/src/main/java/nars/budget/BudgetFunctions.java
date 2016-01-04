@@ -407,8 +407,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return Budget of the conclusion task
      */
-    static Budget budgetInference(Budget target, final float qual,  int complexity, final Premise nal) {
-        complexity = f_complexity(complexity);
+    static Budget budgetInference(Budget target, final float qual, final int complexity, final Premise nal) {
         final float complexityFactor = complexity > 1 ?
 
                 // sqrt factor (experimental)
@@ -448,7 +447,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         if (termLink!=null) {
             priority = or(priority, termLink.getPriority());
             durability = and(durability, termLink.getDurability()); //originaly was 'AND'
-            final float targetActivation = nal.conceptPriority(termLink.getTerm(), -1);
+            final float targetActivation = nal.conceptPriority(termLink.getTerm(), 0);
             if (targetActivation >= 0) {
                 termLink.orPriority(or(quality, targetActivation));
                 termLink.orDurability(quality);
