@@ -145,7 +145,7 @@ public class Anticipate {
         final Task derived = new FluentTask<>(prediction)
                 .belief()
                 .truth(expiredTruth.getFrequency(), expiredTruth.getConfidence())
-                .budget(expiredBudget)
+                .budget(expiredBudget).parent(tt.task).introspective_event()
                 .time(memory.time(), expectedOccurrenceTime)
                 .because("Absent Anticipated Event")
                 ;

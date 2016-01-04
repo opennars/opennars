@@ -46,6 +46,8 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     private char punctuation;
 
+    private boolean introspective_event = false;
+
     public Truth truth;
 
     public boolean executed = false;
@@ -182,6 +184,14 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     protected final void setPunctuation(char punctuation) {
         this.punctuation = punctuation;
+    }
+
+    protected final void setIsIntrospectiveEvent(boolean isIntrospectiveEvent) {
+        this.introspective_event = isIntrospectiveEvent;
+    }
+
+    public final boolean getIsIntrospectiveEvent() {
+        return this.introspective_event;
     }
 
     /** includes: evidentialset, occurrencetime, truth, term, punctuation */

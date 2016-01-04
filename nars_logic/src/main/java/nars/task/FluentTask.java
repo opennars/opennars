@@ -179,6 +179,11 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
         return this;
     }
 
+    public FluentTask introspective_event() {
+        setIsIntrospectiveEvent(true);
+        return this;
+    }
+
     public FluentTask question() {
         setPunctuation(Symbols.QUESTION);
         return this;

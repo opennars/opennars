@@ -229,15 +229,27 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
 
         final Memory memory = nar().memory;
 
-        nar().input($.belief(operation.getTerm(),
+        if(operation.getParentTask()!=null) {
+            nar().input($.belief(operation.getTerm(),
 
-                new DefaultTruth(1.0f,Global.OPERATOR_EXECUTION_CONFIDENCE)).
-                //1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
+                            new DefaultTruth(1.0f, Global.OPERATOR_EXECUTION_CONFIDENCE)).
+                            //1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
 
-                budget(b).
-                present(memory).
-                because("Executed")
-        );
+                                    budget(b).parent(operation.getParentTask()).introspective_event().
+                            present(memory).
+                            because("Executed")
+            );
+        } else {
+            nar().input($.belief(operation.getTerm(),
+
+                            new DefaultTruth(1.0f, Global.OPERATOR_EXECUTION_CONFIDENCE)).
+                            //1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
+
+                                    budget(b).
+                            present(memory).introspective_event().
+                            because("Executed")
+            );
+        }
 
         memory.logic.TASK_EXECUTED.hit();
     }

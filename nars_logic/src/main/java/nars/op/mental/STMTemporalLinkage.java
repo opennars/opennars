@@ -9,6 +9,7 @@ import nars.nal.RuleMatch;
 import nars.nar.Default;
 import nars.process.TaskProcess;
 import nars.process.TaskBeliefProcess;
+import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.term.Compound;
 
@@ -44,7 +45,7 @@ public class STMTemporalLinkage {
 
         nar.memory.eventTaskProcess.on(n -> {
             if (!n.getTask().isDeleted())
-                inductionOnSucceedingEvents(n, false);
+                inductionOnSucceedingEvents(n);
         });
         nar.memory.eventReset.on(n -> {
             stm.clear();
@@ -52,36 +53,23 @@ public class STMTemporalLinkage {
 
     }
 
-    public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
-        if (newEvent.isInput()) return true;
-        //if (Tense.containsMentalOperator(newEvent)) return true;
-        return false;
-    }
-
 //    public int getStmSize() {
 //        return stmSize;
 //    }
 
-    public boolean inductionOnSucceedingEvents(TaskProcess nal, boolean anticipation) {
+    public boolean inductionOnSucceedingEvents(TaskProcess nal) {
 
         final Task currentTask = nal.getTask();
 
         int stmSize = nal.memory().shortTermMemoryHistory.intValue();
 
-
-//        if (!currentTask.isTemporalInductable() && !anticipation) { //todo refine, add directbool in task
-//            return false;
-//        }
-
-        if (currentTask.isEternal() || (!isInputOrTriggeredOperation(currentTask, nal.memory()) && !anticipation)) {
+        if (currentTask.isEternal()) { //this is for events only
             return false;
         }
 
-        //new one happened and duration is already over, so add as negative task
-        //nal.emit(Events.EventBasedReasoningEvent.class, currentTask, nal);
-
-        //final long now = nal.memory.time();
-
+        if(!(currentTask.isInput() || ((DefaultTask)currentTask).getIsIntrospectiveEvent())) {
+            return false; //we allow only these events which are input or introspective
+        }
 
 
         int numToRemoveFromBeginning = Math.max(0, stm.size() - stmSize);
