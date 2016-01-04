@@ -695,4 +695,13 @@ public class UnificationTest  {
                 "(<bird <-> {?1}>, <bird <-> {?1}>)",
                 true);
     }
+
+    /*
+    //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
+    //second level variable elimination (termlink level2 growth needed in order for these rules to work)
+
+    (B --> K), (&&,(#X --> L),(($Y --> K) ==> A)) |- substitute((&&, (#X --> L), A), $Y,B), (Truth:Deduction)
+    (B --> K), (&&,(#X --> L),(($Y --> K) ==> (&&,A..+))) |- substitute((&&,(#X --> L),A..+),$Y,B), (Truth:Deduction)
+     */
+
 }
