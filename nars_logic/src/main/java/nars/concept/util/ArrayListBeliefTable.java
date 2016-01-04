@@ -207,7 +207,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         if (atCapacity) {
             if (i == siz) {
                //reached the end of the list and there is no room to add at the end
-               // onBeliefRemoved(input, "Unbelievable/Undesirable");
+                onBeliefRemoved(input, "Unbelievable/Undesirable");
                 return false;
             } else {
                 Task removed = remove(siz - 1);
