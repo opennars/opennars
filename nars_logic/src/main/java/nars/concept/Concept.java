@@ -186,7 +186,7 @@ public interface Concept extends Termed, Itemized<Term> {
         if (!hasGoals()) {
             return null;
         }
-        return getGoals().top().getTruth();
+        return getGoals().top().projection(getMemory().time(),getMemory().time());
     }
 
     /** satisfaction/success metric:
@@ -200,7 +200,7 @@ public interface Concept extends Termed, Itemized<Term> {
 
             float de = d.getExpectation();
 
-            Truth b = getBeliefs().top().getTruth();
+            Truth b = getBeliefs().top().projection(getMemory().time(),getMemory().time());
             float be = b.getExpectation();
 
 
