@@ -8,6 +8,7 @@ import nars.nal.RuleMatch;
 import nars.nal.meta.Ellipsis;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TermPattern;
+import nars.nal.nal1.LocalRules;
 import nars.nal.nal4.Image;
 import nars.term.*;
 
@@ -534,6 +535,10 @@ public class FindSubst extends Subst {
         /** must have same # subterms */
         int xsize = X.size();
         if (xsize != Y.size()) {
+            return -1;
+        }
+
+        if(!LocalRules.TemporalSimilarTerm(X,Y)) {
             return -1;
         }
 

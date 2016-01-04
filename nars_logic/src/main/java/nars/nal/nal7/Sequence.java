@@ -3,6 +3,7 @@ package nars.nal.nal7;
 import nars.$;
 import nars.Global;
 import nars.Op;
+import nars.nal.nal1.LocalRules;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Conjunctive;
 import nars.term.Compound;
@@ -78,6 +79,9 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     @Override
     public boolean equals(Object that) {
         final boolean e = super.equals(that);
+        if(e==false || !LocalRules.TemporalSimilarTerm(this,(Sequence) that)) {
+            return false;
+        }
 //        if (e) {
 //            /**
 //             * allowed for:
