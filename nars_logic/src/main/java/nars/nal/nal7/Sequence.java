@@ -7,6 +7,7 @@ import nars.Op;
 import nars.term.Term;
 import nars.term.TermVector;
 import nars.term.Terms;
+import nars.term.compile.TermBuilder;
 import nars.term.compile.TermPrinter;
 import nars.term.compound.GenericCompound;
 
@@ -38,7 +39,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
      *      (&/,   /i0, A, /i1, B, /i2, C, /i3)
      *
      */
-    private Sequence(T[] subterms, int[] intervals) {
+    public Sequence(T[] subterms, int[] intervals) {
         super(Op.SEQUENCE, -1, new TermVector(subterms));
 
         if (intervals == null) {
@@ -213,7 +214,7 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
             c.add($.cycles(intervals[p])); //final suffix interval
 
 
-        return makeSequence(c.toArray(new Term[c.size()]));
+        return TermBuilder.makeSequence(c.toArray(new Term[c.size()]));
     }
 
     @Override
@@ -221,59 +222,6 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
         return intervals;
     }
 
-
-    public static Term makeSequence(Term[] a) {
-        return makeSequence(a, true);
-    }
-
-    /**
-     * the input Terms here is "unnormalized" meaning it may contain
-     * Interval whch will need removed as subterms and inserted into the
-     * intervals array. the final subterms array for the new Sequence
-     * will not contain any Intervals but the data will be separated
-     * into the separate intervals array that ensures the terms avoid
-     * involving Intervals in equality tests
-     *
-     * @param a
-     * @return
-     */
-    public static Term makeSequence(Term[] a, boolean allowReduction) {
-
-        //count how many intervals so we know how to resize the final arrays
-        int intervalsPresent = Interval.intervalCount(a);
-
-        if (intervalsPresent == 0) {
-            if (allowReduction && (a.length == 1)) return a[0]; //TODO combine this with singleton condition at end of this method
-            return new Sequence(a, null);
-        }
-
-
-        int blen = a.length - intervalsPresent;
-        if (blen == 0)
-            throw new RuntimeException("empty sequence containing only intervals");
-
-        //if intervals are present:
-        Term[] b = new Term[blen];
-
-        int[] i = new int[blen + 1];
-
-        int p = 0;
-        for (Term x : a) {
-            /*if (x == Ellipsis.Expand)
-                continue;*/
-            if (x instanceof CyclesInterval) {
-                long dd = ((CyclesInterval) x).duration();
-                if (dd < 0)
-                    throw new RuntimeException("cycles must be >= 0");
-
-                i[p] += dd;
-            } else {
-                b[p++] = x;
-            }
-        }
-
-        return makeSequence(b, i);
-    }
 
     public static Term makeSequence(Term[] b, int[] i) {
         if (b.length == 1) {

@@ -15,10 +15,10 @@ public final class substituteIfUnifies extends substitute {
 
     @Override public Term function(Compound p, TermBuilder i) {
         final Term[] xx = p.terms();
+        final Term term = xx[0];
         final Term op = xx[1];
         final Term x = xx[2];
         final Term y = xx[3];
-        final Term term = xx[0];
 
         FindSubst umap = unifies(op, x, y);
         if (umap!=null) {

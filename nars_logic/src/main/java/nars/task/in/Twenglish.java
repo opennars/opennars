@@ -18,10 +18,10 @@ package nars.task.in;
 
 import com.google.common.collect.Lists;
 import nars.*;
-import nars.nal.nal7.Sequence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.compile.TermBuilder;
 import nars.term.compound.Compound;
 import nars.util.io.Twokenize;
 import nars.util.io.Twokenize.Span;
@@ -129,7 +129,7 @@ public class Twenglish {
         //1. add the logical structure of the sequence of terms
         if (inputProduct) {
             Term p =
-                Sequence
+                TermBuilder
                 //Product
                     .makeSequence(t.toArray(new Term[t.size()]));
             Compound q =

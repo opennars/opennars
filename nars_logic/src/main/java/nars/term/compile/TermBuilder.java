@@ -6,6 +6,8 @@ import nars.Global;
 import nars.Op;
 import nars.nal.PremiseAware;
 import nars.nal.PremiseMatch;
+import nars.nal.nal7.CyclesInterval;
+import nars.nal.nal7.Interval;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal8.Operator;
@@ -34,6 +36,77 @@ import static nars.term.Statement.subj;
  * Created by me on 1/2/16.
  */
 public interface TermBuilder {
+
+    static Term makeSequence(Term[] a) {
+
+        //count how many intervals so we know how to resize the final arrays
+        int intervalsPresent = Interval.intervalCount(a);
+
+        if (intervalsPresent == 0) {
+            if (true && (a.length == 1)) {
+                Term single = a[0];
+                if (!(single instanceof Ellipsis))
+                    return single; //TODO combine this with singleton condition at end of this method
+            }
+            return new Sequence(a, null);
+        }
+
+
+        int blen = a.length - intervalsPresent;
+        if (blen == 0)
+            throw new RuntimeException("empty sequence containing only intervals");
+
+        //if intervals are present:
+        Term[] b = new Term[blen];
+
+        int[] i = new int[blen + 1];
+
+        int p = 0;
+        for (Term x : a) {
+            /*if (x == Ellipsis.Expand)
+                continue;*/
+            if (x instanceof CyclesInterval) {
+                long dd = ((CyclesInterval) x).duration();
+                if (dd < 0)
+                    throw new RuntimeException("cycles must be >= 0");
+
+                i[p] += dd;
+            } else {
+                b[p++] = x;
+            }
+        }
+
+        return Sequence.makeSequence(b, i);
+    }
+
+    static Term makeParallel(Term[] a) {
+
+        //count how many intervals so we know how to resize the final arrays
+        int intervalsPresent = Interval.intervalCount(a);
+        int subterms = a.length - intervalsPresent;
+
+        if (subterms == 0)
+            return null;
+
+        if (subterms == 1)
+            return Interval.firstNonIntervalIn(a); //unwrap the only non-interval subterm
+
+        if (intervalsPresent == 0)
+            return new Parallel(a); //no intervals need to be removed
+
+        //otherwise, intervals are present:
+
+        Term[] b = new Term[subterms];
+
+        int p = 0;
+        for (Term x : a) {
+            if (!(x instanceof CyclesInterval))
+                b[p++] = x;
+        }
+
+        return new Parallel(b);
+
+    }
 
     Termed make(Op op, int relation, TermContainer subterms);
 
@@ -188,9 +261,9 @@ public interface TermBuilder {
                     throw new RuntimeException("invalid negation subterms: " + Arrays.toString(t));
                 return negation(t[0]);
             case SEQUENCE:
-                return Sequence.makeSequence(t);
+                return makeSequence(t);
             case PARALLEL:
-                return Parallel.makeParallel(t);
+                return makeParallel(t);
             case INSTANCE:
                 return inst(t[0], t[1]);
             case PROPERTY:
