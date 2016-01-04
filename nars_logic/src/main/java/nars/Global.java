@@ -299,9 +299,19 @@ public class Global {
 
     public static float ANTICIPATION_REVISION_TOLERANCE = 2.0f;
 
-    public static boolean REVISION_INTERVAL_TOLERANCE_ON_MATCHING_IN_INFERENCE = true;
-
-    public static boolean REVISION_INTERVAL_TOLERANCE_BASED_CONCEPT_GROUPING = true;
+    /////////////////////////////////////////////////////
+    //what it means for two intervals to be different:
+    /////////////////////////////////////////////////////
+    //exp-time judged term equality on rule match?
+    public static boolean EXP_INTERVAL_INTOLERANCE_ON_MATCHING_IN_INFERENCE = true;
+    //TODO: this being false has some consequences we did not analyze in detail yet, some sort of projection might
+    //then be necessary which would be tricky.
+    //exp-time judged concept grouping?
+    public static boolean EXP_INTERVAL_INTOLERANCE_BASED_CONCEPT_GROUPING = true;
+    //exp-time judged revision in table?
+    public static boolean EXP_INTERVAL_INTOLERANCE_ON_REVISION = true;
+    //TODO: the latter two not being true or false together has some consequences we did not analyze in detail yet
+    /////////////////////////////////////////////////////
 
 }
 

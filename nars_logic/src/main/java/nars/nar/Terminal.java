@@ -34,7 +34,7 @@ public class Terminal extends Default {
 
     @Override
     public Concept apply(Term t) {
-        return new DefaultConcept(t, memory);
+        return new DefaultConcept(null, t, memory);
     }
 
     @Override

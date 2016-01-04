@@ -251,7 +251,12 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
             );
         }
 
-        System.out.println(operation.toString());
+        System.out.println("EXE: "+operation.toString());
+        String s ="";
+        for(long i : operation.getEvidence()) {
+            s += String.valueOf(i) + " ";
+        }
+        System.out.println("evidental base was "+s);
 
         memory.logic.TASK_EXECUTED.hit();
     }
