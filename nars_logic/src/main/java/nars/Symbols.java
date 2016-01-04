@@ -23,6 +23,7 @@ package nars;
 
 import com.gs.collections.impl.map.mutable.primitive.CharObjectHashMap;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -190,6 +191,13 @@ public final class Symbols {
                 return true;
         }
         return false;
+    }
+
+    public static void argSep(Appendable p, boolean pretty) throws IOException {
+        if (pretty)
+            p.append(ARGUMENT_SEPARATOR_PRETTY);
+        else
+            p.append(ARGUMENT_SEPARATOR);
     }
 
 

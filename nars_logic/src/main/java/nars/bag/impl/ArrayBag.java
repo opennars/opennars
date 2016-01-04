@@ -276,9 +276,10 @@ public class ArrayBag<V> extends Bag<V> {
 
 
 
+
     @Override
     public final void commit() {
-        forEachEntry(this::update);
+        top(this::update);
     }
 
     public void update(BagBudget<V> v) {
@@ -417,7 +418,7 @@ public class ArrayBag<V> extends Bag<V> {
         }
     }
 
-    @Override public void whileEachEntry(Predicate<BagBudget<V>> action) {
+    @Override public void topWhile(Predicate<BagBudget<V>> action) {
         List<BagBudget<V>> l = items.getList();
         int n = l.size();
         for (int i = 0; i < n; i++) {
@@ -426,11 +427,11 @@ public class ArrayBag<V> extends Bag<V> {
         }
     }
 
-    @Override public void forEachEntry(Consumer<BagBudget> action) {
+    @Override public void top(Consumer<BagBudget> action) {
         List<BagBudget<V>> l = items.getList();
         l.forEach(action);
     }
-    @Override public void forEachEntry(int limit, Consumer<BagBudget> action) {
+    @Override public void topN(int limit, Consumer<BagBudget> action) {
         List<BagBudget<V>> l = items.getList();
         int n = Math.min(l.size(), limit);
         for (int i = 0; i < n; i++)

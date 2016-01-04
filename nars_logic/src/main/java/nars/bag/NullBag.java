@@ -11,6 +11,7 @@ import java.util.function.Predicate;
  * Bag which holds nothing
  */
 public final class NullBag<V> extends Bag<V> {
+
     @Override
     public void clear() {
 
@@ -30,8 +31,6 @@ public final class NullBag<V> extends Bag<V> {
     public BagBudget<V> remove(V key) {
         return null;
     }
-
-
 
     @Override
     public BagBudget<V> put(Object newItem) {
@@ -74,17 +73,17 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public void forEachEntry(Consumer<BagBudget> each) {
+    public void top(Consumer<BagBudget> each) {
 
     }
 
     @Override
-    public void whileEachEntry(Predicate<BagBudget<V>> each) {
+    public void topWhile(Predicate<BagBudget<V>> each) {
 
     }
 
     @Override
-    public void forEachEntry(int limit, Consumer<BagBudget> each) {
+    public void topN(int limit, Consumer<BagBudget> each) {
 
     }
 

@@ -400,14 +400,13 @@ public abstract class FindSubst extends Versioning implements Subst {
     }
 
     public final boolean matchPermute(TermContainer x, Compound y) {
-        //SPECIAL CASE: no variables
         if
                 (((type != Op.VAR_PATTERN && (0 == (x.structure() & type.bit()))) ||
                 ((type == Op.VAR_PATTERN) && !Variable.hasPatternVariable(x))))
 
         {
+            //SPECIAL CASE: no variables
             return matchLinear(x, y);
-            //return x.equals(y);
         }
 
         return addTermutator(new CommutivePermutations(this, x, y));
@@ -783,7 +782,16 @@ public abstract class FindSubst extends Versioning implements Subst {
     }
 
 
-
+    /** default compound matching; op will already have been compared. no ellipsis will be involved */
+    public final boolean matchCompound(Compound x, Compound y) {
+        int xs = x.size();
+        if ((xs==y.size()) && (x.relation()==y.relation())) {
+            return ((xs > 1) && (x.isCommutative())) ?
+                    matchPermute(x, y) :
+                    matchLinear(x.subterms(), y.subterms());
+        }
+        return false;
+    }
 }
 
 

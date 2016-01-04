@@ -145,6 +145,8 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
     }
 
 
+
+
 //    /** writes subterm bytes, including any attached metadata preceding or following it */
 //    default void appendSubtermBytes(ByteBuf b) {
 //

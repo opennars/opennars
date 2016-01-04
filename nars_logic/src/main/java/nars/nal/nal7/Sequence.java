@@ -322,12 +322,10 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
     @Override
     public void append(Appendable p, boolean pretty) throws IOException {
 
-        boolean opener = appendTermOpener();
-        if (opener)
-            p.append(COMPOUND_TERM_OPENER);
 
+        p.append(COMPOUND_TERM_OPENER);
 
-        appendOperator(p);
+        op().append(p);
 
         TermPrinter.appendSeparator(p, pretty);
 

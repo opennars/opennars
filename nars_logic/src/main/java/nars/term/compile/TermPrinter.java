@@ -29,18 +29,14 @@ public interface TermPrinter {
 
     static void appendCompound(Compound c, Appendable p, boolean pretty) throws IOException {
 
-        boolean opener = c.appendTermOpener();
-        if (opener)
-            p.append(COMPOUND_TERM_OPENER);
+        p.append(COMPOUND_TERM_OPENER);
 
-
-        boolean appendedOperator = c.appendOperator(p);
+        c.op().append(p);
 
         if (c.size() == 1)
             p.append(ARGUMENT_SEPARATOR);
 
-        c.appendArgs(p, pretty, appendedOperator);
-
+        c.appendArgs(p, pretty, true);
 
         appendCloser(p);
 

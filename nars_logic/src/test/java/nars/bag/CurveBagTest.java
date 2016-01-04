@@ -145,7 +145,7 @@ public class CurveBagTest  {
         n.frame(4);
         Bag<Concept> bag = n.core.active;
 
-        bag.forEachEntry(System.out::println);
+        bag.top(System.out::println);
         System.out.println(bag.size() + " " + bag.getPriorityMax() + " " + bag.getPriorityMin());
 
         //TODO verify the histogram resulting from the above execution is relatively flat:

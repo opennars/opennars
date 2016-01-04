@@ -127,8 +127,8 @@ public class ConceptsSource extends GraphSource {
 //            //missing.remove(tn.term);
         };
 
-        ((Concept)cc).getTermLinks().forEachEntry(maxNodeLinks, linkUpdater);
-        ((Concept)cc).getTaskLinks().forEachEntry(maxNodeLinks, linkUpdater);
+        ((Concept)cc).getTermLinks().topN(maxNodeLinks, linkUpdater);
+        ((Concept)cc).getTaskLinks().topN(maxNodeLinks, linkUpdater);
 
         //sn.removeEdges(missing);
 
@@ -189,7 +189,7 @@ public class ConceptsSource extends GraphSource {
         //final int maxNodes = this.maxNodes;
 
         //TODO use forEach witha predicate return to stop early
-        x.whileEachEntry(eachConcept);
+        x.topWhile(eachConcept);
 
 //        Iterable<Termed> _concepts = StreamSupport.stream(x.spliterator(), false).filter(cc -> {
 //

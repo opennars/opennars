@@ -65,13 +65,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
     public abstract BagBudget<V> put(Object i, Budget b, float scale);
 
 
-    /**
-     * iterates in sequence starting from the top until the predicate returns false
-     */
-    public void top(Predicate<BagBudget<V>> each) {
-        while (each.test(sample())) {
-        }
-    }
+
 
 //    /**
 //     * iterates in sequence starting from the top until predicate returns false, limited by max iterations (n)
@@ -179,6 +173,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
 
     /**
      * iterates all items in (approximately) descending priority
+     * forEach may be used to avoid allocation of iterator instances
      */
     @Override
     public abstract Iterator<V> iterator();
@@ -239,7 +234,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
     }
 
     public void printAll(PrintStream p) {
-        forEachEntry(b -> p.println(b.toBudgetString() + ' ' + b.get()));
+        top(b -> p.println(b.toBudgetString() + ' ' + b.get()));
     }
 
     /**
@@ -250,19 +245,19 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
     //@Override abstract public void forEach(final Consumer<? super V> action);
     public float getPrioritySum() {
         float[] total = {0};
-        forEachEntry(v -> total[0] += v.getPriority());
+        top(v -> total[0] += v.getPriority());
         return total[0];
     }
 
     public float getSummarySum() {
         float[] total = {0};
-        forEachEntry(v -> total[0] += v.summary());
+        top(v -> total[0] += v.summary());
         return total[0];
     }
 
     @Deprecated
-    public void forEachEntry(Consumer<BagBudget> each) {
-        whileEachEntry(e -> {
+    public void top(Consumer<BagBudget> each) {
+        topWhile(e -> {
             each.accept(e);
             return true;
         });
@@ -271,10 +266,10 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
     /**
      * if predicate evaluates false, it terminates the iteration
      */
-    public abstract void whileEachEntry(Predicate<BagBudget<V>> each);
+    public abstract void topWhile(Predicate<BagBudget<V>> each);
 
     //TODO provide default impl
-    public abstract void forEachEntry(int limit, Consumer<BagBudget> each);
+    public abstract void topN(int limit, Consumer<BagBudget> each);
 
 
 //    final public int forgetNext(float forgetCycles, final V[] batch, final long now) {
@@ -299,7 +294,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
      */
     public float getPriorityMin() {
         float[] min = {Float.POSITIVE_INFINITY};
-        forEachEntry(b -> {
+        top(b -> {
             float p = b.getPriority();
             if (p < min[0]) min[0] = p;
         });
@@ -311,7 +306,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
      */
     public float getPriorityMax() {
         float[] max = {Float.NEGATIVE_INFINITY};
-        forEachEntry(b -> {
+        top(b -> {
             float p = b.getPriority();
             if (p > max[0]) max[0] = p;
         });
@@ -422,7 +417,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
 
     public double[] getPriorityHistogram(double[] x) {
         int bins = x.length;
-        forEachEntry(budget -> {
+        top(budget -> {
             float p = budget.getPriority();
             int b = Util.bin(p, bins - 1);
             x[b]++;

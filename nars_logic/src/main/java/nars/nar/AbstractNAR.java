@@ -120,8 +120,8 @@ public abstract class AbstractNAR extends NAR {
     public void initDefaults(Memory m) {
         //parameter defaults
 
-        setTaskLinkBagSize(32);
-        setTermLinkBagSize(32);
+        setTaskLinkBagSize(16);
+        setTermLinkBagSize(16);
 
         m.duration.set(5);
 

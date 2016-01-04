@@ -50,8 +50,8 @@ public class SchemeClosure {
     }
 
     public void set(SymbolExpression symbol, Expression value) {
-        if (bindings.putIfAbsent(symbol, value)!=value) {
-            //..
+        if (bindings.containsKey(symbol)) {
+            bindings.put(symbol, value);
         } else if (enclosingEnvironment != null) {
             enclosingEnvironment.set(symbol, value);
         } else {

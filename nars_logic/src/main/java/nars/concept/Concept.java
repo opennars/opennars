@@ -261,7 +261,7 @@ public interface Concept extends Termed, Supplier<Term> {
         if (showtermlinks) {
 
             out.println(" TermLinks:");
-            getTermLinks().forEachEntry(b-> {
+            getTermLinks().top(b-> {
                 out.print(indent);
                 out.print(b.get() + " " + b.toBudgetString());
                 out.print(" ");
@@ -270,7 +270,7 @@ public interface Concept extends Termed, Supplier<Term> {
 
         if (showtasklinks) {
             out.println(" TaskLinks:");
-            getTaskLinks().forEachEntry(b-> {
+            getTaskLinks().top(b-> {
                 out.print(indent);
                 out.print(b.get() + " " + b.toBudgetString());
                 out.print(" ");

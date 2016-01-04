@@ -22,10 +22,10 @@ package nars.term.compound;
 
 import nars.Global;
 import nars.Op;
+import nars.Symbols;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.compile.TermPrinter;
-import nars.term.match.Ellipsis;
 import nars.term.transform.FindSubst;
 import nars.term.visit.SubtermVisitor;
 import nars.util.data.sexpression.IPair;
@@ -33,10 +33,6 @@ import nars.util.data.sexpression.Pair;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.function.BiConsumer;
-
-import static nars.Symbols.ARGUMENT_SEPARATOR;
-import static nars.Symbols.ARGUMENT_SEPARATOR_PRETTY;
 
 /**
  * a compound term
@@ -48,7 +44,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     /** gets the set of unique recursively contained terms of a specific type
      * TODO generalize to a provided lambda predicate selector
      * */
-    default Set<Term> unique(Op type) {
+    default Set<Term> uniqueSubtermSet(Op type) {
         Set<Term> t = Global.newHashSet(size());
         //final int[] has = {0};
         recurseTerms((t1, superterm) -> {
@@ -61,7 +57,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     @Override
     default void recurseTerms(SubtermVisitor v) {
-        recurseTerms(v, null);
+        recurseTerms(v, this);
     }
 
     @Override
@@ -70,10 +66,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         subterms().forEach(a -> a.recurseTerms(v, this));
     }
 
-    @Override
-    default boolean hasEllipsis() {
-        return Ellipsis.hasEllipsis(this);
-    }
+
 
 
 
@@ -124,40 +117,14 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         int nterms = size();
         for (int i = 0; i < nterms; i++) {
              if ((i != 0) || (/*i == 0 &&*/ nterms > 1 && appendedOperator)) {
-                 argSep(p, pretty);
+                 Symbols.argSep(p, pretty);
              }
 
             term(i).append(p, pretty);
         }
     }
 
-    default void argSep(Appendable p, boolean pretty) throws IOException {
-        if (pretty)
-            p.append(ARGUMENT_SEPARATOR_PRETTY);
-        else
-            p.append(ARGUMENT_SEPARATOR);
-    }
 
-    default boolean appendOperator(Appendable p) throws IOException {
-        p.append(op().str);
-        return true;
-    }
-
-    default boolean appendTermOpener() {
-        return true;
-    }
-
-//    default Term term(int i, boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
-//        Term x = term(i);
-//        return Compound.unwrap(x, unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);
-//    }
-
-
-    default String toString(BiConsumer<Compound, Appendable> a) {
-        StringBuilder sb = new StringBuilder();
-        a.accept(this, sb);
-        return sb.toString();
-    }
 
     @Override
     default StringBuilder toStringBuilder(boolean pretty) {
@@ -307,46 +274,17 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         //# vars of the expected pattern are zero,
         //and since it doesnt equal, there is no match to test
 
+
         return hasEllipsis() ?
                 subst.matchCompoundWithEllipsis(this, y) :
-                matchSubterms(y, subst);
-    }
-
-    /**
-     * default implementation
-     *
-     * X contains no ellipsis to consider (simple/fast)
-     * this implementation can assume that Y has the same size as this, same op.
-     * any additional metadata checks are performed in matchCompoundEx() which by default returns true
-     */
-    default boolean matchSubterms(Compound Y, FindSubst subst) {
-        if (matchCompoundEx(Y)) {
-            int s = size();
-            return ((isCommutative() && (s > 1))) ?
-                    subst.matchPermute(this, Y) :
-                    subst.matchLinear(subterms(), Y.subterms());
-        }
-        return false;
+                subst.matchCompound(this, y);
     }
 
 
-    /** implementatoins may assume that y has:
-     *      equal op()
-     *
-     *  (and that no ellipsis is involved.)
-     */
-    default boolean matchCompoundEx(Compound y) {
-        //final int yStructure = y.structure();
-
-        return
-                //this term as a pattern involves anything y does not?
-                //((yStructure | structure()) == yStructure) &&
-                //&&
-                // ?? && ( y.volume() >= volume() )
-                //same size
-                (size()==y.size()) && (relation()==y.relation());
+    @Override
+    default boolean hasEllipsis() {
+        return subterms().hasEllipsis();
     }
-
 
     @Override
     default int opRel() {

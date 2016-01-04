@@ -76,7 +76,7 @@ public class ItemAccumulatorTest {
         assertTrue(ii.isSorted());
 
         //System.out.println(ii);
-        ii.forEachEntry(x -> System.out.println(x));
+        ii.top(x -> System.out.println(x));
 
         Task one = ii.pop().get();
         assertEquals("$.30;.50;.95$ <d-->x>. :0: %1.0;.90%", one.toString());

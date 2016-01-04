@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.gs.collections.api.block.function.Function;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.term.compound.Compound;
+import nars.term.match.Ellipsis;
 import nars.term.visit.SubtermVisitor;
 import nars.util.data.Util;
 
@@ -176,6 +177,10 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
         return size() != 0;
     }
 
+    @Override
+    public final boolean hasEllipsis() {
+        return Ellipsis.hasEllipsis(this);
+    }
 
     /**
      * first level only, not recursive

@@ -84,6 +84,7 @@ public interface Termlike  {
      * @param v*/
     boolean or(Predicate<? super Term> v);
 
+    boolean hasEllipsis();
 
 
 

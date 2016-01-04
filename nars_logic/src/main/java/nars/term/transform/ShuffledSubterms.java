@@ -59,6 +59,11 @@ public final class ShuffledSubterms extends ShuffledPermutations implements Term
     }
 
     @Override
+    public boolean hasEllipsis() {
+        return compound.hasEllipsis();
+    }
+
+    @Override
     public boolean containsTerm(Term term) {
         return compound.containsTerm(term);
     }

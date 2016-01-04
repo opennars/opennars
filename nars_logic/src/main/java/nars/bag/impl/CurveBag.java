@@ -109,8 +109,8 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public final void whileEachEntry(Predicate<BagBudget<V>> each) {
-        arrayBag.whileEachEntry(each);
+    public final void topWhile(Predicate<BagBudget<V>> each) {
+        arrayBag.topWhile(each);
     }
 
     /** optimized batch fill, using consecutive array elements, also ensuring uniqueness
@@ -352,11 +352,11 @@ public class CurveBag<V> extends Bag<V> {
 //        return next; //# of items actually filled in the array
 //    }
 
-    @Override public void forEachEntry(Consumer<BagBudget> each) {
-        arrayBag.forEachEntry(each);
+    @Override public void top(Consumer<BagBudget> each) {
+        arrayBag.top(each);
     }
-    @Override public void forEachEntry(int limit, Consumer<BagBudget> each) {
-        arrayBag.forEachEntry(limit, each);
+    @Override public void topN(int limit, Consumer<BagBudget> each) {
+        arrayBag.topN(limit, each);
     }
 
     @Override

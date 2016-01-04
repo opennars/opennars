@@ -59,13 +59,13 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
         return 0;
     }
 
-    public static boolean hasEllipsis(Compound x) {
+    public static boolean hasEllipsis(TermContainer x) {
         int xs = x.size();
         for (int i = 0; i < xs; i++)
             if (x.term(i) instanceof Ellipsis) return true;
         return false;
     }
-    public static boolean hasEllipsisTransform(Compound x) {
+    public static boolean hasEllipsisTransform(TermContainer x) {
         int xs = x.size();
         for (int i = 0; i < xs; i++)
             if (x.term(i) instanceof EllipsisTransform) return true;
