@@ -109,13 +109,15 @@ public class STMTemporalLinkage {
 
                     if (previousConcept != null) {
                         //allow inference between these concepts, temporally justified
-                        //nal.link(previousConcept, currentTask);
 
+                        //allow budget flow from one event to the other
+                        nal.link(previousConcept, currentTask);
+                        nal.link(concept, previousTask);
+
+                        //also allow direct event based inference between these events:
                         Default nar = (Default) nal.nar;
-                        //direct inference between these tasks
                         TaskBeliefProcess tbp = new TaskBeliefProcess(nal.nar, currentTask, previousTask);
                         nar.getDeriver().run(tbp, nar.core.derivedTasksBuffer::add);
-
                     }
                 }
             }
