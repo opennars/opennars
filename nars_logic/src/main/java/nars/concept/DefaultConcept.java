@@ -1,6 +1,7 @@
 package nars.concept;
 
 import com.gs.collections.api.block.procedure.Procedure2;
+import com.gs.collections.impl.list.mutable.primitive.LongArrayList;
 import javolution.util.function.Equality;
 import nars.Memory;
 import nars.Param;
@@ -162,7 +163,8 @@ public class DefaultConcept extends AtomConcept {
      * @param goal The task to be processed
      * @return Whether to continue the processing of the task
      */
-    long[] lastevidence = null; //TODO maybe buffer of last execution evidences!!
+    LongArrayList lastevidence = new LongArrayList();
+    int max_last_execution_evidence_len = 100;
     public boolean processGoal(final Premise nal) {
 
         final Task goal = nal.getTask();
@@ -188,25 +190,30 @@ public class DefaultConcept extends AtomConcept {
                 DefaultTruth projected = strongest.projection(memory.time(), memory.time());
                 if (projected.getExpectation() > Global.EXECUTION_DESIRE_EXPECTATION_THRESHOLD) {
                     if (goal.getTerm() instanceof Operation && !((DefaultTask) goal).executed) { //check here already
-                        boolean samebase = false;
-                        long[] evidence = strongest.getEvidence();
-                        if(lastevidence != null && lastevidence.length == evidence.length) {
-                            for(long l : evidence) {
-                                boolean included = false;
-                                for(long l2 : lastevidence) {
+                        boolean subseteq_base = true;
+                        long[] evidence = goal.getEvidence();
+                        if(lastevidence != null) { //if all evidence of the new one is also part of the old one
+                            for(long l : evidence) { //then there is no need to execute
+                                boolean included = false; //which means only execute if there is new evidence which suggests doing so1
+                                for(long l2 : lastevidence.toArray()) {
                                     if(l==l2) {
                                         included = true;
                                     }
                                 }
                                 if(!included) {
-                                    samebase = false;
+                                    subseteq_base = false;
                                     break;
                                 }
                             }
                         }
-                        lastevidence = evidence;
-                        if(!samebase) {
-                            nal.nar().execute((DefaultTask) strongest);
+                        if(!subseteq_base || lastevidence == null) {
+                            nal.nar().execute((DefaultTask) goal);
+                        }
+                        for(int i=0; i<evidence.length; i++) {
+                            lastevidence.add(evidence[i]);
+                        }
+                        while(lastevidence.size() > max_last_execution_evidence_len) {
+                            lastevidence.removeAtIndex(0);
                         }
                     }
                 }
