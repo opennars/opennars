@@ -5,11 +5,11 @@ import com.gs.collections.api.set.MutableSet;
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
 import nars.Op;
-import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -41,29 +41,29 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
 
 
 
-    static TermSet differ(TermSet a, TermSet b) {
-        if (a.size() == 1 && b.size() == 1) {
-            //special case
-            return a.term(0).equals(b.term(0)) ?
-                    TermIndex.EmptySet :
-                    a;
-        } else {
-            MutableSet dd = Sets.difference(a.toSet(), b.toSet());
-            if (dd.isEmpty()) return TermIndex.EmptySet;
-            return TermSet.the(dd);
-        }
-    }
+//    static TermSet differ(TermSet a, TermSet b) {
+//        if (a.size() == 1 && b.size() == 1) {
+//            //special case
+//            return a.term(0).equals(b.term(0)) ?
+//                    TermIndex.EmptySet :
+//                    a;
+//        } else {
+//            MutableSet dd = Sets.difference(a.toSet(), b.toSet());
+//            if (dd.isEmpty()) return TermIndex.EmptySet;
+//            return TermSet.the(dd);
+//        }
+//    }
 
 
     /** returns null if empty set; not sorted */
     @Deprecated static TermSet difference(TermContainer a, TermContainer b) {
 
-        List<Term> terms = Global.newArrayList();
+        TreeSet<Term> terms = new TreeSet();
 
         Term[] aa = a.terms();
-        for(Term t: aa) { //set difference
-            if (!b.containsTerm(t))
-                terms.add(t);
+        for(Term x: aa) { //set difference
+            if (!b.containsTerm(x))
+                terms.add(x);
         }
 
         if (terms.isEmpty()) return null;

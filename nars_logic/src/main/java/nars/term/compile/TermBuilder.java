@@ -507,8 +507,8 @@ public interface TermBuilder {
     default Term transform(Compound src, Subst f, boolean fullMatch) {
 
         Term y = f.getXY(src);
-        if (y!=null)
-            return y;
+//        if (y!=null)
+//            return y;
 
         int len = src.size();
 

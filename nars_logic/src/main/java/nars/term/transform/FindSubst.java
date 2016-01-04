@@ -586,6 +586,9 @@ public abstract class FindSubst extends Versioning implements Subst {
         int i = 0, j = 0;
         int xsize = X.size();
         int ysize = Y.size();
+
+        //TODO check for shim and subtract xsize?
+
         while (i < xsize) {
             Term x = X.term(i++);
 
@@ -593,12 +596,14 @@ public abstract class FindSubst extends Versioning implements Subst {
             if (expansionFollows) i++; //skip over it
 
             if (x instanceof Ellipsis) {
+                int available = ysize - j;
+
                 Term eMatched = getXY(x); //EllipsisMatch, or null
                 if (eMatched == null) {
+
                     //COLLECT
                     if (i == xsize) {
                         //SUFFIX
-                        int available = ysize - j;
                         if (!Xellipsis.valid(available))
                             return false;
 
@@ -618,13 +623,17 @@ public abstract class FindSubst extends Versioning implements Subst {
                 } else {
                     //previous match exists, match against what it had
                     if (i == xsize) {
-                        //SUFFIX - match the remaining terms against what the ellipsis previously collected
-                        //HACK this only works with EllipsisMatch type
-                        Term[] sp = ((EllipsisMatch) eMatched).term;
-                        for (Term aSp : sp) {
-                            if (!match(aSp, Y.term(j++)))
-                                return false;
-                        }
+//                        //SUFFIX - match the remaining terms against what the ellipsis previously collected
+//                        //HACK this only works with EllipsisMatch type
+//                        Term[] sp = ((EllipsisMatch) eMatched).term;
+//                        if (sp.length!=available)
+//                            return false; //incorrect size
+//
+//                        //match every item
+//                        for (Term aSp : sp) {
+//                            if (!match(aSp, Y.term(j++)))
+//                                return false;
+//                        }
                     } else {
                         //TODO other cases
                         return false;
