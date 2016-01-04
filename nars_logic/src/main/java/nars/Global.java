@@ -144,7 +144,7 @@ public class Global {
     
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */
-    public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 8;
+    public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 64;
 
 
     /**

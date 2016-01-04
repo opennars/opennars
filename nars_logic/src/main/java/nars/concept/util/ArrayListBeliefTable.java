@@ -133,10 +133,8 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             tableChanged = true;
         }
 
-
         long now = memory.time();
         Task top = top(input, now);
-
 
         //TODO make sure input.isDeleted() can not happen
         if ( !input.isDeleted() && revisible(input, top) ) {
@@ -153,6 +151,10 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 memory.eventRevision.emit(revised);
                 //nal.memory().logic.BELIEF_REVISION.hit();
 
+                if(!addedRevision) {
+                    onBeliefRemoved(revised, "task didn't make it into belief table");
+                }
+
                 top = revised;
             }
 
@@ -162,6 +164,10 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         if (tableChanged) {
             onChanged(c, memory);
+        }
+
+        if(!added) {
+            onBeliefRemoved(input, "task didn't make it into belief table");
         }
 
         return top;
@@ -190,6 +196,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             for (Task b; null != (b = tasks[i++]); ) {
                 if (b == input) return false;
 
+                long[] ev = b.getEvidence();
                 if (b.equals(input)) {
                     //these should be preventable earlier
                     memory.remove(input, "Duplicate");
@@ -210,11 +217,11 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         if (atCapacity) {
             if (i == siz) {
                //reached the end of the list and there is no room to add at the end
-               //not allowed to call onBeliefRemoved, because this task has something to do, revision
+               //here we cant remove it yet because it is needed for revision
                 return false;
             } else {
                 Task removed = remove(siz - 1);
-                onBeliefRemoved(removed, "Forgotten");
+                onBeliefRemoved(removed, "task was deleted from belief table");
             }
         }
 
@@ -223,7 +230,10 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
     private final void onBeliefRemoved(Task t, String reason) {
-        memory.remove(t, "task was deleted from belief table");
+       //no need to remove a task, it will be forgotten anyway
+       /* if(t.isGoal()) {
+            memory.remove(t, reason);
+        }*/
     }
 
     private void checkForDeleted() {

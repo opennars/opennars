@@ -166,7 +166,7 @@ public class DefaultConcept extends AtomConcept {
         final Task goal = nal.getTask();
         final float successBefore = getSuccess();
 
-        if(goal.getBudget().getPriority()==0) {
+        if(goal.getBudget().summary() <= memory.taskProcessThreshold.floatValue()) {
             return false;
         }
 
