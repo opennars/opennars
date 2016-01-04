@@ -432,51 +432,6 @@ public class InjectionUtils {
         return null;
     }
 
-    public static Method findMethodToInject(Class<?> target, String name, Class<?> source) {
-
-        StringBuilder sb = new StringBuilder(128);
-
-        sb.append("set").append(name.substring(0, 1).toUpperCase());
-
-        if (name.length() > 1) {
-            sb.append(name.substring(1));
-        }
-
-        String methodName = sb.toString();
-
-        Method m = null;
-
-        try {
-
-            m = FindMethod.getMethod(target, methodName, new Class[]{source});
-
-        } catch (Exception e) {
-        }
-
-        if (m == null) {
-
-            Class<?> primitive = getPrimitiveFrom(source);
-
-            if (primitive != null) {
-
-                try {
-
-                    m = target.getMethod(methodName, primitive);
-
-                } catch (Exception e) {
-                }
-
-            }
-        }
-
-        if (m != null) {
-            m.setAccessible(true);
-        }
-
-        return m;
-
-    }
-
     public static Field findFieldToInject(Class<?> target, String name, Class<?> source) {
 
         Field f = getField(target, name);

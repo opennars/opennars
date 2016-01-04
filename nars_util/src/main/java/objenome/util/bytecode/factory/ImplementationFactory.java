@@ -64,6 +64,31 @@ public class ImplementationFactory {
     }
 
     /**
+     * Returns the "type" signature of the method.
+     *
+     * @param methodName
+     *            Name of the method.
+     * @param paramTypes
+     *            Argument types.
+     *
+     * @return Method name and argument types (like
+     *         "methodXY(String, int, boolean)").
+     */
+    public static String createTypeSignature(String methodName, Class<?>[] paramTypes) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(methodName);
+        sb.append('(');
+        for (int i = 0; i < paramTypes.length; i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(paramTypes[i].getSimpleName());
+        }
+        sb.append(')');
+        return sb.toString();
+    }
+
+    /**
      * Creates an implementation of the interface.
      * 
      * @param implPackageName
@@ -149,7 +174,7 @@ public class ImplementationFactory {
 
             // Create method signature
             String name = method1.getName();
-            String typeSignature = SgUtils.createTypeSignature(name, method1
+            String typeSignature = createTypeSignature(name, method1
                     .getParameterTypes());
 
             // Get return type

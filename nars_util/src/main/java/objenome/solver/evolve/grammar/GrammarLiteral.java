@@ -21,7 +21,8 @@
  */
 package objenome.solver.evolve.grammar;
 
-import objenome.util.StringUtils;
+import com.gs.collections.api.CharIterable;
+import com.gs.collections.impl.set.mutable.primitive.CharHashSet;
 
 /**
  * Grammar literals are a type of grammar node, that represent the terminals of
@@ -43,6 +44,26 @@ public class GrammarLiteral implements GrammarNode {
      */
     public GrammarLiteral(String value) {
         this.value = value;
+    }
+
+    /**
+     * Tests whether the given string contains any of the <code>char</code>s in
+     * the provided array.
+     *
+     * @param str an input string to test for specific <code>char</code>s
+     * @param chrs an array of characters to look for in <code>str</code>
+     * @return <code>true</code> if <code>str</code> contains one or more
+     * characters from the <code>chrs</code> array, and <code>false</code> if it
+     * contains none
+     */
+    public static boolean containsAny(CharSequence str, char[] chrs) {
+        CharIterable x = new CharHashSet(chrs);
+
+        for (int i = 0; i < str.length(); i++) {
+            if (x.contains(str.charAt(i)))
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -80,7 +101,7 @@ public class GrammarLiteral implements GrammarNode {
      */
     private String escape(String input) {
         char[] escapeChars = {'>', '<', '|'};
-        if (StringUtils.containsAny(input, escapeChars)) {
+        if (containsAny(input, escapeChars)) {
             StringBuilder buffer = new StringBuilder();
             buffer.append('\"');
             buffer.append(input);

@@ -210,18 +210,6 @@ public class Terms {
         }
     }
 
-    public static Term[] toSortedSetArray(Collection<? extends Term> c) {
-        TreeSet<Term> t = c instanceof TreeSet ? (TreeSet) c : new TreeSet(c);
-        return t.toArray(new Term[t.size()]);
-    }
-
-    /**
-     * for printing complex terms as a recursive tree
-     */
-    public static void printRecursive(Term x) {
-        printRecursive(x, 0);
-    }
-
     public static void printRecursive(Term x, int level) {
         //indent
         for (int i = 0; i < level; i++)
@@ -298,36 +286,6 @@ public class Terms {
         return s;
     }
 
-    /**
-     * interprets subterms of a compound term to a set of
-     * key,value pairs (Map entries).
-     * ie, it translates this SetExt tp a Map<Term,Term> in the
-     * following pattern:
-     * <p/>
-     * { (a,b) }  becomes Map a=b
-     * [ (a,b), b:c ] bcomes Map a=b, b=c
-     * { (a,b), (b,c), d } bcomes Map a=b, b=c, d=null
-     *
-     * @return a potentially incomplete map representation of this compound
-     */
-    public static Map<Term, Term> toKeyValueMap(Compound<?> t) {
-
-        Map<Term, Term> result = Global.newHashMap();
-
-        t.forEach(a -> {
-            if (a.size() == 2) {
-                if ((a.op() == PRODUCT) || (a.op() == Op.INHERIT)) {
-                    Compound ii = (Compound) a;
-                    result.put(ii.term(0), ii.term(1));
-                }
-            } else if (a.size() == 1) {
-                result.put(a, null);
-            }
-        });
-
-        return result;
-    }
-
     public static int maxLevel(Term term) {
         int[] max = {0};
         term.recurseTerms((t, p) -> {
@@ -401,35 +359,10 @@ public class Terms {
         return y;
     }
 
-    /** a heuristic for measuring the difference between terms
-     *  in range of 0..100%, 0 meaning equal
-     * */
-    public static float termDistance(Term a, Term b, float ifLessThan) {
-        if (a.equals(b)) return 0;
-        //TODO handle TermMetadata terms
-
-        float dist = 0;
-        if (a.op()!=b.op()) {
-            //50% for equal term
-            dist += 0.25f;
-            if (dist >= ifLessThan) return dist;
-        }
-
-        if (a.size()!=b.size()) {
-            dist += 0.25f;
-            if (dist >= ifLessThan) return dist;
-        }
-
-        if (a.structure()!=b.structure()) {
-            dist += 0.25f;
-            if (dist >= ifLessThan) return dist;
-        }
-
-        //HACK use toString for now
-        dist += Texts.levenshteinDistancePercent(
-                a.toString(false),
-                b.toString(false)) * 0.25f;
-
-        return dist;
+    /** returns lev distance divided by max(a.length(), b.length() */
+    public static float levenshteinDistancePercent(CharSequence a, CharSequence b) {
+        float len = Math.max(a.length(), b.length());
+        if (len == 0) return 0;
+        return Texts.levenshteinDistance(a,b) / len;
     }
 }

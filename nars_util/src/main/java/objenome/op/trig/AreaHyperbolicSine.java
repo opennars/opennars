@@ -22,7 +22,6 @@
 package objenome.op.trig;
 
 import objenome.op.Node;
-import objenome.util.MathUtils;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
@@ -54,6 +53,30 @@ public class AreaHyperbolicSine extends Node {
     }
 
     /**
+     * Returns the area (inverse) hyperbolic sine of a <code>double</code>
+     * value.
+     * <p>
+     * The identity is:
+     * <p>
+     * <i>arsinh(x)&nbsp;=&nbsp;ln(x&nbsp;+&nbsp;sqrt(x<sup>2</sup>&nbsp;+&nbsp;1))</i>
+     * <p>
+     * Special cases:
+     * <ul>
+     * <li>If the argument is NaN, then the result is NaN.
+     * <li>If the argument is infinite, then the result is an infinity with the
+     * same sign as the argument.
+     * <li>If the argument is zero, then the result is a zero with the same sign
+     * as the argument.
+     * </ul>
+     *
+     * @param d the number whose inverse hyperbolic sine is sought
+     * @return the inverse hyperbolic sine of <code>d</code>
+     */
+    public static double arsinh(double d) {
+        return Double.isInfinite(d) ? d : (d == 0.0) ? d : Math.log(d + Math.sqrt(d * d + 1.0));
+    }
+
+    /**
      * Evaluates this function. The child node is evaluated, the result of which
      * must be a numeric type (one of Double, Float, Long, Integer). The area
      * hyperbolic sine of this value becomes the result of this method as a
@@ -65,7 +88,7 @@ public class AreaHyperbolicSine extends Node {
     public Double evaluate() {
         Object c = getChild(0).evaluate();
 
-        return MathUtils.arsinh(NumericUtils.asDouble(c));
+        return arsinh(NumericUtils.asDouble(c));
     }
 
     /**

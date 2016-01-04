@@ -69,12 +69,6 @@ public class VariableNormalization extends VariableTransform implements Function
     boolean renamed = false;
 
 
-    /** allows using the single variable normalization,
-     * which is safe if the term doesnt contain pattern variables */
-    public static VariableTransform normalizeFast(Compound target) {
-        return target.vars() == 1 ? singleVariableNormalization : new VariableNormalization();
-    }
-
     public final Variable apply(Variable v) {
         Variable rvv = newVariable(v, rename.size()+1);
         if (!renamed) {

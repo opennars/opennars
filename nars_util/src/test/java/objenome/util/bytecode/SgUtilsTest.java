@@ -27,17 +27,36 @@ import java.lang.reflect.Modifier;
 // CHECKSTYLE:OFF
 public class SgUtilsTest {
 
+    /**
+     * Merge two packages into one. If any package is null or empty no "." will
+     * be added. If both packages are null an empty string will be returned.
+     *
+     * @param package1
+     *            First package - Can also be null or empty.
+     * @param package2
+     *            Second package - Can also be null or empty.
+     *
+     * @return Both packages added with ".".
+     */
+    public static String concatPackages(String package1, String package2) {
+        if ((package1 == null) || (package1.isEmpty())) {
+            return (package2 == null) || (package2.isEmpty()) ? "" : package2;
+        } else {
+            return (package2 == null) || (package2.isEmpty()) ? package1 : package1 + '.' + package2;
+        }
+    }
+
     @Test
     public void concatPackages() {
-        Assert.assertEquals(SgUtils.concatPackages(null, null), "");
-        Assert.assertEquals(SgUtils.concatPackages(null, ""), "");
-        Assert.assertEquals(SgUtils.concatPackages("", null), "");
-        Assert.assertEquals(SgUtils.concatPackages("", ""), "");
-        Assert.assertEquals(SgUtils.concatPackages("a", null), "a");
-        Assert.assertEquals(SgUtils.concatPackages("a", ""), "a");
-        Assert.assertEquals(SgUtils.concatPackages(null, "a"), "a");
-        Assert.assertEquals(SgUtils.concatPackages("", "a"), "a");
-        Assert.assertEquals(SgUtils.concatPackages("a", "b"), "a.b");
+        Assert.assertEquals(concatPackages(null, null), "");
+        Assert.assertEquals(concatPackages(null, ""), "");
+        Assert.assertEquals(concatPackages("", null), "");
+        Assert.assertEquals(concatPackages("", ""), "");
+        Assert.assertEquals(concatPackages("a", null), "a");
+        Assert.assertEquals(concatPackages("a", ""), "a");
+        Assert.assertEquals(concatPackages(null, "a"), "a");
+        Assert.assertEquals(concatPackages("", "a"), "a");
+        Assert.assertEquals(concatPackages("a", "b"), "a.b");
     }
 
     @Test

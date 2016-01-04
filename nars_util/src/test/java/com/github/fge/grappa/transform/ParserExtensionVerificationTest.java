@@ -19,13 +19,16 @@ package com.github.fge.grappa.transform;
 import com.github.fge.grappa.transform.base.InstructionGroup;
 import com.github.fge.grappa.transform.base.ParserClassNode;
 import com.github.fge.grappa.transform.base.RuleMethod;
+import com.google.common.base.Preconditions;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.*;
 
-import static com.github.fge.grappa.transform.AsmTestUtils.verifyIntegrity;
 import static org.testng.Assert.assertNotNull;
 
 /*
@@ -61,6 +64,18 @@ public final class ParserExtensionVerificationTest {
 //    }
 
     ParserClassNode classNode;
+
+    public static void verifyIntegrity(
+        String classInternalName, byte[] classCode) {
+        Preconditions.checkNotNull(classCode, "classCode");
+        ClassNode generatedClassNode = new ClassNode();
+        ClassReader classReader = new ClassReader(classCode);
+        classReader.accept(generatedClassNode, 0);
+
+        for (Object methodObj : generatedClassNode.methods) {
+            AsmTestUtils.verifyMethodIntegrity(classInternalName, (MethodNode) methodObj);
+        }
+    }
 
     @BeforeClass
     public void initClassNode()

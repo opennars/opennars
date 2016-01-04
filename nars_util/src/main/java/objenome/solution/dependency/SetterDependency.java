@@ -1,6 +1,7 @@
 package objenome.solution.dependency;
 
 import com.gs.collections.impl.map.mutable.UnifiedMap;
+import objenome.util.FindMethod;
 import objenome.util.InjectionUtils;
 
 import java.lang.reflect.Method;
@@ -28,6 +29,51 @@ public class SetterDependency {
         this.sourceFromContainer = sourceFromContainer;
 
         this.sourceType = sourceType;
+    }
+
+    public static Method findMethodToInject(Class<?> target, String name, Class<?> source) {
+
+        StringBuilder sb = new StringBuilder(128);
+
+        sb.append("set").append(name.substring(0, 1).toUpperCase());
+
+        if (name.length() > 1) {
+            sb.append(name.substring(1));
+        }
+
+        String methodName = sb.toString();
+
+        Method m = null;
+
+        try {
+
+            m = FindMethod.getMethod(target, methodName, new Class[]{source});
+
+        } catch (Exception e) {
+        }
+
+        if (m == null) {
+
+            Class<?> primitive = InjectionUtils.getPrimitiveFrom(source);
+
+            if (primitive != null) {
+
+                try {
+
+                    m = target.getMethod(methodName, primitive);
+
+                } catch (Exception e) {
+                }
+
+            }
+        }
+
+        if (m != null) {
+            m.setAccessible(true);
+        }
+
+        return m;
+
     }
 
     public String getTarget() {
@@ -84,7 +130,7 @@ public class SetterDependency {
             return m;
         }
 
-        m = InjectionUtils.findMethodToInject(targetClass, targetProperty, sourceType);
+        m = findMethodToInject(targetClass, targetProperty, sourceType);
 
         /*
          try {

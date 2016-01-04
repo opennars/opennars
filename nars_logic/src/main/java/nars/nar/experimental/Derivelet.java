@@ -9,6 +9,7 @@ import nars.nar.Default;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Termed;
+import nars.term.Terms;
 
 import java.util.Set;
 import java.util.function.Consumer;
@@ -55,6 +56,27 @@ public class Derivelet {
     private BagBudget[] termsArray = new BagBudget[0];
     private BagBudget[] tasksArray = new BagBudget[0];
 
+    public static int firePremises(Concept concept, BagBudget<Task>[] tasks, BagBudget<Termed>[] terms, Consumer<ConceptProcess> proc, NAR nar) {
+
+        int total = 0;
+
+        for (BagBudget<Task> taskLink : tasks) {
+            if (taskLink == null) break;
+
+            for (BagBudget<Termed> termLink : terms) {
+                if (termLink == null) break;
+
+                if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.get().term(), termLink.get().term()))
+                    continue;
+
+                total+= ConceptProcess.fireAll(
+                    nar, concept, taskLink, termLink, proc);
+            }
+        }
+
+        return total;
+    }
+
 
     /**
      * iteratively supplies a matrix of premises from the next N tasklinks and M termlinks
@@ -79,7 +101,7 @@ public class Derivelet {
         termsArray = this.terms.toArray(termsArray);
         this.terms.clear();
 
-        return ConceptProcess.firePremises(concept,
+        return firePremises(concept,
                 tasksArray, termsArray,
                 proc, nar);
 

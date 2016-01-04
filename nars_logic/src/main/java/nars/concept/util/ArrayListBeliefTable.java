@@ -2,13 +2,15 @@ package nars.concept.util;
 
 import nars.Global;
 import nars.Memory;
+import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.nal.nal7.Tense;
+import nars.task.MutableTask;
 import nars.task.Task;
+import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 import nars.util.data.Util;
-
-import static nars.nal.LocalRules.getRevision;
-import static nars.nal.LocalRules.revisible;
 
 /**
  * Stores beliefs ranked in a sorted ArrayList, with strongest beliefs at lowest indexes (first iterated)
@@ -26,6 +28,50 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
     public ArrayListBeliefTable(int cap) {
         super(cap);
+    }
+
+    /** creates a revision task (but does not input it)
+     *  if failed, returns null
+     * */
+    public static Task getRevision(Task newBelief, Task oldBelief, long now) {
+
+        if (newBelief.equals(oldBelief) || Tense.overlapping(newBelief, oldBelief))
+            return null;
+
+        Truth newBeliefTruth = newBelief.getTruth();
+
+        long newOcc = newBelief.getOccurrenceTime();
+        Truth oldBeliefTruth = oldBelief.projection(newOcc, now);
+
+        Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
+
+        Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, newBelief.getBudget());
+
+        //Task<T> revised = nal.input(
+        return new MutableTask(newBelief.term())
+                .punctuation(newBelief.getPunctuation())
+                .truth(truth)
+                .budget(budget)
+                .parent(newBelief, oldBelief)
+                .because("Revision")
+                .time( now,  newOcc );
+    }
+
+    /**
+     * WARNING: this assumes terms are already
+     * known to be equal.
+     *
+     */
+    public static boolean revisible(Task newBelief, Task oldBelief) {
+
+        //TODO maybe add DEBUG test: newBelief and oldBelief term must be equal
+
+        if (newBelief.isRevisible() && (!newBelief.equals(oldBelief))) {
+            if (Tense.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
+                return true;
+        }
+
+        return false;
     }
 
 

@@ -52,41 +52,6 @@ public final class BooleanUtils {
     }
 
     /**
-     * Generates an array of <code>Boolean</code> arrays of all possible
-     * combinations of <code>true</code>/<code>false</code> values for the given
-     * number of elements.
-     *
-     * <p>
-     * This function will not cope with large values of <code>noBits</code> over
-     * about 30 due to size limitations of the <code>int</code> datatype, and
-     * maximum array sizes. There are also likely to be issues with heap space.
-     * It is recommended in most cases to use the alternative
-     * <code>BooleanUtils.generateBoolSequence(int, long)</code> method which
-     * generates the same <code>boolean</code> arrays on an individual basis.
-     *
-     * @param noBits the number of <code>boolean</code> values in which
-     * different combinations are made
-     * @return an array of all the possible <code>boolean</code> arrays possible
-     * with the given number of elements. There will be 2<sup>noBits</sup>
-     * combinations and so the returned array will have this many elements.
-     */
-    public static Boolean[][] generateBoolSequences(int noBits) {
-        int noInputs = (int) Math.pow(2, noBits);
-
-        Boolean[][] inputs = new Boolean[noInputs][noBits];
-
-        for (int i = 0; i < noBits; i++) {
-            int rep = (int) Math.pow(2, i + 1);
-
-            for (int j = 0; j < noInputs; j++) {
-                inputs[j][i] = (j % rep) > Math.floor(rep / 2.0f) - 1;
-            }
-        }
-
-        return inputs;
-    }
-
-    /**
      * Provides an alternative to
      * <code>BooleanUtils.generateBoolSequences(int)</code> particularly for
      * larger numbers of bits greater than 30 which that method will struggle

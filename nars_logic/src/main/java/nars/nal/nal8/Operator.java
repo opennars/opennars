@@ -114,41 +114,6 @@ public final class Operator<T extends Term> extends AbstractStringAtom { //imple
         return opArgs(term).terms();
     }
 
-    public static void operationAppend(Compound argsProduct, Operator operator, Appendable p, boolean pretty) throws IOException {
-
-        Term predTerm = operator.identifier(); //getOperatorTerm();
-
-        if ((predTerm.volume() != 1) || (predTerm.hasVar())) {
-            //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format
-            TermPrinter.appendSeparator(p, pretty);
-            return;
-        }
-
-
-        Term[] xt = argsProduct.terms();
-
-        predTerm.append(p, pretty); //add the operator name without leading '^'
-        p.append(COMPOUND_TERM_OPENER);
-
-
-        int n = 0;
-        for (Term t : xt) {
-            if (n != 0) {
-                p.append(ARGUMENT_SEPARATOR);
-                if (pretty)
-                    p.append(' ');
-            }
-
-            t.append(p, pretty);
-
-
-            n++;
-        }
-
-        p.append(COMPOUND_TERM_CLOSER);
-
-    }
-
     @Override
     public Op op() {
         return Op.OPERATOR;

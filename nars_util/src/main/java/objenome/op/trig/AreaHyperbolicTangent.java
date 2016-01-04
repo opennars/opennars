@@ -22,7 +22,6 @@
 package objenome.op.trig;
 
 import objenome.op.Node;
-import objenome.util.MathUtils;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
@@ -54,6 +53,32 @@ public class AreaHyperbolicTangent extends Node {
     }
 
     /**
+     * Returns the inverse hyperbolic tangent of a <code>double</code> value.
+     * <p>
+     * The identity is:
+     * <p>
+     * <i>artanh(x)&nbsp;=&nbsp;(1/2)*ln((1&nbsp;+&nbsp;x)/(1&nbsp;-&nbsp;x))</i>
+     * <p>
+     * Special cases:
+     * <ul>
+     * <li>If the argument is NaN, an infinity, or has a modulus of greater than
+     * one, then the result is NaN.
+     * <li>If the argument is plus or minus one, then the result is infinity
+     * with the same sign as the argument.
+     * <li>If the argument is zero, then the result is a zero with the same sign
+     * as the argument.
+     * </ul>
+     *
+     * @param d a <code>double</code> specifying the value whose inverse
+     * hyperbolic tangent is sought
+     * @return a <code>double</code> specifying the inverse hyperbolic tangent
+     * of <code>d</code>
+     */
+    public static double artanh(double d) {
+        return (d != 0.0) ? (Math.log(1.0 + d) - Math.log(1.0 - d)) / 2.0 : d;
+    }
+
+    /**
      * Evaluates this function. The child node is evaluated, the result of which
      * must be a numeric type (one of Double, Float, Long, Integer). The area
      * hyperbolic tangent of this value becomes the result of this method as a
@@ -65,7 +90,7 @@ public class AreaHyperbolicTangent extends Node {
     public Double evaluate() {
         Object c = getChild(0).evaluate();
 
-        return MathUtils.artanh(NumericUtils.asDouble(c));
+        return artanh(NumericUtils.asDouble(c));
     }
 
     /**

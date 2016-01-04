@@ -16,27 +16,4 @@ public interface Interval {
     }
 
 
-    /** returns a count of how many interval terms are in the array */
-    static int intervalCount(Term[] a) {
-        int c = 0;
-        for (Term x : a) {
-            if (x instanceof CyclesInterval) {
-                //long d = ((CyclesInterval)x).duration();
-                c++;
-            }
-        }
-        return c;
-    }
-
-
-    static Term firstNonIntervalIn(Term[] a) {
-
-        for (Term x : a) {
-            if (!(x instanceof CyclesInterval)) {
-                //long d = ((CyclesInterval)x).duration();
-                return x;
-            }
-        }
-        return null;
-    }
 }

@@ -172,10 +172,6 @@ public class LibraryInput extends TextInput {
 //        return params;
 //    }
 
-    public static Map<String, String> getAllExamples() {
-        return getUnitTests(directories);
-    }
-
     public static List<Object[]> rawTasks(String script) {
 
         List<Object[]> rr = Global.newArrayList();

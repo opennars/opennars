@@ -89,18 +89,6 @@ public class AsmTestUtils {
         assertEquals(stringWriter.toString(), traceDump);
     }
 
-    public static void verifyIntegrity(
-        String classInternalName, byte[] classCode) {
-        Preconditions.checkNotNull(classCode, "classCode");
-        ClassNode generatedClassNode = new ClassNode();
-        ClassReader classReader = new ClassReader(classCode);
-        classReader.accept(generatedClassNode, 0);
-
-        for (Object methodObj : generatedClassNode.methods) {
-            verifyMethodIntegrity(classInternalName, (MethodNode) methodObj);
-        }
-    }
-
     public static void verifyMethodIntegrity(String ownerInternalName, MethodNode method) {
         try {
             new Analyzer(new SimpleVerifier()).analyze(ownerInternalName, method);

@@ -209,10 +209,6 @@ public abstract class $  {
         return v(VAR_QUERY, s);
     }
 
-    public static Variable varPattern(int i) {
-        return v(VAR_PATTERN, i);
-    }
-
     public static Variable varPattern(String s) {
         return v(VAR_PATTERN, s);
     }
@@ -228,9 +224,7 @@ public abstract class $  {
     public static Term inst(Term subj, Term pred) {
         return terms.inst(subj, pred);
     }
-    public static Term instprop(Term subject, Term predicate) {
-        return terms.instprop(subject, predicate);
-    }
+
     public static Term prop(Term subject, Term predicate) {
         return terms.prop(subject, predicate);
     }
@@ -334,10 +328,6 @@ public abstract class $  {
         return the(PARALLEL, a);
     }
 
-    public static Term disj(Term... a) {
-        return the(DISJUNCTION, a);
-    }
-
     static {
 //        // assume SLF4J is bound to logback in the current environment
 //        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -408,32 +398,13 @@ public abstract class $  {
     public static Term equiv(Term subject, Term pred) {
         return the(EQUIV, subject, pred);
     }
-    public static Term equivAfter(Term subject, Term pred) {
-        return the(EQUIV_AFTER, subject, pred);
-    }
+
     public static Term equivWhen(Term subject, Term pred) {
         return the(EQUIV_WHEN, subject, pred);
     }
 
-    public static Term diffInt(Term a, Term b) {
-        return the(DIFF_INT, a, b);
-    }
-
-    public static Term diffExt(Term a, Term b) {
-        return the(DIFF_EXT, a, b);
-    }
-
-    public static Term imageExt(Term... x) {
-        return the(IMAGE_EXT, x);
-    }
-    public static Term imageInt(Term... x) {
-        return the(IMAGE_INT, x);
-    }
     public static Term sect(Term... x) {
         return the(INTERSECT_EXT, x);
-    }
-    public static Term sectInt(Term... x) {
-        return the(INTERSECT_INT, x);
     }
 
     public static Operator operator(String name) {
@@ -478,13 +449,6 @@ public abstract class $  {
         return $.sete(
             map.entrySet().stream().map(
                 e -> $.p(e.getKey(),e.getValue()))
-            .collect( toList())
-        );
-    }
-    public static <X> Compound seteMap(Map<Term,? extends X> map, Function<X, Term> toTerm) {
-        return $.sete(
-            map.entrySet().stream().map(
-                e -> $.p(e.getKey(), toTerm.apply(e.getValue())))
             .collect( toList())
         );
     }

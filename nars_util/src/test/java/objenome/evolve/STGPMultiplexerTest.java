@@ -9,11 +9,21 @@ import org.junit.Test;
 
 public class STGPMultiplexerTest extends TestCase {
 
-	@Test public void testSTGPMultiplexer() {                                   
+    public static STGPBoolean.BooleanCases multiplexerProblem(int bits) {
+        int noAddressBits = BenchmarkSolutions.multiplexerAddressBits(bits);
+        Boolean[][] inputValues = BenchmarkSolutions.generateBoolSequences(bits);
+        Boolean[] expectedOutputs = new Boolean[inputValues.length];
+        for (int i = 0; i < inputValues.length; i++) {
+            expectedOutputs[i] = BenchmarkSolutions.multiplexer(inputValues[i], noAddressBits);
+        }
+        return new STGPBoolean.BooleanCases(inputValues, expectedOutputs);
+    }
+
+    @Test public void testSTGPMultiplexer() {
 
         int popSize = 100;
         int generations = 50;
-            STGPBoolean e = new STGPBoolean(BenchmarkSolutions.multiplexerProblem(6), popSize, generations);
+            STGPBoolean e = new STGPBoolean(multiplexerProblem(6), popSize, generations);
             
             Population<TypedOrganism> p = e.cycle();
             

@@ -5,6 +5,7 @@ import nars.Narsese;
 import nars.nal.PatternIndex;
 import nars.nal.PremiseRule;
 import nars.nal.PremiseRuleSet;
+import nars.term.Term;
 import nars.term.Terms;
 import nars.term.compound.Compound;
 import org.junit.Test;
@@ -17,7 +18,13 @@ public class PremiseRuleTest extends TestCase {
 
     static final Narsese p = Narsese.the();
 
- 
+    /**
+     * for printing complex terms as a recursive tree
+     */
+    public static void printRecursive(Term x) {
+        Terms.printRecursive(x, 0);
+    }
+
 
     @Test
     public void testParser() {
@@ -108,7 +115,7 @@ public class PremiseRuleTest extends TestCase {
 
         Compound y = (Compound)p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion)>");
         y = ((PremiseRule)y).normalizeRule(i);
-        Terms.printRecursive(y);
+        printRecursive(y);
 
         assertEquals("((<%1-->%2>,(--,%1)),(<%2-->%1>,(<Conversion-->Truth>)))", y.toString());
         assertEquals(10, y.complexity());
@@ -118,7 +125,7 @@ public class PremiseRuleTest extends TestCase {
 
     @Test public void printTermRecursive() {
         Compound y = (Compound)p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
-        Terms.printRecursive(y);
+        printRecursive(y);
     }
 
 

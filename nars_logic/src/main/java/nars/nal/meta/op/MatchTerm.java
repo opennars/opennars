@@ -16,8 +16,10 @@ import nars.term.constraint.MatchConstraint;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import static com.gs.collections.impl.factory.Maps.immutable;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Establishes conditions for the Term match
@@ -40,7 +42,7 @@ public final class MatchTerm extends AtomicBooleanCondition<PremiseMatch> implem
                 //no constraints
                 x :
                 //constraints stored in atomic string
-                (Compound) ($.sect(x, $.seteMap(constraints.castToMap(), $.ToStringToTerm)));
+                (Compound) ($.sect(x, seteMap(constraints.castToMap(), $.ToStringToTerm)));
 
         this.x = x;
         this.constraints = constraints;
@@ -71,6 +73,14 @@ public final class MatchTerm extends AtomicBooleanCondition<PremiseMatch> implem
             }
         });
         return con;
+    }
+
+    public static <X> Compound seteMap(Map<Term,? extends X> map, Function<X, Term> toTerm) {
+        return $.sete(
+            map.entrySet().stream().map(
+                e -> $.p(e.getKey(), toTerm.apply(e.getValue())))
+            .collect( toList())
+        );
     }
 
     @Override

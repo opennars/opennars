@@ -22,7 +22,6 @@
 package objenome.op.trig;
 
 import objenome.op.Node;
-import objenome.util.MathUtils;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
@@ -53,6 +52,16 @@ public class ArcSecant extends Node {
     }
 
     /**
+     * Returns the inverse secant of a <code>double</code> value
+     *
+     * @param d the number whose inverse secant is sought
+     * @return the inverse secant of <code>d</code>
+     */
+    public static double arcsec(double d) {
+        return Math.acos(1.0 / d);
+    }
+
+    /**
      * Evaluates this function. The child node is evaluated, the result of which
      * must be a numeric type (one of Double, Float, Long, Integer). The
      * arc-secant of this value becomes the result of this method as a double
@@ -64,7 +73,7 @@ public class ArcSecant extends Node {
     public Double evaluate() {
         Object c = getChild(0).evaluate();
 
-        return MathUtils.arcsec(NumericUtils.asDouble(c));
+        return arcsec(NumericUtils.asDouble(c));
     }
 
     /**

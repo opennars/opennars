@@ -71,6 +71,29 @@ public final class ByteBuf  {
         buffer = new byte[ capacity ];
     }
 
+    public static void unsignedByteTo(byte[] buffer, int off, short value ) {
+        buffer[ off ] = ( byte ) ( value );
+
+    }
+
+    public static void unsignedShortTo(byte[] buffer, int off, int value ) {
+
+        buffer[ off++ ] = ( byte ) ( value );
+        buffer[ off ] = ( byte ) ( value >>> 8 );
+
+    }
+
+    public static void unsignedIntTo(byte[] b, int off, long val ) {
+        b[ off++ ] = ( byte ) ( val >>> 24 );
+        b[ off++ ] = ( byte ) ( val >>> 16 );
+        b[ off++ ] = ( byte ) ( val >>> 8 );
+        b[ off ] = ( byte ) ( val );
+    }
+
+    public static int _idx(byte[] output, int outputOffset, byte[] input ) {
+        return Byt._idx(output, outputOffset, input, input.length);
+    }
+
     public ByteBuf append(String str) {
         append(Utf8.toUtf8(str));
         return this;
@@ -159,7 +182,7 @@ public final class ByteBuf  {
     public ByteBuf addUnsignedInt( long value ) {
 
         grow(4);
-        Byt.unsignedIntTo( buffer, length, value );
+        unsignedIntTo( buffer, length, value );
         length += 4;
         return this;
 
@@ -178,7 +201,7 @@ public final class ByteBuf  {
 
 
     public int _idx( byte[] buf, byte[] input ) {
-        return Byt._idx(buf, length, input);
+        return _idx(buf, length, input);
     }
 
     public ByteBuf add(byte value) {
@@ -214,7 +237,7 @@ public final class ByteBuf  {
     }
 
     public ByteBuf add(byte[] array, int subLen) {
-        length += Byt._idx( buffer, subLen, array );
+        length += _idx( buffer, subLen, array );
         return this;
     }
 
@@ -410,12 +433,12 @@ public final class ByteBuf  {
 
     public void addUnsignedByte( short value ) {
         if ( 1 + length < getCapacity()) {
-            Byt.unsignedByteTo( buffer, length, value );
+            unsignedByteTo( buffer, length, value );
         } else {
             buffer = Byt.grow( buffer, buffer.length * 2 + 1 );
             
 
-            Byt.unsignedByteTo( buffer, length, value );
+            unsignedByteTo( buffer, length, value );
         }
 
         length += 1;
@@ -435,12 +458,12 @@ public final class ByteBuf  {
     public void addUnsignedShort( int value ) {
 
         if ( 2 + length < getCapacity()) {
-            Byt.unsignedShortTo( buffer, length, value );
+            unsignedShortTo( buffer, length, value );
         } else {
             buffer = Byt.grow( buffer, buffer.length * 2 + 2 );
             
 
-            Byt.unsignedShortTo( buffer, length, value );
+            unsignedShortTo( buffer, length, value );
         }
 
         length += 2;

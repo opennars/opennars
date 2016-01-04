@@ -121,12 +121,6 @@ public final class TypeUtil {
 
         return false;
     }
-    public static boolean containsSub(Iterable<Class<?>> collection, Class<?> cls) {
-        for (Class<?> c : collection)
-            if (ClassUtils.isAssignable(c, cls))
-                return true;
-        return false;
-    }    
 
     /**
      * Returns <code>true</code> if the given collection contains an element
@@ -253,18 +247,6 @@ public final class TypeUtil {
         } else {
             return Integer.class;
         }
-    }
-
-    /**
-     * Tests whether the given class type is for an integer type (one of
-     * <code>Byte, Short, Integer, Long</code>)
-     *
-     * @param type the type to check
-     * @return <code>true</code> if it is a primitive integer type,
-     * <code>false</code> otherwise
-     */
-    public static boolean isIntegerType(Class<?> type) {
-        return ((type == Integer.class) || (type == Long.class) || (type == Byte.class) || (type == Short.class));
     }
 
     /**

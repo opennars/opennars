@@ -318,9 +318,4 @@ public interface Statement {
 //        return s1Indep ^ s2Indep;
 //    }
 
-    static boolean subjectOrPredicateIsIndependentVar(Compound t) {
-        if (!t.hasVarIndep()) return false;
-        return (t.term(0).op(Op.VAR_INDEP)) || (t.term(1).op(Op.VAR_INDEP));
-    }
-
 }

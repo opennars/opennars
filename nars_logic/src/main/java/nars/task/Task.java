@@ -20,12 +20,8 @@
  */
 package nars.task;
 
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.Symbols;
+import nars.*;
 import nars.budget.Budgeted;
-import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
@@ -116,7 +112,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
         if (t.op().isStatement()) {
 
             /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
-            if (Statement.subjectOrPredicateIsIndependentVar(st))
+            if (subjectOrPredicateIsIndependentVar(st))
                 return false;
 
             if (Global.DEBUG_PARANOID) {
@@ -129,6 +125,18 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
         }
 
         return true;
+    }
+
+    static float prioritySum(Iterable<? extends Budgeted> dd) {
+        float f = 0;
+        for (Budgeted x : dd)
+            f += x.getPriority();
+        return f;
+    }
+
+    static boolean subjectOrPredicateIsIndependentVar(Compound t) {
+        if (!t.hasVarIndep()) return false;
+        return (t.term(0).op(Op.VAR_INDEP)) || (t.term(1).op(Op.VAR_INDEP));
     }
 
 
@@ -517,7 +525,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     static void normalizeCombined(Iterable<Task> derived, float premisePriority) {
 
 
-        float totalDerivedPriority = UnitBudget.prioritySum(derived);
+        float totalDerivedPriority = prioritySum(derived);
         float factor = Math.min(
                     premisePriority/totalDerivedPriority,
                     1.0f //limit to only diminish

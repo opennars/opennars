@@ -41,6 +41,13 @@ import java.util.Set;
 public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> {
 
 
+    static void argSep(Appendable p, boolean pretty) throws IOException {
+        if (pretty)
+            p.append(Symbols.ARGUMENT_SEPARATOR_PRETTY);
+        else
+            p.append(Symbols.ARGUMENT_SEPARATOR);
+    }
+
     /** gets the set of unique recursively contained terms of a specific type
      * TODO generalize to a provided lambda predicate selector
      * */
@@ -116,7 +123,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         int nterms = size();
         for (int i = 0; i < nterms; i++) {
              if ((i != 0) || (/*i == 0 &&*/ nterms > 1 && appendedOperator)) {
-                 Symbols.argSep(p, pretty);
+                 argSep(p, pretty);
              }
 
             term(i).append(p, pretty);

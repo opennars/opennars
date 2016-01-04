@@ -22,7 +22,6 @@
 package objenome.op.trig;
 
 import objenome.op.Node;
-import objenome.util.MathUtils;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
@@ -53,6 +52,16 @@ public class ArcCosecant extends Node {
     }
 
     /**
+     * Returns the inverse cosecant of a <code>double</code> value
+     *
+     * @param d the number whose inverse cosecant is sought
+     * @return the inverse cosecant of <code>d</code>
+     */
+    public static double arccsc(double d) {
+        return Math.asin(1.0 / d);
+    }
+
+    /**
      * Evaluates this function. The child node is evaluated, the result of which
      * must be a numeric type (one of Double, Float, Long, Integer). The
      * arc-cosecant of this value becomes the result of this method as a double
@@ -64,7 +73,7 @@ public class ArcCosecant extends Node {
     public Double evaluate() {
         Object c = getChild(0).evaluate();
 
-        return MathUtils.arccsc(NumericUtils.asDouble(c));
+        return arccsc(NumericUtils.asDouble(c));
     }
 
     /**

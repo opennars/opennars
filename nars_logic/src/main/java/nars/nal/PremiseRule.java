@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import static nars.Op.VAR_PATTERN;
 import static nars.term.Terms.concat;
 
 /**
@@ -653,12 +654,16 @@ public class PremiseRule extends GenericCompound implements Level {
 
         int offset = 0;
 
+        public static Variable varPattern(int i) {
+            return $.v(VAR_PATTERN, i);
+        }
+
         @Override protected Variable newVariable(Variable v, int serial) {
 
 
             if (v instanceof Ellipsis) {
                 Ellipsis e = (Ellipsis)v;
-                Variable r = e.clone($.varPattern(serial+offset), this);
+                Variable r = e.clone(varPattern(serial+offset), this);
                 if (e.toString().contains("..+..+"))
                     throw new RuntimeException("x");
                 offset = 0; //return to zero

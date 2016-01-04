@@ -102,15 +102,6 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
 
     static final char[] emptyChars = new char[0];
 
-    public static byte base36(int index) {
-        if (index < 10)
-            return (byte) ('0' + index);
-        else if (index < (10 + 26))
-            return (byte) ((index - 10) + 'a');
-        else
-            throw new RuntimeException("out of bounds");
-    }
-
     public char[] toChars() {
         if (length == 0) {
             return emptyChars;
@@ -187,17 +178,6 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
         return c;
     }
 
-    public static byte[] charsToBytes(char[] s) {
-        int slen = s.length;
-        byte[] b = new byte[slen *2];
-        int j = 0;
-        for (char c : s) {
-            b[j++] = (byte) ((c & 0xFF00) >> 8);
-            b[j++] = (byte) ((c & 0x00FF));
-        }
-        return b;
-    }
-
     public static byte[] charsToBytes(CharSequence s) {
         int slen = s.length();
 
@@ -252,10 +232,6 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
 
         //unsafe version;
         //return toUtf8(StringHack.chars(str));
-    }
-
-    public static byte[] toUtf8(char[] str) {
-        return toUtf8JDK(CharBuffer.wrap(str));
     }
 
 

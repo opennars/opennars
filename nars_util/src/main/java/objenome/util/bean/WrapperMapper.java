@@ -32,10 +32,6 @@ public final class WrapperMapper {
         return map;
     }
 
-    public static Object getNullObject(Class<?> primitiveType) {
-        return getNullObject(primitiveType.getName());
-    }
-
     public static Object getNullObject(String primitiveTypeName) {
         return MAPPING.get(primitiveTypeName);
     }

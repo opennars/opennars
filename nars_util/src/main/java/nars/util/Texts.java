@@ -171,13 +171,6 @@ public abstract class Texts {
     }
      */
 
-    /** returns lev distance divided by max(a.length(), b.length() */
-    public static float levenshteinDistancePercent(CharSequence a, CharSequence b) {
-        float len = Math.max(a.length(), b.length());
-        if (len == 0) return 0;
-        return levenshteinDistance(a,b) / len;
-    }
-
     /**
      * @author http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Java
      */
@@ -225,59 +218,6 @@ public abstract class Texts {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
-    }
-
-    /**
-     * Half-way between a String and a Rope; concatenates a list of strings into an immutable CharSequence which is either:
-     * If a component is null, it is ignored.
-     * if total non-null components is 0, returns null
-     * if total non-null components is 1, returns that component.
-     * if the combined length <= maxLen, creates a StringBuilder appending them all.
-     * if the combined length > maxLen, creates a Rope appending them all.
-     * <p>
-     * TODO do not allow a StringBuilder to appear in output, instead wrap in CharArrayRope
-     */
-    public static CharSequence yarn(int maxLen, CharSequence... components) {
-        int totalLen = 0;
-        int total = 0;
-        CharSequence lastNonNull = null;
-        for (CharSequence s : components) {
-            if (s != null) {
-                totalLen += s.length();
-                total++;
-                lastNonNull = s;
-            }
-        }
-        if (total == 0) {
-            return null;
-        }
-        if (total == 1) {
-            return lastNonNull.toString();
-        }
-
-        if ((totalLen <= maxLen) || (maxLen == -1)) {            
-            /*
-            final CharBuffer n = CharBuffer.allocate(totalLen);
-
-            for (final CharSequence s : components) {            
-                n.append(s);
-            }
-
-            return n.compact();
-            */
-
-
-            StringBuilder sb = new StringBuilder(totalLen);
-            for (CharSequence s : components) {
-                if (s != null) {
-                    sb.append(s);
-                }
-            }
-            return Rope.sequence(sb);
-        } else {
-            Rope r = Rope.catFast(components);
-            return r;
         }
     }
 
@@ -340,19 +280,6 @@ public abstract class Texts {
 
     public static int tens(float d) {
         return (int) ((d * 10.0f + 0.5f));
-    }
-
-    /**
-     * 2 decimal representation of values between 0 and 1. only the tens and hundredth
-     * decimal point are displayed - not the ones, and not a decimal point.
-     * for compact display.
-     * if the value=1.0, then 'aa' is the result
-     */
-    public static String n2u(float x) {
-        if ((x < 0) || (x > 1)) throw new RuntimeException("values >=0 and <=1");
-        int hundreds = (int) hundredths(x);
-        if (x == 100) return "aa";
-        return hundreds < 10 ? "0" + hundreds : Integer.toString(hundreds);
     }
 
     public static CharSequence n2(float x) {

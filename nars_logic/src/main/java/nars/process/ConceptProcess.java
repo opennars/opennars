@@ -142,27 +142,6 @@ public final class ConceptProcess implements Premise {
         return cyclic;
     }
 
-    public static int firePremises(Concept concept, BagBudget<Task>[] tasks, BagBudget<Termed>[] terms, Consumer<ConceptProcess> proc, NAR nar) {
-
-        int total = 0;
-
-        for (BagBudget<Task> taskLink : tasks) {
-            if (taskLink == null) break;
-
-            for (BagBudget<Termed> termLink : terms) {
-                if (termLink == null) break;
-
-                if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.get().term(), termLink.get().term()))
-                    continue;
-
-                total+= ConceptProcess.fireAll(
-                    nar, concept, taskLink, termLink, proc);
-            }
-        }
-
-        return total;
-    }
-
     @Override
     public String toString() {
         return new StringBuilder().append(

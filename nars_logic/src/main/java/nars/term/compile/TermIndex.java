@@ -65,16 +65,6 @@ public interface TermIndex extends TermBuilder {
     }
 
 
-    static boolean hasImdex(Term[] r) {
-        for (Term x : r) {
-            //        if (t instanceof Compound) return false;
-//        byte[] n = t.bytes();
-//        if (n.length != 1) return false;
-            if (x.equals(Op.Imdex)) return true;
-        }
-        return false;
-    }
-
     static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
         return spawn(parent, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
     }
@@ -85,15 +75,6 @@ public interface TermIndex extends TermBuilder {
                 .budget(p, d, q)
                 .parent(parent)
                 .occurr(occ);
-    }
-
-    static boolean validEquivalenceTerm(Term t) {
-        return !t.isAny(InvalidEquivalenceTerm);
-//        if ( instanceof Implication) || (subject instanceof Equivalence)
-//                || (predicate instanceof Implication) || (predicate instanceof Equivalence) ||
-//                (subject instanceof CyclesInterval) || (predicate instanceof CyclesInterval)) {
-//            return null;
-//        }
     }
 
 
@@ -239,21 +220,6 @@ public interface TermIndex extends TermBuilder {
 //                new HashMap(capacity)
 //                //new UnifriedMap()
 //        );
-    }
-//    static TermIndex memorySoft(int capacity) {
-//        return new MapIndex(
-//                new SoftValueHashMap(capacity),
-//                new SoftValueHashMap(capacity*2)
-//        );
-//    }
-    static TermIndex memoryWeak(int capacity) {
-//        return new MapIndex(
-//            new SoftValueHashMap(capacity),
-//            new SoftValueHashMap(capacity*2)
-//        );
-        return new MapIndex2(
-            new SoftValueHashMap(capacity)
-        );
     }
 
 //    static GuavaIndex memoryGuava(Clock c, int expirationCycles) {

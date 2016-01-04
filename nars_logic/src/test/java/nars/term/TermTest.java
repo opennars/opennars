@@ -31,6 +31,8 @@ import static java.lang.Long.toBinaryString;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
 import static nars.$.*;
+import static nars.Op.IMAGE_EXT;
+import static nars.Op.IMAGE_INT;
 import static org.junit.Assert.*;
 
 /**
@@ -42,6 +44,14 @@ public class TermTest {
     }
 
     NAR n = new Terminal();
+
+    public static Term imageInt(Term... x) {
+        return the(IMAGE_INT, x);
+    }
+
+    public static Term imageExt(Term... x) {
+        return the(IMAGE_EXT, x);
+    }
 
 
     protected void assertEquivalentTerm(String term1String, String term2String) {

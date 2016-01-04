@@ -7,7 +7,6 @@ import nars.Op;
 import nars.nal.PremiseAware;
 import nars.nal.PremiseMatch;
 import nars.nal.nal7.CyclesInterval;
-import nars.nal.nal7.Interval;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal8.Operator;
@@ -20,6 +19,7 @@ import nars.term.match.EllipsisMatch;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.Subst;
 import nars.term.transform.VariableNormalization;
+import nars.term.transform.VariableTransform;
 import nars.term.variable.Variable;
 
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public interface TermBuilder {
     static Term makeSequence(Term[] a) {
 
         //count how many intervals so we know how to resize the final arrays
-        int intervalsPresent = Interval.intervalCount(a);
+        int intervalsPresent = intervalCount(a);
 
         if (intervalsPresent == 0) {
             if (true && (a.length == 1)) {
@@ -82,14 +82,14 @@ public interface TermBuilder {
     static Term makeParallel(Term[] a) {
 
         //count how many intervals so we know how to resize the final arrays
-        int intervalsPresent = Interval.intervalCount(a);
+        int intervalsPresent = intervalCount(a);
         int subterms = a.length - intervalsPresent;
 
         if (subterms == 0)
             return null;
 
         if (subterms == 1)
-            return Interval.firstNonIntervalIn(a); //unwrap the only non-interval subterm
+            return firstNonIntervalIn(a); //unwrap the only non-interval subterm
 
         if (intervalsPresent == 0)
             return new Parallel(a); //no intervals need to be removed
@@ -106,6 +106,54 @@ public interface TermBuilder {
 
         return new Parallel(b);
 
+    }
+
+    /** allows using the single variable normalization,
+     * which is safe if the term doesnt contain pattern variables */
+    static VariableTransform normalizeFast(Compound target) {
+        return target.vars() == 1 ? VariableNormalization.singleVariableNormalization : new VariableNormalization();
+    }
+
+    static boolean validEquivalenceTerm(Term t) {
+        return !t.isAny(TermIndex.InvalidEquivalenceTerm);
+//        if ( instanceof Implication) || (subject instanceof Equivalence)
+//                || (predicate instanceof Implication) || (predicate instanceof Equivalence) ||
+//                (subject instanceof CyclesInterval) || (predicate instanceof CyclesInterval)) {
+//            return null;
+//        }
+    }
+
+    static boolean hasImdex(Term[] r) {
+        for (Term x : r) {
+            //        if (t instanceof Compound) return false;
+//        byte[] n = t.bytes();
+//        if (n.length != 1) return false;
+            if (x.equals(Op.Imdex)) return true;
+        }
+        return false;
+    }
+
+    static Term firstNonIntervalIn(Term[] a) {
+
+        for (Term x : a) {
+            if (!(x instanceof CyclesInterval)) {
+                //long d = ((CyclesInterval)x).duration();
+                return x;
+            }
+        }
+        return null;
+    }
+
+    /** returns a count of how many interval terms are in the array */
+    static int intervalCount(Term[] a) {
+        int c = 0;
+        for (Term x : a) {
+            if (x instanceof CyclesInterval) {
+                //long d = ((CyclesInterval)x).duration();
+                c++;
+            }
+        }
+        return c;
     }
 
     Termed make(Op op, int relation, TermContainer subterms);
@@ -133,7 +181,7 @@ public interface TermBuilder {
         if (t.isNormalized()) {
             return t;
         }
-        Compound x = transform((Compound) t, VariableNormalization.normalizeFast((Compound) t));
+        Compound x = transform((Compound) t, normalizeFast((Compound) t));
         Termed tx = the(x);
         //if (x != t) {
             //if modified, set normalization flag HACK
@@ -278,7 +326,7 @@ public interface TermBuilder {
             case IMAGE_EXT:
                 //if no relation was specified and it's an Image,
                 //it must contain a _ placeholder
-                if (TermIndex.hasImdex(t)) {
+                if (hasImdex(t)) {
                     //TODO use result of hasImdex in image construction to avoid repeat iteration to find it
                     return image(op, t);
                 }
@@ -434,8 +482,8 @@ public interface TermBuilder {
                     case EQUIV:
                     case EQUIV_AFTER:
                     case EQUIV_WHEN:
-                        if (!TermIndex.validEquivalenceTerm(subject)) return null;
-                        if (!TermIndex.validEquivalenceTerm(predicate)) return null;
+                        if (!validEquivalenceTerm(subject)) return null;
+                        if (!validEquivalenceTerm(predicate)) return null;
                         break;
 
                     case IMPLICATION:

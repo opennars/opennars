@@ -22,7 +22,6 @@
 package objenome.op.trig;
 
 import objenome.op.Node;
-import objenome.util.MathUtils;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
@@ -53,6 +52,16 @@ public class Cotangent extends Node {
     }
 
     /**
+     * Returns the cotangent of a <code>double</code> value
+     *
+     * @param d the number whose cotangent is sought
+     * @return the cotangent of <code>d</code>
+     */
+    public static double cot(double d) {
+        return 1 / Math.tan(d);
+    }
+
+    /**
      * Evaluates this function. The child node is evaluated, the result of which
      * must be a numeric type (one of Double, Float, Long, Integer). 1 is
      * divided by the tan of this value to give the result as a double value.
@@ -63,7 +72,7 @@ public class Cotangent extends Node {
     public Double evaluate() {
         Object c = getChild(0).evaluate();
 
-        return MathUtils.cot(NumericUtils.asDouble(c));
+        return cot(NumericUtils.asDouble(c));
     }
 
     /**

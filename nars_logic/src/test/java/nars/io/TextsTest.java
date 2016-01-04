@@ -10,7 +10,60 @@ import static org.junit.Assert.assertTrue;
 
 
 public class TextsTest {
- 
+
+
+    /**
+     * Half-way between a String and a Rope; concatenates a list of strings into an immutable CharSequence which is either:
+     * If a component is null, it is ignored.
+     * if total non-null components is 0, returns null
+     * if total non-null components is 1, returns that component.
+     * if the combined length <= maxLen, creates a StringBuilder appending them all.
+     * if the combined length > maxLen, creates a Rope appending them all.
+     * <p>
+     * TODO do not allow a StringBuilder to appear in output, instead wrap in CharArrayRope
+     */
+    public static CharSequence yarn(int maxLen, CharSequence... components) {
+        int totalLen = 0;
+        int total = 0;
+        CharSequence lastNonNull = null;
+        for (CharSequence s : components) {
+            if (s != null) {
+                totalLen += s.length();
+                total++;
+                lastNonNull = s;
+            }
+        }
+        if (total == 0) {
+            return null;
+        }
+        if (total == 1) {
+            return lastNonNull.toString();
+        }
+
+        if ((totalLen <= maxLen) || (maxLen == -1)) {
+            /*
+            final CharBuffer n = CharBuffer.allocate(totalLen);
+
+            for (final CharSequence s : components) {
+                n.append(s);
+            }
+
+            return n.compact();
+            */
+
+
+            StringBuilder sb = new StringBuilder(totalLen);
+            for (CharSequence s : components) {
+                if (s != null) {
+                    sb.append(s);
+                }
+            }
+            return Rope.sequence(sb);
+        } else {
+            Rope r = Rope.catFast(components);
+            return r;
+        }
+    }
 
     @Test
     public void testN2() {
@@ -107,12 +160,12 @@ public class TextsTest {
         String t2 = "|vjxkcjvlcjxkv";
         String t3 = "nvksdlfksjdkf";
         
-        CharSequence r12 = Texts.yarn(1, t1, t2);
-        CharSequence s12 = Texts.yarn(1, t1, t2);
-        Rope s123 = (Rope)Texts.yarn(1, t1, t2, t3);
-        Rope r123 = (Rope)Texts.yarn(1, t1, t2, t3);
-        Rope s13 = (Rope)Texts.yarn(1, t1, null, t3);
-        Rope r13 = (Rope)Texts.yarn(1, t1, null, t3);
+        CharSequence r12 = yarn(1, t1, t2);
+        CharSequence s12 = yarn(1, t1, t2);
+        Rope s123 = (Rope) yarn(1, t1, t2, t3);
+        Rope r123 = (Rope) yarn(1, t1, t2, t3);
+        Rope s13 = (Rope) yarn(1, t1, null, t3);
+        Rope r13 = (Rope) yarn(1, t1, null, t3);
         
         assertTrue(r12 instanceof FastConcatenationRope);
         
@@ -131,12 +184,12 @@ public class TextsTest {
         assertTrue(r13.compareTo(s13)==0);
         assertTrue(r13.compareTo(s123)!=0);
         
-        assertTrue( ! Texts.yarn(1,"aa", "bb").equals( Texts.yarn(1, "aabb","") ) );
-        assertTrue( ! Texts.yarn(1,"aa", "bb", null).equals( Texts.yarn(1, "aa","bb","cc") ) );
-        assertTrue(   Texts.yarn(1,"aa", "bb", null).equals( Texts.yarn(1, "aa","bb",null) ) );
-        assertTrue( ! Texts.yarn(1,"aa", null, "bb").equals( Texts.yarn(1, "aa","bb") ) );
-        assertTrue( ! Texts.yarn(1,"aa", null, "bb").equals( Texts.yarn(1, "aa","bb") ) );
-        assertTrue( ! Texts.yarn(1,"aa", "x", "bb").equals( Texts.yarn(1, "aa", null, "bb") ) );
+        assertTrue( ! yarn(1,"aa", "bb").equals( yarn(1, "aabb","") ) );
+        assertTrue( ! yarn(1,"aa", "bb", null).equals( yarn(1, "aa","bb","cc") ) );
+        assertTrue(   yarn(1,"aa", "bb", null).equals( yarn(1, "aa","bb",null) ) );
+        assertTrue( ! yarn(1,"aa", null, "bb").equals( yarn(1, "aa","bb") ) );
+        assertTrue( ! yarn(1,"aa", null, "bb").equals( yarn(1, "aa","bb") ) );
+        assertTrue( ! yarn(1,"aa", "x", "bb").equals( yarn(1, "aa", null, "bb") ) );
 
     }    
 
