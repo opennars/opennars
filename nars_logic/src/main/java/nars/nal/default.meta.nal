@@ -305,7 +305,7 @@
 //If after M, P usually happens, and M happens, it means P is expected to happen
 
     M, (M ==> P), shift_occurrence_forward(unused,"==>") |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    M, (P ==> M), shift_occurrence_backward(unused,"==>") |- P, (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
+try:    M, (P ==> M), shift_occurrence_backward(unused,"==>") |- P, (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
     M, (S <=> M), shift_occurrence_backward(unused,"<=>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
     M, (M <=> S), shift_occurrence_forward(unused,"==>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
 

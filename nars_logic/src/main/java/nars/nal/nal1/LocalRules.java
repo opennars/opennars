@@ -141,19 +141,20 @@ public class LocalRules {
 
     //go through each interval and see if they are compatible judged by tolerance
     static boolean TemporalSimilar(IntArrayList a, IntArrayList b) {
-        assertEquals("two identical terms have different sized interval info!", a.size(), b.size());
-        for(int i=0;i<a.size();i++) {
-            int interval1 = a.get(i);
-            int interval2 = b.get(i);
-            int bigger_interval = Math.max(interval1, interval2);
-            //http://sagecell.sagemath.org/?z=eJxL06jQtK3QN-LlKsjJL9FI09Go0DHQMTQw0NRRSKxILY7PSUxKzSm2jVbPzCtJLSpLzFHXUVAvyc9JLUrMS05Vj9UEAI_HFK8=&lang=sage
-            /*
-            f(x)=x/2
-            plot(f,(x,0,100), axes_labels=['interval', 'tolerance'])
-             */
-            int tolerance = (int) (bigger_interval / Global.ANTICIPATION_REVISION_TOLERANCE);
-            if(Math.abs(interval1 - interval2) > tolerance) {
-                return false;
+        if(a.size() == b.size()) { //else it will fall through this check same with other term types
+            for(int i=0;i < a.size();i++) {
+                int interval1 = a.get(i);
+                int interval2 = b.get(i);
+                int bigger_interval = Math.max(interval1, interval2);
+                //http://sagecell.sagemath.org/?z=eJxL06jQtK3QN-LlKsjJL9FI09Go0DHQMTQw0NRRSKxILY7PSUxKzSm2jVbPzCtJLSpLzFHXUVAvyc9JLUrMS05Vj9UEAI_HFK8=&lang=sage
+                /*
+                f(x)=x/2
+                plot(f,(x,0,100), axes_labels=['interval', 'tolerance'])
+                 */
+                int tolerance = (int) (bigger_interval / Global.ANTICIPATION_REVISION_TOLERANCE);
+                if(Math.abs(interval1 - interval2) > tolerance) {
+                    return false;
+                }
             }
         }
         return true;
