@@ -1,13 +1,16 @@
 package nars.op.data;
 
+import nars.Global;
 import nars.NAR;
+import nars.Op;
 import nars.nal.nal7.Sequence;
 import nars.nar.Default;
 import nars.term.Term;
-import nars.term.Terms;
 import nars.term.compound.Compound;
 
 import java.util.Map;
+
+import static nars.Op.PRODUCT;
 
 /**
  IO utility operators
@@ -24,7 +27,7 @@ public interface StringOps {
             Sequence<?> strings = (Sequence) X[1];
 
             //convert this set to a Map<Term,Term>
-            Map<Term, Term> substs = Terms.
+            Map<Term, Term> substs =
                     toKeyValueMap(substitutions);
 
             StringBuilder sb = new StringBuilder();
@@ -45,6 +48,36 @@ public interface StringOps {
         });
 
 
+    }
+
+    /**
+     * interprets subterms of a compound term to a set of
+     * key,value pairs (Map entries).
+     * ie, it translates this SetExt tp a Map<Term,Term> in the
+     * following pattern:
+     * <p/>
+     * { (a,b) }  becomes Map a=b
+     * [ (a,b), b:c ] bcomes Map a=b, b=c
+     * { (a,b), (b,c), d } bcomes Map a=b, b=c, d=null
+     *
+     * @return a potentially incomplete map representation of this compound
+     */
+    static Map<Term, Term> toKeyValueMap(Compound<?> t) {
+
+        Map<Term, Term> result = Global.newHashMap();
+
+        t.forEach(a -> {
+            if (a.size() == 2) {
+                if ((a.op() == PRODUCT) || (a.op() == Op.INHERIT)) {
+                    Compound ii = (Compound) a;
+                    result.put(ii.term(0), ii.term(1));
+                }
+            } else if (a.size() == 1) {
+                result.put(a, null);
+            }
+        });
+
+        return result;
     }
 
 

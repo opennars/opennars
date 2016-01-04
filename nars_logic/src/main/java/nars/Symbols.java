@@ -180,26 +180,7 @@ public final class Symbols {
     public static final char STAMP_STARTER = ':';
 
 
-    public static boolean isPunctuation(char c) {
-        switch (c) {
-            case Symbols.JUDGMENT:
-            case Symbols.GOAL:
-            case Symbols.QUEST:
-            case Symbols.QUESTION:
-                return true;
-        }
-        return false;
-    }
-
-    public static void argSep(Appendable p, boolean pretty) throws IOException {
-        if (pretty)
-            p.append(ARGUMENT_SEPARATOR_PRETTY);
-        else
-            p.append(ARGUMENT_SEPARATOR);
-    }
-
-
-//    public static String getPunctuationWord(char punctuation) {
+    //    public static String getPunctuationWord(char punctuation) {
 //        switch (punctuation) {
 //            case '.': return "BELIEF";
 //            case '!': return "GOAL";

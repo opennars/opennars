@@ -2,6 +2,7 @@ package objenome.util.bean;
 
 import objenome.util.bean.anno.GenericBeanKeyMethod;
 import objenome.util.bean.anno.GenericBeanKeyProvider;
+import objenome.util.bean.anno.GenericBeanMethod;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -9,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import static objenome.util.bean.Annotations.isAnnotated;
+import static objenome.util.bean.ProxyInvocationHandlerPropertyChangeSupport.isAnnotated;
 import static objenome.util.bean.anno.GenericBeanMethod.Type.*;
 
 public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
@@ -41,6 +42,12 @@ public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
         result.addAll(gm.keySet());
         result.addAll(sm.keySet());
         return result;
+    }
+
+    public static boolean isAnnotated(Method method,
+                                      GenericBeanMethod.Type type) {
+        GenericBeanMethod annotation = method.getAnnotation(GenericBeanMethod.class);
+        return annotation != null && annotation.value().equals(type);
     }
 
     private void fillMaps(Collection<Class<?>> ifaces, Map<Object, Method> gm,

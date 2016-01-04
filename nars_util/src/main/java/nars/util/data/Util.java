@@ -16,8 +16,6 @@ package nars.util.data;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
-import nars.util.Texts;
-import nars.util.utf8.Utf8;
 import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandle;
@@ -692,12 +690,12 @@ public class Util {
     public static byte[] intAsByteArray(int index) {
 
         if (index < 36) {
-            byte x = Utf8.base36(index);
+            byte x = base36(index);
             return new byte[] {  x};
         }
         else if (index < (36*36)){
-            byte x1 = Utf8.base36(index%36);
-            byte x2 = Utf8.base36(index/36);
+            byte x1 = base36(index%36);
+            byte x2 = base36(index/36);
             return new byte[] { x2, x1};
         }
         else {
@@ -772,7 +770,12 @@ public class Util {
     }
 
 
-    public static String rangeStringN2(float min, float max) {
-        return "(" + Texts.n2(min) + ","+ Texts.n2(max) + ')';
+    public static byte base36(int index) {
+        if (index < 10)
+            return (byte) ('0' + index);
+        else if (index < (10 + 26))
+            return (byte) ((index - 10) + 'a');
+        else
+            throw new RuntimeException("out of bounds");
     }
 }

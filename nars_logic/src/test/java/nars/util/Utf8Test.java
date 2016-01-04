@@ -18,6 +18,17 @@ import static org.junit.Assert.assertTrue;
  * @author me
  */
 public class Utf8Test {
+    public static byte[] charsToBytes(char[] s) {
+        int slen = s.length;
+        byte[] b = new byte[slen *2];
+        int j = 0;
+        for (char c : s) {
+            b[j++] = (byte) ((c & 0xFF00) >> 8);
+            b[j++] = (byte) ((c & 0x00FF));
+        }
+        return b;
+    }
+
     @Test
     public void testUTF8() {
         Utf8 u = new Utf8("x");
@@ -39,7 +50,7 @@ public class Utf8Test {
         byte[] x = { 1, 2, 3, 4, 5, 6, 7, 8 };
         char[] y = bytesToChars(x);
         assertEquals(x.length/2, y.length);
-        byte[] x2 = Utf8.charsToBytes(y);
+        byte[] x2 = charsToBytes(y);
         //System.out.println(Arrays.toString(x2));
         assertEquals(x[1], x2[1]);
         assertEquals(x[0], x2[0]);

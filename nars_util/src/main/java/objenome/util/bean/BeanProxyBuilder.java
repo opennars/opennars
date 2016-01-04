@@ -79,9 +79,19 @@ public class BeanProxyBuilder<T> {
         }
         this.iface = iface;
         allIfaces = new HashSet<>(ObjectUtil.collectInterfaces(this.iface));
-        propertyChangeSupport = Annotations.hasMethodWithAnnotation(allIfaces,
+        propertyChangeSupport = hasMethodWithAnnotation(allIfaces,
                 PropertyChangeEventMethod.class);
         genericSupport = checkForGenericSupport(allIfaces);
+    }
+
+    public static boolean hasMethodWithAnnotation(Collection<Class<?>> ifaces,
+                                                  Class<? extends Annotation> anno) {
+        for (Class<?> iface : ifaces) {
+            if (Annotations.hasMethodWithAnnotation(iface, anno)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -138,7 +148,7 @@ public class BeanProxyBuilder<T> {
 
     public BeanProxyBuilder<T> add(Class<?> class1) {
         allIfaces.add(class1);
-        propertyChangeSupport = Annotations.hasMethodWithAnnotation(allIfaces,
+        propertyChangeSupport = hasMethodWithAnnotation(allIfaces,
                 PropertyChangeEventMethod.class);
         return this;
     }

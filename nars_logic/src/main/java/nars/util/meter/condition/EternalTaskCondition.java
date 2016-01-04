@@ -13,7 +13,7 @@ import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.truth.Truthed;
-import nars.util.data.Util;
+import nars.util.Texts;
 import org.slf4j.Logger;
 
 import java.io.PrintStream;
@@ -94,10 +94,46 @@ public class EternalTaskCondition implements NARCondition, Predicate<Task>, Cons
         this.duration = n.memory.duration();
     }
 
+    public static String rangeStringN2(float min, float max) {
+        return "(" + Texts.n2(min) + ","+ Texts.n2(max) + ')';
+    }
+
+    /** a heuristic for measuring the difference between terms
+     *  in range of 0..100%, 0 meaning equal
+     * */
+    public static float termDistance(Term a, Term b, float ifLessThan) {
+        if (a.equals(b)) return 0;
+        //TODO handle TermMetadata terms
+
+        float dist = 0;
+        if (a.op()!=b.op()) {
+            //50% for equal term
+            dist += 0.25f;
+            if (dist >= ifLessThan) return dist;
+        }
+
+        if (a.size()!=b.size()) {
+            dist += 0.25f;
+            if (dist >= ifLessThan) return dist;
+        }
+
+        if (a.structure()!=b.structure()) {
+            dist += 0.25f;
+            if (dist >= ifLessThan) return dist;
+        }
+
+        //HACK use toString for now
+        dist += Terms.levenshteinDistancePercent(
+                a.toString(false),
+                b.toString(false)) * 0.25f;
+
+        return dist;
+    }
+
     @Override
     public String toString() {
         return term.toString() + punc + " %" +
-                Util.rangeStringN2(freqMin, freqMax) + ";" + Util.rangeStringN2(confMin, confMax) + '%';
+                rangeStringN2(freqMin, freqMax) + ";" + rangeStringN2(confMin, confMax) + '%';
     }
 
     //    public double getAcceptableDistanceThreshold() {
@@ -255,7 +291,7 @@ public class EternalTaskCondition implements NARCondition, Predicate<Task>, Cons
             return;
 
         float termDifference =
-                Terms.termDistance(tterm, term, worstDiff);
+                termDistance(tterm, term, worstDiff);
         difference += 3 * termDifference;
 
         if (difference >= worstDiff)

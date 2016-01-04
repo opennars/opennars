@@ -20,6 +20,7 @@
  */
 package nars.truth;
 
+import nars.Global;
 import nars.nal.UtilityFunctions;
 
 import static java.lang.Math.abs;
@@ -471,5 +472,14 @@ public final class TruthFunctions extends UtilityFunctions {
     
     public static float temporalProjection(long sourceTime, long targetTime, long currentTime) {
         return abs(sourceTime - targetTime) / (float) (abs(sourceTime - currentTime) + abs(targetTime - currentTime));
+    }
+
+    /**
+     * A function to convert confidence to weight
+     * @param c confidence, in [0, 1)
+     * @return The corresponding weight of evidence, a non-negative real number
+     */
+    public static float c2w(float c) {
+        return Global.HORIZON * c / (1 - c);
     }
 }

@@ -1,6 +1,7 @@
 package objenome.util.bean;
 
 import objenome.util.bean.anno.IgnoreVeto;
+import objenome.util.bean.anno.PropertyChangeEventMethod;
 import objenome.util.bean.anno.PropertyChangeEventMethod.Type;
 import objenome.util.bean.anno.Unbound;
 import objenome.util.bean.listener.BeanListenerSupport;
@@ -9,8 +10,6 @@ import objenome.util.bean.listener.BeanListenerSupportSoftRef;
 import java.beans.*;
 import java.lang.reflect.Method;
 import java.util.Collection;
-
-import static objenome.util.bean.Annotations.isAnnotated;
 
 /**
  * ProxyInvocationHandler that supports PropertyChangeSupport.
@@ -30,6 +29,12 @@ public class ProxyInvocationHandlerPropertyChangeSupport extends ProxyInvocation
         // TODO Check all methods to be valid in dependency of their annotations (e.g. returntypes
         // void, parameters in dependency of type (veto/non-veto)
         // PropertyChangeListener/VetoableChangeListener)
+    }
+
+    public static boolean isAnnotated(Method method,
+                                      Type type) {
+        PropertyChangeEventMethod annotation = method.getAnnotation(PropertyChangeEventMethod.class);
+        return annotation != null && annotation.value().equals(type);
     }
 
     @Override

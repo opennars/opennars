@@ -13,28 +13,6 @@ public final class Annotations {
         throw new IllegalStateException();
     }
 
-    public static boolean isAnnotated(Method method,
-                                      GenericBeanMethod.Type type) {
-        GenericBeanMethod annotation = method.getAnnotation(GenericBeanMethod.class);
-        return annotation != null && annotation.value().equals(type);
-    }
-
-    public static boolean isAnnotated(Method method,
-                                      PropertyChangeEventMethod.Type type) {
-        PropertyChangeEventMethod annotation = method.getAnnotation(PropertyChangeEventMethod.class);
-        return annotation != null && annotation.value().equals(type);
-    }
-
-    public static boolean hasMethodWithAnnotation(Collection<Class<?>> ifaces,
-                                                  Class<? extends Annotation> anno) {
-        for (Class<?> iface : ifaces) {
-            if (hasMethodWithAnnotation(iface, anno)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean hasMethodWithAnnotation(Class<?> iface, Class<? extends Annotation> anno) {
         for (Method method : iface.getDeclaredMethods()) {
             if (method.isAnnotationPresent(anno)) {

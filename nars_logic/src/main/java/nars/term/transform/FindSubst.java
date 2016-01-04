@@ -59,6 +59,24 @@ public abstract class FindSubst extends Versioning implements Subst {
 
     public final List<Termutator> termutes = Global.newArrayList();
 
+    public static Ellipsis getFirstEllipsis(Compound X) {
+        int xsize = X.size();
+        for (int i = 0; i < xsize; i++) {
+            Term xi = X.term(i);
+            if (xi instanceof Ellipsis) {
+                return (Ellipsis) xi;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param x a compound which contains one or more ellipsis terms */
+    public static int countNumNonEllipsis(Compound x) {
+        //TODO depending on the expression, determine the sufficient # of terms Y must contain
+        return Ellipsis.numNonEllipsisSubterms(x);
+    }
+
 
     @Override
     public String toString() {
@@ -277,7 +295,7 @@ public abstract class FindSubst extends Versioning implements Subst {
         //TODO see if there is a volume or structural constraint that can terminate early here
 
 
-        Ellipsis e = Ellipsis.getFirstEllipsis(X);
+        Ellipsis e = getFirstEllipsis(X);
 
         int ysize = Y.size();
 
@@ -331,7 +349,7 @@ public abstract class FindSubst extends Versioning implements Subst {
             if (X.op().isImage()) { //PRECOMPUTABLE
 
                 //if the ellipsis is normal, then interpret the relationIndex as it is
-                if (Ellipsis.countNumNonEllipsis(X) > 0) {
+                if (countNumNonEllipsis(X) > 0) {
 
                     int xEllipseIndex = X.indexOf(e);
                     int xRelationIndex = X.relation();

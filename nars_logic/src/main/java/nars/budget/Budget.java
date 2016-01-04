@@ -6,6 +6,7 @@ import nars.util.data.Util;
 
 import javax.annotation.Nullable;
 
+import static java.lang.Math.pow;
 import static nars.nal.UtilityFunctions.*;
 import static nars.util.data.Util.mean;
 
@@ -42,6 +43,20 @@ public interface Budget extends Prioritized, Budgeted {
 
         tgt.set( nextPri, nextDur, nextQua );
     };
+
+    static boolean aveGeoNotLessThan(float min, float a, float b, float c) {
+        float minCubed = min*min*min; //cube both sides
+        return (a*b*c) >= minCubed;
+    }
+
+    //may be more efficient than the for-loop version above, for 3 params
+    static float aveGeo(float a, float b, float c) {
+        //final float m = Global.BUDGET_EPSILON
+
+        float base = a*b*c;
+        //if ((a < m)||(b < m)||(c < m)) return 0; //early result avoiding pow()
+        return (float)pow(base, 1.0/3.0);
+    }
 
     /**
      * set all quantities to zero

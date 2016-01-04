@@ -41,6 +41,10 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
         return names;
     }
 
+    public static Object getNullObject(Class<?> primitiveType) {
+        return WrapperMapper.getNullObject(primitiveType.getName());
+    }
+
     public Class<?> getProxiedIface() {
         return proxiedIface;
     }
@@ -116,7 +120,7 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
         Object val = data.get(descriptor.getName());
         // fix null object for primitive types
         Class<?> returnType = descriptor.getReadMethod().getReturnType();
-        return val == null && returnType.isPrimitive() ? WrapperMapper.getNullObject(returnType) : val;
+        return val == null && returnType.isPrimitive() ? getNullObject(returnType) : val;
     }
 
     protected Object handleSetter(Object proxy, PropertyDescriptor descriptor, Object[] args) {

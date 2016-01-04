@@ -92,7 +92,7 @@ public class InputPane extends TabPane {
 
             getItems().setAll(scrolled(index), bp);
 
-            absPath = LibraryInput.getAllExamples();
+            absPath = getAllExamples();
 
             index.getItems().addAll(absPath.keySet());
 
@@ -102,6 +102,10 @@ public class InputPane extends TabPane {
                 runLater(LibraryInputPane.this);
             });
 
+        }
+
+        public Map<String, String> getAllExamples() {
+            return LibraryInput.getUnitTests(LibraryInput.directories);
         }
 
         @Override

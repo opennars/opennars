@@ -1,15 +1,15 @@
 package nars.term;
 
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
-
-import static nars.term.Terms.toSortedSetArray;
 
 public class TermSet<X extends Term> extends TermVector<X> {
 
     public static TermSet the(Term... x) {
-        return new TermSet(toSortedSetArray(x));
+        Arrays.sort(toSortedSetArray(Arrays.asList(x)));
+        return new TermSet(/*toSortedSetArray*/x);
     }
 
     public static TermSet the(Collection<? extends Term> x) {
@@ -17,7 +17,7 @@ public class TermSet<X extends Term> extends TermVector<X> {
     }
 
     public static TermSet union(TermContainer a, TermContainer b) {
-        TreeSet<Term> t = new TreeSet();
+        TreeSet<Term> t = new TreeSet<Term>();
         a.addAllTo(t);
         b.addAllTo(t);
         return TermSet.the(t);
@@ -29,6 +29,11 @@ public class TermSet<X extends Term> extends TermVector<X> {
 
     private TermSet(X... x) {
         super(x);
+    }
+
+    public static Term[] toSortedSetArray(Collection<? extends Term> c) {
+        TreeSet<Term> t = c instanceof TreeSet ? (TreeSet<Term>) c : new TreeSet<Term>(c);
+        return t.toArray(new Term[t.size()]);
     }
 
     @Override public final boolean isSorted() {

@@ -2,10 +2,11 @@ package nars.nal;
 
 import nars.Op;
 import nars.term.Term;
+import nars.term.TermContainer;
 import nars.term.TermVector;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
-import nars.term.match.Ellipsis;
+import nars.term.match.EllipsisTransform;
 import nars.term.transform.FindSubst;
 
 public final class PatternCompound extends GenericCompound {
@@ -35,11 +36,18 @@ public final class PatternCompound extends GenericCompound {
                 seed.structure() & ~(Op.VAR_PATTERN.bit());
 
         this.ellipsis = seed.hasEllipsis();
-        this.ellipsisTransform = Ellipsis.hasEllipsisTransform(this);
+        this.ellipsisTransform = hasEllipsisTransform(this);
         this.volCached = seed.volume();
         this.termsCached = subterms.terms();
         this.commutative = isCommutative();
         this.effectivelyCommutative = isCommutative() && (size() > 1);
+    }
+
+    public static boolean hasEllipsisTransform(TermContainer x) {
+        int xs = x.size();
+        for (int i = 0; i < xs; i++)
+            if (x.term(i) instanceof EllipsisTransform) return true;
+        return false;
     }
 
     @Override

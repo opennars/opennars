@@ -711,11 +711,6 @@ public class Byt {
 //
 
 
-
-    public static int _idx( byte[] output, int outputOffset, byte[] input ) {
-        return _idx(output, outputOffset, input, input.length);
-    }
-
     public static int _idx( byte[] output, int outputOffset, byte[] input, int length ) {
         return _idx(output, outputOffset, input, 0, length);
     }
@@ -741,25 +736,6 @@ public class Byt {
         return ( short ) ( array[ location ] & 0xFF );
     }
 
-
-    public static void unsignedIntTo( byte[] b, int off, long val ) {
-        b[ off++ ] = ( byte ) ( val >>> 24 );
-        b[ off++ ] = ( byte ) ( val >>> 16 );
-        b[ off++ ] = ( byte ) ( val >>> 8 );
-        b[ off ] = ( byte ) ( val );
-    }
-
-    public static void unsignedShortTo( byte[] buffer, int off, int value ) {
-
-        buffer[ off++ ] = ( byte ) ( value );
-        buffer[ off ] = ( byte ) ( value >>> 8 );
-
-    }
-
-    public static void unsignedByteTo( byte[] buffer, int off, short value ) {
-        buffer[ off ] = ( byte ) ( value );
-
-    }
 
     public static String utfString( byte[] jsonBytes ) {
         return new String (jsonBytes, StandardCharsets.UTF_8);

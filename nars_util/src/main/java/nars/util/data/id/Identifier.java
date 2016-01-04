@@ -4,6 +4,7 @@ import nars.util.data.rope.impl.CharArrayRope;
 import nars.util.utf8.Utf8;
 
 import java.io.*;
+import java.nio.CharBuffer;
 
 import static nars.util.utf8.Utf8.trim;
 
@@ -23,6 +24,10 @@ import static nars.util.utf8.Utf8.trim;
  * better entropy.
  */
 public abstract class Identifier<E extends Identifier> implements Comparable, Serializable {
+
+    public static byte[] toUtf8(char[] str) {
+        return Utf8.toUtf8JDK(CharBuffer.wrap(str));
+    }
 
     /** produces the character array by invoking the append()
      *  method that certain subclasses use to form their
@@ -169,7 +174,7 @@ public abstract class Identifier<E extends Identifier> implements Comparable, Se
      *  override either bytes() or chars() in subclasses please */
     public byte[] bytes() {
         System.err.println(this + " wasteful String generation");
-        return Utf8.toUtf8(chars(false));
+        return toUtf8(chars(false));
     }
 
     public byte byteAt(int i) {

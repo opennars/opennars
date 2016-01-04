@@ -28,16 +28,6 @@ import static org.junit.Assert.*;
 public class EllipsisTest {
 
 
-    static String termSequence(int arity) {
-        StringBuilder sb = new StringBuilder(arity * 3);
-        for (int i = 0; i < arity; i++) {
-            sb.append( (char)('a' + i) );
-            if (i < arity-1)
-                sb.append(',');
-        }
-        return sb.toString();
-    }
-
     public interface EllipsisTestCase {
         Compound getPattern();
         Compound getResult();
@@ -129,6 +119,16 @@ public class EllipsisTest {
             this.suffix = suffix;
             ellipsis = ellipsisTerm;
             p = getPattern(prefix, suffix);
+        }
+
+        static String termSequence(int arity) {
+            StringBuilder sb = new StringBuilder(arity * 3);
+            for (int i = 0; i < arity; i++) {
+                sb.append( (char)('a' + i) );
+                if (i < arity-1)
+                    sb.append(',');
+            }
+            return sb.toString();
         }
 
         protected abstract Compound getPattern(String prefix, String suffix);

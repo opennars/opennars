@@ -5,6 +5,7 @@ import nars.Global;
 import nars.Op;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.budget.UnitBudget;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.MatchTerm;
 import nars.nal.nal7.Tense;
@@ -60,6 +61,18 @@ public class PremiseMatch extends FindSubst {
         truth = new Versioned(this);
         punct = new Versioned(this);
         pattern = new Versioned(this);
+    }
+
+    /**
+     * Forward logic with CompoundTerm conclusion
+     *
+     * @param truth The truth value of the conclusion
+     * @param content The content of the conclusion
+     * @param nal Reference to the memory
+     * @return The budget of the conclusion
+     */
+    public static Budget compoundForward(Truth truth, Termed content, ConceptProcess nal) {
+        return BudgetFunctions.compoundForward(new UnitBudget(), truth, content, nal);
     }
 
     private void addTransform(Class<? extends ImmediateTermTransform> c) {
@@ -158,7 +171,7 @@ public class PremiseMatch extends FindSubst {
         ConceptProcess p = this.premise;
 
         Budget budget = truth != null ?
-                BudgetFunctions.compoundForward(truth, c, p) :
+                compoundForward(truth, c, p) :
                 BudgetFunctions.compoundBackward(c, p);
 
 //        if (Budget.isDeleted(budget.getPriority())) {

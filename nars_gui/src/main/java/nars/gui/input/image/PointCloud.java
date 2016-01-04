@@ -136,6 +136,22 @@ public class PointCloud
     }
   }
 
+  public static double pathLength(ArrayList<PointCloudPoint> points) // length traversed by a point path
+  {
+    double d = 0.0;
+    for(int i = 1; i < points.size(); i++)
+    {
+      PointCloudPoint p1 = points.get(i);
+      PointCloudPoint p2 = points.get(i - 1);
+      if(p1.getID() == p2.getID())
+      {
+        d += PointCloudUtils.distance(p2, p1);
+      }
+    }
+
+    return d;
+  }
+
   // the following is NOT part of the originally published javascript implementation
   // and has been added to support addition of directional testing for point clouds
   // which represent unistroke gestures

@@ -2,6 +2,7 @@ package nars.term.compound;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Op;
+import nars.Symbols;
 import nars.nal.nal8.Operator;
 import nars.term.*;
 import nars.term.compile.TermIndex;
@@ -11,6 +12,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
+
+import static nars.Symbols.ARGUMENT_SEPARATOR;
+import static nars.Symbols.COMPOUND_TERM_CLOSER;
+import static nars.Symbols.COMPOUND_TERM_OPENER;
 
 
 public class GenericCompound<T extends Term> implements Compound<T> {
@@ -49,6 +54,110 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         this.hash = TermIndex.hash(terms, op, relation+1);
     }
 
+    public static void productAppend(Compound product, Appendable p, boolean pretty) throws IOException {
+
+        int s = product.size();
+        p.append(COMPOUND_TERM_OPENER);
+        for (int i = 0; i < s; i++) {
+            product.term(i).append(p, pretty);
+            if (i < s - 1) {
+                p.append(pretty ? ", " : ",");
+            }
+        }
+        p.append(COMPOUND_TERM_CLOSER);
+    }
+
+    public static void imageAppend(GenericCompound image, Appendable p, boolean pretty) throws IOException {
+
+        int len = image.size();
+
+        p.append(COMPOUND_TERM_OPENER);
+        p.append(image.op().str);
+
+        int relationIndex = image.relation();
+        int i;
+        for (i = 0; i < len; i++) {
+            Term tt = image.term(i);
+
+            p.append(ARGUMENT_SEPARATOR);
+            if (pretty) p.append(' ');
+
+            if (i == relationIndex) {
+                p.append(Symbols.IMAGE_PLACE_HOLDER);
+                p.append(ARGUMENT_SEPARATOR);
+                if (pretty) p.append(' ');
+            }
+
+            tt.append(p, pretty);
+        }
+        if (i == relationIndex) {
+            p.append(ARGUMENT_SEPARATOR);
+            if (pretty) p.append(' ');
+            p.append(Symbols.IMAGE_PLACE_HOLDER);
+        }
+
+        p.append(COMPOUND_TERM_CLOSER);
+
+    }
+
+    public static void setAppend(Compound set, Appendable p, boolean pretty) throws IOException {
+
+        int len = set.size();
+
+        //duplicated from above, dont want to store this as a field in the class
+        char opener, closer;
+        if (set.op(Op.SET_EXT)) {
+            opener = Op.SET_EXT_OPENER.ch;
+            closer = Symbols.SET_EXT_CLOSER;
+        } else {
+            opener = Op.SET_INT_OPENER.ch;
+            closer = Symbols.SET_INT_CLOSER;
+        }
+
+        p.append(opener);
+        for (int i = 0; i < len; i++) {
+            Term tt = set.term(i);
+            if (i != 0) p.append(Symbols.ARGUMENT_SEPARATOR);
+            tt.append(p, pretty);
+        }
+        p.append(closer);
+    }
+
+    public static void operationAppend(Compound argsProduct, Operator operator, Appendable p, boolean pretty) throws IOException {
+
+        Term predTerm = operator.identifier(); //getOperatorTerm();
+
+        if ((predTerm.volume() != 1) || (predTerm.hasVar())) {
+            //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format
+            TermPrinter.appendSeparator(p, pretty);
+            return;
+        }
+
+
+        Term[] xt = argsProduct.terms();
+
+        predTerm.append(p, pretty); //add the operator name without leading '^'
+        p.append(COMPOUND_TERM_OPENER);
+
+
+        int n = 0;
+        for (Term t : xt) {
+            if (n != 0) {
+                p.append(ARGUMENT_SEPARATOR);
+                if (pretty)
+                    p.append(' ');
+            }
+
+            t.append(p, pretty);
+
+
+            n++;
+        }
+
+        p.append(COMPOUND_TERM_CLOSER);
+
+    }
+
     @Override
     public final Op op() {
         return op;
@@ -64,19 +173,19 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         switch (op) {
             case SET_INT_OPENER:
             case SET_EXT_OPENER:
-                TermPrinter.setAppend(this, p, pretty);
+                setAppend(this, p, pretty);
                 break;
             case PRODUCT:
-                TermPrinter.productAppend(this, p, pretty);
+                productAppend(this, p, pretty);
                 break;
             case IMAGE_INT:
             case IMAGE_EXT:
-                TermPrinter.imageAppend(this, p, pretty);
+                imageAppend(this, p, pretty);
                 break;
             default:
                 if (op.isStatement()) {
                     if (Op.isOperation(this)) {
-                        Operator.operationAppend((Compound) term(0), (Operator) term(1), p, pretty); //TODO Appender
+                        operationAppend((Compound) term(0), (Operator) term(1), p, pretty); //TODO Appender
                     }
                     else {
                         Statement.append(this, p, pretty);

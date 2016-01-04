@@ -297,17 +297,6 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
     /* ----- Task derivation in CompositionalRules and StructuralRules ----- */
-    /**
-     * Forward logic with CompoundTerm conclusion
-     *
-     * @param truth The truth value of the conclusion
-     * @param content The content of the conclusion
-     * @param nal Reference to the memory
-     * @return The budget of the conclusion
-     */
-    public static Budget compoundForward(Truth truth, Termed content, ConceptProcess nal) {
-        return compoundForward(new UnitBudget(), truth, content, nal);
-    }
 
     public static Budget compoundForward(Budget target, Truth truth, Termed content, ConceptProcess nal) {
         int complexity = content.term().complexity();
@@ -410,5 +399,8 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
 
-
+    //may be more efficient than the for-loop version above, for 2 params
+    public static float aveAri(float a, float b) {
+        return (a + b)/ 2.0f;
+    }
 }

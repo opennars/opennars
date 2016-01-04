@@ -52,12 +52,6 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
             if (x.term(i) instanceof Ellipsis) return true;
         return false;
     }
-    public static boolean hasEllipsisTransform(TermContainer x) {
-        int xs = x.size();
-        for (int i = 0; i < xs; i++)
-            if (x.term(i) instanceof EllipsisTransform) return true;
-        return false;
-    }
 
 //    /** recursively */
 //    public static boolean containsEllipsis(Compound x) {
@@ -160,13 +154,7 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
 //        return Product.make(others);
 //    }
 
-    /**
-     * @param x a compound which contains one or more ellipsis terms */
-    public static int countNumNonEllipsis(Compound x) {
-        //TODO depending on the expression, determine the sufficient # of terms Y must contain
-        return Ellipsis.numNonEllipsisSubterms(x);
-    }
-//
+    //
 //    @Deprecated public boolean valid(int numNonVarArgs, int ysize) {
 //        int collectable = ysize - numNonVarArgs;
 //        return valid(collectable);
@@ -174,17 +162,6 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
 
 
     public abstract boolean valid(int collectable);
-
-    public static Ellipsis getFirstEllipsis(Compound X) {
-        int xsize = X.size();
-        for (int i = 0; i < xsize; i++) {
-            Term xi = X.term(i);
-            if (xi instanceof Ellipsis) {
-                return (Ellipsis) xi;
-            }
-        }
-        return null;
-    }
 
     //    public static Ellipsis getFirstUnmatchedEllipsis(Compound X, Subst ff) {
 //        final int xsize = X.size();

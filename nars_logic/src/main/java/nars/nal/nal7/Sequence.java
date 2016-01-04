@@ -4,6 +4,7 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.$;
 import nars.Global;
 import nars.Op;
+import nars.Symbols;
 import nars.term.Term;
 import nars.term.TermVector;
 import nars.term.Terms;
@@ -16,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static nars.Symbols.COMPOUND_TERM_OPENER;
-import static nars.nal.nal7.Tense.appendInterval;
 
 /**
  * Sequential Conjunction (&/)
@@ -61,6 +61,11 @@ public final class Sequence<T extends Term> extends GenericCompound<T> implement
 
         this.intervals = intervals;
 
+    }
+
+    public static void appendInterval(Appendable p, long iii) throws IOException {
+        p.append(Symbols.INTERVAL_PREFIX);
+        p.append(Long.toString(iii));
     }
 
 //    @Override

@@ -53,6 +53,17 @@ public abstract class TermFunction<O> extends SyncOperator {
         return Texts.i(Atom.unquote(x));
     }
 
+    public static boolean isPunctuation(char c) {
+        switch (c) {
+            case Symbols.JUDGMENT:
+            case Symbols.GOAL:
+            case Symbols.QUEST:
+            case Symbols.QUESTION:
+                return true;
+        }
+        return false;
+    }
+
     /** y = function(x) 
      * @return y, or null if unsuccessful
      * @param x
@@ -250,7 +261,7 @@ public abstract class TermFunction<O> extends SyncOperator {
 
         //1. try to parse as task
         char mustBePuncToBeTask = ys.charAt(ys.length()-1); //early prevention from invoking parser
-        if (Symbols.isPunctuation(mustBePuncToBeTask) || mustBePuncToBeTask == ':' /* tense ending character */) {
+        if (isPunctuation(mustBePuncToBeTask) || mustBePuncToBeTask == ':' /* tense ending character */) {
             try {
                 Task t = e.nar.task(ys);
                 if (t != null) {

@@ -6,7 +6,6 @@ import com.gs.collections.impl.tuple.Tuples;
 import nars.Premise;
 import nars.concept.Concept;
 import nars.nal.nal7.CyclesInterval;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.AbstractOperator;
 import nars.nar.Terminal;
 import nars.process.ConceptProcess;
@@ -44,6 +43,11 @@ import java.util.*;
  * TODO add all removed tasks and their reasons as extra metadata
  */
 public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,Object> {
+
+    public static String tenseRelative(long then, long now) {
+        long dt = then - now;
+        return dt < 0 ? "[" + dt + ']' : "[+" + dt + ']';
+    }
 
     public static class DerivationPattern extends Keyed  {
 
@@ -488,7 +492,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 
 
         if (!s.isEternal()) {
-            t += ' ' + Tense.tenseRelative(s.getOccurrenceTime(), now);
+            t += ' ' + tenseRelative(s.getOccurrenceTime(), now);
         }
 
         return t;

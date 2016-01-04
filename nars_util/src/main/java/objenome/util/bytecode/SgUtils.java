@@ -308,25 +308,6 @@ public final class SgUtils {
     }
 
     /**
-     * Merge two packages into one. If any package is null or empty no "." will
-     * be added. If both packages are null an empty string will be returned.
-     * 
-     * @param package1
-     *            First package - Can also be null or empty.
-     * @param package2
-     *            Second package - Can also be null or empty.
-     * 
-     * @return Both packages added with ".".
-     */
-    public static String concatPackages(String package1, String package2) {
-        if ((package1 == null) || (package1.isEmpty())) {
-            return (package2 == null) || (package2.isEmpty()) ? "" : package2;
-        } else {
-            return (package2 == null) || (package2.isEmpty()) ? package1 : package1 + '.' + package2;
-        }
-    }
-
-    /**
      * Creates an <code>toString()</code> method with all fields.
      * 
      * @param pool
@@ -516,31 +497,6 @@ public final class SgUtils {
      */
     public static boolean isEmpty(String str) {
         return str == null || str.isEmpty();
-    }
-
-    /**
-     * Returns the "type" signature of the method.
-     * 
-     * @param methodName
-     *            Name of the method.
-     * @param paramTypes
-     *            Argument types.
-     * 
-     * @return Method name and argument types (like
-     *         "methodXY(String, int, boolean)").
-     */
-    public static String createTypeSignature(String methodName, Class<?>[] paramTypes) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(methodName);
-        sb.append('(');
-        for (int i = 0; i < paramTypes.length; i++) {
-            if (i > 0) {
-                sb.append(", ");
-            }
-            sb.append(paramTypes[i].getSimpleName());
-        }
-        sb.append(')');
-        return sb.toString();
     }
 
     /**

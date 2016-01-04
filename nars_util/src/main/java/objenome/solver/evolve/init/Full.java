@@ -29,7 +29,7 @@ import objenome.solver.evolve.GPContainer.GPContainerAware;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.InitialisationEvent;
 import objenome.solver.evolve.event.Listener;
-import objenome.util.TypeUtil;
+import org.apache.commons.lang3.ClassUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -95,6 +95,12 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
         this.autoConfig = autoConfig;
     }
 
+    public static boolean containsSub(Iterable<Class<?>> collection, Class<?> cls) {
+        for (Class<?> c : collection)
+            if (ClassUtils.isAssignable(c, cls))
+                return true;
+        return false;
+    }
 
 
     /**
@@ -278,7 +284,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
             updateDataTypesTable();
         }
 
-        if (!TypeUtil.containsSub(dataTypesTable[maxDepth], returnType)) {
+        if (!containsSub(dataTypesTable[maxDepth], returnType)) {
             throw new IllegalStateException("Syntax is not able to produce full trees with the given return type (" + returnType + ") at depth " + maxDepth + " =" + Arrays.toString(dataTypesTable));
         }
 

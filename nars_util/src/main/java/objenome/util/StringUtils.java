@@ -33,24 +33,4 @@ public final class StringUtils {
     private StringUtils() {
     }
 
-    /**
-     * Tests whether the given string contains any of the <code>char</code>s in
-     * the provided array.
-     *
-     * @param str an input string to test for specific <code>char</code>s
-     * @param chrs an array of characters to look for in <code>str</code>
-     * @return <code>true</code> if <code>str</code> contains one or more
-     * characters from the <code>chrs</code> array, and <code>false</code> if it
-     * contains none
-     */
-    public static boolean containsAny(CharSequence str, char[] chrs) {
-        CharIterable x = new CharHashSet(chrs);
-
-        for (int i = 0; i < str.length(); i++) {
-            if (x.contains(str.charAt(i)))
-                return true;
-        }
-        return false;
-    }
-
 }

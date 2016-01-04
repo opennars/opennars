@@ -128,51 +128,6 @@ public enum Tense  {
         return solution.projectionTruthQuality(projectedTruth, occTime, time, hasQueryVar);
     }
 
-    public static float solutionQuality(Task problem, Task solution, Truth truth, long time) {
-        return solutionQuality(problem.hasQueryVar(), problem.getOccurrenceTime(), solution, truth, time);
-    }
-
-    /**
-     * Evaluate the quality of a belief as a solution to a problem, then reward
-     * the belief and de-prioritize the problem
-     *
-     * @param task  The problem (question or goal) to be solved
-     * @param solution The belief as solution
-     * @param task     The task to be immediately processed, or null for continued
-     *                 process
-     * @return The budget for the new task which is the belief activated, if
-     * necessary
-     */
-    public static Budget solutionEval(Task task, Task solution, long time) {
-        //boolean feedbackToLinks = false;
-        /*if (task == null) {
-            task = nal.getCurrentTask();
-            feedbackToLinks = true;
-        }*/
-        boolean judgmentTask = task.isJudgment();
-        float quality = solutionQuality(task, solution, time);
-        if (quality <= 0)
-            return null;
-
-        Budget budget = null;
-        if (judgmentTask) {
-            task.getBudget().orPriority(quality);
-        } else {
-            float taskPriority = task.getPriority();
-
-            budget = new UnitBudget(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.getTruth()));
-            task.getBudget().setPriority(Math.min(1 - quality, taskPriority));
-        }
-        /*
-        if (feedbackToLinks) {
-            TaskLink tLink = nal.getCurrentTaskLink();
-            tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
-            TermLink bLink = nal.getCurrentBeliefLink();
-            bLink.incPriority(quality);
-        }*/
-        return budget;
-    }
-
     public static Order order(float timeDiff, int durationCycles) {
         float halfDuration = durationCycles / 2.0f;
         if (timeDiff >= halfDuration) {
@@ -263,11 +218,6 @@ public enum Tense  {
         }
     }
 
-    public static void appendInterval(Appendable p, long iii) throws IOException {
-        p.append(Symbols.INTERVAL_PREFIX);
-        p.append(Long.toString(iii));
-    }
-
     /** inner between: time difference of later.start() - earlier.end() */
     public static int between(Temporal task, Temporal belief) {
         long tStart = task.start();
@@ -339,10 +289,6 @@ public enum Tense  {
         return stringToTense.get(s);
     }
 
-    public static String tenseRelative(long then, long now) {
-        long dt = then - now;
-        return dt < 0 ? "[" + dt + ']' : "[+" + dt + ']';
-    }
 }
 
 //TODO make an enum for these Orders

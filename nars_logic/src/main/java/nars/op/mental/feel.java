@@ -45,7 +45,7 @@ public abstract class feel extends SyncOperator implements Mental {
      */
     protected static ArrayList<Task> feeling(float value, Memory memory, Term feeling) {
 
-        Term content = $.instprop(memory.self(), feeling);
+        Term content = instprop(memory.self(), feeling);
 
         return Lists.newArrayList(
             new MutableTask(content, Symbols.JUDGMENT)
@@ -53,5 +53,9 @@ public abstract class feel extends SyncOperator implements Mental {
                 .truth(new DefaultTruth(value, 0.999f))
                 .present(memory)
         );
+    }
+
+    public static Term instprop(Term subject, Term predicate) {
+        return $.terms.instprop(subject, predicate);
     }
 }

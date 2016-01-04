@@ -54,6 +54,18 @@ public class Factorial extends Node {
     }
 
     /**
+     * Tests whether the given class type is for an integer type (one of
+     * <code>Byte, Short, Integer, Long</code>)
+     *
+     * @param type the type to check
+     * @return <code>true</code> if it is a primitive integer type,
+     * <code>false</code> otherwise
+     */
+    public static boolean isIntegerType(Class<?> type) {
+        return ((type == Integer.class) || (type == Long.class) || (type == Byte.class) || (type == Short.class));
+    }
+
+    /**
      * Evaluates this function. The child node is evaluated, the result of which
      * must be of an integer type (one of Byte, Short, Integer, Long). If the
      * value is negative, then its absolute value is used to avoid a divide by
@@ -98,7 +110,7 @@ public class Factorial extends Node {
      */
     @Override
     public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 1) && TypeUtil.isIntegerType(inputTypes[0])) {
+        if ((inputTypes.length == 1) && isIntegerType(inputTypes[0])) {
             return TypeUtil.widestNumberType(inputTypes[0]);
         }
 

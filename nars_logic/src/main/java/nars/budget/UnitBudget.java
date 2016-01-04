@@ -166,13 +166,6 @@ public class UnitBudget implements Budget {
         return f;
     }
 
-    public static float prioritySum(Iterable<? extends Budgeted> dd) {
-        float f = 0;
-        for (Budgeted x : dd)
-            f += x.getPriority();
-        return f;
-    }
-
 
     /**
      * Cloning method

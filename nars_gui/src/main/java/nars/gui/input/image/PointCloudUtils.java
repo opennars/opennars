@@ -138,25 +138,9 @@ public class PointCloudUtils
     return newpoints;
   }
 
-  public static double pathLength(ArrayList<PointCloudPoint> points) // length traversed by a point path
-  {
-    double d = 0.0;
-    for(int i = 1; i < points.size(); i++)
-    {
-      PointCloudPoint p1 = points.get(i);
-      PointCloudPoint p2 = points.get(i - 1);
-      if(p1.getID() == p2.getID())
-      {
-        d += distance(p2, p1);
-      }
-    }
-
-    return d;
-  }
-
   public static ArrayList<PointCloudPoint> resample(ArrayList<PointCloudPoint> points, int numPoints)
   {
-    double I = pathLength(points) / (numPoints - 1); // interval length
+    double I = PointCloud.pathLength(points) / (numPoints - 1); // interval length
     double D = 0.0;
     ArrayList<PointCloudPoint> newpoints = new ArrayList<>();
     PointCloudPoint p = points.get(0);
