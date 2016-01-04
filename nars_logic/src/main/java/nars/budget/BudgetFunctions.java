@@ -124,18 +124,18 @@ public final class BudgetFunctions extends UtilityFunctions {
 //        return new Budget(priority, durability, quality);
 //    }
 
-    /* ----------------------- Links ----------------------- */
-    /**
-     * Distribute the budget of a task among the links to it
-     *
-     * @param b The original budget
-     * @param factor to scale dur and qua
-     * @return Budget value for each tlink
-     */
-    public static UnitBudget clonePriorityMultiplied(Budgeted b, float factor) {
-        float newPriority = b.getPriority() * factor;
-        return new UnitBudget(newPriority, b.getDurability(), b.getQuality());
-    }
+//    /* ----------------------- Links ----------------------- */
+//    /**
+//     * Distribute the budget of a task among the links to it
+//     *
+//     * @param b The original budget
+//     * @param factor to scale dur and qua
+//     * @return Budget value for each tlink
+//     */
+//    public static UnitBudget clonePriorityMultiplied(Budgeted b, float factor) {
+//        float newPriority = b.getPriority() * factor;
+//        return new UnitBudget(newPriority, b.getDurability(), b.getQuality());
+//    }
 
     
 //    /* ----------------------- Concept ----------------------- */

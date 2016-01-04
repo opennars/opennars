@@ -27,12 +27,4 @@ public interface Budgeted  {
         return getBudget().getLastForgetTime();
     }
 
-
-    default Object[] toBudgetArray() {
-        return new Object[]{
-                getPriority(), getDurability(), getQuality()
-        };
-    }
-
-
 }

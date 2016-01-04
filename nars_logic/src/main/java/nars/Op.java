@@ -136,11 +136,6 @@ public enum Op {
      */
     public final int minLevel;
 
-    /**
-     * should be null unless a 1-character representation is not possible.
-     */
-    public final byte[] bytes;
-
     private final boolean commutative;
     private final Order temporalOrder;
 
@@ -176,18 +171,17 @@ public enum Op {
     }
 
     Op(String string, boolean commutative, int minLevel, OpType type, IntIntPair size) {
-        str = string;
+
+        this.str = string;
+
         this.commutative = commutative;
-
-        bytes = string.getBytes();
-
         this.minLevel = minLevel;
         this.type = type;
 
-        ch = string.length() == 1 ? string.charAt(0) : 0;
+        this.ch = string.length() == 1 ? string.charAt(0) : 0;
 
-        opener = name().endsWith("_OPENER");
-        closer = name().endsWith("_CLOSER");
+        this.opener = name().endsWith("_OPENER");
+        this.closer = name().endsWith("_CLOSER");
 
         this.minSize= size.getOne();
         this.maxSize = size.getTwo();

@@ -252,17 +252,17 @@ public abstract class NAR implements Serializable, Level {
     /**
      * ask quest
      */
-    public Task should(String questString) throws NarseseException {
+    public Task askShould(String questString) throws NarseseException {
         Term c = term(questString);
         if (c instanceof Compound)
-            return should((Compound) c);
+            return askShould((Compound) c);
         return null;
     }
 
     /**
      * ask quest
      */
-    public Task should(Compound quest) {
+    public Task askShould(Compound quest) {
         return ask(quest, QUEST);
     }
 

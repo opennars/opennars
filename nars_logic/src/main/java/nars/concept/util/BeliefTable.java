@@ -10,7 +10,8 @@ import nars.truth.Truth;
 import nars.truth.TruthWave;
 import nars.truth.Truthed;
 
-import java.io.*;
+import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -48,17 +49,6 @@ public interface BeliefTable extends TaskTable {
             return Iterators.emptyIterator();
         }
 
-        @Override
-        public void writeValues(ObjectOutput output) throws IOException {
-            output.writeInt(0);
-            output.writeInt(0);
-        }
-
-        @Override
-        public <T> void readValues(ObjectInput input) throws IOException {
-            input.readInt();
-            input.readInt();
-        }
 
         @Override
         public int getCapacity() {

@@ -46,7 +46,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
      * */
     default Set<Term> uniqueSubtermSet(Op type) {
         Set<Term> t = Global.newHashSet(size());
-        //final int[] has = {0};
         recurseTerms((t1, superterm) -> {
             if (t1.op(type))
                 t.add(t1);

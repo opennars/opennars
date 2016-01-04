@@ -6,9 +6,6 @@ import nars.task.Task;
 import org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
@@ -71,46 +68,6 @@ public interface TaskTable extends Iterable<Task> {
         for (Task t : this) {
             recip.accept(t);
             if (--maxPerConcept == 0) break;
-        }
-    }
-
-
-    default void writeValues(ObjectOutput output) throws IOException {
-        int s = size(), c = getCapacity();
-        try {
-            output.writeInt(s);
-            output.writeInt(c);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-        int[] written = {0}; //HACK to prevent writing more than the specified
-        forEach(t -> {
-            if (written[0] < s) {
-                try {
-                    output.writeObject(t);
-                    written[0] = written[0] + 1;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    default <T> void readValues(ObjectInput input) throws IOException {
-
-
-        try {
-            int num = input.readInt();
-            int cap = input.readInt();
-            setCapacity(cap);
-            for (int i = 0; i < num; i++) {
-                Task t = (Task) input.readObject();
-                add(t);
-            }
-        } catch (Exception e) {
-            System.err.println(e);
-            //e.printStackTrace();
         }
     }
 

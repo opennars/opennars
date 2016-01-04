@@ -211,10 +211,7 @@ public class Terms {
     }
 
     public static Term[] toSortedSetArray(Collection<? extends Term> c) {
-        if (c instanceof TreeSet) {
-            return c.toArray(new Term[c.size()]); //already sorted
-        }
-        TreeSet<Term> t = new TreeSet(c);
+        TreeSet<Term> t = c instanceof TreeSet ? (TreeSet) c : new TreeSet(c);
         return t.toArray(new Term[t.size()]);
     }
 
@@ -266,11 +263,6 @@ public class Terms {
         c.accept(line.toString());
     }
 
-    private static boolean ensureTermLength(int num, Term[] a) {
-        return (a.length == num);
-        /*if (a.length!=num)
-            throw new CompoundTerm.InvalidTermConstruction("Expected " + num + " args to create Term from " + Arrays.toString(a));*/
-    }
 
     /**
      * build a component list from terms

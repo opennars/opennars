@@ -148,7 +148,7 @@ public class TermReductionsTest {
         //check consistency with differenceSorted
         assertArrayEquals(
             new Term[] { r, s },
-            Terms.toSortedSetArray(TermContainer.difference(sete(r, p, q, s), sete(p, q)))
+            TermContainer.difference(sete(r, p, q, s), sete(p, q)).terms()
         );
     }
     @Test public void testDifferenceSortedEmpty() {
@@ -157,9 +157,9 @@ public class TermReductionsTest {
 //                Terms.toArray(TermContainer.differenceSorted(sete(p, q), sete(p, q)))
 //        );
         //check consistency with differenceSorted
-        assertArrayEquals(
-                new Term[] { },
-                Terms.toSortedSetArray(TermContainer.difference(sete(p, q), sete(p, q)))
+        assertEquals(
+                null,
+                TermContainer.difference(sete(p, q), sete(p, q))
         );
     }
 
@@ -171,13 +171,19 @@ public class TermReductionsTest {
 
 
         assertEquals(
-                $("{Mars,Venus}"),
-                sete(TermContainer.difference(
+                ((Compound)$("{Mars,Venus}")).subterms(),
+                TermContainer.difference(
                         $("{Mars,Pluto,Venus}"),
                         $("{Pluto,Saturn}")
-                ))
+                )
         );
-
+        assertEquals(
+                ((Compound)$("{Saturn}")).subterms(),
+                TermContainer.difference(
+                        $("{Pluto,Saturn}"),
+                        $("{Mars,Pluto,Venus}")
+                )
+        );
 
 
 //        //test identity does not create new instance, single term

@@ -137,10 +137,6 @@ public interface Premise extends Level, Tasked {
 
     Task getBelief();
 
-    default Term getTerm() {
-        return getConcept().get();
-    }
-
 
     Task getTask();
 

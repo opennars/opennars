@@ -43,7 +43,7 @@ public final class Symbols {
 
     
     /* Tense markers */
-    public static final String TENSE_SEPARATOR = ":";
+
 
     public static final String TENSE_PAST = ":\\:";
     public static final String TENSE_PRESENT = ":|:";
@@ -85,7 +85,6 @@ public final class Symbols {
     /* special characters in argument list */
     public static final char ARGUMENT_SEPARATOR = ',';
     public static final String ARGUMENT_SEPARATOR_PRETTY = ", ";
-    public static final byte ARGUMENT_SEPARATORbyte = (byte)',';
     public static final char IMAGE_PLACE_HOLDER = '_';
     
     /* prefix of special Term name */
@@ -106,7 +105,6 @@ public final class Symbols {
     public static final char SET_EXT_CLOSER = '}';
     public static final char COMPOUND_TERM_OPENER = '(';
     public static final char COMPOUND_TERM_CLOSER = ')';
-    public static final byte COMPOUND_TERM_CLOSERbyte = (byte)COMPOUND_TERM_CLOSER;
     public static final char STATEMENT_OPENER = '<';
     public static final char STATEMENT_CLOSER = '>';
 

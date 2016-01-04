@@ -1,6 +1,5 @@
 package nars.budget;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import nars.Symbols;
 import nars.util.Texts;
 import nars.util.data.Util;
@@ -252,9 +251,9 @@ public interface Budget extends Prioritized, Budgeted {
         return summaryNotLessThan(budgetThreshold);
     }
 
-    default boolean summaryGreaterOrEqual(AtomicDouble budgetThreshold) {
-        return summaryGreaterOrEqual(budgetThreshold.floatValue());
-    }
+//    default boolean summaryGreaterOrEqual(AtomicDouble budgetThreshold) {
+//        return summaryGreaterOrEqual(budgetThreshold.floatValue());
+//    }
 
 
     /** copies a budget into this; if source is null, it deletes the budget */
@@ -319,22 +318,22 @@ public interface Budget extends Prioritized, Budgeted {
         return toBudgetStringExternal().toString();
     }
 
-    /**
-     * 1 digit resolution
-     */
-    default String toStringExternalBudget1(boolean includeQuality) {
-        char priorityString = Texts.n1char(getPriority());
-        char durabilityString = Texts.n1char(getDurability());
-        StringBuilder sb = new StringBuilder(1 + 1 + 1 + (includeQuality ? 1 : 0) + 1)
-                .append(Symbols.BUDGET_VALUE_MARK)
-                .append(priorityString).append(Symbols.VALUE_SEPARATOR)
-                .append(durabilityString);
-
-        if (includeQuality)
-            sb.append(Symbols.VALUE_SEPARATOR).append(Texts.n1char(getQuality()));
-
-        return sb.append(Symbols.BUDGET_VALUE_MARK).toString();
-    }
+//    /**
+//     * 1 digit resolution
+//     */
+//    default String toStringExternalBudget1(boolean includeQuality) {
+//        char priorityString = Texts.n1char(getPriority());
+//        char durabilityString = Texts.n1char(getDurability());
+//        StringBuilder sb = new StringBuilder(1 + 1 + 1 + (includeQuality ? 1 : 0) + 1)
+//                .append(Symbols.BUDGET_VALUE_MARK)
+//                .append(priorityString).append(Symbols.VALUE_SEPARATOR)
+//                .append(durabilityString);
+//
+//        if (includeQuality)
+//            sb.append(Symbols.VALUE_SEPARATOR).append(Texts.n1char(getQuality()));
+//
+//        return sb.append(Symbols.BUDGET_VALUE_MARK).toString();
+//    }
 
     default String getBudgetString() {
         return Budget.toString(this);

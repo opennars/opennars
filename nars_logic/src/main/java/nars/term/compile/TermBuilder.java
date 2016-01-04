@@ -171,9 +171,10 @@ public interface TermBuilder {
 
     default Term newTerm(Op op, int relation, TermContainer tt) {
 
-        Term[] t = tt.terms();
-        if (t == null)
+        if (tt == null)
             return null;
+
+        Term[] t = tt.terms();
 
         /* special handling */
         switch (op) {
@@ -379,7 +380,7 @@ public interface TermBuilder {
     default Term subtractSet(Op setType, Compound A, Compound B) {
         if (A.equals(B))
             return null; //empty set
-        return newTerm(setType, new TermVector(TermContainer.difference(A, B)));
+        return newTerm(setType, TermContainer.difference(A, B));
     }
 
     default Term impl2Conj(Op op, Term subject, Term predicate, Term oldCondition) {
@@ -501,34 +502,6 @@ public interface TermBuilder {
         return newTerm(resultOp, i);
     }
 
-    default Term difference(Compound a, Compound b) {
-
-        if (a.size() == 1) {
-
-            return b.containsTerm(a.term(0)) ? null : a;
-
-        } else {
-            //MutableSet dd = Sets.difference(a.toSet(), b.toSet());
-            MutableSet dd = a.toSet();
-            boolean changed = false;
-            for (Term bb : b.terms()) {
-                changed |= dd.remove(bb);
-            }
-
-            Term r;
-            if (!changed) {
-                r = a;
-            }
-            else if (dd.isEmpty()) {
-                r = null;
-            }
-            else {
-                r = newTerm(a.op(), TermSet.the(dd));
-            }
-            return r;
-        }
-
-    }
 
     /** returns the resolved term according to the substitution    */
     default Term transform(Compound src, Subst f, boolean fullMatch) {

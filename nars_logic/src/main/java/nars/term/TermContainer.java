@@ -54,18 +54,31 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
         }
     }
 
+
     /** returns null if empty set; not sorted */
-    @Deprecated static Term[] difference(TermContainer a, TermContainer b) {
-        if (a.size() == 1 && b.size() == 1) {
-            //special case
-            return a.term(0).equals(b.term(0)) ?
-                    Terms.Empty :
-                    a.terms();
-        } else {
-            MutableSet dd = Sets.difference(a.toSet(), b.toSet());
-            if (dd.isEmpty()) return Terms.Empty;
-            return Terms.toArray(dd);
+    @Deprecated static TermSet difference(TermContainer a, TermContainer b) {
+
+        List<Term> terms = Global.newArrayList();
+
+        Term[] aa = a.terms();
+        for(Term t: aa) { //set difference
+            if (!b.containsTerm(t))
+                terms.add(t);
         }
+
+        if (terms.isEmpty()) return null;
+        return TermSet.the(terms);
+
+//        if (a.size() == 1 && b.size() == 1) {
+//            //special case
+//            return a.term(0).equals(b.term(0)) ?
+//                    Terms.Empty :
+//                    a.terms();
+//        } else {
+//            MutableSet dd = Sets.difference(a.toSet(), b.toSet());
+//            if (dd.isEmpty()) return Terms.Empty;
+//            return Terms.toArray(dd);
+//        }
     }
 
 

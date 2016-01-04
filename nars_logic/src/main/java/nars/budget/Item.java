@@ -71,15 +71,15 @@ public abstract class Item<K> extends UnitBudget  {
         return new StringBuilder(budgetStr.length()+n.length()+1).append(budgetStr).append(' ').append(n).toString();
     }
 
-    /**
-     * Return a String representation of the Item after simplification
-     * @return A simplified String representation of the content
-     */
-    public String toStringWithBudget() {
-        StringBuilder sb = new StringBuilder();
-        appendWithBudget(sb);
-        return sb.toString();
-    }
+//    /**
+//     * Return a String representation of the Item after simplification
+//     * @return A simplified String representation of the content
+//     */
+//    public String toStringWithBudget() {
+//        StringBuilder sb = new StringBuilder();
+//        appendWithBudget(sb);
+//        return sb.toString();
+//    }
 
 
     public void appendWithBudget(StringBuilder sb) {
@@ -112,13 +112,13 @@ public abstract class Item<K> extends UnitBudget  {
         return false;
     }
 
-    public abstract static class StringKeyItem extends Item<CharSequence> {
-        
-        protected StringKeyItem(Budget budget) { super(budget);         }
-        protected StringKeyItem(float p, float d, float q) { super(p, d, q);         }
-        protected StringKeyItem(float p) { this(p, p, p);         }
-
-    }
+//    public abstract static class StringKeyItem extends Item<CharSequence> {
+//
+//        protected StringKeyItem(Budget budget) { super(budget);         }
+//        protected StringKeyItem(float p, float d, float q) { super(p, d, q);         }
+//        protected StringKeyItem(float p) { this(p, p, p);         }
+//
+//    }
 
     public static float getPrioritySum(Iterable<? extends Item> c) {
         float totalPriority = 0;

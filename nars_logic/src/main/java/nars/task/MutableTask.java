@@ -124,11 +124,6 @@ public class MutableTask extends AbstractTask {
         super.budget(source);
         return this;
     }
-
-    public boolean isBudgeted() {
-        return Float.isFinite(getQuality());
-    }
-
     /**
      * uses default budget generation and multiplies it by gain factors
      */
@@ -354,11 +349,11 @@ public class MutableTask extends AbstractTask {
 //            target.setOccurrenceTime(o);
 //    }
 //
-
-    public MutableTask budgetCompoundForward(Compound result, ConceptProcess p) {
-        BudgetFunctions.compoundForward(this, getTruth(), result, p);
-        return this;
-    }
+//
+//    public MutableTask budgetCompoundForward(Compound result, ConceptProcess p) {
+//        BudgetFunctions.compoundForward(this, getTruth(), result, p);
+//        return this;
+//    }
 
 
 //    public TaskSeed temporalInductable(boolean b) {

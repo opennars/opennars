@@ -53,7 +53,7 @@ public class VectorMapTest {
             @Override protected void map(double[] in, double[] out) {
                 if (d == null)
                     d = new Autoencoder(in.length, out.length);
-                
+
                 d.train(in, 0, 0.05, 0, true);
                 d.encode(in, out, true, true);                
             }          
@@ -83,7 +83,10 @@ public class VectorMapTest {
 
         v.update();
 
-        n.frame(16);
+        n.log();
+
+        n.frame(256);
+
 
 
         //new NARSwing(n);
