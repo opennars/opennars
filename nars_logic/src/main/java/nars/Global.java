@@ -313,5 +313,7 @@ public class Global {
     //TODO: the latter two not being true or false together has some consequences we did not analyze in detail yet
     /////////////////////////////////////////////////////
 
+    public static boolean DYNAMIC_BAG = true; //adjust bag curve to distribution in the bag
+
 }
 
