@@ -253,7 +253,7 @@ public interface TermContainer<T extends Term> extends Termlike, Comparable, Ite
                 TermSet.the(tt) : new TermVector(tt);
     }
 
-    static TermContainer the(Op op, Term[] tt) {
+    static TermContainer the(Op op, Term... tt) {
         return requiresTermSet(op, tt.length) ? TermSet.the(tt) :
                 new TermVector(tt);
     }

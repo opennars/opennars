@@ -48,7 +48,7 @@ public abstract class AbstractMapIndex implements TermIndex {
 
         Termed y = getTermIfPresent(x);
         if (y == null) {
-            putTerm(y = intern(x));
+            putTerm(y = makeTerm(x));
         }
         return y;
     }
@@ -66,11 +66,11 @@ public abstract class AbstractMapIndex implements TermIndex {
 //    public abstract int size();
 
     @Override
-    public Termed internCompound(Op op, int relation, TermContainer t) {
+    public Termed make(Op op, int relation, TermContainer t) {
         return intern(op, relation, internSub(t));
     }
 
-    @Override public Termed internAtomic(Term t) {
+    @Override public Termed makeAtomic(Term t) {
         return t;
     }
 

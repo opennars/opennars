@@ -15,7 +15,10 @@ public final class PatternCompound extends GenericCompound {
     public final int structureCached;
     public final Term[] termsCached;
     protected final boolean ellipsis;
+
     private final boolean commutative;
+    private final boolean effectivelyCommutative;
+
     private final boolean ellipsisTransform;
 
 
@@ -36,6 +39,7 @@ public final class PatternCompound extends GenericCompound {
         this.volCached = seed.volume();
         this.termsCached = subterms.terms();
         this.commutative = isCommutative();
+        this.effectivelyCommutative = isCommutative() && (size() > 1);
     }
 
     @Override
@@ -53,26 +57,15 @@ public final class PatternCompound extends GenericCompound {
         return structureCached;
     }
 
-    @Override
-    public boolean match(Compound y, FindSubst subst) {
-
-        if (!prematch(y)) return false;
-
-        if (!ellipsis) {
-
-            if (commutative && y.size() > 1) {
-                return subst.matchPermute(this, y);
-            }
-
-            return subst.matchLinear(this, y);
-
-        } else {
-            return subst.matchCompoundWithEllipsis(this, y);
-        }
-
+    @Override public boolean match(Compound y, FindSubst subst) {
+        return canMatch(y) && (!ellipsis ?
+                ((effectivelyCommutative) ?
+                        subst.matchPermute(this, y) :
+                        subst.matchLinear(this, y)) :
+                subst.matchCompoundWithEllipsis(this, y));
     }
 
-    public final boolean prematch(Compound y) {
+    public final boolean canMatch(Compound y) {
 
         int yStructure = y.structure();
         if ((yStructure | structureCached) != yStructure)

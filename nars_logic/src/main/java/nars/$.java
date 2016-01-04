@@ -43,7 +43,7 @@ public abstract class $  {
     public static final TermBuilder terms = new TermBuilder() {
 
         @Override
-        public Termed internCompound(Op op, int relation, TermContainer subterms) {
+        public Termed make(Op op, int relation, TermContainer subterms) {
             return new GenericCompound(op, relation, (TermVector)subterms);
         }
     };

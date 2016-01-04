@@ -291,17 +291,19 @@ public class NAL5Test extends AbstractNALTester {
 
 
     @Test
-    public void conditional_abduction(){
+    public void conditional_abduction_viaMultiConditionalSyllogism(){
+        //((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
         TestNAR tester = test();
         tester.believe("<<robin --> [flying]> ==> <robin --> bird>>"); //.en("If robin can fly then robin is a bird.");
         tester.believe("<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>"); //.en("If robin both swims and flys then robin is a bird.");
-        tester.mustBelieve(cycles*8," <robin --> swimmer>",1.00f,0.45f); //.en("I guess robin swims.");
+        tester.mustBelieve(cycles*8,"<robin --> swimmer>",1.00f,0.45f); //.en("I guess robin swims.");
 
     }
 
 
     @Test
-    public void conditional_abduction2(){
+    public void conditional_abduction2_viaMultiConditionalSyllogism(){
+        //((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
         TestNAR tester = test();
         tester.believe("<(&&,<robin --> [withWings]>,<robin --> [chirping]>) ==> <robin --> bird>>"); //.en("If robin is has wings and chirps, then robin is a bird");
         tester.believe("<(&&,<robin --> [flying]>,<robin --> [withWings]>,<robin --> [chirping]>) ==> <robin --> bird>>"); //.en("If robin can fly, has wings, and chirps, then robin is a bird");

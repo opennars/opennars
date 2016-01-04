@@ -249,6 +249,11 @@ public interface Statement {
         if (subject.equals(predicate))
             return true;
 
+        return invalidStatement2(subject, predicate);
+    }
+
+    /** skips the null and equality test */
+    static boolean invalidStatement2(Term subject, Term predicate) {
         //TODO combine these mirrored invalidReflexive calls into one combined, unredundant operation
         if (invalidReflexive(subject, predicate))
             return true;
@@ -270,11 +275,9 @@ public interface Statement {
             Term t21 = Statement.subj(s2);
             if (t12.equals(t21))
                 return true;
-
         }
         return false;
     }
-
 
 
     static boolean is(Termed t) {

@@ -1,6 +1,7 @@
 package nars.term.compile;
 
 import com.gs.collections.api.set.MutableSet;
+import javafx.scene.shape.Ellipse;
 import nars.Global;
 import nars.Op;
 import nars.nal.PremiseAware;
@@ -34,7 +35,11 @@ import static nars.term.Statement.subj;
  */
 public interface TermBuilder {
 
-    Termed internCompound(Op op, int relation, TermContainer subterms);
+    Termed make(Op op, int relation, TermContainer subterms);
+
+    default Termed make(Op op, TermContainer subterms) {
+        return make(op, -1, subterms);
+    }
 
     /** unifies a term with this; by default it passes through unchanged */
     default Termed the(Term t) {
@@ -234,18 +239,34 @@ public interface TermBuilder {
             return statement(op, t);
 
         } else {
-            int arity = t.length;
-            if (op.minSize > 1 && arity == 1) {
-                return t[0]; //reduction
-            }
 
-            if (!op.validSize(arity)) {
-                //throw new RuntimeException(Arrays.toString(t) + " invalid size for " + op);
-                return null;
-            }
+            return finish(op, relation, tt);
 
-            return internCompound(op, relation, TermContainer.the(op, tt)).term();
         }
+
+    }
+
+    /** step before calling Make */
+    default Term finish(Op op, int relation, TermContainer tt) {
+
+        Term[] t = tt.terms();
+        int currentSize = t.length;
+
+        boolean valid;
+        if (op.minSize > 1 && currentSize == 1) {
+            //special case: allow for ellipsis to occupy one item even if minArity>1
+            if (t[0] instanceof Ellipsis)
+                currentSize++; //increase to make it seem valid and allow constrct below
+            else
+              return t[0]; //reduction
+        }
+
+        if (!op.validSize(currentSize)) {
+            //throw new RuntimeException(Arrays.toString(t) + " invalid size for " + op);
+            return null;
+        }
+
+        return make(op, relation, TermContainer.the(op, tt)).term();
 
     }
 
@@ -262,11 +283,11 @@ public interface TermBuilder {
     }
 
     default Term negation(Term t) {
-        if (t.op() == Op.NEGATE) {
+        if (t.op(Op.NEGATE)) {
             // (--,(--,P)) = P
             return ((TermContainer) t).term(0);
         }
-        return internCompound(Op.NEGATE, -1, new TermVector(t)).term();
+        return make(Op.NEGATE, -1, new TermVector(t)).term();
     }
 
     default Term image(Op o, Term[] res) {
@@ -317,12 +338,7 @@ public interface TermBuilder {
             return junction(op, s);
         }
 
-
-        TermSet<?> ss = TermSet.the(s);
-        if (ss.size() == 1) return ss.iterator().next();
-
-        return internCompound(op, -1, ss).term();
-
+        return finish(op, -1, TermSet.the(s));
     }
 
     default Term statement(Op op, Term[] t) {
@@ -330,13 +346,15 @@ public interface TermBuilder {
         switch (t.length) {
             case 1:
                 return t[0];
+
             case 2:
 
                 Term subject = t[0];
                 Term predicate = t[1];
 
+                //DEBUG:
                 if (subject == null || predicate == null)
-                    return null;
+                    throw new RuntimeException("invalid statement terms");
 
                 //special statement filters
                 switch (op) {
@@ -366,8 +384,12 @@ public interface TermBuilder {
                         break;
                 }
 
-                if (!Statement.invalidStatement(t[0], t[1])) {
-                    return internCompound(op, -1, TermContainer.the(op, t)).term();
+                if (t[0].equals(t[1]))
+                    return t[0];
+
+                //already tested equality, so go to invalidStatement2:
+                if (!Statement.invalidStatement2(t[0], t[1])) {
+                    return make(op, -1, TermContainer.the(op, t)).term();
                 }
 
                 return null;
@@ -406,9 +428,11 @@ public interface TermBuilder {
                 throw new RuntimeException("invalid case");
         }
 
-        return newTerm(op,
-                newTerm(conjOp, subject, oldCondition),
-                    pred(predicate));
+        Term s = newTerm(conjOp, subject, oldCondition);
+        if (s == null)
+            return null;
+
+        return newTerm(op, s, pred(predicate));
     }
 
     default Term newIntersectINT(Term[] t) {
@@ -430,7 +454,15 @@ public interface TermBuilder {
             case 0:
                 return null;
             case 1:
-                return t[0];
+
+                Term single = t[0];
+                if (single instanceof Ellipse) {
+                    //allow
+                    return make(intersection, -1, TermContainer.the(intersection, single)).term();
+                }
+
+                return single;
+
             case 2:
                 return newIntersection2(t[0], t[1], intersection, setUnion, setIntersection);
             default:
@@ -481,17 +513,14 @@ public interface TermBuilder {
 
             suffix = o2 == intersection ? ((TermContainer) term2).terms() : new Term[]{term2};
 
-            return internCompound(intersection, -1,
+            return finish(intersection, -1,
                     TermSet.the(Terms.concat(
                         ((TermContainer) term1).terms(), suffix
                     ))
-            ).term();
+            );
         }
 
-        if (term1.equals(term2))
-            return term1;
-
-        return internCompound(intersection, -1, TermSet.the(term1, term2)).term();
+        return finish(intersection, -1, TermSet.the(term1, term2));
 
 
     }
@@ -506,7 +535,7 @@ public interface TermBuilder {
     /** returns the resolved term according to the substitution    */
     default Term transform(Compound src, Subst f, boolean fullMatch) {
 
-        Term y = f.getXY(src);
+//        Term y = f.getXY(src);
 //        if (y!=null)
 //            return y;
 
@@ -520,12 +549,6 @@ public interface TermBuilder {
                 if (fullMatch)
                     return null;
             }
-        }
-
-        if (sub.size() > 0) {
-            //check if last item is a shim, if so, remove it
-            if (sub.get(sub.size()-1).equals(Ellipsis.Shim))
-                sub = sub.subList(0, sub.size()-1);
         }
 
         Term result = newTerm(src, TermContainer.the(src.op(), sub));

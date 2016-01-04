@@ -271,7 +271,7 @@ public class PremiseRule extends GenericCompound implements Level {
             index.theCompound(
                 $.terms.transform(
                     $.terms.transform(this, UppercaseAtomsToPatternVariables),
-                new TaskRuleVariableNormalization()) ) );
+                new PremiseRuleVariableNormalization()) ) );
     }
 
 
@@ -646,25 +646,26 @@ public class PremiseRule extends GenericCompound implements Level {
 //
 //    }
 
-
     public final int nal() { return minNAL; }
 
-    public static class TaskRuleVariableNormalization extends VariableNormalization {
+    public static final class PremiseRuleVariableNormalization extends VariableNormalization {
 
 
         int offset = 0;
 
         @Override protected Variable newVariable(Variable v, int serial) {
 
-            Variable newVar = v.normalize(serial+offset);
 
             if (v instanceof Ellipsis) {
                 Ellipsis e = (Ellipsis)v;
-                Variable r = e.clone(newVar, this);
+                Variable r = e.clone($.varPattern(serial+offset), this);
+                if (e.toString().contains("..+..+"))
+                    throw new RuntimeException("x");
                 offset = 0; //return to zero
                 return r;
             }
             else {
+                Variable newVar = v.normalize(serial+offset);
                 return newVar;
             }
         }

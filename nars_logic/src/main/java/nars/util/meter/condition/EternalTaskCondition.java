@@ -13,8 +13,8 @@ import nars.term.compound.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.truth.Truthed;
+import nars.util.data.Util;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 
 public class EternalTaskCondition implements NARCondition, Predicate<Task>, Consumer<Tasked> {
 
-    private static final Logger logger = LoggerFactory.getLogger(EternalTaskCondition.class);
+    //private static final Logger logger = LoggerFactory.getLogger(EternalTaskCondition.class);
 
     protected final NAR nar;
     private final char punc;
@@ -94,7 +94,13 @@ public class EternalTaskCondition implements NARCondition, Predicate<Task>, Cons
         this.duration = n.memory.duration();
     }
 
-//    public double getAcceptableDistanceThreshold() {
+    @Override
+    public String toString() {
+        return term.toString() + punc + " %" +
+                Util.rangeStringN2(freqMin, freqMax) + ";" + Util.rangeStringN2(confMin, confMax) + '%';
+    }
+
+    //    public double getAcceptableDistanceThreshold() {
 //        return 0.01;
 //    }
 

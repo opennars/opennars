@@ -38,11 +38,11 @@ public final class EllipsisMatch extends TermVector<Term> implements Term {
     }
 
     public EllipsisMatch(Collection<Term> term, Term except) {
-        this(term.stream().filter(t -> ((t!=except) && (!t.equals(Ellipsis.Shim)))).collect(toList()));
+        this(term.stream().filter(t -> ((t!=except) )).collect(toList()));
     }
 
     public EllipsisMatch(Collection<Term> term, Term except, Term except2) {
-        this(term.stream().filter(t -> ((t!=except) && (t!=except2) && (!t.equals(Ellipsis.Shim)))).collect(toList()));
+        this(term.stream().filter(t -> ((t!=except) && (t!=except2) )).collect(toList()));
     }
 
     public EllipsisMatch(Term[] t) {

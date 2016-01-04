@@ -83,12 +83,11 @@ public class EllipsisTest {
 
                         //2. test substitution
                         Term s = index.transform(r, this, false);
-                        //System.out.println(s);
-
-                        selectedFixed.add(s);
-
-
-                        TestCase.assertFalse(Variable.hasPatternVariable(s));
+                        if (s!=null) {
+                            //System.out.println(s);
+                            selectedFixed.add(s);
+                            TestCase.assertFalse(Variable.hasPatternVariable(s));
+                        }
 
                         return true;
                     }
@@ -181,12 +180,13 @@ public class EllipsisTest {
 
         @Override
         public Compound getPattern(String prefix, String suffix) {
-            return $(prefix + "%1, " + getEllipsis() + suffix);
+            Compound pattern = $(prefix + "%1, " + getEllipsis() + suffix);
+            return pattern;
         }
 
         @Override
         public Compound getResult() {
-            return $('<' + prefix + getEllipsis() + ", .." + suffix + " --> %1>");
+            return $('<' + prefix + getEllipsis() + suffix + " --> %1>");
         }
 
     }
@@ -215,7 +215,10 @@ public class EllipsisTest {
 
         @Override
         public Compound getResult() {
-            return $(prefix + "Z, " + getEllipsis() + ", .." + suffix);
+            String s = prefix + "Z, " + getEllipsis() + suffix;
+            Compound c = $(s);
+            assertNotNull(s.toString() + " produced null compound", c);
+            return c;
         }
 
         @Override
@@ -256,7 +259,7 @@ public class EllipsisTest {
         TermIndex i = TermIndex.memory(128);
 
         Term u = i.transform(
-                $.p(t), new PremiseRule.TaskRuleVariableNormalization());
+                $.p(t), new PremiseRule.PremiseRuleVariableNormalization());
         t = (EllipsisTransform)((Compound)u).term(0);
         assertEquals("(%1..%2=C..+)", u.toString());
         assertEquals($("%2"), t.from);
@@ -271,25 +274,38 @@ public class EllipsisTest {
 
     @Test public void testVarArg0() {
         //String rule = "(%S --> %M), ((|, %S, %A..+ ) --> %M) |- ((|, %A, ..) --> %M), (Truth:DecomposePositiveNegativeNegative)";
-        String rule = "(%S ==> %M), ((&&,%S,%A..+) ==> %M) |- ((&&,%A..+,..) ==> %M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromBelief)";
+        String rule = "(%S ==> %M), ((&&,%S,%A..+) ==> %M) |- ((&&,%A..+) ==> %M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromBelief)";
         Compound x = $.$('<' + rule + '>');
         //System.out.println(x);
         x = ((PremiseRule)x).normalizeRule(new PatternIndex());
         //System.out.println(x);
 
         assertEquals(
-                "((<%1==>%2>,<(&&,%1,%3..+)==>%2>),(<(&&,%3..+,..)==>%2>,(<DecomposeNegativePositivePositive-->Truth>,<ForAllSame-->Order>,<FromBelief-->SequenceIntervals>)))",
+                "((<%1==>%2>,<(&&,%1,%3..+)==>%2>),(<(&&,%3..+)==>%2>,(<DecomposeNegativePositivePositive-->Truth>,<ForAllSame-->Order>,<FromBelief-->SequenceIntervals>)))",
                 x.toString()
         );
 
     }
-    @Test public void testEllipsisMatchCommutive1() {
-        for (String e : new String[]{"%2..+"}) {
-            for (String[] s : new String[][]{p("(|,", ")"), p("{", "}"), p("[", "]"), p("(&&,", ")")}) {
-                new EllipsisTest.CommutiveEllipsisTest1(e, s).test(2, 4, 4);
-            }
-        }
+
+    @Test public void testEllipsisMatchCommutive1_0() {
+        new EllipsisTest.CommutiveEllipsisTest1("%2..+", p("(|,", ")")).test(2, 2, 4);
     }
+    @Test public void testEllipsisMatchCommutive1_00() {
+        new EllipsisTest.CommutiveEllipsisTest1("%2..+", p("(&,", ")")).test(2, 2, 4);
+    }
+
+    @Test public void testEllipsisMatchCommutive1_1() {
+        new EllipsisTest.CommutiveEllipsisTest1("%2..+", p("{", "}")).test(2, 4, 4);
+    }
+    @Test public void testEllipsisMatchCommutive1_2() {
+        new EllipsisTest.CommutiveEllipsisTest1("%2..+", p("[", "]")).test(2, 4, 4);
+    }
+    @Test public void testEllipsisMatchCommutive1_3() {
+        new EllipsisTest.CommutiveEllipsisTest1("%2..+", p("(&&,", ")")).test(2, 4, 4);
+    }
+
+
+
     @Test public void testEllipsisMatchCommutive2() {
         for (String e : new String[] { "%1..+" }) {
             for (String[] s : new String[][] { p("{", "}"), p("[", "]"), p("(", ")") }) {

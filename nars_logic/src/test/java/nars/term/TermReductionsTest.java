@@ -81,15 +81,23 @@ public class TermReductionsTest {
         assertNull($("<<a <=> b> <=> c>"));
     }
 
-    @Test public void testReducedAndInvalidImplications() {
+    @Test public void testReducedAndInvalidImplications1() {
         assertNull($("<<P<=>Q> ==> R>"));
+    }
+    @Test public void testReducedAndInvalidImplications5() {
         assertNull($("<<P==>Q> ==> R>"));
+    }
+    @Test public void testReducedAndInvalidImplications6() {
         assertNull($("<R ==> <P<=>Q>>"));
-
+    }
+    @Test public void testReducedAndInvalidImplications2() {
         assertEquals("<(&&,P,R)==>Q>", $("<R==><P==>Q>>").toString());
+    }
+    @Test public void testReducedAndInvalidImplications3() {
         assertNull($("<R==><P==>R>>"));
+    }
+    @Test public void testReducedAndInvalidImplications4() {
         assertEquals("<R==>P>", $("<R==><R==>P>>").toString());
-
     }
 
     @Test public void testReducedAndInvalidImplicationsTemporal() {
@@ -103,7 +111,11 @@ public class TermReductionsTest {
 
     @Test public void testReducedAndInvalidImplicationsTemporal2() {
         assertEquals("<(&|,P,R)=|>Q>", $("<R=|><P==>Q>>").toString());
+    }
+    @Test public void testReducedAndInvalidImplicationsTemporal3() {
         assertEquals("<(&/,R,P)=/>Q>", $("<R=/><P==>Q>>").toString());
+    }
+    @Test public void testReducedAndInvalidImplicationsTemporal4() {
         assertEquals("<(&/,P,R)=\\>Q>", $("<R=\\><P==>Q>>").toString());
     }
 

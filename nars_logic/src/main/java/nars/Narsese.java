@@ -26,7 +26,10 @@ import nars.term.atom.Atom;
 import nars.term.compile.TermBuilder;
 import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
-import nars.term.match.*;
+import nars.term.match.EllipsisOneOrMore;
+import nars.term.match.EllipsisTransform;
+import nars.term.match.EllipsisZeroOrMore;
+import nars.term.match.VarPattern;
 import nars.term.variable.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -416,7 +419,6 @@ public class Narsese extends BaseParser<Object>  {
                         Interval(),
 
                         seq(meta, Ellipsis() ),
-                        seq(meta, EllipsisShim() ),
 
                         seq(meta, TaskRule() ),
 
@@ -667,13 +669,6 @@ public class Narsese extends BaseParser<Object>  {
                             push( new EllipsisZeroOrMore( (Variable)pop() ) )
                     )
                 )
-        );
-    }
-
-    Rule EllipsisShim() {
-        return sequence(
-                "..",
-                push( Ellipsis.Shim)
         );
     }
 

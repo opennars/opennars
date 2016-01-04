@@ -1,7 +1,5 @@
 package nars.term.match;
 
-import nars.Op;
-import nars.nal.nal7.ShadowAtom;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.compound.Compound;
@@ -11,19 +9,19 @@ import nars.term.variable.Variable;
 public abstract class Ellipsis extends VarPattern { //TODO use Immutable
 
 
-    /** a placeholder that indicates an expansion of one or more terms that will be provided by an Ellipsis match.
-     *  necessary for terms which require > 1 argument but an expression that will expand one ellipsis variable will not construct a valid prototype of it
-     *  ex:
-     *    (|, %A, ..)
-     *
-     *
-     * IMPORTANT: InvisibleAtom's default compareTo of -1
-     * ensures this will appear always at the end of any ordering */
-    public static final ShadowAtom Shim = new ShadowAtom("..") {
-        @Override public Op op() {
-            return Op.INTERVAL;
-        }
-    };
+//    /** a placeholder that indicates an expansion of one or more terms that will be provided by an Ellipsis match.
+//     *  necessary for terms which require > 1 argument but an expression that will expand one ellipsis variable will not construct a valid prototype of it
+//     *  ex:
+//     *    (|, %A, ..)
+//     *
+//     *
+//     * IMPORTANT: InvisibleAtom's default compareTo of -1
+//     * ensures this will appear always at the end of any ordering */
+//    public static final ShadowAtom Shim = new ShadowAtom("..") {
+//        @Override public Op op() {
+//            return Op.INTERVAL;
+//        }
+//    };
 
     public abstract Variable clone(Variable newVar, VariableNormalization normalizer);
 
@@ -113,8 +111,7 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
         for (int i = 0; i < xs; i++) {
             Term xt = x.term(i);
 
-            if ((xt instanceof Ellipsis)
-             || (xt==Ellipsis.Shim)) //ignore expansion placeholders
+            if (xt instanceof Ellipsis)
                 n--;
         }
         return n;

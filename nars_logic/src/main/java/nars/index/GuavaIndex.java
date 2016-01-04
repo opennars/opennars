@@ -121,7 +121,7 @@ public class GuavaIndex implements TermIndex {
     }
 
     @Override
-    public Termed internCompound(Op op, int relation, TermContainer subterms) {
+    public Termed make(Op op, int relation, TermContainer subterms) {
         return AbstractMapIndex.intern(op, relation, internSub(subterms));
     }
 
@@ -145,7 +145,7 @@ public class GuavaIndex implements TermIndex {
         }
 
         try {
-            return data.get(x, () -> intern(x));
+            return data.get(x, () -> makeTerm(x));
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }

@@ -122,14 +122,14 @@ public interface TermIndex extends TermBuilder {
     }
 
 
-    default Termed internAtomic(Term t) {
+    default Termed makeAtomic(Term t) {
         return t; /* as-is */
     }
 
-    default Termed intern(Term t) {
+    default Termed makeTerm(Term t) {
         return t instanceof Compound ?
-                internCompound((Compound) t)
-                : internAtomic(t);
+                makeCompound((Compound) t)
+                : makeAtomic(t);
     }
 
 
@@ -140,8 +140,8 @@ public interface TermIndex extends TermBuilder {
 //    }
 
 
-    default Termed internCompound(Compound t) {
-        return internCompound(t.op(), t.relation(), t.subterms());
+    default Termed makeCompound(Compound t) {
+        return make(t.op(), t.relation(), t.subterms());
     }
 
 

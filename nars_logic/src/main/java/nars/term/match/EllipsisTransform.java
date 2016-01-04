@@ -37,7 +37,7 @@ public class EllipsisTransform extends EllipsisOneOrMore {
     @Override
     public Variable clone(Variable v, VariableNormalization normalizer) {
         //normalizes any variable parameter terms of an EllipsisTransform
-        PremiseRule.TaskRuleVariableNormalization vnn = (PremiseRule.TaskRuleVariableNormalization) normalizer;
+        PremiseRule.PremiseRuleVariableNormalization vnn = (PremiseRule.PremiseRuleVariableNormalization) normalizer;
         return new EllipsisTransform(v,
                 from instanceof Variable ? vnn.applyAfter((Variable)from) : from,
                 to instanceof Variable ? vnn.applyAfter((Variable)to) : to);

@@ -18,7 +18,7 @@ public class PatternIndex extends MapIndex {
 
 
     @Override
-    public Termed internCompound(Compound x) {
+    public Termed makeCompound(Compound x) {
 
         /*if (!(x instanceof AbstractCompoundPattern)) {
             if (x instanceof Compound) {

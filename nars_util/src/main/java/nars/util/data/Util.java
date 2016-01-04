@@ -16,6 +16,7 @@ package nars.util.data;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
+import nars.util.Texts;
 import nars.util.utf8.Utf8;
 import sun.misc.Unsafe;
 
@@ -771,4 +772,7 @@ public class Util {
     }
 
 
+    public static String rangeStringN2(float min, float max) {
+        return "(" + Texts.n2(min) + ","+ Texts.n2(max) + ')';
+    }
 }

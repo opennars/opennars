@@ -57,7 +57,7 @@ public enum Op {
     IMAGE_INT("\\", 4, Args.GTEOne),
 
     /* CompoundStatement operators, length = 2 */
-    DISJUNCTION("||", true, 5, Args.GTEOne),
+    DISJUNCTION("||", true, 5, Args.GTETwo),
     CONJUNCTION("&&", true, 5, Args.GTETwo),
 
     SEQUENCE("&/", 7, Args.GTETwo), /* NOTE: after cycle terms intermed, it may appear to have one term. but at construction when this is tested, it will need multiple terms even if they are intervals */

@@ -456,7 +456,7 @@ public abstract class FindSubst extends Versioning implements Subst {
             if (v == null) {
 
                 //ellipsis to be matched in stage 2
-                if (x == Xellipsis || x.equals(Ellipsis.Shim)) {
+                if (x == Xellipsis) {
                     continue;
                 }
 
@@ -591,9 +591,6 @@ public abstract class FindSubst extends Versioning implements Subst {
 
         while (i < xsize) {
             Term x = X.term(i++);
-
-            boolean expansionFollows = i < xsize && X.term(i) == Ellipsis.Shim;
-            if (expansionFollows) i++; //skip over it
 
             if (x instanceof Ellipsis) {
                 int available = ysize - j;

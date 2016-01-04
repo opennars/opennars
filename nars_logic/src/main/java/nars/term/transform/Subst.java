@@ -5,7 +5,6 @@ import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.match.Ellipsis;
 
 import java.util.List;
 
@@ -25,10 +24,7 @@ public interface Subst  {
         List<Term> l = Global.newArrayList(s);
 
         for (int i = 0; i < s; i++) {
-            Term e = y.term(i+from);
-            if (e.equals(Ellipsis.Shim))
-                continue;
-            l.add(e);
+            l.add(y.term(i+from));
         }
 
         return l;
