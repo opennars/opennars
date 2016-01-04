@@ -299,5 +299,9 @@ public class Global {
 
     public static float ANTICIPATION_REVISION_TOLERANCE = 2.0f;
 
+    public static boolean REVISION_INTERVAL_TOLERANCE_ON_MATCHING_IN_INFERENCE = false;
+
+    public static boolean REVISION_INTERVAL_TOLERANCE_BASED_CONCEPT_GROUPING = false;
+
 }
 

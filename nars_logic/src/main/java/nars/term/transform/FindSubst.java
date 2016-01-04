@@ -538,7 +538,7 @@ public class FindSubst extends Subst {
             return -1;
         }
 
-        if(!LocalRules.TemporalSimilarTerm(X,Y)) {
+        if(Global.REVISION_INTERVAL_TOLERANCE_ON_MATCHING_IN_INFERENCE && !LocalRules.TemporalSimilarTerm(X,Y)) {
             return -1;
         }
 

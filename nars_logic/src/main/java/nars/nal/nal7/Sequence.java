@@ -79,7 +79,7 @@ public class Sequence extends Conjunctive<Term> implements Intermval {
     @Override
     public boolean equals(Object that) {
         final boolean e = super.equals(that);
-        if(e==false || !LocalRules.TemporalSimilarTerm(this,(Sequence) that)) {
+        if(Global.REVISION_INTERVAL_TOLERANCE_BASED_CONCEPT_GROUPING && !LocalRules.TemporalSimilarTerm(this,(Sequence) that)) {
             return false;
         }
 //        if (e) {
