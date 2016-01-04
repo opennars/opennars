@@ -208,12 +208,22 @@ public class DefaultConcept extends AtomConcept {
                         }
                         if(!subseteq_base || lastevidence == null) {
                             nal.nar().execute((DefaultTask) goal);
-                        }
-                        for(int i=0; i<evidence.length; i++) {
-                            lastevidence.add(evidence[i]);
-                        }
-                        while(lastevidence.size() > max_last_execution_evidence_len) {
-                            lastevidence.removeAtIndex(0);
+
+                            for(int i=0; i<evidence.length; i++) {
+                                boolean iscontained = false;
+                                for(int j =0; j<lastevidence.size(); j++) {
+                                    if(lastevidence.get(j) == evidence[i]) {
+                                        iscontained = true;
+                                        break;
+                                    }
+                                }
+                                if(!iscontained) {
+                                    lastevidence.add(evidence[i]);
+                                }
+                            }
+                            while(lastevidence.size() > max_last_execution_evidence_len) {
+                                lastevidence.removeAtIndex(0);
+                            }
                         }
                     }
                 }
