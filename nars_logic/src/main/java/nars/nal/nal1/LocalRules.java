@@ -152,7 +152,7 @@ public class LocalRules {
                 plot(f,(x,0,100), axes_labels=['interval', 'tolerance'])
                  */
                 int tolerance = (int) (bigger_interval / Global.ANTICIPATION_REVISION_TOLERANCE);
-                if(Math.abs(interval1 - interval2) > tolerance) {
+                if(interval1 != 0 && interval2 != 0 && Math.abs(interval1 - interval2) > tolerance) { //0 is never measured so we use this as "arbitrary interval" for rule language for now
                     return false;
                 }
             }
@@ -180,7 +180,7 @@ public class LocalRules {
         if (newBelief.equals(oldBelief) || Stamp.overlapping(newBelief, oldBelief))
             return null;
 
-        if(!TemporalSimilarTerm(newBelief.getTerm(),oldBelief.getTerm())) {
+        if(Global.EXP_INTERVAL_INTOLERANCE_ON_REVISION && !TemporalSimilarTerm(newBelief.getTerm(),oldBelief.getTerm())) {
             return null;
         }
 
