@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static nars.nal.UtilityFunctions.or;
+
 public enum Tense  {
 
     Eternal(":-:"),
@@ -124,9 +126,9 @@ public enum Tense  {
 
         //if (problem.hasQueryVar()) {
         if (hasQueryVar) {
-            return truth.getExpectation() / solution.getTerm().complexity();
+            return or(solution.getOriginality(),truth.getExpectation() / solution.getTerm().complexity());
         } else {
-            return truth.getConfidence();
+            return or(solution.getOriginality(),truth.getConfidence());
         }
     }
 
@@ -165,7 +167,7 @@ public enum Tense  {
             task.getBudget().orPriority(quality);
         } else {
             float taskPriority = task.getPriority();
-            budget = new Budget(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.getTruth()));
+            budget = new Budget(or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.getTruth()));
             task.getBudget().setPriority(Math.min(1 - quality, taskPriority));
         }
         /*

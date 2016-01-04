@@ -234,7 +234,7 @@ public interface BeliefTable extends TaskTable {
             if (t.equals(q)) return Float.NaN; //dont compare to self
 
             //TODO use bestToBeat to avoid extra work
-            return or(t.getOriginality(),Tense.solutionQualityMatchingOrder(q, t, now, hasQueryVar));
+            return Tense.solutionQualityMatchingOrder(q, t, now, hasQueryVar);
         }
     }
 
