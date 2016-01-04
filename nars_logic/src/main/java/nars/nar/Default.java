@@ -116,7 +116,7 @@ public class Default extends NAR {
         if (t instanceof Atom) {
             return new AtomConcept(t, termLinks, taskLinks);
         } else {
-            return new DefaultConcept(t, taskLinks, termLinks, memory);
+            return new DefaultConcept(memory, t, taskLinks, termLinks, memory);
         }
 
     }

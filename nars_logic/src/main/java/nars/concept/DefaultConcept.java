@@ -2,6 +2,7 @@ package nars.concept;
 
 import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
+import nars.Memory;
 import nars.Param;
 import nars.Premise;
 import nars.bag.Bag;
@@ -52,8 +53,8 @@ public class DefaultConcept extends AtomConcept {
     /** how incoming budget is merged into its existing duplicate quest/question */
     final static Procedure2<Budget, Budget> duplicateQuestionMerge = Budget.plus;
 
-    public DefaultConcept(final Term term, Param p) {
-        this(term, new NullBag(), new NullBag(), p);
+    public DefaultConcept(Memory memory, final Term term, Param p) {
+        this(memory, term, new NullBag(), new NullBag(), p);
     }
 
     /**
@@ -62,12 +63,13 @@ public class DefaultConcept extends AtomConcept {
      * @param taskLinks
      * @param termLinks
      */
-    public DefaultConcept(final Term term, final Bag<Task, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, Param p) {
+    public DefaultConcept(Memory memory, final Term term, final Bag<Task, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, Param p) {
         super(term, termLinks, taskLinks);
 
+        this.memory = memory;
         //TODO lazy instantiate?
-        this.beliefs = new ArrayListBeliefTable(p.conceptBeliefsMax.intValue());
-        this.goals = new ArrayListBeliefTable(p.conceptGoalsMax.intValue());
+        this.beliefs = new ArrayListBeliefTable(memory, p.conceptBeliefsMax.intValue());
+        this.goals = new ArrayListBeliefTable(memory, p.conceptGoalsMax.intValue());
 
         final int maxQuestions = p.conceptQuestionsMax.intValue();
         this.questions = new ArrayListTaskTable(maxQuestions);
@@ -163,6 +165,10 @@ public class DefaultConcept extends AtomConcept {
 
         final Task goal = nal.getTask();
         final float successBefore = getSuccess();
+
+        if(goal.getBudget().getPriority()==0) {
+            return false;
+        }
 
         final Task strongest = getGoals().add( goal, new BeliefTable.SolutionQualityMatchingOrderRanker(goal, nal.time()), this, nal);
 

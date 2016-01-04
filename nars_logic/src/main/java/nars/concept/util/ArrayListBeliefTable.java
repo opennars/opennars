@@ -26,8 +26,11 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //        this(0);
 //    }
 
-    public ArrayListBeliefTable(int cap) {
+    final Memory memory;
+
+    public ArrayListBeliefTable(Memory mem, int cap) {
         super(cap);
+        this.memory = mem;
     }
 
 
@@ -207,7 +210,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         if (atCapacity) {
             if (i == siz) {
                //reached the end of the list and there is no room to add at the end
-                onBeliefRemoved(input, "Unbelievable/Undesirable");
+               //not allowed to call onBeliefRemoved, because this task has something to do, revision
                 return false;
             } else {
                 Task removed = remove(siz - 1);
@@ -220,8 +223,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
     private final void onBeliefRemoved(Task t, String reason) {
-        //patrick says to not delete() these tasks
-        //memory.remove(t, reason)
+        memory.remove(t, "task was deleted from belief table");
     }
 
     private void checkForDeleted() {

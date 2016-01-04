@@ -251,6 +251,8 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
             );
         }
 
+        System.out.println(operation.toString());
+
         memory.logic.TASK_EXECUTED.hit();
     }
 
