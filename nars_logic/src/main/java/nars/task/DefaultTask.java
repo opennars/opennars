@@ -456,7 +456,13 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
             if (bs == null)
                 throw new RuntimeException("parentBelief " + getParentBelief() + " has no evidentialSet");
 
-            final long[] zipped = Stamp.zip(as, bs);
+
+            long[] zipped;
+            if(getParentTask().getCreationTime()>getParentBelief().getCreationTime()) {
+                zipped = Stamp.zip(bs, as);
+            } else {
+                zipped = Stamp.zip(as, bs);
+            }
             final long[] uniques = Stamp.toSetArray(zipped);
 
             setEvidence(uniques);
