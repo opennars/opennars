@@ -46,12 +46,12 @@ public class Activate extends SyncOperator {
         //Operator op = content.getOperator();
          
         TestChamber.executed=true;
-       /* System.out.println("Executed: " + this);
+        //System.out.println("Executed: " + this);
         for (Term t : operation.args()) {
-            System.out.println(" --- " + t);
+          //  System.out.println(" --- " + t);
             TestChamber.operateObj(t.toString(), "activate");
             break;
-        }*/
+        }
         
         
        // if(nars.grid2d.Grid2DSpace.world_used) {

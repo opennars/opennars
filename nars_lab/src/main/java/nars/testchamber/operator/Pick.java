@@ -45,12 +45,12 @@ public class Pick extends SyncOperator {
 
          
         TestChamber.executed=true;
-        /*System.out.println("Executed: " + this);
+       // System.out.println("Executed: " + this);
         for (Term t : operation.args()) {
-            System.out.print(" --- " + t);
+          //  System.out.print(" --- " + t);
             TestChamber.operateObj(t.toString(), "pick");
             break;
-        }*/
+        }
         
         
        // if(nars.grid2d.Grid2DSpace.world_used) {
