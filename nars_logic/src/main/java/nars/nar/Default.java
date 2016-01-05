@@ -298,9 +298,9 @@ public class Default extends NAR {
         m.termLinkThreshold.set(Global.BUDGET_EPSILON);
         m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
 
-        m.executionExpectationThreshold.set(0.51);
+        m.executionExpectationThreshold.set(0.5);
 
-        m.shortTermMemoryHistory.set(5);
+        m.shortTermMemoryHistory.set(1);
     }
 
     public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
@@ -507,9 +507,9 @@ public class Default extends NAR {
                 if (!derivedTasksBuffer.isEmpty()) {
 
 
-                   // Task.normalize(
-                   //         derivedTasksBuffer,
-                   //         p.getMeanPriority());
+                    Task.normalize(
+                            derivedTasksBuffer,
+                            p.getMeanPriority());
 
                     derivedTasksBuffer.forEach(
                         t -> nar.input(t)
