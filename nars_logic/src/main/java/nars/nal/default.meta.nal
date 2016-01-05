@@ -325,7 +325,7 @@
     (&&,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong)
     (&/,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong)
     (&|,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong)
-    (&/,B,A_1..n), B |- (&/,A_1..n), (Truth:Deduction, Desire:Strong, SequenceIntervals:FromPremises)
+    (&/,B,A_1..n), B, task("!") |- (&/,A_1..n), (Truth:Deduction, Desire:Strong, SequenceIntervals:FromPremises)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A_1..n) is not the case, it can't be that (&&,A_1..n) is the case
@@ -412,7 +412,7 @@
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    B, (&&,A, A_1..n), substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong, Order:ForAllSame, SequenceIntervals:FromPremises)
+    B, (&&,A, A_1..n), task("."), substitute_if_unifies("#",A,B) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Desire:Strong, Order:ForAllSame, SequenceIntervals:FromPremises)
 
 //conditional abduction by dependent variable
 
