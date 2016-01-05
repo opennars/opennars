@@ -2,6 +2,7 @@ package nars.nal.meta.op;
 
 import com.google.common.base.Joiner;
 import nars.Global;
+import nars.Memory;
 import nars.Op;
 import nars.Premise;
 import nars.bag.BLink;
@@ -237,12 +238,26 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
     }
 
     /** part 1 */
-    private void derive(PremiseMatch m, Term t) {
+    private void derive(PremiseMatch p, Term t) {
 
         if (t != null && !Variable.hasPatternVariable(t)) {
-            Concept c = m.premise.memory().taskConcept(t);
+
+            Memory mem = p.premise.memory();
+
+            //get the normalized term to determine the budget (via it's complexity)
+            //this way we can determine if the budget is insufficient
+            //before conceptualizating in mem.taskConcept
+            Termed tNorm = mem.index.normalized(t);
+
+            Truth truth = p.truth.get();
+
+            Budget budget = p.getBudget(truth, tNorm);
+            if (budget == null)
+                return;
+
+            Concept c = mem.taskConcept(tNorm);
             if (c != null) {
-                derive(m, c);
+                derive(p, c, truth, budget);
             }
         }
 
@@ -278,15 +293,9 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
     }
 
     /** part 2 */
-    private void derive(PremiseMatch m, Concept c) {
+    private void derive(PremiseMatch m, Concept c, Truth truth, Budget budget) {
 
         ConceptProcess premise = m.premise;
-
-        Truth truth = m.truth.get();
-
-        Budget budget = m.getBudget(truth, c);
-        if (budget == null)
-            return;
 
 
         Task task = premise.getTask();
