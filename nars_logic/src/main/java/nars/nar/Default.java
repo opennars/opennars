@@ -116,8 +116,11 @@ public class Default extends AbstractNAR {
         return c;
     }
 
-
     public Bag<Concept> newConceptBag(int initialCapacity) {
+        return new CurveBag<Concept>(initialCapacity, rng).mergePlus();
+    }
+
+    public Bag<Concept> newConceptBagAggregateLinks(int initialCapacity) {
         return new CurveBag<Concept>(initialCapacity, rng) {
 
             @Override public BagBudget<Concept> put(Object v) {
@@ -151,17 +154,15 @@ public class Default extends AbstractNAR {
     }
 
 
+
     @Override
-    public Concept conceptualize(Termed termed) {
-        Concept c = super.conceptualize(termed);
+    public Concept conceptualize(Termed termed, Budget activation, float scale) {
+        Concept c = memory.concept(termed);
         if (c!=null) {
-            core.activate(c);
-            return c;
+            core.activate(c, activation, scale);
         }
-        return null;
+        return c;
     }
-
-
 
     @Override
     public NAR forEachConcept(Consumer<Concept> recip) {
@@ -292,8 +293,13 @@ public class Default extends AbstractNAR {
         }
 
         private void onCycle(Memory memory) {
+            forgetConcepts();
             fireConcepts(conceptsFiredPerCycle.intValue(), this::process);
             updateActivated();
+        }
+
+        private void forgetConcepts() {
+            active.topWhile(alannForget);
         }
 
         private void updateActivated() {
@@ -346,9 +352,12 @@ public class Default extends AbstractNAR {
 
         }
 
+
         public final void activate(Concept c) {
-            activated.add(c);
-            //core.active.put(c);
+            //activated.add(c);
+        }
+        public final void activate(Concept c, Budget b, float scale) {
+            active.put(c, b, scale);
         }
 
         /** fires a concept selected by the bag */
@@ -365,9 +374,8 @@ public class Default extends AbstractNAR {
                 alannForget
             );
 
-            activate(c);
+            //activate(c);
         }
-
 
         //try to implement some other way, this is here because of serializability
 
@@ -501,14 +509,14 @@ public class Default extends AbstractNAR {
 
             if (!buffer.isEmpty()) {
 
-                Task.normalize(
-                        buffer,
-                        //p.getMeanPriority()
-                        //p.getTask().getPriority()
-                        p.getTask().getPriority()/buffer.size()
-                        //p.getTaskLink().getPriority()
-                        //p.getTaskLink().getPriority()/buffer.size()
-                );
+//                Task.normalize(
+//                        buffer,
+//                        //p.getMeanPriority()
+//                        //p.getTask().getPriority()
+//                        p.getTask().getPriority()/buffer.size()
+//                        //p.getTaskLink().getPriority()
+//                        //p.getTaskLink().getPriority()/buffer.size()
+//                );
 
                 buffer.forEach(nar::input);
                 buffer.clear();

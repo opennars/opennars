@@ -109,7 +109,7 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public final void topWhile(Predicate<BagBudget<V>> each) {
+    public final void topWhile(Predicate<BagBudget> each) {
         arrayBag.topWhile(each);
     }
 

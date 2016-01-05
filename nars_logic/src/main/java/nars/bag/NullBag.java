@@ -78,7 +78,7 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public void topWhile(Predicate<BagBudget<V>> each) {
+    public void topWhile(Predicate<BagBudget> each) {
 
     }
 

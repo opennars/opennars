@@ -2,9 +2,11 @@ package nars.nar;
 
 import nars.Memory;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
+import nars.term.Termed;
 import nars.term.compile.TermIndex;
 import nars.time.Clock;
 import nars.time.FrameClock;
@@ -49,7 +51,12 @@ public class Terminal extends AbstractNAR {
         this(TermIndex.memory(1024), c);
     }
 
-//    @Override
+    @Override
+    public Concept conceptualize(Termed termed, Budget activation, float scale) {
+        return memory.concept(termed); //ignore activation
+    }
+
+    //    @Override
 //    protected Concept doConceptualize(Term term, Budget b, float scale) {
 //        Concept exists = memory.concept(term);
 //        if (exists!=null) {

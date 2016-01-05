@@ -114,7 +114,7 @@ public class AtomConcept extends AbstractConcept  {
 
         for (Termed linkTemplate : templates) {
 
-            Concept componentConcept = nar.conceptualize(linkTemplate);
+            Concept componentConcept = nar.conceptualize(linkTemplate, t.getBudget(), subScale);
 
             if (componentConcept != null) {
 

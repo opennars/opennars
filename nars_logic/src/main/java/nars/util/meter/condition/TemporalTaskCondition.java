@@ -25,16 +25,10 @@ public class TemporalTaskCondition extends EternalTaskCondition {
 
     @Override
     public String toString() {
-        return super.toString() + toConditionString();
+        return super.toString() + " occurrs: (" + occStart + ',' + occEnd +
+        ")";
     }
 
-    @Override
-    public String toConditionString() {
-        return  "  freq in(" + freqMin + ',' + freqMax +
-                "), conf in(" + confMin + ',' + confMax +
-                "), occurrs in(" + occStart + ',' + occEnd +
-                "), creation in(" + creationStart + ',' + creationEnd + ')';
-    }
     @Override
     protected boolean occurrenceTimeMatches(Task task) {
         if (task.isEternal()) return false;

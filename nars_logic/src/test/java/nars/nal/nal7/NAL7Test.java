@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 public class NAL7Test extends AbstractNALTester {
 
 
-    final int cycles = 504;
+    final int cycles = 104;
 
     public NAL7Test(Supplier<NAR> b) {
         super(b);
@@ -143,6 +143,7 @@ public class NAL7Test extends AbstractNALTester {
         TestNAR tester = test();
         
 
+        tester.nar.log();
 
         tester.input("<(John,door) --> open>. :|:");
         tester.inputAt(11, "<(John,room) --> enter>. :|:");
@@ -157,8 +158,8 @@ public class NAL7Test extends AbstractNALTester {
     public void induction_on_events2() throws Narsese.NarseseException {
         TestNAR tester = test();
 
-        tester.input("<(*,John,door) --> open>. :|:");
-        tester.inputAt(11, "<(*,John,room) --> enter>. :|:");
+        tester.input("<(John,door) --> open>. :|:");
+        tester.inputAt(11, "<(John,room) --> enter>. :|:");
 
         tester.mustBelieve(cycles, "<(&/, <(John, door) --> open>, /6) =/> <(John, room) --> enter>>",
                 1.00f, 0.45f,

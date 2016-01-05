@@ -364,7 +364,7 @@ public interface Concept extends Termed, Supplier<Term> {
 
         link(otherTask, initialScale, nar);
 
-        Concept other = nar.conceptualize(otherTask);
+        Concept other = nar.conceptualize(otherTask, thisTask.getBudget(), initialScale);
         if (other == null)
             return;
 

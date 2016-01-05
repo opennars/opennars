@@ -3,6 +3,7 @@ package nars.nar.experimental;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.task.Task;
 import nars.term.Termed;
@@ -67,6 +68,10 @@ public class DefaultAlann extends AbstractAlann  {
     }
 
 
+    @Override
+    public Concept conceptualize(Termed termed, Budget activation, float scale) {
+        return memory.concept(termed); //TODO handle activation
+    }
 
     @Override
     protected void processConcepts() {
