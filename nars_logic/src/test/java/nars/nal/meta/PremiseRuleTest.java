@@ -87,7 +87,7 @@ public class PremiseRuleTest extends TestCase {
     }
 
     private PremiseRule normalize(PremiseRule x) {
-        return new PremiseRuleSet(true, x).get(0);
+        return new PremiseRuleSet(true, x).getFasterList().get(0);
     }
 
     @Test public void testNotSingleVariableRule1() {

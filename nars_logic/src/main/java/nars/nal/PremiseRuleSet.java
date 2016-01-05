@@ -23,13 +23,13 @@ import static nars.$.$;
 /**
  * Holds an array of derivation rules
  */
-public class PremiseRuleSet extends FasterList<PremiseRule> {
+public class PremiseRuleSet {
 
-    private static final Pattern spacePattern = Pattern.compile(" ", Pattern.LITERAL);
     private static final Pattern twoSpacePattern = Pattern.compile("  ", Pattern.LITERAL);
     private static final Pattern equivOperatorPattern = Pattern.compile("<=>", Pattern.LITERAL);
     private static final Pattern implOperatorPattern = Pattern.compile("==>", Pattern.LITERAL);
     private static final Pattern conjOperatorPattern = Pattern.compile("&&", Pattern.LITERAL);
+    private final FasterList<PremiseRule> fasterList = new FasterList<PremiseRule>();
 
 //    @Deprecated
 //    public static int maxVarArgsToMatch = 3; //originally 5 but as few as 2 can allow tests to pass
@@ -50,33 +50,32 @@ public class PremiseRuleSet extends FasterList<PremiseRule> {
 //    }
 
 
-    /** for compiling and de-duplicating pattern term components */
-    public final PatternIndex patterns = new PatternIndex();;
+    private final PatternIndex patterns = new PatternIndex();;
 
-    static final Logger logger = LoggerFactory.getLogger(PremiseRuleSet.class);
+    private static final Logger logger = LoggerFactory.getLogger(PremiseRuleSet.class);
 
 
     public PremiseRuleSet(boolean normalize, PremiseRule... rules) {
         for (PremiseRule p : rules) {
             if (normalize)
-                p = p.normalizeRule(patterns);
-            add(p);
+                p = p.normalizeRule(getPatterns());
+            fasterList.add(p);
         }
     }
 
     public PremiseRuleSet(Collection<String> ruleStrings) {
         final int[] errors = {0};
 
-        Set<PremiseRule> r = parse(load(ruleStrings), patterns);
+        Set<PremiseRule> r = parse(load(ruleStrings), getPatterns());
         r.forEach(s -> {
-            add(s);
+            fasterList.add(s);
         });
 
 
 
-        logger.info("indexed " + size() + " total rules, consisting of " + patterns.size() + " unique pattern components terms");
+        getLogger().info("indexed " + fasterList.size() + " total rules, consisting of " + getPatterns().size() + " unique pattern components terms");
         if (errors[0] > 0) {
-            logger.warn("\trule errors: " + errors[0]);
+            getLogger().warn("\trule errors: " + errors[0]);
         }
     }
 
@@ -98,7 +97,7 @@ public class PremiseRuleSet extends FasterList<PremiseRule> {
         for (String s : lines) {
             boolean currentRuleEmpty = current_rule.length() == 0;
 
-            if (s.startsWith("//") || spacePattern.matcher(s).replaceAll(Matcher.quoteReplacement("")).isEmpty()) {
+            if (s.startsWith("//") || getSpacePattern().matcher(s).replaceAll(Matcher.quoteReplacement("")).isEmpty()) {
 
                 if (!currentRuleEmpty) {
 
@@ -138,7 +137,7 @@ public class PremiseRuleSet extends FasterList<PremiseRule> {
         String ret = '<' + rule + '>';
 
         while (ret.contains("  ")) {
-            ret = twoSpacePattern.matcher(ret).replaceAll(Matcher.quoteReplacement(" "));
+            ret = getTwoSpacePattern().matcher(ret).replaceAll(Matcher.quoteReplacement(" "));
         }
 
         ret = ret.replace("A..", "%A.."); //add var pattern manually to ellipsis
@@ -150,10 +149,10 @@ public class PremiseRuleSet extends FasterList<PremiseRule> {
     }
 
 
-    static final String[] equFull = {"<=>", "</>", "<|>"};
-    static final String[] implFull = {"==>", "=/>", "=|>", "=\\>"};
-    static final String[] conjFull = {"&&", "&|", "&/"};
-    static final String[] unchanged = {null};
+    private static final String[] equFull = {"<=>", "</>", "<|>"};
+    private static final String[] implFull = {"==>", "=/>", "=|>", "=\\>"};
+    private static final String[] conjFull = {"&&", "&|", "&/"};
+    private static final String[] unchanged = {null};
 
     /**
      * //TODO do this on the parsed rule, because string contents could be unpredictable:
@@ -174,19 +173,19 @@ public class PremiseRuleSet extends FasterList<PremiseRule> {
 
         String[] equs =
                 ruleString.contains("<=>") ?
-                        equFull :
-                        unchanged;
+                        getEquFull() :
+                        getUnchanged();
 
 
         String[] impls =
                 ruleString.contains("==>") ?
-                        implFull :
-                        unchanged;
+                        getImplFull() :
+                        getUnchanged();
 
         String[] conjs =
                 ruleString.contains("&&") ?
-                        conjFull :
-                        unchanged;
+                        getConjFull() :
+                        getUnchanged();
 
 
         rules.add(ruleString);
@@ -194,15 +193,15 @@ public class PremiseRuleSet extends FasterList<PremiseRule> {
 
         for (String equ : equs) {
 
-            String p1 = equ != null ? equivOperatorPattern.matcher(ruleString).replaceAll(Matcher.quoteReplacement(equ)) : ruleString;
+            String p1 = equ != null ? getEquivOperatorPattern().matcher(ruleString).replaceAll(Matcher.quoteReplacement(equ)) : ruleString;
 
             for (String imp : impls) {
 
-                String p2 = imp != null ? implOperatorPattern.matcher(p1).replaceAll(Matcher.quoteReplacement(imp)) : p1;
+                String p2 = imp != null ? getImplOperatorPattern().matcher(p1).replaceAll(Matcher.quoteReplacement(imp)) : p1;
 
                 for (String conj : conjs) {
 
-                    String p3 = conj != null ? conjOperatorPattern.matcher(p2).replaceAll(Matcher.quoteReplacement(conj)) : p2;
+                    String p3 = conj != null ? getConjOperatorPattern().matcher(p2).replaceAll(Matcher.quoteReplacement(conj)) : p2;
 
                     rules.add(p3);
                 }
@@ -258,7 +257,7 @@ public class PremiseRuleSet extends FasterList<PremiseRule> {
 
 
             } catch (Exception ex) {
-                logger.error("Invalid TaskRule: {}", ex);
+                getLogger().error("Invalid TaskRule: {}", ex);
                 ex.printStackTrace();
             }
         });
@@ -293,6 +292,56 @@ public class PremiseRuleSet extends FasterList<PremiseRule> {
         q.setSource(src);
         target.add(q);
         return q;
+    }
+    private static final Pattern spacePattern = Pattern.compile(" ", Pattern.LITERAL);
+
+    public static Pattern getSpacePattern() {
+        return spacePattern;
+    }
+
+    public static Pattern getTwoSpacePattern() {
+        return twoSpacePattern;
+    }
+
+    public static Pattern getEquivOperatorPattern() {
+        return equivOperatorPattern;
+    }
+
+    public static Pattern getImplOperatorPattern() {
+        return implOperatorPattern;
+    }
+
+    public static Pattern getConjOperatorPattern() {
+        return conjOperatorPattern;
+    }
+
+    public static Logger getLogger() {
+        return logger;
+    }
+
+    public static String[] getEquFull() {
+        return equFull;
+    }
+
+    public static String[] getImplFull() {
+        return implFull;
+    }
+
+    public static String[] getConjFull() {
+        return conjFull;
+    }
+
+    public static String[] getUnchanged() {
+        return unchanged;
+    }
+
+    /** for compiling and de-duplicating pattern term components */
+    public PatternIndex getPatterns() {
+        return patterns;
+    }
+
+    public FasterList<PremiseRule> getFasterList() {
+        return fasterList;
     }
 
     //    private static void addRule(Multimap<TaskRule, TaskRule> c, TaskRule q, String src) {

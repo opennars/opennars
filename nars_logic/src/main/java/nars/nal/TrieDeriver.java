@@ -35,7 +35,7 @@ public class TrieDeriver extends Deriver {
     public TrieDeriver(PremiseRuleSet ruleset) {
         super(ruleset);
 
-        this.trie = new TermTrie<Term, PremiseRule>(ruleset) {
+        this.trie = new TermTrie<Term, PremiseRule>(ruleset.getFasterList()) {
 
             @Override
             public void index(PremiseRule s) {
