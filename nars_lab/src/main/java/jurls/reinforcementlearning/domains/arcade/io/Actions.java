@@ -23,7 +23,8 @@ import java.util.HashMap;
  *
  * @author Marc G. Bellemare
  */
-public class Actions {
+public enum Actions {
+    ;
     /** The number of player actions available to each player */
     public static int numPlayerActions = 18;
 

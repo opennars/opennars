@@ -10,9 +10,10 @@ import static nars.testchamber.Hauto.irand;
  * 
  * @author Tyrant
  */
-public class Maze {
+public enum Maze {
+	;
 
-    
+
 	public static void buildMaze(Hauto m, int x1, int y1, int x2, int y2) {
             m.forEach(x1,y1,x2,y2, new SetMaterial(Material.StoneWall));
             buildInnerMaze(m,x1+1,y1+1,x2-1,y2-1);

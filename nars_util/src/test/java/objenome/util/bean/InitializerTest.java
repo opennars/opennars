@@ -12,7 +12,8 @@ public class InitializerTest {
     @Initializer(InitTestBean.Init.class)
     public interface InitTestBean {
 
-        class Init {
+        enum Init {
+            ;
 
             @InitializerMethod
             public static void initialize(InitTestBean bean) {

@@ -14,7 +14,8 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class GranulizerDemo {
+public enum GranulizerDemo {
+    ;
 
     //http://forum.renoise.com/index.php/topic/35858-royalty-free-sample-packs/
 

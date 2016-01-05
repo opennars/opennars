@@ -9,7 +9,8 @@ import nars.time.RealtimeMSClock;
 /**
  * Created by me on 9/7/15.
  */
-public class NARideRealtimeDefault {
+public enum NARideRealtimeDefault {
+    ;
 
     public static void main(String[] arg) {
 

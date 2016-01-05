@@ -9,7 +9,8 @@ import java.util.ArrayList;
  *
  * @author David Nadeau
  */
-public class TextToWave {
+public enum TextToWave {
+    ;
 
     public static ArrayList readTxt(String filePath) throws
             IOException {

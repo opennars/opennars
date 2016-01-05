@@ -23,7 +23,8 @@ import java.awt.*;
  * UIUtilities. <br>
  *  
  */
-public class UIUtilities {
+public enum UIUtilities {
+  ;
 
   public static void centerOnScreen(Window window) {
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

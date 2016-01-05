@@ -10,14 +10,11 @@ package automenta.vivisect.face;
    
 import java.util.Random;   
    
-public final class ImprovMath   
-{   
-   
-    private ImprovMath()   
-    {   
-    }   
-   
-    public static double angleBetween(double d, double d1, double d2, double d3,    
+public final enum ImprovMath
+{
+    ;
+
+    public static double angleBetween(double d, double d1, double d2, double d3,
             double d4, double d5)   
     {   
         double d6 = d2 - d;   

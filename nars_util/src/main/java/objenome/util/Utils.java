@@ -16,7 +16,8 @@ import java.util.Collection;
  *
  * @author thorsten
  */
-public class Utils {
+public enum Utils {
+    ;
 
     public static <T> T[] toArray(Collection c) {
         return (T[]) c.toArray((T[]) Array.newInstance(c.iterator().next().getClass(), c.size()));

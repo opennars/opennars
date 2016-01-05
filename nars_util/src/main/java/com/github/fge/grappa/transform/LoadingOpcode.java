@@ -25,8 +25,9 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Objects;
 
-public final class LoadingOpcode
+public final enum LoadingOpcode
 {
+    ;
     private static final Map<Integer, Integer> LOADING_OPCODES;
 
     static {
@@ -45,10 +46,6 @@ public final class LoadingOpcode
         builder.put(Type.ARRAY, Opcodes.ALOAD);
 
         LOADING_OPCODES = builder.build();
-    }
-
-    private LoadingOpcode()
-    {
     }
 
     public static int forType(@Nonnull Type type)

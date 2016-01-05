@@ -9,7 +9,9 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-/** adapter to a Map for coordinating changes in a Map with another Collection */
+/**
+ * adapter to a Map for coordinating changes in a Map with another Collection
+ */
 public abstract class CollectorMap<K, V extends Supplier<K>> implements Serializable {
 
     public final Map<K, V> map;
@@ -25,45 +27,20 @@ public abstract class CollectorMap<K, V extends Supplier<K>> implements Serializ
 
     public abstract BudgetMerge getMerge();
 
-    /** implementation for adding the value to another collecton (called internally)  */
+    /**
+     * implementation for adding the value to another collecton (called internally)
+     */
     protected abstract V addItem(V e);
 
-    /** implementation for removing the value to another collecton (called internally) */
+    /**
+     * implementation for removing the value to another collecton (called internally)
+     */
     protected abstract V removeItem(V e);
 
-    public final void forEach(BiConsumer<K,V> each) {
+    public final void forEach(BiConsumer<K, V> each) {
         map.forEach(each);
     }
 
-
-//    //not used anymore
-//    @Deprecated public void merge(final V value) {
-//
-//
-//
-//        final K key = value.name();
-//        final V valPrev = putKey(key, value);
-//
-//
-//        getMerge().value(value.getBudget(), valPrev.getBudget());
-//
-//        /*if (!value.getBudget().mergeIfChanges(valPrev.getBudget(), Global.BUDGET_EPSILON))
-//            return;*/
-//
-//        //TODO check before and after removal index and if the same just replace
-//        {
-//            final V valPrev2 = removeItem(valPrev);
-//            if (valPrev != valPrev2)
-//                throw new RuntimeException("unable to remove item corresponding to key " + key);
-//
-//
-//            final V removed2 = addItem(value);
-//            if (removed2 != null)
-//                throw new RuntimeException("Only one item should have been valPrev on this insert; both valPrev: " + valPrev + ", " + removed2);
-//        }
-//
-//
-//    }
 
 
     public V put(K key, V value) {
@@ -103,7 +80,7 @@ public abstract class CollectorMap<K, V extends Supplier<K>> implements Serializ
                     throw new RuntimeException(key + " removed from index but not from items list");*/
                 return null;
             }
-            if (removed!=e)
+            if (removed != e)
                 throw new RuntimeException(key + " removed " + e + " but item removed was " + removed);
             return removed;
         }

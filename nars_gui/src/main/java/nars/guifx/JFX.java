@@ -21,7 +21,9 @@ import org.apache.commons.math3.util.Precision;
 /**
  * Created by me on 2/22/15.
  */
-public class JFX {
+public enum JFX {
+    ;
+
     public static void popup(Parent n) {
         Platform.runLater(() -> {
             Stage st = new Stage();

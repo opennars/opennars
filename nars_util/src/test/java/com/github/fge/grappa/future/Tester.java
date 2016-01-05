@@ -9,8 +9,9 @@ import java.lang.invoke.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public final class Tester
+public final enum Tester
 {
+    ;
 
     public static CallSite genCallSite(MethodHandles.Lookup caller,
                                        String invokedName, MethodType invokedType,

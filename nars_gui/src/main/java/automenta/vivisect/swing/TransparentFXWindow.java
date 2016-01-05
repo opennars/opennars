@@ -89,7 +89,8 @@ public class TransparentFXWindow extends Application {
 
 
 //created by Alexander Berg
-class ResizeHelper {
+enum ResizeHelper {
+    ;
 
     public static void addResizeListener(Stage stage) {
         ResizeListener resizeListener = new ResizeListener(stage);

@@ -17,9 +17,10 @@ import static objenome.solver.Behaviors.Behavior.DONT;
  */
 public class LearnedMethodTest {
  
-    public static class BooleanMath {
-        
-        
+    public static enum BooleanMath {
+        ;
+
+
         public static int xor(int x, int y) {
             
             throw new Behaviors() {

@@ -6,7 +6,8 @@ import nars.nar.Default;
 /**
  * Created by me on 9/7/15.
  */
-public class NARideMicro {
+public enum NARideMicro {
+    ;
 
     public static void main(String[] arg) {
 

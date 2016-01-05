@@ -3,7 +3,8 @@ package nars.util.io;
 /**
  * Created by me on 9/12/15.
  */
-public class ANSI {
+public enum ANSI {
+    ;
 
     public static final String COLOR_RESET = "\u001b[0m";
 

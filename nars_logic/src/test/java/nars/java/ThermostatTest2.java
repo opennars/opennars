@@ -12,7 +12,8 @@ import java.util.Random;
 /**
  * Created by me on 8/20/15.
  */
-public class ThermostatTest2 {
+public enum ThermostatTest2 {
+    ;
 
     /** number of steps in total range */
     static int range = 4;

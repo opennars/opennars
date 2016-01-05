@@ -5,14 +5,11 @@ import objenome.util.bean.anno.GenericBeanMethod.Type;
 
 import java.lang.reflect.Method;
 
-public final class GenericBeanMapper {
+public final enum GenericBeanMapper {
+    ;
 
     private enum OnNull {
         THROW_EXCEPTION, RETURN_NULL
-    }
-
-    private GenericBeanMapper() {
-        throw new IllegalStateException();
     }
 
     /**

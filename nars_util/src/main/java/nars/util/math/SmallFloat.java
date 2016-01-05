@@ -4,10 +4,8 @@ package nars.util.math;
  *
  * @lucene.internal
  */
-public class SmallFloat {
-  
-  /** No instance */
-  private SmallFloat() {}
+public enum SmallFloat {
+  ;
 
   /** Converts a 32 bit float to an 8 bit float.
    * <br>Values less than zero are all mapped to zero.

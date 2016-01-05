@@ -9,7 +9,8 @@ import java.util.Random;
 /**
  * Created by me on 8/20/15.
  */
-public class ThermostatTest  {
+public enum ThermostatTest  {
+    ;
 
     public static class Thermostat {
         public int target;

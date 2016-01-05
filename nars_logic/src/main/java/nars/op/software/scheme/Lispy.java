@@ -17,7 +17,9 @@ import static java.util.stream.Stream.of;
  * Lispy: Small Scheme Interpreter in Java 8
  * from: https://forax.github.io/2014-06-01-e733e6af6114eff55149-lispy_in_java.html
  */
-public class Lispy {
+public enum Lispy {
+    ;
+
     public interface Fun {
         Object apply(Object a);
     }

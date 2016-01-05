@@ -11,7 +11,8 @@ import java.util.List;
  *
  * @author David Nadeau
  */
-public class WaveToText {
+public enum WaveToText {
+    ;
 
     @SuppressWarnings("HardcodedFileSeparator")
     public static void writeTxt(Wave w) {

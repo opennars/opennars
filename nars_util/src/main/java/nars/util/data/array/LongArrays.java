@@ -72,16 +72,14 @@ package nars.util.data.array;
  *
  * @see java.util.Arrays
  */
-public class LongArrays {
+public enum LongArrays {
+    ;
 
 
     /**
      * The inverse of the golden ratio times 2<sup>16</sup>.
      */
     public static final long ONEOVERPHI = 106039;
-
-    private LongArrays() {
-    }
 
     /**
      * A static, final, empty array.

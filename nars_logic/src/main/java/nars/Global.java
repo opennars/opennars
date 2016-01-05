@@ -40,7 +40,8 @@ import java.util.Set;
  * (They began here for developmentconvenience)
  *
  */
-public class Global {
+public enum Global {
+    ;
 
 
     public static final float EXECUTION_DESIRE_EXPECTATION_THRESHOLD = 0.6f;

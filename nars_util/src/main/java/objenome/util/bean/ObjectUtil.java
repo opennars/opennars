@@ -13,11 +13,8 @@ import java.util.*;
  * 
  * @author Peter Fichtner
  */
-public final class ObjectUtil {
-
-    private ObjectUtil() {
-        throw new IllegalStateException();
-    }
+public final enum ObjectUtil {
+    ;
 
     /**
      * Get all valid getters for the passed class <code>clazz</code>.

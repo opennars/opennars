@@ -44,7 +44,9 @@ import java.util.*;
  *
  * @since 2.0
  */
-public class ClassUtils {
+public enum ClassUtils {
+    ;
+
     /**
      * Inclusivity literals for {@link #hierarchy(Class, Interfaces)}.
      * @since 3.2
@@ -133,17 +135,6 @@ public class ClassUtils {
         }
         abbreviationMap = Collections.unmodifiableMap(m);
         reverseAbbreviationMap = Collections.unmodifiableMap(r);
-    }
-
-    /**
-     * <p>ClassUtils instances should NOT be constructed in standard programming.
-     * Instead, the class should be used as
-     * {@code ClassUtils.getShortClassName(cls)}.</p>
-     *
-     * <p>This constructor is public to permit tools that require a JavaBean
-     * instance to operate.</p>
-     */
-    public ClassUtils() {
     }
 
     // Short class name

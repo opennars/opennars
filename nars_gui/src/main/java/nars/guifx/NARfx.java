@@ -26,7 +26,8 @@ import java.util.Map;
  *
  * @author me
  */
-public class NARfx  {
+public enum NARfx  {
+    ;
 
     public static final String css = NARfx.class.getResource("narfx.css").toExternalForm();
 

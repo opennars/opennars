@@ -31,10 +31,8 @@ import java.util.function.Function;
  *
  * @since 2.0
  */
-public final class BenchmarkSolutions {
-
-    private BenchmarkSolutions() {
-    }
+public final enum BenchmarkSolutions {
+    ;
 
     /**
      * Calculates and returns the correct result of the target function used in

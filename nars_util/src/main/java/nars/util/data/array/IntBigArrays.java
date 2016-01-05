@@ -72,14 +72,12 @@ import static nars.util.data.array.BigArrays.*;
  *
  * @see BigArrays
  */
-public class IntBigArrays {
+public enum IntBigArrays {
+    ;
     /**
      * The inverse of the golden ratio times 2<sup>16</sup>.
      */
     public static final long ONEOVERPHI = 106039;
-
-    private IntBigArrays() {
-    }
 
     /**
      * A static, final, empty big array.

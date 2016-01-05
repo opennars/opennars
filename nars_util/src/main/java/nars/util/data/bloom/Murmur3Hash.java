@@ -20,7 +20,8 @@ package nars.util.data.bloom;
  * 32-bit Java port of https://code.google.com/p/smhasher/source/browse/trunk/MurmurHash3.cpp#94
  * 128-bit Java port of https://code.google.com/p/smhasher/source/browse/trunk/MurmurHash3.cpp#255
  */
-public class Murmur3Hash {
+public enum Murmur3Hash {
+    ;
     // Constants for 32 bit variant
     private static final int C1_32 = 0xcc9e2d51;
     private static final int C2_32 = 0x1b873593;

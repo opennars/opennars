@@ -31,13 +31,8 @@ import java.util.stream.Collectors;
  * TODO these can be replaced with iterators that avoid allocating collections
  * @since 2.0
  */
-public final class NodeUtils {
-
-    /*
-     * Private constructor to prevent instantiation.
-     */
-    private NodeUtils() {
-    }
+public final enum NodeUtils {
+    ;
 
     /**
      * Returns those nodes from the given syntax that have an arity of 0. The

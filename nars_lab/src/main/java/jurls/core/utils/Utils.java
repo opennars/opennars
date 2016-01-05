@@ -11,7 +11,8 @@ import jurls.core.approximation.ParameterizedFunction;
  *
  * @author thorsten
  */
-public class Utils {
+public enum Utils {
+    ;
 
     public static void join(double[] output, double[] state, int action) {
         System.arraycopy(state, 0, output, 0, state.length);

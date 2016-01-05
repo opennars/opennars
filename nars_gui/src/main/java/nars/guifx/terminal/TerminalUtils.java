@@ -9,7 +9,8 @@ import java.util.Map;
 /**
  * @author sergei.malafeev
  */
-public class TerminalUtils {
+public enum TerminalUtils {
+    ;
     private static final Map<Integer, byte[]> keyMap;
 
     public static byte[] getCode(KeyEvent event, TerminalPanel terminalPanel) {

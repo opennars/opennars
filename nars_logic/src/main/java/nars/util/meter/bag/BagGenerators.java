@@ -11,7 +11,8 @@ import java.util.Random;
 /**
  * Created by me on 9/2/15.
  */
-public class BagGenerators {
+public enum BagGenerators {
+    ;
 
     static final Random rng = new XORShiftRandom();
 

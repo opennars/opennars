@@ -15,7 +15,8 @@ import java.security.PrivilegedAction;
  * class to be able to compare arrays that start at non-zero offsets.
  * from: https://svn.apache.org/repos/asf/cassandra/trunk/src/java/org/apache/cassandra/utils/FastByteComparisons.java
  */
-public abstract class FastByteComparisons {
+public abstract enum FastByteComparisons {
+    ;
 
     /**
      * Lexicographically compare two byte arrays.
@@ -48,7 +49,8 @@ public abstract class FastByteComparisons {
      * <p>Uses reflection to gracefully fall back to the Java implementation if
      * {@code Unsafe} isn't available.
      */
-    private static class LexicographicalComparerHolder {
+    private static enum LexicographicalComparerHolder {
+        ;
         static final String UNSAFE_COMPARER_NAME =
                 LexicographicalComparerHolder.class.getName() + "$UnsafeComparer";
 

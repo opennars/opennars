@@ -22,7 +22,8 @@ import static java.lang.System.out;
  * ============================================================================
     https://github.com/cscheiblich/JWave/
  */
-public class OneDHaar {
+public enum OneDHaar {
+    ;
 
     private static final double FSNORM = Math.sqrt(2);
     private static final double FDNORM = 1/FSNORM;

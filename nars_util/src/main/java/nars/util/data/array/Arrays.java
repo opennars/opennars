@@ -32,10 +32,9 @@ import static com.google.common.math.IntMath.factorial;
  * @see Arrays
  */
 
-public class Arrays {
+public enum Arrays {
+	;
 
-
-	private Arrays() {}
 
 	/** Ensures that a range given by its first (inclusive) and last (exclusive) elements fits an array of given length.
 	 *

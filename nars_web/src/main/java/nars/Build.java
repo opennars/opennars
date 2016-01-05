@@ -5,7 +5,8 @@ import org.apache.maven.cli.MavenCli;
 /**
  * OpenNARS Build and Continuous Integration Agent
  */
-public class Build {
+public enum Build {
+    ;
 
     @SuppressWarnings("HardcodedFileSeparator")
     public static void main(String[] args) {

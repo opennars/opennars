@@ -29,7 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public final class Symbols {
+public final enum Symbols {
+    ;
 
     /* sentence type and delimitors
        TODO use an enum

@@ -19,7 +19,8 @@ import java.lang.reflect.Modifier;
  * Uses another class's static method (with same return type) to implement an abstract or interface method
  * TODO use something other than javassist, like bytebuddy or procyon?
  */
-public class SetAbstractMethodWithExistingStaticMethod {
+public enum SetAbstractMethodWithExistingStaticMethod {
+    ;
 
     //TODO harvest static methods from certain classes like Math. , Double., Character, etc..
 

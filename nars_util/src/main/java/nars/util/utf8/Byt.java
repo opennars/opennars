@@ -34,7 +34,8 @@ package nars.util.utf8;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class Byt {
+public enum Byt {
+    ;
 
 
     public static byte[] grow( byte[] array, int size ) {

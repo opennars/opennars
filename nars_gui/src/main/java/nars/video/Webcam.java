@@ -7,7 +7,8 @@ import boofcv.io.webcamcapture.UtilWebcamCapture;
 import java.awt.image.BufferedImage;
 
 
-public class Webcam {
+public enum Webcam {
+    ;
 
     public static void main(String[] args) {
 

@@ -33,11 +33,9 @@ import java.util.stream.Collectors;
 
 import static com.github.fge.grappa.misc.AsmUtils.*;
 
-public final class ParserTransformer
+public final enum ParserTransformer
 {
-    private ParserTransformer()
-    {
-    }
+    ;
 
     // TODO: remove "synchronized" here
     // TODO: move to Parboiled or the future Grappa class

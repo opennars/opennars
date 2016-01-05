@@ -49,7 +49,8 @@ import java.util.function.Consumer;
  * merge: between items of the same type and stamp;
  * conversion: between different inheritance relations.
  */
-public class LocalRules {
+public enum LocalRules {
+    ;
 
 //
 //    /**

@@ -20,7 +20,8 @@ import com.google.common.base.Optional;
 import com.gs.collections.api.map.primitive.CharObjectMap;
 import com.gs.collections.impl.map.mutable.primitive.CharObjectHashMap;
 
-public final class Chars {
+public final enum Chars {
+    ;
     /**
      * The End-of-Input non-character.
      */
@@ -42,9 +43,6 @@ public final class Chars {
 //            .put('\f', "\\f")
 //            .put(EOI, "EOI")
 //            .build();
-
-    private Chars() {
-    }
 
     /**
      * Return a map of characters to escape and their replacements

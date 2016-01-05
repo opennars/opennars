@@ -33,7 +33,8 @@ import javafx.util.Duration;
 /**
  * Animates sliding a node on and off screen.
  */
-public class SlideAnimator {
+public enum SlideAnimator {
+    ;
 
     public static void slide(Button controlButton, Control node, Side direction) {
         DoubleProperty startWidth = new SimpleDoubleProperty();

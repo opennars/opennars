@@ -15,8 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class Art
+public enum Art
 {
+    ;
     public static final int SAMPLE_BREAK_BLOCK = 0;
     public static final int SAMPLE_GET_COIN = 1;
     public static final int SAMPLE_MARIO_JUMP = 2;

@@ -29,12 +29,11 @@ import java.io.*;
  * @see BitVector
  */
 
-public class BitVectors {
-	
-	private BitVectors() {}	
-	
+public enum BitVectors {
+	;
 
-    public static void ensureFromTo( long bitVectorLength, long from, long to ) {
+
+	public static void ensureFromTo( long bitVectorLength, long from, long to ) {
         if ( from < 0 ) throw new ArrayIndexOutOfBoundsException( "Start index (" + from + ") is negative" );
         if ( from > to ) throw new IllegalArgumentException( "Start index (" + from + ") is greater than end index (" + to + ')');
         if ( to > bitVectorLength ) throw new ArrayIndexOutOfBoundsException( "End index (" + to + ") is greater than bit vector length (" + bitVectorLength + ')');

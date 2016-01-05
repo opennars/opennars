@@ -80,8 +80,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>In any case, if sorting time is important I suggest that you benchmark your sorting load with your data distribution and on your architecture.
  * 
  * @see java.util.Arrays */
-public class IntArrays {
-	private IntArrays() {}
+public enum IntArrays {
+	;
 
 	/** A static, final, empty array. */
 	public static final int[] EMPTY_ARRAY = {};
