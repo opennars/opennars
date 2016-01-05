@@ -100,7 +100,7 @@ public class STMTemporalLinkage {
 
                         //allow budget flow from one event to the other
                         nal.link(previousConcept, currentTask);
-                        nal.link(concept, previousTask);
+                       // nal.link(concept, previousTask);
 
                         //also allow direct event based inference between these events:
                         Default nar = (Default) nal.nar;
