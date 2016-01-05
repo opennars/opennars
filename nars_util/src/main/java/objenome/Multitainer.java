@@ -108,15 +108,13 @@ public class Multitainer extends AbstractPrototainer implements AbstractMultitai
 
         
         //Handle Abstract Methods
-        {
-            Class c = cb.type();
-            for (Method m : c.getMethods()) {
-                if (Modifier.isAbstract( m.getModifiers() )) {
-                    problems.add(new DevelopMethod(m) );
-                }
+        Class c = cb.type();
+        for (Method m : c.getMethods()) {
+            if (Modifier.isAbstract( m.getModifiers() )) {
+                problems.add(new DevelopMethod(m) );
             }
         }
-        
+
         //Handle Constructor Dependencies
         Set<DependencyKey> possibleConstructorDependencies = new HashSet();
         if (cb.getInitValues()!=null) {

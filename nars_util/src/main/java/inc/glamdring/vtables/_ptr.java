@@ -27,7 +27,7 @@ public class _ptr implements _edge<ByteBuffer, Integer> {
     @Override
     public _edge<ByteBuffer, Integer> bind(ByteBuffer byteBuffer, Integer r) {
 
-        l = (ByteBuffer) byteBuffer.duplicate().position(r);
+        l = byteBuffer.duplicate().position(r);
         return this;
     }
 

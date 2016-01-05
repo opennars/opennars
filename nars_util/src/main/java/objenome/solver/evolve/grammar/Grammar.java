@@ -360,7 +360,7 @@ public class Grammar {
                         } else if (buffer.length() == 0) {
                             terminal = false;
                         } else {
-                            throw new MalformedGrammarException("Non-escaped " + "special char: " + ch);
+                            throw new MalformedGrammarException("Non-escaped " + "special char: " + '<');
                         }
                     } else if (ch == '?') {
                         // if (quoted) {
@@ -405,7 +405,7 @@ public class Grammar {
                             // Clear buffer.
                             buffer = new StringBuilder();
                         } else {
-                            throw new MalformedGrammarException("Non-escaped " + "special char: " + ch);
+                            throw new MalformedGrammarException("Non-escaped " + "special char: " + '>');
                         }
                     } else if ((ch == ' ') || (ch == '\t')) {
                         if (quoted || !terminal) {

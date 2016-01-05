@@ -1,8 +1,8 @@
 package nars.nal.op;
 
 import nars.Op;
+import nars.nal.PremiseMatch;
 import nars.term.Term;
-import nars.term.compile.TermBuilder;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
 import nars.util.data.random.XorShift128PlusRandom;
@@ -13,7 +13,8 @@ import java.util.Random;
 public final class substituteIfUnifies extends substitute {
 
 
-    @Override public Term function(Compound p, TermBuilder i) {
+
+    @Override public Term function(Compound p, PremiseMatch r) {
         final Term[] xx = p.terms();
         final Term term = xx[0];
         final Term op = xx[1];
@@ -23,7 +24,7 @@ public final class substituteIfUnifies extends substitute {
         FindSubst umap = unifies(op, x, y);
         if (umap!=null) {
             //umap.putXY(term, y);
-            return subst(i, umap, term);
+            return subst(r, umap, term);
         }
 
         return term;

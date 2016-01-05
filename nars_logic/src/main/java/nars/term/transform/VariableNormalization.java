@@ -69,6 +69,7 @@ public class VariableNormalization extends VariableTransform implements Function
     boolean renamed = false;
 
 
+    @Override
     public final Variable apply(Variable v) {
         Variable rvv = newVariable(v, rename.size()+1);
         if (!renamed) {

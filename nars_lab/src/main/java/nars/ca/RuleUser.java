@@ -188,7 +188,6 @@ public class RuleUser {
 
 					switch (bOldVal) {
 					case 0: // dead
-					{
 						int i4Sum = 0;
 						i4Sum = (((crrState[lurd[0]][j] & 3) == 1) ? 1 : 0)
 								+ (((crrState[i][lurd[1]] & 3) == 1) ? 1 : 0)
@@ -196,7 +195,6 @@ public class RuleUser {
 								+ (((crrState[lurd[2]][j] & 3) == 1) ? 1 : 0);
 						r = 0;
 						d = (i4Sum > 0) ? 1 : 0;
-					}
 						break;
 					case 1: // alive
 						r = 2;

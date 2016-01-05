@@ -33,7 +33,7 @@ public class NARio extends Run implements RLEnvironment {
     int commandPeriod = 250;
     int radarPeriod = 10;
 
-    private int[] keyTime = new int[256];
+    private final int[] keyTime = new int[256];
     private float lastMX;
     private float lastMY;
 
@@ -57,7 +57,7 @@ public class NARio extends Run implements RLEnvironment {
 
     private LevelScene level;
 
-    private Supplier<BufferedImage> levelImageSupplier = new Supplier<BufferedImage>() {
+    private final Supplier<BufferedImage> levelImageSupplier = new Supplier<BufferedImage>() {
         @Override
         public BufferedImage get() {
             if (level != null)
@@ -67,7 +67,7 @@ public class NARio extends Run implements RLEnvironment {
         }
     };
 
-    private Supplier<BufferedImage> screenImageSupplier = new Supplier<BufferedImage>() {
+    private final Supplier<BufferedImage> screenImageSupplier = new Supplier<BufferedImage>() {
         @Override
         public synchronized BufferedImage get() {
             return imageBuffer;

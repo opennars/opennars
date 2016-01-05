@@ -59,7 +59,7 @@ interface Intermval extends Interval, TermMetadata {
     }
 
     /** UNTESTED */
-    public static void visit(Compound c, IntermvalVisitor v, boolean includeZero, boolean recurse) {
+    static void visit(Compound c, IntermvalVisitor v, boolean includeZero, boolean recurse) {
         if (!c.op().isA(Intermval.metadataBits)) return;
         int[] x = ((Intermval)c).intervals();
         Term prev = null;

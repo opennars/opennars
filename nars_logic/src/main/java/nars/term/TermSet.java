@@ -1,15 +1,13 @@
 package nars.term;
 
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
 
 public class TermSet<X extends Term> extends TermVector<X> {
 
     public static TermSet the(Term... x) {
-        Arrays.sort(toSortedSetArray(Arrays.asList(x)));
-        return new TermSet(/*toSortedSetArray*/x);
+        return new TermSet(Terms.toSortedSetArray(x));
     }
 
     public static TermSet the(Collection<? extends Term> x) {

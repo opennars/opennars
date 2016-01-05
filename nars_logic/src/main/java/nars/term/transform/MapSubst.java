@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class MapSubst implements Subst {
 
-    public final Map<Term, Term> subs;
+    public final Map<Term, Term> xy;
 
     /**
      * creates a substitution of one variable; more efficient than supplying a Map
@@ -20,20 +20,20 @@ public class MapSubst implements Subst {
     }
 
 
-    public MapSubst(Map<Term, Term> subs) {
-        this.subs = subs;
+    public MapSubst(Map<Term, Term> xy) {
+        this.xy = xy;
     }
 
     @Override
     public void clear() {
-        subs.clear();
+        xy.clear();
     }
 
 
 
     @Override
     public boolean isEmpty() {
-        return subs.isEmpty();
+        return xy.isEmpty();
     }
 
     /**
@@ -42,14 +42,14 @@ public class MapSubst implements Subst {
      */
     @Override
     public final Term getXY(Object t) {
-        return subs.get(t);
+        return xy.get(t);
     }
 
 
     @Override
     public String toString() {
         return "Substitution{" +
-                "subs=" + subs +
+                "subs=" + xy +
                 '}';
     }
 
