@@ -209,13 +209,10 @@ public abstract class $  {
         return v(VAR_QUERY, s);
     }
 
-    public static Variable varPattern(int i) {
-        return v(VAR_PATTERN, i);
+    public static VarPattern varPattern(int i) {
+        return (VarPattern) v(VAR_PATTERN, i);
     }
 
-    public static Variable varPattern(String s) {
-        return v(VAR_PATTERN, s);
-    }
 
     /**
      * Try to make a new compound from two components. Called by the logic rules.

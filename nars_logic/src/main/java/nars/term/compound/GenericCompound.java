@@ -13,9 +13,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-import static nars.Symbols.ARGUMENT_SEPARATOR;
-import static nars.Symbols.COMPOUND_TERM_CLOSER;
-import static nars.Symbols.COMPOUND_TERM_OPENER;
+import static nars.Symbols.*;
 
 
 public class GenericCompound<T extends Term> implements Compound<T> {
@@ -370,6 +368,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return !impossibleSubterm(target) && terms.containsTermRecursively(target);
     }
 
+    @Override
     public final boolean isNormalized() {
         return normalized;
     }

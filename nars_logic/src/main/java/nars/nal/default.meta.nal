@@ -443,6 +443,7 @@
     (B --> K), (&&,(#X --> L),(($Y --> K) ==> (&&,A..+))) |- substitute((&&,(#X --> L),A..+),$Y,B), (Truth:Deduction)
 
     (B --> K), (($X --> L) ==> (&&,(#Y --> K),A..+)) |- substitute((($X --> L) ==> (&&,A..+)),#Y,B), (Truth:AnonymousAnalogy)
+    (B --> K), (($X --> L) ==> (&&,(#Y --> K),A)) |- substitute((($X --> L) ==> A),#Y,B), (Truth:AnonymousAnalogy)
 
 
 

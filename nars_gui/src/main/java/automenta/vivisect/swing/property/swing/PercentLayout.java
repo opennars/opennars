@@ -353,7 +353,7 @@ public class PercentLayout implements LayoutManager2 {
     if (!remaining.isEmpty()) {
       int rest = availableSize / remaining.size();
       for (Object aRemaining : remaining) {
-        sizes[(Integer)aRemaining] = rest;
+        sizes[(int) aRemaining] = rest;
       }
     }
 

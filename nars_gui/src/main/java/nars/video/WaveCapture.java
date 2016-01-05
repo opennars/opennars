@@ -13,7 +13,6 @@ import nars.util.event.On;
 import nars.util.event.Topic;
 import nars.util.signal.OneDHaar;
 
-import javax.sound.sampled.LineUnavailableException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -246,7 +245,7 @@ public class WaveCapture implements Runnable {
         }
     }
 
-    public static void main(String[] args) throws LineUnavailableException {
+    public static void main(String[] args) {
         WaveCapture au = new WaveCapture(
                 new AudioSource(0, 30),
                 //new SineSource(128),

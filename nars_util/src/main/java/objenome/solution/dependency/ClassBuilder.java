@@ -373,7 +373,7 @@ public class ClassBuilder implements ConfigurableBuilder {
     }
     
     @Override
-    public <T> T instance(objenome.Prototainer context, Collection<DependencyKey> simulateAndAddExtraProblemsHere) {
+    public <T> T instance(Prototainer context, Collection<DependencyKey> simulateAndAddExtraProblemsHere) {
 
         Object[] values = null;
 
@@ -475,7 +475,7 @@ public class ClassBuilder implements ConfigurableBuilder {
 
         } catch (Exception e) {
             
-            throw new RuntimeException("Cannot create instance of " + this + " with constructor: " + constructor + ": " + e.toString() + " with values=" + Arrays.toString(values), e);
+            throw new RuntimeException("Cannot create instance of " + this + " with constructor: " + constructor + ": " + e + " with values=" + Arrays.toString(values), e);
         }
 
         //set Bean properties

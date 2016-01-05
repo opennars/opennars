@@ -143,6 +143,7 @@ public interface Term extends Termed, Comparable, Termlike {
         return varIndep()!=0;
     }
 
+    @Override
     default boolean hasEllipsis() {
         return false;
     }

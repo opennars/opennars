@@ -11,7 +11,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import nars.guifx.NARfx;
 
-import javax.sound.sampled.LineUnavailableException;
 import java.awt.image.BufferedImage;
 
 import static javafx.application.Platform.runLater;
@@ -29,7 +28,7 @@ public class WebcamFX extends StackPane implements Runnable {
     final int fps = 15;
 
 
-    public WebcamFX() throws LineUnavailableException {
+    public WebcamFX() {
 
         //newAudioCaptureThread(5).start();
 

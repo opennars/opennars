@@ -5,7 +5,6 @@ import nars.NAR;
 import nars.nal.nal8.Operator;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.term.compound.Compound;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -427,7 +426,7 @@ public class OWLInput  {
             return;
         }
         if ("parentOf".equals(predicate)) {
-            nar.believe((Compound) $.inh(atom(subject), atom(object)));
+            nar.believe($.inh(atom(subject), atom(object)));
         }
         else {
             nar.believe($.oper((Operator) atom(predicate),

@@ -386,5 +386,22 @@ public class EllipsisTest {
 
     }
 
+    @Test public void testEllipsisInMinArity() {
+        Atom a = $.the("a");
+        Ellipsis b = new EllipsisOneOrMore($.varPattern(1));
+
+        for (Op o : Op.values()) {
+            if (o.minSize <= 1) continue;
+
+            assertEquals(o + " with normal term",
+                    a, $.terms.newTerm(o,a));
+
+
+            assertEquals(o + " with ellipsis not reduced",
+                    o.isStatement() ? Op.VAR_PATTERN : o,
+                    $.terms.newTerm(o,b).op());
+        }
+    }
+
     //TODO case which actually needs the ellipsis and not single term:
 }

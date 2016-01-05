@@ -55,7 +55,7 @@ public class PropertySheetTable extends JTable {
   private PropertyEditorFactory editorFactory;
   private PropertyRendererFactory rendererFactory;
 
-  private TableCellRenderer nameRenderer;  
+  private final TableCellRenderer nameRenderer;
   
   private boolean wantsExtraIndent = false;
   
@@ -321,6 +321,7 @@ public class PropertySheetTable extends JTable {
   /* (non-Javadoc)
    * @see javax.swing.JTable#isCellEditable(int, int)
    */
+  @Override
   public boolean isCellEditable(int row, int column) {
     // names are not editable
     if (column == 0) { return false; }
@@ -332,8 +333,9 @@ public class PropertySheetTable extends JTable {
   /**
    * Gets the CellEditor for the given row and column. It uses the
    * editor registry to find a suitable editor for the property.
-   * @see javax.swing.JTable#getCellEditor(int, int)
+   * @see JTable#getCellEditor(int, int)
    */
+  @Override
   public TableCellEditor getCellEditor(int row, int column) {
     if (column == 0) { return null; }
 
@@ -353,6 +355,7 @@ public class PropertySheetTable extends JTable {
   /* (non-Javadoc)
    * @see javax.swing.JTable#getCellRenderer(int, int)
    */
+  @Override
   public TableCellRenderer getCellRenderer(int row, int column) {
     PropertySheetTableModel.Item item = getSheetModel()
       .getPropertySheetElement(row);
@@ -362,7 +365,7 @@ public class PropertySheetTable extends JTable {
         // name column gets a custom renderer
         return nameRenderer;
 
-      case PropertySheetTableModel.VALUE_COLUMN: {
+      case PropertySheetTableModel.VALUE_COLUMN:
         if (!item.isProperty())
           return nameRenderer;
 
@@ -372,7 +375,6 @@ public class PropertySheetTable extends JTable {
         if (renderer == null)
           renderer = getCellRenderer(property.getType());
         return renderer;
-      }
       default:
         // when will this happen, given the above?
         return super.getCellRenderer(row, column);
@@ -409,8 +411,9 @@ public class PropertySheetTable extends JTable {
    * <li>to disable ({@link Component#setEnabled(boolean)} the renderer if the
    * Property is not editable
    */
+  @Override
   public Component prepareRenderer(TableCellRenderer renderer, int row,
-    int column) {
+                                   int column) {
     Object value = getValueAt(row, column);
     boolean isSelected = isCellSelected(row, column);
     Component component = renderer.getTableCellRendererComponent(this, value,
@@ -428,10 +431,11 @@ public class PropertySheetTable extends JTable {
    * Overriden to register a listener on the model. This listener ensures
    * editing is cancelled when editing row is being changed.
    * 
-   * @see javax.swing.JTable#setModel(javax.swing.table.TableModel)
+   * @see JTable#setModel(TableModel)
    * @throws IllegalArgumentException
    *           if dataModel is not a {@link PropertySheetTableModel}
    */
+  @Override
   public void setModel(TableModel newModel) {
     if (!(newModel instanceof PropertySheetTableModel)) {
       throw new IllegalArgumentException("dataModel must be of type "
@@ -476,8 +480,9 @@ public class PropertySheetTable extends JTable {
   
   /**
    * Ensures the table uses the full height of its parent
-   * {@link javax.swing.JViewport}.
+   * {@link JViewport}.
    */
+  @Override
   public boolean getScrollableTracksViewportHeight() {
     return getPreferredSize().height < getParent().getHeight();
   }
@@ -506,6 +511,7 @@ public class PropertySheetTable extends JTable {
    * Cancels the cell editing if any update happens while modifying a value.
    */
   private class CancelEditing implements TableModelListener {
+    @Override
     public void tableChanged(TableModelEvent e) {
       // in case the table changes for the following reasons:
       // * the editing row has changed
@@ -534,6 +540,7 @@ public class PropertySheetTable extends JTable {
    * only if row is selected.
    */
   private static class StartEditingAction extends AbstractAction {
+    @Override
     public void actionPerformed(ActionEvent e) {
       JTable table = (JTable)e.getSource();
       if (!table.hasFocus()) {
@@ -557,13 +564,15 @@ public class PropertySheetTable extends JTable {
    * with "toggle" knob.
    */
   private class ToggleAction extends AbstractAction {
-    public void actionPerformed(ActionEvent e) {      
+    @Override
+    public void actionPerformed(ActionEvent e) {
       int row = getSelectedRow();
       Item item = getSheetModel()
         .getPropertySheetElement(row);
       item.toggle();
       addRowSelectionInterval(row, row);
     }
+    @Override
     public boolean isEnabled() {
       int row = getSelectedRow();
       if (row != -1) {
@@ -580,6 +589,7 @@ public class PropertySheetTable extends JTable {
    * @see ToggleAction
    */
   private static class ToggleMouseHandler extends MouseAdapter {
+    @Override
     public void mouseReleased(MouseEvent event) {
       PropertySheetTable table = (PropertySheetTable) event.getComponent();
       int row = table.rowAtPoint(event.getPoint());
@@ -634,7 +644,7 @@ public class PropertySheetTable extends JTable {
     private boolean toggleState;
     private Icon expandedIcon;
     private Icon collapsedIcon;
-    private Insets insets = new Insets(1, 0, 1, 1);
+    private final Insets insets = new Insets(1, 0, 1, 1);
     private boolean isProperty;
     
     public CellBorder() {

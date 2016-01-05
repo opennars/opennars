@@ -72,7 +72,7 @@ public class Choose1 extends Termutator {
         count--;
 
         if (y.equals(x))
-            throw new RuntimeException("fault");
+            return true; //throw new RuntimeException("fault");
 
         boolean matched = f.match(x, y);
 

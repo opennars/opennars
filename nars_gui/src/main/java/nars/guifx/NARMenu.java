@@ -76,23 +76,21 @@ public class NARMenu extends HBox {
 
         Menu loadMenu;
         main.getItems().add(loadMenu = new Menu("Load..."));
-        {
-            loadMenu.getItems().add(new AsyncMenuItem(n, ".n3 RDF") {
-                @Override public void run(NAR n) {
-                    FileChooser fileChooser = new FileChooser();
-                    fileChooser.setTitle("Load RDF File");
-                    fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("n3","n4","turtle","rdf" /* .. */));
-                    File f = fileChooser.showOpenDialog(null);
-                    if (f!=null) {
-                        try {
-                            NQuadsRDF.input(n, new FileInputStream(f));
-                        } catch (Exception e) {
-                            n.memory.eventError.emit(e);
-                        }
+        loadMenu.getItems().add(new AsyncMenuItem(n, ".n3 RDF") {
+            @Override public void run(NAR n) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Load RDF File");
+                fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("n3","n4","turtle","rdf" /* .. */));
+                File f = fileChooser.showOpenDialog(null);
+                if (f!=null) {
+                    try {
+                        NQuadsRDF.input(n, new FileInputStream(f));
+                    } catch (Exception e) {
+                        n.memory.eventError.emit(e);
                     }
                 }
-            });
-        }
+            }
+        });
 
         main.getItems().add(new MenuItem("Save..."));
         main.getItems().add(new MenuItem("Fork..."));

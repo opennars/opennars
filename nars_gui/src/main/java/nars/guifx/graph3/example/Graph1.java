@@ -82,15 +82,13 @@ public class Graph1 extends SpacenetApp {
 
         RectNode oxygenSphere = new RectNode();
         //oxygenSphere.setMaterial(redMaterial);
-        {
-            //oxygenSphere.getChildren().add(new Button(""));
+        //oxygenSphere.getChildren().add(new Button(""));
 
-            NARide w = new NARide(new Default().loop());
-            w.setScaleX(0.05f);
-            w.setScaleY(0.03f);
-            w.setScaleZ(0.1f);
-            oxygenSphere.getChildren().add(w);
-        }
+        NARide w = new NARide(new Default().loop());
+        w.setScaleX(0.05f);
+        w.setScaleY(0.03f);
+        w.setScaleZ(0.1f);
+        oxygenSphere.getChildren().add(w);
 
         RectNode hydrogen1Sphere = new RectNode();
         hydrogen1Sphere.base.setMaterial(redMaterial);

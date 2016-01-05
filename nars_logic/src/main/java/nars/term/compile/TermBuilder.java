@@ -1,7 +1,6 @@
 package nars.term.compile;
 
 import com.gs.collections.api.set.MutableSet;
-import javafx.scene.shape.Ellipse;
 import nars.Global;
 import nars.Op;
 import nars.nal.PremiseAware;
@@ -88,7 +87,7 @@ public interface TermBuilder {
         if (subterms == 0)
             return null;
 
-        if (subterms == 1)
+        if ((subterms == 1) && (!(a[0] instanceof Ellipsis)))
             return firstNonIntervalIn(a); //unwrap the only non-interval subterm
 
         if (intervalsPresent == 0)
@@ -336,21 +335,8 @@ public interface TermBuilder {
 
                 break;
             case DIFF_EXT:
-                Term et0 = t[0], et1 = t[1];
-                if ((et0.op(SET_EXT) && et1.op(SET_EXT) )) {
-                    return subtractSet(Op.SET_EXT, (Compound)et0, (Compound)et1);
-                }
-                if (et0.equals(et1))
-                    return null;
-                break;
             case DIFF_INT:
-                Term it0 = t[0], it1 = t[1];
-                if ((it0.op(SET_INT) && it1.op(SET_INT) )) {
-                    return subtractSet(Op.SET_INT, (Compound)it0, (Compound)it1);
-                }
-                if (it0.equals(it1))
-                    return null;
-                break;
+                return newDiff(op, tt);
             case INTERSECT_EXT: return newIntersectEXT(t);
             case INTERSECT_INT: return newIntersectINT(t);
         }
@@ -367,7 +353,32 @@ public interface TermBuilder {
 
     }
 
-    /** step before calling Make */
+    default Term newDiff(Op op, TermContainer tt) {
+
+        //corresponding set type for reduction:
+        Op set = op == DIFF_EXT ? SET_EXT : SET_INT;
+
+        Term[] t = tt.terms();
+        switch (t.length) {
+            case 1:
+                if (t[0] instanceof Ellipsis)
+                    return finish(op, -1, tt);
+                return t[0];
+            case 2:
+                Term et0 = t[0], et1 = t[1];
+                if ((et0.op(set) && et1.op(set) ))
+                    return subtractSet(set, (Compound)et0, (Compound)et1);
+
+                if (et0.equals(et1))
+                    return null;
+                return finish(op, -1, TermContainer.the(op, tt));
+            default:
+                return null;
+        }
+    }
+
+
+    /** step before calling Make, do not call manually from outside */
     default Term finish(Op op, int relation, TermContainer tt) {
 
         Term[] t = tt.terms();
@@ -573,13 +584,13 @@ public interface TermBuilder {
     default Term newIntersection(Term[] t, Op intersection, Op setUnion, Op setIntersection) {
         switch (t.length) {
             case 0:
-                return null;
+                return t[0];
             case 1:
 
                 Term single = t[0];
-                if (single instanceof Ellipse) {
+                if (single instanceof Ellipsis) {
                     //allow
-                    return make(intersection, -1, TermContainer.the(intersection, single)).term();
+                    return finish(intersection, -1, TermContainer.the(intersection, single));
                 }
 
                 return single;

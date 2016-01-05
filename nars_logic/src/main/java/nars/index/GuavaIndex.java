@@ -140,7 +140,7 @@ public class GuavaIndex implements TermIndex {
     @Override
     public Termed the(Term x) {
 
-        if (!MapIndex.isInternable(x)) {
+        if (!AbstractMapIndex.isInternable(x)) {
             return x;
         }
 

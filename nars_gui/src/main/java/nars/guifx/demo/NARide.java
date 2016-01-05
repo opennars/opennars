@@ -11,7 +11,6 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import nars.$;
@@ -41,7 +40,6 @@ import nars.util.data.Util;
 import nars.video.WebcamFX;
 import org.jewelsea.willow.browser.WebBrowser;
 
-import javax.sound.sampled.LineUnavailableException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -152,11 +150,7 @@ public class NARide extends BorderPane {
 
 
             ni.addTool("Webcam", () -> {
-                try {
-                    return new WebcamFX();
-                } catch (LineUnavailableException e) {
-                    return new VBox(new Label(e.toString()));
-                }
+                return new WebcamFX();
             });
 
 

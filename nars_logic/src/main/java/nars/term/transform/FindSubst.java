@@ -683,6 +683,7 @@ public abstract class FindSubst extends Versioning implements Subst {
         Variable commonVar = CommonVariable.make(x, y);
         if (putXY(x, commonVar)) {
             putYX(y, commonVar);
+            //?? what if it fails, should we restore/undo 'x'?
             return true;
         }
         return false;
@@ -798,7 +799,7 @@ public abstract class FindSubst extends Versioning implements Subst {
     }
 
     public final void putYX(Term y /* usually a Variable */, Term x) {
-        yx.put(y, x);
+        yx.put(x, y);
     }
 
     public Term apply(Term t) {
