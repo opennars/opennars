@@ -339,12 +339,11 @@ public class Default extends AbstractNAR {
 
         /** fires a concept selected by the bag */
         @Override public final void accept(BagBudget<Concept> cb) {
-            Concept c = cb.get();
 
             //c.getTermLinks().up(simpleForgetDecay);
             //c.getTaskLinks().update(simpleForgetDecay);
 
-            deriver.firePremiseSquare(nar, this::process, c,
+            deriver.firePremiseSquare(nar, this::process, cb,
                 tasklinksToFire,
                 termlnksToFire,
                 //simpleForgetDecay
@@ -402,7 +401,7 @@ public class Default extends AbstractNAR {
             @Override
             public void accept(Memory memory) {
                 //same for duration of the cycle
-                forgetTimeCached = forgetTime.floatValue();
+                forgetTimeCached = forgetTime.floatValue() * memory.duration();
                 perfectionCached = perfection.floatValue();
                 now = memory.time();
             }
@@ -539,18 +538,19 @@ public class Default extends AbstractNAR {
             }
 
             if (!buffer.isEmpty()) {
-
-                Task.normalize(
-                        buffer,
+                Task.normalize( buffer,
                         //p.getMeanPriority()
                         p.getTask().getPriority()
+
                         //p.getTask().getPriority() * 1f/buffer.size()
                         //p.getTask().getPriority()/buffer.size()
-                        //p.getTaskLink().getPriority()
+                        //p.taskLink.getPriority()
                         //p.getTaskLink().getPriority()/buffer.size()
-                );
 
-                buffer.forEach(nar::input);
+                        //p.conceptLink.getPriority()
+                        //UtilityFunctions.or(p.conceptLink.getPriority(), p.taskLink.getPriority())
+
+                ,nar::input);
                 buffer.clear();
             }
 

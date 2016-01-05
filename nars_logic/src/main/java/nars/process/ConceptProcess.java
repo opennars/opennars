@@ -27,7 +27,7 @@ public final class ConceptProcess implements Premise {
 
     public final NAR nar;
     public final BagBudget<Task> taskLink;
-    public final Concept concept;
+    public final BagBudget<Concept> conceptLink;
     public final BagBudget<Termed> termLink;
 
     private Task currentBelief = null;
@@ -38,17 +38,17 @@ public final class ConceptProcess implements Premise {
         return taskLink.get();
     }
 
-    @Override
+
+
     public Concept getConcept() {
-        return concept;
+        return conceptLink.get();
     }
 
-    public ConceptProcess(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Task belief) {
+    public ConceptProcess(NAR nar, BagBudget<Concept> conceptLink, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Task belief) {
         this.nar = nar;
 
         this.taskLink = taskLink;
-        this.concept = concept;
-
+        this.conceptLink = conceptLink;
         this.termLink = termLink;
 
         //belief can be null:
@@ -57,7 +57,7 @@ public final class ConceptProcess implements Premise {
     }
 
 
-    public static int fireAll(NAR nar, Concept concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Consumer<ConceptProcess> cp) {
+    public static int fireAll(NAR nar, BagBudget<Concept> concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Consumer<ConceptProcess> cp) {
 
 
         int[] beliefAttempts = new int[1];
@@ -146,7 +146,7 @@ public final class ConceptProcess implements Premise {
     public String toString() {
         return new StringBuilder().append(
                 getClass().getSimpleName())
-                .append('[').append(concept).append(',')
+                .append('[').append(conceptLink).append(',')
                             .append(taskLink).append(',')
                             .append(termLink).append(',')
                             .append(getBelief())

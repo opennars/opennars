@@ -19,7 +19,7 @@ public final class BagBudget<X> implements Budget, Supplier<X> {
     public final X id;
     private long lastForget = Tense.TIMELESS;
 
-    protected BagBudget(X id) {
+    public BagBudget(X id) {
         this.id = id;
     }
 

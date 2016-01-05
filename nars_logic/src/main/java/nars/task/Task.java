@@ -36,6 +36,7 @@ import java.lang.ref.Reference;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import static nars.Global.dereference;
 
@@ -539,6 +540,12 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
     static void normalize(Iterable<Task> derived, float premisePriority) {
         derived.forEach(t -> t.getBudget().mulPriority(premisePriority));
+    }
+    static void normalize(Iterable<Task> derived, float premisePriority, Consumer<Task> target) {
+        derived.forEach(t -> {
+            t.getBudget().mulPriority(premisePriority);
+            target.accept(t);
+        });
     }
 
     static Task command(Compound op) {
