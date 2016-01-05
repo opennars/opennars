@@ -33,7 +33,7 @@ public class RuleDerivationGraphTest {
     public void testRuleStatistics() {
         //SimpleDeriver d = new SimpleDeriver(Deriver.standard);
 
-        List<PremiseRule> R = getDefaultRules().getFasterList();
+        List<PremiseRule> R = getDefaultRules().getPremiseRules();
         int registeredRules = R.size();
 
 

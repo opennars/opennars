@@ -305,8 +305,7 @@ public class TestTrie
 
       assertEquals( 5, t.size() );
       
-      Map<String, Boolean> map = new HashMap<>();
-      map.putAll( t );
+      Map<String, Boolean> map = new HashMap<>(t);
 
       assertEquals( 5, map.size() );
 
