@@ -285,7 +285,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K, 
 
         selector.updateItem(item, nextBudget);
 
-        if ((nextBudget.isDeleted()) || (nextBudget.equalsByPrecision(sourceBudget)))
+        if ((nextBudget.isDeleted()) /* || (nextBudget.equalsByPrecision(sourceBudget)) */)
             return false;
         else {
             //it has changed
