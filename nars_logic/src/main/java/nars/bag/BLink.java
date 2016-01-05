@@ -10,30 +10,33 @@ import java.util.function.Supplier;
 import static nars.util.data.Util.clamp;
 
 /**
- * An entry in a bag
+ * Budgeted Link (an entry in a bag)
  * equalsTo/hashCode proxies to the wrapped element, X id
+ *
+ * Acts as a "budget vector" containing an accumulating delta
+ * that can be commit()'d on the next udpate
  */
-public final class BagBudget<X> implements Budget, Supplier<X> {
+public final class BLink<X> implements Budget, Supplier<X> {
 
     private final float[] b = new float[6];
     public final X id;
     private long lastForget = Tense.TIMELESS;
 
-    public BagBudget(X id) {
+    public BLink(X id) {
         this.id = id;
     }
 
-    public BagBudget(X id, float p, float d, float q) {
+    public BLink(X id, float p, float d, float q) {
         this(id);
         init(p, d, q);
     }
 
-    public BagBudget(X id, Budgeted b) {
+    public BLink(X id, Budgeted b) {
         this(id);
         init(b, 1f);
     }
 
-    public BagBudget(X id, Budgeted b, float scale) {
+    public BLink(X id, Budgeted b, float scale) {
         this(id);
         init(b, scale);
     }

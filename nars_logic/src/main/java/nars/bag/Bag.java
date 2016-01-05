@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implements Consumer<V>, Supplier<BagBudget<V>>, Iterable<V> {
+public abstract class Bag<V> extends AbstractCacheBag<V, BLink<V>> implements Consumer<V>, Supplier<BLink<V>>, Iterable<V> {
 
 
     protected BudgetMerge mergeFunction = null;
@@ -35,7 +35,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
      * gets the next value without removing changing it or removing it from any index.  however
      * the bag is cycled so that subsequent elements are different.
      */
-    public abstract BagBudget<V> sample();
+    public abstract BLink<V> sample();
 
 
     /**
@@ -45,24 +45,24 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
      * @return
      */
     @Override
-    public abstract BagBudget<V> remove(V key);
+    public abstract BLink<V> remove(V key);
 
 
     /**
      * put with an empty budget
      */
-    public abstract BagBudget<V> put(Object newItem);
+    public abstract BLink<V> put(Object newItem);
 
-    public final BagBudget<V> put(Object i, Budget b) {
+    public final BLink<V> put(Object i, Budget b) {
         return put(i, b, 1f);
     }
 
     @Override
-    public BagBudget<V> put(V v, BagBudget<V> b) {
+    public BLink<V> put(V v, BLink<V> b) {
         return put(v, b, 1f);
     }
 
-    public abstract BagBudget<V> put(Object i, Budget b, float scale);
+    public abstract BLink<V> put(Object i, Budget b, float scale);
 
 
 
@@ -75,11 +75,11 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
 //        top(c -> (each.test(c) && (toFire[0]--) > 0));
 
 
-    public void sample(int n, Collection<BagBudget<V>> target) {
+    public void sample(int n, Collection<BLink<V>> target) {
         sample(n, null, target);
     }
 
-    public abstract Bag<V> sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target);
+    public abstract Bag<V> sample(int n, Predicate<BLink> each, Collection<BLink<V>> target);
 //    /**
 //     * fills a collection with at-most N items, if an item passes the predicate.
 //     * returns how many items added
@@ -140,7 +140,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
      *
      * @return The selected Item, or null if this bag is empty
      */
-    public abstract BagBudget<V> pop();
+    public abstract BLink<V> pop();
 
     /**
      * The number of items in the bag
@@ -221,7 +221,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
      * implements the Supplier<V> interface; invokes a remove()
      */
     @Override
-    public final BagBudget<V> get() {
+    public final BLink<V> get() {
         return pop();
     }
 
@@ -256,7 +256,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
     }
 
     @Deprecated
-    public void top(Consumer<BagBudget> each) {
+    public void top(Consumer<BLink> each) {
         topWhile(e -> {
             each.accept(e);
             return true;
@@ -266,10 +266,10 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
     /**
      * if predicate evaluates false, it terminates the iteration
      */
-    public abstract void topWhile(Predicate<BagBudget> each);
+    public abstract void topWhile(Predicate<BLink> each);
 
     //TODO provide default impl
-    public abstract void topN(int limit, Consumer<BagBudget> each);
+    public abstract void topN(int limit, Consumer<BLink> each);
 
 
 //    final public int forgetNext(float forgetCycles, final V[] batch, final long now) {

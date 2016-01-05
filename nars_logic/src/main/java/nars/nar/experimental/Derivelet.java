@@ -2,7 +2,7 @@ package nars.nar.experimental;
 
 import nars.Global;
 import nars.NAR;
-import nars.bag.BagBudget;
+import nars.bag.BLink;
 import nars.concept.Concept;
 import nars.nal.PremiseMatch;
 import nars.nar.Default;
@@ -35,7 +35,7 @@ public class Derivelet {
     /**
      * current location
      */
-    public BagBudget<Concept> concept;
+    public BLink<Concept> concept;
 
     /**
      * utility context
@@ -47,23 +47,23 @@ public class Derivelet {
     /**
      * temporary re-usable array for batch firing
      */
-    private final Set<BagBudget<Termed>> terms = Global.newHashSet(1);
+    private final Set<BLink<Termed>> terms = Global.newHashSet(1);
     /**
      * temporary re-usable array for batch firing
      */
-    private final Set<BagBudget<Task>> tasks = Global.newHashSet(1);
+    private final Set<BLink<Task>> tasks = Global.newHashSet(1);
 
-    private BagBudget[] termsArray = new BagBudget[0];
-    private BagBudget[] tasksArray = new BagBudget[0];
+    private BLink[] termsArray = new BLink[0];
+    private BLink[] tasksArray = new BLink[0];
 
-    public static int firePremises(BagBudget<Concept> conceptLink, BagBudget<Task>[] tasks, BagBudget<Termed>[] terms, Consumer<ConceptProcess> proc, NAR nar) {
+    public static int firePremises(BLink<Concept> conceptLink, BLink<Task>[] tasks, BLink<Termed>[] terms, Consumer<ConceptProcess> proc, NAR nar) {
 
         int total = 0;
 
-        for (BagBudget<Task> taskLink : tasks) {
+        for (BLink<Task> taskLink : tasks) {
             if (taskLink == null) break;
 
-            for (BagBudget<Termed> termLink : terms) {
+            for (BLink<Termed> termLink : terms) {
                 if (termLink == null) break;
 
                 if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.get().term(), termLink.get().term()))
@@ -85,8 +85,8 @@ public class Derivelet {
     public int firePremiseSquare(
             NAR nar,
             Consumer<ConceptProcess> proc,
-            BagBudget<Concept> conceptLink,
-            int tasklinks, int termlinks, Predicate<BagBudget> each) {
+            BLink<Concept> conceptLink,
+            int tasklinks, int termlinks, Predicate<BLink> each) {
 
         Concept concept = conceptLink.get();
 
@@ -120,7 +120,7 @@ public class Derivelet {
      */
     public Concept nextConcept() {
 
-        final BagBudget<Concept> concept = this.concept;
+        final BLink<Concept> concept = this.concept;
 
         if (concept == null) {
             return null;
@@ -138,7 +138,7 @@ public class Derivelet {
             float rem = 1.0f - stayProb;
 
 
-            final BagBudget tl = ((x > (stayProb + (rem / 2))) ?
+            final BLink tl = ((x > (stayProb + (rem / 2))) ?
                     c.getTermLinks() :
                     c.getTaskLinks())
                     .sample();
@@ -163,7 +163,7 @@ public class Derivelet {
         }
 
         //TODO dont instantiate BagBudget
-        if ((this.concept = new BagBudget(nextConcept(), 0, 0, 0)) == null) {
+        if ((this.concept = new BLink(nextConcept(), 0, 0, 0)) == null) {
             //dead-end
             return false;
         }
@@ -195,7 +195,7 @@ public class Derivelet {
 
     public final void start(final Concept concept, int ttl, final DeriveletContext context) {
         this.context = context;
-        this.concept = new BagBudget(concept, 0, 0, 0); //TODO
+        this.concept = new BLink(concept, 0, 0, 0); //TODO
         this.ttl = ttl;
         this.matcher = new PremiseMatch(context.rng);
     }

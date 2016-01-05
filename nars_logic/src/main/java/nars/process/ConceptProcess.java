@@ -7,7 +7,7 @@ package nars.process;
 import nars.Global;
 import nars.NAR;
 import nars.Premise;
-import nars.bag.BagBudget;
+import nars.bag.BLink;
 import nars.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
@@ -26,9 +26,9 @@ public final class ConceptProcess implements Premise {
 
 
     public final NAR nar;
-    public final BagBudget<Task> taskLink;
-    public final BagBudget<Concept> conceptLink;
-    public final BagBudget<Termed> termLink;
+    public final BLink<Task> taskLink;
+    public final BLink<Concept> conceptLink;
+    public final BLink<Termed> termLink;
 
     private Task currentBelief = null;
     private transient boolean cyclic;
@@ -44,7 +44,7 @@ public final class ConceptProcess implements Premise {
         return conceptLink.get();
     }
 
-    public ConceptProcess(NAR nar, BagBudget<Concept> conceptLink, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Task belief) {
+    public ConceptProcess(NAR nar, BLink<Concept> conceptLink, BLink<Task> taskLink, BLink<Termed> termLink, Task belief) {
         this.nar = nar;
 
         this.taskLink = taskLink;
@@ -57,7 +57,7 @@ public final class ConceptProcess implements Premise {
     }
 
 
-    public static int fireAll(NAR nar, BagBudget<Concept> concept, BagBudget<Task> taskLink, BagBudget<Termed> termLink, Consumer<ConceptProcess> cp) {
+    public static int fireAll(NAR nar, BLink<Concept> concept, BLink<Task> taskLink, BLink<Termed> termLink, Consumer<ConceptProcess> cp) {
 
 
         int[] beliefAttempts = new int[1];

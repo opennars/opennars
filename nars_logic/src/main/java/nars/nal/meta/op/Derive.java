@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import nars.Global;
 import nars.Op;
 import nars.Premise;
+import nars.bag.BLink;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.PremiseMatch;
@@ -19,6 +20,7 @@ import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Statement;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
@@ -246,6 +248,35 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
 
     }
 
+    public final static class DerivedTask extends MutableTask {
+
+        private final ConceptProcess premise;
+
+        public DerivedTask(Concept c, ConceptProcess premise) {
+            super(c);
+            this.premise = premise;
+        }
+
+        @Override
+        public void onRevision(Truth conclusion) {
+            ConceptProcess p = this.premise;
+
+            BLink<Task> tLink = p.taskLink;
+            BLink<Termed> bLink = p.termLink;
+
+            float oneMinusDifT = 1f - conclusion.getExpDifAbs(tLink.get().getTruth());
+            tLink.andPriority(oneMinusDifT);
+            tLink.andDurability(oneMinusDifT);
+
+            Task belief = p.getBelief();
+            if (belief!=null) {
+                float oneMinusDifB = 1f - conclusion.getExpDifAbs(belief.getTruth());
+                bLink.andPriority(oneMinusDifB);
+                bLink.andDurability(oneMinusDifB);
+            }
+        }
+    }
+
     /** part 2 */
     private void derive(PremiseMatch m, Concept c) {
 
@@ -264,7 +295,7 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
 
         char punct = m.punct.get();
 
-        MutableTask deriving = new MutableTask(c);
+        MutableTask deriving = new DerivedTask(c, premise);
 
         long now = premise.time();
 
@@ -299,11 +330,11 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
         if (truth != null && eternalize && !derived.isEternal()) {
 
             derive(m,
-                    new MutableTask(derived.term())
+                    new DerivedTask(c, premise) //derived.term())
                             .punctuation(punct)
                             .truth(
-                                    truth.getFrequency(),
-                                    eternalizedConfidence(truth.getConfidence())
+                                truth.getFrequency(),
+                                eternalizedConfidence(truth.getConfidence())
                             )
                             .budgetCompoundForward(premise)
                             .time(now, Tense.ETERNAL)

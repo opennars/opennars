@@ -4,8 +4,8 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import nars.Global;
 import nars.NAR;
+import nars.bag.BLink;
 import nars.bag.Bag;
-import nars.bag.BagBudget;
 import nars.concept.Concept;
 import nars.guifx.graph2.impl.TLinkEdge;
 import nars.guifx.graph2.source.SpaceGrapher;
@@ -43,7 +43,7 @@ public class ConceptsSource extends GraphSource {
     private float _maxPri = 0, _minPri = 0;
     protected final List<Termed> concepts = Global.newArrayList();
     private String keywordFilter = null;
-    private final Predicate<BagBudget> eachConcept = cc -> {
+    private final Predicate<BLink> eachConcept = cc -> {
 
         float p = cc.getPriority();
         if ((p < _minPri) || (p > _maxPri))
@@ -75,7 +75,7 @@ public class ConceptsSource extends GraphSource {
     public void updateEdge(TermEdge ee, Object link) {
         //rolling average
         ee.pri = lerp(
-                ((BagBudget)link).getPriority(), ee.pri,
+                ((BLink)link).getPriority(), ee.pri,
                       0.05f);
     }
 
@@ -83,7 +83,7 @@ public class ConceptsSource extends GraphSource {
 
 
     public float getConceptPriority(Termed cc) {
-        BagBudget<Concept> ccc = ((Default) nar).core.active.get(cc);
+        BLink<Concept> ccc = ((Default) nar).core.active.get(cc);
         if (ccc == null) return 0;
         return ccc.getPriorityIfNaNThenZero();
     }
@@ -107,7 +107,7 @@ public class ConceptsSource extends GraphSource {
 
         Consumer linkUpdater = link -> {
 
-            Termed target = ((BagBudget<Termed>)link).get();
+            Termed target = ((BLink<Termed>)link).get();
 
             if (cc.term().equals(target.term())) //self-loop
                 return;

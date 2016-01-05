@@ -1,6 +1,6 @@
 package nars.guifx.graph2;
 
-import nars.bag.BagBudget;
+import nars.bag.BLink;
 import nars.guifx.graph2.source.SpaceGrapher;
 import nars.term.Termed;
 
@@ -39,7 +39,7 @@ public abstract class GraphSource/* W? */ {
 
             if (t == null) return;
 
-            TermNode tn = g.getTermNode(((BagBudget<Termed>)t).get());
+            TermNode tn = g.getTermNode(((BLink<Termed>)t).get());
             if (tn == null)
                 return;
 

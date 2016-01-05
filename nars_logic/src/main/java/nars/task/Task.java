@@ -289,6 +289,11 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
         return isJudgment() || isGoal();
     }
 
+    /** allows for budget feedback that occurrs on revision */
+    default void onRevision(Truth truthConclusion) {
+
+    }
+
 
     final class Solution extends AtomicReference<Task> {
         Solution(Task referent) {

@@ -1,6 +1,5 @@
 package nars;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import nars.budget.BudgetFunctions;
 import nars.data.Range;
 import nars.nal.Level;
@@ -95,8 +94,9 @@ public abstract class Param extends Container implements Level {
 //    /** budget summary necessary to Conceptualize. this will compare the summary of the task during the TaskProcess */
 //    public final AtomicDouble newConceptThreshold = new AtomicDouble(0);
 
-    /** budget summary necessary to create a derived task. this will compare the summary of the raw original derivation */
-    public final AtomicDouble derivationThreshold = new AtomicDouble(0);
+    /** budget threshold (durability and quality) necessary to
+     * form a derived task. */
+    public final MutableFloat derivationThreshold = new MutableFloat(0);
 
 
 //    /** budget summary necessary to execute a desired Goal */
@@ -104,17 +104,17 @@ public abstract class Param extends Container implements Level {
 
     /** budget summary necessary to run a TaskProcess for a given Task
      *  this should be equal to zero to allow subconcept seeding. */
-    public final AtomicDouble taskProcessThreshold = new AtomicDouble(0);
+    public final MutableFloat taskProcessThreshold = new MutableFloat(0);
 
     /** budget summary necessary to propagte tasklink activation */
-    public final AtomicDouble taskLinkThreshold = new AtomicDouble(0);
+    public final MutableFloat taskLinkThreshold = new MutableFloat(0);
 
     /** budget summary necessary to propagte termlink activation */
-    public final AtomicDouble termLinkThreshold = new AtomicDouble(0);
+    public final MutableFloat termLinkThreshold = new MutableFloat(0);
 
     /** Minimum expectation for a desire value.
      *  the range of "now" is [-DURATION, DURATION]; */
-    public final AtomicDouble executionExpectationThreshold = new AtomicDouble();
+    public final MutableFloat executionExpectationThreshold = new MutableFloat();
 
 
 

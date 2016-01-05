@@ -4,8 +4,8 @@ import com.gs.collections.impl.bag.mutable.HashBag;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.bag.BLink;
 import nars.bag.Bag;
-import nars.bag.BagBudget;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
 import nars.budget.BudgetMerge;
@@ -124,11 +124,11 @@ public class Default extends AbstractNAR {
     public Bag<Concept> newConceptBagAggregateLinks(int initialCapacity) {
         return new CurveBag<Concept>(initialCapacity, rng) {
 
-            @Override public BagBudget<Concept> put(Object v) {
-                BagBudget<Concept> b = get(v);
+            @Override public BLink<Concept> put(Object v) {
+                BLink<Concept> b = get(v);
                 Concept c = (Concept) v;
                 if (b==null)
-                    b = new BagBudget(c, 0,1,1);
+                    b = new BLink(c, 0,1,1);
 
                 c.getTaskLinks().commit();
                 c.getTermLinks().commit();
@@ -156,7 +156,7 @@ public class Default extends AbstractNAR {
 
 
     @Override public float conceptPriority(Termed termed, float priIfNonExistent) {
-        BagBudget<Concept> c = core.active.get(termed);
+        BLink<Concept> c = core.active.get(termed);
         if (c!=null)
             return c.getPriority();
         return priIfNonExistent;
@@ -178,7 +178,7 @@ public class Default extends AbstractNAR {
     }
 
 
-    public static final Predicate<BagBudget> simpleForgetDecay = (b) -> {
+    public static final Predicate<BLink> simpleForgetDecay = (b) -> {
         float p = b.getPriority() * 0.95f;
         if (p > b.getQuality()*0.1f)
             b.setPriority(p);
@@ -189,7 +189,7 @@ public class Default extends AbstractNAR {
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
      */
-    public abstract static class AbstractCycle implements Consumer<BagBudget<Concept>> {
+    public abstract static class AbstractCycle implements Consumer<BLink<Concept>> {
 
         final Active handlers;
 
@@ -240,7 +240,7 @@ public class Default extends AbstractNAR {
         @Range(min=0, max=1f,unit="Perfection")
         public final MutableFloat perfection;
 
-        final List<BagBudget<Concept>> firing = Global.newArrayList(1);
+        final List<BLink<Concept>> firing = Global.newArrayList(1);
 
         private final AlannForget linkForget, conceptForget;
 
@@ -325,7 +325,7 @@ public class Default extends AbstractNAR {
             b.setCapacity(capacity.intValue()); //TODO share the MutableInteger so that this doesnt need to be called ever
             if (conceptsToFire == 0 || b.isEmpty()) return;
 
-            List<BagBudget<Concept>> f = this.firing;
+            List<BLink<Concept>> f = this.firing;
             b.sample(conceptsToFire, f);
 
             tasklinksToFire = tasklinksFiredPerFiredConcept.intValue();
@@ -341,7 +341,7 @@ public class Default extends AbstractNAR {
         }
 
         /** fires a concept selected by the bag */
-        @Override public final void accept(BagBudget<Concept> cb) {
+        @Override public final void accept(BLink<Concept> cb) {
 
             //c.getTermLinks().up(simpleForgetDecay);
             //c.getTaskLinks().update(simpleForgetDecay);
@@ -356,7 +356,7 @@ public class Default extends AbstractNAR {
             //activate(c);
         }
 
-        final static class AlannForget implements Predicate<BagBudget>, Consumer<Memory> {
+        final static class AlannForget implements Predicate<BLink>, Consumer<Memory> {
 
             private final MutableFloat forgetTime;
             private final MutableFloat perfection;
@@ -374,7 +374,7 @@ public class Default extends AbstractNAR {
             }
 
             @Override
-            public boolean test(BagBudget budget) {
+            public boolean test(BLink budget) {
                 // priority * e^(-lambda*t)
                 //     lambda is (1 - durabilty) / forgetPeriod
                 //     dt is the delta

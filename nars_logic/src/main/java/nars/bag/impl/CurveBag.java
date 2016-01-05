@@ -1,8 +1,8 @@
 package nars.bag.impl;
 
 import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
+import nars.bag.BLink;
 import nars.bag.Bag;
-import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.budget.BudgetMerge;
 import nars.util.ArraySortedIndex;
@@ -59,7 +59,7 @@ public class CurveBag<V> extends Bag<V> {
 
     }
 
-    public CurveBag(SortedIndex<BagBudget<V>> items, BagCurve curve, Random rng) {
+    public CurveBag(SortedIndex<BLink<V>> items, BagCurve curve, Random rng) {
         super();
 
         this.arrayBag = new ArrayBag(items);
@@ -75,7 +75,7 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public BagBudget<V> pop() {
+    public BLink<V> pop() {
         return peekNext(true);
     }
 
@@ -84,7 +84,7 @@ public class CurveBag<V> extends Bag<V> {
         arrayBag.commit();
     }
 
-    public BagBudget<V> peekNext(boolean remove) {
+    public BLink<V> peekNext(boolean remove) {
 
         ArrayBag<V> b = this.arrayBag;
 
@@ -92,7 +92,7 @@ public class CurveBag<V> extends Bag<V> {
 
             int index = sampleIndex();
 
-            BagBudget<V> i = remove ?
+            BLink<V> i = remove ?
                     b.removeItem(index) : b.getItem(index);
 
             if (!i.getBudget().isDeleted()) {
@@ -109,14 +109,14 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public final void topWhile(Predicate<BagBudget> each) {
+    public final void topWhile(Predicate<BLink> each) {
         arrayBag.topWhile(each);
     }
 
     /** optimized batch fill, using consecutive array elements, also ensuring uniqueness
      * returns the instance for fluentcy
      * */
-    @Override public CurveBag<V> sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
+    @Override public CurveBag<V> sample(int n, Predicate<BLink> each, Collection<BLink<V>> target) {
 
         int ss = size();
         final int begin, end;
@@ -130,7 +130,7 @@ public class CurveBag<V> extends Bag<V> {
         }
 
         for (int i = begin; i < end; i++) {
-            BagBudget<V> ii = get(i);
+            BLink<V> ii = get(i);
             if (each == null || each.test(ii)) {
                 target.add(ii);
             }
@@ -147,36 +147,36 @@ public class CurveBag<V> extends Bag<V> {
     }
 
     @Override
-    public BagBudget<V> get(Object key) {
+    public BLink<V> get(Object key) {
         return arrayBag.get(key);
     }
 
     @Override
-    public final BagBudget<V> sample() {
+    public final BLink<V> sample() {
         return peekNext(false);
     }
 
     @Override
-    public BagBudget<V> remove(V key) {
+    public BLink<V> remove(V key) {
         return arrayBag.remove(key);
     }
 
 
     @Override
-    public BagBudget<V> put(Object v, Budget vBagBudget, float scale) {
+    public BLink<V> put(Object v, Budget vBagBudget, float scale) {
         return arrayBag.put(v, vBagBudget, scale);
     }
 
 
-    @Override public BagBudget<V> put(Object v) {
-        BagBudget<V> existing = get(v);
+    @Override public BLink<V> put(Object v) {
+        BLink<V> existing = get(v);
         return (existing != null) ?
                 existing :
                 put((V) v, getDefaultBudget((V) v));
     }
 
-    protected BagBudget<V> getDefaultBudget(V v) {
-        return new BagBudget(v, 0,0,0);
+    protected BLink<V> getDefaultBudget(V v) {
+        return new BLink(v, 0,0,0);
     }
 
     @Override
@@ -352,10 +352,10 @@ public class CurveBag<V> extends Bag<V> {
 //        return next; //# of items actually filled in the array
 //    }
 
-    @Override public void top(Consumer<BagBudget> each) {
+    @Override public void top(Consumer<BLink> each) {
         arrayBag.top(each);
     }
-    @Override public void topN(int limit, Consumer<BagBudget> each) {
+    @Override public void topN(int limit, Consumer<BLink> each) {
         arrayBag.topN(limit, each);
     }
 
@@ -374,11 +374,11 @@ public class CurveBag<V> extends Bag<V> {
         arrayBag.validate();
     }
 
-    public SortedIndex<BagBudget<V>> getItems() {
+    public SortedIndex<BLink<V>> getItems() {
         return arrayBag.items;
     }
 
-    public BagBudget<V> get(int i) {
+    public BLink<V> get(int i) {
         return arrayBag.getItem(i);
     }
 

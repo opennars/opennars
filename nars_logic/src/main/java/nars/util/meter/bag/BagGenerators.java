@@ -1,7 +1,7 @@
 package nars.util.meter.bag;
 
+import nars.bag.BLink;
 import nars.bag.Bag;
-import nars.bag.BagBudget;
 import nars.util.data.Util;
 import nars.util.data.random.XORShiftRandom;
 
@@ -45,7 +45,7 @@ public enum BagGenerators {
 
                 CharSequence k = Float.toString(rng.nextFloat());
 
-                BagBudget<CharSequence> overflow = f.put(k);
+                BLink<CharSequence> overflow = f.put(k);
                 if (overflow!=null) {
                     float p = overflow.getPriority();
                     nRemoved[0] = removal(nRemoved[0], p, count);

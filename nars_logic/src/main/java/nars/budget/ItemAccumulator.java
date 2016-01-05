@@ -1,6 +1,6 @@
 package nars.budget;
 
-import nars.bag.BagBudget;
+import nars.bag.BLink;
 import nars.bag.impl.ArrayBag;
 import nars.util.ArraySortedIndex;
 
@@ -22,17 +22,17 @@ public class ItemAccumulator<V extends Budgeted> extends ArrayBag<V> {
     }
 
     @Override
-    public final BagBudget<V> sample() {
+    public final BLink<V> sample() {
         return items.getFirst();
     }
 
     @Override
-    public BagBudget<V> pop() {
+    public BLink<V> pop() {
         return removeHighest();
     }
 
     @Override
-    public void update(BagBudget<V> v) {
+    public void update(BLink<V> v) {
         super.update(v);
         v.get().getBudget().set(v); //TODO replace instance's budget on insert so this copy isnt necessary
     }

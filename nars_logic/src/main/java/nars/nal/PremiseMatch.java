@@ -189,14 +189,19 @@ public class PremiseMatch extends FindSubst {
 //            throw new RuntimeException("why is " + budget + " deleted");
 //        }
 
-        if (!!budget.summaryLessThan(p.memory().derivationThreshold.floatValue())) {
-//            if (false) {
-//                RuleMatch.removeInsufficientBudget(premise, new PreTask(t,
-//                        m.punct.get(), truth, budget,
-//                        m.occurrenceShift.getIfAbsent(Tense.TIMELESS), premise));
-//            }
+        float derThresh = p.memory().derivationThreshold.floatValue();
+        if (budget.getDurability() < derThresh || budget.getQuality() < derThresh)
             return null;
-        }
+
+
+//        if (!!budget.summaryLessThan(p.memory().derivationThreshold.floatValue())) {
+////            if (false) {
+////                RuleMatch.removeInsufficientBudget(premise, new PreTask(t,
+////                        m.punct.get(), truth, budget,
+////                        m.occurrenceShift.getIfAbsent(Tense.TIMELESS), premise));
+////            }
+//            return null;
+//        }
 
         return budget;
     }

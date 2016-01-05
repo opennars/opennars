@@ -98,8 +98,8 @@ public enum Global {
 
 
 
-
-
+    /** minimum durability and quality necessary for a derivation to form */
+    public static float BUDGET_DERIVATION_THRESHOLD = 0.01f;
 
     /** minimum difference necessary to indicate a significant modification in budget float number components */
     public static final float BUDGET_PROPAGATION_EPSILON = 0.0001f;
@@ -152,6 +152,7 @@ public enum Global {
 
     public static float MAX_TERMUTATIONS_PER_MATCH = 4;
     public static float MIN_TERMUTATIONS_PER_MATCH = 1;
+
 
 
 //    public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {

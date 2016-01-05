@@ -18,32 +18,32 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public BagBudget<V> get(Object key) {
+    public BLink<V> get(Object key) {
         return null;
     }
 
     @Override
-    public BagBudget<V> sample() {
+    public BLink<V> sample() {
         return null;
     }
 
     @Override
-    public BagBudget<V> remove(V key) {
+    public BLink<V> remove(V key) {
         return null;
     }
 
     @Override
-    public BagBudget<V> put(Object newItem) {
+    public BLink<V> put(Object newItem) {
         return null;
     }
 
     @Override
-    public BagBudget<V> put(Object i, Budget b, float scale) {
+    public BLink<V> put(Object i, Budget b, float scale) {
         return null;
     }
 
     @Override
-    public NullBag<V> sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
+    public NullBag<V> sample(int n, Predicate<BLink> each, Collection<BLink<V>> target) {
         throw new RuntimeException("unimpl");
     }
 
@@ -53,7 +53,7 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public BagBudget<V> pop() {
+    public BLink<V> pop() {
         return null;
     }
 
@@ -73,17 +73,17 @@ public final class NullBag<V> extends Bag<V> {
     }
 
     @Override
-    public void top(Consumer<BagBudget> each) {
+    public void top(Consumer<BLink> each) {
 
     }
 
     @Override
-    public void topWhile(Predicate<BagBudget> each) {
+    public void topWhile(Predicate<BLink> each) {
 
     }
 
     @Override
-    public void topN(int limit, Consumer<BagBudget> each) {
+    public void topN(int limit, Consumer<BLink> each) {
 
     }
 

@@ -40,21 +40,20 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         Truth newBeliefTruth = newBelief.getTruth();
 
-        long newOcc = newBelief.getOccurrenceTime();
-        Truth oldBeliefTruth = oldBelief.projection(newOcc, now);
+        Truth oldBeliefTruth = oldBelief.projection(newBelief.getOccurrenceTime(), now);
 
-        Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
+        Truth conclusion = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
 
-        Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, newBelief.getBudget());
+        Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBelief, conclusion, newBelief.getBudget());
 
         //Task<T> revised = nal.input(
-        return new MutableTask(newBelief.term())
+        return new MutableTask(newBelief.get())
                 .punctuation(newBelief.getPunctuation())
-                .truth(truth)
+                .truth(conclusion)
                 .budget(budget)
                 .parent(newBelief, oldBelief)
                 .because("Revision")
-                .time( now,  newOcc );
+                .time( now, newBelief.getOccurrenceTime());
     }
 
     /**
@@ -147,12 +146,10 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     @Override
     public Task add(Task input, BeliefTable.Ranker ranking, Concept c, Memory memory) {
 
-
         /**
          * involves 3 potentially unique tasks:
          * input, strongest, revised (created here and returned)
          */
-
 
         //empty (special case)
         if (isEmpty()) {

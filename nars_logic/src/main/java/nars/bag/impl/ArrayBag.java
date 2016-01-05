@@ -2,8 +2,8 @@ package nars.bag.impl;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
+import nars.bag.BLink;
 import nars.bag.Bag;
-import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.budget.BudgetMerge;
 import nars.budget.Budgeted;
@@ -30,17 +30,17 @@ public class ArrayBag<V> extends Bag<V> {
     /**
      * array of lists of items, for items on different level
      */
-    public final SortedIndex<BagBudget<V>> items;
+    public final SortedIndex<BLink<V>> items;
 
 
-    public ArrayBag(SortedIndex<BagBudget<V>> items) {
+    public ArrayBag(SortedIndex<BLink<V>> items) {
         this(items,
             //Global.newHashMap(items.capacity()/2)
             new HashMap(items.capacity()/2)
         );
     }
 
-    public ArrayBag(SortedIndex<BagBudget<V>> items, Map<V, BagBudget<V>> map) {
+    public ArrayBag(SortedIndex<BLink<V>> items, Map<V, BLink<V>> map) {
 
         items.clear();
 
@@ -52,14 +52,14 @@ public class ArrayBag<V> extends Bag<V> {
         this(new ArraySortedIndex<>(capacity));
     }
 
-    @Override public BagBudget<V> put(Object v) {
+    @Override public BLink<V> put(Object v) {
         //TODO combine with CurveBag.put(v)
-        BagBudget<V> existing = get(v);
+        BLink<V> existing = get(v);
         return existing != null ? existing : put((V) v, UnitBudget.zero);
     }
 
 
-    public BagBudget<V> put(Budgeted k) {
+    public BLink<V> put(Budgeted k) {
         return put(k, k.getBudget());
     }
 
@@ -99,12 +99,12 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     @Override
-    public BagBudget<V> sample() {
+    public BLink<V> sample() {
         throw new RuntimeException("unimpl");
     }
 
     @Override
-    public ArrayBag<V> sample(int n, Predicate<BagBudget> each, Collection<BagBudget<V>> target) {
+    public ArrayBag<V> sample(int n, Predicate<BLink> each, Collection<BLink<V>> target) {
         throw new RuntimeException("unimpl");
     }
 
@@ -195,7 +195,7 @@ public class ArrayBag<V> extends Bag<V> {
 //    }
 
     @Override
-    public BagBudget<V> remove(V key) {
+    public BLink<V> remove(V key) {
         return index.remove(key);
     }
 
@@ -207,7 +207,7 @@ public class ArrayBag<V> extends Bag<V> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public BagBudget<V> pop() {
+    public BLink<V> pop() {
         throw new RuntimeException("unimpl");
     }
 
@@ -220,11 +220,11 @@ public class ArrayBag<V> extends Bag<V> {
      * @return The updated budget
      */
     @Override
-    public final BagBudget<V> put(Object i, Budget b, float scale) {
+    public final BLink<V> put(Object i, Budget b, float scale) {
 
         ArrayMapping index = this.index;
 
-        BagBudget<V> existing = index.get(i);
+        BLink<V> existing = index.get(i);
 
         if (existing != null) {
 
@@ -237,16 +237,16 @@ public class ArrayBag<V> extends Bag<V> {
 
         } else {
 
-            BagBudget newBudget;
-            if (!(b instanceof BagBudget)) {
-                newBudget = new BagBudget(i, b, scale);
+            BLink newBudget;
+            if (!(b instanceof BLink)) {
+                newBudget = new BLink(i, b, scale);
             } else {
                 //use provided
-                newBudget = (BagBudget)b;
+                newBudget = (BLink)b;
                 newBudget.commit();
             }
 
-            BagBudget<V> displaced = index.put((V) i, newBudget);
+            BLink<V> displaced = index.put((V) i, newBudget);
             if (displaced!=null) {
                 if (displaced == newBudget)
                     return null; //wasnt inserted
@@ -282,7 +282,7 @@ public class ArrayBag<V> extends Bag<V> {
         top(this::update);
     }
 
-    public void update(BagBudget<V> v) {
+    public void update(BLink<V> v) {
         if (!v.hasDelta()) {
             return;
         }
@@ -291,7 +291,7 @@ public class ArrayBag<V> extends Bag<V> {
             return;
         }
 
-        SortedIndex<BagBudget<V>> ii = this.items;
+        SortedIndex<BLink<V>> ii = this.items;
 
         int currentIndex = ii.locate(v);
         if (currentIndex == -1) {
@@ -322,27 +322,27 @@ public class ArrayBag<V> extends Bag<V> {
         return (size() >= capacity());
     }
 
-    protected final BagBudget<V> removeLowest() {
+    protected final BLink<V> removeLowest() {
         if (isEmpty()) return null;
         return removeItem(size() - 1);
     }
 
-    protected final BagBudget<V> removeHighest() {
+    protected final BLink<V> removeHighest() {
         if (isEmpty()) return null;
         return removeItem(0);
     }
 
-    public final BagBudget<V> highest() {
+    public final BLink<V> highest() {
         if (isEmpty()) return null;
         return getItem(0);
     }
 
-    public final BagBudget<V> lowest() {
+    public final BLink<V> lowest() {
         if (isEmpty()) return null;
         return getItem(size() - 1);
     }
 
-    final BagBudget<V> getItem(int index) {
+    final BLink<V> getItem(int index) {
         return items.get(index);
     }
 
@@ -351,9 +351,9 @@ public class ArrayBag<V> extends Bag<V> {
      *
      * @return The first Item
      */
-    final BagBudget<V> removeItem(int index) {
+    final BLink<V> removeItem(int index) {
 
-        BagBudget<V> ii = getItem(index);
+        BLink<V> ii = getItem(index);
         /*if (ii == null)
             throw new RuntimeException("invalid index: " + index + ", size=" + size());*/
 
@@ -365,7 +365,7 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     @Override
-    public BagBudget<V> get(Object key) {
+    public BLink<V> get(Object key) {
         return index.get(key);
     }
 
@@ -394,7 +394,7 @@ public class ArrayBag<V> extends Bag<V> {
 
         //items.forEach(b -> action.accept(b.get()));
 
-        final List<BagBudget<V>> l = items.getList();
+        final List<BLink<V>> l = items.getList();
 
         //start at end
         int n = l.size();
@@ -410,7 +410,7 @@ public class ArrayBag<V> extends Bag<V> {
      */
     @Override
     public void forEach(int max, Consumer<? super V> action) {
-        List<BagBudget<V>> l = items.getList();
+        List<BLink<V>> l = items.getList();
         int n = Math.min(l.size(), max);
         //TODO let the list implementation decide this because it can use the array directly in ArraySortedIndex
         for (int i = 0; i < n; i++) {
@@ -418,8 +418,8 @@ public class ArrayBag<V> extends Bag<V> {
         }
     }
 
-    @Override public void topWhile(Predicate<BagBudget> action) {
-        List<BagBudget<V>> l = items.getList();
+    @Override public void topWhile(Predicate<BLink> action) {
+        List<BLink<V>> l = items.getList();
         int n = l.size();
         for (int i = 0; i < n; i++) {
             if (!action.test(l.get(i)))
@@ -427,11 +427,11 @@ public class ArrayBag<V> extends Bag<V> {
         }
     }
 
-    @Override public void top(Consumer<BagBudget> action) {
+    @Override public void top(Consumer<BLink> action) {
         items.getList().forEach(action);
     }
-    @Override public void topN(int limit, Consumer<BagBudget> action) {
-        List<BagBudget<V>> l = items.getList();
+    @Override public void topN(int limit, Consumer<BLink> action) {
+        List<BLink<V>> l = items.getList();
         int n = Math.min(l.size(), limit);
         for (int i = 0; i < n; i++)
             action.accept(l.get(i));
@@ -466,11 +466,11 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
 
-    public class ArrayMapping extends CollectorMap<V, BagBudget<V>> {
+    public class ArrayMapping extends CollectorMap<V, BLink<V>> {
 
-        final SortedIndex<BagBudget<V>> items;
+        final SortedIndex<BLink<V>> items;
 
-        public ArrayMapping(Map<V, BagBudget<V>> map, SortedIndex<BagBudget<V>> items) {
+        public ArrayMapping(Map<V, BLink<V>> map, SortedIndex<BLink<V>> items) {
             super(map);
             this.items = items;
         }
@@ -481,7 +481,7 @@ public class ArrayBag<V> extends Bag<V> {
         }
 
         @Override
-        protected BagBudget<V> removeItem(BagBudget<V> removed) {
+        protected BLink<V> removeItem(BLink<V> removed) {
 
             if (items.remove(removed)) {
                 return removed;
@@ -491,8 +491,8 @@ public class ArrayBag<V> extends Bag<V> {
         }
 
         @Override
-        protected BagBudget<V> addItem(BagBudget<V> i) {
-            BagBudget<V> overflow = items.insert(i);
+        protected BLink<V> addItem(BLink<V> i) {
+            BLink<V> overflow = items.insert(i);
             if (overflow!=null) {
                 removeKey(overflow.get());
             }

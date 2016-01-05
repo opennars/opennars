@@ -21,7 +21,7 @@
 package nars.budget;
 
 import nars.NAR;
-import nars.bag.BagBudget;
+import nars.bag.BLink;
 import nars.nal.UtilityFunctions;
 import nars.process.ConceptProcess;
 import nars.task.Task;
@@ -45,8 +45,6 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The quality of the judgment, according to truth value only
      */
     public static float truthToQuality(Truth t) {
-//        if (t == null)
-//            throw new RuntimeException("truth null");
         float exp = t.getExpectation();
         return Math.max(exp, (1.0f - exp) * 0.75f);
     }
@@ -55,38 +53,32 @@ public final class BudgetFunctions extends UtilityFunctions {
     /**
      * Evaluate the quality of a revision, then de-prioritize the premises
      *
-     * @param tTruth The truth value of the judgment in the task
-     * @param bTruth The truth value of the belief
-     * @param truth The truth value of the conclusion of revision
+     * @param tTruth The truth value of the judgment in the task of the premise
+     * @param oldBelief The truth value of the previously existing belief
+     * @param conclusion The truth value of the conclusion of revision
      * @return The budget for the new task
      */
-    public static Budget revise(Truth tTruth, Truth bTruth, Truth truth, Budget tb) {
+    public static Budget revise(Truth tTruth, Task oldBelief, Truth conclusion, Budget tb) {
 
-        float difT = truth.getExpDifAbs(tTruth);
+        Truth bTruth = oldBelief.getTruth();
+        float difT = conclusion.getExpDifAbs(tTruth);
 
         tb.andPriority(1.0f - difT);
         tb.andDurability(1.0f - difT);
 
-//        boolean feedbackToLinks = (p instanceof ConceptProcess);
-//        if (feedbackToLinks) {
-//            TaskLink tLink = ((ConceptProcess) p).getTaskLink();
-//            tLink.andPriority(1.0f - difT);
-//            tLink.andDurability(1.0f - difT);
-//            TermLink bLink = p.getTermLink();
-//            float difB = truth.getExpDifAbs(bTruth);
-//            bLink.andPriority(1.0f - difB);
-//            bLink.andDurability(1.0f - difB);
-//        }
+        oldBelief.onRevision(conclusion);
 
-        float dif = truth.getConfidence() - Math.max(tTruth.getConfidence(), bTruth.getConfidence());
-        
-        //TODO determine if this is correct
-        if (dif < 0) dif = 0;  
+
+        float dif = conclusion.getConfidence() - Math.max(tTruth.getConfidence(), bTruth.getConfidence());
+        if (dif < 0) {
+            //throw new RuntimeException("Revision fault: " + oldBelief + " more confident than concluded: " + conclusion);
+            System.err.println("Revision fault: " + oldBelief + " more confident than concluded: " + conclusion);
+        }
         
         
         float priority = or(dif, tb.getPriority());
         float durability = aveAri(dif, tb.getDurability());
-        float quality = truthToQuality(truth);
+        float quality = truthToQuality(conclusion);
         
         /*
         if (priority < 0) {
@@ -303,7 +295,7 @@ public final class BudgetFunctions extends UtilityFunctions {
 
     static Budget budgetInference(Budget target, float qual, float complexityFactor, ConceptProcess nal) {
 
-        BagBudget<Task> taskLink = nal.taskLink;
+        BLink<Task> taskLink = nal.taskLink;
 
         Budget t =
             (taskLink !=null) ? taskLink :  nal.getTask().getBudget();
@@ -313,7 +305,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         float durability = t.getDurability() * complexityFactor;
         final float quality = qual * complexityFactor;
 
-        BagBudget<Termed> termLink = nal.termLink;
+        BLink<Termed> termLink = nal.termLink;
         if (termLink!=null) {
             priority = or(priority, termLink.getPriority());
             durability = and(durability, termLink.getDurability()); //originaly was 'AND'
