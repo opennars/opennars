@@ -238,7 +238,9 @@ public class NLPIRCBot extends IRCBot {
         if (msg.equals("RESET")) {
             go();
         } else {
-            nar.input(msg);
+            if(!msg.contains("$")) {
+                nar.input(msg);
+            }
         }
 
     }
