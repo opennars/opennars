@@ -149,6 +149,9 @@ public class Global {
     /** extra debugging checks */
     public static boolean DEBUG_PARANOID = false;
 
+    public static float MAX_TERMUTATIONS_PER_MATCH = 4;
+    public static float MIN_TERMUTATIONS_PER_MATCH = 1;
+
 
 //    public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {
 //        return 0.02f + taskPriority * 0.02f; //search up to 4% of concepts

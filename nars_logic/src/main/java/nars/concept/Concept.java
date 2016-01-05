@@ -339,9 +339,7 @@ public interface Concept extends Termed, Supplier<Term> {
     //void linkTemplates(Budget budget, float scale, NAR nar);
 
 
-    default boolean link(Task task, NAR nar) {
-        return link(task, 1f, nar);
-    }
+
 
     default boolean link(Task task, float initialScale, NAR nar) {
         float minScale =

@@ -4,6 +4,7 @@
  */
 package nars.process;
 
+import nars.Global;
 import nars.NAR;
 import nars.Premise;
 import nars.bag.BagBudget;
@@ -11,7 +12,6 @@ import nars.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
 import nars.term.Termed;
-import nars.term.Terms;
 
 import java.util.function.Consumer;
 
@@ -159,6 +159,10 @@ public final class ConceptProcess implements Premise {
         return nar;
     }
 
+    public int getMaxMatches() {
+        final float min = Global.MIN_TERMUTATIONS_PER_MATCH, max = Global.MAX_TERMUTATIONS_PER_MATCH;
+        return (int)Math.ceil(getTask().getPriority() * (max-min) + min);
+    }
 
 
     //    /** supplies at most 1 premise containing the pair of next tasklink and termlink into a premise */
