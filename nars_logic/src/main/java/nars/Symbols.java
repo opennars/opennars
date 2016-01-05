@@ -23,13 +23,12 @@ package nars;
 
 import com.gs.collections.impl.map.mutable.primitive.CharObjectHashMap;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public final enum Symbols {
+public enum Symbols {
     ;
 
     /* sentence type and delimitors

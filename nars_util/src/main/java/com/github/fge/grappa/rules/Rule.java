@@ -19,14 +19,13 @@ package com.github.fge.grappa.rules;
 /**
  * Describes the return values of parser rule production methods.
  */
-public interface Rule
-{
-    /**
-     * Attaches a label to this Rule.
-     * Corresponds to the @Label annotation.
-     *
-     * @param label the label
-     * @return this Rule
-     */
-    Rule label(String label);
+public interface Rule {
+	/**
+	 * Attaches a label to this Rule. Corresponds to the @Label annotation.
+	 * 
+	 * @param label
+	 *            the label
+	 * @return this Rule
+	 */
+	Rule label(String label);
 }

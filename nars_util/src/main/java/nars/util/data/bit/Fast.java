@@ -39,7 +39,7 @@ package nars.util.data.bit;
   * @since 0.1
   */
 
-public final enum Fast {
+public enum Fast {
 	;
 
 	public static final long ONES_STEP_4 = 0x1111111111111111L;

@@ -11,13 +11,12 @@ import objenome.solver.Solution;
  * Indicates the gene produces a Number result (Ex: Integer, Double)
  */
 public interface SetNumericValue extends Solution {
-    
-    
-    Number getMin();
-    Number getMax();
-    
-    Number getNumber();
 
-    void setValue(double d);
-    
+	Number getMin();
+	Number getMax();
+
+	Number getNumber();
+
+	void setValue(double d);
+
 }

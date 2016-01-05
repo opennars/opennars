@@ -13,7 +13,7 @@ import java.util.Locale;
 /**
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms
  */
-public abstract enum Texts {
+public enum Texts {
     ;
 
 

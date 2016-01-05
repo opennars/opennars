@@ -29,15 +29,15 @@ import objenome.solver.evolve.event.RunEvent;
 /**
  * The <code>EventManagerTest</code> class provides unit tests for methods of
  * the {@link EventManager} class.
- *
+ * 
  * @see EventManager
  */
 public class EventManagerTest extends TestCase {
 
-    /**
-     * Test for the {@link EventManager#reset()} method.
-     */
-    public void testReset() {
+	/**
+	 * Test for the {@link EventManager#reset()} method.
+	 */
+	public void testReset() {
         EventManager manager = new EventManager();
         Listener<RunEvent> listener = event -> {
         };

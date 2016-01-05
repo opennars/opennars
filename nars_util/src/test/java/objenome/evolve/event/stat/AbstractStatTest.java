@@ -30,15 +30,15 @@ import objenome.solver.evolve.event.stat.RunBestFitness;
 /**
  * The <code>AbstractStatTest</code> class provides unit tests for methods of
  * the {@link AbstractStat} class.
- *
+ * 
  * @see AbstractStat
  */
 public class AbstractStatTest extends TestCase {
 
-    /**
-     * Test for the {@link AbstractStat#clear()} method.
-     */
-    public void testReset() {
+	/**
+	 * Test for the {@link AbstractStat#clear()} method.
+	 */
+	public void testReset() {
         GPContainer config = new GPContainer();        
         
         AbstractStat<GenerationEvent.EndGeneration> a, a2, b;

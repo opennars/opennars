@@ -3,7 +3,7 @@ package objenome.util.bean;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
-public final enum BeanProxy {
+public enum BeanProxy {
     ;
 
     public static boolean isProxyClass(Object o) {

@@ -28,19 +28,20 @@ package objenome.solver.evolve;
  */
 public interface IndividualSelector {
 
-    /**
-     * Prepares the selector. This method is called before an individual is
-     * selected.
-     *
-     * @param population the current population.
-     */
-    void init(Population population);
+	/**
+	 * Prepares the selector. This method is called before an individual is
+	 * selected.
+	 * 
+	 * @param population
+	 *            the current population.
+	 */
+	void init(Population population);
 
-    /**
-     * Returns an individual.
-     *
-     * @return an individual.
-     */
-    Organism select();
+	/**
+	 * Returns an individual.
+	 * 
+	 * @return an individual.
+	 */
+	Organism select();
 
 }

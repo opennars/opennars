@@ -16,7 +16,6 @@
 
 package com.github.fge.grappa.event;
 
-public final class EventBusParserTest
-{
-    // TODO: rewrite
+public final class EventBusParserTest {
+	// TODO: rewrite
 }

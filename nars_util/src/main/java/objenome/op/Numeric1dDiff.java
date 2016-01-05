@@ -8,6 +8,8 @@ package objenome.op;
 /**
  * Differentiable Numeric1d
  */
-public abstract class Numeric1dDiff extends Numeric1d implements DiffableFunction {
-    
+public abstract class Numeric1dDiff extends Numeric1d
+		implements
+			DiffableFunction {
+
 }

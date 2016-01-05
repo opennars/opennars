@@ -6,9 +6,9 @@
 package objenome.problem;
 
 /**
- *
+ * 
  * @author me
  */
 public interface Problem {
-    
+
 }

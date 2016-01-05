@@ -28,7 +28,6 @@ import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPKey;
 import objenome.solver.evolve.Population;
 
-
 /**
  * The <code>ConfigTest</code> class provides unit tests for methods of the
  * {@link GPContainer} class.
@@ -37,7 +36,7 @@ import objenome.solver.evolve.Population;
  */
 public class ConfigTest extends TestCase {
 
-    GPContainer config = new GPContainer();
+	GPContainer config = new GPContainer();
 	/**
 	 * Test for the {@link Config#get(ConfigKey)} method.
 	 */
@@ -47,7 +46,6 @@ public class ConfigTest extends TestCase {
 		config.set(key, 1.0);
 		assertNotNull(config.get(key));
 	}
-
 	/**
 	 * Test for the {@link Config#set(ConfigKey, Object)} method.
 	 */
@@ -59,12 +57,11 @@ public class ConfigTest extends TestCase {
 		config.set(key, 0.4);
 		assertEquals(0.4, config.get(key));
 	}
-
 	/**
 	 * Test for the {@link Config#reset()} method.
 	 */
 	public void testReset() {
-		config.set(Population.SIZE, 100);		
+		config.set(Population.SIZE, 100);
 		assertNotNull(config.get(Population.SIZE));
 
 		config.clear();

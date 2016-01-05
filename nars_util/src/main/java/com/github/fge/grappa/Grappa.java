@@ -28,7 +28,7 @@ import java.util.Objects;
 /**
  * Main class providing the high-level entry point into the parboiled library.
  */
-public final enum Grappa
+public enum Grappa
 {
     ;
 

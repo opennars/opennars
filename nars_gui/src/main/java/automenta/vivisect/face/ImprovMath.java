@@ -10,7 +10,7 @@ package automenta.vivisect.face;
    
 import java.util.Random;   
    
-public final enum ImprovMath
+public enum ImprovMath
 {
     ;
 

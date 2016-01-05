@@ -6,10 +6,10 @@
 package objenome.solution;
 
 /**
- * Uses a static constant (final) field value to complete an abstract or interface method.
- * For dynamically decided values, use a constant node in ImplementAbstractMethodWithExpression
- * TODO
+ * Uses a static constant (final) field value to complete an abstract or
+ * interface method. For dynamically decided values, use a constant node in
+ * ImplementAbstractMethodWithExpression TODO
  */
 public class SetAbstractMethodToReturnExistingStaticFinalField {
-    
+
 }

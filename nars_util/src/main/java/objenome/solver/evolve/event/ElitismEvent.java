@@ -29,74 +29,78 @@ import objenome.solver.evolve.Population;
  */
 public abstract class ElitismEvent implements Event {
 
-    /**
-     * The current population.
-     */
-    private final Population population;
+	/**
+	 * The current population.
+	 */
+	private final Population population;
 
-    /**
-     * Constructs a <code>ElitismEvent</code>.
-     *
-     * @param population the current population.
-     */
-    public ElitismEvent(Population population) {
-        this.population = population;
-    }
+	/**
+	 * Constructs a <code>ElitismEvent</code>.
+	 * 
+	 * @param population
+	 *            the current population.
+	 */
+	public ElitismEvent(Population population) {
+		this.population = population;
+	}
 
-    /**
-     * Returns the population associated with this event.
-     *
-     * @return the population associated with this event.
-     */
-    public Population getPopulation() {
-        return population;
-    }
+	/**
+	 * Returns the population associated with this event.
+	 * 
+	 * @return the population associated with this event.
+	 */
+	public Population getPopulation() {
+		return population;
+	}
 
-    /**
-     * An event that indicates the start of the elitism process.
-     */
-    public static class StartElitism extends ElitismEvent {
+	/**
+	 * An event that indicates the start of the elitism process.
+	 */
+	public static class StartElitism extends ElitismEvent {
 
-        /**
-         * Constructs a <code>StartElitism</code>.
-         *
-         * @param population the current population.
-         */
-        public StartElitism(Population population) {
-            super(population);
-        }
-    }
+		/**
+		 * Constructs a <code>StartElitism</code>.
+		 * 
+		 * @param population
+		 *            the current population.
+		 */
+		public StartElitism(Population population) {
+			super(population);
+		}
+	}
 
-    /**
-     * An event that indicates the end of the elitism process.
-     */
-    public static class EndElitism extends ElitismEvent {
+	/**
+	 * An event that indicates the end of the elitism process.
+	 */
+	public static class EndElitism extends ElitismEvent {
 
-        /**
-         * The elitist individuals.
-         */
-        private final Organism[] elites;
+		/**
+		 * The elitist individuals.
+		 */
+		private final Organism[] elites;
 
-        /**
-         * Constructs an <code>EndElitism</code>.
-         *
-         * @param population the current population.
-         * @param elites the elitist individuals.
-         */
-        public EndElitism(Population population, Organism[] elites) {
-            super(population);
+		/**
+		 * Constructs an <code>EndElitism</code>.
+		 * 
+		 * @param population
+		 *            the current population.
+		 * @param elites
+		 *            the elitist individuals.
+		 */
+		public EndElitism(Population population, Organism[] elites) {
+			super(population);
 
-            this.elites = elites;
-        }
+			this.elites = elites;
+		}
 
-        /**
-         * Returns the elitist individuals.
-         *
-         * @return the elitist individuals.
-         */
-        public Organism[] getElites() {
-            return elites;
-        }
-    }
+		/**
+		 * Returns the elitist individuals.
+		 * 
+		 * @return the elitist individuals.
+		 */
+		public Organism[] getElites() {
+			return elites;
+		}
+	}
 
 }

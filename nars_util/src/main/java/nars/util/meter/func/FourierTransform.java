@@ -6,9 +6,9 @@
 package nars.util.meter.func;
 
 /**
- *
+ * 
  * @author me
  */
 public class FourierTransform {
-    //TODO
+	// TODO
 }

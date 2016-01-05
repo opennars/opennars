@@ -21,16 +21,13 @@
  */
 package objenome.util;
 
-import com.gs.collections.api.CharIterable;
-import com.gs.collections.impl.set.mutable.primitive.CharHashSet;
-
 /**
  * This class provides static utility methods for working with
  * <code>Strings</code>.
  */
 public final class StringUtils {
 
-    private StringUtils() {
-    }
+	private StringUtils() {
+	}
 
 }

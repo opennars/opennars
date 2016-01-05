@@ -23,7 +23,7 @@ package objenome.solver.evolve.event;
 
 /**
  * Interface for events fired during the execution of a run.
- *
+ * 
  * @see EventManager
  */
 public interface Event {

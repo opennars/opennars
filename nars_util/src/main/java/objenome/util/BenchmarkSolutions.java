@@ -21,8 +21,6 @@
  */
 package objenome.util;
 
-import objenome.problem.STGPBoolean.BooleanCases;
-
 import java.util.function.Function;
 
 /**
@@ -31,7 +29,7 @@ import java.util.function.Function;
  *
  * @since 2.0
  */
-public final enum BenchmarkSolutions {
+public enum BenchmarkSolutions {
     ;
 
     /**

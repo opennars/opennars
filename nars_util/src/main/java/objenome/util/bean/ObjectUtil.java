@@ -13,7 +13,7 @@ import java.util.*;
  * 
  * @author Peter Fichtner
  */
-public final enum ObjectUtil {
+public enum ObjectUtil {
     ;
 
     /**

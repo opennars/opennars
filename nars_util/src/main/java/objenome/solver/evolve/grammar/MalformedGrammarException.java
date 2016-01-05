@@ -27,19 +27,20 @@ package objenome.solver.evolve.grammar;
  */
 public class MalformedGrammarException extends RuntimeException {
 
-    /**
+	/**
      *
      */
-    private static final long serialVersionUID = 4253637393156061665L;
+	private static final long serialVersionUID = 4253637393156061665L;
 
-    /**
-     * Constructs a <code>MalformedGrammarException</code> with the specified
-     * message.
-     *
-     * @param message {@inheritDoc}
-     */
-    public MalformedGrammarException(String message) {
-        super(message);
-    }
+	/**
+	 * Constructs a <code>MalformedGrammarException</code> with the specified
+	 * message.
+	 * 
+	 * @param message
+	 *            {@inheritDoc}
+	 */
+	public MalformedGrammarException(String message) {
+		super(message);
+	}
 
 }

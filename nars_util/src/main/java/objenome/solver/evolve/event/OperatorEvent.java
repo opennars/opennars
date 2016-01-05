@@ -29,100 +29,107 @@ import objenome.solver.evolve.OrganismOperator;
  */
 public abstract class OperatorEvent implements Event {
 
-    /**
-     * The <code>Operator</code> that fired the event.
-     */
-    private final OrganismOperator operator;
+	/**
+	 * The <code>Operator</code> that fired the event.
+	 */
+	private final OrganismOperator operator;
 
-    /**
-     * The array of individuals undergoing the operator.
-     */
-    private final Organism[] parents;
+	/**
+	 * The array of individuals undergoing the operator.
+	 */
+	private final Organism[] parents;
 
-    /**
-     * Constructs an <code>OperatorEvent</code>.
-     *
-     * @param operator the operator that fired the event.
-     * @param parents the array of individuals undergoing the operator.
-     */
-    public OperatorEvent(OrganismOperator operator, Organism[] parents) {
-        this.operator = operator;
-        this.parents = parents;
-    }
+	/**
+	 * Constructs an <code>OperatorEvent</code>.
+	 * 
+	 * @param operator
+	 *            the operator that fired the event.
+	 * @param parents
+	 *            the array of individuals undergoing the operator.
+	 */
+	public OperatorEvent(OrganismOperator operator, Organism[] parents) {
+		this.operator = operator;
+		this.parents = parents;
+	}
 
-    /**
-     * Returns the operator that fired the event.
-     *
-     * @return the operator that fired the event.
-     */
-    public OrganismOperator getOperator() {
-        return operator;
-    }
+	/**
+	 * Returns the operator that fired the event.
+	 * 
+	 * @return the operator that fired the event.
+	 */
+	public OrganismOperator getOperator() {
+		return operator;
+	}
 
-    /**
-     * Returns the array of individuals undergoing the operator.
-     *
-     * @return the array of individuals undergoing the operator.
-     */
-    public Organism[] getParents() {
-        return parents;
-    }
+	/**
+	 * Returns the array of individuals undergoing the operator.
+	 * 
+	 * @return the array of individuals undergoing the operator.
+	 */
+	public Organism[] getParents() {
+		return parents;
+	}
 
-    /**
-     * Default event to signal the start of an operator.
-     */
-    public static class StartOperator extends OperatorEvent {
+	/**
+	 * Default event to signal the start of an operator.
+	 */
+	public static class StartOperator extends OperatorEvent {
 
-        /**
-         * Constructs a <code>StartOperator</code>.
-         *
-         * @param operator the operator that fired the event.
-         * @param parents the array of individuals undergoing the operator.
-         */
-        public StartOperator(OrganismOperator operator, Organism[] parents) {
-            super(operator, parents);
-        }
+		/**
+		 * Constructs a <code>StartOperator</code>.
+		 * 
+		 * @param operator
+		 *            the operator that fired the event.
+		 * @param parents
+		 *            the array of individuals undergoing the operator.
+		 */
+		public StartOperator(OrganismOperator operator, Organism[] parents) {
+			super(operator, parents);
+		}
 
-    }
+	}
 
-    /**
-     * Default event to signal the end of an operator.
-     */
-    public static class EndOperator extends OperatorEvent {
+	/**
+	 * Default event to signal the end of an operator.
+	 */
+	public static class EndOperator extends OperatorEvent {
 
-        /**
-         * The array of individuals produced by the operator.
-         */
-        private Organism[] children;
+		/**
+		 * The array of individuals produced by the operator.
+		 */
+		private Organism[] children;
 
-        /**
-         * Constructs a <code>EndOperator</code>.
-         *
-         * @param operator the operator that fired the event.
-         * @param parents the array of individuals undergoing the operator.
-         */
-        public EndOperator(OrganismOperator operator, Organism[] parents) {
-            super(operator, parents);
-        }
+		/**
+		 * Constructs a <code>EndOperator</code>.
+		 * 
+		 * @param operator
+		 *            the operator that fired the event.
+		 * @param parents
+		 *            the array of individuals undergoing the operator.
+		 */
+		public EndOperator(OrganismOperator operator, Organism[] parents) {
+			super(operator, parents);
+		}
 
-        /**
-         * Returns the array of individuals produced by the operator.
-         *
-         * @return the array of individuals produced by the operator.
-         */
-        public Organism[] getChildren() {
-            return children;
-        }
+		/**
+		 * Returns the array of individuals produced by the operator.
+		 * 
+		 * @return the array of individuals produced by the operator.
+		 */
+		public Organism[] getChildren() {
+			return children;
+		}
 
-        /**
-         * Sets the array of individuals produced by the operator.
-         *
-         * @param children the array of individuals produced by the operator.
-         */
-        public void setChildren(Organism[] children) {
-            this.children = children;
-        }
+		/**
+		 * Sets the array of individuals produced by the operator.
+		 * 
+		 * @param children
+		 *            the array of individuals produced by the operator.
+		 */
+		public void setChildren(Organism[] children) {
+			this.children = children;
+		}
 
-    }
+	}
 
 }

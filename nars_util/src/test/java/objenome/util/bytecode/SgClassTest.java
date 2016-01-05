@@ -249,4 +249,4 @@ package nars.obj.util.bytecode;//// CHECKSTYLE:OFF
 //    }
 //
 //}
-//// CHECKSTYLE:ON
+// // CHECKSTYLE:ON

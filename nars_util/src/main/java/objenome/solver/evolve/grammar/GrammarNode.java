@@ -24,7 +24,7 @@ package objenome.solver.evolve.grammar;
 /**
  * Instances of <code>GrammarNode</code> implementations are the elements that
  * represent the set of rules that make up a <code>Grammar</code>.
- *
+ * 
  * @see GrammarProduction
  */
 public interface GrammarNode {

@@ -9,7 +9,7 @@ import java.util.Stack;
 /**
  * Created on 2015/5/10.
  */
-public class NFA extends NFAStateFactory { // only able to accept wfs accessing order, this class construct a NFA with iterate the syntax tree recursively from the root node.
+public class NFA  { // only able to accept wfs accessing order, this class construct a NFA with iterate the syntax tree recursively from the root node.
 
     private final Stack<NFAState> stateStack;
 
@@ -28,7 +28,7 @@ public class NFA extends NFAStateFactory { // only able to accept wfs accessing 
     }
 
     private NFAState newState() {
-        NFAState nfaState = create();
+        NFAState nfaState = NFAStateFactory.create();
         stateList.add(nfaState);
         return nfaState;
     }

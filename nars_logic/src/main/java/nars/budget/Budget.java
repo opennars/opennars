@@ -6,7 +6,9 @@ import nars.util.Texts;
 import javax.annotation.Nullable;
 
 import static java.lang.Math.pow;
-import static nars.nal.UtilityFunctions.*;
+import static nars.nal.UtilityFunctions.and;
+import static nars.nal.UtilityFunctions.or;
+import static nars.util.data.Util.equal;
 import static nars.util.data.Util.mean;
 
 /**

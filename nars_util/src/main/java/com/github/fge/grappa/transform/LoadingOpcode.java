@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Objects;
 
-public final enum LoadingOpcode
+public enum LoadingOpcode
 {
     ;
     private static final Map<Integer, Integer> LOADING_OPCODES;

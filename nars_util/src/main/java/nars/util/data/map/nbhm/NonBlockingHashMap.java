@@ -1522,4 +1522,4 @@
 //    // Do some table-lock, but not it all
 //    chm.help_copy_impl(NonBlockingHashMap.this,kvs,false);
 //  }
-//} // End NonBlockingHashMap class
+// } // End NonBlockingHashMap class

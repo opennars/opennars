@@ -27,4 +27,4 @@
 //    public double partialDerive(Scalar parameter) {
 //        return -input().partialDerive(parameter) * Math.sin(input().value());
 //    }
-//}
+// }

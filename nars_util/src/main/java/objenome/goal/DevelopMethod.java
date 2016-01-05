@@ -10,14 +10,14 @@ import objenome.problem.Problem;
 import java.lang.reflect.Method;
 
 /**
- *
+ * 
  * @author me
  */
 public class DevelopMethod implements Problem {
-    public final Method method;
+	public final Method method;
 
-    public DevelopMethod(Method unimplementedAbstractMethod) {
-        method = unimplementedAbstractMethod;
-    }
-    
+	public DevelopMethod(Method unimplementedAbstractMethod) {
+		method = unimplementedAbstractMethod;
+	}
+
 }

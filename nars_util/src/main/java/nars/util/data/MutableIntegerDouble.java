@@ -4,7 +4,6 @@
  */
 package nars.util.data;
 
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -28,49 +27,44 @@ package nars.util.data;
  */
 public class MutableIntegerDouble extends MutableInteger {
 
-   
-  /** The mutable value. */
-  private double aux;
+	/** The mutable value. */
+	private double aux;
 
-  /**
-   * Constructs a new MutableDouble with the default value of zero.
-   */
-  public MutableIntegerDouble() {
-  }
+	/**
+	 * Constructs a new MutableDouble with the default value of zero.
+	 */
+	public MutableIntegerDouble() {
+	}
 
-  /**
-   * Constructs a new MutableDouble with the specified value.
-   * 
-   * @param value
-   *          a value.
-   */
-  public MutableIntegerDouble(int value, double aux) {
-    super(value);
-    this.aux = aux;
-  }
+	/**
+	 * Constructs a new MutableDouble with the specified value.
+	 * 
+	 * @param value
+	 *            a value.
+	 */
+	public MutableIntegerDouble(int value, double aux) {
+		super(value);
+		this.aux = aux;
+	}
 
-    public double getAux() {
-        return aux;
-    }
+	public double getAux() {
+		return aux;
+	}
 
-    public void setAux(double aux) {
-        this.aux = aux;
-    }
-  
-  
+	public void setAux(double aux) {
+		this.aux = aux;
+	}
 
-  /**
-   * Constructs a new MutableDouble with the specified value.
-   * 
-   * @param value
-   *          a value.
-   * @throws NullPointerException
-   *           if the object is null
-   */
-  public MutableIntegerDouble(Number value) {
-    super(value);
-  }
+	/**
+	 * Constructs a new MutableDouble with the specified value.
+	 * 
+	 * @param value
+	 *            a value.
+	 * @throws NullPointerException
+	 *             if the object is null
+	 */
+	public MutableIntegerDouble(Number value) {
+		super(value);
+	}
 
 }
-
-    

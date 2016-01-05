@@ -24,90 +24,103 @@ import com.github.fge.grappa.support.Position;
  * Abstraction of a simple char[] buffer holding the input text to be parsed.
  */
 // TODO: it furiously resembles a CharSequence and should use that
-public interface InputBuffer
-{
-    /**
-     * Returns the character at the given index.
-     *
-     * <p>If the index is greater than, or equal to, the buffer's length, this
-     * method returns {@link Chars#EOI}.</p>
-     *
-     * @param index the index
-     * @return the character at the given index or Chars.EOI.
-     *
-     * @throws IllegalArgumentException index is negative
-     */
-    char charAt(int index);
+public interface InputBuffer {
+	/**
+	 * Returns the character at the given index.
+	 * 
+	 * <p>
+	 * If the index is greater than, or equal to, the buffer's length, this
+	 * method returns {@link Chars#EOI}.
+	 * </p>
+	 * 
+	 * @param index
+	 *            the index
+	 * @return the character at the given index or Chars.EOI.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             index is negative
+	 */
+	char charAt(int index);
 
-    /**
-     * Returns the Unicode code point starting at a given index
-     *
-     * <p>If the index is greater than, or equal to, the buffer's length, this
-     * method returns -1.</p>
-     *
-     * @param index the index
-     * @return the code point at this index, or -1 if the end of input has been
-     * reached
-     *
-     * @throws IllegalArgumentException index is negative
-     */
-    int codePointAt(int index);
+	/**
+	 * Returns the Unicode code point starting at a given index
+	 * 
+	 * <p>
+	 * If the index is greater than, or equal to, the buffer's length, this
+	 * method returns -1.
+	 * </p>
+	 * 
+	 * @param index
+	 *            the index
+	 * @return the code point at this index, or -1 if the end of input has been
+	 *         reached
+	 * 
+	 * @throws IllegalArgumentException
+	 *             index is negative
+	 */
+	int codePointAt(int index);
 
-    char[] extractChars(int start, int end);
+	char[] extractChars(int start, int end);
 
-    /**
-     * Constructs a new {@link String} from all character between the given
-     * indices. Invalid indices are automatically adjusted to their respective
-     * boundary.
-     *
-     * @param start the start index (inclusively)
-     * @param end the end index (exclusively)
-     * @return a new String (non-interned)
-     */
-    String extract(int start, int end);
+	/**
+	 * Constructs a new {@link String} from all character between the given
+	 * indices. Invalid indices are automatically adjusted to their respective
+	 * boundary.
+	 * 
+	 * @param start
+	 *            the start index (inclusively)
+	 * @param end
+	 *            the end index (exclusively)
+	 * @return a new String (non-interned)
+	 */
+	String extract(int start, int end);
 
-    /**
-     * Constructs a new {@link String} from all character covered by the given
-     * IndexRange.
-     *
-     * @param range the IndexRange
-     * @return a new String (non-interned)
-     */
-    String extract(IndexRange range);
+	/**
+	 * Constructs a new {@link String} from all character covered by the given
+	 * IndexRange.
+	 * 
+	 * @param range
+	 *            the IndexRange
+	 * @return a new String (non-interned)
+	 */
+	String extract(IndexRange range);
 
-    /**
-     * Returns the line and column number of the character with the given index
-     * encapsulated in a {@link Position} object. The very first character has
-     * the line number 1 and the column number 1.
-     *
-     * @param index the index of the character to get the line number of
-     * @return the line number
-     */
-    Position getPosition(int index);
+	/**
+	 * Returns the line and column number of the character with the given index
+	 * encapsulated in a {@link Position} object. The very first character has
+	 * the line number 1 and the column number 1.
+	 * 
+	 * @param index
+	 *            the index of the character to get the line number of
+	 * @return the line number
+	 */
+	Position getPosition(int index);
 
-    /**
-     * Constructs a new {@link String} containing all characters with the given
-     * line number except for the trailing newline.
-     *
-     * @param lineNumber the line number to get
-     * @return the string
-     */
-    String extractLine(int lineNumber);
+	/**
+	 * Constructs a new {@link String} containing all characters with the given
+	 * line number except for the trailing newline.
+	 * 
+	 * @param lineNumber
+	 *            the line number to get
+	 * @return the string
+	 */
+	String extractLine(int lineNumber);
 
-    /**
-     * Get the index range matching a given line number
-     *
-     * @param lineNumber the line number
-     * @return the index range
-     */
-    IndexRange getLineRange(int lineNumber);
+	/**
+	 * Get the index range matching a given line number
+	 * 
+	 * @param lineNumber
+	 *            the line number
+	 * @return the index range
+	 */
+	IndexRange getLineRange(int lineNumber);
 
-    /**
-     * Returns the number of lines in the input buffer.
-     *
-     * @return number of lines in the input buffer.
-     */
-    int getLineCount();
+	/**
+	 * Returns the number of lines in the input buffer.
+	 * 
+	 * @return number of lines in the input buffer.
+	 */
+	int getLineCount();
 
-    int length();
+	int length();
 }
