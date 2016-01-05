@@ -141,17 +141,19 @@ public final class MakeTasks extends PreCondition {
                     FluentTask deriving2 = premise.newTask((Compound) derivedTerm);
                     Budget budget2 = BudgetFunctions.compoundForward(et, derivedTerm, premise);
 
-                    final Task derivedEternal = premise.validate(deriving2
-                            .punctuation(punct)
-                            .truth(et)
-                            .budget(budget2)
-                            .time(now, Stamp.ETERNAL)
-                            .parent(task, belief // null if single
-                            )
-                    );
+                    if(budget2.getDurability() > Global.BUDGET_EPSILON && budget2.getPriority() > Global.BUDGET_EPSILON) {
+                        final Task derivedEternal = premise.validate(deriving2
+                                        .punctuation(punct)
+                                        .truth(et)
+                                        .budget(budget2)
+                                        .time(now, Stamp.ETERNAL)
+                                        .parent(task, belief // null if single
+                                        )
+                        );
 
-                    if (derivedEternal != null) {
-                        receiver.accept(derivedEternal);
+                        if (derivedEternal != null) {
+                            receiver.accept(derivedEternal);
+                        }
                     }
                 }
 

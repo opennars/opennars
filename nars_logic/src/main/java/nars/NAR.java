@@ -412,7 +412,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
      */
     public final boolean input(final Task<?> t) {
 
-        if(t.getBudget().getDurability()<Global.BUDGET_EPSILON) {
+        if(t.getBudget().getDurability() <= Global.BUDGET_EPSILON || t.getBudget().getPriority() <= Global.BUDGET_EPSILON) {
             return false;
         }
 
