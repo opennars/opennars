@@ -319,7 +319,7 @@ public class Global {
     //this decay is a lot weaker than the decay of an event caused by projection
     //just strong enough to support this desired effect
     public static int OCCURENCE_RANKING_DECAY_UNTIL_MAX_STEPS = 10000;
-    public static double OCCURENCE_DECAY_MAX=0.3f;
+    public static double OCCURENCE_DECAY_MAX=0.0f;
 
 }
 
