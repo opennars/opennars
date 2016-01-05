@@ -27,7 +27,8 @@ public interface ComponentFactory {
 
   JComboBox createComboBox();
 
-  class Helper {
+  enum Helper {
+    ;
 
     static ComponentFactory factory = new DefaultComponentFactory();
 

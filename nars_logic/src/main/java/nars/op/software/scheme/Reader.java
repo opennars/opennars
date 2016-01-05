@@ -16,7 +16,9 @@ import static nars.op.software.scheme.cons.Cons.cons;
 import static nars.op.software.scheme.cons.Cons.empty;
 
 
-public class Reader {
+public enum Reader {
+    ;
+
     private static int eatWhiteSpace(String input, int index) {
         while (index < input.length() && Character.isWhitespace(input.charAt(index))) {
             index++;

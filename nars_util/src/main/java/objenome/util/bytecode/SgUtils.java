@@ -26,7 +26,8 @@ import java.util.StringTokenizer;
 /**
  * Some helper for the package.
  */
-public final class SgUtils {
+public final enum SgUtils {
+    ;
 
     private static final String CLASS_ABSTRACT_AND_FINAL_ERROR = "Classes cannot be declared "
             + "abstract and final simultaneously!";
@@ -88,11 +89,6 @@ public final class SgUtils {
             { true, false, false, false, false, false, false },
             { true, false, false, false, false, false, false },
             { false, true, false, true, true, true, true } };
-
-    private SgUtils() {
-        throw new UnsupportedOperationException(
-                "It's not allowed to create an instance of this class!");
-    }
 
     private static void throwIllegalArgument(int type, int modifier) {
         throw new IllegalArgumentException("The modifier '" + MODIFIER_NAMES[modifier]

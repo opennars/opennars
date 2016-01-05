@@ -111,7 +111,8 @@ package nars.util.data.array;
  * @see it.unimi.dsi.fastutil.Arrays
  */
 
-public class BigArrays {
+public enum BigArrays {
+	;
 	/** The shift used to compute the segment associated with an index (equivalently, the logarithm of the segment size). */
 	public static final int SEGMENT_SHIFT = 27;
 	/** The current size of a segment (2<sup>27</sup>) is the largest size that makes
@@ -120,9 +121,7 @@ public class BigArrays {
 	public static final int SEGMENT_SIZE = 1 << SEGMENT_SHIFT;
 	/** The mask used to compute the displacement associated to an index. */
 	public static final int SEGMENT_MASK = SEGMENT_SIZE - 1;
-	
-	protected BigArrays() {}
-	
+
 	/** Computes the segment associated with a given index.
 	 * 
 	 * @param index an index into a big array.

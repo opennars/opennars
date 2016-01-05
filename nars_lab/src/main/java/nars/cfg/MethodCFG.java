@@ -7,7 +7,9 @@ import org.jgrapht.alg.KShortestPaths;
 /**
  * Created by me on 1/15/15.
  */
-public class MethodCFG {
+public enum MethodCFG {
+    ;
+
     public static void main(String[] args) throws ClassNotFoundException {
 
 

@@ -12,7 +12,8 @@ import static nars.op.software.scheme.expressions.ListExpression.list;
 import static nars.op.software.scheme.expressions.SymbolExpression.symbol;
 
 
-public class Evaluator {
+public enum Evaluator {
+    ;
 
     public static Expression evaluate(Expression exp, SchemeClosure env) {
         return analyze(exp).apply(env);

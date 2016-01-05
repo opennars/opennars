@@ -71,15 +71,11 @@ package nars.gui.input.image;
 
 import java.util.ArrayList;
 
-public class PointCloudUtils
+public enum PointCloudUtils
 {
+  ;
   public static final PointCloudPoint ORIGIN = new PointCloudPoint(0.0,0.0,0);
 
-  private PointCloudUtils()
-  {
-	// prevent instantiation which is un-needed to use the static methods in this class
-  }
-  
   public static ArrayList<PointCloudPoint> translateTo(ArrayList<PointCloudPoint> points, PointCloudPoint pt) // translates points' centroid
   {
     PointCloudPoint c = centroid(points);

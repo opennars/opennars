@@ -18,7 +18,8 @@ import org.jbox2d.dynamics.World;
  *
  * @author dilip
  */
-public class Utils {
+public enum Utils {
+    ;
     //Create a JBox2D world. 
     public static final World world = new World(
         new Vec2(0.0f, 25.0f)

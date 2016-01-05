@@ -2,7 +2,9 @@ package nars.op.software.scheme;
 
 import java.util.List;
 
-public class Util {
+public enum Util {
+    ;
+
     public static <T> T first(List<T> list) {
         return list.get(0);
     }

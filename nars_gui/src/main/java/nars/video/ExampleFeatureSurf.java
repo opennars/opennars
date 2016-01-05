@@ -24,7 +24,8 @@ import java.util.List;
  * 
  * @author Peter Abeles
  */
-public class ExampleFeatureSurf {
+public enum ExampleFeatureSurf {
+	;
 
 	/**
 	 * Use generalized interfaces for working with SURF.  This removes much of the drudgery, but also reduces flexibility

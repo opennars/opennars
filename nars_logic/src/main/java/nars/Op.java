@@ -359,7 +359,8 @@ public enum Op {
     );
 
 
-    static class Args {
+    static enum Args {
+        ;
         static final IntIntPair None = pair(0,0);
         static final IntIntPair One = pair(1,1);
         static final IntIntPair Two = pair(2,2);

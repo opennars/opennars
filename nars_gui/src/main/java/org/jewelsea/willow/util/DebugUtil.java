@@ -25,7 +25,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 
 /** Some debugging utilties for the JavaFX SceneGraph. */
-public class DebugUtil {
+public enum DebugUtil {
+    ;
 
     /** Debugging routine to dump the scene graph. */
     public static void dump(Node n) {

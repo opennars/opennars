@@ -11,8 +11,10 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class SampleLoader
+public enum SampleLoader
 {
+    ;
+
     /**
      * Loads a sample from an url
      */

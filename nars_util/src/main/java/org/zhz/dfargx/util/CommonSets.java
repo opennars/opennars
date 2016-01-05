@@ -7,7 +7,8 @@ import java.util.List;
 /**
  * Created on 2015/5/9.
  */
-public class CommonSets {
+public enum CommonSets {
+    ;
     private static final char[] SLW; // slash lower w \w
 
     static {

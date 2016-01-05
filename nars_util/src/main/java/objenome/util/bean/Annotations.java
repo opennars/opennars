@@ -7,11 +7,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-public final class Annotations {
-
-    private Annotations() {
-        throw new IllegalStateException();
-    }
+public final enum Annotations {
+    ;
 
     public static boolean hasMethodWithAnnotation(Class<?> iface, Class<? extends Annotation> anno) {
         for (Method method : iface.getDeclaredMethods()) {

@@ -24,10 +24,8 @@ import java.lang.reflect.Method;
  * BeanUtils. <br>
  * 
  */
-public class BeanUtils {
-
-	private BeanUtils() {
-	}
+public enum BeanUtils {
+	;
 
 	public static Method getReadMethod(Class<?> clazz, String propertyName) {
 

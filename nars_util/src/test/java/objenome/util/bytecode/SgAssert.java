@@ -25,15 +25,8 @@ import java.io.*;
 /**
  * Some assertion helper methods.
  */
-public final class SgAssert {
-
-    /**
-     * Private constructor.
-     */
-    private SgAssert() {
-        throw new UnsupportedOperationException(
-                "It's not allowed to create an instance of this class!");
-    }
+public final enum SgAssert {
+    ;
 
     private static void writeToFile(File file, String src) {
         try {

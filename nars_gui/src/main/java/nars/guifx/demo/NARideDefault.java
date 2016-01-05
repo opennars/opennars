@@ -11,7 +11,8 @@ import nars.time.FrameClock;
 /**
  * Created by me on 9/7/15.
  */
-public class NARideDefault {
+public enum NARideDefault {
+    ;
 
     public static void main(String[] arg) {
 

@@ -31,7 +31,8 @@ import java.io.StringReader;
  * LookAndFeelTweaks. <br>
  * 
  */
-public class LookAndFeelTweaks {
+public enum LookAndFeelTweaks {
+  ;
 
   public static final Border PANEL_BORDER = BorderFactory.createEmptyBorder(3,
       3, 3, 3);

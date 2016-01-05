@@ -31,18 +31,9 @@ import static java.util.Arrays.stream;
  *
  *
  */
-public class Util {
+public enum Util {
+    ;
 
-
-    /**
-     * syntactic complexity of the compound, the sum of those of its term
-     * plus 1
-     * TODO make final again
-     */
-
-
-    protected Util() {
-    }
 
     public static final int PRIME3 = 524287;
     public static final int PRIME2 = 92821;

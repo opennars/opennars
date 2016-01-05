@@ -42,13 +42,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-public final class AsmUtils
+public final enum AsmUtils
 {
+    ;
     private static final ClassCache CACHE = ClassCache.INSTANCE;
-
-    private AsmUtils()
-    {
-    }
 
     public static String getExtendedParserClassName(
         String parserClassName)

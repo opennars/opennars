@@ -7,7 +7,9 @@ import java.io.InputStreamReader;
 /**
  * Created by didrik on 30.12.2014.
  */
-public class Setup {
+public enum Setup {
+    ;
+
     public static void main(String[] args) throws IOException {
         BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         Board board = new Board();

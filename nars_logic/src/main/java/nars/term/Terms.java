@@ -19,7 +19,8 @@ import static nars.Op.*;
  * Static utility class for static methods related to Terms
  * @author me
  */
-public class Terms {
+public enum Terms {
+    ;
     public static final Term[] Empty = new Term[0];
     public static final IntFunction<Term[]> TermArrayBuilder = Term[]::new;
 

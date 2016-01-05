@@ -33,8 +33,10 @@ import static org.objectweb.asm.Opcodes.*;
  * Adds one constructor for each of the ParserClassNode.constructors,
  * which simply delegates to the respective super constructor.
  */
-public final class ConstructorGenerator
+public final enum ConstructorGenerator
 {
+    ;
+
     public static void process(ParserClassNode classNode)
     {
         Objects.requireNonNull(classNode, "classNode");

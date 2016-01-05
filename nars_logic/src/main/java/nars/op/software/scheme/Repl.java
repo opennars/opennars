@@ -7,7 +7,8 @@ import java.io.*;
 import java.util.stream.IntStream;
 
 
-public class Repl {
+public enum Repl {
+    ;
     public static final SchemeClosure ENV = DefaultEnvironment.newInstance();
     public static final PrintStream OUTPUT_STREAM = System.out;
     public static final InputStream INPUT_STREAM = System.in;

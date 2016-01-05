@@ -23,7 +23,8 @@ import java.awt.*;
 /**
  * Provides methods related to the runtime environment.
  */
-public class OS {
+public enum OS {
+  ;
 
   private static final boolean osIsMacOsX;
   private static final boolean osIsWindows;

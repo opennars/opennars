@@ -10,14 +10,10 @@ import java.util.Map;
  * @author Joachim Baumann
  * @author Peter Fichtner
  */
-public final class WrapperMapper {
+public final enum WrapperMapper {
+    ;
 
     private static final Map<String, Object> MAPPING = Collections.unmodifiableMap(createMapping());
-
-    /** All methods are static */
-    private WrapperMapper() {
-        throw new IllegalStateException();
-    }
 
     private static Map<String, Object> createMapping() {
         Map<String, Object> map = new HashMap<>();

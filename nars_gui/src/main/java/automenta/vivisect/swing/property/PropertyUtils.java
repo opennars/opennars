@@ -17,7 +17,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PropertyUtils {
+public enum PropertyUtils {
+	;
 
 	private static SerializableProperty createProperty(Object obj, Field f,
 			boolean forEdit) {

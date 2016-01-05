@@ -16,7 +16,8 @@ import java.io.InputStream;
  * Utility class for video components
  */
 @SuppressWarnings("HardcodedFileSeparator")
-public class Video {
+public enum Video {
+    ;
     public static Font monofont;
     public static final Color transparent = new Color(0,0,0,10);
     public static Font FontAwesome;

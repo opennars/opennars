@@ -25,10 +25,8 @@ package objenome.util;
  * This class provides static utility methods for working with different number
  * types.
  */
-public class NumericUtils {
-
-    private NumericUtils() {
-    }
+public enum NumericUtils {
+    ;
 
     /**
      * Converts the given object to a <code>Double</code>

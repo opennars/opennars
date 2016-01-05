@@ -13,7 +13,8 @@ import java.util.*;
  * @author Jon Skeet
  * (http://groups.google.com/group/comp.lang.java.programmer/browse_thread/thread/921ab91865c8cc2e/9e141d3d62e7cb3f)
  */
-public class FindConstructor {
+public enum FindConstructor {
+    ;
 
     /**
      * Finds the most specific applicable constructor

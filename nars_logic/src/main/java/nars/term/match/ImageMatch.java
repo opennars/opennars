@@ -9,7 +9,8 @@ import nars.term.compound.Compound;
  * at the index location of the original image
  * used to make products from image subterms
  */
-public class ImageMatch /*extends ArrayEllipsisMatch<Term>*/ {
+public enum ImageMatch /*extends ArrayEllipsisMatch<Term>*/ {
+    ;
 
 //    private final Term to;
 //    private final Compound origin;

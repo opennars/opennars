@@ -27,12 +27,10 @@ import java.util.Map;
  * Michal Sevcenko - sevcenko@vc.cvut.cz for development of the formatting
  * language.
  */
-public class LanguageFormatter {
+public enum LanguageFormatter {
+    ;
 
     private static HashMap keywordMap;
-
-    private LanguageFormatter() {
-    }  // This class should never have any instances.
 
     /**
      * ***************************************************************

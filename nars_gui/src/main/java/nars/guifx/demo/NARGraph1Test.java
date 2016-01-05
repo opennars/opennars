@@ -12,7 +12,8 @@ import nars.nar.Default;
 /**
  * Created by me on 8/15/15.
  */
-public class NARGraph1Test {
+public enum NARGraph1Test {
+    ;
 
     public static SpaceGrapher newGraph(Default n) {
 

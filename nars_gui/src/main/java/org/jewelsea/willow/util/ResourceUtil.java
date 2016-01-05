@@ -39,7 +39,8 @@ import java.io.InputStream;
  *
  * Example resources are internationalized text, images, css files, etc.
  */
-public class ResourceUtil {
+public enum ResourceUtil {
+    ;
 //    static ResourceBundle resources;
 //    static {
 //        try {

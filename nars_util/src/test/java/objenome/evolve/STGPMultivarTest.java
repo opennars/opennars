@@ -11,7 +11,8 @@ import objenome.solver.evolve.*;
 import java.util.List;
 
 @Ignore
-public class STGPMultivarTest {
+public enum STGPMultivarTest {
+    ;
 
     static int individuals = 4096;
     static int generations = 202400;

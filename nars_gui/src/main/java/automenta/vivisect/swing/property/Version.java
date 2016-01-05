@@ -9,7 +9,8 @@ import java.util.Date;
  * 
  * @author JReleaseInfo AntTask
  */
-public class Version {
+public enum Version {
+   ;
 
 
    /** buildDate (set during build process to 1352541368640L). */

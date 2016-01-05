@@ -8,11 +8,8 @@ import java.lang.reflect.Method;
  * 
  * @author Peter Fichtner
  */
-public final class BeanCheck {
-
-    private BeanCheck() {
-        throw new IllegalStateException();
-    }
+public final enum BeanCheck {
+    ;
 
     /**
      * Check the passed class for its getter/setter correctness. If the class is invalid a

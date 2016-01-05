@@ -12,7 +12,8 @@ import java.util.List;
  *
  * @author thorsten
  */
-public class Generator {
+public enum Generator {
+    ;
 
     public static DiffableFunctionGenerator generateWavelets(
             int numFeatures

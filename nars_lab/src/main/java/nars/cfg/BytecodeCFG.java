@@ -9,7 +9,9 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import java.io.IOException;
 import java.util.List;
 
-public class BytecodeCFG {
+public enum BytecodeCFG {
+    ;
+
     public static void main(String[] arg) throws IOException, AnalyzerException {
 
         /*

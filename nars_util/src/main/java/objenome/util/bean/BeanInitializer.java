@@ -6,7 +6,8 @@ import objenome.util.bean.anno.InitializerMethod;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-public class BeanInitializer {
+public enum BeanInitializer {
+    ;
 
     public static <T> T initialize(Class<?> iface, T bean) {
         Initializer anno = iface.getAnnotation(Initializer.class);

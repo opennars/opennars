@@ -25,8 +25,9 @@ import java.nio.ByteBuffer;
  * @author Philip Diffenderfer
  * 
  */
-public final class Tries
+public final enum Tries
 {
+   ;
 
    /**
     * Creates a Trie where the keys are case-sensitive Strings.

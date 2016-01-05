@@ -12,7 +12,8 @@ import nars.term.variable.Variable;
 import java.util.Set;
 
 
-public class TermLinkBuilder {
+public enum TermLinkBuilder {
+    ;
 
 //    public final transient Termed concept;
 //

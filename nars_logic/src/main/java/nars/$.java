@@ -38,7 +38,8 @@ import static nars.Op.*;
        (which can be constructed in a static context)
     --??
  */
-public abstract class $  {
+public abstract enum $  {
+    ;
 
     public static final TermBuilder terms = new TermBuilder() {
 

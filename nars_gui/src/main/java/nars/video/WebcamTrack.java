@@ -18,7 +18,8 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 
-public class WebcamTrack {
+public enum WebcamTrack {
+    ;
 
     public static void main(String[] args) {
 

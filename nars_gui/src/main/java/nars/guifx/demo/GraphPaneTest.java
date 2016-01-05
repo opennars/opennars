@@ -31,8 +31,8 @@ import static nars.$.$;
 /**
  * Created by me on 8/15/15.
  */
-public class GraphPaneTest {
-
+public enum GraphPaneTest {
+    ;
 
 
     public static SpaceGrapher newGrapher(NAR nar) {

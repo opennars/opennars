@@ -9,8 +9,10 @@ import java.util.ArrayList;
      * code from https://web.archive.org/web/20120109162743/http://users.visualserver.org/xhudik/art
      * 
      */
-public class Common   
+public enum Common
 {
+    ;
+
     /**
              * 
              * returns -1 if it was not found

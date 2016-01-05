@@ -6,8 +6,9 @@ import java.util.Scanner;
 import java.util.Set;
 
 
-public class TestAutoComplete
+public enum TestAutoComplete
 {
+   ;
 
    public static void main(String[] args)
    {

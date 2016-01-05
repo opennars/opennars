@@ -17,7 +17,8 @@ import java.util.List;
 
 
 @Deprecated
-public class ListProperties_REMOVE {
+public enum ListProperties_REMOVE {
+	;
 
 	static class CustomTableModel extends AbstractTableModel {
 

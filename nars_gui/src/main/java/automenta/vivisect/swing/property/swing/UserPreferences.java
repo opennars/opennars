@@ -37,7 +37,8 @@ import java.util.prefs.Preferences;
  * UserPreferences. <BR>
  * 
  */
-public class UserPreferences {
+public enum UserPreferences {
+  ;
 
   /**
    * Gets the default file chooser. Its current directory will be tracked and

@@ -43,7 +43,8 @@ import java.util.Set;
 /**
  * Generate JavaFX layouts based on POJO.
  */
-public class POJONode {
+public enum POJONode {
+    ;
     private static final String GETTER_PREFIX = "get";
 
     /**

@@ -13,7 +13,8 @@ import java.util.Locale;
 /**
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms
  */
-public abstract class Texts {
+public abstract enum Texts {
+    ;
 
 
     //TODO find more appropriate symbol mapping

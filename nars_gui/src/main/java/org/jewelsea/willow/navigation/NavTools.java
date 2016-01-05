@@ -37,7 +37,8 @@ import org.jewelsea.willow.util.ResourceUtil;
 
 import static org.jewelsea.willow.util.ResourceUtil.getString;
 
-public class NavTools {
+public enum NavTools {
+    ;
     static final int buttonHeight = 20;
 
     public static Pane createNavPane(WebBrowser chrome) {

@@ -7,7 +7,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class InjectionUtils {
+public enum InjectionUtils {
+    ;
 
     /**
      * The character used to separate the prefix from the value name when you

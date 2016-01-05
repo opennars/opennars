@@ -20,9 +20,10 @@ import java.util.regex.Pattern;
  *
  * @author me
  */
-public class NarseseTemplatePanel {
+public enum NarseseTemplatePanel {
+    ;
 
-    
+
     @SuppressWarnings("AbstractClassWithoutAbstractMethods")
     abstract static class TemplateElement {        }
     static class Budget extends TemplateElement {        }

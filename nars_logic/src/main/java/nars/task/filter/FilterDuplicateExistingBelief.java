@@ -8,7 +8,8 @@ import nars.task.Task;
 /**
  * Prevent a duplicate belief from entering the system again
  */
-public class FilterDuplicateExistingBelief { //implements DerivationFilter {
+public enum FilterDuplicateExistingBelief {
+    ; //implements DerivationFilter {
 
 //    public final static String DUPLICATE = "DuplicateExistingBelief";
 //

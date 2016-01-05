@@ -25,10 +25,8 @@ package objenome.util;
  * This class provides static utility methods for working with booleans and
  * boolean arrays.
  */
-public final class BooleanUtils {
-
-    private BooleanUtils() {
-    }
+public final enum BooleanUtils {
+    ;
 
     /**
      * Translates a <code>String</code> of zero ('0') and one ('1') characters

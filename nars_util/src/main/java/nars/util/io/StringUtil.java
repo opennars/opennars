@@ -3,7 +3,9 @@ package nars.util.io;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class StringUtil {
+public enum StringUtil {
+    ;
+
     public static String[] splitInclusive(CharSequence input, char[] splitChars) {
         ArrayList<String> splited = new ArrayList<>();
         String readthusfar = "";

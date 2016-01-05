@@ -35,7 +35,8 @@ import java.util.regex.Pattern;
 
 import static org.testng.Assert.assertEquals;
 
-public class AsmTestUtils {
+public enum AsmTestUtils {
+    ;
 
     private static final Joiner NEWLINE = Joiner.on('\n');
     private static final Pattern PATTERN = Pattern.compile("\n");

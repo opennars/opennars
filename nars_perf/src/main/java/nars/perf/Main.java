@@ -12,7 +12,8 @@ import org.openjdk.jmh.runner.options.TimeValue;
 /**
  * Created by me on 12/11/15.
  */
-public class Main {
+public enum Main {
+    ;
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()

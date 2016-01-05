@@ -6,7 +6,8 @@ import java.io.IOException;
 /**
  * Created by me on 5/20/15.
  */
-public class RunAgent {
+public enum RunAgent {
+    ;
 
 
     @SuppressWarnings("HardcodedFileSeparator")

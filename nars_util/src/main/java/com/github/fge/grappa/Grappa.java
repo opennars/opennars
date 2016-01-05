@@ -28,12 +28,9 @@ import java.util.Objects;
 /**
  * Main class providing the high-level entry point into the parboiled library.
  */
-public final class Grappa
+public final enum Grappa
 {
-    private Grappa()
-    {
-        throw new Error("nice try!");
-    }
+    ;
 
     /**
      * <p>Creates a parser object whose rule creation methods can then be used

@@ -6,7 +6,9 @@ import javafx.scene.control.TextField;
 /**
  * Helper to provide features not bundled with JavaFX.
  */
-public class JavaFXHelper {
+public enum JavaFXHelper {
+    ;
+
     /**
      * Require the text field to contain numeric digits only.
      *

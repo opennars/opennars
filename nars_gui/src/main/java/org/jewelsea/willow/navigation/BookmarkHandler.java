@@ -27,7 +27,8 @@ import org.jewelsea.willow.browser.WebBrowser;
 
 
 /** Creates a named bookmarked url to navigate to. */
-public class BookmarkHandler {
+public enum BookmarkHandler {
+    ;
 
     /**
      * @param chrome        the browser chrome the bookmark is to control.
