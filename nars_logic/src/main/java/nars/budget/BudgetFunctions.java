@@ -433,10 +433,10 @@ public final class BudgetFunctions extends UtilityFunctions {
     static Budget budgetInference(Budget target, final float qual, final float complexityFactor, final Premise nal) {
 
         final TaskLink taskLink =
-            nal instanceof ConceptProcess ? ((ConceptProcess)nal).getTaskLink() : null;
+                nal instanceof ConceptProcess ? ((ConceptProcess)nal).getTaskLink() : null;
 
         final Budget t =
-            (taskLink !=null) ? taskLink :  nal.getTask().getBudget();
+                (taskLink !=null) ? taskLink :  nal.getTask().getBudget();
 
 
         float priority = t.getPriority();
@@ -448,8 +448,15 @@ public final class BudgetFunctions extends UtilityFunctions {
             priority = or(priority, termLink.getPriority());
             durability = and(durability, termLink.getDurability()); //originaly was 'AND'
             final float targetActivation = nal.conceptPriority(termLink.getTerm(), 0);
+            float sourceActivation = 1.0f;
+            if(taskLink!=null) {
+                sourceActivation = nal.conceptPriority(taskLink.getTerm(), 0);
+            }
             if (targetActivation >= 0) {
-                termLink.orPriority(or(quality, targetActivation));
+                //https://groups.google.com/forum/#!topic/open-nars/KnUA43B6iYs
+                termLink.orPriority(or(quality, and(sourceActivation,targetActivation)));
+                //was
+                //termLink.orPriority(or(quality, targetActivation));
                 termLink.orDurability(quality);
             }
         }
@@ -476,6 +483,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             return new BudgetValue(priority, durability, quality);
          */
     }
+
 
     @Deprecated static Budget solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
         throw new RuntimeException("Moved to TemporalRules.java");

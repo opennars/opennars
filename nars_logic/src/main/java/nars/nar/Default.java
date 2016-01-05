@@ -285,8 +285,8 @@ public class Default extends NAR {
         m.conceptQuestionsMax.set(5);
 
         m.conceptForgetDurations.setValue(2.0); //better for declarative reasoning tasks: 2
-        m.taskLinkForgetDurations.setValue(2.0); //better for declarative reasoning tasks: 4
-        m.termLinkForgetDurations.setValue(3.0); //better for declarative reasoning tasks: 10
+        m.taskLinkForgetDurations.setValue(4.0); //better for declarative reasoning tasks: 4
+        m.termLinkForgetDurations.setValue(10.0); //better for declarative reasoning tasks: 10
 
 
         m.derivationThreshold.set(0);
@@ -300,7 +300,7 @@ public class Default extends NAR {
 
         m.executionExpectationThreshold.set(0.51);
 
-        m.shortTermMemoryHistory.set(1);
+        m.shortTermMemoryHistory.set(5);
     }
 
     public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {

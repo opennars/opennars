@@ -269,8 +269,19 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
     /** linearly interpolates the change affected to determine dur, qua */
     final Budget mergePlus(final float addPriority, final float otherDurability, final float otherQuality, float factor) {
+        //(tgt, src, srcScale)
 
-        final float dp = addPriority * factor;
+        float nextPriority = addPriority * factor;
+        float currentPriority = this.getPriorityIfNaNThenZero();
+        float sumPriority = currentPriority + nextPriority;
+        if (sumPriority > 1) sumPriority = 1f;
+        boolean currentWins = currentPriority > nextPriority;
+        float nd = (currentWins ? this.getDurability() : otherDurability);
+        float nq = (currentWins ? this.getQuality() : otherQuality);
+        //this.set( sumPriority, nd, nq );
+        return budget(sumPriority,nd,nq);
+
+        /*final float dp = addPriority * factor;
 
         final float currentPriority = getPriorityIfNaNThenZero();
 
@@ -278,10 +289,10 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
         final float currentNextPrioritySum = (currentPriority + nextPriority);
 
-        /* current proportion */ final float cp = (Util.equal(currentNextPrioritySum, 0, BUDGET_EPSILON)) ?
-                0.5f : /* both are zero so they have equal infleunce */
+        final float cp = (Util.equal(currentNextPrioritySum, 0, BUDGET_EPSILON)) ? // current proportion
+                0.5f : //both are zero so they have equal infleunce
                 (currentPriority / currentNextPrioritySum);
-        /* next proportion */ final float np = 1f - cp;
+        final float np = 1f - cp;  // next proportion
 
 
         float D = getDurability();
@@ -290,7 +301,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
                 nextPriority,
                 Math.max(D, (cp * D) + (np * otherDurability)),
                 Math.max(Q, (cp * Q) + (np * otherQuality))
-        );
+        );*/
     }
 
     /**
