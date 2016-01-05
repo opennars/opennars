@@ -57,21 +57,21 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> {
     /**
      * any scalar decomposition function of a budget value
      * can be used
-     *
-     * TODO parameter score function
+     *  //MODE 0: priority only
+     return b.getPriority();
+
+     //MODE 1:
+     //return b.getBudget().summary();
+
+     //MODE 2:
+     //this ensures that priority is the most significant ordering factor, even if zero
+     /*return (1+b.getPriority())*
+     (b.getDurability()*b.getQuality());
      */
     @Override public float score(Budgeted b) {
 
-        //MODE 0: priority only
         return b.getPriority();
 
-        //MODE 1:
-        //return b.getBudget().summary();
-
-        //MODE 2:
-        //this ensures that priority is the most significant ordering factor, even if zero
-        /*return (1+b.getPriority())*
-                (b.getDurability()*b.getQuality());*/
     }
 
     @Override
@@ -125,8 +125,6 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> {
             int mid = (upperBound + lowerBound) /2; // >>> 1;
             float mp = score(get(mid));
 
-//            System.err.println(upperBound + "(" + score(get(upperBound)) +
-//                    " " + mid + "(" + mp + " " + lowerBound + "(" + score(get(lowerBound))  );
 
             if (mp < score) //midpoint is new lowerBound, so we need to go to the upper half
                 lowerBound = mid - 1;
@@ -238,13 +236,6 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> {
 
         } while ( r <= maxDist );
 
-//        //try exhaustive removal as a final option
-//        if (list.remove(o)) {
-//            return true;
-//        }
-
-        //String err = this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s;
-        //throw new RuntimeException(err);
         return -1;
     }
 
@@ -334,52 +325,3 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> {
     }
     
 }
-/*
- public class PrioritySortedItemList<E extends Item> extends SortedList<E> {
-
- public PrioritySortedItemList() {
- super(null);
- }
-
- @Override
- public boolean add(final E o) {
-        
- final int y = o.budget.getPriorityShort();
-        
- if (size() > 0)  {
-            
- //binary search
- int low = 0;
- int high = size()-1;
-
- while (low <= high) {
- int mid = (low + high) >>> 1;
- E midVal = get(mid);
-                
- final int x = midVal.budget.getPriorityShort();
- int cmp = (x < y) ? -1 : ((x == y) ? 0 : 1);                   
-
- if (cmp < 0)
- low = mid + 1;
- else if (cmp > 0)
- high = mid - 1;
- else {
- // key found, insert after it
- super.add(mid, o);
- return true;
- }
- }
- super.add(low, o);
- return true;
- }
- else {
- super.add(0,o);
- return true;
- }
- }
-
-    
-    
-    
- }
- */
