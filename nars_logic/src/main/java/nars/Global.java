@@ -130,7 +130,7 @@ public class Global {
      /** Default priority of input judgment */
      public static final float DEFAULT_GOAL_PRIORITY = 0.75f;
      /** Default durability of input judgment */
-     public static final float DEFAULT_GOAL_DURABILITY = 0.9f;
+     public static final float DEFAULT_GOAL_DURABILITY = 0.8f;
      /** Default priority of input question */
      public static final float DEFAULT_QUEST_PRIORITY = 0.5f;
      /** Default durability of input question */

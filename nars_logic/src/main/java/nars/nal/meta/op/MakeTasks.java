@@ -101,7 +101,7 @@ public final class MakeTasks extends PreCondition {
             throw new RuntimeException("invalid punctuation");*/
 
         FluentTask deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
-        if (deriving != null) {
+        if (deriving != null && budget.getPriority() > Global.BUDGET_EPSILON && budget.getDurability() > Global.BUDGET_EPSILON) {
 
             if(punct==Symbols.JUDGMENT && derivedTerm.hasVarQuery()) {
                 return false;
@@ -118,14 +118,14 @@ public final class MakeTasks extends PreCondition {
             }
 
             Task derived = premise.validate(deriving
-                    .punctuation(punct)
-                    .truth(truth)
-                    .budget(budget)
-                    .time(now, occ)
-                    .parent(task, belief /* null if single */)
-            );
+                                .punctuation(punct)
+                                .truth(truth)
+                                .budget(budget)
+                                .time(now, occ)
+                                .parent(task, belief /* null if single */)
+                );
 
-            if (derived != null && budget.getPriority() >= Global.BUDGET_EPSILON && budget.getDurability() >= Global.BUDGET_EPSILON) {
+            if (derived != null) {
                 //potential anticipation
                 premise.memory().the(Anticipate.class).anticipate(premise, derived);
                 if (Global.DEBUG && Global.DEBUG_LOG_DERIVING_RULE) { //just not able to measure it, closed world assumption gone wild.
