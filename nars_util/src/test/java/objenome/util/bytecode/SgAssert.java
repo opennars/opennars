@@ -25,7 +25,7 @@ import java.io.*;
 /**
  * Some assertion helper methods.
  */
-public final enum SgAssert {
+public   enum SgAssert {
     ;
 
     private static void writeToFile(File file, String src) {

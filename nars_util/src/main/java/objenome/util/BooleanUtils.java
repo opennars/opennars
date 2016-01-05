@@ -25,7 +25,7 @@ package objenome.util;
  * This class provides static utility methods for working with booleans and
  * boolean arrays.
  */
-public final enum BooleanUtils {
+public   enum BooleanUtils {
     ;
 
     /**

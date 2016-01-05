@@ -1,13 +1,9 @@
 package objenome.util.bean;
 
-import objenome.util.bean.anno.GenericBeanMethod;
-import objenome.util.bean.anno.PropertyChangeEventMethod;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Collection;
 
-public final enum Annotations {
+public   enum Annotations {
     ;
 
     public static boolean hasMethodWithAnnotation(Class<?> iface, Class<? extends Annotation> anno) {

@@ -26,7 +26,7 @@ import java.util.StringTokenizer;
 /**
  * Some helper for the package.
  */
-public final enum SgUtils {
+public   enum SgUtils {
     ;
 
     private static final String CLASS_ABSTRACT_AND_FINAL_ERROR = "Classes cannot be declared "

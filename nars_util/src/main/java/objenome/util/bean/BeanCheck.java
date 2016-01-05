@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
  * 
  * @author Peter Fichtner
  */
-public final enum BeanCheck {
+public enum BeanCheck {
     ;
 
     /**

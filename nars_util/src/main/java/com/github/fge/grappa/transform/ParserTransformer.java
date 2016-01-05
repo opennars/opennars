@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 import static com.github.fge.grappa.misc.AsmUtils.*;
 
-public final enum ParserTransformer
+public enum ParserTransformer
 {
     ;
 

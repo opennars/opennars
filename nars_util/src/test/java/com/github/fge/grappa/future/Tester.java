@@ -9,7 +9,7 @@ import java.lang.invoke.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public final enum Tester
+public   enum Tester
 {
     ;
 

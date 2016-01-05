@@ -31,7 +31,7 @@ import java.util.function.Function;
  *
  * @since 2.0
  */
-public final enum BenchmarkSolutions {
+public   enum BenchmarkSolutions {
     ;
 
     /**

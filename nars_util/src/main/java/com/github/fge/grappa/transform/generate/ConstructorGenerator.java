@@ -33,7 +33,7 @@ import static org.objectweb.asm.Opcodes.*;
  * Adds one constructor for each of the ParserClassNode.constructors,
  * which simply delegates to the respective super constructor.
  */
-public final enum ConstructorGenerator
+public   enum ConstructorGenerator
 {
     ;
 

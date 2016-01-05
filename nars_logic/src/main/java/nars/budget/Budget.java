@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import static java.lang.Math.pow;
 import static nars.nal.UtilityFunctions.*;
+import static nars.util.data.Util.equal;
 import static nars.util.data.Util.mean;
 
 /**
@@ -24,7 +25,7 @@ public interface Budget extends Prioritized, Budgeted {
         float nextPri = currentPriority + dp;
         if (nextPri > 1) nextPri = 1f;
 
-        float currentNextPrioritySum = (currentPriority + nextPri);
+        float currentNextPrioritySum = currentPriority + nextPri;
 
         /* current proportion */
         final float cp;
@@ -34,8 +35,8 @@ public interface Budget extends Prioritized, Budgeted {
         float np = 1.0f - cp;
 
 
-        float nextDur = (cp * tgt.getDurability()) + (np * src.getDurability());
-        float nextQua = (cp * tgt.getQuality()) + (np * src.getQuality());
+        float nextDur = cp * tgt.getDurability() + np * src.getDurability();
+        float nextQua = cp * tgt.getQuality() + np * src.getQuality();
 
         if (Float.isNaN(nextDur))
             throw new RuntimeException("NaN dur: " + src + " " + tgt.getDurability());
@@ -46,7 +47,7 @@ public interface Budget extends Prioritized, Budgeted {
 
     static boolean aveGeoNotLessThan(float min, float a, float b, float c) {
         float minCubed = min*min*min; //cube both sides
-        return (a*b*c) >= minCubed;
+        return a*b*c >= minCubed;
     }
 
     //may be more efficient than the for-loop version above, for 3 params

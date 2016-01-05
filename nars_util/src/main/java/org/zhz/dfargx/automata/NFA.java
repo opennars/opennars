@@ -6,10 +6,12 @@ import org.zhz.dfargx.node.*;
 import java.util.List;
 import java.util.Stack;
 
+import static org.zhz.dfargx.automata.NFAStateFactory.create;
+
 /**
  * Created on 2015/5/10.
  */
-public class NFA extends NFAStateFactory { // only able to accept wfs accessing order, this class construct a NFA with iterate the syntax tree recursively from the root node.
+public class NFA     { // only able to accept wfs accessing order, this class construct a NFA with iterate the syntax tree recursively from the root node.
 
     private final Stack<NFAState> stateStack;
 

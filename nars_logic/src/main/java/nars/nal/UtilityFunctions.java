@@ -21,7 +21,6 @@
 package nars.nal;
 
 import nars.Global;
-import nars.util.data.Util;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
@@ -29,7 +28,7 @@ import static java.lang.Math.sqrt;
 /**
  * Common (static) functions on real numbers, mostly in [0,1].
  */
-public class UtilityFunctions extends Util {
+public class UtilityFunctions   {
 
     protected UtilityFunctions() {
     }
