@@ -125,7 +125,7 @@ public final class MakeTasks extends PreCondition {
                     .parent(task, belief /* null if single */)
             );
 
-            if (derived != null) {
+            if (derived != null && budget.getPriority() >= Global.BUDGET_EPSILON && budget.getDurability() >= Global.BUDGET_EPSILON) {
                 //potential anticipation
                 premise.memory().the(Anticipate.class).anticipate(premise, derived);
                 if (Global.DEBUG && Global.DEBUG_LOG_DERIVING_RULE) { //just not able to measure it, closed world assumption gone wild.
