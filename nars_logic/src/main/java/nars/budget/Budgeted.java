@@ -3,7 +3,7 @@ package nars.budget;
 /**
  * indicates an implementation has, or is associated with a specific BudgetValue
  */
-public interface Budgeted  {
+public interface Budgeted extends Prioritized {
 
     Budget getBudget();
 

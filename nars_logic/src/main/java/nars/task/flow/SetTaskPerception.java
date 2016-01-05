@@ -1,7 +1,6 @@
 package nars.task.flow;
 
 import nars.Memory;
-import nars.budget.Budget;
 import nars.budget.BudgetMerge;
 import nars.task.Task;
 import nars.util.data.map.UnifriedMap;
@@ -21,9 +20,6 @@ public final class SetTaskPerception extends TaskPerception {
     final UnifriedMap<Task,Task> table = new UnifriedMap<>();
     final BudgetMerge merge;
 
-    public SetTaskPerception(Memory m, Consumer<Task> receiver) {
-        this(m, receiver, Budget.plus);
-    }
 
     public SetTaskPerception(Memory m, Consumer<Task> receiver, BudgetMerge merge) {
         super(m, receiver);

@@ -19,7 +19,7 @@ public class NAL5Test extends AbstractNALTester {
         return AbstractNALTester.nars(5, true, true);
     }
 
-    final int cycles = 55;
+    final int cycles = 255;
 
     @Test public void revision(){
         TestNAR tester = test();
@@ -335,8 +335,8 @@ public class NAL5Test extends AbstractNALTester {
         TestNAR tester = test();
         tester.believe("<(&&,<ro --> [f]>,<ro --> [w]>) ==> <ro --> [l]>>",0.9f,0.9f);
         tester.believe("<(&&,<ro --> [f]>,<ro --> b>) ==> <ro --> [l]>>");
-        tester.mustBelieve(cycles,"<<ro --> b> ==> <ro --> [w]>>",1.00f,0.42f);
-        tester.mustBelieve(cycles,"<<ro --> [w]> ==> <ro --> b>>",0.90f,0.45f);
+        tester.mustBelieve(cycles*2,"<<ro --> b> ==> <ro --> [w]>>",1.00f,0.42f);
+        tester.mustBelieve(cycles*2,"<<ro --> [w]> ==> <ro --> b>>",0.90f,0.45f);
     }
     @Test
     public void conditional_abduction3_semigeneric3(){

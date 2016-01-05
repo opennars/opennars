@@ -6,7 +6,6 @@ import nars.NAR;
 import nars.Symbols;
 import nars.bag.Bag;
 import nars.bag.NullBag;
-import nars.budget.Budget;
 import nars.budget.BudgetMerge;
 import nars.concept.util.ArrayListBeliefTable;
 import nars.concept.util.ArrayListTaskTable;
@@ -58,7 +57,7 @@ public class DefaultConcept extends AtomConcept {
     };
 
     /** how incoming budget is merged into its existing duplicate quest/question */
-    static final BudgetMerge duplicateQuestionMerge = Budget.plus;
+    static final BudgetMerge duplicateQuestionMerge = BudgetMerge.plusDQDominated;
     private final Termed[] termLinkTemplates;
 
     public DefaultConcept(Term term, Memory p) {

@@ -8,6 +8,7 @@ import nars.bag.Bag;
 import nars.bag.BagBudget;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
+import nars.budget.BudgetMerge;
 import nars.concept.Concept;
 import nars.data.Range;
 import nars.nal.Deriver;
@@ -89,7 +90,7 @@ public class Default extends AbstractNAR {
     public TaskPerception initInput() {
 
         return new SetTaskPerception(
-                memory, this::process, Budget.plus);
+                memory, this::process, BudgetMerge.plusDQDominated);
 
         /* {
             @Override
@@ -145,7 +146,7 @@ public class Default extends AbstractNAR {
                         //)
                         ;
 
-                b.set(p, 1f, 1f);
+                b.budget(p, 1f, 1f);
 
                 return put(c, b);
             }
@@ -274,7 +275,7 @@ public class Default extends AbstractNAR {
 
         private void onCycle(Memory memory) {
             forgetConcepts();
-            fireConcepts(conceptsFiredPerCycle.intValue(), this::process);
+            fireConcepts(conceptsFiredPerCycle.intValue());
             updateActivated();
         }
 
@@ -311,7 +312,7 @@ public class Default extends AbstractNAR {
         }
 
 
-        protected final void fireConcepts(int conceptsToFire, Consumer<ConceptProcess> processor) {
+        protected final void fireConcepts(int conceptsToFire) {
 
             Bag<Concept> b = this.active;
 
@@ -329,10 +330,6 @@ public class Default extends AbstractNAR {
 
         }
 
-
-        public final void activate(Concept c) {
-            //activated.add(c);
-        }
         public final void activate(Concept c, Budget b, float scale) {
             active.put(c, b, scale);
         }
@@ -353,8 +350,8 @@ public class Default extends AbstractNAR {
             //activate(c);
         }
 
-        private class AlannForget implements Predicate<BagBudget>, Consumer<Memory> {
-            private final NAR nar;
+        final static class AlannForget implements Predicate<BagBudget>, Consumer<Memory> {
+
             private final MutableFloat forgetTime;
             private final MutableFloat perfection;
 
@@ -364,7 +361,6 @@ public class Default extends AbstractNAR {
             private transient long now = -1;
 
             public AlannForget(NAR nar, MutableFloat forgetTime, MutableFloat perfection) {
-                this.nar = nar;
                 this.forgetTime = forgetTime;
                 this.perfection = perfection;
                 nar.onEachCycle(this);
@@ -411,56 +407,6 @@ public class Default extends AbstractNAR {
 
     }
 
-//    @Deprecated
-//    public static class CommandLineNARBuilder extends Default {
-//
-//        List<String> filesToLoad = new ArrayList();
-//
-//        public CommandLineNARBuilder(String[] args) {
-//            super();
-//
-//            for (int i = 0; i < args.length; i++) {
-//                String arg = args[i];
-//                if ("--silence".equals(arg)) {
-//                    arg = args[++i];
-//                    int sl = Integer.parseInt(arg);
-//                    //outputVolume.set(100 - sl);
-//                } else if ("--noise".equals(arg)) {
-//                    arg = args[++i];
-//                    int sl = Integer.parseInt(arg);
-//                    //outputVolume.set(sl);
-//                } else {
-//                    filesToLoad.add(arg);
-//                }
-//            }
-//
-//            for (String x : filesToLoad) {
-//                taskNext(() -> {
-//                    try {
-//                        input(new File(x));
-//                    } catch (FileNotFoundException fex) {
-//                        System.err.println(getClass() + ": " + fex.toString());
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                });
-//
-//                //n.run(1);
-//            }
-//        }
-//
-//        /**
-//         * Decode the silence level
-//         *
-//         * @param param Given argument
-//         * @return Whether the argument is not the silence level
-//         */
-//        public static boolean isReallyFile(String param) {
-//            return !"--silence".equals(param);
-//        }
-//    }
-
-
 
     /**
      * groups each derivation's tasks as a group before inputting into
@@ -496,32 +442,6 @@ public class Default extends AbstractNAR {
 
         }
 
-
-//        @Override
-//        protected void fireConcept(Concept c) {
-//
-//            Collection<Task> buffer = derivedTasksBuffer;
-//            Consumer<Task> narInput = nar::input;
-//            Deriver deriver = this.deriver;
-//
-//            BagBudget<Termed> term = c.getTermLinks().peekNext();
-//            if (term!=null) {
-//                BagBudget<Task> task = c.getTaskLinks().peekNext();
-//                if (task!=null) {
-//                    deriver.run(
-//                            new ConceptTaskTermLinkProcess(nar, c , task, term),
-//                            matcher,
-//                            nar::input
-//                    );
-//                }
-//            }
-//
-
-
-//        fireConceptSquare(c, p -> {
-//
-//
-//            });
 
 
         @Override

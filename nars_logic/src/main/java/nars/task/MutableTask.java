@@ -66,6 +66,7 @@ public class MutableTask extends AbstractTask {
         super.budget(source);
         return this;
     }
+
     /**
      * uses default budget generation and multiplies it by gain factors
      */

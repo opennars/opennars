@@ -106,7 +106,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
      * set the merging function to 'plus'
      */
     public Bag<V> mergePlus() {
-        return setMergeFunction(Budget.plus);
+        return setMergeFunction(BudgetMerge.plusDQDominated);
     }
 
     /**

@@ -5,6 +5,7 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
+import nars.budget.BudgetMerge;
 import nars.guifx.NARfx;
 import nars.nar.Default;
 import nars.task.Task;
@@ -36,7 +37,7 @@ public class NARtop extends BorderPane {
 
         active = new SetTaskPerception(d.memory, f -> {
             update();
-        });
+        }, BudgetMerge.plusDQDominated);
         d.memory.eventTaskProcess.on(t -> {
             if (t.isInput()) {
                 runLater( () -> {

@@ -100,7 +100,9 @@ public class AtomConcept extends AbstractConcept  {
     @Override public final boolean link(Task t, float scale, float minScale, NAR nar) {
 
         //activate tasklink locally
-        getTaskLinks().put(t, t.getBudget(), scale);
+        Budget taskBudget = t.getBudget();
+
+        getTaskLinks().put(t, taskBudget, scale);
 
         Termed[] templates = getTermLinkTemplates();
         if (templates == null) return false;
@@ -114,14 +116,14 @@ public class AtomConcept extends AbstractConcept  {
 
         for (Termed linkTemplate : templates) {
 
-            Concept componentConcept = nar.conceptualize(linkTemplate, t.getBudget(), subScale);
+            Concept templateConcept = nar.conceptualize(linkTemplate, taskBudget, subScale);
 
-            if (componentConcept != null) {
+            if (templateConcept != null) {
 
                 /** activate the peer task tlink */
-                componentConcept.link(t, subScale, minScale, nar);
+                templateConcept.link(t, subScale, minScale, nar);
 
-                linkTemplate(componentConcept, t.getBudget(), subScale);
+                linkTemplate(templateConcept, taskBudget, subScale);
             }
         }
 

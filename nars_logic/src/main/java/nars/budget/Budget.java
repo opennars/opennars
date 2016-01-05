@@ -2,7 +2,6 @@ package nars.budget;
 
 import nars.Symbols;
 import nars.util.Texts;
-import nars.util.data.Util;
 
 import javax.annotation.Nullable;
 
@@ -13,59 +12,23 @@ import static nars.util.data.Util.mean;
 /**
  * Created by me on 12/11/15.
  */
-public interface Budget extends Prioritized, Budgeted {
+public interface Budget extends Budgeted {
 
-
-    BudgetMerge plus = (tgt, src, srcScale) -> {
-        float dp = src.getPriority() * srcScale;
-
-        float currentPriority = tgt.getPriorityIfNaNThenZero();
-
-        float nextPri = currentPriority + dp;
-        if (nextPri > 1) nextPri = 1f;
-
-        float currentNextPrioritySum = (currentPriority + nextPri);
-
-        /* current proportion */
-        final float cp;
-        cp = currentNextPrioritySum != 0 ? currentPriority / currentNextPrioritySum : 0.5f;
-
-        /* next proportion = 1 - cp */
-        float np = 1.0f - cp;
-
-
-        float nextDur = (cp * tgt.getDurability()) + (np * src.getDurability());
-        float nextQua = (cp * tgt.getQuality()) + (np * src.getQuality());
-
-        if (Float.isNaN(nextDur))
-            throw new RuntimeException("NaN dur: " + src + " " + tgt.getDurability());
-        if (Float.isNaN(nextQua)) throw new RuntimeException("NaN quality");
-
-        tgt.set( nextPri, nextDur, nextQua );
-    };
 
     static boolean aveGeoNotLessThan(float min, float a, float b, float c) {
         float minCubed = min*min*min; //cube both sides
         return (a*b*c) >= minCubed;
     }
 
-    //may be more efficient than the for-loop version above, for 3 params
     static float aveGeo(float a, float b, float c) {
-        //final float m = Global.BUDGET_EPSILON
-
-        float base = a*b*c;
-        //if ((a < m)||(b < m)||(c < m)) return 0; //early result avoiding pow()
-        return (float)pow(base, 1.0/3.0);
+        return (float)pow(a*b*c, 1.0/3.0);
     }
 
     /**
      * set all quantities to zero
      */
     default Budget zero() {
-        setPriority(0);
-        setDurability(0);
-        setQuality(0);
-        return this;
+        return budget(0,0,0);
     }
 
     default void delete() {
@@ -110,14 +73,6 @@ public interface Budget extends Prioritized, Budgeted {
 
     void setQuality(float q);
 
-    /** the max priority, durability, and quality of two tasks */
-    default Budget mergeMax(Budget b) {
-        return budget(
-                Util.max(getPriority(), b.getPriority()),
-                Util.max(getDurability(), b.getDurability()),
-                Util.max(getQuality(), b.getQuality())
-        );
-    }
 
 
     default boolean equalsByPrecision(Budget t, float epsilon) {
@@ -140,32 +95,7 @@ public interface Budget extends Prioritized, Budgeted {
         setPriority( or(getPriority(), v) );
     }
 
-//    /**
-//     * merges another budget into this one, averaging each component
-//     */
-//    default void mergeAverageLERP(Budget that) {
-//        if (this == that) return;
-//
-//        float currentPriority = getPriority();
-//
-//        float otherPriority = that.getPriority();
-//
-//        float prisum = (currentPriority + otherPriority);
-//
-//        /* current proportion */
-//        float cp = (Util.equal(prisum, 0, BUDGET_EPSILON)) ?
-//                0.5f : /* both are zero so they have equal infleunce */
-//                (currentPriority / prisum);
-//
-//        /* next proportion */
-//        float np = 1.0f - cp;
-//
-//        budget(
-//                cp * getPriority() + np * that.getPriority(),
-//                cp * getDurability() + np * that.getDurability(),
-//                cp * getQuality() + np * that.getQuality()
-//        );
-//    }
+
 
     /**
      * merges another budget into this one, averaging each component
@@ -245,8 +175,6 @@ public interface Budget extends Prioritized, Budgeted {
         setPriority(and(getPriority(), v));
     }
 
-
-
     /**
      * Whether the budget should get any processing at all
      * <p>
@@ -272,16 +200,11 @@ public interface Budget extends Prioritized, Budgeted {
 
 
     /** copies a budget into this; if source is null, it deletes the budget */
-    default Budget budget(@Nullable Budget source) {
+    default Budgeted budget(@Nullable Budget source) {
         if (source == null) {
             zero();
-        }
-        else {
-            budget(
-                    source.getPriority(),
-                    source.getDurability(),
-                    source.getQuality());
-
+        } else {
+            budget(source.getPriority(), source.getDurability(), source.getQuality());
             setLastForgetTime(source.getLastForgetTime());
         }
 
@@ -298,7 +221,7 @@ public interface Budget extends Prioritized, Budgeted {
         return this;
     }
 
-    default Budget budget(Budgeted source) {
+    default Budgeted budget(Budgeted source) {
         return budget(source.getBudget());
     }
 
@@ -376,14 +299,9 @@ public interface Budget extends Prioritized, Budgeted {
     }
 
 
-    default void set(float p, float d, float q) {
-        setPriority(p);
-        setDurability(d);
-        setQuality(q);
-    }
 
     default void set(Budget b) {
-        set(b.getPriority(), b.getDurability(), b.getQuality());
+        budget(b.getPriority(), b.getDurability(), b.getQuality());
     }
 
 }
