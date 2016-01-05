@@ -81,6 +81,8 @@ public abstract class Param extends Container implements Level {
     
     /** TaskLink decay rate in TaskLinkBag, in [1, 99]. originally: TASK_LINK_FORGETTING_CYCLE */
     @Deprecated public final MutableFloat linkForgetDurations = new MutableFloat();
+
+    @Deprecated public final MutableFloat conceptForgetDurations = new MutableFloat();
     
 
      /*

@@ -418,7 +418,7 @@ public class ArrayBag<V> extends Bag<V> {
         }
     }
 
-    @Override public void topWhile(Predicate<BagBudget<V>> action) {
+    @Override public void topWhile(Predicate<BagBudget> action) {
         List<BagBudget<V>> l = items.getList();
         int n = l.size();
         for (int i = 0; i < n; i++) {
@@ -428,8 +428,7 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
     @Override public void top(Consumer<BagBudget> action) {
-        List<BagBudget<V>> l = items.getList();
-        l.forEach(action);
+        items.getList().forEach(action);
     }
     @Override public void topN(int limit, Consumer<BagBudget> action) {
         List<BagBudget<V>> l = items.getList();

@@ -150,7 +150,7 @@ public abstract class FindSubst extends Versioning implements Subst {
     }
 
     /** setting finish=false allows matching in pieces before finishing */
-    public final void matchAll(Term x, Term y, boolean finish) {
+    public void matchAll(Term x, Term y, boolean finish) {
         if (match(x, y) && finish) {
             if (!termutes.isEmpty())
                 matchTermutes();

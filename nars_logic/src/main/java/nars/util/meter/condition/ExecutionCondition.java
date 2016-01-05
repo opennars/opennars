@@ -51,7 +51,7 @@ public class ExecutionCondition implements NARCondition {
     }
 
     @Override
-    public String toConditionString() {
+    public String toString() {
         return getClass().getSimpleName() + '[' + opTerm + ", time in " +
                 start + ".." + end + ", expect in " + minExpect + ".." + maxExpect +
                 //minExpect, maxExpect
@@ -63,8 +63,5 @@ public class ExecutionCondition implements NARCondition {
         return end;
     }
 
-    @Override
-    public void report() {
-        System.out.println(toConditionString());
-    }
+
 }

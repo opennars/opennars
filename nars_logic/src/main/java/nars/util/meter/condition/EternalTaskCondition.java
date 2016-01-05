@@ -133,7 +133,8 @@ public class EternalTaskCondition implements NARCondition, Predicate<Task>, Cons
     @Override
     public String toString() {
         return term.toString() + punc + " %" +
-                rangeStringN2(freqMin, freqMax) + ";" + rangeStringN2(confMin, confMax) + '%';
+                rangeStringN2(freqMin, freqMax) + ";" + rangeStringN2(confMin, confMax) + '%' + " " +
+                " creation: (" + creationStart + ',' + creationEnd + ')';
     }
 
     //    public double getAcceptableDistanceThreshold() {
@@ -383,13 +384,6 @@ public class EternalTaskCondition implements NARCondition, Predicate<Task>, Cons
         return creationEnd;
     }
 
-    @Override
-    public void report() {
-        if (valid != null) {
-            valid.forEach(t -> System.out.println(t.getExplanation()
-            ));
-        }
-    }
 
     /** calculates the "cost" of an execution according to certain evaluated condtions
      *  this is the soonest time at which all output conditions were successful.
@@ -429,15 +423,8 @@ public class EternalTaskCondition implements NARCondition, Predicate<Task>, Cons
     }
 
     @Override
-    public String toConditionString() {
-        return  "  freq in(" + freqMin + ',' + freqMax +
-                "), conf in(" + confMin + ',' + confMax +
-                "), creation in(" + creationStart + ',' + creationEnd + ')';
-    }
-
-    @Override
     public void toString(PrintStream out) {
-        out.println(isTrue() ? " OK" : "ERR" + '\t' + toString() + ' ' + toConditionString());
+        out.println(isTrue() ? " OK" : "ERR" + '\t' + toString());
 
         BiConsumer<String,Task> printer = (label,s) -> {
             out.print('\t' + label + ' ');
@@ -454,7 +441,7 @@ public class EternalTaskCondition implements NARCondition, Predicate<Task>, Cons
 
     @Override
     public void toLogger(Logger logger) {
-        String msg = isTrue() ? " OK" : "ERR" + '\t' + toString() + ' ' + toConditionString();
+        String msg = isTrue() ? " OK" : "ERR" + '\t' + toString();
         if (isTrue())
             logger.info(msg);
         else

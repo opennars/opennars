@@ -45,6 +45,7 @@ public class PremiseMatch extends FindSubst {
 
     private TaskBeliefPair termPattern = new TaskBeliefPair();
     public boolean cyclic;
+    int termutesPerMatch, termutes;
 
     final Map<Operator, ImmediateTermTransform> transforms =
             Global.newHashMap();
@@ -98,8 +99,16 @@ public class PremiseMatch extends FindSubst {
     }
 
     @Override
+    public void matchAll(Term x, Term y, boolean finish) {
+        this.termutes = termutesPerMatch;
+        super.matchAll(x, y, finish);
+    }
+
+    @Override
     public boolean onMatch() {
-        return pattern.get().onMatch(this);
+        return (termutes-- > 0) ?
+            pattern.get().onMatch(this) :
+            false;
     }
 
 
@@ -130,6 +139,8 @@ public class PremiseMatch extends FindSubst {
         Compound taskTerm = p.getTask().term();
         Task pBelief = p.getBelief();
         Termed beliefTerm = pBelief != null ? pBelief : p.termLink.get(); //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
+
+        this.termutesPerMatch = p.getMaxMatches();
 
         termPattern.set( taskTerm.term(), beliefTerm.term() );
         term.set( termPattern );

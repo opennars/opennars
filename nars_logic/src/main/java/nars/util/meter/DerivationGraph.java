@@ -102,7 +102,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
     static final Map<String, String> parsedTerm = new HashMap(1024);
 
     public DerivationPattern add(ConceptProcess n, Task... derived) {
-        return add(n.concept, n.taskLink.get(),
+        return add(n.getConcept(), n.taskLink.get(),
                 n.termLink.get().term(),
                 n.getBelief(), n.time(), derived);
     }

@@ -17,19 +17,15 @@ public interface NARCondition extends Serializable {
 
     boolean isTrue();
 
-    String toConditionString();
-
     default void toString(PrintStream out) {
-        out.print(toConditionString());
+        out.print(toString());
     }
 
     /** max possible cycle time in which this condition could possibly be satisfied. */
     long getFinalCycle();
 
-    void report();
-
     default void toLogger(Logger logger) {
-        String s = toConditionString();
+        String s = toString();
         if (isTrue())
             logger.info(s);
         else

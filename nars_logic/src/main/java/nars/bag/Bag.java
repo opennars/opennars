@@ -266,7 +266,7 @@ public abstract class Bag<V> extends AbstractCacheBag<V, BagBudget<V>> implement
     /**
      * if predicate evaluates false, it terminates the iteration
      */
-    public abstract void topWhile(Predicate<BagBudget<V>> each);
+    public abstract void topWhile(Predicate<BagBudget> each);
 
     //TODO provide default impl
     public abstract void topN(int limit, Consumer<BagBudget> each);

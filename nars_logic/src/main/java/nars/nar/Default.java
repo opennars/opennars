@@ -116,8 +116,11 @@ public class Default extends AbstractNAR {
         return c;
     }
 
-
     public Bag<Concept> newConceptBag(int initialCapacity) {
+        return new CurveBag<Concept>(initialCapacity, rng).mergePlus();
+    }
+
+    public Bag<Concept> newConceptBagAggregateLinks(int initialCapacity) {
         return new CurveBag<Concept>(initialCapacity, rng) {
 
             @Override public BagBudget<Concept> put(Object v) {
@@ -151,17 +154,15 @@ public class Default extends AbstractNAR {
     }
 
 
+
     @Override
-    public Concept conceptualize(Termed termed) {
-        Concept c = super.conceptualize(termed);
+    public Concept conceptualize(Termed termed, Budget activation, float scale) {
+        Concept c = memory.concept(termed);
         if (c!=null) {
-            core.activate(c);
-            return c;
+            core.activate(c, activation, scale);
         }
-        return null;
+        return c;
     }
-
-
 
     @Override
     public NAR forEachConcept(Consumer<Concept> recip) {
@@ -200,6 +201,9 @@ public class Default extends AbstractNAR {
         public final MutableInteger termlinksFiredPerFiredConcept = new MutableInteger(1);
 
         @Range(min=0.01f,max=8,unit="Duration")
+        public final MutableFloat conceptRemembering;
+
+        @Range(min=0.01f,max=8,unit="Duration")
         public final MutableFloat linkRemembering;
 
         //public final MutableFloat activationFactor = new MutableFloat(1.0f);
@@ -214,7 +218,6 @@ public class Default extends AbstractNAR {
          * concepts active in this cycle
          */
         public final Bag<Concept> active;
-
 
         @Deprecated
         public final transient NAR nar;
@@ -231,6 +234,8 @@ public class Default extends AbstractNAR {
         public final MutableFloat perfection;
 
         final List<BagBudget<Concept>> firing = Global.newArrayList(1);
+
+        private final AlannForget linkForget, conceptForget;
 
         //cached
         private transient int termlnksToFire, tasklinksToFire;
@@ -251,6 +256,7 @@ public class Default extends AbstractNAR {
 
             Memory m = nar.memory;
 
+            this.conceptRemembering = m.conceptForgetDurations;
             this.linkRemembering = m.linkForgetDurations;
             this.perfection = m.perfection;
 
@@ -262,38 +268,18 @@ public class Default extends AbstractNAR {
                 m.eventReset.on((mem) -> onReset())
             );
 
-            alannForget = (budget) -> {
-                // priority * e^(-lambda*t)
-                //     lambda is (1 - durabilty) / forgetPeriod
-                //     dt is the delta
-                final long currentTime = nar.time(); //TODO cache
-
-                long dt = budget.setLastForgetTime(currentTime);
-                if (dt == 0) return true; //too soon to update
-
-                float currentPriority = budget.getPriorityIfNaNThenZero();
-
-                final float forgetPeriod = linkRemembering.floatValue() * m.duration(); //TODO cache
-
-                float relativeThreshold = perfection.floatValue();
-
-                float expDecayed = currentPriority * (float) Math.exp(
-                        -((1.0f - budget.getDurability()) / forgetPeriod) * dt
-                );
-                float threshold = budget.getQuality() * relativeThreshold;
-
-                float nextPriority = expDecayed;
-                if (nextPriority < threshold) nextPriority = threshold;
-
-                budget.setPriority(nextPriority);
-
-                return true;
-            };
+            linkForget = new AlannForget(nar, m.linkForgetDurations, perfection);
+            conceptForget = new AlannForget(nar, m.conceptForgetDurations, perfection);
         }
 
         private void onCycle(Memory memory) {
+            forgetConcepts();
             fireConcepts(conceptsFiredPerCycle.intValue(), this::process);
             updateActivated();
+        }
+
+        private void forgetConcepts() {
+            active.topWhile(conceptForget); //TODO use downsampling % of concepts not TOP
         }
 
         private void updateActivated() {
@@ -325,9 +311,6 @@ public class Default extends AbstractNAR {
         }
 
 
-
-        public final Predicate<BagBudget> alannForget;
-
         protected final void fireConcepts(int conceptsToFire, Consumer<ConceptProcess> processor) {
 
             Bag<Concept> b = this.active;
@@ -346,28 +329,83 @@ public class Default extends AbstractNAR {
 
         }
 
+
         public final void activate(Concept c) {
-            activated.add(c);
-            //core.active.put(c);
+            //activated.add(c);
+        }
+        public final void activate(Concept c, Budget b, float scale) {
+            active.put(c, b, scale);
         }
 
         /** fires a concept selected by the bag */
         @Override public final void accept(BagBudget<Concept> cb) {
-            Concept c = cb.get();
 
             //c.getTermLinks().up(simpleForgetDecay);
             //c.getTaskLinks().update(simpleForgetDecay);
 
-            deriver.firePremiseSquare(nar, this::process, c,
+            deriver.firePremiseSquare(nar, this::process, cb,
                 tasklinksToFire,
                 termlnksToFire,
                 //simpleForgetDecay
-                alannForget
+                linkForget
             );
 
-            activate(c);
+            //activate(c);
         }
 
+        private class AlannForget implements Predicate<BagBudget>, Consumer<Memory> {
+            private final NAR nar;
+            private final MutableFloat forgetTime;
+            private final MutableFloat perfection;
+
+            //cached
+            private transient float forgetTimeCached = Float.NaN;
+            private transient float perfectionCached = Float.NaN;
+            private transient long now = -1;
+
+            public AlannForget(NAR nar, MutableFloat forgetTime, MutableFloat perfection) {
+                this.nar = nar;
+                this.forgetTime = forgetTime;
+                this.perfection = perfection;
+                nar.onEachCycle(this);
+                accept(nar.memory);
+            }
+
+            @Override
+            public boolean test(BagBudget budget) {
+                // priority * e^(-lambda*t)
+                //     lambda is (1 - durabilty) / forgetPeriod
+                //     dt is the delta
+                final long currentTime = now;
+
+                long dt = budget.setLastForgetTime(currentTime);
+                if (dt == 0) return true; //too soon to update
+
+                float currentPriority = budget.getPriorityIfNaNThenZero();
+
+                float relativeThreshold = perfectionCached;
+
+                float expDecayed = currentPriority * (float) Math.exp(
+                        -((1.0f - budget.getDurability()) / forgetTimeCached) * dt
+                );
+                float threshold = budget.getQuality() * relativeThreshold;
+
+                float nextPriority = expDecayed;
+                if (nextPriority < threshold) nextPriority = threshold;
+
+                budget.setPriority(nextPriority);
+
+                return true;
+            }
+
+            @Override
+            public void accept(Memory memory) {
+                //same for duration of the cycle
+                forgetTimeCached = forgetTime.floatValue() * memory.duration();
+                perfectionCached = perfection.floatValue();
+                now = memory.time();
+            }
+        }
 
         //try to implement some other way, this is here because of serializability
 
@@ -500,17 +538,19 @@ public class Default extends AbstractNAR {
             }
 
             if (!buffer.isEmpty()) {
-
-                Task.normalize(
-                        buffer,
+                Task.normalize( buffer,
                         //p.getMeanPriority()
-                        //p.getTask().getPriority()
-                        p.getTask().getPriority()/buffer.size()
-                        //p.getTaskLink().getPriority()
-                        //p.getTaskLink().getPriority()/buffer.size()
-                );
+                        p.getTask().getPriority()
 
-                buffer.forEach(nar::input);
+                        //p.getTask().getPriority() * 1f/buffer.size()
+                        //p.getTask().getPriority()/buffer.size()
+                        //p.taskLink.getPriority()
+                        //p.getTaskLink().getPriority()/buffer.size()
+
+                        //p.conceptLink.getPriority()
+                        //UtilityFunctions.or(p.conceptLink.getPriority(), p.taskLink.getPriority())
+
+                ,nar::input);
                 buffer.clear();
             }
 

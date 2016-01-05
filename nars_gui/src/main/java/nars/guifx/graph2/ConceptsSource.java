@@ -43,7 +43,7 @@ public class ConceptsSource extends GraphSource {
     private float _maxPri = 0, _minPri = 0;
     protected final List<Termed> concepts = Global.newArrayList();
     private String keywordFilter = null;
-    private final Predicate<BagBudget<Concept>> eachConcept = cc -> {
+    private final Predicate<BagBudget> eachConcept = cc -> {
 
         float p = cc.getPriority();
         if ((p < _minPri) || (p > _maxPri))
@@ -55,7 +55,7 @@ public class ConceptsSource extends GraphSource {
                 return true;
         }
 
-        concepts.add(cc.get());
+        concepts.add((Concept)cc.get());
 
         return concepts.size() < maxNodes;
     };

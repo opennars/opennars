@@ -120,20 +120,19 @@ public abstract class AbstractNAR extends NAR {
     public void initDefaults(Memory m) {
         //parameter defaults
 
-        setTaskLinkBagSize(16);
+        setTaskLinkBagSize(12);
         setTermLinkBagSize(16);
 
         m.duration.set(5);
 
         m.conceptBeliefsMax.set(12);
-        m.conceptGoalsMax.set(8);
+        m.conceptGoalsMax.set(7);
         m.conceptQuestionsMax.set(5);
 
-        m.linkForgetDurations.setValue(2.0);
-
+        m.conceptForgetDurations.setValue(4.0);
+        m.linkForgetDurations.setValue(3.0);
 
         m.derivationThreshold.set(0);
-
 
         m.taskProcessThreshold.set(0); //warning: if this is not zero, it could remove un-TaskProcess-able tasks even if they are stored by a Concept
 

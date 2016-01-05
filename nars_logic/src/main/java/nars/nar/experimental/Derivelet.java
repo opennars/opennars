@@ -35,7 +35,7 @@ public class Derivelet {
     /**
      * current location
      */
-    public Concept concept;
+    public BagBudget<Concept> concept;
 
     /**
      * utility context
@@ -56,7 +56,7 @@ public class Derivelet {
     private BagBudget[] termsArray = new BagBudget[0];
     private BagBudget[] tasksArray = new BagBudget[0];
 
-    public static int firePremises(Concept concept, BagBudget<Task>[] tasks, BagBudget<Termed>[] terms, Consumer<ConceptProcess> proc, NAR nar) {
+    public static int firePremises(BagBudget<Concept> conceptLink, BagBudget<Task>[] tasks, BagBudget<Termed>[] terms, Consumer<ConceptProcess> proc, NAR nar) {
 
         int total = 0;
 
@@ -70,7 +70,7 @@ public class Derivelet {
                     continue;
 
                 total+= ConceptProcess.fireAll(
-                    nar, concept, taskLink, termLink, proc);
+                    nar, conceptLink, taskLink, termLink, proc);
             }
         }
 
@@ -85,8 +85,10 @@ public class Derivelet {
     public int firePremiseSquare(
             NAR nar,
             Consumer<ConceptProcess> proc,
-            Concept concept,
+            BagBudget<Concept> conceptLink,
             int tasklinks, int termlinks, Predicate<BagBudget> each) {
+
+        Concept concept = conceptLink.get();
 
         concept.getTaskLinks().sample(tasklinks, each, tasks).commit();
         if (tasks.isEmpty()) return 0;
@@ -101,7 +103,7 @@ public class Derivelet {
         termsArray = this.terms.toArray(termsArray);
         this.terms.clear();
 
-        return firePremises(concept,
+        return firePremises(conceptLink,
                 tasksArray, termsArray,
                 proc, nar);
 
@@ -118,29 +120,31 @@ public class Derivelet {
      */
     public Concept nextConcept() {
 
-        final Concept concept = this.concept;
+        final BagBudget<Concept> concept = this.concept;
 
         if (concept == null) {
             return null;
         }
 
         final float x = context.nextFloat();
+        Concept c = concept.get();
 
         //calculate probability it will stay at this concept
         final float stayProb = 0.5f;//(concept.getPriority()) * 0.5f;
         if (x < stayProb) {
             //stay here
-            return concept;
+            return c;
         } else {
             float rem = 1.0f - stayProb;
 
+
             final BagBudget tl = ((x > (stayProb + (rem / 2))) ?
-                    concept.getTermLinks() :
-                    concept.getTaskLinks())
+                    c.getTermLinks() :
+                    c.getTaskLinks())
                     .sample();
 
             if (tl != null) {
-                Concept c = context.concept(((Termed) tl.get()));
+                c = context.concept(((Termed) tl.get()));
                 if (c != null) return c;
             }
         }
@@ -158,7 +162,8 @@ public class Derivelet {
             return false;
         }
 
-        if ((this.concept = nextConcept()) == null) {
+        //TODO dont instantiate BagBudget
+        if ((this.concept = new BagBudget(nextConcept(), 0, 0, 0)) == null) {
             //dead-end
             return false;
         }
@@ -190,7 +195,7 @@ public class Derivelet {
 
     public final void start(final Concept concept, int ttl, final DeriveletContext context) {
         this.context = context;
-        this.concept = concept;
+        this.concept = new BagBudget(concept, 0, 0, 0); //TODO
         this.ttl = ttl;
         this.matcher = new PremiseMatch(context.rng);
     }

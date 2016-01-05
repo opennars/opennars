@@ -4,6 +4,7 @@ package nars;
 import com.google.common.collect.Sets;
 import com.gs.collections.impl.tuple.Tuples;
 import nars.Narsese.NarseseException;
+import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.Level;
 import nars.nal.nal7.Tense;
@@ -833,23 +834,7 @@ public abstract class NAR implements Serializable, Level {
 
     public abstract NAR forEachConcept(Consumer<Concept> recip);
 
-    /**
-     * Get the Concept associated to a Term, or create it.
-     * <p>
-     * Existing concept: apply tasklink activation (remove from bag, adjust
-     * budget, reinsert) New concept: set initial activation, insert Subconcept:
-     * extract from cache, apply activation, insert
-     * <p>
-     * If failed to insert as a result of null bag, returns null
-     * <p>
-     * A displaced Concept resulting from insert is forgotten (but may be stored
-     * in optional subconcept memory
-     *
-     * @return an existing Concept, or a new one, or null
-     */
-    public Concept conceptualize(Termed termed) {
-        return memory.concept(termed);
-    }
+    public abstract Concept conceptualize(Termed termed, Budget activation, float scale);
 
     public NAR stopIf(BooleanSupplier stopCondition) {
         onEachFrame(n -> {
@@ -891,7 +876,7 @@ public abstract class NAR implements Serializable, Level {
             throw new RuntimeException("Not normalized: " + task);
         }
 
-        Concept c = conceptualize(task.term());
+        Concept c = conceptualize(task.term(), task.getBudget(), 1f);
         if (c == null) {
             throw new RuntimeException("Inconceivable: " + task);
             //memory.remove(task, "Inconceivable");

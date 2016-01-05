@@ -256,11 +256,14 @@ public class Memory extends Param {
 
     public Concept concept(Termed t) {
         if (t instanceof Concept) return ((Concept)t);
-        Term tt = t.term();
 
+        Term tt = t.term();
         if (!validConceptTerm(tt)) return null;
         if (!tt.isNormalized()) {
-            tt = index.normalized(tt).term();
+            t = index.normalized(tt);
+            if (t instanceof Concept)
+                return ((Concept)t);
+            tt = t.term();
         }
 
         Function<Term, Termed> build = this::newDefaultConcept;
