@@ -231,6 +231,8 @@ public interface BeliefTable extends TaskTable {
         public final float rank(final Task t, final float bestToBeat) {
             Task q = this.query;
 
+            if (t == q) return Float.NaN;
+
             //TODO use bestToBeat to avoid extra work
             return Tense.solutionQualityMatchingOrder(q, t, now, hasQueryVar);
         }
