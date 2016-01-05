@@ -155,6 +155,12 @@ public class Default extends AbstractNAR {
     }
 
 
+    @Override public float conceptPriority(Termed termed, float priIfNonExistent) {
+        BagBudget<Concept> c = core.active.get(termed);
+        if (c!=null)
+            return c.getPriority();
+        return priIfNonExistent;
+    }
 
     @Override
     public Concept conceptualize(Termed termed, Budget activation, float scale) {

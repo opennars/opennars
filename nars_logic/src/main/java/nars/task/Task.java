@@ -271,6 +271,10 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
         return appendTo(new StringBuilder(), memory, showStamp);
     }
 
+    default Termed get() {
+        return term();
+    }
+
     @Override
     Compound term();
 

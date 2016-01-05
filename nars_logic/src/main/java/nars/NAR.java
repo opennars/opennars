@@ -931,19 +931,22 @@ public abstract class NAR implements Serializable, Level {
         return this == obj;
     }
 
+    /** gets a measure of the current priority of the concept */
+    abstract public float conceptPriority(Termed termed, float priIfNonExistent);
+
     public static class AlreadyRunningException extends RuntimeException {
         public AlreadyRunningException() {
             super("already running");
         }
     }
 
-    private abstract class StreamNARReaction extends NARReaction {
-
-        public StreamNARReaction(Class... signal) {
-            super(NAR.this, signal);
-        }
-
-    }
-
+//    private abstract class StreamNARReaction extends NARReaction {
+//
+//        public StreamNARReaction(Class... signal) {
+//            super(NAR.this, signal);
+//        }
+//
+//    }
+//
 
 }

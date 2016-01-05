@@ -74,6 +74,11 @@ public class DefaultAlann extends AbstractAlann  {
     }
 
     @Override
+    public float conceptPriority(Termed termed, float priIfNonExistent) {
+        return Float.NaN; //TODO
+    }
+
+    @Override
     protected void processConcepts() {
 
         /*if (concepts().size() > 0)*/

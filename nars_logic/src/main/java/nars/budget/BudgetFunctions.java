@@ -20,6 +20,7 @@
  */
 package nars.budget;
 
+import nars.NAR;
 import nars.bag.BagBudget;
 import nars.nal.UtilityFunctions;
 import nars.process.ConceptProcess;
@@ -138,59 +139,7 @@ public final class BudgetFunctions extends UtilityFunctions {
 //    }
 
     
-//    /* ----------------------- Concept ----------------------- */
-//    /**
-//     * Activate a concept by an incoming TaskLink
-//     *
-//     *
-//     * @param factor linear interpolation factor; 1.0: values are applied fully,  0: values are not applied at all
-//     * @param receiver The budget receiving the activation
-//     * @param amount The budget for the new item
-//     */
-//    public static void activate(final Budget receiver, final Budget amount, final Activating mode, final float factor) {
-//        switch (mode) {
-//            /*case Max:
-//                receiver.max(amount);
-//                break;*/
-//
-//            case Accum:
-//                receiver.accumulate(amount);
-//                break;
-//
-//            case Classic:
-//                float priority = or(receiver.getPriority(), amount.getPriority());
-//                float durability = aveAri(receiver.getDurability(), amount.getDurability());
-//                receiver.setPriority(priority);
-//                receiver.setDurability(durability);
-//                break;
-//
-//            case WTF:
-//
-//                final float currentPriority = receiver.getPriority();
-//                final float targetPriority = amount.getPriority();
-//                /*receiver.setPriority(
-//                        lerp(or(currentPriority, targetPriority),
-//                                currentPriority,
-//                                factor) );*/
-//                float op = or(currentPriority, targetPriority);
-//                if (op > currentPriority) op = lerp(op, currentPriority, factor);
-//                receiver.setPriority( op );
-//
-//                final float currentDurability = receiver.getDurability();
-//                final float targetDurability = amount.getDurability();
-//                receiver.setDurability(
-//                        lerp(aveAri(currentDurability, targetDurability),
-//                                currentDurability,
-//                                factor) );
-//
-//                //doesnt really change it:
-//                //receiver.setQuality( receiver.getQuality() );
-//
-//                break;
-//        }
-//
-//    }
-//
+
 //    /**
 //     */
 //    public static void activate(final Budget receiver, final Budget amount, Activating mode) {
@@ -362,15 +311,24 @@ public final class BudgetFunctions extends UtilityFunctions {
 
         float priority = t.getPriority();
         float durability = t.getDurability() * complexityFactor;
-        float quality = qual * complexityFactor;
+        final float quality = qual * complexityFactor;
 
         BagBudget<Termed> termLink = nal.termLink;
         if (termLink!=null) {
             priority = or(priority, termLink.getPriority());
             durability = and(durability, termLink.getDurability()); //originaly was 'AND'
-            float targetActivation = termLink.getPriority();
+
+            NAR nar = nal.nar;
+            final float targetActivation = nar.conceptPriority(termLink.get(), 0);
+            float sourceActivation = 1.0f;
+            if(taskLink!=null) {
+                sourceActivation = nar.conceptPriority(taskLink.get().term(), 0);
+            }
             if (targetActivation >= 0) {
-                termLink.orPriority(or(quality, targetActivation));
+                //https://groups.google.com/forum/#!topic/open-nars/KnUA43B6iYs
+                termLink.orPriority(or(quality, and(sourceActivation,targetActivation)));
+                //was
+                //termLink.orPriority(or(quality, targetActivation));
                 termLink.orDurability(quality);
             }
         }

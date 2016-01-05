@@ -304,6 +304,9 @@ public abstract class AbstractTask extends Item<Task>
     }
 
 
+    @Override public final Termed get() {
+        return term;
+    }
 
     @Override
     public final Compound term() {

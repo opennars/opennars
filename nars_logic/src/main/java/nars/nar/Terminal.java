@@ -56,6 +56,11 @@ public class Terminal extends AbstractNAR {
         return memory.concept(termed); //ignore activation
     }
 
+    @Override
+    public float conceptPriority(Termed termed, float priIfNonExistent) {
+        return 0;
+    }
+
     //    @Override
 //    protected Concept doConceptualize(Term term, Budget b, float scale) {
 //        Concept exists = memory.concept(term);

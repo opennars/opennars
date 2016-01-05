@@ -90,4 +90,58 @@ public interface BudgetMerge {
 //                cp * getQuality() + np * that.getQuality()
 //        );
 //    }
+
+//    /* ----------------------- Concept ----------------------- */
+//    /**
+//     * Activate a concept by an incoming TaskLink
+//     *
+//     *
+//     * @param factor linear interpolation factor; 1.0: values are applied fully,  0: values are not applied at all
+//     * @param receiver The budget receiving the activation
+//     * @param amount The budget for the new item
+//     */
+//    public static void activate(final Budget receiver, final Budget amount, final Activating mode, final float factor) {
+//        switch (mode) {
+//            /*case Max:
+//                receiver.max(amount);
+//                break;*/
+//
+//            case Accum:
+//                receiver.accumulate(amount);
+//                break;
+//
+//            case Classic:
+//                float priority = or(receiver.getPriority(), amount.getPriority());
+//                float durability = aveAri(receiver.getDurability(), amount.getDurability());
+//                receiver.setPriority(priority);
+//                receiver.setDurability(durability);
+//                break;
+//
+//            case WTF:
+//
+//                final float currentPriority = receiver.getPriority();
+//                final float targetPriority = amount.getPriority();
+//                /*receiver.setPriority(
+//                        lerp(or(currentPriority, targetPriority),
+//                                currentPriority,
+//                                factor) );*/
+//                float op = or(currentPriority, targetPriority);
+//                if (op > currentPriority) op = lerp(op, currentPriority, factor);
+//                receiver.setPriority( op );
+//
+//                final float currentDurability = receiver.getDurability();
+//                final float targetDurability = amount.getDurability();
+//                receiver.setDurability(
+//                        lerp(aveAri(currentDurability, targetDurability),
+//                                currentDurability,
+//                                factor) );
+//
+//                //doesnt really change it:
+//                //receiver.setQuality( receiver.getQuality() );
+//
+//                break;
+//        }
+//
+//    }
+//
 }
