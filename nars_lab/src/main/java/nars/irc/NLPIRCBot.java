@@ -231,7 +231,7 @@ public class NLPIRCBot extends IRCBot {
 
         oldnar = nar.loop(1000);
 
-        NARide.show(oldnar,p -> {});
+      //  NARide.show(oldnar,p -> {});
     }
 
     static NARLoop oldnar = null;
