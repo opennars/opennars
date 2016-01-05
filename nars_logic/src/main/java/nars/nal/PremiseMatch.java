@@ -189,8 +189,8 @@ public class PremiseMatch extends FindSubst {
 //            throw new RuntimeException("why is " + budget + " deleted");
 //        }
 
-        float derThresh = p.memory().derivationThreshold.floatValue();
-        if (budget.getDurability() < derThresh || budget.getQuality() < derThresh)
+        float derThresh = p.memory().derivationDurabilityThreshold.floatValue();
+        if (budget.getDurability() < derThresh)
             return null;
 
 

@@ -99,7 +99,7 @@ public enum Global {
 
 
     /** minimum durability and quality necessary for a derivation to form */
-    public static float BUDGET_DERIVATION_THRESHOLD = 0.01f;
+    public static float BUDGET_DERIVATION_DURABILITY_THRESHOLD = 0.01f;
 
     /** minimum difference necessary to indicate a significant modification in budget float number components */
     public static final float BUDGET_PROPAGATION_EPSILON = 0.0001f;

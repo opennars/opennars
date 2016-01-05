@@ -132,7 +132,7 @@ public abstract class AbstractNAR extends NAR {
         m.conceptForgetDurations.setValue(2.0);
         m.linkForgetDurations.setValue(3.0);
 
-        m.derivationThreshold.setValue(Global.BUDGET_DERIVATION_THRESHOLD);
+        m.derivationDurabilityThreshold.setValue(Global.BUDGET_DERIVATION_DURABILITY_THRESHOLD);
 
         m.taskProcessThreshold.setValue(0); //warning: if this is not zero, it could remove un-TaskProcess-able tasks even if they are stored by a Concept
 
