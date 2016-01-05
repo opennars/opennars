@@ -164,66 +164,68 @@ public class Plot2D extends NControl/*Canvas */ implements Runnable {
         }
     };
     public static final PlotVis Line = (Collection<Series> series, GraphicsContext g, double minValue, double maxValue) -> {
-        if (g == null)
-            return;
+        try {
+            if (g == null)
+                return;
 
-        if (minValue != maxValue) {
+            if (minValue != maxValue) {
 
-            double m = 10; //margin
+                double m = 10; //margin
 
-            final double w = g.getCanvas().getWidth();
-            double H = g.getCanvas().getHeight();
-            final double h = H - m * 2;
+                final double w = g.getCanvas().getWidth();
+                double H = g.getCanvas().getHeight();
+                final double h = H - m * 2;
 
-            g.setGlobalBlendMode(BlendMode.DIFFERENCE);
-            g.setFill(Color.BLACK);
-            g.setStroke(Color.GRAY);
-            g.fillText(String.valueOf(maxValue), 0, m + g.getFont().getSize());
-            g.strokeLine(0, m, w, m);
-            g.strokeLine(0, H - m, w, H - m);
-            g.fillText(String.valueOf(minValue), 0, H - m - 2);
-            g.setGlobalBlendMode(BlendMode.SRC_OVER /* default */);
+                g.setGlobalBlendMode(BlendMode.DIFFERENCE);
+                g.setFill(Color.BLACK);
+                g.setStroke(Color.GRAY);
+                g.fillText(String.valueOf(maxValue), 0, m + g.getFont().getSize());
+                g.strokeLine(0, m, w, m);
+                g.strokeLine(0, H - m, w, H - m);
+                g.fillText(String.valueOf(minValue), 0, H - m - 2);
+                g.setGlobalBlendMode(BlendMode.SRC_OVER /* default */);
 
-            series.forEach(s -> {
-
-
-                DoubleToDoubleFunction ypos = (v) -> {
-                    double py = (v - minValue) / (maxValue - minValue);
-                    if (py < 0) py = 0;
-                    else if (py > 1.0) py = 1.0;
-                    return m + (1.0 - py) * h;
-                };
-
-                double mid = ypos.valueOf(0.5 * (s.minValue + s.maxValue));
-
-                g.setFill(s.color);
-                g.fillText(s.name, m, mid);
-
-                g.setLineWidth(2);
-                g.setStroke(s.color);
-                g.beginPath();
-
-                FloatArrayList sh = s.history;
-
-                final int histSize = sh.size();
-
-                final double dx = (w / histSize);
-
-                double x = 0;
-                for (int i = 0; i < sh.size(); i++) { //TODO why does the array change
-                    final double v = sh.get(i);
-
-                    double y = ypos.valueOf(v);
+                series.forEach(s -> {
 
 
-                    //System.out.println(x + " " + y);
-                    g.lineTo(x, y);
+                    DoubleToDoubleFunction ypos = (v) -> {
+                        double py = (v - minValue) / (maxValue - minValue);
+                        if (py < 0) py = 0;
+                        else if (py > 1.0) py = 1.0;
+                        return m + (1.0 - py) * h;
+                    };
 
-                    x += dx;
-                }
-                g.stroke();
-            });
-        }
+                    double mid = ypos.valueOf(0.5 * (s.minValue + s.maxValue));
+
+                    g.setFill(s.color);
+                    g.fillText(s.name, m, mid);
+
+                    g.setLineWidth(2);
+                    g.setStroke(s.color);
+                    g.beginPath();
+
+                    FloatArrayList sh = s.history;
+
+                    final int histSize = sh.size();
+
+                    final double dx = (w / histSize);
+
+                    double x = 0;
+                    for (int i = 0; i < sh.size(); i++) { //TODO why does the array change
+                        final double v = sh.get(i);
+
+                        double y = ypos.valueOf(v);
+
+
+                        //System.out.println(x + " " + y);
+                        g.lineTo(x, y);
+
+                        x += dx;
+                    }
+                    g.stroke();
+                });
+            }
+        }catch(Exception ex){}
     };
 
     protected void updateSeries() {

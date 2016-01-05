@@ -1,5 +1,6 @@
 package nars.nal.nal7;
 
+import nars.Global;
 import nars.Memory;
 import nars.Premise;
 import nars.Symbols;
@@ -21,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static nars.nal.UtilityFunctions.and;
 import static nars.nal.UtilityFunctions.or;
 
 public enum Tense  {
@@ -124,11 +126,14 @@ public enum Tense  {
             truth = solution.getTruth();
         }
 
-        //if (problem.hasQueryVar()) {
+        //decay 0.1 in truth by creation time all x steps
+        float diff = time - solution.getCreationTime();
+        float DECAY = (float) (1.0 - Math.min(Global.OCCURENCE_DECAY_MAX, diff / ((float) Global.OCCURENCE_RANKING_DECAY_UNTIL_MAX_STEPS)));
+
         if (hasQueryVar) {
-            return or(solution.getOriginality(),truth.getExpectation() / solution.getTerm().complexity());
+            return and(or(solution.getOriginality(),truth.getExpectation() / solution.getTerm().complexity()),DECAY);
         } else {
-            return or(solution.getOriginality(),truth.getConfidence());
+            return and(or(solution.getOriginality(),truth.getConfidence()),DECAY);
         }
     }
 
