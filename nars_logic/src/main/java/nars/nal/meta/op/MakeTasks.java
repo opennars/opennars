@@ -103,6 +103,10 @@ public final class MakeTasks extends PreCondition {
         FluentTask deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving != null) {
 
+            if(punct==Symbols.JUDGMENT && derivedTerm.hasVarQuery()) {
+                return false;
+            }
+
             final long now = premise.time();
 
             final long occurence_shift = post.occurence_shift;
