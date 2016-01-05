@@ -130,6 +130,10 @@ public class DefaultConcept extends AtomConcept {
             this.put(Anticipate.class, true);
         }
 
+        if(belief.getTerm().hasVarQuery()) {
+            return false; //query var beliefs please not ^^ 
+        }
+
         float successBefore = getSuccess();
 
         final Task strongest = getBeliefs().add( belief, new BeliefTable.SolutionQualityMatchingOrderRanker(belief, nal.time()), this, nal);
