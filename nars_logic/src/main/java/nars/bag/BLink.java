@@ -1,7 +1,7 @@
 package nars.bag;
 
 import nars.budget.Budget;
-import nars.budget.Budgeted;
+import nars.budget.BudgetedStruct;
 import nars.budget.UnitBudget;
 import nars.nal.nal7.Tense;
 
@@ -16,7 +16,7 @@ import static nars.util.data.Util.clamp;
  * Acts as a "budget vector" containing an accumulating delta
  * that can be commit()'d on the next udpate
  */
-public final class BLink<X> implements Budget, Supplier<X> {
+public final class BLink<X> extends Budget implements Supplier<X> {
 
     private final float[] b = new float[6];
     public final X id;
@@ -31,12 +31,12 @@ public final class BLink<X> implements Budget, Supplier<X> {
         init(p, d, q);
     }
 
-    public BLink(X id, Budgeted b) {
+    public BLink(X id, BudgetedStruct b) {
         this(id);
         init(b, 1f);
     }
 
-    public BLink(X id, Budgeted b, float scale) {
+    public BLink(X id, BudgetedStruct b, float scale) {
         this(id);
         init(b, scale);
     }
@@ -46,7 +46,7 @@ public final class BLink<X> implements Budget, Supplier<X> {
         return id;
     }
 
-    private void init(Budgeted c, float scale) {
+    private void init(BudgetedStruct c, float scale) {
         //this.lastForget = c.getLastForgetTime();
         this.lastForget = Tense.TIMELESS;
 

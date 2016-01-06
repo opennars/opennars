@@ -24,25 +24,25 @@ public class ItemAccumulatorTest {
                 2 //capacity = 2 but this test will only grow to size 1 if successful
         );
 
-        ii.mergePlus();
+        ii.getArrayBag().mergePlus();
 
-        assertEquals(0, ii.size());
+        assertEquals(0, ii.getArrayBag().size());
 
         Task t = n.task("$0.1$ <a --> b>. %1.00;0.90%");
         assertEquals(0.1f, t.getPriority(), 0.001);
 
-        ii.put(t);
-        assertEquals(1, ii.size());
+        ii.getArrayBag().put(t);
+        assertEquals(1, ii.getArrayBag().size());
 
-        ii.put(t);
-        assertEquals(1, ii.size());
+        ii.getArrayBag().put(t);
+        assertEquals(1, ii.getArrayBag().size());
 
-        ii.commit();
+        ii.getArrayBag().commit();
 
-        ii.forEach(c -> System.out.println(c));
+        ii.getArrayBag().forEach(c -> System.out.println(c));
 
         //mergePlus:
-        assertEquals(0.1f+0.1f, ii.sample().getPriority(), 0.001f);
+        assertEquals(0.1f+0.1f, ii.getArrayBag().sample().getPriority(), 0.001f);
 
     }
 
@@ -59,34 +59,34 @@ public class ItemAccumulatorTest {
 
 
         String s = ". %1.00;0.90%";
-        ii.put(n.task("$0.05$ <z-->x>" + s ));
-        ii.put(n.task("$0.09$ <a-->x>" + s ));
-        ii.put(n.task("$0.1$ <b-->x>" + s ));
-        ii.put(n.task("$0.2$ <c-->x>" + s ));
-        ii.put(n.task("$0.3$ <d-->x>" + s ));
-        ii.commit();
-        assertEquals(4, ii.size());
+        ii.getArrayBag().put(n.task("$0.05$ <z-->x>" + s ));
+        ii.getArrayBag().put(n.task("$0.09$ <a-->x>" + s ));
+        ii.getArrayBag().put(n.task("$0.1$ <b-->x>" + s ));
+        ii.getArrayBag().put(n.task("$0.2$ <c-->x>" + s ));
+        ii.getArrayBag().put(n.task("$0.3$ <d-->x>" + s ));
+        ii.getArrayBag().commit();
+        assertEquals(4, ii.getArrayBag().size());
 
         //z should be ignored
         //List<Task> buffer = Global.newArrayList();
 
 
-        assertEquals(capacity, ii.size());
+        assertEquals(capacity, ii.getArrayBag().size());
 
-        assertTrue(ii.isSorted());
+        assertTrue(ii.getArrayBag().isSorted());
 
         //System.out.println(ii);
-        ii.top(x -> System.out.println(x));
+        ii.getArrayBag().top(x -> System.out.println(x));
 
-        Task one = ii.pop().get();
+        Task one = ii.getArrayBag().pop().get();
         assertEquals("$.30;.50;.95$ <d-->x>. :0: %1.0;.90%", one.toString());
 
         List<Task> two = new ArrayList();
-        two.add(ii.pop().get());
-        two.add(ii.pop().get());
+        two.add(ii.getArrayBag().pop().get());
+        two.add(ii.getArrayBag().pop().get());
         assertEquals("[$.20;.50;.95$ <c-->x>. :0: %1.0;.90%, $.10;.50;.95$ <b-->x>. :0: %1.0;.90%]", two.toString());
 
-        assertEquals(1, ii.size());
+        assertEquals(1, ii.getArrayBag().size());
 
 //        ii.update(capacity, buffer);
 //        System.out.println(buffer);
@@ -105,24 +105,24 @@ public class ItemAccumulatorTest {
         int capacity = 8;
 
         TaskAccumulator ii = new TaskAccumulator(capacity);
-        assertTrue(ii.isSorted());
+        assertTrue(ii.getArrayBag().isSorted());
 
         for (int i = 0; i < capacity - 1; i++) {
-            ii.put($.$("a:" + i, '?').budget( (float)Math.random() * 0.95f, 0.5f, 0.5f));
+            ii.getArrayBag().put($.$("a:" + i, '?').budget( (float)Math.random() * 0.95f, 0.5f, 0.5f));
         }
 
-        ii.commit();
+        ii.getArrayBag().commit();
 
         MutableDouble prev = new MutableDouble(Double.POSITIVE_INFINITY);
 
-        ii.forEach( (Budgeted t) -> {
+        ii.getArrayBag().forEach( (Budgeted t) -> {
             float p = t.getBudget().getPriority();
             assertTrue(p <= prev.floatValue()); //decreasing
             prev.set(p);
         });
 
         //this will use an Iterator to determine sorting
-        assertTrue(ii.isSorted());
+        assertTrue(ii.getArrayBag().isSorted());
     }
 
     @Test public void testRankDurQuaForEqualPri() {   }
@@ -137,10 +137,10 @@ public class ItemAccumulatorTest {
 
         for (int i = 0; i < capacity-1; i++) {
             float dur = i * 0.05f;
-            ii.put($.$("a:" + i, '?').budget(0.5f, dur, 0.5f));
+            ii.getArrayBag().put($.$("a:" + i, '?').budget(0.5f, dur, 0.5f));
         }
 
-        assertTrue(ii.isSorted());
+        assertTrue(ii.getArrayBag().isSorted());
 
         ii.print(System.out);
 

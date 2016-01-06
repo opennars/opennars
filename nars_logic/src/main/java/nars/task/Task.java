@@ -22,6 +22,7 @@ package nars.task;
 
 import nars.*;
 import nars.budget.Budgeted;
+import nars.budget.BudgetedStruct;
 import nars.concept.Concept;
 import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
@@ -128,9 +129,9 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
         return true;
     }
 
-    static float prioritySum(Iterable<? extends Budgeted> dd) {
+    static float prioritySum(Iterable<? extends BudgetedStruct> dd) {
         float f = 0;
-        for (Budgeted x : dd)
+        for (BudgetedStruct x : dd)
             f += x.getPriority();
         return f;
     }
@@ -293,6 +294,8 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     default void onRevision(Truth truthConclusion) {
 
     }
+
+    void mulPriority(float factor);
 
 
     final class Solution extends AtomicReference<Task> {

@@ -1,7 +1,7 @@
 package nars.util.meter;
 
 import nars.Memory;
-import nars.budget.Budgeted;
+import nars.budget.BudgetedHandle;
 import nars.concept.Concept;
 import nars.util.event.FrameReaction;
 import nars.util.meter.event.DoubleMeter;
@@ -104,7 +104,7 @@ public class LogicMeter extends FrameReaction {
         conceptMeter.commit(m);
     }
 
-    public static class ItemMeter<I extends Budgeted> implements Consumer<I> {
+    public static class ItemMeter<I extends BudgetedHandle> implements Consumer<I> {
 
         double prioritySum = 0;
         double prioritySumSq = 0;

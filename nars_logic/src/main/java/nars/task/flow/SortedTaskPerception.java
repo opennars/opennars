@@ -33,7 +33,7 @@ public class SortedTaskPerception extends TaskPerception {
     @Override
     public final void accept(Task t) {
         if (!t.isDeleted()) {
-            Task overflow = buffer.put(t).get();
+            Task overflow = buffer.getArrayBag().put(t).get();
             if (overflow!=null)
                 onOverflow(overflow);
         }
@@ -45,7 +45,7 @@ public class SortedTaskPerception extends TaskPerception {
 
     @Override
     public void forEach(Consumer<? super Task> each) {
-        buffer.forEach(each);
+        buffer.getArrayBag().forEach(each);
     }
 
     @Override
@@ -60,18 +60,18 @@ public class SortedTaskPerception extends TaskPerception {
                 inputsPerCyc = available;
             }
 
-            buffer.pop(receiver,
+            buffer.getArrayBag().pop(receiver,
                 Math.min(available, inputsPerCyc)
             );
         }
     }
 
     public final int size() {
-        return buffer.size();
+        return buffer.getArrayBag().size();
     }
 
     @Override
     public void clear() {
-        buffer.clear();
+        buffer.getArrayBag().clear();
     }
 }

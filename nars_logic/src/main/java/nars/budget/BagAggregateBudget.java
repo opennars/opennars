@@ -3,15 +3,15 @@ package nars.budget;
 /**
  * Created by me on 12/12/15.
  */
-public class BagAggregateBudget implements Budget {
+public class BagAggregateBudget extends Budget {
 
-    private final Iterable<? extends Budgeted> budgets;
+    private final Iterable<? extends BudgetedStruct> budgets;
     private long time;
     private float pri = 0;
     private float dur = 0;
     private float qua = 0;
 
-    public BagAggregateBudget(Iterable<? extends Budgeted> budgets) {
+    public BagAggregateBudget(Iterable<? extends BudgetedStruct> budgets) {
         this.budgets = budgets;
     }
 
@@ -55,7 +55,7 @@ public class BagAggregateBudget implements Budget {
 
     private void refreshMax() {
         float totalPri = 0, totalDur = 0, totalQua = 0;
-        for (Budgeted b : budgets) {
+        for (BudgetedStruct b : budgets) {
             totalPri = Math.max(b.getPriority(), totalPri);
             totalDur = Math.max(b.getDurability(), totalDur);
             totalQua = Math.max(b.getQuality(), totalQua);
@@ -71,7 +71,7 @@ public class BagAggregateBudget implements Budget {
     private void refreshAvg() {
         float totalPri = 0, totalDur = 0, totalQua = 0;
         int n = 0;
-        for (Budgeted b : budgets) {
+        for (BudgetedStruct b : budgets) {
             totalPri += b.getPriority();
             totalDur += b.getDurability();
             totalQua += b.getQuality();

@@ -31,7 +31,7 @@ public class NaturalLanguagePane extends CodeInput {
 
 
         te.parse(toString(), nar, s).forEach(t -> {
-            t.getBudget().setPriority(sentenceBudget);
+            t.getBudget().setPriority((float) sentenceBudget);
             nar.input(t);
         });
 
@@ -49,7 +49,7 @@ public class NaturalLanguagePane extends CodeInput {
 //                                )
 //                        )
 //                );
-            return true;
+        return true;
 //        }
     }
 }
