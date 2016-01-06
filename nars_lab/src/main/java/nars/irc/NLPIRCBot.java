@@ -23,6 +23,82 @@ import java.util.List;
  */
 public class NLPIRCBot extends IRCBot {
 
+    /*
+    testname="belief_table_full_revision"
+tester="patham9_"
+narnick = "mr_nars"
+include_comments = True
+
+history = """
+[17:44] <patham9_> <a --> b>?
+[17:44] <patham9_> <a --> b>.
+[17:44] <mr_nars> $0.05;0.90;1.00$ <a --> b>? :6219::$0.50;0.80;0.95$ <a --> b>. :8470: %1.00;0.90%
+[17:44] <patham9_> <a --> b>.
+[17:44] <patham9_> <a --> b>.
+[17:44] <mr_nars> $0.02;0.90;1.00$ <a --> b>? :6219::$0.49;0.40;0.99$ <a --> b>. :12255: %1.00;0.97%
+[17:44] <patham9_> <a --> b>.
+[17:44] <mr_nars> $0.02;0.90;1.00$ <a --> b>? :6219::$0.49;0.39;0.99$ <a --> b>. :13567: %1.00;0.98%
+[17:45] <patham9_> <a --> b>.
+[17:45] <patham9_> <a --> b>.
+[17:45] <patham9_> <a --> b>.
+[17:45] <patham9_> <a --> b>.
+[17:45] <patham9_> <a --> b>.
+[17:45] <patham9_> <a --> b>.
+[17:45] <patham9_> <a --> b>.
+[17:45] <patham9_> <a --> b>.
+[17:45] <patham9_> <a --> b>?
+[17:45] <mr_nars> $0.02;0.90;1.00$ <a --> b>? :23033::$0.48;0.38;0.99$ <a --> b>. :18941: %1.00;0.98%
+[17:45] <patham9_> belief table is now full
+[17:45] <SquareOfTwo> >so I can create unit tests
+[17:45] <SquareOfTwo> :S
+[17:45] <SquareOfTwo> write first the tests, then the code :/
+[17:45] <SquareOfTwo> (i never do this for experimental code btw)
+[17:45] <patham9_> and still it is able to revise to revise with new beliefs:
+[17:45] <patham9_> <a --> b>. %0%
+[17:45] <patham9_> <a --> b>. %0%
+[17:45] <patham9_> <a --> b>. %0%
+[17:46] <patham9_> <a --> b>?
+[17:46] <mr_nars> $0.02;0.90;1.00$ <a --> b>? :77114::$0.23;0.18;0.60$ <a --> b>. :73865: %0.60;0.98%
+[17:46] <patham9_> <a --> b>. %0%
+[17:46] <patham9_> <a --> b>?
+[17:46] <mr_nars> $0.02;0.90;1.00$ <a --> b>? :84094::$0.27;0.22;0.51$ <a --> b>. :82864: %0.51;0.98%
+[17:46] <patham9_> see?
+[17:46] <patham9_> <a --> b>.
+[17:46] <patham9_> <a --> b>?
+[17:46] <mr_nars> $0.02;0.90;1.00$ <a --> b>? :91756::$0.32;0.26;0.59$ <a --> b>. :89779: %0.59;0.98%
+"""
+
+print """@Test
+public void """+testname+"() throws Narsese.NarseseException { \nTestNAR tester = test();"
+
+#input the things the user input
+lines = history.split("\n")
+for Li in [h for h in lines if h.replace(" ","")!=""]:
+    Li = Li.split("] ")[1]
+    nick = Li.split(">")[0].split("<")[1]
+    Input = "> ".join(Li.split("> ")[1:])
+    if nick == tester and True in [z in Input for z in ["<",">","("]]:
+        print "nar.input(\""+Input+"\");"
+    elif include_comments and nick == tester:
+        print "//"+Input
+
+#determine what to test for:
+for Li in reversed(lines):
+    if narnick in Li:
+        truth = Li.split("%")[1].replace(";","f,")+"f"
+        expected_truth_typ = "mustBelieve"
+        splitter = ". "
+        if ">!" in Li or ")!" in Li:
+            expected_truth_typ = "mustDesire"
+            splitter = "! "
+        term = Li.split(splitter)[0].split("$ ")[2]
+        print "tester."+expected_truth_typ+"(cycles,"+term+","+truth+");\n}"
+        break
+
+
+#http://sagecell.sagemath.org/?z=eJzlVt9v4kYQfo_E_zDZJhIIzrENxj8SSFv1Hk46XaVe3gJCxixle2bN7a7D5ar-751ZG8UJCSRV-1QezNrzzcw3szOza7g2Ml3zEZvzXPDlzKTznM-WZZ7PFL8TWhSStU4MwrgasU1qVuk6nuEnmSopsi8wArZWM3zT-FHILC8XfJYV6zWXRqP0RpW8ddI6WQltCnVPeIbIWy9MBoMpXO1MjuEqhXfvxjAfXx8WOw1x7XoMZ67jBpeuE7uXnuO6Zw1rkAx9L04ShAQuQiJ6xEED4kASDUI3gXPStVbOX8_hLRT9oxQHMUIGlkT8mKLn-0HQ4Bi-geM_IdGPnyPRD4Zhg0S0IxEcJvF_E183xK9Lvt93-_0q-xFlP3ou-1E88I5nv-plsL0MQoMstkAt3QB__lqmiv-6vNkWYxjrAj5AlkrIFE8Nh1IKA9T0-iWV5PNLkq0SaGEplEYTK16Z6dFS2vesWHBILl5SbwuQ_I4rWBQIR_LLQgH_tuFK0EhJ88rA3Gw7z8aeygVoI_IcMARUtzkwBdhp1lxthVmhq22dLZ0c2W84d4_V-tsgw8OVM3x15YSh5w1s5fh9xHhUOUP3ceWE_WhIw4MkjyrnBRb_CdFo4MY10RAxPgED78kg9qPhwBINvANENefXRyL4t9nHXhgMLfs-YfwhsX_SoFEchnHFPt6xt-dd62SjhDR0-P14gx2B7-U8FxncFWJBX7umPoq7rN3BylfFVsMnZMU1d-r_998yvjF4JMOfMJFk5tNPv0F1OOPBSot259J6-0HITVk34ErI37VdlhqBVtI6yYXkdEDXB7OjN7kwbTaRDBuLmu6jQCjcrmwHrmhdqYglrBzFN3ma8TYD1mOsczpibIodBPhDvRE-dganwDq33rSS1VeGB-kYhe5093bVgH6wAeB1YQzM-aMQst3QsjaTaaeCIqPK8GiXDJoCdPOwEXynZ2WOQrGvt-irh957DBnumNOv3iasB8cmqj3BvbHKXTZhNrsEw5mxhL3rDrl9zGTf8sVFbc9u04IjaI15he0qNTSeSI94Js1dUDQSNV-07RZ0koe462sYYj6KhjOjShxvzUyf29w-bNwlxr7ssU6XLdmDHk3azPDFzBqYmfuNveGV2vxMY_KON7DWcFV6zIGGAHmx8SmrSAEGgQXC9igedvcL10I1vT31eNr0SElsRrsDNovrjIrGn-5tSLVRDuvuk8FezO6znOse9adadxktSNrFUpjIvxoU5nh0fvkbNG8H4w==&lang=sage
+
+     */
 
     private NAR nar;
 
