@@ -207,7 +207,7 @@ public class DefaultConcept extends AtomConcept {
                             }
                         }
                         if(!subseteq_base || lastevidence == null) {
-                            nal.nar().execute((DefaultTask) goal);
+                            nal.nar().execute((DefaultTask) strongest);
 
                             for(int i=0; i<evidence.length; i++) {
                                 boolean iscontained = false;

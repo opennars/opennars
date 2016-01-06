@@ -454,7 +454,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     public final int execute(final DefaultTask goal) {
         Term term = goal.getTerm();
 
-        if (term instanceof Operation && !goal.executed) {
+        if (term instanceof Operation /* && !goal.executed */) {
             final Operation o = (Operation) term;
 
             goal.executed = true;
