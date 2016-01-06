@@ -21,121 +21,124 @@ import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
 
 import java.util.Arrays;
 
-/** A simple RL feature set for Atari agents. The screen is divided into blocks.
- *   Within each block, we encode the presence or absence of a color. The number
- *   of colors is restricted to reduce the number of active features.
- *
+/**
+ * A simple RL feature set for Atari agents. The screen is divided into blocks.
+ * Within each block, we encode the presence or absence of a color. The number
+ * of colors is restricted to reduce the number of active features.
+ * 
  * @author Marc G. Bellemare <mgbellemare@ualberta.ca>
  */
 public class FeatureMap {
-    /** The number of colors used in our feature set */
-    protected final int numColors;
-    /** The number of columns (y bins) in the quantization */
-    protected final int numColumns;
-    /** The number of rows (x bins) in the quantization */
-    protected final int numRows;
-    private final double[] features;
-    private final boolean[] hasColor;
+	/** The number of colors used in our feature set */
+	protected final int numColors;
+	/** The number of columns (y bins) in the quantization */
+	protected final int numColumns;
+	/** The number of rows (x bins) in the quantization */
+	protected final int numRows;
+	private final double[] features;
+	private final boolean[] hasColor;
 
-    /** Create a new FeatureMap with fixed parameter settings: 16 columns,
-     *   21 rows and 8 colors (SECAM).
-     */
-    public FeatureMap(int columns, int rows, int colors) {
-        // Some hardcoded feature set parameters
-        numColumns = columns;
-        numRows = rows;
-        numColors = colors;
-        hasColor = new boolean[numColors];
-        features = new double[numFeatures()];
-        System.out.println(this +  " " + numFeatures());
+	/**
+	 * Create a new FeatureMap with fixed parameter settings: 16 columns, 21
+	 * rows and 8 colors (SECAM).
+	 */
+	public FeatureMap(int columns, int rows, int colors) {
+		// Some hardcoded feature set parameters
+		numColumns = columns;
+		numRows = rows;
+		numColors = colors;
+		hasColor = new boolean[numColors];
+		features = new double[numFeatures()];
+		System.out.println(this + " " + numFeatures());
 
-    }
-    public FeatureMap() {
-        this(18, 21, 8);
-    }
+	}
+	public FeatureMap() {
+		this(18, 21, 8);
+	}
 
+	/**
+	 * Returns a quantized version of the last screen.
+	 * 
+	 * @param history
+	 * @return
+	 */
+	public double[] getFeatures(FrameHistory history) {
+		// Obtain the last screen
+		ScreenMatrix screen = history.getLastFrame(0);
 
+		int blockWidth = screen.width / numColumns;
+		int blockHeight = screen.height / numRows;
 
-    /** Returns a quantized version of the last screen.
-     * 
-     * @param history
-     * @return
-     */
-    public double[] getFeatures(FrameHistory history) {
-        // Obtain the last screen
-        ScreenMatrix screen = history.getLastFrame(0);
+		int featuresPerBlock = numColors;
 
-        int blockWidth = screen.width / numColumns;
-        int blockHeight = screen.height / numRows;
+		int blockIndex = 0;
 
-        int featuresPerBlock = numColors;
+		int numColors = this.numColors;
 
-        int blockIndex = 0;
+		double[] features = this.features;
+		int[][] matrix = screen.matrix;
 
-        int numColors = this.numColors;
+		int rr = numRows;
+		int cc = numColumns;
 
-        double[] features = this.features;
-        int[][] matrix = screen.matrix;
+		// For each pixel block
+		boolean[] hasColor = this.hasColor;
 
-        int rr = numRows;
-        int cc = numColumns;
+		for (int by = 0; by < rr; by++) {
 
-        // For each pixel block
-        boolean[] hasColor = this.hasColor;
+			int yo = by * blockHeight;
 
-        for (int by = 0; by < rr; by++) {
+			for (int bx = 0; bx < cc; bx++) {
+				Arrays.fill(hasColor, false);
+				int xo = bx * blockWidth;
 
-            int yo = by * blockHeight;
+				// Determine which colors are present
+				for (int x = xo; x < xo + blockWidth; x++) {
+					int[] sm = matrix[x];
+					for (int y = yo; y < yo + blockHeight; y++) {
+						int pixelColor = sm[y];
+						hasColor[encode(pixelColor)] = true;
+					}
+				}
 
-            for (int bx = 0; bx < cc; bx++) {
-                Arrays.fill(hasColor, false);
-                int xo = bx * blockWidth;
+				// Add all colors present to our feature set
+				for (int c = 0; c < numColors; c++)
+					if (hasColor[c])
+						features[c + blockIndex] = 1.0;
 
+				// Increment the feature offset in the big feature vector
+				blockIndex += featuresPerBlock;
+			}
+		}
 
-                // Determine which colors are present
-                for (int x = xo; x < xo + blockWidth; x++) {
-                    int[] sm = matrix[x];
-                    for (int y = yo; y < yo + blockHeight; y++) {
-                        int pixelColor = sm[y];
-                        hasColor[encode(pixelColor)] = true;
-                    }
-                }
+		return features;
+	}
 
-                // Add all colors present to our feature set
-                for (int c = 0; c < numColors; c++)
-                    if (hasColor[c])
-                        features[c + blockIndex] = 1.0;
+	/**
+	 * SECAM encoding of colors; we end up with 8 possible colors.
+	 * 
+	 * @param color
+	 * @return
+	 */
+	protected static int encode(int color) {
+		return (color & 0xF) >> 1;
+	}
 
-                // Increment the feature offset in the big feature vector
-                blockIndex += featuresPerBlock;
-            }
-        }
+	/**
+	 * Returns the number of features in this FeatureMap.
+	 * 
+	 * @return
+	 */
+	public int numFeatures() {
+		return numColumns * numRows * numColors;
+	}
 
-        return features;
-    }
-
-    /** SECAM encoding of colors; we end up with 8 possible colors.
-     * 
-     * @param color
-     * @return
-     */
-    protected static int encode(int color) {
-        return (color & 0xF) >> 1;
-    }
-
-    /** Returns the number of features in this FeatureMap.
-     *
-     * @return
-     */
-    public int numFeatures() {
-        return numColumns * numRows * numColors;
-    }
-
-    /** Returns the length of history required to compute features.
-     * 
-     * @return
-     */
-    public int historyLength() {
-        return 1;
-    }
+	/**
+	 * Returns the length of history required to compute features.
+	 * 
+	 * @return
+	 */
+	public int historyLength() {
+		return 1;
+	}
 }

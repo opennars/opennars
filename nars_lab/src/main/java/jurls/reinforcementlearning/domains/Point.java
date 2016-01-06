@@ -6,18 +6,19 @@
 package jurls.reinforcementlearning.domains;
 
 /**
- *
+ * 
  * @author thorsten
  */
 public class Point {
-    public double x,y,vx,vy,decayx,decayy;
+	public double x, y, vx, vy, decayx, decayy;
 
-    public Point(double x, double y, double vx, double vy, double decayx, double decayy) {
-        this.x = x;
-        this.y = y;
-        this.vx = vx;
-        this.vy = vy;
-        this.decayx = decayx;
-        this.decayy = decayy;
-    }
+	public Point(double x, double y, double vx, double vy, double decayx,
+			double decayy) {
+		this.x = x;
+		this.y = y;
+		this.vx = vx;
+		this.vy = vy;
+		this.decayx = decayx;
+		this.decayy = decayy;
+	}
 }

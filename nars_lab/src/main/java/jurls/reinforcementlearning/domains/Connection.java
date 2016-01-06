@@ -6,17 +6,17 @@
 package jurls.reinforcementlearning.domains;
 
 /**
- *
+ * 
  * @author thorsten
  */
 public class Connection {
 
-    public final double length;
-    public final Point p1, p2;
+	public final double length;
+	public final Point p1, p2;
 
-    public Connection(double length, Point p1, Point p2) {
-        this.length = length;
-        this.p1 = p1;
-        this.p2 = p2;
-    }
+	public Connection(double length, Point p1, Point p2) {
+		this.length = length;
+		this.p1 = p1;
+		this.p2 = p2;
+	}
 }

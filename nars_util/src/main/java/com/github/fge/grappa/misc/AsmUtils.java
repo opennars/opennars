@@ -42,7 +42,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-public enum AsmUtils
+public   enum AsmUtils
 {
     ;
     private static final ClassCache CACHE = ClassCache.INSTANCE;

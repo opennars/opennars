@@ -19,10 +19,10 @@ package automenta.vivisect.swing.property.model;
 
 /**
  * ObjectRenderer.<br>
- *
+ * 
  */
 public interface ObjectRenderer {
 
 	String getText(Object object);
-	
+
 }

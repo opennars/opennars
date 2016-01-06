@@ -1647,4 +1647,4 @@ package automenta.vivisect.face;
 //	lab.setText(s);
 //	//	getLayout().invalidateLayout(this);
 //    }
-//}
+// }

@@ -5,22 +5,20 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import nars.NAR;
 
-/** displays a tree representation of NARS components, including:
- *          Tasks
- *              Judgments
- *              Questions
- *              Goals
- *
- *          Plugins
- *
- *          ..
- *
+/**
+ * displays a tree representation of NARS components, including: Tasks Judgments
+ * Questions Goals
+ * 
+ * Plugins
+ * 
+ * ..
+ * 
  */
 public class NARTree extends TreeView {
 
-    private final NAR nar;
+	private final NAR nar;
 
-    public NARTree(NAR n) {
+	public NARTree(NAR n) {
         nar = n;
         CheckBoxTreeItem<String> rootItem =
                 new CheckBoxTreeItem<>("View Source Files");
@@ -47,6 +45,4 @@ public class NARTree extends TreeView {
         setShowRoot(true);
 
     }
-
-
 }

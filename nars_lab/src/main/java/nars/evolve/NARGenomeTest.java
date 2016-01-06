@@ -109,4 +109,4 @@
 //			Encog.getInstance().shutdown();
 //		}
 //	}
-//}
+// }

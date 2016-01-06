@@ -676,4 +676,4 @@
 //    private javax.swing.JTextField qEpsilonTextField;
 //    private javax.swing.JRadioButtonMenuItem qZeroMenuItem;
 //    // End of variables declaration//GEN-END:variables
-//}
+// }

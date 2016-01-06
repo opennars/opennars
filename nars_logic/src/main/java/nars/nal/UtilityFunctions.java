@@ -28,7 +28,7 @@ import static java.lang.Math.sqrt;
 /**
  * Common (static) functions on real numbers, mostly in [0,1].
  */
-public class UtilityFunctions  {
+public class UtilityFunctions   {
 
     protected UtilityFunctions() {
     }

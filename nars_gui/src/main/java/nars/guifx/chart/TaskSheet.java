@@ -13,11 +13,11 @@ import org.controlsfx.control.spreadsheet.*;
  */
 public class TaskSheet extends BorderPane {
 
-    private final NAR nar;
-    private final SpreadsheetView sheet;
-    private final FlowPane header;
+	private final NAR nar;
+	private final SpreadsheetView sheet;
+	private final FlowPane header;
 
-    public TaskSheet(NAR n) {
+	public TaskSheet(NAR n) {
 
         nar = n;
 
@@ -35,34 +35,34 @@ public class TaskSheet extends BorderPane {
 
         setCenter(sheet);
     }
+	protected void update() {
+		sheet.getGrid().setCellValue(0, 0, "x" + Math.random());
+	}
 
-    protected void update() {
-        sheet.getGrid().setCellValue(0,0,"x"+Math.random());
-    }
+	private static Grid getSampleGrid() {
+		GridBase gridBase = new GridBase(16, 16);
 
+		ObservableList rows = FXCollections.observableArrayList();
 
-    private static Grid getSampleGrid() {
-        GridBase gridBase = new GridBase(16, 16);
+		for (int row = 0; row < gridBase.getRowCount(); ++row) {
+			ObservableList currentRow = FXCollections.observableArrayList();
 
-        ObservableList rows = FXCollections.observableArrayList();
+			for (int column = 0; column < gridBase.getColumnCount(); ++column) {
+				SpreadsheetCell cell = SpreadsheetCellType.STRING.createCell(
+						row, column, 1, 1, " ? ");
+				cell.setWrapText(true);
+				/*
+				 * cell.getStyleClass().clear();
+				 * cell.getStyleClass().add("sheetcell");
+				 */
 
-        for(int row = 0; row < gridBase.getRowCount(); ++row) {
-            ObservableList currentRow = FXCollections.observableArrayList();
+				currentRow.add(cell);
+			}
 
-            for(int column = 0; column < gridBase.getColumnCount(); ++column) {
-                SpreadsheetCell cell = SpreadsheetCellType.STRING.createCell(row, column, 1, 1, " ? ");
-                cell.setWrapText(true);
-                /*cell.getStyleClass().clear();
-                cell.getStyleClass().add("sheetcell");*/
+			rows.add(currentRow);
+		}
 
-
-                currentRow.add(cell);
-            }
-
-            rows.add(currentRow);
-        }
-
-        gridBase.setRows(rows);
-        return gridBase;
-    }
+		gridBase.setRows(rows);
+		return gridBase;
+	}
 }

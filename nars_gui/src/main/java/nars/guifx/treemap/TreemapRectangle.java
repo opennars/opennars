@@ -11,50 +11,52 @@ import javafx.scene.text.Text;
  */
 class TreemapRectangle extends Parent {
 
-    //private static final Logger LOG = Logger.getLogger(TreemapRectangle.class.getName());
-    //private Random random = new Random();
-    private final Color rectangleColor;
-    private final Rectangle rectangle = new Rectangle();
+	// private static final Logger LOG =
+	// Logger.getLogger(TreemapRectangle.class.getName());
+	// private Random random = new Random();
+	private final Color rectangleColor;
+	private final Rectangle rectangle = new Rectangle();
 
-    public TreemapRectangle(TreemapDtoElement child, Color color) {
+	public TreemapRectangle(TreemapDtoElement child, Color color) {
 
-        rectangle.setHeight(child.getHeight());
-        rectangle.setWidth(child.getWidth());
+		rectangle.setHeight(child.getHeight());
+		rectangle.setWidth(child.getWidth());
 
-        /*(rectangle.addEventHandler(MouseEvent.MOUSE_ENTERED, new HoverOnEventHandler());
-        rectangle.addEventHandler(MouseEvent.MOUSE_EXITED, new HoverOffEventHandler());*/
-        rectangleColor = color;
-        rectangle.setFill(rectangleColor);
+		/*
+		 * (rectangle.addEventHandler(MouseEvent.MOUSE_ENTERED, new
+		 * HoverOnEventHandler());
+		 * rectangle.addEventHandler(MouseEvent.MOUSE_EXITED, new
+		 * HoverOffEventHandler());
+		 */
+		rectangleColor = color;
+		rectangle.setFill(rectangleColor);
 
-        getChildren().setAll(rectangle, new Text(child.getLabel()));
+		getChildren().setAll(rectangle, new Text(child.getLabel()));
 
-        /*runLater(() -> {
-            //Tooltip.install(rectangle, new NodeTooltip(child));
-        });*/
+		/*
+		 * runLater(() -> { //Tooltip.install(rectangle, new
+		 * NodeTooltip(child)); });
+		 */
 
-    }
+	}
 
-    private static class NodeTooltip extends Tooltip {
+	private static class NodeTooltip extends Tooltip {
 
-        public NodeTooltip(TreemapDtoElement child) {
-            super(child.getLabel());
-        }
-    }
+		public NodeTooltip(TreemapDtoElement child) {
+			super(child.getLabel());
+		}
+	}
 
-    /*private class HoverOnEventHandler implements EventHandler<Event> {
-
-        @Override
-        public void handle(Event t) {
-            Color brighter = rectangleColor.brighter();
-            TreemapRectangle.this.rectangle.setFill(brighter);
-        }
-    }
-
-    private class HoverOffEventHandler implements EventHandler<Event> {
-
-        @Override
-        public void handle(Event t) {
-            TreemapRectangle.this.rectangle.setFill(rectangleColor);
-        }
-    }*/
+	/*
+	 * private class HoverOnEventHandler implements EventHandler<Event> {
+	 * 
+	 * @Override public void handle(Event t) { Color brighter =
+	 * rectangleColor.brighter();
+	 * TreemapRectangle.this.rectangle.setFill(brighter); } }
+	 * 
+	 * private class HoverOffEventHandler implements EventHandler<Event> {
+	 * 
+	 * @Override public void handle(Event t) {
+	 * TreemapRectangle.this.rectangle.setFill(rectangleColor); } }
+	 */
 }

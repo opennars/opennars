@@ -255,7 +255,7 @@ public class PremiseRuleSet {
 
     static PremiseRule add(Collection<PremiseRule> target, PremiseRule q, String src, PatternIndex index) {
         if (q == null)
-            throw new RuntimeException("null: " + q + " " + src);
+            throw new RuntimeException("null: " + q + ' ' + src);
 
         q = q.normalizeRule(index).setup(index);
         q.setSource(src);

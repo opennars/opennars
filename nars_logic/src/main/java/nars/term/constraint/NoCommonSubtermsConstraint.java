@@ -28,7 +28,7 @@ public final class NoCommonSubtermsConstraint implements MatchConstraint {
 
     @Override
     public String toString() {
-        return "noCommonSubterms(" + b + ")";
+        return "noCommonSubterms(" + b + ')';
     }
 
     static boolean sharedSubterms(Term a, Term b, Set<Term> s) {

@@ -9,13 +9,13 @@ import java.io.Serializable;
  */
 public interface Clock extends Serializable {
 
-    /** called when memory reset */
-    void clear(Memory m);
+	/** called when memory reset */
+	void clear(Memory m);
 
-    /** returns the current time, as measured in units determined by this clock */
-    long time();
+	/** returns the current time, as measured in units determined by this clock */
+	long time();
 
-    void preFrame();
+	void preFrame();
 
-    long elapsed();
+	long elapsed();
 }

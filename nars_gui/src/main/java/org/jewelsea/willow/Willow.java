@@ -308,4 +308,4 @@ package org.jewelsea.willow;
 //    public TabManager getTabManager() {
 //        return tabManager;
 //    }
-//}
+// }

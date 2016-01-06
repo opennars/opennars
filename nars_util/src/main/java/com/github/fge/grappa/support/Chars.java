@@ -20,7 +20,7 @@ import com.google.common.base.Optional;
 import com.gs.collections.api.map.primitive.CharObjectMap;
 import com.gs.collections.impl.map.mutable.primitive.CharObjectHashMap;
 
-public enum Chars {
+public   enum Chars {
     ;
     /**
      * The End-of-Input non-character.

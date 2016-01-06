@@ -61,7 +61,7 @@ public class Commander implements Consumer<NAR>, Supplier<Concept> {
                 //: null;
 
         commands = buffer;
-        commandIterator = Iterators.cycle(commands);
+        commandIterator = Iterators.cycle(commands.getArrayBag());
 
 
         maxTemporalBeliefAge = nar.memory.duration() * maxTemporalBeliefDurations;
@@ -69,7 +69,7 @@ public class Commander implements Consumer<NAR>, Supplier<Concept> {
 
         nar.memory.eventInput.on((tp) -> {
             Task t = tp.getTask();
-            if (t.isInput() && !commands.contains(t))
+            if (t.isInput() && !commands.getArrayBag().contains(t))
                 input(t);
         });
     }
@@ -86,7 +86,7 @@ public class Commander implements Consumer<NAR>, Supplier<Concept> {
 
     protected void input(Task t) {
         if (/*(t.isGoal() || t.isQuestOrQuestion()) && */ t.isInput()) {
-            commands.put(t);
+            commands.getArrayBag().put(t);
         }
     }
 
@@ -97,7 +97,7 @@ public class Commander implements Consumer<NAR>, Supplier<Concept> {
         //TODO iterate tasks until allotted priority has been reached,
         //  TaskProcess each
 
-        int cs = commands.size();
+        int cs = commands.getArrayBag().size();
         if (cs == 0) return;
 
 
@@ -124,7 +124,7 @@ public class Commander implements Consumer<NAR>, Supplier<Concept> {
 
     public final boolean valid(long now, Task t) {
 
-        if (t.getBudget().isDeleted())
+        if (t.getBudget().getDeleted())
             return false;
 
         if (!Tense.isEternal(t.getOccurrenceTime())) {
@@ -142,11 +142,11 @@ public class Commander implements Consumer<NAR>, Supplier<Concept> {
     }
 
     public boolean isEmpty() {
-        return this.commands.isEmpty();
+        return this.commands.getArrayBag().isEmpty();
     }
 
     public int size() {
-        return this.commands.size();
+        return this.commands.getArrayBag().size();
     }
 
     //TODO getBufferPrioritySum

@@ -23,13 +23,13 @@ package automenta.vivisect.swing.property.util.converter;
  */
 public interface Converter {
 
-  /**
-   * Converts <code>value</code> to an object of <code>type</code>.
-   *  
-   * @param type
-   * @param value
-   * @return <code>value</code> converted to an object of <code>type</code>.
-   */
-  Object convert(Class type, Object value);
-  
+	/**
+	 * Converts <code>value</code> to an object of <code>type</code>.
+	 * 
+	 * @param type
+	 * @param value
+	 * @return <code>value</code> converted to an object of <code>type</code>.
+	 */
+	Object convert(Class type, Object value);
+
 }

@@ -32,17 +32,14 @@ import java.util.Collection;
  */
 public class TextInput extends TaskQueue {
 
+	public TextInput(NAR n, String input) {
+		process(n, input);
+	}
 
-    public TextInput(NAR n, String input) {
-        process(n, input);
-    }
-
-    protected int process(NAR nar, String input) {
+	protected int process(NAR nar, String input) {
         //..
 
         return Narsese.the().tasks(input,
                 (Collection<Task>) this, nar.memory);
     }
-
-
 }

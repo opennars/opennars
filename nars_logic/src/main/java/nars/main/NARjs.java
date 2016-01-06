@@ -10,73 +10,74 @@ import java.io.InputStreamReader;
 
 /**
  * Javascript NAR Runner
+ * 
  * @author me
  */
 public class NARjs {
-    static final ScriptEngineManager factory = new ScriptEngineManager();
-    
-    final ScriptEngine js = factory.getEngineByName("JavaScript");
+	static final ScriptEngineManager factory = new ScriptEngineManager();
 
-    public NARjs() throws Exception {
-        js.eval("load('nashorn:mozilla_compat.js')");
-        
-        js.eval("importPackage('java.lang')");
-        js.eval("importPackage('java.other')");
-        js.eval("importPackage('java.io')");
+	final ScriptEngine js = factory.getEngineByName("JavaScript");
 
-        js.eval("importPackage('nars.core')");
-        js.eval("importPackage('nars.nal')");
-        js.eval("importPackage('nars.nal.nal7')");
-        js.eval("importPackage('nars.build')");
-        js.eval("importPackage('nars.io')");
-        js.eval("importPackage('nars.gui')");
-        
-        js.eval("function newDefaultNAR() { var x = new DefaultNARBuilder().build(); new TextOutput(x, System.out); return x; }");
-    }
+	public NARjs() throws Exception {
+		js.eval("load('nashorn:mozilla_compat.js')");
 
-    public Object eval(String s) throws ScriptException {
-        return js.eval(s);
-    }
-    
-    public static void printHelp() {
-        System.out.println("Help coming soon.");
-    }
-    
-    public static void main(String[] args) throws Exception {
-        NARjs j = new NARjs();
+		js.eval("importPackage('java.lang')");
+		js.eval("importPackage('java.other')");
+		js.eval("importPackage('java.io')");
 
-        System.out.println(NAR.VERSION +  " Javascript Console - :h for help, :q to exit");
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        System.out.print("> ");
+		js.eval("importPackage('nars.core')");
+		js.eval("importPackage('nars.nal')");
+		js.eval("importPackage('nars.nal.nal7')");
+		js.eval("importPackage('nars.build')");
+		js.eval("importPackage('nars.io')");
+		js.eval("importPackage('nars.gui')");
 
-        String s;
-        while ((s = br.readLine())!=null) {
-            
-            
-            try {
-                if (":q".equals(s))
-                    break;
-                if (s.startsWith(":h")) {
-                    printHelp();
-                    continue;
-                }
+		js.eval("function newDefaultNAR() { var x = new DefaultNARBuilder().build(); new TextOutput(x, System.out); return x; }");
+	}
 
-                Object ret = j.eval(s);
-                
-                if (ret != null) {
-                    System.out.println(ret);
-                }
-            } catch (Exception e) {
-                System.out.println(e.getClass().getName() + " in parsing: " + e.getMessage());
-            } finally {
+	public Object eval(String s) throws ScriptException {
+		return js.eval(s);
+	}
 
-                
-                System.out.print("> ");
-                
-            }
-        }
-    
-        br.close();
-        System.exit(0);
-    }
+	public static void printHelp() {
+		System.out.println("Help coming soon.");
+	}
+
+	public static void main(String[] args) throws Exception {
+		NARjs j = new NARjs();
+
+		System.out.println(NAR.VERSION
+				+ " Javascript Console - :h for help, :q to exit");
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("> ");
+
+		String s;
+		while ((s = br.readLine()) != null) {
+
+			try {
+				if (":q".equals(s))
+					break;
+				if (s.startsWith(":h")) {
+					printHelp();
+					continue;
+				}
+
+				Object ret = j.eval(s);
+
+				if (ret != null) {
+					System.out.println(ret);
+				}
+			} catch (Exception e) {
+				System.out.println(e.getClass().getName() + " in parsing: "
+						+ e.getMessage());
+			} finally {
+
+				System.out.print("> ");
+
+			}
+		}
+
+		br.close();
+		System.exit(0);
+	}
 }

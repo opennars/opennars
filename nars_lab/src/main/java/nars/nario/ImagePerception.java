@@ -49,4 +49,4 @@
 //    public boolean isState(Term t) {
 //        return false;
 //    }
-//}
+// }

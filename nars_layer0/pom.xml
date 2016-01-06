@@ -53,6 +53,11 @@
             <artifactId>affinity</artifactId>
             <version>3.0</version>
         </dependency>
+        <dependency>
+                <groupId>opennars</groupId>
+                <version>${parent.version}</version>
+            <artifactId>nars_data</artifactId>
+        </dependency>
 
         <!--<dependency>--> <!--<groupId>net.openhft</groupId>--> <!--<artifactId>chronicle-values</artifactId>--> <!--<version>1.0.2-alpha</version>--> <!--</dependency>-->
     </dependencies>

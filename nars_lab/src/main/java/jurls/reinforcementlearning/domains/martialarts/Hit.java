@@ -6,18 +6,18 @@
 package jurls.reinforcementlearning.domains.martialarts;
 
 /**
- *
+ * 
  * @author thorsten
  */
 public class Hit {
-    public final int x;
-    public final int y;
-    public final int reward;
-    public int progress = 0;
+	public final int x;
+	public final int y;
+	public final int reward;
+	public int progress = 0;
 
-    public Hit(int x, int y, int reward) {
-        this.x = x;
-        this.y = y;
-        this.reward = reward;
-    }
+	public Hit(int x, int y, int reward) {
+		this.x = x;
+		this.y = y;
+		this.reward = reward;
+	}
 }

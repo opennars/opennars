@@ -6,18 +6,16 @@
 
 package jurls.reinforcementlearning.domains.grid;
 
-
-
 /**
- *
+ * 
  * @author me
  */
 public interface Agent {
-    
-    int step(double reward);
-    double[] getSensor();
-    double[] getAction();
 
-    void init(World world);
-    
+	int step(double reward);
+	double[] getSensor();
+	double[] getAction();
+
+	void init(World world);
+
 }

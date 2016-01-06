@@ -20,40 +20,44 @@ package jurls.reinforcementlearning.domains.arcade.screen;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-/** Converts a ScreenMatrix to a BufferedImage, using a ColorMap.
- *
+/**
+ * Converts a ScreenMatrix to a BufferedImage, using a ColorMap.
+ * 
  * @author Marc G. Bellemare <mgbellemare@ualberta.ca>
  */
 public class ScreenConverter {
-    /** The map from screen indices to RGB colors */
-    public ColorPalette colorMap;
+	/** The map from screen indices to RGB colors */
+	public ColorPalette colorMap;
 
-    /** Create a new ScreenConverter with the desired color palette
-     * 
-     * @param cMap
-     */
-    public ScreenConverter(ColorPalette cMap) {
-        colorMap = cMap;
-    }
+	/**
+	 * Create a new ScreenConverter with the desired color palette
+	 * 
+	 * @param cMap
+	 */
+	public ScreenConverter(ColorPalette cMap) {
+		colorMap = cMap;
+	}
 
-    /** Transforms a ScreenMatrix into a BufferedImage.
-     * 
-     * @param m
-     * @return
-     */
-    public BufferedImage convert(ScreenMatrix m) {
-        // Create a new image, of the same width and height as the screen matrix
-        BufferedImage img = new BufferedImage(m.width, m.height, BufferedImage.TYPE_INT_RGB);
+	/**
+	 * Transforms a ScreenMatrix into a BufferedImage.
+	 * 
+	 * @param m
+	 * @return
+	 */
+	public BufferedImage convert(ScreenMatrix m) {
+		// Create a new image, of the same width and height as the screen matrix
+		BufferedImage img = new BufferedImage(m.width, m.height,
+				BufferedImage.TYPE_INT_RGB);
 
-        // Map each pixel
-        for (int x = 0; x < m.width; x++)
-            for (int y = 0; y < m.height; y++) {
-                int index = m.matrix[x][y];
-                Color c = colorMap.get(index);
-                img.setRGB(x, y, c.getRGB());
-            }
+		// Map each pixel
+		for (int x = 0; x < m.width; x++)
+			for (int y = 0; y < m.height; y++) {
+				int index = m.matrix[x][y];
+				Color c = colorMap.get(index);
+				img.setRGB(x, y, c.getRGB());
+			}
 
-        return img;
-    }
+		return img;
+	}
 
 }

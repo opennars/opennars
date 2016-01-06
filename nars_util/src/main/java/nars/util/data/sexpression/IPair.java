@@ -18,5 +18,4 @@ public interface IPair extends IPaired {
 	static Object first(Object x) {
         return (x instanceof IPair) ? ((IPair) x)._car() : null;
     }
-
 }

@@ -9,7 +9,7 @@ public class RuleMarg {
 	public static final int TYPE_MS = 1; // Simple Margolus
 	public int iClo; // count of states, not used yet
 	public int iTyp; // Margolus rule type, 1-simple
-	public boolean isHist; // with history?  not used yet
+	public boolean isHist; // with history? not used yet
 	public int[] swapArray = new int[16];
 
 	// ----------------------------------------------------------------
@@ -33,7 +33,7 @@ public class RuleMarg {
 	public void InitFromString(String sStr) {
 		String sTok, sSwaps;
 		int i, iNum, iVal;
-		//noinspection UseOfStringTokenizer
+		// noinspection UseOfStringTokenizer
 		StringTokenizer st, std;
 
 		ResetToDefaults();
@@ -41,7 +41,8 @@ public class RuleMarg {
 		st = new StringTokenizer(sStr, ",", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken();
-			if (sTok.length() > 0 && sTok.charAt(0) == 'M') // Margholus rule type
+			if (sTok.length() > 0 && sTok.charAt(0) == 'M') // Margholus rule
+															// type
 			{
 				iTyp = TYPE_MS; // simple - the only one available now
 			} else if (sTok.length() > 0 && sTok.charAt(0) == 'D') // definition
@@ -128,10 +129,10 @@ public class RuleMarg {
 		}
 	}
 
-    // ----------------------------------------------------------------
+	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
+			short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		int modCnt = 0;
 		int i, j, ic;
 		int c1, c2, r1, r2;
@@ -169,24 +170,25 @@ public class RuleMarg {
 						|| (swapArray[0] > 0)) {
 					SwapMargCells(mgCells); // apply the rule
 
-					for (ic = 0; ic <= 3; ic++) // check if any of 4 cells was modified
+					for (ic = 0; ic <= 3; ic++) // check if any of 4 cells was
+												// modified
 					{
 						if (mgCellsOld[ic] != mgCells[ic]) // change detected
 						{
 							modCnt++; // one more changed cell
 							switch (ic) {
-							case 0:
-								tmpState[c1][r1] = (short) mgCells[ic];
-								break; // ul
-							case 1:
-								tmpState[c2][r1] = (short) mgCells[ic];
-								break; // ur
-							case 2:
-								tmpState[c1][r2] = (short) mgCells[ic];
-								break; // ll
-							case 3:
-								tmpState[c2][r2] = (short) mgCells[ic];
-								break; // lr
+								case 0 :
+									tmpState[c1][r1] = (short) mgCells[ic];
+									break; // ul
+								case 1 :
+									tmpState[c2][r1] = (short) mgCells[ic];
+									break; // ur
+								case 2 :
+									tmpState[c1][r2] = (short) mgCells[ic];
+									break; // ll
+								case 3 :
+									tmpState[c2][r2] = (short) mgCells[ic];
+									break; // lr
 							}
 						}
 					}

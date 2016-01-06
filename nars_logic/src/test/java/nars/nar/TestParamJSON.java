@@ -53,4 +53,4 @@ package nars.nar;
 ////        assertTrue(d.length > 1);
 ////    }
 //
-//}
+// }

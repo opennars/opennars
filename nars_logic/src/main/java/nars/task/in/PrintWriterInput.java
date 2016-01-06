@@ -14,35 +14,34 @@ import java.io.PipedWriter;
  */
 public class PrintWriterInput extends ReaderInput {
 
-    /**
-     * Printing to out will be piped into TextInput
-     */
-    public final PipedWriter out;
-    boolean outClosed = false;
+	/**
+	 * Printing to out will be piped into TextInput
+	 */
+	public final PipedWriter out;
+	boolean outClosed = false;
 
-    public PrintWriterInput(NAR n) throws IOException {
-        super(n);
+	public PrintWriterInput(NAR n) throws IOException {
+		super(n);
 
-        out = new PipedWriter();
-        setInput(new BufferedReader(new PipedReader(out)));
+		out = new PipedWriter();
+		setInput(new BufferedReader(new PipedReader(out)));
 
-    }
+	}
 
+	public void append(CharSequence c) {
+		try {
+			out.append(c);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-    public void append(CharSequence c) {
-        try {
-            out.append(c);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void close() {
-        try {
-            out.close();
-            outClosed = true;
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
+	public void close() {
+		try {
+			out.close();
+			outClosed = true;
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
 }

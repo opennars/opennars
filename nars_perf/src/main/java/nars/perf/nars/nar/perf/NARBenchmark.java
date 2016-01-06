@@ -42,30 +42,29 @@ import static nars.$.$;
 
 public class NARBenchmark {
 
+	@Benchmark
+	@BenchmarkMode(value = Mode.SingleShotTime)
+	public void nal1Deduction() {
+		NAR n = new Default();
+		n.nal(1);
+		Compound a = $("<a-->b>");
+		Compound b = $("<b-->c>");
 
+		n.believe(a);
+		n.believe(b);
+		n.frame(10000);
+	}
 
+	@Benchmark
+	@BenchmarkMode(value = Mode.SingleShotTime)
+	public void nal1DeductionInNAL8() {
+		NAR n = new Default();
+		n.nal(8);
+		Compound a = $("<a-->b>");
+		Compound b = $("<b-->c>");
 
-    @Benchmark @BenchmarkMode(value = Mode.SingleShotTime)
-    public void nal1Deduction() {
-        NAR n = new Default();
-        n.nal(1);
-        Compound a = $("<a-->b>");
-        Compound b = $("<b-->c>");
-
-        n.believe(a);
-        n.believe(b);
-        n.frame(10000);
-    }
-
-    @Benchmark @BenchmarkMode(value = Mode.SingleShotTime)
-    public void nal1DeductionInNAL8() {
-        NAR n = new Default();
-        n.nal(8);
-        Compound a = $("<a-->b>");
-        Compound b = $("<b-->c>");
-
-        n.believe(a);
-        n.believe(b);
-        n.frame(10000);
-    }
+		n.believe(a);
+		n.believe(b);
+		n.frame(10000);
+	}
 }

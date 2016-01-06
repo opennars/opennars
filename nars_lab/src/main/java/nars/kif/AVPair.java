@@ -1,4 +1,3 @@
-
 /* This code is copyrighted by Articulate Software (c) 2003.
  It is released underthe GNU Public License <http://www.gnu.org/copyleft/gpl.html>.
  Users ofthis code also consent, by use of this code, to credit Articulate Software in any
@@ -8,7 +7,7 @@ package nars.kif;
 
 public class AVPair {
 
-    public String attribute = "";
-    public String value = "";
+	public String attribute = "";
+	public String value = "";
 
 }

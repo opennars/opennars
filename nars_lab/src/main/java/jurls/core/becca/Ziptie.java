@@ -6,13 +6,15 @@
 package jurls.core.becca;
 
 public abstract class Ziptie {
-    
-    /**
-     * 
-     * @param signal input signal vector
-     * @param result may be null, in which case a new array will be allocated
-     * @return double[] result
-     */
-    public abstract double[] in(double[] signal, double[] result);
+
+	/**
+	 * 
+	 * @param signal
+	 *            input signal vector
+	 * @param result
+	 *            may be null, in which case a new array will be allocated
+	 * @return double[] result
+	 */
+	public abstract double[] in(double[] signal, double[] result);
 
 }

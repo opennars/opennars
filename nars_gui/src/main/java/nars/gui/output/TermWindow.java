@@ -126,4 +126,4 @@ package nars.gui.output;
 //    }
 //
 //
-//}
+// }

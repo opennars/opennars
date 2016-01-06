@@ -1,37 +1,36 @@
 package nars.term.index;
 
-
 /**
- * Implements very fast dictionary storage and retrieval.
- * Only depends upon the core String class.
+ * Implements very fast dictionary storage and retrieval. Only depends upon the
+ * core String class.
  * 
- * @author Melinda Green - © 2010 Superliminal Software.
- * Free for all uses with attribution.
+ * @author Melinda Green - © 2010 Superliminal Software. Free for all uses with
+ *         attribution.
  */
 public class TrieMap {
-    /*
-     * Implementation of a trie tree. (see http://en.wikipedia.org/wiki/Trie)
-     * though I made it faster and more compact for long key strings 
-     * by building tree nodes only as needed to resolve collisions.
-     * Each letter of a key is the index into the following array.
-     * Values stored in the array are either a Leaf containing the user's value or
-     * another TrieMap node if more than one key shares the key prefix up to that point.
-     * Null elements indicate unused, I.E. available slots.
-     */
-    private final Object[] mChars = new Object[256];
-    private Object mPrefixVal; // Used only for values of prefix keys.
-    
-    // Simple container for a string-value pair.
-    private static class Leaf {
-        public final String mStr;
-        public final Object mVal;
-        public Leaf(String str, Object val) {
-            mStr = str;
-            mVal = val;
-        }
-    }
+	/*
+	 * Implementation of a trie tree. (see http://en.wikipedia.org/wiki/Trie)
+	 * though I made it faster and more compact for long key strings by building
+	 * tree nodes only as needed to resolve collisions. Each letter of a key is
+	 * the index into the following array. Values stored in the array are either
+	 * a Leaf containing the user's value or another TrieMap node if more than
+	 * one key shares the key prefix up to that point. Null elements indicate
+	 * unused, I.E. available slots.
+	 */
+	private final Object[] mChars = new Object[256];
+	private Object mPrefixVal; // Used only for values of prefix keys.
 
-    public boolean isEmpty() {
+	// Simple container for a string-value pair.
+	private static class Leaf {
+		public final String mStr;
+		public final Object mVal;
+		public Leaf(String str, Object val) {
+			mStr = str;
+			mVal = val;
+		}
+	}
+
+	public boolean isEmpty() {
         if(mPrefixVal != null) {
             return false;
         }
@@ -42,15 +41,17 @@ public class TrieMap {
         }
         return true;
     }
-    
-    
-    /**
-     * Inserts a key/value pair.
-     * 
-     * @param key may be empty or contain low-order chars 0..255 but must not be null.
-     * @param val Your data. Any data class except another TrieMap. Null values erase entries.
-     */
-    public void put(String key, Object val) {
+	/**
+	 * Inserts a key/value pair.
+	 * 
+	 * @param key
+	 *            may be empty or contain low-order chars 0..255 but must not be
+	 *            null.
+	 * @param val
+	 *            Your data. Any data class except another TrieMap. Null values
+	 *            erase entries.
+	 */
+	public void put(String key, Object val) {
         assert key != null;
         assert !(val instanceof TrieMap); // Only we get to store TrieMap nodes. TODO: Allow it.
         if(key.isEmpty()) {
@@ -90,12 +91,10 @@ public class TrieMap {
         branch.put(cLeaf.mStr.substring(1), cLeaf.mVal); // Plus the one we collided with.
         mChars[c] = branch;
     }
-
-
-    /**
-     * Retrieve a value for a given key or null if not found.
-     */
-    public Object get(String key) {
+	/**
+	 * Retrieve a value for a given key or null if not found.
+	 */
+	public Object get(String key) {
         TrieMap other = this;
         while (true) {
             assert key != null;
@@ -125,35 +124,45 @@ public class TrieMap {
             return null; // Not found.
         }
     }
+	/**
+	 * Simple example test program.
+	 */
+	public static void main(String[] args) {
+		// Insert a bunch of key/value pairs.
+		TrieMap trieMap = new TrieMap();
+		trieMap.put("123", "456");
+		trieMap.put("Java", "rocks");
+		trieMap.put("Melinda", "too");
+		trieMap.put("Moo", "cow"); // Will collide with "Melinda".
+		trieMap.put("Moon", "walk"); // Collides with "Melinda" and turns "Moo"
+										// into a prefix.
+		trieMap.put("", "Root"); // You can store one value at the empty key if
+									// you like.
 
-    
-    /**
-     * Simple example test program.
-     */
-    public static void main(String[] args) {
-        // Insert a bunch of key/value pairs.
-        TrieMap trieMap = new TrieMap();
-        trieMap.put("123", "456");
-        trieMap.put("Java", "rocks");
-        trieMap.put("Melinda", "too");
-        trieMap.put("Moo", "cow"); // Will collide with "Melinda".
-        trieMap.put("Moon", "walk"); // Collides with "Melinda" and turns "Moo" into a prefix.
-        trieMap.put("", "Root"); // You can store one value at the empty key if you like.
-        
-        // Test for inserted, nonexistent, and deleted keys.
-        System.out.println("123 = " + trieMap.get("123"));
-        System.out.println("Java = " + trieMap.get("Java"));
-        System.out.println("Melinda = " + trieMap.get("Melinda"));
-        System.out.println("Moo = " + trieMap.get("Moo"));
-        System.out.println("Moon = " + trieMap.get("Moon"));
-        System.out.println("Mo = " + trieMap.get("Mo")); // Should return null.
-        System.out.println("Empty key = " + trieMap.get("")); // Should return "Root".
-        System.out.println("Moose = " + trieMap.get("Moose")); // Never added so should return null.
-        System.out.println("Nothing = " + trieMap.get("Nothing")); // Ditto.
-        trieMap.put("123", null); // Removes this leaf entry.
-        System.out.println("After removal, 123 = " + trieMap.get("123")); // Should now return null.
-        trieMap.put("Moo", null); // Removes this prefix entry. (Special case to test internal logic).
-        System.out.println("After removal, Moo = " + trieMap.get("Moo")); // Should now return null.
-        trieMap.put("Moon", null); // Internal test of branch pruning.
-    }
+		// Test for inserted, nonexistent, and deleted keys.
+		System.out.println("123 = " + trieMap.get("123"));
+		System.out.println("Java = " + trieMap.get("Java"));
+		System.out.println("Melinda = " + trieMap.get("Melinda"));
+		System.out.println("Moo = " + trieMap.get("Moo"));
+		System.out.println("Moon = " + trieMap.get("Moon"));
+		System.out.println("Mo = " + trieMap.get("Mo")); // Should return null.
+		System.out.println("Empty key = " + trieMap.get("")); // Should return
+																// "Root".
+		System.out.println("Moose = " + trieMap.get("Moose")); // Never added so
+																// should return
+																// null.
+		System.out.println("Nothing = " + trieMap.get("Nothing")); // Ditto.
+		trieMap.put("123", null); // Removes this leaf entry.
+		System.out.println("After removal, 123 = " + trieMap.get("123")); // Should
+																			// now
+																			// return
+																			// null.
+		trieMap.put("Moo", null); // Removes this prefix entry. (Special case to
+									// test internal logic).
+		System.out.println("After removal, Moo = " + trieMap.get("Moo")); // Should
+																			// now
+																			// return
+																			// null.
+		trieMap.put("Moon", null); // Internal test of branch pruning.
+	}
 }

@@ -24,4 +24,4 @@
 //
 //    /** determine the truth of a given term, or return null to prevent the concept being created */
 //    protected abstract Truth truth(Term t, Memory m);
-//}
+// }

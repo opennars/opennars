@@ -24,4 +24,5 @@ import automenta.vivisect.swing.property.swing.plaf.LookAndFeelAddons;
  * preferred as this addon may not provide complete implementation of the
  * additionnal pluggable UIs.
  */
-public class BasicLookAndFeelAddons extends LookAndFeelAddons { }
+public class BasicLookAndFeelAddons extends LookAndFeelAddons {
+}

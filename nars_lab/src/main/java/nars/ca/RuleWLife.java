@@ -10,8 +10,10 @@ public class RuleWLife {
 	public static final int IMAXWLIFERUL = 8 * IMAXWLIFEVAL;
 	public int iClo; // count of states
 	public final int[] wgtAry = new int[10]; // weights of neighbours
-	public final boolean[] rulesS = new boolean[IMAXWLIFERUL + 1]; // rules for surviving
-	public final boolean[] rulesB = new boolean[IMAXWLIFERUL + 1]; // rules for birth
+	public final boolean[] rulesS = new boolean[IMAXWLIFERUL + 1]; // rules for
+																	// surviving
+	public final boolean[] rulesB = new boolean[IMAXWLIFERUL + 1]; // rules for
+																	// birth
 	public boolean isHist; // with history?
 
 	// ----------------------------------------------------------------
@@ -39,7 +41,7 @@ public class RuleWLife {
 	// Parse the rule string
 	// Example: #RULE NW0,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE0,HI7,RS2,RB1,RB2,RB3
 	public void InitFromString(String sStr) {
-		//noinspection UseOfStringTokenizer
+		// noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int i;
@@ -48,8 +50,8 @@ public class RuleWLife {
 		st = new StringTokenizer(sStr, " ,", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
-			//System.out.println(sTok);
-			//noinspection IfStatementWithTooManyBranches
+			// System.out.println(sTok);
+			// noinspection IfStatementWithTooManyBranches
 			if (sTok.startsWith("NW"))
 				wgtAry[1] = Integer.valueOf(sTok.substring(2));
 			else if (sTok.startsWith("NN"))
@@ -105,13 +107,10 @@ public class RuleWLife {
 
 		ih = isHist ? iClo : 0;
 
-		sBff = "NW" + wgtAry[1] + ",NN"
-				+ wgtAry[2] + ",NE" + wgtAry[3]
-				+ ",WW" + wgtAry[4] + ",ME"
-				+ wgtAry[5] + ",EE" + wgtAry[6]
-				+ ",SW" + wgtAry[7] + ",SS"
-				+ wgtAry[8] + ",SE" + wgtAry[9]
-				+ ",HI" + ih;
+		sBff = "NW" + wgtAry[1] + ",NN" + wgtAry[2] + ",NE" + wgtAry[3] + ",WW"
+				+ wgtAry[4] + ",ME" + wgtAry[5] + ",EE" + wgtAry[6] + ",SW"
+				+ wgtAry[7] + ",SS" + wgtAry[8] + ",SE" + wgtAry[9] + ",HI"
+				+ ih;
 
 		for (i = 0; i < IMAXWLIFERUL; i++)
 			if (rulesS[i])
@@ -137,7 +136,7 @@ public class RuleWLife {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
+			short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
@@ -192,12 +191,16 @@ public class RuleWLife {
 								bNewVal = 1;
 							} else // isolation or overpopulation
 							{
-								bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
+								bNewVal = bOldVal < (iClo - 1)
+										? (short) (bOldVal + 1)
+										: 0;
 							}
 						}
 					} else // was older than 1
 					{
-						bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
+						bNewVal = bOldVal < (iClo - 1)
+								? (short) (bOldVal + 1)
+								: 0;
 					}
 				} else // no history
 				{
@@ -226,15 +229,19 @@ public class RuleWLife {
 					if (bOldVal == 0) // was dead
 					{
 						if (rulesB[iCnt]) // rules for birth
-							bNewVal = ColoringMethod == 1 ? 1 : (short) (mjb.Cycle
-									% (mjb.StatesCount - 1) + 1);
+							bNewVal = ColoringMethod == 1
+									? 1
+									: (short) (mjb.Cycle
+											% (mjb.StatesCount - 1) + 1);
 					} else // was alive
 					{
 						if (rulesS[iCnt]) // rules for surviving
 						{
 							if (ColoringMethod == 1) // standard
 							{
-								bNewVal = bOldVal < (mjb.StatesCount - 1) ? (short) (bOldVal + 1) : (short) (mjb.StatesCount - 1);
+								bNewVal = bOldVal < (mjb.StatesCount - 1)
+										? (short) (bOldVal + 1)
+										: (short) (mjb.StatesCount - 1);
 							} else {
 								// alternate coloring - cells remain not changed
 							}

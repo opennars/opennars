@@ -8,10 +8,11 @@ package jurls.core.reinforcementlearning;
 import jurls.core.utils.ActionValuePair;
 
 /**
- *
+ * 
  * @author thorsten
  */
 public interface ActionSelector {
 
-    ActionValuePair[] fromQValuesToProbabilities(double epsilon, ActionValuePair[] actionValuePairs);
+	ActionValuePair[] fromQValuesToProbabilities(double epsilon,
+			ActionValuePair[] actionValuePairs);
 }

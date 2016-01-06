@@ -27,173 +27,173 @@ import java.util.ResourceBundle;
  */
 public class ResourceManager {
 
-  static Map nameToRM = new HashMap();
+	static Map nameToRM = new HashMap();
 
-  private final ResourceBundle bundle;
+	private final ResourceBundle bundle;
 
-  /**
-   * Gets the ResourceManager associated with <code>clazz</code>.
-   * It looks for a ResourceBundle named against the class name plus
-   * the string "RB". For example, for the com.mypackage.Main, the
-   * ResourceBundle com.mypackage.MainRB will be looked up.
-   * 
-   * @param clazz
-   * @return the ResourceManager associated with the class
-   */
-  public static ResourceManager get(Class clazz) {
-    String bundleName = clazz.getName() + "RB";
-    return get(bundleName);
-  }
+	/**
+	 * Gets the ResourceManager associated with <code>clazz</code>. It looks for
+	 * a ResourceBundle named against the class name plus the string "RB". For
+	 * example, for the com.mypackage.Main, the ResourceBundle
+	 * com.mypackage.MainRB will be looked up.
+	 * 
+	 * @param clazz
+	 * @return the ResourceManager associated with the class
+	 */
+	public static ResourceManager get(Class clazz) {
+		String bundleName = clazz.getName() + "RB";
+		return get(bundleName);
+	}
 
-  /**
-   * Gets the ResourceManager with the given name.
-   * 
-   * @param bundleName
-   * @return the ResourceManager with the given name.
-   */
-  public static ResourceManager get(String bundleName) {
-    ResourceManager rm = (ResourceManager)nameToRM.get(bundleName);
-    if (rm == null) {
-      ResourceBundle rb = ResourceBundle.getBundle(bundleName);
-      rm = new ResourceManager(rb);
-      nameToRM.put(bundleName, rm);
-    }
-    return rm;
-  }
+	/**
+	 * Gets the ResourceManager with the given name.
+	 * 
+	 * @param bundleName
+	 * @return the ResourceManager with the given name.
+	 */
+	public static ResourceManager get(String bundleName) {
+		ResourceManager rm = (ResourceManager) nameToRM.get(bundleName);
+		if (rm == null) {
+			ResourceBundle rb = ResourceBundle.getBundle(bundleName);
+			rm = new ResourceManager(rb);
+			nameToRM.put(bundleName, rm);
+		}
+		return rm;
+	}
 
-  /**
-   * @param clazz
-   * @return the "AllRB" in the class package
-   */
-  public static ResourceManager all(Class clazz) {
-    return get(getPackage(clazz) + ".AllRB");
-  }
+	/**
+	 * @param clazz
+	 * @return the "AllRB" in the class package
+	 */
+	public static ResourceManager all(Class clazz) {
+		return get(getPackage(clazz) + ".AllRB");
+	}
 
-  /**
-   * Gets the default ResourceManager. This is equivalent to
-   * <code>all(ResourceManager.class)</code>. It returns the
-   * ResourceManager named "AllRB" located in the same package
-   * ResourceManager class (i.e com.l2fprod.common.other.AllRB).
-   * 
-   * @return the default ResourceManager
-   */
-  public static ResourceManager common() {
-    return all(ResourceManager.class);
-  }
+	/**
+	 * Gets the default ResourceManager. This is equivalent to
+	 * <code>all(ResourceManager.class)</code>. It returns the ResourceManager
+	 * named "AllRB" located in the same package ResourceManager class (i.e
+	 * com.l2fprod.common.other.AllRB).
+	 * 
+	 * @return the default ResourceManager
+	 */
+	public static ResourceManager common() {
+		return all(ResourceManager.class);
+	}
 
-  /**
-   * @return the default ResourceManager for ui specific resources.
-   */
-  public static ResourceManager ui() {
-      ///home/me/share/vivisect/src/main/java/automenta/vivisect/swing/property/beans/editor/AllRB.properties
-    return get("automenta.vivisect.swing.properties.swing.AllRB");
-  }
-  
-  /**
-   * Resolves any references to a resource bundle contained in
-   * <code>rbAndProperty</code>. To reference a resource bundle
-   * inside a property use <code>${com.package.FileRB:key}</code>,
-   * this will look for <code>key</code> in the ResourceBundle
-   * <code>com.package.FileRB</code>.
-   * 
-   * @param rbAndProperty
-   * @return the resolved resource or rbAndProperty if no resource was
-   *         found
-   */
-  public static String resolve(String rbAndProperty) {
-    return common().resolve0(rbAndProperty);
-  }
+	/**
+	 * @return the default ResourceManager for ui specific resources.
+	 */
+	public static ResourceManager ui() {
+		// /home/me/share/vivisect/src/main/java/automenta/vivisect/swing/property/beans/editor/AllRB.properties
+		return get("automenta.vivisect.swing.properties.swing.AllRB");
+	}
 
-  /**
-   * Same as {@link #resolve(String)} but once the value as been
-   * resolved, a MessageFormatter is applied with the given
-   * <code>args</code>.
-   * 
-   * @param rbAndProperty
-   * @param args
-   * @return the value for the resource parametrized by args
-   */
-  public static String resolve(String rbAndProperty, Object[] args) {
-    String value = common().resolve0(rbAndProperty);
-    return MessageFormat.format(value, args);
-  }
+	/**
+	 * Resolves any references to a resource bundle contained in
+	 * <code>rbAndProperty</code>. To reference a resource bundle inside a
+	 * property use <code>${com.package.FileRB:key}</code>, this will look for
+	 * <code>key</code> in the ResourceBundle <code>com.package.FileRB</code>.
+	 * 
+	 * @param rbAndProperty
+	 * @return the resolved resource or rbAndProperty if no resource was found
+	 */
+	public static String resolve(String rbAndProperty) {
+		return common().resolve0(rbAndProperty);
+	}
 
-  /**
-   * Can't be directly constructed
-   * 
-   * @param bundle
-   */
-  private ResourceManager(ResourceBundle bundle) {
-    this.bundle = bundle;
-  }
+	/**
+	 * Same as {@link #resolve(String)} but once the value as been resolved, a
+	 * MessageFormatter is applied with the given <code>args</code>.
+	 * 
+	 * @param rbAndProperty
+	 * @param args
+	 * @return the value for the resource parametrized by args
+	 */
+	public static String resolve(String rbAndProperty, Object[] args) {
+		String value = common().resolve0(rbAndProperty);
+		return MessageFormat.format(value, args);
+	}
 
-  /**
-   * Gets the String associated with <code>key</code> after having
-   * resolved any nested keys ({@link #resolve(String)}).
-   * 
-   * @param key the key to lookup
-   * @return the String associated with <code>key</code>
-   */
-  public String getString(String key) {
-    return resolve0(String.valueOf(bundle.getObject(key)));
-  }
+	/**
+	 * Can't be directly constructed
+	 * 
+	 * @param bundle
+	 */
+	private ResourceManager(ResourceBundle bundle) {
+		this.bundle = bundle;
+	}
 
-  /**
-   * Gets the String associated with <code>key</code> after having
-   * resolved any nested keys ({@link #resolve(String)}) and applied
-   * a formatter using the given <code>args</code>.
-   * 
-   * @param key the key to lookup
-   * @param args the arguments to pass to the formatter
-   * @return the String associated with <code>key</code>
-   */
-  public String getString(String key, Object[] args) {
-    String value = getString(key);
-    return MessageFormat.format(value, args);
-  }
+	/**
+	 * Gets the String associated with <code>key</code> after having resolved
+	 * any nested keys ({@link #resolve(String)}).
+	 * 
+	 * @param key
+	 *            the key to lookup
+	 * @return the String associated with <code>key</code>
+	 */
+	public String getString(String key) {
+		return resolve0(String.valueOf(bundle.getObject(key)));
+	}
 
-  /**
-   * Gets the first character of the String associated with
-   * <code>key</code>.
-   * 
-   * @param key the key to lookup
-   * @return the first character of the String associated with
-   *         <code>key</code>.
-   */
-  public char getChar(String key) {
-    String s = getString(key);
-    return s == null || s.trim().isEmpty() ? (char) 0 : s.charAt(0);
-  }
+	/**
+	 * Gets the String associated with <code>key</code> after having resolved
+	 * any nested keys ({@link #resolve(String)}) and applied a formatter using
+	 * the given <code>args</code>.
+	 * 
+	 * @param key
+	 *            the key to lookup
+	 * @param args
+	 *            the arguments to pass to the formatter
+	 * @return the String associated with <code>key</code>
+	 */
+	public String getString(String key, Object[] args) {
+		String value = getString(key);
+		return MessageFormat.format(value, args);
+	}
 
-  private String resolve0(String property) {
-    String result = property;
-    if (property != null) {
-      int index = property.indexOf("${");
-      if (index != -1) {
-        int endIndex = property.indexOf('}', index);
-        String sub = property.substring(index + 2, endIndex);
-        // check if sub contains a reference to another RB, key
-        int colon = sub.indexOf(':');
-        if (colon != -1) {
-          String rbName = sub.substring(0, colon);
-          String keyName = sub.substring(colon + 1);
-          sub = get(rbName).getString(keyName);
-        } else {
-          // it's a regular nested property
-          sub = getString(sub);
-        }
-        result = property.substring(0, index) + sub
-            + resolve0(property.substring(endIndex + 1));
-      }
-    }
-    return result;
-  }
+	/**
+	 * Gets the first character of the String associated with <code>key</code>.
+	 * 
+	 * @param key
+	 *            the key to lookup
+	 * @return the first character of the String associated with
+	 *         <code>key</code>.
+	 */
+	public char getChar(String key) {
+		String s = getString(key);
+		return s == null || s.trim().isEmpty() ? (char) 0 : s.charAt(0);
+	}
 
-  private static String getPackage(Class clazz) {
-    String pck = clazz.getName();
-    int index = pck.lastIndexOf('.');
-    pck = index != -1 ? pck.substring(0, index) : "";
-    return pck;
-  }
+	private String resolve0(String property) {
+		String result = property;
+		if (property != null) {
+			int index = property.indexOf("${");
+			if (index != -1) {
+				int endIndex = property.indexOf('}', index);
+				String sub = property.substring(index + 2, endIndex);
+				// check if sub contains a reference to another RB, key
+				int colon = sub.indexOf(':');
+				if (colon != -1) {
+					String rbName = sub.substring(0, colon);
+					String keyName = sub.substring(colon + 1);
+					sub = get(rbName).getString(keyName);
+				} else {
+					// it's a regular nested property
+					sub = getString(sub);
+				}
+				result = property.substring(0, index) + sub
+						+ resolve0(property.substring(endIndex + 1));
+			}
+		}
+		return result;
+	}
+
+	private static String getPackage(Class clazz) {
+		String pck = clazz.getName();
+		int index = pck.lastIndexOf('.');
+		pck = index != -1 ? pck.substring(0, index) : "";
+		return pck;
+	}
 
 }

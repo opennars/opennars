@@ -190,7 +190,7 @@ public class NarseseIRCBot extends IRCBot {
     public synchronized void say(String s) {
 
         System.out.println("say: " + s);
-        buffer += " " + s;
+        buffer += ' ' + s;
 
         if (buffer.length() > outputBufferLength) {
 
@@ -247,7 +247,7 @@ public class NarseseIRCBot extends IRCBot {
                 nar.input(msg);
             }
             catch (Exception e) {
-                System.err.println(msg + " " + e);
+                System.err.println(msg + ' ' + e);
                 //send(e.toString());
             }
         }

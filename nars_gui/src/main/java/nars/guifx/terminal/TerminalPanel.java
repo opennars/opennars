@@ -14,16 +14,15 @@ import java.io.PrintStream;
  * @author sergei.malafeev
  */
 public class TerminalPanel extends StackPane {
-    private final TextArea textArea;
+	private final TextArea textArea;
 
+	public TerminalPanel() {
+		textArea = new TextArea();
+		textArea.setFont(Font.font("Monospaced", 14));
+		getChildren().add(textArea);
+	}
 
-    public TerminalPanel() {
-        textArea = new TextArea();
-        textArea.setFont(Font.font("Monospaced", 14));
-        getChildren().add(textArea);
-    }
-
-    public void setPrintStream(PrintStream printStream) {
+	public void setPrintStream(PrintStream printStream) {
 
         textArea.addEventHandler(KeyEvent.KEY_RELEASED, Event::consume);
 
@@ -55,8 +54,7 @@ public class TerminalPanel extends StackPane {
                 }
         );
     }
-
-    public TextArea getTextArea() {
-        return textArea;
-    }
+	public TextArea getTextArea() {
+		return textArea;
+	}
 }

@@ -64,7 +64,7 @@ public class RuleGenBin {
 	public void InitFromString(String sStr) {
 		int i, iTmp;
 		String sTok;
-		//noinspection UseOfStringTokenizer
+		// noinspection UseOfStringTokenizer
 		StringTokenizer st;
 
 		ResetToDefaults();
@@ -72,7 +72,7 @@ public class RuleGenBin {
 		st = new StringTokenizer(sStr, ",", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken();
-			//noinspection IfStatementWithTooManyBranches
+			// noinspection IfStatementWithTooManyBranches
 			if (sTok.length() > 0 && sTok.charAt(0) == 'S') // survivals
 			{
 				sTok = ExpandIt(sTok.substring(1));
@@ -104,7 +104,7 @@ public class RuleGenBin {
 	// ----------------------------------------------------------------
 	// Initialize from separate parameters
 	public void InitFromPrm(int i_Clo, boolean is_Hist, int i_Ngh,
-							boolean[] rules_S, boolean[] rules_B) {
+			boolean[] rules_S, boolean[] rules_B) {
 		iClo = i_Clo; // count of colors
 		iNgh = i_Ngh; // neighbourhood
 		isHist = is_Hist; // with history?
@@ -212,7 +212,7 @@ public class RuleGenBin {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
+			short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		int modCnt = 0;
 		int i, j, iCnt;
 		short bOldVal, bNewVal; // old and new value of the cell
@@ -262,7 +262,7 @@ public class RuleGenBin {
 								iCnt += 8;
 						}
 
-                        // determine the cell status
+						// determine the cell status
 						if (bOldVal == 0) // was dead
 						{
 							if (rulesB[iCnt]) // rules for birth
@@ -274,14 +274,18 @@ public class RuleGenBin {
 								bNewVal = 1;
 							} else // isolation or overpopulation
 							{
-								bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
+								bNewVal = bOldVal < (iClo - 1)
+										? (short) (bOldVal + 1)
+										: 0;
 							}
-                        }
-                    } else // was older than 1
+						}
+					} else // was older than 1
 					{
-						bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
+						bNewVal = bOldVal < (iClo - 1)
+								? (short) (bOldVal + 1)
+								: 0;
 					}
-                } else // no history
+				} else // no history
 				{
 					if (iNgh == MJRules.NGHTYP_MOOR) {
 						if (crrState[i][lurd[1]] != 0)
@@ -311,35 +315,39 @@ public class RuleGenBin {
 							iCnt += 8;
 					}
 
-                    // determine the cell status
+					// determine the cell status
 					if (bOldVal == 0) // was dead
 					{
 						if (rulesB[iCnt]) // rules for birth
-							bNewVal = ColoringMethod == 1 ? 1 : (short) (mjb.Cycle
-									% (mjb.StatesCount - 1) + 1);
+							bNewVal = ColoringMethod == 1
+									? 1
+									: (short) (mjb.Cycle
+											% (mjb.StatesCount - 1) + 1);
 					} else // was alive
 					{
 						if (rulesS[iCnt]) // rules for surviving
 						{
 							if (ColoringMethod == 1) // standard
 							{
-								bNewVal = bOldVal < (mjb.StatesCount - 1) ? (short) (bOldVal + 1) : (short) (mjb.StatesCount - 1);
+								bNewVal = bOldVal < (mjb.StatesCount - 1)
+										? (short) (bOldVal + 1)
+										: (short) (mjb.StatesCount - 1);
 							} else {
 								// alternate coloring - cells remain not changed
 							}
-                        } else
+						} else
 							bNewVal = 0; // isolation or overpopulation
 					}
-                }
+				}
 
-                tmpState[i][j] = bNewVal;
+				tmpState[i][j] = bNewVal;
 				if (bNewVal != bOldVal) {
 					modCnt++; // one more modified cell
 				}
 			}
-            // for j
+			// for j
 		}
-        // for i
+		// for i
 
 		return modCnt;
 	}

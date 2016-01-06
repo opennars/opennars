@@ -18,7 +18,7 @@ import nars.Global;
 import nars.NAR;
 import nars.NARLoop;
 import nars.budget.Budget;
-import nars.budget.Budgeted;
+import nars.budget.BudgetedHandle;
 import nars.concept.Concept;
 import nars.guifx.*;
 import nars.guifx.graph2.ConceptsSource;
@@ -605,7 +605,7 @@ public class NARide extends BorderPane {
 
     }
 
-    public static class BudgetScatterPane<X extends Budgeted> extends NControl {
+    public static class BudgetScatterPane<X extends BudgetedHandle> extends NControl {
         private final Supplier<Iterable<X>> source;
 
         public BudgetScatterPane(Supplier<Iterable<X>> source) {

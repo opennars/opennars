@@ -16,38 +16,44 @@
 package automenta.vivisect.swing.dock;
 
 /**
- *
+ * 
  * @author kitfox
  */
 public interface DockingContainer {
 
-    /**
-     * Divide this container in two
-     *
-     * @param child The child component which is being split. Must be a child of
-     * this container.
-     * @param content Content to add to the newly created side of the split
-     * @param right If true, content will be placed on the right or bottom of
-     * the new split
-     * @param vertical If true, split will divide the panel into a top and
-     * bottom. Otherwise will divide left and right.
-     * @return The newly created region.
-     */
-    DockingRegionSplit split(DockingChild child,
-                             DockingContent content,
-                             boolean right, boolean vertical);
+	/**
+	 * Divide this container in two
+	 * 
+	 * @param child
+	 *            The child component which is being split. Must be a child of
+	 *            this container.
+	 * @param content
+	 *            Content to add to the newly created side of the split
+	 * @param right
+	 *            If true, content will be placed on the right or bottom of the
+	 *            new split
+	 * @param vertical
+	 *            If true, split will divide the panel into a top and bottom.
+	 *            Otherwise will divide left and right.
+	 * @return The newly created region.
+	 */
+	DockingRegionSplit split(DockingChild child, DockingContent content,
+			boolean right, boolean vertical);
 
-    /**
-     * Indicates that oldChild has become invalid and should be replaced with
-     * newChild. If newChild is null, indicates oldChild should be removed.
-     *
-     * @param oldChild Child to be removed
-     * @param newChild Child to replace oldChild with. If null, oldChild is
-     * simply removed
-     */
-    void join(DockingChild oldChild, DockingChild newChild);
+	/**
+	 * Indicates that oldChild has become invalid and should be replaced with
+	 * newChild. If newChild is null, indicates oldChild should be removed.
+	 * 
+	 * @param oldChild
+	 *            Child to be removed
+	 * @param newChild
+	 *            Child to replace oldChild with. If null, oldChild is simply
+	 *            removed
+	 */
+	void join(DockingChild oldChild, DockingChild newChild);
 
-    DockingPathRecord buildPath(DockingChild dockChild, DockingPathRecord childPath);
+	DockingPathRecord buildPath(DockingChild dockChild,
+			DockingPathRecord childPath);
 
-    DockingRegionContainer getContainerRoot();
+	DockingRegionContainer getContainerRoot();
 }

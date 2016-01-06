@@ -229,4 +229,4 @@ package nars.gui.output;
 //        gridbag.setConstraints(closeButton, c);
 //        add(closeButton);
 //    }
-//}
+// }

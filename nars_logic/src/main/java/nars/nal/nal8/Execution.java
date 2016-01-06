@@ -33,7 +33,7 @@ public class Execution implements Runnable {
 
     /** should only be called by NAR */
     @Override public final void run() {
-        if (task.isDeleted()) return;
+        if (task.getDeleted()) return;
 
         listeners.emit(this);
     }
@@ -102,7 +102,7 @@ public class Execution implements Runnable {
      */
     protected void noticeExecuted(Task operation) {
 
-        Budget b = !operation.isDeleted() ? operation.getBudget() : UnitBudget.zero;
+        Budget b = !operation.getDeleted() ? operation.getBudget() : UnitBudget.zero;
 
         Memory memory = nar.memory;
 

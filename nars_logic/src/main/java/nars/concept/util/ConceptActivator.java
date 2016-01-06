@@ -215,4 +215,4 @@
 ////        //return budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold);
 ////        return c.getBudget().getPriority() > nar.memory.activeConceptThreshold.floatValue();
 ////    }
-//}
+// }

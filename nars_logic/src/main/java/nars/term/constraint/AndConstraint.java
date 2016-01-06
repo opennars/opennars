@@ -28,6 +28,6 @@ public class AndConstraint implements MatchConstraint {
 
     @Override
     public String toString() {
-        return "(&&," + Joiner.on(",").join(subConst) + ")";
+        return "(&&," + Joiner.on(",").join(subConst) + ')';
     }
 }

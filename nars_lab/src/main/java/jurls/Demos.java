@@ -94,4 +94,4 @@
 //    private javax.swing.JButton jButton2;
 //    private javax.swing.JButton jButton3;
 //    // End of variables declaration//GEN-END:variables
-//}
+// }

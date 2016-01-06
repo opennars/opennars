@@ -16,12 +16,12 @@ public class World {
 		}
 		player = new Player(this);
 		player.randomizePosition();
-		time=0;
+		time = 0;
 	}
 
 	public void update() {
 		time++;
-                player.update();
+		player.update();
 	}
 
 	public Player getPlayer() {
@@ -47,7 +47,6 @@ public class World {
 		}
 		return false;
 	}
-
 	public boolean pointInObstacle(double x, double y) {
 		if(!inside(x, SIZE) || !inside(y, SIZE)) {
 			return true;
@@ -59,9 +58,8 @@ public class World {
 		}
 		return false;
 	}
-
 	public int getTime() {
 		return time;
 	}
-	
+
 }

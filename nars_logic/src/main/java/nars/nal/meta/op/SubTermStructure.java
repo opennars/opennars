@@ -22,7 +22,7 @@ public final class SubTermStructure extends PatternOp {
 
         this.bits = bits;
         id = "(subterm:" + subterm + "):(struct:" +
-                Integer.toString(bits, 16) + ")";
+                Integer.toString(bits, 16) + ')';
     }
 
 

@@ -8,13 +8,13 @@ import javafx.scene.control.Tab;
  */
 public class ComingSoonTab extends Tab {
 
-    public ComingSoonTab(String label, String message) {
-        super(label);
+	public ComingSoonTab(String label, String message) {
+		super(label);
 
-        Label l = new Label("TODO: " + message);
-        l.setWrapText(true);
-        l.getStyleClass().add("ComingSoon");
+		Label l = new Label("TODO: " + message);
+		l.setWrapText(true);
+		l.getStyleClass().add("ComingSoon");
 
-        setContent(l);
-    }
+		setContent(l);
+	}
 }

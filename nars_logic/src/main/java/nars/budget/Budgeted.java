@@ -1,30 +1,12 @@
 package nars.budget;
 
+import nars.data.BudgetedStruct;
+
 /**
- * indicates an implementation has, or is associated with a specific BudgetValue
+ * Created by jim on 1/6/2016.
  */
-public interface Budgeted extends Prioritized {
+public interface Budgeted extends BudgetedStruct {
 
-    Budget getBudget();
-
-    default boolean isDeleted() {
-        return Budget.isDeleted(getPriority());
-    }
-
-    default float getPriority() {
-        return getBudget().getPriority();
-    }
-
-    default float getDurability() {
-        return getBudget().getDurability();
-    }
-
-    default float getQuality() {
-        return getBudget().getQuality();
-    }
-
-    default long getLastForgetTime() {
-        return getBudget().getLastForgetTime();
-    }
+	Budget getBudget();
 
 }

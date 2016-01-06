@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * TODO these can be replaced with iterators that avoid allocating collections
  * @since 2.0
  */
-public enum NodeUtils {
+public   enum NodeUtils {
     ;
 
     /**

@@ -10,14 +10,14 @@ import nars.util.meter.MemoryBudget;
  */
 public class StatusPane extends PlotBox {
 
-    final MemoryBudget m;
-    final double w = 0;
+	final MemoryBudget m;
+	final double w = 0;
 
-    public StatusPane(NAR nar, double height) {
-        this(nar, new MemoryBudget(), 256, height);
-    }
+	public StatusPane(NAR nar, double height) {
+		this(nar, new MemoryBudget(), 256, height);
+	}
 
-    public StatusPane(NAR nar, MemoryBudget m, int historySize, double height) {
+	public StatusPane(NAR nar, MemoryBudget m, int historySize, double height) {
         super(
 
             new Plot2D(Plot2D.Line, historySize,
@@ -60,9 +60,8 @@ public class StatusPane extends PlotBox {
         layout();
 
     }
-
-//    private Plot2D addPlot(Plot2D p) {
-//        plots.add(p);
-//        return p;
-//    }
+	// private Plot2D addPlot(Plot2D p) {
+	// plots.add(p);
+	// return p;
+	// }
 }

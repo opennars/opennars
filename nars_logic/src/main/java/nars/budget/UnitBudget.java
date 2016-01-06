@@ -33,16 +33,8 @@ import static nars.nal.UtilityFunctions.or;
  * Mutable, unit-scaled (1.0 max) budget value
  *
  */
-public class UnitBudget implements Budget {
+public class UnitBudget extends Budget {
 
-//    public static final Procedure2<Budget,Budget> average =
-//        //(Serializable & Procedure2<Budget, Budget>) Budget::mergeAverage;
-//        (Serializable & Procedure2<Budget, Budget>) Budget::mergeAverageLERP;
-//    public static final Procedure2<Budget,Budget> plus =
-//        (Serializable & Procedure2<Budget, Budget>) Budget::mergePlus;
-//    public static final Procedure2<Budget,Budget> max =
-//        (Serializable & Procedure2<Budget, Budget>) Budget::mergeMax;
-//
 
 
     //common instance for a 'deleted budget'.  TODO use a wrapper class to make it unmodifiable
@@ -77,20 +69,6 @@ public class UnitBudget implements Budget {
      */
     protected long lastForgetTime = Tense.TIMELESS;
 
-//    public Budget newDefaultBudget(Memory m, char punctuation, Truth truth) {
-//        Budget b = new Budget();
-//        m.applyDefaultBudget(b, punctuation, truth);
-//        return b;
-//    }
-//
-//    public Budget(final float p, char punctuation, Truth qualityFromTruth) {
-//        this(p,
-//                punctuation == Symbols.JUDGMENT ? Global.DEFAULT_JUDGMENT_DURABILITY :
-//                        (punctuation == Symbols.QUESTION ? Global.DEFAULT_QUESTION_DURABILITY :
-//                                (punctuation == Symbols.GOAL ? Global.DEFAULT_GOAL_DURABILITY :
-//                                        Global.DEFAULT_QUEST_DURABILITY)),
-//                qualityFromTruth);
-//    }
 
     public UnitBudget(float p, float d, Truth qualityFromTruth) {
         this(p, d, qualityFromTruth !=
@@ -136,35 +114,8 @@ public class UnitBudget implements Budget {
         }
     }
 
-    /*
-    public static void ensureBetweenZeroAndOne(final float v) {
-        String err = null;
-        if (Float.isNaN(v)) err = ("value is NaN");
-        else if (v > 1.0f)  err = ("value > 1.0: " + v);
-        else if (v < 0.0f)  err = ("value < 1.0: " + v);
-
-        if (err!=null)
-            throw new RuntimeException(err);
-    }*/
 
 
-//    /**
-//     * creates a new Budget instance, should be avoided if possible
-//     */
-//    final public static Budget budgetIfAboveThreshold(final float budgetThreshold, final float pri, final float dur, final float qua) {
-//        if (aveGeoNotLessThan(budgetThreshold, pri, dur, qua))
-//            return new Budget(pri, dur, qua);
-//        return null;
-//    }
-
-
-
-    public static float summarySum(Iterable<? extends Budgeted> dd) {
-        float f = 0;
-        for (Budgeted x : dd)
-            f += x.getBudget().summary();
-        return f;
-    }
 
 
     /**
@@ -176,21 +127,6 @@ public class UnitBudget implements Budget {
         return new UnitBudget(this, true);
     }
 
-
-//    public final Budget accumulateLerp(final float addPriority, final float otherDurability, final float otherQuality) {
-//        final float currentPriority = getPriority();
-//
-//        /** influence factor determining LERP amount of blending durability and quality */
-//        final float f = 1 - Math.abs(currentPriority - clamp(addPriority+currentPriority));
-//
-//        return set(
-//                currentPriority + addPriority,
-//                lerp(getDurability(), otherDurability, f),
-//                lerp(getQuality(), otherQuality, f)
-//                //max(getDurability(), otherDurability),
-//                //max(getQuality(), otherQuality)
-//        );
-//    }
 
 
 
@@ -241,25 +177,10 @@ public class UnitBudget implements Budget {
     @Override
     public final void setDurability(float d) {
         durability = Util.clamp(d);
-//        if (this.durability < 0.5) {
-//            System.err.println("low durability");
-//        }
+
     }
 
 
-
-//    /**
-//     * returns true if this budget is greater in all quantities than another budget,
-//     * used to prevent a merge that would have no consequence
-//     * NOT TESTED
-//     * @param other
-//     * @return
-//     */
-//    public boolean greaterThan(final BudgetValue other) {
-//        return (getPriority() - other.getPriority() > Parameters.BUDGET_THRESHOLD) &&
-//                (getDurability()- other.getDurability()> Parameters.BUDGET_THRESHOLD) &&
-//                (getQuality() - other.getQuality() > Parameters.BUDGET_THRESHOLD);
-//    }
 
     /**
      * Get quality value
@@ -281,10 +202,6 @@ public class UnitBudget implements Budget {
         quality = Util.clamp(q);
     }
 
-//    public float summary(float additionalPriority) {
-//        return aveGeo(Math.min(1.0f, priority + additionalPriority), durability, quality);
-//    }
-
     /**
      * Increase quality value by a percentage of the remaining range
      *
@@ -303,70 +220,6 @@ public class UnitBudget implements Budget {
         quality = and(quality, v);
     }
 
-//    /**
-//     * Merge one BudgetValue into another
-//     *
-//     * @param that The other Budget
-//     * @return whether the merge had any effect
-//     */
-//    @Override
-//    public void merge(final Prioritized that) {
-//        setPriority(mean(getPriority(), that.getPriority()));
-//    }
-
-
-
-
-//    /**
-//     * applies a merge only if the changes would be significant
-//     * (the difference in value equal to or exceeding the budget epsilon parameter)
-//     *
-//     * @return whether change occurred
-//     */
-//    public boolean mergeIfChanges(Budget target, float budgetEpsilon) {
-//        if (this == target) return false;
-//
-//        final float p = mean(getPriority(), target.getPriority());
-//        final float d = mean(getDurability(), target.getDurability());
-//        final float q = mean(getQuality(), target.getQuality());
-//
-//        return setIfChanges(p, d, q, budgetEpsilon);
-//    }
-
-
-
-//    /* Whether budget is above threshold, with the involvement of additional priority (saved previously, or boosting)
-//     * @param additionalPriority saved credit to contribute to possibly push it over threshold
-//     */
-//    public boolean aboveThreshold(float additionalPriority) {
-//        return (summary(additionalPriority) >= Global.BUDGET_THRESHOLD);
-//    }
-
-
-//    /**
-//     * Whether budget is above threshold, with the involvement of additional priority (saved previously, or boosting)
-//     * @param additionalPriority
-//     * @return NaN if neither aboveThreshold, nor aboveThreshold with additional priority; 0 if no additional priority necessary to make above threshold, > 0 if that amount of the additional priority was "spent" to cause it to go above threshold
-//     */
-//    public float aboveThreshold(float additionalPriority) {
-//        float s = summary();
-//        if (s >= Parameters.BUDGET_THRESHOLD)
-//            return 0;
-//        if (summary(additionalPriority) >= Parameters.BUDGET_EPSILON) {
-//            //calculate how much was necessary
-//
-//            float dT = Parameters.BUDGET_THRESHOLD - s; //difference between how much needed
-//
-//            //TODO solve for additional:
-//            //  newSummary - s = dT
-//            //  ((priority+additional)*(duration)*(quality))^(1/3) - s = dT;
-//
-//            float used = 0;
-//        }
-//        return Float.NaN;
-//    }
-
-
 
     public boolean equals(Object that) {
         throw new RuntimeException("N/A");
@@ -375,10 +228,7 @@ public class UnitBudget implements Budget {
     @Override
     public int hashCode() {
         throw new RuntimeException("N/A");
-        //this will be relatively slow if used in a hash collection
-        //TODO if hashes are needed, it should use a similar hashing method as Truth values does
-        //return Objects.hash(getPriority(), getDurability(), getQuality());
-    }
+     }
 
 
     /**
@@ -393,20 +243,6 @@ public class UnitBudget implements Budget {
 
 
 
-    /**
-     * linear interpolate the priority value to another value
-     * https://en.wikipedia.org/wiki/Linear_interpolation
-     */
-    /*public void lerpPriority(final float targetValue, final float momentum) {
-        if (momentum == 1.0) 
-            return;
-        else if (momentum == 0) 
-            setPriority(targetValue);
-        else
-            setPriority( (getPriority() * momentum) + ((1f - momentum) * targetValue) );
-    }*/
-
-
 
     @Override
     public final long setLastForgetTime(long currentTime) {
@@ -417,63 +253,14 @@ public class UnitBudget implements Budget {
         return period;
     }
 
-//    public Budget budget(final float p, final float d, final float q) {
-//        setPriority(p);
-//        setDurability(d);
-//        setQuality(q);
-//        return this;
-//    }
-
     @Override
     public long getLastForgetTime() {
         return lastForgetTime;
     }
 
-//    /**
-//     * fast version which avoids bounds checking, safe to use if getting values from an existing Budget instance
-//     */
-//    protected final AbstractBudget budgetDirect(float p, float d, float q) {
-//
-//        if (isDeleted(p)) {
-//            throw new RuntimeException("source budget invalid");
-//        }
-//
-//        priority = p;
-//        durability = d;
-//        quality = q;
-//        return this;
-//    }
 
 
 
-
-
-
-//    @Override
-//    public float receive(float amount) {
-//        float maxReceivable = 1.0f - getPriority();
-//
-//        float received = Math.min(amount, maxReceivable);
-//        addPriority(received);
-//
-//        return amount - received;
-//    }
-
-//    /**
-//     * modifies the budget if any of the components are signifiantly different
-//     * returns whether the budget was changed
-//     */
-//    protected boolean setIfChanges(final float p, final float d, final float q, float budgetEpsilon) {
-//        float dp = abs(getPriority() - p);
-//        float dd = abs(getDurability() - d);
-//        float dq = abs(getQuality() - q);
-//
-//        if (dp < budgetEpsilon && dd < budgetEpsilon && dq < budgetEpsilon)
-//            return false;
-//
-//        set(p, d, q);
-//        return true;
-//    }
 
     @Override
     public void mulPriority(float factor) {
@@ -485,17 +272,5 @@ public class UnitBudget implements Budget {
     }
 
 
-
-
-//    public static void requireNotDeleted(float pri) {
-//        if (isDeleted(pri)) {
-//            throw new RuntimeException("NaN priority");
-//        }
-//
-//    }
-//
-//    public static void requireNotDeleted(Task q) {
-//        requireNotDeleted(q.getPriority());
-//    }
 
 }

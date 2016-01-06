@@ -27,7 +27,7 @@ import org.apache.commons.lang3.ClassUtils;
 /**
  * This class provides static utility methods for working with Epox data-types.
  */
-public enum TypeUtil {
+public   enum TypeUtil {
     ;
 
     /**

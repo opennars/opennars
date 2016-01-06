@@ -103,7 +103,7 @@ public class RuleNeumBin {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-					   short[][] crrState, short[][] tmpState) {
+			short[][] crrState, short[][] tmpState) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
@@ -122,8 +122,9 @@ public class RuleNeumBin {
 				lurd[1] = (j > 0) ? j - 1 : (isWrap) ? sizY - 1 : sizY;
 				lurd[3] = (j < sizY - 1) ? j + 1 : (isWrap) ? 0 : sizY;
 				bOldVal = crrState[i][j];
-				bOldVal = (short) ((bOldVal < 0) ? 0
-						: (bOldVal >= iClo) ? (iClo - 1) : bOldVal);
+				bOldVal = (short) ((bOldVal < 0) ? 0 : (bOldVal >= iClo)
+						? (iClo - 1)
+						: bOldVal);
 
 				l = crrState[lurd[0]][j];
 				u = crrState[i][lurd[1]];

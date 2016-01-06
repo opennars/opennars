@@ -29,19 +29,21 @@ import javafx.scene.layout.Priority;
 
 /**
  * A control to monitor worker progress.
- *
+ * 
  * Used for showing progress of WebView loading.
  */
 public class LoadingProgressDisplay extends ProgressBar {
 
-    /**
-     * Creates a UI display monitor for provided worker.
-     *
-     * Assumes the worker is reporting progress as work done on a scale from 0 to 100 (other values indicate indeterminate progress).
-     *
-     * @param worker the worker whose progress is to be monitored and displayed.
-     */
-    public LoadingProgressDisplay(Worker worker) {
+	/**
+	 * Creates a UI display monitor for provided worker.
+	 * 
+	 * Assumes the worker is reporting progress as work done on a scale from 0
+	 * to 100 (other values indicate indeterminate progress).
+	 * 
+	 * @param worker
+	 *            the worker whose progress is to be monitored and displayed.
+	 */
+	public LoadingProgressDisplay(Worker worker) {
         setMaxWidth(Double.MAX_VALUE);
 
         ColorAdjust bleach = new ColorAdjust();
@@ -63,5 +65,4 @@ public class LoadingProgressDisplay extends ProgressBar {
             setProgress(newValue / 100.0);
         });
     }
-
 }

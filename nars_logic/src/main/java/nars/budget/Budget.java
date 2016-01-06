@@ -1,7 +1,10 @@
 package nars.budget;
 
 import nars.Symbols;
+import nars.data.BudgetedStruct;
 import nars.util.Texts;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -14,78 +17,127 @@ import static nars.util.data.Util.mean;
 /**
  * Created by me on 12/11/15.
  */
-public interface Budget extends Budgeted {
+public abstract class Budget extends BudgetedHandle {
 
 
-    static boolean aveGeoNotLessThan(float min, float a, float b, float c) {
-        float minCubed = min*min*min; //cube both sides
-        return (a*b*c) >= minCubed;
+    public static final BudgetMerge plus = (tgt, src, srcScale) -> {
+        float dp = src.getPriority() * srcScale;
+
+        float currentPriority = tgt.getPriorityIfNaNThenZero();
+
+        float nextPri = currentPriority + dp;
+        if (nextPri > 1) nextPri = 1f;
+
+        float currentNextPrioritySum = currentPriority + nextPri;
+
+        /* current proportion */
+        float cp;
+        cp = currentNextPrioritySum != 0 ? currentPriority / currentNextPrioritySum : 0.5f;
+
+        /* next proportion = 1 - cp */
+        float np = 1.0f - cp;
+
+        float nextDur = cp * tgt.getDurability() + np * src.getDurability();
+        float nextQua = cp * tgt.getQuality() + np * src.getQuality();
+
+        assert !Float.isNaN(nextDur) : "NaN dur: " + src + ' ' + tgt.getDurability();
+        assert !Float.isNaN(nextQua) : "NaN quality";
+
+        tgt.budget( nextPri,nextDur,nextQua);
+    };
+
+    @Contract(pure = true)
+    public static boolean aveGeoNotLessThan(float min, float a, float b, float c) {
+        float minCubed = min * min * min; //cube both sides
+        return a * b * c >= minCubed;
     }
 
-    static float aveGeo(float a, float b, float c) {
-        return (float)pow(a*b*c, 1.0/3.0);
+    public static float aveGeo(float a, float b, float c) {
+        return (float) pow(a * b * c, 1.0 / 3.0);
+    }
+
+    @Contract(pure = true)
+    public static boolean isDeleted(float pri) {
+        return Float.isNaN(pri);
+    }
+
+    @NotNull
+    public static String toString(Budget b) {
+
+        return toStringBuilder(new StringBuilder(), Texts.n4(b.getPriority()), Texts.n4(b.getDurability()), Texts.n4(b.getQuality())).toString();
+    }
+
+    public static StringBuilder toStringBuilder(StringBuilder sb, CharSequence priorityString, CharSequence durabilityString, CharSequence qualityString) {
+        int c = 1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1;
+        if (sb == null)
+            sb = new StringBuilder(c);
+        else
+            sb.ensureCapacity(c);
+
+        sb.append(Symbols.BUDGET_VALUE_MARK)
+                .append(priorityString).append(Symbols.VALUE_SEPARATOR)
+                .append(durabilityString).append(Symbols.VALUE_SEPARATOR)
+                .append(qualityString)
+                .append(Symbols.BUDGET_VALUE_MARK);
+
+        return  sb;
     }
 
     /**
      * set all quantities to zero
      */
-    default Budget zero() {
-        return budget(0,0,0);
+    public Budget zero() {
+        return budget(0, 0, 0);
     }
 
-    default void delete() {
+    public void delete() {
         deleteBudget();
     }
 
-    default void deleteBudget() {
+    public void deleteBudget() {
         setPriority(Float.NaN);
     }
 
-    @Override
-    default Budget getBudget() {
+    
+    
+    public Budget getBudget() {
         return this;
     }
 
-    @Override
-    float getPriority();
+    
+    public abstract float getPriority();
 
-    @Override
-    void setPriority(float p);
+    
+    public abstract void setPriority(float p);
 
     /**
      * returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime
      */
-    @Override long setLastForgetTime(long currentTime);
 
-    @Override
-    long getLastForgetTime();
+    public abstract long setLastForgetTime(long currentTime);
 
-    @Override
-    default void mulPriority(float factor) {
-        setPriority(getPriority()*factor);
+    
+    public abstract long getLastForgetTime();
+
+    public void mulPriority(float factor) {
+        setPriority(getPriority() * factor);
     }
 
-    @Override
-    float getDurability();
+    
+    public abstract float getDurability();
 
-    void setDurability(float d);
+    public abstract void setDurability(float d);
 
-    @Override
-    float getQuality();
+    
+    public abstract float getQuality();
 
-    void setQuality(float q);
+    public abstract void setQuality(float q);
 
-
-
-    default boolean equalsByPrecision(Budget t, float epsilon) {
-        return  equal(getPriority(), t.getPriority(), epsilon) &&
+    public boolean equalsByPrecision(Budget t, float epsilon) {
+        return equal(getPriority(), t.getPriority(), epsilon) &&
                 equal(getDurability(), t.getDurability(), epsilon) &&
                 equal(getQuality(), t.getQuality(), epsilon);
     }
-
-
-
-
 
     /**
      * Increase priority value by a percentage of the remaining range.
@@ -93,16 +145,14 @@ public interface Budget extends Budgeted {
      *
      * @param v The increasing percent
      */
-    default void orPriority(float v) {
-        setPriority( or(getPriority(), v) );
+    public void orPriority(float v) {
+        setPriority(or(getPriority(), v));
     }
-
-
 
     /**
      * merges another budget into this one, averaging each component
      */
-    default void mergeAverage(Budget that) {
+    public void mergeAverage(Budget that) {
         if (this == that) return;
 
         budget(
@@ -111,54 +161,28 @@ public interface Budget extends Budgeted {
                 mean(getQuality(), that.getQuality())
         );
     }
+
+
     /**
      * To summarize a BudgetValue into a single number in [0, 1]
      *
      * @return The summary value
      */
-    default float summary() {
+    public float summary() {
         return aveGeo(getPriority(), getDurability(), getQuality());
     }
 
-    Budget clone();
+    public abstract Budget clone();
 
-    static boolean isDeleted(float pri) {
-        return Float.isNaN(pri);
-    }
-
-//    default boolean isDeleted() {
-//        return AbstractBudget.isDeleted(getPriority());
-//    }
-
-
-    default boolean summaryLessThan(float s) {
+    public boolean summaryLessThan(float s) {
         return !summaryNotLessThan(s);
     }
 
     /**
      * uses optimized aveGeoNotLessThan to avoid a cube root operation
      */
-    default boolean summaryNotLessThan(float min) {
-        if (min == 0f) return true;
-        return aveGeoNotLessThan(min, getPriority(), getDurability(), getQuality());
-    }
-
-    /**
-     * Increase durability value by a percentage of the remaining range
-     *
-     * @param v The increasing percent
-     */
-    default void orDurability(float v) {
-        setDurability(or(getDurability(), v));
-    }
-
-    /**
-     * Decrease durability value by a percentage of the remaining range
-     *
-     * @param v The decreasing percent
-     */
-    default void andDurability(float v) {
-        setDurability(and(getDurability(), v));
+    public boolean summaryNotLessThan(float min) {
+        return min == 0f || aveGeoNotLessThan(min, getPriority(), getDurability(), getQuality());
     }
 
 
@@ -171,9 +195,27 @@ public interface Budget extends Budgeted {
 //    }
 
     /**
+     * Increase durability value by a percentage of the remaining range
+     *
+     * @param v The increasing percent
+     */
+    public void orDurability(float v) {
+        setDurability(or(getDurability(), v));
+    }
+
+    /**
+     * Decrease durability value by a percentage of the remaining range
+     *
+     * @param v The decreasing percent
+     */
+    public void andDurability(float v) {
+        setDurability(and(getDurability(), v));
+    }
+
+    /**
      * AND's (multiplies) priority with another value
      */
-    default void andPriority(float v) {
+    public void andPriority(float v) {
         setPriority(and(getPriority(), v));
     }
 
@@ -185,9 +227,9 @@ public interface Budget extends Budgeted {
      *
      * @return The decision on whether to process the Item
      */
-    default boolean summaryGreaterOrEqual(float budgetThreshold) {
+    public boolean summaryGreaterOrEqual(float budgetThreshold) {
 
-        if (isDeleted()) return false;
+        if (getDeleted()) return false;
 
         /* since budget can only be positive.. */
         if (budgetThreshold <= 0) return true;
@@ -196,13 +238,10 @@ public interface Budget extends Budgeted {
         return summaryNotLessThan(budgetThreshold);
     }
 
-//    default boolean summaryGreaterOrEqual(AtomicDouble budgetThreshold) {
-//        return summaryGreaterOrEqual(budgetThreshold.floatValue());
-//    }
-
-
-    /** copies a budget into this; if source is null, it deletes the budget */
-    default Budgeted budget(@Nullable Budget source) {
+    /**
+     * copies a budget into this; if source is null, it deletes the budget
+     */
+    public BudgetedStruct budget(@Nullable Budget source) {
         if (source == null) {
             zero();
         } else {
@@ -216,23 +255,19 @@ public interface Budget extends Budgeted {
     /**
      * returns this budget, after being modified
      */
-    default Budget budget(float p, float d, float q) {
+    public Budget budget(float p, float d, float q) {
         setPriority(p);
         setDurability(d);
         setQuality(q);
         return this;
     }
 
-    default Budgeted budget(Budgeted source) {
+    public BudgetedStruct budget(BudgetedHandle source) {
         return budget(source.getBudget());
     }
 
-
-    default float getPriorityIfNaNThenZero() {
-        float p = getPriority();
-        if (!Float.isNaN( p ))
-            return p;
-        return 0;
+    public float getPriorityIfNaNThenZero() {
+        return !Float.isNaN(getPriority()) ? getPriority() : 0;
     }
 
     /**
@@ -240,11 +275,11 @@ public interface Budget extends Budgeted {
      *
      * @return String representation of the value with 2-digit accuracy
      */
-    default StringBuilder toBudgetStringExternal() {
+    public StringBuilder toBudgetStringExternal() {
         return toBudgetStringExternal(null);
     }
 
-    default StringBuilder toBudgetStringExternal(StringBuilder sb) {
+    public StringBuilder toBudgetStringExternal(StringBuilder sb) {
         //return MARK + priority.toStringBrief() + SEPARATOR + durability.toStringBrief() + SEPARATOR + quality.toStringBrief() + MARK;
 
         CharSequence priorityString = Texts.n2(getPriority());
@@ -254,55 +289,15 @@ public interface Budget extends Budgeted {
         return toStringBuilder(sb, priorityString, durabilityString, qualityString);
     }
 
-    default String toBudgetString() {
+    public String toBudgetString() {
         return toBudgetStringExternal().toString();
     }
 
-//    /**
-//     * 1 digit resolution
-//     */
-//    default String toStringExternalBudget1(boolean includeQuality) {
-//        char priorityString = Texts.n1char(getPriority());
-//        char durabilityString = Texts.n1char(getDurability());
-//        StringBuilder sb = new StringBuilder(1 + 1 + 1 + (includeQuality ? 1 : 0) + 1)
-//                .append(Symbols.BUDGET_VALUE_MARK)
-//                .append(priorityString).append(Symbols.VALUE_SEPARATOR)
-//                .append(durabilityString);
-//
-//        if (includeQuality)
-//            sb.append(Symbols.VALUE_SEPARATOR).append(Texts.n1char(getQuality()));
-//
-//        return sb.append(Symbols.BUDGET_VALUE_MARK).toString();
-//    }
-
-    default String getBudgetString() {
-        return Budget.toString(this);
+    public String getBudgetString() {
+        return toString(this);
     }
 
-    static String toString(Budget b) {
-        //return MARK + Texts.n4(b.getPriority()) + SEPARATOR + Texts.n4(b.getDurability()) + SEPARATOR + Texts.n4(b.getQuality()) + MARK;
-        return Budget.toStringBuilder(new StringBuilder(), Texts.n4(b.getPriority()), Texts.n4(b.getDurability()), Texts.n4(b.getQuality())).toString();
-    }
-
-    static StringBuilder toStringBuilder(StringBuilder sb, CharSequence priorityString, CharSequence durabilityString, CharSequence qualityString) {
-        int c = 1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1;
-        if (sb == null)
-            sb = new StringBuilder(c);
-        else
-            sb.ensureCapacity(c);
-
-        sb.append(Symbols.BUDGET_VALUE_MARK)
-                .append(priorityString).append(Symbols.VALUE_SEPARATOR)
-                .append(durabilityString).append(Symbols.VALUE_SEPARATOR)
-                .append(qualityString)
-                .append(Symbols.BUDGET_VALUE_MARK);
-
-        return sb;
-    }
-
-
-
-    default void set(Budget b) {
+    public void set(Budget b) {
         budget(b.getPriority(), b.getDurability(), b.getQuality());
     }
 

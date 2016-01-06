@@ -330,7 +330,7 @@ public class Memory extends Param {
         if (willBeReceived && removalReason!=null)
             task.log(removalReason);
 
-        if (!task.isDeleted()) {
+        if (!task.getDeleted()) {
 
             task.getBudget().delete();
 

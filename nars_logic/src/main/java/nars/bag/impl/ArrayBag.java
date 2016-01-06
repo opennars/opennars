@@ -4,10 +4,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 import nars.bag.BLink;
 import nars.bag.Bag;
-import nars.budget.Budget;
-import nars.budget.BudgetMerge;
-import nars.budget.Budgeted;
-import nars.budget.UnitBudget;
+import nars.budget.*;
 import nars.util.ArraySortedIndex;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
@@ -59,7 +56,7 @@ public class ArrayBag<V> extends Bag<V> {
     }
 
 
-    public BLink<V> put(Budgeted k) {
+    public BLink<V> put(BudgetedHandle k) {
         return put(k, k.getBudget());
     }
 

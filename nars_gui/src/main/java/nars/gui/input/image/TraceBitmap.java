@@ -144,4 +144,4 @@ package nars.gui.input.image;
 //                detectCanny(input);
 //	}
 //    
-//}
+// }

@@ -454,7 +454,7 @@ public class KIF {
         if (!inAntecedent && !inConsequent && (parenLevel == 1)) {
             key = key + "arg-";
             key = key + argumentNum;
-            key = key + "-";
+            key = key + '-';
             key = key + sval;
         }
         if (!inAntecedent && !inConsequent && (parenLevel > 1)) {
