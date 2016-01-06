@@ -19,7 +19,8 @@ package automenta.vivisect.swing.property.swing.plaf.windows;
 
 /**
  * Adds new pluggable UI following the Windows Classic look and feel. Currently
- * it extends the XP look and feel and overrides the <code>JTaskPane</code>
- * and <code>JTaskPaneGroup</code> UIs.
+ * it extends the XP look and feel and overrides the <code>JTaskPane</code> and
+ * <code>JTaskPaneGroup</code> UIs.
  */
-public class WindowsClassicLookAndFeelAddons extends WindowsLookAndFeelAddons { }
+public class WindowsClassicLookAndFeelAddons extends WindowsLookAndFeelAddons {
+}

@@ -19,25 +19,25 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- *
+ * 
  * @author kitfox
  */
 public interface DockingChild {
 
-    JComponent getComponent();
+	JComponent getComponent();
 
-    DockingContainer getDockParent();
+	DockingContainer getDockParent();
 
-    void setDockParent(DockingContainer dockParent);
+	void setDockParent(DockingContainer dockParent);
 
-    void addDockContent(DockingContent content);
+	void addDockContent(DockingContent content);
 
-    DockingChild getDockingChild(DockingPathRecord subpath);
+	DockingChild getDockingChild(DockingPathRecord subpath);
 
-    void restore(DockingContent content, DockingPathRecord subpath);
+	void restore(DockingContent content, DockingPathRecord subpath);
 
-    DockingPickRecord pickContainer(Point containerPoint);
+	DockingPickRecord pickContainer(Point containerPoint);
 
-    void closeAll();
+	void closeAll();
 
 }

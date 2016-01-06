@@ -20,219 +20,231 @@ package jurls.reinforcementlearning.domains.arcade.rl;
 import java.util.ArrayList;
 
 /**
- *  A class that acts accordingly to an epsilon-greedy policy and learns using
- *   SARSA(lambda).
- *
+ * A class that acts accordingly to an epsilon-greedy policy and learns using
+ * SARSA(lambda).
+ * 
  * @author Marc G. Bellemare
  */
 public class SarsaLearner {
-    /** The number of actions considered by the learner */
-    protected int numActions;
+	/** The number of actions considered by the learner */
+	protected int numActions;
 
-    /** The usual set of SARSA/epsilon-greedy parameters */
-    /** Learning rate */
-    protected double alpha = 0.1;
-    /** Discount factor */
-    protected double gamma = 0.999;
-    /** Eligibility trace parameter */
-    protected double lambda = 0.9;
-    /** Probability of a random action */
-    protected double epsilon = 0.05;
+	/** The usual set of SARSA/epsilon-greedy parameters */
+	/** Learning rate */
+	protected double alpha = 0.1;
+	/** Discount factor */
+	protected double gamma = 0.999;
+	/** Eligibility trace parameter */
+	protected double lambda = 0.9;
+	/** Probability of a random action */
+	protected double epsilon = 0.05;
 
-    /** A set of variables used to perform the SARSA update */
-    protected int lastAction;
-    protected int action;
-    protected double[] lastFeatures;
-    protected double[] features;
-    
-    /** Eligibility traces; need separate traces for each action */
-    protected double[][] traces;
+	/** A set of variables used to perform the SARSA update */
+	protected int lastAction;
+	protected int action;
+	protected double[] lastFeatures;
+	protected double[] features;
 
-    /** Q-value models, one per action */
-    protected LinearModel[] valueFunction;
+	/** Eligibility traces; need separate traces for each action */
+	protected double[][] traces;
 
-    /** The threshold below which we consider traces to be 0 */
-    public static final double minTrace = 0.01;
+	/** Q-value models, one per action */
+	protected LinearModel[] valueFunction;
 
-    /** Creates a new SarsaLearner that expects a feature vector of size
-     *   'numFeatures' and takes one of 'numActions' actions.
-     * 
-     * @param numFeatures
-     * @param numActions
-     */
-    public SarsaLearner(int numFeatures, int numActions) {
-        this.numActions = numActions;
+	/** The threshold below which we consider traces to be 0 */
+	public static final double minTrace = 0.01;
 
-        // Create the linear models
-        createModels(numActions, numFeatures);
-    }
+	/**
+	 * Creates a new SarsaLearner that expects a feature vector of size
+	 * 'numFeatures' and takes one of 'numActions' actions.
+	 * 
+	 * @param numFeatures
+	 * @param numActions
+	 */
+	public SarsaLearner(int numFeatures, int numActions) {
+		this.numActions = numActions;
 
-    /** Sets the learning rate for the value function approximators.
-     * 
-     * @param alpha
-     */
-    public void setAlpha(double alpha) {
-        this.alpha = alpha;
-        for (int a = 0; a < numActions; a++)
-            valueFunction[a].setAlpha(alpha);
-    }
+		// Create the linear models
+		createModels(numActions, numFeatures);
+	}
 
-    /** Begins a new episode with the given feature vector.
-     * 
-     * @param features
-     * @return
-     */
-    public int agent_start(double[] features) {
-        lastFeatures = null;
-        traces = null;
+	/**
+	 * Sets the learning rate for the value function approximators.
+	 * 
+	 * @param alpha
+	 */
+	public void setAlpha(double alpha) {
+		this.alpha = alpha;
+		for (int a = 0; a < numActions; a++)
+			valueFunction[a].setAlpha(alpha);
+	}
 
-        this.features = features.clone();
-        
-        return actAndLearn(features, 0.0);
-    }
+	/**
+	 * Begins a new episode with the given feature vector.
+	 * 
+	 * @param features
+	 * @return
+	 */
+	public int agent_start(double[] features) {
+		lastFeatures = null;
+		traces = null;
 
-    /** Takes one step in the RL environment. Agent_start must be called at
-     *    least once prior to calling agent_step.
-     * 
-     * @param pReward
-     * @param features
-     * @return
-     */
-    public int agent_step(double pReward, double[] features) {
-        lastFeatures = this.features;
-        this.features = features.clone();
+		this.features = features.clone();
 
-        return actAndLearn(this.features, pReward);
-    }
+		return actAndLearn(features, 0.0);
+	}
 
-    /** The very last step, when the agent receives the last reward but not the
-     *   subsequent state (because that state is the terminal state).
-     * 
-     * @param pReward
-     */
-    public void agent_end(double pReward) {
-        learn(features, action, pReward, null, 0);
-    }
+	/**
+	 * Takes one step in the RL environment. Agent_start must be called at least
+	 * once prior to calling agent_step.
+	 * 
+	 * @param pReward
+	 * @param features
+	 * @return
+	 */
+	public int agent_step(double pReward, double[] features) {
+		lastFeatures = this.features;
+		this.features = features.clone();
 
-   /** Take an action and learn from the option given the current state and
-     *   current observation.
-     *
-     * @param features
-     * @param pObservation
-     * @return
-     */
-    public int actAndLearn(double[] features, double pReward) {
-        lastAction = action;
+		return actAndLearn(this.features, pReward);
+	}
 
-        // Get the next action
-        action = selectAction(features);
+	/**
+	 * The very last step, when the agent receives the last reward but not the
+	 * subsequent state (because that state is the terminal state).
+	 * 
+	 * @param pReward
+	 */
+	public void agent_end(double pReward) {
+		learn(features, action, pReward, null, 0);
+	}
 
-        // If this is not the first step...
-        if (lastFeatures != null) {
-            // Perform a SARSA update
-            learn(lastFeatures, lastAction, pReward, features, action);
-        }
+	/**
+	 * Take an action and learn from the option given the current state and
+	 * current observation.
+	 * 
+	 * @param features
+	 * @param pObservation
+	 * @return
+	 */
+	public int actAndLearn(double[] features, double pReward) {
+		lastAction = action;
 
-        return action;
-    }
+		// Get the next action
+		action = selectAction(features);
 
-    /** The core of the SARSA learning algorithm. See Sutton and Barto (1998).
-     *
-     * @param lastFeatures
-     * @param lastAction
-     * @param reward
-     * @param features
-     * @param action
-     */
-    public void learn(double[] lastFeatures, int lastAction,
-            double reward, double[] features, int action) {
-        // Compute Q(s,a)
-        double oldValue = valueFunction[lastAction].predict(lastFeatures);
+		// If this is not the first step...
+		if (lastFeatures != null) {
+			// Perform a SARSA update
+			learn(lastFeatures, lastAction, pReward, features, action);
+		}
 
-        // Early exit for diverging agents
-        if (Double.isNaN(oldValue) || oldValue >= 10.0E7)
-            throw new RuntimeException("Diverged.");
+		return action;
+	}
 
-        // Compute Q(s',a')
-        double newValue;
+	/**
+	 * The core of the SARSA learning algorithm. See Sutton and Barto (1998).
+	 * 
+	 * @param lastFeatures
+	 * @param lastAction
+	 * @param reward
+	 * @param features
+	 * @param action
+	 */
+	public void learn(double[] lastFeatures, int lastAction, double reward,
+			double[] features, int action) {
+		// Compute Q(s,a)
+		double oldValue = valueFunction[lastAction].predict(lastFeatures);
 
-        // ... if s' is null (terminal state), then Q(s',a') is assumed to be 0
-        newValue = features != null ? valueFunction[action].predict(features) : 0;
+		// Early exit for diverging agents
+		if (Double.isNaN(oldValue) || oldValue >= 10.0E7)
+			throw new RuntimeException("Diverged.");
 
-        // Compute the TD error
-        double delta = reward + gamma * newValue - oldValue;
+		// Compute Q(s',a')
+		double newValue;
 
-        // Update the eligibility traces
-        updateTraces(lastFeatures, lastAction);
+		// ... if s' is null (terminal state), then Q(s',a') is assumed to be 0
+		newValue = features != null
+				? valueFunction[action].predict(features)
+				: 0;
 
-        // With traces, we update *all* models
-        for (int a = 0; a < numActions; a++) {
-            LinearModel model = valueFunction[a];
-            // Perform a TD error linear approximation udpate
-            model.updateWeightsDelta(traces[a], delta);
-        }
-    }
+		// Compute the TD error
+		double delta = reward + gamma * newValue - oldValue;
 
-    /** Updates the eligibility traces for all actions. The action that was
-     *   actually taken has the current feature vector added to its traces;
-     *   all others are simply decayed.
-     * 
-     * @param features
-     * @param lastAction
-     */
-    public void updateTraces(double[] features, int lastAction) {
-        if (traces == null) {
-            traces = new double[numActions][];
-            traces[lastAction] = features.clone();
+		// Update the eligibility traces
+		updateTraces(lastFeatures, lastAction);
 
-            for (int a = 0; a < numActions; a++)
-                if (a != lastAction)
-                    traces[a] = new double[features.length];
-        }
-        else {
-            for (int a = 0; a < numActions; a++) {
-                // For the selected action, decay its trace and add the new
-                //  state vector
-                if (a != lastAction)
-                    decayTraces(traces[a], gamma*lambda);
-                else
-                    replaceTraces(traces[a], gamma*lambda, features);
-            }
-        }
-    }
+		// With traces, we update *all* models
+		for (int a = 0; a < numActions; a++) {
+			LinearModel model = valueFunction[a];
+			// Perform a TD error linear approximation udpate
+			model.updateWeightsDelta(traces[a], delta);
+		}
+	}
 
-    /** Decays the given eligibility traces.
-     * 
-     * @param traces
-     * @param factor
-     */
-    protected void decayTraces(double[] traces, double factor) {
-        for (int f = 0; f < traces.length; f++)
-            traces[f] *= factor;
-    }
+	/**
+	 * Updates the eligibility traces for all actions. The action that was
+	 * actually taken has the current feature vector added to its traces; all
+	 * others are simply decayed.
+	 * 
+	 * @param features
+	 * @param lastAction
+	 */
+	public void updateTraces(double[] features, int lastAction) {
+		if (traces == null) {
+			traces = new double[numActions][];
+			traces[lastAction] = features.clone();
 
-    /** Replacing traces. This, of course, assumes a sparse feature vector.
-     * 
-     * @param traces
-     * @param factor
-     * @param state
-     */
-    protected void replaceTraces(double[] traces, double factor, double[] state) {
-        for (int f = 0; f < traces.length; f++) {
-            // If the feature is currently 0, decay its trace
-            if (state[f] == 0)
-                traces[f] *= factor;
-            else
-                traces[f] = state[f];
-        }
-    }
+			for (int a = 0; a < numActions; a++)
+				if (a != lastAction)
+					traces[a] = new double[features.length];
+		} else {
+			for (int a = 0; a < numActions; a++) {
+				// For the selected action, decay its trace and add the new
+				// state vector
+				if (a != lastAction)
+					decayTraces(traces[a], gamma * lambda);
+				else
+					replaceTraces(traces[a], gamma * lambda, features);
+			}
+		}
+	}
 
-    /** Epsilon-greedy action selection.
-     *
-     * @param pState
-     * @return
-     */
-    public int selectAction(double[] pState) {
+	/**
+	 * Decays the given eligibility traces.
+	 * 
+	 * @param traces
+	 * @param factor
+	 */
+	protected void decayTraces(double[] traces, double factor) {
+		for (int f = 0; f < traces.length; f++)
+			traces[f] *= factor;
+	}
+
+	/**
+	 * Replacing traces. This, of course, assumes a sparse feature vector.
+	 * 
+	 * @param traces
+	 * @param factor
+	 * @param state
+	 */
+	protected void replaceTraces(double[] traces, double factor, double[] state) {
+		for (int f = 0; f < traces.length; f++) {
+			// If the feature is currently 0, decay its trace
+			if (state[f] == 0)
+				traces[f] *= factor;
+			else
+				traces[f] = state[f];
+		}
+	}
+
+	/**
+	 * Epsilon-greedy action selection.
+	 * 
+	 * @param pState
+	 * @return
+	 */
+	public int selectAction(double[] pState) {
         double[] values = new double[numActions];
 
         double bestValue = Double.NEGATIVE_INFINITY;
@@ -274,18 +286,20 @@ public class SarsaLearner {
 
         return bestAction;
     }
+	/**
+	 * This method constructs the set of models used by this agent.
+	 * 
+	 * @param numActions
+	 *            The number of actions available to the agent.
+	 * @param pObservationDim
+	 *            The dimension of the observation vector.
+	 */
+	protected final void createModels(int numActions, int numFeatures) {
+		valueFunction = new LinearModel[numActions];
 
-   /** This method constructs the set of models used by this agent.
-     *
-     * @param numActions The number of actions available to the agent.
-     * @param pObservationDim The dimension of the observation vector.
-     */
-    protected final void createModels(int numActions, int numFeatures) {
-        valueFunction = new LinearModel[numActions];
-
-        for (int a = 0; a < numActions; a++) {
-            valueFunction[a] = new LinearModel(numFeatures, true);
-            valueFunction[a].setAlpha(alpha);
-        }
-    }
+		for (int a = 0; a < numActions; a++) {
+			valueFunction[a] = new LinearModel(numFeatures, true);
+			valueFunction[a].setAlpha(alpha);
+		}
+	}
 }

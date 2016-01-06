@@ -66,27 +66,24 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
-**/
+ **/
 package nars.gui.input.image;
 
-public class PointCloudMatchResult
-{
-  private String _name = null;
-  private double _score = Double.NaN;
+public class PointCloudMatchResult {
+	private String _name = null;
+	private double _score = Double.NaN;
 
-  public PointCloudMatchResult(String name, double score) // constructor
-  {
-    _name = name;
-    _score = score;
-  }
+	public PointCloudMatchResult(String name, double score) // constructor
+	{
+		_name = name;
+		_score = score;
+	}
 
-  public String getName()
-  {
-    return _name;
-  }
+	public String getName() {
+		return _name;
+	}
 
-  public double getScore()
-  {
-    return _score;
-  }
+	public double getScore() {
+		return _score;
+	}
 }

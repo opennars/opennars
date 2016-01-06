@@ -7,9 +7,9 @@
 package jurls.reinforcementlearning.domains.grid.mnist;
 
 /**
- *
+ * 
  * @author me
  */
 public class MNISTNoHub {
-    
+
 }

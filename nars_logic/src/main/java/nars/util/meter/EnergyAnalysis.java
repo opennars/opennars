@@ -7,21 +7,18 @@ import nars.NAR;
  */
 public class EnergyAnalysis {
 
-    public final NAR nar;
+	public final NAR nar;
 
-    public EnergyAnalysis(NAR n) {
-        nar = n;
-    }
+	public EnergyAnalysis(NAR n) {
+		nar = n;
+	}
 
+	public MemoryBudget energy() {
+		return new MemoryBudget(nar);
+	}
 
-    public MemoryBudget energy() {
-        return new MemoryBudget(nar);
-    }
-
-    public void printEnergy() {
-        System.out.println(nar.time() + ": " + energy());
-    }
-
-
+	public void printEnergy() {
+		System.out.println(nar.time() + ": " + energy());
+	}
 
 }

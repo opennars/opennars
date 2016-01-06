@@ -535,7 +535,6 @@ public final class ByteBuf {
             append(value);
         }
     }
-
 	public void writeLargeIntArray(int[] values) {
 		int byteSize = values.length * 4 + 4;
 		append(values.length);
@@ -593,7 +592,6 @@ public final class ByteBuf {
             append(value);
         }
     }
-
 	public void writeLargeFloatArray(float[] values) {
 		int byteSize = values.length * 4 + 4;
 		append(values.length);
@@ -622,7 +620,6 @@ public final class ByteBuf {
             append(value);
         }
     }
-
 	public void writeLargeDoubleArray(double[] values) {
 		int byteSize = values.length * 8 + 4;
 		append(values.length);
@@ -652,7 +649,6 @@ public final class ByteBuf {
             append(value);
         }
     }
-
 	public String toString() {
 		int len = len();
 

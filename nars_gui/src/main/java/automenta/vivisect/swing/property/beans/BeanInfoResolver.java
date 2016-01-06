@@ -21,12 +21,12 @@ import java.beans.BeanInfo;
 
 /**
  * BeanInfoResolver.<br>
- *
+ * 
  */
 public interface BeanInfoResolver {
 
-  BeanInfo getBeanInfo(Object object);
-  
-  BeanInfo getBeanInfo(Class clazz);
-  
+	BeanInfo getBeanInfo(Object object);
+
+	BeanInfo getBeanInfo(Class clazz);
+
 }

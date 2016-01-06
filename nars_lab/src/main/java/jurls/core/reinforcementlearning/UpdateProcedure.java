@@ -9,25 +9,18 @@ import jurls.core.approximation.ApproxParameters;
 import jurls.core.approximation.ParameterizedFunction;
 
 /**
- *
+ * 
  * @author thorsten
  */
 public interface UpdateProcedure {
 
-    class Context {
+	class Context {
 
-        public double[] e;
-        public double[] previousDeltas;
-    }
+		public double[] e;
+		public double[] previousDeltas;
+	}
 
-    void update(
-            ApproxParameters approxParameters,
-            RLParameters rLParameters,
-            Context context,
-            double reward,
-            double[][] s,
-            int[] a,
-            ParameterizedFunction f,
-            int numActions
-    );
+	void update(ApproxParameters approxParameters, RLParameters rLParameters,
+			Context context, double reward, double[][] s, int[] a,
+			ParameterizedFunction f, int numActions);
 }

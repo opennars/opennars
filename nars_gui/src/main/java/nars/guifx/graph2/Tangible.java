@@ -15,19 +15,19 @@ import nars.guifx.util.Animate;
  */
 public class Tangible {
 
-    private final Node node;
-    Spacegraph parent = null;
-    private Overlay ww;
-    private Bounds currentBounds;
+	private final Node node;
+	Spacegraph parent = null;
+	private Overlay ww;
+	private Bounds currentBounds;
 
-    //public String getName();
-    //public Term getDescription();
+	// public String getName();
+	// public Term getDescription();
 
-    public class Overlay extends Group {
-        private final Node target;
-        private final Animate boundsTracker;
+	public class Overlay extends Group {
+		private final Node target;
+		private final Animate boundsTracker;
 
-        public Overlay(Node target) {
+		public Overlay(Node target) {
 
             this.target = target;
             setMouseTransparent(true);
@@ -51,25 +51,24 @@ public class Tangible {
 //
 //            });
         }
+		protected void trackBounds() {
+			if (getParent() == null) {
+				boundsTracker.stop();
+				currentBounds = null;
+				return;
+			}
 
-        protected void trackBounds() {
-            if (getParent() == null) {
-                boundsTracker.stop();
-                currentBounds = null;
-                return;
-            }
+			Bounds sb = currentBounds = target.localToScene(target
+					.getBoundsInLocal());
+			setLayoutX(0.5 * (sb.getMinX() + sb.getMaxX()));
+			setLayoutY(0.5 * (sb.getMinY() + sb.getMaxY()));
+			setScaleX(sb.getWidth());
+			setScaleY(sb.getHeight());
 
-            Bounds sb = currentBounds = target.localToScene(target.getBoundsInLocal());
-            setLayoutX(0.5 * (sb.getMinX() + sb.getMaxX()));
-            setLayoutY(0.5 * (sb.getMinY() + sb.getMaxY()));
-            setScaleX(sb.getWidth());
-            setScaleY(sb.getHeight());
+		}
+	}
 
-
-        }
-    }
-
-    public Tangible(Node n) {
+	public Tangible(Node n) {
         node = n;
         n.setOnMouseEntered(e -> hover(true));
         n.setOnMouseExited(e -> hover(false));
@@ -80,47 +79,46 @@ public class Tangible {
             }
         });
     }
+	private void zoomTo() {
+		System.out.println("zoom to: " + currentBounds);
+		if (parent != null) {
+			double w = currentBounds.getWidth();
+			double h = currentBounds.getHeight();
+			// parent.panX.set(currentBounds.getMinX()+w/2);
+			// parent.panY.set(currentBounds.getMinY()+h/2);
 
-    private void zoomTo() {
-        System.out.println("zoom to: " + currentBounds);
-        if (parent!=null) {
-            double w = currentBounds.getWidth();
-            double h = currentBounds.getHeight();
-            //parent.panX.set(currentBounds.getMinX()+w/2);
-            //parent.panY.set(currentBounds.getMinY()+h/2);
+			double z = w / 500;
+			// parent.zoomFactor.set(z);
+		}
+	}
 
-            double z =  w/500;
-            //parent.zoomFactor.set(z);
-        }
-    }
+	protected void hover(boolean b) {
 
-    protected void hover(boolean b) {
+		if (parent == null) {
+			findSpace();
+			if (parent == null)
+				return;
+		}
 
-        if (parent==null) {
-            findSpace();
-            if (parent == null) return;
-        }
+		if (b) {
+			ww = new Overlay(node);
+			parent.hud.getChildren().add(ww);
+		} else {
+			if (ww != null) {
+				parent.hud.getChildren().remove(ww);
+				ww = null;
+			}
+		}
 
-        if (b) {
-            ww = new Overlay(node);
-            parent.hud.getChildren().add(ww);
-        } else {
-            if (ww!=null) {
-                parent.hud.getChildren().remove(ww);
-                ww = null;
-            }
-        }
+	}
 
-    }
+	private void findSpace() {
+		Node p = node.getParent();
+		while (p != null && !(p instanceof Spacegraph)) {
+			p = p.getParent();
+		}
 
-    private void findSpace() {
-        Node p = node.getParent();
-        while (p!=null && !(p instanceof Spacegraph)) {
-            p = p.getParent();
-        }
-
-        parent = (p!=null) ? (Spacegraph)p : null;
-    }
-
+		parent = (p != null) ? (Spacegraph) p : null;
+	}
 
 }

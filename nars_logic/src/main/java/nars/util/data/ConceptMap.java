@@ -7,21 +7,22 @@ import nars.util.event.Active;
 /**
  * Created by me on 4/16/15.
  */
-public abstract class ConceptMap  {
+public abstract class ConceptMap {
 
-    public final NAR nar;
+	public final NAR nar;
 
-    Active regs;
-    int frame = -1;
-    protected int cycleInFrame = -1;
+	Active regs;
+	int frame = -1;
+	protected int cycleInFrame = -1;
 
-    public int frame() {
-        return frame;
-    }
+	public int frame() {
+		return frame;
+	}
 
-    public void reset() { }
+	public void reset() {
+	}
 
-    protected ConceptMap(NAR nar) {
+	protected ConceptMap(NAR nar) {
 
         regs = new Active(
         nar.memory.eventReset.on(n -> {
@@ -44,24 +45,28 @@ public abstract class ConceptMap  {
         this.nar = nar;
 
     }
+	public void off() {
 
-    public void off() {
+	}
 
-    }
+	protected void onFrame() {
+	}
 
-    protected void onFrame() { }
+	protected void onCycle() {
+	}
 
-    protected void onCycle() { }
+	public abstract boolean contains(Concept c);
 
+	/**
+	 * returns true if the concept was successfully removed (ie. it was already
+	 * present and not permanently included)
+	 */
+	protected abstract boolean onConceptForget(Concept c);
 
-    public abstract boolean contains(Concept c);
-
-
-    /** returns true if the concept was successfully removed (ie. it was already present and not permanently included) */
-    protected abstract boolean onConceptForget(Concept c);
-
-    /** returns true if the concept was successfully added (ie. it was not already present) */
-    protected abstract boolean onConceptActive(Concept c);
-
+	/**
+	 * returns true if the concept was successfully added (ie. it was not
+	 * already present)
+	 */
+	protected abstract boolean onConceptActive(Concept c);
 
 }

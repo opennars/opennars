@@ -204,4 +204,4 @@
 //    private JTextArea pureTextArea;
 //    
 //    private SentencePartContext[] sentencePartContexts;
-//}
+// }

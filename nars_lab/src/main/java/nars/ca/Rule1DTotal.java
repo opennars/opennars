@@ -12,7 +12,8 @@ public class Rule1DTotal {
 	public boolean isCentr; // use the center (middle) cell?
 	public int iClo; // count of states
 	public int iRng; // range, 1..10
-	public boolean[] rulesS = new boolean[MAX_RANGE * 2 + 2]; // rules for surviving
+	public boolean[] rulesS = new boolean[MAX_RANGE * 2 + 2]; // rules for
+																// surviving
 	public boolean[] rulesB = new boolean[MAX_RANGE * 2 + 2]; // rules for birth
 
 	// ----------------------------------------------------------------
@@ -38,7 +39,7 @@ public class Rule1DTotal {
 	// Parse the rule string
 	// Example: "R6,C25,M1,S1,S4,S7,S8,B0,B3,B5"
 	public void InitFromString(String sStr) {
-		//noinspection UseOfStringTokenizer
+		// noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int iTmp;
@@ -47,8 +48,8 @@ public class Rule1DTotal {
 		st = new StringTokenizer(sStr, ",", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
-			//System.out.println(sTok);
-			//noinspection IfStatementWithTooManyBranches
+			// System.out.println(sTok);
+			// noinspection IfStatementWithTooManyBranches
 			if (sTok.length() > 0 && sTok.charAt(0) == 'R')
 				iRng = Integer.valueOf(sTok.substring(1));
 			else if (sTok.length() > 0 && sTok.charAt(0) == 'C') {
@@ -58,16 +59,19 @@ public class Rule1DTotal {
 					iClo = iTmp;
 				} else
 					isHist = false; // states count is meaningless
-			} else if (sTok.length() > 0 && sTok.charAt(0) == 'M') // center cell?
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'M') // center
+																	// cell?
 			{
 				isCentr = (Integer.valueOf(sTok.substring(1)) > 0);
-			} else if (sTok.length() > 0 && sTok.charAt(0) == 'S') // surviving rules
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'S') // surviving
+																	// rules
 			{
 				iTmp = Integer.valueOf(sTok.substring(1));
 				if ((iTmp >= 0) && (iTmp <= MAX_RANGE * 2 + 1)) {
 					rulesS[iTmp] = true;
 				}
-			} else if (sTok.length() > 0 && sTok.charAt(0) == 'B') // birth rules
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'B') // birth
+																	// rules
 			{
 				iTmp = Integer.valueOf(sTok.substring(1));
 				if ((iTmp >= 0) && (iTmp <= MAX_RANGE * 2 + 1)) {
@@ -146,7 +150,7 @@ public class Rule1DTotal {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
+			short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, iCnt;
@@ -164,7 +168,8 @@ public class Rule1DTotal {
 			i1DNextRow = 0;
 
 		for (ic = 0; ic < sizX; ic++)
-			OneRow[ic + ary1DOfs] = crrState[ic][mjb.i1DLastRow]; // original line
+			OneRow[ic + ary1DOfs] = crrState[ic][mjb.i1DLastRow]; // original
+																	// line
 		if (isWrap) {
 			for (ic = 1; ic <= ary1DOfs; ic++) {
 				OneRow[ary1DOfs - ic] = OneRow[sizX - 1 - ic + 1];
@@ -205,7 +210,9 @@ public class Rule1DTotal {
 							bNewVal = 1;
 						} else // isolation or overpopulation
 						{
-							bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
+							bNewVal = bOldVal < (iClo - 1)
+									? (short) (bOldVal + 1)
+									: 0;
 						}
 					}
 				} else // was older than 1
@@ -239,7 +246,9 @@ public class Rule1DTotal {
 					{
 						if (ColoringMethod == 1) // standard
 						{
-							bNewVal = bOldVal < (mjb.StatesCount - 1) ? (short) (bOldVal + 1) : (short) (mjb.StatesCount - 1);
+							bNewVal = bOldVal < (mjb.StatesCount - 1)
+									? (short) (bOldVal + 1)
+									: (short) (mjb.StatesCount - 1);
 						} else {
 							// alternate coloring - cells remain not changed
 						}
@@ -256,4 +265,3 @@ public class Rule1DTotal {
 		return modCnt;
 	}
 }
-

@@ -8,12 +8,12 @@ package jurls.examples.approximation;
 import java.awt.*;
 
 /**
- *
+ * 
  * @author thorsten
  */
 public interface RenderFunction2D {
 
-    double compute(double x, double y);
+	double compute(double x, double y);
 
-    Color getColor();
+	Color getColor();
 }

@@ -16,31 +16,31 @@
 package automenta.vivisect.swing.dock;
 
 /**
- *
+ * 
  * @author kitfox
  */
 public class DockingPickRecord {
 
-    private final DockingChild child;
-    private final int direction;
+	private final DockingChild child;
+	private final int direction;
 
-    public DockingPickRecord(DockingChild child, int direction) {
-        this.child = child;
-        this.direction = direction;
-    }
+	public DockingPickRecord(DockingChild child, int direction) {
+		this.child = child;
+		this.direction = direction;
+	}
 
-    /**
-     * @return the child
-     */
-    public DockingChild getChild() {
-        return child;
-    }
+	/**
+	 * @return the child
+	 */
+	public DockingChild getChild() {
+		return child;
+	}
 
-    /**
-     * @return the direction
-     */
-    public int getDirection() {
-        return direction;
-    }
+	/**
+	 * @return the direction
+	 */
+	public int getDirection() {
+		return direction;
+	}
 
 }

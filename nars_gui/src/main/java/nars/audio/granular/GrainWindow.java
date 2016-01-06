@@ -5,7 +5,7 @@ public interface GrainWindow {
 	/** in samples */
 	int getSize();
 
-	/**  amplitude factor */
+	/** amplitude factor */
 	float getFactor(int offset);
 
 }

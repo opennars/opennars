@@ -1,6 +1,5 @@
 package automenta.vivisect.surfaceplotter.example;
 
-
 import automenta.vivisect.surfaceplotter.JSurfacePanel;
 import automenta.vivisect.surfaceplotter.Mapper;
 import automenta.vivisect.surfaceplotter.ProgressiveSurfaceModel;
@@ -8,8 +7,6 @@ import automenta.vivisect.surfaceplotter.ProgressiveSurfaceModel;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import java.awt.*;
-
-
 
 /**
  * @author User #1
@@ -41,17 +38,17 @@ public class Sample extends JPanel {
 		});
 		model.plot().execute();
 	}
-
-	private void button1ActionPerformed()  {
+	private void button1ActionPerformed() {
 		JFileChooser jfc = new JFileChooser();
 		try {
-//			if (jfc.showSaveDialog(surfacePanel1) == JFileChooser.APPROVE_OPTION )
-//				surfacePanel1.getSurface().doExportSVG( jfc.getSelectedFile());
+			// if (jfc.showSaveDialog(surfacePanel1) ==
+			// JFileChooser.APPROVE_OPTION )
+			// surfacePanel1.getSurface().doExportSVG( jfc.getSelectedFile());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		Sample sample = new Sample();
 		JFrame jf = new JFrame("sample");
@@ -62,7 +59,7 @@ public class Sample extends JPanel {
 	}
 
 	private void slider1StateChanged(ChangeEvent e) {
-		if (!slider1.getValueIsAdjusting())  
+		if (!slider1.getValueIsAdjusting())
 			model.setCurrentDefinition(slider1.getValue());
 	}
 
@@ -103,11 +100,11 @@ public class Sample extends JPanel {
 		add(toolBar1, BorderLayout.NORTH);
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
-
-	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+	// JFormDesigner - Variables declaration - DO NOT MODIFY
+	// //GEN-BEGIN:variables
 	private JSurfacePanel surfacePanel1;
 	private JToolBar toolBar1;
 	private JButton button1;
 	private JSlider slider1;
-	// JFormDesigner - End of variables declaration  //GEN-END:variables
+	// JFormDesigner - End of variables declaration //GEN-END:variables
 }

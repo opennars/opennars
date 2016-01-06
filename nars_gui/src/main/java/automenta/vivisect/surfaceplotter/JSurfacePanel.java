@@ -19,19 +19,17 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-
-/** Main panel to display a surface plot.
+/**
+ * Main panel to display a surface plot.
  * 
  * @author eric
  */
 public class JSurfacePanel extends JPanel {
-	
-	
+
 	public JSurfacePanel() {
 		this(createDefaultSurfaceModel());
 	}
 
-	
 	/**
 	 * @return
 	 */
@@ -85,20 +83,18 @@ public class JSurfacePanel extends JPanel {
 		return sm;
 
 	}
-
 	public JSurfacePanel(SurfaceModel model) {
 		super(new BorderLayout());
 		initComponents();
-		
+
 		String name = (String) configurationToggler.getValue(Action.NAME);
 		getActionMap().put(name, configurationToggler);
-		getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), name);
-		
+		getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), name);
+
 		setModel(model);
 
 	}
-
-	
 
 	public void setModel(SurfaceModel model) {
 		if (model instanceof AbstractSurfaceModel)
@@ -191,11 +187,10 @@ public class JSurfacePanel extends JPanel {
 		invalidate();
 		revalidate();
 	}
-	
 
 	private void toggleConfiguration() {
 		setConfigurationVisible(!isConfigurationVisible());
-		if ( !isConfigurationVisible())
+		if (!isConfigurationVisible())
 			surface.requestFocusInWindow();
 	}
 
@@ -208,15 +203,9 @@ public class JSurfacePanel extends JPanel {
 	}
 
 	private void surfaceMouseClicked(MouseEvent e) {
-		if (e.getClickCount()>=2)
+		if (e.getClickCount() >= 2)
 			toggleConfiguration();
 	}
-
-	
-	
-	
-	
-	
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -284,13 +273,13 @@ public class JSurfacePanel extends JPanel {
 		configurationToggler.putValue(Action.NAME, "configurationToggler.Name");
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
-
-	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+	// JFormDesigner - Variables declaration - DO NOT MODIFY
+	// //GEN-BEGIN:variables
 	private JLabel title;
 	private JSurface surface;
 	private JGridBagScrollPane scrollpane;
 	private VerticalConfigurationPanel configurationPanel;
 	private AbstractAction configurationToggler;
-	// JFormDesigner - End of variables declaration  //GEN-END:variables
-	
+	// JFormDesigner - End of variables declaration //GEN-END:variables
+
 }

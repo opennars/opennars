@@ -24,54 +24,54 @@ import java.util.Map;
 
 /**
  * IconPool.<br>
- *
+ * 
  */
 public class IconPool {
 
-  private static final IconPool iconPool = new IconPool();
-  
-  private final Map pool;
-  
-  public IconPool() {
-    pool = new HashMap();    
-  }
+	private static final IconPool iconPool = new IconPool();
 
-  public static IconPool shared() {
-    return iconPool;
-  }
-  
-  /**
-   * Gets the icon denoted by url.
-   * If url is relative, it is relative to the caller.
-   * 
-   * @param url
-   * @return an icon
-   */
-  public Icon get(String url) {
-    StackTraceElement[] stacks = new Exception().getStackTrace();
-    try {
-      Class callerClazz = Class.forName(stacks[1].getClassName());
-      return get(callerClazz.getResource(url));
-    } catch (ClassNotFoundException e) {
-      throw new RuntimeException(e);
-    }
-  }
-  
-  public synchronized Icon get(URL url) {
-    if (url == null) {
-      return null;
-    }
-    
-    Icon icon = (Icon)pool.get(url.toString());
-    if (icon == null) {
-      icon = new ImageIcon(url);
-      pool.put(url.toString(), icon);
-    }
-    return icon;
-  }
-  
-  public synchronized void clear() {
-    pool.clear();
-  }
-  
+	private final Map pool;
+
+	public IconPool() {
+		pool = new HashMap();
+	}
+
+	public static IconPool shared() {
+		return iconPool;
+	}
+
+	/**
+	 * Gets the icon denoted by url. If url is relative, it is relative to the
+	 * caller.
+	 * 
+	 * @param url
+	 * @return an icon
+	 */
+	public Icon get(String url) {
+		StackTraceElement[] stacks = new Exception().getStackTrace();
+		try {
+			Class callerClazz = Class.forName(stacks[1].getClassName());
+			return get(callerClazz.getResource(url));
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public synchronized Icon get(URL url) {
+		if (url == null) {
+			return null;
+		}
+
+		Icon icon = (Icon) pool.get(url.toString());
+		if (icon == null) {
+			icon = new ImageIcon(url);
+			pool.put(url.toString(), icon);
+		}
+		return icon;
+	}
+
+	public synchronized void clear() {
+		pool.clear();
+	}
+
 }

@@ -5,18 +5,18 @@ package nars.budget;
  */
 public interface Prioritized {
 
-    float getPriority();
+	float getPriority();
 
-    void setPriority(float p);
+	void setPriority(float p);
 
-    //void addPriority(float v);
+	// void addPriority(float v);
 
-    //void merge(Prioritized that);
+	// void merge(Prioritized that);
 
-    long setLastForgetTime(long currentTime);
+	long setLastForgetTime(long currentTime);
 
-    long getLastForgetTime();
+	long getLastForgetTime();
 
-    void mulPriority(float factor);
+	void mulPriority(float factor);
 
 }

@@ -17,13 +17,14 @@
  */
 package jurls.reinforcementlearning.domains.arcade.io;
 
-/** This class encapsulates RL data.
- *
+/**
+ * This class encapsulates RL data.
+ * 
  * @author Marc G. Bellemare
  */
 public class RLData {
-    /** How much reward was received */
-    public int reward;
-    /** Indicates the end of an episode */
-    public boolean isTerminal;
+	/** How much reward was received */
+	public int reward;
+	/** Indicates the end of an episode */
+	public boolean isTerminal;
 }

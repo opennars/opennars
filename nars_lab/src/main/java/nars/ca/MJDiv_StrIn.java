@@ -13,7 +13,8 @@ public class MJDiv_StrIn {
 	public int m_X, m_Y;
 	public boolean m_Repeat;
 	public final Vector m_Vals = new Vector();
-	public int m_Pos; // current position in the array - the value to be injected
+	public int m_Pos; // current position in the array - the value to be
+						// injected
 
 	private void AddVal(Integer n) {
 		if ((n >= 0) && (n <= MJBoard.MAX_CLO)) {
@@ -26,7 +27,7 @@ public class MJDiv_StrIn {
 	private void SetStr(String sStr) {
 		String sTok, sBff;
 		int i, iPos, iCnt;
-		//noinspection UseOfStringTokenizer
+		// noinspection UseOfStringTokenizer
 		StringTokenizer st;
 
 		m_Str = sStr;
@@ -56,7 +57,7 @@ public class MJDiv_StrIn {
 		}
 	}
 
-	//------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------
 	public void Reset() {
 		m_Active = false;
 		m_Repeat = true;
@@ -66,10 +67,10 @@ public class MJDiv_StrIn {
 		m_Vals.removeAllElements();
 	}
 
-	//------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------
 	// Example: #STRIN,act=1,rep=1,x=0,y=-40,str=1,2,1,0,10(1),5(0)
 	public void SetFromString(String sStr) {
-		//noinspection UseOfStringTokenizer
+		// noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		String sBff;
@@ -80,7 +81,7 @@ public class MJDiv_StrIn {
 		st = new StringTokenizer(sStr, ",", false);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
-			//noinspection IfStatementWithTooManyBranches
+			// noinspection IfStatementWithTooManyBranches
 			if (sTok.startsWith("ACT="))
 				m_Active = Integer.valueOf(sTok.substring(4)) != 0;
 			else if (sTok.startsWith("REP="))
@@ -98,7 +99,7 @@ public class MJDiv_StrIn {
 		}
 	}
 
-	//------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------
 	public String GetAsString() {
 		String sRet = "#STRIN";
 
@@ -110,7 +111,6 @@ public class MJDiv_StrIn {
 
 		return sRet;
 	}
-	//------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------
 
 }
-

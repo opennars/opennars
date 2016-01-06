@@ -15,9 +15,9 @@ import java.util.function.Function;
  */
 public class NARspace extends Spacegraph {
 
-    private final NAR nar;
+	private final NAR nar;
 
-    public NARspace(NAR n) {
+	public NARspace(NAR n) {
 
         nar = n;
 

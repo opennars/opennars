@@ -5,17 +5,17 @@ package nars.op.software.befunge;
  */
 public class Board {
 
-    private final char[][] board;
+	private final char[][] board;
 
-    Board(){
-        board = new char[25][80];
-    }
+	Board() {
+		board = new char[25][80];
+	}
 
-    char get(int y, int x){
-        return board[y][x];
-    }
+	char get(int y, int x) {
+		return board[y][x];
+	}
 
-    void put(int y, int x, char c){
-        board[y][x] = c;
-    }
+	void put(int y, int x, char c) {
+		board[y][x] = c;
+	}
 }

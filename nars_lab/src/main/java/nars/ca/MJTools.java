@@ -11,7 +11,7 @@ import java.util.Vector;
 public class MJTools {
 	// ----------------------------------------------------------------
 	public MJTools() {
-    }
+	}
 
 	// ----------------------------------------------------------------
 	// Read the specified text file, return its lines in vLines

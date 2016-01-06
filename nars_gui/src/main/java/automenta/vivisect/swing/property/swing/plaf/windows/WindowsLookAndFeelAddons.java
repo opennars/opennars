@@ -24,8 +24,8 @@ import automenta.vivisect.swing.property.swing.plaf.basic.BasicLookAndFeelAddons
  */
 public class WindowsLookAndFeelAddons extends BasicLookAndFeelAddons {
 
-  public static final String HOMESTEAD_VISUAL_STYLE = "HomeStead";
-  
-  public static final String SILVER_VISUAL_STYLE = "Metallic";
-  
+	public static final String HOMESTEAD_VISUAL_STYLE = "HomeStead";
+
+	public static final String SILVER_VISUAL_STYLE = "Metallic";
+
 }

@@ -19,37 +19,45 @@ package jurls.reinforcementlearning.domains.arcade.gui;
 
 import java.awt.image.BufferedImage;
 
-/** An interface describing a UI. This gets subclassed into a graphical UI,
- *   a command-line UI, etc... as needed.
- *
+/**
+ * An interface describing a UI. This gets subclassed into a graphical UI, a
+ * command-line UI, etc... as needed.
+ * 
  * @author Marc G. Bellemare
  */
 public interface AbstractUI {
-    /** This method is called to notify the UI that we want to terminate. */
-    void die();
-    /** Notifies the UI that it should refresh its display */
-    void refresh();
+	/** This method is called to notify the UI that we want to terminate. */
+	void die();
+	/** Notifies the UI that it should refresh its display */
+	void refresh();
 
-    /** Sets the screen image to be displayed in the GUI */
-    void setImage(BufferedImage img);
+	/** Sets the screen image to be displayed in the GUI */
+	void setImage(BufferedImage img);
 
-    /** Provides a string to be displayed (at the bottom of the GUI if using a GUI) */
-    void setCenterString(String s);
-    void addMessage(String s);
+	/**
+	 * Provides a string to be displayed (at the bottom of the GUI if using a
+	 * GUI)
+	 */
+	void setCenterString(String s);
+	void addMessage(String s);
 
-    /** Obtain an ALE action from the UI, e.g. via the keyboard.
-     * 
-     * @return
-     */
-    int getKeyboardAction();
-    /** Returns true if the user requested the end of the program, e.g. via a
-     *   keypress.
-     * @return
-     */
-    boolean quitRequested();
+	/**
+	 * Obtain an ALE action from the UI, e.g. via the keyboard.
+	 * 
+	 * @return
+	 */
+	int getKeyboardAction();
+	/**
+	 * Returns true if the user requested the end of the program, e.g. via a
+	 * keypress.
+	 * 
+	 * @return
+	 */
+	boolean quitRequested();
 
-    /** A method called to notify the UI that a new frame has been processed.
-     *   Used to display frames per second information.
-     */
-    void updateFrameCount();
+	/**
+	 * A method called to notify the UI that a new frame has been processed.
+	 * Used to display frames per second information.
+	 */
+	void updateFrameCount();
 }

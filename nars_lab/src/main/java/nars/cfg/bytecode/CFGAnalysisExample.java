@@ -45,7 +45,7 @@ import java.util.Set;
  */
 public class CFGAnalysisExample implements Opcodes {
 
-    public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
         ClassReader cr = new ClassReader("nars.cfg.bytecode.CFGAnalysisExample");
         ClassNode cn = new ClassNode();
         cr.accept(cn, ClassReader.SKIP_DEBUG);
@@ -98,13 +98,12 @@ public class CFGAnalysisExample implements Opcodes {
             }
         }
     }
-
-    /*
-     * Detects unused xSTORE instructions, i.e. xSTORE instructions without at
-     * least one xLOAD corresponding instruction in their successor instructions
-     * (in the control flow graph).
-     */
-    public static boolean analyzeUselessStores(ClassNode c, MethodNode m)
+	/*
+	 * Detects unused xSTORE instructions, i.e. xSTORE instructions without at
+	 * least one xLOAD corresponding instruction in their successor instructions
+	 * (in the control flow graph).
+	 */
+	public static boolean analyzeUselessStores(ClassNode c, MethodNode m)
             throws Exception {
         Analyzer<SourceValue> a = new Analyzer<>(
                 new SourceInterpreter());
@@ -148,28 +147,27 @@ public class CFGAnalysisExample implements Opcodes {
         }
         return ok;
     }
+	/*
+	 * Test for the above method, with three useless xSTORE instructions.
+	 */
+	public int test(int i, int j) {
+		i = i + 1; // ok, because i can be read after this point
 
-    /*
-     * Test for the above method, with three useless xSTORE instructions.
-     */
-    public int test(int i, int j) {
-        i = i + 1; // ok, because i can be read after this point
+		if (j == 0) {
+			j = 1; // useless
+		} else {
+			try {
+				j = j - 1; // ok, because j can be accessed in the catch
+				int k = 0;
+				if (i > 0) {
+					k = i - 1;
+				}
+				return k;
+			} catch (Exception e) { // useless ASTORE (e is never used)
+				j = j + 1; // useless
+			}
+		}
 
-        if (j == 0) {
-            j = 1; // useless
-        } else {
-            try {
-                j = j - 1; // ok, because j can be accessed in the catch
-                int k = 0;
-                if (i > 0) {
-                    k = i - 1;
-                }
-                return k;
-            } catch (Exception e) { // useless ASTORE (e is never used)
-                j = j + 1; // useless
-            }
-        }
-
-        return 0;
-    }
+		return 0;
+	}
 }

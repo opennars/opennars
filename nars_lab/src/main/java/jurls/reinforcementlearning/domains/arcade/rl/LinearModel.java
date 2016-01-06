@@ -21,107 +21,113 @@ package jurls.reinforcementlearning.domains.arcade.rl;
 import java.io.Serializable;
 
 /**
- * Defines a linear regression model. Uses double[] as its feature representation.
- *
+ * Defines a linear regression model. Uses double[] as its feature
+ * representation.
+ * 
  * @author Marc G. Bellemare
  */
 public class LinearModel implements Serializable, Cloneable {
-    /** Whether we should use the bias weights as well */
-    protected boolean useBias = false;
-    /** Learning rate for modifying weights */
-    protected double alpha = 0.1;
+	/** Whether we should use the bias weights as well */
+	protected boolean useBias = false;
+	/** Learning rate for modifying weights */
+	protected double alpha = 0.1;
 
-    /** How many features this model expects. */
-    protected int numFeatures;
-    /** The last prediction made by the model */
-    protected double prediction;
-    /** The set of weights used to predict */
-    protected double[] weights;
-    /** The model's bias term */
-    protected double bias;
+	/** How many features this model expects. */
+	protected int numFeatures;
+	/** The last prediction made by the model */
+	protected double prediction;
+	/** The set of weights used to predict */
+	protected double[] weights;
+	/** The model's bias term */
+	protected double bias;
 
-    /**
-     * Create a new LinearModel.
-     *
-     * @param numFeatures The length of the state vector used by this model.
-     * @param useBias Whether to use a bias term.
-     */
-    public LinearModel(int numFeatures, boolean useBias) {
-        this.useBias = useBias;
-        this.numFeatures = numFeatures;
+	/**
+	 * Create a new LinearModel.
+	 * 
+	 * @param numFeatures
+	 *            The length of the state vector used by this model.
+	 * @param useBias
+	 *            Whether to use a bias term.
+	 */
+	public LinearModel(int numFeatures, boolean useBias) {
+		this.useBias = useBias;
+		this.numFeatures = numFeatures;
 
-        // Initialize weights to 0
-        weights = new double[numFeatures];
-        bias = 0;
-        prediction = 0;
-    }
+		// Initialize weights to 0
+		weights = new double[numFeatures];
+		bias = 0;
+		prediction = 0;
+	}
 
-    /** Sets the learning rate for this model.
-     * 
-     * @param alpha
-     */
-    public void setAlpha(double alpha) {
-        this.alpha = alpha;
-    }
+	/**
+	 * Sets the learning rate for this model.
+	 * 
+	 * @param alpha
+	 */
+	public void setAlpha(double alpha) {
+		this.alpha = alpha;
+	}
 
-    /** Returns the learning rate for this model.
-     * 
-     * @return
-     */
-    public double getAlpha() {
-        return alpha;
-    }
+	/**
+	 * Returns the learning rate for this model.
+	 * 
+	 * @return
+	 */
+	public double getAlpha() {
+		return alpha;
+	}
 
-    public double[] getWeights() {
-        return weights;
-    }
+	public double[] getWeights() {
+		return weights;
+	}
 
-    public boolean getUseBias() {
-        return useBias;
-    }
+	public boolean getUseBias() {
+		return useBias;
+	}
 
-    public double getPrediction() {
-        return prediction;
-    }
+	public double getPrediction() {
+		return prediction;
+	}
 
-    /** Makes a prediction for the given feature vector. The prediction is
-     *   the dot product of the weight vector with the feature vector.
-     * 
-     * @param features
-     * @return
-     */
-    public double predict(double[] features) {
-        prediction = 0;
+	/**
+	 * Makes a prediction for the given feature vector. The prediction is the
+	 * dot product of the weight vector with the feature vector.
+	 * 
+	 * @param features
+	 * @return
+	 */
+	public double predict(double[] features) {
+		prediction = 0;
 
-        // Dot product
-        for (int i = 0; i < features.length; i++) {
-            prediction += weights[i] * features[i];
-        }
+		// Dot product
+		for (int i = 0; i < features.length; i++) {
+			prediction += weights[i] * features[i];
+		}
 
-        // Add bias if so desired
-        if (useBias)
-            prediction += bias;
+		// Add bias if so desired
+		if (useBias)
+			prediction += bias;
 
-        return prediction;
-    }
+		return prediction;
+	}
 
-    /** Updates the weights by a 'delta' gradient-ish quantity (e.g., TD
-     *   error).
-     * 
-     * @param lastFeatures
-     * @param delta
-     */
-    public void updateWeightsDelta(double[] lastFeatures, double delta) {
-        // Update the bias
-        if (useBias) {
-            bias += alpha * delta;
-        }
+	/**
+	 * Updates the weights by a 'delta' gradient-ish quantity (e.g., TD error).
+	 * 
+	 * @param lastFeatures
+	 * @param delta
+	 */
+	public void updateWeightsDelta(double[] lastFeatures, double delta) {
+		// Update the bias
+		if (useBias) {
+			bias += alpha * delta;
+		}
 
-        // Update other weights
-        for (int index = 0; index < lastFeatures.length; index++) {
-            double value = lastFeatures[index];
+		// Update other weights
+		for (int index = 0; index < lastFeatures.length; index++) {
+			double value = lastFeatures[index];
 
-            weights[index] += alpha * (delta * value);
-        }
-    }
+			weights[index] += alpha * (delta * value);
+		}
+	}
 }

@@ -12,17 +12,16 @@ import java.util.SortedSet;
  */
 public class TreemapChart extends Parent {
 
+	// private final ColorBucket colorBucket = ColorBucket.createBucket();
+	public final Item root;
 
-    //private final ColorBucket colorBucket = ColorBucket.createBucket();
-    public final Item root;
+	public DoubleProperty width = new SimpleDoubleProperty(640.0);
+	public DoubleProperty height = new SimpleDoubleProperty(280.0);
 
-    public DoubleProperty width = new SimpleDoubleProperty(640.0);
-    public DoubleProperty height = new SimpleDoubleProperty(280.0);
+	private final TreemapElementFactory elementFactory = new TreemapElementFactory();
+	private final TreemapLayout treemapLayouter;
 
-    private final TreemapElementFactory elementFactory = new TreemapElementFactory();
-    private final TreemapLayout treemapLayouter;
-
-    public TreemapChart(Item root) {
+	public TreemapChart(Item root) {
         this.root = root;
         SortedSet<Item> items = root.getItems();
         treemapLayouter = elementFactory.createTreemapLayout(width.doubleValue(), height.doubleValue(), items);
@@ -32,17 +31,17 @@ public class TreemapChart extends Parent {
         getChildren().add(treemapLayouter);
 
     }
+	public void update() {
+		treemapLayouter.update(width.doubleValue(), height.doubleValue(),
+				root.getItems());
+		autosize();
+	}
 
-    public void update() {
-        treemapLayouter.update(width.doubleValue(), height.doubleValue(), root.getItems());
-        autosize();
-    }
+	public DoubleProperty getWidth() {
+		return width;
+	}
 
-    public DoubleProperty getWidth() {
-        return width;
-    }
-
-    public DoubleProperty getHeight() {
-        return height;
-    }
+	public DoubleProperty getHeight() {
+		return height;
+	}
 }

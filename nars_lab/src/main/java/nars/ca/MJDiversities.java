@@ -43,47 +43,47 @@ public class MJDiversities {
 		ResetItem(DIV_STRIN);
 	}
 
-	//------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------
 	// Reset the specified item; defaults
 	public void ResetItem(int itm) {
 		switch (itm) {
-		case DIV_NOISE:
-			m_NoiseActive = false;
-			m_NoiseCycles = 1;
-			m_NoiseCells = 0;
-			m_NoiseState = 1;
-			break;
-		case DIV_BHOLE:
-			m_BHoleActive = false;
-			m_BHoleCtrX = -30;
-			m_BHoleCtrY = -30;
-			m_BHoleSize = 10;
-			m_SNovaState = 1;
-			break;
-		case DIV_SNOVA:
-			m_SNovaActive = false;
-			m_SNovaCtrX = 30;
-			m_SNovaCtrY = 30;
-			m_SNovaSize = 10;
-			break;
-		case DIV_STRIN:
-			StrIn.Reset();
-			break;
+			case DIV_NOISE :
+				m_NoiseActive = false;
+				m_NoiseCycles = 1;
+				m_NoiseCells = 0;
+				m_NoiseState = 1;
+				break;
+			case DIV_BHOLE :
+				m_BHoleActive = false;
+				m_BHoleCtrX = -30;
+				m_BHoleCtrY = -30;
+				m_BHoleSize = 10;
+				m_SNovaState = 1;
+				break;
+			case DIV_SNOVA :
+				m_SNovaActive = false;
+				m_SNovaCtrX = 30;
+				m_SNovaCtrY = 30;
+				m_SNovaSize = 10;
+				break;
+			case DIV_STRIN :
+				StrIn.Reset();
+				break;
 		}
 	}
 
-	//------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------
 	// Initialize the specified item from the string
 	public void ItemFromString(String sStr, int sizX, int sizY) {
 		int itm = DIV_NONE;
-		//noinspection UseOfStringTokenizer
+		// noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		String sBff;
 		int iTmp;
 
 		try {
-			//noinspection IfStatementWithTooManyBranches
+			// noinspection IfStatementWithTooManyBranches
 			if (sStr.startsWith("#SYSTEM"))
 				itm = DIV_SYSTEM;
 			else if (sStr.startsWith("#NOISE"))
@@ -101,130 +101,143 @@ public class MJDiversities {
 				while (st.hasMoreTokens()) {
 					sTok = st.nextToken().toUpperCase();
 					switch (itm) {
-					case DIV_SYSTEM:
-						if (sTok.startsWith("ACT="))
-							m_Enabled = Integer.valueOf(sTok.substring(4)) != 0;
-						break;
-					case DIV_NOISE:
-						//noinspection IfStatementWithTooManyBranches
-						if (sTok.startsWith("ACT="))
-							m_NoiseActive = Integer.valueOf(sTok.substring(4)) != 0;
-						else if (sTok.startsWith("CYCL="))
-							m_NoiseCycles = Integer.valueOf(sTok.substring(5));
-						else if (sTok.startsWith("CELL="))
-							m_NoiseCells = Integer.valueOf(sTok.substring(5));
-						else if (sTok.startsWith("STT="))
-							m_NoiseState = Integer.valueOf(sTok.substring(4));
-						break;
-					case DIV_BHOLE:
-						//noinspection IfStatementWithTooManyBranches
-						if (sTok.startsWith("ACT="))
-							m_BHoleActive = Integer.valueOf(sTok.substring(4)) != 0;
-						else if (sTok.startsWith("X=")) {
-							m_BHoleCtrX = Integer.valueOf(sTok.substring(2));
-							m_BHoleCtrX += sizX / 2;
-						} else if (sTok.startsWith("Y=")) {
-							m_BHoleCtrY = Integer.valueOf(sTok.substring(2));
-							m_BHoleCtrY += sizY / 2;
-						} else if (sTok.startsWith("SIZE="))
-							m_BHoleSize = Integer.valueOf(sTok.substring(5));
-						break;
-					case DIV_SNOVA:
-						//noinspection IfStatementWithTooManyBranches
-						if (sTok.startsWith("ACT="))
-							m_SNovaActive = Integer.valueOf(sTok.substring(4)) != 0;
-						else if (sTok.startsWith("X=")) {
-							m_SNovaCtrX = Integer.valueOf(sTok.substring(2));
-							m_SNovaCtrX += sizX / 2;
-						} else if (sTok.startsWith("Y=")) {
-							m_SNovaCtrY = Integer.valueOf(sTok.substring(2));
-							m_SNovaCtrY += sizY / 2;
-						} else if (sTok.startsWith("SIZE="))
-							m_SNovaSize = Integer.valueOf(sTok.substring(5));
-						else if (sTok.startsWith("STT="))
-							m_SNovaState = Integer.valueOf(sTok.substring(4));
-						break;
-					case DIV_STRIN:
-						StrIn.SetFromString(sStr);
-						StrIn.m_X += sizX / 2;
-						StrIn.m_Y += sizY / 2;
-						break;
+						case DIV_SYSTEM :
+							if (sTok.startsWith("ACT="))
+								m_Enabled = Integer.valueOf(sTok.substring(4)) != 0;
+							break;
+						case DIV_NOISE :
+							// noinspection IfStatementWithTooManyBranches
+							if (sTok.startsWith("ACT="))
+								m_NoiseActive = Integer.valueOf(sTok
+										.substring(4)) != 0;
+							else if (sTok.startsWith("CYCL="))
+								m_NoiseCycles = Integer.valueOf(sTok
+										.substring(5));
+							else if (sTok.startsWith("CELL="))
+								m_NoiseCells = Integer.valueOf(sTok
+										.substring(5));
+							else if (sTok.startsWith("STT="))
+								m_NoiseState = Integer.valueOf(sTok
+										.substring(4));
+							break;
+						case DIV_BHOLE :
+							// noinspection IfStatementWithTooManyBranches
+							if (sTok.startsWith("ACT="))
+								m_BHoleActive = Integer.valueOf(sTok
+										.substring(4)) != 0;
+							else if (sTok.startsWith("X=")) {
+								m_BHoleCtrX = Integer
+										.valueOf(sTok.substring(2));
+								m_BHoleCtrX += sizX / 2;
+							} else if (sTok.startsWith("Y=")) {
+								m_BHoleCtrY = Integer
+										.valueOf(sTok.substring(2));
+								m_BHoleCtrY += sizY / 2;
+							} else if (sTok.startsWith("SIZE="))
+								m_BHoleSize = Integer
+										.valueOf(sTok.substring(5));
+							break;
+						case DIV_SNOVA :
+							// noinspection IfStatementWithTooManyBranches
+							if (sTok.startsWith("ACT="))
+								m_SNovaActive = Integer.valueOf(sTok
+										.substring(4)) != 0;
+							else if (sTok.startsWith("X=")) {
+								m_SNovaCtrX = Integer
+										.valueOf(sTok.substring(2));
+								m_SNovaCtrX += sizX / 2;
+							} else if (sTok.startsWith("Y=")) {
+								m_SNovaCtrY = Integer
+										.valueOf(sTok.substring(2));
+								m_SNovaCtrY += sizY / 2;
+							} else if (sTok.startsWith("SIZE="))
+								m_SNovaSize = Integer
+										.valueOf(sTok.substring(5));
+							else if (sTok.startsWith("STT="))
+								m_SNovaState = Integer.valueOf(sTok
+										.substring(4));
+							break;
+						case DIV_STRIN :
+							StrIn.SetFromString(sStr);
+							StrIn.m_X += sizX / 2;
+							StrIn.m_Y += sizY / 2;
+							break;
 					}
 				}
 			}
 		} catch (Exception e) {
-        }
+		}
 	}
 
-	//------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------
 	// Get the specified item as a string
 	public String ItemAsString(int itm) {
 		String sRet = "";
 
 		switch (itm) {
-		case DIV_SYSTEM:
-			sRet = "#SYSTEM";
-			sRet = sRet + ",act=" + (m_Enabled ? "1" : "0");
-			break;
+			case DIV_SYSTEM :
+				sRet = "#SYSTEM";
+				sRet = sRet + ",act=" + (m_Enabled ? "1" : "0");
+				break;
 
-		case DIV_NOISE:
-			sRet = "#NOISE";
-			sRet = sRet + ",act=" + (m_NoiseActive ? "1" : "0");
-			sRet = sRet + ",cycl=" + m_NoiseCycles;
-			sRet = sRet + ",cell=" + m_NoiseCells;
-			sRet = sRet + ",stt=" + m_NoiseState;
-			break;
+			case DIV_NOISE :
+				sRet = "#NOISE";
+				sRet = sRet + ",act=" + (m_NoiseActive ? "1" : "0");
+				sRet = sRet + ",cycl=" + m_NoiseCycles;
+				sRet = sRet + ",cell=" + m_NoiseCells;
+				sRet = sRet + ",stt=" + m_NoiseState;
+				break;
 
-		case DIV_BHOLE:
-			sRet = "#BHOLE";
-			sRet = sRet + ",act=" + (m_BHoleActive ? "1" : "0");
-			sRet = sRet + ",x=" + m_BHoleCtrX;
-			sRet = sRet + ",y=" + m_BHoleCtrY;
-			sRet = sRet + ",size=" + m_BHoleSize;
-			break;
+			case DIV_BHOLE :
+				sRet = "#BHOLE";
+				sRet = sRet + ",act=" + (m_BHoleActive ? "1" : "0");
+				sRet = sRet + ",x=" + m_BHoleCtrX;
+				sRet = sRet + ",y=" + m_BHoleCtrY;
+				sRet = sRet + ",size=" + m_BHoleSize;
+				break;
 
-		case DIV_SNOVA:
-			sRet = "#SNOVA";
-			sRet = sRet + ",act=" + (m_SNovaActive ? "1" : "0");
-			sRet = sRet + ",x=" + m_SNovaCtrX;
-			sRet = sRet + ",y=" + m_SNovaCtrY;
-			sRet = sRet + ",size=" + m_SNovaSize;
-			sRet = sRet + ",stt=" + m_SNovaState;
-			break;
+			case DIV_SNOVA :
+				sRet = "#SNOVA";
+				sRet = sRet + ",act=" + (m_SNovaActive ? "1" : "0");
+				sRet = sRet + ",x=" + m_SNovaCtrX;
+				sRet = sRet + ",y=" + m_SNovaCtrY;
+				sRet = sRet + ",size=" + m_SNovaSize;
+				sRet = sRet + ",stt=" + m_SNovaState;
+				break;
 
-		case DIV_STRIN:
-			sRet = StrIn.GetAsString();
-			break;
+			case DIV_STRIN :
+				sRet = StrIn.GetAsString();
+				break;
 		}
 
 		return (sRet);
 	}
 
-	//------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------
 	// Check, if the specified item is active
 	public boolean ItemActive(int itm) {
 		boolean bRet = false;
 		switch (itm) {
-		case DIV_SYSTEM:
-			bRet = m_Enabled;
-			break;
-		case DIV_NOISE:
-			bRet = m_NoiseActive;
-			break;
-		case DIV_BHOLE:
-			bRet = m_BHoleActive;
-			break;
-		case DIV_SNOVA:
-			bRet = m_SNovaActive;
-			break;
-		case DIV_STRIN:
-			bRet = StrIn.m_Active;
-			break;
+			case DIV_SYSTEM :
+				bRet = m_Enabled;
+				break;
+			case DIV_NOISE :
+				bRet = m_NoiseActive;
+				break;
+			case DIV_BHOLE :
+				bRet = m_BHoleActive;
+				break;
+			case DIV_SNOVA :
+				bRet = m_SNovaActive;
+				break;
+			case DIV_STRIN :
+				bRet = StrIn.m_Active;
+				break;
 		}
 		return (bRet);
 	}
 
-	//------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------
 	// Perform diversities
 	// "BeforePass" is True if the procedure is invoked before the cycle,
 	// and False after.

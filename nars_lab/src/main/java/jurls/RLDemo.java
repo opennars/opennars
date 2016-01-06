@@ -418,4 +418,4 @@
 //    //private javax.swing.JTextField qEpsilonTextField;
 //    private javax.swing.JPanel renderPanel;
 //    // End of variables declaration//GEN-END:variables
-//}
+// }

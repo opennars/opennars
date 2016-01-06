@@ -17,16 +17,17 @@
  */
 package jurls.reinforcementlearning.domains.arcade.io;
 
-/** This class encapsulates RAM data.
- *
+/**
+ * This class encapsulates RAM data.
+ * 
  * @author Marc G. Bellemare
  */
 public class ConsoleRAM {
-    public static final int RAM_SIZE = 128;
+	public static final int RAM_SIZE = 128;
 
-    public int[] ram;
+	public int[] ram;
 
-    public ConsoleRAM() {
-        ram = new int[RAM_SIZE];
-    }
+	public ConsoleRAM() {
+		ram = new int[RAM_SIZE];
+	}
 }

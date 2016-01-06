@@ -14,12 +14,11 @@ import nars.util.meter.MemoryBudget;
  */
 public class BudgetControlGame {
 
-    public static final int historySize = 256;
+	public static final int historySize = 256;
 
+	MemoryBudget m = new MemoryBudget();
 
-    MemoryBudget m = new MemoryBudget();
-
-    public BudgetControlGame() {
+	public BudgetControlGame() {
         NARfx.run((a, b) -> {
 
             int h = 250;
@@ -73,8 +72,7 @@ public class BudgetControlGame {
         });
 
     }
-
-    public static void main(String[] args) {
-        new BudgetControlGame();
-    }
+	public static void main(String[] args) {
+		new BudgetControlGame();
+	}
 }

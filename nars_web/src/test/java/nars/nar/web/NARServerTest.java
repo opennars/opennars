@@ -5,5 +5,4 @@ package nars.nar.web;
  */
 public class NARServerTest {
 
-
 }

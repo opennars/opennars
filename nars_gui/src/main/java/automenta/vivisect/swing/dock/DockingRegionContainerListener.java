@@ -19,10 +19,10 @@ import java.util.EventListener;
 import java.util.EventObject;
 
 /**
- *
+ * 
  * @author kitfox
  */
 public interface DockingRegionContainerListener extends EventListener {
 
-    void dockingContainerEmpty(EventObject evt);
+	void dockingContainerEmpty(EventObject evt);
 }

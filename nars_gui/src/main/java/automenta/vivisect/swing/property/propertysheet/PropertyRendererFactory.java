@@ -24,8 +24,8 @@ import javax.swing.table.TableCellRenderer;
  */
 public interface PropertyRendererFactory {
 
-  TableCellRenderer createTableCellRenderer(Property property);
+	TableCellRenderer createTableCellRenderer(Property property);
 
-  TableCellRenderer createTableCellRenderer(Class type);
-  
+	TableCellRenderer createTableCellRenderer(Class type);
+
 }

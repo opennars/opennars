@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class MJPalette {
 	public final int[] Palette = new int[MJBoard.MAX_CLO + 1]; // color palette
-	public final int[] GridColor = new int[2]; //normal, bold
+	public final int[] GridColor = new int[2]; // normal, bold
 	public String PalName = "MJCell Standard";
 
 	// ----------------------------------------------------------------
@@ -26,7 +26,7 @@ public class MJPalette {
 	// Activate the given palette with the 'iSttCnt' states
 	public void ActivatePalette(String palNam, int iSttCnt) {
 		int i, j;
-		//noinspection IfStatementWithTooManyBranches
+		// noinspection IfStatementWithTooManyBranches
 		if ("Red & blue".equalsIgnoreCase(palNam)) {
 			GeneratePalette(Color.red, Color.blue, iSttCnt);
 			Palette[0] = Color.white.getRGB();
@@ -199,9 +199,10 @@ public class MJPalette {
 		dg = (g2 - g1) / (iSttCnt - 1);
 		db = (b2 - b1) / (iSttCnt - 1);
 
-		//Palette[0] = Color.black;
+		// Palette[0] = Color.black;
 		for (i = 1; i < iSttCnt; i++) {
-			Palette[i] = (i == iSttCnt - 1) && (iSttCnt > 2) ? MakeRGB(r2, g2, b2) : MakeRGB(r1 + (i - 1) * dr, g1 + (i - 1) * dg, b1
+			Palette[i] = (i == iSttCnt - 1) && (iSttCnt > 2) ? MakeRGB(r2, g2,
+					b2) : MakeRGB(r1 + (i - 1) * dr, g1 + (i - 1) * dg, b1
 					+ (i - 1) * db);
 		}
 	}

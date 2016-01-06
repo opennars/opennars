@@ -8,13 +8,13 @@ package jurls.reinforcementlearning.domains.martialarts;
 import java.awt.image.BufferedImage;
 
 /**
- *
+ * 
  * @author thorsten
  */
 public class Move {
-    public BufferedImage[] images = null;
+	public BufferedImage[] images = null;
 
-    public int hitIndex = 0;
-    public int hitX = 0;
-    public int hitY = 0;
+	public int hitIndex = 0;
+	public int hitX = 0;
+	public int hitY = 0;
 }

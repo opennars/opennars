@@ -31,84 +31,84 @@ import javafx.scene.layout.VBox;
 import org.jewelsea.willow.browser.WebBrowser;
 
 public class SideBar {
-    private final ScrollPane sideBarScroll;
-    private final VBox bar;
-    private final VBox progressHolder;
+	private final ScrollPane sideBarScroll;
+	private final VBox bar;
+	private final VBox progressHolder;
 
-    /**
-     * Create a private contructor so you can only create a sidebar via factory methods
-     */
-    private SideBar(VBox bar, VBox progressHolder) {
-        this.bar = bar;
-        this.progressHolder = progressHolder;
-        sideBarScroll = new ScrollPane(bar);
-        sideBarScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        sideBarScroll.getStyleClass().add("sidebar-scroll");
-    }
+	/**
+	 * Create a private contructor so you can only create a sidebar via factory
+	 * methods
+	 */
+	private SideBar(VBox bar, VBox progressHolder) {
+		this.bar = bar;
+		this.progressHolder = progressHolder;
+		sideBarScroll = new ScrollPane(bar);
+		sideBarScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		sideBarScroll.getStyleClass().add("sidebar-scroll");
+	}
 
-    /**
-     * Factory method for creating a new sidebar.
-     *
-     * @param chrome the chrome the sidebar will be placed into.
-     * @return the new sidebar.
-     */
-    public static SideBar createSidebar(WebBrowser chrome) {
-        // layout holder for the sidebar.
-        VBox bar = new VBox();
-        bar.getStyleClass().add("sidebar-background");
+	/**
+	 * Factory method for creating a new sidebar.
+	 * 
+	 * @param chrome
+	 *            the chrome the sidebar will be placed into.
+	 * @return the new sidebar.
+	 */
+	public static SideBar createSidebar(WebBrowser chrome) {
+		// layout holder for the sidebar.
+		VBox bar = new VBox();
+		bar.getStyleClass().add("sidebar-background");
 
-        // create a spacer for the sidebar.
-        VBox spacer = new VBox();
-        spacer.getStyleClass().add("sidebar-background");
-        VBox.setVgrow(spacer, Priority.ALWAYS);
-        spacer.setAlignment(Pos.BOTTOM_CENTER);
+		// create a spacer for the sidebar.
+		VBox spacer = new VBox();
+		spacer.getStyleClass().add("sidebar-background");
+		VBox.setVgrow(spacer, Priority.ALWAYS);
+		spacer.setAlignment(Pos.BOTTOM_CENTER);
 
-        // create sidebar panels.
-        TitledPane navigationPanel = new NavigationPanel(chrome);
-        //final TitledPane developerPanel  = new DeveloperPanel(chrome);
-        TitledPane demoPanel       = new DemoPanel(chrome);
-        TitledPane benchPanel      = new BenchPanel(chrome);
+		// create sidebar panels.
+		TitledPane navigationPanel = new NavigationPanel(chrome);
+		// final TitledPane developerPanel = new DeveloperPanel(chrome);
+		TitledPane demoPanel = new DemoPanel(chrome);
+		TitledPane benchPanel = new BenchPanel(chrome);
 
-        // size all of the panes similarly.
-        navigationPanel.prefWidthProperty().bind(benchPanel.prefWidthProperty());
-        //developerPanel.prefWidthProperty().bind(benchPanel.prefWidthProperty());
-        demoPanel.prefWidthProperty().bind(benchPanel.prefWidthProperty());
+		// size all of the panes similarly.
+		navigationPanel.prefWidthProperty()
+				.bind(benchPanel.prefWidthProperty());
+		// developerPanel.prefWidthProperty().bind(benchPanel.prefWidthProperty());
+		demoPanel.prefWidthProperty().bind(benchPanel.prefWidthProperty());
 
-        // put the panes inside the sidebar.
-        bar.getChildren().addAll(
-                navigationPanel,
-                //developerPanel,
-                demoPanel,
-                benchPanel,
-                spacer
-        );
+		// put the panes inside the sidebar.
+		bar.getChildren().addAll(navigationPanel,
+		// developerPanel,
+				demoPanel, benchPanel, spacer);
 
-        return new SideBar(bar, spacer);
-    }
+		return new SideBar(bar, spacer);
+	}
 
-    /**
-     * Set the load control attached to the sidebar
-     */
-    public void setLoadControl(Node loadControl) {
-        VBox.setMargin(loadControl, new Insets(5, 5, 10, 5));
-        progressHolder.getChildren().clear();
-        progressHolder.getChildren().add(loadControl);
-    }
+	/**
+	 * Set the load control attached to the sidebar
+	 */
+	public void setLoadControl(Node loadControl) {
+		VBox.setMargin(loadControl, new Insets(5, 5, 10, 5));
+		progressHolder.getChildren().clear();
+		progressHolder.getChildren().add(loadControl);
+	}
 
-    /**
-     * Returns the sidebar display
-     */
-    public VBox getBarDisplay() {
-        return bar;
-    }
+	/**
+	 * Returns the sidebar display
+	 */
+	public VBox getBarDisplay() {
+		return bar;
+	}
 
-    public ScrollPane getScroll() {
-        return sideBarScroll;
-    }
+	public ScrollPane getScroll() {
+		return sideBarScroll;
+	}
 }
 
 // todo add an autohide to the bar if it hasn't been used for a while.
-// todo history in the sidebar should actually be chrome wide rather than browser tab specific.
+// todo history in the sidebar should actually be chrome wide rather than
+// browser tab specific.
 // todo some kind of persistence framework is needed.
 
 // todo file jira ability to set the initial offset of a slider

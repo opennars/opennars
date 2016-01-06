@@ -1,4 +1,3 @@
-
 package automenta.vivisect.surfaceplotter.beans;
 
 import automenta.vivisect.surfaceplotter.surface.AbstractSurfaceModel;
@@ -6,17 +5,18 @@ import automenta.vivisect.surfaceplotter.surface.AbstractSurfaceModel;
 import javax.swing.event.SwingPropertyChangeSupport;
 import java.beans.PropertyChangeListener;
 
-
-/** A Bean that "handles" an DefaultSurfaceModel, editors  get ginded to this source to display an attribute.
+/**
+ * A Bean that "handles" an DefaultSurfaceModel, editors get ginded to this
+ * source to display an attribute.
+ * 
  * @author eric
- *
+ * 
  */
 public class ModelSource {
 
 	SwingPropertyChangeSupport event = new SwingPropertyChangeSupport(this);
 	AbstractSurfaceModel surfaceModel;
-	
-	
+
 	/**
 	 * @return the surfaceModel
 	 */
@@ -25,10 +25,11 @@ public class ModelSource {
 	}
 
 	/**
-	 * @param surfaceModel the surfaceModel to set
+	 * @param surfaceModel
+	 *            the surfaceModel to set
 	 */
 	public void setSurfaceModel(AbstractSurfaceModel surfaceModel) {
-		Object old = this.surfaceModel ;
+		Object old = this.surfaceModel;
 		this.surfaceModel = surfaceModel;
 		event.firePropertyChange("surfaceModel", old, surfaceModel);
 	}
@@ -44,9 +45,11 @@ public class ModelSource {
 	/**
 	 * @param propertyName
 	 * @param listener
-	 * @see java.beans.PropertyChangeSupport#addPropertyChangeListener(String, PropertyChangeListener)
+	 * @see java.beans.PropertyChangeSupport#addPropertyChangeListener(String,
+	 *      PropertyChangeListener)
 	 */
-	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+	public void addPropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
 		event.addPropertyChangeListener(propertyName, listener);
 	}
 
@@ -61,13 +64,12 @@ public class ModelSource {
 	/**
 	 * @param propertyName
 	 * @param listener
-	 * @see java.beans.PropertyChangeSupport#removePropertyChangeListener(String, PropertyChangeListener)
+	 * @see java.beans.PropertyChangeSupport#removePropertyChangeListener(String,
+	 *      PropertyChangeListener)
 	 */
-	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+	public void removePropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
 		event.removePropertyChangeListener(propertyName, listener);
 	}
-	
-	
-	
-	
+
 }

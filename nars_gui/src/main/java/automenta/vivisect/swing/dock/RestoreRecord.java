@@ -16,31 +16,31 @@
 package automenta.vivisect.swing.dock;
 
 /**
- *
+ * 
  * @author kitfox
  */
 public class RestoreRecord {
 
-    private final DockingPathRecord path;
-    private final int containerIndex;
+	private final DockingPathRecord path;
+	private final int containerIndex;
 
-    public RestoreRecord(DockingPathRecord path, int containerIndex) {
-        this.path = path;
-        this.containerIndex = containerIndex;
-    }
+	public RestoreRecord(DockingPathRecord path, int containerIndex) {
+		this.path = path;
+		this.containerIndex = containerIndex;
+	}
 
-    /**
-     * @return the path
-     */
-    public DockingPathRecord getPath() {
-        return path;
-    }
+	/**
+	 * @return the path
+	 */
+	public DockingPathRecord getPath() {
+		return path;
+	}
 
-    /**
-     * @return the containerIndex
-     */
-    public int getContainerIndex() {
-        return containerIndex;
-    }
+	/**
+	 * @return the containerIndex
+	 */
+	public int getContainerIndex() {
+		return containerIndex;
+	}
 
 }

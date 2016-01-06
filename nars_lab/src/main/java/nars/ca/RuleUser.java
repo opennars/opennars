@@ -35,7 +35,7 @@ public class RuleUser {
 	// Parse the rule string
 	// Example: RUG,C128,I1
 	public void InitFromString(String sStr) {
-		//noinspection UseOfStringTokenizer
+		// noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int i;
@@ -43,7 +43,7 @@ public class RuleUser {
 		if (sStr.length() < 3)
 			return;
 
-		//noinspection IfStatementWithTooManyBranches
+		// noinspection IfStatementWithTooManyBranches
 		if (sStr.compareTo("Rug") == 0)
 			sStr = "RUG,C64,I1";
 		else if (sStr.compareTo("Digital_Inkblots") == 0)
@@ -53,7 +53,7 @@ public class RuleUser {
 		else if (sStr.compareTo("GreenHast") == 0)
 			sStr = "GRH";
 
-		//noinspection IfStatementWithTooManyBranches
+		// noinspection IfStatementWithTooManyBranches
 		if (sStr.startsWith("RUG"))
 			RuleIdx = RIDX_RUG;
 		else if (sStr.startsWith("DIB"))
@@ -84,21 +84,21 @@ public class RuleUser {
 		Validate();
 
 		switch (RuleIdx) {
-		case RIDX_RUG: // Rug
-			sBff = "RUG,C" + iClo;
-			sBff = sBff + ",I" + Increment;
-			break;
-		case RIDX_DIB: // Digital Inkblots
-			sBff = "DIB,C" + iClo;
-			sBff = sBff + ",I" + Increment;
-			break;
-		case RIDX_HOD: // Hodge
-			sBff = "HOD,C" + iClo;
-			sBff = sBff + ",I" + Increment;
-			break;
-		case RIDX_GRH: // GreenHast
-			sBff = "GRH";
-			break;
+			case RIDX_RUG : // Rug
+				sBff = "RUG,C" + iClo;
+				sBff = sBff + ",I" + Increment;
+				break;
+			case RIDX_DIB : // Digital Inkblots
+				sBff = "DIB,C" + iClo;
+				sBff = sBff + ",I" + Increment;
+				break;
+			case RIDX_HOD : // Hodge
+				sBff = "HOD,C" + iClo;
+				sBff = sBff + ",I" + Increment;
+				break;
+			case RIDX_GRH : // GreenHast
+				sBff = "GRH";
+				break;
 		}
 
 		return sBff;
@@ -116,7 +116,7 @@ public class RuleUser {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-					   short[][] crrState, short[][] tmpState) {
+			short[][] crrState, short[][] tmpState) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
@@ -134,79 +134,107 @@ public class RuleUser {
 
 				bNewVal = bOldVal;
 				switch (RuleIdx) {
-				case RIDX_RUG: // Rug
-					// total of neighbours
-					iCnt = crrState[lurd[0]][lurd[1]] + crrState[lurd[0]][j]
-							+ crrState[lurd[0]][lurd[3]] + crrState[i][lurd[1]]
-							+ crrState[i][lurd[3]] + crrState[lurd[2]][lurd[1]]
-							+ crrState[lurd[2]][j] + crrState[lurd[2]][lurd[3]];
-					bNewVal = (short) (((iCnt / 8) + Increment) % iClo); // new cell status
-					break;
+					case RIDX_RUG : // Rug
+						// total of neighbours
+						iCnt = crrState[lurd[0]][lurd[1]]
+								+ crrState[lurd[0]][j]
+								+ crrState[lurd[0]][lurd[3]]
+								+ crrState[i][lurd[1]] + crrState[i][lurd[3]]
+								+ crrState[lurd[2]][lurd[1]]
+								+ crrState[lurd[2]][j]
+								+ crrState[lurd[2]][lurd[3]];
+						bNewVal = (short) (((iCnt / 8) + Increment) % iClo); // new
+																				// cell
+																				// status
+						break;
 
-				case RIDX_DIB: // Digital Inkblots
-					// total of neighbours
-					iCnt = crrState[lurd[0]][lurd[1]] + crrState[lurd[0]][j]
-							+ crrState[lurd[0]][lurd[3]] + crrState[i][lurd[1]]
-							+ crrState[i][j] + crrState[i][lurd[3]]
-							+ crrState[lurd[2]][lurd[1]] + crrState[lurd[2]][j]
-							+ crrState[lurd[2]][lurd[3]];
-					bNewVal = (short) (((iCnt / 9) + Increment) % iClo); // new cell status
-					break;
+					case RIDX_DIB : // Digital Inkblots
+						// total of neighbours
+						iCnt = crrState[lurd[0]][lurd[1]]
+								+ crrState[lurd[0]][j]
+								+ crrState[lurd[0]][lurd[3]]
+								+ crrState[i][lurd[1]] + crrState[i][j]
+								+ crrState[i][lurd[3]]
+								+ crrState[lurd[2]][lurd[1]]
+								+ crrState[lurd[2]][j]
+								+ crrState[lurd[2]][lurd[3]];
+						bNewVal = (short) (((iCnt / 9) + Increment) % iClo); // new
+																				// cell
+																				// status
+						break;
 
-				case RIDX_HOD: // Hodge
-					int sum8 = crrState[lurd[0]][lurd[1]]
-							+ crrState[lurd[0]][j] + crrState[lurd[0]][lurd[3]]
-							+ crrState[i][lurd[1]] + crrState[i][lurd[3]]
-							+ crrState[lurd[2]][lurd[1]] + crrState[lurd[2]][j]
-							+ crrState[lurd[2]][lurd[3]];
-					bNewVal = 0;
-
-					// CelLab's version
-					if (bOldVal == 0) {
-						if (sum8 < Increment) {
-							bNewVal = 0;
-						} else bNewVal = (short) (sum8 < 100 ? 2 : 3);
-					} else if ((bOldVal > 0) && (bOldVal < (iClo - 1))) {
-						bNewVal = (short) (((sum8 >> 3) + Increment) & 255);
-					}
-
-					if (bNewVal > (iClo - 1)) {
-						bNewVal = (short) (iClo - 1);
-					}
-
-					if (bOldVal == (iClo - 1)) {
+					case RIDX_HOD : // Hodge
+						int sum8 = crrState[lurd[0]][lurd[1]]
+								+ crrState[lurd[0]][j]
+								+ crrState[lurd[0]][lurd[3]]
+								+ crrState[i][lurd[1]] + crrState[i][lurd[3]]
+								+ crrState[lurd[2]][lurd[1]]
+								+ crrState[lurd[2]][j]
+								+ crrState[lurd[2]][lurd[3]];
 						bNewVal = 0;
-					}
-					break;
 
-				case RIDX_GRH: // GreenHast
-					int r = 0, d = 0;
-					int prevState;
+						// CelLab's version
+						if (bOldVal == 0) {
+							if (sum8 < Increment) {
+								bNewVal = 0;
+							} else
+								bNewVal = (short) (sum8 < 100 ? 2 : 3);
+						} else if ((bOldVal > 0) && (bOldVal < (iClo - 1))) {
+							bNewVal = (short) (((sum8 >> 3) + Increment) & 255);
+						}
 
-					prevState = (bOldVal >> 2) & 3; // get the previous state
-					bOldVal = (short) (bOldVal & 3); // throw the previous state away
+						if (bNewVal > (iClo - 1)) {
+							bNewVal = (short) (iClo - 1);
+						}
 
-					switch (bOldVal) {
-					case 0: // dead
-						int i4Sum = 0;
-						i4Sum = (((crrState[lurd[0]][j] & 3) == 1) ? 1 : 0)
-								+ (((crrState[i][lurd[1]] & 3) == 1) ? 1 : 0)
-								+ (((crrState[i][lurd[3]] & 3) == 1) ? 1 : 0)
-								+ (((crrState[lurd[2]][j] & 3) == 1) ? 1 : 0);
-						r = 0;
-						d = (i4Sum > 0) ? 1 : 0;
+						if (bOldVal == (iClo - 1)) {
+							bNewVal = 0;
+						}
 						break;
-					case 1: // alive
-						r = 2;
+
+					case RIDX_GRH : // GreenHast
+						int r = 0,
 						d = 0;
+						int prevState;
+
+						prevState = (bOldVal >> 2) & 3; // get the previous
+														// state
+						bOldVal = (short) (bOldVal & 3); // throw the previous
+															// state away
+
+						switch (bOldVal) {
+							case 0 : // dead
+								int i4Sum = 0;
+								i4Sum = (((crrState[lurd[0]][j] & 3) == 1)
+										? 1
+										: 0)
+										+ (((crrState[i][lurd[1]] & 3) == 1)
+												? 1
+												: 0)
+										+ (((crrState[i][lurd[3]] & 3) == 1)
+												? 1
+												: 0)
+										+ (((crrState[lurd[2]][j] & 3) == 1)
+												? 1
+												: 0);
+								r = 0;
+								d = (i4Sum > 0) ? 1 : 0;
+								break;
+							case 1 : // alive
+								r = 2;
+								d = 0;
+								break;
+							case 2 : // dying
+								r = 0;
+								d = 0;
+								break;
+						}
+						bNewVal = (short) ((r + d - prevState + 3) % 3 + (bOldVal << 2)); // store
+																							// Me
+																							// for
+																							// next
+																							// calls
 						break;
-					case 2: // dying
-						r = 0;
-						d = 0;
-						break;
-					}
-					bNewVal = (short) ((r + d - prevState + 3) % 3 + (bOldVal << 2)); // store Me for next calls
-					break;
 				} // switch
 
 				tmpState[i][j] = bNewVal;

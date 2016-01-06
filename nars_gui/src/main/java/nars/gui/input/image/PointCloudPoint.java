@@ -66,38 +66,33 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
-**/
+ **/
 package nars.gui.input.image;
 
-public class PointCloudPoint
-{
-  private double _x = Double.NaN;
-  private double _y = Double.NaN;
-  private int _id = -1;
+public class PointCloudPoint {
+	private double _x = Double.NaN;
+	private double _y = Double.NaN;
+	private int _id = -1;
 
-  public static PointCloudPoint pcp(double x, double y, int id) {
-      return new PointCloudPoint(x, y, id);
-  }
-  
-  public PointCloudPoint(double x, double y, int id)
-  {
-    _x = x;
-    _y = y;
-    _id = id;
-  }
+	public static PointCloudPoint pcp(double x, double y, int id) {
+		return new PointCloudPoint(x, y, id);
+	}
 
-  public double getX()
-  {
-    return _x;
-  }
+	public PointCloudPoint(double x, double y, int id) {
+		_x = x;
+		_y = y;
+		_id = id;
+	}
 
-  public double getY()
-  {
-    return _y;
-  }
+	public double getX() {
+		return _x;
+	}
 
-  public int getID()
-  {
-    return _id;
-  }
+	public double getY() {
+		return _y;
+	}
+
+	public int getID() {
+		return _id;
+	}
 }

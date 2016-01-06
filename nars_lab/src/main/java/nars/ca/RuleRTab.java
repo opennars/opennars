@@ -10,7 +10,8 @@ public class RuleRTab {
 	public boolean fCtrCell; // use the center cell?
 	public boolean fAll1Fire; // all from bitplane 1 can fire
 	public int iClo; // count of states
-	public final int[][] table = new int[MJBoard.MAX_CLO + 1][10]; // rules table
+	public final int[][] table = new int[MJBoard.MAX_CLO + 1][10]; // rules
+																	// table
 
 	// ----------------------------------------------------------------
 	public RuleRTab() {
@@ -36,7 +37,7 @@ public class RuleRTab {
 	// Parse the rule string
 	public void InitFromString(String sStr) {
 		int i_Stt, i_Ngh, iNum, iTmp;
-		//noinspection UseOfStringTokenizer
+		// noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		ResetToDefaults();
@@ -50,25 +51,28 @@ public class RuleRTab {
 					iNum++;
 					iTmp = Integer.valueOf(sTok);
 					switch (iNum) {
-					case 1: // the neighbourhood type
-						iNghTyp = iTmp == 2 ? MJRules.NGHTYP_NEUM : MJRules.NGHTYP_MOOR;
-						break;
-					case 2: // the center cell flag
-						fCtrCell = (iTmp == 1); // use the center cell
-						break;
-					case 3: // all from bitplane 1 can fire
-						fAll1Fire = (iTmp == 1); // Rules table - all from bitplane 1 can fire
-						break;
-					default: // the rule follows
-						if (iTmp < 0)
-							iTmp = 0;
-						if (iTmp > MJBoard.MAX_CLO)
-							iTmp = MJBoard.MAX_CLO;
-						i_Stt = (iNum - 4) / 10;
-						i_Ngh = (iNum - 4) % 10;
-						table[i_Stt][i_Ngh] = iTmp;
-						iClo = i_Stt + 2;
-						break;
+						case 1 : // the neighbourhood type
+							iNghTyp = iTmp == 2
+									? MJRules.NGHTYP_NEUM
+									: MJRules.NGHTYP_MOOR;
+							break;
+						case 2 : // the center cell flag
+							fCtrCell = (iTmp == 1); // use the center cell
+							break;
+						case 3 : // all from bitplane 1 can fire
+							fAll1Fire = (iTmp == 1); // Rules table - all from
+														// bitplane 1 can fire
+							break;
+						default : // the rule follows
+							if (iTmp < 0)
+								iTmp = 0;
+							if (iTmp > MJBoard.MAX_CLO)
+								iTmp = MJBoard.MAX_CLO;
+							i_Stt = (iNum - 4) / 10;
+							i_Ngh = (iNum - 4) % 10;
+							table[i_Stt][i_Ngh] = iTmp;
+							iClo = i_Stt + 2;
+							break;
 					}
 				}
 			}
@@ -128,13 +132,15 @@ public class RuleRTab {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
+			short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
 		int[] lurd = new int[4]; // 0-left, 1-up, 2-right, 3-down
 		int rtMask;
-		boolean fMoore = (iNghTyp == MJRules.NGHTYP_MOOR); // Moore neighbourhood? Else von Neumann.
+		boolean fMoore = (iNghTyp == MJRules.NGHTYP_MOOR); // Moore
+															// neighbourhood?
+															// Else von Neumann.
 
 		rtMask = fAll1Fire ? 1 : 0xFF;
 

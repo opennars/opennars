@@ -32,33 +32,31 @@ import javafx.scene.layout.VBox;
 /** a display to monitor status messages from the webview. */
 public class StatusDisplay extends HBox {
 
-    private final VBox progressHolder = new VBox();
-    
-    public StatusDisplay(StringExpression statusProperty) {
-        Label statusText = new Label();
-        statusText.setTextOverrun(OverrunStyle.ELLIPSIS);
-        
-        statusText.textProperty().bind(statusProperty);
+	private final VBox progressHolder = new VBox();
 
-        
-        getStyleClass().add("status-background");
-        
-        setVisible(true);
+	public StatusDisplay(StringExpression statusProperty) {
+		Label statusText = new Label();
+		statusText.setTextOverrun(OverrunStyle.ELLIPSIS);
 
-        //statusText.textProperty().addListener((observableValue, oldValue, newValue) ->
-                //setVisible(newValue != null && !newValue.equals(""))
-        //);
-        
-        
-        getChildren().addAll(statusText, progressHolder);
-    }
-    
-    public void setLoadControl(ProgressBar loadControl) {
-        VBox.setMargin(loadControl, new Insets(4, 5, 4, 5));
-        progressHolder.getChildren().clear();
-        progressHolder.getChildren().add(loadControl);
-        
-        
-    }    
+		statusText.textProperty().bind(statusProperty);
+
+		getStyleClass().add("status-background");
+
+		setVisible(true);
+
+		// statusText.textProperty().addListener((observableValue, oldValue,
+		// newValue) ->
+		// setVisible(newValue != null && !newValue.equals(""))
+		// );
+
+		getChildren().addAll(statusText, progressHolder);
+	}
+
+	public void setLoadControl(ProgressBar loadControl) {
+		VBox.setMargin(loadControl, new Insets(4, 5, 4, 5));
+		progressHolder.getChildren().clear();
+		progressHolder.getChildren().add(loadControl);
+
+	}
 
 }

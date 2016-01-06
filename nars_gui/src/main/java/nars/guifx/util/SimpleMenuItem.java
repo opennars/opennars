@@ -8,11 +8,11 @@ import javafx.scene.control.MenuItem;
  */
 public final class SimpleMenuItem extends MenuItem {
 
-    public SimpleMenuItem(String s, Runnable r) {
-        this(null, s, r);
-    }
+	public SimpleMenuItem(String s, Runnable r) {
+		this(null, s, r);
+	}
 
-    public SimpleMenuItem(Node i, String s, Runnable r) {
+	public SimpleMenuItem(Node i, String s, Runnable r) {
         super(s, i);
         setOnAction(e -> {
             r.run();

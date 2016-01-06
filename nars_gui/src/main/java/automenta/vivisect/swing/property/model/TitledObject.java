@@ -19,12 +19,12 @@ package automenta.vivisect.swing.property.model;
 
 /**
  * TitledObject.<br>
- *
+ * 
  */
 public interface TitledObject {
-	
+
 	String getTitle();
-	
+
 	void setTitle(String title);
 
 }

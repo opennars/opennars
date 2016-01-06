@@ -9,13 +9,13 @@ import nars.term.atom.Atom;
  */
 public interface Termizer {
 
-    Atom TRUE = $.the("true");
-    Term FALSE = $.neg(TRUE);
-    Atom VOID = $.the("void");
-    Atom EMPTY = $.the("empty");
-    Atom NULL = $.the("null");
+	Atom TRUE = $.the("true");
+	Term FALSE = $.neg(TRUE);
+	Atom VOID = $.the("void");
+	Atom EMPTY = $.the("empty");
+	Atom NULL = $.the("null");
 
-    Term term(Object o);
-    Object object(Term t);
+	Term term(Object o);
+	Object object(Term t);
 
 }

@@ -21,26 +21,26 @@ import java.util.Iterator;
 
 /**
  * PropertySheet.<br>
- *
+ * 
  */
 public interface PropertySheet {
 
-  int VIEW_AS_FLAT_LIST = 0;
-  
-  int VIEW_AS_CATEGORIES = 1;
+	int VIEW_AS_FLAT_LIST = 0;
 
-  void setProperties(Property[] properties);
-  
-  Property[] getProperties();
-  
-  void addProperty(Property property);
-  
-  void addProperty(int index, Property property);
+	int VIEW_AS_CATEGORIES = 1;
 
-  void removeProperty(Property property);
-  
-  int getPropertyCount();
-  
-  Iterator propertyIterator();
-  
+	void setProperties(Property[] properties);
+
+	Property[] getProperties();
+
+	void addProperty(Property property);
+
+	void addProperty(int index, Property property);
+
+	void removeProperty(Property property);
+
+	int getPropertyCount();
+
+	Iterator propertyIterator();
+
 }

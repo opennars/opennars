@@ -23,7 +23,6 @@ import javax.swing.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-
 /**
  * Percentage editor.
  * 
@@ -35,7 +34,8 @@ public class PercentageEditor extends SpinnerEditor {
 	 * Percentage editor. Argument has to be an object so javax.bean API handles
 	 * it correctly.
 	 * 
-	 * @param property the property object (instance of {@link Property})
+	 * @param property
+	 *            the property object (instance of {@link Property})
 	 */
 	public PercentageEditor(Object property) {
 

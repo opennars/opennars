@@ -21,50 +21,49 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- *
+ * 
  * @author kitfox
  */
 public class DockingRegionMaximized extends JTabbedPane {
 
-    MinMaxRecord record;
+	MinMaxRecord record;
 
-    public DockingRegionMaximized(MinMaxRecord record) {
-        this.record = record;
-        DockingContent content = record.getContent();
+	public DockingRegionMaximized(MinMaxRecord record) {
+		this.record = record;
+		DockingContent content = record.getContent();
 
-        Component comp = content.getComponent();
-        addTab(content.getTitle(), comp);
-        int idx = indexOfComponent(comp);
-        setTabComponentAt(idx, new TabbedPaneTitleMax(this, content));
-    }
+		Component comp = content.getComponent();
+		addTab(content.getTitle(), comp);
+		int idx = indexOfComponent(comp);
+		setTabComponentAt(idx, new TabbedPaneTitleMax(this, content));
+	}
 
-    public void minimize() {
-        DockingContent content = record.getContent();
-        record.getContainer().restoreFromMaximize(content);
-    }
+	public void minimize() {
+		DockingContent content = record.getContent();
+		record.getContainer().restoreFromMaximize(content);
+	}
 
-    public void close() {
-        DockingContent content = record.getContent();
-        record.getContainer().restoreFromMaximize(content);
+	public void close() {
+		DockingContent content = record.getContent();
+		record.getContainer().restoreFromMaximize(content);
 
-        DockingRegionTabbed panel
-                = (DockingRegionTabbed) record.getContainer()
-                .getRoot().getDockingChild(record.getPath());
-//        DockingRegionTabbed panel =
-//                (DockingRegionTabbed)record.getPath().getLast().getDockingChild();
-        panel.removeTab(content);
-    }
+		DockingRegionTabbed panel = (DockingRegionTabbed) record.getContainer()
+				.getRoot().getDockingChild(record.getPath());
+		// DockingRegionTabbed panel =
+		// (DockingRegionTabbed)record.getPath().getLast().getDockingChild();
+		panel.removeTab(content);
+	}
 
-    void restoreFromMaximize(DockingContent content) {
-        record.getContainer().restoreFromMaximize(content);
-    }
+	void restoreFromMaximize(DockingContent content) {
+		record.getContainer().restoreFromMaximize(content);
+	}
 
-    void closeFromMaximize(DockingContent content) {
-        record.getContainer().closeFromMaximize(content);
-    }
+	void closeFromMaximize(DockingContent content) {
+		record.getContainer().closeFromMaximize(content);
+	}
 
-    void floatFromMaximize(DockingContent content) {
-        record.getContainer().floatFromMaximize(content);
-    }
+	void floatFromMaximize(DockingContent content) {
+		record.getContainer().floatFromMaximize(content);
+	}
 
 }

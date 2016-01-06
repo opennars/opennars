@@ -29,7 +29,7 @@ public class Rule1DBin {
 	// Parse the rule string
 	// Example: "R2,W23AC2"
 	public void InitFromString(String sStr) {
-		//noinspection UseOfStringTokenizer
+		// noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok;
 		int iTmp;
@@ -38,11 +38,12 @@ public class Rule1DBin {
 		st = new StringTokenizer(sStr, ",", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
-			//System.out.println(sTok);
+			// System.out.println(sTok);
 			if (sTok.length() > 0 && sTok.charAt(0) == 'R') // range
 			{
 				iRng = Integer.valueOf(sTok.substring(1));
-			} else if (sTok.length() > 0 && sTok.charAt(0) == 'W') // Wolfram's code
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'W') // Wolfram's
+																	// code
 			{
 				sHex = sTok.substring(1);
 			}
@@ -164,54 +165,54 @@ public class Rule1DBin {
 		sHex.toUpperCase();
 		for (i = 0; i < sHex.length(); i++) {
 			switch (sHex.charAt(i)) {
-			case '0':
-				sBinBff = sBinBff + "0000";
-				break;
-			case '1':
-				sBinBff = sBinBff + "0001";
-				break;
-			case '2':
-				sBinBff = sBinBff + "0010";
-				break;
-			case '3':
-				sBinBff = sBinBff + "0011";
-				break;
-			case '4':
-				sBinBff = sBinBff + "0100";
-				break;
-			case '5':
-				sBinBff = sBinBff + "0101";
-				break;
-			case '6':
-				sBinBff = sBinBff + "0110";
-				break;
-			case '7':
-				sBinBff = sBinBff + "0111";
-				break;
-			case '8':
-				sBinBff = sBinBff + "1000";
-				break;
-			case '9':
-				sBinBff = sBinBff + "1001";
-				break;
-			case 'A':
-				sBinBff = sBinBff + "1010";
-				break;
-			case 'B':
-				sBinBff = sBinBff + "1011";
-				break;
-			case 'C':
-				sBinBff = sBinBff + "1100";
-				break;
-			case 'D':
-				sBinBff = sBinBff + "1101";
-				break;
-			case 'E':
-				sBinBff = sBinBff + "1110";
-				break;
-			case 'F':
-				sBinBff = sBinBff + "1111";
-				break;
+				case '0' :
+					sBinBff = sBinBff + "0000";
+					break;
+				case '1' :
+					sBinBff = sBinBff + "0001";
+					break;
+				case '2' :
+					sBinBff = sBinBff + "0010";
+					break;
+				case '3' :
+					sBinBff = sBinBff + "0011";
+					break;
+				case '4' :
+					sBinBff = sBinBff + "0100";
+					break;
+				case '5' :
+					sBinBff = sBinBff + "0101";
+					break;
+				case '6' :
+					sBinBff = sBinBff + "0110";
+					break;
+				case '7' :
+					sBinBff = sBinBff + "0111";
+					break;
+				case '8' :
+					sBinBff = sBinBff + "1000";
+					break;
+				case '9' :
+					sBinBff = sBinBff + "1001";
+					break;
+				case 'A' :
+					sBinBff = sBinBff + "1010";
+					break;
+				case 'B' :
+					sBinBff = sBinBff + "1011";
+					break;
+				case 'C' :
+					sBinBff = sBinBff + "1100";
+					break;
+				case 'D' :
+					sBinBff = sBinBff + "1101";
+					break;
+				case 'E' :
+					sBinBff = sBinBff + "1110";
+					break;
+				case 'F' :
+					sBinBff = sBinBff + "1111";
+					break;
 			}
 		}
 		sBinBff = DelLedChr(sBinBff, '0');
@@ -230,7 +231,7 @@ public class Rule1DBin {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
+			short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i;
@@ -250,7 +251,8 @@ public class Rule1DBin {
 			i1DNextRow = 0;
 
 		for (ic = 0; ic < sizX; ic++)
-			OneRow[ic + ary1DOfs] = crrState[ic][mjb.i1DLastRow]; // original row
+			OneRow[ic + ary1DOfs] = crrState[ic][mjb.i1DLastRow]; // original
+																	// row
 		if (isWrap) {
 			for (ic = 1; ic <= ary1DOfs; ic++) {
 				OneRow[ary1DOfs - ic] = OneRow[sizX - 1 - ic + 1];
@@ -286,4 +288,3 @@ public class Rule1DBin {
 		return modCnt;
 	}
 }
-

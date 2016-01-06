@@ -2,10 +2,12 @@ package automenta.vivisect.surfaceplotter.surface;
 
 import java.awt.*;
 
-/** Interface used by JSurface for every color. Warning, some color are not suitable for some drawing, be careful to sync it with the SurfaceModel
+/**
+ * Interface used by JSurface for every color. Warning, some color are not
+ * suitable for some drawing, be careful to sync it with the SurfaceModel
  * 
  * @author eric
- *
+ * 
  */
 public interface SurfaceColor {
 

@@ -39,7 +39,7 @@ public class RuleLgtL {
 	// Parse the rule string
 	// Example: "R3,C0,M1,S34..58,B34..45,NM"
 	public void InitFromString(String sStr) {
-		//noinspection UseOfStringTokenizer
+		// noinspection UseOfStringTokenizer
 		StringTokenizer st;
 		String sTok, sBff;
 		int i, iTmp;
@@ -49,13 +49,14 @@ public class RuleLgtL {
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken().toUpperCase();
 			sTok = sTok.trim();
-			//System.out.println(sTok);
+			// System.out.println(sTok);
 
-			//noinspection IfStatementWithTooManyBranches
+			// noinspection IfStatementWithTooManyBranches
 			if (sTok.length() > 0 && sTok.charAt(0) == 'R') // range
 			{
 				iRng = Integer.valueOf(sTok.substring(1));
-			} else if (sTok.length() > 0 && sTok.charAt(0) == 'C') // states (history)
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'C') // states
+																	// (history)
 			{
 				i = Integer.valueOf(sTok.substring(1));
 				if (i >= 3) {
@@ -63,7 +64,8 @@ public class RuleLgtL {
 					iClo = i;
 				} else
 					isHist = false; // states count is meaningless
-			} else if (sTok.length() > 0 && sTok.charAt(0) == 'M') // center cell?
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'M') // center
+																	// cell?
 			{
 				isCentr = (Integer.valueOf(sTok.substring(1)) > 0);
 			} else if (sTok.startsWith("NM")) // Moore neighbourhood
@@ -72,7 +74,8 @@ public class RuleLgtL {
 			} else if (sTok.startsWith("NN")) // von Neumann neighbourhood
 			{
 				iNgh = MJRules.NGHTYP_NEUM;
-			} else if (sTok.length() > 0 && sTok.charAt(0) == 'S') // surviving rules
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'S') // surviving
+																	// rules
 			{
 				if (sTok.length() >= 4) {
 					iTmp = sTok.indexOf("..");
@@ -83,7 +86,8 @@ public class RuleLgtL {
 						iSMax = Integer.valueOf(sBff);
 					}
 				}
-			} else if (sTok.length() > 0 && sTok.charAt(0) == 'B') // birth rules
+			} else if (sTok.length() > 0 && sTok.charAt(0) == 'B') // birth
+																	// rules
 			{
 				if (sTok.length() >= 4) {
 					iTmp = sTok.indexOf("..");
@@ -137,12 +141,10 @@ public class RuleLgtL {
 		sBff = isCentr ? sBff + ",M1" : sBff + ",M0";
 
 		// S rules
-		sBff = sBff + ",S" + iSMin + ".."
-				+ iSMax;
+		sBff = sBff + ",S" + iSMin + ".." + iSMax;
 
 		// B rules
-		sBff = sBff + ",B" + iBMin + ".."
-				+ iBMax;
+		sBff = sBff + ",B" + iBMin + ".." + iBMax;
 
 		// neighbourhood
 		sBff = iNgh == MJRules.NGHTYP_NEUM ? sBff + ",NN" : sBff + ",NM";
@@ -191,7 +193,7 @@ public class RuleLgtL {
 	// ----------------------------------------------------------------
 	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
-					   short[][] crrState, short[][] tmpState, MJBoard mjb) {
+			short[][] crrState, short[][] tmpState, MJBoard mjb) {
 		short bOldVal, bNewVal;
 		int modCnt = 0;
 		int i, j, iCnt;
@@ -202,7 +204,8 @@ public class RuleLgtL {
 		int ic, ir, iTmp;
 		int iTmpC, iTmpR, iTmpBlobC, iTmpBlobR;
 		int ctrCol, ctrRow;
-		boolean fMoore = (iNgh == MJRules.NGHTYP_MOOR); // Moore neighbourhood? Else von Neumann.
+		boolean fMoore = (iNgh == MJRules.NGHTYP_MOOR); // Moore neighbourhood?
+														// Else von Neumann.
 
 		for (i = 0; i < sizX; i++) {
 			for (j = 0; j < sizY; j++) {
@@ -248,21 +251,27 @@ public class RuleLgtL {
 						// determine the new cell state
 						if (bOldVal == 0) // was dead
 						{
-							if ((iCnt >= iBMin) && (iCnt <= iBMax)) // rules for birth
+							if ((iCnt >= iBMin) && (iCnt <= iBMax)) // rules for
+																	// birth
 								bNewVal = 1; // birth
 						} else // was 1 - alive
 						{
-							if ((iCnt >= iSMin) && (iCnt <= iSMax)) // rules for surviving
+							if ((iCnt >= iSMin) && (iCnt <= iSMax)) // rules for
+																	// surviving
 							{
 								bNewVal = 1;
 							} else // isolation or overpopulation
 							{
-								bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
+								bNewVal = bOldVal < (iClo - 1)
+										? (short) (bOldVal + 1)
+										: 0;
 							}
 						}
 					} else // was older than 1
 					{
-						bNewVal = bOldVal < (iClo - 1) ? (short) (bOldVal + 1) : 0;
+						bNewVal = bOldVal < (iClo - 1)
+								? (short) (bOldVal + 1)
+								: 0;
 					}
 				} else // no history
 				{
@@ -282,16 +291,22 @@ public class RuleLgtL {
 					// determine the cell status
 					if (bOldVal == 0) // was dead
 					{
-						if ((iCnt >= iBMin) && (iCnt <= iBMax)) // rules for birth
-							bNewVal = ColoringMethod == 1 ? 1 : (short) (mjb.Cycle
-									% (mjb.StatesCount - 1) + 1);
+						if ((iCnt >= iBMin) && (iCnt <= iBMax)) // rules for
+																// birth
+							bNewVal = ColoringMethod == 1
+									? 1
+									: (short) (mjb.Cycle
+											% (mjb.StatesCount - 1) + 1);
 					} else // was alive
 					{
-						if ((iCnt >= iSMin) && (iCnt <= iSMax)) // rules for surviving
+						if ((iCnt >= iSMin) && (iCnt <= iSMax)) // rules for
+																// surviving
 						{
 							if (ColoringMethod == 1) // standard
 							{
-								bNewVal = bOldVal < (mjb.StatesCount - 1) ? (short) (bOldVal + 1) : (short) (mjb.StatesCount - 1);
+								bNewVal = bOldVal < (mjb.StatesCount - 1)
+										? (short) (bOldVal + 1)
+										: (short) (mjb.StatesCount - 1);
 							} else {
 								// alternate coloring - cells remain not changed
 							}
