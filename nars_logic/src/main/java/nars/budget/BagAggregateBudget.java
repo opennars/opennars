@@ -1,5 +1,7 @@
 package nars.budget;
 
+import nars.data.BudgetedStruct;
+
 /**
  * Created by me on 12/12/15.
  */

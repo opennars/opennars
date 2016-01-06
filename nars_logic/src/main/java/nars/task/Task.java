@@ -22,7 +22,7 @@ package nars.task;
 
 import nars.*;
 import nars.budget.Budgeted;
-import nars.budget.BudgetedStruct;
+import nars.data.BudgetedStruct;
 import nars.concept.Concept;
 import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;

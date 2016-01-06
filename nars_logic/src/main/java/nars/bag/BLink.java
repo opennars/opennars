@@ -1,7 +1,7 @@
 package nars.bag;
 
 import nars.budget.Budget;
-import nars.budget.BudgetedStruct;
+import nars.data.BudgetedStruct;
 import nars.budget.UnitBudget;
 import nars.nal.nal7.Tense;
 

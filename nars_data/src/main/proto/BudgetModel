@@ -8,8 +8,18 @@ option java_outer_classname = "NarsData";
 message Atom {
     required string lit = 1;
 }
+/**
+ * Created by jim on 1/6/2016.
+ */
+message BudgetedStruct {
+	required bool deleted =1;
+	required float priority =100;
+	required float durability=200;
+	 required float quality=300;
+   required int64 lastForgetTime=1000;
+}
 
-message Model{
+message BudgetModel{
     message ModelInfo {
         message ModelInfoResponse { //
             required bool compactRunning = 1;
@@ -24,5 +34,7 @@ message Model{
         }
         required string db = 1;
     }
-    repeated Atom atoms= 1;
+    repeated Atom nonspecificStrings= 1;
+    repeated BudgetedStruct budgetValues= 2;
 }
+

@@ -886,7 +886,7 @@ public abstract class NAR implements Serializable, Level {
         memory.emotion.busy(task);
 
         if (c.process(task, this)) {
-            if (!task.isDeleted()) {
+            if (!task.getDeleted()) {
 
                 c.link(task, 1f, this);
 

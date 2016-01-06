@@ -124,7 +124,7 @@ public class Commander implements Consumer<NAR>, Supplier<Concept> {
 
     public final boolean valid(long now, Task t) {
 
-        if (t.getBudget().isDeleted())
+        if (t.getBudget().getDeleted())
             return false;
 
         if (!Tense.isEternal(t.getOccurrenceTime())) {

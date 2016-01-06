@@ -34,7 +34,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.truth.Truth;
-import nars.truth.TruthFunctions;
 
 import java.util.function.Consumer;
 
@@ -115,7 +114,7 @@ public enum LocalRules {
      */
     public static void trySolution(Task question, Task solution, NAR nal, Consumer<Task> eachSolutions) {
 
-        if ((solution == null) || (solution.isDeleted()))
+        if ((solution == null) || (solution.getDeleted()))
             throw new RuntimeException("proposedBelief " + solution + " deleted or null");
 
         if (!Tense.matchingOrder(question, solution)) {

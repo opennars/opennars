@@ -1,6 +1,7 @@
 package nars.budget;
 
 import nars.Symbols;
+import nars.data.BudgetedStruct;
 import nars.util.Texts;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -228,7 +229,7 @@ public abstract class Budget extends BudgetedHandle {
      */
     public boolean summaryGreaterOrEqual(float budgetThreshold) {
 
-        if (isDeleted()) return false;
+        if (getDeleted()) return false;
 
         /* since budget can only be positive.. */
         if (budgetThreshold <= 0) return true;

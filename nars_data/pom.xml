@@ -8,9 +8,9 @@
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
+    <version>${parent.version}</version>
     <artifactId>nars_data</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <name>OpenNARS model data</name>
+     <name>OpenNARS model data</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

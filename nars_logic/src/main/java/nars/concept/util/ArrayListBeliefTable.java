@@ -160,7 +160,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
         boolean added = tryAdd(input, ranking, memory);
-        if (input.isDeleted()) {
+        if (input.getDeleted()) {
             return top();
         }
 
@@ -185,7 +185,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 if (addedRevision) {
                     tableChanged = true;
                 }
-                if (!revised.isDeleted()) {
+                if (!revised.getDeleted()) {
 
                     memory.eventRevision.emit(revised);
                     //nal.memory().logic.BELIEF_REVISION.hit();
@@ -214,7 +214,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     public final boolean tryAdd(Task input, Ranker r, Memory memory) {
 
         if (Global.DEBUG) {
-            if (input.isDeleted())
+            if (input.getDeleted())
                 throw new RuntimeException("deleted task being added");
             checkForDeleted();
         }
@@ -280,7 +280,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         data.forEach((Task dt) -> {
 //            if (dt == null)
 //                throw new RuntimeException("wtf");
-            if (dt == null || dt.isDeleted()) {
+            if (dt == null || dt.getDeleted()) {
                 throw new RuntimeException(
                         //System.err.println(
                         "deleted tasks should not be present in belief tables: " + dt);

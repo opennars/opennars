@@ -214,7 +214,7 @@ public class DefaultConcept extends AtomConcept {
                 new BeliefTable.SolutionQualityMatchingOrderRanker(belief, nar.memory.time()),
                 this, nar.memory);
 
-        if (strongest == null || strongest.isDeleted()) {
+        if (strongest == null || strongest.getDeleted()) {
             return false;
         }
 

@@ -7,7 +7,7 @@ public abstract class BudgetedHandle implements Budgeted {
 
 
     @Override
-    public boolean isDeleted() {
+    public boolean getDeleted() {
         return Budget.isDeleted(getPriority());
     }
 

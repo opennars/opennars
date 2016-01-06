@@ -145,7 +145,7 @@ public abstract class AbstractTask extends Item<Task>
 //            return this;
 //        }
 
-        if (isDeleted())
+        if (getDeleted())
             return null;
 
         Compound t = term();
