@@ -46,8 +46,8 @@
     </pluginRepositories>
     <modules>
 
-        <module>nars_util</module>
         <module>nars_data</module>
+        <module>nars_util</module>
         <module>nars_layer0</module>
         <module>nars_logic</module>
         <module>nars_lab</module>

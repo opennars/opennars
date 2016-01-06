@@ -23,7 +23,7 @@ package nars.task;
 import nars.*;
 import nars.budget.Budgeted;
 import nars.concept.Concept;
-import nars.data.BudgetedStruct;
+
 import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
 import nars.term.Statement;
@@ -127,9 +127,9 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
         return true;
     }
 
-    static float prioritySum(Iterable<? extends BudgetedStruct> dd) {
+    static float prioritySum(Iterable<? extends Budgeted > dd) {
         float f = 0;
-        for (BudgetedStruct x : dd)
+        for (Budgeted  x : dd)
             f += x.getPriority();
         return f;
     }

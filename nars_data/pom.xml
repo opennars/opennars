@@ -8,7 +8,7 @@
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
-    <version>${parent.version}</version>
+    <version>1.7-SNAPSHOT</version>
     <artifactId>nars_data</artifactId>
      <name>OpenNARS model data</name>
     <properties>
@@ -22,28 +22,22 @@
         </dependency>
     </dependencies>
     <build>
-        <plugins>
-            <plugin>
-                <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
-                <artifactId>maven-java-formatter-plugin</artifactId>
-                <version>0.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <compilerSource>1.8</compilerSource>
-                    <compilerCompliance>1.8</compilerCompliance>
-                    <compilerTargetPlatform>1.8</compilerTargetPlatform>
-                    <!--<configFile>${project.basedir}/../fmt/ugh.xml</configFile>-->
-                    <!--<configFile>${project.basedir}/../fmt/gwt-format.xml</configFile>-->
-                    <!--http://code.google.com/p/google-web-toolkit/source/browse/trunk/eclipse/settings/code-style/gwt-format.xml</configFile>&ndash;&gt;-->
-                    <lineEnding>LF</lineEnding>
-                </configuration>
-            </plugin>
+        <plugins>       <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>generate-sources</phase>
+                    <goals><goal>add-source</goal></goals>
+                    <configuration>
+                        <sources>
+                            <source>${project.build.directory}/generated-sources/</source>
+                        </sources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
             <plugin>
                 <groupId>com.github.0xCopy.prautobeans</groupId>
                 <artifactId>prautobeans-maven-plugin</artifactId>
@@ -58,6 +52,9 @@
                     </execution>
                 </executions>
             </plugin>
+
+
+
         </plugins>
     </build>
 </project>
