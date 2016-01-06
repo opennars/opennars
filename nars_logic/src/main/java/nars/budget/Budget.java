@@ -3,8 +3,6 @@ package nars.budget;
 import nars.Symbols;
 import nars.data.BudgetedStruct;
 import nars.util.Texts;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -46,7 +44,7 @@ public abstract class Budget extends BudgetedHandle {
         tgt.budget( nextPri,nextDur,nextQua);
     };
 
-    @Contract(pure = true)
+    //@Contract(pure = true)
     public static boolean aveGeoNotLessThan(float min, float a, float b, float c) {
         float minCubed = min * min * min; //cube both sides
         return a * b * c >= minCubed;
@@ -56,12 +54,11 @@ public abstract class Budget extends BudgetedHandle {
         return (float) pow(a * b * c, 1.0 / 3.0);
     }
 
-    @Contract(pure = true)
-    public static boolean isDeleted(float pri) {
+    //@Contract(pure = true)
+    public static boolean getDeleted(float pri) {
         return Float.isNaN(pri);
     }
 
-    @NotNull
     public static String toString(Budget b) {
 
         return toStringBuilder(new StringBuilder(), Texts.n4(b.getPriority()), Texts.n4(b.getDurability()), Texts.n4(b.getQuality())).toString();

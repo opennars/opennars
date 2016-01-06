@@ -52,7 +52,20 @@ public class ArrayBag<V> extends Bag<V> {
     @Override public BLink<V> put(Object v) {
         //TODO combine with CurveBag.put(v)
         BLink<V> existing = get(v);
-        return existing != null ? existing : put((V) v, UnitBudget.zero);
+        if (existing!=null) {
+            merge(existing.getBudget(),
+                    getDefaultBudget(v), 1f);
+            return existing;
+        } else {
+            return existing != null ? existing :
+                    put((V) v, getDefaultBudget(v));
+        }
+    }
+
+    private Budget getDefaultBudget(Object v) {
+        if (v instanceof Budgeted)
+            return ((Budgeted)v).getBudget();
+        return UnitBudget.zero;
     }
 
 

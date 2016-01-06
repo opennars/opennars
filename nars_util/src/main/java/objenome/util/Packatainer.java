@@ -35,10 +35,10 @@ public class Packatainer extends AbstractPrototainer {
     private final ConfigurationBuilder configuration;
 
     /** all classes are available */
-    public Packatainer(Class... classes) {
-        this(new String[] { "" }, classes);
-    }
-    
+//    public Packatainer(Class... classes) {
+//        this(new String[] { "" }, classes);
+//    }
+//
     /** filters results to contain only what is in a given set of packages */
     public Packatainer(String[] packages, Class... classes) {
         this(new ConfigurationBuilder()

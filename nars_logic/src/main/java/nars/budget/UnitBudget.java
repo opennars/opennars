@@ -148,7 +148,7 @@ public class UnitBudget extends Budget {
      */
     @Override
     public final void setPriority(float p) {
-        if (Budget.isDeleted(p)) {
+        if (Budget.getDeleted(p)) {
             throw new RuntimeException("NaN priority");
         }
         priority = Util.clamp(p);

@@ -22,8 +22,8 @@ package nars.task;
 
 import nars.*;
 import nars.budget.Budgeted;
-import nars.data.BudgetedStruct;
 import nars.concept.Concept;
+import nars.data.BudgetedStruct;
 import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
 import nars.term.Statement;
@@ -50,8 +50,6 @@ import static nars.Global.dereference;
  * TODO decide if the Sentence fields need to be Reference<> also
  */
 public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Tasked {
-
-
 
 
     static void getExplanation(Task task, int indent, StringBuilder sb) {

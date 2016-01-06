@@ -26,7 +26,8 @@ public class PackatainerTest {
 
         
     
-        Packatainer rg = new Packatainer(/*new String[] { "objenome" },*/
+        Packatainer rg = new Packatainer(
+                new String[] { "objenome" },
                 Multitainer.class, Container.class, Builder.class);
                 
         SetMultimap<Class, Class> anc = rg.includeAncestorImplementations();

@@ -2,6 +2,7 @@ package nars.budget;
 
 import nars.$;
 import nars.NAR;
+import nars.bag.BLink;
 import nars.nar.Default;
 import nars.task.Task;
 import nars.util.data.MutableDouble;
@@ -59,7 +60,9 @@ public class ItemAccumulatorTest {
 
 
         String s = ". %1.00;0.90%";
-        ii.getArrayBag().put(n.task("$0.05$ <z-->x>" + s ));
+        Task n1 = n.task("$0.05$ <z-->x>" + s);
+
+        ii.getArrayBag().put(n1);
         ii.getArrayBag().put(n.task("$0.09$ <a-->x>" + s ));
         ii.getArrayBag().put(n.task("$0.1$ <b-->x>" + s ));
         ii.getArrayBag().put(n.task("$0.2$ <c-->x>" + s ));
@@ -78,7 +81,8 @@ public class ItemAccumulatorTest {
         //System.out.println(ii);
         ii.getArrayBag().top(x -> System.out.println(x));
 
-        Task one = ii.getArrayBag().pop().get();
+        BLink<Task> oneLink = ii.getArrayBag().pop();
+        Task one = oneLink.get();
         assertEquals("$.30;.50;.95$ <d-->x>. :0: %1.0;.90%", one.toString());
 
         List<Task> two = new ArrayList();
