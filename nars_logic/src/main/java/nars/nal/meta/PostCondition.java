@@ -66,6 +66,7 @@ public class PostCondition implements Serializable, Level //since there can be m
         add(the("Punctuation"));
         add(the("SequenceIntervals"));
         add(the("Eternalize"));
+        add(the("Linkage"));
     }};
 
 
@@ -76,6 +77,7 @@ public class PostCondition implements Serializable, Level //since there can be m
             identity = the("Identity"),*/
             allowBackward = the("AllowBackward"),
             fromPremises = the("FromPremises"),
+            temporalLinked = the("Temporal"),
             fromTask = the("FromTask"),
             fromBelief = the("FromBelief"),
             immediate = the("Immediate");
@@ -186,6 +188,11 @@ public class PostCondition implements Serializable, Level //since there can be m
                         rule.sequenceIntervalsFromBelief = true;
                         rule.sequenceIntervalsFromTask = true;
                     }
+                    break;
+
+                case "Linkage":
+                    if(which.equals(temporalLinked))
+                    rule.temporal_linked = true;
                     break;
 
                 default:

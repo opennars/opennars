@@ -353,10 +353,10 @@ public class FluentTask<C extends Compound> extends DefaultTask<C>  {
 //    }
 //
 
-    public FluentTask budgetCompoundForward(Compound result, Premise p) {
-        BudgetFunctions.compoundForward(this, getTruth(), result, p);
-        return this;
-    }
+   // public FluentTask budgetCompoundForward(Compound result, Premise p) {
+     //   BudgetFunctions.compoundForward(this, getTruth(), result, p);
+     //   return this;
+   /// }
 
 
 //    public TaskSeed temporalInductable(boolean b) {
