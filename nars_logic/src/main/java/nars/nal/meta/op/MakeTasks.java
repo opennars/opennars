@@ -64,13 +64,7 @@ public final class MakeTasks extends PreCondition {
 
         final Truth truth = post.truth;
         final Budget budget;
-        if (truth != null) {
-            budget = BudgetFunctions.compoundForward(truth, derivedTerm, premise);
-            //budget = BudgetFunctions.forward(truth, premise);
-        } else {
-            budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
-            budget.setDurability(budget.getDurability()*0.5f);
-        }
+        budget = getBudget(premise, derivedTerm, truth, post.punct);
 
         if (!premise.validateDerivedBudget(budget)) {
             if (Global.DEBUG && Global.DEBUG_REMOVED_INSUFFICIENT_BUDGET_DERIVATIONS) {
@@ -139,7 +133,7 @@ public final class MakeTasks extends PreCondition {
                 if (truth != null && !derived.isEternal() /* && derived.isJudgment() && rule.immediate_eternalize */ ) {
                     Truth et = TruthFunctions.eternalize(new DefaultTruth(truth.getFrequency(), truth.getConfidence()));
                     FluentTask deriving2 = premise.newTask((Compound) derivedTerm);
-                    Budget budget2 = BudgetFunctions.compoundForward(et, derivedTerm, premise);
+                    Budget budget2 = getBudget(premise,derivedTerm, et, punct);//BudgetFunctions.compoundForward(new Budget(), et, derivedTerm, premise);
 
                     if(budget2.getDurability() > Global.BUDGET_EPSILON && budget2.getPriority() > Global.BUDGET_EPSILON) {
                         final Task derivedEternal = premise.validate(deriving2
@@ -161,5 +155,22 @@ public final class MakeTasks extends PreCondition {
         }
 
         return false; //finished
+    }
+
+    private Budget getBudget(Premise premise, Term derivedTerm, Truth truth, char punct) {
+        Budget budget;
+        if (truth != null) {
+            if(punct == Symbols.GOAL) {
+                budget = BudgetFunctions.compoundForwardGoal(truth, derivedTerm, premise, rule.temporal_linked);
+            }
+            else {
+                budget = BudgetFunctions.compoundForward(new Budget(), truth, derivedTerm, premise, rule.temporal_linked);
+            }
+            //budget = BudgetFunctions.forward(truth, premise);
+        } else {
+            budget = BudgetFunctions.compoundBackward(derivedTerm, premise, rule.temporal_linked);
+            budget.setDurability(budget.getDurability()*0.5f);
+        }
+        return budget;
     }
 }

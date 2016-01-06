@@ -61,6 +61,7 @@ public class TaskRule extends ProductN implements Level {
     public int minNAL;
 
     private String str;
+    public boolean temporal_linked = false;
 
     public final ProductN getPremise() {
         return (ProductN) term(0);

@@ -323,8 +323,8 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param truth The truth value of the conclusion
      * @return The budget value of the conclusion
      */
-    public static Budget forward(final Truth truth, final Premise nal) {
-        return budgetInference(truthToQuality(truth), 1, nal);
+    public static Budget forward(final Truth truth, final Premise nal, boolean temporal) {
+        return budgetInference(truthToQuality(truth), 1, nal, temporal);
     }
 
     /**
@@ -334,8 +334,8 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return The budget value of the conclusion
      */
-    public static Budget backward(final Truth truth, final Premise nal) {
-        return budgetInference(truthToQuality(truth), 1, nal);
+    public static Budget backward(final Truth truth, final Premise nal, boolean temporal) {
+        return budgetInference(truthToQuality(truth), 1, nal, temporal);
     }
 
     /**
@@ -345,8 +345,8 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return The budget value of the conclusion
      */
-    public static Budget backwardWeak(final Truth truth, final Premise nal) {
-        return budgetInference(w2c(1) * truthToQuality(truth), 1, nal);
+    public static Budget backwardWeak(final Truth truth, final Premise nal, boolean temporal) {
+        return budgetInference(w2c(1) * truthToQuality(truth), 1, nal, temporal);
     }
 
     /* ----- Task derivation in CompositionalRules and StructuralRules ----- */
@@ -358,17 +358,19 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return The budget of the conclusion
      */
-    public static Budget compoundForward(final Truth truth, final Term content, final Premise nal) {
-        return compoundForward(new Budget(), truth, content, nal);
+
+    public static Budget compoundForwardGoal(final Truth truth, final Term content, final Premise nal, boolean temporal) {
+        final int complexity = content.complexity();
+        return budgetInference(new Budget(), (float) Math.min(1.0-Global.BUDGET_EPSILON,1.5f*truthToQuality(truth)), f_complexity(complexity), nal, temporal);
     }
 
     public static int f_complexity(int complexity) {
         return complexity;
     }
 
-    public static Budget compoundForward(Budget target, final Truth truth, final Term content, final Premise nal) {
+    public static Budget compoundForward(Budget target, final Truth truth, final Term content, final Premise nal, boolean temporal) {
         final int complexity = content.complexity();
-        return budgetInference(target, truthToQuality(truth), f_complexity(complexity), nal);
+        return budgetInference(target, truthToQuality(truth), f_complexity(complexity), nal, temporal);
     }
 
 
@@ -379,9 +381,9 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param content The content of the conclusion
      * @return The budget of the conclusion
      */
-    public static Budget compoundBackward(final Term content, final Premise nal) {
+    public static Budget compoundBackward(final Term content, final Premise nal, boolean temporal) {
        // return budgetInference(1f, content.complexity(), nal);
-        return budgetInference(new Budget(), truthToQuality(new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE)), f_complexity(content.complexity()), nal);
+        return budgetInference(new Budget(), truthToQuality(new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE)), f_complexity(content.complexity()), nal, temporal);
     }
 
     /**
@@ -391,12 +393,12 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return The budget of the conclusion
      */
-    public static Budget compoundBackwardWeak(final Term content, final Premise nal) {
-        return budgetInference(w2c(1), content.complexity(), nal);
+    public static Budget compoundBackwardWeak(final Term content, final Premise nal, boolean temporal) {
+        return budgetInference(w2c(1), content.complexity(), nal, temporal);
     }
 
-    static Budget budgetInference(final float qual, final int complexity, final Premise nal) {
-        return budgetInference(new Budget(), qual, complexity, nal );
+    static Budget budgetInference(final float qual, final int complexity, final Premise nal, boolean temporal) {
+        return budgetInference(new Budget(), qual, complexity, nal, temporal );
     }
 
     /**
@@ -407,7 +409,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return Budget of the conclusion task
      */
-    static Budget budgetInference(Budget target, final float qual, final int complexity, final Premise nal) {
+    static Budget budgetInference(Budget target, final float qual, final int complexity, final Premise nal, boolean temporal) {
         final float complexityFactor = complexity > 1 ?
 
                 // sqrt factor (experimental)
@@ -427,10 +429,10 @@ public final class BudgetFunctions extends UtilityFunctions {
 
                 : 1f;
 
-        return budgetInference(target, qual, complexityFactor, nal);
+        return budgetInference(target, qual, complexityFactor, nal, temporal);
     }
 
-    static Budget budgetInference(Budget target, final float qual, final float complexityFactor, final Premise nal) {
+    static Budget budgetInference(Budget target, final float qual, final float complexityFactor, final Premise nal, boolean temporal) {
 
         final TaskLink taskLink =
                 nal instanceof ConceptProcess ? ((ConceptProcess)nal).getTaskLink() : null;
@@ -444,7 +446,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         final float quality = qual * complexityFactor;
 
         final TermLink termLink = nal.getTermLink();
-        if (termLink!=null) {
+        if (termLink!=null && !temporal) {
             priority = or(priority, termLink.getPriority());
             durability = and(durability, termLink.getDurability()); //originaly was 'AND'
             final float targetActivation = nal.conceptPriority(termLink.getTerm(), 0);
