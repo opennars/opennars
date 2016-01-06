@@ -15,7 +15,7 @@ import java.security.PrivilegedAction;
  * class to be able to compare arrays that start at non-zero offsets.
  * from: https://svn.apache.org/repos/asf/cassandra/trunk/src/java/org/apache/cassandra/utils/FastByteComparisons.java
  */
-public enum FastByteComparisons {
+public   enum FastByteComparisons {
     ;
 
     /**

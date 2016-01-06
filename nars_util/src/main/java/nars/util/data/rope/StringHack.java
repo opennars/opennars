@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 /**
  * Direct access to String private fields
  */
-public enum StringHack {
+public   enum StringHack {
     ;
 
     public static final Field sbval;

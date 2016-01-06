@@ -5,7 +5,7 @@ import objenome.util.bean.anno.GenericBeanMethod.Type;
 
 import java.lang.reflect.Method;
 
-public enum GenericBeanMapper {
+public   enum GenericBeanMapper {
     ;
 
     private enum OnNull {

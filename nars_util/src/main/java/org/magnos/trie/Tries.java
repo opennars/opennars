@@ -25,7 +25,7 @@ import java.nio.ByteBuffer;
  * @author Philip Diffenderfer
  * 
  */
-public enum Tries
+public   enum Tries
 {
    ;
 

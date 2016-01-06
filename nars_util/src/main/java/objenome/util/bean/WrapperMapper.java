@@ -10,7 +10,7 @@ import java.util.Map;
  * @author Joachim Baumann
  * @author Peter Fichtner
  */
-public enum WrapperMapper {
+public   enum WrapperMapper {
     ;
 
     private static final Map<String, Object> MAPPING = Collections.unmodifiableMap(createMapping());

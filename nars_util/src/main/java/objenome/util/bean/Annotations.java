@@ -3,7 +3,7 @@ package objenome.util.bean;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-public enum Annotations {
+public   enum Annotations {
     ;
 
     public static boolean hasMethodWithAnnotation(Class<?> iface, Class<? extends Annotation> anno) {

@@ -6,8 +6,7 @@ import nars.util.Texts;
 import javax.annotation.Nullable;
 
 import static java.lang.Math.pow;
-import static nars.nal.UtilityFunctions.and;
-import static nars.nal.UtilityFunctions.or;
+import static nars.nal.UtilityFunctions.*;
 import static nars.util.data.Util.equal;
 import static nars.util.data.Util.mean;
 
@@ -17,9 +16,37 @@ import static nars.util.data.Util.mean;
 public interface Budget extends Budgeted {
 
 
+    BudgetMerge plus = (tgt, src, srcScale) -> {
+        float dp = src.getPriority() * srcScale;
+
+        float currentPriority = tgt.getPriorityIfNaNThenZero();
+
+        float nextPri = currentPriority + dp;
+        if (nextPri > 1) nextPri = 1f;
+
+        float currentNextPrioritySum = currentPriority + nextPri;
+
+        /* current proportion */
+        final float cp;
+        cp = currentNextPrioritySum != 0 ? currentPriority / currentNextPrioritySum : 0.5f;
+
+        /* next proportion = 1 - cp */
+        float np = 1.0f - cp;
+
+
+        float nextDur = cp * tgt.getDurability() + np * src.getDurability();
+        float nextQua = cp * tgt.getQuality() + np * src.getQuality();
+
+        if (Float.isNaN(nextDur))
+            throw new RuntimeException("NaN dur: " + src + " " + tgt.getDurability());
+        if (Float.isNaN(nextQua)) throw new RuntimeException("NaN quality");
+
+        tgt.set( nextPri, nextDur, nextQua );
+    };
+
     static boolean aveGeoNotLessThan(float min, float a, float b, float c) {
         float minCubed = min*min*min; //cube both sides
-        return (a*b*c) >= minCubed;
+        return a*b*c >= minCubed;
     }
 
     static float aveGeo(float a, float b, float c) {

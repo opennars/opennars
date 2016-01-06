@@ -28,7 +28,7 @@ package objenome.util;
  * <i>Thanks to the <a href="http://jsci.sourceforge.net/">JSci science API</a>
  * for some of these.</i>
  */
-public enum MathUtils {
+public   enum MathUtils {
     ;
 
     static final double EPSILON = 0.0001;
