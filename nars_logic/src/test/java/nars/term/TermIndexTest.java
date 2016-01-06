@@ -143,7 +143,7 @@ public class TermIndexTest {
 
         assertEquals(t1.term(), t2.term());
         if (t1 != t2)
-            System.err.println("share failed: " + t1 + " " + t1.getClass() + " " + t2 + " "+ t2.getClass());
+            System.err.println("share failed: " + t1 + ' ' + t1.getClass() + ' ' + t2 + ' ' + t2.getClass());
 
         assertTrue(t1 == t2);
 

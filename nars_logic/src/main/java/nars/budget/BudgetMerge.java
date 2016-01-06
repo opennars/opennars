@@ -49,7 +49,7 @@ public interface BudgetMerge {
         float nextQua = (cp * tgt.getQuality()) + (np * src.getQuality());
 
         if (Float.isNaN(nextDur))
-            throw new RuntimeException("NaN dur: " + src + " " + tgt.getDurability());
+            throw new RuntimeException("NaN dur: " + src + ' ' + tgt.getDurability());
         if (Float.isNaN(nextQua)) throw new RuntimeException("NaN quality");
 
         tgt.budget( nextPri, nextDur, nextQua );

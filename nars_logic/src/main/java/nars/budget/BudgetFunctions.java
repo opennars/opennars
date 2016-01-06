@@ -368,7 +368,6 @@ public final class BudgetFunctions extends UtilityFunctions {
             return new BudgetValue(priority, durability, quality);
          */
     }
-
 	// may be more efficient than the for-loop version above, for 2 params
 	public static float aveAri(float a, float b) {
 		return (a + b) / 2.0f;

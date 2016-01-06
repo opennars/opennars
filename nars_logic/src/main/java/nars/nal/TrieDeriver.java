@@ -126,7 +126,7 @@ public class TrieDeriver extends Deriver {
                 }
                 return false;
             } else {
-                throw new RuntimeException("not boolean condition" + x + " in branch: " + t + " (" + x.getClass() + ")");
+                throw new RuntimeException("not boolean condition" + x + " in branch: " + t + " (" + x.getClass() + ')');
                 //System.out.println("\tnot boolean condition");
                 //return false;
             }
@@ -156,7 +156,7 @@ public class TrieDeriver extends Deriver {
         StringBuilder s = new StringBuilder();
 
         final String header = "public final static String wtf=" +
-                "\"" + this + " " + new Date() + "\"+\n" +
+                '"' + this + ' ' + new Date() + "\"+\n" +
                 "\"COPYRIGHT (C) OPENNARS. ALL RIGHTS RESERVED.\"+\n" +
                 "\"THIS SOURCE CODE AND ITS GENERATOR IS PROTECTED BY THE AFFERO GENERAL PUBLIC LICENSE: https://gnu.org/licenses/agpl.html\"+\n" +
                 "\"http://github.com/opennars/opennars\";\n";
@@ -181,9 +181,9 @@ public class TrieDeriver extends Deriver {
         String initCode = "nars.Premise p = m.premise;";
 
         String m = "public void run(nars.nal.PremiseMatch m) {\n" +
-                '\t' + initCode + "\n" +
+                '\t' + initCode + '\n' +
                 '\t' + s + '\n' +
-                "}";
+                '}';
 
         System.out.println(m);
 

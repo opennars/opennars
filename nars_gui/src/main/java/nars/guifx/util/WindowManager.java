@@ -158,7 +158,7 @@ public final class WindowManager /*implements ShutdownHandler*/ {
         window.setOnShown(onWindowShown);
         window.setOnHidden(onWindowHidden);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Attaching window with name: '" + name + " " + window);
+            LOG.debug("Attaching window with name: '" + name + ' ' + window);
         }
         windows.put(name, window);
     }
@@ -179,7 +179,7 @@ public final class WindowManager /*implements ShutdownHandler*/ {
             window.setOnHidden(null);
             String name = findWindowName(window);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Detaching window with name: '" + name + " " + window);
+                LOG.debug("Detaching window with name: '" + name + ' ' + window);
             }
             windows.remove(name);
         }

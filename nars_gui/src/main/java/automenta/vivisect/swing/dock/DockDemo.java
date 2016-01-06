@@ -10,7 +10,7 @@ import javax.swing.*;
  * @see https
  *      ://java.net/projects/raven/sources/svn/show/trunk/proj/RavenDocking/
  *      src/com/kitfox/docking/test?rev=116
- * @see https
+ * @see https 
  *      ://java.net/projects/raven/sources/svn/content/trunk/proj/RavenDocking
  *      /src/com/kitfox/docking/test/DockingTestFrame2.java?rev=116
  */

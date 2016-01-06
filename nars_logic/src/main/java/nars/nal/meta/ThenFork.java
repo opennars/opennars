@@ -47,7 +47,7 @@ abstract public class ThenFork<C> extends GenericCompound<ProcTerm<C>> implement
         for (ProcTerm<C> p : terms()) {
             s.append("\t\t");
             p.appendJavaProcedure(s);
-            s.append("\n");
+            s.append('\n');
         }
     }
 

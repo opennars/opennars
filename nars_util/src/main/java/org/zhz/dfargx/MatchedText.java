@@ -23,8 +23,8 @@ public final class MatchedText {
     @Override
     public String toString() {
         return "match:(" +
-                "'" + text + '\'' +
-                "," + Pos +
+                '\'' + text + '\'' +
+                ',' + Pos +
                 ')';
     }
 }

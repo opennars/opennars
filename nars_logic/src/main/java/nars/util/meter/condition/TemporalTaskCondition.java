@@ -26,7 +26,7 @@ public class TemporalTaskCondition extends EternalTaskCondition {
     @Override
     public String toString() {
         return super.toString() + " occurrs: (" + occStart + ',' + occEnd +
-        ")";
+                ')';
     }
 
     @Override

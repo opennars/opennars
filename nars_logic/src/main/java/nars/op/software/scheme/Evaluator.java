@@ -1,7 +1,6 @@
 package nars.op.software.scheme;
 
-import com.google.common.collect.ImmutableSet;
-import nars.op.software.scheme.cons.Cons;
+ import nars.op.software.scheme.cons.Cons;
 import nars.op.software.scheme.expressions.*;
 
 import java.util.*;
@@ -38,7 +37,7 @@ public enum Evaluator {
         }
 
 
-        throw new IllegalArgumentException(String.format("Unable to evaluate expression '%s'", exp + " (" + exp.getClass() + ")"));
+        throw new IllegalArgumentException(String.format("Unable to evaluate expression '%s'", exp + " (" + exp.getClass() + ')'));
     }
 
     private static Function<SchemeClosure, Expression> analyzeSpecialForm(ListExpression exp) {
@@ -244,7 +243,7 @@ public enum Evaluator {
         return !BooleanExpression.bool(false).equals(exp);
     }
 
-    private static final Set<SymbolExpression> SPECIAL_FORMS = ImmutableSet.of("quote", "set!", "define", "if", "lambda", "begin", "let", "cond").stream()
+    private static final Set<SymbolExpression> SPECIAL_FORMS = Arrays.stream(new String[]{"quote", "set!", "define", "if", "lambda", "begin", "let", "cond"})
             .map(SymbolExpression::symbol)
             .collect(Collectors.toSet());
 }

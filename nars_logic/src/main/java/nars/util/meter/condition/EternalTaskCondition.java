@@ -95,7 +95,7 @@ public class EternalTaskCondition implements NARCondition, Predicate<Task>, Cons
     }
 
     public static String rangeStringN2(float min, float max) {
-        return "(" + Texts.n2(min) + ","+ Texts.n2(max) + ')';
+        return "(" + Texts.n2(min) + ',' + Texts.n2(max) + ')';
     }
 
     /** a heuristic for measuring the difference between terms
@@ -133,7 +133,7 @@ public class EternalTaskCondition implements NARCondition, Predicate<Task>, Cons
     @Override
     public String toString() {
         return term.toString() + punc + " %" +
-                rangeStringN2(freqMin, freqMax) + ";" + rangeStringN2(confMin, confMax) + '%' + " " +
+                rangeStringN2(freqMin, freqMax) + ';' + rangeStringN2(confMin, confMax) + '%' + ' ' +
                 " creation: (" + creationStart + ',' + creationEnd + ')';
     }
 

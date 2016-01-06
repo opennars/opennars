@@ -42,5 +42,4 @@ public class TextInput extends TaskQueue {
         return Narsese.the().tasks(input,
                 (Collection<Task>) this, nar.memory);
     }
-
 }

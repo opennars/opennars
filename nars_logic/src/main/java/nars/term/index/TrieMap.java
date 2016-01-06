@@ -41,7 +41,6 @@ public class TrieMap {
         }
         return true;
     }
-
 	/**
 	 * Inserts a key/value pair.
 	 * 
@@ -92,7 +91,6 @@ public class TrieMap {
         branch.put(cLeaf.mStr.substring(1), cLeaf.mVal); // Plus the one we collided with.
         mChars[c] = branch;
     }
-
 	/**
 	 * Retrieve a value for a given key or null if not found.
 	 */
@@ -126,7 +124,6 @@ public class TrieMap {
             return null; // Not found.
         }
     }
-
 	/**
 	 * Simple example test program.
 	 */
