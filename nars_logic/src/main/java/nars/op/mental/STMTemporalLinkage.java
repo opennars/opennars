@@ -112,7 +112,9 @@ public class STMTemporalLinkage {
 
         int a = stm.size();
 
-        stm.add(currentTask);
+        if(currentTask.isJudgment()) {
+            stm.add(currentTask);
+        }
 
         return true;
     }
