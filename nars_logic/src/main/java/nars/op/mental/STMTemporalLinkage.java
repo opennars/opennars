@@ -97,7 +97,7 @@ public class STMTemporalLinkage {
 
                     if (previousConcept != null) {
                         //allow budget flow from one event concept to the other and justify inference between them
-                        nal.link(previousConcept, currentTask);
+                        //nal.link(previousConcept, currentTask);
 
                         //also allow direct event based inference between these events:
                         if(previousTask.isJudgment()) { //but only if the second premise plays the role of a belief
