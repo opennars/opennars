@@ -74,25 +74,25 @@
 
 //A belief b <f,c> is equal to --b <1-f,c>, which is the negation rule:
 
-    (A --> B), A, task(negative) |- --(A --> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
-    (A --> B), B, task(negative) |- --(A --> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
-  --(A --> B), A, task(negative) |-   (A --> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
-  --(A --> B), B, task(negative) |-   (A --> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
+    (A --> B), A |- --(A --> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
+    (A --> B), B |- --(A --> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
+  --(A --> B), A |-   (A --> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
+  --(A --> B), B |-   (A --> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
 
-    (A <-> B), A, task(negative) |- --(A <-> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
-    (A <-> B), B, task(negative) |- --(A <-> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
-  --(A <-> B), A, task(negative) |-   (A <-> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
-  --(A <-> B), B, task(negative) |-   (A <-> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
+    (A <-> B), A |- --(A <-> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
+    (A <-> B), B |- --(A <-> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
+  --(A <-> B), A |-   (A <-> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
+  --(A <-> B), B |-   (A <-> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward)
 
-    (A ==> B), A, task(negative) |- --(A ==> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
-    (A ==> B), B, task(negative) |- --(A ==> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
-  --(A ==> B), A, task(negative) |-   (A ==> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
-  --(A ==> B), B, task(negative) |-   (A ==> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
+    (A ==> B), A |- --(A ==> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
+    (A ==> B), B |- --(A ==> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
+  --(A ==> B), A |-   (A ==> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
+  --(A ==> B), B |-   (A ==> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
 
-    (A <=> B), A, task(negative) |- --(A <=> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
-    (A <=> B), B, task(negative) |- --(A <=> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
-  --(A <=> B), A, task(negative) |-   (A <=> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
-  --(A <=> B), B, task(negative) |-   (A <=> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
+    (A <=> B), A |- --(A <=> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
+    (A <=> B), B |- --(A <=> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
+  --(A <=> B), A |-   (A <=> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
+  --(A <=> B), B |-   (A <=> B), (Truth:Negation, Desire:Negation, Derive:AllowBackward, Order:ForAllSame)
 
 //TODO: probably make simpler by just allowing it for all tasks in general
 
