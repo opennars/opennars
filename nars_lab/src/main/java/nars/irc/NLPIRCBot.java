@@ -316,9 +316,7 @@ for Li in reversed(lines):
         if (msg.equals("RESET")) {
             go();
         } else {
-            if(!msg.contains("$")) {
-                nar.input(msg);
-            }
+            nar.input(msg);
         }
 
     }
