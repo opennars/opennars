@@ -315,6 +315,8 @@ public class Global {
 
     public static boolean DYNAMIC_BAG = false; //adjust bag curve to distribution in the bag
 
+    public static boolean INPUT_BAG = true;
+
     //since new information should be preferred, there is also a ranking decay for creation time:
     //this decay is a lot weaker than the decay of an event caused by projection
     //just strong enough to support this desired effect

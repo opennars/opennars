@@ -1,5 +1,6 @@
 package nars.task.flow;
 
+import nars.Global;
 import nars.NAR;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
@@ -79,14 +80,17 @@ public class ImmediateTaskPerception extends TaskPerception {
             Task t = (Task) bag.pop();
 
             //accept all for now:
-            buffer.stream().forEach(receiver::accept);
-
-            //accept only input and the selected one from the bag:
-           /* if (t!=null) {
-                receiver.accept(t);
+            if(!Global.INPUT_BAG) {
+                buffer.stream().forEach(receiver::accept);
             }
 
-            buffer.stream().filter(tt -> tt.isInput()).forEach(receiver::accept);*/
+            //accept only input and the selected one from the bag:
+            if(Global.INPUT_BAG) {
+                if (t != null) {
+                    receiver.accept(t);
+                }
+                buffer.stream().filter(tt -> tt.isInput()).forEach(receiver::accept);
+            }
             buffer.clear();
         } else {
             for(Task t: buffer) {
