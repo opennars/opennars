@@ -14,7 +14,6 @@
     <name>OpenNARS Logic Reasoner</name>
     <url>https://github.com/opennars/opennars</url>
 
-
     <scm>
         <connection>scm:git:${project.url}.git</connection>
         <developerConnection>scm:git:${project.url}.git</developerConnection>
@@ -23,8 +22,6 @@
     </scm>
 
     <build>
-
-
         <resources>
             <resource>
                 <directory>${basedir}/src/main/java/</directory>
@@ -34,14 +31,8 @@
                 <filtering>false</filtering>
             </resource>
         </resources>
-
         <finalName>nars_logic_${project.version}</finalName>
-
-
         <plugins>
-
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -124,6 +115,7 @@
             <!--</executions>-->
             <!--</plugin>-->
 
+<!--
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -145,18 +137,18 @@
                             </transformers>
                             <minimizeJar>true</minimizeJar>
                             <filters>
-                                <!-- TODO: apache commons math: geometry, etc... -->
+                                &lt;!&ndash; TODO: apache commons math: geometry, etc... &ndash;&gt;
                                 <filter>
                                     <artifact>com.goldmansachs:gs-collections</artifact>
                                     <excludes>
-                                        <!-- primitive types we dont use but take up lots of space -->
-                                        <!--<exclude>com/gs/collections/impl/map/mutable/primitive/Byte*</exclude>
-                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Char*</exclude>-->
-                                        <!--<exclude>com/gs/collections/impl/map/mutable/primitive/Short*</exclude>
+                                        &lt;!&ndash; primitive types we dont use but take up lots of space &ndash;&gt;
+                                        &lt;!&ndash;<exclude>com/gs/collections/impl/map/mutable/primitive/Byte*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Char*</exclude>&ndash;&gt;
+                                        &lt;!&ndash;<exclude>com/gs/collections/impl/map/mutable/primitive/Short*</exclude>
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Int*</exclude>
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Long*</exclude>
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Float*</exclude>
-                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Double*</exclude>-->
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Double*</exclude>&ndash;&gt;
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Synchronized*</exclude>
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Unmodifiable*</exclude>
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Immutable*</exclude>
@@ -164,8 +156,8 @@
                                         <exclude>com/gs/collections/impl/block/**</exclude>
                                         <exclude>com/gs/collections/impl/bag/**</exclude>
                                         <exclude>com/gs/collections/impl/stack/**</exclude>
-                                        <!--<exclude>com/gs/collections/impl/multimap/**</exclude>-->
-                                        <!--<exclude>com/gs/collections/impl/bimap/**</exclude>-->
+                                        &lt;!&ndash;<exclude>com/gs/collections/impl/multimap/**</exclude>&ndash;&gt;
+                                        &lt;!&ndash;<exclude>com/gs/collections/impl/bimap/**</exclude>&ndash;&gt;
                                     </excludes>
                                 </filter>
                             </filters>
@@ -174,6 +166,7 @@
                 </executions>
             </plugin>
 
+-->
 
             <!--&lt;!&ndash;Proguard SOMEWHAT WORKING&ndash;&gt;-->
             <!--<plugin>-->

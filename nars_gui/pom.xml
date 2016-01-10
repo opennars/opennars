@@ -18,7 +18,6 @@
     <build>
         <finalName>nars_gui_${project.version}</finalName>
 
-
         <resources>
             <resource><!--TODO: resolve:  this has the effect of disabling src/main/resources for this project.  can it simply stomp src/main/resources to take the default effective pom? and reduce total LOC?-->
                 <directory>src/resources</directory>

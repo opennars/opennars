@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -31,9 +31,9 @@
             <version>1.7-SNAPSHOT</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>opennars</groupId>-->
-            <!--<artifactId>nars_web</artifactId>-->
-            <!--<version>1.7-SNAPSHOT</version>-->
+        <!--<groupId>opennars</groupId>-->
+        <!--<artifactId>nars_web</artifactId>-->
+        <!--<version>1.7-SNAPSHOT</version>-->
         <!--</dependency>-->
 
         <dependency>
@@ -70,63 +70,63 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>ai.h2o</groupId>-->
-            <!--<artifactId>h2o-core</artifactId>-->
-            <!--<version>3.0.1.4</version>-->
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>ai.h2o</groupId>-->
-                    <!--<artifactId>google-analytics-java</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.eclipse.jetty.aggregate</groupId>-->
-                    <!--<artifactId>jetty-servlet</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.eclipse.jetty</groupId>-->
-                    <!--<artifactId>jetty-server</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>com.google.guava</groupId>-->
-                    <!--<artifactId>guava</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>log4j</groupId>-->
-                    <!--<artifactId>log4j</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>commons-collections</groupId>-->
-                    <!--<artifactId>commons-collections</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
+        <!--<groupId>ai.h2o</groupId>-->
+        <!--<artifactId>h2o-core</artifactId>-->
+        <!--<version>3.0.1.4</version>-->
+        <!--<exclusions>-->
+        <!--<exclusion>-->
+        <!--<groupId>ai.h2o</groupId>-->
+        <!--<artifactId>google-analytics-java</artifactId>-->
+        <!--</exclusion>-->
+        <!--<exclusion>-->
+        <!--<groupId>org.eclipse.jetty.aggregate</groupId>-->
+        <!--<artifactId>jetty-servlet</artifactId>-->
+        <!--</exclusion>-->
+        <!--<exclusion>-->
+        <!--<groupId>org.eclipse.jetty</groupId>-->
+        <!--<artifactId>jetty-server</artifactId>-->
+        <!--</exclusion>-->
+        <!--<exclusion>-->
+        <!--<groupId>com.google.guava</groupId>-->
+        <!--<artifactId>guava</artifactId>-->
+        <!--</exclusion>-->
+        <!--<exclusion>-->
+        <!--<groupId>log4j</groupId>-->
+        <!--<artifactId>log4j</artifactId>-->
+        <!--</exclusion>-->
+        <!--<exclusion>-->
+        <!--<groupId>commons-collections</groupId>-->
+        <!--<artifactId>commons-collections</artifactId>-->
+        <!--</exclusion>-->
+        <!--</exclusions>-->
         <!--</dependency>-->
 
 
         <!--<dependency>-->
-            <!--<groupId>org.jogamp.jocl</groupId>-->
-            <!--<artifactId>jocl</artifactId>-->
-            <!--<version>2.3.1</version>-->
+        <!--<groupId>org.jogamp.jocl</groupId>-->
+        <!--<artifactId>jocl</artifactId>-->
+        <!--<version>2.3.1</version>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>org.jogamp.jocl</groupId>-->
-            <!--<artifactId>jocl-main</artifactId>-->
-            <!--<version>2.3.1</version>-->
+        <!--<groupId>org.jogamp.jocl</groupId>-->
+        <!--<artifactId>jocl-main</artifactId>-->
+        <!--<version>2.3.1</version>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>net.sf.sociaal</groupId>-->
-            <!--<artifactId>vecmath</artifactId>-->
+        <!--<groupId>net.sf.sociaal</groupId>-->
+        <!--<artifactId>vecmath</artifactId>-->
         <!--</dependency>-->
 
-       <!--<dependency>-->
-           <!--<groupId>org.encog</groupId>-->
-           <!--<artifactId>encog-core</artifactId>-->
-           <!--<exclusions>-->
-               <!--<exclusion>-->
-                   <!--<groupId>org.apache.commons</groupId>-->
-                   <!--<artifactId>commons-math3</artifactId>-->
-               <!--</exclusion>-->
-           <!--</exclusions>-->
-       <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>org.encog</groupId>-->
+        <!--<artifactId>encog-core</artifactId>-->
+        <!--<exclusions>-->
+        <!--<exclusion>-->
+        <!--<groupId>org.apache.commons</groupId>-->
+        <!--<artifactId>commons-math3</artifactId>-->
+        <!--</exclusion>-->
+        <!--</exclusions>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>
@@ -136,9 +136,9 @@
 
         <!--&lt;!&ndash; for VNC &ndash;&gt;-->
         <!--<dependency>-->
-            <!--<groupId>urbanophile</groupId>-->
-            <!--<artifactId>java-getopt</artifactId>-->
-            <!--<version>1.0.9</version>-->
+        <!--<groupId>urbanophile</groupId>-->
+        <!--<artifactId>java-getopt</artifactId>-->
+        <!--<version>1.0.9</version>-->
 
         <!--</dependency>-->
 
@@ -149,8 +149,6 @@
         </dependency>
 
     </dependencies>
-
-
 
 
     <repositories>
@@ -165,9 +163,28 @@
             </snapshots>
         </repository>
     </repositories>
-  
+
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>nars.launcher.Launcher</mainClass>
+                        </manifest>
+                    </archive>
+
+                </configuration>
+            </plugin>
+
+        </plugins>
         <resources>
 
             <resource>
