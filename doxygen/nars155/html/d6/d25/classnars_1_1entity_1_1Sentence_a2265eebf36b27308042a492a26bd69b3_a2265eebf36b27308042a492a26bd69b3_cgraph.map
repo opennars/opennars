@@ -1,0 +1,5 @@
+<map id="nars.entity.Sentence.toString" name="nars.entity.Sentence.toString">
+<area shape="rect" id="node2" href="$d3/db8/classnars_1_1entity_1_1TruthValue_aac30fa0b30fd070caa7c678da2621b68.html#aac30fa0b30fd070caa7c678da2621b68" title="The String representation of a TruthValue. " alt="" coords="255,5,420,47"/>
+<area shape="rect" id="node3" href="$d8/db8/classnars_1_1language_1_1Term_a04fc046ba98c451bded562f79cff4244.html#a04fc046ba98c451bded562f79cff4244" title="The same as getName by default, used in display only. " alt="" coords="244,71,431,98"/>
+<area shape="rect" id="node4" href="$d1/d1e/classnars_1_1entity_1_1Stamp_ad1aee19cfc0bb8ca9232bad251f74ffc.html#ad1aee19cfc0bb8ca9232bad251f74ffc" title="Get a String form of the Stamp for display Format: {creationTime [: eventTime] : evidentialBase}. " alt="" coords="250,122,425,149"/>
+</map>

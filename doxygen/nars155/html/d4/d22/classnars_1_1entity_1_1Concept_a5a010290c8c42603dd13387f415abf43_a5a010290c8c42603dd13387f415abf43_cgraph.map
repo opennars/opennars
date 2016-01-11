@@ -1,0 +1,7 @@
+<map id="nars.entity.Concept.startPlay" name="nars.entity.Concept.startPlay">
+<area shape="rect" id="node2" href="$d9/d37/classnars_1_1storage_1_1Bag_a73a559e1b77e6bc3a7db686816accef2.html#a73a559e1b77e6bc3a7db686816accef2" title="To start displaying the Bag in a BagWindow. " alt="" coords="249,5,472,32"/>
+<area shape="rect" id="node3" href="$d4/d96/interfacenars_1_1entity_1_1EntityObserver_a58888a42bc7ce9a40165517c8ca81667.html#a58888a42bc7ce9a40165517c8ca81667" title="nars.entity.EntityObserver.create\lBagObserver" alt="" coords="253,57,468,98"/>
+<area shape="rect" id="node4" href="$d4/d22/classnars_1_1entity_1_1Concept_a2b2088a51d2519fe76c791b6c6945409.html#a2b2088a51d2519fe76c791b6c6945409" title="Collect direct isBelief, questions, and goals for display. " alt="" coords="270,122,451,163"/>
+<area shape="rect" id="node5" href="$d4/d96/interfacenars_1_1entity_1_1EntityObserver_ac62aeea4d8b2ba99f935a2380b8e9407.html#ac62aeea4d8b2ba99f935a2380b8e9407" title="Display the content of the concept. " alt="" coords="259,188,462,215"/>
+<area shape="rect" id="node6" href="$d4/d96/interfacenars_1_1entity_1_1EntityObserver_aef3ebd18d9e7d210d5c46e49e749142a.html#aef3ebd18d9e7d210d5c46e49e749142a" title="nars.entity.EntityObserver.startPlay" alt="" coords="245,239,476,265"/>
+</map>

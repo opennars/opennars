@@ -1,0 +1,8 @@
+<map id="nars.entity.Sentence.clone" name="nars.entity.Sentence.clone">
+<area shape="rect" id="node2" href="$d8/db8/classnars_1_1language_1_1Term_ae2dba162b71bb9b806f54832249a260c.html#ae2dba162b71bb9b806f54832249a260c" title="Make a new Term with the same name. " alt="" coords="245,5,417,32"/>
+<area shape="rect" id="node4" href="$d1/d1e/classnars_1_1entity_1_1Stamp_a034905573fe14fb73ba09bfa360eb608.html#a034905573fe14fb73ba09bfa360eb608" title="Clone a stamp. " alt="" coords="251,56,411,83"/>
+<area shape="rect" id="node6" href="$d6/d25/classnars_1_1entity_1_1Sentence_ad7f0c103faac9d3ebebbe0e8c5b829ff.html#ad7f0c103faac9d3ebebbe0e8c5b829ff" title="Create a Sentence with the given fields. " alt="" coords="231,111,432,137"/>
+<area shape="rect" id="node3" href="$d8/db8/classnars_1_1language_1_1Term_a2d9973aada6190dd60b48a34448094c9.html#a2d9973aada6190dd60b48a34448094c9" title="Default constructor that build an internal Term. " alt="" coords="487,5,657,32"/>
+<area shape="rect" id="node5" href="$d1/d1e/classnars_1_1entity_1_1Stamp_a959f21fb20f72cfd277d994332e862c3.html#a959f21fb20f72cfd277d994332e862c3" title="Generate a new stamp, with a new serial number, for a new Task. " alt="" coords="489,56,655,83"/>
+<area shape="rect" id="node7" href="$d8/db8/classnars_1_1language_1_1Term_a6ad164dd053a9cc808bcd6a2d741a775.html#a6ad164dd053a9cc808bcd6a2d741a775" title="Blank method to be override in CompoundTerm. " alt="" coords="480,107,664,149"/>
+</map>

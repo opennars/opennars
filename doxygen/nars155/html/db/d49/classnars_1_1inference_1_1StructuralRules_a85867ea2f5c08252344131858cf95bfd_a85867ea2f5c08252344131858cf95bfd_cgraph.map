@@ -1,0 +1,6 @@
+<map id="nars.inference.StructuralRules.structuralStatement" name="nars.inference.StructuralRules.structuralStatement">
+<area shape="rect" id="node2" href="$dc/ddc/classnars_1_1entity_1_1Task_a091f9ec3bdacfd6741f767cb62b14c0f.html#a091f9ec3bdacfd6741f767cb62b14c0f" title="Directly get the content of the sentence. " alt="" coords="228,13,412,39"/>
+<area shape="rect" id="node4" href="$d8/df4/classnars_1_1storage_1_1Memory_a26eda4f00b333b706b4e3d069fdf1508.html#a26eda4f00b333b706b4e3d069fdf1508" title="The selected Task. " alt="" coords="460,97,699,123"/>
+<area shape="rect" id="node5" href="$d8/df4/classnars_1_1storage_1_1Memory_aec1106814819aa1c8437001c2c4bf1a3.html#aec1106814819aa1c8437001c2c4bf1a3" title="Shared final operations by all single&#45;premise rules, called in StructuralRules. " alt="" coords="229,115,411,156"/>
+<area shape="rect" id="node3" href="$d6/d25/classnars_1_1entity_1_1Sentence_ad1ded9a02cae3557948d05530cd4d37e.html#ad1ded9a02cae3557948d05530cd4d37e" title="Get the content of the sentence. " alt="" coords="497,5,661,47"/>
+</map>

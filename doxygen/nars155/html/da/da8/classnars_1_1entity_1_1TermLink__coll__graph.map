@@ -1,0 +1,5 @@
+<map id="nars.entity.TermLink" name="nars.entity.TermLink">
+<area shape="rect" id="node2" href="$d1/dd1/classnars_1_1entity_1_1Item.html" title="An item is an object that can be put into a Bag, to participate in the resource competition of the sy..." alt="" coords="133,477,251,760"/>
+<area shape="rect" id="node4" href="$db/d8e/classnars_1_1entity_1_1BudgetValue.html" title="A triple of priority (current), durability (decay), and quality (long&#45;term average). " alt="" coords="111,132,273,415"/>
+<area shape="rect" id="node6" href="$d8/db8/classnars_1_1language_1_1Term.html" title="Term is the basic component of Narsese, and the object of processing in NARS. " alt="" coords="375,492,513,745"/>
+</map>

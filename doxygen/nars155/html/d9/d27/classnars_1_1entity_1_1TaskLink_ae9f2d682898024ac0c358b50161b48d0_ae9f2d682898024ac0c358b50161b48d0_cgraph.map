@@ -1,0 +1,5 @@
+<map id="nars.entity.TaskLink.toString" name="nars.entity.TaskLink.toString">
+<area shape="rect" id="node2" href="$dc/ddc/classnars_1_1entity_1_1Task_ab140cb553a6cf40b07093d1df283567f.html#ab140cb553a6cf40b07093d1df283567f" title="Get the sentence. " alt="" coords="243,5,436,32"/>
+<area shape="rect" id="node3" href="$d6/d25/classnars_1_1entity_1_1Sentence_ac0ed749c50e55120d5b63219ed7eb082.html#ac0ed749c50e55120d5b63219ed7eb082" title="Get the stamp of the sentence. " alt="" coords="257,57,421,98"/>
+<area shape="rect" id="node4" href="$d9/d27/classnars_1_1entity_1_1TaskLink_a60ac6941518e78c1f0049b90437b9053.html#a60ac6941518e78c1f0049b90437b9053" title="Get the target Task. " alt="" coords="258,122,421,163"/>
+</map>

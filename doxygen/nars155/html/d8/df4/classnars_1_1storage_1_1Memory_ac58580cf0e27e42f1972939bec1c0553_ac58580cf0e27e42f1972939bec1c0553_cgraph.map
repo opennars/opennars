@@ -1,0 +1,12 @@
+<map id="nars.storage.Memory.init" name="nars.storage.Memory.init">
+<area shape="rect" id="node2" href="$db/d34/interfacenars_1_1io_1_1IInferenceRecorder_acb473be6e5d774c10781bc8e74453459.html#acb473be6e5d774c10781bc8e74453459" title="Add new text to display. " alt="" coords="220,5,443,32"/>
+<area shape="rect" id="node3" href="$d8/df4/classnars_1_1storage_1_1Memory_a33af7b3d806d32c85390563fec3c6d27.html#a33af7b3d806d32c85390563fec3c6d27" title="Concept bag. " alt="" coords="220,56,443,83"/>
+<area shape="rect" id="node4" href="$d8/df4/classnars_1_1storage_1_1Memory_a1a17565c7b06ca4ecc1ed57c3fce973f.html#a1a17565c7b06ca4ecc1ed57c3fce973f" title="List of Strings or Tasks to be sent to the output channels. " alt="" coords="229,107,434,149"/>
+<area shape="rect" id="node5" href="$d8/df4/classnars_1_1storage_1_1Memory_a8c50bdf4f2750032f24965e12e9fb59c.html#a8c50bdf4f2750032f24965e12e9fb59c" title="List of new tasks accumulated in one cycle, to be processed in the next cycle. " alt="" coords="234,173,429,214"/>
+<area shape="rect" id="node6" href="$d8/df4/classnars_1_1storage_1_1Memory_aa15a4cd104018dc9b98ceaa12d54255d.html#aa15a4cd104018dc9b98ceaa12d54255d" title="New tasks with novel composed terms, for delayed and selective processing. " alt="" coords="231,238,432,279"/>
+<area shape="rect" id="node7" href="$d8/df4/classnars_1_1storage_1_1Memory_a076ad9a0e872386bca3f2d17fa7cb2d4.html#a076ad9a0e872386bca3f2d17fa7cb2d4" title="Backward pointer to the reasoner. " alt="" coords="220,304,443,331"/>
+<area shape="rect" id="node8" href="$d8/df4/classnars_1_1storage_1_1Memory_aa4c7e1f5823d0404c0cab49b617968f1.html#aa4c7e1f5823d0404c0cab49b617968f1" title="Inference record text to be written into a log file. " alt="" coords="221,355,441,381"/>
+<area shape="rect" id="node9" href="$d9/d37/classnars_1_1storage_1_1Bag_a4f481c434a5a4ac0004138ba81fd426f.html#a4f481c434a5a4ac0004138ba81fd426f" title="nars.storage.Bag.init" alt="" coords="260,405,403,432"/>
+<area shape="rect" id="node10" href="$dd/da5/classnars_1_1storage_1_1Memory_1_1ReasonerBatch_af29e66c0813aeea26cc4afea9735473e.html#af29e66c0813aeea26cc4afea9735473e" title="nars.storage.Memory.Reasoner\lBatch.initTimer" alt="" coords="229,457,434,498"/>
+<area shape="rect" id="node11" href="$dd/da5/classnars_1_1storage_1_1Memory_1_1ReasonerBatch_a364bf53ee103367ae0518803bc746bc2.html#a364bf53ee103367ae0518803bc746bc2" title="nars.storage.Memory.Reasoner\lBatch.setTimer" alt="" coords="491,457,696,498"/>
+</map>

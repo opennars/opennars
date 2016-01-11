@@ -1,0 +1,6 @@
+<map id="nars.language.IntersectionExt.clone" name="nars.language.IntersectionExt.clone">
+<area shape="rect" id="node2" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a4f199daa7588f86b81b0912a5e52dfe0.html#a4f199daa7588f86b81b0912a5e52dfe0" title="Deep clone an array list of terms. " alt="" coords="228,5,484,32"/>
+<area shape="rect" id="node4" href="$d2/d68/classnars_1_1language_1_1IntersectionExt_a43c0383322a3867944025bbd19aaba7f.html#a43c0383322a3867944025bbd19aaba7f" title="Constructor with partial values, called by make. " alt="" coords="269,57,443,98"/>
+<area shape="rect" id="node5" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_aee0ef6fd533b58caf22bee2a98eef67d.html#aee0ef6fd533b58caf22bee2a98eef67d" title="check if the term contains free variable " alt="" coords="249,122,463,163"/>
+<area shape="rect" id="node3" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a963e8aef1163f4ed8c364b5e448deaff.html#a963e8aef1163f4ed8c364b5e448deaff" title="Abstract clone method. " alt="" coords="532,5,767,32"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="nars.language.ImageInt.clone" name="nars.language.ImageInt.clone">
+<area shape="rect" id="node2" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a4f199daa7588f86b81b0912a5e52dfe0.html#a4f199daa7588f86b81b0912a5e52dfe0" title="Deep clone an array list of terms. " alt="" coords="247,5,503,32"/>
+<area shape="rect" id="node4" href="$df/de3/classnars_1_1language_1_1ImageInt_a588d82aa3f377df8c58de039088ee835.html#a588d82aa3f377df8c58de039088ee835" title="constructor with partial values, called by make " alt="" coords="268,56,481,83"/>
+<area shape="rect" id="node5" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_aee0ef6fd533b58caf22bee2a98eef67d.html#aee0ef6fd533b58caf22bee2a98eef67d" title="check if the term contains free variable " alt="" coords="267,107,482,149"/>
+<area shape="rect" id="node3" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a963e8aef1163f4ed8c364b5e448deaff.html#a963e8aef1163f4ed8c364b5e448deaff" title="Abstract clone method. " alt="" coords="551,5,785,32"/>
+</map>

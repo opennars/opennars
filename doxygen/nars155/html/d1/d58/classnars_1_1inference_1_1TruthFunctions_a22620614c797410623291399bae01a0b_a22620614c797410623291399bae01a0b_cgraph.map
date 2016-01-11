@@ -1,0 +1,6 @@
+<map id="nars.inference.TruthFunctions.revision" name="nars.inference.TruthFunctions.revision">
+<area shape="rect" id="node2" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a2020576689d5aebb96d6915150cc7b9d.html#a2020576689d5aebb96d6915150cc7b9d" title="A function to convert confidence to weight. " alt="" coords="297,5,524,32"/>
+<area shape="rect" id="node3" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a68ca7d92e9ea20d2a9a9f578ad7b681c.html#a68ca7d92e9ea20d2a9a9f578ad7b681c" title="Get the confidence value. " alt="" coords="325,57,497,98"/>
+<area shape="rect" id="node4" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a9eac33f2495441c77911a8581a5bbe61.html#a9eac33f2495441c77911a8581a5bbe61" title="Get the frequency value. " alt="" coords="325,122,497,163"/>
+<area shape="rect" id="node5" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a957a91e3b91d4a4043c3959838c370f2.html#a957a91e3b91d4a4043c3959838c370f2" title="A function to convert weight to confidence. " alt="" coords="297,188,524,215"/>
+</map>

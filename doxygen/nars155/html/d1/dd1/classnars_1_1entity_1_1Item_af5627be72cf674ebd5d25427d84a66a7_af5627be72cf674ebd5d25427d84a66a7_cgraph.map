@@ -1,0 +1,11 @@
+<map id="nars.entity.Item.merge" name="nars.entity.Item.merge">
+<area shape="rect" id="node2" href="$d1/dd1/classnars_1_1entity_1_1Item_a54fc0a370b847dd77c0a698c765e6e55.html#a54fc0a370b847dd77c0a698c765e6e55" title="Get BudgetValue. " alt="" coords="219,93,395,119"/>
+<area shape="rect" id="node3" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_a4fdeae08389c60a4d89bc0b85a92848f.html#a4fdeae08389c60a4d89bc0b85a92848f" title="Merge one BudgetValue into another. " alt="" coords="207,143,408,170"/>
+<area shape="rect" id="node4" href="$d7/d11/classnars_1_1inference_1_1BudgetFunctions_a64bec0b466ef31bc3150de23f0623309.html#a64bec0b466ef31bc3150de23f0623309" title="Merge an item into another one in a bag, when the two are identical except in budget values..." alt="" coords="456,143,703,170"/>
+<area shape="rect" id="node5" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_a088e64163126211239b6afd25a9cdca3.html#a088e64163126211239b6afd25a9cdca3" title="Increase priority value by a percentage of the remaining range. " alt="" coords="751,5,933,47"/>
+<area shape="rect" id="node7" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_ab72bce41fd8a1512fc8baa07ed93fc1b.html#ab72bce41fd8a1512fc8baa07ed93fc1b" title="Change durability value. " alt="" coords="751,71,933,112"/>
+<area shape="rect" id="node8" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_ab0e0dc2172d3fab6390670acb68da1a6.html#ab0e0dc2172d3fab6390670acb68da1a6" title="Get durability value. " alt="" coords="751,136,933,177"/>
+<area shape="rect" id="node9" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_ab134287bfbdfe703501697c5f9eac50b.html#ab134287bfbdfe703501697c5f9eac50b" title="Change quality value. " alt="" coords="751,201,933,243"/>
+<area shape="rect" id="node10" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_ae48fee1252f685c6ce2033bb855d13e1.html#ae48fee1252f685c6ce2033bb855d13e1" title="Get quality value. " alt="" coords="751,267,933,308"/>
+<area shape="rect" id="node6" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a24093a77b49f21322e62c9bed7ff5ee2.html#a24093a77b49f21322e62c9bed7ff5ee2" title="A function where the output is disjunctively determined by the inputs. " alt="" coords="981,13,1196,39"/>
+</map>

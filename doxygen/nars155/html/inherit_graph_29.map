@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$d1/dd1/classnars_1_1entity_1_1Item.html" title="An item is an object that can be put into a Bag, to participate in the resource competition of the sy..." alt="" coords="136,56,249,83"/>
+<area shape="rect" id="node3" href="$d4/d22/classnars_1_1entity_1_1Concept.html" title="A concept contains information associated with a term, including directly and indirectly related task..." alt="" coords="300,5,436,32"/>
+<area shape="rect" id="node4" href="$dc/ddc/classnars_1_1entity_1_1Task.html" title="A task to be processed, consists of a Sentence and a BudgetValue. " alt="" coords="310,56,426,83"/>
+<area shape="rect" id="node5" href="$d4/d8b/classnars_1_1entity_1_1TermLink.html" title="A link between a compound term and a component term. " alt="" coords="297,107,439,133"/>
+<area shape="rect" id="node6" href="$d9/d27/classnars_1_1entity_1_1TaskLink.html" title="Reference to a Task. " alt="" coords="487,107,627,133"/>
+</map>

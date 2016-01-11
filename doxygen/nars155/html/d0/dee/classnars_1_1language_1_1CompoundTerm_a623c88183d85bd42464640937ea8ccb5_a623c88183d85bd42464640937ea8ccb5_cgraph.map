@@ -1,0 +1,8 @@
+<map id="nars.language.CompoundTerm.setComponent" name="nars.language.CompoundTerm.setComponent">
+<area shape="rect" id="node2" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a5923e4b211c0c1e1e53b39ebed2c7be1.html#a5923e4b211c0c1e1e53b39ebed2c7be1" title="Clone the component list. " alt="" coords="277,5,511,47"/>
+<area shape="rect" id="node5" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a89000afae8017231889aaa549292d1e0.html#a89000afae8017231889aaa549292d1e0" title="Default constructor. " alt="" coords="292,71,496,112"/>
+<area shape="rect" id="node6" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_ae4b161399fd4fa864f9a5cf6e1a4ed83.html#ae4b161399fd4fa864f9a5cf6e1a4ed83" title="Try to make a compound term from a template and a list of components. " alt="" coords="276,137,512,163"/>
+<area shape="rect" id="node3" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a4f199daa7588f86b81b0912a5e52dfe0.html#a4f199daa7588f86b81b0912a5e52dfe0" title="Deep clone an array list of terms. " alt="" coords="560,13,816,39"/>
+<area shape="rect" id="node4" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a963e8aef1163f4ed8c364b5e448deaff.html#a963e8aef1163f4ed8c364b5e448deaff" title="Abstract clone method. " alt="" coords="864,13,1099,39"/>
+<area shape="rect" id="node7" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a786848bcf438b17b9aa566b9b0c04e5f.html#a786848bcf438b17b9aa566b9b0c04e5f" title="Abstract method to get the operator of the compound. " alt="" coords="563,137,813,163"/>
+</map>

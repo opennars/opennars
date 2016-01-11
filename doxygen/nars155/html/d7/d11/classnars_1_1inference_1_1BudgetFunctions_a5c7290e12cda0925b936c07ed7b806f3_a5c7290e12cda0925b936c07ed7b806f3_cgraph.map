@@ -1,0 +1,7 @@
+<map id="nars.inference.BudgetFunctions.rankBelief" name="nars.inference.BudgetFunctions.rankBelief">
+<area shape="rect" id="node2" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a68ca7d92e9ea20d2a9a9f578ad7b681c.html#a68ca7d92e9ea20d2a9a9f578ad7b681c" title="Get the confidence value. " alt="" coords="309,5,481,47"/>
+<area shape="rect" id="node3" href="$d6/d25/classnars_1_1entity_1_1Sentence_ac0ed749c50e55120d5b63219ed7eb082.html#ac0ed749c50e55120d5b63219ed7eb082" title="Get the stamp of the sentence. " alt="" coords="313,71,477,112"/>
+<area shape="rect" id="node4" href="$d6/d25/classnars_1_1entity_1_1Sentence_a9f69b4fef64c81abad21404946cd41f9.html#a9f69b4fef64c81abad21404946cd41f9" title="Get the truth value of the sentence. " alt="" coords="313,136,477,177"/>
+<area shape="rect" id="node5" href="$d1/d1e/classnars_1_1entity_1_1Stamp_a316ac8d258c291cb941e50f17c2dc0eb.html#a316ac8d258c291cb941e50f17c2dc0eb" title="Return the baseLength of the evidentialBase. " alt="" coords="313,202,477,229"/>
+<area shape="rect" id="node6" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a24093a77b49f21322e62c9bed7ff5ee2.html#a24093a77b49f21322e62c9bed7ff5ee2" title="A function where the output is disjunctively determined by the inputs. " alt="" coords="288,253,503,279"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="nars.language.CompoundTerm.prepareComponentLinks" name="nars.language.CompoundTerm.prepareComponentLinks">
+<area shape="rect" id="node2" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_acedae916705e9fa1669391a7d728b840.html#acedae916705e9fa1669391a7d728b840" title="get a component by index " alt="" coords="300,5,581,32"/>
+<area shape="rect" id="node3" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a89000afae8017231889aaa549292d1e0.html#a89000afae8017231889aaa549292d1e0" title="Default constructor. " alt="" coords="339,57,543,98"/>
+<area shape="rect" id="node4" href="$d8/db8/classnars_1_1language_1_1Term_a88297bdbbfb5f3e292783647b14f0c70.html#a88297bdbbfb5f3e292783647b14f0c70" title="Check whether the current Term can name a Concept. " alt="" coords="339,123,543,149"/>
+<area shape="rect" id="node5" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_ac81c5851f664320ddec435641f198b03.html#ac81c5851f664320ddec435641f198b03" title="get the number of components " alt="" coords="327,173,555,200"/>
+</map>

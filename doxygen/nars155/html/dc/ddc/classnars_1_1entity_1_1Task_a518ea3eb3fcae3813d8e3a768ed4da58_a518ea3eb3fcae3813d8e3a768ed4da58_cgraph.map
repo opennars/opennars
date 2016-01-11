@@ -1,0 +1,5 @@
+<map id="nars.entity.Task.merge" name="nars.entity.Task.merge">
+<area shape="rect" id="node2" href="$dc/ddc/classnars_1_1entity_1_1Task_a1f643668b958d700afee3616f0baf93f.html#a1f643668b958d700afee3616f0baf93f" title="Directly get the creation time of the sentence. " alt="" coords="209,35,425,61"/>
+<area shape="rect" id="node3" href="$d1/d1e/classnars_1_1entity_1_1Stamp_acb0b161e2d2fb0cbfb33b44ec2a29075.html#acb0b161e2d2fb0cbfb33b44ec2a29075" title="Get the creationTime of the truth&#45;value. " alt="" coords="473,5,699,32"/>
+<area shape="rect" id="node4" href="$d6/d25/classnars_1_1entity_1_1Sentence_ac0ed749c50e55120d5b63219ed7eb082.html#ac0ed749c50e55120d5b63219ed7eb082" title="Get the stamp of the sentence. " alt="" coords="504,57,668,98"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="nars.language.ImageExt.make" name="nars.language.ImageExt.make">
+<area shape="rect" id="node2" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a5923e4b211c0c1e1e53b39ebed2c7be1.html#a5923e4b211c0c1e1e53b39ebed2c7be1" title="Clone the component list. " alt="" coords="275,5,510,47"/>
+<area shape="rect" id="node5" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_acedae916705e9fa1669391a7d728b840.html#acedae916705e9fa1669391a7d728b840" title="get a component by index " alt="" coords="252,71,533,98"/>
+<area shape="rect" id="node6" href="$d8/db8/classnars_1_1language_1_1Term_ad85f45a7858737445d5158801774ff5f.html#ad85f45a7858737445d5158801774ff5f" title="Equal terms have identical name, though not necessarily the same reference. " alt="" coords="303,122,482,149"/>
+<area shape="rect" id="node8" href="$db/dbb/classnars_1_1language_1_1ImageExt_afb24af5cc6c098ad3f5d837fa383e69c.html#afb24af5cc6c098ad3f5d837fa383e69c" title="Try to make a new ImageExt. " alt="" coords="293,173,492,199"/>
+<area shape="rect" id="node9" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_ac81c5851f664320ddec435641f198b03.html#ac81c5851f664320ddec435641f198b03" title="get the number of components " alt="" coords="279,223,507,250"/>
+<area shape="rect" id="node3" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a4f199daa7588f86b81b0912a5e52dfe0.html#a4f199daa7588f86b81b0912a5e52dfe0" title="Deep clone an array list of terms. " alt="" coords="581,13,837,39"/>
+<area shape="rect" id="node4" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a963e8aef1163f4ed8c364b5e448deaff.html#a963e8aef1163f4ed8c364b5e448deaff" title="Abstract clone method. " alt="" coords="885,13,1120,39"/>
+<area shape="rect" id="node7" href="$d8/db8/classnars_1_1language_1_1Term_a3aad4654016b8615fd4fa8a26668e1db.html#a3aad4654016b8615fd4fa8a26668e1db" title="Reporting the name of the current Term. " alt="" coords="612,122,807,149"/>
+</map>

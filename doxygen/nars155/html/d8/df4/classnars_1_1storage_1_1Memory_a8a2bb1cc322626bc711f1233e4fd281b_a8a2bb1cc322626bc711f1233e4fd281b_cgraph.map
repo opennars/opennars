@@ -1,0 +1,5 @@
+<map id="nars.storage.Memory.taskBuffersStartPlay" name="nars.storage.Memory.taskBuffersStartPlay">
+<area shape="rect" id="node2" href="$d9/d37/classnars_1_1storage_1_1Bag_a73a559e1b77e6bc3a7db686816accef2.html#a73a559e1b77e6bc3a7db686816accef2" title="To start displaying the Bag in a BagWindow. " alt="" coords="228,5,451,32"/>
+<area shape="rect" id="node3" href="$d8/df4/classnars_1_1storage_1_1Memory_aa15a4cd104018dc9b98ceaa12d54255d.html#aa15a4cd104018dc9b98ceaa12d54255d" title="New tasks with novel composed terms, for delayed and selective processing. " alt="" coords="239,57,440,98"/>
+<area shape="rect" id="node4" href="$df/d32/interfacenars_1_1storage_1_1BagObserver_ae0455b8e5d7053bd0a868d1c45616bfd.html#ae0455b8e5d7053bd0a868d1c45616bfd" title="nars.storage.BagObserver.setBag" alt="" coords="230,123,449,149"/>
+</map>

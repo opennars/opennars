@@ -1,0 +1,7 @@
+<map id="nars.language.CompoundTerm.CompoundTerm" name="nars.language.CompoundTerm.CompoundTerm">
+<area shape="rect" id="node2" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_aa28e96a54f884dc827849fc17c372bff.html#aa28e96a54f884dc827849fc17c372bff" title="The complexity of the term is the sum of those of the components plus 1. " alt="" coords="257,12,485,53"/>
+<area shape="rect" id="node3" href="$de/da5/classnars_1_1language_1_1Variable_a2c36e85a56295a27aba7a4ee162f5850.html#a2c36e85a56295a27aba7a4ee162f5850" title="Check whether a string represent a name of a term that contains a variable. " alt="" coords="261,78,481,105"/>
+<area shape="rect" id="node4" href="$de/da5/classnars_1_1language_1_1Variable_a9caa9f23d798ce1913cfca744ddd1c15.html#a9caa9f23d798ce1913cfca744ddd1c15" title="Check whether a string represent a name of a term that contains an independent variable. " alt="" coords="533,5,733,47"/>
+<area shape="rect" id="node5" href="$de/da5/classnars_1_1language_1_1Variable_a3a7ee29b5a23255edf3dbca5f85f7b44.html#a3a7ee29b5a23255edf3dbca5f85f7b44" title="Check whether a string represent a name of a term that contains a dependent variable. " alt="" coords="533,71,733,112"/>
+<area shape="rect" id="node6" href="$de/da5/classnars_1_1language_1_1Variable_a25dcc4d5882131d679903f93d41420c9.html#a25dcc4d5882131d679903f93d41420c9" title="Check whether a string represent a name of a term that contains a query variable. ..." alt="" coords="533,136,733,177"/>
+</map>

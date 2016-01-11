@@ -1,0 +1,5 @@
+<map id="nars.entity.Stamp.make" name="nars.entity.Stamp.make">
+<area shape="rect" id="node2" href="$d1/d1e/classnars_1_1entity_1_1Stamp_a546d6921dc3e1e4a9d1b80bf7f0356b4.html#a546d6921dc3e1e4a9d1b80bf7f0356b4" title="Get a number from the evidentialBase by index, called in this class only. " alt="" coords="225,5,371,32"/>
+<area shape="rect" id="node3" href="$d1/d1e/classnars_1_1entity_1_1Stamp_a316ac8d258c291cb941e50f17c2dc0eb.html#a316ac8d258c291cb941e50f17c2dc0eb" title="Return the baseLength of the evidentialBase. " alt="" coords="216,56,380,83"/>
+<area shape="rect" id="node4" href="$d1/d1e/classnars_1_1entity_1_1Stamp_a959f21fb20f72cfd277d994332e862c3.html#a959f21fb20f72cfd277d994332e862c3" title="Generate a new stamp, with a new serial number, for a new Task. " alt="" coords="215,107,381,133"/>
+</map>

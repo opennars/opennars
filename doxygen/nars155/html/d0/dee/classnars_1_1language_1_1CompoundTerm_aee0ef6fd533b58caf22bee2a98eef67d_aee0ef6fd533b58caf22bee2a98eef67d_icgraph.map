@@ -1,0 +1,21 @@
+<map id="nars.language.CompoundTerm.isConstant" name="nars.language.CompoundTerm.isConstant">
+<area shape="rect" id="node2" href="$d6/d98/classnars_1_1language_1_1Conjunction_afab922cb7b88c6cb7ae619f20b4c90ed.html#afab922cb7b88c6cb7ae619f20b4c90ed" title="Clone an object. " alt="" coords="274,5,485,32"/>
+<area shape="rect" id="node3" href="$da/db6/classnars_1_1language_1_1Implication_a2d8bb553b90caaeb73a797087e52cb17.html#a2d8bb553b90caaeb73a797087e52cb17" title="Clone an object. " alt="" coords="277,56,482,83"/>
+<area shape="rect" id="node4" href="$d1/d8b/classnars_1_1language_1_1Equivalence_a1c49bb1a2ca313cf3807bfec63c9f731.html#a1c49bb1a2ca313cf3807bfec63c9f731" title="Clone an object. " alt="" coords="273,107,486,133"/>
+<area shape="rect" id="node5" href="$de/d1d/classnars_1_1language_1_1SetExt_aad126e022fc7ce5cf5ed1112655ba413.html#aad126e022fc7ce5cf5ed1112655ba413" title="Clone a SetExt. " alt="" coords="288,157,471,184"/>
+<area shape="rect" id="node6" href="$d3/d12/classnars_1_1language_1_1DifferenceExt_adce6da4f9eb348cdc59c3493f039f50a.html#adce6da4f9eb348cdc59c3493f039f50a" title="Clone an object. " alt="" coords="296,209,463,250"/>
+<area shape="rect" id="node7" href="$d4/d5b/classnars_1_1language_1_1DifferenceInt_a4809c7a0fe8a14837469fd9b819fad99.html#a4809c7a0fe8a14837469fd9b819fad99" title="Clone an object. " alt="" coords="296,274,463,315"/>
+<area shape="rect" id="node8" href="$d9/d5d/classnars_1_1language_1_1Disjunction_a145c54f6e9263769fd8e751e8245b426.html#a145c54f6e9263769fd8e751e8245b426" title="Clone an object. " alt="" coords="276,340,483,367"/>
+<area shape="rect" id="node9" href="$d2/dfc/classnars_1_1language_1_1SetInt_aabb9d80867d444bfa781a3c628cb73f7.html#aabb9d80867d444bfa781a3c628cb73f7" title="Clone a SetInt. " alt="" coords="291,391,468,417"/>
+<area shape="rect" id="node10" href="$d0/df3/classnars_1_1language_1_1Inheritance_a30b9a743c58d8aa4f172d00ef04a8891.html#a30b9a743c58d8aa4f172d00ef04a8891" title="Clone an object. " alt="" coords="276,441,483,468"/>
+<area shape="rect" id="node11" href="$d2/d68/classnars_1_1language_1_1IntersectionExt_af5972d508155a133710574b3fc58e1d9.html#af5972d508155a133710574b3fc58e1d9" title="Clone an object. " alt="" coords="292,493,467,534"/>
+<area shape="rect" id="node12" href="$da/d1e/classnars_1_1language_1_1Negation_aa75de1d079c9867de603470387c64998.html#aa75de1d079c9867de603470387c64998" title="Clone an object. " alt="" coords="282,559,477,585"/>
+<area shape="rect" id="node13" href="$d9/df4/classnars_1_1language_1_1IntersectionInt_a6f20109d61f2aa3afc159873cd36d7c3.html#a6f20109d61f2aa3afc159873cd36d7c3" title="Clone an object. " alt="" coords="292,610,467,651"/>
+<area shape="rect" id="node14" href="$d3/d1f/classnars_1_1language_1_1Similarity_a186e43d1f6a471425fe6cdf3bd951dac.html#a186e43d1f6a471425fe6cdf3bd951dac" title="Clone an object. " alt="" coords="281,676,477,703"/>
+<area shape="rect" id="node15" href="$d8/d73/classnars_1_1language_1_1Product_a0d1189bcbcf720c3818cb2ebc953cd64.html#a0d1189bcbcf720c3818cb2ebc953cd64" title="Clone a Product. " alt="" coords="286,727,473,753"/>
+<area shape="rect" id="node16" href="$db/dbb/classnars_1_1language_1_1ImageExt_ac5fdab0792feb897ec29059f1f7f4b03.html#ac5fdab0792feb897ec29059f1f7f4b03" title="Clone an object. " alt="" coords="280,777,479,804"/>
+<area shape="rect" id="node17" href="$df/de3/classnars_1_1language_1_1ImageInt_a926536f74b2950c52901d5299f06c019.html#a926536f74b2950c52901d5299f06c019" title="Clone an object. " alt="" coords="283,828,476,855"/>
+<area shape="rect" id="node18" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a4800a7c8dd9043a2bffecd669aa4cfe2.html#a4800a7c8dd9043a2bffecd669aa4cfe2" title="Constructor called from subclasses constructors to clone the fields. " alt="" coords="277,879,481,921"/>
+<area shape="rect" id="node19" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_aba82571567444c65efde4cdba1733ac9.html#aba82571567444c65efde4cdba1733ac9" title="Set the constant status. " alt="" coords="268,945,491,986"/>
+<area shape="rect" id="node20" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_ac19f90fbe8b8ebe78462fa13e7ebca74.html#ac19f90fbe8b8ebe78462fa13e7ebca74" title="Rename the variables in the compound. " alt="" coords="539,945,785,986"/>
+</map>

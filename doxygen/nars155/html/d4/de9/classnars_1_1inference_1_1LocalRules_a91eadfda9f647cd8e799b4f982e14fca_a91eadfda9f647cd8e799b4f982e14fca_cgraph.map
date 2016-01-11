@@ -1,0 +1,9 @@
+<map id="nars.inference.LocalRules.solutionQuality" name="nars.inference.LocalRules.solutionQuality">
+<area shape="rect" id="node2" href="$d6/d25/classnars_1_1entity_1_1Sentence_a3664d0b53eca935536d60cd0e3a13256.html#a3664d0b53eca935536d60cd0e3a13256" title="nars.entity.Sentence.contain\lQueryVar" alt="" coords="295,5,483,47"/>
+<area shape="rect" id="node4" href="$d8/db8/classnars_1_1language_1_1Term_ae14632d1d25bcde8d6698ea0b58eb19a.html#ae14632d1d25bcde8d6698ea0b58eb19a" title="The syntactic complexity, for constant automic Term, is 1. " alt="" coords="276,71,501,98"/>
+<area shape="rect" id="node5" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a68ca7d92e9ea20d2a9a9f578ad7b681c.html#a68ca7d92e9ea20d2a9a9f578ad7b681c" title="Get the confidence value. " alt="" coords="303,123,475,164"/>
+<area shape="rect" id="node6" href="$d6/d25/classnars_1_1entity_1_1Sentence_ad1ded9a02cae3557948d05530cd4d37e.html#ad1ded9a02cae3557948d05530cd4d37e" title="Get the content of the sentence. " alt="" coords="307,188,471,229"/>
+<area shape="rect" id="node7" href="$d3/db8/classnars_1_1entity_1_1TruthValue_aa5ffcde3ae611b087ba7fdd4cd67b216.html#aa5ffcde3ae611b087ba7fdd4cd67b216" title="Calculate the expectation value of the truth value. " alt="" coords="303,253,475,295"/>
+<area shape="rect" id="node8" href="$d6/d25/classnars_1_1entity_1_1Sentence_a9f69b4fef64c81abad21404946cd41f9.html#a9f69b4fef64c81abad21404946cd41f9" title="Get the truth value of the sentence. " alt="" coords="307,319,471,360"/>
+<area shape="rect" id="node3" href="$d8/db8/classnars_1_1language_1_1Term_a3aad4654016b8615fd4fa8a26668e1db.html#a3aad4654016b8615fd4fa8a26668e1db" title="Reporting the name of the current Term. " alt="" coords="549,13,744,39"/>
+</map>

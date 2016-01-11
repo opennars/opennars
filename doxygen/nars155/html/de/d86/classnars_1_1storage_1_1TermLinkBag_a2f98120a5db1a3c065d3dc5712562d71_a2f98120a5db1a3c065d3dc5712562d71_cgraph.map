@@ -1,0 +1,11 @@
+<map id="nars.storage.TermLinkBag.takeOut" name="nars.storage.TermLinkBag.takeOut">
+<area shape="rect" id="node2" href="$d9/d27/classnars_1_1entity_1_1TaskLink_afea026df0afd74986f940d10a7875a2f.html#afea026df0afd74986f940d10a7875a2f" title="To check whether a TaskLink should use a TermLink, return false if they interacted recently..." alt="" coords="285,123,459,149"/>
+<area shape="rect" id="node9" href="$d9/d37/classnars_1_1storage_1_1Bag_a64b0b75c54e6882a28702d7810094656.html#a64b0b75c54e6882a28702d7810094656" title="Put an item back into the itemTable. " alt="" coords="279,174,465,215"/>
+<area shape="rect" id="node10" href="$d9/d37/classnars_1_1storage_1_1Bag_a775c0537431b865015facac73e698891.html#a775c0537431b865015facac73e698891" title="Choose an Item according to priority distribution and take it out of the Bag. " alt="" coords="279,239,465,281"/>
+<area shape="rect" id="node3" href="$d8/db8/classnars_1_1language_1_1Term_ad85f45a7858737445d5158801774ff5f.html#ad85f45a7858737445d5158801774ff5f" title="Equal terms have identical name, though not necessarily the same reference. " alt="" coords="521,5,699,32"/>
+<area shape="rect" id="node5" href="$d6/d25/classnars_1_1entity_1_1Sentence_ad1ded9a02cae3557948d05530cd4d37e.html#ad1ded9a02cae3557948d05530cd4d37e" title="Get the content of the sentence. " alt="" coords="528,57,692,98"/>
+<area shape="rect" id="node6" href="$d1/dd1/classnars_1_1entity_1_1Item_ab5c9fbb171f325844966b496010acf60.html#ab5c9fbb171f325844966b496010acf60" title="Get the current key. " alt="" coords="531,123,689,149"/>
+<area shape="rect" id="node7" href="$dc/ddc/classnars_1_1entity_1_1Task_ab140cb553a6cf40b07093d1df283567f.html#ab140cb553a6cf40b07093d1df283567f" title="Get the sentence. " alt="" coords="513,173,707,200"/>
+<area shape="rect" id="node8" href="$d4/d8b/classnars_1_1entity_1_1TermLink_a133e3243292f9daacaa8443acef6b185.html#a133e3243292f9daacaa8443acef6b185" title="Get the target of the link. " alt="" coords="529,225,691,266"/>
+<area shape="rect" id="node4" href="$d8/db8/classnars_1_1language_1_1Term_a3aad4654016b8615fd4fa8a26668e1db.html#a3aad4654016b8615fd4fa8a26668e1db" title="Reporting the name of the current Term. " alt="" coords="755,5,949,32"/>
+</map>

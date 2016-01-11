@@ -1,0 +1,4 @@
+<map id="nars.inference.BudgetFunctions.merge" name="nars.inference.BudgetFunctions.merge">
+<area shape="rect" id="node2" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_a4fdeae08389c60a4d89bc0b85a92848f.html#a4fdeae08389c60a4d89bc0b85a92848f" title="Merge one BudgetValue into another. " alt="" coords="300,5,501,32"/>
+<area shape="rect" id="node3" href="$d1/dd1/classnars_1_1entity_1_1Item_af5627be72cf674ebd5d25427d84a66a7.html#af5627be72cf674ebd5d25427d84a66a7" title="Merge with another Item with identical key. " alt="" coords="549,5,703,32"/>
+</map>

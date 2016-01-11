@@ -1,0 +1,26 @@
+var classnars_1_1inference_1_1TruthFunctions =
+[
+    [ "abduction", "d1/d58/classnars_1_1inference_1_1TruthFunctions_ab001ba72b5926188d21dd48a5eaaeb8b.html#ab001ba72b5926188d21dd48a5eaaeb8b", null ],
+    [ "abduction", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a3c2af6c7d01507c33ff76a03e2ae6e21.html#a3c2af6c7d01507c33ff76a03e2ae6e21", null ],
+    [ "analogy", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a93ca820557fc8d18ef741bd33501126f.html#a93ca820557fc8d18ef741bd33501126f", null ],
+    [ "anonymousAnalogy", "d1/d58/classnars_1_1inference_1_1TruthFunctions_ad7f4353395335ad37f76d83ea8aae8e2.html#ad7f4353395335ad37f76d83ea8aae8e2", null ],
+    [ "comparison", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a0eded294e31894aad09eb976587a20d3.html#a0eded294e31894aad09eb976587a20d3", null ],
+    [ "contraposition", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a8a24dac0bee6fb26bdf7de4517abe66c.html#a8a24dac0bee6fb26bdf7de4517abe66c", null ],
+    [ "conversion", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a3a5a75db35145955b00958489a5ce50d.html#a3a5a75db35145955b00958489a5ce50d", null ],
+    [ "deduction", "d1/d58/classnars_1_1inference_1_1TruthFunctions_af0cd0f846c8a7e500840b517ab006b94.html#af0cd0f846c8a7e500840b517ab006b94", null ],
+    [ "deduction", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a36d2256df8aa616ab1ac7519a60312c8.html#a36d2256df8aa616ab1ac7519a60312c8", null ],
+    [ "desireDed", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a8fd216794e4f1458287c579cf27956d0.html#a8fd216794e4f1458287c579cf27956d0", null ],
+    [ "desireInd", "d1/d58/classnars_1_1inference_1_1TruthFunctions_aa35b455da68c91d792d6466bf95b908b.html#aa35b455da68c91d792d6466bf95b908b", null ],
+    [ "desireStrong", "d1/d58/classnars_1_1inference_1_1TruthFunctions_aeebc439ecfbe6f4aa80a39f3eda0dc05.html#aeebc439ecfbe6f4aa80a39f3eda0dc05", null ],
+    [ "desireWeak", "d1/d58/classnars_1_1inference_1_1TruthFunctions_ad7bc2b54e412adaf906d962a8e477428.html#ad7bc2b54e412adaf906d962a8e477428", null ],
+    [ "exemplification", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a54676ae3de8c6ef712566837b99d08a1.html#a54676ae3de8c6ef712566837b99d08a1", null ],
+    [ "induction", "d1/d58/classnars_1_1inference_1_1TruthFunctions_aed67308b830f5b1780c075f2736f3ad0.html#aed67308b830f5b1780c075f2736f3ad0", null ],
+    [ "intersection", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a20446cf012806110b595d9d1309bba24.html#a20446cf012806110b595d9d1309bba24", null ],
+    [ "negation", "d1/d58/classnars_1_1inference_1_1TruthFunctions_ace28b3a18d275b33d2a094189842b2ed.html#ace28b3a18d275b33d2a094189842b2ed", null ],
+    [ "reduceConjunction", "d1/d58/classnars_1_1inference_1_1TruthFunctions_ae8945611915519f50ab3392c9168b170.html#ae8945611915519f50ab3392c9168b170", null ],
+    [ "reduceConjunctionNeg", "d1/d58/classnars_1_1inference_1_1TruthFunctions_af3bd991ec2bf11c3c8c622b0857ece31.html#af3bd991ec2bf11c3c8c622b0857ece31", null ],
+    [ "reduceDisjunction", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a2c88a176105542a01810dc2fa4c68a54.html#a2c88a176105542a01810dc2fa4c68a54", null ],
+    [ "resemblance", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a6c1cb2626ef3303a17b5bc84c9da732f.html#a6c1cb2626ef3303a17b5bc84c9da732f", null ],
+    [ "revision", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a22620614c797410623291399bae01a0b.html#a22620614c797410623291399bae01a0b", null ],
+    [ "union", "d1/d58/classnars_1_1inference_1_1TruthFunctions_a471861b5c5919c45388bc871f48b71a2.html#a471861b5c5919c45388bc871f48b71a2", null ]
+];

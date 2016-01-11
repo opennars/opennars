@@ -1,0 +1,9 @@
+<map id="nars.language.Statement.invalid" name="nars.language.Statement.invalid">
+<area shape="rect" id="node2" href="$d1/d5e/classnars_1_1language_1_1Statement_ababe6155e2f78e769f76493317e118e0.html#ababe6155e2f78e769f76493317e118e0" title="Return the second component of the statement. " alt="" coords="525,5,714,47"/>
+<area shape="rect" id="node3" href="$d1/d5e/classnars_1_1language_1_1Statement_ace4f80751d303c613e467163913bebf5.html#ace4f80751d303c613e467163913bebf5" title="Return the first component of the statement. " alt="" coords="525,71,714,112"/>
+<area shape="rect" id="node4" href="$d1/d5e/classnars_1_1language_1_1Statement_a96d4bf7bb99f48b6496cdb7457bc0e50.html#a96d4bf7bb99f48b6496cdb7457bc0e50" title="Check the validity of a potential Statement. " alt="" coords="261,133,469,175"/>
+<area shape="rect" id="node5" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a89000afae8017231889aaa549292d1e0.html#a89000afae8017231889aaa549292d1e0" title="Default constructor. " alt="" coords="517,136,721,177"/>
+<area shape="rect" id="node6" href="$d8/db8/classnars_1_1language_1_1Term_ad85f45a7858737445d5158801774ff5f.html#ad85f45a7858737445d5158801774ff5f" title="Equal terms have identical name, though not necessarily the same reference. " alt="" coords="530,202,709,229"/>
+<area shape="rect" id="node8" href="$d1/d5e/classnars_1_1language_1_1Statement_ac56b558891dd2088e0b66b437780c7b7.html#ac56b558891dd2088e0b66b437780c7b7" title="Default constructor. " alt="" coords="534,253,705,295"/>
+<area shape="rect" id="node7" href="$d8/db8/classnars_1_1language_1_1Term_a3aad4654016b8615fd4fa8a26668e1db.html#a3aad4654016b8615fd4fa8a26668e1db" title="Reporting the name of the current Term. " alt="" coords="769,202,964,229"/>
+</map>

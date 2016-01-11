@@ -1,0 +1,6 @@
+<map id="nars.inference.LocalRules.revisible" name="nars.inference.LocalRules.revisible">
+<area shape="rect" id="node2" href="$d8/db8/classnars_1_1language_1_1Term_ad85f45a7858737445d5158801774ff5f.html#ad85f45a7858737445d5158801774ff5f" title="Equal terms have identical name, though not necessarily the same reference. " alt="" coords="279,5,457,32"/>
+<area shape="rect" id="node4" href="$d6/d25/classnars_1_1entity_1_1Sentence_ad1ded9a02cae3557948d05530cd4d37e.html#ad1ded9a02cae3557948d05530cd4d37e" title="Get the content of the sentence. " alt="" coords="286,57,450,98"/>
+<area shape="rect" id="node5" href="$d6/d25/classnars_1_1entity_1_1Sentence_ae57a195c3623dc9b8245d977adc94b4d.html#ae57a195c3623dc9b8245d977adc94b4d" title="nars.entity.Sentence.get\lRevisible" alt="" coords="286,122,450,163"/>
+<area shape="rect" id="node3" href="$d8/db8/classnars_1_1language_1_1Term_a3aad4654016b8615fd4fa8a26668e1db.html#a3aad4654016b8615fd4fa8a26668e1db" title="Reporting the name of the current Term. " alt="" coords="505,5,700,32"/>
+</map>

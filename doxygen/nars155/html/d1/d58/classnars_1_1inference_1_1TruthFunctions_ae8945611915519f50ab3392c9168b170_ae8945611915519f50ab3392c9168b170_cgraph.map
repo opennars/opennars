@@ -1,0 +1,8 @@
+<map id="nars.inference.TruthFunctions.reduceConjunction" name="nars.inference.TruthFunctions.reduceConjunction">
+<area shape="rect" id="node2" href="$d1/d58/classnars_1_1inference_1_1TruthFunctions_af0cd0f846c8a7e500840b517ab006b94.html#af0cd0f846c8a7e500840b517ab006b94" title="{&lt;S ==&gt; M&gt;, &lt;M ==&gt; P&gt;} |&#45; &lt;S ==&gt; P&gt; " alt="" coords="298,72,553,99"/>
+<area shape="rect" id="node6" href="$d1/d58/classnars_1_1inference_1_1TruthFunctions_a20446cf012806110b595d9d1309bba24.html#a20446cf012806110b595d9d1309bba24" title="{&lt;M &#45;&#45;&gt; S&gt;, &lt;M &lt;&#45;&gt; P&gt;} |&#45; &lt;M &#45;&#45;&gt; (S&amp;P)&gt; " alt="" coords="292,21,559,48"/>
+<area shape="rect" id="node7" href="$d1/d58/classnars_1_1inference_1_1TruthFunctions_ace28b3a18d275b33d2a094189842b2ed.html#ace28b3a18d275b33d2a094189842b2ed" title="{A} |&#45; (–A) " alt="" coords="301,123,549,149"/>
+<area shape="rect" id="node3" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a35ac262407303cdf8d11f7892f9a3a03.html#a35ac262407303cdf8d11f7892f9a3a03" title="A function where the output is conjunctively determined by the inputs. " alt="" coords="607,5,831,32"/>
+<area shape="rect" id="node4" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a68ca7d92e9ea20d2a9a9f578ad7b681c.html#a68ca7d92e9ea20d2a9a9f578ad7b681c" title="Get the confidence value. " alt="" coords="633,122,805,163"/>
+<area shape="rect" id="node5" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a9eac33f2495441c77911a8581a5bbe61.html#a9eac33f2495441c77911a8581a5bbe61" title="Get the frequency value. " alt="" coords="633,57,805,98"/>
+</map>

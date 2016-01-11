@@ -1,0 +1,10 @@
+<map id="nars.language.IntersectionExt.make" name="nars.language.IntersectionExt.make">
+<area shape="rect" id="node2" href="$d2/d68/classnars_1_1language_1_1IntersectionExt_a43c0383322a3867944025bbd19aaba7f.html#a43c0383322a3867944025bbd19aaba7f" title="Constructor with partial values, called by make. " alt="" coords="259,5,433,47"/>
+<area shape="rect" id="node3" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a8d1e610c509fa096c6b52eb5fe06d59b.html#a8d1e610c509fa096c6b52eb5fe06d59b" title="default method to make the oldName of a compound term from given fields " alt="" coords="228,71,464,112"/>
+<area shape="rect" id="node6" href="$d8/df4/classnars_1_1storage_1_1Memory_a63058cc52d77412e0aead8387c23aa93.html#a63058cc52d77412e0aead8387c23aa93" title="Get a Term for a given name of a Concept or Operator. " alt="" coords="255,153,437,195"/>
+<area shape="rect" id="node4" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a89000afae8017231889aaa549292d1e0.html#a89000afae8017231889aaa549292d1e0" title="Default constructor. " alt="" coords="545,12,749,53"/>
+<area shape="rect" id="node5" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_aa26a304f6249c185836d8fde8b8f17a8.html#aa26a304f6249c185836d8fde8b8f17a8" title="default method to make the oldName of the current term from existing fields " alt="" coords="512,78,783,105"/>
+<area shape="rect" id="node7" href="$d8/df4/classnars_1_1storage_1_1Memory_a33af7b3d806d32c85390563fec3c6d27.html#a33af7b3d806d32c85390563fec3c6d27" title="Concept bag. " alt="" coords="536,129,759,155"/>
+<area shape="rect" id="node8" href="$d9/d37/classnars_1_1storage_1_1Bag_a011b37fc683db7fb7b41e33712a37d92.html#a011b37fc683db7fb7b41e33712a37d92" title="Get an Item by key. " alt="" coords="576,179,719,206"/>
+<area shape="rect" id="node9" href="$d4/d22/classnars_1_1entity_1_1Concept_afcd1217b7680b073fa51f0d0f159dcea.html#afcd1217b7680b073fa51f0d0f159dcea" title="Return the associated term, called from Memory only. " alt="" coords="553,230,741,257"/>
+</map>

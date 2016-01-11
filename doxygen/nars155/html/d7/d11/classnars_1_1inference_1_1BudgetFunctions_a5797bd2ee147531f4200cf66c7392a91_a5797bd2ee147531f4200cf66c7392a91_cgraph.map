@@ -1,0 +1,5 @@
+<map id="nars.inference.BudgetFunctions.truthToQuality" name="nars.inference.BudgetFunctions.truthToQuality">
+<area shape="rect" id="node2" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a7649e37bb61cac9b8a2601fdff3a5f7a.html#a7649e37bb61cac9b8a2601fdff3a5f7a" title="A function where the output is the geometric average the inputs. " alt="" coords="289,5,537,32"/>
+<area shape="rect" id="node3" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a68ca7d92e9ea20d2a9a9f578ad7b681c.html#a68ca7d92e9ea20d2a9a9f578ad7b681c" title="Get the confidence value. " alt="" coords="327,57,499,98"/>
+<area shape="rect" id="node4" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a9eac33f2495441c77911a8581a5bbe61.html#a9eac33f2495441c77911a8581a5bbe61" title="Get the frequency value. " alt="" coords="327,122,499,163"/>
+</map>

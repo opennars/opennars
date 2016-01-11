@@ -1,0 +1,4 @@
+<map id="nars.inference.TruthFunctions.negation" name="nars.inference.TruthFunctions.negation">
+<area shape="rect" id="node2" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a68ca7d92e9ea20d2a9a9f578ad7b681c.html#a68ca7d92e9ea20d2a9a9f578ad7b681c" title="Get the confidence value. " alt="" coords="301,5,473,47"/>
+<area shape="rect" id="node3" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a9eac33f2495441c77911a8581a5bbe61.html#a9eac33f2495441c77911a8581a5bbe61" title="Get the frequency value. " alt="" coords="301,71,473,112"/>
+</map>

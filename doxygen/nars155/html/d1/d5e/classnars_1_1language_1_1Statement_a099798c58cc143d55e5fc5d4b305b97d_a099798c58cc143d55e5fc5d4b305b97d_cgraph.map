@@ -1,0 +1,5 @@
+<map id="nars.language.Statement.makeName" name="nars.language.Statement.makeName">
+<area shape="rect" id="node2" href="$d1/d5e/classnars_1_1language_1_1Statement_ababe6155e2f78e769f76493317e118e0.html#ababe6155e2f78e769f76493317e118e0" title="Return the second component of the statement. " alt="" coords="299,5,488,47"/>
+<area shape="rect" id="node3" href="$d1/d5e/classnars_1_1language_1_1Statement_ace4f80751d303c613e467163913bebf5.html#ace4f80751d303c613e467163913bebf5" title="Return the first component of the statement. " alt="" coords="299,71,488,112"/>
+<area shape="rect" id="node4" href="$d1/d5e/classnars_1_1language_1_1Statement_a7123aba1c8c566f291e2c9b9d147557d.html#a7123aba1c8c566f291e2c9b9d147557d" title="Default method to make the nameStr of an image term from given fields. " alt="" coords="292,136,495,177"/>
+</map>

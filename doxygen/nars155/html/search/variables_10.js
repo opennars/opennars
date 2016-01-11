@@ -1,0 +1,13 @@
+var searchData=
+[
+  ['reasoner',['reasoner',['../d7/d69/classnars_1_1io_1_1ExperienceReader_a2360054ef94073abe1df64f06ae20c3a.html#a2360054ef94073abe1df64f06ae20c3a',1,'nars.io.ExperienceReader.reasoner()'],['../d0/d5d/classnars_1_1io_1_1ExperienceWriter_a1623cd330931e9d39d5bfb951b2a611f.html#a1623cd330931e9d39d5bfb951b2a611f',1,'nars.io.ExperienceWriter.reasoner()'],['../d8/df4/classnars_1_1storage_1_1Memory_a481aa9117eaaf8fb057ff76f16481cb6.html#a481aa9117eaaf8fb057ff76f16481cb6',1,'nars.storage.Memory.reasoner()'],['../d4/d88/classnars_1_1storage_1_1Memory_1_1NARSBatch_a153320b4db462e7023e17676cf202022.html#a153320b4db462e7023e17676cf202022',1,'nars.storage.Memory.NARSBatch.reasoner()']]],
+  ['recordedlinks',['recordedLinks',['../d9/d27/classnars_1_1entity_1_1TaskLink_ab09ee26890f38c3e532da7bac1d5cc67.html#ab09ee26890f38c3e532da7bac1d5cc67',1,'nars::entity::TaskLink']]],
+  ['recorder',['recorder',['../d8/df4/classnars_1_1storage_1_1Memory_ad5a9d6afc56ea914b0c5537117ebe8b9.html#ad5a9d6afc56ea914b0c5537117ebe8b9',1,'nars::storage::Memory']]],
+  ['recordingtime',['recordingTime',['../d9/d27/classnars_1_1entity_1_1TaskLink_a8219e84e2e88420ef548f493bafa6891.html#a8219e84e2e88420ef548f493bafa6891',1,'nars::entity::TaskLink']]],
+  ['relationindex',['relationIndex',['../db/dbb/classnars_1_1language_1_1ImageExt_a2447186d99da3fb6a3cd875cfe505772.html#a2447186d99da3fb6a3cd875cfe505772',1,'nars.language.ImageExt.relationIndex()'],['../df/de3/classnars_1_1language_1_1ImageInt_a0363652d73bf1b44da9fc1a35ad9e370.html#a0363652d73bf1b44da9fc1a35ad9e370',1,'nars.language.ImageInt.relationIndex()']]],
+  ['relative_5fthreshold',['RELATIVE_THRESHOLD',['../d9/d37/classnars_1_1storage_1_1Bag_a61d022b3e801efa8cd301a19f1a50ad9.html#a61d022b3e801efa8cd301a19f1a50ad9',1,'nars::storage::Bag']]],
+  ['reliance',['RELIANCE',['../db/d49/classnars_1_1inference_1_1StructuralRules_a91cc846f3173248751ae1a8b45512324.html#a91cc846f3173248751ae1a8b45512324',1,'nars.inference.StructuralRules.RELIANCE()'],['../da/d3b/classnars_1_1storage_1_1Memory_1_1Parameters_af1e0bb76b0926a7f851df81c9f99af7f.html#af1e0bb76b0926a7f851df81c9f99af7f',1,'nars.storage.Memory.Parameters.RELIANCE()']]],
+  ['reset_5fmark',['RESET_MARK',['../dc/d71/classnars_1_1io_1_1Symbols_a5eb6e55e05ec108b04cba52bfc05606e.html#a5eb6e55e05ec108b04cba52bfc05606e',1,'nars::io::Symbols']]],
+  ['revisible',['revisible',['../d6/d25/classnars_1_1entity_1_1Sentence_abe49081ed6962e51de6f1c25eb36fcd6.html#abe49081ed6962e51de6f1c25eb36fcd6',1,'nars::entity::Sentence']]],
+  ['running',['running',['../dd/da5/classnars_1_1storage_1_1Memory_1_1ReasonerBatch_aef7252f44b7536ae7ec31718106b43d5.html#aef7252f44b7536ae7ec31718106b43d5',1,'nars::storage::Memory::ReasonerBatch']]]
+];

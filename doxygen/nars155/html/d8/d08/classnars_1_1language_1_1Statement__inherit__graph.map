@@ -1,0 +1,11 @@
+<map id="nars.language.Statement" name="nars.language.Statement">
+<area shape="rect" id="node7" href="$d1/d8b/classnars_1_1language_1_1Equivalence.html" title="A Statement about an Equivalence relation. " alt="" coords="5,1299,184,1449"/>
+<area shape="rect" id="node8" href="$da/db6/classnars_1_1language_1_1Implication.html" title="A Statement about an Inheritance relation. " alt="" coords="208,1306,379,1442"/>
+<area shape="rect" id="node9" href="$d0/df3/classnars_1_1language_1_1Inheritance.html" title="A Statement about an Inheritance relation. " alt="" coords="403,1306,573,1442"/>
+<area shape="rect" id="node10" href="$df/d4e/classnars_1_1language_1_1Instance.html" title="A Statement about an Instance relation, which is used only in Narsese for I/O, and translated into In..." alt="" coords="597,1335,755,1413"/>
+<area shape="rect" id="node11" href="$d6/d3b/classnars_1_1language_1_1InstanceProperty.html" title="A Statement about an InstanceProperty relation, which is used only in Narsese for I/O..." alt="" coords="779,1335,986,1413"/>
+<area shape="rect" id="node12" href="$dd/dd7/classnars_1_1language_1_1Property.html" title="A Statement about a Property relation, which is used only in Narsese for I/O, and translated into Inh..." alt="" coords="1010,1335,1166,1413"/>
+<area shape="rect" id="node13" href="$d3/d1f/classnars_1_1language_1_1Similarity.html" title="A Statement about a Similarity relation. " alt="" coords="1190,1299,1351,1449"/>
+<area shape="rect" id="node2" href="$d0/dee/classnars_1_1language_1_1CompoundTerm.html" title="A CompoundTerm is a Term with internal (syntactic) structure. " alt="" coords="576,432,776,949"/>
+<area shape="rect" id="node3" href="$d8/db8/classnars_1_1language_1_1Term.html" title="Term is the basic component of Narsese, and the object of processing in NARS. " alt="" coords="607,131,745,384"/>
+</map>

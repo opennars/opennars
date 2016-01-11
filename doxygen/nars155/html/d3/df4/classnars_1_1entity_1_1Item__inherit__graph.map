@@ -1,0 +1,6 @@
+<map id="nars.entity.Item" name="nars.entity.Item">
+<area shape="rect" id="node3" href="$d4/d22/classnars_1_1entity_1_1Concept.html" title="A concept contains information associated with a term, including directly and indirectly related task..." alt="" coords="5,476,147,876"/>
+<area shape="rect" id="node4" href="$dc/ddc/classnars_1_1entity_1_1Task.html" title="A task to be processed, consists of a Sentence and a BudgetValue. " alt="" coords="171,527,309,825"/>
+<area shape="rect" id="node5" href="$d4/d8b/classnars_1_1entity_1_1TermLink.html" title="A link between a compound term and a component term. " alt="" coords="334,513,543,839"/>
+<area shape="rect" id="node6" href="$d9/d27/classnars_1_1entity_1_1TaskLink.html" title="Reference to a Task. " alt="" coords="369,924,509,1089"/>
+</map>

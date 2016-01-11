@@ -1,0 +1,7 @@
+<map id="nars.inference.TruthFunctions.induction" name="nars.inference.TruthFunctions.induction">
+<area shape="rect" id="node2" href="$d1/d58/classnars_1_1inference_1_1TruthFunctions_ab001ba72b5926188d21dd48a5eaaeb8b.html#ab001ba72b5926188d21dd48a5eaaeb8b" title="{&lt;S ==&gt; M&gt;, " alt="" coords="304,97,559,124"/>
+<area shape="rect" id="node3" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a35ac262407303cdf8d11f7892f9a3a03.html#a35ac262407303cdf8d11f7892f9a3a03" title="A function where the output is conjunctively determined by the inputs. " alt="" coords="608,5,832,32"/>
+<area shape="rect" id="node4" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a68ca7d92e9ea20d2a9a9f578ad7b681c.html#a68ca7d92e9ea20d2a9a9f578ad7b681c" title="Get the confidence value. " alt="" coords="634,57,806,98"/>
+<area shape="rect" id="node5" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a9eac33f2495441c77911a8581a5bbe61.html#a9eac33f2495441c77911a8581a5bbe61" title="Get the frequency value. " alt="" coords="634,122,806,163"/>
+<area shape="rect" id="node6" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a957a91e3b91d4a4043c3959838c370f2.html#a957a91e3b91d4a4043c3959838c370f2" title="A function to convert weight to confidence. " alt="" coords="607,188,833,215"/>
+</map>

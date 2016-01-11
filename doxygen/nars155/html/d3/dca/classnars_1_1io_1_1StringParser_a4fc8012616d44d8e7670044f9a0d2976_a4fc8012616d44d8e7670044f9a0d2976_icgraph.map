@@ -1,0 +1,9 @@
+<map id="nars.io.StringParser.showWarning" name="nars.io.StringParser.showWarning">
+<area shape="rect" id="node2" href="$d3/dca/classnars_1_1io_1_1StringParser_a75b446999d71c676a9915ecc75077a7d.html#a75b446999d71c676a9915ecc75077a7d" title="Enter a new Task in String into the memory, called from InputWindow or locally. " alt="" coords="476,13,679,39"/>
+<area shape="rect" id="node5" href="$d3/dca/classnars_1_1io_1_1StringParser_a5c31494d6f7862dcf15a4d5716b6200e.html#a5c31494d6f7862dcf15a4d5716b6200e" title="Top&#45;level method that parse a Term in general, which may recursively call itself. ..." alt="" coords="225,71,428,98"/>
+<area shape="rect" id="node3" href="$d3/dca/classnars_1_1io_1_1StringParser_a37ff864d959aba58138170a3f9a3e7c8.html#a37ff864d959aba58138170a3f9a3e7c8" title="Parse a line of input experience. " alt="" coords="727,5,900,47"/>
+<area shape="rect" id="node4" href="$dd/da5/classnars_1_1storage_1_1Memory_1_1ReasonerBatch_a2f22be33d98b4366712ff91b93c2be8a.html#a2f22be33d98b4366712ff91b93c2be8a" title="To process a line of input text. " alt="" coords="948,5,1153,47"/>
+<area shape="rect" id="node6" href="$d3/dca/classnars_1_1io_1_1StringParser_a7a11182c36a2fae68be8952110f47570.html#a7a11182c36a2fae68be8952110f47570" title="Parse a String into the argument get of a CompoundTerm. " alt="" coords="491,64,664,105"/>
+<area shape="rect" id="node8" href="$d3/dca/classnars_1_1io_1_1StringParser_a7c129938c8d721e3db0a9804988f0588.html#a7c129938c8d721e3db0a9804988f0588" title="Parse a String to create a Statement. " alt="" coords="491,129,664,171"/>
+<area shape="rect" id="node7" href="$d3/dca/classnars_1_1io_1_1StringParser_a944bb677dff9f232ce6b896c853e24e0.html#a944bb677dff9f232ce6b896c853e24e0" title="Parse a String to create a CompoundTerm. " alt="" coords="727,129,900,171"/>
+</map>

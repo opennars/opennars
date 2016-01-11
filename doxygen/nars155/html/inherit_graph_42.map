@@ -1,0 +1,28 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$d8/db8/classnars_1_1language_1_1Term.html" title="Term is the basic component of Narsese, and the object of processing in NARS. " alt="" coords="152,335,289,361"/>
+<area shape="rect" id="node3" href="$d0/dee/classnars_1_1language_1_1CompoundTerm.html" title="A CompoundTerm is a Term with internal (syntactic) structure. " alt="" coords="344,309,544,336"/>
+<area shape="rect" id="node24" href="$de/da5/classnars_1_1language_1_1Variable.html" title="A variable term, which does not correspond to a concept. " alt="" coords="367,360,521,387"/>
+<area shape="rect" id="node4" href="$d6/d98/classnars_1_1language_1_1Conjunction.html" title="Conjunction of statements. " alt="" coords="601,5,777,32"/>
+<area shape="rect" id="node5" href="$d3/d12/classnars_1_1language_1_1DifferenceExt.html" title="A compound term whose extension is the difference of the extensions of its components. " alt="" coords="596,56,783,83"/>
+<area shape="rect" id="node6" href="$d4/d5b/classnars_1_1language_1_1DifferenceInt.html" title="A compound term whose extension is the difference of the intensions of its components. " alt="" coords="598,107,781,133"/>
+<area shape="rect" id="node7" href="$d9/d5d/classnars_1_1language_1_1Disjunction.html" title="A disjunction of Statements. " alt="" coords="603,157,775,184"/>
+<area shape="rect" id="node8" href="$db/dbb/classnars_1_1language_1_1ImageExt.html" title="An extension image. " alt="" coords="608,208,771,235"/>
+<area shape="rect" id="node9" href="$df/de3/classnars_1_1language_1_1ImageInt.html" title="An intension image. " alt="" coords="610,259,769,285"/>
+<area shape="rect" id="node10" href="$d2/d68/classnars_1_1language_1_1IntersectionExt.html" title="A compound term whose extension is the intersection of the extensions of its components. " alt="" coords="592,309,787,336"/>
+<area shape="rect" id="node11" href="$d9/df4/classnars_1_1language_1_1IntersectionInt.html" title="A compound term whose intension is the intersection of the extensions of its components. " alt="" coords="594,360,785,387"/>
+<area shape="rect" id="node12" href="$da/d1e/classnars_1_1language_1_1Negation.html" title="A negation of a Statement. " alt="" coords="610,411,769,437"/>
+<area shape="rect" id="node13" href="$d8/d73/classnars_1_1language_1_1Product.html" title="A Product is a sequence of terms. " alt="" coords="613,461,765,488"/>
+<area shape="rect" id="node14" href="$de/d1d/classnars_1_1language_1_1SetExt.html" title="An extensionally defined set, which contains one or more instances. " alt="" coords="616,512,763,539"/>
+<area shape="rect" id="node15" href="$d2/dfc/classnars_1_1language_1_1SetInt.html" title="An intensionally defined set, which contains one or more instances defining the Term. " alt="" coords="618,563,761,589"/>
+<area shape="rect" id="node16" href="$d1/d5e/classnars_1_1language_1_1Statement.html" title="A statement is a compound term, consisting of a subject, a predicate, and a relation symbol in betwee..." alt="" coords="606,613,773,640"/>
+<area shape="rect" id="node17" href="$d1/d8b/classnars_1_1language_1_1Equivalence.html" title="A Statement about an Equivalence relation. " alt="" coords="849,461,1027,488"/>
+<area shape="rect" id="node18" href="$da/db6/classnars_1_1language_1_1Implication.html" title="A Statement about an Inheritance relation. " alt="" coords="853,512,1023,539"/>
+<area shape="rect" id="node19" href="$d0/df3/classnars_1_1language_1_1Inheritance.html" title="A Statement about an Inheritance relation. " alt="" coords="853,563,1023,589"/>
+<area shape="rect" id="node20" href="$df/d4e/classnars_1_1language_1_1Instance.html" title="A Statement about an Instance relation, which is used only in Narsese for I/O, and translated into In..." alt="" coords="859,613,1017,640"/>
+<area shape="rect" id="node21" href="$d6/d3b/classnars_1_1language_1_1InstanceProperty.html" title="A Statement about an InstanceProperty relation, which is used only in Narsese for I/O..." alt="" coords="835,664,1041,691"/>
+<area shape="rect" id="node22" href="$dd/dd7/classnars_1_1language_1_1Property.html" title="A Statement about a Property relation, which is used only in Narsese for I/O, and translated into Inh..." alt="" coords="860,715,1016,741"/>
+<area shape="rect" id="node23" href="$d3/d1f/classnars_1_1language_1_1Similarity.html" title="A Statement about a Similarity relation. " alt="" coords="857,765,1019,792"/>
+<area shape="rect" id="node26" href="$d6/d25/classnars_1_1entity_1_1Sentence.html" title="A Sentence is an abstract class, mainly containing a Term, a TruthValue, and a Stamp. " alt="" coords="149,385,292,412"/>
+<area shape="rect" id="node27" href="$d1/d1e/classnars_1_1entity_1_1Stamp.html" title="Each Sentence has a time stamp, consisting the following components: (1) The creation time of the sen..." alt="" coords="158,436,283,463"/>
+<area shape="rect" id="node28" href="$d3/db8/classnars_1_1entity_1_1TruthValue.html" title="Frequency and confidence. " alt="" coords="145,487,296,513"/>
+</map>

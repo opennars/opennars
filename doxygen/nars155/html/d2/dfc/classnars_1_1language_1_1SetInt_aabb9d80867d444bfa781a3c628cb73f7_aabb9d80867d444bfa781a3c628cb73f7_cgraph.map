@@ -1,0 +1,6 @@
+<map id="nars.language.SetInt.clone" name="nars.language.SetInt.clone">
+<area shape="rect" id="node2" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a4f199daa7588f86b81b0912a5e52dfe0.html#a4f199daa7588f86b81b0912a5e52dfe0" title="Deep clone an array list of terms. " alt="" coords="231,5,487,32"/>
+<area shape="rect" id="node4" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_aee0ef6fd533b58caf22bee2a98eef67d.html#aee0ef6fd533b58caf22bee2a98eef67d" title="check if the term contains free variable " alt="" coords="251,57,466,98"/>
+<area shape="rect" id="node5" href="$d2/dfc/classnars_1_1language_1_1SetInt_a9ac079997eca79d179404b8f4172497a.html#a9ac079997eca79d179404b8f4172497a" title="Constructor with partial values, called by make. " alt="" coords="268,123,449,149"/>
+<area shape="rect" id="node3" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a963e8aef1163f4ed8c364b5e448deaff.html#a963e8aef1163f4ed8c364b5e448deaff" title="Abstract clone method. " alt="" coords="535,5,769,32"/>
+</map>

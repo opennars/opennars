@@ -1,0 +1,5 @@
+<map id="nars.entity.TermLink.TermLink" name="nars.entity.TermLink.TermLink">
+<area shape="rect" id="node2" href="$d8/db8/classnars_1_1language_1_1Term_a3aad4654016b8615fd4fa8a26668e1db.html#a3aad4654016b8615fd4fa8a26668e1db" title="Reporting the name of the current Term. " alt="" coords="252,5,447,32"/>
+<area shape="rect" id="node3" href="$d4/d8b/classnars_1_1entity_1_1TermLink_a133e3243292f9daacaa8443acef6b185.html#a133e3243292f9daacaa8443acef6b185" title="Get the target of the link. " alt="" coords="268,57,431,98"/>
+<area shape="rect" id="node4" href="$d4/d8b/classnars_1_1entity_1_1TermLink_ad19e927a3e2e339682081d8e462fe73b.html#ad19e927a3e2e339682081d8e462fe73b" title="Set the key of the link. " alt="" coords="256,123,443,149"/>
+</map>

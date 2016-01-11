@@ -1,0 +1,5 @@
+<map id="nars.entity.Sentence" name="nars.entity.Sentence">
+<area shape="rect" id="node3" href="$d3/db8/classnars_1_1entity_1_1TruthValue.html" title="Frequency and confidence. " alt="" coords="219,154,370,437"/>
+<area shape="rect" id="node4" href="$d8/db8/classnars_1_1language_1_1Term.html" title="Term is the basic component of Narsese, and the object of processing in NARS. " alt="" coords="395,169,533,422"/>
+<area shape="rect" id="node7" href="$d1/d1e/classnars_1_1entity_1_1Stamp.html" title="Each Sentence has a time stamp, consisting the following components: (1) The creation time of the sen..." alt="" coords="5,132,144,459"/>
+</map>

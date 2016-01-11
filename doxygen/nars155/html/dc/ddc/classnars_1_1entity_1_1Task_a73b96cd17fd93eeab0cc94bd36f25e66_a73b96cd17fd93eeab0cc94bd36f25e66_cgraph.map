@@ -1,0 +1,10 @@
+<map id="nars.entity.Task.toString" name="nars.entity.Task.toString">
+<area shape="rect" id="node2" href="$dc/ddc/classnars_1_1entity_1_1Task_ab140cb553a6cf40b07093d1df283567f.html#ab140cb553a6cf40b07093d1df283567f" title="Get the sentence. " alt="" coords="219,5,412,32"/>
+<area shape="rect" id="node3" href="$d1/dd1/classnars_1_1entity_1_1Item_a7c18bbc91147504a285041d636284acd.html#a7c18bbc91147504a285041d636284acd" title="Return a String representation of the Item after simplification. " alt="" coords="234,57,397,98"/>
+<area shape="rect" id="node5" href="$d6/d25/classnars_1_1entity_1_1Sentence_aed4fff67fb986a938db98460a16dda2d.html#aed4fff67fb986a938db98460a16dda2d" title="Get a String representation of the sentence, with 2&#45;digit accuracy. " alt="" coords="220,122,411,163"/>
+<area shape="rect" id="node4" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_aff75d0d4fed143961e843d2959687fb0.html#aff75d0d4fed143961e843d2959687fb0" title="Briefly display the BudgetValue. " alt="" coords="462,57,638,98"/>
+<area shape="rect" id="node6" href="$d6/d25/classnars_1_1entity_1_1Sentence_a32d81c9525d514aca8ddc5f4db48a762.html#a32d81c9525d514aca8ddc5f4db48a762" title="Get a String representation of the sentence for key of Task and TaskLink. " alt="" coords="460,125,640,152"/>
+<area shape="rect" id="node9" href="$d1/d1e/classnars_1_1entity_1_1Stamp_ad1aee19cfc0bb8ca9232bad251f74ffc.html#ad1aee19cfc0bb8ca9232bad251f74ffc" title="Get a String form of the Stamp for display Format: {creationTime [: eventTime] : evidentialBase}. " alt="" coords="463,176,637,203"/>
+<area shape="rect" id="node7" href="$d8/db8/classnars_1_1language_1_1Term_a04fc046ba98c451bded562f79cff4244.html#a04fc046ba98c451bded562f79cff4244" title="The same as getName by default, used in display only. " alt="" coords="688,96,875,123"/>
+<area shape="rect" id="node8" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a5af8b2fe37987ba1e8396ec1aad38e90.html#a5af8b2fe37987ba1e8396ec1aad38e90" title="A simplified String representation of a TruthValue, where each factor is accruate to 1%..." alt="" coords="699,147,864,189"/>
+</map>

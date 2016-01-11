@@ -1,0 +1,4 @@
+<map id="nars.language.Product.make" name="nars.language.Product.make">
+<area shape="rect" id="node2" href="$d8/d73/classnars_1_1language_1_1Product_a03b4b8cac0b36273fac8e5413743cd27.html#a03b4b8cac0b36273fac8e5413743cd27" title="Try to make a Product from an ImageExt/ImageInt and a component. " alt="" coords="265,5,453,32"/>
+<area shape="rect" id="node3" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a80748e3181cffb66ac216637477507c3.html#a80748e3181cffb66ac216637477507c3" title="Try to make a compound term from an operator and a list of components. " alt="" coords="241,56,477,83"/>
+</map>

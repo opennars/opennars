@@ -1,0 +1,11 @@
+<map id="nars.inference.StructuralRules.transformNegation" name="nars.inference.StructuralRules.transformNegation">
+<area shape="rect" id="node2" href="$d8/df4/classnars_1_1storage_1_1Memory_a26eda4f00b333b706b4e3d069fdf1508.html#a26eda4f00b333b706b4e3d069fdf1508" title="The selected Task. " alt="" coords="516,117,755,144"/>
+<area shape="rect" id="node3" href="$dc/ddc/classnars_1_1entity_1_1Task_ab140cb553a6cf40b07093d1df283567f.html#ab140cb553a6cf40b07093d1df283567f" title="Get the sentence. " alt="" coords="247,45,441,72"/>
+<area shape="rect" id="node4" href="$d6/d25/classnars_1_1entity_1_1Sentence_a9f69b4fef64c81abad21404946cd41f9.html#a9f69b4fef64c81abad21404946cd41f9" title="Get the truth value of the sentence. " alt="" coords="262,97,426,138"/>
+<area shape="rect" id="node5" href="$d6/d25/classnars_1_1entity_1_1Sentence_a7d95d60caaf4c895559182a7eb2ff71e.html#a7d95d60caaf4c895559182a7eb2ff71e" title="Distinguish Judgment from Goal (&quot;instanceof Judgment&quot; doesn&#39;t work) " alt="" coords="237,163,451,189"/>
+<area shape="rect" id="node6" href="$d6/d25/classnars_1_1entity_1_1Sentence_acb98b40c8990dbe5e15061f0759c60ee.html#acb98b40c8990dbe5e15061f0759c60ee" title="Distinguish Question from Quest (&quot;instanceof Question&quot; doesn&#39;t work) " alt="" coords="240,213,448,240"/>
+<area shape="rect" id="node7" href="$d1/d58/classnars_1_1inference_1_1TruthFunctions_ace28b3a18d275b33d2a094189842b2ed.html#ace28b3a18d275b33d2a094189842b2ed" title="{A} |&#45; (–A) " alt="" coords="220,331,468,357"/>
+<area shape="rect" id="node10" href="$d8/df4/classnars_1_1storage_1_1Memory_aec1106814819aa1c8437001c2c4bf1a3.html#aec1106814819aa1c8437001c2c4bf1a3" title="Shared final operations by all single&#45;premise rules, called in StructuralRules. " alt="" coords="253,265,435,306"/>
+<area shape="rect" id="node8" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a9eac33f2495441c77911a8581a5bbe61.html#a9eac33f2495441c77911a8581a5bbe61" title="Get the frequency value. " alt="" coords="549,290,721,331"/>
+<area shape="rect" id="node9" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a68ca7d92e9ea20d2a9a9f578ad7b681c.html#a68ca7d92e9ea20d2a9a9f578ad7b681c" title="Get the confidence value. " alt="" coords="549,355,721,397"/>
+</map>

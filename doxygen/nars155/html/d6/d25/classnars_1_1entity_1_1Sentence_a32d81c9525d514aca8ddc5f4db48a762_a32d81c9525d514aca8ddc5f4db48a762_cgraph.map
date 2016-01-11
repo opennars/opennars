@@ -1,0 +1,4 @@
+<map id="nars.entity.Sentence.toKey" name="nars.entity.Sentence.toKey">
+<area shape="rect" id="node2" href="$d8/db8/classnars_1_1language_1_1Term_a04fc046ba98c451bded562f79cff4244.html#a04fc046ba98c451bded562f79cff4244" title="The same as getName by default, used in display only. " alt="" coords="233,5,420,32"/>
+<area shape="rect" id="node3" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a5af8b2fe37987ba1e8396ec1aad38e90.html#a5af8b2fe37987ba1e8396ec1aad38e90" title="A simplified String representation of a TruthValue, where each factor is accruate to 1%..." alt="" coords="244,57,409,98"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="nars.storage.Memory.ReasonerBatch.ReasonerBatch" name="nars.storage.Memory.ReasonerBatch.ReasonerBatch">
+<area shape="rect" id="node2" href="$d8/df4/classnars_1_1storage_1_1Memory_a3d47e1393f4751a94e1b18e64c9fa2ef.html#a3d47e1393f4751a94e1b18e64c9fa2ef" title="Create a new memory. " alt="" coords="259,163,455,189"/>
+<area shape="rect" id="node3" href="$d8/df4/classnars_1_1storage_1_1Memory_ab35f24f2e05fb428d36d7e86b5009cb2.html#ab35f24f2e05fb428d36d7e86b5009cb2" title="nars.storage.Memory.setConcepts" alt="" coords="503,5,725,32"/>
+<area shape="rect" id="node4" href="$d8/df4/classnars_1_1storage_1_1Memory_a9f579556cc722fff72241bbca4fcdd08.html#a9f579556cc722fff72241bbca4fcdd08" title="nars.storage.Memory.setExport\lStrings" alt="" coords="511,57,717,98"/>
+<area shape="rect" id="node5" href="$d8/df4/classnars_1_1storage_1_1Memory_af366ebf6ee22511021272241a397e54d.html#af366ebf6ee22511021272241a397e54d" title="nars.storage.Memory.setNew\lTasks" alt="" coords="517,122,711,163"/>
+<area shape="rect" id="node6" href="$d8/df4/classnars_1_1storage_1_1Memory_a004fc746c755e9448a36be1bc48bfe30.html#a004fc746c755e9448a36be1bc48bfe30" title="nars.storage.Memory.setNovel\lTasks" alt="" coords="513,187,715,229"/>
+<area shape="rect" id="node7" href="$d8/df4/classnars_1_1storage_1_1Memory_ab98ad1b36aa77d470f4b6b7df29f1fd8.html#ab98ad1b36aa77d470f4b6b7df29f1fd8" title="nars.storage.Memory.setReasoner" alt="" coords="503,253,725,280"/>
+<area shape="rect" id="node8" href="$d8/df4/classnars_1_1storage_1_1Memory_a43ad4121ee38fdede43e4424e5a94eb1.html#a43ad4121ee38fdede43e4424e5a94eb1" title="nars.storage.Memory.setRecorder" alt="" coords="504,304,724,331"/>
+</map>

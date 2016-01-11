@@ -1,0 +1,5 @@
+<map id="nars.entity.Stamp.getCreationTime" name="nars.entity.Stamp.getCreationTime">
+<area shape="rect" id="node2" href="$dc/ddc/classnars_1_1entity_1_1Task_a1f643668b958d700afee3616f0baf93f.html#a1f643668b958d700afee3616f0baf93f" title="Directly get the creation time of the sentence. " alt="" coords="279,29,495,56"/>
+<area shape="rect" id="node4" href="$d1/d1e/classnars_1_1entity_1_1Stamp_ace10b17e33839430469efd8af6da5135.html#ace10b17e33839430469efd8af6da5135" title="Generate a new stamp identical with a given one. " alt="" coords="303,80,470,107"/>
+<area shape="rect" id="node3" href="$dc/ddc/classnars_1_1entity_1_1Task_a518ea3eb3fcae3813d8e3a768ed4da58.html#a518ea3eb3fcae3813d8e3a768ed4da58" title="Merge one Task into another. " alt="" coords="543,29,699,56"/>
+</map>

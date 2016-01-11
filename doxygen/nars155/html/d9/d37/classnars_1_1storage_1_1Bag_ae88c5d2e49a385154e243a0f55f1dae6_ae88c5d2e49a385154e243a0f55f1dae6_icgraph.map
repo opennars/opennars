@@ -1,0 +1,6 @@
+<map id="nars.storage.Bag.emptyLevel" name="nars.storage.Bag.emptyLevel">
+<area shape="rect" id="node2" href="$d9/d37/classnars_1_1storage_1_1Bag_a405137ac9b2c5e0b6fb836a7ecf5c1e6.html#a405137ac9b2c5e0b6fb836a7ecf5c1e6" title="Insert an item into the itemTable, and return the overflow. " alt="" coords="245,5,428,47"/>
+<area shape="rect" id="node3" href="$d9/d37/classnars_1_1storage_1_1Bag_a775c0537431b865015facac73e698891.html#a775c0537431b865015facac73e698891" title="Choose an Item according to priority distribution and take it out of the Bag. " alt="" coords="245,71,428,112"/>
+<area shape="rect" id="node4" href="$d9/d37/classnars_1_1storage_1_1Bag_a4106abcc906c5ae1ce6828b0a88a1cca.html#a4106abcc906c5ae1ce6828b0a88a1cca" title="Collect Bag content into a String for display. " alt="" coords="245,136,428,177"/>
+<area shape="rect" id="node5" href="$d9/d37/classnars_1_1storage_1_1Bag_adff1bdb7ded17b66dc84068e49571ba7.html#adff1bdb7ded17b66dc84068e49571ba7" title="TODO bad paste from preceding. " alt="" coords="245,201,428,243"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="nars.entity.Task.getCreationTime" name="nars.entity.Task.getCreationTime">
+<area shape="rect" id="node2" href="$d1/d1e/classnars_1_1entity_1_1Stamp_acb0b161e2d2fb0cbfb33b44ec2a29075.html#acb0b161e2d2fb0cbfb33b44ec2a29075" title="Get the creationTime of the truth&#45;value. " alt="" coords="269,5,495,32"/>
+<area shape="rect" id="node3" href="$d6/d25/classnars_1_1entity_1_1Sentence_ac0ed749c50e55120d5b63219ed7eb082.html#ac0ed749c50e55120d5b63219ed7eb082" title="Get the stamp of the sentence. " alt="" coords="300,57,464,98"/>
+</map>

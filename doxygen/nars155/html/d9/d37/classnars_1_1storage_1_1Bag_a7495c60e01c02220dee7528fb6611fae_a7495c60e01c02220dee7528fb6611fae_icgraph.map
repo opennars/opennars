@@ -1,0 +1,4 @@
+<map id="nars.storage.Bag.takeOutFirst" name="nars.storage.Bag.takeOutFirst">
+<area shape="rect" id="node2" href="$d9/d37/classnars_1_1storage_1_1Bag_a405137ac9b2c5e0b6fb836a7ecf5c1e6.html#a405137ac9b2c5e0b6fb836a7ecf5c1e6" title="Insert an item into the itemTable, and return the overflow. " alt="" coords="224,5,407,47"/>
+<area shape="rect" id="node3" href="$d9/d37/classnars_1_1storage_1_1Bag_a775c0537431b865015facac73e698891.html#a775c0537431b865015facac73e698891" title="Choose an Item according to priority distribution and take it out of the Bag. " alt="" coords="224,71,407,112"/>
+</map>

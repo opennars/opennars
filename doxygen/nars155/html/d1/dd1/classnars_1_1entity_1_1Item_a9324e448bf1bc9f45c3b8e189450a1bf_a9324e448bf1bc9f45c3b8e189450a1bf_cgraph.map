@@ -1,0 +1,4 @@
+<map id="nars.entity.Item.incPriority" name="nars.entity.Item.incPriority">
+<area shape="rect" id="node2" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_a088e64163126211239b6afd25a9cdca3.html#a088e64163126211239b6afd25a9cdca3" title="Increase priority value by a percentage of the remaining range. " alt="" coords="228,5,411,47"/>
+<area shape="rect" id="node3" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a24093a77b49f21322e62c9bed7ff5ee2.html#a24093a77b49f21322e62c9bed7ff5ee2" title="A function where the output is disjunctively determined by the inputs. " alt="" coords="459,13,673,39"/>
+</map>

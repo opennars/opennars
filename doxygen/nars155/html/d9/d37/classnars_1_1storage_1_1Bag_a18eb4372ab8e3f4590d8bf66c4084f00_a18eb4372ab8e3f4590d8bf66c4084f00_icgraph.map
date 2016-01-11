@@ -1,0 +1,4 @@
+<map id="nars.storage.Bag.getLevel" name="nars.storage.Bag.getLevel">
+<area shape="rect" id="node2" href="$d9/d37/classnars_1_1storage_1_1Bag_a405137ac9b2c5e0b6fb836a7ecf5c1e6.html#a405137ac9b2c5e0b6fb836a7ecf5c1e6" title="Insert an item into the itemTable, and return the overflow. " alt="" coords="228,5,411,47"/>
+<area shape="rect" id="node3" href="$d9/d37/classnars_1_1storage_1_1Bag_ab6b356879b5d95a8c0ce2f36a2727d75.html#ab6b356879b5d95a8c0ce2f36a2727d75" title="Remove an item from itemTable, then adjust mass. " alt="" coords="228,71,411,112"/>
+</map>

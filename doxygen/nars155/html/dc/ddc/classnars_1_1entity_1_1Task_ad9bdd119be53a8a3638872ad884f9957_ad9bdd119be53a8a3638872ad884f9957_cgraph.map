@@ -1,0 +1,5 @@
+<map id="nars.entity.Task.Task" name="nars.entity.Task.Task">
+<area shape="rect" id="node2" href="$d6/d25/classnars_1_1entity_1_1Sentence_a32d81c9525d514aca8ddc5f4db48a762.html#a32d81c9525d514aca8ddc5f4db48a762" title="Get a String representation of the sentence for key of Task and TaskLink. " alt="" coords="203,35,383,61"/>
+<area shape="rect" id="node3" href="$d8/db8/classnars_1_1language_1_1Term_a04fc046ba98c451bded562f79cff4244.html#a04fc046ba98c451bded562f79cff4244" title="The same as getName by default, used in display only. " alt="" coords="431,5,617,32"/>
+<area shape="rect" id="node4" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a5af8b2fe37987ba1e8396ec1aad38e90.html#a5af8b2fe37987ba1e8396ec1aad38e90" title="A simplified String representation of a TruthValue, where each factor is accruate to 1%..." alt="" coords="441,57,607,98"/>
+</map>

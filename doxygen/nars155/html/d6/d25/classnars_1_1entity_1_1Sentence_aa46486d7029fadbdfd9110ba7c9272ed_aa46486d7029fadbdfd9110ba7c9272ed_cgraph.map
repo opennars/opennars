@@ -1,0 +1,7 @@
+<map id="nars.entity.Sentence.hashCode" name="nars.entity.Sentence.hashCode">
+<area shape="rect" id="node2" href="$d8/db8/classnars_1_1language_1_1Term_a932a75d46661c14589d7c924dd03de7b.html#a932a75d46661c14589d7c924dd03de7b" title="Produce a hash code for the term. " alt="" coords="265,5,465,32"/>
+<area shape="rect" id="node3" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a8a6a2fc1c28f3294d243dce4d3c3e968.html#a8a6a2fc1c28f3294d243dce4d3c3e968" title="The hash code of a TruthValue. " alt="" coords="259,56,472,83"/>
+<area shape="rect" id="node5" href="$d1/d1e/classnars_1_1entity_1_1Stamp_ab52baff17f87c3737f0bc0216f66ac3f.html#ab52baff17f87c3737f0bc0216f66ac3f" title="The hash code of Stamp. " alt="" coords="271,108,459,135"/>
+<area shape="rect" id="node4" href="$d3/db8/classnars_1_1entity_1_1TruthValue_aa5ffcde3ae611b087ba7fdd4cd67b216.html#aa5ffcde3ae611b087ba7fdd4cd67b216" title="Calculate the expectation value of the truth value. " alt="" coords="521,46,693,87"/>
+<area shape="rect" id="node6" href="$d1/d1e/classnars_1_1entity_1_1Stamp_ad1aee19cfc0bb8ca9232bad251f74ffc.html#ad1aee19cfc0bb8ca9232bad251f74ffc" title="Get a String form of the Stamp for display Format: {creationTime [: eventTime] : evidentialBase}. " alt="" coords="520,112,695,139"/>
+</map>

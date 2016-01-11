@@ -1,0 +1,28 @@
+var classnars_1_1entity_1_1Sentence =
+[
+    [ "Sentence", "d6/d25/classnars_1_1entity_1_1Sentence_ad7f0c103faac9d3ebebbe0e8c5b829ff.html#ad7f0c103faac9d3ebebbe0e8c5b829ff", null ],
+    [ "Sentence", "d6/d25/classnars_1_1entity_1_1Sentence_ac49a9178409ff2565a759b3f99a97a2d.html#ac49a9178409ff2565a759b3f99a97a2d", null ],
+    [ "clone", "d6/d25/classnars_1_1entity_1_1Sentence_a721f626ab83f34dc2e6858a4eede7102.html#a721f626ab83f34dc2e6858a4eede7102", null ],
+    [ "cloneContent", "d6/d25/classnars_1_1entity_1_1Sentence_ac6fa0cb96108a540d7e768ffc1b95630.html#ac6fa0cb96108a540d7e768ffc1b95630", null ],
+    [ "containQueryVar", "d6/d25/classnars_1_1entity_1_1Sentence_a3664d0b53eca935536d60cd0e3a13256.html#a3664d0b53eca935536d60cd0e3a13256", null ],
+    [ "equals", "d6/d25/classnars_1_1entity_1_1Sentence_a6b64cf9f10e578e4831092ab31dcd5d9.html#a6b64cf9f10e578e4831092ab31dcd5d9", null ],
+    [ "equivalentTo", "d6/d25/classnars_1_1entity_1_1Sentence_a8fee2d32f0024964146b13d7698210c5.html#a8fee2d32f0024964146b13d7698210c5", null ],
+    [ "getContent", "d6/d25/classnars_1_1entity_1_1Sentence_ad1ded9a02cae3557948d05530cd4d37e.html#ad1ded9a02cae3557948d05530cd4d37e", null ],
+    [ "getPunctuation", "d6/d25/classnars_1_1entity_1_1Sentence_a3e0fe978c5d87f921a277fd067982980.html#a3e0fe978c5d87f921a277fd067982980", null ],
+    [ "getRevisible", "d6/d25/classnars_1_1entity_1_1Sentence_ae57a195c3623dc9b8245d977adc94b4d.html#ae57a195c3623dc9b8245d977adc94b4d", null ],
+    [ "getStamp", "d6/d25/classnars_1_1entity_1_1Sentence_ac0ed749c50e55120d5b63219ed7eb082.html#ac0ed749c50e55120d5b63219ed7eb082", null ],
+    [ "getTruth", "d6/d25/classnars_1_1entity_1_1Sentence_a9f69b4fef64c81abad21404946cd41f9.html#a9f69b4fef64c81abad21404946cd41f9", null ],
+    [ "hashCode", "d6/d25/classnars_1_1entity_1_1Sentence_aa46486d7029fadbdfd9110ba7c9272ed.html#aa46486d7029fadbdfd9110ba7c9272ed", null ],
+    [ "isJudgment", "d6/d25/classnars_1_1entity_1_1Sentence_a7d95d60caaf4c895559182a7eb2ff71e.html#a7d95d60caaf4c895559182a7eb2ff71e", null ],
+    [ "isQuestion", "d6/d25/classnars_1_1entity_1_1Sentence_acb98b40c8990dbe5e15061f0759c60ee.html#acb98b40c8990dbe5e15061f0759c60ee", null ],
+    [ "setContent", "d6/d25/classnars_1_1entity_1_1Sentence_a8565e00f1855969c9706dd5cdca66a50.html#a8565e00f1855969c9706dd5cdca66a50", null ],
+    [ "setRevisible", "d6/d25/classnars_1_1entity_1_1Sentence_a97aee434b02405a38c1796bf8e27180b.html#a97aee434b02405a38c1796bf8e27180b", null ],
+    [ "toKey", "d6/d25/classnars_1_1entity_1_1Sentence_a32d81c9525d514aca8ddc5f4db48a762.html#a32d81c9525d514aca8ddc5f4db48a762", null ],
+    [ "toString", "d6/d25/classnars_1_1entity_1_1Sentence_a2265eebf36b27308042a492a26bd69b3.html#a2265eebf36b27308042a492a26bd69b3", null ],
+    [ "toStringBrief", "d6/d25/classnars_1_1entity_1_1Sentence_aed4fff67fb986a938db98460a16dda2d.html#aed4fff67fb986a938db98460a16dda2d", null ],
+    [ "content", "d6/d25/classnars_1_1entity_1_1Sentence_a9247640643ad9d028cee445c08ee54f8.html#a9247640643ad9d028cee445c08ee54f8", null ],
+    [ "punctuation", "d6/d25/classnars_1_1entity_1_1Sentence_ac7a1b89f613ce7add43826138bc6495f.html#ac7a1b89f613ce7add43826138bc6495f", null ],
+    [ "revisible", "d6/d25/classnars_1_1entity_1_1Sentence_abe49081ed6962e51de6f1c25eb36fcd6.html#abe49081ed6962e51de6f1c25eb36fcd6", null ],
+    [ "stamp", "d6/d25/classnars_1_1entity_1_1Sentence_a652c806bcc1aa1585b2b8779c12ed351.html#a652c806bcc1aa1585b2b8779c12ed351", null ],
+    [ "truth", "d6/d25/classnars_1_1entity_1_1Sentence_a46387491d810911098863902d26123b7.html#a46387491d810911098863902d26123b7", null ]
+];

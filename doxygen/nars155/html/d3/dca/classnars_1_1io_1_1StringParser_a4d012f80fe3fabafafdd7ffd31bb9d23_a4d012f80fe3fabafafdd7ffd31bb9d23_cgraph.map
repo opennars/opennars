@@ -1,0 +1,6 @@
+<map id="nars.io.StringParser.parseBudget" name="nars.io.StringParser.parseBudget">
+<area shape="rect" id="node2" href="$d7/d11/classnars_1_1inference_1_1BudgetFunctions_a5797bd2ee147531f4200cf66c7392a91.html#a5797bd2ee147531f4200cf66c7392a91" title="Determine the quality of a judgment by its truth value alone. " alt="" coords="227,57,463,98"/>
+<area shape="rect" id="node3" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a7649e37bb61cac9b8a2601fdff3a5f7a.html#a7649e37bb61cac9b8a2601fdff3a5f7a" title="A function where the output is the geometric average the inputs. " alt="" coords="511,5,759,32"/>
+<area shape="rect" id="node4" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a68ca7d92e9ea20d2a9a9f578ad7b681c.html#a68ca7d92e9ea20d2a9a9f578ad7b681c" title="Get the confidence value. " alt="" coords="549,57,721,98"/>
+<area shape="rect" id="node5" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a9eac33f2495441c77911a8581a5bbe61.html#a9eac33f2495441c77911a8581a5bbe61" title="Get the frequency value. " alt="" coords="549,122,721,163"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="nars.entity.TaskLink.novel" name="nars.entity.TaskLink.novel">
+<area shape="rect" id="node2" href="$d8/db8/classnars_1_1language_1_1Term_ad85f45a7858737445d5158801774ff5f.html#ad85f45a7858737445d5158801774ff5f" title="Equal terms have identical name, though not necessarily the same reference. " alt="" coords="235,5,414,32"/>
+<area shape="rect" id="node4" href="$d6/d25/classnars_1_1entity_1_1Sentence_ad1ded9a02cae3557948d05530cd4d37e.html#ad1ded9a02cae3557948d05530cd4d37e" title="Get the content of the sentence. " alt="" coords="243,57,407,98"/>
+<area shape="rect" id="node5" href="$d1/dd1/classnars_1_1entity_1_1Item_ab5c9fbb171f325844966b496010acf60.html#ab5c9fbb171f325844966b496010acf60" title="Get the current key. " alt="" coords="245,123,404,149"/>
+<area shape="rect" id="node6" href="$dc/ddc/classnars_1_1entity_1_1Task_ab140cb553a6cf40b07093d1df283567f.html#ab140cb553a6cf40b07093d1df283567f" title="Get the sentence. " alt="" coords="228,173,421,200"/>
+<area shape="rect" id="node7" href="$d4/d8b/classnars_1_1entity_1_1TermLink_a133e3243292f9daacaa8443acef6b185.html#a133e3243292f9daacaa8443acef6b185" title="Get the target of the link. " alt="" coords="243,225,406,266"/>
+<area shape="rect" id="node3" href="$d8/db8/classnars_1_1language_1_1Term_a3aad4654016b8615fd4fa8a26668e1db.html#a3aad4654016b8615fd4fa8a26668e1db" title="Reporting the name of the current Term. " alt="" coords="469,5,664,32"/>
+</map>

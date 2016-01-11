@@ -1,0 +1,6 @@
+<map id="nars.language.Product.Product" name="nars.language.Product.Product">
+<area shape="rect" id="node2" href="$d8/d73/classnars_1_1language_1_1Product_a0d1189bcbcf720c3818cb2ebc953cd64.html#a0d1189bcbcf720c3818cb2ebc953cd64" title="Clone a Product. " alt="" coords="255,5,442,32"/>
+<area shape="rect" id="node3" href="$d8/d73/classnars_1_1language_1_1Product_a7cdc5cc66b8a8083cfab9abf39b529c7.html#a7cdc5cc66b8a8083cfab9abf39b529c7" title="Try to make a new compound. " alt="" coords="255,56,443,83"/>
+<area shape="rect" id="node4" href="$d8/d73/classnars_1_1language_1_1Product_a03b4b8cac0b36273fac8e5413743cd27.html#a03b4b8cac0b36273fac8e5413743cd27" title="Try to make a Product from an ImageExt/ImageInt and a component. " alt="" coords="515,31,703,57"/>
+<area shape="rect" id="node5" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a80748e3181cffb66ac216637477507c3.html#a80748e3181cffb66ac216637477507c3" title="Try to make a compound term from an operator and a list of components. " alt="" coords="491,81,727,108"/>
+</map>

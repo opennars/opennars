@@ -1,0 +1,10 @@
+<map id="nars.language.CompoundTerm.applySubstitute" name="nars.language.CompoundTerm.applySubstitute">
+<area shape="rect" id="node2" href="$d8/db8/classnars_1_1language_1_1Term_ae2dba162b71bb9b806f54832249a260c.html#ae2dba162b71bb9b806f54832249a260c" title="Make a new Term with the same name. " alt="" coords="343,5,515,32"/>
+<area shape="rect" id="node4" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_acedae916705e9fa1669391a7d728b840.html#acedae916705e9fa1669391a7d728b840" title="get a component by index " alt="" coords="288,56,569,83"/>
+<area shape="rect" id="node5" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a89000afae8017231889aaa549292d1e0.html#a89000afae8017231889aaa549292d1e0" title="Default constructor. " alt="" coords="901,158,1105,199"/>
+<area shape="rect" id="node6" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a43c073fe9f5a36241c475a2bc8736800.html#a43c073fe9f5a36241c475a2bc8736800" title="Check if the order of the components matters. " alt="" coords="321,158,536,199"/>
+<area shape="rect" id="node7" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_aa26a304f6249c185836d8fde8b8f17a8.html#aa26a304f6249c185836d8fde8b8f17a8" title="default method to make the oldName of the current term from existing fields " alt="" coords="293,224,564,251"/>
+<area shape="rect" id="node9" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_ac81c5851f664320ddec435641f198b03.html#ac81c5851f664320ddec435641f198b03" title="get the number of components " alt="" coords="315,275,543,301"/>
+<area shape="rect" id="node3" href="$d8/db8/classnars_1_1language_1_1Term_a2d9973aada6190dd60b48a34448094c9.html#a2d9973aada6190dd60b48a34448094c9" title="Default constructor that build an internal Term. " alt="" coords="650,5,821,32"/>
+<area shape="rect" id="node8" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_a8d1e610c509fa096c6b52eb5fe06d59b.html#a8d1e610c509fa096c6b52eb5fe06d59b" title="default method to make the oldName of a compound term from given fields " alt="" coords="617,217,853,258"/>
+</map>

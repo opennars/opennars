@@ -1,0 +1,4 @@
+<map id="nars.entity.BudgetValue.aboveThreshold" name="nars.entity.BudgetValue.aboveThreshold">
+<area shape="rect" id="node2" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_af414899759992288edbba78d7457c534.html#af414899759992288edbba78d7457c534" title="To summarize a BudgetValue into a single number in [0, 1]. " alt="" coords="253,13,472,39"/>
+<area shape="rect" id="node3" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a7649e37bb61cac9b8a2601fdff3a5f7a.html#a7649e37bb61cac9b8a2601fdff3a5f7a" title="A function where the output is the geometric average the inputs. " alt="" coords="520,13,768,39"/>
+</map>

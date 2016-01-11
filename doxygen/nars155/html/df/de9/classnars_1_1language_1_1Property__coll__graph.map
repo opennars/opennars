@@ -1,0 +1,5 @@
+<map id="nars.language.Property" name="nars.language.Property">
+<area shape="rect" id="node2" href="$d1/d5e/classnars_1_1language_1_1Statement.html" title="A statement is a compound term, consisting of a subject, a predicate, and a relation symbol in betwee..." alt="" coords="272,1013,440,1267"/>
+<area shape="rect" id="node3" href="$d0/dee/classnars_1_1language_1_1CompoundTerm.html" title="A CompoundTerm is a Term with internal (syntactic) structure. " alt="" coords="256,461,456,964"/>
+<area shape="rect" id="node4" href="$d8/db8/classnars_1_1language_1_1Term.html" title="Term is the basic component of Narsese, and the object of processing in NARS. " alt="" coords="139,145,277,399"/>
+</map>

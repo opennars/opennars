@@ -1,0 +1,4 @@
+<map id="nars.storage.Memory.getTime" name="nars.storage.Memory.getTime">
+<area shape="rect" id="node2" href="$d8/df4/classnars_1_1storage_1_1Memory_a076ad9a0e872386bca3f2d17fa7cb2d4.html#a076ad9a0e872386bca3f2d17fa7cb2d4" title="Backward pointer to the reasoner. " alt="" coords="249,5,472,32"/>
+<area shape="rect" id="node3" href="$dd/da5/classnars_1_1storage_1_1Memory_1_1ReasonerBatch_aaf7efb6a6732b702669e9548bdb3a243.html#aaf7efb6a6732b702669e9548bdb3a243" title="Get the current time from the clock Called in nars.entity.Stamp. " alt="" coords="258,57,463,98"/>
+</map>

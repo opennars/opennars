@@ -1,0 +1,6 @@
+<map id="nars.entity.Sentence.toStringBrief" name="nars.entity.Sentence.toStringBrief">
+<area shape="rect" id="node2" href="$d6/d25/classnars_1_1entity_1_1Sentence_a32d81c9525d514aca8ddc5f4db48a762.html#a32d81c9525d514aca8ddc5f4db48a762" title="Get a String representation of the sentence for key of Task and TaskLink. " alt="" coords="244,35,424,61"/>
+<area shape="rect" id="node5" href="$d1/d1e/classnars_1_1entity_1_1Stamp_ad1aee19cfc0bb8ca9232bad251f74ffc.html#ad1aee19cfc0bb8ca9232bad251f74ffc" title="Get a String form of the Stamp for display Format: {creationTime [: eventTime] : evidentialBase}. " alt="" coords="247,85,421,112"/>
+<area shape="rect" id="node3" href="$d8/db8/classnars_1_1language_1_1Term_a04fc046ba98c451bded562f79cff4244.html#a04fc046ba98c451bded562f79cff4244" title="The same as getName by default, used in display only. " alt="" coords="472,5,659,32"/>
+<area shape="rect" id="node4" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a5af8b2fe37987ba1e8396ec1aad38e90.html#a5af8b2fe37987ba1e8396ec1aad38e90" title="A simplified String representation of a TruthValue, where each factor is accruate to 1%..." alt="" coords="483,57,648,98"/>
+</map>

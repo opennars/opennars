@@ -1,0 +1,17 @@
+<map id="nars.inference.BudgetFunctions.activate" name="nars.inference.BudgetFunctions.activate">
+<area shape="rect" id="node2" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a8abd4e228bb1ac62df2efdf4487ff34d.html#a8abd4e228bb1ac62df2efdf4487ff34d" title="A function where the output is the arithmetic average the inputs. " alt="" coords="309,50,549,77"/>
+<area shape="rect" id="node3" href="$d1/dd1/classnars_1_1entity_1_1Item_adbb21c1891722e30c1d6cfaf5fee18ee.html#adbb21c1891722e30c1d6cfaf5fee18ee" title="Get durability value. " alt="" coords="334,101,525,127"/>
+<area shape="rect" id="node5" href="$d1/dd1/classnars_1_1entity_1_1Item_a97b35888ceaad90e7a428701051c51d7.html#a97b35888ceaad90e7a428701051c51d7" title="Get priority value. " alt="" coords="341,151,517,178"/>
+<area shape="rect" id="node7" href="$d4/d22/classnars_1_1entity_1_1Concept_acf3c7af84e64586a6b1d549f02bfeead.html#acf3c7af84e64586a6b1d549f02bfeead" title="Recalculate the quality of the concept [to be refined to show extension/intension balance]..." alt="" coords="330,202,529,229"/>
+<area shape="rect" id="node10" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a24093a77b49f21322e62c9bed7ff5ee2.html#a24093a77b49f21322e62c9bed7ff5ee2" title="A function where the output is disjunctively determined by the inputs. " alt="" coords="603,253,817,279"/>
+<area shape="rect" id="node11" href="$d1/dd1/classnars_1_1entity_1_1Item_a0f27e5a39dc50b5f108732f59199db22.html#a0f27e5a39dc50b5f108732f59199db22" title="Set durability value. " alt="" coords="334,307,525,334"/>
+<area shape="rect" id="node13" href="$d1/dd1/classnars_1_1entity_1_1Item_aeda0763b2c90f6fef3f23b9b4d3d68f0.html#aeda0763b2c90f6fef3f23b9b4d3d68f0" title="Set priority value. " alt="" coords="341,367,517,394"/>
+<area shape="rect" id="node15" href="$d1/dd1/classnars_1_1entity_1_1Item_a686c257308a15eba9458a438cc60227a.html#a686c257308a15eba9458a438cc60227a" title="Set quality value. " alt="" coords="341,425,517,451"/>
+<area shape="rect" id="node4" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_ab0e0dc2172d3fab6390670acb68da1a6.html#ab0e0dc2172d3fab6390670acb68da1a6" title="Get durability value. " alt="" coords="619,5,801,47"/>
+<area shape="rect" id="node6" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_a1e7b6826531f03f792f3516ce0e97ac3.html#a1e7b6826531f03f792f3516ce0e97ac3" title="Get priority value. " alt="" coords="619,71,801,112"/>
+<area shape="rect" id="node8" href="$d9/d37/classnars_1_1storage_1_1Bag_a5ff587f448a7a832732b4d86eb9a7642.html#a5ff587f448a7a832732b4d86eb9a7642" title="Get the average priority of Items. " alt="" coords="625,136,795,177"/>
+<area shape="rect" id="node9" href="$d8/db8/classnars_1_1language_1_1Term_ae14632d1d25bcde8d6698ea0b58eb19a.html#ae14632d1d25bcde8d6698ea0b58eb19a" title="The syntactic complexity, for constant automic Term, is 1. " alt="" coords="597,202,823,229"/>
+<area shape="rect" id="node12" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_ab72bce41fd8a1512fc8baa07ed93fc1b.html#ab72bce41fd8a1512fc8baa07ed93fc1b" title="Change durability value. " alt="" coords="619,304,801,345"/>
+<area shape="rect" id="node14" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_ac2cb3449a15125e5f0e4165aeee0befb.html#ac2cb3449a15125e5f0e4165aeee0befb" title="Change priority value. " alt="" coords="619,369,801,411"/>
+<area shape="rect" id="node16" href="$db/d8e/classnars_1_1entity_1_1BudgetValue_ab134287bfbdfe703501697c5f9eac50b.html#ab134287bfbdfe703501697c5f9eac50b" title="Change quality value. " alt="" coords="619,435,801,476"/>
+</map>

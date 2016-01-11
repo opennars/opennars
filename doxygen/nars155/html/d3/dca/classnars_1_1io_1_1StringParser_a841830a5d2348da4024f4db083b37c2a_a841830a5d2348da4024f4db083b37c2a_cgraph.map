@@ -1,0 +1,5 @@
+<map id="nars.io.StringParser.topRelation" name="nars.io.StringParser.topRelation">
+<area shape="rect" id="node2" href="$d3/dca/classnars_1_1io_1_1StringParser_aa579e2d90aa176b8fa99af6fda484bf7.html#aa579e2d90aa176b8fa99af6fda484bf7" title="Check CompoundTerm closer symbol. " alt="" coords="214,5,403,32"/>
+<area shape="rect" id="node3" href="$d1/d5e/classnars_1_1language_1_1Statement_aef04a664a5871b608c654a3dbb7cfa84.html#aef04a664a5871b608c654a3dbb7cfa84" title="Check Statement relation symbol, called in StringPaser. " alt="" coords="453,49,635,90"/>
+<area shape="rect" id="node4" href="$d3/dca/classnars_1_1io_1_1StringParser_ae9b91054186389c3930bc2aaecd4aee8.html#ae9b91054186389c3930bc2aaecd4aee8" title="Check CompoundTerm opener symbol. " alt="" coords="212,107,405,133"/>
+</map>

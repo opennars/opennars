@@ -1,0 +1,8 @@
+<map id="nars.entity.Task" name="nars.entity.Task">
+<area shape="rect" id="node2" href="$d1/dd1/classnars_1_1entity_1_1Item.html" title="An item is an object that can be put into a Bag, to participate in the resource competition of the sy..." alt="" coords="133,521,251,804"/>
+<area shape="rect" id="node4" href="$db/d8e/classnars_1_1entity_1_1BudgetValue.html" title="A triple of priority (current), durability (decay), and quality (long&#45;term average). " alt="" coords="111,154,273,437"/>
+<area shape="rect" id="node6" href="$d6/d25/classnars_1_1entity_1_1Sentence.html" title="A Sentence is an abstract class, mainly containing a Term, a TruthValue, and a Stamp. " alt="" coords="402,543,545,782"/>
+<area shape="rect" id="node8" href="$d3/db8/classnars_1_1entity_1_1TruthValue.html" title="Frequency and confidence. " alt="" coords="511,154,662,437"/>
+<area shape="rect" id="node9" href="$d8/db8/classnars_1_1language_1_1Term.html" title="Term is the basic component of Narsese, and the object of processing in NARS. " alt="" coords="687,169,825,422"/>
+<area shape="rect" id="node12" href="$d1/d1e/classnars_1_1entity_1_1Stamp.html" title="Each Sentence has a time stamp, consisting the following components: (1) The creation time of the sen..." alt="" coords="297,132,436,459"/>
+</map>

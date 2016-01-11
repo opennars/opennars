@@ -1,0 +1,7 @@
+<map id="nars.storage.Memory.getConcept" name="nars.storage.Memory.getConcept">
+<area shape="rect" id="node2" href="$d9/d37/classnars_1_1storage_1_1Bag_a011b37fc683db7fb7b41e33712a37d92.html#a011b37fc683db7fb7b41e33712a37d92" title="Get an Item by key. " alt="" coords="309,5,452,32"/>
+<area shape="rect" id="node3" href="$d8/df4/classnars_1_1storage_1_1Memory_a33af7b3d806d32c85390563fec3c6d27.html#a33af7b3d806d32c85390563fec3c6d27" title="Concept bag. " alt="" coords="269,56,492,83"/>
+<area shape="rect" id="node4" href="$d8/db8/classnars_1_1language_1_1Term_a3aad4654016b8615fd4fa8a26668e1db.html#a3aad4654016b8615fd4fa8a26668e1db" title="Reporting the name of the current Term. " alt="" coords="283,107,478,133"/>
+<area shape="rect" id="node5" href="$d8/db8/classnars_1_1language_1_1Term_a88297bdbbfb5f3e292783647b14f0c70.html#a88297bdbbfb5f3e292783647b14f0c70" title="Check whether the current Term can name a Concept. " alt="" coords="279,157,483,184"/>
+<area shape="rect" id="node6" href="$d9/d37/classnars_1_1storage_1_1Bag_a9d42fa45681a07796750a350e08d095b.html#a9d42fa45681a07796750a350e08d095b" title="Add a new Item into the Bag. " alt="" coords="303,208,458,235"/>
+</map>

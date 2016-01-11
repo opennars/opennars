@@ -1,0 +1,4 @@
+<map id="nars.entity.Concept.play" name="nars.entity.Concept.play">
+<area shape="rect" id="node2" href="$d4/d22/classnars_1_1entity_1_1Concept_a2b2088a51d2519fe76c791b6c6945409.html#a2b2088a51d2519fe76c791b6c6945409" title="Collect direct isBelief, questions, and goals for display. " alt="" coords="228,5,409,47"/>
+<area shape="rect" id="node3" href="$d4/d96/interfacenars_1_1entity_1_1EntityObserver_ac62aeea4d8b2ba99f935a2380b8e9407.html#ac62aeea4d8b2ba99f935a2380b8e9407" title="Display the content of the concept. " alt="" coords="217,71,420,98"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="nars.inference.TruthFunctions.desireStrong" name="nars.inference.TruthFunctions.desireStrong">
+<area shape="rect" id="node2" href="$d4/de4/classnars_1_1inference_1_1UtilityFunctions_a35ac262407303cdf8d11f7892f9a3a03.html#a35ac262407303cdf8d11f7892f9a3a03" title="A function where the output is conjunctively determined by the inputs. " alt="" coords="288,5,512,32"/>
+<area shape="rect" id="node3" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a68ca7d92e9ea20d2a9a9f578ad7b681c.html#a68ca7d92e9ea20d2a9a9f578ad7b681c" title="Get the confidence value. " alt="" coords="314,57,486,98"/>
+<area shape="rect" id="node4" href="$d3/db8/classnars_1_1entity_1_1TruthValue_a9eac33f2495441c77911a8581a5bbe61.html#a9eac33f2495441c77911a8581a5bbe61" title="Get the frequency value. " alt="" coords="314,122,486,163"/>
+</map>

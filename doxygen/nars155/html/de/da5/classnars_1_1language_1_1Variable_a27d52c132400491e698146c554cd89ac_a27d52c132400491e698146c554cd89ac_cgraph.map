@@ -1,0 +1,8 @@
+<map id="nars.language.Variable.hasSubstitute" name="nars.language.Variable.hasSubstitute">
+<area shape="rect" id="node2" href="$de/da5/classnars_1_1language_1_1Variable_a997e50c6a8ea7057483f057bc703a4f0.html#a997e50c6a8ea7057483f057bc703a4f0" title="To recursively find a substitution that can unify two Terms without changing them. " alt="" coords="232,74,411,115"/>
+<area shape="rect" id="node3" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_acedae916705e9fa1669391a7d728b840.html#acedae916705e9fa1669391a7d728b840" title="get a component by index " alt="" coords="459,5,740,32"/>
+<area shape="rect" id="node4" href="$d8/db8/classnars_1_1language_1_1Term_ad85f45a7858737445d5158801774ff5f.html#ad85f45a7858737445d5158801774ff5f" title="Equal terms have identical name, though not necessarily the same reference. " alt="" coords="510,56,689,83"/>
+<area shape="rect" id="node6" href="$de/da5/classnars_1_1language_1_1Variable_a453637a49d162fd4bb44725ff7b5965b.html#a453637a49d162fd4bb44725ff7b5965b" title="Get the type of the variable. " alt="" coords="497,107,702,133"/>
+<area shape="rect" id="node7" href="$d0/dee/classnars_1_1language_1_1CompoundTerm_ac81c5851f664320ddec435641f198b03.html#ac81c5851f664320ddec435641f198b03" title="get the number of components " alt="" coords="485,157,713,184"/>
+<area shape="rect" id="node5" href="$d8/db8/classnars_1_1language_1_1Term_a3aad4654016b8615fd4fa8a26668e1db.html#a3aad4654016b8615fd4fa8a26668e1db" title="Reporting the name of the current Term. " alt="" coords="788,56,983,83"/>
+</map>

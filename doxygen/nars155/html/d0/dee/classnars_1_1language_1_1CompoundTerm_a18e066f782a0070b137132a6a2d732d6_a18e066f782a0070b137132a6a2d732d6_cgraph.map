@@ -1,0 +1,6 @@
+<map id="nars.language.CompoundTerm.containVar" name="nars.language.CompoundTerm.containVar">
+<area shape="rect" id="node2" href="$de/da5/classnars_1_1language_1_1Variable_a2c36e85a56295a27aba7a4ee162f5850.html#a2c36e85a56295a27aba7a4ee162f5850" title="Check whether a string represent a name of a term that contains a variable. " alt="" coords="320,78,540,105"/>
+<area shape="rect" id="node3" href="$de/da5/classnars_1_1language_1_1Variable_a9caa9f23d798ce1913cfca744ddd1c15.html#a9caa9f23d798ce1913cfca744ddd1c15" title="Check whether a string represent a name of a term that contains an independent variable. " alt="" coords="588,5,788,47"/>
+<area shape="rect" id="node4" href="$de/da5/classnars_1_1language_1_1Variable_a3a7ee29b5a23255edf3dbca5f85f7b44.html#a3a7ee29b5a23255edf3dbca5f85f7b44" title="Check whether a string represent a name of a term that contains a dependent variable. " alt="" coords="588,71,788,112"/>
+<area shape="rect" id="node5" href="$de/da5/classnars_1_1language_1_1Variable_a25dcc4d5882131d679903f93d41420c9.html#a25dcc4d5882131d679903f93d41420c9" title="Check whether a string represent a name of a term that contains a query variable. ..." alt="" coords="588,136,788,177"/>
+</map>

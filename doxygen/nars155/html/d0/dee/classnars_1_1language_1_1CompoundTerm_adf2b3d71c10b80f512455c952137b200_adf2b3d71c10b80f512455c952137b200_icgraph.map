@@ -1,0 +1,6 @@
+<map id="nars.language.CompoundTerm.makeImageName" name="nars.language.CompoundTerm.makeImageName">
+<area shape="rect" id="node2" href="$db/dbb/classnars_1_1language_1_1ImageExt_a1193c5f5c8a2c4a13736c501c4699d6c.html#a1193c5f5c8a2c4a13736c501c4699d6c" title="Try to make a new compound from a set of components. " alt="" coords="307,5,506,32"/>
+<area shape="rect" id="node3" href="$df/de3/classnars_1_1language_1_1ImageInt_a6c80d27670942b32acff9f9a9f7c29aa.html#a6c80d27670942b32acff9f9a9f7c29aa" title="Try to make a new compound from a set of components. " alt="" coords="309,56,504,83"/>
+<area shape="rect" id="node4" href="$db/dbb/classnars_1_1language_1_1ImageExt_abc70c101ab503a200a5dbb1fd75e724a.html#abc70c101ab503a200a5dbb1fd75e724a" title="override the default in making the name of the current term from existing fields " alt="" coords="289,107,524,133"/>
+<area shape="rect" id="node5" href="$df/de3/classnars_1_1language_1_1ImageInt_ae5244566e2cd367c93118ccfbee8d2dc.html#ae5244566e2cd367c93118ccfbee8d2dc" title="Override the default in making the name of the current term from existing fields. ..." alt="" coords="292,157,521,184"/>
+</map>

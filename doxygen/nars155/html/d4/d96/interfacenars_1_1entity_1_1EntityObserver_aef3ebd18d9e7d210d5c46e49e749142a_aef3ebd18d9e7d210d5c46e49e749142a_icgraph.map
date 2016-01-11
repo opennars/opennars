@@ -1,0 +1,3 @@
+<map id="nars.entity.EntityObserver.startPlay" name="nars.entity.EntityObserver.startPlay">
+<area shape="rect" id="node2" href="$d4/d22/classnars_1_1entity_1_1Concept_a5a010290c8c42603dd13387f415abf43.html#a5a010290c8c42603dd13387f415abf43" title="Start displaying contents and links, called from ConceptWindow, TermWindow or Memory.processTask only. " alt="" coords="284,5,476,32"/>
+</map>

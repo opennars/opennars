@@ -1,0 +1,4 @@
+<map id="nars.entity.EntityObserver.post" name="nars.entity.EntityObserver.post">
+<area shape="rect" id="node2" href="$d4/d22/classnars_1_1entity_1_1Concept_add08a37b7cf7b272838532c942c083a4.html#add08a37b7cf7b272838532c942c083a4" title="Resume display, called from ConceptWindow only. " alt="" coords="270,5,434,32"/>
+<area shape="rect" id="node3" href="$d4/d22/classnars_1_1entity_1_1Concept_a5a010290c8c42603dd13387f415abf43.html#a5a010290c8c42603dd13387f415abf43" title="Start displaying contents and links, called from ConceptWindow, TermWindow or Memory.processTask only. " alt="" coords="256,56,448,83"/>
+</map>
