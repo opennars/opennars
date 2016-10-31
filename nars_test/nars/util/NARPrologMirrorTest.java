@@ -4,7 +4,6 @@
  */
 package nars.util;
 
-import nars.NARPrologMirror;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
@@ -44,22 +43,6 @@ public class NARPrologMirrorTest {
                 } catch (Narsese.InvalidInputException ex) {
                     assertTrue(false);
                     return null;
-                }
-                
-                if (prolog) {
-                    new NARPrologMirror(nar, 0.5f, true) {
-
-                        @Override
-                        public void answer(Task question, Term t, nars.prolog.Term pt) {
-                            super.answer(question, t, pt);
-                            
-                            //look for <a --> d> answer
-                            if (t.equals(aInhd))
-                                prologAnswered = true;
-                        }
-                        
-                        
-                    }.temporal(true, true);
                 }
                 
                 return nar;
