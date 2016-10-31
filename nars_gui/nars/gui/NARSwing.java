@@ -33,7 +33,6 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.core.build.Default.CommandLineNARBuilder;
-import nars.core.control.experimental.AntAttention;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -238,36 +237,4 @@ public class NARSwing  {
     public static final String ON_LABEL = "On";
     public static final String OFF_LABEL = "Off";
 
-    public static interface NARManagerMBean {
-        public int getNumConcepts();
-
-    }
-    
-    public static class NARManager implements NARManagerMBean {
-        private final NAR nar;
-
-        public NARManager(NAR n) {
-            this.nar = n;
-        }
-
-        @Override
-        public int getNumConcepts() {
-            return ((AntAttention)nar.memory.concepts).concepts.size();
-        }
-        
-    }
-    
-    public void enableJMX() throws Exception  {
-
-        /*
-         *java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=1617 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
-         */
-        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer(); 
-        ObjectName name = new ObjectName("nar:type=NAR"/* + this.nar.getClass().getSimpleName() + "_" + this.nar.hashCode()*/); 
-        
-        mbs.registerMBean(new NARManager(nar), name);
-        
-        System.out.println("JMX Enabled:\n" + name.toString() + "\n" + mbs.toString() + "\n");
-    }
-    
 }
