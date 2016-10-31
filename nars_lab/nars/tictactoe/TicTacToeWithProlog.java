@@ -37,7 +37,6 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import nars.NARPrologMirror;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
@@ -89,9 +88,6 @@ public class TicTacToeWithProlog extends JPanel {
                 setConceptBagSize(1000).
                 setSubconceptBagSize(10000).
                 simulationTime());
-        
-        new NARPrologMirror(nar, 0.75f, true).temporal(true, false);
-        new NARPrologMirror(nar, 0.75f, true).temporal(false, true);
         
         nar.memory.addOperator(new AddO("^addO"));        
         (nar.param).duration.set(1000);
