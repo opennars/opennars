@@ -4,7 +4,6 @@ import java.util.Iterator;
 import nars.perf.BagPerf.NullItem;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
-import nars.storage.CurveBag;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -65,8 +64,6 @@ public class BagIteratorTest {
     @Test
     public void testBags() {
         testBagIterator(new LevelBag(L, L*2));
-        testBagIterator(new CurveBag(L*2, false));
-        testBagIterator(new CurveBag(L*2, true));
         
     }
     

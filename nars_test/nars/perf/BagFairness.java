@@ -22,7 +22,7 @@ import automenta.vivisect.timeline.MultiTimeline;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import nars.core.Memory.Timing;
 import nars.core.control.FireConcept;
-import nars.storage.CurveBag;
+import nars.storage.LevelBag;
 
 /**
  *
@@ -225,7 +225,7 @@ public class BagFairness {
                             //return new DelayBag(param.conceptForgetDurations, getConceptBagSize());
                             //return new LevelBag2(getConceptBagSize(), 20);
                             //return new AdaptiveContinuousBag(getConceptBagSize());
-                            return new CurveBag(getConceptBagSize(), true);
+                            return new LevelBag(getConceptBagSize(), 20);
                         }
                         /*else { //if (experiment == 1) {
                             

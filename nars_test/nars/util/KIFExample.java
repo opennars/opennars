@@ -18,7 +18,7 @@
 package nars.util;
 
 import nars.core.NAR;
-import nars.core.build.Curve;
+import nars.core.build.Default;
 import nars.gui.NARSwing;
 import nars.util.kif.KIFInput;
 
@@ -32,7 +32,7 @@ public class KIFExample {
     public static void main(String[] args) throws Exception {
         
         
-        NAR n = new Curve(true)
+        NAR n = new Default()
                 .setConceptBagSize(16192)
                 .build();
                 

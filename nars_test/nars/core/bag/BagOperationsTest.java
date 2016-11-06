@@ -9,8 +9,6 @@ import nars.entity.Concept;
 import nars.entity.Item;
 import nars.language.Term;
 import nars.storage.Bag;
-import nars.storage.CurveBag;
-import nars.storage.GearBag;
 import nars.storage.LevelBag;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -39,9 +37,7 @@ public class BagOperationsTest {
     
     @Test
     public void testConcept() {
-        //testBagSequence(new CurveBag(2, new CurveBag.FairPriorityProbabilityCurve(), true, new FractalSortedItemList()));
-        //testBagSequence(new LevelBag(2, 2));
-        testBagSequence(new GearBag(2,2));        
+        testBagSequence(new LevelBag(2, 2));    
     }
     
     public static void testBagSequence(Bag b) {
@@ -89,20 +85,6 @@ public class BagOperationsTest {
         
         if (b instanceof LevelBag) {
             assertEquals("a", b.putIn(new NullConcept("c", 0.1f)).name().toString()); //replaces item on level
-        }
-        else if (b instanceof CurveBag) {
-            assertEquals("c", b.putIn(new NullConcept("c", 0.1f)).name().toString()); //could not insert, so got the object returned as result
-            assertEquals(2, b.size());
-        
-            //same id, different priority (lower, so ignored)
-            assertEquals(null, b.putIn(new NullConcept("b", 0.1f)));
-            assertEquals(0.2f, b.getMinPriority(),0.001f); //unaffected, 0.2 still lowest
-
-            //same id, higher priority
-            assertEquals(0.3f, b.getMaxPriority(),0.001f); //affected, 0.4 highest        
-            assertEquals(null, b.putIn(new NullConcept("b", 0.4f)));
-            assertEquals(0.4f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
-
         }
         
     }
