@@ -1,5 +1,6 @@
 package nars.core;
 
+import nars.core.control.DefaultAttention;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.language.Term;
@@ -17,29 +18,11 @@ abstract public class Build extends Parameters  {
     public Param param = new Param();
     
     abstract public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag();
-    abstract public Attention newAttention();
+    abstract public DefaultAttention newAttention();
 
     public Build() {
     }
             
-    
-//    /** initial runtime parameters */
-//    public Param getParam() {
-//        return param;
-//    }
-//    
-//    public Bag<Task<Term>,Sentence<Term>> getNovelTaskBag() {
-//        return novelTaskBag;
-//    }
-//    
-//    public Attention getAttention() {
-//        return attention;
-//    }
-//    
-//    public ConceptBuilder getConceptBuilder() {
-//        return conceptBuilder;
-//    }
-    
     @Deprecated public NAR build() {
         return new NAR(this)
         //return build(g, g.param);
