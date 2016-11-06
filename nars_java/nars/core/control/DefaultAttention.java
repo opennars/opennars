@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.core.Attention;
 import nars.core.Events;
 import nars.core.Events.ConceptForget;
 import nars.core.Memory;
@@ -24,7 +23,7 @@ import nars.storage.CacheBag;
  * The original deterministic memory cycle implementation that is currently used as a standard
  * for development and testing.
  */
-public class DefaultAttention implements Attention {
+public class DefaultAttention implements Iterable<Concept> {
 
 
     /* ---------- Long-term storage for multiple cycles ---------- */
@@ -101,16 +100,14 @@ public class DefaultAttention implements Attention {
         return concepts.take(t);
     }
             
-    @Override
     public void init(Memory m) {
         this.memory = m;
-        if (concepts instanceof AttentionAware)
-            ((AttentionAware)concepts).setAttention(this);
+        /*if (concepts instanceof AttentionAware)
+            ((AttentionAware)concepts).setAttention((Attention) this);
         if (concepts instanceof MemoryAware)
-            ((MemoryAware)concepts).setMemory(m);
+            ((MemoryAware)concepts).setMemory(m);*/
     }
 
-    @Override
     public int getInputPriority() {
         return loop.inputTasksPriority();
     }
@@ -133,7 +130,6 @@ public class DefaultAttention implements Attention {
         
     }
 
-    @Override
     public void cycle() {
         if (Parameters.THREADS == 1)
             cycleSequential();
@@ -196,17 +192,14 @@ public class DefaultAttention implements Attention {
          return concepts.values();
     }
 
-    @Override
     public void reset() {
         concepts.clear();
     }
 
-    @Override
     public Concept concept(final Term term) {
         return concepts.get(term);
     }
 
-    @Override
     public void conceptRemoved(Concept c) {
         
         if (subcon!=null) {            
@@ -226,7 +219,6 @@ public class DefaultAttention implements Attention {
         
     }
     
-    @Override
     public Concept conceptualize(BudgetValue budget, final Term term, boolean createIfMissing) {
         
         //see if concept is active
@@ -295,7 +287,7 @@ public class DefaultAttention implements Attention {
     }
     
     
-    @Override public void activate(final Concept c, final BudgetValue b, Activating mode) {
+    public void activate(final Concept c, final BudgetValue b, Activating mode) {
         concepts.take(c.name());
         BudgetFunctions.activate(c.budget, b, mode);
         concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
@@ -307,17 +299,14 @@ public class DefaultAttention implements Attention {
 //        concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);    
 //    }
 
-    @Override
     public Concept sampleNextConcept() {
         return concepts.peekNext();
     }
 
-    @Override
     public Iterator<Concept> iterator() {
         return concepts.iterator();
     }
 
-    @Override
     public Memory getMemory() {
         return memory;
     }

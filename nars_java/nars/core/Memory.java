@@ -33,13 +33,13 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import javolution.context.ConcurrentContext;
-import nars.core.Attention.AttentionAware;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
 import static nars.core.Memory.Forgetting.Periodic;
 import static nars.core.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;
+import nars.core.control.DefaultAttention;
 import nars.core.control.ImmediateProcess;
 import nars.core.control.NAL;
 import nars.io.meter.EmotionMeter;
@@ -173,7 +173,7 @@ public class Memory implements Serializable {
         randomNumber.setSeed(randomSeed);    
     }
     
-    public final Attention concepts;
+    public final DefaultAttention concepts;
     
     public final EventEmitter event;
     
@@ -281,7 +281,7 @@ public class Memory implements Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, Attention concepts, Bag<Task<Term>,Sentence<Term>> novelTasks) {                
+    public Memory(Param param, DefaultAttention concepts, Bag<Task<Term>,Sentence<Term>> novelTasks) {                
 
         this.param = param;
         
@@ -291,8 +291,6 @@ public class Memory implements Serializable {
         this.concepts.init(this);
         
         this.novelTasks = novelTasks;                
-        if (novelTasks instanceof AttentionAware)
-            ((AttentionAware)novelTasks).setAttention(concepts);
         
         this.newTasks = (Parameters.THREADS > 1) ?  
                 new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
