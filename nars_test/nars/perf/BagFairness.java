@@ -218,7 +218,7 @@ public class BagFairness {
 
             @Override public Chart[] getCharts(int experiment) {
                 
-                final NAR n = new Default() {
+                final NAR n = new NAR(new Default() {
 
                     @Override public Bag<Concept, Term> newConceptBag() {                        
                         /*if (experiment == 0)*/ {
@@ -234,7 +234,7 @@ public class BagFairness {
                         }*/
                     }
 
-                }.setConceptBagSize(maxConcepts).build();
+                }.setConceptBagSize(maxConcepts));
 
                 
                 ArrayList<Chart> ch = new BagFairness(n, 

@@ -84,7 +84,7 @@ public class TextsTest {
     
     @Test
     public void testRope() throws Narsese.InvalidInputException {
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
         Narsese np = new Narsese(n);
         
         String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";

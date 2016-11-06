@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import nars.core.Build;
 import nars.core.Memory;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
@@ -43,10 +42,10 @@ import nars.storage.LevelBag;
 /**
  * Default set of NAR parameters which have been classically used for development.
  */
-public class Default extends Build implements ConceptBuilder {
+public class Default extends Parameters implements ConceptBuilder {
 
     
-
+    public Param param = new Param();
     
     int taskLinkBagLevels;
     
@@ -83,8 +82,6 @@ public class Default extends Build implements ConceptBuilder {
     
     public Default() {
         super();
-    
-        this.type = "level";
         
        // temporalPlanner(8, 64, 16);
         
@@ -130,14 +127,15 @@ public class Default extends Build implements ConceptBuilder {
         //param.getDefaultDerivationFilters().add(new BeRational());
     }
 
-    
+    public Memory newMemory(Param p) {        
+        return new Memory(p, newAttention(), newNovelTaskBag());
+    }
 
     public Default temporalPlanner(float searchDepth, int planParticles, int inlineParticles) {
         pluginPlanner = new TemporalParticlePlanner(searchDepth, planParticles, inlineParticles);
         return this;
     }
 
-    @Override
     public NAR init(NAR n) {
         
         for (Operator o : DefaultOperators.get(n))
@@ -195,7 +193,6 @@ public class Default extends Build implements ConceptBuilder {
         return new CacheBag(getSubconceptBagSize());
     }
 
-    @Override
     public DefaultAttention newAttention() {
         return new DefaultAttention(newConceptBag(), newSubconceptBag(), getConceptBuilder());
     }

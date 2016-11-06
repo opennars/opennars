@@ -16,6 +16,7 @@ import nars.core.Events.FrameStart;
 import nars.core.Events.Perceive;
 import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
+import nars.core.build.Default;
 import nars.core.control.AbstractTask;
 import nars.core.control.NAL.DerivationFilter;
 import nars.entity.BudgetValue;
@@ -708,19 +709,8 @@ public class NAR implements Runnable, TaskSource {
         return inputChannels;
     }
 
-
-    /** create a NAR given the class of a Build.  its default constructor will be used */
-    public static NAR build(Class<? extends Build> g) {
-        try {
-            return new NAR(g.newInstance());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
     /** normal way to construct a NAR, using a particular Build instance */
-    public NAR(Build b) {
+    public NAR(Default b) {
         this(b.newMemory(b.param));
         b.init(this);
     }

@@ -84,7 +84,7 @@ public class NALStressMeasure  {
     
     public static void main(String[] args) {
        
-        NAR nd = new Default().build();
+        NAR nd = new NAR(new Default());
         test(nd);
         
         

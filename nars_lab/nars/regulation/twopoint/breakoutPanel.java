@@ -129,7 +129,7 @@ public class breakoutPanel extends JPanel {
      //   Parameters.DERIVATION_DURABILITY_LEAK=0.1f;
        // Parameters.DERIVATION_PRIORITY_LEAK=0.1f;
        // Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF = false;
-        nar = new Default().build();
+        nar = new NAR(new Default());
  
         nar.addPlugin(new move());
         

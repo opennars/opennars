@@ -15,7 +15,7 @@ public class TestMultistepEdited {
 
     @Test
     public void testMultistepEndState() {
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
         n.addInput(new TextInput(NALTest.getExample("nal/Examples/Example-MultiStep-edited.txt")));        
         new TextOutput(n, System.out);
         /*InferenceLogger logger = new InferenceLogger(System.out);

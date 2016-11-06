@@ -6,7 +6,6 @@ package nars.inference;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import nars.core.Build;
 import nars.core.Events.Answer;
 import nars.core.NAR;
 import nars.core.build.Default;
@@ -68,7 +67,7 @@ public class TuneTuffy {
     }
     
     public static void main(String[] args) throws FileNotFoundException, Narsese.InvalidInputException {
-        Build b = new Default().
+        Default b = new Default().
                 setInternalExperience(null);
                 
         

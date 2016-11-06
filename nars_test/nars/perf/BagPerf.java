@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.BudgetValue;
@@ -42,7 +43,7 @@ public class BagPerf {
     
     int repeats = 8;
     int warmups = 1;
-    final static AtomicDouble forgetRate = (new Default().build().param).conceptForgetDurations;
+    final static AtomicDouble forgetRate = (new NAR(new Default()).param).conceptForgetDurations;
     int randomAccesses;
     double insertRatio = 0.9;
     

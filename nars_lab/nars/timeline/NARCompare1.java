@@ -42,13 +42,13 @@ public class NARCompare1 extends TimelineExample {
         int cycles = 128;
 
         String input = "<a --> b>.\n" + "<b --> c>.\n" + "<a --> c>?\n";
-        NAR a = new Default().build();
+        NAR a = new NAR(new Default());
         setA(a.param);        
         NARTrace at = new NARTrace(a);
         a.addInput(input);
         a.run(cycles);
 
-        NAR b = new Default().build();
+        NAR b = new NAR(new Default());
         setB(b.param);
         NARTrace bt = new NARTrace(b);
         b.addInput(input);

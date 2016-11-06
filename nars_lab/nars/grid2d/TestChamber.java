@@ -1,7 +1,6 @@
 package nars.grid2d;
 
 import java.util.List;
-import nars.core.Build;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events;
 import nars.core.NAR;
@@ -40,12 +39,11 @@ public class TestChamber {
 
     
     public static void main(String[] args) {
-        Build builder = new Default();
-        
+
         //set NAR architecture parameters:
         //builder...
         Parameters.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
-        NAR nar = builder.build();
+        NAR nar = new NAR(new Default());
         //set NAR runtime parmeters:  
 
         /*for(NAR.PluginState pluginstate : nar.getPlugins()) {
