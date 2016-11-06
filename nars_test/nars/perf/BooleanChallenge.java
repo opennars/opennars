@@ -317,7 +317,7 @@ public class BooleanChallenge {
             
     public static void main(String[] args) {
         //NAR n = new DefaultNARBuilder().build();
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
         
         //NAR n = new CurveBagNARBuilder().build();
 

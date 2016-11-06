@@ -420,7 +420,7 @@ public class NALTestPerformance {
         int[] outs = new int[] { 5 };
         //int[] ins = null, outs = null;
         
-        NALControlMLDataSet trainingSet = test(new Default().build(), tests, 2000, additionalCycles, ins, outs, historySize);
+        NALControlMLDataSet trainingSet = test(new NAR(new Default()), tests, 2000, additionalCycles, ins, outs, historySize);
         trainingSet.normalize();
 
         System.out.println(trainingSet.allFields);
@@ -509,7 +509,7 @@ public class NALTestPerformance {
         int[] outs = new int[] {  10 };
         //int[] ins = null, outs = null;
         
-        NALControlMLDataSet trainingSet = test(new Default().build(), tests, 2000, additionalCycles, ins, outs, historySize);
+        NALControlMLDataSet trainingSet = test(new NAR(new Default()), tests, 2000, additionalCycles, ins, outs, historySize);
         trainingSet.normalize();
 
         System.out.println(trainingSet.allFields);

@@ -61,8 +61,7 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new Default().realtime().build();
         
-        NAR nar = new Default().simulationTime().setConceptBagSize(500).
-                /*temporalPlanner(12,64,16).*/build();
+        NAR nar = new NAR(new Default().simulationTime().setConceptBagSize(500));
         
         //nar.addPlugin(new TemporalParticlePlanner());
 

@@ -16,7 +16,7 @@ public class RLNAR extends RLAgent {
     int thoughtCycles = 1000;
 
     public static void main(String[] args) {
-        NAR n = new Default().build();
+        NAR n = new NAR(new Default());
 
         AgentLoader L = new AgentLoader(new RLNAR(n));
         L.run();

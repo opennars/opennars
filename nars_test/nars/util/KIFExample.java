@@ -32,9 +32,9 @@ public class KIFExample {
     public static void main(String[] args) throws Exception {
         
         
-        NAR n = new Default()
+        NAR n = new NAR(new Default()
                 .setConceptBagSize(16192)
-                .build();
+                );
                 
         
         (n.param).noiseLevel.set(40);

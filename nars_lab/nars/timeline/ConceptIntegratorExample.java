@@ -159,7 +159,7 @@ public class ConceptIntegratorExample extends TimelineExample {
     public static void main(String[] args) throws Exception {
         int cycles = 500;
                 
-        NAR nar = new Default().build();
+        NAR nar = new NAR(new Default());
         NARTrace t = new NARTrace(nar);
         nar.addInput("<a --> b>.");
         nar.addInput("<b --> c>.");
