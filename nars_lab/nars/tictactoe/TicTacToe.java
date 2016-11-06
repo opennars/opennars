@@ -42,7 +42,7 @@ import nars.core.Events.FrameEnd;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Discretinuous;
+import nars.core.build.Default;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
@@ -84,7 +84,7 @@ public class TicTacToe extends JPanel {
     public TicTacToe() {
         super(new BorderLayout());
 
-        nar = new NAR(new Discretinuous().
+        nar = new NAR(new Default().
                 setConceptBagSize(1000).
                 setSubconceptBagSize(10000).
                 simulationTime());

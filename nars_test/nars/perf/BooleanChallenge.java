@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
-import nars.core.build.Discretinuous;
+import nars.core.build.Default;
 import nars.entity.Task;
 import nars.io.Output.OUT;
 import static nars.io.Texts.n2;
@@ -317,7 +317,7 @@ public class BooleanChallenge {
             
     public static void main(String[] args) {
         //NAR n = new DefaultNARBuilder().build();
-        NAR n = new Discretinuous().build();
+        NAR n = new Default().build();
         
         //NAR n = new CurveBagNARBuilder().build();
 

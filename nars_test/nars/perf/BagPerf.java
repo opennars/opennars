@@ -32,8 +32,6 @@ import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
-import nars.storage.CurveBag;
-import nars.storage.GearBag;
 import nars.util.sort.ArraySortedIndex;
 
 /**
@@ -226,8 +224,6 @@ public class BagPerf {
         int iterationsPerItem = 0;
         int accessesPerItem = 8;
         
-        CurveBag.FairPriorityProbabilityCurve curve = new CurveBag.FairPriorityProbabilityCurve();
-        
         boolean printedHeader = false;
         
         for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.1f) {
@@ -238,9 +234,6 @@ public class BagPerf {
                 int randomAccesses = accessesPerItem * items;
                         
                 Bag[] bags = new Bag[] { 
-                    new GearBag(levels, items),
-                    new CurveBag(items, curve, true, new ArraySortedIndex<>(items)),
-                    //new CurveBag(items, curve, true, new FractalSortedItemList<>()),                
                     new LevelBag(levels, items)                        
                 };
                 
