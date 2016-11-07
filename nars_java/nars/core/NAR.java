@@ -14,7 +14,6 @@ import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.FrameStart;
 import nars.core.Events.Perceive;
-import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
 import nars.core.build.Default;
 import nars.core.control.AbstractTask;
@@ -53,7 +52,7 @@ import nars.operator.io.Echo;
  *   * step mode - controlled by an outside system, such as during debugging or testing
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class NAR implements Runnable, TaskSource {
+public class NAR implements Runnable {
 
     /**
      * The information about the version and date of the project.
@@ -554,7 +553,6 @@ public class NAR implements Runnable, TaskSource {
      * Processes the next input from each input channel.  Removes channels that have finished.
      * @return whether to finish the reasoner afterward, which is true if any input exists.
      */
-    @Override
     public AbstractTask nextTask() {                
         if ((!inputting) || (inputChannels.isEmpty()))
            return null;        
@@ -592,7 +590,7 @@ public class NAR implements Runnable, TaskSource {
     }
 
     /** count of how many items are buffered */
-    @Override public int getInputItemsBuffered() {
+    public int getInputItemsBuffered() {
         int total = 0;
         for (final InPort i : inputChannels)
             total += i.getItemsBuffered();
