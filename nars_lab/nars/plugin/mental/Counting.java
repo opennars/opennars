@@ -15,6 +15,7 @@ import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.SetExt;
 import nars.language.Term;
+import nars.plugin.mental.InternalExperience;
 
 /**
  * Counting and Cardinality
