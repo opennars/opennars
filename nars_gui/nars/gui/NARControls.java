@@ -421,8 +421,6 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 
         JComponent jp = newParameterPanel();
         top.add(jp, BorderLayout.CENTER);
-
-
         
         
         /*CompoundMeter senses = new CompoundMeter(memory.logic, memory.resource) {
