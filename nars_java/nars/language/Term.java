@@ -33,7 +33,7 @@ import nars.io.Texts;
 import nars.language.Terms.Termable;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.util.sort.SortedList;
+//import nars.util.sort.SortedList;
 
 /**
  * Term is the basic component of Narsese, and the object of processing in NARS.
@@ -388,9 +388,9 @@ public class Term implements AbstractTerm, Termable {
         //TODO fast sorted array for arg.length == 3
 
         //terms > 2:        
-        
-        SortedList<Term> s = new SortedList(arg.length);
-        s.setAllowDuplicate(false);
+        TreeSet<Term> s = new TreeSet();
+        //SortedList<Term> s = new SortedList(arg.length);
+        //s.setAllowDuplicate(false);
         
         for (Term a: arg) s.add(a);        
         
