@@ -28,7 +28,6 @@ import nars.entity.Task;
 import nars.language.CompoundTerm;
 import nars.language.Product;
 import nars.language.Term;
-import nars.language.Terms;
 import nars.operator.Operation;
 import nars.operator.Operator;
 
