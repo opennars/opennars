@@ -158,13 +158,6 @@ public class Memory implements Serializable {
     
     Timing timing;
     
-    
-    public static interface TaskSource {
-        public AbstractTask nextTask();
-
-        public int getInputItemsBuffered();
-    }
-    
     //public static Random randomNumber = new Random(1);
     public static long randomSeed = 1;
     public static Random randomNumber = new Random(randomSeed);
@@ -741,7 +734,7 @@ public class Memory implements Serializable {
     
     
     
-    public void cycle(final TaskSource inputs) {
+    public void cycle(final NAR inputs) {
 
         if (!isEnabled())
             return;
