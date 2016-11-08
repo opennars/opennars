@@ -1,10 +1,11 @@
-package nars.core;
+package nars;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import nars.core.NAR;
 
 /**
  * Javascript NAR Runner
