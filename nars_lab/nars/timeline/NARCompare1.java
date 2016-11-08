@@ -26,7 +26,7 @@ import automenta.vivisect.timeline.TimelineVis;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
-import nars.util.NARTrace;
+import nars.gui.util.NARTrace;
 
 public class NARCompare1 extends TimelineExample {
     

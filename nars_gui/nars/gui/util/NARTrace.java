@@ -1,4 +1,4 @@
-package nars.util;
+package nars.gui.util;
 
 import automenta.vivisect.TreeMLData;
 import automenta.vivisect.Video;

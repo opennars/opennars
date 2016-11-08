@@ -32,7 +32,7 @@ import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import nars.gui.EventChart;
 import nars.io.TextOutput;
-import nars.util.NARTrace;
+import nars.gui.util.NARTrace;
 
 /**
  *

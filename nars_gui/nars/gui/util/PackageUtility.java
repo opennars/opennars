@@ -1,4 +1,4 @@
-package nars.util;
+package nars.gui.util;
 
 import java.io.File;
 import java.io.FileInputStream;

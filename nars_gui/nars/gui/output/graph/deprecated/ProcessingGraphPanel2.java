@@ -25,7 +25,7 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.util.NARGraph;
+import nars.gui.util.NARGraph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DirectedMultigraph;
 

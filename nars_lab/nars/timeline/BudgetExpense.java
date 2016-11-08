@@ -26,9 +26,9 @@ import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import automenta.vivisect.timeline.TimelineVis;
 import nars.gui.EventChart;
-import nars.util.NARTrace;
-import nars.util.NARTrace.ConceptBagTreeMLData;
-import nars.util.NARTrace.ConceptBagTreeMLData.Mode;
+import nars.gui.util.NARTrace;
+import nars.gui.util.NARTrace.ConceptBagTreeMLData;
+import nars.gui.util.NARTrace.ConceptBagTreeMLData.Mode;
 
 /**
  *

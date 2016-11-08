@@ -23,7 +23,7 @@ import javax.swing.JToggleButton;
 import nars.gui.EventChart;
 import nars.gui.WrapLayout;
 
-import nars.util.NARTrace;
+import nars.gui.util.NARTrace;
 
 /**
  *

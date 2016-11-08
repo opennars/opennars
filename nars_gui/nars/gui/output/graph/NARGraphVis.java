@@ -28,8 +28,8 @@ import nars.core.Events.FrameEnd;
 import nars.core.Events.ResetEnd;
 import nars.core.NAR;
 import nars.gui.output.graph.layout.HashPriorityPolarLayout;
-import nars.util.DefaultGraphizer;
-import nars.util.NARGraph;
+import nars.gui.util.DefaultGraphizer;
+import nars.gui.util.NARGraph;
 import nars.gui.graph.InheritanceGraph;
 import org.jgrapht.Graph;
 

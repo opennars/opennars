@@ -29,7 +29,7 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.core.NAR.PluginState;
 import nars.core.Plugin;
-import nars.util.PackageUtility;
+import nars.gui.util.PackageUtility;
 
 /**
  * Manages the activated set of plugins in a NAR, and a menu for adding additional ones

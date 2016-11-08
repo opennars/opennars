@@ -8,8 +8,8 @@ import automenta.vivisect.dimensionalize.AbegoTreeLayout;
 import automenta.vivisect.graph.AnimatingGraphVis;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.util.NARGraph;
-import nars.util.NARGraph.UniqueEdge;
+import nars.gui.util.NARGraph;
+import nars.gui.util.NARGraph.UniqueEdge;
 import org.jgrapht.Graph;
 
 /**
