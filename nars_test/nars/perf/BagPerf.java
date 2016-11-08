@@ -33,7 +33,6 @@ import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
-import nars.util.sort.ArraySortedIndex;
 
 /**
  *

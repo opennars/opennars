@@ -6,8 +6,6 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.HashMap;
 import java.util.Map;
-import nars.util.rope.Rope;
-import nars.util.rope.impl.CharArrayRope;
 
 /**
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms 
@@ -271,29 +269,13 @@ public class Texts {
             return lastNonNull.toString();
         }
         
-        if ((totalLen <= maxLen) || (maxLen == -1)) {            
-            /*
-            final CharBuffer n = CharBuffer.allocate(totalLen);
-
-            for (final CharSequence s : components) {            
-                n.append(s);
+        StringBuilder sb = new StringBuilder(totalLen);
+        for (final CharSequence s : components) {
+            if (s != null) {
+                sb.append(s);
             }
-
-            return n.compact();
-            */
-        
-            
-            StringBuilder sb = new StringBuilder(totalLen);
-            for (final CharSequence s : components) {
-                if (s != null) {
-                    sb.append(s);
-                }
-            }
-            return Texts.sequence(sb);
-        } else {
-            Rope r = Rope.catFast(components);
-            return r;
         }
+        return Texts.sequence(sb);
     }    
     
     public static boolean containsChar(final CharSequence n, final char c) {
@@ -313,7 +295,7 @@ public class Texts {
      * CharArrayRope can use the StringBuilder's underlying char[] directly without copy.
      */
     public static CharSequence sequence(StringBuilder b) {
-        return new CharArrayRope(b);
+        return b; //new CharArrayRope(b);
     }
 
     final static Format fourDecimal = new DecimalFormat("0.0000");
