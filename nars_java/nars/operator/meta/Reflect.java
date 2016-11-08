@@ -11,12 +11,13 @@ import nars.language.Product;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
+import nars.operator.SynchronousFunctionOperator;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term
  * @author me
  */
-public class Reflect extends TermTransform {
+public class Reflect extends SynchronousFunctionOperator {
 
 
     /*
