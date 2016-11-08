@@ -21,6 +21,7 @@
 package nars.gui;
 
 import automenta.vivisect.swing.NWindow;
+import java.awt.BorderLayout;
 
 import java.awt.Color;
 import java.io.File;
@@ -110,23 +111,23 @@ public class NARSwing  {
         this.nar = nar;                
         
         controls = new NARControls(nar);        
-        mainWindow = new NWindow(NAR.VERSION, controls);
+        mainWindow = new NWindow(NAR.VERSION);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainWindow.setBounds(10, 10, 270, 650);
-        mainWindow.setVisible(true);
-        
+        mainWindow.setBounds(10, 10, 870, 650);
+       
+        mainWindow.setLayout(new BorderLayout());
+        mainWindow.getContentPane().add(controls, BorderLayout.WEST);
+        mainWindow.getContentPane().add(new ConsolePanel(controls), BorderLayout.CENTER);
+         mainWindow.setVisible(true);
         
         //TEMPORARY
         //new Window("Plugins", new PluginPanel(nar)).show(300, 400);
         
         
         if (logPanel) {
-            NWindow nw = new NWindow("I/O", new ConsolePanel(controls));
-            nw.setBounds(mainWindow.getX() + mainWindow.getWidth(), mainWindow.getY(), 800, 650);
-            nw.setVisible(true);
-            
-            
-
+            //NWindow nw = new NWindow("I/O", new ConsolePanel(controls));
+            //nw.setBounds(mainWindow.getX() + mainWindow.getWidth(), mainWindow.getY(), 800, 650);
+           // nw.setVisible(true);
         }
         else {
             new TextOutput(nar, System.out);
