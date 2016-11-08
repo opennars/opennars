@@ -133,9 +133,9 @@ public abstract class NAL implements Runnable {
         if (occurence2 != null && !occurence2.isEternal()) {
             stamp.setOccurrenceTime(occurence2.getOccurenceTime());
         }
-        if (stamp.latency > 0) {
-            memory.logic.DERIVATION_LATENCY.commit(stamp.latency);
-        }
+        //if (stamp.latency > 0) {
+        //    memory.logic.DERIVATION_LATENCY.commit(stamp.latency);
+        //}
         
         final Term currentTaskContent = getCurrentTask().getTerm();
         if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
@@ -200,7 +200,7 @@ public abstract class NAL implements Runnable {
         task.getBudget().setDurability(task.getBudget().getDurability()*Parameters.DERIVATION_DURABILITY_LEAK);
         task.getBudget().setPriority(task.getBudget().getPriority()*Parameters.DERIVATION_PRIORITY_LEAK);
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
-        memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
+        //memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
         addTask(task, "Derived");
         return true;
     }

@@ -799,7 +799,7 @@ public class GraphExecutive {
                 break;
         }
         
-        memory.logic.PLAN_TASK_PLANNED.commit(n);
+       // memory.logic.PLAN_TASK_PLANNED.commit(n);
         
         return n;
        

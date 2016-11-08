@@ -20,19 +20,13 @@
  */
 package nars.gui;
 
-import automenta.vivisect.TreeMLData;
 import automenta.vivisect.dimensionalize.FastOrganicLayout;
 import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
-import automenta.vivisect.timeline.BarChart;
-import automenta.vivisect.timeline.Chart;
-import automenta.vivisect.timeline.LineChart;
-import automenta.vivisect.timeline.StackedPercentageChart;
 import java.awt.BorderLayout;
-import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.NORTH;
 import java.awt.Color;
 import java.awt.Dialog;
@@ -64,24 +58,16 @@ import nars.core.NAR;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
 import nars.gui.output.IdeaPanel;
-import nars.gui.output.MultiOutputPanel;
 import nars.gui.output.PluginPanel;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TaskTree;
-import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.NARFacePanel;
 import nars.gui.output.TimelinePanel;
-import nars.gui.output.chart.MeterVis;
 import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
-import nars.plugin.app.plan.MultipleExecutionManager;
-import nars.plugin.app.plan.MultipleExecutionManager.Execution;
-import nars.plugin.app.plan.GraphExecutive;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.io.meter.CompoundMeter;
-
 
 public class NARControls extends JPanel implements ActionListener, EventObserver {
 
@@ -450,7 +436,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 
         
         
-        CompoundMeter senses = new CompoundMeter(memory.logic, memory.resource) {
+        /*CompoundMeter senses = new CompoundMeter(memory.logic, memory.resource) {
             @Override
             public Chart newDefaultChart(String id, TreeMLData data) {                
                 switch (id) {
@@ -471,10 +457,10 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             }          
         };
         senses.setActive(true);
-        senses.update(memory);        
+        senses.update(memory);   */     
         
         add(top, NORTH);
-        add(new MeterVis(nar, senses, 128).newPanel(), CENTER);
+        //add(new MeterVis(nar, senses, 128).newPanel(), CENTER);
         
         
         init();

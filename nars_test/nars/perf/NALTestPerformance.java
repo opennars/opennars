@@ -16,7 +16,6 @@ import java.util.StringJoiner;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.io.meter.CompoundMeter;
 import nars.core.NALTest;
 import nars.io.condition.OutputCondition;
 import nars.util.XORShiftRandom;
@@ -91,10 +90,10 @@ public class NALTestPerformance {
             boolean error = false;
             int successes = 0;
 
-            CompoundMeter m = new CompoundMeter(nar.memory.logic, nar.memory.resource);
-            m.update(nar.memory);
+            //CompoundMeter m = new CompoundMeter(nar.memory.logic, nar.memory.resource);
+            //m.update(nar.memory);
             
-            fields.addAll(m.keySet());
+           // fields.addAll(m.keySet());
             fields.add("id");
             fields.add("time");
             fields.add("absTime");
@@ -105,14 +104,14 @@ public class NALTestPerformance {
             
             do {
                 double successRate = successes / ((double)expects.size());
-                m.update(nar.memory);
+               /* m.update(nar.memory);
                 logicState.add(m.toArray(
                         exampleNum,
                         nar.memory.getCycleTime(),
                         absTime++,
                         successRate, 
                         error ? 1 : 0
-                ));
+                ));*/
 
                 if (error)
                     break;
