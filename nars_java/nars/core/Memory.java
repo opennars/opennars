@@ -43,8 +43,6 @@ import nars.core.control.DefaultAttention;
 import nars.core.control.ImmediateProcess;
 import nars.core.control.NAL;
 import nars.io.meter.EmotionMeter;
-import nars.io.meter.LogicMeter;
-import nars.io.meter.ResourceMeter;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -220,8 +218,6 @@ public class Memory implements Serializable {
 
     
     public final EmotionMeter emotion = new EmotionMeter();    
-    public final LogicMeter logic;
-    public final ResourceMeter resource;
     
     
     /**
@@ -291,10 +287,9 @@ public class Memory implements Serializable {
         this.operators = new HashMap<>();
         
 
-        this.resource = new ResourceMeter();
+        /*this.resource = new ResourceMeter();
         this.logic = new LogicMeter() {
 
-            @Override
             public void commit(Memory memory) {
                 double prioritySum = 0;        
                 double prioritySumSq = 0;
@@ -334,17 +329,17 @@ public class Memory implements Serializable {
                     mean = variance = 0;
                 }
 
-                setConceptNum(count);
-                setConceptBeliefsSum(totalBeliefs);
-                setConceptQuestionsSum(totalQuestions);
-                setConceptPriorityMean(mean);
-                setConceptPriorityVariance(variance);
-                setConceptPriorityHistogram(histogram);
+                //setConceptNum(count);
+                //setConceptBeliefsSum(totalBeliefs);
+                //setConceptQuestionsSum(totalQuestions);
+                //setConceptPriorityMean(mean);
+                //setConceptPriorityVariance(variance);
+                //setConceptPriorityHistogram(histogram);
                 
-                super.commit(memory);
+                //super.commit(memory);
             }
 
-        };
+        }; */
         
         
         
@@ -595,7 +590,7 @@ public class Memory implements Serializable {
         
         newTasks.add(t);
                 
-        logic.TASK_ADD_NEW.commit(t.getPriority());
+      //  logic.TASK_ADD_NEW.commit(t.getPriority());
         
         emit(Events.TaskAdd.class, t, reason);
         
@@ -692,7 +687,7 @@ public class Memory implements Serializable {
      */
     public void executedTask(final Operation operation, TruthValue truth) {
         Task opTask = operation.getTask();
-        logic.TASK_EXECUTED.commit(opTask.budget.getPriority());
+       // logic.TASK_EXECUTED.commit(opTask.budget.getPriority());
                 
         Stamp stamp = new Stamp(this, Tense.Present); 
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
@@ -739,12 +734,12 @@ public class Memory implements Serializable {
         if (!isEnabled())
             return;
         
-        resource.CYCLE.start();
+        /*resource.CYCLE.start();
         resource.CYCLE_CPU_TIME.start();
         resource.CYCLE_RAM_USED.start();
 
         if (logic.IO_INPUTS_BUFFERED.isActive())
-            logic.IO_INPUTS_BUFFERED.commit(inputs.getInputItemsBuffered());
+            logic.IO_INPUTS_BUFFERED.commit(inputs.getInputItemsBuffered());*/
         
         event.emit(Events.CycleStart.class);                
 
@@ -769,9 +764,9 @@ public class Memory implements Serializable {
         updateTime();
         
 
-        resource.CYCLE_RAM_USED.stop();
+       /* resource.CYCLE_RAM_USED.stop();
         resource.CYCLE_CPU_TIME.stop();
-        resource.CYCLE.stop();
+        resource.CYCLE.stop();*/
     }
     
     
@@ -813,7 +808,7 @@ public class Memory implements Serializable {
                         //just imagine a board game where you are confident about all the board rules
                         //but the implications reach all the frequency spectrum in certain situations
                         //but every concept can also be represented with (--,) so i guess its ok
-                        logic.TASK_ADD_NOVEL.commit();
+                        //logic.TASK_ADD_NOVEL.commit();
                         
                         // new concept formation                        
                         Task displacedNovelTask = novelTasks.putIn(task);

@@ -15,7 +15,6 @@ import nars.core.Events.ConceptNew;
 import nars.core.Events.InferenceEvent;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.io.meter.CompoundMeter;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.core.EventEmitter.EventObserver;
@@ -56,7 +55,6 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
     private long t;
     public final NAR nar;
-    public final CompoundMeter senses;
 
     public TreeMLData[] getCharts(String... names) {
         List<TreeMLData> l = new ArrayList(names.length);
@@ -134,14 +132,14 @@ public class NARTrace extends MemoryObserver implements Serializable {
         
         Memory memory = nar.memory;
         
-        senses = new CompoundMeter(memory.logic, memory.resource);
-        senses.setActive(true);
-        senses.update(memory);        
+        //senses = new CompoundMeter(memory.logic, memory.resource);
+        //senses.setActive(true);
+        //senses.update(memory);        
         
-        for (String x : senses.keySet()) {
-            TreeMLData ch = new TreeMLData(x, Video.getColor(x+"_EsfDF_SDF_SD", 0.8f, 0.8f), chartHistorySize);
-            charts.put(x, ch);            
-        }
+        //for (String x : senses.keySet()) {
+        //    TreeMLData ch = new TreeMLData(x, Video.getColor(x+"_EsfDF_SDF_SD", 0.8f, 0.8f), chartHistorySize);
+        //    charts.put(x, ch);            
+        //}
         
     }
     
@@ -197,12 +195,12 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
     @Override
     public void onCycleEnd(long time) {
-        senses.update(nar.memory);
+        //senses.update(nar.memory);
         
         for (Map.Entry<String, TreeMLData> e : charts.entrySet()) {
             String f = e.getKey();            
             TreeMLData ch = e.getValue();
-            Object value = senses.get(f);
+           /* Object value = senses.get(f);
             
             if (value instanceof Double) {                    
                 ch.setData((int)time, ((Number) value).floatValue());
@@ -215,7 +213,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
             }
             else if (value instanceof Long) {
                 ch.setData((int)time, ((Number) value).floatValue());
-            }            
+            }    */      
         }        
     }
 

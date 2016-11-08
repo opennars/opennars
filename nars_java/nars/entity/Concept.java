@@ -207,16 +207,16 @@ public class Concept extends Item<Term> implements Termable {
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
-                memory.logic.JUDGMENT_PROCESS.commit();
+                //memory.logic.JUDGMENT_PROCESS.commit();
                 processJudgment(nal, task);
                 break;
             case Symbols.GOAL_MARK:
-                memory.logic.GOAL_PROCESS.commit();
+                //memory.logic.GOAL_PROCESS.commit();
                 processGoal(nal, task, true);
                 break;
             case Symbols.QUESTION_MARK:
             case Symbols.QUEST_MARK:
-                memory.logic.QUESTION_PROCESS.commit();
+                //memory.logic.QUESTION_PROCESS.commit();
                 processQuestion(nal, task);
                 break;
             default:
@@ -224,7 +224,7 @@ public class Concept extends Item<Term> implements Termable {
         }
 
         if (task.aboveThreshold()) {    // still need to be processed
-            memory.logic.LINK_TO_TASK.commit();
+            //memory.logic.LINK_TO_TASK.commit();
             linkToTask(task);
         }
 

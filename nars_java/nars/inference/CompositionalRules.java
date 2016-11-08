@@ -181,7 +181,7 @@ public final class CompositionalRules {
                     return;
                 }*/
 
-                nal.mem().logic.DED_CONJUNCTION_BY_QUESTION.commit();
+                //nal.mem().logic.DED_CONJUNCTION_BY_QUESTION.commit();
 
                 TruthValue truthAnd = intersection(truthT, truthB);
                 BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
@@ -1352,7 +1352,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     
                     if (nal.derivedTask(newTask, false, false, task, second_belief, true)) {
                         
-                        nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.commit();
+                        //nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.commit();
                         nal.emit(Events.ConceptUnification.class, newTask, first, secondConcept, second_belief);
                         unifiedAnything = true;
                         
@@ -1431,7 +1431,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     
                     if (nal.derivedTask(newTask, false, false, task, second_belief, false)) {
 
-                        nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
+                        //nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
 
                     }
                 }

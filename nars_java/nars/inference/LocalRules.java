@@ -116,7 +116,7 @@ public class LocalRules {
         
         if (budget.aboveThreshold()) {
             if (nal.doublePremiseTaskRevised(newBelief.term, truth, budget)) {
-                nal.mem().logic.BELIEF_REVISION.commit();
+                //nal.mem().logic.BELIEF_REVISION.commit();
                 return true;
             }
         }
@@ -175,7 +175,7 @@ public class LocalRules {
 
         task.setBestSolution(memory,belief);
         
-        memory.logic.SOLUTION_BEST.commit(task.getPriority());
+        //memory.logic.SOLUTION_BEST.commit(task.getPriority());
 
         if (problem.isGoal()) {
             memory.emotion.adjustHappy(newQ, task.getPriority(), nal);
