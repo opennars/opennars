@@ -17,8 +17,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import nars.core.Events;
 import nars.entity.Item;
 import nars.io.Output;
-import nars.util.NARTrace;
-import nars.util.NARTrace.HasLabel;
+import nars.gui.util.NARTrace;
+import nars.gui.util.NARTrace.HasLabel;
 import processing.core.PConstants;
 
 /**

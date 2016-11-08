@@ -29,9 +29,9 @@ import nars.io.condition.OutputCondition;
 import nars.io.condition.OutputContainsCondition;
 import nars.language.Term;
 import nars.operator.Operation;
-import nars.util.NARGraph;
-import nars.util.NARGraph.TimeNode;
-import nars.util.NARGraph.UniqueEdge;
+import nars.gui.util.NARGraph;
+import nars.gui.util.NARGraph.TimeNode;
+import nars.gui.util.NARGraph.UniqueEdge;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DirectedSubgraph;
 

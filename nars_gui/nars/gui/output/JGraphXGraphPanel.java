@@ -9,9 +9,9 @@ import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import nars.core.NAR;
-import nars.util.DefaultGraphizer;
-import nars.util.NARGraph;
-import static nars.util.NARGraph.IncludeEverything;
+import nars.gui.util.DefaultGraphizer;
+import nars.gui.util.NARGraph;
+import static nars.gui.util.NARGraph.IncludeEverything;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
 

@@ -36,7 +36,7 @@ import nars.language.Image;
 import static nars.language.Tense.Eternal;
 import nars.language.Term;
 import nars.language.Variable;
-import nars.util.NARGraph;
+import nars.gui.util.NARGraph;
 
 /**
  * TODO add existing concepts before it is added

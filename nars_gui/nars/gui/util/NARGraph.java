@@ -1,4 +1,4 @@
-package nars.util;
+package nars.gui.util;
 
 import java.io.FileWriter;
 import java.io.IOException;

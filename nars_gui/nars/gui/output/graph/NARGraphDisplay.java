@@ -20,7 +20,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.language.Terms.Termable;
-import nars.util.NARGraph;
+import nars.gui.util.NARGraph;
 /**
  *
  * @author me
