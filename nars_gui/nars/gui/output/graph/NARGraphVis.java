@@ -30,7 +30,7 @@ import nars.core.NAR;
 import nars.gui.output.graph.layout.HashPriorityPolarLayout;
 import nars.util.DefaultGraphizer;
 import nars.util.NARGraph;
-import nars.util.graph.InheritanceGraph;
+import nars.gui.graph.InheritanceGraph;
 import org.jgrapht.Graph;
 
 /**
