@@ -1,5 +1,8 @@
 package nars.plugin.mental;
 
+import nars.plugin.mental.InternalExperience;
+import nars.plugin.mental.InternalExperience;
+
 /**
  * To rememberAction an internal action as an operation
  * <p>
