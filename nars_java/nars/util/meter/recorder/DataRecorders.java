@@ -20,7 +20,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import nars.util.meter.Meter;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
-import nars.util.meter.util.Decorator;
 import nars.util.meter.util.ThreadSafe;
 
 /**
@@ -230,7 +229,7 @@ public final class DataRecorders {
     /* NESTED CLASSES */
     @ThreadSafe
     private static final class LockingDataRecorderDecorator
-            implements DataRecorder, Decorator<DataRecorder> {
+            implements DataRecorder {
 
         private final DataRecorder delegate;
         private final Lock lock;
@@ -247,7 +246,6 @@ public final class DataRecorders {
             }
         }
 
-        @Override
         public DataRecorder delegate() {
             return delegate;
         }
