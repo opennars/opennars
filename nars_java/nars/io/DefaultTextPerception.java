@@ -20,9 +20,9 @@ import nars.entity.Task;
 import nars.io.Output.IN;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
-import nars.io.nlp.Englisch;
+/*import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
-import nars.io.nlp.Twenglish;
+import nars.io.nlp.Twenglish;*/
 import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reboot;
@@ -45,8 +45,8 @@ public class DefaultTextPerception implements Plugin, EventObserver {
     
     
     public Narsese narsese;    
-    public Englisch englisch;
-    public Twenglish twenglish;
+    //public Englisch englisch;
+    //public Twenglish twenglish;
     
     private boolean enableNarsese = true;
 
@@ -61,8 +61,8 @@ public class DefaultTextPerception implements Plugin, EventObserver {
         if (enabled) {
             this.memory = n.memory;
             this.narsese = new Narsese(memory);
-            this.englisch = new Englisch();
-            this.twenglish = new Twenglish(memory);
+            //this.englisch = new Englisch();
+            //this.twenglish = new Twenglish(memory);
             this.parsers = getParsers();
             
         }
@@ -279,8 +279,9 @@ public class DefaultTextPerception implements Plugin, EventObserver {
             @Override
             public Object react(String line) {
                 
-                if (enableEnglisch) {
-                    /*if (!possiblyNarsese(line))*/ {                    
+                /*if (enableEnglisch) {
+                    //if (!possiblyNarsese(line)) 
+                    {                    
                         List<AbstractTask> l;
                         try {
                             l = englisch.parse(line, narsese, true);
@@ -291,7 +292,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
                             return null;
                         }
                     }
-                }
+                }*/
                 return null;            
             }
         });
@@ -301,8 +302,9 @@ public class DefaultTextPerception implements Plugin, EventObserver {
             @Override
             public Object react(String line) {
                 
-                if (enableTwenglish) {
-                    /*if (!possiblyNarsese(line))*/ {                    
+                /*if (enableTwenglish) {
+                    //if (!possiblyNarsese(line))
+                    {                    
                         List<AbstractTask> l;
                         try {
                             l = twenglish.parse(line, narsese, true);
@@ -313,7 +315,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
                             return null;
                         }
                     }
-                }
+                }*/
                 return null;            
             }
         });
@@ -323,14 +325,15 @@ public class DefaultTextPerception implements Plugin, EventObserver {
             @Override
             public Object react(String line) {
                 
-                if (enableNaturalLanguage) {
-                    /*if (!possiblyNarsese(line))*/ {                    
+                /*if (enableNaturalLanguage) {
+                    //if (!possiblyNarsese(line)) 
+                    {                    
                         List<AbstractTask> l = NaturalLanguagePerception.parseLine(line, narsese, "word");
                         if ((l == null) || (l.isEmpty())) 
                             return null;
                         return l;
                     }
-                }
+                }*/
                 return null;            
             }
         });
