@@ -29,7 +29,7 @@ import nars.language.Term;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
 import nars.lab.plugin.app.plan.TemporalParticlePlanner;
-import nars.plugin.input.PerceptionAccel;
+import nars.plugin.mental.PerceptionAccel;
 import nars.plugin.mental.Abbreviation;
 import nars.lab.plugin.mental.Counting;
 import nars.plugin.mental.FullInternalExperience;
