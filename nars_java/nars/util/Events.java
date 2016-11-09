@@ -54,9 +54,6 @@ public class Events {
     
     public static class Perceive {    }
     
-    //when remembered a previously forgotten concept
-    public static class ConceptRemember {    }
-    
     public static class ConceptForget { }
     
     abstract public static class ConceptBeliefAdd implements EventObserver {  
