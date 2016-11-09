@@ -11,7 +11,7 @@ import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import java.awt.Color;
-import nars.core.Events.TaskImmediateProcess;
+import nars.util.Events.TaskImmediateProcess;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;

@@ -1,7 +1,7 @@
 package nars.lab.inference;
 
-import nars.core.EventEmitter;
-import nars.core.Events;
+import nars.util.EventEmitter;
+import nars.util.Events;
 import nars.core.NAR;
 
 

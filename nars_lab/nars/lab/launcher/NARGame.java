@@ -1,7 +1,7 @@
 package nars.lab.launcher;
 
-import nars.core.EventEmitter.EventObserver;
-import nars.core.Events;
+import nars.util.EventEmitter.EventObserver;
+import nars.util.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.gui.NARSwing;

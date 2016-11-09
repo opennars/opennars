@@ -6,7 +6,7 @@ package nars.lab.inference;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import nars.core.Events.Answer;
+import nars.util.Events.Answer;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Sentence;
