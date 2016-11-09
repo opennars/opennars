@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-import nars.core.Events;
+import nars.util.Events;
 import nars.entity.Item;
 import nars.io.Output;
 import nars.gui.util.NARTrace;

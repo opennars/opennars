@@ -18,7 +18,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import static javax.swing.SwingUtilities.invokeLater;
-import nars.core.EventEmitter.EventObserver;
+import nars.util.EventEmitter.EventObserver;
 import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.output.graph.deprecated.ProcessingGraphPanel2;

@@ -17,7 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
-import nars.core.Events;
+import nars.util.Events;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
