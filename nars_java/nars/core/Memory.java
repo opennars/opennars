@@ -673,17 +673,15 @@ public class Memory implements Serializable {
         }
     }
 
-    
-
     /**
      * Select a novel task to process.
      * @return whether a task was processed
      */
     public int processNovelTasks(int num, Collection<Runnable> queue) {
-        if (num == 0) return 0;
-        
+        if (num == 0) 
+            return 0;
+    
         int executed = 0;                
-
         for (int i = 0; i < novelTasks.size(); i++) {
             final Task task = novelTasks.takeNext();       // select a task from novelTasks
             if (task != null) {            
@@ -691,8 +689,6 @@ public class Memory implements Serializable {
                 executed++;
             }
         }
-        
-        
         return executed;
     }
 
@@ -710,21 +706,6 @@ public class Memory implements Serializable {
      public Operator removeOperator(final Operator op) {
          return operators.remove(op.name());
      }
-     
-
-
-
-    @Override
-    public String toString() {
-        //final StringBuilder sb = new StringBuilder(1024);
-        //sb.append(toStringLongIfNotNull(novelTasks, "novelTasks"))
-          //      .append(toStringIfNotNull(newTasks, "newTasks"));
-                //.append(toStringLongIfNotNull(getCurrentTask(), "currentTask"))
-                //.append(toStringLongIfNotNull(getCurrentBeliefLink(), "currentBeliefLink"))
-                //.append(toStringIfNotNull(getCurrentBelief(), "currentBelief"));
-        //return sb.toString();
-        return super.toString();
-    }
 
     private String toStringLongIfNotNull(Bag<?,?> item, String title) {
         return item == null ? "" : "\n " + title + ":\n"
@@ -816,90 +797,6 @@ public class Memory implements Serializable {
         return concepts.sampleNextConcept();
     }
     
-    
-    //there are some inference rules like temporal induction, which violate the semantic dependence
-    //like temporal induction, this applies the Novelty strategy also for this case
-    public class Recording
-    {
-        public Recording(Sentence task, Term belief, long time) {
-            this.task=task;
-            this.belief=belief;
-            this.time=time;
-        }
-        Sentence task; //the sentence of the task
-        Term belief; //the remembered termlink this recording represents
-        public long time; //when it was recorded
-    }
-    
-    public Concept sampleNextConceptNovel(Sentence t) {
-        if(t==null) {
-            return null;
-        }
-        Concept c = concepts.sampleNextConcept();
-        if(c!=null && isNovelInRegardTo(t, c.term)) { //it is novel
-            setNotNovelAnymore(t, c.term); //so remember it that it won't be novel again that fastly and return the concept
-            return c;
-        }
-        return null;
-    }
-    
-    public HashMap<Sentence,Integer> recorded=new HashMap<Sentence,Integer>(); //its not ideal but at least a speedup in case of novel
-    public ArrayList<Recording> records=new ArrayList<Recording>();
-    
-    public void setNotNovelAnymore(Sentence t, Term belief) {
-        
-        if(recorded.containsKey(t)) { //"tasklink-sentence" exists
-            recorded.put(t, recorded.get(t)+1); //so count 1 up for how many tracked "termlinks" it has
-        } else {
-            recorded.put(t, 1); //init counter to 1
-        }
-        
-        records.add(new Recording(t,belief,this.time())); //add the record and init it to current time
-        
-        while(records.size()>Parameters.NOVEL_TASKS_TRACK_SIZE) { //too much records, remove oldest
-            removeRecord(records.get(0));
-        }
-    }
-    
-    public void removeRecord(Recording rec) {
-        records.remove(rec);
-        Sentence key=rec.task;
-        //it is in records so it is at least with number 1 in recorded:
-        Integer val=recorded.get(key);
-        if(val<=1) { //it can be removed entirely because it is only 1 time in the records
-            recorded.remove(key);
-        } else {
-            recorded.put(key, recorded.get(key)-1); //decrement "ref counter"
-        }
-    }
-            
-    
-    
-    public boolean isNovelInRegardTo(Sentence t, Term belief) {
-        if(!recorded.containsKey(t)) {
-            return true;  //it is not contained so it has to be novel
-        }
-        //it is contained, so lets look through records till we find one with t as taskSentence and 
-        ArrayList<Recording> toRemove=new ArrayList<Recording>();
-        for(Recording r : records) {
-            
-            if(r.time+Parameters.NOVELTY_HORIZON<this.time()) { //outdated, can be removed entirely
-                toRemove.add(r);
-            }
-        }
-        for(Recording r : toRemove) { //this way we don't search through records which are outdated
-            removeRecord(r);
-        }
-        for(Recording r : records) {
-            if(r.task==t) { //it is the same task sentence reference (note: ref is important here)
-                if(r.belief.equals(belief)) { //same "termlink" which means novel=false
-                    return false;
-                }
-            }
-        }
-        return true; //we didnt find a recording which wasnt outdated, so it is novel
-    }
-
     public Collection<Task> conceptQuestions(Class c) {
         if (c == Conjunction.class) {
             return questionsConjunction;
@@ -911,14 +808,13 @@ public class Memory implements Serializable {
     //public Task stmLast = null;
     
     public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, NAL nal, boolean SucceedingEventsInduction) {
+        
         if(SucceedingEventsInduction && !controllerTask.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
             return false;
         }
-       
         if (newEvent.isEternal() || !isInputOrTriggeredOperation(controllerTask, nal.memory)) {
             return false;
         }
-
         if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
             return false;
         }
@@ -946,7 +842,6 @@ public class Memory implements Serializable {
         }
 
         nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
-                
 
         if (newEvent.sentence.isEternal() || !isInputOrTriggeredOperation(newEvent, nal.memory)) {
             return false;
@@ -964,6 +859,4 @@ public class Memory implements Serializable {
 
         return true;
     }
-
-    
 }
