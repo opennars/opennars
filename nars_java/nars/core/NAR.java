@@ -23,7 +23,6 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
-import nars.gui.NARControls;
 import nars.io.Answered;
 import nars.io.InPort;
 import nars.io.Input;
