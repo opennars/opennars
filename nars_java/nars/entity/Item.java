@@ -22,7 +22,6 @@ package nars.entity;
 
 import java.util.Comparator;
 import nars.core.Memory;
-import nars.entity.BudgetValue.Budgetable;
 
 /**
  * An item is an object that can be put into a Bag,
@@ -30,7 +29,7 @@ import nars.entity.BudgetValue.Budgetable;
  * <p>
  * It has a key and a budget. Cannot be cloned
  */
-public abstract class Item<K> implements Budgetable {
+public abstract class Item<K> {
 
     public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
 
@@ -270,7 +269,6 @@ public abstract class Item<K> implements Budgetable {
         
     }
 
-    @Override
     public BudgetValue getBudget() {
         return budget;
     }

@@ -9,7 +9,8 @@ import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
 import java.util.concurrent.atomic.AtomicBoolean;
-import nars.entity.BudgetValue.Budgetable;
+import nars.entity.Concept;
+import nars.entity.TaskLink;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 
@@ -38,8 +39,8 @@ public class HyperassociativeLayout implements GraphDisplay {
 
             @Override
             public double getEdgeWeight(Object e) {
-                if (e instanceof Budgetable) {                   
-                    return 1.0 + ((Budgetable)e).getBudget().getPriority() * 1.0;                }
+                if (e instanceof TaskLink) {                   
+                    return 1.0 + ((TaskLink)e).getBudget().getPriority() * 1.0;                }
                 return 1;
             }
 
@@ -48,8 +49,8 @@ public class HyperassociativeLayout implements GraphDisplay {
                 
             @Override
             public double getRadius(Object n) {
-                if (n instanceof Budgetable) {
-                    return 1.0 + ((Budgetable)n).getBudget().getPriority() * 1.0;                }
+                if (n instanceof Concept) {
+                    return 1.0 + ((Concept)n).getBudget().getPriority() * 1.0;                }
                 return 1;
             }
 

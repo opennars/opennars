@@ -27,10 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 import nars.core.Memory;
 import nars.core.control.AbstractTask;
-import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.language.Terms.Termable;
-import nars.operator.Operation;
 import nars.plugin.mental.InternalExperience;
 
 /**
@@ -39,7 +36,7 @@ import nars.plugin.mental.InternalExperience;
  * garbage collection process.  Otherwise, Task ancestry would grow unbounded,
  * violating the assumption of insufficient resources (AIKR).
  */
-public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements Termable {
+public class Task<T extends Term> extends AbstractTask<Sentence<T>>  {
 
     /** placeholder for a forgotten task */
     public static final Task Forgotten = new Task();
@@ -400,7 +397,6 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
         return tl;
     }
 
-    @Override
     public T getTerm() {
         return sentence.getTerm();
     }

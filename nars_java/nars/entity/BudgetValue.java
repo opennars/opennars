@@ -324,10 +324,4 @@ public class BudgetValue implements Cloneable {
     public long getLastForgetTime() {
         return lastForgetTime;
     }
-
-
-    /** indicates an implementation has, or is associated with a specific BudgetValue */
-    public interface Budgetable {
-        public BudgetValue getBudget();
-    }
 }

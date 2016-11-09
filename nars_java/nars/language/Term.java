@@ -30,7 +30,6 @@ import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.io.Texts;
-import nars.language.Terms.Termable;
 import nars.operator.Operation;
 import nars.operator.Operator;
 //import nars.util.sort.SortedList;
@@ -42,7 +41,7 @@ import nars.operator.Operator;
  * It is not linked in the Term, because a Concept may be forgot while the Term
  * exists. Multiple objects may represent the same Term.
  */
-public class Term implements AbstractTerm, Termable {
+public class Term implements AbstractTerm {
     private static final Map<CharSequence,Term> atoms = new HashMap();
 
     final public static Term SELF = Term.get("SELF");
@@ -443,6 +442,4 @@ public class Term implements AbstractTerm, Termable {
         }
         return false;
     }
-    
-    @Override public Term getTerm() { return this; }
 }

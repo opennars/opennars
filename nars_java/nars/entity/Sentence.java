@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Objects;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.entity.TruthValue.Truthable;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.inference.TruthFunctions.EternalizedTruthValue;
@@ -42,7 +41,6 @@ import nars.language.Interval;
 import nars.language.Interval.AtomicDuration;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.language.Terms.Termable;
 import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -53,7 +51,7 @@ import nars.operator.Operator;
  * <p>
  * It is used as the premises and conclusions of all inference rules.
  */
-public class Sentence<T extends Term> implements Cloneable, Termable, Truthable {
+public class Sentence<T extends Term> implements Cloneable {
 
     public boolean producedByTemporalInduction=false;
 
@@ -600,12 +598,10 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         return false;
     }
 
-    @Override
     public T getTerm() {
         return term;
     }
 
-    @Override
     public TruthValue getTruth() {
         return truth;
     }

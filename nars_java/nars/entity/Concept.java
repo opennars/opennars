@@ -62,7 +62,6 @@ import nars.language.Equivalence;
 import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
-import nars.language.Terms.Termable;
 import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -70,7 +69,7 @@ import nars.plugin.mental.InternalExperience;
 import nars.storage.Bag;
 import nars.storage.Bag.MemoryAware;
 
-public class Concept extends Item<Term> implements Termable {
+public class Concept extends Item<Term> {
 
     
     /**

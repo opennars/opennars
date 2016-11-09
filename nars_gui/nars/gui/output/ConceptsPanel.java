@@ -29,11 +29,9 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.util.Events.FrameEnd;
 import nars.core.NAR;
-import nars.entity.BudgetValue.Budgetable;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.entity.TruthValue.Truthable;
 import nars.gui.WrapLayout;
 import nars.gui.output.graph.TermSyntaxVis;
 
@@ -265,13 +263,13 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             update(Collections.EMPTY_LIST);
         }
 
-        public void update(Iterable<? extends Budgetable> i) {
+        public void update(Iterable<Task> i) {
             Graphics g = g();
             if (g == null) return;
             
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
-            for (Budgetable s : i) {
+            for (Task s : i) {
                 float pri = s.getBudget().getPriority();
                 float dur = s.getBudget().getDurability();
 
@@ -371,13 +369,13 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             super(width, height);
         }
 
-        public void update(long now, Iterable<? extends Truthable> i) {
+        public void update(long now, Iterable<Sentence> i) {
             Graphics g = g();
             if (g == null) return;
             
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, (int) getWidth(), (int) getHeight());
-            for (Truthable s : i) {
+            for (Sentence s : i) {
                 float freq = s.getTruth().getFrequency();
                 float conf = s.getTruth().getConfidence();
 
