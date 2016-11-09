@@ -7,30 +7,21 @@ package nars.lab.regulation.twopoint;
 //TODO: Integrate ideas from [23:39] <sseehh_> patham9,  here's code https://gist.github.com/automenta/569bd8694a789a5d9490 i'm done for now
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import javax.swing.JPanel;
 import nars.util.EventEmitter;
 import nars.util.Events.CycleEnd;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.NAR.PluginState;
-import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.io.TextOutput;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.plugin.mental.InternalExperience;
  
 /**
  *
@@ -72,7 +63,7 @@ public class breakoutPanel extends JPanel {
                         System.out.println("BAD:\n" + operation.getTask().getExplanation());
                         bad();
                     } else {
-                        good();
+                        //good();
                     }
                 }
                 if (args[0].toString().equals("right")) {
@@ -81,7 +72,7 @@ public class breakoutPanel extends JPanel {
                         System.out.println("BAD:\n" + operation.getTask().getExplanation());
                         bad();
                     } else {
-                        good();
+                        //good();
                     }
                 }
                 
@@ -116,9 +107,9 @@ public class breakoutPanel extends JPanel {
  
     public void target(String direction) {
         if(direction.equals("left1")) {
-            nar.addInput("<target --> right1>. :|: %0.00;0.90%");  
+            nar.addInput("<target --> left1>. :|:");  
         } else {
-            nar.addInput("<target --> " + direction + ">. :|:");  
+            nar.addInput("<target --> right1>. :|:");  
         }
     }
     
