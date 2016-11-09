@@ -28,8 +28,8 @@ import nars.io.TextInput;
 import nars.language.Term;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
-import nars.lab.plugin.app.plan.TemporalParticlePlanner;
-import nars.plugin.mental.PerceptionAccel;
+//import nars.lab.plugin.app.plan.TemporalParticlePlanner;
+//import nars.lab.plugin.input.PerceptionAccel;
 import nars.plugin.mental.Abbreviation;
 import nars.lab.plugin.mental.Counting;
 import nars.plugin.mental.FullInternalExperience;
@@ -76,7 +76,7 @@ public class Default extends Parameters implements ConceptBuilder {
     InternalExperienceMode internalExperience = InternalExperienceMode.Minimal;
         
     
-    transient TemporalParticlePlanner pluginPlanner = null;
+   //transient TemporalParticlePlanner pluginPlanner = null;
 
     
     public Default() {
@@ -130,10 +130,6 @@ public class Default extends Parameters implements ConceptBuilder {
         return new Memory(p, newAttention(), newNovelTaskBag());
     }
 
-    public Default temporalPlanner(float searchDepth, int planParticles, int inlineParticles) {
-        pluginPlanner = new TemporalParticlePlanner(searchDepth, planParticles, inlineParticles);
-        return this;
-    }
 
     public NAR init(NAR n) {
         
@@ -147,13 +143,13 @@ public class Default extends Parameters implements ConceptBuilder {
         
         n.addPlugin(new RuntimeNARSettings());
         
-        n.addPlugin(new PerceptionAccel());
+        //n.addPlugin(new PerceptionAccel());
         
        // n.addPlugin(new TemporalParticlePlanner());
         
-        if(pluginPlanner!=null) {
+        /*if(pluginPlanner!=null) {
             n.addPlugin(pluginPlanner);
-        }
+        }*/
         
         n.addPlugin(new Anticipate());      // expect an event
         
