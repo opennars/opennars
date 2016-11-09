@@ -61,46 +61,9 @@ import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
 import nars.io.Symbols;
-import nars.io.Symbols.NativeOperator;
-import static nars.io.Symbols.NativeOperator.CONJUNCTION;
-import static nars.io.Symbols.NativeOperator.DIFFERENCE_EXT;
-import static nars.io.Symbols.NativeOperator.DIFFERENCE_INT;
-import static nars.io.Symbols.NativeOperator.DISJUNCTION;
-import static nars.io.Symbols.NativeOperator.EQUIVALENCE;
-import static nars.io.Symbols.NativeOperator.EQUIVALENCE_AFTER;
-import static nars.io.Symbols.NativeOperator.EQUIVALENCE_WHEN;
-import static nars.io.Symbols.NativeOperator.IMAGE_EXT;
-import static nars.io.Symbols.NativeOperator.IMAGE_INT;
-import static nars.io.Symbols.NativeOperator.IMPLICATION;
-import static nars.io.Symbols.NativeOperator.IMPLICATION_AFTER;
-import static nars.io.Symbols.NativeOperator.IMPLICATION_BEFORE;
-import static nars.io.Symbols.NativeOperator.IMPLICATION_WHEN;
-import static nars.io.Symbols.NativeOperator.INHERITANCE;
-import static nars.io.Symbols.NativeOperator.INTERSECTION_EXT;
-import static nars.io.Symbols.NativeOperator.INTERSECTION_INT;
-import static nars.io.Symbols.NativeOperator.NEGATION;
-import static nars.io.Symbols.NativeOperator.PARALLEL;
-import static nars.io.Symbols.NativeOperator.PRODUCT;
-import static nars.io.Symbols.NativeOperator.SEQUENCE;
-import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
-import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
-import nars.language.DifferenceExt;
-import nars.language.DifferenceInt;
-import nars.language.Disjunction;
-import nars.language.Equivalence;
-import nars.language.Image;
-import nars.language.ImageExt;
-import nars.language.ImageInt;
 import nars.language.Implication;
-import nars.language.Inheritance;
-import nars.language.IntersectionExt;
-import nars.language.IntersectionInt;
-import nars.language.Negation;
-import nars.language.Product;
-import nars.language.SetExt;
-import nars.language.SetInt;
 import nars.language.Tense;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
@@ -132,7 +95,6 @@ public class Memory implements Serializable {
     public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo 
     //get it out to plugin somehow
     
-    private boolean enabled = true;
     private long timeRealStart;
     private long timeRealNow;
     private long timePreviousCycle;
@@ -163,17 +125,10 @@ public class Memory implements Serializable {
     /* InnateOperator registry. Containing all registered operators of the system */
     public final HashMap<CharSequence, Operator> operators;
     
-    /**
-     * New tasks with novel composed terms, for delayed and selective processing
-     */
+    /* New tasks with novel composed terms, for delayed and selective processing*/
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
-   
-    /* ---------- Short-term workspace for a single cycle ---	------- */
-    
-    /**
-     * List of new tasks accumulated in one cycle, to be processed in the next
-     * cycle
-     */
+
+    /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
     
 
@@ -592,24 +547,8 @@ public class Memory implements Serializable {
         return event.isActive(channel);
     }
 
-    
-    /** enable/disable all I/O and memory processing.  CycleStart and CycleStop events will 
-     continue to be generated, allowing the memory to be used as a clock tick while disabled. */
-    public void setEnabled(boolean e) {
-        this.enabled = e;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-    
-    
-    
     public void cycle(final NAR inputs) {
-
-        if (!isEnabled())
-            return;
-        
+    
         /*resource.CYCLE.start();
         resource.CYCLE_CPU_TIME.start();
         resource.CYCLE_RAM_USED.start();
@@ -618,27 +557,20 @@ public class Memory implements Serializable {
             logic.IO_INPUTS_BUFFERED.commit(inputs.getInputItemsBuffered());*/
         
         event.emit(Events.CycleStart.class);                
-
-            
-        int inputTaskPriority = concepts.getInputPriority();
         
         /** adds input tasks to newTasks */
-        for (int i = 0; (i < inputTaskPriority) && (isProcessingInput()); i++) {
+        for (int i = 0; (i < concepts.getInputPriority()) && (isProcessingInput()); i++) {
             AbstractTask t = inputs.nextTask();                    
             if (t!=null) 
                 inputTask(t);            
         }
       
-
-        concepts.cycle();
-                           
+        concepts.cycle();         
         executive.cycle();
-
+        
         event.emit(Events.CycleEnd.class);
         event.synch();
-        
         updateTime();
-        
 
        /* resource.CYCLE_RAM_USED.stop();
         resource.CYCLE_CPU_TIME.stop();
@@ -705,17 +637,6 @@ public class Memory implements Serializable {
         }        
                          
         return processed;
-    }
- 
-    protected void error(Throwable ex) {
-        if(Parameters.SHOW_REASONING_ERRORS) {
-            emit(ERR.class, ex);
-        }
-        
-        if (Parameters.DEBUG) {
-            ex.printStackTrace();            
-        }
-        
     }
     
     public <T> void run(final List<Runnable> tasks) {
