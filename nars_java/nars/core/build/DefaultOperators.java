@@ -4,9 +4,9 @@ import nars.core.NAR;
 import nars.operator.NullOperator;
 import nars.operator.Operator;
 import nars.operator.io.Say;
-import nars.operator.math.Add;
-import nars.operator.math.Count;
-import nars.operator.math.MathExpression;
+import nars.lab.operator.math.Add;
+import nars.lab.operator.math.Count;
+import nars.lab.operator.math.MathExpression;
 import nars.operator.mental.Believe;
 import nars.operator.mental.Consider;
 import nars.operator.mental.Doubt;
@@ -20,8 +20,8 @@ import nars.operator.mental.Remind;
 import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
 import nars.operator.meta.Reflect;
-import nars.operator.software.Javascript;
-import nars.operator.software.NumericCertainty;
+import nars.lab.operator.software.Javascript;
+import nars.lab.operator.software.NumericCertainty;
 
 
 public class DefaultOperators {
