@@ -634,7 +634,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                 }
             }
         }
-        return memory.term(this, list);
+        return Terms.term(this, list);
     }
 
     /* ----- variable-related utilities ----- */

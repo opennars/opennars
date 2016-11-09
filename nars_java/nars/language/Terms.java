@@ -9,6 +9,7 @@ import java.util.Set;
 import nars.core.Memory;
 import nars.entity.Sentence;
 import nars.entity.TermLink;
+import nars.inference.TemporalRules;
 import nars.io.Symbols;
 
 /**
@@ -142,6 +143,92 @@ public class Terms {
     }
      */
 
+    /* static methods making new compounds, which may return null */
+    /**
+     * Try to make a compound term from a template and a list of term
+     *
+     * @param compound The template
+     * @param components The term
+     * @param memory Reference to the memory
+     * @return A compound term or null
+     */
+    public static Term term(final CompoundTerm compound, final Term[] components) {
+        if (compound instanceof ImageExt) {
+            return new ImageExt(components, ((Image) compound).relationIndex);
+        } else if (compound instanceof ImageInt) {
+            return ImageInt.make(components, ((Image) compound).relationIndex);
+        } else {
+            return term(compound.operator(), components);
+        }
+    }
+
+    public static Term term(final CompoundTerm compound, Collection<Term> components) {
+        Term[] c = components.toArray(new Term[components.size()]);
+        return term(compound, c);
+    }
+    
+
+    /**
+     * Try to make a compound term from an operator and a list of term
+     * <p>
+     * Called from StringParser
+     *
+     * @param op Term operator
+     * @param arg Component list
+     * @return A term or null
+     */
+    public static Term term(final Symbols.NativeOperator op, final Term[] a) {
+        
+        switch (op) {
+            
+            case SET_EXT_OPENER:
+                return SetExt.make(a);
+            case SET_INT_OPENER:
+                return SetInt.make(a);
+            case INTERSECTION_EXT:
+                return IntersectionExt.make(a);
+            case INTERSECTION_INT:
+                return IntersectionInt.make(a);
+            case DIFFERENCE_EXT:
+                return DifferenceExt.make(a);
+            case DIFFERENCE_INT:
+                return DifferenceInt.make(a);
+            case INHERITANCE:
+                return Inheritance.make(a[0], a[1]);
+            case PRODUCT:
+                return new Product(a);
+            case IMAGE_EXT:
+                return ImageExt.make(a);
+            case IMAGE_INT:
+                return ImageInt.make(a);
+            case NEGATION:
+                return Negation.make(a);
+            case DISJUNCTION:
+                return Disjunction.make(a);
+            case CONJUNCTION:
+                return Conjunction.make(a);
+            case SEQUENCE:
+                return Conjunction.make(a, TemporalRules.ORDER_FORWARD);
+            case PARALLEL:
+                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT);
+            case IMPLICATION:
+                return Implication.make(a[0], a[1]);
+            case IMPLICATION_AFTER:
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
+            case IMPLICATION_BEFORE:
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD);
+            case IMPLICATION_WHEN:
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
+            case EQUIVALENCE:
+                return Equivalence.make(a[0], a[1]);
+            case EQUIVALENCE_WHEN:
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
+            case EQUIVALENCE_AFTER:
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
+        }
+        throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
+    }
+    
     /**
      * Try to remove a component from a compound
      *
@@ -159,7 +246,7 @@ public class Terms {
         }
         if (list != null) {
             if (list.length > 1) {
-                return memory.term(t1, list);
+                return term(t1, list);
             }
             if (list.length == 1) {
                 if ((t1 instanceof Conjunction) || (t1 instanceof Disjunction) || (t1 instanceof IntersectionExt) || (t1 instanceof IntersectionInt) || (t1 instanceof DifferenceExt) || (t1 instanceof DifferenceInt)) {
@@ -179,7 +266,7 @@ public class Terms {
         }
         if (list != null) {
             if (list.length > 1) {
-                return memory.term(t1, list);
+                return term(t1, list);
             } else if (list.length == 1) {
                 return list[0];
             }
