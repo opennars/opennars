@@ -43,6 +43,7 @@ import nars.language.SetInt;
 import nars.language.Statement;
 import nars.language.Tense;
 import nars.language.Term;
+import nars.language.Terms;
 import nars.language.Variable;
 import static nars.language.Variables.containVar;
 import nars.operator.Operation;
@@ -520,7 +521,7 @@ public class Narsese {
         Term t;
         
         if (oNative!=null) {
-            t = memory.term(oNative, argA);
+            t = Terms.term(oNative, argA);
         }
         else if (oRegistered!=null) {
             t = make(oRegistered, argA, true);

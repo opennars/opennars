@@ -47,6 +47,7 @@ import nars.language.SetInt;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
+import nars.language.Terms;
 
 /**
  * Single-premise inference rules involving compound terms. Input are one
@@ -86,12 +87,12 @@ public final class StructuralRules {
             if (components.contains(sub)) {
                 sub = compound;
                 components.set(index, pred);
-                pred = mem.term(compound, components);
+                pred = Terms.term(compound, components);
             }
         } else {
             if (components.contains(pred)) {
                 components.set(index, sub);
-                sub = mem.term(compound, components);
+                sub = Terms.term(compound, components);
                 pred = compound;
             }
         }
@@ -431,13 +432,13 @@ public final class StructuralRules {
             if (((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) && (condition instanceof Conjunction)) {
                 componentList = ((CompoundTerm) condition).cloneTerms();
                 componentList[indices[1]] = newInh;
-                Term newCond = memory.term((CompoundTerm) condition, componentList);
+                Term newCond = Terms.term((CompoundTerm) condition, componentList);
                 content = Statement.make((Statement) oldContent, newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder());
             } else {
                 componentList = oldContent.cloneTerms();
                 componentList[indices[0]] = newInh;
                 if (oldContent instanceof Conjunction) {
-                    Term newContent = memory.term(oldContent, componentList);
+                    Term newContent = Terms.term(oldContent, componentList);
                     if (!(newContent instanceof CompoundTerm))
                         return;
                     content = (CompoundTerm)newContent;

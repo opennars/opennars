@@ -16,7 +16,7 @@ abstract public class NARGame implements EventObserver {
 
     public NARGame(NAR nar) {        
         this.nar = nar;        
-        if (nar.memory.getTiming()!=Memory.Timing.Simulation)
+        if (nar.memory.param.getTiming()!=Memory.Timing.Simulation)
             throw new RuntimeException(this + " requires NAR use Simulation timing");
         
         nar.memory.event.on(Events.FrameEnd.class, this);

@@ -631,7 +631,7 @@ public class NAR implements Runnable {
 
         long timeEnd = System.currentTimeMillis();
 
-        if (memory.getTiming() == Timing.Real) {
+        if (memory.param.getTiming() == Timing.Real) {
             long frameTime = timeEnd - timeStart;
             final int d = param.duration.get();
 
