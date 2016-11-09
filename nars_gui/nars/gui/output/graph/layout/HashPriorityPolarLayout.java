@@ -9,8 +9,8 @@ import automenta.vivisect.graph.AbstractGraphVis;
 import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
+import nars.entity.Concept;
 import nars.entity.Item;
-import nars.language.Terms.Termable;
 
 /**
  * Item Hash = theta, Priority = radius
@@ -35,8 +35,8 @@ public class HashPriorityPolarLayout implements GraphDisplay<Item, Object> {
         double radius = (1.0 - priority) * spacing + 8;
 
         Object x = vertex;
-        if (vertex instanceof Termable) {
-            x = ((Termable) vertex).getTerm();
+        if (vertex instanceof Concept) {
+            x = ((Concept) vertex).getTerm();
         }
 
         float angle = ((arcStop - arcStart) * Video.hashFloat(x.hashCode()) + arcStart) * ((float) Math.PI * 2f);

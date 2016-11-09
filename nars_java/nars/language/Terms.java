@@ -591,11 +591,5 @@ public class Terms {
         }
         return false;
     }
-
-
-    /** has, or is associated with a specific term */
-    public static interface Termable {
-        public Term getTerm();
-    }
     
 }

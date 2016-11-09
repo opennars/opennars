@@ -25,7 +25,6 @@ import java.util.Deque;
 import java.util.Iterator;
 import nars.core.Parameters;
 import nars.language.Term;
-import nars.language.Terms.Termable;
 
 /**
  * Reference to a Task.
@@ -35,7 +34,7 @@ import nars.language.Terms.Termable;
  * 
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
+public class TaskLink extends Item<Task> implements TLink<Task> {
 
     /**
      * The Task linked. The "target" field in TermLink is not used here.
@@ -212,14 +211,8 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Termable {
     public void end() {
         records.clear();
     }
-
-    @Override
+    
     public Term getTerm() {
         return getTarget().getTerm();
     }
-
-
-    
-    
-    
 }

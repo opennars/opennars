@@ -11,12 +11,10 @@ import java.util.Set;
 import javax.xml.transform.TransformerConfigurationException;
 import nars.core.NAR;
 import nars.entity.BudgetValue;
-import nars.entity.BudgetValue.Budgetable;
 import nars.entity.Concept;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
-import nars.language.Terms.Termable;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.GmlExporter;
 import org.jgrapht.ext.GraphMLExporter;
@@ -186,7 +184,7 @@ public class NARGraph extends DirectedMultigraph {
         }
     }
 
-    public static class TermLinkEdge extends NAREdge<TermLink> implements Budgetable, Termable {
+    public static class TermLinkEdge extends NAREdge<TermLink> {
 
         public TermLinkEdge(TermLink t) {
             super(t);
@@ -202,19 +200,17 @@ public class NARGraph extends DirectedMultigraph {
             return super.clone();
         }
 
-        @Override
         public BudgetValue getBudget() {
             return this.getObject().getBudget();
         }
 
-        @Override
         public Term getTerm() {
             return this.getObject().getTerm();
         }
 
     }
 
-    public static class TaskLinkEdge extends NAREdge<TaskLink> implements Termable, Budgetable {
+    public static class TaskLinkEdge extends NAREdge<TaskLink> {
 
         public TaskLinkEdge(TaskLink t) {
             super(t);
@@ -230,12 +226,10 @@ public class NARGraph extends DirectedMultigraph {
             return super.clone();
         }
 
-        @Override
         public BudgetValue getBudget() {
             return this.getObject().getBudget();
         }
 
-        @Override
         public Term getTerm() {
             return this.getObject().getTerm();
         }

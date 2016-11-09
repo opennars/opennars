@@ -19,7 +19,6 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
-import nars.language.Terms.Termable;
 import nars.gui.util.NARGraph;
 /**
  *
@@ -90,7 +89,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
         
 
         Object x = o;
-        if (x instanceof Termable) x = ((Termable)o).getTerm();
+        if (x instanceof Concept) x = ((Concept)o).getTerm();
         float hue = Video.hashFloat(x.hashCode());
 
 

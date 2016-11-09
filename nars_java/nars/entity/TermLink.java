@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import nars.io.Symbols;
 import nars.language.Term;
-import nars.language.Terms.Termable;
 
 /**
  * A link between a compound term and a component term
@@ -38,7 +37,7 @@ import nars.language.Terms.Termable;
  * <p>
  * This class is mainly used in inference.RuleTable to dispatch premises to inference rules
  */
-public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
+public class TermLink extends Item<TermLink> implements TLink<Term> {
     
     
     /** At C, point to C; TaskLink only */
@@ -249,8 +248,6 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Termable {
         return target;
     }
 
-
-    @Override
     public Term getTerm() {
         return getTarget();
     }
