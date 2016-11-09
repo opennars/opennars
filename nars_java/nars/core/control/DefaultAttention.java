@@ -17,7 +17,6 @@ import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.Bag.MemoryAware;
-import nars.storage.CacheBag;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -31,7 +30,6 @@ public class DefaultAttention implements Iterable<Concept> {
      * Concept bag. Containing all Concepts of the system
      */
     public final Bag<Concept,Term> concepts;
-    public final CacheBag<Term, Concept> subcon;
     
     private final ConceptBuilder conceptBuilder;
     private Memory memory;
@@ -88,9 +86,8 @@ public class DefaultAttention implements Iterable<Concept> {
     }
     
             
-    public DefaultAttention(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
+    public DefaultAttention(Bag<Concept,Term> concepts, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
-        this.subcon = subcon;
         this.conceptBuilder = conceptBuilder;        
         
     }
@@ -201,43 +198,13 @@ public class DefaultAttention implements Iterable<Concept> {
     }
 
     public void conceptRemoved(Concept c) {
-        
-        if (subcon!=null) {            
-            subcon.add(c);
-            //System.out.println("forget: " + c + "   con=" + concepts.size() + " subcon=" + subcon.size());
-        }
-        else {
             memory.emit(ConceptForget.class, c);
-            
-        
-            //explicitly destroy all concept data structures to free memory for GC
-            //c.end();
-        }
-        
-        
-        
-        
     }
     
     public Concept conceptualize(BudgetValue budget, final Term term, boolean createIfMissing) {
         
         //see if concept is active
         Concept concept = concepts.take(term);
-        
-        //try remembering from subconscious
-        if ((concept == null) && (subcon!=null)) {
-            concept = subcon.take(term);
-            if (concept!=null) {                
-                
-                //reset the forgetting period to zero so that its time while forgotten will not continue to penalize it during next forgetting iteration
-                concept.budget.setLastForgetTime(memory.time());
-                
-                memory.emit(Events.ConceptRemember.class, concept);                
-
-                //System.out.println("retrieved: " + concept + "  subcon=" + subcon.size());
-            }
-        }               
-        
         
         if ((concept == null) && (createIfMissing)) {                            
             //create new concept, with the applied budget

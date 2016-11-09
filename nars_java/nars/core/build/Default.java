@@ -36,7 +36,6 @@ import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.InternalExperience;
 import nars.plugin.mental.RuntimeNARSettings;
 import nars.storage.Bag;
-import nars.storage.CacheBag;
 import nars.storage.LevelBag;
 
 /**
@@ -187,14 +186,9 @@ public class Default extends Parameters implements ConceptBuilder {
     public Bag<Concept,Term> newConceptBag() {
         return new LevelBag(getConceptBagLevels(), getConceptBagSize());
     }
-    
-    CacheBag<Term,Concept> newSubconceptBag() {        
-        if (getSubconceptBagSize() == 0) return null;
-        return new CacheBag(getSubconceptBagSize());
-    }
 
     public DefaultAttention newAttention() {
-        return new DefaultAttention(newConceptBag(), newSubconceptBag(), getConceptBuilder());
+        return new DefaultAttention(newConceptBag(), getConceptBuilder());
     }
     
     public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag() {
