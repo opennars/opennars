@@ -1,6 +1,5 @@
-package nars.inference;
+package nars.util;
 
-import nars.util.EventEmitter;
 import nars.core.NAR;
 
 /**

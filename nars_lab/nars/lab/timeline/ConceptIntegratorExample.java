@@ -35,7 +35,7 @@ import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.TimelineVis;
-import nars.inference.AbstractObserver;
+import nars.util.AbstractObserver;
 import nars.gui.util.NARTrace;
 
 /**

@@ -9,7 +9,7 @@ import java.util.List;
 import nars.util.Events;
 import nars.core.NAR;
 import nars.entity.Concept;
-import nars.inference.AbstractObserver;
+import nars.util.AbstractObserver;
 
 /**
  *

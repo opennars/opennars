@@ -4,7 +4,7 @@ import nars.util.EventEmitter;
 import nars.util.Events.Answer;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.inference.AbstractObserver;
+import nars.util.AbstractObserver;
 import nars.operator.io.Say;
 
 /**
