@@ -4,7 +4,7 @@
  */
 package nars.core.control;
 
-import nars.core.Events;
+import nars.util.Events;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Task;

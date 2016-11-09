@@ -20,6 +20,8 @@
  */
 package nars.core;
 
+import nars.util.Events;
+import nars.util.EventEmitter;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -33,9 +35,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import javolution.context.ConcurrentContext;
-import nars.core.Events.ResetEnd;
-import nars.core.Events.ResetStart;
-import nars.core.Events.TaskRemove;
+import nars.util.Events.ResetEnd;
+import nars.util.Events.ResetStart;
+import nars.util.Events.TaskRemove;
 import static nars.core.Memory.Forgetting.Periodic;
 import static nars.core.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;

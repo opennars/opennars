@@ -1,5 +1,7 @@
 package nars.core;
 
+import nars.util.Events;
+import nars.util.EventEmitter;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import static com.google.common.collect.Iterators.singletonIterator;
@@ -10,10 +12,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import nars.core.EventEmitter.EventObserver;
-import nars.core.Events.FrameEnd;
-import nars.core.Events.FrameStart;
-import nars.core.Events.Perceive;
+import nars.util.EventEmitter.EventObserver;
+import nars.util.Events.FrameEnd;
+import nars.util.Events.FrameStart;
+import nars.util.Events.Perceive;
 import nars.core.Memory.Timing;
 import nars.core.build.Default;
 import nars.core.control.AbstractTask;

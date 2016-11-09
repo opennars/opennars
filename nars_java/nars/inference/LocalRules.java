@@ -21,8 +21,8 @@
 package nars.inference;
 
 import java.util.Arrays;
-import nars.core.Events.Answer;
-import nars.core.Events.Unsolved;
+import nars.util.Events.Answer;
+import nars.util.Events.Unsolved;
 import nars.core.Memory;
 import nars.core.control.NAL;
 import nars.entity.BudgetValue;

@@ -1,5 +1,5 @@
 
-package nars.core;
+package nars.util;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import nars.core.Parameters;
 
 /**
  * Adapted from http://www.recursiverobot.com/post/86215392884/witness-a-simple-android-and-java-event-emitter
