@@ -6,8 +6,8 @@ package nars.lab.timeline;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import nars.core.EventEmitter.EventObserver;
-import nars.core.Events;
+import nars.util.EventEmitter.EventObserver;
+import nars.util.Events;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Concept;

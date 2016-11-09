@@ -12,7 +12,7 @@ import automenta.vivisect.timeline.TimelineVis;
 import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
-import nars.core.Events.CycleEnd;
+import nars.util.Events.CycleEnd;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;

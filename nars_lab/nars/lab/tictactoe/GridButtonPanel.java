@@ -15,8 +15,8 @@ import java.awt.event.MouseWheelListener;
 import java.lang.reflect.Array;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
-import nars.core.EventEmitter.EventObserver;
-import nars.core.Events.FrameEnd;
+import nars.util.EventEmitter.EventObserver;
+import nars.util.Events.FrameEnd;
 import nars.core.NAR;
 import nars.entity.Concept;
 
