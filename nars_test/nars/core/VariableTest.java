@@ -5,7 +5,7 @@
 package nars.core;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import nars.core.Events.Answer;
+import nars.util.Events.Answer;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.inference.AbstractObserver;
