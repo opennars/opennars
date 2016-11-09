@@ -16,7 +16,7 @@ import nars.language.Product;
 import nars.language.Similarity;
 import nars.language.Term;
 import nars.language.Variable;
-import nars.operator.software.Javascript;
+import nars.lab.operator.software.Javascript;
 
 
 /** 
