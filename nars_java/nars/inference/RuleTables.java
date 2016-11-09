@@ -88,12 +88,12 @@ public class RuleTables {
         final Term beliefTerm = bLink.target;       // cloning for substitution
 
         //CONTRAPOSITION //TODO: put into rule table
-        if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
+        /*if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
             Concept d=memory.sampleNextConceptNovel(task.sentence);
             if(d!=null && d.term.equals(taskSentence.term)) {
                 StructuralRules.contraposition((Statement)taskTerm, taskSentence, nal); 
             }
-        }  
+        }*/
         
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
            return;
@@ -104,29 +104,16 @@ public class RuleTables {
         Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task) : null;
         
         nal.setCurrentBelief( belief );  // may be null
-        perceptionBasedDetachment(task, nal, memory);
-        
-        temporalInduce(nal, task, taskSentence, memory);
         
         if (belief != null) {   
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
-
-            temporalInductionChain(beliefTerm, nal, belief);
             
             if (LocalRules.match(task, belief, nal)) {
                 //new tasks resulted from the match, so return
                 return;
             }
         }
-        
-        // to be invoked by the corresponding links 
-        if (CompositionalRules.dedSecondLayerVariableUnification(task, nal)) {
-            //unification ocurred, done reasoning in this cycle if it's judgment
-            if (taskSentence.isJudgment())
-                return;
-        }
-
         
         //current belief and task may have changed, so set again:
         nal.setCurrentBelief(belief);
@@ -310,244 +297,6 @@ public class RuleTables {
                 goalterm2=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm2);
                 Sentence sent=new Sentence(goalterm2,Symbols.GOAL_MARK,truth.clone(),new Stamp(task.sentence.stamp,nal.memory.time()));
                 nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
-            }
-        }
-    }
-
-    private static void temporalInductionChain(final Term beliefTerm, final NAL nal, Sentence belief) {
-        //this is a new attempt/experiment to make nars effectively track temporal coherences
-        if(beliefTerm instanceof Implication &&
-                (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
-            
-            //prevent duplicate inductions
-            Set<Term> alreadyInducted = new HashSet();
-            
-            for(int i=0;i<Parameters.TEMPORAL_INDUCTION_CHAIN_SAMPLES;i++) {
-                
-                Concept next=nal.memory.concepts.sampleNextConcept();
-                if (next == null) continue;
-                
-                Term t = next.getTerm();
-                
-                if ((t instanceof Implication) && (!alreadyInducted.contains(t))) {
-                    
-                    Implication implication=(Implication) t;
-                    
-                    if (!next.beliefs.isEmpty() && (implication.isForward() || implication.isConcurrent())) {
-                        
-                        ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
-                        Stamp SVSTamp=nal.getNewStamp();
-                        Task SVTask=nal.getCurrentTask();
-                        NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
-                        //END
-                        //now set the current context:
-                        
-                        Sentence s=next.beliefs.get(0).sentence;
-                        if(nal.memory.isNovelInRegardTo(s,belief.term)) {
-                            nal.memory.setNotNovelAnymore(s,belief.term);
-                            //this one needs an dummy task..
-                            Task dummycur=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s.truth));
-                            nal.setCurrentTask(dummycur);
-                            //its priority isnt needed at all, this just is for stamp completeness..
-                            if(s.punctuation==belief.punctuation) {
-                                TemporalRules.temporalInductionChain(s, belief, nal);
-                                TemporalRules.temporalInductionChain(belief, s, nal);
-                            }
-                        }
-                        alreadyInducted.add(t);
-                        
-                        //RESTORE CONTEXT
-                        nal.setNewStamp(SVSTamp);
-                        nal.setCurrentTask(SVTask);
-                        nal.newStampBuilder=SVstampBuilder; //also restore this one
-                        //END
-                    }
-                }
-            }
-        }
-    }
-
-    private static void temporalInduce(final NAL nal, final Task task, final Sentence taskSentence, final Memory memory) {
-        //usual temporal induction between two events
-        for(int i=0;i<Parameters.TEMPORAL_INDUCTION_SAMPLES;i++) {
-            
-            //prevent duplicate inductions
-            Set<Term> alreadyInducted = new HashSet();
-            
-            Concept next=nal.memory.sampleNextConceptNovel(task.sentence);
-            if (next == null) continue;
-            
-            Term t = next.getTerm();
-            
-            if (!alreadyInducted.contains(t)) {
-                
-                if (!next.beliefs.isEmpty()) {
-                    
-                    Sentence s=next.beliefs.get(0).sentence;
-                    
-                    ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
-                    Stamp SVSTamp=nal.getNewStamp();
-                    Sentence SVBelief=nal.getCurrentBelief();
-                    NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
-                    //now set the current context:
-                    nal.setCurrentBelief(s);
-                    
-                    if(!taskSentence.isEternal() && !s.isEternal()) {
-                        if(s.after(taskSentence, memory.param.duration.get())) {
-                            nal.memory.proceedWithTemporalInduction(s,task.sentence,task,nal,false);
-                        } else {
-                            nal.memory.proceedWithTemporalInduction(task.sentence,s,task,nal,false);
-                        }
-                    }
-                    
-                    //RESTORE OF SPECIAL REASONING CONTEXT
-                    nal.setNewStamp(SVSTamp);
-                    nal.setCurrentBelief(SVBelief);
-                    nal.newStampBuilder=SVstampBuilder; //also restore this one
-                    //END
-                    
-                    alreadyInducted.add(t);
-                    
-                }
-            }
-        }
-    }
-
-    private static void perceptionBasedDetachment(final Task task, final NAL nal, final Memory memory) {
-        //only if the premise task is a =/>
-        
-        //the following code is for:
-        //<(&/,<a --> b>,<b --> c>,<x --> y>,pick(a)) =/> <goal --> reached>>.
-        //(&/,<a --> b>,<b --> c>,<x --> y>). :|:
-        // |-
-        //<pick(a) =/> <goal --> reached>>. :|:
-        //https://groups.google.com/forum/#!topic/open-nars/8VVscfLQ034
-        //<(&/,<a --> b>,<$1 --> c>,<x --> y>,pick(a)) =/> <$1 --> reached>>.
-        //(&/,<a --> b>,<goal --> c>,<x --> y>). :|:
-        //|-
-        //<pick(a) =/> <goal --> reached>>.
-        if(task.sentence.term instanceof Implication &&
-                (((Implication)task.sentence.term).getTemporalOrder()==ORDER_FORWARD ||
-                ((Implication)task.sentence.term).getTemporalOrder()==ORDER_CONCURRENT)) {
-            Implication imp=(Implication)task.sentence.term;
-            if(imp.getSubject() instanceof Conjunction &&
-                    ((((Conjunction)imp.getSubject()).getTemporalOrder()==ORDER_FORWARD) ||
-                    (((Conjunction)imp.getSubject()).getTemporalOrder()==ORDER_CONCURRENT))) {
-                Conjunction conj=(Conjunction)imp.getSubject();
-                for(int i=0;i<PerceptionAccel.PERCEPTION_DECISION_ACCEL_SAMPLES;i++) {
-                    
-                    //prevent duplicate derivations
-                    Set<Term> alreadyInducted = new HashSet();
-                    
-                    Concept next=nal.memory.sampleNextConceptNovel(task.sentence);
-                    
-                    if (next == null) continue;
-                    
-                    Term t = next.getTerm();
-                    
-                    Sentence s=null;
-                    if(task.sentence.punctuation==Symbols.JUDGMENT_MARK && !next.beliefs.isEmpty()) {
-                        s=next.beliefs.get(0).sentence;
-                    }
-                    if(task.sentence.punctuation==Symbols.GOAL_MARK && !next.desires.isEmpty()) {
-                        s=next.desires.get(0).sentence;
-                    }
-                    
-                    if (s!=null && !alreadyInducted.contains(t) && (t instanceof Conjunction)) {
-                        alreadyInducted.add(t);
-                        Conjunction conj2=(Conjunction) t; //ok check if it is a right conjunction
-                        if(conj.getTemporalOrder()==conj2.getTemporalOrder()) {
-                            //conj2 conjunction has to be a minor of conj
-                            //the case where its equal is already handled by other inference rule
-                            if(conj2.term.length<conj.term.length) {
-                                boolean equal=true;
-                                HashMap<Term,Term> map=new HashMap<Term,Term>();
-                                HashMap<Term,Term> map2=new HashMap<Term,Term>();
-                                for(int j=0;j<conj2.term.length;j++) //ok now check if it is really a minor
-                                {
-                                    if(!Variables.findSubstitute(VAR_INDEPENDENT, conj.term[j], conj2.term[j], map, map2)) {
-                                        equal=false;
-                                        break;
-                                    }
-                                }
-                                if(equal) {
-                                    //ok its a minor, we have to construct the residue implication now
-                                    
-                                    ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
-                                    Stamp SVSTamp=nal.getNewStamp();
-                                    Sentence SVBelief=nal.getCurrentBelief();
-                                    NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
-                                    //now set the current context:
-                                    nal.setCurrentBelief(s);
-                                    //END
-                                    
-                                    Term[] residue=new Term[conj.term.length-conj2.term.length];
-                                    for(int k=0;k<residue.length;k++) {
-                                        residue[k]=conj.term[conj2.term.length+k];
-                                    }
-                                    Term C=Conjunction.make(residue,conj.getTemporalOrder());
-                                    Implication resImp=Implication.make(C, imp.getPredicate(), imp.getTemporalOrder());
-                                    if(resImp==null) {
-                                        continue;
-                                    }
-                                    resImp=(Implication) resImp.applySubstitute(map);
-                                    //todo add
-                                    Stamp st=new Stamp(task.sentence.stamp,nal.memory.time());
-                                    boolean eternalBelieve=nal.getCurrentBelief().isEternal(); //https://groups.google.com/forum/#!searchin/open-nars/projection/open-nars/8KnAbKzjp4E/rBc-6V5pem8J
-                                    boolean eternalTask=task.sentence.isEternal();
-                                    
-                                    TruthValue BelieveTruth=nal.getCurrentBelief().truth;
-                                    TruthValue TaskTruth=task.sentence.truth;
-                                    
-                                    if(eternalBelieve && !eternalTask) { //occurence time of task
-                                        st.setOccurrenceTime(task.sentence.getOccurenceTime());
-                                    }
-                                    
-                                    if(!eternalBelieve && eternalTask) { //eternalize case
-                                        BelieveTruth=TruthFunctions.eternalize(BelieveTruth);
-                                    }
-                                    
-                                    if(!eternalBelieve && !eternalTask) { //project believe to task
-                                        BelieveTruth=nal.getCurrentBelief().projectionTruth(task.sentence.getOccurenceTime(), memory.time());
-                                    }
-                                    
-                                    //we also need to add one to stamp... time to think about redoing this for 1.6.3 in a more clever way..
-                                    ArrayList<Long> evBase=new ArrayList<Long>();
-                                    for(long l: st.evidentialBase) {
-                                        if(!evBase.contains(l)) {
-                                            evBase.add(l);
-                                        }
-                                    }
-                                    for(long l: nal.getCurrentBelief().stamp.evidentialBase) {
-                                        if(!evBase.contains(l)) {
-                                            evBase.add(l);
-                                        }
-                                    }
-                                    long[] evB=new long[evBase.size()];
-                                    int u=0;
-                                    for(long l : evBase) {
-                                        evB[i]=l;
-                                        u++;
-                                    }
-                                    
-                                    st.evidentialBase=evB;
-                                    st.baseLength=evB.length;
-                                    TruthValue truth=TruthFunctions.deduction(BelieveTruth, TaskTruth);
-                                    
-                                    
-                                    Sentence S=new Sentence(resImp,s.punctuation,truth,st);
-                                    Task Tas=new Task(S,new BudgetValue(BudgetFunctions.forward(truth, nal)));
-                                    nal.derivedTask(Tas, false, false, null, null, true);
-                                    
-                                    //RESTORE CONTEXT
-                                    nal.setNewStamp(SVSTamp);
-                                    nal.setCurrentBelief(SVBelief);
-                                    nal.newStampBuilder=SVstampBuilder; //also restore this one
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }
