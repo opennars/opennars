@@ -11,7 +11,7 @@ import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.inference.AbstractObserver;
+import nars.util.AbstractObserver;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
 import nars.io.TextOutput;

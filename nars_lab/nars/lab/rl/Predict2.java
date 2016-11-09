@@ -24,7 +24,7 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.gui.NARSwing;
 import nars.gui.output.ConceptsPanel;
-import nars.inference.AbstractObserver;
+import nars.util.AbstractObserver;
 import nars.inference.TemporalRules;
 import nars.io.Answered;
 import nars.io.Symbols;

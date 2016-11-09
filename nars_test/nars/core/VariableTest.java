@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import nars.util.Events.Answer;
 import nars.core.NAR;
 import nars.core.build.Default;
-import nars.inference.AbstractObserver;
+import nars.util.AbstractObserver;
 import nars.io.condition.OutputContainsCondition;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;

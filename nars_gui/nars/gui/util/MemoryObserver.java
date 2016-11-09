@@ -1,5 +1,6 @@
-package nars.inference;
+package nars.gui.util;
 
+import nars.util.AbstractObserver;
 import nars.util.Events;
 import nars.util.Events.CycleEnd;
 import nars.util.Events.CycleStart;

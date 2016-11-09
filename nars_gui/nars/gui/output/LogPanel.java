@@ -29,7 +29,7 @@ import nars.gui.InferenceLogger;
 import nars.gui.InferenceLogger.LogOutput;
 import nars.gui.NARControls;
 import nars.gui.WrapLayout;
-import nars.inference.AbstractObserver;
+import nars.util.AbstractObserver;
 import nars.io.Output;
 import nars.io.Output.ECHO;
 import nars.io.Output.ERR;

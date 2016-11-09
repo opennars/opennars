@@ -31,7 +31,7 @@ import nars.core.Memory.Timing;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.inference.MemoryObserver;
+import nars.gui.util.MemoryObserver;
 
 /**
  * Inference log, which record input/output of each inference step interface

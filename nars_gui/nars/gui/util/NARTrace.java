@@ -19,7 +19,6 @@ import nars.entity.Concept;
 import nars.entity.Task;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.CycleEnd;
-import nars.inference.MemoryObserver;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
 
