@@ -26,7 +26,7 @@ import nars.operator.Operation;
 /**
  * Feeling busy value
  */
-public class FeelBusy extends Feel implements Mental {
+public class FeelBusy extends Feel {
 
     public FeelBusy() {
         super("^feelBusy");

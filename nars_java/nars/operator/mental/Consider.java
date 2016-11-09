@@ -30,7 +30,7 @@ import nars.operator.Operator;
 /**
  * Operator that activates a concept
  */
-public class Consider extends Operator implements Mental {
+public class Consider extends Operator {
 
     public static BudgetValue budgetMentalConcept(final Operation o) {
         return o.getTask().budget.clone();

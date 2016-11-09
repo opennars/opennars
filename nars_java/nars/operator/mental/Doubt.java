@@ -28,7 +28,7 @@ import nars.operator.Operator;
 /**
  * Operator that activates a concept
  */
-public class Doubt extends Operator implements Mental {
+public class Doubt extends Operator {
 
     public Doubt() {
         super("^doubt");

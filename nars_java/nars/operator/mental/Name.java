@@ -36,7 +36,7 @@ import nars.operator.Operator;
 /**
  * Operator that give a CompoundTerm a new name
  */
-public class Name extends Operator implements Mental {
+public class Name extends Operator {
 
     public Name() {
         super("^name");

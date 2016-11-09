@@ -26,7 +26,6 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
 import nars.language.Term;
 import nars.operator.Operation;
@@ -35,7 +34,7 @@ import nars.operator.Operator;
 /**
  * Operator that creates a goal with a given statement
  */
-public class Want extends Operator implements Mental {
+public class Want extends Operator {
 
     public Want() {
         super("^want");

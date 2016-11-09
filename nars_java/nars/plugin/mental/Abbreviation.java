@@ -22,7 +22,6 @@ import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.operator.mental.Mental;
 
 /**
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.
@@ -35,7 +34,7 @@ public class Abbreviation implements Plugin {
     /**
     * Operator that give a CompoundTerm an atomic name
     */
-    public static class Abbreviate extends Operator implements Mental {
+    public static class Abbreviate extends Operator {
 
         public Abbreviate() {
             super("^abbreviate");

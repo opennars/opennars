@@ -54,7 +54,7 @@ import nars.plugin.mental.InternalExperience;
 //**
 //* Operator that creates a judgment with a given statement
  //*
-public class Anticipate extends Operator implements EventObserver, Mental {
+public class Anticipate extends Operator implements EventObserver {
 
     public final Map<Vector2Int,LinkedHashSet<Term>> anticipations = new LinkedHashMap();
             

@@ -33,7 +33,7 @@ import nars.operator.Operator;
 /**
  * Operator that creates a quest with a given statement
  */
-public class Evaluate extends Operator implements Mental {
+public class Evaluate extends Operator {
 
     public Evaluate() {
         super("^evaluate");
