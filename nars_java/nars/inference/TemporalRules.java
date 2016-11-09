@@ -153,95 +153,6 @@ public class TemporalRules {
     public final static boolean tooMuchTemporalStatements(final Term t) {
         return (t == null) || (t.containedTemporalRelations() > 1);
     }
-      
-    // { A =/> B, B =/> C } |- (&/,A,B) =/> C
-    // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
-    //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
-    public static boolean temporalInductionChain(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
-        
-        //prevent trying question sentences, causes NPE
-        if ((s1.truth == null) || (s2.truth == null))
-            return false;
-        
-        //try if B1 unifies with B2, if yes, create new judgement
-        Implication S1=(Implication) s1.term;
-        Implication S2=(Implication) s2.term;
-        Term A=S1.getSubject();
-        Term B1=S1.getPredicate();
-        Term B2=S2.getSubject();
-        Term C=S2.getPredicate();
-        ArrayList<Term> args=null;
-        
-        int beginoffset=0;
-        if(B2 instanceof Conjunction) {
-            Conjunction CB2=((Conjunction)B2);
-            if(CB2.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {       
-                if(A instanceof Conjunction && ((Conjunction)A).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                    Conjunction ConjA=(Conjunction) A;
-                    args=new ArrayList(CB2.term.length+ConjA.term.length);
-                    beginoffset=ConjA.size();
-                    
-                    for(final Term t: ConjA.term) args.add(t);
-                } else {
-                    args = new ArrayList(CB2.term.length + 1);
-                    args.add(A);
-                    beginoffset=1;
-                }
-                for (final Term t : CB2.term) args.add(t);
-            }
-        }
-        else {
-            args=Lists.newArrayList(A, B1);
-        }
-        
-        if(args==null)
-            return false;
-                
-        //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
-        Term[] term = args.toArray(new Term[args.size()]);
-        Term realB2 = term[beginoffset];
-        HashMap<Term, Term> res1 = new HashMap<>();
-        HashMap<Term, Term> res2 = new HashMap<>();
-
-        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2, res1,res2)) {
-            //ok it unifies, so lets create a &/ term
-            for(int i=0;i<term.length;i++) {
-                if(term[i] instanceof CompoundTerm) {
-                    term[i]=((CompoundTerm) term[i]).applySubstitute(res1);
-                    if(term[i]==null) { 
-                        //it resulted in invalid term for example <a --> a>, so wrong
-                        return false;
-                    }
-                }
-            }
-            int order1=s1.getTemporalOrder();
-            int order2=s2.getTemporalOrder();
-            Term S = Conjunction.make(term,order1);
-            //check if term has a element which is equal to C
-            for(Term t : term) {
-                if(Terms.equalSubTermsInRespectToImageAndProduct(t, C)) {
-                    return false;
-                }
-                for(Term u : term) {
-                    if(u!=t) { //important: checking reference here is as it should be!
-                        if(Terms.equalSubTermsInRespectToImageAndProduct(t, u)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            Implication whole=Implication.make(S, C,order2);
-            
-            if(whole!=null) {
-                TruthValue truth = TruthFunctions.induction(s1.truth, s2.truth);
-                BudgetValue budget = BudgetFunctions.compoundForward(truth,whole, nal);
-                budget.setPriority((float) Math.min(0.99, budget.getPriority()));
-                
-                return nal.doublePremiseTask(whole, truth, budget, true, false)!=null;
-            }
-        }
-        return false;
-    }
     
     /** whether a term can be used in temoralInduction(,,) */
     protected static boolean termForTemporalInduction(final Term t) {
@@ -478,8 +389,6 @@ public class TemporalRules {
                     
                     Task task=t;
                     
-                    desireUpdateCompiledInferenceHelper(s1, task, nal, s2);
-                    
                     //micropsi inspired strive for knowledge
                     //get strongest belief of that concept and use the revison truth, if there is no, use this truth
                     double conf=task.sentence.truth.getConfidence();
@@ -513,86 +422,6 @@ public class TemporalRules {
                 }
         }
         return success;
-    }
-
-    private static void desireUpdateCompiledInferenceHelper(final Sentence s1, Task task, final NAL nal, final Sentence s2) {
-        /*
-        IN <SELF --> [good]>! %1.00;0.90%
-        IN (^pick,left). :|: %1.00;0.90%
-        IN  PauseInput(3)
-        IN <SELF --> [good]>. :|: %0.00;0.90%
-        <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. :|: %0.00;0.45%
-        <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. %0.00;0.31%
-        <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. :|: %0.00;0.45%
-        <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. %0.00;0.31%
-        <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. :|: %0.00;0.45%
-        <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. %0.00;0.31%
-        <(&/,(^pick,left),+3) </> <SELF --> [good]>>. :|: %0.00;0.45%
-        <(&/,(^pick,left),+3) </> <SELF --> [good]>>. %0.00;0.31%
-        
-        It takes the system sometimes like 1000 steps to go from
-        "(^pick,left) leads to SELF not being good"
-        to
-        "since <SELF --> good> is a goal, (^pick,left) is not desired"
-        making it bad for RL tasks but this will change, maybe with the following principle:
-        
-        
-        task: <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>.
-        belief: <SELF --> [good]>!
-        |-
-        (^pick,left)! (note the change of punctuation, it needs the punctuation of the belief here)
-        
-        */
-        
-        if(s1.punctuation==Symbols.JUDGMENT_MARK) { //necessary check?
-            Sentence belief=task.sentence;
-            Concept S1_State_C=nal.memory.concept(s1.term);
-            if(S1_State_C != null && S1_State_C.desires != null && S1_State_C.desires.size() > 0 &&
-                    !(((Statement)belief.term).getPredicate() instanceof Operation)) {
-                Task a_desire = S1_State_C.desires.get(0);
-                Sentence Goal = new Sentence(S1_State_C.term,Symbols.JUDGMENT_MARK,new TruthValue(1.0f,0.99f),a_desire.sentence.stamp.clone());
-                Goal.stamp.setOccurrenceTime(s1.getOccurenceTime()); //strongest desire for that time is what we want to know
-                Task strongest_desireT=S1_State_C.selectCandidate(Goal, S1_State_C.desires);
-                Sentence strongest_desire=strongest_desireT.sentence.projection(s1.getOccurenceTime(), strongest_desireT.sentence.getOccurenceTime());
-                TruthValue T=TruthFunctions.desireDed(belief.truth, strongest_desire.truth);
-                //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
-                Stamp st=belief.stamp.clone();
-                
-                if(strongest_desire.getOccurenceTime()==Stamp.ETERNAL) {
-                    st.setEternal();
-                } else {
-                    long shift=0;
-                    if(((Implication)task.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                        shift=nal.memory.getDuration();
-                    }
-                    st.setOccurrenceTime(strongest_desire.stamp.getOccurrenceTime()-shift);
-                }
-                
-                ///SPECIAL REASONING CONTEXT FOR TEMPORAL DESIRE UPDATE
-                Stamp SVSTamp=nal.getNewStamp();
-                Task SVTask=nal.getCurrentTask();
-                NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
-                //END
-                
-                nal.setCurrentBelief(belief);
-                nal.setCurrentTask(strongest_desireT);
-                
-                Sentence W=new Sentence(s2.term,Symbols.GOAL_MARK,T,st);
-                BudgetValue val=BudgetFunctions.forward(T, nal);
-                Task TD=new Task(W,val,strongest_desireT);
-                
-                nal.doublePremiseTask(TD.getTerm(), TD.sentence.truth, TD.budget, false, true);
-                // nal.derivedTask(TD, false, false, strongest_desireT, null, false);
-                
-                //RESTORE CONTEXT
-                nal.setNewStamp(SVSTamp);
-                nal.setCurrentTask(SVTask);
-                nal.newStampBuilder=SVstampBuilder; //also restore this one
-                //END
-            }
-        }
-        
-        //PRINCIPLE END
     }
 
     private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
