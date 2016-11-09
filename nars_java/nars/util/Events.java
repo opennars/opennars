@@ -1,8 +1,8 @@
-package nars.core;
+package nars.util;
 
 import java.util.Arrays;
 import java.util.List;
-import nars.core.EventEmitter.EventObserver;
+import nars.util.EventEmitter.EventObserver;
 import nars.core.control.FireConcept;
 import nars.core.control.NAL;
 import nars.entity.Concept;

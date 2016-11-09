@@ -7,7 +7,7 @@ package nars.core.control;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import nars.core.Events;
+import nars.util.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;

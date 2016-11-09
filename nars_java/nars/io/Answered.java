@@ -4,8 +4,8 @@
  */
 package nars.io;
 
-import nars.core.EventEmitter.EventObserver;
-import nars.core.Events.Answer;
+import nars.util.EventEmitter.EventObserver;
+import nars.util.Events.Answer;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;

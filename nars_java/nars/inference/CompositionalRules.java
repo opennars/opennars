@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import nars.core.Events;
+import nars.util.Events;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;

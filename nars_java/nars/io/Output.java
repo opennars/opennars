@@ -1,7 +1,7 @@
 package nars.io;
 
-import nars.core.EventEmitter;
-import nars.core.Events.Answer;
+import nars.util.EventEmitter;
+import nars.util.Events.Answer;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.inference.AbstractObserver;

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import nars.core.Events;
+import nars.util.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.core.control.NAL;

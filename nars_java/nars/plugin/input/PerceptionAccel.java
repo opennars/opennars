@@ -5,8 +5,8 @@
 package nars.plugin.input;
 
 import java.util.ArrayList;
-import nars.core.EventEmitter;
-import nars.core.Events;
+import nars.util.EventEmitter;
+import nars.util.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
