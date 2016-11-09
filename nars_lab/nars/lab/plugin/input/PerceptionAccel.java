@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.plugin.mental;
+package nars.lab.plugin.input;
 
 import java.util.ArrayList;
 import nars.util.EventEmitter;

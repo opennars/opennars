@@ -59,7 +59,7 @@ import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variable;
 import nars.language.Variables;
 import nars.operator.Operation;
-import nars.plugin.mental.PerceptionAccel;
+import nars.lab.plugin.input.PerceptionAccel;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
