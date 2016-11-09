@@ -5,8 +5,8 @@
 package nars.perf;
 
 import java.util.Collection;
-import nars.core.EventEmitter;
-import nars.core.Events;
+import nars.util.EventEmitter;
+import nars.util.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
