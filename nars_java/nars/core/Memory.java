@@ -133,13 +133,10 @@ public class Memory implements Serializable {
     //get it out to plugin somehow
     
     private boolean enabled = true;
-    
     private long timeRealStart;
     private long timeRealNow;
     private long timePreviousCycle;
     private long timeSimulation;
-
-
 
     public static enum Forgetting {
         Iterative, Periodic
@@ -148,38 +145,23 @@ public class Memory implements Serializable {
     public enum Timing {
         /** internal, subjective time (inference steps) */
         Iterative, 
-        
         /** hard real-time, uses system clock */
         Real, 
-        
         /** soft real-time, uses controlled simulation time */
         Simulation
     }
     
-    Timing timing;
-    
-    //public static Random randomNumber = new Random(1);
     public static long randomSeed = 1;
     public static Random randomNumber = new Random(randomSeed);
-
     public static void resetStatic() {
         randomNumber.setSeed(randomSeed);    
     }
     
     public final DefaultAttention concepts;
-    
     public final EventEmitter event;
-    
-    
-
-    
     
     /* InnateOperator registry. Containing all registered operators of the system */
     public final HashMap<CharSequence, Operator> operators;
-    
-    private long currentStampSerial = 0;
-    
-    
     
     /**
      * New tasks with novel composed terms, for delayed and selective processing
@@ -194,26 +176,6 @@ public class Memory implements Serializable {
      */
     public final Deque<Task> newTasks;
     
-    
-    
-    
-    // ----------------------------------------
-//    public Term currentTerm;
-//
-//    public Concept currentConcept;
-//
-//    private Task currentTask;
-//
-//    private TermLink currentBeliefLink;
-//    private TaskLink currentTaskLink;
-//
-//    private Sentence currentBelief;    
-//
-//    private Stamp newStamp;
-    // ----------------------------------------
-    
-    
-    //public final Term self;
 
     
     
@@ -362,8 +324,7 @@ public class Memory implements Serializable {
         novelTasks.clear();
         newTasks.clear();    
         stm.clear();
-        
-        timing = param.getTiming();      
+            
         cycle = 0;
         timeRealStart = timeRealNow = System.currentTimeMillis();
         timePreviousCycle = time();
@@ -378,7 +339,7 @@ public class Memory implements Serializable {
     }
 
     public long time() {
-        switch (timing) {
+        switch (param.getTiming()) {
             case Iterative: return getCycleTime();
             case Real: return getRealTime();
             case Simulation: return getSimulationTime();
@@ -947,16 +908,14 @@ public class Memory implements Serializable {
     }
 
 
-
+    private long currentStampSerial = 0;
     public long newStampSerial() {
         return currentStampSerial++;
     }
 
-
     public boolean isProcessingInput() {
         return time() >= inputPausedUntil;
     }
-
     
     /**
      * Queue additional cycle()'s to the inference process.
@@ -1105,10 +1064,6 @@ public class Memory implements Serializable {
             }
         }
         return true; //we didnt find a recording which wasnt outdated, so it is novel
-    }
-    
-    public Timing getTiming() {
-        return timing;
     }
 
     public Collection<Task> conceptQuestions(Class c) {
