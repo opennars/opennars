@@ -9,11 +9,10 @@ import nars.language.Tense;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.operator.mental.Mental;
 
 // Usage:
 // (^numericCertainty, min, max, value, term)
-public class NumericCertainty extends Operator implements Mental{
+public class NumericCertainty extends Operator {
     public NumericCertainty() {
         super("^numericCertainty");
     }

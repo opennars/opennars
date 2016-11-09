@@ -26,7 +26,7 @@ import nars.operator.Operation;
 /**
  * Feeling happy value
  */
-public class FeelHappy extends Feel implements Mental {
+public class FeelHappy extends Feel {
 
     public FeelHappy() {
         super("^feelHappy");

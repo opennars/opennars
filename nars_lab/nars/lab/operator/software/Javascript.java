@@ -2,7 +2,6 @@ package nars.lab.operator.software;
 
 import java.util.HashMap;
 import javax.script.Bindings;
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
@@ -11,12 +10,11 @@ import nars.io.Output.ERR;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
-import nars.operator.mental.Mental;
 
 /**
  * Executes a Javascript expression
  */
-public class Javascript extends SynchronousFunctionOperator implements Mental {
+public class Javascript extends SynchronousFunctionOperator {
     
     ScriptEngine js = null;   
     Bindings bindings = null;

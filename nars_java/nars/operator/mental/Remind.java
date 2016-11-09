@@ -30,7 +30,7 @@ import nars.operator.Operator;
 /**
  * Operator that activates a concept
  */
-public class Remind extends Operator implements Mental {
+public class Remind extends Operator {
 
     public Remind() {
         super("^remind");

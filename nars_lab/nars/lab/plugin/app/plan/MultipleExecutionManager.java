@@ -21,7 +21,6 @@ import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.operator.mental.Mental;
 
 /**
  * Operation execution and planning support. Strengthens and accelerates
@@ -442,7 +441,7 @@ public class MultipleExecutionManager {
             return false;
         
         Operation o= (Operation)t.sentence.term;
-        return (o.getOperator() instanceof Mental);
+        return true;
     }
     
     //is input or by the system triggered operation

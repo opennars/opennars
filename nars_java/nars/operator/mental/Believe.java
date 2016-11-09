@@ -39,7 +39,7 @@ import nars.operator.Operator;
  * Operator that creates a judgment with a given statement
  * Causes the system to belief things it has no evidence for
  */
-public class Believe extends Operator implements Mental {
+public class Believe extends Operator {
 
     public Believe() {
         super("^believe");
