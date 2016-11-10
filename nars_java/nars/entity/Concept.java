@@ -67,7 +67,6 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.plugin.mental.InternalExperience;
 import nars.storage.Bag;
-import nars.storage.Bag.MemoryAware;
 
 public class Concept extends Item<Term> {
 
@@ -148,9 +147,6 @@ public class Concept extends Item<Term> {
 
         this.taskLinks = taskLinks;
         this.termLinks = termLinks;
-
-        if (taskLinks instanceof MemoryAware)  ((MemoryAware)taskLinks).setMemory(memory);
-        if (termLinks instanceof MemoryAware)  ((MemoryAware)termLinks).setMemory(memory);
                 
         if (tm instanceof CompoundTerm) {
             this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
