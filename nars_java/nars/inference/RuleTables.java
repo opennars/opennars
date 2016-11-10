@@ -91,6 +91,7 @@ public class RuleTables {
         
         if (belief != null) {   
             
+            TemporalRules.temporalInduction(task.sentence, belief, nal, true);
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
             if (LocalRules.match(task, belief, nal)) { //new tasks resulted from the match, so return
