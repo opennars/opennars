@@ -16,13 +16,10 @@
  */
 package nars.inference;
 
-
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.core.control.NAL;
@@ -47,7 +44,6 @@ import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Terms;
 import nars.language.Variable;
-import nars.language.Variables;
 import nars.operator.Operation;
 
 /**

@@ -28,8 +28,6 @@ import nars.core.Parameters;
  * Common functions on real numbers, mostly in [0,1].
  */
 public class UtilityFunctions {
-
-    
     
     /**
      * A function where the output is conjunctively determined by the inputs

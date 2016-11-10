@@ -20,10 +20,6 @@
  */
 package nars.inference;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import nars.util.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -37,8 +33,6 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
-import static nars.inference.TemporalRules.ORDER_CONCURRENT;
-import static nars.inference.TemporalRules.ORDER_FORWARD;
 import nars.io.Symbols;
 import static nars.io.Symbols.VAR_DEPENDENT;
 import static nars.io.Symbols.VAR_INDEPENDENT;
@@ -59,7 +53,6 @@ import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variable;
 import nars.language.Variables;
 import nars.operator.Operation;
-import nars.lab.plugin.input.PerceptionAccel;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
