@@ -5,7 +5,6 @@
 package nars.core.control;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import nars.util.Events;
 import nars.core.Memory;
@@ -23,7 +22,6 @@ import nars.entity.TruthValue;
 import nars.inference.TruthFunctions;
 import nars.language.CompoundTerm;
 import nars.language.Interval;
-import nars.language.Negation;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.operator.Operation;
@@ -133,9 +131,6 @@ public abstract class NAL implements Runnable {
         if (occurence2 != null && !occurence2.isEternal()) {
             stamp.setOccurrenceTime(occurence2.getOccurenceTime());
         }
-        //if (stamp.latency > 0) {
-        //    memory.logic.DERIVATION_LATENCY.commit(stamp.latency);
-        //}
         
         final Term currentTaskContent = getCurrentTask().getTerm();
         if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
@@ -153,28 +148,7 @@ public abstract class NAL implements Runnable {
             stamp.chainRemove(currentTaskContent);
             stamp.chainAdd(currentTaskContent);
         }
-        //its a inference rule, so we have to do the derivation chain check to hamper cycles
-        /*if (!revised) {
-            Term tc = task.getTerm();            
-            
-            if (task.sentence.isJudgment()) { 
-                
-                Term ptc = task.getParentTask() != null ? task.getParentTask().getTerm() : null;
-                
-                if (
-                    (task.getParentTask() == null) || (!Negation.areMutuallyInverse(tc, ptc))
-                   ) {
-                
-                    final Collection<Term> chain = stamp.getChain();
-                    if (chain.contains(tc)) {
-                        memory.removeTask(task, "Cyclic Reasoning");
-                        return false;
-                    }
-                }
-            }
-            
-        } else {*/
-            //its revision, of course its cyclic, apply evidental base policy
+        //its revision, of course its cyclic, apply evidental base policy
         if(revised || !overlapAllowed) { //TODO cleanup for 1.6.3, revised variable wont be needed anymore I guess.
             final int stampLength = stamp.baseLength;
             for (int i = 0; i < stampLength; i++) {
