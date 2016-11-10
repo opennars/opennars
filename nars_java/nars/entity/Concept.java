@@ -871,21 +871,37 @@ public class Concept extends Item<Term> {
         for (final Task beliefT : beliefs) {  
             Sentence belief = beliefT.sentence;
             nal.emit(BeliefSelect.class, belief);
-
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
             
-////            if (memory.newStamp != null) {
-            //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
-////            }
-            
             Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
-            if (projectedBelief.getOccurenceTime()!=belief.getOccurenceTime()) {
+            if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
                 nal.singlePremiseTask(projectedBelief, task.budget);
             }
             
             return projectedBelief;     // return the first satisfying belief
         }
         return null;
+    }
+    
+    public Sentence getBeliefForTemporalInference(final Task task) {
+        
+        if(task.sentence.isEternal()) { //this is for event-event inference only
+            return null;
+        }
+        
+        Sentence bestSoFar = null;
+        long distance = Long.MAX_VALUE;
+
+        for (final Task beliefT : beliefs) {  
+            if(!beliefT.sentence.isEternal()) {
+                long distance_new = Math.abs(task.sentence.getOccurenceTime() - beliefT.sentence.getOccurenceTime());
+                if(distance_new < distance) {
+                    distance = distance_new;
+                    bestSoFar = beliefT.sentence;
+                }
+            }
+        }
+        return bestSoFar;
     }
 
     /**
