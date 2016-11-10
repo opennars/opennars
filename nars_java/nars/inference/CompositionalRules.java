@@ -20,25 +20,18 @@
  */
 package nars.inference;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import nars.util.Events;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.core.control.NAL;
 import nars.entity.Sentence;
-import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import static nars.inference.TemporalRules.ORDER_INVALID;
-import static nars.inference.TemporalRules.ORDER_NONE;
 import static nars.inference.TruthFunctions.abduction;
-import static nars.inference.TruthFunctions.anonymousAnalogy;
 import static nars.inference.TruthFunctions.comparison;
-import static nars.inference.TruthFunctions.deduction;
 import static nars.inference.TruthFunctions.induction;
 import static nars.inference.TruthFunctions.intersection;
 import static nars.inference.TruthFunctions.negation;
@@ -48,7 +41,6 @@ import static nars.inference.TruthFunctions.reduceDisjunction;
 import static nars.inference.TruthFunctions.union;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
-import nars.language.CompoundTerm.UnableToCloneException;
 import nars.language.Conjunction;
 import nars.language.DifferenceExt;
 import nars.language.DifferenceInt;
@@ -66,8 +58,6 @@ import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
 import static nars.language.Terms.reduceComponents;
-import static nars.language.Terms.reduceUntilLayer2;
-import static nars.language.Terms.unwrapNegation;
 import nars.language.Variable;
 import nars.language.Variables;
 
