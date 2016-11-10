@@ -368,17 +368,8 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>>  {
 //        return null;
 //    }
 //
-
-    /** ends, indicating whether successful completion */
-    public void end(boolean success) {
-
-    }
     
     
-    /** sets priority to zero, signaling that the Task has ended or discarded */
-    @Override public void end() {
-        end(false);
-    }
 
     /** flag to indicate whether this Event Task participates in tempporal induction */
     public void setParticipateInTemporalInductionOnSucceedingEvents(boolean b) {
