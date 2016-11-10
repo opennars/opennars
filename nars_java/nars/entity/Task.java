@@ -41,23 +41,13 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>>  {
     /** placeholder for a forgotten task */
     public static final Task Forgotten = new Task();
 
-    
-
-    /**
-     * The sentence of the Task
-     */
+    /* The sentence of the Task*/
     public final Sentence<T> sentence;
-    /**
-     * Task from which the Task is derived, or null if input
-     */
+    /* Task from which the Task is derived, or null if input*/
     final WeakReference<Task> parentTask;
-    /**
-     * Belief from which the Task is derived, or null if derived from a theorem
-     */
+    /* Belief from which the Task is derived, or null if derived from a theorem*/
     public final  WeakReference<Sentence> parentBelief;
-    /**
-     * For Question and Goal: best solution found so far
-     */
+    /* For Question and Goal: best solution found so far*/
     private Sentence bestSolution;
     
     /** causal factor; usually an instance of Operation */
@@ -303,21 +293,8 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>>  {
         return p;
     }
 
-    /** generally, op will be an Operation instance */
-    public void setCause(final Term op) {
-        this.cause = new WeakReference(op);
-    }
-
-    /** the causing Operation, or null if not applicable. */
-    public Term getCause() {
-        if (cause == null) return null;
-        return cause.get();
-    }
-
     public String getExplanation() {
         String x = toString() + "\n";
-        if (cause!=null)
-            x += "  cause=" + cause + "\n";
         if (bestSolution!=null) {
             if (!getTerm().equals(bestSolution.term))
                 x += "  solution=" + bestSolution + "\n";

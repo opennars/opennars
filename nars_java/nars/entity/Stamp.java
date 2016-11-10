@@ -41,22 +41,17 @@ public class Stamp implements Cloneable {
 
     /*serial numbers. not to be modified after Stamp constructor has initialized it*/
     public long[] evidentialBase;
-    
     /* evidentialBase baseLength*/
     public int baseLength;
-    
     /*creation time of the stamp*/
     private long creationTime;
-
     /* estimated occurrence time of the event*/
     private long occurrenceTime;
-
     /*default for atemporal events means "always" in Judgment/Question, but "current" in Goal/Quest*/
     public static final long ETERNAL = Integer.MIN_VALUE;
-
     /** caches evidentialBase as a set for comparisons and hashcode, stores the unique Long's in-order for efficiency*/    
     private long[] evidentialSet = null;
-    
+    /*Tense of the item*/
     private Tense tense;
     
     /** caches  */
@@ -324,19 +319,13 @@ public class Stamp implements Cloneable {
             toSet();       
         return evidentialHash;
     }
-
-    public Stamp cloneWithNewCreationTime(long newCreationTime) {
-        return new Stamp(this, newCreationTime);
-    }
+    
     public Stamp cloneWithNewOccurrenceTime(final long newOcurrenceTime) {
         Stamp s = clone();
         if (newOcurrenceTime == ETERNAL)
             s.tense = Tense.Eternal;
         s.setOccurrenceTime(newOcurrenceTime);
         return s;
-    }
-    public Stamp cloneEternal() {
-        return cloneWithNewOccurrenceTime(ETERNAL);
     }
 
     /**
@@ -348,10 +337,12 @@ public class Stamp implements Cloneable {
         return occurrenceTime;
     }
     
+    /**
+     * 
+     */
     public void setEternal() {
         occurrenceTime=ETERNAL;
     }
-
     
     public StringBuilder appendOcurrenceTime(final StringBuilder sb) {
         if (occurrenceTime != ETERNAL) {
@@ -401,7 +392,6 @@ public class Stamp implements Cloneable {
         }
     }
 
-
     public CharSequence name() {
         if (name == null) {
             
@@ -435,53 +425,10 @@ public class Stamp implements Cloneable {
         return name().toString();
     }
 
-
     /**
      * @return the creationTime
      */
     public long getCreationTime() {
         return creationTime;
     }
-
-
-
-
-
-
-    //String toStringCache = null; //holds pre-allocated symbol for toString()
-    /**
-     * Get a String form of the Stamp for display Format: {creationTime [:
-     * eventTime] : evidentialBase}
-     *
-     * @return The Stamp as a String
-     */
-    /* 
-     final static String stampOpenerSpace = " " + Symbols.STAMP_OPENER;
-     final static String spaceStampStarterSpace = " " + Symbols.STAMP_STARTER + " ";
-     final static String stampCloserSpace = Symbols.STAMP_CLOSER + " ";
-  
-     @Override
-     public String toString() {
-     if (toStringCache == null) {
-     int numBases = evidentialBase.size();
-     final StringBuilder b = new StringBuilder(8+numBases*5 // TODO properly estimate this //);
-        
-     b.append(stampOpenerSpace).append(creationTime)
-     .append(spaceStampStarterSpace);
-            
-     int i = 0;
-     for (long eb : evidentialBase) {  
-     b.append(Long.toString(eb));
-     if (i++ < (numBases - 1)) {
-     b.append(Symbols.STAMP_SEPARATOR);
-     } else {
-     b.append(stampCloserSpace);
-     }
-     }
-     toStringCache = b.toString();
-     }
-     return toStringCache;
-     }
-     */
-
 }

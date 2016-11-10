@@ -448,7 +448,7 @@ public class MultipleExecutionManager {
     public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
         if (newEvent.isInput()) return true;
         if (containsMentalOperator(newEvent)) return true;
-        if (newEvent.getCause()!=null) return true;       
+        //if (newEvent.getCause()!=null) return true;       
         return false;
     }
     
