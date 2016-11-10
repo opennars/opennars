@@ -34,7 +34,7 @@ import nars.util.Events.CycleEnd;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -59,7 +59,7 @@ public class Anticipate extends Operator implements EventObserver {
     public final Map<Vector2Int,LinkedHashSet<Term>> anticipations = new LinkedHashMap();
             
     final Set<Term> newTasks = new LinkedHashSet();
-    NAL nal;
+    DerivationContext nal;
  
     final static TruthValue expiredTruth = new TruthValue(0.0f, Parameters.ANTICIPATION_CONFIDENCE);
     final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
@@ -162,7 +162,7 @@ public class Anticipate extends Operator implements EventObserver {
     public void event(Class event, Object[] args) {
         if (event == Events.InduceSucceedingEvent.class) {            
             Task newEvent = (Task)args[0];
-            this.nal= (NAL)args[1];
+            this.nal= (DerivationContext)args[1];
             
             if (newEvent.sentence.truth!=null) {
                 newTasks.add(newEvent.getTerm()); //new: always add but keep truth value in mind

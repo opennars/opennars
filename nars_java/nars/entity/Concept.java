@@ -39,7 +39,7 @@ import nars.util.Events.UnexecutableGoal;
 import nars.core.Memory;
 import nars.core.NARRun;
 import nars.core.Parameters;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
@@ -67,6 +67,10 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.plugin.mental.InternalExperience;
 import nars.storage.Bag;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
 
 public class Concept extends Item<Term> {
 
@@ -198,7 +202,7 @@ public class Concept extends Item<Term> {
      * @param task The task to be processed
      * @return whether it was processed
      */
-    public boolean directProcess(final NAL nal, final Task task) {
+    public boolean directProcess(final DerivationContext nal, final Task task) {
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
@@ -233,7 +237,7 @@ public class Concept extends Item<Term> {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processJudgment(final NAL nal, final Task task) {
+    protected void processJudgment(final DerivationContext nal, final Task task) {
         final Sentence judg = task.sentence;
         final Task oldBeliefT = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
@@ -344,7 +348,7 @@ public class Concept extends Item<Term> {
         return false;
     }
     
-    protected void howQuestionDecisionMakingAccel(final Task T, NAL nal) {
+    protected void howQuestionDecisionMakingAccel(final Task T, DerivationContext nal) {
         if(!Parameters.COMPOUND_OPERATIONS)
             return;
         Term Subject = new Variable("?1"); //because its not normalized we have to use "?1" here
@@ -385,7 +389,7 @@ public class Concept extends Item<Term> {
                                 ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
                                 Stamp SVSTamp=nal.getNewStamp().clone();
                                 Task SVTask=nal.getCurrentTask();
-                                NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
+                                DerivationContext.StampBuilder SVstampBuilder=nal.newStampBuilder;
                                 //END
                         
                                 nal.getTheNewStamp().setOccurrenceTime(nal.memory.time()+occurrenceOffset);
@@ -416,7 +420,7 @@ public class Concept extends Item<Term> {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected boolean processGoal(final NAL nal, final Task task, boolean shortcut) {        
+    protected boolean processGoal(final DerivationContext nal, final Task task, boolean shortcut) {        
         
         final Sentence goal = task.sentence;
         final Task oldGoalT = selectCandidate(goal, desires); // revise with the existing desire values
@@ -503,7 +507,7 @@ public class Concept extends Item<Term> {
         return false;
     }
 
-    private void questionFromGoal(final Task task, final NAL nal) {
+    private void questionFromGoal(final Task task, final DerivationContext nal) {
         if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled
             ArrayList<Term> qu=new ArrayList<Term>();
@@ -541,7 +545,7 @@ public class Concept extends Item<Term> {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processQuestion(final NAL nal, final Task task) {
+    protected void processQuestion(final DerivationContext nal, final Task task) {
 
         Sentence ques = task.sentence;
 
@@ -860,7 +864,7 @@ public class Concept extends Item<Term> {
      * @param task The selected task
      * @return The selected isBelief
      */
-    public Sentence getBelief(final NAL nal, final Task task) {
+    public Sentence getBelief(final DerivationContext nal, final Task task) {
         final Stamp taskStamp = task.sentence.stamp;
         final long currentTime = memory.time();
 

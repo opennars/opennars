@@ -27,7 +27,7 @@ import nars.util.Events.UnexecutableOperation;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.lab.plugin.app.plan.MultipleExecutionManager;
@@ -88,7 +88,7 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
         if (event == UnexecutableGoal.class) {
             Task t = (Task)a[0];
             Concept c = (Concept)a[1];
-            NAL n = (NAL)a[2];
+            DerivationContext n = (DerivationContext)a[2];
             decisionPlanning(n, t, c);            
         }
         else if (event == UnexecutableOperation.class) {
@@ -141,7 +141,7 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
         }
     }
     
-    public void decisionPlanning(final NAL nal, final Task t, final Concept concept) {
+    public void decisionPlanning(final DerivationContext nal, final Task t, final Concept concept) {
 
         if (!concept.isDesired()) {
             return;

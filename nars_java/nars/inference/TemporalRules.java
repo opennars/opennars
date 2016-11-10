@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -155,7 +155,7 @@ public class TemporalRules {
         return (t instanceof Inheritance) || (t instanceof Similarity);
     }
     
-    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal, boolean SucceedingEventsInduction) {
+    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.DerivationContext nal, boolean SucceedingEventsInduction) {
         
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK)
             return Collections.EMPTY_LIST;
@@ -420,7 +420,7 @@ public class TemporalRules {
         return success;
     }
 
-    private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
+    private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final DerivationContext nal) {
         if(nal.memory.emotion.busy()<Parameters.CURIOSITY_BUSINESS_THRESHOLD &&  Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
             if(task.sentence.term instanceof Implication) {
                 boolean valid=false;
@@ -479,7 +479,7 @@ public class TemporalRules {
      * @return The budget for the new task which is the belief activated, if
      * necessary
      */
-    public static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final nars.core.control.NAL nal) {
+    public static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final nars.core.control.DerivationContext nal) {
         BudgetValue budget = null;
         boolean feedbackToLinks = false;
         if (task == null) {

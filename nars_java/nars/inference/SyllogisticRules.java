@@ -21,7 +21,7 @@
 package nars.inference;
 
 import nars.core.Parameters;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -67,7 +67,7 @@ public final class SyllogisticRules {
      * @param belief The second premise
      * @param nal Reference to the memory
      */
-    static void dedExe(Term term1, Term term2, Sentence sentence, Sentence belief, NAL nal) {
+    static void dedExe(Term term1, Term term2, Sentence sentence, Sentence belief, DerivationContext nal) {
         if (Statement.invalidStatement(term1, term2)) {
             return;
         }
@@ -123,7 +123,7 @@ public final class SyllogisticRules {
      * removed?
      * @param nal Reference to the memory
      */
-    static void abdIndCom(final Term term1, final Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final NAL nal) {
+    static void abdIndCom(final Term term1, final Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final DerivationContext nal) {
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1, term2)) {
             return;
         }
@@ -212,7 +212,7 @@ public final class SyllogisticRules {
      * @param figure Locations of the shared term in premises
      * @param nal Reference to the memory
      */
-    static void analogy(Term subj, Term pred, Sentence asym, Sentence sym, int figure, NAL nal) {
+    static void analogy(Term subj, Term pred, Sentence asym, Sentence sym, int figure, DerivationContext nal) {
         if (Statement.invalidStatement(subj, pred)) {
             return;
         }
@@ -267,7 +267,7 @@ public final class SyllogisticRules {
      * @param figure Locations of the shared term in premises
      * @param nal Reference to the memory
      */
-    static void resemblance(Term term1, Term term2, Sentence belief, Sentence sentence, int figure, NAL nal) {
+    static void resemblance(Term term1, Term term2, Sentence belief, Sentence sentence, int figure, DerivationContext nal) {
         if (Statement.invalidStatement(term1, term2)) {
             return;
         }
@@ -367,7 +367,7 @@ public final class SyllogisticRules {
      * @param side The location of s2 in s1
      * @param nal Reference to the memory
      */
-    static void detachment(Sentence mainSentence, Sentence subSentence, int side, NAL nal) {
+    static void detachment(Sentence mainSentence, Sentence subSentence, int side, DerivationContext nal) {
         Statement statement = (Statement) mainSentence.term;
         if (!(statement instanceof Implication) && !(statement instanceof Equivalence)) {
             return;
@@ -469,7 +469,7 @@ public final class SyllogisticRules {
      * for predicate, -1 for the whole term
      * @param nal Reference to the memory
      */
-    static void conditionalDedInd(Implication premise1, short index, Term premise2, int side, NAL nal) {
+    static void conditionalDedInd(Implication premise1, short index, Term premise2, int side, DerivationContext nal) {
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
         Sentence belief = nal.getCurrentBelief();
@@ -619,7 +619,7 @@ public final class SyllogisticRules {
      * for predicate, -1 for the whole term
      * @param nal Reference to the memory
      */
-    static void conditionalAna(Equivalence premise1, short index, Term premise2, int side, NAL nal) {
+    static void conditionalAna(Equivalence premise1, short index, Term premise2, int side, DerivationContext nal) {
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
         Sentence belief = nal.getCurrentBelief();
@@ -718,7 +718,7 @@ public final class SyllogisticRules {
      * @param nal Reference to the memory
      * @return Whether there are derived tasks
      */
-    static boolean conditionalAbd(Term cond1, Term cond2, Statement st1, Statement st2, NAL nal) {
+    static boolean conditionalAbd(Term cond1, Term cond2, Statement st1, Statement st2, DerivationContext nal) {
         if (!(st1 instanceof Implication) || !(st2 instanceof Implication)) {
             return false;
         }
@@ -822,7 +822,7 @@ public final class SyllogisticRules {
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      */
-    static void elimiVarDep(CompoundTerm compound, Term component, boolean compoundTask, NAL nal) {
+    static void elimiVarDep(CompoundTerm compound, Term component, boolean compoundTask, DerivationContext nal) {
         Term content = reduceComponents(compound, component, nal.mem());
         if ((content == null) || ((content instanceof Statement) && ((Statement) content).invalid())) {
             return;

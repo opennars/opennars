@@ -43,7 +43,7 @@ import static nars.core.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;
 import nars.core.control.DefaultAttention;
 import nars.core.control.ImmediateProcess;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.io.meter.EmotionMeter;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -808,7 +808,7 @@ public class Memory implements Serializable {
     public final ArrayDeque<Task> stm = new ArrayDeque();
     //public Task stmLast = null;
     
-    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, NAL nal, boolean SucceedingEventsInduction) {
+    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, DerivationContext nal, boolean SucceedingEventsInduction) {
         
         if(SucceedingEventsInduction && !controllerTask.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
             return false;
@@ -836,7 +836,7 @@ public class Memory implements Serializable {
         return false;
     }
     
-    public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
+    public boolean inductionOnSucceedingEvents(final Task newEvent, DerivationContext nal) {
 
         if(newEvent.budget==null || !newEvent.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
             return false;

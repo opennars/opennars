@@ -24,7 +24,7 @@ import java.util.Arrays;
 import nars.util.Events.Answer;
 import nars.util.Events.Unsolved;
 import nars.core.Memory;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -41,6 +41,7 @@ import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variables;
+import static nars.inference.TemporalRules.matchingOrder;
 
 
 /**
@@ -65,7 +66,7 @@ public class LocalRules {
      * @param belief The belief
      * @param memory Reference to the memory
      */
-    public static boolean match(final Task task, final Sentence belief, final NAL nal) {
+    public static boolean match(final Task task, final Sentence belief, final DerivationContext nal) {
         Sentence sentence = task.sentence;
         
         if (sentence.isJudgment()) {
@@ -106,7 +107,7 @@ public class LocalRules {
      * @param feedbackToLinks Whether to send feedback to the links
      * @param memory Reference to the memory
      */
-    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
+    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final DerivationContext nal) {
         if (newBelief.term==null) return false;
         
         TruthValue newTruth = newBelief.truth;
@@ -132,7 +133,7 @@ public class LocalRules {
      * @param task The task to be processed
      * @param memory Reference to the memory
      */
-    public static boolean trySolution(Sentence belief, final Task task, final NAL nal) {
+    public static boolean trySolution(Sentence belief, final Task task, final DerivationContext nal) {
         Sentence problem = task.sentence;
         Memory memory = nal.mem();
         
@@ -156,6 +157,7 @@ public class LocalRules {
             }
         }
         
+        /* //TODO evaluate why this was necessary at all!!
         Term content = belief.term;
         if (content.hasVarIndep()) {
             Term u[] = new Term[] { content, problem.term };
@@ -168,10 +170,7 @@ public class LocalRules {
             if ((!unified) || (content == null)) {
                 throw new RuntimeException("Unification invalid: " + Arrays.toString(u));
             }
-            
-            Stamp st = new Stamp(belief.stamp, memory.time());
-            st.chainAdd(belief.term);
-        }
+        }*/
 
         task.setBestSolution(memory,belief);
         
@@ -221,7 +220,7 @@ public class LocalRules {
      *
      * @param nal Reference to the memory
      */
-    public static void matchReverse(final NAL nal) {
+    public static void matchReverse(final DerivationContext nal) {
         Task task = nal.getCurrentTask();
         Sentence belief = nal.getCurrentBelief();
         Sentence sentence = task.sentence;
@@ -242,7 +241,7 @@ public class LocalRules {
      * @param figure location of the shared term
      * @param nal Reference to the memory
      */
-    public static void matchAsymSym(final Sentence asym, final Sentence sym, int figure, final NAL nal) {
+    public static void matchAsymSym(final Sentence asym, final Sentence sym, int figure, final DerivationContext nal) {
         if (nal.getCurrentTask().sentence.isJudgment()) {
             inferToAsym(asym, sym, nal);
         } else {
@@ -259,7 +258,7 @@ public class LocalRules {
      * @param judgment2 The second premise
      * @param nal Reference to the memory
      */
-    private static void inferToSym(Sentence judgment1, Sentence judgment2, NAL nal) {
+    private static void inferToSym(Sentence judgment1, Sentence judgment2, DerivationContext nal) {
         Statement s1 = (Statement) judgment1.term;
         Term t1 = s1.getSubject();
         Term t2 = s1.getPredicate();
@@ -284,7 +283,7 @@ public class LocalRules {
      * @param sym The symmetric premise
      * @param nal Reference to the memory
      */
-    private static void inferToAsym(Sentence asym, Sentence sym, NAL nal) {
+    private static void inferToAsym(Sentence asym, Sentence sym, DerivationContext nal) {
         Statement statement = (Statement) asym.term;
         Term sub = statement.getPredicate();
         Term pre = statement.getSubject();
@@ -304,7 +303,7 @@ public class LocalRules {
      *
      * @param nal Reference to the memory
      */
-    private static void conversion(final NAL nal) {
+    private static void conversion(final DerivationContext nal) {
         TruthValue truth = TruthFunctions.conversion(nal.getCurrentBelief().truth);
         BudgetValue budget = BudgetFunctions.forward(truth, nal);
         convertedJudgment(truth, budget, nal);
@@ -316,7 +315,7 @@ public class LocalRules {
      *
      * @param nal Reference to the memory
      */
-    private static void convertRelation(final NAL nal) {
+    private static void convertRelation(final DerivationContext nal) {
         TruthValue truth = nal.getCurrentBelief().truth;
         if (((CompoundTerm) nal.getCurrentTask().getTerm()).isCommutative()) {
             truth = TruthFunctions.abduction(truth, 1.0f);
@@ -336,7 +335,7 @@ public class LocalRules {
      * @param truth The truth value of the new task
      * @param nal Reference to the memory
      */
-    private static void convertedJudgment(final TruthValue newTruth, final BudgetValue newBudget, final NAL nal) {
+    private static void convertedJudgment(final TruthValue newTruth, final BudgetValue newBudget, final DerivationContext nal) {
         Statement content = (Statement) nal.getCurrentTask().getTerm();
         Statement beliefContent = (Statement) nal.getCurrentBelief().term;
         int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());

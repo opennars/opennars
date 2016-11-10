@@ -7,7 +7,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -163,7 +163,7 @@ public class InternalExperience implements Plugin, EventObserver {
             Sentence belief = (Sentence)a[0];
             Term beliefTerm = (Term)a[1];
             Term taskTerm = (Term)a[2];
-            NAL nal = (NAL)a[3];
+            DerivationContext nal = (DerivationContext)a[3];
             beliefReason(belief, beliefTerm, taskTerm, nal);
         }
     }
@@ -233,7 +233,7 @@ public class InternalExperience implements Plugin, EventObserver {
     }; 
     
     /** used in full internal experience mode only */
-    protected void beliefReason(Sentence belief, Term beliefTerm, Term taskTerm, NAL nal) {
+    protected void beliefReason(Sentence belief, Term beliefTerm, Term taskTerm, DerivationContext nal) {
         
         Memory memory = nal.memory;
     

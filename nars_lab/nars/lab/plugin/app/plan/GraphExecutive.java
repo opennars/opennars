@@ -583,10 +583,6 @@ public class GraphExecutive {
 
             Stamp stamp = new Stamp(goal.sentence.stamp, currentEdge.getStamp(), memory.time());
 
-            //add all terms to derivation chain
-            for(Term T : sequence) {
-                stamp.chainAdd(T); //todo: if too long kick out the first n terms
-            }
             //todo: evidental base hm
 
             //memory.setTheNewStamp(stamp);
@@ -762,7 +758,7 @@ public class GraphExecutive {
         return plans;
     } 
     
-    protected Task planTask(nars.core.control.NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
+    protected Task planTask(nars.core.control.DerivationContext nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
         
         Task newTask = plan.planTask(c, task, target, punctuation);
         
@@ -774,7 +770,7 @@ public class GraphExecutive {
         
     }
 
-   public int plan(final nars.core.control.NAL nal, Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
+   public int plan(final nars.core.control.DerivationContext nal, Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
 
         TreeSet<ParticlePlan> plans = particlePlan(target, searchDistance, particles);
         

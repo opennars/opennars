@@ -29,7 +29,7 @@ import nars.util.Events.TaskImmediateProcess;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.inference.TruthFunctions;
@@ -329,7 +329,7 @@ public class PredictGUI extends JPanel {
             
             
             @Override
-            public void onProcessed(Task t, NAL n) {
+            public void onProcessed(Task t, DerivationContext n) {
                 //onPrediction(t);
             }
         });

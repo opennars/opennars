@@ -14,7 +14,7 @@ import nars.core.NAR;
 import nars.core.NAR.PluginState;
 import nars.core.Parameters;
 import nars.core.Plugin;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -79,7 +79,7 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
         }
         else if (event == Events.InduceSucceedingEvent.class) {            
             Task newEvent = (Task)args[0];
-            NAL nal= (NAL)args[1];
+            DerivationContext nal= (DerivationContext)args[1];
             
             if (newEvent.sentence.truth!=null) {
                 stm.add(newEvent);
@@ -93,7 +93,7 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
     }  
     
     //check all predictive statements, match them with last events
-    public void temporalPredictionsAdapt(NAL nal) {
+    public void temporalPredictionsAdapt(DerivationContext nal) {
         if(TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV==0.0f) {
             return; 
         }

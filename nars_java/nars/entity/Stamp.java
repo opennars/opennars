@@ -21,17 +21,9 @@
 package nars.entity;
 
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.inference.TemporalRules;
@@ -44,62 +36,31 @@ import static nars.language.Tense.Future;
 import static nars.language.Tense.Past;
 import static nars.language.Tense.Present;
 import nars.language.Term;
-import nars.language.Terms;
-
 
 public class Stamp implements Cloneable {
 
-
-    /**
-     * serial numbers. not to be modified after Stamp constructor has initialized it
-     */
+    /*serial numbers. not to be modified after Stamp constructor has initialized it*/
     public long[] evidentialBase;
-
-    /**
-     * evidentialBase baseLength
-     */
+    
+    /* evidentialBase baseLength*/
     public int baseLength;
-
-    /**
-     * creation time of the stamp
-     */
+    
+    /*creation time of the stamp*/
     private long creationTime;
 
-    /**
-     * estimated occurrence time of the event
-     * TODO: make this final?
-     */
+    /* estimated occurrence time of the event*/
     private long occurrenceTime;
 
-    /**
-     * default for atemporal events
-     * means "always" in Judgment/Question, but "current" in Goal/Quest     
-     */
+    /*default for atemporal events means "always" in Judgment/Question, but "current" in Goal/Quest*/
     public static final long ETERNAL = Integer.MIN_VALUE;
 
-    /**
-     * used when the occurrence time cannot be estimated, means "unknown"
-     */
-    //public static final long UNKNOWN = Integer.MAX_VALUE;
-
-    
-    /** caches evidentialBase as a set for comparisons and hashcode.
-        stores the unique Long's in-order for efficiency
-     */    
+    /** caches evidentialBase as a set for comparisons and hashcode, stores the unique Long's in-order for efficiency*/    
     private long[] evidentialSet = null;
-
     
     private Tense tense;
     
-    
     /** caches  */
     transient CharSequence name = null;
-    
-    /* used for lazily calculating derivationChain on-demand */
-    private DerivationBuilder derivationBuilder = null;
-    
-    
-    final static Collection<Term> EmptyDerivationChain = Collections.EMPTY_LIST;
     
     /**
      * derivation chain containing the used premises and conclusions which made
@@ -107,10 +68,6 @@ public class Stamp implements Cloneable {
      * Uses LinkedHashSet for optimal contains/indexOf performance.
      * TODO use thread-safety for this
      */
-    private Collection<Term> derivationChain;
-    
-    /** analytics metric */
-    transient public final long latency;
     
     /** cache of hashcode of evidential base */
     transient private int evidentialHash;
@@ -135,118 +92,13 @@ public class Stamp implements Cloneable {
         LinkedHashSet<Term> build();
     }
     
-    /** creates a Derivation Chain by collating / zipping 2 Stamps Derivation Chains */
-    public static class ZipperDerivationBuilder implements DerivationBuilder {
-        private final WeakReference<Stamp> first;
-        private final WeakReference<Stamp> second;
-
-        public ZipperDerivationBuilder(Stamp first, Stamp second) {
-            this.first = new WeakReference(first);
-            this.second = new WeakReference(second);
-        }
-            
-        @Override public LinkedHashSet<Term> build()  {
-            Stamp ff = first.get();
-            Stamp ss = second.get();
-            
-            //check if the parent stamps still exist, because they may have been garbage collected
-            if ((ff == null) && (ss == null)) {                
-                return new LinkedHashSet();
-            }
-            else {
-                //TODO decide if it can use the parent chains directly?
-                if (ff == null) {
-                    //ss!=null
-                    return new LinkedHashSet(ss.getChain());
-                }
-                else if (ss == null) {
-                    //ff!=null                    
-                    return new LinkedHashSet(ff.getChain());
-                }
-            }
-                    
-            final Collection<Term> chain1 = ff.getChain();
-            final Collection<Term> chain2 = ss.getChain();
-            
-            final Iterator<Term> iter1 = chain1.iterator();
-            int i1 = chain1.size() - 1;
-            
-            final Iterator<Term> iter2 = chain2.iterator();
-            int i2 = chain2.size() - 1;
-
-            Set<Term> added = new HashSet();
-            //set here is for fast contains() checking
-            List<Term> sequence = new ArrayList<>(Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);      
-
-            //take as long till the chain is full or all elements were taken out of chain1 and chain2:
-            int j = 0;
-            while (j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1 >= 0 || i2 >= 0)) {
-                if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
-                    if (i1 >= 0) {
-                        final Term c1i1 = iter1.next();
-                        if (!added.add(c1i1)) {
-                            sequence.add(c1i1);                        
-                        }
-                        else {
-                            j--; //was double, so we can add one more now
-                        }
-                        i1--;
-                    }
-                } else {
-                    if (i2 >= 0) {
-                        final Term c2i2 = iter2.next();
-                        if (!added.add(c2i2)) {
-                            sequence.add(c2i2);
-                        }
-                        else {
-                            j--; //was double, so we can add one more now
-                        }
-                        i2--;
-                    }
-                }
-                j++;
-            } 
-
-            if (Parameters.DEBUG) {
-                Terms.verifyNonNull(added);
-            }
-
-            Collections.reverse(sequence);
-
-            return new LinkedHashSet<>(sequence);
-        }                            
-    }
-    
-    /** lazily inherit the derivation from a parent, causing it to cache the derivation also (in case other children get it */
-    public static class InheritDerivationBuilder implements DerivationBuilder {
-        private final WeakReference<Stamp> parent;
-
-        public InheritDerivationBuilder(Stamp parent) {
-            this.parent = new WeakReference(parent);            
-        }
-        
-        @Override public LinkedHashSet<Term> build() {
-            if (parent.get() == null) {
-                //parent doesnt exist anymore (garbage collected)
-                return new LinkedHashSet();
-            }
-            
-            Collection<Term> p = parent.get().getChain();
-            return new LinkedHashSet(p);
-        }
-        
-    }
-    
     /** used for when the ocrrence time will be set later; so should not be called from externally but through another Stamp constructor */
     protected Stamp(final Tense tense, final long serial) {
         this.baseLength = 1;
         this.evidentialBase = new long[baseLength];
         this.evidentialBase[0] = serial;
         this.tense = tense;
-        this.latency = 0;
         this.creationTime = -1;
-        this.derivationBuilder = null;
-        this.derivationChain = EmptyDerivationChain; // new LinkedHashSet(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
     }
     
     /**
@@ -287,13 +139,6 @@ public class Stamp implements Cloneable {
         this.creationTime = creationTime;
 
         this.occurrenceTime = old.getOccurrenceTime();
-        this.derivationChain = old.getChain();
-        this.latency = this.creationTime - old.latency;
-        
-        if (derivationChain == null)
-            this.derivationBuilder = new InheritDerivationBuilder(old);        
-        else
-            this.derivationBuilder = null;
     }
     
     /**
@@ -317,11 +162,7 @@ public class Stamp implements Cloneable {
         int secondLength = secondBase.length;
 
         creationTime = time;
-        
         occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
-        
-        //calculate latency as the time difference between now and the last created of the 2 input stamps
-        this.latency = time - Math.max(first.creationTime, second.creationTime);
         
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143        
         while (i2 < secondLength && j < baseLength) {
@@ -330,9 +171,6 @@ public class Stamp implements Cloneable {
         while (i1 < firstLength && j < baseLength) {
             evidentialBase[j++] = firstBase[i1++];
         }
-        
-        this.derivationBuilder = new ZipperDerivationBuilder(first, second);
-
     }
 
     public Stamp(final Memory memory, final Tense tense) {
@@ -344,7 +182,6 @@ public class Stamp implements Cloneable {
         this(memory, Tense.Present);
     }
 
-    
     public boolean isEternal() {
         boolean eternalOccurrence = occurrenceTime == ETERNAL;
         
@@ -373,49 +210,7 @@ public class Stamp implements Cloneable {
         }
         
     }
-    
-    protected boolean chainIsNullOrEmpty() {
-        return derivationChain == null || derivationChain.isEmpty();
-    }
-    
-    /** for creating the chain lazily */
-    protected synchronized void ensureChain() {
-        
-        if (derivationChain == EmptyDerivationChain) {
-            derivationChain = new LinkedHashSet();
-            return;
-        }
-        
-            
-        if (this.derivationChain != null) return;
-        
-        //create chain
-        if (derivationBuilder==null)
-            throw new RuntimeException("Null derivationChain and derivationBuilder");
-        
-        this.derivationChain = derivationBuilder.build();
-        this.derivationBuilder = null;
-    }
 
-    /*
-     private static boolean equalBases(long[] base1, long[] base2) {
-     if (base1.baseLength != base2.baseLength) {
-     return false;
-     }
-     for (long n1 : base1) {
-     boolean found = false;
-     for (long n2 : base2) {
-     if (n1 == n2) {
-     found = true;
-     }
-     }
-     if (!found) {
-     return false;
-     }
-     }
-     return true;
-     }
-     */
     /**
      * Clone a stamp
      *
@@ -426,7 +221,6 @@ public class Stamp implements Cloneable {
         return new Stamp(this);
     }
 
-
     /**
      * Get a number from the evidentialBase by index, called in this class only
      *
@@ -436,57 +230,6 @@ public class Stamp implements Cloneable {
     long get(final int i) {
         return evidentialBase[i];
     }
-
-
-    /**
-     * Get the derivationChain, called from derivedTask in Memory
-     * Provides a snapshot copy if in multi-threaded mode.
-     * @return The evidentialBase of numbers
-     */
-    public Collection<Term> getChain() {
-        ensureChain();
-        
-        if (Parameters.THREADS == 1)
-            return derivationChain;
-        else {
-            //unmodifiable list copy
-            return Lists.newArrayList(derivationChain);
-        }
-    }
-
-    /**
-     * Add element to the chain.
-     *
-     * @return The evidentialBase of numbers
-     */
-    public void chainAdd(final Term t) {
-        if (t == null)
-            throw new RuntimeException("Chain must contain non-null items");
-            
-        ensureChain();        
-        
-        if (derivationChain.size()+1 > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
-            //remove first element
-            Term first = derivationChain.iterator().next();
-            derivationChain.remove(first); 
-        }
-
-        derivationChain.add(t);
-        name = null;
-    }
-    public void chainRemove(final Term t) {
-        if (t == null)
-            throw new RuntimeException("Chain must contain non-null items");
-
-        if (chainIsNullOrEmpty())
-            return;
-        
-        ensureChain();
-
-        derivationChain.remove(t);
-        name = null;
-    }
-    
     
     public static long[] toSetArray(final long[] x) {
         long[] set = x.clone();
@@ -556,11 +299,6 @@ public class Stamp implements Cloneable {
             if (evidentialHash() != s.evidentialHash()) return false;
             if (!Arrays.equals(toSet(), s.toSet())) return false;
         }
-        
-        //two beliefs can have two different derivation chains altough they share same evidental bas
-        //in this case it shouldnt return true
-        if (derivationChain)
-            if (!chainEquals(getChain(), s.getChain())) return false;
         
         return true;        
     }
@@ -642,7 +380,6 @@ public class Stamp implements Cloneable {
         if (isEternal()) {
             return "";
         }
-        
         switch (TemporalRules.order(currentTime, occurrenceTime, duration)) {
             case ORDER_FORWARD:
                 return Symbols.TENSE_FUTURE;
@@ -667,9 +404,8 @@ public class Stamp implements Cloneable {
 
     public CharSequence name() {
         if (name == null) {
-            ensureChain();
             
-            final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
+            final int estimatedInitialSize = 10 * baseLength;
 
             final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
             buffer.append(Symbols.STAMP_OPENER).append(getCreationTime());
@@ -682,21 +418,9 @@ public class Stamp implements Cloneable {
                 if (i < (baseLength - 1)) {
                     buffer.append(Symbols.STAMP_SEPARATOR);
                 } else {
-                    if (derivationChain.isEmpty()) {
-                        buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
-                    }
+                    buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
                 }
             }
-            int i = 0;
-            try{
-                for (Term t : derivationChain) {
-                    buffer.append(t);
-                    if (i < (derivationChain.size() - 1)) {
-                        buffer.append(Symbols.STAMP_SEPARATOR);
-                    }
-                    i++;
-                }
-            } catch(Exception ex) {}
             buffer.append(Symbols.STAMP_CLOSER).append(' ');
 
             //this is for estimating an initial size of the stringbuffer

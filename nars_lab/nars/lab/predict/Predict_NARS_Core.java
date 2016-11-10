@@ -15,7 +15,7 @@ import nars.util.Events.TaskImmediateProcess;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
@@ -52,7 +52,7 @@ public class Predict_NARS_Core {
         n.on(TaskImmediateProcess.class, new TaskImmediateProcess() {
             int curmax=0;
             @Override
-            public void onProcessed(Task t, NAL n) {
+            public void onProcessed(Task t, DerivationContext n) {
                 if (t.sentence.getOccurenceTime() >= n.memory.time() && t.sentence.truth.getExpectation()>0.5) {
                     Term term = t.getTerm();
                     int time = (int) t.sentence.getOccurenceTime();
