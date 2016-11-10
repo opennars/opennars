@@ -191,7 +191,6 @@ public class Memory implements Serializable {
         concepts.reset();
         novelTasks.clear();
         newTasks.clear();    
-        stm.clear();
         cycle = 0;
         timeRealStart = timeRealNow = System.currentTimeMillis();
         timePreviousCycle = time();
@@ -443,13 +442,6 @@ public class Memory implements Serializable {
 
     public void cycle(final NAR inputs) {
     
-        /*resource.CYCLE.start();
-        resource.CYCLE_CPU_TIME.start();
-        resource.CYCLE_RAM_USED.start();
-
-        if (logic.IO_INPUTS_BUFFERED.isActive())
-            logic.IO_INPUTS_BUFFERED.commit(inputs.getInputItemsBuffered());*/
-        
         event.emit(Events.CycleStart.class);                
         
         /** adds input tasks to newTasks */
@@ -463,29 +455,19 @@ public class Memory implements Serializable {
         
         event.emit(Events.CycleEnd.class);
         event.synch();
-        updateTime();
-
-       /* resource.CYCLE_RAM_USED.stop();
-        resource.CYCLE_CPU_TIME.stop();
-        resource.CYCLE.stop();*/
-    }
-    
-    
-
-    /**
-     * automatically called each cycle */    
-    protected void updateTime() {
+        
         timePreviousCycle = time();
         cycle++;
         timeRealNow = System.currentTimeMillis();
     }
-    
+   
     /** Processes a specific number of new tasks */
     public int processNewTasks(int maxTasks, Collection<Runnable> queue) {
-        if (maxTasks == 0) return 0;
+        
+        if (maxTasks == 0)
+            return 0;
         
         int processed = 0;
-                
         int numTasks = Math.min(maxTasks, newTasks.size());
         
         for (int i = 0; (!newTasks.isEmpty()) && (i < numTasks); i++) {
@@ -504,13 +486,7 @@ public class Memory implements Serializable {
                 final Sentence s = task.sentence;
                 if ((s!=null) && (s.isJudgment()||s.isGoal())) {
                     final double exp = s.truth.getExpectation();
-                    if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
-                        //i dont see yet how frequency could play a role here - patrick
-                        //just imagine a board game where you are confident about all the board rules
-                        //but the implications reach all the frequency spectrum in certain situations
-                        //but every concept can also be represented with (--,) so i guess its ok
-                        //logic.TASK_ADD_NOVEL.commit();
-                        
+                    if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {                        
                         // new concept formation                        
                         Task displacedNovelTask = novelTasks.putIn(task);
                         if (displacedNovelTask!=null) {
@@ -585,8 +561,6 @@ public class Memory implements Serializable {
         return executed;
     }
 
-
-    
      public Operator getOperator(final String op) {
         return operators.get(op);
      }
@@ -696,65 +670,5 @@ public class Memory implements Serializable {
         }
         throw new RuntimeException("Questions index for " + c + " does not exist");
     }
-    
-    public final ArrayDeque<Task> stm = new ArrayDeque();
-    //public Task stmLast = null;
-    
-    //is input or by the system triggered operation
-    public static boolean isInputOrOperation(final Task newEvent) {
-        return newEvent.isInput() || (newEvent.sentence.term instanceof Operation);
-    }
-    
-    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, DerivationContext nal, boolean SucceedingEventsInduction) {
-        
-        if(SucceedingEventsInduction && !controllerTask.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
-            return false;
-        }
-        if (newEvent.isEternal() || !isInputOrOperation(controllerTask)) {
-            return false;
-        }
-        if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
-            return false;
-        }
-        
-        if(newEvent.punctuation!=Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
-            return false; //temporal inductions for judgements only
-        
-        nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, time());
-        nal.setCurrentTask(controllerTask);
-
-        Sentence previousBelief = stmLast;
-        nal.setCurrentBelief(previousBelief);
-
-        Sentence currentBelief = newEvent;
-
-        //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-        TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction);
-        return false;
-    }
-    
-    public boolean inductionOnSucceedingEvents(final Task newEvent, DerivationContext nal) {
-
-        if(newEvent.budget==null || !newEvent.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
-            return false;
-        }
-
-        nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
-
-        if (newEvent.sentence.isEternal() || !isInputOrOperation(newEvent)) {
-            return false;
-        }
-
-        if(Parameters.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS) {
-            for (Task stmLast : stm) {
-                proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);
-            }
-        }
-        
-        while (stm.size()+1 > Parameters.STM_SIZE)
-            stm.removeFirst();
-        stm.addLast(newEvent);
-
-        return true;
-    }
+   
 }
