@@ -9,15 +9,10 @@ import nars.entity.Item;
 
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
-    public interface MemoryAware {
-        public void setMemory(Memory m);
-    }
-    
     public static final int bin(final float x, final int bins) {
         int i = (int)Math.floor((x + 0.5f/bins) * bins);
         return i;
     }
-
 
     public abstract void clear();   
 

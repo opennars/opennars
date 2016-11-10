@@ -16,7 +16,6 @@ import nars.inference.BudgetFunctions;
 import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
 import nars.storage.Bag;
-import nars.storage.Bag.MemoryAware;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
