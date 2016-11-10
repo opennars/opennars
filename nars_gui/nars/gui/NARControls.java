@@ -270,7 +270,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             
             
 
-            JMenuItem imv = new JMenuItem("+ Eternalized Implications Graph");
+            /*JMenuItem imv = new JMenuItem("+ Eternalized Implications Graph");
             imv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -281,10 +281,10 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                                             nar.memory.executive.graph.implication,
                                             new NARGraphDisplay(),
                                             new FastOrganicLayout()
-                                    ))).show(500, 500);
+                                    ))).show(500, 500); 
                 }
             });
-            m.add(imv); 
+            m.add(imv); */
 //
 //            JMenuItem sg = new JMenuItem("+ Inheritance / Similarity Graph");
 //            sg.addActionListener(new ActionListener() {

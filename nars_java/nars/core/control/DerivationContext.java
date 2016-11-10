@@ -213,9 +213,6 @@ public abstract class DerivationContext implements Runnable {
                 
                 if (newTask!=null) {
                     boolean added = derivedTask(newTask, false, false, null, null, overlapAllowed);
-                    if (added && temporalInduction) {
-                        memory.temporalRuleOutputToGraph(newSentence, newTask);
-                    }
                     if(added) {
                         derived=newTask;
                     }
@@ -239,9 +236,6 @@ public abstract class DerivationContext implements Runnable {
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 if (newTask!=null) {
                     boolean added = derivedTask(newTask, false, false, null, null, overlapAllowed);
-                    if (added && temporalInduction) {
-                        memory.temporalRuleOutputToGraph(newSentence, newTask);
-                    }
                 }
                 
             }

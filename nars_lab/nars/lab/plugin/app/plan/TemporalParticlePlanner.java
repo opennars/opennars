@@ -240,7 +240,6 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
     }
     
     @Override public boolean setEnabled(NAR n, boolean enabled) {
-        this.executive = n.memory.executive;
         this.graph = executive.graph;
         
         n.memory.event.set(this, enabled, 

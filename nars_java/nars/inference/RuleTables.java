@@ -79,31 +79,21 @@ public class RuleTables {
         
         final Term taskTerm = taskSentence.term;         // cloning for substitution
         final Term beliefTerm = bLink.target;       // cloning for substitution
-
-        //CONTRAPOSITION //TODO: put into rule table
-        /*if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
-            Concept d=memory.sampleNextConceptNovel(task.sentence);
-            if(d!=null && d.term.equals(taskSentence.term)) {
-                StructuralRules.contraposition((Statement)taskTerm, taskSentence, nal); 
-            }
-        }*/
         
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
            return;
         
-        final Concept currentConcept = nal.getCurrentConcept();
         final Concept beliefConcept = memory.concept(beliefTerm);
         
         Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task) : null;
         
-        nal.setCurrentBelief( belief );  // may be null
+        nal.setCurrentBelief( belief );
         
         if (belief != null) {   
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
-            if (LocalRules.match(task, belief, nal)) {
-                //new tasks resulted from the match, so return
+            if (LocalRules.match(task, belief, nal)) { //new tasks resulted from the match, so return
                 return;
             }
         }
@@ -115,8 +105,6 @@ public class RuleTables {
         /*if ((memory.getNewTaskCount() > 0) && taskSentence.isJudgment()) {
             return;
         }*/
-        
-        CompositionalRules.dedConjunctionByQuestion(taskSentence, belief, nal);
         
         final short tIndex = tLink.getIndex(0);
         short bIndex = bLink.getIndex(0);

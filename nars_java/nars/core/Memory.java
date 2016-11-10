@@ -54,8 +54,6 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.lab.plugin.app.plan.MultipleExecutionManager;
-import static nars.lab.plugin.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
 import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
@@ -92,8 +90,8 @@ import nars.storage.Bag;
  */
 public class Memory implements Serializable {
     
-    public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo 
-    //get it out to plugin somehow
+    //emotion meter keeping track of global emotion
+    public final EmotionMeter emotion = new EmotionMeter();   
     
     private long timeRealStart;
     private long timeRealNow;
@@ -119,6 +117,7 @@ public class Memory implements Serializable {
         randomNumber.setSeed(randomSeed);    
     }
     
+    //todo make sense of this class and de-obfuscate
     public final DefaultAttention concepts;
     public final EventEmitter event;
     
@@ -131,29 +130,14 @@ public class Memory implements Serializable {
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
     
-
-    
-    
-
-    
-    public final EmotionMeter emotion = new EmotionMeter();    
-    
-    
-    /**
-     * The remaining number of steps to be carried out (stepLater mode)
-     */
+    /* The remaining number of steps to be carried out (stepLater mode)*/
     private int inputPausedUntil;
-
     
-    /**
-     * System clock, relatively defined to guarantee the repeatability of
-     * behaviors
-     */
+    /* System clock, relatively defined to guarantee the repeatability of behaviors */
     private long cycle;
     
-    
+    /* System parameters that can be changed at runtime */
     public final Param param;
-    
     
     //index of Conjunction questions
     transient private Set<Task> questionsConjunction = new HashSet();
@@ -192,105 +176,29 @@ public class Memory implements Serializable {
     public Memory(Param param, DefaultAttention concepts, Bag<Task<Term>,Sentence<Term>> novelTasks) {                
 
         this.param = param;
-        
         this.event = new MemoryEventEmitter();
-        
         this.concepts = concepts;
         this.concepts.init(this);
-        
         this.novelTasks = novelTasks;                
-        
         this.newTasks = (Parameters.THREADS > 1) ?  
                 new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
-        
         this.operators = new HashMap<>();
-        
-
-        /*this.resource = new ResourceMeter();
-        this.logic = new LogicMeter() {
-
-            public void commit(Memory memory) {
-                double prioritySum = 0;        
-                double prioritySumSq = 0;
-                int count = 0;
-                int totalQuestions = 0;
-                int totalBeliefs = 0;
-                int histogramBins = 4;
-                double[] histogram = new double[histogramBins];
-
-                for (final Concept c : concepts) {
-                    double p = c.getPriority();
-                    totalQuestions += c.questions.size();        
-                    totalBeliefs += c.beliefs.size();        
-                    //TODO totalGoals...
-                    //TODO totalQuests...
-                    
-                    prioritySum += p;
-                    prioritySumSq += p*p;
-                    
-                    if (p > 0.75) histogram[0]++;
-                    else if (p > 0.5) histogram[1]++;
-                    else if (p > 0.25) histogram[2]++;
-                    else histogram[3]++;
-                    
-                    count++;
-                }
-                double mean, variance;
-                if (count > 0) {
-                    mean = prioritySum / count;
-                    
-                    //http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
-                    variance = (prioritySumSq - ((prioritySum*prioritySum)/count))/(count-1);
-                    for (int i = 0; i < histogram.length; i++)
-                        histogram[i]/=count;
-                }
-                else {
-                    mean = variance = 0;
-                }
-
-                //setConceptNum(count);
-                //setConceptBeliefsSum(totalBeliefs);
-                //setConceptQuestionsSum(totalQuestions);
-                //setConceptPriorityMean(mean);
-                //setConceptPriorityVariance(variance);
-                //setConceptPriorityHistogram(histogram);
-                
-                //super.commit(memory);
-            }
-
-        }; */
-        
-        
-        
-        this.executive = new MultipleExecutionManager(this);
-                
-        //after this line begins actual inference, now that the essential data strucures are allocated
-        //------------------------------------ 
-                
-                
         reset();
-
     }
     
     public void reset() {
         event.emit(ResetStart.class);
-        
         concepts.reset();
         novelTasks.clear();
         newTasks.clear();    
         stm.clear();
-            
         cycle = 0;
         timeRealStart = timeRealNow = System.currentTimeMillis();
         timePreviousCycle = time();
-        
         inputPausedUntil = 0;
-        
         emotion.set(0.5f, 0.5f);
         resetStatic();
-        
         event.emit(ResetEnd.class);
-       
     }
 
     public long time() {
@@ -347,19 +255,6 @@ public class Memory implements Serializable {
     public Concept concept(final Term t) {
         return concepts.concept(t);
     }
-  
-
-
-
-    //TODO decide if this is necessary
-    public void temporalRuleOutputToGraph(Sentence s, Task t) {
-        if(t.sentence.term instanceof Implication && t.sentence.term.getTemporalOrder()!=TemporalRules.ORDER_INVALID && t.sentence.term.getTemporalOrder()!=TemporalRules.ORDER_NONE && t.sentence.term.getTemporalOrder()!=TemporalRules.ORDER_BACKWARD) {
-            
-            executive.graph.implication.add(s, (CompoundTerm)s.term, t);            
-        }
-
-    }
-
 
     /**
      * Get the Concept associated to a Term, or create it.
@@ -468,7 +363,6 @@ public class Memory implements Serializable {
             emit(IN.class, task);
 
             if (task.budget.aboveThreshold()) {
-                temporalRuleOutputToGraph(task.sentence,task);
                 
                 addNewTask(task, "Perceived");
                 
@@ -525,7 +419,6 @@ public class Memory implements Serializable {
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
         
         Task task = new Task(sentence, opTask.budget, operation.getTask());
-        task.setCause(operation);
         
         addNewTask(task, "Executed");
     }
@@ -567,7 +460,6 @@ public class Memory implements Serializable {
         }
       
         concepts.cycle();         
-        executive.cycle();
         
         event.emit(Events.CycleEnd.class);
         event.synch();
@@ -795,7 +687,7 @@ public class Memory implements Serializable {
     
     /** gets a next concept for processing */
     public Concept sampleNextConcept() {
-        return concepts.sampleNextConcept();
+        return concepts.sampleNextConcept(); 
     }
     
     public Collection<Task> conceptQuestions(Class c) {
@@ -808,12 +700,17 @@ public class Memory implements Serializable {
     public final ArrayDeque<Task> stm = new ArrayDeque();
     //public Task stmLast = null;
     
+    //is input or by the system triggered operation
+    public static boolean isInputOrOperation(final Task newEvent) {
+        return newEvent.isInput() || (newEvent.sentence.term instanceof Operation);
+    }
+    
     public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, DerivationContext nal, boolean SucceedingEventsInduction) {
         
         if(SucceedingEventsInduction && !controllerTask.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
             return false;
         }
-        if (newEvent.isEternal() || !isInputOrTriggeredOperation(controllerTask, nal.memory)) {
+        if (newEvent.isEternal() || !isInputOrOperation(controllerTask)) {
             return false;
         }
         if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
@@ -844,7 +741,7 @@ public class Memory implements Serializable {
 
         nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
 
-        if (newEvent.sentence.isEternal() || !isInputOrTriggeredOperation(newEvent, nal.memory)) {
+        if (newEvent.sentence.isEternal() || !isInputOrOperation(newEvent)) {
             return false;
         }
 

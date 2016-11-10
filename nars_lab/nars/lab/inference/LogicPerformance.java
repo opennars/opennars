@@ -66,7 +66,6 @@ public class LogicPerformance {
 
         public void explain(Task t, int maxLevels, List<Task> generated) {
             //String x = toString() + "\n";
-            Term cause = t.getCause();
             Sentence bestSolution = t.getBestSolution();            
             Sentence parentBelief = t.getParentBelief();
             Task parentTask = t.getParentTask();
@@ -79,13 +78,6 @@ public class LogicPerformance {
                 at(t, s.getOccurenceTime(), "o");
             }
             
-            if ((cause!=null) && (cause instanceof Operation)) {
-                //x += "  cause=" + cause + "\n";
-                Task causeTask = ((Operation)cause).getTask();
-                addVertex(causeTask);
-                addEdge(causeTask, t,new UniqueEdge("cause"));
-                explain(causeTask, maxLevels-1);
-            }
             if (bestSolution!=null) {
                 if (!t.getTerm().equals(bestSolution.term)) {
                     
