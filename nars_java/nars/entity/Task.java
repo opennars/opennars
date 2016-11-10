@@ -50,11 +50,11 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>>  {
     /**
      * Task from which the Task is derived, or null if input
      */
-    final WeakReference<? extends Task> parentTask;
+    final WeakReference<Task> parentTask;
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
      */
-    public final Sentence parentBelief;
+    public final  WeakReference<Sentence> parentBelief;
     /**
      * For Question and Goal: best solution found so far
      */
@@ -94,10 +94,10 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>>  {
      * @param parentBelief The belief from which this new task is derived
      */
     public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief) {
-        this(s, b, new WeakReference(parentTask), parentBelief, null);
+        this(s, b, new WeakReference(parentTask), new WeakReference(parentBelief), null);
     }
 
-    public Task(final Sentence<T> s, final BudgetValue b, final WeakReference<Task> parentTask, final Sentence parentBelief, Sentence solution) {    
+    public Task(final Sentence<T> s, final BudgetValue b, final WeakReference<Task> parentTask, final WeakReference<Sentence> parentBelief, Sentence solution) {    
         super(b);
         this.sentence = s;
         this.parentTask = parentTask;
@@ -114,7 +114,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>>  {
      * @param solution The belief to be used in future inference
      */
     public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
-        this(s, b, new WeakReference(parentTask), parentBelief, solution);
+        this(s, b, new WeakReference(parentTask), new WeakReference(parentBelief), solution);
     }
 
     public Task clone() {
@@ -233,7 +233,8 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>>  {
      * @return The belief from which the task is derived
      */
     public Sentence getParentBelief() {
-        return parentBelief;
+        if (parentBelief == null) return null;
+        return parentBelief.get();
     }
 
     /**
@@ -322,7 +323,7 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>>  {
                 x += "  solution=" + bestSolution + "\n";
         }
         if (parentBelief!=null)
-            x += "  parentBelief=" + parentBelief + " @ " + parentBelief.getCreationTime() + "\n";
+            x += "  parentBelief=" + parentBelief + " @ " + parentBelief.get().getCreationTime() + "\n";
         
         Task pt = getParentTask();
         if (pt!=null) {
