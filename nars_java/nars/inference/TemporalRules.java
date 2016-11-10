@@ -157,7 +157,8 @@ public class TemporalRules {
     
     public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.DerivationContext nal, boolean SucceedingEventsInduction) {
         
-        if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK)
+        if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK
+                || s1.isEternal() || s2.isEternal())
             return Collections.EMPTY_LIST;
         
         Term t1 = s1.term;
