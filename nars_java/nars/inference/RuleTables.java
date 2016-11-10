@@ -91,7 +91,10 @@ public class RuleTables {
         
         if (belief != null) {   
             
-            TemporalRules.temporalInduction(task.sentence, belief, nal, true);
+            Sentence belief_event = beliefConcept.getBeliefForTemporalInference(task);
+            if(belief_event != null) {
+                TemporalRules.temporalInduction(task.sentence, belief_event, nal, true);
+            }
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
             if (LocalRules.match(task, belief, nal)) { //new tasks resulted from the match, so return
@@ -230,7 +233,6 @@ public class RuleTables {
                         break;
                 }
         }
-        
     }
 
     private static void goalFromQuestion(final Task task, final Term taskTerm, final DerivationContext nal) {
