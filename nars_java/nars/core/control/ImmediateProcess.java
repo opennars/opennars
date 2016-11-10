@@ -12,7 +12,7 @@ import nars.entity.Task;
  * Immediate processing of a new task, in constant time Local processing, in
  * one concept only
  */
-public class ImmediateProcess extends NAL {
+public class ImmediateProcess extends DerivationContext {
     final Task task;
     final int numSiblingTasks;
 

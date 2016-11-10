@@ -2,7 +2,7 @@ package nars.io.meter;
 
 import java.io.Serializable;
 import nars.core.Parameters;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -47,7 +47,7 @@ public class EmotionMeter implements Serializable {
     }
 
     public double lasthappy=-1;
-    public void adjustHappy(float newValue, float weight, NAL nal) {
+    public void adjustHappy(float newValue, float weight, DerivationContext nal) {
         //        float oldV = happyValue;
         happy += newValue * weight;
         happy /= 1.0f + weight;
@@ -108,7 +108,7 @@ public class EmotionMeter implements Serializable {
     }
     
     public double lastbusy=-1;
-    public void manageBusy(NAL nal) {
+    public void manageBusy(DerivationContext nal) {
         if(lastbusy!=-1) {
             float frequency=-1;
             if(busy>Parameters.BUSY_EVENT_HIGHER_THRESHOLD && lastbusy<=Parameters.BUSY_EVENT_HIGHER_THRESHOLD) {

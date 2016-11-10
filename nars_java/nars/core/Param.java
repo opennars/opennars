@@ -18,7 +18,7 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import nars.core.control.NAL.DerivationFilter;
+import nars.core.control.DerivationContext.DerivationFilter;
 
 /**
  * NAR Parameters which can be changed during runtime.

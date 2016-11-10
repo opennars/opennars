@@ -4,8 +4,8 @@
  */
 package nars.lab.plugin.filter;
 
-import nars.core.control.NAL;
-import nars.core.control.NAL.DerivationFilter;
+import nars.core.control.DerivationContext;
+import nars.core.control.DerivationContext.DerivationFilter;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.Symbols;
@@ -20,7 +20,7 @@ import nars.operator.Operation;
 public class DeriveOnlyDemandedTasks implements DerivationFilter {
 
     @Override
-    public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief) {
+    public String reject(DerivationContext nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief) {
         
         Sentence s = task.sentence;
         

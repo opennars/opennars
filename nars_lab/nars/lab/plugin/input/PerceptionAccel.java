@@ -10,7 +10,7 @@ import nars.util.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -52,7 +52,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
     ArrayList<Task> eventbuffer=new ArrayList<>();
     int cur_maxlen=1;
     
-    public void perceive(NAL nal) { //implement Peis idea here now
+    public void perceive(DerivationContext nal) { //implement Peis idea here now
         //we start with length 2 compounds, and search for patterns which are one longer than the longest observed one
         
         boolean longest_result_derived_already=false;
@@ -75,7 +75,6 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                     break;
                 }
                 Task current=eventbuffer.get(j);
-                st.getChain().add(current.sentence.term);
                 for(long l : current.sentence.stamp.evidentialBase) {
                     evBase.add(l);
                 }
@@ -221,7 +220,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 while(eventbuffer.size()>cur_maxlen+1) {
                     eventbuffer.remove(0);
                 }
-                NAL nal= (NAL)args[1];
+                DerivationContext nal= (DerivationContext)args[1];
                 perceive(nal);
             }
         }

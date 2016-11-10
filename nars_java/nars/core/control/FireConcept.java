@@ -13,7 +13,7 @@ import nars.entity.TermLink;
 import nars.inference.RuleTables;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
-abstract public class FireConcept extends NAL {
+abstract public class FireConcept extends DerivationContext {
     
     public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
         this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());

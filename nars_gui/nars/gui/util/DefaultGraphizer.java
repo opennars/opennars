@@ -187,7 +187,6 @@ public class DefaultGraphizer implements NARGraph.Graphize {
         if (includeDerivations && includeBeliefs) {
             for (final Map.Entry<Sentence, Concept> s : sentenceTerms.entrySet()) {
                 final Sentence derivedSentence = s.getKey();
-                final Collection<Term> schain = derivedSentence.stamp.getChain();
                 final Concept derived = s.getValue();
                 for (final Map.Entry<Sentence, Concept> t : sentenceTerms.entrySet()) {
                     if (s == t) {
@@ -197,17 +196,6 @@ public class DefaultGraphizer implements NARGraph.Graphize {
                     final Concept deriver = t.getValue();
                     if (derived == deriver) {
                         continue;
-                    }
-                    final Collection<Term> tchain = deriverSentence.stamp.getChain();
-                    if (schain.contains(deriverSentence.term)) {
-                        g.addVertex(derived);
-                        g.addVertex(deriver);
-                        g.addEdge(deriver, derived, new NARGraph.TermDerivation());
-                    }
-                    if (tchain.contains(derivedSentence.term)) {
-                        g.addVertex(derived);
-                        g.addVertex(deriver);
-                        g.addEdge(derived, deriver, new NARGraph.TermDerivation());
                     }
                 }
             }

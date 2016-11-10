@@ -30,11 +30,11 @@ import nars.operator.mental.Anticipate;
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.
  */
-public abstract class NAL implements Runnable {
+public abstract class DerivationContext implements Runnable {
 
     public interface DerivationFilter extends Plugin {
         /** returns null if allowed to derive, or a String containing a short rejection reason for logging */
-        public String reject(NAL nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief);
+        public String reject(DerivationContext nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief);
 
         @Override
         public default boolean setEnabled(NAR n, boolean enabled) {
@@ -60,7 +60,7 @@ public abstract class NAL implements Runnable {
     
     //TODO tasksDicarded
     
-    public NAL(Memory mem) {
+    public DerivationContext(Memory mem) {
         super();
         this.memory = mem;
         this.derivationFilters = mem.param.getDerivationFilters();
@@ -132,22 +132,6 @@ public abstract class NAL implements Runnable {
             stamp.setOccurrenceTime(occurence2.getOccurenceTime());
         }
         
-        final Term currentTaskContent = getCurrentTask().getTerm();
-        if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
-            final Term currentBeliefContent = getCurrentBelief().term;
-            stamp.chainRemove(currentBeliefContent);
-            stamp.chainAdd(currentBeliefContent);
-        }
-        //workaround for single premise task issue:
-        if (currentBelief == null && single && currentTask != null && currentTask.sentence.isJudgment()) {
-            stamp.chainRemove(currentTaskContent);
-            stamp.chainAdd(currentTaskContent);
-        }
-        //end workaround
-        if (currentTask != null && !single && currentTask.sentence.isJudgment()) {
-            stamp.chainRemove(currentTaskContent);
-            stamp.chainAdd(currentTaskContent);
-        }
         //its revision, of course its cyclic, apply evidental base policy
         if(revised || !overlapAllowed) { //TODO cleanup for 1.6.3, revised variable wont be needed anymore I guess.
             final int stampLength = stamp.baseLength;

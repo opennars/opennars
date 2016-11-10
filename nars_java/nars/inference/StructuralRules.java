@@ -22,7 +22,7 @@ package nars.inference;
 
 import java.util.List;
 import nars.core.Memory;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -68,7 +68,7 @@ public final class StructuralRules {
      * @param side The location of the indicated term in the premise
      * @param nal Reference to the memory
      */
-    static void structuralCompose2(CompoundTerm compound, short index, Statement statement, short side, NAL nal) {
+    static void structuralCompose2(CompoundTerm compound, short index, Statement statement, short side, DerivationContext nal) {
         final Memory mem = nal.mem();
         
         if (compound.equals(statement.term[side])) {
@@ -123,7 +123,7 @@ public final class StructuralRules {
      * @param statement The premise
      * @param nal Reference to the memory
      */
-    static void structuralDecompose2(Statement statement, int index, NAL nal) {
+    static void structuralDecompose2(Statement statement, int index, DerivationContext nal) {
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
         if (subj.getClass() != pred.getClass()) {
@@ -186,7 +186,7 @@ public final class StructuralRules {
      * @param statement The premise
      * @param nal Reference to the memory
      */
-    static void structuralCompose1(CompoundTerm compound, short index, Statement statement, NAL nal) {
+    static void structuralCompose1(CompoundTerm compound, short index, Statement statement, DerivationContext nal) {
         if (!nal.getCurrentTask().sentence.isJudgment()) {
             return;     // forward inference only
         }
@@ -238,7 +238,7 @@ public final class StructuralRules {
      * @param statement The premise
      * @param nal Reference to the memory
      */
-    static void structuralDecompose1(CompoundTerm compound, short index, Statement statement, NAL nal) {
+    static void structuralDecompose1(CompoundTerm compound, short index, Statement statement, DerivationContext nal) {
 //        if (!memory.getCurrentTask().sentence.isJudgment()) {
 //            return;
 //        }
@@ -297,7 +297,7 @@ public final class StructuralRules {
      * @param truth The truth value of the new task
      * @param nal Reference to the memory
      */
-    private static void structuralStatement(Term subject, Term predicate, int order, TruthValue truth, NAL nal) {
+    private static void structuralStatement(Term subject, Term predicate, int order, TruthValue truth, DerivationContext nal) {
         Task task = nal.getCurrentTask();
         Term oldContent = task.getTerm();
         if (oldContent instanceof Statement) {
@@ -318,7 +318,7 @@ public final class StructuralRules {
      * @param side The location of the indicated term in the premise
      * @param nal Reference to the memory
      */
-    static void transformSetRelation(CompoundTerm compound, Statement statement, short side, NAL nal) {
+    static void transformSetRelation(CompoundTerm compound, Statement statement, short side, DerivationContext nal) {
         if (compound.size() > 1) {
             return;
         }
@@ -368,7 +368,7 @@ public final class StructuralRules {
      * @param task The task
      * @param memory Reference to the memory
      */
-    static void transformProductImage(Inheritance inh, CompoundTerm oldContent, short[] indices, NAL nal) {
+    static void transformProductImage(Inheritance inh, CompoundTerm oldContent, short[] indices, DerivationContext nal) {
         final Memory memory = nal.mem();
         Term subject = inh.getSubject();
         Term predicate = inh.getPredicate();
@@ -473,7 +473,7 @@ public final class StructuralRules {
      * @param predicate The predicate term
      * @param nal Reference to the memory
      */
-    private static void transformSubjectPI(CompoundTerm subject, Term predicate, NAL nal) {
+    private static void transformSubjectPI(CompoundTerm subject, Term predicate, DerivationContext nal) {
         TruthValue truth = nal.getCurrentTask().sentence.truth;
         BudgetValue budget;
         Inheritance inheritance;
@@ -527,7 +527,7 @@ public final class StructuralRules {
      * @param predicate The predicate term
      * @param nal Reference to the memory
      */
-    private static void transformPredicatePI(Term subject, CompoundTerm predicate, NAL nal) {
+    private static void transformPredicatePI(Term subject, CompoundTerm predicate, DerivationContext nal) {
         TruthValue truth = nal.getCurrentTask().sentence.truth;
         BudgetValue budget;
         Inheritance inheritance;
@@ -582,7 +582,7 @@ public final class StructuralRules {
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      */
-    static boolean structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
+    static boolean structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
         if (component.hasVarIndep()) {
             return false;
         }
@@ -634,7 +634,7 @@ public final class StructuralRules {
      * @param content The premise
      * @param nal Reference to the memory
      */
-    public static void transformNegation(CompoundTerm content, NAL nal) {
+    public static void transformNegation(CompoundTerm content, DerivationContext nal) {
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
@@ -656,7 +656,7 @@ public final class StructuralRules {
      * @param statement The premise
      * @param memory Reference to the memory
      */
-    protected static boolean contraposition(final Statement statement, final Sentence sentence, final NAL nal) {
+    protected static boolean contraposition(final Statement statement, final Sentence sentence, final DerivationContext nal) {
         Memory memory = nal.mem();
         //memory.logic.CONTRAPOSITION.commit(statement.complexity);
         

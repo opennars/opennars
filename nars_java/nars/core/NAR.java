@@ -19,7 +19,7 @@ import nars.util.Events.Perceive;
 import nars.core.Memory.Timing;
 import nars.core.build.Default;
 import nars.core.control.AbstractTask;
-import nars.core.control.NAL.DerivationFilter;
+import nars.core.control.DerivationContext.DerivationFilter;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;

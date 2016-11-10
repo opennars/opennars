@@ -23,7 +23,7 @@ package nars.inference;
 import nars.util.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -69,7 +69,7 @@ public class RuleTables {
      * @param bLink The selected TermLink, which may provide a belief
      * @param memory Reference to the memory
      */
-    public static void reason(final TaskLink tLink, final TermLink bLink, final NAL nal) {
+    public static void reason(final TaskLink tLink, final TermLink bLink, final DerivationContext nal) {
         final Memory memory = nal.mem();
                         
         memory.emotion.manageBusy(nal);
@@ -244,7 +244,7 @@ public class RuleTables {
         
     }
 
-    private static void goalFromQuestion(final Task task, final Term taskTerm, final NAL nal) {
+    private static void goalFromQuestion(final Task task, final Term taskTerm, final DerivationContext nal) {
         if(task.sentence.punctuation==Symbols.QUESTION_MARK && (taskTerm instanceof Implication || taskTerm instanceof Equivalence)) { //<a =/> b>? |- a!
             Term goalterm=null;
             Term goalterm2=null;
@@ -305,7 +305,7 @@ public class RuleTables {
      * @param beliefTerm The content of belief
      * @param nal Reference to the memory
      */
-    private static void syllogisms(TaskLink tLink, TermLink bLink, Term taskTerm, Term beliefTerm, NAL nal) {
+    private static void syllogisms(TaskLink tLink, TermLink bLink, Term taskTerm, Term beliefTerm, DerivationContext nal) {
         Sentence taskSentence = nal.getCurrentTask().sentence;
         Sentence belief = nal.getCurrentBelief();
         int figure;
@@ -386,7 +386,7 @@ public class RuleTables {
      * @param figure The location of the shared term
      * @param nal Reference to the memory
      */
-    private static void asymmetricAsymmetric(final Sentence taskSentence, final Sentence belief, int figure, final NAL nal) {
+    private static void asymmetricAsymmetric(final Sentence taskSentence, final Sentence belief, int figure, final DerivationContext nal) {
         Statement taskStatement = (Statement) taskSentence.term;
         Statement beliefStatement = (Statement) belief.term;
         
@@ -480,7 +480,7 @@ public class RuleTables {
      * @param figure The location of the shared term
      * @param nal Reference to the memory
      */
-    private static void asymmetricSymmetric(final Sentence asym, final Sentence sym, final int figure, final NAL nal) {
+    private static void asymmetricSymmetric(final Sentence asym, final Sentence sym, final int figure, final DerivationContext nal) {
         Statement asymSt = (Statement) asym.term;
         Statement symSt = (Statement) sym.term;
         Term t1, t2;
@@ -555,7 +555,7 @@ public class RuleTables {
      * @param figure The location of the shared term
      * @param nal Reference to the memory
      */
-    private static void symmetricSymmetric(final Sentence belief, final Sentence taskSentence, int figure, final NAL nal) {
+    private static void symmetricSymmetric(final Sentence belief, final Sentence taskSentence, int figure, final DerivationContext nal) {
         Statement s1 = (Statement) belief.term;
         Statement s2 = (Statement) taskSentence.term;
         
@@ -621,7 +621,7 @@ public class RuleTables {
      * @param index The location of the second premise in the first
      * @param nal Reference to the memory
      */
-    private static void detachmentWithVar(Sentence originalMainSentence, Sentence subSentence, int index, NAL nal) {
+    private static void detachmentWithVar(Sentence originalMainSentence, Sentence subSentence, int index, DerivationContext nal) {
         if(originalMainSentence==null)  {
             return;
         }
@@ -666,7 +666,7 @@ public class RuleTables {
      * @param side The location of the shared term in the statement
      * @param nal Reference to the memory
      */
-    private static void conditionalDedIndWithVar(Implication conditional, short index, Statement statement, short side, NAL nal) {
+    private static void conditionalDedIndWithVar(Implication conditional, short index, Statement statement, short side, DerivationContext nal) {
         
         if (!(conditional.getSubject() instanceof CompoundTerm))
             return;
@@ -705,7 +705,7 @@ public class RuleTables {
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      */
-     private static void compoundAndSelf(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
+     private static void compoundAndSelf(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
         if ((compound instanceof Conjunction) || (compound instanceof Disjunction)) {
             if (nal.getCurrentBelief() != null) {
                 CompositionalRules.decomposeStatement(compound, component, compoundTask, index, nal);
@@ -730,7 +730,7 @@ public class RuleTables {
      * @param beliefTerm The compound from the belief
      * @param nal Reference to the memory
      */
-    private static void compoundAndCompound(CompoundTerm taskTerm, CompoundTerm beliefTerm, int index, NAL nal) {
+    private static void compoundAndCompound(CompoundTerm taskTerm, CompoundTerm beliefTerm, int index, DerivationContext nal) {
         if (taskTerm.getClass() == beliefTerm.getClass()) {
             if (taskTerm.size() >= beliefTerm.size()) {
                 compoundAndSelf(taskTerm, beliefTerm, true, index, nal);
@@ -750,7 +750,7 @@ public class RuleTables {
      * @param beliefTerm The content of the belief
      * @param nal Reference to the memory
      */
-    private static void compoundAndStatement(CompoundTerm compound, short index, Statement statement, short side, Term beliefTerm, NAL nal) {        
+    private static void compoundAndStatement(CompoundTerm compound, short index, Statement statement, short side, Term beliefTerm, DerivationContext nal) {        
         
         if(index >= compound.term.length) {
             return;
@@ -798,7 +798,7 @@ public class RuleTables {
      * @param side The location of the current term in the statement
      * @param nal Reference to the memory
      */
-    private static void componentAndStatement(CompoundTerm compound, short index, Statement statement, short side, NAL nal) {
+    private static void componentAndStatement(CompoundTerm compound, short index, Statement statement, short side, DerivationContext nal) {
         if (statement instanceof Inheritance) {
             StructuralRules.structuralDecompose1(compound, index, statement, nal);
             if (!(compound instanceof SetExt) && !(compound instanceof SetInt)) {
@@ -831,7 +831,7 @@ public class RuleTables {
      * @param tLink The task link
      * @param nal Reference to the memory
      */
-    public static void transformTask(TaskLink tLink, NAL nal) {
+    public static void transformTask(TaskLink tLink, DerivationContext nal) {
         CompoundTerm content = (CompoundTerm) nal.getCurrentTask().getTerm();
         short[] indices = tLink.index;
         Term inh = null;

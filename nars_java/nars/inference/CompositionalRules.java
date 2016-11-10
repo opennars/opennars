@@ -26,7 +26,7 @@ import java.util.List;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
@@ -60,6 +60,7 @@ import nars.language.Term;
 import static nars.language.Terms.reduceComponents;
 import nars.language.Variable;
 import nars.language.Variables;
+import static nars.inference.TruthFunctions.abduction;
 
 /**
  * Compound term composition and decomposition rules, with two premises.
@@ -81,7 +82,7 @@ public final class CompositionalRules {
      * @param belief The second premise
      * @param nal Reference to the memory
      */
-    static void dedConjunctionByQuestion(final Sentence sentence, final Sentence belief, final NAL nal) {
+    static void dedConjunctionByQuestion(final Sentence sentence, final Sentence belief, final DerivationContext nal) {
         if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
             return;
         }
@@ -193,7 +194,7 @@ public final class CompositionalRules {
      * @param index The location of the shared term
      * @param nal Reference to the memory
      */
-    static void composeCompound(final Statement taskContent, final Statement beliefContent, final int index, final NAL nal) {
+    static void composeCompound(final Statement taskContent, final Statement beliefContent, final int index, final DerivationContext nal) {
         if ((!nal.getCurrentTask().sentence.isJudgment()) || (taskContent.getClass() != beliefContent.getClass())) {
             return;
         }
@@ -273,7 +274,7 @@ public final class CompositionalRules {
      * @param truth TruthValue of the contentInd
      * @param memory Reference to the memory
      */
-    private static void processComposed(final Statement statement, final Term subject, final Term predicate, final int order, final TruthValue truth, final NAL nal) {
+    private static void processComposed(final Statement statement, final Term subject, final Term predicate, final int order, final TruthValue truth, final DerivationContext nal) {
         if ((subject == null) || (predicate == null)) {
             return;
         }
@@ -296,7 +297,7 @@ public final class CompositionalRules {
      * @param compoundTask Whether the implication comes from the task
      * @param nal Reference to the memory
      */
-    private static void decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, int order, NAL nal) {
+    private static void decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, int order, DerivationContext nal) {
 
         if ((compound instanceof Statement) || (compound instanceof ImageExt) || (compound instanceof ImageInt)) {
             return;
@@ -391,7 +392,7 @@ public final class CompositionalRules {
      * @param compoundTask Whether the implication comes from the task
      * @param nal Reference to the memory
      */
-    static void decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
+    static void decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
         if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
             return;
         }
@@ -481,7 +482,7 @@ public final class CompositionalRules {
      * predicate
      * @param nal Reference to the memory
      */
-    public static void introVarOuter(final Statement taskContent, final Statement beliefContent, final int index, final NAL nal) {
+    public static void introVarOuter(final Statement taskContent, final Statement beliefContent, final int index, final DerivationContext nal) {
 
         if (!(taskContent instanceof Inheritance)) {
             return;
@@ -686,7 +687,7 @@ public final class CompositionalRules {
      * or Conjunction
      * @param nal Reference to the memory
      */
-    static boolean introVarInner(Statement premise1, Statement premise2, CompoundTerm oldCompound, NAL nal) {
+    static boolean introVarInner(Statement premise1, Statement premise2, CompoundTerm oldCompound, DerivationContext nal) {
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
         if (!taskSentence.isJudgment() || (premise1.getClass() != premise2.getClass()) || oldCompound.containsTerm(premise1)) {
@@ -808,7 +809,7 @@ public final class CompositionalRules {
 OUT: <lock1 --> lock>.
     http://code.google.com/p/open-nars/issues/detail?id=40&can=1
     */
-    public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final NAL nal) {
+    public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final DerivationContext nal) {
         Statement T1 = (Statement) sentence.term;
         Statement T2 = (Statement) belief.term;
 
@@ -1084,7 +1085,7 @@ OUT: <lock1 --> lock>.
         }
     }
 
-    static void IntroVarSameSubjectOrPredicate(final Sentence originalMainSentence, final Sentence subSentence, final Term component, final Term content, final int index, final NAL nal) {
+    static void IntroVarSameSubjectOrPredicate(final Sentence originalMainSentence, final Sentence subSentence, final Term component, final Term content, final int index, final DerivationContext nal) {
         Term T1 = originalMainSentence.term;
         if (!(T1 instanceof CompoundTerm) || !(content instanceof CompoundTerm)) {
             return;

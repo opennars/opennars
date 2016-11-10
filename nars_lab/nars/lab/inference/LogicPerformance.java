@@ -18,7 +18,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.core.control.FireConcept;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -77,10 +77,6 @@ public class LogicPerformance {
             Sentence s = t.sentence;
             if (!s.isEternal()) {
                 at(t, s.getOccurenceTime(), "o");
-            }
-            for (Term term : t.sentence.stamp.getChain()) {
-                addVertex(term);
-                addEdge(term, t, new UniqueEdge("s"));
             }
             
             if ((cause!=null) && (cause instanceof Operation)) {
@@ -268,7 +264,7 @@ public class LogicPerformance {
         
         
         n.on(TaskImmediateProcess.class, new TaskImmediateProcess() {
-            @Override public void onProcessed(Task t, NAL nal) {
+            @Override public void onProcessed(Task t, DerivationContext nal) {
                 process.explain(t, analysisDepth, nal.tasksAdded);
             }            
         });

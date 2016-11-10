@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import nars.util.EventEmitter.EventObserver;
 import nars.core.control.FireConcept;
-import nars.core.control.NAL;
+import nars.core.control.DerivationContext;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -115,10 +115,10 @@ public class Events {
     }
     abstract public static class TaskImmediateProcess implements EventObserver { 
 
-        abstract public void onProcessed(Task t, NAL n);
+        abstract public void onProcessed(Task t, DerivationContext n);
         
         @Override public void event(Class event, Object[] args) {
-            onProcessed((Task)args[0], (NAL)args[1]);
+            onProcessed((Task)args[0], (DerivationContext)args[1]);
         }
         
     }
