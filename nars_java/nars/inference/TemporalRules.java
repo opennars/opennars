@@ -360,9 +360,8 @@ public class TemporalRules {
                     }
                 }
              }
-        } 
+        }
         
-       
         List<Task> success=new ArrayList<Task>();
         if(t11!=null && t22!=null) {
             Statement statement11 = Implication.make(t11, t22, order);
@@ -393,12 +392,13 @@ public class TemporalRules {
                     success.add(t);
                 }
         }
+        
         if(!tooMuchTemporalStatements(statement2)) {
             Task t=nal.doublePremiseTask(statement2, truth2, budget2,true, false);
                  if(t!=null) {
                     success.add(t);
                     
-                    Task task=t;
+                    /*Task task=t;
                     
                     //micropsi inspired strive for knowledge
                     //get strongest belief of that concept and use the revison truth, if there is no, use this truth
@@ -423,7 +423,7 @@ public class TemporalRules {
                         }
                     }
                     
-                    questionFromLowConfidenceHighPriorityJudgement(task, conf, nal);
+                    questionFromLowConfidenceHighPriorityJudgement(task, conf, nal); */
                 }
             }
         if(!tooMuchTemporalStatements(statement3)) {
