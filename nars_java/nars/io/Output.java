@@ -27,8 +27,15 @@ public abstract class Output extends AbstractObserver {
     
     /** operation execution */
     public static interface EXE  { }
+    
+        
+    public static class ANTICIPATE {}
+    
+    public static class CONFIRM {}
+    
+    public static class DISAPPOINT {}
 
-    public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Say.class, Answer.class };
+    public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Say.class, Answer.class, ANTICIPATE.class, CONFIRM.class, DISAPPOINT.class };
             
     public Output(EventEmitter source, boolean active) {
         super(source, active, DefaultOutputEvents );

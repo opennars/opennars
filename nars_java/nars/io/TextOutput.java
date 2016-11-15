@@ -205,16 +205,21 @@ public class TextOutput extends Output {
             }      
             
         }        
-        else if ((channel == OUT.class) || (channel == IN.class) || (channel == ECHO.class) || (channel == EXE.class) || (channel == Answer.class))  {
+        else if ((channel == OUT.class) || (channel == IN.class) || (channel == ECHO.class) || (channel == EXE.class) || (channel == Answer.class)
+                || (channel == ANTICIPATE.class) || (channel == DISAPPOINT.class) || (channel == CONFIRM.class))  {
 
-
+            if(channel == CONFIRM.class) {
+                buffer.append(signal.toString());  
+            }
             if (signal instanceof Task) {
                 Task t = (Task)signal;                
                 if (t.getPriority() < minPriority)
                     return null;
                 
-                
-                
+                if((channel == ANTICIPATE.class) || (channel == DISAPPOINT.class)) {
+                    buffer.append(t.sentence.toString(nar, showStamp));  
+                }
+                else
                 if (channel == Answer.class) {
                     Task task = t; //server / NARRun
                     Sentence answer = task.getBestSolution();
