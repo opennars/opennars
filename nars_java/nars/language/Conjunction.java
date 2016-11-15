@@ -187,7 +187,7 @@ public class Conjunction extends CompoundTerm {
         }
     }
 
-    final public static Term make(final Term prefix, final List<? extends Term> suffix, final int temporalOrder) {
+    final public static Term make(final Term prefix, final List<Interval> suffix, final int temporalOrder) {
         Term[] t = new Term[suffix.size()+1];
         int i = 0;
         t[i++] = prefix;
@@ -196,6 +196,15 @@ public class Conjunction extends CompoundTerm {
         return make(t, temporalOrder);        
     }
     
+    final public static Term make(final Term prefix, final List<Interval> ival, final Term suffix, final int temporalOrder) {
+        Term[] t = new Term[ival.size()+2];
+        int i = 0;
+        t[i++] = prefix;
+        for (Term x : ival)
+            t[i++] = x;
+        t[i++] = suffix;
+        return make(t, temporalOrder);        
+    }
     
     /**    
      *

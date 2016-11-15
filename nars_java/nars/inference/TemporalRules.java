@@ -293,9 +293,11 @@ public class TemporalRules {
         TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
         TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
+        TruthValue truth4 = TruthFunctions.intersection(givenTruth1, givenTruth2);
         BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
         BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
         BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
+        BudgetValue budget4 = BudgetFunctions.forward(truth4, nal);
         
         //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
         if(!SucceedingEventsInduction) { //reduce priority according to temporal distance
@@ -308,13 +310,25 @@ public class TemporalRules {
                 budget1.setPriority((float) (budget1.getPriority()*mul));
                 budget2.setPriority((float) (budget2.getPriority()*mul));
                 budget3.setPriority((float) (budget3.getPriority()*mul));
+                budget4.setPriority((float) (budget4.getPriority()*mul));
             }
         }
         
         Statement statement1 = Implication.make(t1, t2, order);
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
         Statement statement3 = Equivalence.make(t1, t2, order);
-        
+        Term statement4 = null;
+        switch (order) {
+            case TemporalRules.ORDER_FORWARD:
+                statement4 = Conjunction.make(t1, interval, s2.term, order);
+                break;
+            case TemporalRules.ORDER_BACKWARD:
+                statement4 = Conjunction.make(s2.term, interval, t1, reverseOrder(order));
+                break;
+            default:
+                statement4 = Conjunction.make(t1, s2.term, order);
+                break;
+        }
         
         //maybe this way is also the more flexible and intelligent way to introduce variables for the case above
         //TODO: rethink this for 1.6.3
@@ -414,6 +428,12 @@ public class TemporalRules {
             }
         if(!tooMuchTemporalStatements(statement3)) {
             Task t=nal.doublePremiseTask(statement3, truth3, budget3,true, false);
+            if(t!=null) {
+                    success.add(t);
+                }
+        }
+        if(!tooMuchTemporalStatements(statement4)) {
+            Task t=nal.doublePremiseTask(statement4, truth4, budget4,true, false);
             if(t!=null) {
                     success.add(t);
                 }
