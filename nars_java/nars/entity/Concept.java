@@ -606,6 +606,8 @@ public class Concept extends Item<Term> {
             for (int t = 0; t < termLinkTemplates.size(); t++) {
                 TermLink termLink = termLinkTemplates.get(t);
 
+               if(termLink.type == TermLink.TEMPORAL)
+                    continue;
 //              if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
                 Term componentTerm = termLink.target;
 
