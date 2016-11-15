@@ -293,7 +293,7 @@ public class TestChamber {
                                                         cells.readCells[i][j].charge=0.0f;
                                                         cells.writeCells[i][j].charge=0.0f;
                                                         if(ComplexFeedback)
-                                                            nar.addInput("<"+goal+" --> [on]>. :|: %0.00;0.90%");
+                                                            nar.addInput("(--,<"+goal+" --> [on]>). :|: %1.00;0.90%");
                                                     }
                                                 }
                                             }
