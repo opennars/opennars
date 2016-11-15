@@ -20,6 +20,7 @@
  */
 package nars.inference;
 
+import java.util.HashSet;
 import nars.util.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -91,10 +92,36 @@ public class RuleTables {
         
         if (belief != null) {   
             
+            HashSet<Long> task_base = new HashSet<Long>();
+            for(int i=0;i<task.sentence.stamp.evidentialBase.length;i++) {
+                task_base.add(task.sentence.stamp.evidentialBase[i]);
+            }
+            
             Sentence belief_event = beliefConcept.getBeliefForTemporalInference(task);
             if(belief_event != null) {
-                TemporalRules.temporalInduction(task.sentence, belief_event, nal, true);
+                boolean found_overlap = false;
+                for(int i=0;i<belief_event.stamp.evidentialBase.length;i++) {
+                    if(task_base.contains(Long.valueOf(belief_event.stamp.evidentialBase[i]))) {
+                        found_overlap = true;
+                        break;
+                    }
+                }
+                if(!found_overlap) {
+                    Sentence inference_belief = belief;
+                    nal.setCurrentBelief(belief_event);
+                    nal.setTheNewStamp(task.sentence.stamp, belief_event.stamp, nal.memory.time());
+                    TemporalRules.temporalInduction(task.sentence, belief_event, nal, true);
+                    nal.setCurrentBelief(inference_belief);
+                    nal.setTheNewStamp(task.sentence.stamp, belief.stamp, nal.memory.time());
+                }
             }
+            
+            for(int i=0;i<belief.stamp.evidentialBase.length;i++) {
+                if(task_base.contains(Long.valueOf(belief.stamp.evidentialBase[i]))) {
+                    return;
+                }
+            }
+            
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
             if (LocalRules.match(task, belief, nal)) { //new tasks resulted from the match, so return

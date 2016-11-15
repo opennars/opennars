@@ -133,7 +133,7 @@ public abstract class DerivationContext implements Runnable {
         }
         
         //its revision, of course its cyclic, apply evidental base policy
-        if(revised || !overlapAllowed) { //TODO cleanup for 1.6.3, revised variable wont be needed anymore I guess.
+        if(revised /* || !overlapAllowed */ ) { // || !overlapAllowed is outcommented because it happens when belief is selected already now
             final int stampLength = stamp.baseLength;
             for (int i = 0; i < stampLength; i++) {
                 final long baseI = stamp.evidentialBase[i];
