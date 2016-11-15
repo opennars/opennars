@@ -33,6 +33,14 @@ public class ImmediateProcess extends DerivationContext {
                 memory.event.emit(Events.ConceptDirectProcessedTask.class, currentTask);
             }
         }
+        
+         if (!currentTask.sentence.isEternal()) {
+            boolean stmUpdated = memory.interlinkConcepts(currentTask, this);
+            //if (stmUpdated) {
+                //memory.logic.SHORT_TERM_MEMORY_UPDATE.commit();
+            //}
+        }
+        
         //memory.logic.TASK_IMMEDIATE_PROCESS.commit();
         emit(Events.TaskImmediateProcess.class, task, this);
     }

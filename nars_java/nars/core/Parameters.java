@@ -187,7 +187,7 @@ public class Parameters {
     public static boolean IMMEDIATE_ETERNALIZATION=true;
     
     
-    public static int STM_SIZE = 1;
+    public static int STM_SIZE = 10;
     
     public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=true; //this should be true to restore 1.6.1 strategy
     

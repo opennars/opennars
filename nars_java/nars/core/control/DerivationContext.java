@@ -335,16 +335,6 @@ public abstract class DerivationContext implements Runnable {
         return derivedTask(newTask, false, true, null, null, false);
     }
 
-    //    protected void reset(Memory currentMemory) {
-    //        mem = currentMemory;
-    //        setCurrentTerm(null);
-    //        setCurrentBelief(null);
-    //        setCurrentConcept(null);
-    //        setCurrentTask(null);
-    //        setCurrentBeliefLink(null);
-    //        setCurrentTaskLink(null);
-    //        setNewStamp(null);
-    //    }
     public long getTime() {
         return memory.time();
     }

@@ -94,7 +94,7 @@ public class Concept extends Item<Term> {
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
      * are used to improve the efficiency of TermLink building
      */
-    private final List<TermLink> termLinkTemplates;
+    public List<TermLink> termLinkTemplates;
 
     /**
      * Pending Question directly asked about the term
@@ -753,7 +753,7 @@ public class Concept extends Item<Term> {
                 // that termLink to this
                 concept.insertTermLink(new TermLink(term, template, subBudget));
 
-                if (target instanceof CompoundTerm) {
+                if (target instanceof CompoundTerm && template.type != TermLink.TEMPORAL) {
                     concept.buildTermLinks(subBudget);
                 }
             }
