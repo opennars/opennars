@@ -56,6 +56,8 @@ public class TermLink extends Item<TermLink> implements TLink<Term> {
     public static final short COMPOUND_CONDITION = 6;
     /** At C, point to <(*, C, B) --> A>; TaskLink only */
     public static final short TRANSFORM = 8;
+    /** At C, point to B, potentially without common subterm term */
+    public static final short TEMPORAL = 9;
     
     
     /** The linked Term */

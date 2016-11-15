@@ -24,6 +24,7 @@ import nars.util.Events;
 import nars.util.EventEmitter;
 import java.io.Serializable;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
@@ -40,6 +41,7 @@ import nars.util.Events.TaskRemove;
 import static nars.core.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;
 import nars.core.control.DefaultAttention;
+import nars.core.control.DerivationContext;
 import nars.core.control.ImmediateProcess;
 import nars.io.meter.EmotionMeter;
 import nars.entity.BudgetValue;
@@ -49,6 +51,7 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TaskLink;
+import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.Output.IN;
@@ -57,6 +60,7 @@ import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Tense;
 import nars.language.Term;
+import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
@@ -662,5 +666,46 @@ public class Memory implements Serializable {
         }
         throw new RuntimeException("Questions index for " + c + " does not exist");
     }
+    
+    //TODO put probably in extra class involved for event chaining?
+    public final ArrayDeque<Task> stm = new ArrayDeque();
+    //is input or by the system triggered operation
+    public static boolean isInputOrOperation(final Task newEvent) {
+        return newEvent.isInput() || (newEvent.sentence.term instanceof Operation);
+    }
+        
+    public boolean interlinkConcepts(final Task newEvent, DerivationContext nal) {
+
+        if(newEvent.budget==null || !newEvent.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
+            return false;
+       }
+
+        nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
+
+        if (newEvent.sentence.isEternal() || !isInputOrOperation(newEvent)) {
+            return false;
+       }
+
+        if(Parameters.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS) {
+            for (Task stmLast : stm) {
+                Concept OldConc = this.concept(stmLast.getTerm());
+                if(OldConc != null)
+                {
+                    TermLink template = new TermLink(newEvent.getTerm(), TermLink.TEMPORAL);
+                    if(OldConc.termLinkTemplates == null)
+                        OldConc.termLinkTemplates = new ArrayList<>();
+                    OldConc.termLinkTemplates.add(template);
+                    OldConc.buildTermLinks(newEvent.getBudget()); //will be built bidirectionally anyway
+                }
+            }
+        }
+        
+        while (stm.size()+1 > Parameters.STM_SIZE)
+            stm.removeFirst();
+        stm.addLast(newEvent);
+
+        return true;
+    }
+    
    
 }
