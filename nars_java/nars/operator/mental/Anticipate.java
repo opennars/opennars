@@ -42,6 +42,10 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
+import nars.io.Output;
+import nars.io.Output.ANTICIPATE;
+import nars.io.Output.CONFIRM;
+import nars.io.Output.DISAPPOINT;
 import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Interval;
@@ -139,7 +143,8 @@ public class Anticipate extends Operator implements EventObserver {
 
                 if (maybeHappened) {
                     if (newTasks.remove(aTerm)) {
-                        //it happened, temporal induction will do the rest          
+                        //it happened, temporal induction will do the rest      
+                        nal.memory.emit(CONFIRM.class, aTerm);
                         remove = true; 
                         hasNewTasks = !newTasks.isEmpty();
                     }
@@ -212,6 +217,8 @@ public class Anticipate extends Operator implements EventObserver {
             return;
         } 
         
+        nal.memory.emit(ANTICIPATE.class, t);
+        
         LinkedHashSet<Term> ae = new LinkedHashSet();
         anticipations.put(new Vector2Int(memory.time(),occurenceTime), ae);
 
@@ -251,5 +258,6 @@ public class Anticipate extends Operator implements EventObserver {
         Task task = new Task(S, budget);
         nal.derivedTask(task, false, true, null, null, false); 
         task.setParticipateInTemporalInductionOnSucceedingEvents(true);
+        nal.memory.emit(DISAPPOINT.class, task);
     }
 }
