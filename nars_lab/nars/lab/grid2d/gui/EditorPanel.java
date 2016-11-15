@@ -700,7 +700,7 @@ public class EditorPanel extends JPanel {
                 s.nar.addInput("<(&/,<$1 --> [at]>,(^pick,$1)) =/> <$1 --> [hold]>>.");
                 s.nar.addInput("<(^go-to,$1) =/> <$1 --> [at]>>.");
                 s.nar.addInput("<(&/,<$1 --> [at]>,(^activate,$1)) =/> <$1 --> [on]>>.");
-                s.nar.addInput("<(&/,<$1 --> [at]>,(^deactivate,$1)) =/> <$1 --> [on]>>. %0.00;0.90%");
+                s.nar.addInput("(--,<(&/,<$1 --> [at]>,(^deactivate,$1)) =/> <$1 --> [on]>>). %1.00;0.90%");
                 //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> on>>).");
                 //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> opened>>).");
             }
