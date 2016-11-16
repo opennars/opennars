@@ -143,8 +143,10 @@ public class Anticipate extends Operator implements EventObserver {
 
                 if (maybeHappened) {
                     if (newTasks.remove(aTerm)) {
-                        //it happened, temporal induction will do the rest      
-                        nal.memory.emit(CONFIRM.class, aTerm);
+                        //in case it happened, temporal induction will do the rest, else deriveDidntHappen occurred
+                        if(!didntHappen) {
+                            nal.memory.emit(CONFIRM.class, aTerm);
+                        }
                         remove = true; 
                         hasNewTasks = !newTasks.isEmpty();
                     }
