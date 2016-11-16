@@ -58,7 +58,7 @@ public class NAR implements Runnable {
     /**
      * The information about the version and date of the project.
      */
-    public static final String VERSION = "Open-NARS v1.6.4";
+    public static final String VERSION = "Open-NARS v1.6.5";
     
     /**
      * The project web sites.
