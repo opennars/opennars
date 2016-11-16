@@ -1,0 +1,8 @@
+<(*,toothbrush,plastic) --> made_of>.
+<(&/,<(*,$1,plastic) --> made_of>,(^lighter,(*,{SELF},$1))) =/> <$1 --> [heated]>>.
+<<$1 --> [heated]> =/> <$1 --> [melted]>>.
+<<$1 --> [melted]> <|> <$1 --> [pliable]>>.
+<(&/,<$1 --> [pliable]>,(^reshape,(*,{SELF},$1))) =/> <$1 --> [hardened]>>.
+<<$1 --> [hardened]> =|> <$1 --> [unscrewing]>>.
+<toothbrush --> object>.
+(&&,<#1 --> object>,<#1 --> [unscrewing]>)!

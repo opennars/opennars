@@ -20,7 +20,9 @@ public class ExampleOperators {
             new NullOperator("^strike"),
             new NullOperator("^throw"),
             new NullOperator("^activate"),
-            new NullOperator("^deactivate")
+            new NullOperator("^deactivate"),
+            new NullOperator("^lighter"),
+            new NullOperator("^reshape")
         };
     }
 }
