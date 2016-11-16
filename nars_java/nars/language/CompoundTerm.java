@@ -41,6 +41,7 @@ import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.makeCompoundName;
+import static nars.language.Interval.interval;
 
 
 public abstract class CompoundTerm extends Term implements Iterable<Term> {
@@ -149,6 +150,29 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                 }
             }
         }
+    }
+    
+    static Interval conceptival = interval(1);
+    private static void ReplaceIntervals(CompoundTerm comp) {
+        for(int i=0; i<comp.term.length; i++) {
+            Term t = comp.term[i];
+            if(t instanceof Interval) {
+                comp.term[i] = conceptival;
+                comp.invalidateName();
+            }
+            else
+            if(t instanceof CompoundTerm) {
+                ReplaceIntervals((CompoundTerm) t);
+            }
+        }
+    }
+    
+    public static Term cloneDeepReplaceIntervals(Term T) {
+        T=T.cloneDeep(); //we will operate on a copy
+        if(T instanceof CompoundTerm) {
+            ReplaceIntervals((CompoundTerm) T);
+        }
+        return T;
     }
     
     public CompoundTerm transformIndependentVariableToDependentVar(CompoundTerm T) {

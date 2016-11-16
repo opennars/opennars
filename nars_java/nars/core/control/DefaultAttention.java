@@ -14,6 +14,8 @@ import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.inference.BudgetFunctions;
 import nars.inference.BudgetFunctions.Activating;
+import nars.language.CompoundTerm;
+import nars.language.Interval;
 import nars.language.Term;
 import nars.storage.Bag;
 
@@ -192,7 +194,8 @@ public class DefaultAttention implements Iterable<Concept> {
         concepts.clear();
     }
 
-    public Concept concept(final Term term) {
+    public Concept concept(Term term) {
+        term = CompoundTerm.cloneDeepReplaceIntervals(term);
         return concepts.get(term);
     }
 
@@ -200,7 +203,13 @@ public class DefaultAttention implements Iterable<Concept> {
             memory.emit(ConceptForget.class, c);
     }
     
-    public Concept conceptualize(BudgetValue budget, final Term term, boolean createIfMissing) {
+    public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing) {
+        
+        if(term instanceof Interval) {
+            return null;
+        }
+        
+        term = CompoundTerm.cloneDeepReplaceIntervals(term);
         
         //see if concept is active
         Concept concept = concepts.take(term);

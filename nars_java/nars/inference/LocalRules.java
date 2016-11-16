@@ -109,6 +109,9 @@ public class LocalRules {
      */
     public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final DerivationContext nal) {
         if (newBelief.term==null) return false;
+        if(!newBelief.term.equals(oldBelief.getTerm())) { //this is expensive but we have to do
+            return false; //it since now different interval terms end in the same concept
+        } //but we can not allow revision if the intervals are different!
         
         TruthValue newTruth = newBelief.truth;
         TruthValue oldTruth = oldBelief.truth;
