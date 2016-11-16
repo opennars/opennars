@@ -304,7 +304,7 @@ public class Rover extends PhysicsModel {
                             bads++;
                             double stat=goods/bads;
                             nar.emit(Output.OUT.class, "good : bad = "+stat+" total: "+((Integer)((int)(goods+bads))).toString());
-                            sight.set("<goal --> reached>. :|: %0.0;0.90%");
+                            sight.set("(--,<goal --> reached>). :|: %1.0;0.90%");
                         }
                        
                     }
@@ -313,7 +313,7 @@ public class Rover extends PhysicsModel {
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     if(Sgood.equals("bad") && n%100==0) {
-                        Li.add(new InputDistance("<"+id+/* "," + dist +*/" --> [good]>. :|: %0%", di));
+                        Li.add(new InputDistance("(--,<"+id+/* "," + dist +*/" --> [good]>). :|: %1%", di));
                        // nar.addInput("<(*," + id + "," + dist + ",good) --> see>. :|: %0.00;0.90%");
                     } else if(n%100==0) {
                         //nar.addInput("<(*," + id + ",good) --> see>. :|:");
