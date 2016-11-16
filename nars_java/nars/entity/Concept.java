@@ -332,7 +332,7 @@ public class Concept extends Item<Term> {
 
             Term content = term;
 
-            if(content instanceof Operation) {
+            if(content instanceof Operation && !content.hasVarDep() && !content.hasVarIndep()) {
 
                 Operation op=(Operation)content;
                 Operator oper = op.getOperator();
