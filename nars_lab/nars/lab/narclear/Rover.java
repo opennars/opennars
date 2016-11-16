@@ -372,7 +372,7 @@ public class Rover extends PhysicsModel {
                 feelMotion();
             }
           //  rover.thrust(0, 100);
-            rover.rotate(0.15f);
+          //  rover.rotate(0.15f);
            // rover.thrust(0, 150.15f);
             Rover.cnt++;
         }
@@ -610,7 +610,7 @@ public class Rover extends PhysicsModel {
  
                             if(true) { //allow_subcons
                                 ArrayList<String> candids=new ArrayList<>();
-                         //       candids.add("(^motor,left). :|:");
+                                candids.add("(^motor,left). :|:");
                                 candids.add("(^motor,right). :|:");
                            //     candids.add("(^motor,backward). :|:");
                                 candids.add("(^motor,forward). :|:");
@@ -628,7 +628,7 @@ public class Rover extends PhysicsModel {
                                     rover.rotate(rotationSpeed);
                             } else {
                                 ArrayList<String> candids=new ArrayList<>();
-                          //      candids.add("(^motor,left)! :|:");
+                                candids.add("(^motor,left)! :|:");
                                 candids.add("(^motor,right)! :|:");
                               //  candids.add("(^motor,backward)! :|:");
                                 candids.add("(^motor,forward)! :|:");
