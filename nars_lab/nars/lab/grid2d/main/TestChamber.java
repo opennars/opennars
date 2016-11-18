@@ -19,9 +19,6 @@ import nars.lab.grid2d.operator.Deactivate;
 import nars.lab.grid2d.operator.Goto;
 import nars.lab.grid2d.operator.Pick;
 import nars.gui.NARSwing;
-import nars.lab.plugin.app.plan.TemporalParticlePlanner;
-import nars.plugin.mental.FullInternalExperience;
-import nars.plugin.mental.InternalExperience;
 import processing.core.PVector;
 
 public class TestChamber {
@@ -29,9 +26,9 @@ public class TestChamber {
     public static boolean staticInformation=false;
     //TIMING
     static int narUpdatePeriod = 1; /*milliseconds */
-    int gridUpdatePeriod = 2;
-    int automataPeriod = 2;
-    int agentPeriod = 2;
+    int gridUpdatePeriod = 20;
+    int automataPeriod = 20;
+    int agentPeriod = 20;
     static long guiUpdateTime = 25; /* milliseconds */
         
     //OPTIONS
