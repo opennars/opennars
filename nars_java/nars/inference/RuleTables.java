@@ -106,7 +106,8 @@ public class RuleTables {
                         break;
                     }
                 }
-                if(!found_overlap) {
+                if(!found_overlap) { //temporal rules are inductive so no chance to succeed if there is an overlap
+                                     //and since the temporal rule is relatively expensive the check here was good.
                     Sentence inference_belief = belief;
                     nal.setCurrentBelief(belief_event);
                     nal.setTheNewStamp(task.sentence.stamp, belief_event.stamp, nal.memory.time());
@@ -116,11 +117,12 @@ public class RuleTables {
                 }
             }
             
-            for(int i=0;i<belief.stamp.evidentialBase.length;i++) {
+            //too restrictive, its checked for non-deductive inference rules in derivedTask
+            /*for(int i=0;i<belief.stamp.evidentialBase.length;i++) {
                 if(task_base.contains(Long.valueOf(belief.stamp.evidentialBase[i]))) {
                     return;
                 }
-            }
+            }*/
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
