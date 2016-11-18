@@ -36,6 +36,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -144,7 +145,7 @@ public class Anticipate extends Operator implements EventObserver {
                 if (maybeHappened) {
                     if (newTasks.remove(aTerm)) {
                         //in case it happened, temporal induction will do the rest, else deriveDidntHappen occurred
-                        if(!didntHappen) {
+                        if(!remove) {
                             nal.memory.emit(CONFIRM.class, aTerm);
                         }
                         remove = true; 
@@ -210,7 +211,7 @@ public class Anticipate extends Operator implements EventObserver {
         anticipationOperator=val;
     }
     
-    public void anticipate(Term content,Memory memory, long occurenceTime, Task t) {
+    public void anticipate(Term content, Memory memory, long occurenceTime, Task t) {
         if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
             return;
         }
@@ -218,6 +219,11 @@ public class Anticipate extends Operator implements EventObserver {
         if(t.sentence.truth.getExpectation()<Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
             return;
         } 
+        
+        Concept c = memory.concept(t.getTerm());
+        if(!c.observable) {
+            return;
+        }
         
         nal.memory.emit(ANTICIPATE.class, t);
         

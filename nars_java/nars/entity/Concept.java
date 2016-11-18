@@ -49,11 +49,6 @@ import static nars.inference.LocalRules.trySolution;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
 import nars.inference.TruthFunctions;
-import nars.inference.UtilityFunctions;
-import static nars.inference.UtilityFunctions.or;
-import static nars.inference.UtilityFunctions.or;
-import static nars.inference.UtilityFunctions.or;
-import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
@@ -67,9 +62,6 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.plugin.mental.InternalExperience;
 import nars.storage.Bag;
-import static nars.inference.UtilityFunctions.or;
-import static nars.inference.UtilityFunctions.or;
-import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 
 public class Concept extends Item<Term> {
@@ -202,7 +194,12 @@ public class Concept extends Item<Term> {
      * @param task The task to be processed
      * @return whether it was processed
      */
+    public boolean observable = false;
     public boolean directProcess(final DerivationContext nal, final Task task) {
+        if(task.isInput())
+        {
+            observable = true;
+        }
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:

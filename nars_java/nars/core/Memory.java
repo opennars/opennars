@@ -54,6 +54,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
+import nars.inference.TemporalRules;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
 import nars.io.Symbols;
@@ -673,6 +674,34 @@ public class Memory implements Serializable {
     public static boolean isInputOrOperation(final Task newEvent) {
         return newEvent.isInput() || (newEvent.sentence.term instanceof Operation);
     }
+    
+    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, DerivationContext nal, boolean SucceedingEventsInduction) {
+        
+        if(SucceedingEventsInduction && !controllerTask.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
+            return false;
+        }
+        if (newEvent.isEternal() || !isInputOrOperation(controllerTask)) {
+            return false;
+        }
+        if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
+            return false;
+        }
+        
+        if(newEvent.punctuation!=Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
+            return false; //temporal inductions for judgements only
+        
+        nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, time());
+        nal.setCurrentTask(controllerTask);
+
+        Sentence previousBelief = stmLast;
+        nal.setCurrentBelief(previousBelief);
+
+        Sentence currentBelief = newEvent;
+
+        //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
+        TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction);
+        return false;
+    }
         
     public boolean interlinkConcepts(final Task newEvent, DerivationContext nal) {
 
@@ -698,6 +727,10 @@ public class Memory implements Serializable {
                     OldConc.buildTermLinks(newEvent.getBudget()); //will be built bidirectionally anyway
                 }
             }
+            //also attempt direct
+            /*for (Task stmLast : stm) {
+                proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);
+            }*/
         }
         
         while (stm.size()+1 > Parameters.STM_SIZE)
