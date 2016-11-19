@@ -60,9 +60,6 @@ public class Default extends Parameters implements ConceptBuilder {
     int conceptBagSize;    
     
     int conceptBagLevels;
-    
-    /** max # subconscious "subconcept" concepts */
-    int subconceptBagSize;
 
     /** Size of TaskBuffer */
     int taskBufferSize;
@@ -84,8 +81,7 @@ public class Default extends Parameters implements ConceptBuilder {
         
        // temporalPlanner(8, 64, 16);
         
-        setConceptBagSize(1000);        
-        setSubconceptBagSize(0);
+        setConceptBagSize(100);        
         setConceptBagLevels(100);
         
         setTaskLinkBagSize(20);
@@ -190,16 +186,6 @@ public class Default extends Parameters implements ConceptBuilder {
     public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag() {
         return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
     }
-
-    public Default setSubconceptBagSize(int subconceptBagSize) {
-        this.subconceptBagSize = subconceptBagSize;
-        return this;
-    }
-    public int getSubconceptBagSize() {
-        return subconceptBagSize;
-    }
- 
-    
     
     public int getConceptBagSize() { return conceptBagSize; }    
     public Default setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
