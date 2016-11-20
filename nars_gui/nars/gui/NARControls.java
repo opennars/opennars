@@ -312,7 +312,9 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             });
             m.add(st);
             
-            JMenuItem gml = new JMenuItem("+ Forgetting Log");
+            m.addSeparator();
+            
+            JMenuItem gml = new JMenuItem("+ Concept Forgetting Log");
             gml.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
@@ -324,6 +326,19 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                 }
             });
             m.add(gml);
+            
+            JMenuItem gml2 = new JMenuItem("+ Task Forgetting Log");
+            gml2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {                    
+                    new NWindow("Forgot", new SwingLogPanel(NARControls.this, 
+                            Events.TaskRemove.class
+                            //, Events.TaskRemove.class, Events.TermLinkRemove.class, Events.TaskLinkRemove.class)
+                    ))
+                    .show(500, 300);
+                }
+            });
+            m.add(gml2);
 
          /* not working yet anyway   JMenuItem fc = new JMenuItem("+ Freq. vs Confidence");
             fc.addActionListener(new ActionListener() {
