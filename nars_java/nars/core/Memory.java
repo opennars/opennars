@@ -728,9 +728,9 @@ public class Memory implements Serializable {
                 }
             }
             //also attempt direct
-            /*for (Task stmLast : stm) {
+            for (Task stmLast : stm) {
                 proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);
-            }*/
+            }
         }
         
         while (stm.size()+1 > Parameters.STM_SIZE)

@@ -874,7 +874,7 @@ public class Concept extends Item<Term> {
             
             Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
             if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
-                nal.singlePremiseTask(projectedBelief, task.budget);
+               // nal.singlePremiseTask(projectedBelief, task.budget);
             }
             
             return projectedBelief;     // return the first satisfying belief

@@ -60,7 +60,7 @@ public class EmotionMeter implements Serializable {
             if(happy<Parameters.HAPPY_EVENT_LOWER_THRESHOLD && lasthappy>=Parameters.HAPPY_EVENT_LOWER_THRESHOLD) {
                 frequency=0.0f;
             }
-            if(frequency!=-1) { //ok lets add an event now
+            /*if(frequency!=-1) { //ok lets add an event now
                 Term predicate=SetInt.make(new Term("satisfied"));
                 Term subject=new Term("SELF");
                 Inheritance inh=Inheritance.make(subject, predicate);
@@ -100,7 +100,7 @@ public class EmotionMeter implements Serializable {
                         }
                     }
                 }
-            }
+            }*/
         }
         lasthappy=happy;
         //        if (Math.abs(oldV - happyValue) > 0.1) {
