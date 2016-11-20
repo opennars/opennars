@@ -300,7 +300,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             if (input.length() > 0)
                 actionsCollected.add(inputDirect);
             
-            actionsCollected.add(step);
+            //actionsCollected.add(step);
             //TODO reset
             
             
