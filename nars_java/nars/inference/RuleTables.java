@@ -118,11 +118,11 @@ public class RuleTables {
             }
             
             //too restrictive, its checked for non-deductive inference rules in derivedTask
-            /*for(int i=0;i<belief.stamp.evidentialBase.length;i++) {
+            for(int i=0;i<belief.stamp.evidentialBase.length;i++) {
                 if(task_base.contains(Long.valueOf(belief.stamp.evidentialBase[i]))) {
                     return;
                 }
-            }*/
+            }
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
