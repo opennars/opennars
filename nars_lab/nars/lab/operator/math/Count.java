@@ -17,7 +17,7 @@
 
 package nars.lab.operator.math;
 
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.language.CompoundTerm;
 import nars.language.SetExt;
 import nars.language.SetInt;

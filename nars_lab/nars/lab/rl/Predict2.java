@@ -13,7 +13,7 @@ import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
 import nars.util.Events.CycleEnd;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.core.control.ImmediateProcess;

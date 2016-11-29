@@ -23,7 +23,7 @@ package nars.inference;
 import java.util.Arrays;
 import nars.util.Events.Answer;
 import nars.util.Events.Unsolved;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;

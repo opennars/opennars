@@ -2,7 +2,6 @@ package nars.storage;
 
 import java.util.Iterator;
 import java.util.Set;
-import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Item;
 

@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;

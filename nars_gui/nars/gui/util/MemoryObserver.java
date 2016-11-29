@@ -4,7 +4,7 @@ import nars.util.AbstractObserver;
 import nars.util.Events;
 import nars.util.Events.CycleEnd;
 import nars.util.Events.CycleStart;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;

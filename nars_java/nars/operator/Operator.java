@@ -23,7 +23,7 @@ package nars.operator;
 
 import java.util.Arrays;
 import java.util.List;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;

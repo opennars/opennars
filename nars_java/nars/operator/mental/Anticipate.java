@@ -31,7 +31,7 @@ import java.util.Set;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.util.Events.CycleEnd;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.control.DerivationContext;

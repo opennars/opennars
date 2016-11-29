@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Set;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.gui.output.PPanel;

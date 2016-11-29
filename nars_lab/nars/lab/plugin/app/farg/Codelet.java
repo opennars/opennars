@@ -5,7 +5,7 @@
 
 package nars.lab.plugin.app.farg;
 
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.language.Term;

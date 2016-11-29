@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;

@@ -20,7 +20,7 @@ import nars.storage.Bag;
 import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.MultiTimeline;
 import automenta.vivisect.timeline.StackedPercentageChart;
-import nars.core.Memory.Timing;
+import nars.storage.Memory.Timing;
 import nars.core.control.FireConcept;
 import nars.storage.LevelBag;
 

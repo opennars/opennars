@@ -1,7 +1,7 @@
 package nars.lab.operator.software;
 
 import java.util.ArrayList;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.io.Symbols;

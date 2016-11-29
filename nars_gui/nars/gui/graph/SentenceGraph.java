@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 import nars.util.EventEmitter;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.entity.Concept;
 import nars.entity.Item;
 import nars.entity.Sentence;

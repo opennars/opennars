@@ -1,5 +1,6 @@
 package nars.core;
 
+import nars.storage.Memory;
 import nars.io.condition.OutputCondition;
 import java.io.IOException;
 import java.util.ArrayList;

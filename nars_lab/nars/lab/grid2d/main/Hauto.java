@@ -1,6 +1,6 @@
 package nars.lab.grid2d.main;
 
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.lab.grid2d.main.Cell.Logic;
 import static nars.lab.grid2d.main.Cell.Logic.AND;

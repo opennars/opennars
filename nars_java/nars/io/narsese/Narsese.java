@@ -3,7 +3,7 @@ package nars.io.narsese;
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import java.util.ArrayList;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;

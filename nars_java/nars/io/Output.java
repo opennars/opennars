@@ -2,7 +2,7 @@ package nars.io;
 
 import nars.util.EventEmitter;
 import nars.util.Events.Answer;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.util.AbstractObserver;
 import nars.operator.io.Say;

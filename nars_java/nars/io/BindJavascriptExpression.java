@@ -7,7 +7,7 @@ package nars.io;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.Parameters;
 import nars.io.Output.ERR;
 import nars.io.narsese.Narsese;

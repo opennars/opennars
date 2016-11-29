@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import nars.util.Events;
 import nars.util.Events.UnexecutableOperation;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TruthValue;

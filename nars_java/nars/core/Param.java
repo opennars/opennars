@@ -1,8 +1,8 @@
 package nars.core;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.core.Memory.Forgetting;
-import nars.core.Memory.Timing;
+import nars.storage.Memory.Forgetting;
+import nars.storage.Memory.Timing;
 import nars.language.Interval.AtomicDuration;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.google.gson.Gson;

@@ -16,7 +16,7 @@
  */
 package nars.lab.operator.math;
 
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
 

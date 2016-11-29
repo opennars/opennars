@@ -1,7 +1,7 @@
 package nars.core;
 
 import java.util.List;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.language.Interval;

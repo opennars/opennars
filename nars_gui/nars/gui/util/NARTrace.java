@@ -13,7 +13,7 @@ import java.util.TreeMap;
 import nars.util.Events;
 import nars.util.Events.ConceptNew;
 import nars.util.Events.InferenceEvent;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
