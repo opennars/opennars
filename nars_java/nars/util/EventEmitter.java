@@ -68,10 +68,10 @@ public class EventEmitter {
                     Class c = (Class)o[1];
                     EventObserver d = (EventObserver)o[2];
                     if ((Boolean)o[0]) {                        
-                        _on(c,d);
+                        on(c,d);
                     }
                     else {                        
-                        _off(c,d);
+                        off(c,d);
                     }
                 }
             }
@@ -90,19 +90,8 @@ public class EventEmitter {
         return o;
     } 
     */
-    
-    public <C> void on(final Class<? extends C> event, final EventObserver<? extends C> o) {
-        if (Parameters.THREADS == 1) {
-            _on(event, o);
-        }
-        else {
-            synchronized(pendingOps) {
-                pendingOps.add(new Object[] { true, event, o });        
-            }
-        }
-    }
             
-    private <C> void _on(final Class<? extends C> event, final EventObserver<? extends C> o) {
+    public void on(final Class<?> event, final EventObserver o) {
         if (events.containsKey(event))
             events.get(event).add(o);
         else {
@@ -116,20 +105,8 @@ public class EventEmitter {
     /**
      * @param event
      * @param o
-     * @return  whether it was removed
      */
-    public <C> void off(final Class<? extends C> event, final EventObserver<? extends C> o) {
-        if (Parameters.THREADS == 1) {
-            _off(event, o);
-        }
-        else {
-            synchronized(pendingOps) {
-                pendingOps.add(new Object[] { false, event, o });        
-            }
-        }
-    }
-    
-    private void _off(final Class<?> event, final EventObserver o) {
+    private void off(final Class<?> event, final EventObserver o) {
         if (null == event || null == o)
             throw new RuntimeException("Invalid parameter");
  

@@ -345,70 +345,6 @@ public class Concept extends Item<Term> {
         return false;
     }
     
-    protected void howQuestionDecisionMakingAccel(final Task T, DerivationContext nal) {
-        if(!Parameters.COMPOUND_OPERATIONS)
-            return;
-        Term Subject = new Variable("?1"); //because its not normalized we have to use "?1" here
-        Term how=Implication.make(Subject, T.sentence.term, TemporalRules.ORDER_FORWARD);
-        if(how!=null) {
-            Concept myCon=nal.memory.concept(how);
-            if(myCon!=null) {
-                //get best solution to first question
-                if(myCon.questions!=null && myCon.questions.size()>0) {
-                    Task question=myCon.questions.get(0);
-                    if(question!=null && question.getBestSolution()!=null) { //TODO from here nothing is called
-                        Sentence solution=question.getBestSolution(); //<(&/...) =/> T>
-                        //we have the best solution, check truth expectation
-                        Term plan = ((Implication)solution.term).getSubject();
-                        //ok we have the plan, either it is elementary,
-                        //then we have to processGoal with its first desire task
-                        //but this we skip for now because it can be done by inference also,
-                        //or it is a forward conjunction and we have to call processGoal from lefz to right with its desire
-                        if(plan instanceof Conjunction && ((Conjunction)plan).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                            Conjunction Cplan=(Conjunction) plan;
-                            int occurrenceOffset=0;
-                            for(Term t : Cplan.term) {
-                                //test: Term t=Cplan; //we directly deduct the entire (&/ statement
-                                if(t instanceof Interval) {
-                                    Interval I=(Interval)t;
-                                    occurrenceOffset += I.getTime(nal.memory.param.duration);
-                                    continue;
-                                }
-                                //Concept Ct = nal.memory.concept(t);
-                                /*if(Ct != null && Ct.desires!=null && Ct.desires.size()>0) {
-                                    Task toProcess=Ct.desires.get(0);
-                                    if(!processGoal(nal,toProcess,true)) { //not fullfilled or fullfillable per exec, stop
-                                        break; //should be false instead true due to AIKR
-                                    }
-                                }*/
-                                //we derive the subgoals instead, their desirability will trigger goal processing anyway
-                                
-                                ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
-                                Stamp SVSTamp=nal.getNewStamp().clone();
-                                Task SVTask=nal.getCurrentTask();
-                                DerivationContext.StampBuilder SVstampBuilder=nal.newStampBuilder;
-                                //END
-                        
-                                nal.getTheNewStamp().setOccurrenceTime(nal.memory.time()+occurrenceOffset);
-                                nal.setCurrentBelief(solution); //current task is right already
-                                TruthValue truth = TruthFunctions.deduction(T.sentence.truth, solution.truth);
-                                nal.doublePremiseTask(t, truth, BudgetFunctions.forward(truth, nal), false, true);
-                              
-                                //RESTORE CONTEXT
-                                nal.setNewStamp(SVSTamp);
-                                nal.setCurrentTask(SVTask);
-                                nal.newStampBuilder=SVstampBuilder; //also restore this one
-                                //END
-
-                                occurrenceOffset+=nal.memory.param.duration.get();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
     /**
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it
@@ -485,9 +421,6 @@ public class Concept extends Item<Term> {
             if (task.aboveThreshold() && !fullfilled && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
 
                 questionFromGoal(task, nal);
-                
-                if(shortcut)
-                    howQuestionDecisionMakingAccel(task, nal);
                 
                 addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 

@@ -14,12 +14,10 @@ import nars.entity.Task;
  */
 public class ImmediateProcess extends DerivationContext {
     final Task task;
-    final int numSiblingTasks;
 
-    public ImmediateProcess(Memory mem, Task currentTask, int numSiblingTasks) {
+    public ImmediateProcess(Memory mem, Task currentTask) {
         super(mem);
         this.task = currentTask;
-        this.numSiblingTasks = numSiblingTasks;
     }
 
     @Override

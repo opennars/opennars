@@ -153,8 +153,7 @@ public class Memory implements Serializable {
         this.concepts = concepts;
         this.concepts.init(this);
         this.novelTasks = novelTasks;                
-        this.newTasks = (Parameters.THREADS > 1) ?  
-                new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
+        this.newTasks = new ArrayDeque<>();
         this.operators = new HashMap<>();
         reset();
     }
@@ -429,80 +428,27 @@ public class Memory implements Serializable {
     }
    
     /** Processes a specific number of new tasks */
-    public int processNewTasks(int maxTasks, Collection<Runnable> queue) {
-        
-        if (maxTasks == 0)
-            return 0;
-        
-        int processed = 0;
-        int numTasks = Math.min(maxTasks, newTasks.size());
-        
-        for (int i = 0; (!newTasks.isEmpty()) && (i < numTasks); i++) {
-            
-            final Task task = newTasks.removeFirst();   
-            processed++;
-            emotion.adjustBusy(task.getPriority(), task.getDurability());            
-            
-            if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term)!=null) { //it is a question/goal/quest or a concept which exists                   
-                // ok so lets fire it
-                queue.add(new ImmediateProcess(this, task, numTasks - 1)); 
-            } else { 
-                final Sentence s = task.sentence;
-                if ((s!=null) && (s.isJudgment()||s.isGoal())) {
-                    final double exp = s.truth.getExpectation();
-                    if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {                        
-                        // new concept formation                        
-                        Task displacedNovelTask = novelTasks.putIn(task);
-                        if (displacedNovelTask!=null) {
-                            if (displacedNovelTask==task) {
-                                removeTask(task, "Ignored");
-                            }
-                            else {
-                                removeTask(displacedNovelTask, "Displaced novel task");
-                            }
-                        }
-                    } else {                        
+    public void processNewTasks(int maxTasks, Collection<Runnable> queue) {
+        Task task;
+        int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
+        while (counter-- > 0) {
+            task = newTasks.removeFirst();
+            if (task.isInput() || concept(task.sentence.term)!=null) { // new input or existing concept
+                queue.add(new ImmediateProcess(this, task)); 
+            } else {
+                Sentence s = task.sentence;
+                if (s.isJudgment()) {
+                    double d = s.getTruth().getExpectation();
+                    if (d > Parameters.DEFAULT_CREATION_EXPECTATION) {
+                        novelTasks.putIn(task);    // new concept formation
+                    } else {
                         removeTask(task, "Neglected");
                     }
                 }
             }
-        }                    
-        return processed;
+        }
     }
     
-    public <T> void run(final List<Runnable> tasks) {
-        run(tasks, 1);
-    }
-    
-    public <T> void run(final List<Runnable> tasks, int concurrency) {        
-        
-        if ((tasks == null) || (tasks.isEmpty())) return;
-        
-        else if (tasks.size() == 1) {            
-            tasks.get(0).run();
-        }
-        else if (concurrency == 1) {
-            //single threaded
-            for (final Runnable t : tasks) {
-                t.run();
-            }
-        }
-        else {   
-            //execute in parallel, multithreaded                        
-            final ConcurrentContext ctx = ConcurrentContext.enter(); 
-            
-            ctx.setConcurrency(concurrency);
-            try { 
-                for (final Runnable r : tasks) {                    
-                    ctx.execute(r);
-                }
-            } finally {
-                // Waits for all concurrent executions to complete.
-                // Re-exports any exception raised during concurrent executions. 
-                ctx.exit();                              
-            }
-        }
-    }
 
     /**
      * Select a novel task to process.
