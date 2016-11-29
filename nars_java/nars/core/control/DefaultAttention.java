@@ -75,6 +75,25 @@ public class DefaultAttention implements Iterable<Concept> {
         return memory.newTasks.isEmpty();
     }
     
+    private Cycle loop = new Cycle();
+        
+     public class Cycle {
+ 
+         public Cycle() {
+         }
+ 
+         int t(int threads) {
+             if (threads == 1) return 1;
+             else {
+                 return threads;
+             }
+         }
+ 
+    
+ 
+ 
+     }
+    
     public void cycleSequential() {
         
         memory.processNewTasks();

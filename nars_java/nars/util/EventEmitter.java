@@ -68,42 +68,24 @@ public class EventEmitter {
                     Class c = (Class)o[1];
                     EventObserver d = (EventObserver)o[2];
                     if ((Boolean)o[0]) {                        
-                        _on(c,d);
+                        on(c,d);
                     }
                     else {                        
-                        _off(c,d);
+                        off(c,d);
                     }
                 }
             }
             pendingOps.clear();
         }
-    }
- 
-    /*
-    //These will not work if o is a subclass of X
-    public <X extends EventObserver> X on(X o) {
-        on(o.getClass(), o);
-        return o;
-    }
-    public <X extends EventObserver> X off(X o) {
-        off(o.getClass(), o);
-        return o;
-    } 
-    */
-    
-    public <C> void on(final Class<? extends C> event, final EventObserver<? extends C> o) {
-        _on(event, o);
-    }
-            
-    private <C> void _on(final Class<? extends C> event, final EventObserver<? extends C> o) {
+    }  
+    public void on(final Class<?> event, final EventObserver o) {
         if (events.containsKey(event))
             events.get(event).add(o);
         else {
             List<EventObserver> a = newObserverList();
             a.add(o);
             events.put(event, a);
-        }
-                
+        }       
     }
  
     /**
@@ -111,11 +93,7 @@ public class EventEmitter {
      * @param o
      * @return  whether it was removed
      */
-    public <C> void off(final Class<? extends C> event, final EventObserver<? extends C> o) {
-        _off(event, o);
-    }
-    
-    private void _off(final Class<?> event, final EventObserver o) {
+    public void off(final Class<?> event, final EventObserver o) {
         if (null == event || null == o)
             throw new RuntimeException("Invalid parameter");
  

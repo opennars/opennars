@@ -411,7 +411,7 @@ public class Memory implements Serializable {
         event.emit(Events.CycleStart.class);                
         
         /** adds input tasks to newTasks */
-        while(isProcessingInput()) {
+        for(int i=0; i<1 && isProcessingInput(); i++) {
             AbstractTask t = inputs.nextTask();                    
             if (t!=null) 
                 inputTask(t);            
