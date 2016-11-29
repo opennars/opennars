@@ -34,33 +34,7 @@ public class DefaultAttention implements Iterable<Concept> {
     
     private final ConceptBuilder conceptBuilder;
     private Memory memory;
-    
-    private Cycle loop = new Cycle();
-       
-    public class Cycle {
-
-        public Cycle() {
-        }
-
-        int t(int threads) {
-            if (threads == 1) return 1;
-            else {
-                return threads;
-            }
-        }
-
-        public int conceptsPriority() {
-            if (memory.getNewTasks().isEmpty()) {
-                return memory.param.conceptsFiredPerCycle.get();
-            } else {
-                return 0;
-            }
-        }
-
-
-    }
-    
-            
+         
     public DefaultAttention(Bag<Concept,Term> concepts, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.conceptBuilder = conceptBuilder;        
@@ -102,34 +76,18 @@ public class DefaultAttention implements Iterable<Concept> {
     }
     
     public void cycleSequential() {
-        final List<Runnable> run = new ArrayList();
         
-        memory.processNewTask(run);
-        memory.run(run);
-        
-        run.clear();
-        memory.processNovelTask(loop.novelTasksPriority(), run);
-        memory.run(run); 
-        
-        run.clear();        
-        processConcepts(loop.conceptsPriority(), run);
-        memory.run(run);
-        
-        run.clear();
-
+        memory.processNewTasks();
+        if(noResult())
+            memory.processNovelTask();
+        if(noResult())
+            processConcept();
     }
     
-    public void processConcepts(int c, Collection<Runnable> run) {
-        if (c == 0) return;                
-        
-        for (int i = 0; i < c; i++) {
-            FireConcept f = next();
-            
+    public void processConcept() {
+        FireConcept f = next();
             if (f!=null)
-                run.add(f);                            
-            else
-                break;
-        }
+                f.run();  
         
     }
 

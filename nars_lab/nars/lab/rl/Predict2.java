@@ -232,7 +232,7 @@ public class Predict2 {
             
             //memory.inputTask(t);
             
-            new ImmediateProcess(memory, memory.newTask(currentBelief, Symbols.JUDGMENT_MARK, truth, 0.90f, 1.0f, 0.8f), 0).run();
+            new ImmediateProcess(memory, memory.newTask(currentBelief, Symbols.JUDGMENT_MARK, truth, 0.90f, 1.0f, 0.8f)).run();
        }        
     
     public static void main(String[] args) throws Narsese.InvalidInputException, InterruptedException {

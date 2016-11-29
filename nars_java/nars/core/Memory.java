@@ -411,7 +411,7 @@ public class Memory implements Serializable {
         event.emit(Events.CycleStart.class);                
         
         /** adds input tasks to newTasks */
-        for (int i = 0; (i < concepts.getInputPriority()) && (isProcessingInput()); i++) {
+        while(isProcessingInput()) {
             AbstractTask t = inputs.nextTask();                    
             if (t!=null) 
                 inputTask(t);            
@@ -427,14 +427,18 @@ public class Memory implements Serializable {
         timeRealNow = System.currentTimeMillis();
     }
    
-    /** Processes a specific number of new tasks */
-    public void processNewTasks(int maxTasks, Collection<Runnable> queue) {
+    /**
+     * Process the newTasks accumulated in the previous workCycle, accept input
+     * ones and those that corresponding to existing concepts, plus one from the
+     * buffer.
+     */
+    public void processNewTasks() {
         Task task;
         int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
         while (counter-- > 0) {
             task = newTasks.removeFirst();
             if (task.isInput() || concept(task.sentence.term)!=null) { // new input or existing concept
-                queue.add(new ImmediateProcess(this, task)); 
+                new ImmediateProcess(this, task).run(); 
             } else {
                 Sentence s = task.sentence;
                 if (s.isJudgment()) {
@@ -454,19 +458,11 @@ public class Memory implements Serializable {
      * Select a novel task to process.
      * @return whether a task was processed
      */
-    public int processNovelTasks(int num, Collection<Runnable> queue) {
-        if (num == 0) 
-            return 0;
-    
-        int executed = 0;                
-        for (int i = 0; i < novelTasks.size(); i++) {
-            final Task task = novelTasks.takeNext();       // select a task from novelTasks
-            if (task != null) {            
-                queue.add(new ImmediateProcess(this, task, 0));
-                executed++;
-            }
+    public void processNovelTask() {
+        final Task task = novelTasks.takeNext();
+        if (task != null) {            
+                new ImmediateProcess(this, task).run();
         }
-        return executed;
     }
 
      public Operator getOperator(final String op) {
@@ -481,22 +477,6 @@ public class Memory implements Serializable {
      public Operator removeOperator(final Operator op) {
          return operators.remove(op.name());
      }
-
-    private String toStringLongIfNotNull(Bag<?,?> item, String title) {
-        return item == null ? "" : "\n " + title + ":\n"
-                + item.toString();
-    }
-
-    private String toStringLongIfNotNull(Item item, String title) {
-        return item == null ? "" : "\n " + title + ":\n"
-                + item.toStringLong();
-    }
-
-    private String toStringIfNotNull(Object item, String title) {
-        return item == null ? "" : "\n " + title + ":\n"
-                + item.toString();
-    }
-
 
     private long currentStampSerial = 0;
     public long newStampSerial() {
