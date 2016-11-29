@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.core;
+package nars.storage;
 
 import nars.util.Events;
 import nars.util.EventEmitter;
@@ -35,10 +35,13 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import javolution.context.ConcurrentContext;
+import nars.core.NAR;
+import nars.core.Param;
+import nars.core.Parameters;
 import nars.util.Events.ResetEnd;
 import nars.util.Events.ResetStart;
 import nars.util.Events.TaskRemove;
-import static nars.core.Memory.Timing.Iterative;
+import static nars.storage.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;
 import nars.core.control.DefaultAttention;
 import nars.core.control.DerivationContext;
@@ -69,7 +72,6 @@ import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetDecisionThreshold;
 import nars.operator.io.SetVolume;
-import nars.storage.Bag;
 
 
 /**

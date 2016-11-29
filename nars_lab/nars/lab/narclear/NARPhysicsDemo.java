@@ -1,7 +1,7 @@
 package nars.lab.narclear;
 
 import java.util.List;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Task;

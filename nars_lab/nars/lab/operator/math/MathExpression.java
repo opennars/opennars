@@ -1,7 +1,7 @@
 package nars.lab.operator.math;
 
 import java.util.List;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.io.Texts;
 import static nars.io.Texts.unescape;
 import nars.language.Inheritance;

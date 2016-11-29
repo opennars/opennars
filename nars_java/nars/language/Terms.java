@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.entity.Sentence;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;

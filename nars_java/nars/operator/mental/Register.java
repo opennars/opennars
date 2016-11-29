@@ -18,7 +18,7 @@
 package nars.operator.mental;
 
 import java.util.ArrayList;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.entity.Task;
 import nars.language.Term;
 import nars.operator.NullOperator;

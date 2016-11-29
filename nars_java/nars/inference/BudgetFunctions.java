@@ -23,7 +23,7 @@ package nars.inference;
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;

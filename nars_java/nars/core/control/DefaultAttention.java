@@ -1,14 +1,9 @@
 package nars.core.control;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import nars.util.Events;
 import nars.util.Events.ConceptForget;
-import nars.core.Memory;
-import nars.core.Parameters;
+import nars.storage.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
@@ -75,25 +70,6 @@ public class DefaultAttention implements Iterable<Concept> {
         return memory.newTasks.isEmpty();
     }
     
-    private Cycle loop = new Cycle();
-        
-     public class Cycle {
- 
-         public Cycle() {
-         }
- 
-         int t(int threads) {
-             if (threads == 1) return 1;
-             else {
-                 return threads;
-             }
-         }
- 
-    
- 
- 
-     }
-    
     public void cycleSequential() {
         
         memory.processNewTasks();
@@ -110,11 +86,6 @@ public class DefaultAttention implements Iterable<Concept> {
         
     }
 
-    
-    public Iterable<Concept> getConcepts() {
-         return concepts.values();
-    }
-
     public void reset() {
         concepts.clear();
     }
@@ -125,7 +96,7 @@ public class DefaultAttention implements Iterable<Concept> {
     }
 
     public void conceptRemoved(Concept c) {
-            memory.emit(ConceptForget.class, c);
+        memory.emit(ConceptForget.class, c);
     }
     
     public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing) {
@@ -192,12 +163,6 @@ public class DefaultAttention implements Iterable<Concept> {
         BudgetFunctions.activate(c.budget, b, mode);
         concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
     }
-    
-//    @Override
-//    public void forget(Concept c) {
-//        concepts.take(c.name());        
-//        concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);    
-//    }
 
     public Concept sampleNextConcept() {
         return concepts.peekNext();
@@ -210,7 +175,5 @@ public class DefaultAttention implements Iterable<Concept> {
     public Memory getMemory() {
         return memory;
     }
-
-    
     
 }

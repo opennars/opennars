@@ -2,7 +2,7 @@ package nars.language;
 
 import java.util.HashMap;
 import java.util.Map;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.io.Symbols;
 
 /**

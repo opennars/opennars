@@ -1,6 +1,6 @@
 package nars.lab.rl.hai;
 
-import nars.core.Memory;
+import nars.storage.Memory;
 
 
 /**

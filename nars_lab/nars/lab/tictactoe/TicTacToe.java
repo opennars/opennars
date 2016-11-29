@@ -39,7 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;

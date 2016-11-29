@@ -21,7 +21,7 @@
 package nars.entity;
 
 import java.util.Comparator;
-import nars.core.Memory;
+import nars.storage.Memory;
 
 /**
  * An item is an object that can be put into a Bag,

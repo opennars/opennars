@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.TaskDerive;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;

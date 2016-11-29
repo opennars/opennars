@@ -21,7 +21,7 @@
 package nars.operator;
 
 import java.util.List;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.language.Term;

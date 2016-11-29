@@ -22,7 +22,7 @@ package nars.inference;
 
 import java.util.HashSet;
 import nars.util.Events;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.Parameters;
 import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;

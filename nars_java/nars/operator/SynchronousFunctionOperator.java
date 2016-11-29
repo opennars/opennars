@@ -2,7 +2,7 @@ package nars.operator;
 
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.io.Symbols;

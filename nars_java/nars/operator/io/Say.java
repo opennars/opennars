@@ -23,7 +23,7 @@ package nars.operator.io;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.entity.Task;
 import nars.language.CompoundTerm;
 import nars.language.Product;

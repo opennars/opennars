@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.io.Symbols;
 
 /**

@@ -18,7 +18,7 @@
 package nars.operator.mental;
 
 import java.util.ArrayList;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.control.FireConcept;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;

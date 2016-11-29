@@ -36,7 +36,7 @@ import nars.util.Events.TaskLinkRemove;
 import nars.util.Events.TermLinkAdd;
 import nars.util.Events.TermLinkRemove;
 import nars.util.Events.UnexecutableGoal;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NARRun;
 import nars.core.Parameters;
 import nars.core.control.DerivationContext;

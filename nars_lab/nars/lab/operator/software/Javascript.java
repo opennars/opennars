@@ -5,7 +5,7 @@ import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.io.Output.ERR;
 import nars.io.Texts;
 import nars.language.Term;

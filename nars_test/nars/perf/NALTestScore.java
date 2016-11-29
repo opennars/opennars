@@ -7,7 +7,7 @@ package nars.perf;
 import java.util.Collection;
 import nars.util.EventEmitter;
 import nars.util.Events;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.NALTest;

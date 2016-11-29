@@ -14,7 +14,7 @@ import java.util.List;
 import javax.swing.JPanel;
 import nars.util.EventEmitter;
 import nars.util.Events.CycleEnd;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Task;

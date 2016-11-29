@@ -2,7 +2,7 @@ package nars.lab.plugin.mental;
 
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Plugin;
 import nars.entity.BudgetValue;

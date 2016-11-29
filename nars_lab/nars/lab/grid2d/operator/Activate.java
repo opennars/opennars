@@ -21,7 +21,7 @@
 package nars.lab.grid2d.operator;
  
 import java.util.List;
-import nars.core.Memory;
+import nars.storage.Memory;
 import nars.entity.Task;
 import nars.lab.grid2d.main.TestChamber;
 import nars.language.Term;
