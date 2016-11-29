@@ -138,31 +138,7 @@ public class Memory implements Serializable {
     
     //index of Conjunction questions
     transient private Set<Task> questionsConjunction = new HashSet();
-    
 
-    
-    private class MemoryEventEmitter extends EventEmitter {        
-        @Override public void emit(final Class eventClass, final Object... params) {
-            super.emit(eventClass, params); 
-
-            if (eventClass == Events.ConceptQuestionAdd.class) {                    
-                //Concept c = params[0];
-                Task t = (Task)params[1];
-                Term term = t.getTerm();
-                if (term instanceof Conjunction) {
-                    questionsConjunction.add(t);
-                }
-            }
-            else if (eventClass == Events.ConceptQuestionAdd.class) {
-                //Concept c = params[0];
-                Task t = (Task)params[1];
-                Term term = t.getTerm();
-                if (term instanceof Conjunction) {
-                    questionsConjunction.remove(t);
-                }
-            }
-        }
-    }
     
     /* ---------- Constructor ---------- */
     /**
@@ -173,7 +149,7 @@ public class Memory implements Serializable {
     public Memory(Param param, DefaultAttention concepts, Bag<Task<Term>,Sentence<Term>> novelTasks) {                
 
         this.param = param;
-        this.event = new MemoryEventEmitter();
+        this.event = new EventEmitter();
         this.concepts = concepts;
         this.concepts.init(this);
         this.novelTasks = novelTasks;                
@@ -308,15 +284,9 @@ public class Memory implements Serializable {
      * add new task that waits to be processed in the next cycleMemory
      */
     public void addNewTask(final Task t, final String reason) {
-        /*if (!Term.valid(t.getContent()))
-            throw new RuntimeException("Invalid term: " + t);*/
-        
         newTasks.add(t);
-                
       //  logic.TASK_ADD_NEW.commit(t.getPriority());
-        
         emit(Events.TaskAdd.class, t, reason);
-        
         output(t);
     }
     
@@ -469,12 +439,9 @@ public class Memory implements Serializable {
         
         for (int i = 0; (!newTasks.isEmpty()) && (i < numTasks); i++) {
             
-            final Task task = newTasks.removeFirst();
-                        
+            final Task task = newTasks.removeFirst();   
             processed++;
-            
             emotion.adjustBusy(task.getPriority(), task.getDurability());            
- 
             
             if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term)!=null) { //it is a question/goal/quest or a concept which exists                   
                 // ok so lets fire it
@@ -494,14 +461,12 @@ public class Memory implements Serializable {
                                 removeTask(displacedNovelTask, "Displaced novel task");
                             }
                         }
-                        
                     } else {                        
                         removeTask(task, "Neglected");
                     }
                 }
             }
-        }        
-                         
+        }                    
         return processed;
     }
     
