@@ -36,42 +36,16 @@ public class DefaultAttention implements Iterable<Concept> {
     private Memory memory;
     
     private Cycle loop = new Cycle();
-    
        
     public class Cycle {
-        public final AtomicInteger threads = new AtomicInteger();
-        private final int numThreads;
 
         public Cycle() {
-            this(Parameters.THREADS);
-        }
-
-        public Cycle(int threads) {
-            this.numThreads = threads;
-            this.threads.set(threads);
-
         }
 
         int t(int threads) {
             if (threads == 1) return 1;
             else {
                 return threads;
-            }
-        }
-
-        public int inputTasksPriority() {
-            return t(numThreads);
-        }
-
-        public int newTasksPriority() {
-            return memory.newTasks.size();
-        }
-
-        public int novelTasksPriority() {
-            if (memory.getNewTasks().isEmpty()) {
-                return t(numThreads);
-            } else {
-                return 0;
             }
         }
 
@@ -100,16 +74,7 @@ public class DefaultAttention implements Iterable<Concept> {
             
     public void init(Memory m) {
         this.memory = m;
-        /*if (concepts instanceof AttentionAware)
-            ((AttentionAware)concepts).setAttention((Attention) this);
-        if (concepts instanceof MemoryAware)
-            ((MemoryAware)concepts).setMemory(m);*/
     }
-
-    public int getInputPriority() {
-        return loop.inputTasksPriority();
-    }
-    
     
     protected FireConcept next() {       
 
@@ -129,22 +94,21 @@ public class DefaultAttention implements Iterable<Concept> {
     }
 
     public void cycle() {
-        if (Parameters.THREADS == 1)
-            cycleSequential();
-        else
-            cycleParallel();
+        cycleSequential();
     }
 
-    
+    public boolean noResult() {
+        return memory.newTasks.isEmpty();
+    }
     
     public void cycleSequential() {
         final List<Runnable> run = new ArrayList();
         
-        memory.processNewTasks(loop.newTasksPriority(), run);
+        memory.processNewTask(run);
         memory.run(run);
         
         run.clear();
-        memory.processNovelTasks(loop.novelTasksPriority(), run);
+        memory.processNovelTask(loop.novelTasksPriority(), run);
         memory.run(run); 
         
         run.clear();        
@@ -154,22 +118,6 @@ public class DefaultAttention implements Iterable<Concept> {
         run.clear();
 
     }
-
-    public void cycleParallel() {
-
-        final List<Runnable> run = new ArrayList();
-        
-        memory.processNewTasks(loop.newTasksPriority(), run);
-        
-        memory.processNovelTasks(loop.novelTasksPriority(), run);
-        
-        processConcepts(loop.conceptsPriority(), run);
-                
-        memory.run(run, Parameters.THREADS);
-        
-        run.clear();
-
-    }    
     
     public void processConcepts(int c, Collection<Runnable> run) {
         if (c == 0) return;                
