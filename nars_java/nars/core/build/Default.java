@@ -104,8 +104,6 @@ public class Default extends Parameters implements ConceptBuilder {
         param.conceptGoalsMax.set(7);
         param.conceptQuestionsMax.set(5);
         
-        param.conceptsFiredPerCycle.set(1);
-        
         param.termLinkMaxReasoned.set(3);
         param.termLinkMaxMatched.set(10);
         param.termLinkRecordLength.set(10);

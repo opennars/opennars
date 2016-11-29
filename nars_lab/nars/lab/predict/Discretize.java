@@ -157,7 +157,7 @@ public class Discretize {
             if (mode == BeliefInsertion.MemoryInput)
                 nar.memory.inputTask(t);
             else if (mode == BeliefInsertion.ImmediateProcess)
-                new ImmediateProcess(nar.memory, t, 0).run();
+                new ImmediateProcess(nar.memory, t).run();
             
         }
     }            

@@ -100,7 +100,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 
         this.capacity = capacity;
 
-        nameTable = Parameters.THREADS == 1 ? new HashMap<>(capacity) : new ConcurrentHashMap<>(capacity);
+        nameTable = new HashMap<>(capacity);
 
         level = new Level[this.levels];
         
@@ -220,7 +220,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         
         int in = nameTable.size();
         
-        if (Parameters.DEBUG_BAG && (Parameters.DEBUG) && (Parameters.THREADS==1)) {
+        if (Parameters.DEBUG_BAG && (Parameters.DEBUG)) {
         
             int is = sizeItems();
             if (Math.abs(is-in) > 1 ) {                
@@ -343,12 +343,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         }
         
         if (levelEmpty[currentLevel]) {
-            if (Parameters.THREADS == 1) {
-                throw new RuntimeException("Empty level selected for takeNext");
-            }
-            else {
-                return null;
-            }
+            throw new RuntimeException("Empty level selected for takeNext");
         }
         
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
@@ -402,7 +397,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         if (Parameters.DEBUG) {
             int ns = nameTable.size();
             int is = sizeItems();
-            if ((ns == is) || (Parameters.THREADS!=1))
+            if (ns == is)
                 return null;
             throw new RuntimeException("LevelBag inconsistency: " + nameTable.size() + "|" + sizeItems() + " Can not remove missing element: size inconsistency" + oldItem + " from " + this.getClass().getSimpleName());
         }
@@ -478,8 +473,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             removeMass(selected);
         }
         else {
-            if (Parameters.THREADS == 1)
-                throw new RuntimeException("Attempt to remove item from empty level: " + level);
+            throw new RuntimeException("Attempt to remove item from empty level: " + level);
         }
         return selected;
     }
