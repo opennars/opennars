@@ -90,14 +90,18 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
 
         Object x = o;
         if (x instanceof Concept) x = ((Concept)o).getTerm();
-        float hue = Video.hashFloat(x.hashCode());
-
+        float hue = 0.0f; //Video.hashFloat(x.hashCode());
+        if (x instanceof Task)
+            hue = 0.4f;
 
         
-        float brightness = 0.85f;
-        float saturation = 0.85f;
+        float brightness = 0.33f+0.66f*rad/9.0f;
+        float saturation = 0.33f+0.66f*rad/9.0f;
+       // brightness*=brightness;
+        //saturation*=saturation;
         
-        v.color = Video.colorHSB( hue, saturation, brightness, alpha );
+         
+        v.color =  Video.colorHSB( hue, saturation, brightness, alpha );
 
         String label;
         if (o instanceof Concept) {
