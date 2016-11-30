@@ -192,9 +192,9 @@ public class Parameters {
 
     public static int TEMPORAL_INDUCTION_SAMPLES = 1; //normal inference rule, this should be 0 to restore 1.6.1 strategy, 1 to restore 1.6.3 strategy
     
-    public static float DERIVATION_PRIORITY_LEAK = 0.1f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+    public static float DERIVATION_PRIORITY_LEAK = 0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
     
-    public static float DERIVATION_DURABILITY_LEAK = 0.1f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+    public static float DERIVATION_DURABILITY_LEAK = 0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
     
     public static float CURIOSITY_BUSINESS_THRESHOLD=0.18f; //dont be curious if business is above
     public static float CURIOSITY_PRIORITY_THRESHOLD=0.3f; //0.3f in 1.6.3

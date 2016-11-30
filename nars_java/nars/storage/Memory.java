@@ -439,7 +439,7 @@ public class Memory implements Serializable {
         int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
         while (counter-- > 0) {
             task = newTasks.removeFirst();
-            if (task.isInput() || concept(task.sentence.term)!=null) { // new input or existing concept
+            if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term)!=null) { // new input or existing concept
                 new ImmediateProcess(this, task).run(); 
             } else {
                 Sentence s = task.sentence;
