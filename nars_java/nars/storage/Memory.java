@@ -609,7 +609,7 @@ public class Memory implements Serializable {
        }
 
         if(Parameters.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS) {
-            for (Task stmLast : stm) {
+            /*for (Task stmLast : stm) {
                 Concept OldConc = this.concept(stmLast.getTerm());
                 if(OldConc != null)
                 {
@@ -619,7 +619,7 @@ public class Memory implements Serializable {
                     OldConc.termLinkTemplates.add(template);
                     OldConc.buildTermLinks(newEvent.getBudget()); //will be built bidirectionally anyway
                 }
-            }
+            }*/
             //also attempt direct
             for (Task stmLast : stm) {
                 proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);

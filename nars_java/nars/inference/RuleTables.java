@@ -97,7 +97,7 @@ public class RuleTables {
                 task_base.add(task.sentence.stamp.evidentialBase[i]);
             }
             
-            Sentence belief_event = beliefConcept.getBeliefForTemporalInference(task);
+            /*Sentence belief_event = beliefConcept.getBeliefForTemporalInference(task);
             if(belief_event != null) {
                 boolean found_overlap = false;
                 for(int i=0;i<belief_event.stamp.evidentialBase.length;i++) {
@@ -115,7 +115,7 @@ public class RuleTables {
                     nal.setCurrentBelief(inference_belief);
                     nal.setTheNewStamp(task.sentence.stamp, belief.stamp, nal.memory.time());
                 }
-            }
+            }*/
             
             //too restrictive, its checked for non-deductive inference rules in derivedTask
             for(int i=0;i<belief.stamp.evidentialBase.length;i++) {
