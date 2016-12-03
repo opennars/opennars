@@ -32,7 +32,6 @@ public class NALTestScore extends NALTest {
     }
     
     public static double score(NAR nn, int maxCycles/* randomseed, etc. */) {
-        Parameters.THREADS = 1;
         
         nextNAR = nn;
           

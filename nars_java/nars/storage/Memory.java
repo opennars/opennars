@@ -24,7 +24,6 @@ import nars.util.Events;
 import nars.util.EventEmitter;
 import java.io.Serializable;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
@@ -33,8 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import javolution.context.ConcurrentContext;
 import nars.core.NAR;
 import nars.core.Param;
 import nars.core.Parameters;
@@ -54,7 +51,6 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TaskLink;
-import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
@@ -125,6 +121,9 @@ public class Memory implements Serializable {
     
     /* New tasks with novel composed terms, for delayed and selective processing*/
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
+    
+    /* Input event tasks that were either input events or derived sequences*/
+    public final Bag<Task<Term>,Sentence<Term>> sequenceTasks;
 
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
@@ -148,7 +147,8 @@ public class Memory implements Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, DefaultAttention concepts, Bag<Task<Term>,Sentence<Term>> novelTasks) {                
+    public Memory(Param param, DefaultAttention concepts, Bag<Task<Term>,Sentence<Term>> novelTasks,
+            Bag<Task<Term>,Sentence<Term>> sequenceTasks) {                
 
         this.param = param;
         this.event = new EventEmitter();
@@ -156,6 +156,7 @@ public class Memory implements Serializable {
         this.concepts.init(this);
         this.novelTasks = novelTasks;                
         this.newTasks = new ArrayDeque<>();
+        this.sequenceTasks = sequenceTasks;
         this.operators = new HashMap<>();
         reset();
     }
@@ -549,11 +550,6 @@ public class Memory implements Serializable {
         return task;
     }
     
-    /** gets a next concept for processing */
-    public Concept sampleNextConcept() {
-        return concepts.sampleNextConcept(); 
-    }
-    
     public Collection<Task> conceptQuestions(Class c) {
         if (c == Conjunction.class) {
             return questionsConjunction;
@@ -562,7 +558,7 @@ public class Memory implements Serializable {
     }
     
     //TODO put probably in extra class involved for event chaining?
-    public final ArrayDeque<Task> stm = new ArrayDeque();
+    //public final ArrayDeque<Task> stm = new ArrayDeque();
     //is input or by the system triggered operation
     public static boolean isInputOrOperation(final Task newEvent) {
         return newEvent.isInput() || (newEvent.sentence.term instanceof Operation);
@@ -621,14 +617,22 @@ public class Memory implements Serializable {
                 }
             }*/
             //also attempt direct
-            for (Task stmLast : stm) {
-                proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);
+            for(int i =0 ;i<Math.min(this.sequenceTasks.size(), Parameters.SEQUENCE_BAG_ATTEMPTS);i++) {
+                Task takeout = this.sequenceTasks.takeNext();
+                proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true);
+                this.sequenceTasks.putBack(takeout, this.param.cycles(this.param.sequenceForgetDurations), this);
+                
             }
+            //for (Task stmLast : stm) {
+               // proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);
+            //}
         }
         
-        while (stm.size()+1 > Parameters.STM_SIZE)
+        /*while (stm.size()+1 > Parameters.STM_SIZE)
             stm.removeFirst();
-        stm.addLast(newEvent);
+        stm.addLast(newEvent);*/
+        
+        this.sequenceTasks.addItem(newEvent);
 
         return true;
     }
