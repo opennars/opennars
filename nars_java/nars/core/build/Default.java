@@ -97,8 +97,8 @@ public class Default extends Parameters implements ConceptBuilder {
         setNovelTaskBagSize(100);
         setNovelTaskBagLevels(100);
         
-        setSequenceTaskBagSize(100);
-        setSequenceTaskBagLevels(100);
+        setSequenceTaskBagSize(10);
+        setSequenceTaskBagLevels(10);
         
         param.duration.set(Parameters.DURATION);
         param.conceptForgetDurations.set(2.0);
