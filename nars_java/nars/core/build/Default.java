@@ -62,9 +62,13 @@ public class Default extends Parameters implements ConceptBuilder {
     int conceptBagLevels;
 
     /** Size of TaskBuffer */
-    int taskBufferSize;
+    int novelTaskBagSize;
     
-    int taskBufferLevels;
+    int sequenceTaskBagSize;
+    
+    int novelTaskBagLevels;
+    
+    int sequenceBagLevels;
     
     public static enum InternalExperienceMode {
         None, Minimal, Full
@@ -81,24 +85,27 @@ public class Default extends Parameters implements ConceptBuilder {
         
        // temporalPlanner(8, 64, 16);
         
-        setConceptBagSize(1000);        
+        setConceptBagSize(10000);        
         setConceptBagLevels(100);
         
-        setTaskLinkBagSize(20);
+        setTaskLinkBagSize(200);
         setTaskLinkBagLevels(100);
 
-        setTermLinkBagSize(100);
+        setTermLinkBagSize(1000);
         setTermLinkBagLevels(100);
         
-        setNovelTaskBagSize(10);
+        setNovelTaskBagSize(100);
         setNovelTaskBagLevels(100);
-
+        
+        setSequenceTaskBagSize(100);
+        setSequenceTaskBagLevels(100);
         
         param.duration.set(Parameters.DURATION);
         param.conceptForgetDurations.set(2.0);
         param.taskLinkForgetDurations.set(4.0);
         param.termLinkForgetDurations.set(10.0);
         param.novelTaskForgetDurations.set(2.0);
+        param.sequenceForgetDurations.set(4.0);
                 
         param.conceptBeliefsMax.set(7);
         param.conceptGoalsMax.set(7);
@@ -121,7 +128,10 @@ public class Default extends Parameters implements ConceptBuilder {
     }
 
     public Memory newMemory(Param p) {        
-        return new Memory(p, newAttention(), newNovelTaskBag());
+        return new Memory(p, 
+                new DefaultAttention(newConceptBag(), getConceptBuilder()), 
+                new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize()),
+                new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize()));
     }
 
 
@@ -176,14 +186,6 @@ public class Default extends Parameters implements ConceptBuilder {
     public Bag<Concept,Term> newConceptBag() {
         return new LevelBag(getConceptBagLevels(), getConceptBagSize());
     }
-
-    public DefaultAttention newAttention() {
-        return new DefaultAttention(newConceptBag(), getConceptBuilder());
-    }
-    
-    public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag() {
-        return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
-    }
     
     public int getConceptBagSize() { return conceptBagSize; }    
     public Default setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
@@ -206,21 +208,35 @@ public class Default extends Parameters implements ConceptBuilder {
     }
 
     public Default setNovelTaskBagSize(int taskBufferSize) {
-        this.taskBufferSize = taskBufferSize;
+        this.novelTaskBagSize = taskBufferSize;
+        return this;
+    }
+    
+    public Default setSequenceTaskBagSize(int taskBufferSize) {
+        this.sequenceTaskBagSize = taskBufferSize;
         return this;
     }
 
     public int getNovelTaskBagSize() {
-        return taskBufferSize;
+        return novelTaskBagSize;
+    }
+    
+    public int getSequenceTaskBagSize() {
+        return sequenceTaskBagSize;
     }
     
     public Default setNovelTaskBagLevels(int l) {
-        this.taskBufferLevels = l;
+        this.novelTaskBagLevels = l;
+        return this;
+    }
+    
+    public Default setSequenceTaskBagLevels(int l) {
+        this.sequenceBagLevels = l;
         return this;
     }
 
     public int getNovelTaskBagLevels() {
-        return taskBufferLevels;
+        return novelTaskBagLevels;
     }
     
 

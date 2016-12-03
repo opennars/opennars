@@ -19,7 +19,6 @@ public class NALPerfLoop {
         int maxConcepts = 2000;
         int extraCycles = 2048;
         int randomExtraCycles = 512;
-        Parameters.THREADS = 1;
           
         NAR n = new NAR(new Default().setConceptBagSize(maxConcepts) );
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );

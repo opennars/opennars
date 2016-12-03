@@ -19,8 +19,10 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
+import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.language.CompoundTerm;
+import nars.language.Conjunction;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.language.Variable;
@@ -159,6 +161,15 @@ public abstract class DerivationContext implements Runnable {
         task.getBudget().setPriority(task.getBudget().getPriority()*Parameters.DERIVATION_PRIORITY_LEAK);
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
         //memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
+        
+        //fill sequenceTask buffer due to the new derived sequence
+        if(!task.sentence.isEternal() && 
+                task.sentence.term instanceof Conjunction && 
+                ((Conjunction) task.sentence.term).getTemporalOrder() != TemporalRules.ORDER_NONE &&
+                ((Conjunction) task.sentence.term).getTemporalOrder() != TemporalRules.ORDER_INVALID) {
+            this.memory.sequenceTasks.putIn(task);
+        }
+        
         addTask(task, "Derived");
         return true;
     }
