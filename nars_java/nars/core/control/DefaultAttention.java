@@ -164,10 +164,6 @@ public class DefaultAttention implements Iterable<Concept> {
         concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
     }
 
-    public Concept sampleNextConcept() {
-        return concepts.peekNext();
-    }
-
     public Iterator<Concept> iterator() {
         return concepts.iterator();
     }
