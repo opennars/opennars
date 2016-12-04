@@ -334,7 +334,7 @@ public class Predict1 {
 
         Parameters.DEBUG = true;
         
-        this.nar = new NAR(new Default().simulationTime());
+        this.nar = new NAR(new Default());
 
         nar.param.conceptForgetDurations.set(10);
         nar.param.taskLinkForgetDurations.set(16);
@@ -481,7 +481,7 @@ public class Predict1 {
 
             nar.frame(1);
 
-            nar.memory.addSimulationTime(1);
+            //nar.memory.addSimulationTime(1);
         }
 
     }

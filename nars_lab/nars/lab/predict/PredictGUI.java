@@ -283,7 +283,7 @@ public class PredictGUI extends JPanel {
         
         Parameters.DEBUG = true;
 
-        n = new NAR(new Default().simulationTime().setInternalExperience(null));
+        n = new NAR(new Default().setInternalExperience(null));
         
         NARSwing.themeInvert();
         new NARSwing(n);
@@ -375,7 +375,7 @@ public class PredictGUI extends JPanel {
             
             
             n.step(getThinkInterval());
-            n.memory.addSimulationTime(getDT());
+           // n.memory.addSimulationTime(getDT());
             //System.out.println(n.time() + " " + n.memory.getTimeDelta());
             
             try {
