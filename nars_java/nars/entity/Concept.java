@@ -152,20 +152,6 @@ public class Concept extends Item<Term> {
 
     }
 
-//    @Override public int hashCode() {
-//        return term.hashCode();
-//    }
-//
-//    @Override public boolean equals(final Object obj) {
-//        if (this == obj) return true;
-//        if (obj instanceof Concept) {
-//            Concept t = (Concept)obj;
-//            return (t.term.equals(term));
-//        }
-//        return false;
-//    }
-//    
-
     @Override public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Concept)) return false;
@@ -174,9 +160,6 @@ public class Concept extends Item<Term> {
 
     @Override public int hashCode() { return name().hashCode();     }
 
-    
-    
-    
     
     @Override
     public Term name() {
@@ -418,7 +401,9 @@ public class Concept extends Item<Term> {
 
             boolean fullfilled = AntiSatisfaction < Parameters.SATISFACTION_TRESHOLD;
             
-            if (task.aboveThreshold() && !fullfilled && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
+            Sentence projectedGoal = goal.projection(nal.memory.time(),nal.memory.time());
+            
+            if (projectedGoal != null && task.aboveThreshold() && !fullfilled && projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
 
                 questionFromGoal(task, nal);
                 
