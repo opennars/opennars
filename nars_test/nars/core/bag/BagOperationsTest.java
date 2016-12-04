@@ -40,6 +40,28 @@ public class BagOperationsTest {
         testBagSequence(new LevelBag(2, 2));    
     }
     
+    /** slow, probably want to override in subclasses */
+    public static float getMinPriority(Bag bag) {
+        float min = 1.0f;
+        for (Object o : bag) {
+            Item e = (Item) o;
+            float p = e.getPriority();
+            if (p < min) min = p;
+        }
+        return min;            
+    }
+    
+    /** slow, probably want to override in subclasses */
+    public static float getMaxPriority(Bag bag) {
+        float max = 0.0f;
+        for (Object o : bag) {
+            Item e = (Item) o;
+            float p = e.getPriority();
+            if (p > max) max = p;
+        }
+        return max;
+    }
+    
     public static void testBagSequence(Bag b) {
         
         //different id, different priority
@@ -55,8 +77,8 @@ public class BagOperationsTest {
         
         b.putIn(new NullConcept("c", 0.2f));
         assertEquals(2, b.size());
-        assertEquals(0.1f, b.getMinPriority(),0.001f);
-        assertEquals(0.2f, b.getMaxPriority(),0.001f);
+        assertEquals(0.1f, getMinPriority(b),0.001f);
+        assertEquals(0.2f, getMaxPriority(b),0.001f);
         
         //if (b instanceof GearBag()) return;
         
@@ -65,8 +87,8 @@ public class BagOperationsTest {
         
         
         assertEquals(2, b.size());
-        assertEquals(0.2f, b.getMinPriority(),0.001f);
-        assertEquals(0.4f, b.getMaxPriority(),0.001f);
+        assertEquals(0.2f, getMinPriority(b),0.001f);
+        assertEquals(0.4f, getMaxPriority(b),0.001f);
         
         
         Item tb = b.take(new Term("b"));
