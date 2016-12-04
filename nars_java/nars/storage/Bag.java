@@ -181,25 +181,4 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         return getClass().getSimpleName();// + "(" + size() + "/" + getCapacity() +")";
     }
     
-    /** slow, probably want to override in subclasses */
-    public float getMinPriority() {
-        float min = 1.0f;
-        for (Item e : this) {
-            float p = e.getPriority();
-            if (p < min) min = p;
-        }
-        return min;            
-    }
-    
-    /** slow, probably want to override in subclasses */
-    public float getMaxPriority() {
-        float max = 0.0f;
-        for (Item e : this) {
-            float p = e.getPriority();
-            if (p > max) max = p;
-        }
-        return max;
-    }
-
-    
 }
