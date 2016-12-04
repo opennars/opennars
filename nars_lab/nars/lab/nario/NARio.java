@@ -60,9 +60,9 @@ public class NARio extends Run {
 
     public static void main(String[] arg) {
         //NAR nar = new Default().realtime().build();
-        
-        NAR nar = new NAR(new Default().simulationTime().setConceptBagSize(500));
-        
+        NARSwing.themeInvert();
+        NAR nar = new NAR(new Default());
+
         //nar.addPlugin(new TemporalParticlePlanner());
 
        // NAR nar = new CurveBagNARBuilder().simulationTime().build();
@@ -85,18 +85,18 @@ public class NARio extends Run {
         (nar.param).noiseLevel.set(0);
        // (nar.param).decisionThreshold.set(0);
         
-        float fps = 50f;
-        gameRate = 1.0f / fps;
+        float fps = 200f;
+        gameRate = 2.0f; //1.0f / fps;
 
         
 
         NARSwing sw=new NARSwing(nar);
         
-        //nar.start(((long)(1000f/fps)));//, memCyclesPerFrame, 1f);
-        nar.start((long)(1000f/fps), memoryCyclesPerFrame);
+        nar.start(((long)(1000f/fps)));//, memCyclesPerFrame, 1f);
+       // nar.start((long)(1000f/fps), memoryCyclesPerFrame);
         
         NARio nario = new NARio(nar);
-        sw.controls.setSpeed(0.95f);
+        //sw.controls.setSpeed(0.95f);
     }
 
     ChangedTextInput chg;
@@ -268,8 +268,6 @@ public class NARio extends Run {
             @Override
             public void event(Class event, Object... arguments) {
 
-                nar.memory.addSimulationTime(memoryCyclesPerFrame);
-
                 {
         //                int ji = 10;
         //                System.out.print("CONCEPTS: ");
@@ -393,7 +391,7 @@ public class NARio extends Run {
                                     lastMY = y;
                                 }
                                 if("left".equals(dir))  {
-                                    nar.addInput("<right --> moved>. :|: %0.00;0.90%");
+                                    nar.addInput("(--,<right --> moved>). :|: %1.00;0.90%");
                                 }
                             }
                             //this one is wrong like when getting stuck indicates:
@@ -560,7 +558,7 @@ public class NARio extends Run {
                     gotCoin = 0;
                 }
                 if(www%200==0) {
-                    nar.addInput("<right --> moved>. %0.00;0.90%"); //dont remember
+                    nar.addInput("(--,<right --> moved>). %1.00;0.90%"); //dont remember
                     nar.addInput("<right --> moved>! %1.00;0.99%");
                      //nar.addInput("<up --> moved>!");
                      //nar.addInput("<up --> moved>!");

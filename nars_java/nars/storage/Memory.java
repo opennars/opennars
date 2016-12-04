@@ -176,12 +176,7 @@ public class Memory implements Serializable {
     }
 
     public long time() {
-        switch (param.getTiming()) {
-            case Iterative: return getCycleTime();
-            case Real: return getRealTime();
-            case Simulation: return getSimulationTime();
-        }
-        return 0;
+        return getCycleTime();
     }
     
     public int getDuration() {
@@ -191,20 +186,6 @@ public class Memory implements Serializable {
     /** internal, subjective time (inference steps) */
     public long getCycleTime() {
         return cycle;
-    }
-
-    /** hard real-time, uses system clock */
-    public long getRealTime() {
-        return timeRealNow - timeRealStart;
-    }
-    
-    /** soft real-time, uses controlled simulation time */
-    public long getSimulationTime() {
-        return timeSimulation;
-    }
-    
-    public void addSimulationTime(long dt) {
-        timeSimulation += dt;
     }
     
     /** difference in time since last cycle */

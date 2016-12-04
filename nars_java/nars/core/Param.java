@@ -110,16 +110,6 @@ public class Param implements Serializable {
     /** Reliance factor, the empirical confidence of analytical truth.
         the same as default confidence  */        
     public final AtomicDouble reliance = new AtomicDouble();
-    
-    
-    /** avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode */
-    public void setTiming(Timing time) {
-        this.timing = time;
-    }
-
-    public Timing getTiming() {
-        return timing;
-    }
 
     public Forgetting getForgetMode() {
         return forgetting;

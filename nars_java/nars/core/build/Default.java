@@ -116,7 +116,6 @@ public class Default extends Parameters implements ConceptBuilder {
         param.termLinkRecordLength.set(10);
         
         param.setForgetting(Forgetting.Iterative);
-        param.setTiming(Timing.Iterative);
         param.noiseLevel.set(100);
 
         param.reliance.set(0.9f);
@@ -264,18 +263,6 @@ public class Default extends Parameters implements ConceptBuilder {
 
     public Default setTermLinkBagSize(int termLinkBagSize) {
         this.termLinkBagSize = termLinkBagSize;
-        return this;
-    }
-
-    
-    public Default realTime() {
-        param.setTiming(Timing.Real);
-        param.setForgetting(Forgetting.Periodic);
-        return this;
-    }
-    public Default simulationTime() {
-        param.setTiming(Timing.Simulation);
-        param.setForgetting(Forgetting.Periodic);
         return this;
     }
 

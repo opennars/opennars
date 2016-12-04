@@ -246,6 +246,7 @@ public class SimNAR extends Frame {
                 nar.memory.addOperator(new Right("^Left")); 
                 (nar.param).noiseLevel.set(0);
                 new NARSwing(nar); 
+                nar.start(1);
                 Memory m = nar.memory;
                // m.conceptForgetDurations.setValue(1.0); //better for declarative reasoning tasks: 2
                 //m.taskLinkForgetDurations.setValue(1.0); //better for declarative reasoning tasks: 4
@@ -306,7 +307,7 @@ public class SimNAR extends Frame {
                     nar.addInput("(--,<SELF --> [good]>). :|:");
                 }
                 
-                nar.step(500);
+                //nar.step(500);
 
                 if(lastAction==0 && random(1.0f)<Alpha) { //if NAR hasn't decided chose a random action
                     lastAction = (int)random((float)nActions);
@@ -1313,6 +1314,7 @@ public class SimNAR extends Frame {
         public void setup()
         {
             this.size(800, 600);
+            this.frameRate(30);
             //mem.simulate_consistency=0.05;
             //mem.simulate_damping=0.90;
             //size(worldSize-200,worldSize-200);
