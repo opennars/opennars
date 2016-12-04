@@ -121,7 +121,7 @@ public class Default extends Parameters implements ConceptBuilder {
 
         param.reliance.set(0.9f);
         
-        param.decisionThreshold.set(0.5);
+        param.decisionThreshold.set(0.6);
     
         //add derivation filters here:
         //param.getDefaultDerivationFilters().add(new BeRational());

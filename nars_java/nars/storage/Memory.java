@@ -440,15 +440,20 @@ public class Memory implements Serializable {
         int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
         while (counter-- > 0) {
             task = newTasks.removeFirst();
-            if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.term)!=null) { // new input or existing concept
+            if (task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
                 new ImmediateProcess(this, task).run(); 
             } else {
                 Sentence s = task.sentence;
-                if (s.isJudgment()) {
+                if (s.isJudgment() || s.isGoal()) {
                     double d = s.getTruth().getExpectation();
-                    if (d > Parameters.DEFAULT_CREATION_EXPECTATION) {
+                    if (s.isJudgment() && d > Parameters.DEFAULT_CREATION_EXPECTATION) {
                         novelTasks.putIn(task);    // new concept formation
-                    } else {
+                    } else 
+                    if(s.isGoal() && d > Parameters.DEFAULT_CREATION_EXPECTATION_GOAL) {
+                        novelTasks.putIn(task);    // new concept formation
+                    }
+                    else
+                    {
                         removeTask(task, "Neglected");
                     }
                 }
