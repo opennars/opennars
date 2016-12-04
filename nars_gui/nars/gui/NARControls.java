@@ -640,19 +640,11 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                     return "";
                 }
                 
-                Timing tt = memory.param.getTiming();
-                
                 if (sb.length() > 0) sb.setLength(0);
                 
                 sb.append('@');
                 
-                if ((tt == Real) || (tt == Simulation)) {
-                    sb.append(memory.time() + "|" + memory.getCycleTime());
-                }
-                else {
-                    sb.append(memory.time());
-                }
-                        
+                sb.append(memory.time());      
                 
 
                 if (currentSpeed == 0) {

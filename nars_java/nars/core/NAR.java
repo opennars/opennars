@@ -635,20 +635,6 @@ public class NAR implements Runnable {
         }
 
         emit(FrameEnd.class);
-
-        long timeEnd = System.currentTimeMillis();
-
-        if (memory.param.getTiming() == Timing.Real) {
-            long frameTime = timeEnd - timeStart;
-            final int d = param.duration.get();
-
-            //warn if frame consumed more time than reasoner duration
-            if (frameTime > d) {
-                emit(ERR.class, 
-                        "@" + timeEnd + ": Real-time consumed by frame (" + 
-                                frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)" );
-            }
-        }
     }
     
     protected long getSimulationTimeCyclesPerFrame() {
