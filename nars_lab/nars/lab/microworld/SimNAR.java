@@ -246,7 +246,7 @@ public class SimNAR extends Frame {
                 nar.memory.addOperator(new Right("^Left")); 
                 (nar.param).noiseLevel.set(0);
                 new NARSwing(nar); 
-                nar.start(1);
+                nar.start(0);
                 Memory m = nar.memory;
                // m.conceptForgetDurations.setValue(1.0); //better for declarative reasoning tasks: 2
                 //m.taskLinkForgetDurations.setValue(1.0); //better for declarative reasoning tasks: 4
@@ -287,7 +287,7 @@ public class SimNAR extends Frame {
             {
                 for(int i=0;i<viewField.length;i++) {
                     if(viewField[i]>0.1f) {
-                        String s = "<{\""+String.valueOf(i)+"\"} --> [on]>. :|: %"+String.valueOf(viewField[i])+"%";
+                        String s = "<{\""+String.valueOf(i)+"\"} --> [on]>. :|: %"+String.valueOf(0.5f+0.5f*viewField[i])+"%";
                         nar.addInput(s);
                         System.out.println("perceive "+s);
                     }
@@ -1314,7 +1314,7 @@ public class SimNAR extends Frame {
         public void setup()
         {
             this.size(800, 600);
-            this.frameRate(30);
+            this.frameRate(20);
             //mem.simulate_consistency=0.05;
             //mem.simulate_damping=0.90;
             //size(worldSize-200,worldSize-200);
