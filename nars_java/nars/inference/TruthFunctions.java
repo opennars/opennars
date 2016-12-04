@@ -399,6 +399,7 @@ public final class TruthFunctions extends UtilityFunctions {
     }
     
     public static final float temporalProjection(final long sourceTime, final long targetTime, final long currentTime) {
-        return abs(sourceTime - targetTime) / (float) (abs(sourceTime - currentTime) + abs(targetTime - currentTime));
+        double a = 10.0; //projection less strict as we changed in v2.0.0
+        return abs(sourceTime - targetTime) / (float) (abs(sourceTime - currentTime) + abs(targetTime - currentTime) + a);
     }
 }
