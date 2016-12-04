@@ -81,8 +81,8 @@ public class BagFairness {
             n.memory.concepts.concepts.peekNext();
             n.step(1);
             
-            if (n.memory.param.getTiming() == Timing.Simulation)
-                n.memory.addSimulationTime(1);
+            //if (n.memory.param.getTiming() == Timing.Simulation)
+            //    n.memory.addSimulationTime(1);
             
             if (n.time() > iterationRecordBegin) {
 

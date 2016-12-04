@@ -85,8 +85,7 @@ public class TicTacToe extends JPanel {
         super(new BorderLayout());
 
         nar = new NAR(new Default().
-                setConceptBagSize(1000).
-                simulationTime());
+                setConceptBagSize(1000));
         
         nar.memory.addOperator(new AddO("^addO"));        
         (nar.param).duration.set(1000);
@@ -97,7 +96,7 @@ public class TicTacToe extends JPanel {
 
             @Override
             public void event(Class event, Object[] args) {
-                nar.memory.addSimulationTime(500);
+               // nar.memory.addSimulationTime(500);
             }
             
         });

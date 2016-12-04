@@ -14,7 +14,7 @@ public class RealtimeSequenceExperiment {
         int durationMS = 50;
         int cycPerFrame = 5;
         
-        NAR n = new NAR(new Default().realTime());
+        NAR n = new NAR(new Default());
                 
         (n.param).duration.set(durationMS);
         (n.param).noiseLevel.set(0);
