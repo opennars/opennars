@@ -40,7 +40,6 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     abstract public int getCapacity();
 
-    abstract public float getMass();
 
     /**
      * Choose an Item according to distribution policy and take it out of the Bag
@@ -52,7 +51,6 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     /** gets the next value without removing changing it or removing it from any index.  however
      the bag is cycled so that subsequent elements are different. */    
     abstract public E peekNext();
-    
     
     /**
      * Insert an item into the itemTable, and return the overflow
