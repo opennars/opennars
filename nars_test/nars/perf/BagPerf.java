@@ -40,28 +40,6 @@ import nars.storage.LevelBag;
  */
 public class BagPerf {
     
-        public float getMaxItemsPerLevel(LevelBag<NullItem,CharSequence> bag) {
-        int max = bag.getLevelSize(0);
-        for (int i = 1; i < bag.levels; i++) {
-            int s = bag.getLevelSize(i);
-            if (s > max) {
-                max = s;
-            }
-        }
-        return max;
-    }
-
-    public float getMinItemsPerLevel(LevelBag<NullItem,CharSequence> bag) {
-        int min = bag.getLevelSize(0);
-        for (int i = 1; i < bag.levels; i++) {
-            int s = bag.getLevelSize(i);
-            if (s < min) {
-                min = s;
-            }
-        }
-        return min;
-    }
-    
     int repeats = 8;
     int warmups = 1;
     final static AtomicDouble forgetRate = (new NAR(new Default()).param).conceptForgetDurations;
@@ -98,9 +76,9 @@ public class BagPerf {
                 
                 if (!warmup) {                    
                     totalPriority += b.getAveragePriority();
-                    //totalMass += b.getMass();                    
-                    totalMinItemsPerLevel += getMinItemsPerLevel(b);
-                    totalMaxItemsPerLevel += getMaxItemsPerLevel(b);
+                    totalMass += b.getMass();                    
+                    totalMinItemsPerLevel += b.getMinItemsPerLevel();
+                    totalMaxItemsPerLevel += b.getMaxItemsPerLevel();
                 }
             }
             
@@ -114,7 +92,7 @@ public class BagPerf {
         //System.out.print((totalMinItemsPerLevel/p.repeats) + ",");
         System.out.print((totalMaxItemsPerLevel/p.repeats) + ",");
         System.out.print(totalPriority/p.repeats + ",");
-        //System.out.print(totalMass/repeats/levels + ",");
+        System.out.print(totalMass/repeats/levels + ",");
         System.out.println();
     }
             
