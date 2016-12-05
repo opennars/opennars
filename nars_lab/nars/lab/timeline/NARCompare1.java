@@ -17,7 +17,7 @@
 package nars.lab.timeline;
 
 import nars.NAR;
-import nars.config.Param;
+import nars.config.RuntimeParameters;
 import nars.config.Default;
 import automenta.vivisect.TreeMLData.FirstOrderDifferenceTimeSeries;
 import automenta.vivisect.swing.NWindow;
@@ -30,11 +30,11 @@ import nars.gui.util.NARTrace;
 
 public class NARCompare1 extends TimelineExample {
     
-    public static void setA(Param p) {
+    public static void setA(RuntimeParameters p) {
         p.termLinkForgetDurations.set(10);
     }
     
-    public static void setB(Param p) {
+    public static void setB(RuntimeParameters p) {
         p.termLinkForgetDurations.set(5);
     }
     

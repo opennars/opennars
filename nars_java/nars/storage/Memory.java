@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import nars.NAR;
-import nars.config.Param;
+import nars.config.RuntimeParameters;
 import nars.config.Parameters;
 import nars.util.Events.ResetEnd;
 import nars.util.Events.ResetStart;
@@ -121,7 +121,7 @@ public class Memory implements Serializable {
     private long cycle;
     
     /* System parameters that can be changed at runtime */
-    public final Param param;
+    public final RuntimeParameters param;
     
     //index of Conjunction questions
     transient private Set<Task> questionsConjunction = new HashSet();
@@ -133,7 +133,7 @@ public class Memory implements Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, WorkingCycle concepts, Bag<Task<Term>,Sentence<Term>> novelTasks,
+    public Memory(RuntimeParameters param, WorkingCycle concepts, Bag<Task<Term>,Sentence<Term>> novelTasks,
             Bag<Task<Term>,Sentence<Term>> sequenceTasks) {                
 
         this.param = param;

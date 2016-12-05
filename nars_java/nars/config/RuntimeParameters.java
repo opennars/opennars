@@ -12,9 +12,9 @@ import nars.control.DerivationContext.DerivationFilter;
 /**
  * NAR Parameters which can be changed during runtime.
  */
-public class Param implements Serializable {
+public class RuntimeParameters implements Serializable {
     
-    public Param() {    }
+    public RuntimeParameters() {    }
 
     /** Silent threshold for task reporting, in [0, 100]. 
      *  Noise level = 100 - silence level; noise 0 = always silent, noise 100 = never silent

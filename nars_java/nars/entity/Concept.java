@@ -79,6 +79,22 @@ import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 import nars.storage.LevelBag;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
 
 public class Concept extends Item<Term> {
 

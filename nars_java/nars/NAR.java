@@ -1,7 +1,7 @@
 package nars;
 
 import nars.config.Parameters;
-import nars.config.Param;
+import nars.config.RuntimeParameters;
 import nars.util.Plugin;
 import nars.storage.Memory;
 import nars.util.Events;
@@ -84,7 +84,7 @@ public class NAR implements Runnable {
      * The memory of the reasoner
      */
     public Memory memory;
-    public Param param;
+    public RuntimeParameters param;
     
     
     /** The addInput channels of the reasoner     */
