@@ -638,18 +638,16 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                 }
                 
                 if (sb.length() > 0) sb.setLength(0);
-                
-                sb.append('@');
-                
+
                 sb.append(memory.time());      
                 
 
                 if (currentSpeed == 0) {
                     sb.append(" - pause");
                 } else if (currentSpeed == 1.0) {
-                    sb.append(" - run max speed");
+                    sb.append(" - max speed");
                 } else {
-                    sb.append(" - run ").append(nar.getMinCyclePeriodMS()).append(" ms / step");
+                    sb.append(" - ").append(nar.getMinCyclePeriodMS()).append(" ms/step");
                 }
                 return sb.toString();
             }
@@ -675,7 +673,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                 }
 
                 float v = value();
-                String s = "Volume: " + super.getText() + " (";
+                String s = "Volume:" + super.getText() + " (";
 
                 if (v == 0) {
                     s += "Silent";
@@ -747,31 +745,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             stopButton.setText(String.valueOf(FA_PlayCharacter));
             nar.stop();
         }
-    }
-
-
-    
-//
-//    @Override
-//    public void run() {
-//        
-//
-//        updateGUI();
-//        
-//        lastTime = nar.getTime();
-//
-//        while (true) {
-//            try {
-//                Thread.sleep(GUIUpdatePeriodMS);
-//            } catch (InterruptedException ex) {
-//            }
-//
-//
-//            updateGUI();
-//
-//        }
-//    }
-    
+    } 
     
     //http://astronautweb.co/snippet/font-awesome/
     private final char FA_PlayCharacter = '\uf04b';
@@ -806,7 +780,6 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             public void actionPerformed(ActionEvent e) {
                 setSpeed(1.0f);
                 volumeSlider.setValue(0.0f);
-                
             }
 
         });
@@ -846,11 +819,11 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         c.ipady = 4;
 
         p.add(new NSlider(memory.param.decisionThreshold, "Decision Threshold", 0.0f, 1.0f), c);
-        p.add(new NSlider(memory.param.taskLinkForgetDurations, "Task Memory Duration", 0.5f, 20), c);
-        p.add(new NSlider(memory.param.termLinkForgetDurations, "Belief Memory Duration", 0.5f, 20), c);
-        p.add(new NSlider(memory.param.conceptForgetDurations, "Concept Memory Duration", 0.5f, 20), c);
-        p.add(new NSlider(memory.param.novelTaskForgetDurations, "Novel Memory Duration", 0.5f, 20), c);
-        p.add(new NSlider(memory.param.sequenceForgetDurations, "Sequence Memory Duration", 0.5f, 20), c);
+        p.add(new NSlider(memory.param.taskLinkForgetDurations, "Task Duration", 0.5f, 20), c);
+        p.add(new NSlider(memory.param.termLinkForgetDurations, "Belief Duration", 0.5f, 20), c);
+        p.add(new NSlider(memory.param.conceptForgetDurations, "Concept Duration", 0.5f, 20), c);
+        p.add(new NSlider(memory.param.novelTaskForgetDurations, "Novel Duration", 0.5f, 20), c);
+        p.add(new NSlider(memory.param.sequenceForgetDurations, "Sequence Duration", 0.5f, 20), c);
 
         
 //
