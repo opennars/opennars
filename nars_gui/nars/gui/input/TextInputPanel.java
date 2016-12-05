@@ -48,7 +48,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import nars.core.NAR;
+import nars.NAR;
 import nars.gui.FileTreeModel;
 import nars.gui.input.TextInputPanel.InputAction;
 import nars.gui.input.TextInputPanel.TextInputMode;

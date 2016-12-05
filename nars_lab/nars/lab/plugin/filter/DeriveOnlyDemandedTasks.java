@@ -4,8 +4,8 @@
  */
 package nars.lab.plugin.filter;
 
-import nars.core.control.DerivationContext;
-import nars.core.control.DerivationContext.DerivationFilter;
+import nars.control.DerivationContext;
+import nars.control.DerivationContext.DerivationFilter;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.Symbols;

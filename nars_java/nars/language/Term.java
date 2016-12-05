@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 import nars.storage.Memory;
-import nars.core.Parameters;
+import nars.config.Parameters;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;

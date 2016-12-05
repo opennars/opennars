@@ -1,10 +1,10 @@
 package nars.multistep;
 
-import nars.core.NAR;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Default;
 import nars.io.TextOutput;
 import nars.lab.testutils.OutputContainsCondition;
-import nars.io.narsese.Narsese;
+import nars.io.Narsese;
 import nars.language.Tense;
 
 /**

@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import nars.storage.Memory;
-import nars.core.Parameters;
+import nars.config.Parameters;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;

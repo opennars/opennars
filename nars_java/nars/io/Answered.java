@@ -6,7 +6,7 @@ package nars.io;
 
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.Answer;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;

@@ -2,8 +2,8 @@ package nars.lab.io.nlp;
 
 import java.util.ArrayList;
 import java.util.List;
-import nars.core.control.AbstractTask;
-import nars.io.narsese.Narsese;
+import nars.control.AbstractTask;
+import nars.io.Narsese;
 
 public class NaturalLanguagePerception {
     static public class LinePart {

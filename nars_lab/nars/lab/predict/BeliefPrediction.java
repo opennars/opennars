@@ -7,7 +7,7 @@ package nars.lab.predict;
 import com.google.common.collect.Lists;
 import java.util.List;
 import nars.util.Events;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Concept;
 import nars.util.AbstractObserver;
 

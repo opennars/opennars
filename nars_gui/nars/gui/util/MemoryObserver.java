@@ -5,7 +5,7 @@ import nars.util.Events;
 import nars.util.Events.CycleEnd;
 import nars.util.Events.CycleStart;
 import nars.storage.Memory;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.io.Output;

@@ -17,7 +17,7 @@ import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Concept;
 
 /**

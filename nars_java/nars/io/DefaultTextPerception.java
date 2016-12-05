@@ -11,24 +11,17 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.util.Events.Perceive;
 import nars.storage.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.NAR;
+import nars.config.Parameters;
 import nars.util.Plugin;
-import nars.core.control.AbstractTask;
+import nars.control.AbstractTask;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.Output.IN;
-import nars.io.narsese.Narsese;
-import nars.io.narsese.Narsese.InvalidInputException;
+import nars.io.Narsese.InvalidInputException;
 /*import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
 import nars.io.nlp.Twenglish;*/
-import nars.console.Echo;
-import nars.console.PauseInput;
-import nars.console.Reboot;
-import nars.console.Reset;
-import nars.console.SetDecisionThreshold;
-import nars.console.SetVolume;
 
 /**
  *  Default handlers for text perception.

@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.build.Default;
-import nars.core.control.DefaultAttention;
+import nars.NAR;
+import nars.config.Parameters;
+import nars.config.Default;
+import nars.control.DefaultAttention;
 import nars.entity.Concept;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.timeline.LineChart;
@@ -20,7 +20,7 @@ import nars.storage.Bag;
 import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.MultiTimeline;
 import automenta.vivisect.timeline.StackedPercentageChart;
-import nars.core.control.FireConcept;
+import nars.control.FireConcept;
 import nars.storage.LevelBag;
 
 /**

@@ -2,7 +2,7 @@ package nars.lab.inference;
 
 import nars.util.EventEmitter;
 import nars.util.Events;
-import nars.core.NAR;
+import nars.NAR;
 
 
 public abstract class AbstractController implements EventEmitter.EventObserver {

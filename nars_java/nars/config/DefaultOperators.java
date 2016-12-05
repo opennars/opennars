@@ -1,9 +1,9 @@
-package nars.core.build;
+package nars.config;
 
-import nars.core.NAR;
+import nars.NAR;
 import nars.operator.NullOperator;
 import nars.operator.Operator;
-import nars.console.Say;
+import nars.io.Say;
 import nars.lab.operator.math.Add;
 import nars.lab.operator.math.Count;
 import nars.lab.operator.math.MathExpression;

@@ -8,7 +8,7 @@ import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.Output;
 
 

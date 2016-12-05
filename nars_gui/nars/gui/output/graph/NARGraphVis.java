@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
 import nars.util.Events.ResetEnd;
-import nars.core.NAR;
+import nars.NAR;
 import nars.gui.output.graph.layout.HashPriorityPolarLayout;
 import nars.gui.util.DefaultGraphizer;
 import nars.gui.util.NARGraph;

@@ -1,7 +1,7 @@
 package nars.language;
 
 import java.util.Objects;
-import nars.core.Parameters;
+import nars.config.Parameters;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;

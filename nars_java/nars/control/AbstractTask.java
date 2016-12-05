@@ -1,4 +1,4 @@
-package nars.core.control;
+package nars.control;
 
 import nars.entity.BudgetValue;
 import nars.entity.Item;

@@ -8,8 +8,8 @@ import java.util.Collection;
 import nars.util.EventEmitter;
 import nars.util.Events;
 import nars.storage.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.NAR;
+import nars.config.Parameters;
 import nars.core.NALTest;
 
 /**

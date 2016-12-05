@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import nars.storage.Memory;
-import nars.core.Parameters;
-import nars.core.control.DerivationContext;
+import nars.config.Parameters;
+import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -155,7 +155,7 @@ public class TemporalRules {
         return (t instanceof Inheritance) || (t instanceof Similarity);
     }
     
-    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.DerivationContext nal, boolean SucceedingEventsInduction) {
+    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.control.DerivationContext nal, boolean SucceedingEventsInduction) {
         
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK
                 || s1.isEternal() || s2.isEternal())
@@ -500,7 +500,7 @@ public class TemporalRules {
      * @return The budget for the new task which is the belief activated, if
      * necessary
      */
-    public static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final nars.core.control.DerivationContext nal) {
+    public static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final nars.control.DerivationContext nal) {
         BudgetValue budget = null;
         boolean feedbackToLinks = false;
         if (task == null) {

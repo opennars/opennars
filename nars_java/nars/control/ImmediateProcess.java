@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.core.control;
+package nars.control;
 
 import nars.util.Events;
 import nars.storage.Memory;

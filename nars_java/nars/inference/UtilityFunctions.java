@@ -22,7 +22,7 @@ package nars.inference;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
-import nars.core.Parameters;
+import nars.config.Parameters;
 
 /**
  * Common functions on real numbers, mostly in [0,1].

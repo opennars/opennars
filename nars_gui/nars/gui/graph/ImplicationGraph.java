@@ -2,7 +2,7 @@ package nars.gui.graph;
 
 import java.util.Objects;
 import nars.storage.Memory;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;

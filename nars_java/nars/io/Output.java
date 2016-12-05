@@ -3,9 +3,8 @@ package nars.io;
 import nars.util.EventEmitter;
 import nars.util.Events.Answer;
 import nars.storage.Memory;
-import nars.core.NAR;
+import nars.NAR;
 import nars.util.AbstractObserver;
-import nars.console.Say;
 
 /**
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels

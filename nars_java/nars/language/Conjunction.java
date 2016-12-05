@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
-import nars.core.Parameters;
+import nars.config.Parameters;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 

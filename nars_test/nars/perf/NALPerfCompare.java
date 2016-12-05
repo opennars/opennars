@@ -1,9 +1,9 @@
 package nars.perf;
 
 import java.util.Collection;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Parameters;
+import nars.config.Default;
 import static nars.perf.NALStressMeasure.perfNAL;
 import nars.core.NALTest;
 

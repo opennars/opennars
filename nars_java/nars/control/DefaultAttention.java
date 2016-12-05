@@ -1,4 +1,4 @@
-package nars.core.control;
+package nars.control;
 
 import java.util.Iterator;
 import nars.util.Events;

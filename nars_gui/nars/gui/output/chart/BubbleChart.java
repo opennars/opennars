@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.SwingUtilities;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;

@@ -8,7 +8,7 @@ import java.awt.BorderLayout;
 import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import nars.core.NAR;
+import nars.NAR;
 import nars.gui.util.DefaultGraphizer;
 import nars.gui.util.NARGraph;
 import static nars.gui.util.NARGraph.IncludeEverything;

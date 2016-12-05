@@ -51,7 +51,7 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.util.Events.FrameEnd;
 import nars.storage.Memory;
-import nars.core.NAR;
+import nars.NAR;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
 import nars.gui.output.PluginPanel;

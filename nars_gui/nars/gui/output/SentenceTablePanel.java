@@ -13,7 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;

@@ -6,7 +6,7 @@ package nars.lab.testutils;
 
 import java.util.LinkedList;
 import java.util.List;
-import nars.core.NAR;
+import nars.NAR;
 
 /**
  *

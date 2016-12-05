@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import nars.storage.Memory;
-import nars.core.Parameters;
+import nars.config.Parameters;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.ORDER_BACKWARD;
 import static nars.inference.TemporalRules.ORDER_FORWARD;

@@ -20,8 +20,8 @@
  */
 package nars.inference;
 
-import nars.core.Parameters;
-import nars.core.control.DerivationContext;
+import nars.config.Parameters;
+import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;

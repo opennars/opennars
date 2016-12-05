@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import javax.swing.AbstractAction;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;

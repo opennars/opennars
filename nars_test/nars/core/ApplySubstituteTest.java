@@ -2,9 +2,9 @@ package nars.core;
 
 import java.util.HashMap;
 import java.util.Map;
-import nars.core.NAR;
-import nars.core.build.Default;
-import nars.io.narsese.Narsese;
+import nars.NAR;
+import nars.config.Default;
+import nars.io.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;

@@ -21,7 +21,7 @@
 package nars.language;
 
 import java.nio.CharBuffer;
-import nars.core.Parameters;
+import nars.config.Parameters;
 import static nars.io.Symbols.VAR_DEPENDENT;
 import static nars.io.Symbols.VAR_INDEPENDENT;
 import static nars.io.Symbols.VAR_QUERY;

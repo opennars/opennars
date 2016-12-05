@@ -1,5 +1,7 @@
 package nars.core;
 
+import nars.NAR;
+import nars.config.Parameters;
 import nars.lab.ioutils.ExampleFileInput;
 import nars.storage.Memory;
 import nars.lab.testutils.OutputCondition;
@@ -9,7 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import nars.core.build.Default;
+import nars.config.Default;
 import nars.gui.InferenceLogger;
 import nars.io.TextInput;
 import nars.io.TextOutput;

@@ -20,7 +20,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import nars.core.NAR;
+import nars.NAR;
 
 
 public class SketchPointCloudPanel extends Panel implements MouseListener, MouseMotionListener, ActionListener {

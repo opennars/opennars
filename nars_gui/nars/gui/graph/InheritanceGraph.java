@@ -1,6 +1,6 @@
 package nars.gui.graph;
 
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.io.Symbols;

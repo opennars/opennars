@@ -1,6 +1,6 @@
-package nars.console;
+package nars.io;
 
-import nars.core.control.AbstractTask;
+import nars.control.AbstractTask;
 
 /**
  * Input perception command to queue 'stepLater' cycles in Memory

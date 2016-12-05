@@ -7,7 +7,7 @@ package nars.lab.testutils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.Output;
 
 /**

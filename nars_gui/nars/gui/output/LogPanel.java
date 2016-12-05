@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 import nars.util.Events;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import automenta.vivisect.swing.AwesomeToggleButton;

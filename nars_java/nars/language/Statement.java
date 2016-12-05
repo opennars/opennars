@@ -22,7 +22,7 @@ package nars.language;
 
 import java.nio.CharBuffer;
 import java.util.Arrays;
-import nars.core.Parameters;
+import nars.config.Parameters;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.ORDER_NONE;
 import nars.io.Symbols.NativeOperator;

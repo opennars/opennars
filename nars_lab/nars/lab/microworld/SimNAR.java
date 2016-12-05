@@ -1,7 +1,7 @@
 package nars.lab.microworld;
 
 import nars.storage.Memory;
-import nars.core.NAR;
+import nars.NAR;
 //import nars.nal.nal8.Operation;
 //import nars.nal.nal8.operator.SyncOperator;
 //import nars.nar.Default;
@@ -14,7 +14,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import nars.core.build.Default;
+import nars.config.Default;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.language.Term;

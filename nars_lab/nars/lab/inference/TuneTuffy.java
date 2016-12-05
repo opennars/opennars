@@ -7,15 +7,15 @@ package nars.lab.inference;
 import java.io.File;
 import java.io.FileNotFoundException;
 import nars.util.Events.Answer;
-import nars.core.NAR;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.util.AbstractObserver;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.io.narsese.Narsese;
+import nars.io.Narsese;
 import nars.language.Term;
 
 /**

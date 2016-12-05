@@ -5,10 +5,11 @@
 package nars.core;
 
 
+import nars.NAR;
 import com.google.common.collect.Iterables;
 import java.util.HashSet;
 import java.util.Set;
-import nars.core.build.Default;
+import nars.config.Default;
 import nars.entity.Concept;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
