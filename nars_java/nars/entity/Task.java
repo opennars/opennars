@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import nars.storage.Memory;
-import nars.control.AbstractTask;
 import nars.language.Term;
 import nars.plugin.mental.InternalExperience;
 
@@ -36,7 +35,7 @@ import nars.plugin.mental.InternalExperience;
  * garbage collection process.  Otherwise, Task ancestry would grow unbounded,
  * violating the assumption of insufficient resources (AIKR).
  */
-public class Task<T extends Term> extends AbstractTask<Sentence<T>>  {
+public class Task<T extends Term> extends Item<Sentence<T>>  {
 
     /** placeholder for a forgotten task */
     public static final Task Forgotten = new Task();

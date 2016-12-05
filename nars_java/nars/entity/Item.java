@@ -48,7 +48,10 @@ public abstract class Item<K> {
     /** The budget of the Item, consisting of 3 numbers */
     public final BudgetValue budget;
 
-
+    public Item() { //items that do not need budget
+        this.budget = null; //Todo get rid of these console classes such as Reboot completely
+    } //instead process them on parsing immediately!!
+          
     /**
      * Constructor with initial budget
      * @param key The key value

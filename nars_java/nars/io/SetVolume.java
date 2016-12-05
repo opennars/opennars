@@ -1,11 +1,11 @@
 package nars.io;
 
-import nars.control.AbstractTask;
+import nars.entity.Item;
 
 /**
  * Sets the global volume / noise level, =(100% - "silence level")
  */
-public class SetVolume extends AbstractTask<CharSequence> {
+public class SetVolume extends Item<CharSequence> {
     public final int volume;
 
     public SetVolume(int volume) {

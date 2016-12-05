@@ -1,11 +1,11 @@
 package nars.io;
 
-import nars.control.AbstractTask;
+import nars.entity.Item;
 
 /**
  * Sets the global volume / noise level, =(100% - "silence level")
  */
-public class SetDecisionThreshold extends AbstractTask<CharSequence> {
+public class SetDecisionThreshold extends Item<CharSequence> {
     public final double volume;
 
     public SetDecisionThreshold(double volume) {

@@ -1,12 +1,13 @@
 package nars.io;
 
-import nars.control.AbstractTask;
+import nars.entity.Item;
+
 
 /**
  * TODO wrap as operator
  * @author me
  */
-public class Echo extends AbstractTask<CharSequence> {
+public class Echo extends Item<CharSequence> {
     public final Object signal;
     public final Class channel;
 
