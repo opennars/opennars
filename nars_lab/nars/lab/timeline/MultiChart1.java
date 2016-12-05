@@ -36,7 +36,7 @@ public class MultiChart1 extends TimelineExample {
     public static void main(String[] args) {
         int cycles = 500;
         
-        NAR nar = new NAR(new Default());
+        NAR nar = new NAR();
         NARTrace t = new NARTrace(nar);
         nar.addInput("<a --> b>.");
         nar.addInput("<b --> c>.");

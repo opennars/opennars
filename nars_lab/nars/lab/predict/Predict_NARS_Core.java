@@ -44,7 +44,7 @@ public class Predict_NARS_Core {
         int thinkInterval = 50;
         double discretization = 3;
 
-        NAR n = new NAR(new Default());
+        NAR n = new NAR();
         n.param.duration.set(duration);
         n.param.noiseLevel.set(0);
         //n.param.conceptForgetDurations.set(16);

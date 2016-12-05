@@ -191,7 +191,7 @@ public class NlpGui extends JFrame {
     }
     
     public static void main(String[] args) {
-        NAR nar = new NAR(new Default());
+        NAR nar = new NAR();
         
         new NARSwing(nar);
         

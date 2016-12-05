@@ -39,7 +39,7 @@ import nars.config.Parameters;
 import nars.util.Events.ResetEnd;
 import nars.util.Events.ResetStart;
 import nars.util.Events.TaskRemove;
-import nars.control.DefaultAttention;
+import nars.control.WorkingCycle;
 import nars.control.DerivationContext;
 import nars.control.ImmediateProcess;
 import nars.plugin.mental.Emotions;
@@ -99,7 +99,7 @@ public class Memory implements Serializable {
     }
     
     //todo make sense of this class and de-obfuscate
-    public final DefaultAttention concepts;
+    public final WorkingCycle concepts;
     public final EventEmitter event;
     
     /* InnateOperator registry. Containing all registered operators of the system */
@@ -133,7 +133,7 @@ public class Memory implements Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, DefaultAttention concepts, Bag<Task<Term>,Sentence<Term>> novelTasks,
+    public Memory(Param param, WorkingCycle concepts, Bag<Task<Term>,Sentence<Term>> novelTasks,
             Bag<Task<Term>,Sentence<Term>> sequenceTasks) {                
 
         this.param = param;

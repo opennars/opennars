@@ -21,7 +21,7 @@ public class KeyboardInputExample {
         //NAR n = NAR.build(new Default().realTime());
         //n.param.duration.set(100);
         
-        NAR n = new NAR(new Default());
+        NAR n = new NAR();
         
         
                 
