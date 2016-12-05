@@ -19,14 +19,14 @@ public class Param implements Serializable {
     /** Silent threshold for task reporting, in [0, 100]. 
      *  Noise level = 100 - silence level; noise 0 = always silent, noise 100 = never silent
      */
-    public final AtomicInteger noiseLevel = new AtomicInteger();
+    public final AtomicInteger noiseLevel = new AtomicInteger(100);
     
     /** 
        Cycles per duration.
        Past/future tense usage convention;
        How far away "past" and "future" is from "now", in cycles.         
        The range of "now" is [-DURATION/2, +DURATION/2];      */
-    public final AtomicDuration duration = new AtomicDuration();
+    public final AtomicDuration duration = new AtomicDuration(Parameters.DURATION);
     
     /** Concept decay rate in ConceptBag, in [1, 99].  originally: CONCEPT_FORGETTING_CYCLE 
      *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
