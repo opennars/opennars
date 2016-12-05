@@ -17,7 +17,6 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
 import nars.util.Events.FrameStart;
 import nars.util.Events.Perceive;
-import nars.storage.Memory.Timing;
 import nars.core.build.Default;
 import nars.core.control.AbstractTask;
 import nars.core.control.DerivationContext.DerivationFilter;
