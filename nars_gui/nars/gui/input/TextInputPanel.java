@@ -486,29 +486,29 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             
             menu.removeAll();
             
-            
             comments.setText("");
             for (String[] i : interpretations) {
-                Color c = Video.getColor(i[0], 0.7f, 0.6f);
+                Color c = Color.WHITE; //Video.getColor(i[0], 0.7f, 0.6f);
                 comments.print(Color.WHITE, c, i[0] + ":\n", null);
-                Color c2 = Video.getColor(i[0], 0.5f, 0.3f);
+                Color c2 = Color.BLACK; //DARK_GRAY; //Video.getColor(i[0], 0.5f, 0.3f);
                 comments.print(Color.WHITE, c2, i[1] + "\n\n", null);
             }
-
+            comments.setText(comments.getText().trim());
+             comments.setText(""); //syntax panel deactivated here !!!!!
 
             
             if (comments.getText().length() > 0) {
                 if (!isVisible()) {
-                    int ll = mainSplit.getLastDividerLocation();
+                    /*int ll = mainSplit.getLastDividerLocation();
                     if (ll <= 0)
                         ll = (int)(getWidth() * 0.75);
                     if (getWidth() == 0) {
                         //component hasnt been instantiated yet, guessing at size
                         //TODO use actual planned size
                         ll = 500;
-                    }
-                    mainSplit.setDividerLocation(ll);
-                    mainSplit.setLastDividerLocation(ll);
+                    }*/
+                    mainSplit.setDividerLocation(400);
+                    mainSplit.setLastDividerLocation(400);
                     setVisible(true);
                 }                
             }
@@ -529,7 +529,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                     defaultButton = b;
                     maxStrength = strength;
                 }
-                b.setFont(b.getFont().deriveFont((float)(b.getFont().getSize() * (0.5f + 0.5f * strength))));
+               // b.setFont(b.getFont().deriveFont((float)(b.getFont().getSize() * (0.5f + 0.5f * strength))));
                 b.setForeground(Color.WHITE); 
                 b.setBackground(Color.DARK_GRAY);
                 b.addActionListener(new ActionListener() {

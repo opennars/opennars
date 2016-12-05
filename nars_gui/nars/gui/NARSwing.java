@@ -72,7 +72,7 @@ public class NARSwing  {
         UIManager.put("OptionPane.background", Color.GRAY);
         UIManager.put("OptionPane.foreground", Color.WHITE);
         
-        UIManager.put("ComboBox.background", Color.GRAY);
+        UIManager.put("ComboBox.background", Color.DARK_GRAY);
         UIManager.put("ComboBox.foreground", Color.WHITE);
         
         UIManager.put("Table.selectionBackground", Color.LIGHT_GRAY);
@@ -89,13 +89,13 @@ public class NARSwing  {
         UIManager.put("EditorPane.selectionBackground", Color.LIGHT_GRAY);
         UIManager.put("TextPane.selectionBackground", Color.LIGHT_GRAY);
         UIManager.put("TextPane.selectionBackground", Color.LIGHT_GRAY);
-        UIManager.put("ComboBox.selectionBackground", Color.DARK_GRAY);
+        UIManager.put("ComboBox.selectionBackground", Color.BLACK);
         UIManager.put("ComboBox.selectionForeground", Color.WHITE);
         
-        UIManager.put("Pane.background", Color.GRAY);
+        UIManager.put("Pane.background", Color.DARK_GRAY);
         UIManager.put("Pane.foreground", Color.WHITE);
         
-        UIManager.put("CheckBox.background", Color.GRAY);
+        UIManager.put("CheckBox.background", Color.DARK_GRAY);
         UIManager.put("CheckBox.foreground", Color.WHITE);
          
 
