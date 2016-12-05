@@ -7,7 +7,6 @@ package nars.io;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.Answer;
 import nars.NAR;
-import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 
@@ -28,23 +27,12 @@ public abstract class Answered implements EventObserver {
         this.question = question;
                 
         nar.event(this, true, events);
-        
-        reportExistingSolutions();
     }
     
     public void off() {
         nar.event(this, false, events);
     }
 
-    protected void reportExistingSolutions() {
-        Concept c = (Concept)nar.memory.concept( question.getTerm() );
-        if (c == null) return;        
-        
-        for (Task ts : c.beliefs) {
-            onSolution(ts.sentence);
-        }
-    }
-    
     @Override
     public void event(Class event, Object[] args) {                
         
@@ -65,6 +53,4 @@ public abstract class Answered implements EventObserver {
     
     /** called when a subtask of the question has been solved */
     abstract public void onChildSolution(Task child, Sentence belief);
-    
-    
 }
