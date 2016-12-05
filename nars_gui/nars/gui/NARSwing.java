@@ -28,6 +28,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.swing.JFrame;
@@ -51,6 +52,53 @@ public class NARSwing  {
 
     public static void themeInvert() {
         //http://alvinalexander.com/java/java-swing-uimanager-defaults
+        //UIManager.put("ScrollBar.foreground", Color.WHITE);
+       //  UIManager.put("ScrollBar.background", Color.WHITE);
+        UIManager.put("ScrollBar.width", 12);
+        UIManager.put("ScrollBar.shadow", Color.BLACK);
+        UIManager.put("ScrollBar.darkShadow", Color.WHITE);
+        ArrayList<Object> gradients = new ArrayList<Object>(5);
+        gradients.add(0.0f);
+        gradients.add(0.0f);
+        gradients.add(Color.WHITE);
+        gradients.add(Color.WHITE);
+        gradients.add(Color.WHITE);
+        UIManager.put("ScrollBar.gradient", gradients);
+        
+        UIManager.put("CheckBox.gradient", gradients);
+        
+        UIManager.put("OptionPane.gradient", gradients);
+        
+        UIManager.put("OptionPane.background", Color.GRAY);
+        UIManager.put("OptionPane.foreground", Color.WHITE);
+        
+        UIManager.put("ComboBox.background", Color.GRAY);
+        UIManager.put("ComboBox.foreground", Color.WHITE);
+        
+        UIManager.put("Table.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("TextArea.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("TextField.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("Text.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("Pane.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("Menu.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("MenuItem.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("List.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("Tabel.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("Panel.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("Tree.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("EditorPane.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("TextPane.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("TextPane.selectionBackground", Color.LIGHT_GRAY);
+        UIManager.put("ComboBox.selectionBackground", Color.DARK_GRAY);
+        UIManager.put("ComboBox.selectionForeground", Color.WHITE);
+        
+        UIManager.put("Pane.background", Color.GRAY);
+        UIManager.put("Pane.foreground", Color.WHITE);
+        
+        UIManager.put("CheckBox.background", Color.GRAY);
+        UIManager.put("CheckBox.foreground", Color.WHITE);
+         
+
         UIManager.put("Button.foreground", Color.WHITE);
         UIManager.put("Button.background", Color.DARK_GRAY);
         UIManager.put("Panel.background", Color.BLACK);

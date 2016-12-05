@@ -653,74 +653,8 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             defaultButton.doClick();
     }
 
-//    /**
-//     * Handling button click
-//     *
-//     * @param e The ActionEvent
-//     */
-//    @Override
-//    public void actionPerformed(ActionEvent e) {
-//        JButton b = (JButton) e.getSource();
-//        if (b == eval) {
-//            ready = true;
-//            evaluateSeq(inputText.getText());
-//            inputText.setText("");
-////        } else if (b == evalAll) {
-////            ready = true;
-////            evaluateAll(inputText.getText());
-////            inputText.setText("");
-//        } else if (b == holdButton) {
-//            ready = false;
-//        } else if (b == clearButton) {
-//            inputText.setText("");
-//        }
-//    }
-
-//    public void evaluateAll(String input) {
-//        reasoner.addInput(input);
-//        reasoner.step(1);
-//    }
-
     private void close() {
         setVisible(false);
     }
 
-//    /**
-//     * Accept text addInput in a tick, which can be multiple lines TODO some
-// duplicated code with {@link ExperienceReader#nextInput()}
-//     *
-//     * @return Whether to check this channel again
-//     */
-//    public boolean nextInput() {
-//        if (timer > 0) {  // wait until the timer
-//            timer--;
-//            return true;
-//        }
-//        if (!ready) {
-//            return false;
-//        }
-//        String text = inputText.getText().trim();
-//        String line;    // The next line of text
-//        int endOfLine;
-//        // The process steps at a number or no more text
-//        while ((text.length() > 0) && (timer == 0)) {
-//            endOfLine = text.indexOf('\n');
-//            if (endOfLine < 0) {	// this code is reached at end of text
-//                line = text;
-//                text = "";
-//            } else {	// this code is reached for ordinary lines
-//                line = text.substring(0, endOfLine).trim();
-//                text = text.substring(endOfLine + 1);	// text becomes rest of text
-//            }
-//            
-//            reasoner.addInput(line);
-//            
-//            inputText.setText(text);	// update addInput Text widget to rest of text
-//            if (text.isEmpty()) {
-//                ready = false;
-//            }
-//        }
-//        return ((text.length() > 0) || (timer > 0));
-//    }
-//
 }
