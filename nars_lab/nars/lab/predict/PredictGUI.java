@@ -288,9 +288,9 @@ public class PredictGUI extends JPanel {
         NARSwing.themeInvert();
         new NARSwing(n);
         
-        n.param.duration.set(getDuration());
+       // n.param.duration.set(getDuration());
         //n.param.duration.setLinear(0.5);
-        n.param.conceptBeliefsMax.set(getMaxConceptBeliefs());
+       // n.param.conceptBeliefsMax.set(getMaxConceptBeliefs());
         n.param.noiseLevel.set(0);
         n.param.conceptForgetDurations.set(5);
         

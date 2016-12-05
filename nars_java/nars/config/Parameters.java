@@ -128,6 +128,8 @@ public class Parameters {
     /** Size of TermLinkBag */
     public static final int TERM_LINK_BAG_SIZE = 100;  //was 1000 in new experiment
     public static final int TERM_LINK_BAG_LEVELS = 10;
+    /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
+    public static final int TERM_LINK_MAX_MATCHED = 10;
     /** Size of Novel Task Buffer */
     public static final int NOVEL_TASK_BAG_SIZE = 100;
     public static final int NOVEL_TASK_BAG_LEVELS = 10;
@@ -143,6 +145,26 @@ public class Parameters {
     
     /** Maximum length of Stamp, a power of 2 */
     //public static final int MAXIMUM_STAMP_LENGTH = 8;
+    
+    /** Maximum TermLinks used in reasoning for each Task in Concept */
+    public static final int TERMLINK_MAX_REASONED = 3;
+    
+    
+    /** Record-length for newly created TermLink's */
+    public static final int TERM_LINK_RECORD_LENGTH =10;
+    
+    /** Maximum number of beliefs kept in a Concept */
+    public static final int CONCEPT_BELIEFS_MAX = 7;
+    
+    /** Maximum number of questions kept in a Concept */
+    public static final int CONCEPT_QUESTIONS_MAX = 5;
+
+    /** Maximum number of goals kept in a Concept */
+    public static final int CONCEPT_GOALS_MAX = 7;
+    
+    /** Reliance factor, the empirical confidence of analytical truth.
+        the same as default confidence  */        
+    public static final float reliance = 0.9f;
 
 
 

@@ -43,6 +43,7 @@ public class Param implements Serializable {
     /** Sequence bag forget durations **/
     public final AtomicDouble sequenceForgetDurations = new AtomicDouble(4.0);
     
+    /** novel task bag forget duration **/
     public final AtomicDouble novelTaskForgetDurations = new AtomicDouble(2.0);
 
     
@@ -50,9 +51,6 @@ public class Param implements Serializable {
      *  the range of "now" is [-DURATION, DURATION]; */
     public final AtomicDouble decisionThreshold = new AtomicDouble(0.6);
     
-    /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
-    public final AtomicInteger termLinkMaxMatched = new AtomicInteger(10);
-            
     
 //    //let NARS use NARS+ ideas (counting etc.)
 //    public final AtomicBoolean experimentalNarsPlus = new AtomicBoolean();
@@ -65,24 +63,7 @@ public class Param implements Serializable {
     //public final AtomicInteger abbreviationMinComplexity = new AtomicInteger();
     //public final AtomicDouble abbreviationMinQuality = new AtomicDouble();
     
-    /** Maximum TermLinks used in reasoning for each Task in Concept */
-    public final AtomicInteger termLinkMaxReasoned = new AtomicInteger(3);
 
-    /** Record-length for newly created TermLink's */
-    public final AtomicInteger termLinkRecordLength = new AtomicInteger(10);
-    
-    /** Maximum number of beliefs kept in a Concept */
-    public final AtomicInteger conceptBeliefsMax = new AtomicInteger(7);
-    
-    /** Maximum number of questions kept in a Concept */
-    public final AtomicInteger conceptQuestionsMax = new AtomicInteger(5);
-
-    /** Maximum number of goals kept in a Concept */
-    public final AtomicInteger conceptGoalsMax = new AtomicInteger(7);
-    
-    /** Reliance factor, the empirical confidence of analytical truth.
-        the same as default confidence  */        
-    public final AtomicDouble reliance = new AtomicDouble(0.9f);
 
     public List<DerivationFilter> defaultDerivationFilters = new ArrayList();
     public final List<DerivationFilter> getDerivationFilters() {

@@ -21,6 +21,7 @@
 package nars.inference;
 
 import java.util.List;
+import nars.config.Parameters;
 import nars.storage.Memory;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
@@ -112,7 +113,7 @@ public final class StructuralRules {
             return;
         
         Sentence sentence = nal.getCurrentTask().sentence;
-        TruthValue truth = TruthFunctions.deduction(sentence.truth, nal.memory.param.reliance.floatValue());
+        TruthValue truth = TruthFunctions.deduction(sentence.truth, Parameters.reliance);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.singlePremiseTask(content, truth, budget);
     }
@@ -196,7 +197,7 @@ public final class StructuralRules {
         int order = sentence.getTemporalOrder();
         TruthValue truth = sentence.truth;
         
-        final float reliance = nal.memory.param.reliance.floatValue();
+        final float reliance = Parameters.reliance;
         TruthValue truthDed = TruthFunctions.deduction(truth, reliance);
         TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
         
@@ -255,7 +256,7 @@ public final class StructuralRules {
             return;
         }
         
-        final float reliance = nal.memory.param.reliance.floatValue();
+        final float reliance = Parameters.reliance;
         TruthValue truthDed = TruthFunctions.deduction(truth, reliance);
         TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
         
@@ -599,7 +600,7 @@ public final class StructuralRules {
         Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
 
-        final float reliance = nal.memory.param.reliance.floatValue();
+        final float reliance = Parameters.reliance;
 
         BudgetValue budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
