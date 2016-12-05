@@ -37,7 +37,7 @@ import nars.util.Events.TermLinkAdd;
 import nars.util.Events.TermLinkRemove;
 import nars.util.Events.UnexecutableGoal;
 import nars.storage.Memory;
-import nars.io.NARRun;
+import nars.io.NARConsole;
 import nars.config.Parameters;
 import nars.control.DerivationContext;
 import nars.inference.BudgetFunctions;
@@ -62,6 +62,7 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.plugin.mental.InternalExperience;
 import nars.storage.Bag;
+import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 
 public class Concept extends Item<Term> {
@@ -711,7 +712,7 @@ public class Concept extends Item<Term> {
     }
 
     /**
-     * called from {@link NARRun}
+     * called from {@link NARConsole}
      */
     @Override
     public String toStringLong() {

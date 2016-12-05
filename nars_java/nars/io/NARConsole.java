@@ -26,8 +26,11 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import nars.NAR;
+import nars.NAR;
 import nars.config.Default.CommandLineNARBuilder;
 import nars.io.TextInput;
+import nars.io.TextInput;
+import nars.io.TextOutput;
 import nars.io.TextOutput;
 
 /**
@@ -38,7 +41,7 @@ import nars.io.TextOutput;
  * <p>
  * Manage the internal working thread. Communicate with Reasoner only.
  */
-public class NARRun {
+public class NARConsole {
 
     private final NAR nar;
 
@@ -54,7 +57,7 @@ public class NARRun {
      */
     public static void main(String args[]) {
                 
-        NARRun nars = new NARRun(new NAR(new CommandLineNARBuilder(args)));
+        NARConsole nars = new NARConsole(new NAR(new CommandLineNARBuilder(args)));
         nars.run(args);
         
         // TODO only if single finish ( no reset in between )
@@ -64,7 +67,7 @@ public class NARRun {
         }
     }
 
-    public NARRun(NAR n) {
+    public NARConsole(NAR n) {
         this.nar = n;
     }
 
