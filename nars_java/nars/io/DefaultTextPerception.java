@@ -13,8 +13,8 @@ import nars.util.Events.Perceive;
 import nars.storage.Memory;
 import nars.NAR;
 import nars.config.Parameters;
+import nars.entity.Item;
 import nars.util.Plugin;
-import nars.control.AbstractTask;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.Output.IN;
@@ -69,7 +69,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
             Object o = arguments[1];
             InPort i = (InPort)arguments[0];
             
-            Iterator<AbstractTask> it = i.postprocess( perceive(o) ); 
+            Iterator<Item> it = i.postprocess( perceive(o) ); 
             if (it!=null)
                 while (it.hasNext())
                     i.queue(it.next());
@@ -78,7 +78,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
     
 
     /* Perceive an input object by calling an appropriate perception system according to the object type. */
-    public Iterator<? extends AbstractTask> perceive(final Object o) {
+    public Iterator<? extends Item> perceive(final Object o) {
                 
         Exception error;
         try {
@@ -254,7 +254,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
                     char c = input.charAt(0);
                     if (c != Symbols.COMMENT_MARK) {
                         try {
-                            AbstractTask task = narsese.parseNarsese(new StringBuilder(input));
+                            Item task = narsese.parseNarsese(new StringBuilder(input));
                             if (task != null) {
                                 return task;
                             }
@@ -334,7 +334,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
         return parsers;           
     }
     
-    protected Iterator<AbstractTask> perceive(final String line) {
+    protected Iterator<Item> perceive(final String line) {
 
         Exception lastException = null;
         
@@ -344,13 +344,13 @@ public class DefaultTextPerception implements Plugin, EventObserver {
             
             if (result!=null) {
                 if (result instanceof Iterator) {
-                    return (Iterator<AbstractTask>)result;
+                    return (Iterator<Item>)result;
                 }
                 if (result instanceof Collection) {
-                    return ((Collection<AbstractTask>)result).iterator();
+                    return ((Collection<Item>)result).iterator();
                 }
-                if (result instanceof AbstractTask) {
-                    return singletonIterator((AbstractTask)result);
+                if (result instanceof Item) {
+                    return singletonIterator((Item)result);
                 }
                 else if (result.equals(Boolean.TRUE)) {
                     return null;

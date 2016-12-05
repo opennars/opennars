@@ -22,10 +22,10 @@ import nars.util.Events.FrameEnd;
 import nars.util.Events.FrameStart;
 import nars.util.Events.Perceive;
 import nars.config.Default;
-import nars.control.AbstractTask;
 import nars.control.DerivationContext.DerivationFilter;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
+import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -88,10 +88,10 @@ public class NAR implements Runnable {
     
     
     /** The addInput channels of the reasoner     */
-    public final List<InPort<Object,AbstractTask>> inputChannels;
+    public final List<InPort<Object,Item>> inputChannels;
     
     /** pending input and output channels to add on the next cycle. */
-    private final List<InPort<Object,AbstractTask>> newInputChannels;
+    private final List<InPort<Object,Item>> newInputChannels;
 
  
     
@@ -310,7 +310,7 @@ public class NAR implements Runnable {
         return cyclesPerFrame;
     }
     
-    final class ObjectTaskInPort extends InPort<Object,AbstractTask> {
+    final class ObjectTaskInPort extends InPort<Object,Item> {
         private long creationTime = -1;
 
         public ObjectTaskInPort(Input input, ArrayDeque buffer, float initialAttention) {
@@ -322,7 +322,7 @@ public class NAR implements Runnable {
         }
         
         @Override
-        public Iterator<AbstractTask> postprocess(final Iterator<AbstractTask> at) {
+        public Iterator<Item> postprocess(final Iterator<Item> at) {
             try {
                 if (creationTime == -1)
                     return at;
@@ -330,8 +330,8 @@ public class NAR implements Runnable {
                     //Process tasks with overrides                    
                     final int duration = memory.param.duration.get();
                     
-                    return Iterators.filter(at, new Predicate<AbstractTask>() {
-                        @Override public boolean apply(AbstractTask at) {
+                    return Iterators.filter(at, new Predicate<Item>() {
+                        @Override public boolean apply(Item at) {
                             if (at instanceof Task) {
                                 Task t = (Task)at;
                                 if (t.sentence!=null)
@@ -543,7 +543,7 @@ public class NAR implements Runnable {
     }
 
     protected void resetPorts() {
-        for (InPort<Object, AbstractTask> i : getInPorts()) {
+        for (InPort<Object, Item> i : getInPorts()) {
             i.reset();
         }
     }
@@ -566,7 +566,7 @@ public class NAR implements Runnable {
      * Processes the next input from each input channel.  Removes channels that have finished.
      * @return whether to finish the reasoner afterward, which is true if any input exists.
      */
-    public AbstractTask nextTask() {                
+    public Item nextTask() {                
         if ((!inputting) || (inputChannels.isEmpty()))
            return null;        
         
@@ -575,7 +575,7 @@ public class NAR implements Runnable {
         while ((remainingChannels > 0) && (inputChannels.size() > 0)) {
             inputSelected %= inputChannels.size();
 
-            final InPort<Object,AbstractTask> i = inputChannels.get(inputSelected++);
+            final InPort<Object,Item> i = inputChannels.get(inputSelected++);
             remainingChannels--;
             
             if (i.finished()) {
@@ -590,7 +590,7 @@ public class NAR implements Runnable {
             }                
 
             if (i.hasNext()) {
-                AbstractTask task = i.next();
+                Item task = i.next();
                 if (task!=null) {
                     return task;
                 }
@@ -708,7 +708,7 @@ public class NAR implements Runnable {
         return total;
     }
 
-    public List<InPort<Object, AbstractTask>> getInPorts() {
+    public List<InPort<Object, Item>> getInPorts() {
         return inputChannels;
     }
 

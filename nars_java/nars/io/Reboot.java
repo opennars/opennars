@@ -1,12 +1,13 @@
 package nars.io;
 
-import nars.control.AbstractTask;
+import nars.entity.Item;
+
 
 /**
  *
  * @author me
  */
-public class Reboot extends AbstractTask<CharSequence> {
+public class Reboot extends Item<CharSequence> {
 
     @Override
     public CharSequence name() {

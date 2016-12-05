@@ -1,11 +1,11 @@
 package nars.io;
 
-import nars.control.AbstractTask;
+import nars.entity.Item;
 
 /**
  * Resets memory, @see memory.reset()
  */
-public class Reset extends AbstractTask<CharSequence> {
+public class Reset extends Item<CharSequence> {
 
     public String input;
     public Reset(String input) {        

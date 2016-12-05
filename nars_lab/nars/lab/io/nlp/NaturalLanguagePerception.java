@@ -2,7 +2,7 @@ package nars.lab.io.nlp;
 
 import java.util.ArrayList;
 import java.util.List;
-import nars.control.AbstractTask;
+import nars.entity.Item;
 import nars.io.Narsese;
 
 public class NaturalLanguagePerception {
@@ -21,16 +21,16 @@ public class NaturalLanguagePerception {
         }
     }
     
-    static public List<AbstractTask> parseLine(String input, Narsese narsese, String prefix) {
+    static public List<Item> parseLine(String input, Narsese narsese, String prefix) {
 
         List<String> statements = new ArrayList();
 
         parseLineInternal(input, statements, prefix);
         
-        List<AbstractTask> results = new ArrayList();
+        List<Item> results = new ArrayList();
         for (String i : statements) {
             try {
-                AbstractTask t = narsese.parseNarsese(new StringBuilder(i));
+                Item t = narsese.parseNarsese(new StringBuilder(i));
                 if (t != null) {
                     results.add(t);
                 }

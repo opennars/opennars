@@ -38,7 +38,6 @@ import nars.config.Parameters;
 import nars.util.Events.ResetEnd;
 import nars.util.Events.ResetStart;
 import nars.util.Events.TaskRemove;
-import nars.control.AbstractTask;
 import nars.control.DefaultAttention;
 import nars.control.DerivationContext;
 import nars.control.ImmediateProcess;
@@ -288,7 +287,7 @@ public class Memory implements Serializable {
         return false;
     }
     
-    public void inputTask(final AbstractTask t) {
+    public void inputTask(final Item t) {
         if(!checked) {
             checked=true;
             isjUnit=isJUnitTest();
@@ -386,7 +385,7 @@ public class Memory implements Serializable {
         
         /** adds input tasks to newTasks */
         for(int i=0; i<1 && isProcessingInput(); i++) {
-            AbstractTask t = inputs.nextTask();                    
+            Item t = inputs.nextTask();                    
             if (t!=null) 
                 inputTask(t);            
         }
