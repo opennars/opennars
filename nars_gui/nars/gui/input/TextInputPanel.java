@@ -25,20 +25,30 @@ import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
@@ -441,7 +451,8 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
          * List with buttons (instant invoke) and checkboxes with 'All' at the top when two or more are selected
          */
         //private final JPanel list;
-
+        JScrollPane scrollp = new JScrollPane(comments);
+        Date date = new Date();
         public ReactionPanel() {
             super(new BorderLayout());
 
@@ -453,7 +464,22 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             
             /*JPanel pj = new JPanel(new BorderLayout());
             pj.add(j, BorderLayout.CENTER);*/
-            add(new JScrollPane(comments), BorderLayout.CENTER);
+            scrollp = new JScrollPane(comments);
+            add(scrollp, BorderLayout.CENTER);
+            
+            scrollp.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {  
+                public void adjustmentValueChanged(AdjustmentEvent e) {  
+                    if(Math.abs(date.getSeconds()-new Date().getSeconds()) < 1)
+                        e.getAdjustable().setValue(e.getAdjustable().getMinimum()); 
+                }
+            });
+            
+            scrollp.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {  
+                public void adjustmentValueChanged(AdjustmentEvent e) {  
+                    if(Math.abs(date.getSeconds()-new Date().getSeconds()) < 1)
+                        e.getAdjustable().setValue(e.getAdjustable().getMinimum()); 
+                }
+            });
         }
 
         public void update() {
@@ -490,11 +516,11 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             for (String[] i : interpretations) {
                 Color c = Color.WHITE; //Video.getColor(i[0], 0.7f, 0.6f);
                 comments.print(Color.WHITE, c, i[0] + ":\n", null);
-                Color c2 = Color.BLACK; //DARK_GRAY; //Video.getColor(i[0], 0.5f, 0.3f);
+                Color c2 = Color.DARK_GRAY; //DARK_GRAY; //Video.getColor(i[0], 0.5f, 0.3f);
                 comments.print(Color.WHITE, c2, i[1] + "\n\n", null);
             }
             comments.setText(comments.getText().trim());
-             comments.setText(""); //syntax panel deactivated here !!!!!
+             //comments.setText(""); //syntax panel deactivated here !!!!!
 
             
             if (comments.getText().length() > 0) {
@@ -545,7 +571,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                         });
                     }
                 });
-                                
+               
                 menu.add(b);
             }
 
@@ -554,7 +580,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             
             validate();
             repaint();
-
+            date = new Date();
         }
 
     }
