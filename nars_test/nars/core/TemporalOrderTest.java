@@ -8,7 +8,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.io.TextOutput;
-import nars.io.condition.OutputContainsCondition;
+import nars.lab.testutils.OutputContainsCondition;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 

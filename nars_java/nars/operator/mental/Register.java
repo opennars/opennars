@@ -22,7 +22,10 @@ import nars.storage.Memory;
 import nars.entity.Task;
 import nars.language.Term;
 import nars.operator.NullOperator;
+import nars.operator.NullOperator;
 import nars.operator.Operation;
+import nars.operator.Operation;
+import nars.operator.Operator;
 import nars.operator.Operator;
 
 /**

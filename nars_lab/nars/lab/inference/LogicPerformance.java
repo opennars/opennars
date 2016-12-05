@@ -4,6 +4,7 @@
  */
 package nars.lab.inference;
 
+import nars.lab.ioutils.ExampleFileInput;
 import automenta.vivisect.swing.NWindow;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
@@ -24,9 +25,8 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.gui.output.JGraphXGraphPanel;
-
-import nars.io.condition.OutputCondition;
-import nars.io.condition.OutputContainsCondition;
+import nars.lab.testutils.OutputCondition;
+import nars.lab.testutils.OutputContainsCondition;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.gui.util.NARGraph;

@@ -28,7 +28,7 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.core.NAR;
 import nars.core.NAR.PluginState;
-import nars.core.Plugin;
+import nars.util.Plugin;
 import nars.gui.util.PackageUtility;
 
 /**

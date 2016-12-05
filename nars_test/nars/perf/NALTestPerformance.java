@@ -17,7 +17,7 @@ import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.core.NALTest;
-import nars.io.condition.OutputCondition;
+import nars.lab.testutils.OutputCondition;
 import nars.lab.util.XORShiftRandom;
 import org.encog.Encog;
 import org.encog.engine.network.activation.ActivationSigmoid;

@@ -5,7 +5,7 @@ import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Task;
-import nars.io.ChangedTextInput;
+import nars.lab.ioutils.ChangedTextInput;
 import nars.language.Term;
 import nars.operator.NullOperator;
 import nars.operator.Operation;

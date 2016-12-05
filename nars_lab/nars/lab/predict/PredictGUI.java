@@ -33,7 +33,7 @@ import nars.core.control.DerivationContext;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.inference.TruthFunctions;
-import nars.io.ChangedTextInput;
+import nars.lab.ioutils.ChangedTextInput;
 import nars.io.Texts;
 import nars.io.narsese.Narsese;
 import nars.language.Interval;

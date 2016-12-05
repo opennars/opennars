@@ -5,9 +5,9 @@
 
 package nars.plugin.mental;
 
+import nars.util.Plugin;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.Plugin;
 
 /**
  *

@@ -9,7 +9,7 @@ import nars.util.Events.Answer;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.util.AbstractObserver;
-import nars.io.condition.OutputContainsCondition;
+import nars.lab.testutils.OutputContainsCondition;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;

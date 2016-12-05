@@ -4,7 +4,7 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.storage.Memory;
 import nars.core.NAR;
-import nars.core.Plugin;
+import nars.util.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;

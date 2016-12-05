@@ -36,6 +36,7 @@ import nars.plugin.mental.InternalExperience;
 import nars.plugin.mental.RuntimeNARSettings;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
+import nars.plugin.mental.Emotions;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
@@ -144,6 +145,8 @@ public class Default extends Parameters implements ConceptBuilder {
         n.addPlugin(new DefaultTextPerception());
         
         n.addPlugin(new RuntimeNARSettings());
+        
+        n.addPlugin(new Emotions());
         
         //n.addPlugin(new PerceptionAccel());
         

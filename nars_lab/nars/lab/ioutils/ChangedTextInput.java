@@ -1,4 +1,4 @@
-package nars.io;
+package nars.lab.ioutils;
 
 import nars.core.NAR;
 

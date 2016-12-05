@@ -33,6 +33,7 @@ import nars.language.SetInt;
 import nars.language.Tense;
 import nars.language.Term;
 import nars.operator.Operator;
+import nars.operator.Operator;
 
 /**
  * Feeling common operations

@@ -26,7 +26,7 @@ import nars.util.Events.UnexecutableGoal;
 import nars.util.Events.UnexecutableOperation;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.Plugin;
+import nars.util.Plugin;
 import nars.core.control.DerivationContext;
 import nars.entity.Concept;
 import nars.entity.Task;

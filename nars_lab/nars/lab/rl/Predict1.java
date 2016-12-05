@@ -26,7 +26,7 @@ import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import automenta.vivisect.timeline.TimelineVis;
-import nars.io.ChangedTextInput;
+import nars.lab.ioutils.ChangedTextInput;
 import static nars.io.Texts.n2;
 import nars.language.Inheritance;
 import nars.language.Term;

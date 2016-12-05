@@ -1,6 +1,7 @@
-package nars.io.meter;
+package nars.plugin.mental;
 
 import java.io.Serializable;
+import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
@@ -13,19 +14,20 @@ import nars.io.Symbols;
 import nars.language.Inheritance;
 import nars.language.SetInt;
 import nars.language.Term;
+import nars.util.Plugin;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
-public class EmotionMeter implements Serializable {
+public class Emotions implements Plugin {
 
     /** average desire-value */
     private float happy;
     /** average priority */
     private float busy;
 
-    public EmotionMeter() {
+    public Emotions() {
     }
 
-    public EmotionMeter(float happy, float busy) {
+    public Emotions(float happy, float busy) {
         set(happy, busy);
     }
 
@@ -44,6 +46,9 @@ public class EmotionMeter implements Serializable {
 
     public double lasthappy=-1;
     public void adjustHappy(float newValue, float weight, DerivationContext nal) {
+        if(!enabled) {
+            return;
+        }
         //        float oldV = happyValue;
         happy += newValue * weight;
         happy /= 1.0f + weight;
@@ -105,6 +110,9 @@ public class EmotionMeter implements Serializable {
     
     public double lastbusy=-1;
     public void manageBusy(DerivationContext nal) {
+        if(!enabled) {
+            return;
+        }
         if(lastbusy!=-1) {
             float frequency=-1;
             if(busy>Parameters.BUSY_EVENT_HIGHER_THRESHOLD && lastbusy<=Parameters.BUSY_EVENT_HIGHER_THRESHOLD) {
@@ -129,9 +137,19 @@ public class EmotionMeter implements Serializable {
 
     public void adjustBusy(float newValue, float weight) {
         //        float oldV = busyValue;
+        if(!enabled) {
+            return;
+        }
         busy += newValue * weight;
         busy /= (1.0f + weight);
         //        if (Math.abs(oldV - busyValue) > 0.1) {
         //            Record.append("BUSY: " + (int) (oldV*10.0) + " to " + (int) (busyValue*10.0) + "\n");
+    }
+
+    boolean enabled = true;
+    @Override
+    public boolean setEnabled(NAR n, boolean enabled) {
+        this.enabled = enabled;
+        return enabled;
     }
 }

@@ -53,6 +53,8 @@ import nars.language.Interval;
 import nars.language.Product;
 import nars.language.Term;
 import nars.operator.Operation;
+import nars.operator.Operation;
+import nars.operator.Operator;
 import nars.operator.Operator;
 import nars.plugin.mental.InternalExperience;
 

@@ -10,7 +10,7 @@ import nars.util.Events;
 import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.Plugin;
+import nars.util.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;

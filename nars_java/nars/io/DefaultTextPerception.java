@@ -13,7 +13,7 @@ import nars.util.Events.Perceive;
 import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.Plugin;
+import nars.util.Plugin;
 import nars.core.control.AbstractTask;
 import nars.entity.Sentence;
 import nars.entity.Task;
