@@ -18,6 +18,12 @@ import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
 import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
 
 /**
  *
