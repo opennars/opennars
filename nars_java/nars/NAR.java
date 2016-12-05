@@ -1,5 +1,7 @@
-package nars.core;
+package nars;
 
+import nars.config.Parameters;
+import nars.config.Param;
 import nars.util.Plugin;
 import nars.storage.Memory;
 import nars.util.Events;
@@ -18,9 +20,9 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
 import nars.util.Events.FrameStart;
 import nars.util.Events.Perceive;
-import nars.core.build.Default;
-import nars.core.control.AbstractTask;
-import nars.core.control.DerivationContext.DerivationFilter;
+import nars.config.Default;
+import nars.control.AbstractTask;
+import nars.control.DerivationContext.DerivationFilter;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -36,11 +38,11 @@ import nars.io.Symbols;
 import nars.io.TaskInput;
 import nars.io.TextInput;
 import nars.util.FIFO;
-import nars.io.narsese.Narsese;
-import nars.io.narsese.Narsese.InvalidInputException;
+import nars.io.Narsese;
+import nars.io.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
-import nars.console.Echo;
+import nars.io.Echo;
 
 
 /**
@@ -81,8 +83,8 @@ public class NAR implements Runnable {
     /**
      * The memory of the reasoner
      */
-    public final Memory memory;
-    public final Param param;
+    public Memory memory;
+    public Param param;
     
     
     /** The addInput channels of the reasoner     */
@@ -139,7 +141,17 @@ public class NAR implements Runnable {
     
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
     
-    
+    public NAR() {
+        Default b = new Default();
+        Memory m = b.newMemory(b.param);
+        this.memory = m;        
+        this.param = m.param;
+        
+        //needs to be concurrent in case we change this while running
+        inputChannels = new ArrayList();
+        newInputChannels = new CopyOnWriteArrayList();
+        b.init(this);
+    }
     protected NAR(final Memory m) {
         this.memory = m;        
         this.param = m.param;
@@ -705,5 +717,6 @@ public class NAR implements Runnable {
         this(b.newMemory(b.param));
         b.init(this);
     }
+    
     
 }

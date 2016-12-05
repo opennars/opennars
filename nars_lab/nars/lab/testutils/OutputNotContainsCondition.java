@@ -4,7 +4,7 @@
  */
 package nars.lab.testutils;
 
-import nars.core.NAR;
+import nars.NAR;
 
 /**
  *

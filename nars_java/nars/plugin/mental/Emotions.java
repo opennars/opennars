@@ -1,9 +1,9 @@
 package nars.plugin.mental;
 
 import java.io.Serializable;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.control.DerivationContext;
+import nars.NAR;
+import nars.config.Parameters;
+import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;

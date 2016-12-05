@@ -1,7 +1,7 @@
 package nars.multistep;
 
-import nars.core.NAR;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Default;
 
 
 

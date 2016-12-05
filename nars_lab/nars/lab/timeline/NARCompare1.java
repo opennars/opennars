@@ -16,9 +16,9 @@
  */
 package nars.lab.timeline;
 
-import nars.core.NAR;
-import nars.core.Param;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Param;
+import nars.config.Default;
 import automenta.vivisect.TreeMLData.FirstOrderDifferenceTimeSeries;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;

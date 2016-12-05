@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.CycleEnd;
-import nars.core.NAR;
+import nars.NAR;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;

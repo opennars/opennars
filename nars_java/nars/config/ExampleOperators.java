@@ -1,4 +1,4 @@
-package nars.core.build;
+package nars.config;
 
 import nars.operator.NullOperator;
 import nars.operator.Operator;

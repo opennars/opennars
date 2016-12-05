@@ -24,7 +24,7 @@ import java.util.Arrays;
 import nars.util.Events.Answer;
 import nars.util.Events.Unsolved;
 import nars.storage.Memory;
-import nars.core.control.DerivationContext;
+import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;

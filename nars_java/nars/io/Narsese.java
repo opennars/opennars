@@ -1,11 +1,11 @@
-package nars.io.narsese;
+package nars.io;
 
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import java.util.ArrayList;
 import nars.storage.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.NAR;
+import nars.config.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;

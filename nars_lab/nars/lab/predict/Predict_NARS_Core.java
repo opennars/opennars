@@ -12,14 +12,14 @@ import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import java.awt.Color;
 import nars.util.Events.TaskImmediateProcess;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.build.Default;
-import nars.core.control.DerivationContext;
+import nars.NAR;
+import nars.config.Parameters;
+import nars.config.Default;
+import nars.control.DerivationContext;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.lab.ioutils.ChangedTextInput;
-import nars.io.narsese.Narsese;
+import nars.io.Narsese;
 import nars.language.Term;
 
 /**

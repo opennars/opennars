@@ -31,7 +31,7 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
 import nars.util.Events.TaskAdd;
 import nars.util.Events.TaskRemove;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TruthValue;

@@ -4,12 +4,12 @@
  */
 package nars.util;
 
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Parameters;
+import nars.config.Default;
 import nars.core.NALTestSome;
 import nars.entity.Task;
-import nars.io.narsese.Narsese;
+import nars.io.Narsese;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;

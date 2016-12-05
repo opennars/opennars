@@ -26,10 +26,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import nars.core.NAR;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Default;
 import nars.gui.NARSwing;
-import nars.io.narsese.Narsese;
+import nars.io.Narsese;
 import nars.lab.nario.NARio;
 import nars.web.NARServer;
 

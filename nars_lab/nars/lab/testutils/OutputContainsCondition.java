@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.TextOutput;

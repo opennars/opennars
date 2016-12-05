@@ -4,7 +4,7 @@
  */
 package nars.lab.plugin.filter;
 
-import nars.core.control.DerivationContext;
+import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Task;

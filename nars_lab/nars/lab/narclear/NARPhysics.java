@@ -7,7 +7,7 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.lab.launcher.NARGame;
-import nars.core.NAR;
+import nars.NAR;
 
 
 

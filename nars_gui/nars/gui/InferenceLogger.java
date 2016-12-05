@@ -27,7 +27,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import nars.util.Events.ConceptNew;
 import nars.util.Events.TaskAdd;
 import nars.util.Events.TaskRemove;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.util.MemoryObserver;

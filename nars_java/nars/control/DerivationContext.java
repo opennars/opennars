@@ -2,14 +2,14 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.core.control;
+package nars.control;
 
 import java.util.ArrayList;
 import java.util.List;
 import nars.util.Events;
 import nars.storage.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.NAR;
+import nars.config.Parameters;
 import nars.util.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;

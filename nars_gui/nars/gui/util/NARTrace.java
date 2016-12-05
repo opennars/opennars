@@ -14,12 +14,12 @@ import nars.util.Events;
 import nars.util.Events.ConceptNew;
 import nars.util.Events.InferenceEvent;
 import nars.storage.Memory;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.CycleEnd;
-import nars.io.narsese.Narsese;
+import nars.io.Narsese;
 import nars.language.Term;
 
 

@@ -1,7 +1,7 @@
 package nars.util;
 
-import nars.core.NAR;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Default;
 import nars.gui.util.DefaultGraphizer;
 import nars.gui.util.NARGraph;
 import static nars.gui.util.NARGraph.IncludeEverything;

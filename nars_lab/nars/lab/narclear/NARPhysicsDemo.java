@@ -2,8 +2,8 @@ package nars.lab.narclear;
 
 import java.util.List;
 import nars.storage.Memory;
-import nars.core.NAR;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Default;
 import nars.entity.Task;
 import nars.lab.ioutils.ChangedTextInput;
 import nars.language.Term;

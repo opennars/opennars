@@ -26,8 +26,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
-import nars.core.NAR;
-import nars.core.NAR.PluginState;
+import nars.NAR;
+import nars.NAR.PluginState;
 import nars.util.Plugin;
 import nars.gui.util.PackageUtility;
 

@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Set;
-import nars.core.NAR;
+import nars.NAR;
 import nars.lab.grid2d.main.Action.Forward;
 import nars.lab.grid2d.main.Action.Turn;
 

@@ -1,6 +1,6 @@
 package nars.lab.ioutils;
 
-import nars.core.NAR;
+import nars.NAR;
 
 
 /** TextInput subclass that only inputs when the next input value changes from previous */

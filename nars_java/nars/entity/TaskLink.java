@@ -23,7 +23,7 @@ package nars.entity;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
-import nars.core.Parameters;
+import nars.config.Parameters;
 import nars.language.Term;
 
 /**

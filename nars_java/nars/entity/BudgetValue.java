@@ -20,8 +20,8 @@
  */
 package nars.entity;
 
-import nars.core.Parameters;
-import static nars.core.Parameters.TRUTH_EPSILON;
+import nars.config.Parameters;
+import static nars.config.Parameters.TRUTH_EPSILON;
 import nars.inference.BudgetFunctions;
 import static nars.inference.UtilityFunctions.and;
 import static nars.inference.UtilityFunctions.aveGeo;

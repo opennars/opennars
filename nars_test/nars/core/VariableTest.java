@@ -6,8 +6,8 @@ package nars.core;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import nars.util.Events.Answer;
-import nars.core.NAR;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Default;
 import nars.util.AbstractObserver;
 import nars.lab.testutils.OutputContainsCondition;
 import static org.junit.Assert.assertTrue;

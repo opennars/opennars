@@ -13,7 +13,7 @@ import java.awt.event.KeyEvent;
 import static java.awt.event.KeyEvent.CHAR_UNDEFINED;
 import java.awt.event.KeyListener;
 import javax.swing.JTextArea;
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.Texts;
 import static nars.io.Texts.n2;
 

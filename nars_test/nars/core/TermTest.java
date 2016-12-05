@@ -16,12 +16,14 @@
  */
 package nars.core;
 
+import nars.NAR;
+import nars.config.Parameters;
 import java.util.TreeSet;
-import nars.core.build.Default;
+import nars.config.Default;
 import nars.entity.Concept;
 import nars.io.Symbols.NativeOperator;
 import nars.io.Texts;
-import nars.io.narsese.Narsese;
+import nars.io.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Statement;

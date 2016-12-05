@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import static javax.swing.SwingUtilities.invokeLater;
 import nars.util.EventEmitter.EventObserver;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Task;
 import nars.gui.output.graph.deprecated.ProcessingGraphPanel2;
 import nars.io.Output;

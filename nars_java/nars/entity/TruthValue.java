@@ -20,8 +20,8 @@
  */
 package nars.entity;
 
-import nars.core.Parameters;
-import static nars.core.Parameters.TRUTH_EPSILON;
+import nars.config.Parameters;
+import static nars.config.Parameters.TRUTH_EPSILON;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.Term;

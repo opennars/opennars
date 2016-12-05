@@ -18,7 +18,7 @@ package nars.operator.mental;
 
 import java.util.ArrayList;
 import nars.storage.Memory;
-import nars.core.Parameters;
+import nars.config.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;

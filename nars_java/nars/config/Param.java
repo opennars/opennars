@@ -1,4 +1,4 @@
-package nars.core;
+package nars.config;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.storage.Memory.Forgetting;
@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import nars.core.control.DerivationContext.DerivationFilter;
+import nars.control.DerivationContext.DerivationFilter;
 
 /**
  * NAR Parameters which can be changed during runtime.
@@ -41,7 +41,7 @@ public class Param implements Serializable {
     public final AtomicDuration duration = new AtomicDuration();
 
     Forgetting forgetting;
-    List<DerivationFilter> defaultDerivationFilters = new ArrayList();
+    public List<DerivationFilter> defaultDerivationFilters = new ArrayList();
     
     public static Param fromJSON(String json) {
         return Param.json.fromJson(json, Param.class);

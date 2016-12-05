@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import nars.storage.Memory;
-import nars.core.control.AbstractTask;
+import nars.control.AbstractTask;
 import nars.language.Term;
 import nars.plugin.mental.InternalExperience;
 

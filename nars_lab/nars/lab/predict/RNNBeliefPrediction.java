@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;

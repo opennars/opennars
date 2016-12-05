@@ -1,6 +1,6 @@
 package nars.util;
 
-import nars.core.NAR;
+import nars.NAR;
 
 /**
  *

@@ -4,9 +4,9 @@
  */
 package nars.core;
 
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Parameters;
+import nars.config.Default;
 import nars.io.TextOutput;
 import nars.lab.testutils.OutputContainsCondition;
 import static org.junit.Assert.assertTrue;

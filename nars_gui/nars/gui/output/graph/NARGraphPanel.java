@@ -12,7 +12,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import nars.core.NAR;
+import nars.NAR;
 import nars.gui.WrapLayout;
 
 /**

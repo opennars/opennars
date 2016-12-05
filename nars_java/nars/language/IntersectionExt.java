@@ -24,7 +24,7 @@ import com.google.common.collect.ObjectArrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
-import nars.core.Parameters;
+import nars.config.Parameters;
 import nars.io.Symbols.NativeOperator;
 
 /**

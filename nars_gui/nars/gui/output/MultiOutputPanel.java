@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
-import nars.core.NAR;
+import nars.NAR;
 import nars.entity.Task;
 import nars.gui.NARControls;
 

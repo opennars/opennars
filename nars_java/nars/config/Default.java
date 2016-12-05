@@ -1,4 +1,4 @@
-package nars.core.build;
+package nars.config;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,12 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import nars.storage.Memory;
 import nars.storage.Memory.Forgetting;
-import nars.core.NAR;
-import nars.core.Param;
-import nars.core.Parameters;
-import static nars.core.build.Default.InternalExperienceMode.Full;
-import static nars.core.build.Default.InternalExperienceMode.Minimal;
-import nars.core.control.DefaultAttention;
+import nars.NAR;
+import static nars.config.Default.InternalExperienceMode.Full;
+import static nars.config.Default.InternalExperienceMode.Minimal;
+import nars.control.DefaultAttention;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;

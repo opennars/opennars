@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.console;
+package nars.io;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,8 +25,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import nars.core.NAR;
-import nars.core.build.Default.CommandLineNARBuilder;
+import nars.NAR;
+import nars.config.Default.CommandLineNARBuilder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 

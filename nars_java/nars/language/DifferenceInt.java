@@ -21,7 +21,7 @@
 package nars.language;
 
 import java.util.TreeSet;
-import nars.core.Parameters;
+import nars.config.Parameters;
 import nars.io.Symbols.NativeOperator;
 
 /**

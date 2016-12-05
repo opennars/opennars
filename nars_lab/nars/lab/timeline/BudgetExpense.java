@@ -17,8 +17,8 @@
 package nars.lab.timeline;
 
 import automenta.vivisect.TreeMLData.FirstOrderDifferenceTimeSeries;
-import nars.core.NAR;
-import nars.core.build.Default;
+import nars.NAR;
+import nars.config.Default;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.BarChart;

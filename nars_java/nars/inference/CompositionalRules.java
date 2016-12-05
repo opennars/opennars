@@ -26,7 +26,7 @@ import java.util.List;
 import nars.storage.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.core.control.DerivationContext;
+import nars.control.DerivationContext;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
