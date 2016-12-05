@@ -24,6 +24,7 @@ import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -110,7 +111,8 @@ public class NARSwing  {
                 
         this.nar = nar;                
         
-        controls = new NARControls(nar);        
+        controls = new NARControls(nar);    
+        controls.setPreferredSize(new Dimension(200,10));
         mainWindow = new NWindow(NAR.VERSION);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.setBounds(10, 10, 870, 650);

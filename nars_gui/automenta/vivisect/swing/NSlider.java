@@ -88,8 +88,9 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         float p = (value.floatValue() - min) / (max-min);
         if (barColor == null) {
             //Green->Yellow->Red
-            //g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.2f, 0.9f));
-             g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.2f, 0.8f + 0.15f));
+        //    g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.2f, 0.9f));
+             //g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.2f, 0.8f + 0.15f));
+             g.setColor(Color.GRAY);
             
         }
         else {
@@ -97,10 +98,11 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         }
         
         int wp = (int)(((float)w) * p );
-        g.setColor(barColor);
+        //g.setColor(barColor);
         g.fillRect(0, 0, wp, h);
         
-        g.setXORMode(Color.BLACK);        
+        //g.setXORMode(Color.BLACK);     
+        
         super.paint(g);
     }
     
