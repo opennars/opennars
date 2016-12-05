@@ -1,5 +1,6 @@
 package nars.core;
 
+import nars.lab.inference.ExampleFileInput;
 import nars.storage.Memory;
 import nars.io.condition.OutputCondition;
 import java.io.IOException;
@@ -10,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import nars.core.build.Default;
 import nars.gui.InferenceLogger;
-import nars.io.ExampleFileInput;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import static org.junit.Assert.assertTrue;
