@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import nars.core.Parameters;
 import nars.entity.Item;
 
@@ -84,8 +83,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      */
     int currentCounter;
     final boolean[] levelEmpty;
-
-
+    
     
     public LevelBag(int levels, int capacity) {
         this(levels, capacity, (int) (Parameters.BAG_THRESHOLD * levels));
@@ -94,22 +92,15 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     /** thresholdLevel = 0 disables "fire level completely" threshold effect */
     public LevelBag(int levels, int capacity, int thresholdLevel) {
         this.levels = levels;
-
         this.fireCompleteLevelThreshold = thresholdLevel;
         //THRESHOLD = levels + 1; //fair/flat takeOut policy
-
         this.capacity = capacity;
-
         nameTable = new HashMap<>(capacity);
-
         level = new Level[this.levels];
-        
         levelEmpty = new boolean[this.levels];
         Arrays.fill(levelEmpty, true);
-
         DISTRIBUTOR = Distributor.get(this.levels).order;
         distributorLength = DISTRIBUTOR.length;        
- 
         clear();
     }
 
@@ -118,18 +109,10 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         
         //Deque<E> items;
         LinkedHashSet<E> items;
-        
                 
         public Level(int level, int numElements) {
             super();
             items = new LinkedHashSet(numElements);
-            
-            /*if (Parameters.THREADS == 1) {
-                items = new ArrayDeque(numElements);
-            }
-            else {
-                items = new ConcurrentLinkedDeque();
-            }*/
             this.thisLevel = level;
         }
 
@@ -149,8 +132,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             items.clear();
             levelIsEmpty(true);
         }
-        
-       
+
        public boolean add(final E e) {
            if (e == null)
                throw new RuntimeException("Bag requires non-null items");
@@ -187,9 +169,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             return items.iterator();
             //return items.descendingIterator();
         }
-        
-        
-        
     }
     
     private Level<E> newLevel(int l) {
@@ -265,9 +244,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return f;
     }
 
-    
-
-
     /**
      * Get an Item by key
      *
@@ -279,32 +255,14 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return nameTable.get(key);
     }
 
-
-
-//    /**
-//     * Check whether a level is empty
-//     *
-//     * @param n The level index
-//     * @return Whether that level is empty
-//     */
-//    final public boolean levelEmpty[final int l) {
-//        final Deque<E> level = this.level[l];
-//        return (level == null) || (level.isEmpty());
-//    }
-
-
     final int distributorLength;
     
     /** look for a non-empty level */
     protected void nextNonEmptyLevel() {
-               
         int cl = currentLevel;
-
         do {                        
         } while (levelEmpty[cl = DISTRIBUTOR[(levelIndex++) % distributorLength]]);
-        
-        currentLevel = cl;
-                
+        currentLevel = cl;  
         if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
             currentCounter = 1;
         } else {                  // for active levels, take all current items
@@ -314,8 +272,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 
     @Override
     public E peekNext() {
-        if (size() == 0) return null; // empty bag                
-                
+        if (size() == 0) 
+            return null; // empty bag                  
         E e = takeNext();
         putIn(e);
         return e;        
@@ -323,33 +281,25 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     
     public E peekNextWithoutAffectingBagOrder() {    
         if (size() == 0) return null; // empty bag                
-        
         if (levelEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
             nextNonEmptyLevel();
         }
-       
         return level[currentLevel].peekFirst();        
     }
     
     @Override
     public E takeNext() {
-        
         if (size() == 0) {
             return null; // empty bag                
         }
-        
         if (levelEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
             nextNonEmptyLevel();
         }
-        
         if (levelEmpty[currentLevel]) {
             throw new RuntimeException("Empty level selected for takeNext");
         }
-        
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
-        
         currentCounter--;        
-
         return selected;
     }
 
@@ -360,27 +310,19 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return (levelEmpty[level]) ? 0 : this.level[level].size();
     }
 
-
-
     @Override public E take(final K name) {
-        
         E oldItem = nameTable.remove(name);
         if (oldItem == null) {
             return null;
         }
-        
-        
         final int expectedLevel = getLevel(oldItem);
-
         //TODO scan up/down iteratively, it is likely to be near where it was
-        
         if (!levelEmpty[expectedLevel]) {
             if (level[expectedLevel].remove(oldItem)) {                
                 removeMass(oldItem);
                 return oldItem;
             }            
         }
-        
         for (int l = 0; l < levels; l++) {
             if ((!levelEmpty[l]) && (l!=expectedLevel)) {
                 if (level[l].remove(oldItem)) {
@@ -389,10 +331,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
                 }
             }
         }
-
-        
         //If it wasn't found, it probably was removed already.  So this check is probably not necessary
-        
             //search other levels for this item because it's not where we thought it was according to getLevel()
         if (Parameters.DEBUG) {
             int ns = nameTable.size();
@@ -401,11 +340,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
                 return null;
             throw new RuntimeException("LevelBag inconsistency: " + nameTable.size() + "|" + sizeItems() + " Can not remove missing element: size inconsistency" + oldItem + " from " + this.getClass().getSimpleName());
         }
-        
         return oldItem;
     }
-
-
 
     /**
      * Decide the put-in level according to priority
@@ -420,7 +356,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         if (level >= levels) return levels-1;
         return level;
     }
-
     
     /**
      * Insert an item into the itemTable, and return the overflow
@@ -444,12 +379,9 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             }
         }
         ensureLevelExists(inLevel);
-        
-        
         level[inLevel].add(newItem);        // FIFO
         nameTable.put(newItem.name(), newItem);        
         addMass(newItem);
-        
         return oldItem;
     }
 
@@ -458,7 +390,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             this.level[level] = newLevel(level);
         }
     }
-
 
     /**
      * Take out the first or last E in a level from the itemTable
@@ -484,37 +415,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     protected void addMass(E item) {
         mass += item.getPriority();
     }
-    
-
-
-
-//    /**
-//     * Refresh display
-//     */
-//    @Deprecated protected void refresh() {
-//        if (bagObserver!=null)       
-//            if (bagObserver.isActive()) {
-//                bagObserver.refresh(toString());
-//            }
-//    }
-
-    
-    /**
-     * Collect Bag content into a String for display
-     */
-//    @Override
-//    public String toString() {
-//        final StringBuilder buf = new StringBuilder(" ");
-//        for (int i = levels - 1; i >= 0; i--) {
-//            if (itemTable[i] != null && !itemTable[i].isEmpty()) {
-//                buf.append("\n --- Level ").append((i + 1)).append(":\n");
-//                for (final E e : itemTable[i]) {
-//                    buf.append(e.toStringExternal()).append('\n');
-//                }
-//            }
-//        }
-//        return buf.toString();
-//    }
 
     /**
      * TODO refactor : paste from preceding method
@@ -604,7 +504,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     @Override
     public Iterator<E> iterator() {
         return new Iterator<E>() {
-
             int l = level.length - 1;
             private Iterator<E> levelIterator;
             private E next;
@@ -616,7 +515,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
                 if (next != null) {
                     return true;
                 }
-
                 if (l >= 0 && levelIterator == null) {
                     while (levelEmpty[l]) {
                         if (--l == -1)
@@ -624,14 +522,11 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
                     }
                     levelIterator = level[l].descendingIterator();
                 }
-
                 if (levelIterator == null) {
                     return false;
                 }
-
                 next = levelIterator.next();
                 count++;
-
                 if (levelIterator.hasNext()) {
                     return true;
                 } else {
@@ -647,7 +542,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
                 next = null;
                 return e;
             }
-
         };
     }
 
@@ -660,35 +554,4 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         }
         return empty;
     }
-
-
-
-//    private void stat() {
-//        int itsize = 0;
-//        Set<CharSequence> items = new HashSet();
-//        for (Deque<E> x : itemTable) {
-//            if (x != null) {
-//                itsize += x.size();
-//                for (E e : x)
-//                    if (e!=null) items.add(e.name());
-//            }
-//        }
-//        int nsize = nameTable.size();
-//        if (nsize != itsize) {
-//            System.err.println("nameTable=" + nameTable.size() + " , itemTable=" + itsize);
-////            Set<CharSequence> named = new HashSet(nameTable.keySet());
-////            if (itsize > nsize) {
-////                System.err.println("  itemTable extras: " + items.removeAll(named));
-////            }
-////            else {
-////                System.err.println("  nameTable extras: " + named.removeAll(items));
-////            }
-//                        
-//        }
-//        
-//    }
-
-    
-
-
 }
