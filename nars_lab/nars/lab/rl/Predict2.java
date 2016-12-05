@@ -16,6 +16,7 @@ import nars.util.Events.CycleEnd;
 import nars.storage.Memory;
 import nars.NAR;
 import nars.config.Default;
+import nars.config.Parameters;
 import nars.control.ImmediateProcess;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -135,7 +136,7 @@ public class Predict2 {
             
             Term beliefTerm = Inheritance.make(term, value);
             
-            int maxBeliefs = memory.param.conceptBeliefsMax.get();
+            int maxBeliefs = Parameters.CONCEPT_BELIEFS_MAX;
             
             
             Sentence belief = new Sentence(beliefTerm, Symbols.JUDGMENT_MARK,new TruthValue(freq, conf), new Stamp(memory, Tense.Present) );
@@ -249,9 +250,9 @@ public class Predict2 {
         int thinkInterval = onlyNoticeChange ? 1 : duration/1;
 
         NAR n = new NAR();
-        n.param.duration.set(duration);
+      // n.param.duration.set(duration);
         //n.param.duration.setLinear(0.5);
-        n.param.conceptBeliefsMax.set(16);
+       // n.param.conceptBeliefsMax.set(16);
         //n.param.conceptForgetDurations.set(16);
 
         String xPrevFuncEq0 = "<x_tMin1 --> y0>";

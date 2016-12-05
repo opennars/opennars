@@ -4,6 +4,7 @@
  */
 package nars.control;
 
+import nars.config.Parameters;
 import nars.util.Events;
 import nars.storage.Memory;
 import nars.entity.Concept;
@@ -16,7 +17,7 @@ import nars.inference.RuleTables;
 abstract public class FireConcept extends DerivationContext {
     
     public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
-        this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
+        this(mem, concept, numTaskLinks, Parameters.TERMLINK_MAX_REASONED);
     }
     
     public FireConcept(Memory mem, Concept concept, int numTaskLinks, int termLinkCount) {

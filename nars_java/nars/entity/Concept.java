@@ -282,7 +282,7 @@ public class Concept extends Item<Term> {
                 trySolution(judg, questions.get(i), nal);
             }
 
-            addToTable(task, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
+            addToTable(task, beliefs, Parameters.CONCEPT_BELIEFS_MAX, ConceptBeliefAdd.class, ConceptBeliefRemove.class);
         }
     }
 
@@ -423,7 +423,7 @@ public class Concept extends Item<Term> {
 
                 questionFromGoal(task, nal);
                 
-                addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
+                addToTable(task, desires, Parameters.CONCEPT_GOALS_MAX, ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
                 InternalExperience.InternalExperienceFromTask(memory,task,false);
                 
@@ -491,7 +491,7 @@ public class Concept extends Item<Term> {
         }
 
         if (newQuestion) {
-            if (questions.size() + 1 > memory.param.conceptQuestionsMax.get()) {
+            if (questions.size() + 1 > Parameters.CONCEPT_QUESTIONS_MAX) {
                 Task removed = questions.remove(0);    // FIFO
                 memory.event.emit(ConceptQuestionRemove.class, this, removed);
             }
@@ -522,7 +522,7 @@ public class Concept extends Item<Term> {
         final BudgetValue taskBudget = task.budget;
 
         insertTaskLink(new TaskLink(task, null, taskBudget,
-                memory.param.termLinkRecordLength.get()));  // link type: SELF
+                Parameters.TERM_LINK_RECORD_LENGTH));  // link type: SELF
 
         if (!(term instanceof CompoundTerm)) {
             return;
@@ -546,7 +546,7 @@ public class Concept extends Item<Term> {
 
                 if (componentConcept != null) {
                     componentConcept.insertTaskLink(
-                        new TaskLink(task, termLink, subBudget, memory.param.termLinkRecordLength.get())
+                        new TaskLink(task, termLink, subBudget, Parameters.TERM_LINK_RECORD_LENGTH)
                     );
                 }
 //              }
@@ -898,7 +898,7 @@ public class Concept extends Item<Term> {
     public TermLink selectTermLink(final TaskLink taskLink, final long time) {
         
         
-        int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
+        int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
             
             final TermLink termLink = termLinks.takeNext();

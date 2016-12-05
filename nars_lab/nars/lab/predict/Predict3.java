@@ -58,9 +58,8 @@ public class Predict3 {
         int discretization = 3;
 
         NAR n = new NAR();
-        n.param.duration.set(duration);
+       // n.param.duration.set(duration);
         //n.param.duration.setLinear(0.5);
-        n.param.conceptBeliefsMax.set(64);
         //n.param.conceptForgetDurations.set(16);
         
         Discretize discretize = new Discretize(n, discretization);
