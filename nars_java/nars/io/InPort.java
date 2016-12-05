@@ -1,8 +1,8 @@
 package nars.io;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.Iterator;
-import nars.util.FIFO;
 
 
 /**
@@ -11,7 +11,7 @@ import nars.util.FIFO;
  */
 abstract public class InPort<X,Y> implements Iterator<Y> {
     public final Input<X> input;
-    public final FIFO<Y> buffer;
+    public final ArrayDeque<Y> buffer;
     private float attention;
     
     
@@ -20,7 +20,7 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
 //        this(input, new FIFO(), 1.0);
 //    }
     
-    public InPort(Input<X> input, FIFO<Y> buffer, float initialAttention) {
+    public InPort(Input<X> input, ArrayDeque<Y> buffer, float initialAttention) {
         super();
         this.input = input;
         this.buffer = buffer;
@@ -76,7 +76,8 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
     public void update() throws IOException {
         if (buffer == null) return;
         
-        while (!input.finished(false) && (buffer.available() > 0) ) {            
+        int DEFAULT_CAPACITY = 1024;
+        while (!input.finished(false) && (DEFAULT_CAPACITY - buffer.size()> 0) ) {            
             X x = input.next();
             if (x == null)
                 continue;
