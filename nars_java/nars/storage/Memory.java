@@ -20,6 +20,7 @@
  */
 package nars.storage;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.util.Events;
 import nars.util.EventEmitter;
 import java.io.Serializable;
@@ -90,10 +91,6 @@ public class Memory implements Serializable {
     private long timeRealNow;
     private long timePreviousCycle;
     private long timeSimulation;
-
-    public static enum Forgetting {
-        Iterative, Periodic
-    }
     
     public static long randomSeed = 1;
     public static Random randomNumber = new Random(randomSeed);
@@ -595,7 +592,7 @@ public class Memory implements Serializable {
             for(int i =0 ;i<Math.min(this.sequenceTasks.size(), Parameters.SEQUENCE_BAG_ATTEMPTS);i++) {
                 Task takeout = this.sequenceTasks.takeNext();
                 proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true);
-                this.sequenceTasks.putBack(takeout, this.param.cycles(this.param.sequenceForgetDurations), this);
+                this.sequenceTasks.putBack(takeout, cycles(this.param.sequenceForgetDurations), this);
                 
             }
             //for (Task stmLast : stm) {
@@ -610,6 +607,11 @@ public class Memory implements Serializable {
         this.sequenceTasks.addItem(newEvent);
 
         return true;
+    }
+    
+    /** converts durations to cycles */
+    public final float cycles(AtomicDouble durations) {
+        return param.duration.floatValue() * durations.floatValue();
     }
     
    

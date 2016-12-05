@@ -29,6 +29,12 @@ public class Parameters {
     
     public static boolean SHOW_REASONING_ERRORS=false; //currently false because the sentence constructor is the only one
                                                        //who creates them but is not doing it because of an error.
+    
+    /** 
+       Cycles per duration.
+       Past/future tense usage convention;
+       How far away "past" and "future" is from "now", in cycles.         
+       The range of "now" is [-DURATION/2, +DURATION/2];      */
     public static int DURATION = 5;
     
     /** use this for advanced error checking, at the expense of lower performance.

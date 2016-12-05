@@ -54,7 +54,7 @@ public class DefaultAttention implements Iterable<Concept> {
         return new FireConcept(memory, currentConcept, 1) {
             
             @Override public void onFinished() {
-                float forgetCycles = memory.param.cycles(memory.param.conceptForgetDurations);
+                float forgetCycles = memory.cycles(memory.param.conceptForgetDurations);
 
                 concepts.putBack(currentConcept, forgetCycles, memory);
             }
@@ -132,7 +132,7 @@ public class DefaultAttention implements Iterable<Concept> {
         }
 
         
-        Concept displaced = concepts.putBack(concept, memory.param.cycles(memory.param.conceptForgetDurations), memory);
+        Concept displaced = concepts.putBack(concept, memory.cycles(memory.param.conceptForgetDurations), memory);
                 
         if (displaced == null) {
             //added without replacing anything
@@ -161,7 +161,7 @@ public class DefaultAttention implements Iterable<Concept> {
     public void activate(final Concept c, final BudgetValue b, Activating mode) {
         concepts.take(c.name());
         BudgetFunctions.activate(c.budget, b, mode);
-        concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
+        concepts.putBack(c, memory.cycles(memory.param.conceptForgetDurations), memory);
     }
 
     public Iterator<Concept> iterator() {

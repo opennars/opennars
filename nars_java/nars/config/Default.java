@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import nars.storage.Memory;
-import nars.storage.Memory.Forgetting;
 import nars.NAR;
 import static nars.config.Default.InternalExperienceMode.Full;
 import static nars.config.Default.InternalExperienceMode.Minimal;
@@ -113,7 +112,6 @@ public class Default extends Parameters implements ConceptBuilder {
         param.termLinkMaxMatched.set(10);
         param.termLinkRecordLength.set(10);
         
-        param.setForgetting(Forgetting.Iterative);
         param.noiseLevel.set(100);
 
         param.reliance.set(0.9f);
@@ -331,19 +329,6 @@ public class Default extends Parameters implements ConceptBuilder {
     public Default setInternalExperience(InternalExperienceMode internalExperience) {
         this.internalExperience = internalExperience;
         return this;
-    }
-
-    
-    
-    public static Default fromJSON(String filePath) {
-        
-        try {
-            String c = readFile(filePath, Charset.defaultCharset());                        
-            return Param.json.fromJson(c, Default.class);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
     }
     
     static String readFile(String path, Charset encoding) 
