@@ -30,6 +30,21 @@ import nars.lab.ioutils.ChangedTextInput;
 import static nars.io.Texts.n2;
 import nars.language.Inheritance;
 import nars.language.Term;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
 
 /**
  *

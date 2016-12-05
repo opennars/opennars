@@ -27,6 +27,13 @@ import java.util.TreeSet;
 import nars.config.Parameters;
 import nars.io.Symbols.NativeOperator;
 import static nars.language.IntersectionExt.make;
+import static nars.language.IntersectionExt.make;
+import static nars.language.IntersectionExt.make;
+import static nars.language.IntersectionExt.make;
+import static nars.language.IntersectionExt.make;
+import static nars.language.IntersectionExt.make;
+import static nars.language.IntersectionExt.make;
+import static nars.language.IntersectionExt.make;
 
 /**
  * A compound term whose intension is the intersection of the extensions of its term

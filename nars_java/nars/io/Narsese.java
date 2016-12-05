@@ -49,6 +49,34 @@ import static nars.language.Variables.containVar;
 import nars.operator.Operation;
 import static nars.operator.Operation.make;
 import nars.operator.Operator;
+import static java.lang.String.valueOf;
+import static nars.io.Symbols.getOperator;
+import static nars.language.Variables.containVar;
+import static nars.language.Statement.make;
+import static java.lang.String.valueOf;
+import static nars.io.Symbols.getOperator;
+import static nars.language.Variables.containVar;
+import static nars.language.Statement.make;
+import static java.lang.String.valueOf;
+import static nars.io.Symbols.getOperator;
+import static nars.language.Variables.containVar;
+import static nars.language.Statement.make;
+import static java.lang.String.valueOf;
+import static nars.io.Symbols.getOperator;
+import static nars.language.Variables.containVar;
+import static nars.language.Statement.make;
+import static java.lang.String.valueOf;
+import static nars.io.Symbols.getOperator;
+import static nars.language.Variables.containVar;
+import static nars.language.Statement.make;
+import static java.lang.String.valueOf;
+import static nars.io.Symbols.getOperator;
+import static nars.language.Variables.containVar;
+import static nars.language.Statement.make;
+import static java.lang.String.valueOf;
+import static nars.io.Symbols.getOperator;
+import static nars.language.Variables.containVar;
+import static nars.language.Statement.make;
 
 /**
  * Utility methods for working and reacting to Narsese input.

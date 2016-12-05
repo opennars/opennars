@@ -57,7 +57,7 @@ public class Predict3 {
         int thinkInterval = onlyNoticeChange ? 1 : 2;
         int discretization = 3;
 
-        NAR n = new NAR(new Default().setInternalExperience(null));
+        NAR n = new NAR(new Default());
         n.param.duration.set(duration);
         //n.param.duration.setLinear(0.5);
         n.param.conceptBeliefsMax.set(64);

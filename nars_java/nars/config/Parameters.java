@@ -124,13 +124,13 @@ public class Parameters {
     public static final int CONCEPT_BAG_LEVELS = 1000;
     /** Size of TaskLinkBag */
     public static final int TASK_LINK_BAG_SIZE = 20;  //was 200 in new experiment
-    public static final int TASK_LINK_LEVELS = 10;
+    public static final int TASK_LINK_BAG_LEVELS = 10;
     /** Size of TermLinkBag */
     public static final int TERM_LINK_BAG_SIZE = 100;  //was 1000 in new experiment
     public static final int TERM_LINK_BAG_LEVELS = 10;
-    /** Size of TaskBuffer */
-    public static final int TASK_BUFFER_BAG_SIZE = 100;
-    public static final int TASK_BUFFER_BAG_LEVELS = 10;
+    /** Size of Novel Task Buffer */
+    public static final int NOVEL_TASK_BAG_SIZE = 100;
+    public static final int NOVEL_TASK_BAG_LEVELS = 10;
     /*  Size of sequence/input event bag */
     public static final int SEQUENCE_BAG_SIZE = 100;
     public static final int SEQUENCE_BAG_LEVELS = 10;

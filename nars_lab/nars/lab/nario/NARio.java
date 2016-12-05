@@ -28,6 +28,8 @@ import nars.operator.NullOperator;
 import nars.operator.Operation;
 import nars.lab.plugin.app.plan.TemporalParticlePlanner;
 import nars.plugin.mental.InternalExperience;
+import static java.lang.Math.signum;
+import static java.lang.Math.signum;
 
 /**
  *

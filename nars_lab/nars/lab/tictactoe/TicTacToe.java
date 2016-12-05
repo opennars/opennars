@@ -84,8 +84,7 @@ public class TicTacToe extends JPanel {
     public TicTacToe() {
         super(new BorderLayout());
 
-        nar = new NAR(new Default().
-                setConceptBagSize(1000));
+        nar = new NAR();
         
         nar.memory.addOperator(new AddO("^addO"));        
         (nar.param).duration.set(1000);

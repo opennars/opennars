@@ -6,6 +6,21 @@ import nars.config.Parameters;
 import nars.config.Default;
 import static nars.perf.NALStressMeasure.perfNAL;
 import nars.core.NALTest;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
 
 /**
  * Runs NALTestPerf continuously, for profiling

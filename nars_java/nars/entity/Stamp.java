@@ -36,6 +36,13 @@ import static nars.language.Tense.Future;
 import static nars.language.Tense.Past;
 import static nars.language.Tense.Present;
 import nars.language.Term;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
 
 public class Stamp implements Cloneable {
 
