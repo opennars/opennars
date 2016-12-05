@@ -90,7 +90,8 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
             //Green->Yellow->Red
         //    g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.2f, 0.9f));
              //g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.2f, 0.8f + 0.15f));
-             g.setColor(Color.GRAY);
+             //g.setColor(Color.GRAY);
+             g.setColor(Color.getHSBColor(0,0, Math.max(0.5f,(float)p) / 3.0f));
             
         }
         else {
