@@ -23,7 +23,7 @@ import nars.lab.operator.software.Javascript;
 import nars.lab.operator.software.NumericCertainty;
 
 
-public class DefaultOperators {
+public class Operators {
     
     
     /**
@@ -37,6 +37,21 @@ public class DefaultOperators {
         js.setEnabled(nar, true);
         
         return new Operator[] {
+            
+            //example operators
+            new NullOperator("^break"),
+            new NullOperator("^drop"),
+            new NullOperator("^go-to"),
+            new NullOperator("^open"),
+            new NullOperator("^pick"),
+            new NullOperator("^strike"),
+            new NullOperator("^throw"),
+            new NullOperator("^activate"),
+            new NullOperator("^deactivate"),
+            new NullOperator("^lighter"),
+            new NullOperator("^reshape"),
+            new NullOperator("^say"),
+            
             //new Wait(),            
             //new Wait(),            
             new NullOperator(),
@@ -72,8 +87,8 @@ public class DefaultOperators {
 
             js,      // javascript evaluation
             
-            new NumericCertainty(),
-                
+            new NumericCertainty()
+
          /* 
 +         *          I/O operations under consideration
 +         * observe          // get the most active input (Channel ID: optional?)
@@ -122,15 +137,7 @@ public class DefaultOperators {
         * name             // turn a compount term into an atomic term ???
          * -???              // rememberAction the history of the system? excutions of operatons?
          */
-                
-        /* operators for testing examples */
-//        table.put("^go-to", new GoTo("^go-to"));
-//        table.put("^pick", new Pick("^pick"));
-//        table.put("^open", new Open("^open"));
-//        table.put("^break", new Break("^break"));
-//        table.put("^drop", new Drop("^drop"));
-//        table.put("^throw", new Throw("^throw"));
-//        table.put("^strike", new Strike("^strike"));
+               
             
         };
         
