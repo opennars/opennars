@@ -14,7 +14,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.language.Term;

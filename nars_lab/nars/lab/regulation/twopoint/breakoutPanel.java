@@ -16,7 +16,7 @@ import nars.util.EventEmitter;
 import nars.util.Events.CycleEnd;
 import nars.storage.Memory;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.language.Term;

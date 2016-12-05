@@ -3,7 +3,7 @@ package nars.core;
 import java.util.List;
 import nars.storage.Memory;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.language.Interval;
 import nars.language.Interval.AtomicDuration;
 import static org.junit.Assert.assertEquals;
@@ -56,7 +56,7 @@ public class IntervalTest {
     @Test
     public void testIntervalSequence() {
     
-        NAR n = new NAR(new Default());
+        NAR n = new NAR(new Plugins());
         Memory m = n.memory;
         
         List<Interval> a11 = Interval.intervalTimeSequence(1, 1, m);

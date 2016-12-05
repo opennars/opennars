@@ -3,8 +3,8 @@ package nars.config;
 import nars.NAR;
 import nars.operator.NullOperator;
 import nars.operator.Operator;
-import nars.lab.operator.math.Add;
-import nars.lab.operator.math.Count;
+import nars.operator.misc.Add;
+import nars.operator.misc.Count;
 import nars.lab.operator.math.MathExpression;
 import nars.operator.mental.Believe;
 import nars.operator.mental.Consider;
@@ -18,8 +18,8 @@ import nars.operator.mental.Register;
 import nars.operator.mental.Remind;
 import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
-import nars.operator.mental.Reflect;
-import nars.lab.operator.software.Javascript;
+import nars.operator.misc.Reflect;
+import nars.operator.misc.Javascript;
 import nars.lab.operator.software.NumericCertainty;
 
 

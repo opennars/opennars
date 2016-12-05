@@ -1,4 +1,4 @@
-package nars.lab.operator.software;
+package nars.operator.misc;
 
 import java.util.HashMap;
 import javax.script.Bindings;

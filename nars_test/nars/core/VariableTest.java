@@ -7,7 +7,7 @@ package nars.core;
 import java.util.concurrent.atomic.AtomicBoolean;
 import nars.util.Events.Answer;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.util.AbstractObserver;
 import nars.lab.testutils.OutputContainsCondition;
 import static org.junit.Assert.assertTrue;
@@ -20,7 +20,7 @@ import org.junit.Test;
  */
 public class VariableTest {
  
-    NAR n = new NAR(new Default());
+    NAR n = new NAR(new Plugins());
     
     @Before public void init() {
         n.addInput("<a --> 3>. :|:");

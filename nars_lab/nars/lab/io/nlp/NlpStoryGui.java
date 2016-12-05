@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.gui.NARSwing;
 
 public class NlpStoryGui extends JFrame {

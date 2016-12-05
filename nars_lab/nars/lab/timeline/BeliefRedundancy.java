@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Concept;
 import nars.io.TextInput;
 import nars.io.TextOutput;

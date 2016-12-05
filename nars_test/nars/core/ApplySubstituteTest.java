@@ -3,7 +3,7 @@ package nars.core;
 import java.util.HashMap;
 import java.util.Map;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.io.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Term;
@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class ApplySubstituteTest {
     
-    NAR n = new NAR(new Default());
+    NAR n = new NAR(new Plugins());
     Narsese np = new Narsese(n);
     
     @Test
@@ -43,7 +43,7 @@ public class ApplySubstituteTest {
     @Test
     public void test2() throws Narsese.InvalidInputException {
         //substituting:  <(*,$1) --> num>.  with $1 ==> 0
-        NAR n = new NAR(new Default());
+        NAR n = new NAR(new Plugins());
             
         Map<Term,Term> h = new HashMap();
         h.put(np.parseTerm("$1"), np.parseTerm("0"));        

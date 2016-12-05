@@ -12,7 +12,7 @@ import automenta.vivisect.timeline.TimelineVis;
 import java.awt.Color;
 import nars.NAR;
 import nars.config.Parameters;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;

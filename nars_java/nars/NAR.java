@@ -21,8 +21,9 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
 import nars.util.Events.FrameStart;
 import nars.util.Events.Perceive;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.control.DerivationContext.DerivationFilter;
+import nars.control.WorkingCycle;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -43,6 +44,7 @@ import nars.io.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
 import nars.io.Echo;
+import nars.storage.LevelBag;
 
 
 /**
@@ -141,9 +143,20 @@ public class NAR implements Runnable {
     
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
     
+    public Memory NewMemory(RuntimeParameters p) {
+        return new Memory(p, 
+                new WorkingCycle(new LevelBag(Parameters.CONCEPT_BAG_LEVELS, Parameters.CONCEPT_BAG_SIZE)), 
+                new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
+                new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE));
+    }
+    
     public NAR() {
-        Default b = new Default();
-        Memory m = b.newMemory(b.param);
+        this(new Plugins());
+    }
+    
+    /** normal way to construct a NAR, using a particular Build instance */
+    public NAR(Plugins b) {
+        Memory m = NewMemory(b.param);
         this.memory = m;        
         this.param = m.param;
         
@@ -151,15 +164,6 @@ public class NAR implements Runnable {
         inputChannels = new ArrayList();
         newInputChannels = new CopyOnWriteArrayList();
         b.init(this);
-    }
-    protected NAR(final Memory m) {
-        this.memory = m;        
-        this.param = m.param;
-        
-        //needs to be concurrent in case we change this while running
-        inputChannels = new ArrayList();
-        newInputChannels = new CopyOnWriteArrayList();
-
     }
 
     /**
@@ -711,12 +715,4 @@ public class NAR implements Runnable {
     public List<InPort<Object, Item>> getInPorts() {
         return inputChannels;
     }
-
-    /** normal way to construct a NAR, using a particular Build instance */
-    public NAR(Default b) {
-        this(b.newMemory(b.param));
-        b.init(this);
-    }
-    
-    
 }

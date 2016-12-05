@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import nars.util.Events.Answer;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.util.AbstractObserver;

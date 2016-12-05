@@ -26,7 +26,7 @@ import nars.util.EventEmitter;
 import nars.util.Events.ConceptForget;
 import nars.util.Events.ConceptNew;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Concept;
 import nars.io.Symbols.NativeOperator;
 import nars.io.Texts;

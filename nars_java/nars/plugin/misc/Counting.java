@@ -1,4 +1,4 @@
-package nars.lab.plugin.mental;
+package nars.plugin.misc;
 
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
@@ -15,7 +15,6 @@ import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.SetExt;
 import nars.language.Term;
-import nars.plugin.mental.InternalExperience;
 import nars.plugin.mental.InternalExperience;
 
 /**

@@ -1,7 +1,7 @@
 package nars.util;
 
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.gui.util.DefaultGraphizer;
 import nars.gui.util.NARGraph;
 import static nars.gui.util.NARGraph.IncludeEverything;
@@ -14,7 +14,7 @@ public class TestNARGraph {
     @Test
     public void testGraph() {
     
-        NAR n = new NAR(new Default());
+        NAR n = new NAR(new Plugins());
         
         n.addInput("<a --> b>.");
         

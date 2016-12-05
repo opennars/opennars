@@ -15,7 +15,7 @@ import java.util.List;
 import nars.util.Events.CycleEnd;
 import nars.storage.Memory;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.config.Parameters;
 import nars.control.ImmediateProcess;
 import nars.entity.Concept;

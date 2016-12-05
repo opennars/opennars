@@ -26,7 +26,7 @@ import nars.util.Events;
 import nars.util.Events.ConceptFire;
 import nars.util.Events.CycleEnd;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Concept;
 import automenta.vivisect.TreeMLData;
 import automenta.vivisect.Video;

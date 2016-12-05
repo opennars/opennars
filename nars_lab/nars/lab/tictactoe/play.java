@@ -24,7 +24,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import nars.storage.Memory;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.language.Term;
