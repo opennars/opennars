@@ -68,11 +68,9 @@ public class TuneTuffy {
     }
     
     public static void main(String[] args) throws FileNotFoundException, Narsese.InvalidInputException {
-        Default b = new Default().
-                setInternalExperience(null);
-                
+
         
-        NAR n = new NAR(b);
+        NAR n = new NAR();
         n.addInput(new TextInput(new File("nal/use_cases/tuffy.smokes.nal")));
         
         //new TextOutput(n, System.out, 0.95f);                

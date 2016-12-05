@@ -28,6 +28,27 @@ import static nars.inference.UtilityFunctions.aveGeo;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.io.Texts;
+import static nars.inference.UtilityFunctions.and;
+import static nars.inference.UtilityFunctions.aveGeo;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.and;
+import static nars.inference.UtilityFunctions.aveGeo;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.and;
+import static nars.inference.UtilityFunctions.aveGeo;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.and;
+import static nars.inference.UtilityFunctions.aveGeo;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.and;
+import static nars.inference.UtilityFunctions.aveGeo;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.and;
+import static nars.inference.UtilityFunctions.aveGeo;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.and;
+import static nars.inference.UtilityFunctions.aveGeo;
+import static nars.inference.UtilityFunctions.or;
 
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).

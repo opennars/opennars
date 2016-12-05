@@ -38,7 +38,7 @@ import nars.plugin.mental.Emotions;
 /**
  * Default set of NAR parameters which have been classically used for development.
  */
-public class Default extends Parameters implements ConceptBuilder {
+public class Default extends Parameters {
 
     
     public Param param = new Param();
@@ -79,33 +79,13 @@ public class Default extends Parameters implements ConceptBuilder {
     
     public Default() {
         super();
-        
-       // temporalPlanner(8, 64, 16);
-        
-        setConceptBagSize(Parameters.CONCEPT_BAG_SIZE);        
-        setConceptBagLevels(Parameters.CONCEPT_BAG_LEVELS);
-        
-        setTaskLinkBagSize(Parameters.TASK_LINK_BAG_SIZE);
-        setTaskLinkBagLevels(10);
-
-        setTermLinkBagSize(Parameters.TERM_LINK_BAG_SIZE);
-        setTermLinkBagLevels(Parameters.TERM_LINK_BAG_LEVELS);
-        
-        setNovelTaskBagSize(Parameters.TASK_BUFFER_BAG_SIZE);
-        setNovelTaskBagLevels(Parameters.TASK_BUFFER_BAG_LEVELS);
-        
-        setSequenceTaskBagSize(Parameters.SEQUENCE_BAG_SIZE);
-        setSequenceTaskBagLevels(Parameters.SEQUENCE_BAG_LEVELS);
-    
-        //add derivation filters here:
-        //param.getDefaultDerivationFilters().add(new BeRational());
     }
 
     public Memory newMemory(Param p) {        
         return new Memory(p, 
-                new DefaultAttention(newConceptBag(), getConceptBuilder()), 
-                new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize()),
-                new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize()));
+                new DefaultAttention(newConceptBag(), this), 
+                new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
+                new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE));
     }
 
 
@@ -137,111 +117,16 @@ public class Default extends Parameters implements ConceptBuilder {
         return n;
     }
 
-
-    ConceptBuilder getConceptBuilder() {
-        return this;
-    }
-
-    @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {        
-        Bag<TaskLink,Task> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
-        Bag<TermLink,TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
+        Bag<TaskLink,Task> taskLinks = new LevelBag<>(Parameters.TASK_LINK_BAG_LEVELS, Parameters.TASK_LINK_BAG_SIZE);
+        Bag<TermLink,TermLink> termLinks = new LevelBag<>(Parameters.TERM_LINK_BAG_LEVELS, Parameters.TERM_LINK_BAG_SIZE);
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }
 
     
     public Bag<Concept,Term> newConceptBag() {
-        return new LevelBag(getConceptBagLevels(), getConceptBagSize());
-    }
-    
-    public int getConceptBagSize() { return conceptBagSize; }    
-    public Default setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
-
-    
-    
-    public int getConceptBagLevels() { return conceptBagLevels; }    
-    public Default setConceptBagLevels(int bagLevels) { this.conceptBagLevels = bagLevels; return this;  }
-        
-    /**
-     * @return the taskLinkBagLevels
-     */
-    public int getTaskLinkBagLevels() {
-        return taskLinkBagLevels;
-    }
-       
-    public Default setTaskLinkBagLevels(int taskLinkBagLevels) {
-        this.taskLinkBagLevels = taskLinkBagLevels;
-        return this;
-    }
-
-    public Default setNovelTaskBagSize(int taskBufferSize) {
-        this.novelTaskBagSize = taskBufferSize;
-        return this;
-    }
-    
-    public Default setSequenceTaskBagSize(int taskBufferSize) {
-        this.sequenceTaskBagSize = taskBufferSize;
-        return this;
-    }
-
-    public int getNovelTaskBagSize() {
-        return novelTaskBagSize;
-    }
-    
-    public int getSequenceTaskBagSize() {
-        return sequenceTaskBagSize;
-    }
-    
-    public Default setNovelTaskBagLevels(int l) {
-        this.novelTaskBagLevels = l;
-        return this;
-    }
-    
-    public Default setSequenceTaskBagLevels(int l) {
-        this.sequenceBagLevels = l;
-        return this;
-    }
-
-    public int getNovelTaskBagLevels() {
-        return novelTaskBagLevels;
-    }
-    
-
-    public int getConceptTaskLinks() {
-        return taskLinkBagSize;
-    }
-
-    public Default setTaskLinkBagSize(int taskLinkBagSize) {
-        this.taskLinkBagSize = taskLinkBagSize;
-        return this;
-    }
-
-    public int getTermLinkBagLevels() {
-        return termLinkBagLevels;
-    }
-
-    public Default setTermLinkBagLevels(int termLinkBagLevels) {
-        this.termLinkBagLevels = termLinkBagLevels;
-        return this;
-    }
-
-    public int getConceptTermLinks() {
-        return termLinkBagSize;
-    }
-
-    public Default setTermLinkBagSize(int termLinkBagSize) {
-        this.termLinkBagSize = termLinkBagSize;
-        return this;
-    }
-
-    public InternalExperienceMode getInternalExperience() {
-        return internalExperience;
-    }
-
-    public Default setInternalExperience(InternalExperienceMode internalExperience) {
-        this.internalExperience = internalExperience;
-        return this;
+        return new LevelBag(Parameters.CONCEPT_BAG_LEVELS, Parameters.CONCEPT_BAG_SIZE);
     }
     
     static String readFile(String path, Charset encoding) 

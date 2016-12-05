@@ -42,6 +42,13 @@ import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.makeCompoundName;
 import static nars.language.Interval.interval;
+import static nars.language.Interval.interval;
+import static nars.language.Interval.interval;
+import static nars.language.Interval.interval;
+import static nars.language.Interval.interval;
+import static nars.language.Interval.interval;
+import static nars.language.Interval.interval;
+import static nars.language.Interval.interval;
 
 
 public abstract class CompoundTerm extends Term implements Iterable<Term> {

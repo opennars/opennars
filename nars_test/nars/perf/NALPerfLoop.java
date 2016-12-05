@@ -6,6 +6,21 @@ import nars.config.Parameters;
 import static nars.perf.NALStressMeasure.perfNAL;
 import nars.core.NALTest;
 import nars.config.Default;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
 
 /**
  * Runs NALTestPerf continuously, for profiling
@@ -20,7 +35,7 @@ public class NALPerfLoop {
         int extraCycles = 2048;
         int randomExtraCycles = 512;
           
-        NAR n = new NAR(new Default().setConceptBagSize(maxConcepts) );
+        NAR n = new NAR(new Default());
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
         //NAR n = new NAR(new Curve());
         

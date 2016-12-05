@@ -35,7 +35,7 @@ public class NARPrologMirrorTest {
             
             @Override
             public NAR newNAR() {
-                NAR nar = new NAR( new Default().setInternalExperience(null) );
+                NAR nar = new NAR( new Default());
 
                 Term aInhd;
                 try {

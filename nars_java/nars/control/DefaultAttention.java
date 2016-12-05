@@ -13,6 +13,7 @@ import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.storage.Bag;
+import nars.config.Default;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -27,13 +28,12 @@ public class DefaultAttention implements Iterable<Concept> {
      */
     public final Bag<Concept,Term> concepts;
     
-    private final ConceptBuilder conceptBuilder;
+    private final Default conceptBuilder;
     private Memory memory;
          
-    public DefaultAttention(Bag<Concept,Term> concepts, ConceptBuilder conceptBuilder) {
+    public DefaultAttention(Bag<Concept,Term> concepts, Default conceptBuilder) {
         this.concepts = concepts;
         this.conceptBuilder = conceptBuilder;        
-        
     }
 
     /** for removing a specific concept (if it's not putBack) */

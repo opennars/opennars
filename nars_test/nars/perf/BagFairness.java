@@ -224,7 +224,7 @@ public class BagFairness {
                             //return new DelayBag(param.conceptForgetDurations, getConceptBagSize());
                             //return new LevelBag2(getConceptBagSize(), 20);
                             //return new AdaptiveContinuousBag(getConceptBagSize());
-                            return new LevelBag(getConceptBagSize(), 20);
+                            return new LevelBag(Parameters.CONCEPT_BAG_SIZE, 20);
                         }
                         /*else { //if (experiment == 1) {
                             
@@ -233,7 +233,7 @@ public class BagFairness {
                         }*/
                     }
 
-                }.setConceptBagSize(maxConcepts));
+                });
 
                 
                 ArrayList<Chart> ch = new BagFairness(n, 
