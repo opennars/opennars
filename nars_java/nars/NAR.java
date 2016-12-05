@@ -328,7 +328,7 @@ public class NAR implements Runnable {
                     return at;
                 else {                    
                     //Process tasks with overrides                    
-                    final int duration = memory.param.duration.get();
+                    final int duration = Parameters.DURATION;
                     
                     return Iterators.filter(at, new Predicate<Item>() {
                         @Override public boolean apply(Item at) {

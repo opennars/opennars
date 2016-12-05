@@ -260,8 +260,7 @@ public class TemporalRules {
         }
 
         
-        final Interval.AtomicDuration duration = nal.memory.param.duration;
-        int durationCycles = duration.get();
+        int durationCycles = Parameters.DURATION;
         
         long time1 = s1.getOccurenceTime();
         long time2 = s2.getOccurenceTime();
@@ -304,7 +303,7 @@ public class TemporalRules {
             //it was not "semantically" connected by temporal succession
             int tt1=(int) s1.getOccurenceTime();
             int tt2=(int) s1.getOccurenceTime();
-            int d=Math.abs(tt1-tt2)/nal.memory.param.duration.get();
+            int d=Math.abs(tt1-tt2)/Parameters.DURATION;
             if(d!=0) {
                 double mul=1.0/((double)d);
                 budget1.setPriority((float) (budget1.getPriority()*mul));

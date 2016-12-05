@@ -1,18 +1,8 @@
 package nars.config;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.storage.Memory.Forgetting;
 import nars.language.Interval.AtomicDuration;
 import com.google.common.util.concurrent.AtomicDouble;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -24,8 +14,6 @@ import nars.control.DerivationContext.DerivationFilter;
  */
 public class Param implements Serializable {
     
-    
-
     public Param() {    }
 
     /** Silent threshold for task reporting, in [0, 100]. 
@@ -39,44 +27,31 @@ public class Param implements Serializable {
        How far away "past" and "future" is from "now", in cycles.         
        The range of "now" is [-DURATION/2, +DURATION/2];      */
     public final AtomicDuration duration = new AtomicDuration();
-
-    Forgetting forgetting;
-    public List<DerivationFilter> defaultDerivationFilters = new ArrayList();
-    
-    public static Param fromJSON(String json) {
-        return Param.json.fromJson(json, Param.class);
-    }
-    
-
-    /** converts durations to cycles */
-    public final float cycles(AtomicDouble durations) {
-        return duration.floatValue() * durations.floatValue();
-    }
     
     /** Concept decay rate in ConceptBag, in [1, 99].  originally: CONCEPT_FORGETTING_CYCLE 
      *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
      *  Lower means faster rate of decay.
      */
-    public final AtomicDouble conceptForgetDurations = new AtomicDouble();
+    public final AtomicDouble conceptForgetDurations = new AtomicDouble(2.0);
     
     /** TermLink decay rate in TermLinkBag, in [1, 99]. originally: TERM_LINK_FORGETTING_CYCLE */
-    public final AtomicDouble termLinkForgetDurations = new AtomicDouble();
+    public final AtomicDouble termLinkForgetDurations = new AtomicDouble(10.0);
     
     /** TaskLink decay rate in TaskLinkBag, in [1, 99]. originally: TASK_LINK_FORGETTING_CYCLE */
-    public final AtomicDouble taskLinkForgetDurations = new AtomicDouble();
+    public final AtomicDouble taskLinkForgetDurations = new AtomicDouble(4.0);
     
     /** Sequence bag forget durations **/
-    public final AtomicDouble sequenceForgetDurations = new AtomicDouble();
+    public final AtomicDouble sequenceForgetDurations = new AtomicDouble(4.0);
     
-    public final AtomicDouble novelTaskForgetDurations = new AtomicDouble();
+    public final AtomicDouble novelTaskForgetDurations = new AtomicDouble(2.0);
 
     
     /** Minimum expectation for a desire value. 
      *  the range of "now" is [-DURATION, DURATION]; */
-    public final AtomicDouble decisionThreshold = new AtomicDouble();
+    public final AtomicDouble decisionThreshold = new AtomicDouble(0.6);
     
     /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
-    public final AtomicInteger termLinkMaxMatched = new AtomicInteger();
+    public final AtomicInteger termLinkMaxMatched = new AtomicInteger(10);
             
     
 //    //let NARS use NARS+ ideas (counting etc.)
@@ -87,106 +62,30 @@ public class Param implements Serializable {
     
     //these two are AND-coupled:
     //when a concept is important and exceeds a syntactic complexity, let NARS name it: 
-    public final AtomicInteger abbreviationMinComplexity = new AtomicInteger();
-    public final AtomicDouble abbreviationMinQuality = new AtomicDouble();
+    //public final AtomicInteger abbreviationMinComplexity = new AtomicInteger();
+    //public final AtomicDouble abbreviationMinQuality = new AtomicDouble();
     
     /** Maximum TermLinks used in reasoning for each Task in Concept */
-    public final AtomicInteger termLinkMaxReasoned = new AtomicInteger();
+    public final AtomicInteger termLinkMaxReasoned = new AtomicInteger(3);
 
     /** Record-length for newly created TermLink's */
-    public final AtomicInteger termLinkRecordLength = new AtomicInteger();
+    public final AtomicInteger termLinkRecordLength = new AtomicInteger(10);
     
     /** Maximum number of beliefs kept in a Concept */
-    public final AtomicInteger conceptBeliefsMax = new AtomicInteger();
+    public final AtomicInteger conceptBeliefsMax = new AtomicInteger(7);
     
     /** Maximum number of questions kept in a Concept */
-    public final AtomicInteger conceptQuestionsMax = new AtomicInteger();
+    public final AtomicInteger conceptQuestionsMax = new AtomicInteger(5);
 
     /** Maximum number of goals kept in a Concept */
-    public final AtomicInteger conceptGoalsMax = new AtomicInteger();
+    public final AtomicInteger conceptGoalsMax = new AtomicInteger(7);
     
     /** Reliance factor, the empirical confidence of analytical truth.
         the same as default confidence  */        
-    public final AtomicDouble reliance = new AtomicDouble();
+    public final AtomicDouble reliance = new AtomicDouble(0.9f);
 
-    public Forgetting getForgetMode() {
-        return forgetting;
-    }
-
-    public void setForgetting(Forgetting forgetMode) {
-        this.forgetting = forgetMode;
-    }
-
+    public List<DerivationFilter> defaultDerivationFilters = new ArrayList();
     public final List<DerivationFilter> getDerivationFilters() {
         return defaultDerivationFilters;
     }
-    
-    
-    @Override
-    public String toString() {
-        return json.toJson(this);
-    }
-    
-//    public double[] toGenome(String... excludeFields) {
-//        JsonObject j = json.toJsonTree(this).getAsJsonObject();
-//        TreeSet<Map.Entry<String, JsonElement>> fields = new TreeSet<>(j.entrySet());
-//        
-//        Set<String> excluded = new HashSet();
-//        for (String e : excludeFields)
-//            excluded.add(e);
-//        
-//        List<Double> l = new ArrayList();
-//        for (Map.Entry<String, JsonElement> e : fields) {
-//            String f = e.getKey();
-//            if (excluded.contains(f))
-//                continue;
-//            JsonElement v = e.getValue();
-//            if (v.isJsonPrimitive()) {
-//                try {
-//                    double d = v.getAsDouble();
-//                    l.add(d);                
-//                }
-//                catch (NumberFormatException nfe) { }
-//            }
-//        }
-//        return Doubles.toArray(l);
-//    }
-    
-    static public final Gson json;
-    static { 
-        GsonBuilder b = new GsonBuilder();
-        b.setPrettyPrinting();
-        b.disableHtmlEscaping();
-        b.serializeNulls();
-        
-        final JsonSerializer<AtomicDouble> atomicDoubleSerializer = new JsonSerializer<AtomicDouble>() {
-            @Override public JsonElement serialize(AtomicDouble t, Type type, JsonSerializationContext jsc) {
-                return new JsonPrimitive(t.get());
-            }
-        };
-        
-        JsonDeserializer<AtomicDouble> atomicDoubleDeserializer = new JsonDeserializer<AtomicDouble>() {
-            @Override public AtomicDouble deserialize(JsonElement je, Type type, JsonDeserializationContext jdc) throws JsonParseException {
-                return new AtomicDouble(je.getAsDouble());
-            }
-        };
-        
-        b.registerTypeAdapter(AtomicDouble.class, atomicDoubleSerializer);
-        b.registerTypeAdapter(AtomicDouble.class, atomicDoubleDeserializer);
-        
-        b.registerTypeAdapter(AtomicInteger.class, new JsonSerializer<AtomicInteger>() {
-            @Override public JsonElement serialize(AtomicInteger t, Type type, JsonSerializationContext jsc) {
-                return new JsonPrimitive(t.get());
-            }            
-        });
-        b.registerTypeAdapter(AtomicInteger.class, new JsonDeserializer<AtomicInteger>() {
-            @Override public AtomicInteger deserialize(JsonElement je, Type type, JsonDeserializationContext jdc) throws JsonParseException {
-                return new AtomicInteger(je.getAsInt());
-            }           
-        });
-
-        
-        json = b.create();            
-    }
-    
 }

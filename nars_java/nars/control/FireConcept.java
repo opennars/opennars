@@ -68,7 +68,7 @@ abstract public class FireConcept extends DerivationContext {
     
     protected void returnTaskLink(TaskLink t) {
         currentConcept.taskLinks.putBack(t, 
-                memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
+                memory.cycles(memory.param.taskLinkForgetDurations), memory);
         
     }
     
