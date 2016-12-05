@@ -23,12 +23,12 @@ import nars.io.narsese.Narsese.InvalidInputException;
 /*import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
 import nars.io.nlp.Twenglish;*/
-import nars.operator.io.Echo;
-import nars.operator.io.PauseInput;
-import nars.operator.io.Reboot;
-import nars.operator.io.Reset;
-import nars.operator.io.SetDecisionThreshold;
-import nars.operator.io.SetVolume;
+import nars.console.Echo;
+import nars.console.PauseInput;
+import nars.console.Reboot;
+import nars.console.Reset;
+import nars.console.SetDecisionThreshold;
+import nars.console.SetVolume;
 
 /**
  *  Default handlers for text perception.

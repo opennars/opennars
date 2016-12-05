@@ -1,4 +1,4 @@
-package nars.operator.io;
+package nars.console;
 
 import nars.core.control.AbstractTask;
 

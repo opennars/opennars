@@ -62,11 +62,11 @@ import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.operator.io.Echo;
-import nars.operator.io.PauseInput;
-import nars.operator.io.Reset;
-import nars.operator.io.SetDecisionThreshold;
-import nars.operator.io.SetVolume;
+import nars.console.Echo;
+import nars.console.PauseInput;
+import nars.console.Reset;
+import nars.console.SetDecisionThreshold;
+import nars.console.SetVolume;
 
 
 /**

@@ -1,11 +1,11 @@
-package nars.io.buffer;
+package nars.util;
 
 import java.util.ArrayDeque;
 
 /**
  * FIFO Item buffer that processes items directly and immediately
  */
-public class FIFO<B> extends ArrayDeque<B> implements Buffer<B> {
+public class FIFO<B> extends ArrayDeque<B> {
 
     public int DEFAULT_CAPACITY = 1024;
     
@@ -18,7 +18,7 @@ public class FIFO<B> extends ArrayDeque<B> implements Buffer<B> {
         return DEFAULT_CAPACITY;
     }
 
-    @Override
+
     public int available() {
         return capacity() - size();
     }

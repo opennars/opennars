@@ -37,7 +37,7 @@ import nars.util.Events.TermLinkAdd;
 import nars.util.Events.TermLinkRemove;
 import nars.util.Events.UnexecutableGoal;
 import nars.storage.Memory;
-import nars.core.NARRun;
+import nars.console.NARRun;
 import nars.core.Parameters;
 import nars.core.control.DerivationContext;
 import nars.inference.BudgetFunctions;
