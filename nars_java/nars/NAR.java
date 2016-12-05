@@ -11,6 +11,7 @@ import com.google.common.collect.Iterators;
 import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -37,7 +38,6 @@ import nars.io.Output.IN;
 import nars.io.Symbols;
 import nars.io.TaskInput;
 import nars.io.TextInput;
-import nars.util.FIFO;
 import nars.io.Narsese;
 import nars.io.Narsese.InvalidInputException;
 import nars.language.Tense;
@@ -313,7 +313,7 @@ public class NAR implements Runnable {
     final class ObjectTaskInPort extends InPort<Object,AbstractTask> {
         private long creationTime = -1;
 
-        public ObjectTaskInPort(Input input, FIFO buffer, float initialAttention) {
+        public ObjectTaskInPort(Input input, ArrayDeque buffer, float initialAttention) {
             super(input, buffer, initialAttention);
         }
 
@@ -361,7 +361,7 @@ public class NAR implements Runnable {
     
     /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
     public ObjectTaskInPort addInput(final Input channel) {
-        ObjectTaskInPort i = new ObjectTaskInPort(channel, new FIFO(), 1.0f);
+        ObjectTaskInPort i = new ObjectTaskInPort(channel, new ArrayDeque(), 1.0f);
                
         try {
             i.update();
