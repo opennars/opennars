@@ -4,12 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import nars.NAR;
 import nars.config.Plugins;
-import nars.io.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-
+import nars.io.Narsese;
 
 
 public class ApplySubstituteTest {

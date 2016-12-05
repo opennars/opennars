@@ -4,6 +4,7 @@
  */
 package nars.core.bag;
 
+import nars.NAR;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -20,20 +21,12 @@ import org.junit.Test;
  */
 public class BagOperationsTest {
 
-    public static class NullConcept extends Concept {
-
-        public NullConcept(String id, float priority) {
-            super(new BudgetValue(priority, priority, priority), new Term(id), null, null, null);
-        }    
-
-        @Override
-        public float getQuality() {
-            return 0;
-        }
-        
-    }
-    
-    
+    static NAR nar = new NAR();
+    static Concept makeConcept(String name, float priority) {
+        BudgetValue budg = new BudgetValue(priority,priority,priority);
+        Concept s = new Concept(budg,new Term(name),nar.memory);
+        return s;
+    }  
     
     @Test
     public void testConcept() {
@@ -41,19 +34,19 @@ public class BagOperationsTest {
     }
     
     public static void testBagSequence(Bag b) {
-        
+
         //different id, different priority
-        b.putIn(new NullConcept("a", 0.1f));
-        b.putIn(new NullConcept("b", 0.15f));
+        b.putIn(makeConcept("a", 0.1f));
+        b.putIn(makeConcept("b", 0.15f));
         assertEquals(2, b.size());
         b.clear();
         
         //same priority, different id
-        b.putIn(new NullConcept("a", 0.1f));
-        b.putIn(new NullConcept("b", 0.1f));
+        b.putIn(makeConcept("a", 0.1f));
+        b.putIn(makeConcept("b", 0.1f));
         assertEquals(2, b.size());
         
-        b.putIn(new NullConcept("c", 0.2f));
+        b.putIn(makeConcept("c", 0.2f));
         assertEquals(2, b.size());
         assertEquals(0.1f, b.getMinPriority(),0.001f);
         assertEquals(0.2f, b.getMaxPriority(),0.001f);
@@ -61,7 +54,7 @@ public class BagOperationsTest {
         //if (b instanceof GearBag()) return;
         
         
-        b.putIn(new NullConcept("b", 0.4f));
+        b.putIn(makeConcept("b", 0.4f));
         
         
         assertEquals(2, b.size());
@@ -80,11 +73,11 @@ public class BagOperationsTest {
         
         
         
-        assertEquals(null, b.putIn(new NullConcept("a", 0.2f)));
-        assertEquals(null, b.putIn(new NullConcept("b", 0.3f)));
+        assertEquals(null, b.putIn(makeConcept("a", 0.2f)));
+        assertEquals(null, b.putIn(makeConcept("b", 0.3f)));
         
         if (b instanceof LevelBag) {
-            assertEquals("a", b.putIn(new NullConcept("c", 0.1f)).name().toString()); //replaces item on level
+            assertEquals("a", b.putIn(makeConcept("c", 0.1f)).name().toString()); //replaces item on level
         }
         
     }
