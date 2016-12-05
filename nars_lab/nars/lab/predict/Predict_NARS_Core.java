@@ -14,7 +14,7 @@ import java.awt.Color;
 import nars.util.Events.TaskImmediateProcess;
 import nars.NAR;
 import nars.config.Parameters;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.control.DerivationContext;
 import nars.entity.Task;
 import nars.gui.NARSwing;

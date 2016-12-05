@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.gui.NARSwing;
 import nars.io.Narsese;
 import nars.lab.nario.NARio;

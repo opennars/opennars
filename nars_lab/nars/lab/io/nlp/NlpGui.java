@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.gui.NARSwing;
 
 public class NlpGui extends JFrame {

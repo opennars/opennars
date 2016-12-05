@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.lab.operator.math;
+package nars.operator.misc;
 
 import nars.storage.Memory;
 import nars.language.CompoundTerm;

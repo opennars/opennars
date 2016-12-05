@@ -6,7 +6,7 @@ package nars.core;
 
 import nars.NAR;
 import java.util.concurrent.atomic.AtomicBoolean;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.Answered;
@@ -36,7 +36,7 @@ public class NALQueryTest {
                 "<a --> b>" /* unknown solution to be derived */ : 
                 "<b --> a>" /* existing solution, to test finding existing solutions */;
         
-        new NAR(new Default()).
+        new NAR(new Plugins()).
                 
                 believe("<a <-> b>", Eternal, 1.0f, 0.5f).
                 

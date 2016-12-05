@@ -20,7 +20,7 @@ import automenta.vivisect.TreeMLData.FirstOrderDifferenceTimeSeries;
 import java.io.File;
 import java.io.IOException;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.lab.grid2d.main.TestChamber;
 import nars.gui.NARSwing;
 import automenta.vivisect.swing.NWindow;

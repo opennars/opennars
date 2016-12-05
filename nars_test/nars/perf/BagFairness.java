@@ -8,7 +8,7 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.NAR;
 import nars.config.Parameters;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.control.WorkingCycle;
 import nars.entity.Concept;
 import automenta.vivisect.swing.NWindow;
@@ -217,7 +217,7 @@ public class BagFairness {
 
             @Override public Chart[] getCharts(int experiment) {
                 
-                final NAR n = new NAR(new Default() {
+                final NAR n = new NAR(new Plugins() {
 
                     @Override public Bag<Concept, Term> newConceptBag() {                        
                         /*if (experiment == 0)*/ {

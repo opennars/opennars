@@ -3,7 +3,7 @@
  * Each line should be prefixed with  * 
  */
 
-package nars.plugin.mental;
+package nars.plugin.misc;
 
 import nars.util.Plugin;
 import nars.NAR;

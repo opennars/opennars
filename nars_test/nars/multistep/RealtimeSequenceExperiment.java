@@ -1,7 +1,7 @@
 package nars.multistep;
 
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 
 
 
@@ -14,7 +14,7 @@ public class RealtimeSequenceExperiment {
         int durationMS = 50;
         int cycPerFrame = 5;
         
-        NAR n = new NAR(new Default());
+        NAR n = new NAR(new Plugins());
                 
         (n.param).duration.set(durationMS);
         (n.param).noiseLevel.set(0);

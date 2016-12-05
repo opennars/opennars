@@ -9,7 +9,7 @@ import nars.NAR;
 import com.google.common.collect.Iterables;
 import java.util.HashSet;
 import java.util.Set;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Concept;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -23,7 +23,7 @@ public class AttentionTest {
     @Test public void testSampleNextConcept() {
         
         int numConcepts = 32;
-        NAR n = new NAR(new Default());
+        NAR n = new NAR(new Plugins());
         for (int i = 0; i < numConcepts; i++)
             n.addInput("<x" + i + " <-> x" + (i+1) + ">.");
         

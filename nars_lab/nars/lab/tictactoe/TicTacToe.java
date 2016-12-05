@@ -42,7 +42,7 @@ import nars.util.Events.FrameEnd;
 import nars.storage.Memory;
 import nars.NAR;
 import nars.config.Parameters;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;

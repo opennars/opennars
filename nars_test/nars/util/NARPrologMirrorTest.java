@@ -6,7 +6,7 @@ package nars.util;
 
 import nars.NAR;
 import nars.config.Parameters;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.core.NALTestSome;
 import nars.entity.Task;
 import nars.io.Narsese;
@@ -35,7 +35,7 @@ public class NARPrologMirrorTest {
             
             @Override
             public NAR newNAR() {
-                NAR nar = new NAR( new Default());
+                NAR nar = new NAR( new Plugins());
 
                 Term aInhd;
                 try {

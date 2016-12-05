@@ -12,7 +12,7 @@ import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.storage.Bag;
-import nars.config.Default;
+import nars.config.Plugins;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard

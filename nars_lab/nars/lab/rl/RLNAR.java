@@ -1,7 +1,7 @@
 package nars.lab.rl;
 
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;

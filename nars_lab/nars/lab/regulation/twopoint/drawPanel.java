@@ -23,7 +23,7 @@ import nars.storage.Memory;
 import nars.NAR;
 import nars.NAR.PluginState;
 import nars.config.Parameters;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.TextOutput;

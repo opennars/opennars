@@ -6,7 +6,7 @@ package nars.core;
 
 import nars.NAR;
 import nars.config.Parameters;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.io.TextOutput;
 import nars.lab.testutils.OutputContainsCondition;
 import static org.junit.Assert.assertTrue;
@@ -21,7 +21,7 @@ public class TemporalOrderTest {
     @Test 
     public void testFutureQuestion() {
         Parameters.DEBUG = true;
-        NAR n = new NAR(new Default());
+        NAR n = new NAR(new Plugins());
         new TextOutput(n, System.out);
         
         n.addInput("<e --> f>. :/:");

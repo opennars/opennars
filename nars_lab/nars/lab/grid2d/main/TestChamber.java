@@ -5,7 +5,7 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.NAR;
 import nars.config.Parameters;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.lab.grid2d.main.Cell.Logic;
 import nars.lab.grid2d.main.Cell.Material;
 import static nars.lab.grid2d.main.Hauto.DOWN;

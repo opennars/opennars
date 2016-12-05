@@ -12,7 +12,7 @@ import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
 import nars.language.Variable;
-import nars.lab.operator.software.Javascript;
+import nars.operator.misc.Javascript;
 
 
 /** 

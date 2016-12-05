@@ -1,7 +1,7 @@
 package nars.multistep;
 
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.io.TextOutput;
 import nars.lab.testutils.OutputContainsCondition;
 import nars.io.Narsese;
@@ -38,7 +38,7 @@ public class GoalSequence {
     final int maxCycles = 2000;
     
     public GoalSequence(int duration, int pause, int interSeqPause/*, float questionPriority, float questionDurability*/) throws Narsese.InvalidInputException {
-        NAR n = new NAR(new Default());
+        NAR n = new NAR(new Plugins());
         n.param.duration.set(duration);
     
         System.out.println("duration=" + duration + ", pause=" + pause + ", interSeqPause=" + interSeqPause );

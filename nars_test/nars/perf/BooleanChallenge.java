@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.CycleEnd;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 import nars.entity.Task;
 import nars.io.Output.OUT;
 import static nars.io.Texts.n2;
@@ -17,6 +17,14 @@ import nars.io.Narsese;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
+import static nars.io.Texts.n2;
 import static nars.io.Texts.n2;
 import static nars.io.Texts.n2;
 import static nars.io.Texts.n2;
@@ -324,7 +332,7 @@ public class BooleanChallenge {
             
     public static void main(String[] args) {
         //NAR n = new DefaultNARBuilder().build();
-        NAR n = new NAR(new Default());
+        NAR n = new NAR(new Plugins());
         
         //NAR n = new CurveBagNARBuilder().build();
 

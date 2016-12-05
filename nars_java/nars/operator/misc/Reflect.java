@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.operator.mental;
+package nars.operator.misc;
 
 import nars.storage.Memory;
 import nars.language.CompoundTerm;

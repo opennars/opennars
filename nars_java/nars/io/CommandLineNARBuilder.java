@@ -8,13 +8,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import nars.NAR;
-import nars.config.Default;
+import nars.config.Plugins;
 
 /**
  *
  * @author patrick.hammer
  */
-public class CommandLineNARBuilder extends Default {
+public class CommandLineNARBuilder extends Plugins {
         
     List<String> filesToLoad = new ArrayList();
 
