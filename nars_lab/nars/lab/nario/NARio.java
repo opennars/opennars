@@ -15,7 +15,7 @@ import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.io.ChangedTextInput;
+import nars.lab.ioutils.ChangedTextInput;
 import nars.language.Term;
 import nars.lab.nario.level.Level;
 import nars.lab.nario.level.LevelGenerator;

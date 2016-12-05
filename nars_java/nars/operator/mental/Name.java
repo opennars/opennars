@@ -31,6 +31,8 @@ import nars.io.Symbols;
 import nars.language.Similarity;
 import nars.language.Term;
 import nars.operator.Operation;
+import nars.operator.Operation;
+import nars.operator.Operator;
 import nars.operator.Operator;
 
 /**

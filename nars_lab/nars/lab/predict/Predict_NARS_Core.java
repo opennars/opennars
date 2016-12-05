@@ -18,7 +18,7 @@ import nars.core.build.Default;
 import nars.core.control.DerivationContext;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.io.ChangedTextInput;
+import nars.lab.ioutils.ChangedTextInput;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
 

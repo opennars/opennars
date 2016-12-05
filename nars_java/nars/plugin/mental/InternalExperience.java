@@ -1,12 +1,12 @@
 package nars.plugin.mental;
 
+import nars.util.Plugin;
 import java.util.Arrays;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.Plugin;
 import nars.core.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;

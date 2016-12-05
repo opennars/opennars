@@ -42,7 +42,7 @@ import nars.core.control.AbstractTask;
 import nars.core.control.DefaultAttention;
 import nars.core.control.DerivationContext;
 import nars.core.control.ImmediateProcess;
-import nars.io.meter.EmotionMeter;
+import nars.plugin.mental.Emotions;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -85,7 +85,7 @@ import nars.console.SetVolume;
 public class Memory implements Serializable {
     
     //emotion meter keeping track of global emotion
-    public final EmotionMeter emotion = new EmotionMeter();   
+    public final Emotions emotion = new Emotions();   
     
     private long timeRealStart;
     private long timeRealNow;

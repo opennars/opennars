@@ -1,5 +1,6 @@
 package nars.plugin.mental;
 
+import nars.util.Plugin;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -8,7 +9,6 @@ import nars.util.Events.TaskDerive;
 import nars.storage.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;

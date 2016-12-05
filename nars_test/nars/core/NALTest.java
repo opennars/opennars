@@ -1,8 +1,8 @@
 package nars.core;
 
-import nars.lab.inference.ExampleFileInput;
+import nars.lab.ioutils.ExampleFileInput;
 import nars.storage.Memory;
-import nars.io.condition.OutputCondition;
+import nars.lab.testutils.OutputCondition;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;

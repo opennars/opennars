@@ -42,6 +42,8 @@ import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variables;
 import static nars.inference.TemporalRules.matchingOrder;
+import static nars.inference.TemporalRules.matchingOrder;
+import static nars.inference.TemporalRules.matchingOrder;
 
 
 /**

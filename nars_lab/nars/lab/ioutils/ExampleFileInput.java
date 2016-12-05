@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.lab.inference;
+package nars.lab.ioutils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,7 +15,7 @@ import java.util.TreeMap;
 import nars.core.NAR;
 import nars.core.NAR;
 import nars.io.TextInput;
-import nars.io.condition.OutputCondition;
+import nars.lab.testutils.OutputCondition;
 
 /**
  * Access to library of examples/unit tests

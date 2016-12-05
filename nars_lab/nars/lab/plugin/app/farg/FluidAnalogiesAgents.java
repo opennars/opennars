@@ -6,7 +6,7 @@
 package nars.lab.plugin.app.farg;
 
 import nars.core.NAR;
-import nars.core.Plugin;
+import nars.util.Plugin;
 import nars.language.Term;
 import nars.storage.LevelBag;
 

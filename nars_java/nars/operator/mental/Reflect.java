@@ -12,6 +12,7 @@ import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
+import nars.operator.SynchronousFunctionOperator;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term

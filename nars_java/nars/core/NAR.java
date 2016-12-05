@@ -1,5 +1,6 @@
 package nars.core;
 
+import nars.util.Plugin;
 import nars.storage.Memory;
 import nars.util.Events;
 import nars.util.EventEmitter;

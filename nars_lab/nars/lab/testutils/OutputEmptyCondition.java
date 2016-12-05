@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.io.condition;
+package nars.lab.testutils;
 
 import java.util.LinkedList;
 import java.util.List;
