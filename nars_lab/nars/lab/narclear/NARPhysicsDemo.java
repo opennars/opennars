@@ -174,7 +174,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     }
 
     public static void main(String[] args) {
-        NAR n = new NAR(new Default());
+        NAR n = new NAR();
         (n.param).duration.set(20);
         (n.param).decisionThreshold.set(0);
         (n.param).noiseLevel.set(5);

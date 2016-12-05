@@ -241,7 +241,7 @@ public class SimNAR extends Frame {
             Hai(int nactions,int nstates)
             {
                 this.nActions = nactions; //for actions since we allow the same randomization phase as in QL
-                nar = new NAR(new Default());
+                nar = new NAR();
                 nar.memory.addOperator(new Right("^Right"));
                 nar.memory.addOperator(new Right("^Left")); 
                 (nar.param).noiseLevel.set(0);

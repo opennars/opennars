@@ -9,7 +9,7 @@ import nars.util.Events;
 import nars.NAR;
 import nars.config.Parameters;
 import nars.config.Default;
-import nars.control.DefaultAttention;
+import nars.control.WorkingCycle;
 import nars.entity.Concept;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.timeline.LineChart;
@@ -93,9 +93,9 @@ public class BagFairness {
                 }
 
 
-                int concepts = ((DefaultAttention)n.memory.concepts).concepts.size();
+                int concepts = ((WorkingCycle)n.memory.concepts).concepts.size();
 
-                ((DefaultAttention)n.memory.concepts).concepts.getPriorityDistribution(d);
+                ((WorkingCycle)n.memory.concepts).concepts.getPriorityDistribution(d);
                 for (int b = 0; b < bins; b++) {
 
                     held[b].add((int)n.time(), (float)d[b]);

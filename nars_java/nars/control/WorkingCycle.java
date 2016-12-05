@@ -6,7 +6,6 @@ import nars.util.Events.ConceptForget;
 import nars.storage.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.entity.ConceptBuilder;
 import nars.inference.BudgetFunctions;
 import nars.inference.BudgetFunctions.Activating;
 import nars.language.CompoundTerm;
@@ -19,7 +18,7 @@ import nars.config.Default;
  * The original deterministic memory cycle implementation that is currently used as a standard
  * for development and testing.
  */
-public class DefaultAttention implements Iterable<Concept> {
+public class WorkingCycle implements Iterable<Concept> {
 
 
     /* ---------- Long-term storage for multiple cycles ---------- */
@@ -28,12 +27,10 @@ public class DefaultAttention implements Iterable<Concept> {
      */
     public final Bag<Concept,Term> concepts;
     
-    private final Default conceptBuilder;
     private Memory memory;
          
-    public DefaultAttention(Bag<Concept,Term> concepts, Default conceptBuilder) {
-        this.concepts = concepts;
-        this.conceptBuilder = conceptBuilder;        
+    public WorkingCycle(Bag<Concept,Term> concepts) {
+        this.concepts = concepts;   
     }
 
     /** for removing a specific concept (if it's not putBack) */
@@ -113,7 +110,7 @@ public class DefaultAttention implements Iterable<Concept> {
         if ((concept == null) && (createIfMissing)) {                            
             //create new concept, with the applied budget
             
-            concept = conceptBuilder.newConcept(budget, term, memory);
+            concept = new Concept(budget, term, memory);
 
             //if (memory.logic!=null)
             //    memory.logic.CONCEPT_NEW.commit(term.getComplexity());

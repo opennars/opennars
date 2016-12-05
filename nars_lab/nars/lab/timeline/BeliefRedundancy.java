@@ -21,7 +21,7 @@ import nars.io.TextOutput;
 public class BeliefRedundancy {
     
     public static void main(String[] args) throws FileNotFoundException {
-        NAR n = new NAR(new Default());
+        NAR n = new NAR();
         
         TextInput i = new TextInput(new File("nal/TestChamber/TestChamberIndependentExperience/switch_on_door_opened.nal"));
     

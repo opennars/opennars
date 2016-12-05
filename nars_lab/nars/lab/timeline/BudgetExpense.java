@@ -39,7 +39,7 @@ public class BudgetExpense extends TimelineExample {
     public static void main(String[] args) throws Exception {
         int cycles = 1000;
                 
-        NAR nar = new NAR(new Default());
+        NAR nar = new NAR();
         NARTrace t = new NARTrace(nar);
         nar.addInput("<a --> b>.");
         nar.addInput("<b --> c>.");

@@ -63,7 +63,7 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new Default().realtime().build();
         NARSwing.themeInvert();
-        NAR nar = new NAR(new Default());
+        NAR nar = new NAR();
 
         //nar.addPlugin(new TemporalParticlePlanner());
 

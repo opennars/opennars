@@ -78,6 +78,7 @@ import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
+import nars.storage.LevelBag;
 
 public class Concept extends Item<Term> {
 
@@ -145,7 +146,7 @@ public class Concept extends Item<Term> {
      * @param tm A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final BudgetValue b, final Term tm, Bag<TaskLink,Task> taskLinks, Bag<TermLink,TermLink> termLinks, final Memory memory) {
+    public Concept(final BudgetValue b, final Term tm, final Memory memory) {
         super(b);        
         
         this.term = tm;
@@ -156,8 +157,8 @@ public class Concept extends Item<Term> {
         this.quests = new ArrayList<>();
         this.desires = new ArrayList<>();
 
-        this.taskLinks = taskLinks;
-        this.termLinks = termLinks;
+        this.taskLinks = new LevelBag<>(Parameters.TASK_LINK_BAG_LEVELS, Parameters.TASK_LINK_BAG_SIZE);
+        this.termLinks = new LevelBag<>(Parameters.TERM_LINK_BAG_LEVELS, Parameters.TERM_LINK_BAG_SIZE);
                 
         if (tm instanceof CompoundTerm) {
             this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();

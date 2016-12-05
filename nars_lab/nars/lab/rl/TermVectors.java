@@ -152,7 +152,7 @@ public class TermVectors implements EventEmitter.EventObserver {
     public static void main(String[] args) throws Narsese.InvalidInputException {
         int dimensions = 1;
 
-        NAR n = new NAR(new Default());
+        NAR n = new NAR();
         TermVectors t = new TermVectors(n, dimensions);
 
         n.believe("<a --> b>", Eternal, 1f, 0.9f);

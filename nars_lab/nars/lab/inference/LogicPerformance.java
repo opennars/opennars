@@ -242,7 +242,7 @@ public class LogicPerformance {
         Parameters.DEBUG = true;
         
         int analysisDepth = 5;
-        NAR n = new NAR(new Default());
+        NAR n = new NAR();
         
         ExampleFileInput example = ExampleFileInput.get("test/nal7.5");
                 

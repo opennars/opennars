@@ -34,7 +34,7 @@ public class NARServer  {
 
             if (WEBSOCKET_DEBUG) System.out.println("Connect: " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
 
-            final NARConnection n = new NARConnection(new NAR(new Default()), cycleIntervalMS) {
+            final NARConnection n = new NARConnection(new NAR(), cycleIntervalMS) {
                 @Override public void println(String output) {
                     conn.send(output);
                 }

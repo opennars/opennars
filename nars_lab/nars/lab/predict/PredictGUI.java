@@ -283,7 +283,7 @@ public class PredictGUI extends JPanel {
         
         Parameters.DEBUG = true;
 
-        n = new NAR(new Default());
+        n = new NAR();
         
         NARSwing.themeInvert();
         new NARSwing(n);
