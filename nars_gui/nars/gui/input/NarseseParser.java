@@ -1,4 +1,4 @@
-package nars.io.narsese;
+package nars.gui.input;
 
 import java.util.Scanner;
 import org.parboiled.BaseParser;

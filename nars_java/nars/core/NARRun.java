@@ -29,8 +29,6 @@ import nars.core.build.Default.CommandLineNARBuilder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
-
-
 /**
  * Run Reasoner
  * <p>
@@ -48,9 +46,6 @@ public class NARRun {
     private final boolean dumpLastState = true;
     int maxTime = 0;
 
-
-
-    
     /**
      * The entry point of the standalone application.
      * <p>
@@ -156,11 +151,4 @@ public class NARRun {
             System.out.println("/ " + mess);
         }
     }
-    
-    
-    
-    
-    
-
-
 }
