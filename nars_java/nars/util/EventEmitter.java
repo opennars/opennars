@@ -133,17 +133,4 @@ public class EventEmitter {
         }
         
     }
- 
-//    public void emitLater(final Class eventClass, final Object... params) {
-//        if (hasAnyOn(eventClass)) {
-//            Platform.runLater(new Runnable() {
-//
-//                @Override
-//                public void run() {
-//                    emit(eventClass, params);
-//                }
-//                
-//            });
-//        }
-//    }
 }
