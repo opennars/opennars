@@ -38,7 +38,6 @@ import nars.core.Parameters;
 import nars.util.Events.ResetEnd;
 import nars.util.Events.ResetStart;
 import nars.util.Events.TaskRemove;
-import static nars.storage.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;
 import nars.core.control.DefaultAttention;
 import nars.core.control.DerivationContext;
@@ -95,15 +94,6 @@ public class Memory implements Serializable {
 
     public static enum Forgetting {
         Iterative, Periodic
-    }
-    
-    public enum Timing {
-        /** internal, subjective time (inference steps) */
-        Iterative, 
-        /** hard real-time, uses system clock */
-        Real, 
-        /** soft real-time, uses controlled simulation time */
-        Simulation
     }
     
     public static long randomSeed = 1;

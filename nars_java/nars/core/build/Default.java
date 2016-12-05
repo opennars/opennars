@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import nars.storage.Memory;
 import nars.storage.Memory.Forgetting;
-import nars.storage.Memory.Timing;
 import nars.core.NAR;
 import nars.core.Param;
 import nars.core.Parameters;

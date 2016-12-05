@@ -2,7 +2,6 @@ package nars.core;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.storage.Memory.Forgetting;
-import nars.storage.Memory.Timing;
 import nars.language.Interval.AtomicDuration;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.google.gson.Gson;
@@ -41,7 +40,6 @@ public class Param implements Serializable {
        The range of "now" is [-DURATION/2, +DURATION/2];      */
     public final AtomicDuration duration = new AtomicDuration();
 
-    Timing timing;
     Forgetting forgetting;
     List<DerivationFilter> defaultDerivationFilters = new ArrayList();
     

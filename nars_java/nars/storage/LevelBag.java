@@ -196,18 +196,13 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      */
     @Override
     public int size() {
-        
         int in = nameTable.size();
-        
         if (Parameters.DEBUG_BAG && (Parameters.DEBUG)) {
-        
             int is = sizeItems();
             if (Math.abs(is-in) > 1 ) {                
                 throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());
-
             }
         }
-        
         return in;
     }
         
@@ -220,7 +215,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         }
         return t;
     }
-
     
     @Override
     public Set<K> keySet() {
