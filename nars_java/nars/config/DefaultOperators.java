@@ -3,7 +3,6 @@ package nars.config;
 import nars.NAR;
 import nars.operator.NullOperator;
 import nars.operator.Operator;
-import nars.io.Say;
 import nars.lab.operator.math.Add;
 import nars.lab.operator.math.Count;
 import nars.lab.operator.math.MathExpression;
@@ -74,9 +73,6 @@ public class DefaultOperators {
             js,      // javascript evaluation
             
             new NumericCertainty(),
-            
-            //io operations
-            new Say(),
                 
          /* 
 +         *          I/O operations under consideration

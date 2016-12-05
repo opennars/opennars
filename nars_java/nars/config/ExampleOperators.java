@@ -22,7 +22,8 @@ public class ExampleOperators {
             new NullOperator("^activate"),
             new NullOperator("^deactivate"),
             new NullOperator("^lighter"),
-            new NullOperator("^reshape")
+            new NullOperator("^reshape"),
+            new NullOperator("^say")
         };
     }
 }
