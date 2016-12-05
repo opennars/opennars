@@ -17,7 +17,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
-import nars.util.Events;
 import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -31,11 +30,8 @@ import nars.gui.NARControls;
 import nars.gui.WrapLayout;
 import nars.util.AbstractObserver;
 import nars.io.Output;
-import nars.io.Output.ECHO;
 import nars.io.Output.ERR;
 import nars.io.Output.EXE;
-import nars.io.Output.IN;
-import nars.io.Output.OUT;
 import nars.io.TextOutput;
 
 abstract public class LogPanel extends NPanel implements LogOutput {
@@ -300,14 +296,14 @@ abstract public class LogPanel extends NPanel implements LogOutput {
         return Color.GRAY;
     }
 
-    final static Color getPriorityColor(final float priority) {
-        return new Color(priority, priority, priority);
+    final static Color getPriorityColor(final float val) {
+        return new Color(val, val, val);
     }
-    final static Color getFrequencyColor(final float frequency) {
-        return new Color(1.0f - frequency, frequency, 0);
+    final static Color getNegativeEvidenceColor(final float val) {
+        return new Color(0, 0, val);
     }
-    final static Color getConfidenceColor(final float confidence) {
-        return new Color(0,0,confidence);
+    final static Color getPositiveEvidenceColor(final float val) {
+        return new Color(val,0,0);
     }
 
     final static Color getStatementColor(final char punctuation, final float priority) {

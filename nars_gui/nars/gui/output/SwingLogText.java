@@ -13,6 +13,8 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.inference.TruthFunctions;
+import nars.inference.UtilityFunctions;
 import nars.io.Output.OUT;
 
 
@@ -192,9 +194,13 @@ public class SwingLogText extends SwingText  {
                     printColorBlock(LogPanel.getPriorityColor(priority), "  ");
                 
                     TruthValue tv = s.truth;
-                    if (tv!=null) {                    
-                        printColorBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
-                        printColorBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "  ");                        
+                    if (tv!=null) {          
+                        float evidence = TruthFunctions.c2w(tv.getConfidence());
+                        float pos_2 = tv.getConfidence()*tv.getFrequency();
+                        float positive_evidence_in_0_1 = TruthFunctions.w2c(evidence*tv.getFrequency());
+                        float negative_evidence_in_0_1 = TruthFunctions.w2c(evidence*(1.0f-tv.getFrequency()));
+                        printColorBlock(LogPanel.getPositiveEvidenceColor(positive_evidence_in_0_1), "  ");
+                        printColorBlock(LogPanel.getNegativeEvidenceColor(negative_evidence_in_0_1), "  ");                        
                     }
                     else if ( t.getBestSolution()!=null) {
                         printColorBlock(LogPanel.getStatementColor('=', priority), "    ");
