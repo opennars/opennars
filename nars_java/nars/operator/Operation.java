@@ -116,15 +116,6 @@ public class Operation extends Inheritance {
         return nameBuilder.toString();
     }
     
-    
-    /*public Operator getOperator() {
-        return (Operator) getPredicate();
-    }
-    
-    public Term[] getArguments() {
-        return ((CompoundTerm) getSubject()).term;
-    }*/
-
     /** stores the currently executed task, which can be accessed by Operator execution */
     public void setTask(final Task task) {
         this.task = task;
