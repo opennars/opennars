@@ -24,7 +24,7 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.gui.output.JGraphXGraphPanel;
-import nars.io.ExampleFileInput;
+
 import nars.io.condition.OutputCondition;
 import nars.io.condition.OutputContainsCondition;
 import nars.language.Term;

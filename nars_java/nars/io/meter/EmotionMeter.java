@@ -11,12 +11,8 @@ import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
 import nars.language.Inheritance;
-import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Term;
-import nars.operator.Operation;
-import nars.operator.Operator;
-import nars.plugin.mental.InternalExperience;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
 public class EmotionMeter implements Serializable {

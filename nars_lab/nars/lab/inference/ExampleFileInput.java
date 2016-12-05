@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.io;
+package nars.lab.inference;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import nars.core.NAR;
+import nars.core.NAR;
+import nars.io.TextInput;
 import nars.io.condition.OutputCondition;
 
 /**
