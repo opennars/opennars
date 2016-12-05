@@ -56,7 +56,7 @@ import static nars.gui.output.SwingLogPanel.setConsoleFont;
 import nars.gui.output.SwingText;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
-import nars.io.narsese.NarseseParser;
+import nars.gui.input.NarseseParser;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.ReportingParseRunner;
 import org.parboiled.support.MatcherPath;
