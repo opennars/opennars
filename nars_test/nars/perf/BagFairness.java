@@ -217,24 +217,7 @@ public class BagFairness {
 
             @Override public Chart[] getCharts(int experiment) {
                 
-                final NAR n = new NAR(new Plugins() {
-
-                    @Override public Bag<Concept, Term> newConceptBag() {                        
-                        /*if (experiment == 0)*/ {
-                            //return new DelayBag(param.conceptForgetDurations, getConceptBagSize());
-                            //return new LevelBag2(getConceptBagSize(), 20);
-                            //return new AdaptiveContinuousBag(getConceptBagSize());
-                            return new LevelBag(Parameters.CONCEPT_BAG_SIZE, 20);
-                        }
-                        /*else { //if (experiment == 1) {
-                            
-                            //return new LevelBag(getConceptBagSize(), 100);
-                            return new FairDelayBag(param.conceptForgetDurations, getConceptBagSize());
-                        }*/
-                    }
-
-                });
-
+                final NAR n = new NAR();
                 
                 ArrayList<Chart> ch = new BagFairness(n, 
                         new RandomTermInput(8, inputs, 0.01, 0.5, 0.5, minPri, maxPri), 
