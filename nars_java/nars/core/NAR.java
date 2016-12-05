@@ -34,13 +34,12 @@ import nars.io.Output.IN;
 import nars.io.Symbols;
 import nars.io.TaskInput;
 import nars.io.TextInput;
-import nars.io.buffer.Buffer;
-import nars.io.buffer.FIFO;
+import nars.util.FIFO;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
-import nars.operator.io.Echo;
+import nars.console.Echo;
 
 
 /**
@@ -86,7 +85,7 @@ public class NAR implements Runnable {
     
     
     /** The addInput channels of the reasoner     */
-    protected final List<InPort<Object,AbstractTask>> inputChannels;
+    public final List<InPort<Object,AbstractTask>> inputChannels;
     
     /** pending input and output channels to add on the next cycle. */
     private final List<InPort<Object,AbstractTask>> newInputChannels;
@@ -301,7 +300,7 @@ public class NAR implements Runnable {
     final class ObjectTaskInPort extends InPort<Object,AbstractTask> {
         private long creationTime = -1;
 
-        public ObjectTaskInPort(Input input, Buffer buffer, float initialAttention) {
+        public ObjectTaskInPort(Input input, FIFO buffer, float initialAttention) {
             super(input, buffer, initialAttention);
         }
 

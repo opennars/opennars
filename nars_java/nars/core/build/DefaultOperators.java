@@ -3,7 +3,7 @@ package nars.core.build;
 import nars.core.NAR;
 import nars.operator.NullOperator;
 import nars.operator.Operator;
-import nars.operator.io.Say;
+import nars.console.Say;
 import nars.lab.operator.math.Add;
 import nars.lab.operator.math.Count;
 import nars.lab.operator.math.MathExpression;
@@ -19,7 +19,7 @@ import nars.operator.mental.Register;
 import nars.operator.mental.Remind;
 import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
-import nars.operator.meta.Reflect;
+import nars.operator.mental.Reflect;
 import nars.lab.operator.software.Javascript;
 import nars.lab.operator.software.NumericCertainty;
 

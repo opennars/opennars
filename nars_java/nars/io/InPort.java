@@ -2,8 +2,8 @@ package nars.io;
 
 import java.io.IOException;
 import java.util.Iterator;
-import nars.io.buffer.Buffer;
-import nars.operator.io.Reboot;
+import nars.console.Reboot;
+import nars.util.FIFO;
 
 
 /**
@@ -12,7 +12,7 @@ import nars.operator.io.Reboot;
  */
 abstract public class InPort<X,Y> implements Iterator<Y> {
     public final Input<X> input;
-    public final Buffer<Y> buffer;
+    public final FIFO<Y> buffer;
     private float attention;
     
     
@@ -21,7 +21,7 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
 //        this(input, new FIFO(), 1.0);
 //    }
     
-    public InPort(Input<X> input, Buffer<Y> buffer, float initialAttention) {
+    public InPort(Input<X> input, FIFO<Y> buffer, float initialAttention) {
         super();
         this.input = input;
         this.buffer = buffer;
