@@ -24,7 +24,6 @@ import nars.storage.Memory;
 import nars.config.Parameters;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
-import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;

@@ -26,12 +26,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import nars.NAR;
-import nars.NAR;
-import nars.config.Default.CommandLineNARBuilder;
-import nars.io.TextInput;
-import nars.io.TextInput;
-import nars.io.TextOutput;
-import nars.io.TextOutput;
+import nars.io.CommandLineNARBuilder;
 
 /**
  * Run Reasoner

@@ -82,41 +82,20 @@ public class Default extends Parameters implements ConceptBuilder {
         
        // temporalPlanner(8, 64, 16);
         
-        setConceptBagSize(10000);        
-        setConceptBagLevels(100);
+        setConceptBagSize(Parameters.CONCEPT_BAG_SIZE);        
+        setConceptBagLevels(Parameters.CONCEPT_BAG_LEVELS);
         
-        setTaskLinkBagSize(200);
-        setTaskLinkBagLevels(100);
+        setTaskLinkBagSize(Parameters.TASK_LINK_BAG_SIZE);
+        setTaskLinkBagLevels(10);
 
-        setTermLinkBagSize(1000);
-        setTermLinkBagLevels(100);
+        setTermLinkBagSize(Parameters.TERM_LINK_BAG_SIZE);
+        setTermLinkBagLevels(Parameters.TERM_LINK_BAG_LEVELS);
         
-        setNovelTaskBagSize(100);
-        setNovelTaskBagLevels(100);
+        setNovelTaskBagSize(Parameters.TASK_BUFFER_BAG_SIZE);
+        setNovelTaskBagLevels(Parameters.TASK_BUFFER_BAG_LEVELS);
         
-        setSequenceTaskBagSize(10);
-        setSequenceTaskBagLevels(10);
-        
-        param.duration.set(Parameters.DURATION);
-        param.conceptForgetDurations.set(2.0);
-        param.taskLinkForgetDurations.set(4.0);
-        param.termLinkForgetDurations.set(10.0);
-        param.novelTaskForgetDurations.set(2.0);
-        param.sequenceForgetDurations.set(4.0);
-                
-        param.conceptBeliefsMax.set(7);
-        param.conceptGoalsMax.set(7);
-        param.conceptQuestionsMax.set(5);
-        
-        param.termLinkMaxReasoned.set(3);
-        param.termLinkMaxMatched.set(10);
-        param.termLinkRecordLength.set(10);
-        
-        param.noiseLevel.set(100);
-
-        param.reliance.set(0.9f);
-        
-        param.decisionThreshold.set(0.6);
+        setSequenceTaskBagSize(Parameters.SEQUENCE_BAG_SIZE);
+        setSequenceTaskBagLevels(Parameters.SEQUENCE_BAG_LEVELS);
     
         //add derivation filters here:
         //param.getDefaultDerivationFilters().add(new BeRational());
@@ -143,14 +122,6 @@ public class Default extends Parameters implements ConceptBuilder {
         n.addPlugin(new RuntimeNARSettings());
         
         n.addPlugin(new Emotions());
-        
-        //n.addPlugin(new PerceptionAccel());
-        
-       // n.addPlugin(new TemporalParticlePlanner());
-        
-        /*if(pluginPlanner!=null) {
-            n.addPlugin(pluginPlanner);
-        }*/
         
         n.addPlugin(new Anticipate());      // expect an event
         
@@ -262,64 +233,6 @@ public class Default extends Parameters implements ConceptBuilder {
     public Default setTermLinkBagSize(int termLinkBagSize) {
         this.termLinkBagSize = termLinkBagSize;
         return this;
-    }
-
-    
-    
-    public static class CommandLineNARBuilder extends Default {
-        
-        List<String> filesToLoad = new ArrayList();
-        
-        public CommandLineNARBuilder(String[] args) {
-            super();
-
-            for (int i = 0; i < args.length; i++) {
-                String arg = args[i];
-                if ("--silence".equals(arg)) {
-                    arg = args[++i];
-                    int sl = Integer.parseInt(arg);                
-                    param.noiseLevel.set(100-sl);
-                }
-                else if ("--noise".equals(arg)) {
-                    arg = args[++i];
-                    int sl = Integer.parseInt(arg);                
-                    param.noiseLevel.set(sl);
-                }    
-                else {
-                    filesToLoad.add(arg);
-                }
-                
-            }        
-        }
-
-        @Override
-        public NAR init(NAR n) {
-            n = super.init(n); 
-            
-            for (String x : filesToLoad) {
-                try {
-                    n.addInput( new TextInput(new File(x) ) );
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                n.run(1);
-            }
-            
-            return n;
-        }
-
-        
-        
-        
-        /**
-         * Decode the silence level
-         *
-         * @param param Given argument
-         * @return Whether the argument is not the silence level
-         */
-        public static boolean isReallyFile(String param) {
-            return !"--silence".equals(param);
-        }
     }
 
     public InternalExperienceMode getInternalExperience() {
