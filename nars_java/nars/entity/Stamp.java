@@ -95,7 +95,7 @@ public class Stamp implements Cloneable {
         return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_FORWARD;        }
 
     public float getOriginality() {
-        return 1.0f / (evidentialBase.length + 1);
+        return evidentialBase.length / (evidentialBase.length + 1);
     }
     
     public interface DerivationBuilder {

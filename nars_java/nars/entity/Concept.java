@@ -272,11 +272,9 @@ public class Concept extends Item<Term> {
         int preSize = table.size();
         Task removedT;
         Sentence removed = null;
-        synchronized (table) {
-            removedT = addToTable(task, table, max);
-            if(removedT != null) {
-                removed=removedT.sentence;
-            }
+        removedT = addToTable(task, table, max);
+        if(removedT != null) {
+            removed=removedT.sentence;
         }
 
         if (removed != null) {
