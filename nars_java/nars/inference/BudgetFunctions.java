@@ -78,8 +78,8 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public final static float rankBelief(final Sentence judg) {        
         final float confidence = judg.truth.getConfidence();
-        final float originality = judg.stamp.getOriginality();
-        return or(confidence, originality);
+        //final float originality = judg.stamp.getOriginality();
+        return confidence; //or(confidence, originality);
     }
 
 
