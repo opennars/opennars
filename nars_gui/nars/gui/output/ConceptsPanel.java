@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import static java.util.Collections.unmodifiableList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -138,6 +140,7 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
         final float titleSize = 24f;
         final float subfontSize = 16f;
         private BeliefTimeline beliefTime;
+        private BeliefTimeline desireTime;
        // private final PCanvas syntaxPanel;
         long time = 0;
         
@@ -152,14 +155,17 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             super(new BorderLayout());
             this.concept = c;
 
-            this.setPreferredSize(new Dimension(500,500));
+            this.setPreferredSize(new Dimension(600,600));
             JPanel overlay = new JPanel(new BorderLayout());
             
             JPanel details = new JPanel(new WrapLayout(FlowLayout.LEFT));
             details.setOpaque(false);
 
+            details.add(new JLabel("Beliefs"));
             details.add(this.beliefChart = new TruthChart(chartWidth, chartHeight));
+            details.add(new JLabel("Questions:"));
             details.add(this.questionChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight));
+            details.add(new JLabel("Desires"));
             details.add(this.desireChart = new TruthChart(chartWidth, chartHeight));
             //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
             
@@ -171,7 +177,7 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             
             JTextField jfilter = new JTextField("");
             jfilter.setPreferredSize(new Dimension(255,20));
-            titlePanel.add(jfilter,EAST);
+            details.add(jfilter,SOUTH);
             jfilter.setBackground(Color.DARK_GRAY);
             jfilter.setForeground(Color.WHITE);
             
@@ -203,7 +209,18 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             title.setFont(Video.monofont.deriveFont(titleSize ));
 
             overlay.add(details, CENTER);
-            overlay.add(this.beliefTime = new BeliefTimeline(chartWidth*3, chartHeight/2), SOUTH);
+            JPanel timepanels = new JPanel();
+            timepanels.setLayout(new BoxLayout(timepanels,BoxLayout.PAGE_AXIS));
+            timepanels.setOpaque(false);
+            timepanels.setPreferredSize(new Dimension(250,100));
+            timepanels.add(new JLabel("beliefs-events:"));
+            timepanels.add(this.beliefTime = new BeliefTimeline(chartWidth*6, chartHeight/3));
+            timepanels.add(new JLabel("desire-events:"));
+            timepanels.add(this.desireTime = new BeliefTimeline(chartWidth*6, chartHeight/3));
+            
+            overlay.add(timepanels, SOUTH);
+            
+            
             
            /* TermSyntaxVis tt = new TermSyntaxVis(c.term);
             syntaxPanel = new PCanvas(tt);
@@ -225,69 +242,71 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
 
         public void update(long time) {
 
+             StringBuilder conceptstr = new StringBuilder(); //concept.toStringLong().replaceAll("\n", "<br/>");
+                
+            /*if(concept.beliefs.size()>0) {
+                conceptstr.append("\nBeliefs:\n");
+                for(Task tl : concept.beliefs) {
+                    conceptstr.append(tl.sentence.toString());
+                    conceptstr.append("\n");
+                }
+            }
+
+            if(concept.desires.size()>0) {
+                conceptstr.append("\nDesires:\n");
+                for(Task tl : concept.desires) {
+                    conceptstr.append(tl.sentence.toString());
+                    conceptstr.append("\n");
+                }
+            }
+
+            if(concept.questions.size()>0) {
+                conceptstr.append("\nQuestions:\n");
+                for(Task tl : concept.questions) {
+                    conceptstr.append(tl.sentence.toString());
+                    conceptstr.append("\n");
+                }
+            }
+
+            if(concept.quests.size()>0) {
+                conceptstr.append("\nQuests:\n");
+                for(Task tl : concept.quests) {
+                    conceptstr.append(tl.sentence.toString());
+                    conceptstr.append("\n");
+                }
+            }*/
+
+            if(concept.taskLinks.size()>0) {
+                conceptstr.append("TaskLinks:\n");
+                for(TaskLink tl : concept.taskLinks) {
+                    String s = tl.targetTask.sentence.toString()+ " priority:" + tl.getBudget().getPriority();
+                    if(s.contains(filter)) {
+                        conceptstr.append(s);
+                        conceptstr.append("\n");
+                    }
+                }
+            }
+
+            /*if(concept.termLinks.size()>0) {
+                conceptstr.append("\nTermLinks:\n");
+                for(TermLink tl : concept.termLinks) {
+                    conceptstr.append(tl.getTerm().toString());
+                    conceptstr.append("\n");
+                }
+            }*/
+            
             this.time = time;
+            String sub = "<html>";
+
             if (!concept.beliefs.isEmpty()) {
                 List<Task> bbT = concept.getBeliefs();
                 List<Sentence> bb=new ArrayList<Sentence>();
                 for(Task ts : bbT) {
                     bb.add(ts.sentence);
                 }
-                StringBuilder conceptstr = new StringBuilder(); //concept.toStringLong().replaceAll("\n", "<br/>");
-                
-                /*if(concept.beliefs.size()>0) {
-                    conceptstr.append("\nBeliefs:\n");
-                    for(Task tl : concept.beliefs) {
-                        conceptstr.append(tl.sentence.toString());
-                        conceptstr.append("\n");
-                    }
-                }
-                
-                if(concept.desires.size()>0) {
-                    conceptstr.append("\nDesires:\n");
-                    for(Task tl : concept.desires) {
-                        conceptstr.append(tl.sentence.toString());
-                        conceptstr.append("\n");
-                    }
-                }
-                
-                if(concept.questions.size()>0) {
-                    conceptstr.append("\nQuestions:\n");
-                    for(Task tl : concept.questions) {
-                        conceptstr.append(tl.sentence.toString());
-                        conceptstr.append("\n");
-                    }
-                }
-                
-                if(concept.quests.size()>0) {
-                    conceptstr.append("\nQuests:\n");
-                    for(Task tl : concept.quests) {
-                        conceptstr.append(tl.sentence.toString());
-                        conceptstr.append("\n");
-                    }
-                }*/
-                
-                if(concept.taskLinks.size()>0) {
-                    conceptstr.append("\nTaskLinks:\n");
-                    for(TaskLink tl : concept.taskLinks) {
-                        String s = tl.targetTask.sentence.toString()+ " priority:" + tl.getBudget().getPriority();
-                        if(s.contains(filter)) {
-                            conceptstr.append(s);
-                            conceptstr.append("\n");
-                        }
-                    }
-                }
-                
-                /*if(concept.termLinks.size()>0) {
-                    conceptstr.append("\nTermLinks:\n");
-                    for(TermLink tl : concept.termLinks) {
-                        conceptstr.append(tl.getTerm().toString());
-                        conceptstr.append("\n");
-                    }
-                }*/
                 
                 beliefChart.update(time, bb);
-                String conceptst = conceptstr.toString().replace("<", "&lt;").replace(">", "&gt;").replace("\n","<br/>");
-                subtitle.setText("<html>truth: " + bb.get(0).truth.toString()+"<br/>"+conceptst+"</html>");
+                sub+="truth: " + bb.get(0).truth.toString();
                 
                 beliefTime.setVisible(
                         beliefTime.update(time, bb));
@@ -303,14 +322,27 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
                 questionChart.update( unmodifiableList( concept.questions ) );
             
             if (!concept.desires.isEmpty()) {
-                String s=subtitle.getText();
-                subtitle.setText(s+(s.equals("") ? "" : " ")+"desire: "+concept.desires.get(0).sentence.truth.toString());
+                List<Task> ddT = concept.getDesires();
+                List<Sentence> dd=new ArrayList<Sentence>();
+                for(Task ts : ddT) {
+                    dd.add(ts.sentence);
+                }
+                
+                String s=sub;
+                sub = (s.equals("<html>") ? "<html>" : s+" ")+"  desire: "+concept.desires.get(0).sentence.truth.toString();
                 ArrayList<Sentence> desir=new ArrayList();
                 for(Task ts: concept.desires) {
                     desir.add(ts.sentence);
                 }
                 desireChart.update( time, unmodifiableList( desir ));
+                
+                desireTime.setVisible(
+                        desireTime.update(time, dd));
+            } else {
+                desireTime.setVisible(false);
             }
+            String finalstr = sub+"<br/><br/>"+conceptstr.toString().replace("<", "&lt;").replace(">", "&gt;").replace("\n","<br/>")+"</html>";
+            subtitle.setText(finalstr);
 
             updateUI();
         }
