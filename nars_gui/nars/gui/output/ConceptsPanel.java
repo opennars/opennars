@@ -9,12 +9,15 @@ import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.PCanvas;
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.EAST;
 import static java.awt.BorderLayout.NORTH;
 import static java.awt.BorderLayout.SOUTH;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +28,7 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.util.Events.FrameEnd;
@@ -32,8 +36,11 @@ import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.entity.TaskLink;
+import nars.entity.TermLink;
 import nars.gui.WrapLayout;
 import nars.gui.output.graph.TermSyntaxVis;
+import nars.inference.TruthFunctions;
 
 /**
  * Views one or more Concepts
@@ -132,16 +139,20 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
         final float subfontSize = 16f;
         private BeliefTimeline beliefTime;
        // private final PCanvas syntaxPanel;
+        long time = 0;
         
         public ConceptPanel(Concept c, long time) {
             this(c);
+            this.time = time;
             update(time);
         }
 
+        String filter = "";
         public ConceptPanel(Concept c) {
             super(new BorderLayout());
             this.concept = c;
 
+            this.setPreferredSize(new Dimension(500,500));
             JPanel overlay = new JPanel(new BorderLayout());
             
             JPanel details = new JPanel(new WrapLayout(FlowLayout.LEFT));
@@ -157,9 +168,35 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             titlePanel.setOpaque(false);
             
             titlePanel.add(this.title = new JTextArea(concept.term.toString()), CENTER);
+            
+            JTextField jfilter = new JTextField("");
+            jfilter.setPreferredSize(new Dimension(255,20));
+            titlePanel.add(jfilter,EAST);
+            jfilter.setBackground(Color.DARK_GRAY);
+            jfilter.setForeground(Color.WHITE);
+            
+            ConceptPanel THIS = this;
+            jfilter.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent ke) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent ke) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent ke) {
+                THIS.update(time);
+                THIS.filter = jfilter.getText();
+            }
+
+            });
+            
             title.setEditable(false);
             title.setOpaque(false);
-            titlePanel.add(this.subtitle = new JLabel(), SOUTH);
+            subtitle = new JLabel();
+            titlePanel.add(subtitle, SOUTH);
             
             details.add(titlePanel);
             
@@ -188,14 +225,69 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
 
         public void update(long time) {
 
+            this.time = time;
             if (!concept.beliefs.isEmpty()) {
                 List<Task> bbT = concept.getBeliefs();
                 List<Sentence> bb=new ArrayList<Sentence>();
                 for(Task ts : bbT) {
                     bb.add(ts.sentence);
                 }
+                StringBuilder conceptstr = new StringBuilder(); //concept.toStringLong().replaceAll("\n", "<br/>");
+                
+                /*if(concept.beliefs.size()>0) {
+                    conceptstr.append("\nBeliefs:\n");
+                    for(Task tl : concept.beliefs) {
+                        conceptstr.append(tl.sentence.toString());
+                        conceptstr.append("\n");
+                    }
+                }
+                
+                if(concept.desires.size()>0) {
+                    conceptstr.append("\nDesires:\n");
+                    for(Task tl : concept.desires) {
+                        conceptstr.append(tl.sentence.toString());
+                        conceptstr.append("\n");
+                    }
+                }
+                
+                if(concept.questions.size()>0) {
+                    conceptstr.append("\nQuestions:\n");
+                    for(Task tl : concept.questions) {
+                        conceptstr.append(tl.sentence.toString());
+                        conceptstr.append("\n");
+                    }
+                }
+                
+                if(concept.quests.size()>0) {
+                    conceptstr.append("\nQuests:\n");
+                    for(Task tl : concept.quests) {
+                        conceptstr.append(tl.sentence.toString());
+                        conceptstr.append("\n");
+                    }
+                }*/
+                
+                if(concept.taskLinks.size()>0) {
+                    conceptstr.append("\nTaskLinks:\n");
+                    for(TaskLink tl : concept.taskLinks) {
+                        String s = tl.targetTask.sentence.toString()+ " priority:" + tl.getBudget().getPriority();
+                        if(s.contains(filter)) {
+                            conceptstr.append(s);
+                            conceptstr.append("\n");
+                        }
+                    }
+                }
+                
+                /*if(concept.termLinks.size()>0) {
+                    conceptstr.append("\nTermLinks:\n");
+                    for(TermLink tl : concept.termLinks) {
+                        conceptstr.append(tl.getTerm().toString());
+                        conceptstr.append("\n");
+                    }
+                }*/
+                
                 beliefChart.update(time, bb);
-                subtitle.setText("truth: " + bb.get(0).truth.toString());
+                String conceptst = conceptstr.toString().replace("<", "&lt;").replace(">", "&gt;").replace("\n","<br/>");
+                subtitle.setText("<html>truth: " + bb.get(0).truth.toString()+"<br/>"+conceptst+"</html>");
                 
                 beliefTime.setVisible(
                         beliefTime.update(time, bb));
@@ -358,9 +450,13 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
     
     public static Color getColor(float freq, float conf, float factor) {
         float ii = 0.25f + (factor * conf) * 0.75f;
-        float green = freq > 0.5f ? (freq/2f) : 0f;
-        float red = freq <= 0.5f ? ((1.0f-freq)/2f) : 0;
-        return new Color(red, green, 1.0f, ii);
+       // float green = freq > 0.5f ? (freq/2f) : 0f;
+        //float red = freq <= 0.5f ? ((1.0f-freq)/2f) : 0;
+        
+        float evidence = TruthFunctions.c2w(conf);
+        float positive_evidence_in_0_1 = TruthFunctions.w2c(evidence*freq);
+        float negative_evidence_in_0_1 = TruthFunctions.w2c(evidence*(1.0f-freq));        
+        return new Color(positive_evidence_in_0_1,0.0f, negative_evidence_in_0_1, ii);
     }
     
     public static class TruthChart extends ImagePanel {
