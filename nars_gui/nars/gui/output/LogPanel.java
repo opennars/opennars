@@ -309,16 +309,16 @@ abstract public class LogPanel extends NPanel implements LogOutput {
     final static Color getStatementColor(final char punctuation, final float priority) {
         
         float r = 1f, g = 1f, b = 1f;
-        switch (punctuation) {
+        /*switch (punctuation) {
             case '!': r = 1f; g = 0.75f; b = 0f; break;
-            case '?': b = 1f; r = 0.3f; g = 0f; break;
-            case '=': r = 0.2f; g = 1f; b = 0.2f; break; //solution
+            case '?': b = 1f; r = 1.0f; g = 1f; break;
+            case '=': r = 0.0f; g = 0f; b = 0.0f; break; //solution
             case '.': break;
                 
         }        
         r *= 0.25f + 0.75f*priority;
         g *= 0.25f + 0.75f*priority;
-        b *= 0.25f + 0.75f*priority;
+        b *= 0.25f + 0.75f*priority;*/
         return new Color(r, g, b);
     }
     
