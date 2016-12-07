@@ -172,14 +172,12 @@ public class SwingLogText extends SwingText  {
             //pad the channel name to max 6 characters, right aligned
             
             String n = c.getSimpleName();
-            n = n.substring(0,Math.min(6, n.length()));
+            //n = n.substring(0,Math.min(4, n.length()));
             switch (n.length()) {
                 case 0: break;
-                case 1: n = "     " + n; break;
-                case 2: n = "    " + n; break;
-                case 3: n = "   " + n; break;
-                case 4: n = "  " + n; break;
-                case 5: n = " " + n; break;                    
+                case 1: n = "   " + n; break;
+                case 2: n = "  " + n; break;
+                case 3: n = " " + n; break;           
             }
             Color chanColor = Video.getColor(c.getClass().hashCode(), 0.8f, 0.8f);
             print(chanColor, n);
@@ -191,7 +189,7 @@ public class SwingLogText extends SwingText  {
                 Sentence s = t.sentence;
                 if (s!=null) {
                     priority = t.budget.getPriority();
-                    printColorBlock(LogPanel.getPriorityColor(priority), "  ");
+                    //printColorBlock(LogPanel.getPriorityColor(priority), "  ");
                 
                     TruthValue tv = s.truth;
                     if (tv!=null) {          

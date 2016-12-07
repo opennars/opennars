@@ -497,8 +497,17 @@ public class Sentence<T extends Term> implements Cloneable {
         
         final long t = nar.memory.time();
 
-        long plus=stamp.getOccurrenceTime()-nar.memory.time();
-        String timediff = plus>0 ? "+"+String.valueOf(plus) : String.valueOf(plus);
+        long diff=stamp.getOccurrenceTime()-nar.memory.time();
+        long diffabs = Math.abs(diff);
+        
+        String timediff = "";
+        if(diffabs < nar.memory.param.duration.get()) {
+            timediff = "|";
+        }
+        else {
+            int Int = Interval.timeToMagnitude(diffabs, nar.param.duration);
+            timediff = diff>0 ? "+"+String.valueOf(Int) : "-"+String.valueOf(Int);
+        }
         String tenseString = ":"+timediff+":"; //stamp.getTense(t, nar.memory.getDuration());
         
         if(stamp.getOccurrenceTime() == Stamp.ETERNAL)
