@@ -10,6 +10,7 @@ import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
 import automenta.vivisect.swing.NSlider;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import javax.swing.JPanel;
@@ -20,6 +21,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.gui.util.NARGraph;
+import nars.inference.TruthFunctions;
 /**
  *
  * @author me
@@ -86,22 +88,70 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
             //rad = (float) (Math.log(1 + 2 + t.getComplexity()));
         }
         
-        
-
         Object x = o;
-        if (x instanceof Concept) x = ((Concept)o).getTerm();
-        float hue = 0.0f; //Video.hashFloat(x.hashCode());
-        if (x instanceof Task)
-            hue = 0.4f;
+        if(!(x instanceof Concept)) {
+            
+            if(!(x instanceof Task)) {
+                if (x instanceof Concept) x = ((Concept)o).getTerm();
+                float hue = 0.0f; //Video.hashFloat(x.hashCode());
+                if (x instanceof Task)
+                    hue = 0.4f;
 
-        
-        float brightness = 0.33f+0.66f*rad/9.0f;
-        float saturation = 0.33f+0.66f*rad/9.0f;
-       // brightness*=brightness;
-        //saturation*=saturation;
-        
+
+                float brightness = 0.33f+0.66f*rad/9.0f;
+                float saturation = 0.33f+0.66f*rad/9.0f;
+               // brightness*=brightness;
+                //saturation*=saturation;
+                 v.color =  Video.colorHSB( hue, saturation, brightness, 0.25f+(0.75f*alpha) );
+            } 
+            else
+            if(x instanceof Task){
+                float rr=0.5f,gg=0.5f,bb=0.5f,aa=1.0f;
+
+                Task t = (Task) o;
+                if(t.sentence.truth!=null) {
+                    float conf = t.sentence.truth.getConfidence();
+                    float freq = t.sentence.truth.getFrequency();
+                    aa = 0.25f + conf * 0.75f;
+                    float evidence = TruthFunctions.c2w(conf);
+                    float positive_evidence_in_0_1 = TruthFunctions.w2c(evidence*freq);
+                    float negative_evidence_in_0_1 = TruthFunctions.w2c(evidence*(1.0f-freq));
+                    rr = positive_evidence_in_0_1;
+                    bb = negative_evidence_in_0_1;
+                    gg = 0.0f;
+                }
+
+                Color HSB = new Color(rr,gg,bb,aa);
+                float hsb[] = new float[3];
+                Color.RGBtoHSB((int)(rr*255.0f), (int)(gg*255.0f), (int)(bb*255.0f), hsb);
+                v.color =  Video.colorHSB( hsb[0], hsb[1], hsb[2], aa);
+            }
+        }
+        else
+        if(x instanceof Concept){
+            Concept conc = ((Concept)o);
+            float rr=0.5f,gg=0.5f,bb=0.5f,aa=1.0f;
+
+            if(conc.beliefs.size()>0) {
+                Sentence sent = conc.beliefs.get(0).sentence;
+                float conf = sent.truth.getConfidence();
+                float freq = sent.truth.getFrequency();
+                aa = 0.25f + conf * 0.75f;
+                float evidence = TruthFunctions.c2w(conf);
+                float positive_evidence_in_0_1 = TruthFunctions.w2c(evidence*freq);
+                float negative_evidence_in_0_1 = TruthFunctions.w2c(evidence*(1.0f-freq));
+                rr = positive_evidence_in_0_1;
+                bb = negative_evidence_in_0_1;
+                gg = 0.0f;
+                
+            }
+            Color HSB = new Color(rr,gg,bb,aa);
+            float hsb[] = new float[3];
+            Color.RGBtoHSB((int)(rr*255.0f), (int)(gg*255.0f), (int)(bb*255.0f), hsb);
+            v.color =  Video.colorHSB( hsb[0], hsb[1], hsb[2], aa);
+        }
          
-        v.color =  Video.colorHSB( hue, saturation, brightness, alpha );
+       
 
         String label;
         if (o instanceof Concept) {
@@ -136,7 +186,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
             TermLink t = ((NARGraph.TermLinkEdge)edge).getObject();
             float p = t.getPriority();            
             thickness = (1 + p) * lineWidth;            
-            color = Video.color(255f * (0.5f + p*0.5f), 125f, 125f, 255f * (0.5f + p*0.5f) );
+            color = Video.color(255f * (0.5f + p*0.5f), 255f * (0.5f + p*0.5f), 125f, 255f * (0.5f + p*0.5f) );
         }
         if (edge instanceof NARGraph.TaskLinkEdge) {
             TaskLink t = ((NARGraph.TaskLinkEdge)edge).getObject();
