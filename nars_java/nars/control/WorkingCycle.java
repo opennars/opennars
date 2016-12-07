@@ -47,6 +47,17 @@ public class WorkingCycle implements Iterable<Concept> {
         Concept currentConcept = concepts.takeNext();
         if (currentConcept==null)
             return null;
+        
+        if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
+            this.memory.concepts.takeOut(currentConcept.getTerm());
+            conceptRemoved(currentConcept);
+            return null;
+        }
+        if(currentConcept.termLinks.size() == 0) {  //remove concepts without tasklinks and without termlinks
+            this.memory.concepts.takeOut(currentConcept.getTerm());
+            conceptRemoved(currentConcept);
+            return null;
+        }
             
         return new FireConcept(memory, currentConcept, 1) {
             
