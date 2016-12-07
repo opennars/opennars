@@ -24,6 +24,10 @@ import automenta.vivisect.swing.AwesomeToggleButton;
 import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
+import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import javax.swing.JTextField;
 import nars.gui.InferenceLogger;
 import nars.gui.InferenceLogger.LogOutput;
 import nars.gui.NARControls;
@@ -69,6 +73,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
         this(c, outputEvents);
     }
     
+    String filter = "";
     public LogPanel(NARControls c, Class... events) {
         super();
         setLayout(new BorderLayout());
@@ -216,6 +221,29 @@ abstract public class LogPanel extends NPanel implements LogOutput {
         };
         fontSlider.setPrefix("Font size: ");
         menuTop.add(fontSlider);
+        
+        final JTextField filterBox = new JTextField("");
+        filterBox.setPreferredSize(new Dimension(255,20));
+        
+        filterBox.setForeground(Color.WHITE); 
+        filterBox.setBackground(Color.DARK_GRAY);
+        filterBox.setEnabled(true);
+        filterBox.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent ke) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent ke) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent ke) {
+                filter = filterBox.getText();
+            }
+        
+        });
+        menuTop.add(filterBox);
 
 
         //add(menuBottom, BorderLayout.SOUTH);
