@@ -230,12 +230,18 @@ public class SwingLogText extends SwingText  {
                 
         if (o instanceof Task) {
             Task t = (Task)o;
-            Concept cc = nar.memory.concept(t.getTerm());            
+            int color = 128;
+            Concept cc = nar.memory.concept(t.getTerm()); 
+            color = (int) Math.min(255.0f,80.0f+t.getPriority()*255.0f);
+            Color col = new Color(color,color,color);
             if (cc!=null) {
-                
-                print(Color.WHITE, sb.toString(), new ConceptAction(cc));
+                color = (int)(128.0f+cc.getPriority()*128.0f);
+                print(col, sb.toString(), new ConceptAction(cc));
                 return doc.getLength();
-            }            
+            } 
+            
+            print(col, sb.toString());
+            return doc.getLength();
         }
         
 //        float tc = 0.75f + 0.25f * priority;
