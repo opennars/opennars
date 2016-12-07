@@ -133,11 +133,11 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
         private final TruthChart desireChart;
         private final PriorityColumn questionChart;
         private final JTextArea title;
-        private final JLabel subtitle;
+        private final JTextArea subtitle;
 
         final int chartWidth = 64;
         final int chartHeight = 64;
-        final float titleSize = 24f;
+        final float titleSize = 16f;
         final float subfontSize = 16f;
         private BeliefTimeline beliefTime;
         private BeliefTimeline desireTime;
@@ -163,7 +163,7 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
 
             details.add(new JLabel("Beliefs"));
             details.add(this.beliefChart = new TruthChart(chartWidth, chartHeight));
-            details.add(new JLabel("Questions:"));
+            details.add(new JLabel("Questions"));
             details.add(this.questionChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight));
             details.add(new JLabel("Desires"));
             details.add(this.desireChart = new TruthChart(chartWidth, chartHeight));
@@ -201,7 +201,8 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             
             title.setEditable(false);
             title.setOpaque(false);
-            subtitle = new JLabel();
+            subtitle = new JTextArea("");
+            subtitle.setEditable(false);
             titlePanel.add(subtitle, SOUTH);
             
             details.add(titlePanel);
@@ -296,7 +297,7 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             }*/
             
             this.time = time;
-            String sub = "<html>";
+            String sub = "";
 
             if (!concept.beliefs.isEmpty()) {
                 List<Task> bbT = concept.getBeliefs();
@@ -329,7 +330,7 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
                 }
                 
                 String s=sub;
-                sub = (s.equals("<html>") ? "<html>" : s+" ")+"  desire: "+concept.desires.get(0).sentence.truth.toString();
+                sub = (s.equals("") ? "" : s+" ")+"  desire: "+concept.desires.get(0).sentence.truth.toString();
                 ArrayList<Sentence> desir=new ArrayList();
                 for(Task ts: concept.desires) {
                     desir.add(ts.sentence);
@@ -341,7 +342,7 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             } else {
                 desireTime.setVisible(false);
             }
-            String finalstr = sub+"<br/><br/>"+conceptstr.toString().replace("<", "&lt;").replace(">", "&gt;").replace("\n","<br/>")+"</html>";
+            String finalstr = sub+"\n\n"+conceptstr.toString();
             subtitle.setText(finalstr);
 
             updateUI();
