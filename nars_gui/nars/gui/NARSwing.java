@@ -127,13 +127,13 @@ public class NARSwing  {
         UIManager.put("TextPane.border", new EmptyBorder(1,1,1,1));
         UIManager.put("Panel.border", new EmptyBorder(1,1,1,1));
         UIManager.put("Button.select", Color.GREEN);
-        UIManager.put("Button.highlight", Color.YELLOW);
+        UIManager.put("Button.highlight", Color.GRAY);
         UIManager.put("ToggleButton.foreground", Color.WHITE);
         UIManager.put("ToggleButton.background", Color.DARK_GRAY);
         UIManager.put("ToggleButton.select", Color.GRAY);
         //UIManager.put("ToggleButton.border", Color.BLUE);
         //UIManager.put("ToggleButton.light", Color.DARK_GRAY);
-        UIManager.put("Button.select", Color.ORANGE);
+        UIManager.put("Button.select", Color.GRAY);
         UIManager.put("Button.opaque", false);
         UIManager.put("Panel.opaque", false);
         UIManager.put("ScrollBar.opaque", false);
