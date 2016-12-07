@@ -992,6 +992,11 @@ public class Concept extends Item<Term> {
     public List<Task> getBeliefs() {
         return Collections.unmodifiableList(beliefs);
     }
+    
+    /** returns unmodifidable collection wrapping beliefs */
+    public List<Task> getDesires() {
+        return Collections.unmodifiableList(desires);
+    }
 
     
 }
