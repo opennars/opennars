@@ -239,7 +239,8 @@ public class SwingLogText extends SwingText  {
         }
         
 //        float tc = 0.75f + 0.25f * priority;
-//        Color textColor = new Color(tc,tc,tc);        
+//        Color textColor = new Color(tc,tc,tc);   
+        String s = sb.toString();
         print(Color.GRAY, sb.toString());        
         return doc.getLength();
         

@@ -67,18 +67,19 @@ public class SwingLogPanel extends LogPanel {
 
     @Override
     void print(Class c, Object o) {
+        
+        if(!filter.equals("")) { //ok its filtered we can afford the ToStrings for this case as we also want the logfile to be affected
+            if(!o.toString().contains(filter)) {
+                return;
+            }
+        }
         ioText.output(c, o);//, showStamp, nar);
 
         CharSequence s = TextOutput.getOutputString(c, o, true, showStamp, nar);
         if (logFile != null) {
             logFile.append(s).append('\n');
         }
-        
-        
-        
     }
-
-    
     
     @Override
     public void setFontSize(float v) {
