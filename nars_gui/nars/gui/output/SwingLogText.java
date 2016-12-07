@@ -201,7 +201,13 @@ public class SwingLogText extends SwingText  {
                         printColorBlock(LogPanel.getNegativeEvidenceColor(negative_evidence_in_0_1), "  ");                        
                     }
                     else if ( t.getBestSolution()!=null) {
-                        printColorBlock(LogPanel.getStatementColor('=', priority), "    ");
+                        float evidence = TruthFunctions.c2w(t.getBestSolution().truth.getConfidence());
+                        float pos_2 = t.getBestSolution().truth.getConfidence()*t.getBestSolution().truth.getFrequency();
+                        float positive_evidence_in_0_1 = TruthFunctions.w2c(evidence*t.getBestSolution().truth.getFrequency());
+                        float negative_evidence_in_0_1 = TruthFunctions.w2c(evidence*(1.0f-t.getBestSolution().truth.getFrequency()));
+                        //printColorBlock(LogPanel.getStatementColor('=', priority, t.getBestSolution().truth.get), "    ");
+                        printColorBlock(LogPanel.getPositiveEvidenceColor(positive_evidence_in_0_1), "  ");
+                        printColorBlock(LogPanel.getNegativeEvidenceColor(negative_evidence_in_0_1), "  ");  
                     }
                     else {                        
                         printColorBlock(LogPanel.getStatementColor(s.punctuation, priority), "    ");                   
