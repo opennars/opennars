@@ -269,5 +269,7 @@ public class Parameters {
     
     public static int TASKLINK_PER_CONTENT = 2; //eternal/event are also seen extra
     
+    public static float QUALITY_FORGET = 0.99f;
+    
 }
 

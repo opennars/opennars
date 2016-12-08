@@ -211,6 +211,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             quality += p * pow(budget.getDurability(), 1.0 / (forgetCycles * p));
         }    // priority Durability
         budget.setPriority(quality);
+        budget.setQuality(Parameters.QUALITY_FORGET*budget.getQuality());
         return quality;
     }
 
