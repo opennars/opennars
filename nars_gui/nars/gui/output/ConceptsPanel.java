@@ -214,7 +214,7 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             timepanels.setLayout(new BoxLayout(timepanels,BoxLayout.PAGE_AXIS));
             timepanels.setOpaque(false);
             timepanels.setPreferredSize(new Dimension(250,100));
-            timepanels.add(new JLabel("beliefs-events:"));
+            timepanels.add(new JLabel("belief-events:"));
             timepanels.add(this.beliefTime = new BeliefTimeline(chartWidth*6, chartHeight/3));
             timepanels.add(new JLabel("desire-events:"));
             timepanels.add(this.desireTime = new BeliefTimeline(chartWidth*6, chartHeight/3));

@@ -614,6 +614,30 @@ public class Concept extends Item<Term> {
      */
     protected boolean insertTaskLink(final TaskLink taskLink) {        
         
+        //HANDLE MAX PER CONTENT
+        //if taskLinks already contain a certain amount of tasks with same content then one has to go
+        boolean isEternal = taskLink.getTarget().sentence.isEternal();
+        int nSameContent = 0;
+        float lowest_priority = Float.MAX_VALUE;
+        TaskLink lowest = null;
+        for(TaskLink tl : taskLinks) {
+            Sentence s = tl.getTarget().sentence;
+            if(s.getTerm().equals(taskLink.getTerm()) && s.isEternal() == isEternal) {
+                nSameContent++; //same content and occurrence-type, so count +1
+                if(tl.getPriority() < lowest_priority) { //the current one has lower priority so save as lowest
+                    lowest_priority = tl.getPriority();
+                    lowest = tl;
+                }
+                if(nSameContent > Parameters.TASKLINK_PER_CONTENT) { //ok we reached the maximum so lets delete the lowest
+                    taskLinks.take(lowest);
+                    memory.emit(TaskLinkRemove.class, lowest, this);
+                    break;
+                }
+            }
+        }
+        //END HANDLE MAX PER CONTENT
+        
+        
         TaskLink removed = taskLinks.putIn(taskLink);
         
         if (removed!=null) {
