@@ -267,5 +267,7 @@ public class Parameters {
     
     public static boolean COMPOUND_OPERATIONS=true;
     
+    public static int TASKLINK_PER_CONTENT = 2; //eternal/event are also seen extra
+    
 }
 
