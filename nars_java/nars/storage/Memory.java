@@ -567,9 +567,9 @@ public class Memory implements Serializable {
         return false;
     }
 
-    public boolean interlinkConcepts(final Task newEvent, DerivationContext nal) {
+    public boolean eventInference(final Task newEvent, DerivationContext nal) {
 
-        if(newEvent.budget==null || !newEvent.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
+        if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
             return false;
        }
 
@@ -602,12 +602,56 @@ public class Memory implements Serializable {
             //}
         }
         
-        /*while (stm.size()+1 > Parameters.STM_SIZE)
-            stm.removeFirst();
-        stm.addLast(newEvent);*/
-        this.sequenceTasks.addItem(newEvent);
-
+        addToSequenceTasks(newEvent);
+        
+        /*System.out.println("----------");
+        for(Task t : this.sequenceTasks) {
+            System.out.println(t.sentence.getTerm().toString()+ " " +String.valueOf(t.getPriority()));
+        }
+        System.out.println("^^^^^^^^^");*/
         return true;
+    }
+
+    public void addToSequenceTasks(final Task newEvent) {
+       
+        /*if(newEvent.getTerm() instanceof Conjunction) {
+            Conjunction term = ((Conjunction)newEvent.getTerm());
+            if(!(term.term[term.term.length-1] instanceof Operation)) {
+                return;
+            }
+        }*/
+
+        int delete_attempts = 10;
+        for(int i =0 ;i<Math.min(this.sequenceTasks.size(), delete_attempts);i++) {
+            Task takeout = this.sequenceTasks.takeNext();
+            if(takeout.getTerm().equals(newEvent.sentence.getTerm())) { //in this case we remove the found duplicate also
+                continue; //by not putting it in anymore
+            }
+            this.sequenceTasks.putBack(takeout, cycles(this.param.sequenceForgetDurations), this);
+        }
+        
+        //nice bag test, uncomment and rum prediction: sometimes its impossible to remove a item that is in the bag, TODO fix:
+        //if there is an item with same content, then remove it to make place for the new one
+        /*Task removal = null;
+        do
+        {
+            removal = null;
+            for(Task s : this.sequenceTasks) {
+                if(s.getTerm().equals(newEvent.getTerm()) && newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime()) {
+                    removal = s;
+                    break;
+                }
+            }
+            if(removal != null) {
+                this.sequenceTasks.take(removal);
+            }
+        }
+        while(removal != null);*/
+        //ok now add the new one:
+        //making sure we do not mess with budget of the task:
+        Task t2 = newEvent; //new Task(newEvent.sentence, newEvent.getBudget().clone() /*ew BudgetValue(0.8f,0.1f,0.0f)*/, newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
+        //we use a event default budget here so the time it appeared and whether it was selected is key criteria currently divided by complexity
+        this.sequenceTasks.addItem(t2);
     }
     
     /** converts durations to cycles */
