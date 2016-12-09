@@ -52,6 +52,7 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
+import static nars.inference.BudgetFunctions.truthToQuality;
 import nars.inference.TemporalRules;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
@@ -67,6 +68,7 @@ import nars.io.PauseInput;
 import nars.io.Reset;
 import nars.io.SetDecisionThreshold;
 import nars.io.SetVolume;
+import nars.language.Interval;
 
 
 /**
@@ -353,7 +355,8 @@ public class Memory implements Serializable {
         Stamp stamp = new Stamp(this, Tense.Present); 
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
         
-        Task task = new Task(sentence, opTask.budget, operation.getTask());
+        Task task = new Task(sentence, new BudgetValue(Parameters.DEFAULT_FEEDBACK_PRIORITY, Parameters.DEFAULT_FEEDBACK_DURABILITY,
+                                        truthToQuality(sentence.getTruth())), operation.getTask());
         
         addNewTask(task, "Executed");
     }
@@ -563,7 +566,7 @@ public class Memory implements Serializable {
         TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction);
         return false;
     }
-        
+
     public boolean interlinkConcepts(final Task newEvent, DerivationContext nal) {
 
         if(newEvent.budget==null || !newEvent.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
@@ -572,7 +575,7 @@ public class Memory implements Serializable {
 
         nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
 
-        if (newEvent.sentence.isEternal() || !isInputOrOperation(newEvent)) {
+        if (!newEvent.sentence.isJudgment() || newEvent.sentence.isEternal() || !isInputOrOperation(newEvent)) {
             return false;
        }
 
@@ -593,7 +596,6 @@ public class Memory implements Serializable {
                 Task takeout = this.sequenceTasks.takeNext();
                 proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true);
                 this.sequenceTasks.putBack(takeout, cycles(this.param.sequenceForgetDurations), this);
-                
             }
             //for (Task stmLast : stm) {
                // proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);
@@ -603,7 +605,6 @@ public class Memory implements Serializable {
         /*while (stm.size()+1 > Parameters.STM_SIZE)
             stm.removeFirst();
         stm.addLast(newEvent);*/
-        
         this.sequenceTasks.addItem(newEvent);
 
         return true;

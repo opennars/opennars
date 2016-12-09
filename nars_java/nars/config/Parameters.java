@@ -271,5 +271,10 @@ public class Parameters {
     
     public static float QUALITY_FORGET = 0.99f;
     
+    /** Default priority of exection feedback */
+    public static float DEFAULT_FEEDBACK_PRIORITY = (float) 0.9;
+    /** Default durability of exection feedback */
+    public static float DEFAULT_FEEDBACK_DURABILITY = (float) 0.5; //was 0.8 in 1.5.5; 0.5 after
+    
 }
 
