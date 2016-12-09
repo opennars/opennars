@@ -60,7 +60,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param newItem The Item to put in
      * @return The overflow Item, or null if nothing displaced
      */
-    abstract protected E addItem(final E newItem);
+    public abstract E addItem(final E newItem);
 
     /**
      * Add a new Item into the Bag

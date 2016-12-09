@@ -145,7 +145,7 @@ public class LogicPerformance {
             addEdge(link, f, new UniqueEdge("fire"));
             at(f, t, "fire");
             
-            explainGeneration(f, f.tasksAdded);
+           // explainGeneration(f, f.tasksAdded);
         }
 
         
@@ -257,7 +257,7 @@ public class LogicPerformance {
         
         n.on(TaskImmediateProcess.class, new TaskImmediateProcess() {
             @Override public void onProcessed(Task t, DerivationContext nal) {
-                process.explain(t, analysisDepth, nal.tasksAdded);
+                //process.explain(t, analysisDepth, nal.tasksAdded);
             }            
         });
          n.on(ConceptFire.class, new ConceptFire() {
