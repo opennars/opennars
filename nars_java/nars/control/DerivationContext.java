@@ -56,11 +56,6 @@ public abstract class DerivationContext implements Runnable {
     protected Stamp newStamp;
     public StampBuilder newStampBuilder;
     protected List<DerivationFilter> derivationFilters = null;
-
-    /** stores the tasks that this process generates, and adds to memory */
-    public final List<Task> tasksAdded = new ArrayList();
-    
-    //TODO tasksDicarded
     
     public DerivationContext(Memory mem) {
         super();
@@ -161,14 +156,6 @@ public abstract class DerivationContext implements Runnable {
         task.getBudget().setPriority(task.getBudget().getPriority()*Parameters.DERIVATION_PRIORITY_LEAK);
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
         //memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
-        
-        //fill sequenceTask buffer due to the new derived sequence
-        if(!task.sentence.isEternal() && 
-                task.sentence.term instanceof Conjunction && 
-                ((Conjunction) task.sentence.term).getTemporalOrder() != TemporalRules.ORDER_NONE &&
-                ((Conjunction) task.sentence.term).getTemporalOrder() != TemporalRules.ORDER_INVALID) {
-            this.memory.sequenceTasks.putIn(task);
-        }
         
         addTask(task, "Derived");
         return true;
@@ -482,11 +469,15 @@ public abstract class DerivationContext implements Runnable {
     
     /** tasks added with this method will be remembered by this NAL instance; useful for feedback */
     public void addTask(Task t, String reason) {
-        
         memory.addNewTask(t, reason);
-        
-        tasksAdded.add(t);
-        
+        //fill sequenceTask buffer due to the new derived sequence
+        if(t.sentence.isJudgment() &&
+                !t.sentence.isEternal() && 
+                t.sentence.term instanceof Conjunction && 
+                ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_NONE &&
+                ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_INVALID) {
+            this.memory.sequenceTasks.addItem(t);
+        }
     }
     
     /**

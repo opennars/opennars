@@ -358,7 +358,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      * @return null if nothing overflowed, non-null if an overflow Item, which
      * may be the attempted input item (in which case it was not inserted)
      */
-    @Override protected E addItem(final E newItem) {
+    @Override public E addItem(final E newItem) {
         E oldItem = null;
         int inLevel = getLevel(newItem);
         if (size() >= capacity) {      // the bag will be full after the next 
