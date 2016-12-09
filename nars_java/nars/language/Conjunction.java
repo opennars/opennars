@@ -22,6 +22,7 @@ package nars.language;
 
 import static java.lang.System.arraycopy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
@@ -49,6 +50,10 @@ public class Conjunction extends CompoundTerm {
         temporalOrder = order;
         
         init(flatten(arg,order));
+        
+        if(term[0] instanceof Interval) {
+            throw new RuntimeException("First entry can't be interval.");
+        }
         
         /*if (normalized)
             setNormalized(true);*/

@@ -469,6 +469,9 @@ public abstract class DerivationContext implements Runnable {
     
     /** tasks added with this method will be remembered by this NAL instance; useful for feedback */
     public void addTask(Task t, String reason) {
+        if(t.sentence.term==null) {
+            return;
+        }
         memory.addNewTask(t, reason);
         //fill sequenceTask buffer due to the new derived sequence
         if(t.sentence.isJudgment() &&
@@ -476,7 +479,7 @@ public abstract class DerivationContext implements Runnable {
                 t.sentence.term instanceof Conjunction && 
                 ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_NONE &&
                 ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_INVALID) {
-            this.memory.sequenceTasks.addItem(t);
+            this.memory.addToSequenceTasks(t);
         }
     }
     

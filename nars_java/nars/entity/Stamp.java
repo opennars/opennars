@@ -51,6 +51,22 @@ import static nars.inference.TemporalRules.order;
 import static nars.inference.TemporalRules.order;
 import static nars.inference.TemporalRules.order;
 import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
+import static nars.inference.TemporalRules.order;
 
 public class Stamp implements Cloneable {
 

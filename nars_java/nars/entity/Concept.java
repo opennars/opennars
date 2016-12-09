@@ -60,6 +60,7 @@ import nars.plugin.mental.InternalExperience;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
 import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
 
 public class Concept extends Item<Term> {
 

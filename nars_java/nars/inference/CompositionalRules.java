@@ -61,6 +61,8 @@ import static nars.language.Terms.reduceComponents;
 import nars.language.Variable;
 import nars.language.Variables;
 import static nars.inference.TruthFunctions.abduction;
+import static nars.inference.TruthFunctions.abduction;
+import static nars.inference.TruthFunctions.abduction;
 
 /**
  * Compound term composition and decomposition rules, with two premises.
