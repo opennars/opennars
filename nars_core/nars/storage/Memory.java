@@ -621,17 +621,6 @@ public class Memory implements Serializable {
             }
         }*/
 
-        int delete_attempts = 10;
-        for(int i =0 ;i<Math.min(this.sequenceTasks.size(), delete_attempts);i++) {
-            Task takeout = this.sequenceTasks.takeNext();
-            if(takeout.getTerm().equals(newEvent.sentence.getTerm())) { //in this case we remove the found duplicate also
-                continue; //by not putting it in anymore
-            }
-            this.sequenceTasks.putBack(takeout, cycles(this.param.sequenceForgetDurations), this);
-        }
-        
-        //nice bag test, uncomment and rum prediction: sometimes its impossible to remove a item that is in the bag, TODO fix:
-        //if there is an item with same content, then remove it to make place for the new one
         /*Task removal = null;
         do
         {
@@ -651,7 +640,7 @@ public class Memory implements Serializable {
         //making sure we do not mess with budget of the task:
         Task t2 = newEvent; //new Task(newEvent.sentence, newEvent.getBudget().clone() /*ew BudgetValue(0.8f,0.1f,0.0f)*/, newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
         //we use a event default budget here so the time it appeared and whether it was selected is key criteria currently divided by complexity
-        this.sequenceTasks.addItem(t2);
+        this.sequenceTasks.putIn(t2);
     }
     
     /** converts durations to cycles */
