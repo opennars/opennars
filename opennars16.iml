@@ -6,7 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/nars_gui" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/nars_core" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/nars_lab" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/nars_prolog" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/nars_test" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
