@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="opennars">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/opennars.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
