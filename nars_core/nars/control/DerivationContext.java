@@ -151,7 +151,7 @@ public abstract class DerivationContext implements Runnable {
             }
         }
         
-        task.setParticipateInTemporalInductionOnSucceedingEvents(false);
+        task.setElemOfSequenceBuffer(false);
         task.getBudget().setDurability(task.getBudget().getDurability()*Parameters.DERIVATION_DURABILITY_LEAK);
         task.getBudget().setPriority(task.getBudget().getPriority()*Parameters.DERIVATION_PRIORITY_LEAK);
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
@@ -186,8 +186,9 @@ public abstract class DerivationContext implements Runnable {
      * @param temporalInduction
      * @param overlapAllowed // https://groups.google.com/forum/#!topic/open-nars/FVbbKq5En-M
      */
-    public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed) {
+    public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed) {
         
+        List<Task> ret = new ArrayList<Task>();
         if(newContent == null) {
             return null;
         }
@@ -201,9 +202,7 @@ public abstract class DerivationContext implements Runnable {
             if(newContent.subjectOrPredicateIsIndependentVar()) {
                 return null;
             }
-            
-            Task derived = null;
-            
+
             try {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
                 newSentence.producedByTemporalInduction=temporalInduction;
@@ -212,7 +211,7 @@ public abstract class DerivationContext implements Runnable {
                 if (newTask!=null) {
                     boolean added = derivedTask(newTask, false, false, null, null, overlapAllowed);
                     if(added) {
-                        derived=newTask;
+                        ret.add(newTask);
                     }
                 }
             }
@@ -234,6 +233,9 @@ public abstract class DerivationContext implements Runnable {
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 if (newTask!=null) {
                     boolean added = derivedTask(newTask, false, false, null, null, overlapAllowed);
+                    if(added) {
+                        ret.add(newTask);
+                    }
                 }
                 
             }
@@ -242,7 +244,7 @@ public abstract class DerivationContext implements Runnable {
             }
                 
             }
-            return derived;
+            return ret;
         }
         return null;
     }
@@ -473,14 +475,6 @@ public abstract class DerivationContext implements Runnable {
             return;
         }
         memory.addNewTask(t, reason);
-        //fill sequenceTask buffer due to the new derived sequence
-        if(t.sentence.isJudgment() &&
-                !t.sentence.isEternal() && 
-                t.sentence.term instanceof Conjunction && 
-                ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_NONE &&
-                ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_INVALID) {
-            this.memory.addToSequenceTasks(t);
-        }
     }
     
     /**

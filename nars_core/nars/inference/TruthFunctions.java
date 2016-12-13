@@ -241,7 +241,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue desireStrong(final TruthValue v1, final TruthValue v2) {
+    public static final TruthValue desireStrong(final TruthValue v1, final TruthValue v2) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float c1 = v1.getConfidence();

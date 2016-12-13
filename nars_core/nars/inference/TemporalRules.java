@@ -366,36 +366,43 @@ public class TemporalRules {
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if(!tooMuchTemporalStatements(statement11)) {
-                Task t=nal.doublePremiseTask(statement11, truth1, budget1,true, false);
+                List<Task> t=nal.doublePremiseTask(statement11, truth1, budget1,true, false);
                 if(t!=null) {
-                    success.add(t);
+                    success.addAll(t);
                 }
             }
             if(!tooMuchTemporalStatements(statement22)) {
-               Task t=nal.doublePremiseTask(statement22, truth2, budget2,true, false);
+               List<Task> t=nal.doublePremiseTask(statement22, truth2, budget2,true, false);
                 if(t!=null) {
-                    success.add(t);
+                    success.addAll(t);
                 }
             }
             if(!tooMuchTemporalStatements(statement33)) {
-                Task t=nal.doublePremiseTask(statement33, truth3, budget3,true, false);
+                List<Task> t=nal.doublePremiseTask(statement33, truth3, budget3,true, false);
                 if(t!=null) {
-                    success.add(t);
+                    success.addAll(t);
                 }
             }
         }
         if(!tooMuchTemporalStatements(statement1)) {
-            Task t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
+            List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
             if(t!=null) {
-                    success.add(t);
+                success.addAll(t);
+                
+                for(Task task : t) {
+                    task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
                 }
+            }
         }
         
         if(!tooMuchTemporalStatements(statement2)) {
-            Task t=nal.doublePremiseTask(statement2, truth2, budget2,true, false);
+            List<Task> t=nal.doublePremiseTask(statement2, truth2, budget2,true, false);
                  if(t!=null) {
-                    success.add(t);
+                    success.addAll(t);
                     
+                    for(Task task : t) {
+                        task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
+                    }
                     /*Task task=t;
                     
                     //micropsi inspired strive for knowledge
@@ -425,17 +432,32 @@ public class TemporalRules {
                 }
             }
         if(!tooMuchTemporalStatements(statement3)) {
-            Task t=nal.doublePremiseTask(statement3, truth3, budget3,true, false);
+            List<Task> t=nal.doublePremiseTask(statement3, truth3, budget3,true, false);
             if(t!=null) {
-                    success.add(t);
+                for(Task task : t) {
+                    task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
                 }
+                success.addAll(t);
+            }
         }
         if(!tooMuchTemporalStatements(statement4)) {
-            Task t=nal.doublePremiseTask(statement4, truth4, budget4,true, false);
-            if(t!=null) {
+            List<Task> tl=nal.doublePremiseTask(statement4, truth4, budget4,true, false);
+            if(tl!=null) {
+                for(Task t : tl) {
+                    //fill sequenceTask buffer due to the new derived sequence
+                    if(t.sentence.isJudgment() &&
+                            !t.sentence.isEternal() && 
+                            t.sentence.term instanceof Conjunction && 
+                            ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_NONE &&
+                            ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_INVALID) {
+                        nal.memory.addToSequenceTasks(t);
+                    }
+
                     success.add(t);
                 }
+            }
         }
+
         return success;
     }
 

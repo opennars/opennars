@@ -32,7 +32,7 @@ public class ImmediateProcess extends DerivationContext {
             }
         }
         
-         if (!currentTask.sentence.isEternal()) {
+        if (!currentTask.sentence.isEternal()) {
             boolean stmUpdated = memory.eventInference(currentTask, this);
             //if (stmUpdated) {
                 //memory.logic.SHORT_TERM_MEMORY_UPDATE.commit();

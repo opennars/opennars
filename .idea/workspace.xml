@@ -7,8 +7,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30ccc499-a9a1-4a74-8896-3f16e16c3486" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/config/Parameters.java" afterPath="$PROJECT_DIR$/nars_core/nars/config/Parameters.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/control/DerivationContext.java" afterPath="$PROJECT_DIR$/nars_core/nars/control/DerivationContext.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/control/ImmediateProcess.java" afterPath="$PROJECT_DIR$/nars_core/nars/control/ImmediateProcess.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/entity/Concept.java" afterPath="$PROJECT_DIR$/nars_core/nars/entity/Concept.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/entity/Task.java" afterPath="$PROJECT_DIR$/nars_core/nars/entity/Task.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/inference/BudgetFunctions.java" afterPath="$PROJECT_DIR$/nars_core/nars/inference/BudgetFunctions.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/inference/CompositionalRules.java" afterPath="$PROJECT_DIR$/nars_core/nars/inference/CompositionalRules.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/inference/LocalRules.java" afterPath="$PROJECT_DIR$/nars_core/nars/inference/LocalRules.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/inference/TemporalRules.java" afterPath="$PROJECT_DIR$/nars_core/nars/inference/TemporalRules.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/inference/TruthFunctions.java" afterPath="$PROJECT_DIR$/nars_core/nars/inference/TruthFunctions.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/io/Narsese.java" afterPath="$PROJECT_DIR$/nars_core/nars/io/Narsese.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/operator/mental/Anticipate.java" afterPath="$PROJECT_DIR$/nars_core/nars/operator/mental/Anticipate.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/storage/Memory.java" afterPath="$PROJECT_DIR$/nars_core/nars/storage/Memory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/opennars16.iml" afterPath="$PROJECT_DIR$/opennars16.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/util/Events.java" afterPath="$PROJECT_DIR$/nars_core/nars/util/Events.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_lab/nars/lab/microworld/SimNAR.java" afterPath="$PROJECT_DIR$/nars_lab/nars/lab/microworld/SimNAR.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_lab/nars/lab/nario/NARio.java" afterPath="$PROJECT_DIR$/nars_lab/nars/lab/nario/NARio.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_lab/nars/lab/plugin/input/PerceptionAccel.java" afterPath="$PROJECT_DIR$/nars_lab/nars/lab/plugin/input/PerceptionAccel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_test/nars/perf/BooleanChallenge.java" afterPath="$PROJECT_DIR$/nars_test/nars/perf/BooleanChallenge.java" />
     </list>
     <ignored path="opennars16.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,36 +47,106 @@
     <favorites_list name="opennars16" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="NARSwing.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/nars_gui/nars/gui/NARSwing.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.36">
-              <caret line="65" column="55" selection-start-line="65" selection-start-column="55" selection-end-line="65" selection-end-column="55" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="Memory.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nars_core/nars/storage/Memory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="641" column="26" selection-start-line="641" selection-start-column="26" selection-end-line="641" selection-end-column="26" />
+            <state vertical-scroll-proportion="-6.3103447">
+              <caret line="413" column="102" selection-start-line="413" selection-start-column="102" selection-end-line="413" selection-end-column="102" />
               <folding>
-                <element signature="e#0#23946#0" expanded="true" />
-                <element signature="e#22565#22683#0" expanded="true" />
-                <element signature="e#23274#23299#0" expanded="true" />
+                <element signature="e#0#23918#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="docComment;field#checked#0;class#Memory#0" expanded="true" />
+                <element signature="docComment;method#executedTask#0;class#Memory#0" expanded="true" />
+                <element signature="e#12506#12507#0" expanded="true" />
+                <element signature="e#12551#12552#0" expanded="true" />
+                <element signature="e#12609#12610#0" expanded="true" />
+                <element signature="e#12655#12656#0" expanded="true" />
+                <element signature="docComment;method#processNewTasks#0;class#Memory#0" expanded="true" />
+                <element signature="docComment;method#processNovelTask#0;class#Memory#0" expanded="true" />
+                <element signature="e#15105#15106#0" expanded="true" />
+                <element signature="e#15146#15147#0" expanded="true" />
+                <element signature="e#15335#15336#0" expanded="true" />
+                <element signature="e#15387#15388#0" expanded="true" />
+                <element signature="e#15464#15465#0" expanded="true" />
+                <element signature="e#15507#15508#0" expanded="true" />
+                <element signature="e#15549#15550#0" expanded="true" />
+                <element signature="e#15598#15599#0" expanded="true" />
+                <element signature="docComment;method#stepLater#0;class#Memory#0" expanded="true" />
+                <element signature="e#15783#15784#0" expanded="true" />
+                <element signature="e#15841#15842#0" expanded="true" />
+                <element signature="docComment;method#getTasks#0;class#Memory#0" expanded="true" />
+                <element signature="docComment;method#newTask#2;class#Memory#0" expanded="true" />
+                <element signature="docComment;method#newTask#3;class#Memory#0" expanded="true" />
+                <element signature="e#21371#21399#0" expanded="true" />
+                <element signature="docComment;method#cycles#0;class#Memory#0" expanded="true" />
+                <element signature="e#23830#23831#0" expanded="true" />
+                <element signature="e#23905#23906#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Unsafe.class" pinned="false" current-in-tab="false">
-        <entry file="jar://E:/Program Files/Java/jdk1.8.0_65/jre/lib/rt.jar!/sun/misc/Unsafe.class">
+      <file leaf-file-name="Concept.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nars_core/nars/entity/Concept.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-13.703704">
-              <caret line="365" column="5" selection-start-line="365" selection-start-column="5" selection-end-line="365" selection-end-column="5" />
+            <state vertical-scroll-proportion="-6.586207">
+              <caret line="455" column="60" selection-start-line="455" selection-start-column="60" selection-end-line="455" selection-end-column="60" />
+              <folding>
+                <element signature="e#0#42516#0" expanded="true" />
+                <element signature="e#6844#6873#0" expanded="true" />
+                <element signature="e#20461#20467#0" expanded="true" />
+                <element signature="docComment;method#processQuestion#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#linkToTask#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#addToTable#1;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#selectCandidate#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#insertTaskLink#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#buildTermLinks#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#insertTermLink#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#toString#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#toStringLong#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#getQuality#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#getTermLinkTemplates#0;class#Concept#0" expanded="true" />
+                <element signature="e#35249#35250#0" expanded="true" />
+                <element signature="e#35289#35290#0" expanded="true" />
+                <element signature="docComment;method#getBelief#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#getDesire#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#displayContent#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#selectTermLink#0;class#Concept#0" expanded="true" />
+                <element signature="docComment;method#getQuestions#0;class#Concept#0" expanded="true" />
+                <element signature="e#39651#39652#0" expanded="true" />
+                <element signature="e#39683#39684#0" expanded="true" />
+                <element signature="docComment;method#getBeliefRandomByConfidence#0;class#Concept#0" expanded="true" />
+                <element signature="e#41664#41665#0" expanded="true" />
+                <element signature="e#41702#41703#0" expanded="true" />
+                <element signature="e#42157#42158#0" expanded="true" />
+                <element signature="e#42184#42185#0" expanded="true" />
+                <element signature="docComment;method#getBeliefs#0;class#Concept#0" expanded="true" />
+                <element signature="e#42283#42284#0" expanded="true" />
+                <element signature="e#42343#42344#0" expanded="true" />
+                <element signature="docComment;method#getDesires#0;class#Concept#0" expanded="true" />
+                <element signature="e#42446#42447#0" expanded="true" />
+                <element signature="e#42506#42507#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Operator.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nars_core/nars/operator/Operator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="205" column="0" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TruthFunctions.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nars_core/nars/inference/TruthFunctions.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="244" column="43" selection-start-line="244" selection-start-column="43" selection-end-line="244" selection-end-column="43" />
               <folding />
             </state>
           </provider>
@@ -67,10 +155,70 @@
       <file leaf-file-name="NAR.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nars_core/nars/NAR.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.24138">
-              <caret line="273" column="81" selection-start-line="273" selection-start-column="81" selection-end-line="273" selection-end-column="81" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="633" column="31" selection-start-line="633" selection-start-column="31" selection-end-line="633" selection-end-column="31" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#19478#19479#0" expanded="true" />
+                <element signature="e#19515#19516#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Sentence.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nars_core/nars/entity/Sentence.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="90" column="11" selection-start-line="90" selection-start-column="11" selection-end-line="90" selection-end-column="11" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SyllogisticRules.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nars_core/nars/inference/SyllogisticRules.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-5.5172415">
+              <caret line="152" column="69" selection-start-line="152" selection-start-column="25" selection-end-line="152" selection-end-column="69" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SimNAR.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/nars_lab/nars/lab/microworld/SimNAR.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.375">
+              <caret line="272" column="32" selection-start-line="272" selection-start-column="32" selection-end-line="272" selection-end-column="32" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#9739#9740#0" expanded="true" />
+                <element signature="e#9790#9791#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DerivationContext.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nars_core/nars/control/DerivationContext.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="43.206898">
+              <caret line="34" column="22" selection-start-line="34" selection-start-column="22" selection-end-line="34" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Parameters.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nars_core/nars/config/Parameters.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-6.2413793">
+              <caret line="125" column="51" selection-start-line="125" selection-start-column="51" selection-end-line="125" selection-end-column="51" />
+              <folding>
+                <element signature="e#1778#1874#0" expanded="true" />
+                <element signature="docComment;field#DEFAULT_CREATION_EXPECTATION#0;class#Parameters#0" expanded="true" />
+                <element signature="docComment;field#TERM_ELEMENT_EQUIVALENCY#0;class#Parameters#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -93,8 +241,19 @@
         <option value="$PROJECT_DIR$/nars_prolog/nars/PrologTheoryFileOperator.java" />
         <option value="$PROJECT_DIR$/nars_prolog/nars/NARPrologSwing.java" />
         <option value="$PROJECT_DIR$/nars_prolog/nars/PrologTheoryStringOperator.java" />
+        <option value="$PROJECT_DIR$/nars_core/nars/config/Parameters.java" />
+        <option value="$PROJECT_DIR$/nars_lab/nars/lab/microworld/SimNAR.java" />
+        <option value="$PROJECT_DIR$/nars_core/nars/entity/Concept.java" />
+        <option value="$PROJECT_DIR$/nars_core/nars/inference/TruthFunctions.java" />
         <option value="$PROJECT_DIR$/nars_core/nars/storage/Memory.java" />
       </list>
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="Bundled (Maven 3)" />
+      </MavenGeneralSettings>
     </option>
   </component>
   <component name="ProjectFrameBounds">
@@ -128,9 +287,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="PackagesPane" />
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -173,11 +332,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="nars_lab" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lab" />
+              <option name="myItemId" value="nars_gui" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -191,7 +346,33 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="nars_gui" />
+              <option name="myItemId" value="nars_core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nars" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="opennars16" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="opennars16" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nars_core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nars" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="inference" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -203,8 +384,11 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="project.propDebugger" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
   </component>
-  <component name="RunManager" selected="Application.NARSwing">
+  <component name="RunManager" selected="Application.SimNAR">
     <configuration default="false" name="NARSwing" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -213,6 +397,46 @@
         </pattern>
       </extension>
       <option name="MAIN_CLASS_NAME" value="nars.gui.NARSwing" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="opennars16" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="SimNAR" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="nars.lab.microworld.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="nars.lab.microworld.SimNAR" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="opennars16" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="Launcher" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="nars.lab.launcher.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="nars.lab.launcher.Launcher" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -490,12 +714,16 @@
       <listeners />
       <method />
     </configuration>
-    <list size="1">
+    <list size="3">
       <item index="0" class="java.lang.String" itemvalue="Application.NARSwing" />
+      <item index="1" class="java.lang.String" itemvalue="Application.SimNAR" />
+      <item index="2" class="java.lang.String" itemvalue="Application.Launcher" />
     </list>
     <recent_temporary>
-      <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="Application.NARSwing" />
+      <list size="3">
+        <item index="0" class="java.lang.String" itemvalue="Application.SimNAR" />
+        <item index="1" class="java.lang.String" itemvalue="Application.Launcher" />
+        <item index="2" class="java.lang.String" itemvalue="Application.NARSwing" />
       </list>
     </recent_temporary>
   </component>
@@ -541,30 +769,30 @@
     <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33952254" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="REPL" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891247" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Leiningen" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2570694" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16445623" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="REPL" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40450928" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Leiningen" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2570694" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891247" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39920425" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4204244" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -587,66 +815,91 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/nars_core/nars/storage/Memory.java</url>
-          <line>645</line>
-          <properties />
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/nars_core/nars/storage/Memory.java</url>
-          <line>638</line>
-          <properties />
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/nars_core/nars/storage/Memory.java</url>
-          <line>639</line>
-          <properties />
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/nars_core/nars/storage/Memory.java</url>
-          <line>640</line>
-          <properties />
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="5" />
+      <option name="time" value="45" />
     </breakpoint-manager>
-    <watches-manager />
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="enactable_explainations" language="JAVA" />
+        <watch expression="preconc" />
+        <watch expression="op" />
+        <watch expression="t" />
+        <watch expression="preconc" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/build/classes/nars/storage/Memory.class">
+    <entry file="file://$PROJECT_DIR$/nars_gui/nars/gui/NARSwing.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/storage/Memory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="630" column="26" selection-start-line="630" selection-start-column="26" selection-end-line="630" selection-end-column="26" />
           <folding>
-            <element signature="e#0#15990#0" expanded="true" />
+            <element signature="e#0#23918#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="docComment;field#checked#0;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#executedTask#0;class#Memory#0" expanded="true" />
+            <element signature="e#12506#12507#0" expanded="true" />
+            <element signature="e#12551#12552#0" expanded="true" />
+            <element signature="e#12609#12610#0" expanded="true" />
+            <element signature="e#12655#12656#0" expanded="true" />
+            <element signature="docComment;method#processNewTasks#0;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#processNovelTask#0;class#Memory#0" expanded="true" />
+            <element signature="e#15105#15106#0" expanded="true" />
+            <element signature="e#15146#15147#0" expanded="true" />
+            <element signature="e#15335#15336#0" expanded="true" />
+            <element signature="e#15387#15388#0" expanded="true" />
+            <element signature="e#15464#15465#0" expanded="true" />
+            <element signature="e#15507#15508#0" expanded="true" />
+            <element signature="e#15549#15550#0" expanded="true" />
+            <element signature="e#15598#15599#0" expanded="true" />
+            <element signature="docComment;method#stepLater#0;class#Memory#0" expanded="true" />
+            <element signature="e#15783#15784#0" expanded="true" />
+            <element signature="e#15841#15842#0" expanded="true" />
+            <element signature="docComment;method#getTasks#0;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#newTask#2;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#newTask#3;class#Memory#0" expanded="true" />
+            <element signature="e#21371#21399#0" expanded="true" />
+            <element signature="docComment;method#cycles#0;class#Memory#0" expanded="true" />
+            <element signature="e#23830#23831#0" expanded="true" />
+            <element signature="e#23905#23906#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nars_lab/nars/lab/robot/NARVision_Processing_Sketch.txt">
+    <entry file="jar://E:/Program Files/Java/jdk1.8.0_65/jre/lib/rt.jar!/sun/misc/Unsafe.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-9.114894">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="365" column="5" selection-start-line="365" selection-start-column="5" selection-end-line="365" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_core/nars/NAR.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.24138">
+        <state vertical-scroll-proportion="0.0">
           <caret line="273" column="81" selection-start-line="273" selection-start-column="81" selection-end-line="273" selection-end-column="81" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_gui/nars/gui/NARSwing.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -655,16 +908,73 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="641" column="26" selection-start-line="641" selection-start-column="26" selection-end-line="641" selection-end-column="26" />
           <folding>
-            <element signature="e#0#23946#0" expanded="true" />
-            <element signature="e#22565#22683#0" expanded="true" />
-            <element signature="e#23274#23299#0" expanded="true" />
+            <element signature="e#0#23918#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="docComment;field#checked#0;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#executedTask#0;class#Memory#0" expanded="true" />
+            <element signature="e#12506#12507#0" expanded="true" />
+            <element signature="e#12551#12552#0" expanded="true" />
+            <element signature="e#12609#12610#0" expanded="true" />
+            <element signature="e#12655#12656#0" expanded="true" />
+            <element signature="docComment;method#processNewTasks#0;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#processNovelTask#0;class#Memory#0" expanded="true" />
+            <element signature="e#15105#15106#0" expanded="true" />
+            <element signature="e#15146#15147#0" expanded="true" />
+            <element signature="e#15335#15336#0" expanded="true" />
+            <element signature="e#15387#15388#0" expanded="true" />
+            <element signature="e#15464#15465#0" expanded="true" />
+            <element signature="e#15507#15508#0" expanded="true" />
+            <element signature="e#15549#15550#0" expanded="true" />
+            <element signature="e#15598#15599#0" expanded="true" />
+            <element signature="docComment;method#stepLater#0;class#Memory#0" expanded="true" />
+            <element signature="e#15783#15784#0" expanded="true" />
+            <element signature="e#15841#15842#0" expanded="true" />
+            <element signature="docComment;method#getTasks#0;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#newTask#2;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#newTask#3;class#Memory#0" expanded="true" />
+            <element signature="e#21371#21399#0" expanded="true" />
+            <element signature="docComment;method#cycles#0;class#Memory#0" expanded="true" />
+            <element signature="e#23830#23831#0" expanded="true" />
+            <element signature="e#23905#23906#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="jar://E:/Program Files/Java/jdk1.8.0_65/jre/lib/rt.jar!/sun/misc/Unsafe.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-13.703704">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="365" column="5" selection-start-line="365" selection-start-column="5" selection-end-line="365" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/NAR.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="273" column="81" selection-start-line="273" selection-start-column="81" selection-end-line="273" selection-end-column="81" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/classes/nars/storage/Memory.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_lab/nars/lab/robot/NARVision_Processing_Sketch.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-9.114894">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://E:/Program Files/Java/jdk1.8.0_65/jre/lib/rt.jar!/sun/misc/Unsafe.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
           <caret line="365" column="5" selection-start-line="365" selection-start-column="5" selection-end-line="365" selection-end-column="5" />
           <folding />
         </state>
@@ -672,9 +982,218 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_gui/nars/gui/NARSwing.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.36">
-          <caret line="65" column="55" selection-start-line="65" selection-start-column="55" selection-end-line="65" selection-end-column="55" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="52" column="13" selection-start-line="52" selection-start-column="13" selection-end-line="52" selection-end-column="13" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/storage/Bag.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.13513513">
+          <caret line="70" column="13" selection-start-line="70" selection-start-column="13" selection-end-line="70" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_lab/nars/lab/launcher/Launcher.form">
+      <provider selected="true" editor-type-id="ui-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/entity/Stamp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="316" column="152" selection-start-line="316" selection-start-column="18" selection-end-line="316" selection-end-column="152" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/inference/TemporalRules.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="51" column="13" selection-start-line="51" selection-start-column="13" selection-end-line="51" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_lab/nars/lab/launcher/Launcher.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/control/ImmediateProcess.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="3.4827585">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/config/Parameters.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.2413793">
+          <caret line="125" column="51" selection-start-line="125" selection-start-column="51" selection-end-line="125" selection-end-column="51" />
+          <folding>
+            <element signature="e#1778#1874#0" expanded="true" />
+            <element signature="docComment;field#DEFAULT_CREATION_EXPECTATION#0;class#Parameters#0" expanded="true" />
+            <element signature="docComment;field#TERM_ELEMENT_EQUIVALENCY#0;class#Parameters#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/inference/RuleTables.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.24938875">
+          <caret line="62" column="13" selection-start-line="62" selection-start-column="13" selection-end-line="62" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/inference/SyllogisticRules.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.5172415">
+          <caret line="152" column="69" selection-start-line="152" selection-start-column="25" selection-end-line="152" selection-end-column="69" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/entity/Sentence.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="90" column="11" selection-start-line="90" selection-start-column="11" selection-end-line="90" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/NAR.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="633" column="31" selection-start-line="633" selection-start-column="31" selection-end-line="633" selection-end-column="31" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#19478#19479#0" expanded="true" />
+            <element signature="e#19515#19516#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/control/DerivationContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="43.206898">
+          <caret line="34" column="22" selection-start-line="34" selection-start-column="22" selection-end-line="34" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/operator/Operator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="205" column="0" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/entity/Concept.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.586207">
+          <caret line="455" column="60" selection-start-line="455" selection-start-column="60" selection-end-line="455" selection-end-column="60" />
+          <folding>
+            <element signature="e#0#42516#0" expanded="true" />
+            <element signature="e#6844#6873#0" expanded="true" />
+            <element signature="e#20461#20467#0" expanded="true" />
+            <element signature="docComment;method#processQuestion#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#linkToTask#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#addToTable#1;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#selectCandidate#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#insertTaskLink#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#buildTermLinks#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#insertTermLink#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#toString#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#toStringLong#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#getQuality#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#getTermLinkTemplates#0;class#Concept#0" expanded="true" />
+            <element signature="e#35249#35250#0" expanded="true" />
+            <element signature="e#35289#35290#0" expanded="true" />
+            <element signature="docComment;method#getBelief#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#getDesire#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#displayContent#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#selectTermLink#0;class#Concept#0" expanded="true" />
+            <element signature="docComment;method#getQuestions#0;class#Concept#0" expanded="true" />
+            <element signature="e#39651#39652#0" expanded="true" />
+            <element signature="e#39683#39684#0" expanded="true" />
+            <element signature="docComment;method#getBeliefRandomByConfidence#0;class#Concept#0" expanded="true" />
+            <element signature="e#41664#41665#0" expanded="true" />
+            <element signature="e#41702#41703#0" expanded="true" />
+            <element signature="e#42157#42158#0" expanded="true" />
+            <element signature="e#42184#42185#0" expanded="true" />
+            <element signature="docComment;method#getBeliefs#0;class#Concept#0" expanded="true" />
+            <element signature="e#42283#42284#0" expanded="true" />
+            <element signature="e#42343#42344#0" expanded="true" />
+            <element signature="docComment;method#getDesires#0;class#Concept#0" expanded="true" />
+            <element signature="e#42446#42447#0" expanded="true" />
+            <element signature="e#42506#42507#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/inference/TruthFunctions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="244" column="43" selection-start-line="244" selection-start-column="43" selection-end-line="244" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/storage/Memory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.3103447">
+          <caret line="413" column="102" selection-start-line="413" selection-start-column="102" selection-end-line="413" selection-end-column="102" />
+          <folding>
+            <element signature="e#0#23918#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="docComment;field#checked#0;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#executedTask#0;class#Memory#0" expanded="true" />
+            <element signature="e#12506#12507#0" expanded="true" />
+            <element signature="e#12551#12552#0" expanded="true" />
+            <element signature="e#12609#12610#0" expanded="true" />
+            <element signature="e#12655#12656#0" expanded="true" />
+            <element signature="docComment;method#processNewTasks#0;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#processNovelTask#0;class#Memory#0" expanded="true" />
+            <element signature="e#15105#15106#0" expanded="true" />
+            <element signature="e#15146#15147#0" expanded="true" />
+            <element signature="e#15335#15336#0" expanded="true" />
+            <element signature="e#15387#15388#0" expanded="true" />
+            <element signature="e#15464#15465#0" expanded="true" />
+            <element signature="e#15507#15508#0" expanded="true" />
+            <element signature="e#15549#15550#0" expanded="true" />
+            <element signature="e#15598#15599#0" expanded="true" />
+            <element signature="docComment;method#stepLater#0;class#Memory#0" expanded="true" />
+            <element signature="e#15783#15784#0" expanded="true" />
+            <element signature="e#15841#15842#0" expanded="true" />
+            <element signature="docComment;method#getTasks#0;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#newTask#2;class#Memory#0" expanded="true" />
+            <element signature="docComment;method#newTask#3;class#Memory#0" expanded="true" />
+            <element signature="e#21371#21399#0" expanded="true" />
+            <element signature="docComment;method#cycles#0;class#Memory#0" expanded="true" />
+            <element signature="e#23830#23831#0" expanded="true" />
+            <element signature="e#23905#23906#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_lab/nars/lab/microworld/SimNAR.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.375">
+          <caret line="272" column="32" selection-start-line="272" selection-start-column="32" selection-end-line="272" selection-end-column="32" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#9739#9740#0" expanded="true" />
+            <element signature="e#9790#9791#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -35,36 +35,6 @@ import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.language.Term;
 import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
-import static java.lang.Math.max;
 
 /**
  * Budget functions for resources allocation
@@ -92,7 +62,10 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param judg The judgment to be ranked
      * @return The rank of the judgment, according to truth value only
      */
-    public final static float rankBelief(final Sentence judg) {        
+    public final static float rankBelief(final Sentence judg, final boolean rankTruthExpectation) {        
+        if(rankTruthExpectation) {
+            return judg.getTruth().getExpectation();
+        }
         final float confidence = judg.truth.getConfidence();
         //final float originality = judg.stamp.getOriginality();
         return confidence; //or(confidence, originality);

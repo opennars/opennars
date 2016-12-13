@@ -243,10 +243,10 @@ public class SimNAR extends Frame {
                 this.nActions = nactions; //for actions since we allow the same randomization phase as in QL
                 nar = new NAR();
                 nar.memory.addOperator(new Right("^Right"));
-                nar.memory.addOperator(new Right("^Left")); 
+                nar.memory.addOperator(new Left("^Left"));
                 (nar.param).noiseLevel.set(0);
                 new NARSwing(nar); 
-                nar.start(0);
+                //nar.start(0);
                 Memory m = nar.memory;
                // m.conceptForgetDurations.setValue(1.0); //better for declarative reasoning tasks: 2
                 //m.taskLinkForgetDurations.setValue(1.0); //better for declarative reasoning tasks: 4
@@ -289,14 +289,14 @@ public class SimNAR extends Frame {
                     if(viewField[i]>0.1f) {
                         String s = "<{\""+String.valueOf(i)+"\"} --> [on]>. :|: %"+String.valueOf(0.5f+0.5f*viewField[i])+"%";
                         nar.addInput(s);
-                        System.out.println("perceive "+s);
+                        //System.out.println("perceive "+s);
                     }
                 }
                 lastAction = 0;
                 k++;
                 if(k%10==0) {
                     nar.addInput("<SELF --> [good]>! :|:");
-                    System.out.println("food urge input");
+                    //System.out.println("food urge input");
                 }
                 if(reward > 0) {
                     System.out.println("good mr_nars");
@@ -307,16 +307,16 @@ public class SimNAR extends Frame {
                     nar.addInput("(--,<SELF --> [good]>). :|:");
                 }
                 
-                //nar.step(500);
+                nar.step(1000);
 
                 if(lastAction==0 && random(1.0f)<Alpha) { //if NAR hasn't decided chose a random action
                     lastAction = (int)random((float)nActions);
                     if(lastAction == 1) {
-                        System.out.println("random left");
+                        //System.out.println("random left");
                         nar.addInput("Left(SELF). :|:");
                     }
                     if(lastAction == 2) {
-                        System.out.println("random right");
+                        //System.out.println("random right");
                         nar.addInput("Right(SELF). :|:");
                     }
                 }
