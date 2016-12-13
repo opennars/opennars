@@ -72,7 +72,8 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
         this(null, null);
     }
     
-    private boolean temporalInducted=true;
+    private boolean partOfSequenceBuffer = false;
+    private boolean observablePrediction = false;
     
     /**
      * Constructor for a derived task
@@ -349,12 +350,20 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
     
 
     /** flag to indicate whether this Event Task participates in tempporal induction */
-    public void setParticipateInTemporalInductionOnSucceedingEvents(boolean b) {
-        this.temporalInducted = b;
+    public void setElemOfSequenceBuffer(boolean b) {
+        this.partOfSequenceBuffer = b;
     }
 
-    public boolean isParticipatingInTemporalInductionOnSucceedingEvents() {
-        return temporalInducted;
+    public boolean isElemOfSequenceBuffer() {
+        return !this.sentence.isEternal() && (this.isInput() || partOfSequenceBuffer);
+    }
+    
+    public void setObservablePrediction(boolean b) {
+        this.observablePrediction = b;
+    }
+
+    public boolean isObservablePrediction() {
+        return this.observablePrediction;
     }
 
     

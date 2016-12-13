@@ -56,6 +56,9 @@ public class Events {
     
     public static class ConceptForget { }
     
+    public static class EnactableExplainationAdd { }
+    public static class EnactableExplainationRemove { }
+    
     abstract public static class ConceptBeliefAdd implements EventObserver {  
         
         abstract public void onBeliefAdd(Concept c, Task t, Object[] extra);

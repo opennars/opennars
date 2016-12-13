@@ -357,7 +357,7 @@ public class Memory implements Serializable {
         
         Task task = new Task(sentence, new BudgetValue(Parameters.DEFAULT_FEEDBACK_PRIORITY, Parameters.DEFAULT_FEEDBACK_DURABILITY,
                                         truthToQuality(sentence.getTruth())), operation.getTask());
-        
+        task.setElemOfSequenceBuffer(true);
         addNewTask(task, "Executed");
     }
 
@@ -410,7 +410,8 @@ public class Memory implements Serializable {
         int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
         while (counter-- > 0) {
             task = newTasks.removeFirst();
-            if (task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
+            boolean enterDirect = false;
+            if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || enterDirect || */ task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
                 new ImmediateProcess(this, task).run(); 
             } else {
                 Sentence s = task.sentence;
@@ -541,7 +542,7 @@ public class Memory implements Serializable {
     
     public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, DerivationContext nal, boolean SucceedingEventsInduction) {
         
-        if(SucceedingEventsInduction && !controllerTask.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
+        if(SucceedingEventsInduction && !controllerTask.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return false;
         }
         if (newEvent.isEternal() || !isInputOrOperation(controllerTask)) {
@@ -569,7 +570,7 @@ public class Memory implements Serializable {
 
     public boolean eventInference(final Task newEvent, DerivationContext nal) {
 
-        if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isParticipatingInTemporalInductionOnSucceedingEvents()) { //todo refine, add directbool in task
+        if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return false;
        }
 
@@ -613,20 +614,27 @@ public class Memory implements Serializable {
     }
 
     public void addToSequenceTasks(final Task newEvent) {
-       
-        /*if(newEvent.getTerm() instanceof Conjunction) {
+
+        float periority_penalty = 1.0f;
+        if(newEvent.getTerm() instanceof Conjunction) {
             Conjunction term = ((Conjunction)newEvent.getTerm());
             if(!(term.term[term.term.length-1] instanceof Operation)) {
-                return;
+                periority_penalty *= 0.5f;
             }
-        }*/
+            if(term.term[0] instanceof Operation) { //also try to start with a condition
+                periority_penalty *= 0.5f;
+            }
+        }
 
-        /*Task removal = null;
+        //multiple versions are necessary, but we do not allow duplicates
+        Task removal = null;
         do
         {
             removal = null;
             for(Task s : this.sequenceTasks) {
-                if(s.getTerm().equals(newEvent.getTerm()) && newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime()) {
+                if(s.getTerm().equals(newEvent.getTerm())  &&
+                        s.sentence.stamp.equals(newEvent.sentence.stamp,false,true,true,false)) {
+                    /*&& newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime() ) { */
                     removal = s;
                     break;
                 }
@@ -635,12 +643,19 @@ public class Memory implements Serializable {
                 this.sequenceTasks.take(removal);
             }
         }
-        while(removal != null);*/
+        while(removal != null);
         //ok now add the new one:
         //making sure we do not mess with budget of the task:
-        Task t2 = newEvent; //new Task(newEvent.sentence, newEvent.getBudget().clone() /*ew BudgetValue(0.8f,0.1f,0.0f)*/, newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
+        Task t2 = new Task(newEvent.sentence, new BudgetValue(0.9f*periority_penalty,0.1f,0.1f), newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
         //we use a event default budget here so the time it appeared and whether it was selected is key criteria currently divided by complexity
         this.sequenceTasks.putIn(t2);
+
+        //debug:
+        /*System.out.println("---------");
+        for(Task t : this.sequenceTasks) {
+            System.out.println(t.getTerm().toString());
+        }
+        System.out.println("^^^^^^");*/
     }
     
     /** converts durations to cycles */

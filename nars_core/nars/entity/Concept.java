@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import com.sun.istack.internal.Pool;
+import nars.inference.TruthFunctions;
 import nars.util.Events.BeliefSelect;
 import nars.util.Events.ConceptBeliefAdd;
 import nars.util.Events.ConceptBeliefRemove;
@@ -59,7 +62,10 @@ import nars.operator.Operator;
 import nars.plugin.mental.InternalExperience;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
-import static nars.inference.UtilityFunctions.or;
+import nars.language.Conjunction;
+import nars.language.Interval;
+import nars.util.Events.EnactableExplainationAdd;
+import nars.util.Events.EnactableExplainationRemove;
 import static nars.inference.UtilityFunctions.or;
 
 public class Concept extends Item<Term> {
@@ -105,6 +111,7 @@ public class Concept extends Item<Term> {
      * and insertion in the middle
      */
     public final ArrayList<Task> beliefs;
+    public final ArrayList<Task> enactable_explainations;
 
     /**
      * Desire values on the term, similar to the above one
@@ -136,6 +143,7 @@ public class Concept extends Item<Term> {
 
         this.questions = new ArrayList<>();
         this.beliefs = new ArrayList<>();
+        this.enactable_explainations = new ArrayList<>();
         this.quests = new ArrayList<>();
         this.desires = new ArrayList<>();
 
@@ -264,16 +272,16 @@ public class Concept extends Item<Term> {
                 trySolution(judg, questions.get(i), nal);
             }
 
-            addToTable(task, beliefs, Parameters.CONCEPT_BELIEFS_MAX, ConceptBeliefAdd.class, ConceptBeliefRemove.class);
+            addToTable(task, false, beliefs, Parameters.CONCEPT_BELIEFS_MAX, ConceptBeliefAdd.class, ConceptBeliefRemove.class);
         }
     }
 
-    protected void addToTable(final Task task, final ArrayList<Task> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
+    protected void addToTable(final Task task, final boolean rankTruthExpectation, final ArrayList<Task> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
         
         int preSize = table.size();
         Task removedT;
         Sentence removed = null;
-        removedT = addToTable(task, table, max);
+        removedT = addToTable(task, table, max, rankTruthExpectation);
         if(removedT != null) {
             removed=removedT.sentence;
         }
@@ -306,7 +314,7 @@ public class Concept extends Item<Term> {
         //if (isDesired()) 
         {
 
-            Term content = term;
+            Term content = t.getTerm();
 
             if(content instanceof Operation && !content.hasVarDep() && !content.hasVarIndep()) {
 
@@ -401,9 +409,74 @@ public class Concept extends Item<Term> {
             
             if (projectedGoal != null && task.aboveThreshold() && !fullfilled && projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
 
+
+                Operation bestop = null;
+                float bestop_truthexp = 0.0f;
+                TruthValue bestop_truth = null;
+                for(Task t: this.enactable_explainations) {
+                    Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
+                    Term[] newprec = new Term[prec.length-3];
+                    for(int i=0;i<prec.length-3;i++) { //skip the last part: interval, operator, interval
+                        newprec[i] = prec[i];
+                    }
+                    Operation op = (Operation) prec[prec.length-2];
+                    Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
+
+                    Concept preconc = nal.memory.concept(precondition);
+                    long newesttime = -1;
+                    Task bestsofar = null;
+                    if(preconc != null && preconc.beliefs.size() > 0) { //ok we can look now how much it is fullfilled
+                        for(Task p : preconc.beliefs) { //search events first
+                            if(!p.sentence.isJudgment() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() < memory.time()) {
+                                newesttime = p.sentence.getOccurenceTime();
+                                bestsofar = p;
+                            }
+                        }
+                        //also check tasklinks:
+                        for(TaskLink pl : preconc.taskLinks) { //search events first
+                            Task p = pl.getTarget();
+                            if(!p.sentence.isJudgment() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() < memory.time()) {
+                                newesttime = p.sentence.getOccurenceTime();
+                                bestsofar = p;
+                            }
+                        }
+
+                        //but if no event is here the eternal can be used
+                       /* if(bestsofar == null) { //todo: also if too much in the past
+                            bestsofar = preconc.beliefs.get(0);
+                        }*/
+
+                        //ok now we can take the desire value:
+                        TruthValue A = projectedGoal.getTruth();
+                        //and the truth of the hypothesis:
+                        TruthValue Hyp = t.sentence.truth;
+                        //and the truth of the precondition:
+                        TruthValue precon = bestsofar.sentence.truth;
+                        //and derive the conjunction of the left side:
+                        TruthValue leftside = TruthFunctions.desireStrong(A, Hyp);
+                        //in order to derive the operator desire value:
+                        TruthValue opdesire = TruthFunctions.desireStrong(precon, leftside);
+
+                        float expecdesire = opdesire.getExpectation();
+                        if(expecdesire > bestop_truthexp) {
+                            bestop = op;
+                            bestop_truthexp = expecdesire;
+                            bestop_truth = opdesire;
+                        }
+                    }
+                }
+
+                if(bestop != null && bestop_truthexp > 0.5f /* memory.param.decisionThreshold.get() */) {
+                    Task t = new Task(new Sentence(bestop,Symbols.JUDGMENT_MARK,bestop_truth, projectedGoal.stamp), new BudgetValue(1.0f,1.0f,1.0f));
+                    System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
+                    if(!executeDecision(t)) { //this task is just used as dummy
+                        memory.emit(UnexecutableGoal.class, task, this, nal);
+                    }
+                }
+                
                 questionFromGoal(task, nal);
                 
-                addToTable(task, desires, Parameters.CONCEPT_GOALS_MAX, ConceptGoalAdd.class, ConceptGoalRemove.class);
+                addToTable(task, false, desires, Parameters.CONCEPT_GOALS_MAX, ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
                 InternalExperience.InternalExperienceFromTask(memory,task,false);
                 
@@ -545,14 +618,14 @@ public class Concept extends Item<Term> {
      * @param capacity The capacity of the table
      * @return whether table was modified
      */
-    public static Task addToTable(final Task newTask, final List<Task> table, final int capacity) {
+    public static Task addToTable(final Task newTask, final List<Task> table, final int capacity, boolean rankTruthExpectation) {
         Sentence newSentence = newTask.sentence;
-        final float rank1 = rankBelief(newSentence);    // for the new isBelief
+        final float rank1 = rankBelief(newSentence, rankTruthExpectation);    // for the new isBelief
         float rank2;        
         int i;
         for (i = 0; i < table.size(); i++) {
             Sentence judgment2 = table.get(i).sentence;
-            rank2 = rankBelief(judgment2);
+            rank2 = rankBelief(judgment2, rankTruthExpectation);
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(judgment2)) {
                     //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
@@ -615,9 +688,40 @@ public class Concept extends Item<Term> {
      */
     protected boolean insertTaskLink(final TaskLink taskLink) {        
         
+        //if taskLink predicts this concept then add to predictive 
+        Task target = taskLink.getTarget();
+        Term term = target.getTerm();
+        boolean wat = target.sentence.isJudgment();
+        if(//target.isObservablePrediction() &&
+           target.sentence.isJudgment() && 
+           target.sentence.isEternal() && 
+           term instanceof Implication &&
+                   !term.hasVarIndep() && //Might be relaxed in the future!!
+           !(this.name() instanceof Operation)) 
+        {
+            
+            Implication imp = (Implication) term;
+            if(imp.getTemporalOrder() == TemporalRules.ORDER_FORWARD && imp.getPredicate().equals(this.name())) {
+                //also it has to be enactable, meaning the last entry of the sequence before the interval is an operation:
+                Term subj = imp.getSubject();
+                if(subj instanceof Conjunction) {
+                    Conjunction conj = (Conjunction) subj;
+                    if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                            conj.term.length >= 4 && 
+                            conj.term[conj.term.length-1] instanceof Interval && 
+                            conj.term[conj.term.length-2] instanceof Operation) {
+                        addToTable(target, false, enactable_explainations, Parameters.CONCEPT_BELIEFS_MAX, EnactableExplainationAdd.class, EnactableExplainationRemove.class);
+                    }
+                }
+            }
+        }
+        if(this.name().equals(target.getTerm())) {
+            
+        }
+        
         //HANDLE MAX PER CONTENT
         //if taskLinks already contain a certain amount of tasks with same content then one has to go
-        boolean isEternal = taskLink.getTarget().sentence.isEternal();
+        boolean isEternal = target.sentence.isEternal();
         int nSameContent = 0;
         float lowest_priority = Float.MAX_VALUE;
         TaskLink lowest = null;
