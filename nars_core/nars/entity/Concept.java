@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.sun.istack.internal.Pool;
 import nars.inference.TruthFunctions;
 import nars.util.Events.BeliefSelect;
 import nars.util.Events.ConceptBeliefAdd;
