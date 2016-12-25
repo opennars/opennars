@@ -100,7 +100,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     /** call this after changing Term[] contents */
     protected void init(Term[] term) {
 
-
         this.complexity = 1;
         this.hasVariables = this.hasVarDeps = this.hasVarIndeps = this.hasVarQueries = false;
         for (final Term t : term) {
