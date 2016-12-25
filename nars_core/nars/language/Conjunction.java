@@ -56,7 +56,7 @@ public class Conjunction extends CompoundTerm {
      * @param normalized
      */
     protected Conjunction(Term[] arg, final int order, boolean normalized) {
-        super(removeFirstInterval(flatten(arg,order)));
+        super(arg);
         
         temporalOrder = order;
         init(this.term);
@@ -163,7 +163,6 @@ public class Conjunction extends CompoundTerm {
         return ret;
     }
     
-    
     /**
      * Try to make a new compound from a list of term. Called by StringParser.
      *
@@ -183,8 +182,11 @@ public class Conjunction extends CompoundTerm {
         }                         // special case: single component
         
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            
-            return new Conjunction(argList, temporalOrder, false);
+            Term[] newArgList = removeFirstInterval(flatten(argList, temporalOrder));
+            if(newArgList.length == 1) {
+                return newArgList[0];
+            }
+            return new Conjunction(newArgList, temporalOrder, false);
             
         } else {
             
