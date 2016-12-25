@@ -37,6 +37,17 @@ public class Conjunction extends CompoundTerm {
 
     public final int temporalOrder;
 
+    public static Term[] removeFirstInterval(Term[] arg) {
+        if(arg[0] instanceof Interval) {
+            Term[] argNew = new Term[arg.length - 1];
+            for(int i=1;i<arg.length;i++) {
+                argNew[i - 1] = arg[i];
+            }
+            return argNew;
+        }
+        return arg;
+    }
+    
     /**
      * Constructor with partial values, called by make
      *
@@ -45,16 +56,11 @@ public class Conjunction extends CompoundTerm {
      * @param normalized
      */
     protected Conjunction(Term[] arg, final int order, boolean normalized) {
-        super(flatten(arg,order));
+        super(removeFirstInterval(flatten(arg,order)));
         
         temporalOrder = order;
-        
-        init(flatten(arg,order));
-        
-        if(term[0] instanceof Interval) {
-            throw new RuntimeException("First entry can't be interval.");
-        }
-        
+        init(this.term);
+
         /*if (normalized)
             setNormalized(true);*/
     }
