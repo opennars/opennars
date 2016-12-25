@@ -110,7 +110,7 @@ public class Concept extends Item<Term> {
      * and insertion in the middle
      */
     public final ArrayList<Task> beliefs;
-    public final ArrayList<Task> enactable_explainations;
+    public final ArrayList<Task> executable_preconditions;
 
     /**
      * Desire values on the term, similar to the above one
@@ -142,7 +142,7 @@ public class Concept extends Item<Term> {
 
         this.questions = new ArrayList<>();
         this.beliefs = new ArrayList<>();
-        this.enactable_explainations = new ArrayList<>();
+        this.executable_preconditions = new ArrayList<>();
         this.quests = new ArrayList<>();
         this.desires = new ArrayList<>();
 
@@ -412,7 +412,7 @@ public class Concept extends Item<Term> {
                 Operation bestop = null;
                 float bestop_truthexp = 0.0f;
                 TruthValue bestop_truth = null;
-                for(Task t: this.enactable_explainations) {
+                for(Task t: this.executable_preconditions) {
                     Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
                     Term[] newprec = new Term[prec.length-3];
                     for(int i=0;i<prec.length-3;i++) { //skip the last part: interval, operator, interval
@@ -444,6 +444,10 @@ public class Concept extends Item<Term> {
                        /* if(bestsofar == null) { //todo: also if too much in the past
                             bestsofar = preconc.beliefs.get(0);
                         }*/
+                       
+                        if(bestsofar == null) {
+                            continue;
+                        }
 
                         //ok now we can take the desire value:
                         TruthValue A = projectedGoal.getTruth();
@@ -709,7 +713,7 @@ public class Concept extends Item<Term> {
                             conj.term.length >= 4 && 
                             conj.term[conj.term.length-1] instanceof Interval && 
                             conj.term[conj.term.length-2] instanceof Operation) {
-                        addToTable(target, false, enactable_explainations, Parameters.CONCEPT_BELIEFS_MAX, EnactableExplainationAdd.class, EnactableExplainationRemove.class);
+                        addToTable(target, false, executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, EnactableExplainationAdd.class, EnactableExplainationRemove.class);
                     }
                 }
             }
