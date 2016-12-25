@@ -426,7 +426,7 @@ public class Concept extends Item<Term> {
                     Task bestsofar = null;
                     if(preconc != null && preconc.beliefs.size() > 0) { //ok we can look now how much it is fullfilled
                         for(Task p : preconc.beliefs) { //search events first
-                            if(!p.sentence.isJudgment() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() < memory.time()) {
+                            if(p.sentence.isJudgment() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() < memory.time()) {
                                 newesttime = p.sentence.getOccurenceTime();
                                 bestsofar = p;
                             }
@@ -434,7 +434,7 @@ public class Concept extends Item<Term> {
                         //also check tasklinks:
                         for(TaskLink pl : preconc.taskLinks) { //search events first
                             Task p = pl.getTarget();
-                            if(!p.sentence.isJudgment() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() < memory.time()) {
+                            if(p.sentence.isJudgment() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() < memory.time()) {
                                 newesttime = p.sentence.getOccurenceTime();
                                 bestsofar = p;
                             }
