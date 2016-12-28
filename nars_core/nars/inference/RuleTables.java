@@ -92,19 +92,11 @@ public class RuleTables {
         
         if (belief != null) {   
             
-            HashSet<Long> task_base = new HashSet<Long>();
-            for(int i=0;i<task.sentence.stamp.evidentialBase.length;i++) {
-                task_base.add(task.sentence.stamp.evidentialBase[i]);
-            }
-            
-            /*Sentence belief_event = beliefConcept.getBeliefForTemporalInference(task);
+          /*Sentence belief_event = beliefConcept.getBeliefForTemporalInference(task);
             if(belief_event != null) {
                 boolean found_overlap = false;
-                for(int i=0;i<belief_event.stamp.evidentialBase.length;i++) {
-                    if(task_base.contains(Long.valueOf(belief_event.stamp.evidentialBase[i]))) {
-                        found_overlap = true;
-                        break;
-                    }
+                if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief_event.stamp.evidentialBase)) {
+                    found_overlap = true;
                 }
                 if(!found_overlap) { //temporal rules are inductive so no chance to succeed if there is an overlap
                                      //and since the temporal rule is relatively expensive the check here was good.
@@ -115,14 +107,20 @@ public class RuleTables {
                     nal.setCurrentBelief(inference_belief);
                     nal.setTheNewStamp(task.sentence.stamp, belief.stamp, nal.memory.time());
                 }
-            }*/
+            }
             
             //too restrictive, its checked for non-deductive inference rules in derivedTask
             for(int i=0;i<belief.stamp.evidentialBase.length;i++) {
                 if(task_base.contains(Long.valueOf(belief.stamp.evidentialBase[i]))) {
                     return;
                 }
+            }*/
+            
+            //too restrictive, its checked for non-deductive inference rules in derivedTask (also for single prem)
+            if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief.stamp.evidentialBase)) {
+                return;
             }
+            //comment out for recursive examples, this is for the future, it generates a lot of potentially useless tasks
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             

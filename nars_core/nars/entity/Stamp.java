@@ -23,6 +23,7 @@ package nars.entity;
 import com.google.common.collect.Iterators;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import nars.storage.Memory;
 import nars.config.Parameters;
@@ -178,19 +179,17 @@ public class Stamp implements Cloneable {
     }
     
     public static boolean baseOverlap(long[] base1, long[] base2) {
-        for (long n1 : base1) {
-            boolean found = false;
-            for (long n2 : base2) {
-                if (n1 == n2) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                return false;
+        HashSet<Long> task_base = new HashSet<Long>(base1.length);
+        for(int i=0; i < base1.length; i++) {
+            task_base.add(base1[i]);
+        }
+        //too restrictive, its checked for non-deductive inference rules in derivedTask
+        for(int i=0; i < base2.length; i++) {
+            if(task_base.contains(Long.valueOf(base2[i]))) {
+                return true;
             }
         }
-        return true;
+        return false;
      }
 
     public boolean isEternal() {
