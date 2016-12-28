@@ -237,24 +237,9 @@ public class Concept extends Item<Term> {
                 
                 memory.removeTask(task, "Duplicated");                
                 return;
-            } else if (revisible(judg, oldBelief)) {
+            } else if (revisible(judg, oldBelief) && !Stamp.baseOverlap(newStamp.evidentialBase, oldStamp.evidentialBase)) {
                 
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
-                
-//                if (nal.setTheNewStamp( //temporarily removed
-//                /*
-//                if (equalBases(first.getBase(), second.getBase())) {
-//                return null;  // do not merge identical bases
-//                }
-//                 */
-//                //        if (first.baseLength() > second.baseLength()) {
-//                new Stamp(newStamp, oldStamp, memory.time()) // keep the order for projection
-//                //        } else {
-//                //            return new Stamp(second, first, time);
-//                //        }
-//                ) != null) {
-                    
-                
                 Sentence projectedBelief = oldBelief.projection(memory.time(), newStamp.getOccurrenceTime());
                 if (projectedBelief!=null) {
                     if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
@@ -341,6 +326,9 @@ public class Concept extends Item<Term> {
      */
     protected boolean processGoal(final DerivationContext nal, final Task task, boolean shortcut) {        
         
+        if(task.isInput())  {
+            int hurra = 1;
+        }
         final Sentence goal = task.sentence;
         final Task oldGoalT = selectCandidate(goal, desires); // revise with the existing desire values
         Sentence oldGoal = null;
@@ -354,7 +342,7 @@ public class Concept extends Item<Term> {
             if (newStamp.equals(oldStamp,false,true,true,false)) {
                 return false; // duplicate
             }
-            if (revisible(goal, oldGoal)) {
+            if (revisible(goal, oldGoal) && !Stamp.baseOverlap(newStamp.evidentialBase, oldStamp.evidentialBase)) {
                 
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 
@@ -1106,16 +1094,6 @@ public class Concept extends Item<Term> {
         return term.operator();
     }
 
-    public Collection<Task> getSentences(char punc) {
-        switch(punc) {
-            case Symbols.JUDGMENT_MARK: return beliefs;
-            case Symbols.GOAL_MARK: return desires;                
-            case Symbols.QUESTION_MARK: return Task.getTasks(questions);
-            case Symbols.QUEST_MARK: return Task.getTasks(quests);
-        }
-        throw new RuntimeException("Invalid punctuation: " + punc);
-    }
-
     public Term getTerm() {
         return term;
     }
@@ -1129,6 +1107,4 @@ public class Concept extends Item<Term> {
     public List<Task> getDesires() {
         return Collections.unmodifiableList(desires);
     }
-
-    
 }
