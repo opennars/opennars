@@ -29,43 +29,12 @@ import nars.config.Parameters;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.ORDER_BACKWARD;
 import static nars.inference.TemporalRules.ORDER_FORWARD;
-import static nars.inference.TemporalRules.order;
 import nars.io.Symbols;
 import nars.language.Tense;
 import static nars.language.Tense.Future;
 import static nars.language.Tense.Past;
 import static nars.language.Tense.Present;
 import nars.language.Term;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
-import static nars.inference.TemporalRules.order;
 import static nars.inference.TemporalRules.order;
 
 public class Stamp implements Cloneable {
@@ -207,6 +176,22 @@ public class Stamp implements Cloneable {
     public Stamp(final Memory memory) {
         this(memory, Tense.Present);
     }
+    
+    public static boolean baseOverlap(long[] base1, long[] base2) {
+        for (long n1 : base1) {
+            boolean found = false;
+            for (long n2 : base2) {
+                if (n1 == n2) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
+     }
 
     public boolean isEternal() {
         boolean eternalOccurrence = occurrenceTime == ETERNAL;

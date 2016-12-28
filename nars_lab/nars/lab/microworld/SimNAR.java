@@ -294,7 +294,7 @@ public class SimNAR extends Frame {
                 }
                 lastAction = 0;
                 k++;
-                if(k%10==0) {
+                if(k%8==0) {
                     nar.addInput("<SELF --> [good]>! :|:");
                     //System.out.println("food urge input");
                 }
