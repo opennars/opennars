@@ -237,7 +237,7 @@ public class Concept extends Item<Term> {
                 
                 memory.removeTask(task, "Duplicated");                
                 return;
-            } else if (revisible(judg, oldBelief) && !Stamp.baseOverlap(newStamp.evidentialBase, oldStamp.evidentialBase)) {
+            } else if (revisible(judg, oldBelief)) {
                 
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 Sentence projectedBelief = oldBelief.projection(memory.time(), newStamp.getOccurrenceTime());
@@ -342,7 +342,7 @@ public class Concept extends Item<Term> {
             if (newStamp.equals(oldStamp,false,true,true,false)) {
                 return false; // duplicate
             }
-            if (revisible(goal, oldGoal) && !Stamp.baseOverlap(newStamp.evidentialBase, oldStamp.evidentialBase)) {
+            if (revisible(goal, oldGoal)) {
                 
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 

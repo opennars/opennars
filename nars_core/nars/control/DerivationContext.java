@@ -130,7 +130,7 @@ public abstract class DerivationContext implements Runnable {
         }
         
         //its revision, of course its cyclic, apply evidental base policy
-        if(revised || !overlapAllowed) { // || !overlapAllowed is outcommented because it happens when belief is selected already now
+        if(!overlapAllowed) { //todo reconsider
             final int stampLength = stamp.baseLength;
             for (int i = 0; i < stampLength; i++) {
                 final long baseI = stamp.evidentialBase[i];
@@ -173,8 +173,8 @@ public abstract class DerivationContext implements Runnable {
     public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-        return derivedTask(newTask, true, false, null, null, false);
-    }
+        return derivedTask(newTask, true, false, null, null, true); //allows overlap since overlap was already checked on revisable( function
+    }                                                               //which is not the case for other single premise tasks
 
     /**
      * Shared final operations by all double-premise rules, called from the

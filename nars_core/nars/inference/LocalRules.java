@@ -100,7 +100,8 @@ public class LocalRules {
     public static boolean revisible(final Sentence s1, final Sentence s2) {
         return (s1.getRevisible() && 
                 s1.equalsContent(s2) && 
-                matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));
+                matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()) && 
+                !Stamp.baseOverlap(s1.stamp.evidentialBase, s2.stamp.evidentialBase));
     }
 
     /**
