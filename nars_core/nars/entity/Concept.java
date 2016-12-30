@@ -306,7 +306,7 @@ public class Concept extends Item<Term> {
                                 pred_conc.executable_preconditions.remove(i_delete);
                             }
                             //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-                            pred_conc.addToTable(strongest_target, false, pred_conc.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, EnactableExplainationAdd.class, EnactableExplainationRemove.class);
+                            pred_conc.addToTable(strongest_target, true, pred_conc.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, EnactableExplainationAdd.class, EnactableExplainationRemove.class);
                             int b = pred_conc.executable_preconditions.size();
                             if(b < a) {
                                 int h = 0;
