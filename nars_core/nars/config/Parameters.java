@@ -259,7 +259,7 @@ public class Parameters {
     public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
     public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=true;
     
-    public static float ANTICIPATION_CONFIDENCE=0.95f;
+    public static float ANTICIPATION_CONFIDENCE = 0.9f;
     
     public static float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
     
