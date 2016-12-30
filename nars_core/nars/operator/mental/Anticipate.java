@@ -214,8 +214,8 @@ public class Anticipate extends Operator implements EventObserver {
     }
     
     public void anticipate(Term content, Memory memory, long occurenceTime, Task t) {
-        if(true)
-            return;
+        //if(true)
+        //    return;
         
         if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
             return;
