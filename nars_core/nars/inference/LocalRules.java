@@ -98,7 +98,7 @@ public class LocalRules {
         }
         return (s1.getRevisible() && 
                 matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()) &&
-                //s1.equalsContent(s2) && 
+                CompoundTerm.cloneDeepReplaceIntervals(s1.term).equals(CompoundTerm.cloneDeepReplaceIntervals(s2.term)) && 
                 !Stamp.baseOverlap(s1.stamp.evidentialBase, s2.stamp.evidentialBase));
     }
 
