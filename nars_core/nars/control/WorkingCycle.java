@@ -81,9 +81,9 @@ public class WorkingCycle implements Iterable<Concept> {
     public void cycleSequential() {
         
         memory.processNewTasks();
-        if(noResult())
+        //if(noResult())
             memory.processNovelTask();
-        if(noResult())
+        //if(noResult())
             processConcept();
     }
     

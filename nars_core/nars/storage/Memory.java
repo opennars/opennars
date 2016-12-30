@@ -68,6 +68,7 @@ import nars.io.PauseInput;
 import nars.io.Reset;
 import nars.io.SetDecisionThreshold;
 import nars.io.SetVolume;
+import nars.language.CompoundTerm;
 import nars.language.Interval;
 
 
@@ -89,6 +90,8 @@ public class Memory implements Serializable {
     //emotion meter keeping track of global emotion
     public final Emotions emotion = new Emotions();   
     
+    public boolean allowExecution = true;
+    public Task lastDecision = null;
     private long timeRealStart;
     private long timeRealNow;
     private long timePreviousCycle;
@@ -111,7 +114,7 @@ public class Memory implements Serializable {
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
     
     /* Input event tasks that were either input events or derived sequences*/
-    public final Bag<Task<Term>,Sentence<Term>> sequenceTasks;
+    public Bag<Task<Term>,Sentence<Term>> sequenceTasks;
 
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
@@ -592,6 +595,7 @@ public class Memory implements Serializable {
                     OldConc.buildTermLinks(newEvent.getBudget()); //will be built bidirectionally anyway
                 }
             }*/
+            
             //also attempt direct
             for(int i =0 ;i<Math.min(this.sequenceTasks.size(), Parameters.SEQUENCE_BAG_ATTEMPTS);i++) {
                 Task takeout = this.sequenceTasks.takeNext();
@@ -632,9 +636,11 @@ public class Memory implements Serializable {
         {
             removal = null;
             for(Task s : this.sequenceTasks) {
-                if(s.getTerm().equals(newEvent.getTerm())  &&
-                        s.sentence.stamp.equals(newEvent.sentence.stamp,false,true,true,false)) {
-                    /*&& newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime() ) { */
+                if(CompoundTerm.cloneDeepReplaceIntervals(s.getTerm()).equals(
+                        CompoundTerm.cloneDeepReplaceIntervals(newEvent.getTerm()))) {
+                        // && //-- new outcommented
+                        //s.sentence.stamp.equals(newEvent.sentence.stamp,false,true,true,false) ) {
+                    //&& newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime() ) { 
                     removal = s;
                     break;
                 }

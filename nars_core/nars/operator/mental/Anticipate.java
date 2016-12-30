@@ -174,7 +174,7 @@ public class Anticipate extends Operator implements EventObserver {
             Task newEvent = (Task)args[0];
             this.nal= (DerivationContext)args[1];
             
-            if (newEvent.sentence.truth!=null) {
+            if (newEvent.sentence.truth != null && newEvent.sentence.isJudgment() && !newEvent.sentence.isEternal()) {
                 newTasks.add(newEvent.getTerm()); //new: always add but keep truth value in mind
             }
         }
@@ -214,6 +214,9 @@ public class Anticipate extends Operator implements EventObserver {
     }
     
     public void anticipate(Term content, Memory memory, long occurenceTime, Task t) {
+        if(true)
+            return;
+        
         if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
             return;
         }

@@ -22,11 +22,12 @@ import nars.entity.TruthValue;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.language.CompoundTerm;
-import nars.language.Conjunction;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.operator.Operation;
+import nars.language.Implication;
+import nars.language.Conjunction;
 import nars.operator.mental.Anticipate;
 
 /**
@@ -81,6 +82,15 @@ public abstract class DerivationContext implements Runnable {
      */
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent,Sentence occurence2, boolean overlapAllowed) {                        
 
+        /*if(task.sentence.truth.getConfidence() > 0.98 && (task.getTerm() instanceof Implication) && 
+                (((Implication) task.getTerm()).getSubject() instanceof Conjunction) && 
+                ((Conjunction) ((Implication) task.getTerm()).getSubject()).term.length == 4) {
+            int a = 3;
+            a = 0;
+            System.out.println(a);
+        }*/
+        
+        
         if (derivationFilters!=null) {            
             for (int i = 0; i < derivationFilters.size(); i++) {
                 DerivationFilter d = derivationFilters.get(i);
@@ -187,7 +197,7 @@ public abstract class DerivationContext implements Runnable {
      * @param overlapAllowed // https://groups.google.com/forum/#!topic/open-nars/FVbbKq5En-M
      */
     public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed) {
-        
+                
         List<Task> ret = new ArrayList<Task>();
         if(newContent == null) {
             return null;
