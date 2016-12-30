@@ -285,12 +285,16 @@ public class SimNAR extends Frame {
 
             int k=0;
             float Alpha=0.1f;
+            String lastInput = "";
             int UpdateSOM(float[] viewField,float reward) //input and reward
             {
                 for(int i=0;i<viewField.length;i++) {
                     if(viewField[i]>0.1f) {
-                        String s = "<{\""+String.valueOf(i)+"\"} --> [on]>. :|: %"+String.valueOf(0.5f+0.5f*viewField[i])+"%";
-                        nar.addInput(s);
+                        String s = "<{\""+String.valueOf(i)+"\"} --> [on]>. :|:"; // %"+String.valueOf(0.5f+0.5f*viewField[i])+"%";
+                        if(!lastInput.equals(s)) {
+                            nar.addInput(s);
+                        }
+                        lastInput = s;
                         //System.out.println("perceive "+s);
                     }
                 }
