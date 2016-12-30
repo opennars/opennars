@@ -98,7 +98,7 @@ public class Pong extends Frame {
             }
 
             int k=0;
-            float Alpha=0.04f;
+            float Alpha=0.08f;
             int UpdateSOM(float[] viewField,float reward) //input and reward
             {
                 /*for(int i=0;i<viewField.length;i++) {
@@ -175,7 +175,7 @@ public class Pong extends Frame {
                 float accepted_distance = 20.0f;
                 if(Math.abs(agent.x - ball.x) < accepted_distance ) {
                     String s = "<{\"1\"} --> [on]>. :|:";
-                    if(/*k%20 == 0 ||*/ !s.equals(this.LastInput)) {
+                    if(k%20 == 0 || !s.equals(this.LastInput)) {
                         System.out.println("good mr_nars");
                         nar.addInput(s);
                         System.out.println(s);
@@ -184,14 +184,14 @@ public class Pong extends Frame {
                 } else {
                     if(agent.x < ball.x) {
                         String s = "<{right} --> [on]>. :|:";
-                        if(/*k%20 == 0 ||*/ !s.equals(this.LastInput)) {
+                        if(k%20 == 0 || !s.equals(this.LastInput)) {
                             nar.addInput(s);
                             System.out.println(s);
                         }
                         this.LastInput = s;
                     } else {
                         String s = "<{left} --> [on]>. :|:";
-                        if(/*k%20 == 0 ||*/ !s.equals(this.LastInput)) {
+                        if(k%20 == 0 || !s.equals(this.LastInput)) {
                             nar.addInput(s);
                             System.out.println(s);
                         }
@@ -377,8 +377,8 @@ public class Pong extends Frame {
             else
             {
                 if(oi.VX == 0 && oi.VY == 0) {
-                  //  oi.VX = 5.0f;
-                  //  oi.VY = 10.0f;
+                    oi.VX = 3.0f;
+                    oi.VY = 5.0f;
                 }
                 oi.v = 0.0f;
                 if(oi.x>width)
