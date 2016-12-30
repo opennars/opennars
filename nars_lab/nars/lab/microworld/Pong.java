@@ -14,20 +14,28 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import nars.config.Plugins;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import nars.entity.Concept;
+import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
+import nars.io.Narsese;
+import nars.lab.util.ConceptMonitor;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
 
-public class SimNAR extends Frame {
+public class Pong extends Frame {
 
-    public SimNAR() {
-        String[] args = {"Microworld"};
+    public Pong() {
+        String[] args = {"Pong"};
         MyPapplet mp = new MyPapplet ();
         PApplet.runSketch(args, mp);
     }
+    
+    static MyPapplet.Obj agent;
+        static MyPapplet.Obj ball;
 
     public class MyPapplet extends PApplet {
 
@@ -37,207 +45,13 @@ public class SimNAR extends Frame {
             hamlib.mouseScrolled();
         }
 
-
-        class Hsom
-        {
-            Hsom(int SomSize, int numInputs)
-            {
-                links = new float[SomSize][SomSize][numInputs];
-                vis = new float[SomSize][SomSize][numInputs];
-                inputs = new float[numInputs];
-                coords1 = new float[SomSize][SomSize];
-                coords2 = new float[SomSize][SomSize];
-                this.numInputs = numInputs;
-                this.SomSize = SomSize;
-                for (int i1 = 0; i1 < SomSize; i1++)
-                {
-                    for (int i2 = 0; i2 < SomSize; i2++)
-                    {
-                        coords1[i1][i2] = (float) ((float)i1 * 1.0); //Kartenkoords
-                        coords2[i1][i2] = (float) ((float)i2 * 1.0);
-                    }
-                }
-                for (int x = 0; x < SomSize; x++)
-                {
-                    for (int y = 0; y < SomSize; y++)
-                    {
-                        for (int z = 0; z < numInputs; z++)
-                        {
-                            links[x][y][z] = (float) ((random(1)/**2.0-1.0*/) * 0.1);
-                        }
-                    }
-                }
-            }
-            float[][][] links;
-            float[] inputs;
-            float[][] coords1;
-            float[][] coords2;
-            float[][][] vis;
-            int numInputs = 100;
-            int SomSize = 10;
-            float gamma = 5.0f;
-            float eta=0.1f;
-            float outmul = 1.0f;
-            int winnerx = 0; //winner coordinates
-            int winnery = 0;
-
-            float Leak= (float) 0.1;
-            float InMul= (float) 1.0;
-            boolean Leaky=true;
-            void Input(float[] input)
-            {
-                int i1, i2, j;
-                float summe;
-                float minv = 100000.0f;
-
-                for (j = 0; j < numInputs; j++)
-                {
-                    if (!Leaky)
-                    {
-                        this.inputs[j] = input[j]*InMul;
-                    }
-                    else
-                    {
-                        this.inputs[j] += -Leak * this.inputs[j] + input[j];
-                    }
-                }
-                for (i1 = 0; i1 < SomSize; i1++)
-                {
-                    for (i2 = 0; i2 < SomSize; i2++)
-                    {
-                        summe = 0.0f;
-                        for (j = 0; j < numInputs; j++)
-                        {
-                            float val=(links[i1][i2][j] - inputs[j]) * (links[i1][i2][j] - inputs[j]);
-                            vis[i1][i2][j]=val;
-                            summe += val;
-                        }
-                        if (summe <= minv) //get winner
-                        {
-                            minv = summe;
-                            winnerx = i1;
-                            winnery = i2;
-                        }
-                    }
-                }
-            }
-            void Output(float[] outarr)
-            {
-                int x = winnerx;
-                int y = winnery;
-                int i;
-                for (i = 0; i < numInputs; i++)
-                {
-                    outarr[i] = links[x][y][i] * outmul;
-                }
-            }
-            float hsit(int i1, int i2)
-            {   //neighboorhood-function
-                float diff1 = (coords1[i1][i2] - coords1[winnerx][winnery]) * (coords1[i1][i2] - coords1[winnerx][winnery]);
-                float diff2 = (coords2[i1][i2] - coords2[winnerx][winnery]) * (coords2[i1][i2] - coords2[winnerx][winnery]);
-                return 1.0f / ((float)Math.sqrt(2 * Math.PI * gamma * gamma)) * ((float)Math.exp((diff1 + diff2) / (-2 * gamma * gamma)));
-            }
-            void Adapt(float[] input)
-            {
-                int i1, i2, j;
-                Input(input);
-                if (eta != 0.0f)
-                {
-                    for (i1 = 0; i1 < SomSize; i1++)
-                    {
-                        for (i2 = 0; i2 < SomSize; i2++)
-                        {
-                            for (j = 0; j < numInputs; j++)
-                            {  //adaption
-                                links[i1][i2][j] = links[i1][i2][j] + eta * hsit(i1, i2) * (inputs[j] - links[i1][i2][j]);
-                            }
-                        }
-                    }
-                }
-            }
-            String GetWinnerCoordinatesWordFromAnalogInput(float[] input)
-            {
-                Adapt(input);
-                return "x" + String.valueOf(winnerx)+ "y" + String.valueOf(winnery);
-            }
-            void SetParams(float AdaptionStrenght, float AdaptioRadius)
-            {
-                eta = AdaptionStrenght;
-                gamma = AdaptioRadius;
-            }
-            void GetActivationForRendering(float[][] input, boolean forSpecialInput, int specialInputIndex)
-            {
-                if (input == null)
-                {
-                    input = new float[SomSize][SomSize];
-                }
-                for (int x = 0; x < SomSize; x++)
-                {
-                    for (int y = 0; y < SomSize; y++)
-                    {
-                        float curval = (float) 0.0;
-                        if (!forSpecialInput)
-                        {
-                            for (int i = 0; i < numInputs; i++)
-                            {
-                                curval += vis[x][y][i];
-                            }
-                        }
-                        else
-                        {
-                            curval = vis[x][y][specialInputIndex];
-                        }
-                        input[x][y] = curval;
-                    }
-                }
-
-                //minimum for better visualisation:
-                float mini = 99999999;
-                float maxi = -99999999;
-                for (int x = 0; x < SomSize; x++)
-                {
-                    for (int y = 0; y < SomSize; y++)
-                    {
-                        float t=input[x][y];
-                        if (t < mini)
-                        {
-                            mini = t;
-                        }
-                        if (t > maxi)
-                        {
-                            maxi = t;
-                        }
-                    }
-                }
-                float diff = maxi - mini;
-                for (int x = 0; x < SomSize; x++)
-                {
-                    for (int y = 0; y < SomSize; y++)
-                    {
-                        input[x][y] = (float) ((input[x][y] /*- mini*/) / Math.max(0.00000001, diff));
-                    }
-                }
-            }
-        }
-        void hsom_DrawSOM(Hsom somobj,int RenderSize,int x,int y,boolean bSpecial,int specialIndex)
-        {
-            fill(0);
-            pushMatrix();
-            translate(x,y);
-            float[][]  input = new float[somobj.SomSize][somobj.SomSize];
-            somobj.GetActivationForRendering(input,bSpecial,specialIndex);
-            hamlib.Draw2DPlane(input,RenderSize);
-            fill(255);
-            rect(somobj.winnerx*RenderSize,somobj.winnery*RenderSize,RenderSize,RenderSize);
-            popMatrix();
-        }
-
-
         class Hai
         {
             Hai(){}
             NAR nar;
+            String LastInput ="";
             int nActions = 3;
+            int direction = 0;
             Hai(int nactions,int nstates)
             {
                 this.nActions = nactions; //for actions since we allow the same randomization phase as in QL
@@ -265,7 +79,7 @@ public class SimNAR extends Frame {
                 public List<Task> execute(Operation operation, Term[] args, Memory memory) {
                     lastAction = 1;
                     memory.allowExecution = false;
-                    System.out.println("NAR decide left");
+                    //System.out.println("NAR decide left");
                     return null;
                 }
             }
@@ -278,50 +92,131 @@ public class SimNAR extends Frame {
                 public List<Task> execute(Operation operation, Term[] args, Memory memory) {
                     lastAction = 2;
                     memory.allowExecution = false;
-                    System.out.println("NAR decide right");
+                    //System.out.println("NAR decide right");
                     return null;
                 }
             }
 
             int k=0;
-            float Alpha=0.1f;
+            float Alpha=0.04f;
             int UpdateSOM(float[] viewField,float reward) //input and reward
             {
-                for(int i=0;i<viewField.length;i++) {
+                /*for(int i=0;i<viewField.length;i++) {
                     if(viewField[i]>0.1f) {
-                        String s = "<{\""+String.valueOf(i)+"\"} --> [on]>. :|: %"+String.valueOf(0.5f+0.5f*viewField[i])+"%";
-                        nar.addInput(s);
+                        String s = "<{\""+String.valueOf(i)+"\"} --> [on]>. :|:";  // %"+String.valueOf(0.5f+0.5f*viewField[i])+"%";
+                        if(this.LastInput != s) {
+                            nar.addInput(s);
+                            System.out.println(s);
+                        }
+                        this.LastInput = s;
+
                         //System.out.println("perceive "+s);
                     }
-                }
+                }*/
                 lastAction = 0;
                 k++;
                 if(k%4==0) {
-                    nar.addInput("<SELF --> [good]>! :|:");
+                    nar.addInput("<{\"1\"} --> [on]>! :|:"); //future extension: change to self good
                     //System.out.println("food urge input");
                 }
-                if(reward > 0) {
-                    System.out.println("good mr_nars");
-                    nar.addInput("<SELF --> [good]>. :|:");
+                //if(reward > 0) { //even more delayed reward (for the future)
+                
+                //show what the system perceived about the ballposition:
+                /*Sentence left = ConceptMonitor.strongestProjectedInputEventBelief(nar, "<{left} --> [on]>");
+                Sentence right = ConceptMonitor.strongestProjectedInputEventBelief(nar, "<{right} --> [on]>");
+                Sentence middle = ConceptMonitor.strongestProjectedInputEventBelief(nar, "<{\"1\"} --> [on]>");
+                if(left != null) {
+                    System.out.print("left: ");
+                    System.out.print(left.truth);
+                    System.out.print(" ");
                 }
-                if(reward < 0) {
+                if(middle != null) {
+                    System.out.print("middle: ");
+                    System.out.print(middle.truth);
+                    System.out.print(" ");
+                }
+                if(right != null) {
+                    System.out.print("right: ");
+                    System.out.print(right.truth);
+                    System.out.print(" ");
+                }
+                if(left != null || middle != null || right != null) {
+                    System.out.println();
+                }*/
+                                                   //                                         <(&/,<{right} --> [on]>,+12,(^Left,SELF),+13) =/> <{"1"} --> [on]>>
+                                                   
+                
+                if(k%4 == 0) {
+                Sentence hypo_left = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
+                        "<(&/,<{left} --> [on]>,+1,(^Right,SELF),+1) =/> <{\"1\"} --> [on]>>");
+                if(hypo_left != null) {
+                    System.out.println("HypLeft: " + hypo_left.truth);
+                }
+                
+                Sentence hypo_right = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
+                        "<(&/,<{right} --> [on]>,+12,(^Left,SELF),+13) =/> <{\"1\"} --> [on]>>");
+                if(hypo_right != null) {
+                    System.out.println("HypRight: " + hypo_right.truth);
+                }
+                
+                Sentence hypo_left_false = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
+                        "<(&/,<{left} --> [on]>,+1,(^Left,SELF),+1) =/> <{\"1\"} --> [on]>>");
+                if(hypo_left_false != null) {
+                    System.out.println("HypLefFalse: " + hypo_left_false.truth);
+                }
+                
+                Sentence hypo_right_false = ConceptMonitor.strongestPrecondition(nar,  "<{\"1\"} --> [on]>",
+                        "<(&/,<{right} --> [on]>,+12,(^Right,SELF),+13) =/> <{\"1\"} --> [on]>>");
+                if(hypo_right_false != null) {
+                    System.out.println("HypRigFalse: " + hypo_right_false.truth);
+                }
+                }
+                
+                float accepted_distance = 20.0f;
+                if(Math.abs(agent.x - ball.x) < accepted_distance ) {
+                    String s = "<{\"1\"} --> [on]>. :|:";
+                    if(/*k%20 == 0 ||*/ !s.equals(this.LastInput)) {
+                        System.out.println("good mr_nars");
+                        nar.addInput(s);
+                        System.out.println(s);
+                    }
+                    this.LastInput = s;
+                } else {
+                    if(agent.x < ball.x) {
+                        String s = "<{right} --> [on]>. :|:";
+                        if(/*k%20 == 0 ||*/ !s.equals(this.LastInput)) {
+                            nar.addInput(s);
+                            System.out.println(s);
+                        }
+                        this.LastInput = s;
+                    } else {
+                        String s = "<{left} --> [on]>. :|:";
+                        if(/*k%20 == 0 ||*/ !s.equals(this.LastInput)) {
+                            nar.addInput(s);
+                            System.out.println(s);
+                        }
+                        this.LastInput = s;
+                    }
+                }
+                /*/if(reward < 0) {
                     System.out.println("bad mr_nars");
                     nar.addInput("(--,<SELF --> [good]>). :|:");
-                }
+                }*/
                 
                 nar.step(500);
 
-                if(lastAction==0 && random(1.0f)<Alpha) { //if NAR hasn't decided chose a random action
-                    lastAction = (int)random((float)nActions);
+                if(lastAction==0 && random(1.0f) < Alpha) { //if NAR hasn't decided chose a random action
+                    lastAction = (int) random((float) nActions);
                     if(lastAction == 1) {
                         //System.out.println("random left");
+                        //nar.addInput("Left(SELF). :|:");
+                        
                         nar.executeDummyDecision("Right(SELF)");
-                       // nar.addInput("Left(SELF). :|:");
                     }
                     if(lastAction == 2) {
-                        //System.out.println("random right");
                         nar.executeDummyDecision("Left(SELF)");
-                       /// nar.addInput("Right(SELF). :|:");
+                        //System.out.println("random right");
+                        //nar.addInput("Right(SELF). :|:");
                     }
                 }
 
@@ -333,19 +228,19 @@ public class SimNAR extends Frame {
         {
             if(key=='t')
             {
-                test.v=1.0f;
+                agent.v=1.0f;
             }
             if(key=='g')
             {
-                test.v=-1.0f;
+                agent.v=-1.0f;
             }
             if(key=='f')
             {
-                test.a+=0.2f;
+                agent.a+=0.2f;
             }
             if(key=='h')
             {
-                test.a-=0.2;
+                agent.a-=0.2;
             }
             hamlib.keyPressed();
         }
@@ -384,8 +279,8 @@ public class SimNAR extends Frame {
             }
             if(j.type==1 || j.type==2)
             {
-                j.x=random(1)*width;
-                j.y=random(1)*height;
+                //j.x=random(1)*width;
+                //j.y=random(1)*height;
             }
         }
         int Hsim_eyesize=3; //9
@@ -433,16 +328,14 @@ public class SimNAR extends Frame {
                 }*/
                 if(action==2)
                 {
-                    oi.a+=0.5f;
-                    oi.v=5.0f;
-                    //mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
+                    oi.hai.direction = 2;
+                   // oi.x += 10;
                 }
                 else
                 if(action==1)
                 {
-                    oi.a-=0.5f;
-                    oi.v=5.0f;
-                    // mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
+                    oi.hai.direction = 1;
+                   // oi.x -= 10;
                 }
                 else
                 if(action==0)
@@ -450,23 +343,66 @@ public class SimNAR extends Frame {
                     oi.v=10.0f;
                     // mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
                 }
-                if(oi.x>width)
-                {
-                    oi.x=0;
+                
+                if(oi.hai.direction == 1) {
+                    oi.x += 10.0f;
+                } 
+                else
+                if(oi.hai.direction == 2) {
+                    oi.x -= 10.0f;
                 }
-                if(oi.x<0)
+                oi.y = 0;
+                
+                
+                if(oi.x>width)
                 {
                     oi.x=width;
                 }
-                if(oi.y>height)
+                if(oi.x<0)
                 {
-                    oi.y=0;
+                    oi.x=0;
                 }
-                if(oi.y<0)
+                if(oi.y>height)
                 {
                     oi.y=height;
                 }
+                if(oi.y<0)
+                {
+                    oi.y=0;
+                }
                 oi.acc=0.0f;
+                oi.v = 0;
+                oi.a = (float) (Math.PI / 2.0);
+            }
+            else
+            {
+                if(oi.VX == 0 && oi.VY == 0) {
+                  //  oi.VX = 5.0f;
+                  //  oi.VY = 10.0f;
+                }
+                oi.v = 0.0f;
+                if(oi.x>width)
+                {
+                    oi.x = width;
+                    oi.VX = -oi.VX;
+                }
+                if(oi.x<0)
+                {
+                    oi.x = 0;
+                    oi.VX = -oi.VX;
+                }
+                if(oi.y>height)
+                {
+                    oi.y = height;
+                    oi.VY = -oi.VY;
+                }
+                if(oi.y<0)
+                {
+                    oi.y = 0;
+                    oi.VY = -oi.VY;
+                } 
+                oi.x += oi.VX;
+                oi.y += oi.VY;
             }
         }
 
@@ -602,7 +538,7 @@ public class SimNAR extends Frame {
                 ellipse(x,y,Cursor3DWidth,Cursor3DWidth);
                 noStroke();
             }
-            float visarea=PI/3;
+            float visarea=PI/2.01f;
             float viewdist=100.0f;
 
             void Simulate()
@@ -707,7 +643,7 @@ public class SimNAR extends Frame {
         int worldSize=800;
         PImage[] im=new PImage[10];
         Gui label1;
-        Obj test;
+        
 //WaveMembran mem=new WaveMembran(100);
 
 
@@ -1274,6 +1210,8 @@ public class SimNAR extends Frame {
             float v;
             float vx;
             float vy;
+            float VX;
+            float VY;
             float s;
             float acc;
             boolean DrawField=false;
@@ -1287,7 +1225,7 @@ public class SimNAR extends Frame {
                 y=Y;
                 a=A;
                 v=V;
-                s=S;
+                s=S*4.0f;
                 vx=Vx;
                 vy=Vy;
                 type=Type;
@@ -1332,19 +1270,20 @@ public class SimNAR extends Frame {
                 Hai h=new Hai(nactions,SomSize);
                 //h.som=new Hsom(SomSize,Hsim_eyesize*2);
                 //h.som.Leaky=false;
-                test=new Obj(new Hsim_Custom(),h,(int)(random(1)*(double)width),(int)(random(1)*(double)height),random(1)*2*PI-PI,random(1),0,0,random(1)*5+20,0,Hsim_eyesize);
-                hsim.obj.add(test);
+                agent=new Obj(new Hsim_Custom(),h,(int)(random(1)*(double)width),(int)(random(1)*(double)height),random(1)*2*PI-PI,random(1),0,0,random(1)*5+20,0,Hsim_eyesize);
+                hsim.obj.add(agent);
             }
             lastclicked=((Obj)hsim.obj.get(0));
-            for(int i=0;i<5;i++)
+            for(int i=0;i<1;i++)
             {
-                hsim.obj.add(new Obj(null,null,(int)(random(1)*(double)width),(int)(random(1)*(double)height),random(1)*2*PI,0,0,0,random(1)*5+20,1,10));
+                ball = new Obj(null,null,width / 2,height / 2,random(1)*2*PI,0,0,0,random(1)*5+20,1,10);
+                hsim.obj.add(ball);
             }
-            for(int i=0;i<5;i++)
+            /*for(int i=0;i<5;i++)
             {
                 hsim.obj.add(new Obj(null,null,(int)(random(1)*(double)width),(int)(random(1)*(double)height),random(1)*2*PI,0,0,0,random(1)*5+20,2,10));
-            }
-            hsim.viewdist=width/5; //4
+            }*/
+            hsim.viewdist=(float) Math.sqrt(width*width+height*height); //4
             label1=new Gui(0,height-25,width,25, "label1", "", false);
             hgui.gui.add(label1);
         }
@@ -1361,6 +1300,6 @@ public class SimNAR extends Frame {
 
     public static void main(String[] args) {
         NARSwing.themeInvert();
-        new SimNAR();
+        new Pong();
     }
 }

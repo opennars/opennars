@@ -51,6 +51,8 @@ public class Operators {
             new NullOperator("^lighter"),
             new NullOperator("^reshape"),
             new NullOperator("^say"),
+            new NullOperator("^Right"),
+            new NullOperator("^Left"),
             
             //new Wait(),            
             //new Wait(),            

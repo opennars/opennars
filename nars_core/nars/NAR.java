@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
 import nars.util.Events.FrameStart;
@@ -44,6 +46,7 @@ import nars.io.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
 import nars.io.Echo;
+import nars.lab.util.ConceptMonitor;
 import nars.storage.LevelBag;
 
 
@@ -195,6 +198,20 @@ public class NAR implements Runnable {
         
         return addInput(text, text.contains("\n") ? -1 : time());
     }
+    
+    public void executeDummyDecision(String name) { //mainly for RL tasks where a random action is tried
+        Task t;
+        try {        
+            t = new Narsese(this.memory).parseTask(name + ". :|:");
+        } catch (InvalidInputException ex) {
+            return;
+        }
+        t.sentence.stamp.setOccurrenceTime(this.memory.time());
+        this.addInput(t);
+        this.memory.lastDecision = t;
+        Concept.successfulOperationHandler(this.memory);
+    }
+    
     
     /** add text input at a specific time, which can be set to current time (regardless of when it will reach the memory), backdated, or forward dated */
     public TextInput addInput(final String text, long creationTime) {
@@ -467,6 +484,7 @@ public class NAR implements Runnable {
     /** Execute a fixed number of frames. 
      * may execute more than requested cycles if cyclesPerFrame > 1 */
     public void step(final int frames) {
+        memory.allowExecution = true;
         /*if (thread!=null) {
             memory.stepLater(cycles);
             return;

@@ -298,7 +298,7 @@ public class Sentence<T extends Term> implements Cloneable {
                 throw new RuntimeException("invalid comparison for Sentence.equivalentTo");
             }
         }
-        return (truth.equals(that.truth) && stamp.equals(that.stamp,false,false,true,true));
+        return (truth.equals(that.truth) && stamp.equals(that.stamp,false,true,true,true));
     }
 
     /**

@@ -21,6 +21,7 @@
 package nars.inference;
 
 import java.util.Arrays;
+import nars.config.Parameters;
 import nars.util.Events.Answer;
 import nars.util.Events.Unsolved;
 import nars.storage.Memory;
@@ -41,12 +42,6 @@ import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variables;
-import static nars.inference.TemporalRules.matchingOrder;
-import static nars.inference.TemporalRules.matchingOrder;
-import static nars.inference.TemporalRules.matchingOrder;
-import static nars.inference.TemporalRules.matchingOrder;
-import static nars.inference.TemporalRules.matchingOrder;
-import static nars.inference.TemporalRules.matchingOrder;
 import static nars.inference.TemporalRules.matchingOrder;
 
 
@@ -98,9 +93,12 @@ public class LocalRules {
      * @return If revision is possible between the two sentences
      */
     public static boolean revisible(final Sentence s1, final Sentence s2) {
+        if(!s1.isEternal() && !s2.isEternal() && Math.abs(s1.getOccurenceTime() - s2.getOccurenceTime()) > Parameters.REVISION_MAX_OCCURRENCE_DISTANCE) {
+            return false;
+        }
         return (s1.getRevisible() && 
-                s1.equalsContent(s2) && 
-                matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()) && 
+                matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()) &&
+                //s1.equalsContent(s2) && 
                 !Stamp.baseOverlap(s1.stamp.evidentialBase, s2.stamp.evidentialBase));
     }
 
@@ -116,9 +114,6 @@ public class LocalRules {
      */
     public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final DerivationContext nal) {
         if (newBelief.term==null) return false;
-        if(!newBelief.term.equals(oldBelief.getTerm())) { //this is expensive but we have to do
-            return false; //it since now different interval terms end in the same concept
-        } //but we can not allow revision if the intervals are different!
         
         TruthValue newTruth = newBelief.truth;
         TruthValue oldTruth = oldBelief.truth;

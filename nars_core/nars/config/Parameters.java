@@ -118,6 +118,8 @@ public class Parameters {
 
     /** (see its use in budgetfunctions iterative forgetting) */
     public static float FORGET_QUALITY_RELATIVE = 0.1f;
+    
+    public static int REVISION_MAX_OCCURRENCE_DISTANCE = 10;
 
     /** Size of ConceptBag and level amount */
     public static final int CONCEPT_BAG_SIZE = 10000;
@@ -139,9 +141,7 @@ public class Parameters {
     
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */
-    public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 20;
-    /** Maximum length of the Derivation Chain of the stamp */
-    public static final int MAXIMUM_DERIVATION_CHAIN_LENGTH = 20;
+    public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 200;
     
     /** Maximum length of Stamp, a power of 2 */
     //public static final int MAXIMUM_STAMP_LENGTH = 8;
@@ -154,7 +154,7 @@ public class Parameters {
     public static final int TERM_LINK_RECORD_LENGTH =10;
     
     /** Maximum number of beliefs kept in a Concept */
-    public static final int CONCEPT_BELIEFS_MAX = 7;
+    public static final int CONCEPT_BELIEFS_MAX = 28; //was 7
     
     /** Maximum number of questions kept in a Concept */
     public static final int CONCEPT_QUESTIONS_MAX = 5;
@@ -229,7 +229,7 @@ public class Parameters {
     
     
    // public static int STM_SIZE = 1;
-    public static int SEQUENCE_BAG_ATTEMPTS = 5;
+    public static int SEQUENCE_BAG_ATTEMPTS = 20; //5
     
     public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=true; //this should be true to restore 1.6.1 strategy
 

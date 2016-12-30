@@ -21,7 +21,6 @@
 package nars.entity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,6 +65,7 @@ import nars.language.Interval;
 import nars.util.Events.EnactableExplainationAdd;
 import nars.util.Events.EnactableExplainationRemove;
 import static nars.inference.UtilityFunctions.or;
+import nars.operator.mental.Anticipate;
 
 public class Concept extends Item<Term> {
 
@@ -184,8 +184,7 @@ public class Concept extends Item<Term> {
      */
     public boolean observable = false;
     public boolean directProcess(final DerivationContext nal, final Task task) {
-        if(task.isInput())
-        {
+        if(task.isInput()) {
             observable = true;
         }
         char type = task.sentence.punctuation;
@@ -224,7 +223,7 @@ public class Concept extends Item<Term> {
      */
     protected void processJudgment(final DerivationContext nal, final Task task) {
         final Sentence judg = task.sentence;
-        final Task oldBeliefT = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
+        final Task oldBeliefT = selectCandidate(judg, beliefs, true);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
             oldBelief = oldBeliefT.sentence;
@@ -255,8 +254,74 @@ public class Concept extends Item<Term> {
             for (int i = 0; i < nnq; i++) {                
                 trySolution(judg, questions.get(i), nal);
             }
+            
+        addToTable(task, false, beliefs, Parameters.CONCEPT_BELIEFS_MAX, ConceptBeliefAdd.class, ConceptBeliefRemove.class);
+            
+        //if taskLink predicts this concept then add to predictive 
+        Task target = task;
+        Term term = target.getTerm();
+        boolean wat = target.sentence.isJudgment();
+        if(//target.isObservablePrediction() &&
+           target.sentence.isEternal() && 
+           term instanceof Implication &&
+                   !term.hasVarIndep())  //Might be relaxed in the future!!
+        {
+            
+            Implication imp = (Implication) term;
+            if(imp.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                //also it has to be enactable, meaning the last entry of the sequence before the interval is an operation:
+                Term subj = imp.getSubject();
+                Term pred = imp.getPredicate();
+                Concept pred_conc = nal.memory.concept(pred);
+                if(pred_conc != null && !(pred instanceof Operation) && (subj instanceof Conjunction)) {
+                    Conjunction conj = (Conjunction) subj;
+                    if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                            conj.term.length == 4 && 
+                            conj.term[conj.term.length-1] instanceof Interval && 
+                            conj.term[conj.term.length-2] instanceof Operation) {
+                        
+                        //we do not add the target, instead the strongest belief in the target concept
+                        if(beliefs.size() > 0) {
+                            Task strongest_target = null; //beliefs.get(0);
+                            //get the first eternal:
+                            for(Task t : beliefs) {
+                                if(t.sentence.isEternal()) {
+                                    strongest_target = t;
+                                    break;
+                                }
+                            }
+                            
+                            int a = pred_conc.executable_preconditions.size();
+                            
+                            //at first we have to remove the last one with same content from table
+                            int i_delete = -1;
+                            for(int i=0; i < pred_conc.executable_preconditions.size(); i++) {
+                                if(CompoundTerm.cloneDeepReplaceIntervals(pred_conc.executable_preconditions.get(i).getTerm()).equals(
+                                        CompoundTerm.cloneDeepReplaceIntervals(strongest_target.getTerm()))) {
+                                    i_delete = i; //even these with same term but different intervals are removed here
+                                    break;
+                                }
+                            }
+                            if(i_delete != -1) {
+                                pred_conc.executable_preconditions.remove(i_delete);
+                            }
+                            //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
+                            pred_conc.addToTable(strongest_target, false, pred_conc.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, EnactableExplainationAdd.class, EnactableExplainationRemove.class);
+                            int b = pred_conc.executable_preconditions.size();
+                            if(b < a) {
+                                int h = 0;
+                                b = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+            
+            
+            
 
-            addToTable(task, false, beliefs, Parameters.CONCEPT_BELIEFS_MAX, ConceptBeliefAdd.class, ConceptBeliefRemove.class);
+            
         }
     }
 
@@ -288,7 +353,7 @@ public class Concept extends Item<Term> {
         }
         return desire.getExpectation() > memory.param.decisionThreshold.get();
     }
-    
+
     /**
      * Entry point for all potentially executable tasks.
      * Returns true if the Task has a Term which can be executed
@@ -296,8 +361,9 @@ public class Concept extends Item<Term> {
     public boolean executeDecision(final Task t) {
 
         //if (isDesired()) 
+        if(memory.allowExecution)
         {
-
+            
             Term content = t.getTerm();
 
             if(content instanceof Operation && !content.hasVarDep() && !content.hasVarIndep()) {
@@ -309,11 +375,52 @@ public class Concept extends Item<Term> {
                 if(!oper.call(op, memory)) {
                     return false;
                 }
-
+                this.memory.lastDecision = t;
+                //delete everything related to the last decisions
+                successfulOperationHandler(this.memory);
+                
+                //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
                 return true;
             }
         }
         return false;
+    }
+
+    public static void successfulOperationHandler(Memory memory) {
+        //multiple versions are necessary, but we do not allow duplicates
+        Task removal = null;
+        do
+        {
+            removal = null;
+            for(Task s : memory.sequenceTasks) {
+                
+                
+                if(memory.lastDecision != null && (s.getTerm() instanceof Operation)) {
+                    if(!s.getTerm().equals(memory.lastDecision.getTerm())) {
+                        removal = s;
+                        break;
+                    }
+                }
+                if(memory.lastDecision != null && (s.getTerm() instanceof Conjunction)) {
+                    Conjunction seq = (Conjunction) s.getTerm();
+                    if(seq.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                        for(Term w : seq.term) {
+                            if((w instanceof Operation) && !w.equals(memory.lastDecision.getTerm())) {
+                                removal = s;
+                                break;
+                            }
+                        }
+                        if(removal != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+            if(removal != null) {
+                memory.sequenceTasks.take(removal);
+            }
+        }
+        while(removal != null);
     }
     
     /**
@@ -326,11 +433,8 @@ public class Concept extends Item<Term> {
      */
     protected boolean processGoal(final DerivationContext nal, final Task task, boolean shortcut) {        
         
-        if(task.isInput())  {
-            int hurra = 1;
-        }
         final Sentence goal = task.sentence;
-        final Task oldGoalT = selectCandidate(goal, desires); // revise with the existing desire values
+        final Task oldGoalT = selectCandidate(goal, desires, true); // revise with the existing desire values
         Sentence oldGoal = null;
         
         if (oldGoalT != null) {
@@ -375,7 +479,7 @@ public class Concept extends Item<Term> {
         
         if (task.aboveThreshold()) {
 
-            final Task beliefT = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
+            final Task beliefT = selectCandidate(goal, beliefs, false); // check if the Goal is already satisfied
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
@@ -396,42 +500,61 @@ public class Concept extends Item<Term> {
             
             if (projectedGoal != null && task.aboveThreshold() && !fullfilled && projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
 
-
+                try{
                 Operation bestop = null;
                 float bestop_truthexp = 0.0f;
                 TruthValue bestop_truth = null;
+                long expect_result_at = -1;
+                Term expect_result = null;
                 for(Task t: this.executable_preconditions) {
                     Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
                     Term[] newprec = new Term[prec.length-3];
                     for(int i=0;i<prec.length-3;i++) { //skip the last part: interval, operator, interval
                         newprec[i] = prec[i];
                     }
+                    
+                    expect_result_at = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
+                    expect_result = ((Implication) t.getTerm()).getPredicate();
+                    
                     Operation op = (Operation) prec[prec.length-2];
                     Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
 
                     Concept preconc = nal.memory.concept(precondition);
                     long newesttime = -1;
                     Task bestsofar = null;
-                    if(preconc != null && preconc.beliefs.size() > 0) { //ok we can look now how much it is fullfilled
+                    if(preconc != null) { //ok we can look now how much it is fullfilled
+                        
                         for(Task p : preconc.beliefs) { //search events first
-                            if(p.sentence.isJudgment() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() < memory.time()) {
+                            if(p.isInput() && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= memory.time()) {
                                 newesttime = p.sentence.getOccurenceTime();
-                                bestsofar = p;
-                            }
+                                bestsofar = p; //we use the newest for now
+                            } //TODO relax to non-input
                         }
+                        
                         //also check tasklinks:
                         for(TaskLink pl : preconc.taskLinks) { //search events first
                             Task p = pl.getTarget();
-                            if(p.sentence.isJudgment() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() < memory.time()) {
+                           try {
+                            if(p.isInput() && p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= memory.time()) {
                                 newesttime = p.sentence.getOccurenceTime();
-                                bestsofar = p;
+                                bestsofar = p; //we use the newest for now
                             }
+                           }catch(Exception ex) {
+                               System.out.println("wat");
+                           }
                         }
-
-                        //but if no event is here the eternal can be used
-                       /* if(bestsofar == null) { //todo: also if too much in the past
-                            bestsofar = preconc.beliefs.get(0);
-                        }*/
+                        
+                        //check recent events in event bag
+                        for(Task p : this.memory.sequenceTasks) {
+                            try {
+                            if(p.isInput() && p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= memory.time()) {
+                                newesttime = p.sentence.getOccurenceTime();
+                                bestsofar = p; //we use the newest for now
+                            }
+                           }catch(Exception ex) {
+                               System.out.println("wat");
+                           }
+                        }
                        
                         if(bestsofar == null) {
                             continue;
@@ -442,7 +565,18 @@ public class Concept extends Item<Term> {
                         //and the truth of the hypothesis:
                         TruthValue Hyp = t.sentence.truth;
                         //and the truth of the precondition:
-                        TruthValue precon = bestsofar.sentence.truth;
+                        Sentence projectedPrecon = bestsofar.sentence.projection(memory.time(), memory.time());
+                        
+                        if(projectedPrecon.isEternal()) {
+                            continue; //projection wasn't better than eternalization, too long in the past
+                        }
+                        
+                        //debug start
+                        long timeA = memory.time();
+                        long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
+                        long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
+                        //debug end
+                        TruthValue precon = projectedPrecon.truth;
                         //and derive the conjunction of the left side:
                         TruthValue leftside = TruthFunctions.desireStrong(A, Hyp);
                         //in order to derive the operator desire value:
@@ -457,13 +591,26 @@ public class Concept extends Item<Term> {
                     }
                 }
 
-                if(bestop != null && bestop_truthexp > 0.5f /* memory.param.decisionThreshold.get() */) {
+                if(bestop != null && bestop_truthexp > memory.param.decisionThreshold.get()) {
                     Task t = new Task(new Sentence(bestop,Symbols.JUDGMENT_MARK,bestop_truth, projectedGoal.stamp), new BudgetValue(1.0f,1.0f,1.0f));
                     System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
                     if(!executeDecision(t)) { //this task is just used as dummy
                         memory.emit(UnexecutableGoal.class, task, this, nal);
+                    } else {
+                        //it was executed, so anticipate the result
+                        /*Anticipate ret = ((Anticipate)memory.getOperator("^anticipate"));
+                        if(ret!=null) {
+                            Sentence s = new Sentence(expect_result, Symbols.JUDGMENT_MARK, new TruthValue(1.0f,0.9f), new Stamp(nal.memory));
+                            s.stamp.setOccurrenceTime(expect_result_at);
+                            Task dummy = new Task(s, new BudgetValue(0.5f,0.5f,0.5f));
+                            //ret.anticipate(expect_result, nal.memory, expect_result_at, dummy);
+                        }
+                        ret.anticipate(task.sentence.term, memory, task.sentence.getOccurenceTime(),task);
+                        */
+                        
                     }
                 }
+                }catch(Exception ex){}
                 
                 questionFromGoal(task, nal);
                 
@@ -545,8 +692,8 @@ public class Concept extends Item<Term> {
         }
 
         final Task newAnswerT = (ques.isQuestion())
-                ? selectCandidate(ques, beliefs)
-                : selectCandidate(ques, desires);
+                ? selectCandidate(ques, beliefs, false)
+                : selectCandidate(ques, desires, false);
 
         if (newAnswerT != null) {
             trySolution(newAnswerT.sentence, task, nal);
@@ -648,7 +795,7 @@ public class Concept extends Item<Term> {
      * @param list The list of beliefs or desires to be used
      * @return The best candidate selected
      */
-    public Task selectCandidate(final Sentence query, final List<Task> list) {
+    public Task selectCandidate(final Sentence query, final List<Task> list, boolean forRevision) {
  //        if (list == null) {
         //            return null;
         //        }
@@ -659,8 +806,8 @@ public class Concept extends Item<Term> {
             for (int i = 0; i < list.size(); i++) {
                 Task judgT = list.get(i);
                 Sentence judg = judgT.sentence;
-                beliefQuality = solutionQuality(query, judg, memory);
-                if (beliefQuality > currentBest) {
+                beliefQuality = solutionQuality(query, judg, memory); //makes revision explicitly search for 
+                if (beliefQuality > currentBest /*&& (!forRevision || judgT.sentence.equalsContent(query)) */ && (!forRevision || !Stamp.baseOverlap(query.stamp.evidentialBase, judg.stamp.evidentialBase))) {
                     currentBest = beliefQuality;
                     candidate = judgT;
                 }
@@ -678,9 +825,10 @@ public class Concept extends Item<Term> {
      * @param taskLink The termLink to be inserted
      */
     protected boolean insertTaskLink(final TaskLink taskLink) {        
-        
-        //if taskLink predicts this concept then add to predictive 
         Task target = taskLink.getTarget();
+        /*
+        //if taskLink predicts this concept then add to predictive 
+        
         Term term = target.getTerm();
         boolean wat = target.sentence.isJudgment();
         if(//target.isObservablePrediction() &&
@@ -698,17 +846,36 @@ public class Concept extends Item<Term> {
                 if(subj instanceof Conjunction) {
                     Conjunction conj = (Conjunction) subj;
                     if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
-                            conj.term.length >= 4 && 
+                            conj.term.length == 4 && 
                             conj.term[conj.term.length-1] instanceof Interval && 
                             conj.term[conj.term.length-2] instanceof Operation) {
-                        addToTable(target, false, executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, EnactableExplainationAdd.class, EnactableExplainationRemove.class);
+                        
+                        //we do not add the target, instead the strongest belief in the target concept
+                        Concept conc = memory.concept(target.getTerm());
+                        if(conc != null && conc.beliefs.size() > 0) {
+                            Task strongest_target = conc.beliefs.get(0);
+                            //at first we have to remove the last one with same content from table
+                            int i_delete = -1;
+                            for(int i=0; i<this.executable_preconditions.size(); i++) {
+                                if(this.executable_preconditions.get(i).getTerm().equals(strongest_target.getTerm())) {
+                                    i_delete = i;
+                                    break;
+                                }
+                            }
+                            if(i_delete != -1) {
+                                executable_preconditions.remove(i_delete);
+                            }
+                            //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
+                            
+                            addToTable(strongest_target, true, executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, EnactableExplainationAdd.class, EnactableExplainationRemove.class);
+                        }
                     }
                 }
             }
         }
         if(this.name().equals(target.getTerm())) {
             
-        }
+        }*/
         
         //HANDLE MAX PER CONTENT
         //if taskLinks already contain a certain amount of tasks with same content then one has to go
@@ -906,9 +1073,9 @@ public class Concept extends Item<Term> {
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
             
             Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
-            if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
+            /*if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
                nal.singlePremiseTask(projectedBelief, task.budget);
-            }
+            }*/
             
             return projectedBelief;     // return the first satisfying belief
         }
