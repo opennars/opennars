@@ -276,7 +276,7 @@ public class Concept extends Item<Term> {
                 if(pred_conc != null && !(pred instanceof Operation) && (subj instanceof Conjunction)) {
                     Conjunction conj = (Conjunction) subj;
                     if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
-                            conj.term.length == 4 && 
+                            conj.term.length >= 4 && conj.term.length%2 == 0 &&
                             conj.term[conj.term.length-1] instanceof Interval && 
                             conj.term[conj.term.length-2] instanceof Operation) {
                         
@@ -504,17 +504,12 @@ public class Concept extends Item<Term> {
                 Operation bestop = null;
                 float bestop_truthexp = 0.0f;
                 TruthValue bestop_truth = null;
-                long expect_result_at = -1;
-                Term expect_result = null;
                 for(Task t: this.executable_preconditions) {
                     Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
                     Term[] newprec = new Term[prec.length-3];
                     for(int i=0;i<prec.length-3;i++) { //skip the last part: interval, operator, interval
                         newprec[i] = prec[i];
                     }
-                    
-                    expect_result_at = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
-                    expect_result = ((Implication) t.getTerm()).getPredicate();
                     
                     Operation op = (Operation) prec[prec.length-2];
                     Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
@@ -524,42 +519,16 @@ public class Concept extends Item<Term> {
                     Task bestsofar = null;
                     if(preconc != null) { //ok we can look now how much it is fullfilled
                         
-                        for(Task p : preconc.beliefs) { //search events first
-                            if(p.isInput() && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime && p.sentence.getOccurenceTime() <= memory.time()) {
-                                newesttime = p.sentence.getOccurenceTime();
-                                bestsofar = p; //we use the newest for now
-                            } //TODO relax to non-input
-                        }
-                        
-                        //also check tasklinks:
-                        for(TaskLink pl : preconc.taskLinks) { //search events first
-                            Task p = pl.getTarget();
-                           try {
-                            if(p.isInput() && p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= memory.time()) {
-                                newesttime = p.sentence.getOccurenceTime();
-                                bestsofar = p; //we use the newest for now
-                            }
-                           }catch(Exception ex) {
-                               System.out.println("wat");
-                           }
-                        }
-                        
                         //check recent events in event bag
                         for(Task p : this.memory.sequenceTasks) {
-                            try {
-                            if(p.isInput() && p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= memory.time()) {
+                            if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= memory.time()) {
                                 newesttime = p.sentence.getOccurenceTime();
                                 bestsofar = p; //we use the newest for now
                             }
-                           }catch(Exception ex) {
-                               System.out.println("wat");
-                           }
                         }
-                       
                         if(bestsofar == null) {
                             continue;
                         }
-
                         //ok now we can take the desire value:
                         TruthValue A = projectedGoal.getTruth();
                         //and the truth of the hypothesis:
@@ -570,11 +539,10 @@ public class Concept extends Item<Term> {
                         if(projectedPrecon.isEternal()) {
                             continue; //projection wasn't better than eternalization, too long in the past
                         }
-                        
                         //debug start
-                        long timeA = memory.time();
-                        long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
-                        long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
+                        //long timeA = memory.time();
+                        //long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
+                        //long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
                         //debug end
                         TruthValue precon = projectedPrecon.truth;
                         //and derive the conjunction of the left side:
@@ -591,23 +559,11 @@ public class Concept extends Item<Term> {
                     }
                 }
 
-                if(bestop != null && bestop_truthexp > memory.param.decisionThreshold.get() && Math.random() < bestop_truthexp) {
+                if(bestop != null && bestop_truthexp > memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
                     Task t = new Task(new Sentence(bestop,Symbols.JUDGMENT_MARK,bestop_truth, projectedGoal.stamp), new BudgetValue(1.0f,1.0f,1.0f));
                     System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
                     if(!executeDecision(t)) { //this task is just used as dummy
                         memory.emit(UnexecutableGoal.class, task, this, nal);
-                    } else {
-                        //it was executed, so anticipate the result
-                        /*Anticipate ret = ((Anticipate)memory.getOperator("^anticipate"));
-                        if(ret!=null) {
-                            Sentence s = new Sentence(expect_result, Symbols.JUDGMENT_MARK, new TruthValue(1.0f,0.9f), new Stamp(nal.memory));
-                            s.stamp.setOccurrenceTime(expect_result_at);
-                            Task dummy = new Task(s, new BudgetValue(0.5f,0.5f,0.5f));
-                            //ret.anticipate(expect_result, nal.memory, expect_result_at, dummy);
-                        }
-                        ret.anticipate(task.sentence.term, memory, task.sentence.getOccurenceTime(),task);
-                        */
-                        
                     }
                 }
                 }catch(Exception ex){}
