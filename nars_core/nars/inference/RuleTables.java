@@ -118,7 +118,9 @@ public class RuleTables {
             
             //too restrictive, its checked for non-deductive inference rules in derivedTask (also for single prem)
             if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief.stamp.evidentialBase)) {
-                return;
+                if(Parameters.EVIDENTAL_OVERLAP_PROCEED_CHANCE == 0 || memory.randomNumber.nextDouble() < Parameters.EVIDENTAL_OVERLAP_PROCEED_CHANCE) {
+                    return;
+                }
             }
             //comment out for recursive examples, this is for the future, it generates a lot of potentially useless tasks
             
