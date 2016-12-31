@@ -43,7 +43,6 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
-import nars.io.Output;
 import nars.io.Output.ANTICIPATE;
 import nars.io.Output.CONFIRM;
 import nars.io.Output.DISAPPOINT;
@@ -53,8 +52,6 @@ import nars.language.Interval;
 import nars.language.Product;
 import nars.language.Term;
 import nars.operator.Operation;
-import nars.operator.Operation;
-import nars.operator.Operator;
 import nars.operator.Operator;
 import nars.plugin.mental.InternalExperience;
 
@@ -221,7 +218,7 @@ public class Anticipate extends Operator implements EventObserver {
             return;
         }
         
-        if(t.sentence.truth.getExpectation()<Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
+        if(t.sentence.truth.getExpectation() < Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
             return;
         } 
         
