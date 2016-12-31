@@ -298,9 +298,12 @@ public class TemporalRules {
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
         TruthValue truth4 = TruthFunctions.intersection(givenTruth1, givenTruth2);
         BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
+        budget1.setPriority(budget1.getPriority() * Parameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
+        budget2.setPriority(budget2.getPriority() * Parameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
-        BudgetValue budget4 = BudgetFunctions.forward(truth4, nal);
+        budget3.setPriority(budget3.getPriority() * Parameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
+        BudgetValue budget4 = BudgetFunctions.forward(truth4, nal); //this one is sequence in sequenceBag, no need to reduce here
         
         //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
         if(!SucceedingEventsInduction) { //reduce priority according to temporal distance
