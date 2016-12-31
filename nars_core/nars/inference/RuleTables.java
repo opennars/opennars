@@ -107,18 +107,11 @@ public class RuleTables {
                     nal.setCurrentBelief(inference_belief);
                     nal.setTheNewStamp(task.sentence.stamp, belief.stamp, nal.memory.time());
                 }
-            }
-            
-            //too restrictive, its checked for non-deductive inference rules in derivedTask
-            for(int i=0;i<belief.stamp.evidentialBase.length;i++) {
-                if(task_base.contains(Long.valueOf(belief.stamp.evidentialBase[i]))) {
-                    return;
-                }
             }*/
             
             //too restrictive, its checked for non-deductive inference rules in derivedTask (also for single prem)
             if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief.stamp.evidentialBase)) {
-                if(Parameters.EVIDENTAL_OVERLAP_PROCEED_CHANCE == 0 || memory.randomNumber.nextDouble() < Parameters.EVIDENTAL_OVERLAP_PROCEED_CHANCE) {
+                if(Parameters.EVIDENTAL_OVERLAP_PROCEED_CHANCE == 0 || memory.randomNumber.nextDouble() >= Parameters.EVIDENTAL_OVERLAP_PROCEED_CHANCE) {
                     return;
                 }
             }
