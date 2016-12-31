@@ -388,8 +388,8 @@ public class SimNAR extends Frame {
             }
             if(j.type==1 || j.type==2)
             {
-                j.x=random(1)*width;
-                j.y=random(1)*height;
+                j.x=padding+random(1)*(width-padding);
+                j.y=padding+random(1)*(height-padding);
             }
         }
         int Hsim_eyesize=3; //9
@@ -1291,7 +1291,7 @@ public class SimNAR extends Frame {
                 y=Y;
                 a=A;
                 v=V;
-                s=S;
+                s=25.0f;
                 vx=Vx;
                 vy=Vy;
                 type=Type;
@@ -1319,6 +1319,7 @@ public class SimNAR extends Frame {
             size(600,600);
         }
 
+        int padding = 80;
         public void setup()
         {
             this.size(800, 600);
@@ -1336,17 +1337,17 @@ public class SimNAR extends Frame {
                 Hai h=new Hai(nactions,SomSize);
                 //h.som=new Hsom(SomSize,Hsim_eyesize*2);
                 //h.som.Leaky=false;
-                test=new Obj(new Hsim_Custom(),h,(int)(random(1)*(double)width),(int)(random(1)*(double)height),random(1)*2*PI-PI,random(1),0,0,random(1)*5+20,0,Hsim_eyesize);
+                test=new Obj(new Hsim_Custom(),h,(int)(padding+random(1)*(width-padding)),(int)(padding+random(1)*(height-padding)),random(1)*2*PI-PI,random(1),0,0,random(1)*5+20,0,Hsim_eyesize);
                 hsim.obj.add(test);
             }
             lastclicked=((Obj)hsim.obj.get(0));
             for(int i=0;i<5;i++)
             {
-                hsim.obj.add(new Obj(null,null,(int)(random(1)*(double)width),(int)(random(1)*(double)height),random(1)*2*PI,0,0,0,random(1)*5+20,1,10));
+                hsim.obj.add(new Obj(null,null,(int)(padding+random(1)*(width-padding)),(int)(padding+random(1)*(height-padding)),random(1)*2*PI,0,0,0,random(1)*5+20,1,10));
             }
             for(int i=0;i<5;i++)
             {
-                hsim.obj.add(new Obj(null,null,(int)(random(1)*(double)width),(int)(random(1)*(double)height),random(1)*2*PI,0,0,0,random(1)*5+20,2,10));
+                hsim.obj.add(new Obj(null,null,(int)(padding+random(1)*(width-padding)),(int)(padding+random(1)*(height-padding)),random(1)*2*PI,0,0,0,random(1)*5+20,2,10));
             }
             hsim.viewdist=width/5; //4
             label1=new Gui(0,height-25,width,25, "label1", "", false);
