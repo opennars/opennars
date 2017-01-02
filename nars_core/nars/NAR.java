@@ -274,6 +274,29 @@ public class NAR implements Runnable {
         
     }
     
+    public NAR askNow(String termString, Answered answered) throws InvalidInputException {
+        
+        Task t;
+        addInput(
+                t = new Task(
+                        new Sentence(
+                                new Narsese(this).parseTerm(termString),
+                                Symbols.QUESTION_MARK, 
+                                null, 
+                                new Stamp(memory, Tense.Present)), 
+                        new BudgetValue(
+                                Parameters.DEFAULT_QUESTION_PRIORITY, 
+                                Parameters.DEFAULT_QUESTION_DURABILITY, 
+                                1))
+        );
+        
+        if (answered!=null) {
+            answered.start(t, this);
+        }
+        return this;
+        
+    }
+    
     public NAR addInput(final Sentence sentence) throws InvalidInputException {
         
         //TODO use correct default values depending on sentence punctuation

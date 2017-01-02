@@ -112,7 +112,7 @@ public class SupervisedRecognition {
                 "ooxoo" + "\n", -1);
         
         try {
-                nar.ask("<?what --> EXAMPLE>", new Answered() {
+                nar.askNow("<?what --> EXAMPLE>", new Answered() {
                     @Override
                     public void onSolution(Sentence belief) {
                         System.out.println(belief);
