@@ -95,10 +95,6 @@ public final class BudgetFunctions extends UtilityFunctions {
             bLink.decDurability(1 - difB);
         }
         float dif = truth.getConfidence() - max(tTruth.getConfidence(), bTruth.getConfidence());
-        
-        //TODO determine if this is correct
-        if (dif < 0) dif = 0;  
-        
         float priority = or(dif, task.getPriority());
         float durability = aveAri(dif, task.getDurability());
         float quality = truthToQuality(truth);
