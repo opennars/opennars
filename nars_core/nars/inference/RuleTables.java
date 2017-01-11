@@ -651,7 +651,7 @@ public class RuleTables {
             
             Term[] u = new Term[] { statement, content };
             
-            if (!component.hasVarIndep()) {
+            if (!component.hasVarIndep() && !component.hasVarDep()) { //because of example: <<(*,w1,#2) --> [good]> ==> <w1 --> TRANSLATE>>. <(*,w1,w2) --> [good]>.
                 SyllogisticRules.detachment(mainSentence, subSentence, index, nal);
             } else if (Variables.unify(VAR_INDEPENDENT, component, content, u)) {
                 mainSentence = mainSentence.clone(u[0]);
