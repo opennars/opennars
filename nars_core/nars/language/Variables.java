@@ -14,6 +14,24 @@ public class Variables {
         return findSubstitute(type, term1, term2, new Map[] { map1, map2 });
     }
     
+    public static boolean allowUnification(final char type, final char uniType)
+    { //it is valid to allow dependent var unification in case that a independent var unification is happening,
+        //as shown in the 
+        // <(&&,<$1 --> [ENGLISH]>, <$2 --> [CHINESE]>, <(*, $1, #3) --> REPRESENT>, <(*, $2, #3) --> REPRESENT>) ==> <(*, $1, $2) --> TRANSLATE>>.
+        //example by Kai Liu.
+        //1.7.0 and 2.0.1 also already allowed this, so this is for v1.6.x now.
+        
+        if(uniType == type) { //the usual case
+            return true;
+        }
+        if(uniType == Symbols.VAR_INDEPENDENT) { //the now allowed case
+            if(type == Symbols.VAR_DEPENDENT) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /** map is a 2-element array of HashMap<Term,Term>. it may be null, in which case
      * the maps will be instantiated as necessary.  
      * this is to delay the instantiation of the 2 HashMap until necessary to avoid
@@ -38,7 +56,7 @@ public class Variables {
         }*/
         
         Term t;                
-        if (term1Var && (((Variable) term1).getType() == type)) {
+        if (term1Var && allowUnification(((Variable) term1).getType(), type)) {
             final Variable var1 = (Variable) term1;            
             t = map[0]!=null ? map[0].get(var1) : null;
             
@@ -48,7 +66,7 @@ public class Variables {
                 
                 if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
                 
-                if ((term2 instanceof Variable) && (((Variable) term2).getType() == type)) {
+                if ((term2 instanceof Variable) && allowUnification(((Variable) term2).getType(), type)) {
                     Variable CommonVar = makeCommonVariable(term1, term2);                    
                     map[0].put(var1, CommonVar);
                     map[1].put(term2, CommonVar);
@@ -64,7 +82,7 @@ public class Variables {
                 }
                 return true;
             }
-        } else if (term2Var && (((Variable) term2).getType() == type)) {
+        } else if (term2Var && allowUnification(((Variable) term2).getType(), type)) {
             final Variable var2 = (Variable) term2;            
             t = map[1]!=null ? map[1].get(var2) : null;
             
