@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: nars.lab.launcher.Launcher
+Main-Class: nars.gui.NARSwing
 

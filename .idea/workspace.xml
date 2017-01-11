@@ -9,6 +9,9 @@
     <list default="true" id="30ccc499-a9a1-4a74-8896-3f16e16c3486" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/config/RuntimeParameters.java" afterPath="$PROJECT_DIR$/nars_core/nars/config/RuntimeParameters.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_web/src/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/nars_web/src/META-INF/MANIFEST.MF" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/opennars16.iml" afterPath="$PROJECT_DIR$/opennars16.iml" />
     </list>
     <ignored path="opennars16.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -32,29 +35,42 @@
       <file leaf-file-name="Memory.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nars_core/nars/storage/Memory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4539">
+            <state relative-caret-position="5559">
               <caret line="413" column="31" lean-forward="false" selection-start-line="413" selection-start-column="31" selection-end-line="413" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Concept.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nars_core/nars/entity/Concept.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5627">
-              <caret line="455" column="60" lean-forward="false" selection-start-line="455" selection-start-column="60" selection-end-line="455" selection-end-column="60" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Operator.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nars_core/nars/operator/Operator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2227">
-              <caret line="205" column="0" lean-forward="false" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
-              <folding />
+              <folding>
+                <element signature="e#0#24196#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#3206#3207#0" expanded="false" />
+                <element signature="e#3258#3259#0" expanded="false" />
+                <element signature="e#5566#5567#0" expanded="false" />
+                <element signature="e#5603#5604#0" expanded="false" />
+                <element signature="e#5639#5640#0" expanded="false" />
+                <element signature="e#5682#5683#0" expanded="false" />
+                <element signature="e#5775#5776#0" expanded="false" />
+                <element signature="e#5803#5804#0" expanded="false" />
+                <element signature="e#5888#5889#0" expanded="false" />
+                <element signature="e#5937#5938#0" expanded="false" />
+                <element signature="e#5977#5978#0" expanded="false" />
+                <element signature="e#6008#6009#0" expanded="false" />
+                <element signature="e#6306#6307#0" expanded="false" />
+                <element signature="e#6348#6349#0" expanded="false" />
+                <element signature="e#12614#12615#0" expanded="false" />
+                <element signature="e#12659#12660#0" expanded="false" />
+                <element signature="e#12717#12718#0" expanded="false" />
+                <element signature="e#12763#12764#0" expanded="false" />
+                <element signature="e#15213#15214#0" expanded="false" />
+                <element signature="e#15254#15255#0" expanded="false" />
+                <element signature="e#15443#15444#0" expanded="false" />
+                <element signature="e#15495#15496#0" expanded="false" />
+                <element signature="e#15572#15573#0" expanded="false" />
+                <element signature="e#15615#15616#0" expanded="false" />
+                <element signature="e#15657#15658#0" expanded="false" />
+                <element signature="e#15706#15707#0" expanded="false" />
+                <element signature="e#15891#15892#0" expanded="false" />
+                <element signature="e#15949#15950#0" expanded="false" />
+                <element signature="e#24108#24109#0" expanded="false" />
+                <element signature="e#24183#24184#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -62,9 +78,16 @@
       <file leaf-file-name="TruthFunctions.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nars_core/nars/inference/TruthFunctions.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2601">
+            <state relative-caret-position="3774">
               <caret line="244" column="43" lean-forward="false" selection-start-line="244" selection-start-column="43" selection-end-line="244" selection-end-column="43" />
-              <folding />
+              <folding>
+                <element signature="e#0#15049#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#7067#7068#0" expanded="false" />
+                <element signature="e#7107#7108#0" expanded="false" />
+                <element signature="e#14220#14221#0" expanded="false" />
+                <element signature="e#14255#14256#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -72,9 +95,43 @@
       <file leaf-file-name="SimNAR.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nars_lab/nars/lab/microworld/SimNAR.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4131">
+            <state relative-caret-position="4182">
               <caret line="267" column="32" lean-forward="false" selection-start-line="267" selection-start-column="32" selection-end-line="267" selection-end-column="32" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+                <element signature="e#9316#9317#0" expanded="false" />
+                <element signature="e#9367#9368#0" expanded="false" />
+                <element signature="e#9790#9791#0" expanded="false" />
+                <element signature="e#9841#9842#0" expanded="false" />
+                <element signature="e#12656#12657#0" expanded="false" />
+                <element signature="e#12699#12700#0" expanded="false" />
+                <element signature="e#12745#12746#0" expanded="false" />
+                <element signature="e#12791#12792#0" expanded="false" />
+                <element signature="e#12836#12837#0" expanded="false" />
+                <element signature="e#12881#12882#0" expanded="false" />
+                <element signature="e#12926#12927#0" expanded="false" />
+                <element signature="e#12971#12972#0" expanded="false" />
+                <element signature="e#13011#13012#0" expanded="false" />
+                <element signature="e#13074#13075#0" expanded="false" />
+                <element signature="e#24136#24137#0" expanded="false" />
+                <element signature="e#24191#24192#0" expanded="false" />
+                <element signature="e#25128#25129#0" expanded="false" />
+                <element signature="e#25196#25197#0" expanded="false" />
+                <element signature="e#25246#25247#0" expanded="false" />
+                <element signature="e#25302#25303#0" expanded="false" />
+                <element signature="e#25352#25353#0" expanded="false" />
+                <element signature="e#25406#25407#0" expanded="false" />
+                <element signature="e#27503#27504#0" expanded="false" />
+                <element signature="e#27552#27553#0" expanded="false" />
+                <element signature="e#28486#28487#0" expanded="false" />
+                <element signature="e#28529#28530#0" expanded="false" />
+                <element signature="e#28571#28572#0" expanded="false" />
+                <element signature="e#28618#28619#0" expanded="false" />
+                <element signature="e#36656#36657#0" expanded="false" />
+                <element signature="e#36696#36697#0" expanded="false" />
+                <element signature="e#40874#40875#0" expanded="false" />
+                <element signature="e#40911#40912#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -82,9 +139,18 @@
       <file leaf-file-name="BagPerf.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nars_test/nars/perf/BagPerf.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
+            <state relative-caret-position="170">
               <caret line="40" column="13" lean-forward="false" selection-start-line="40" selection-start-column="13" selection-end-line="40" selection-end-column="13" />
-              <folding />
+              <folding>
+                <element signature="e#0#9326#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#3574#3575#0" expanded="false" />
+                <element signature="e#3671#3672#0" expanded="false" />
+                <element signature="e#3886#3887#0" expanded="false" />
+                <element signature="e#3920#3921#0" expanded="false" />
+                <element signature="e#6701#6702#0" expanded="false" />
+                <element signature="e#6765#6766#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -94,7 +160,9 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="34">
               <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -104,28 +172,52 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="34">
               <caret line="7" column="27" lean-forward="false" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="NALStressMeasure.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/nars_test/nars/perf/NALStressMeasure.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="18" column="8" lean-forward="false" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="imports" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DerivationContext.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nars_core/nars/control/DerivationContext.java">
+      <file leaf-file-name="NALStressMeasure.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nars_test/nars/perf/NALStressMeasure.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="34" column="3" lean-forward="false" selection-start-line="34" selection-start-column="3" selection-end-line="34" selection-end-column="3" />
+            <state relative-caret-position="136">
+              <caret line="18" column="8" lean-forward="false" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GCheckbox.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nars_gui/automenta/vivisect/gui/GCheckbox.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="349">
+              <caret line="70" column="41" lean-forward="false" selection-start-line="70" selection-start-column="41" selection-end-line="70" selection-end-column="41" />
+              <folding>
+                <element signature="e#0#2455#0" expanded="false" />
+                <element signature="e#1475#1476#0" expanded="false" />
+                <element signature="e#1517#1518#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Parameters.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nars_core/nars/config/Parameters.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="125" column="51" lean-forward="false" selection-start-line="125" selection-start-column="51" selection-end-line="125" selection-end-column="51" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RuntimeParameters.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/nars_core/nars/config/RuntimeParameters.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="269">
+              <caret line="51" column="71" lean-forward="false" selection-start-line="51" selection-start-column="71" selection-end-line="51" selection-end-column="71" />
               <folding />
             </state>
           </provider>
@@ -154,6 +246,7 @@
         <option value="$PROJECT_DIR$/nars_core/nars/inference/TruthFunctions.java" />
         <option value="$PROJECT_DIR$/nars_core/nars/storage/Memory.java" />
         <option value="$PROJECT_DIR$/nars_test/nars/perf/NALPerfLoop.java" />
+        <option value="$PROJECT_DIR$/nars_core/nars/config/RuntimeParameters.java" />
       </list>
     </option>
   </component>
@@ -167,7 +260,7 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1616" />
+    <option name="width" value="1612" />
     <option name="height" value="886" />
   </component>
   <component name="ProjectView">
@@ -185,6 +278,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -305,20 +401,38 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="opennars16" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="opennars16" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nars_core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nars" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="config" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Problems" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="project.propDebugger" />
-    <property name="settings.editor.splitter.proportion" value="0.2" />
   </component>
   <component name="RunManager" selected="Application.SimNAR">
     <configuration default="false" name="NARSwing" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -680,12 +794,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1612" height="886" extended-state="1" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34877735" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -697,7 +812,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13688946" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13659148" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -710,7 +825,6 @@
       <window_info id="REPL" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Leiningen" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16445623" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891247" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -753,27 +867,45 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/nars_core/nars/operator/Operator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2227">
-          <caret line="205" column="0" lean-forward="false" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nars_core/nars/inference/TruthFunctions.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2601">
-          <caret line="244" column="43" lean-forward="false" selection-start-line="244" selection-start-column="43" selection-end-line="244" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/nars_lab/nars/lab/microworld/SimNAR.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4131">
           <caret line="267" column="32" lean-forward="false" selection-start-line="267" selection-start-column="32" selection-end-line="267" selection-end-column="32" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#9316#9317#0" expanded="false" />
+            <element signature="e#9367#9368#0" expanded="false" />
+            <element signature="e#9790#9791#0" expanded="false" />
+            <element signature="e#9841#9842#0" expanded="false" />
+            <element signature="e#12656#12657#0" expanded="false" />
+            <element signature="e#12699#12700#0" expanded="false" />
+            <element signature="e#12745#12746#0" expanded="false" />
+            <element signature="e#12791#12792#0" expanded="false" />
+            <element signature="e#12836#12837#0" expanded="false" />
+            <element signature="e#12881#12882#0" expanded="false" />
+            <element signature="e#12926#12927#0" expanded="false" />
+            <element signature="e#12971#12972#0" expanded="false" />
+            <element signature="e#13011#13012#0" expanded="false" />
+            <element signature="e#13074#13075#0" expanded="false" />
+            <element signature="e#24136#24137#0" expanded="false" />
+            <element signature="e#24191#24192#0" expanded="false" />
+            <element signature="e#25128#25129#0" expanded="false" />
+            <element signature="e#25196#25197#0" expanded="false" />
+            <element signature="e#25246#25247#0" expanded="false" />
+            <element signature="e#25302#25303#0" expanded="false" />
+            <element signature="e#25352#25353#0" expanded="false" />
+            <element signature="e#25406#25407#0" expanded="false" />
+            <element signature="e#27503#27504#0" expanded="false" />
+            <element signature="e#27552#27553#0" expanded="false" />
+            <element signature="e#28486#28487#0" expanded="false" />
+            <element signature="e#28529#28530#0" expanded="false" />
+            <element signature="e#28571#28572#0" expanded="false" />
+            <element signature="e#28618#28619#0" expanded="false" />
+            <element signature="e#36656#36657#0" expanded="false" />
+            <element signature="e#36696#36697#0" expanded="false" />
+            <element signature="e#40874#40875#0" expanded="false" />
+            <element signature="e#40911#40912#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -781,7 +913,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
           <caret line="40" column="13" lean-forward="false" selection-start-line="40" selection-start-column="13" selection-end-line="40" selection-end-column="13" />
-          <folding />
+          <folding>
+            <element signature="e#0#9326#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#3574#3575#0" expanded="false" />
+            <element signature="e#3671#3672#0" expanded="false" />
+            <element signature="e#3886#3887#0" expanded="false" />
+            <element signature="e#3920#3921#0" expanded="false" />
+            <element signature="e#6701#6702#0" expanded="false" />
+            <element signature="e#6765#6766#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -789,7 +930,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -797,7 +940,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="7" column="27" lean-forward="false" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -805,9 +950,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -815,7 +958,48 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="34" column="3" lean-forward="true" selection-start-line="34" selection-start-column="3" selection-end-line="34" selection-end-column="3" />
-          <folding />
+          <folding>
+            <element signature="e#0#18112#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#1373#1374#0" expanded="false" />
+            <element signature="e#1408#1409#0" expanded="false" />
+            <element signature="e#2191#2192#0" expanded="false" />
+            <element signature="e#2224#2225#0" expanded="false" />
+            <element signature="e#14151#14152#0" expanded="false" />
+            <element signature="e#14187#14188#0" expanded="false" />
+            <element signature="e#14221#14222#0" expanded="false" />
+            <element signature="e#14252#14253#0" expanded="false" />
+            <element signature="e#14299#14300#0" expanded="false" />
+            <element signature="e#14339#14340#0" expanded="false" />
+            <element signature="e#14422#14423#0" expanded="false" />
+            <element signature="e#14456#14457#0" expanded="false" />
+            <element signature="e#14573#14574#0" expanded="false" />
+            <element signature="e#14627#14628#0" expanded="false" />
+            <element signature="e#14688#14689#0" expanded="false" />
+            <element signature="e#14740#14741#0" expanded="false" />
+            <element signature="e#15704#15705#0" expanded="false" />
+            <element signature="e#15773#15774#0" expanded="false" />
+            <element signature="e#15881#15882#0" expanded="false" />
+            <element signature="e#15917#15918#0" expanded="false" />
+            <element signature="e#16046#16047#0" expanded="false" />
+            <element signature="e#16096#16097#0" expanded="false" />
+            <element signature="e#16195#16196#0" expanded="false" />
+            <element signature="e#16235#16236#0" expanded="false" />
+            <element signature="e#16380#16381#0" expanded="false" />
+            <element signature="e#16438#16439#0" expanded="false" />
+            <element signature="e#16533#16534#0" expanded="false" />
+            <element signature="e#16571#16572#0" expanded="false" />
+            <element signature="e#16708#16709#0" expanded="false" />
+            <element signature="e#16762#16763#0" expanded="false" />
+            <element signature="e#16845#16846#0" expanded="false" />
+            <element signature="e#16879#16880#0" expanded="false" />
+            <element signature="e#16996#16997#0" expanded="false" />
+            <element signature="e#17042#17043#0" expanded="false" />
+            <element signature="e#17134#17135#0" expanded="false" />
+            <element signature="e#17171#17172#0" expanded="false" />
+            <element signature="e#17198#17199#0" expanded="false" />
+            <element signature="e#17227#17228#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -823,7 +1007,40 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="413" column="102" lean-forward="false" selection-start-line="413" selection-start-column="102" selection-end-line="413" selection-end-column="102" />
-          <folding />
+          <folding>
+            <element signature="e#0#24196#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#3206#3207#0" expanded="false" />
+            <element signature="e#3258#3259#0" expanded="false" />
+            <element signature="e#5566#5567#0" expanded="false" />
+            <element signature="e#5603#5604#0" expanded="false" />
+            <element signature="e#5639#5640#0" expanded="false" />
+            <element signature="e#5682#5683#0" expanded="false" />
+            <element signature="e#5775#5776#0" expanded="false" />
+            <element signature="e#5803#5804#0" expanded="false" />
+            <element signature="e#5888#5889#0" expanded="false" />
+            <element signature="e#5937#5938#0" expanded="false" />
+            <element signature="e#5977#5978#0" expanded="false" />
+            <element signature="e#6008#6009#0" expanded="false" />
+            <element signature="e#6306#6307#0" expanded="false" />
+            <element signature="e#6348#6349#0" expanded="false" />
+            <element signature="e#12614#12615#0" expanded="false" />
+            <element signature="e#12659#12660#0" expanded="false" />
+            <element signature="e#12717#12718#0" expanded="false" />
+            <element signature="e#12763#12764#0" expanded="false" />
+            <element signature="e#15213#15214#0" expanded="false" />
+            <element signature="e#15254#15255#0" expanded="false" />
+            <element signature="e#15443#15444#0" expanded="false" />
+            <element signature="e#15495#15496#0" expanded="false" />
+            <element signature="e#15572#15573#0" expanded="false" />
+            <element signature="e#15615#15616#0" expanded="false" />
+            <element signature="e#15657#15658#0" expanded="false" />
+            <element signature="e#15706#15707#0" expanded="false" />
+            <element signature="e#15891#15892#0" expanded="false" />
+            <element signature="e#15949#15950#0" expanded="false" />
+            <element signature="e#24108#24109#0" expanded="false" />
+            <element signature="e#24183#24184#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -831,7 +1048,24 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="455" column="60" lean-forward="false" selection-start-line="455" selection-start-column="60" selection-end-line="455" selection-end-column="60" />
-          <folding />
+          <folding>
+            <element signature="e#0#48539#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#5474#5475#0" expanded="false" />
+            <element signature="e#5501#5502#0" expanded="false" />
+            <element signature="e#41700#41701#0" expanded="false" />
+            <element signature="e#41740#41741#0" expanded="false" />
+            <element signature="e#46106#46107#0" expanded="false" />
+            <element signature="e#46138#46139#0" expanded="false" />
+            <element signature="e#48119#48120#0" expanded="false" />
+            <element signature="e#48157#48158#0" expanded="false" />
+            <element signature="e#48186#48187#0" expanded="false" />
+            <element signature="e#48213#48214#0" expanded="false" />
+            <element signature="e#48312#48313#0" expanded="false" />
+            <element signature="e#48372#48373#0" expanded="false" />
+            <element signature="e#48475#48476#0" expanded="false" />
+            <element signature="e#48535#48536#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -839,7 +1073,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="205" column="0" lean-forward="false" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#0#8547#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -847,7 +1084,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="244" column="43" lean-forward="false" selection-start-line="244" selection-start-column="43" selection-end-line="244" selection-end-column="43" />
-          <folding />
+          <folding>
+            <element signature="e#0#15049#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#7067#7068#0" expanded="false" />
+            <element signature="e#7107#7108#0" expanded="false" />
+            <element signature="e#14220#14221#0" expanded="false" />
+            <element signature="e#14255#14256#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -880,7 +1124,41 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#9316#9317#0" expanded="false" />
+            <element signature="e#9367#9368#0" expanded="false" />
+            <element signature="e#9790#9791#0" expanded="false" />
+            <element signature="e#9841#9842#0" expanded="false" />
+            <element signature="e#12656#12657#0" expanded="false" />
+            <element signature="e#12699#12700#0" expanded="false" />
+            <element signature="e#12745#12746#0" expanded="false" />
+            <element signature="e#12791#12792#0" expanded="false" />
+            <element signature="e#12836#12837#0" expanded="false" />
+            <element signature="e#12881#12882#0" expanded="false" />
+            <element signature="e#12926#12927#0" expanded="false" />
+            <element signature="e#12971#12972#0" expanded="false" />
+            <element signature="e#13011#13012#0" expanded="false" />
+            <element signature="e#13074#13075#0" expanded="false" />
+            <element signature="e#24136#24137#0" expanded="false" />
+            <element signature="e#24191#24192#0" expanded="false" />
+            <element signature="e#25128#25129#0" expanded="false" />
+            <element signature="e#25196#25197#0" expanded="false" />
+            <element signature="e#25246#25247#0" expanded="false" />
+            <element signature="e#25302#25303#0" expanded="false" />
+            <element signature="e#25352#25353#0" expanded="false" />
+            <element signature="e#25406#25407#0" expanded="false" />
+            <element signature="e#27503#27504#0" expanded="false" />
+            <element signature="e#27552#27553#0" expanded="false" />
+            <element signature="e#28486#28487#0" expanded="false" />
+            <element signature="e#28529#28530#0" expanded="false" />
+            <element signature="e#28571#28572#0" expanded="false" />
+            <element signature="e#28618#28619#0" expanded="false" />
+            <element signature="e#36656#36657#0" expanded="false" />
+            <element signature="e#36696#36697#0" expanded="false" />
+            <element signature="e#40874#40875#0" expanded="false" />
+            <element signature="e#40911#40912#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -888,7 +1166,48 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="34" column="22" lean-forward="false" selection-start-line="34" selection-start-column="22" selection-end-line="34" selection-end-column="22" />
-          <folding />
+          <folding>
+            <element signature="e#0#18112#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#1373#1374#0" expanded="false" />
+            <element signature="e#1408#1409#0" expanded="false" />
+            <element signature="e#2191#2192#0" expanded="false" />
+            <element signature="e#2224#2225#0" expanded="false" />
+            <element signature="e#14151#14152#0" expanded="false" />
+            <element signature="e#14187#14188#0" expanded="false" />
+            <element signature="e#14221#14222#0" expanded="false" />
+            <element signature="e#14252#14253#0" expanded="false" />
+            <element signature="e#14299#14300#0" expanded="false" />
+            <element signature="e#14339#14340#0" expanded="false" />
+            <element signature="e#14422#14423#0" expanded="false" />
+            <element signature="e#14456#14457#0" expanded="false" />
+            <element signature="e#14573#14574#0" expanded="false" />
+            <element signature="e#14627#14628#0" expanded="false" />
+            <element signature="e#14688#14689#0" expanded="false" />
+            <element signature="e#14740#14741#0" expanded="false" />
+            <element signature="e#15704#15705#0" expanded="false" />
+            <element signature="e#15773#15774#0" expanded="false" />
+            <element signature="e#15881#15882#0" expanded="false" />
+            <element signature="e#15917#15918#0" expanded="false" />
+            <element signature="e#16046#16047#0" expanded="false" />
+            <element signature="e#16096#16097#0" expanded="false" />
+            <element signature="e#16195#16196#0" expanded="false" />
+            <element signature="e#16235#16236#0" expanded="false" />
+            <element signature="e#16380#16381#0" expanded="false" />
+            <element signature="e#16438#16439#0" expanded="false" />
+            <element signature="e#16533#16534#0" expanded="false" />
+            <element signature="e#16571#16572#0" expanded="false" />
+            <element signature="e#16708#16709#0" expanded="false" />
+            <element signature="e#16762#16763#0" expanded="false" />
+            <element signature="e#16845#16846#0" expanded="false" />
+            <element signature="e#16879#16880#0" expanded="false" />
+            <element signature="e#16996#16997#0" expanded="false" />
+            <element signature="e#17042#17043#0" expanded="false" />
+            <element signature="e#17134#17135#0" expanded="false" />
+            <element signature="e#17171#17172#0" expanded="false" />
+            <element signature="e#17198#17199#0" expanded="false" />
+            <element signature="e#17227#17228#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -910,17 +1229,44 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="630" column="26" lean-forward="false" selection-start-line="630" selection-start-column="26" selection-end-line="630" selection-end-column="26" />
-          <folding />
+          <folding>
+            <element signature="e#0#24196#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#3206#3207#0" expanded="false" />
+            <element signature="e#3258#3259#0" expanded="false" />
+            <element signature="e#5566#5567#0" expanded="false" />
+            <element signature="e#5603#5604#0" expanded="false" />
+            <element signature="e#5639#5640#0" expanded="false" />
+            <element signature="e#5682#5683#0" expanded="false" />
+            <element signature="e#5775#5776#0" expanded="false" />
+            <element signature="e#5803#5804#0" expanded="false" />
+            <element signature="e#5888#5889#0" expanded="false" />
+            <element signature="e#5937#5938#0" expanded="false" />
+            <element signature="e#5977#5978#0" expanded="false" />
+            <element signature="e#6008#6009#0" expanded="false" />
+            <element signature="e#6306#6307#0" expanded="false" />
+            <element signature="e#6348#6349#0" expanded="false" />
+            <element signature="e#12614#12615#0" expanded="false" />
+            <element signature="e#12659#12660#0" expanded="false" />
+            <element signature="e#12717#12718#0" expanded="false" />
+            <element signature="e#12763#12764#0" expanded="false" />
+            <element signature="e#15213#15214#0" expanded="false" />
+            <element signature="e#15254#15255#0" expanded="false" />
+            <element signature="e#15443#15444#0" expanded="false" />
+            <element signature="e#15495#15496#0" expanded="false" />
+            <element signature="e#15572#15573#0" expanded="false" />
+            <element signature="e#15615#15616#0" expanded="false" />
+            <element signature="e#15657#15658#0" expanded="false" />
+            <element signature="e#15706#15707#0" expanded="false" />
+            <element signature="e#15891#15892#0" expanded="false" />
+            <element signature="e#15949#15950#0" expanded="false" />
+            <element signature="e#24108#24109#0" expanded="false" />
+            <element signature="e#24183#24184#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="jar://E:/Program Files/Java/jdk1.8.0_65/jre/lib/rt.jar!/sun/misc/Unsafe.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="365" column="5" lean-forward="false" selection-start-line="365" selection-start-column="5" selection-end-line="365" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://E:/Program Files/Java/jdk1.8.0_65/jre/lib/rt.jar!/sun/misc/Unsafe.class" />
     <entry file="file://$PROJECT_DIR$/nars_core/nars/NAR.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -942,17 +1288,44 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="641" column="26" lean-forward="false" selection-start-line="641" selection-start-column="26" selection-end-line="641" selection-end-column="26" />
-          <folding />
+          <folding>
+            <element signature="e#0#24196#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#3206#3207#0" expanded="false" />
+            <element signature="e#3258#3259#0" expanded="false" />
+            <element signature="e#5566#5567#0" expanded="false" />
+            <element signature="e#5603#5604#0" expanded="false" />
+            <element signature="e#5639#5640#0" expanded="false" />
+            <element signature="e#5682#5683#0" expanded="false" />
+            <element signature="e#5775#5776#0" expanded="false" />
+            <element signature="e#5803#5804#0" expanded="false" />
+            <element signature="e#5888#5889#0" expanded="false" />
+            <element signature="e#5937#5938#0" expanded="false" />
+            <element signature="e#5977#5978#0" expanded="false" />
+            <element signature="e#6008#6009#0" expanded="false" />
+            <element signature="e#6306#6307#0" expanded="false" />
+            <element signature="e#6348#6349#0" expanded="false" />
+            <element signature="e#12614#12615#0" expanded="false" />
+            <element signature="e#12659#12660#0" expanded="false" />
+            <element signature="e#12717#12718#0" expanded="false" />
+            <element signature="e#12763#12764#0" expanded="false" />
+            <element signature="e#15213#15214#0" expanded="false" />
+            <element signature="e#15254#15255#0" expanded="false" />
+            <element signature="e#15443#15444#0" expanded="false" />
+            <element signature="e#15495#15496#0" expanded="false" />
+            <element signature="e#15572#15573#0" expanded="false" />
+            <element signature="e#15615#15616#0" expanded="false" />
+            <element signature="e#15657#15658#0" expanded="false" />
+            <element signature="e#15706#15707#0" expanded="false" />
+            <element signature="e#15891#15892#0" expanded="false" />
+            <element signature="e#15949#15950#0" expanded="false" />
+            <element signature="e#24108#24109#0" expanded="false" />
+            <element signature="e#24183#24184#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="jar://E:/Program Files/Java/jdk1.8.0_65/jre/lib/rt.jar!/sun/misc/Unsafe.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="365" column="5" lean-forward="false" selection-start-line="365" selection-start-column="5" selection-end-line="365" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://E:/Program Files/Java/jdk1.8.0_65/jre/lib/rt.jar!/sun/misc/Unsafe.class" />
     <entry file="file://$PROJECT_DIR$/nars_core/nars/NAR.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -977,13 +1350,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://E:/Program Files/Java/jdk1.8.0_65/jre/lib/rt.jar!/sun/misc/Unsafe.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="365" column="5" lean-forward="false" selection-start-line="365" selection-start-column="5" selection-end-line="365" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://E:/Program Files/Java/jdk1.8.0_65/jre/lib/rt.jar!/sun/misc/Unsafe.class" />
     <entry file="file://$PROJECT_DIR$/nars_gui/nars/gui/NARSwing.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1032,13 +1399,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nars_core/nars/config/Parameters.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="125" column="51" lean-forward="false" selection-start-line="125" selection-start-column="51" selection-end-line="125" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/nars_core/nars/inference/RuleTables.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1073,57 +1433,201 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_core/nars/control/DerivationContext.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
+        <state relative-caret-position="119">
           <caret line="34" column="3" lean-forward="false" selection-start-line="34" selection-start-column="3" selection-end-line="34" selection-end-column="3" />
-          <folding />
+          <folding>
+            <element signature="e#0#18112#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#1373#1374#0" expanded="false" />
+            <element signature="e#1408#1409#0" expanded="false" />
+            <element signature="e#2191#2192#0" expanded="false" />
+            <element signature="e#2224#2225#0" expanded="false" />
+            <element signature="e#14151#14152#0" expanded="false" />
+            <element signature="e#14187#14188#0" expanded="false" />
+            <element signature="e#14221#14222#0" expanded="false" />
+            <element signature="e#14252#14253#0" expanded="false" />
+            <element signature="e#14299#14300#0" expanded="false" />
+            <element signature="e#14339#14340#0" expanded="false" />
+            <element signature="e#14422#14423#0" expanded="false" />
+            <element signature="e#14456#14457#0" expanded="false" />
+            <element signature="e#14573#14574#0" expanded="false" />
+            <element signature="e#14627#14628#0" expanded="false" />
+            <element signature="e#14688#14689#0" expanded="false" />
+            <element signature="e#14740#14741#0" expanded="false" />
+            <element signature="e#15704#15705#0" expanded="false" />
+            <element signature="e#15773#15774#0" expanded="false" />
+            <element signature="e#15881#15882#0" expanded="false" />
+            <element signature="e#15917#15918#0" expanded="false" />
+            <element signature="e#16046#16047#0" expanded="false" />
+            <element signature="e#16096#16097#0" expanded="false" />
+            <element signature="e#16195#16196#0" expanded="false" />
+            <element signature="e#16235#16236#0" expanded="false" />
+            <element signature="e#16380#16381#0" expanded="false" />
+            <element signature="e#16438#16439#0" expanded="false" />
+            <element signature="e#16533#16534#0" expanded="false" />
+            <element signature="e#16571#16572#0" expanded="false" />
+            <element signature="e#16708#16709#0" expanded="false" />
+            <element signature="e#16762#16763#0" expanded="false" />
+            <element signature="e#16845#16846#0" expanded="false" />
+            <element signature="e#16879#16880#0" expanded="false" />
+            <element signature="e#16996#16997#0" expanded="false" />
+            <element signature="e#17042#17043#0" expanded="false" />
+            <element signature="e#17134#17135#0" expanded="false" />
+            <element signature="e#17171#17172#0" expanded="false" />
+            <element signature="e#17198#17199#0" expanded="false" />
+            <element signature="e#17227#17228#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_core/nars/operator/Operator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2227">
+        <state relative-caret-position="2958">
           <caret line="205" column="0" lean-forward="false" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#0#8547#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_core/nars/entity/Concept.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5627">
+        <state relative-caret-position="6613">
           <caret line="455" column="60" lean-forward="false" selection-start-line="455" selection-start-column="60" selection-end-line="455" selection-end-column="60" />
-          <folding />
+          <folding>
+            <element signature="e#0#48539#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#5474#5475#0" expanded="false" />
+            <element signature="e#5501#5502#0" expanded="false" />
+            <element signature="e#41700#41701#0" expanded="false" />
+            <element signature="e#41740#41741#0" expanded="false" />
+            <element signature="e#46106#46107#0" expanded="false" />
+            <element signature="e#46138#46139#0" expanded="false" />
+            <element signature="e#48119#48120#0" expanded="false" />
+            <element signature="e#48157#48158#0" expanded="false" />
+            <element signature="e#48186#48187#0" expanded="false" />
+            <element signature="e#48213#48214#0" expanded="false" />
+            <element signature="e#48312#48313#0" expanded="false" />
+            <element signature="e#48372#48373#0" expanded="false" />
+            <element signature="e#48475#48476#0" expanded="false" />
+            <element signature="e#48535#48536#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_core/nars/inference/TruthFunctions.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2601">
+        <state relative-caret-position="3774">
           <caret line="244" column="43" lean-forward="false" selection-start-line="244" selection-start-column="43" selection-end-line="244" selection-end-column="43" />
-          <folding />
+          <folding>
+            <element signature="e#0#15049#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#7067#7068#0" expanded="false" />
+            <element signature="e#7107#7108#0" expanded="false" />
+            <element signature="e#14220#14221#0" expanded="false" />
+            <element signature="e#14255#14256#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_core/nars/storage/Memory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4539">
+        <state relative-caret-position="5559">
           <caret line="413" column="31" lean-forward="false" selection-start-line="413" selection-start-column="31" selection-end-line="413" selection-end-column="31" />
-          <folding />
+          <folding>
+            <element signature="e#0#24196#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#3206#3207#0" expanded="false" />
+            <element signature="e#3258#3259#0" expanded="false" />
+            <element signature="e#5566#5567#0" expanded="false" />
+            <element signature="e#5603#5604#0" expanded="false" />
+            <element signature="e#5639#5640#0" expanded="false" />
+            <element signature="e#5682#5683#0" expanded="false" />
+            <element signature="e#5775#5776#0" expanded="false" />
+            <element signature="e#5803#5804#0" expanded="false" />
+            <element signature="e#5888#5889#0" expanded="false" />
+            <element signature="e#5937#5938#0" expanded="false" />
+            <element signature="e#5977#5978#0" expanded="false" />
+            <element signature="e#6008#6009#0" expanded="false" />
+            <element signature="e#6306#6307#0" expanded="false" />
+            <element signature="e#6348#6349#0" expanded="false" />
+            <element signature="e#12614#12615#0" expanded="false" />
+            <element signature="e#12659#12660#0" expanded="false" />
+            <element signature="e#12717#12718#0" expanded="false" />
+            <element signature="e#12763#12764#0" expanded="false" />
+            <element signature="e#15213#15214#0" expanded="false" />
+            <element signature="e#15254#15255#0" expanded="false" />
+            <element signature="e#15443#15444#0" expanded="false" />
+            <element signature="e#15495#15496#0" expanded="false" />
+            <element signature="e#15572#15573#0" expanded="false" />
+            <element signature="e#15615#15616#0" expanded="false" />
+            <element signature="e#15657#15658#0" expanded="false" />
+            <element signature="e#15706#15707#0" expanded="false" />
+            <element signature="e#15891#15892#0" expanded="false" />
+            <element signature="e#15949#15950#0" expanded="false" />
+            <element signature="e#24108#24109#0" expanded="false" />
+            <element signature="e#24183#24184#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_lab/nars/lab/microworld/SimNAR.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4131">
+        <state relative-caret-position="4182">
           <caret line="267" column="32" lean-forward="false" selection-start-line="267" selection-start-column="32" selection-end-line="267" selection-end-column="32" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#9316#9317#0" expanded="false" />
+            <element signature="e#9367#9368#0" expanded="false" />
+            <element signature="e#9790#9791#0" expanded="false" />
+            <element signature="e#9841#9842#0" expanded="false" />
+            <element signature="e#12656#12657#0" expanded="false" />
+            <element signature="e#12699#12700#0" expanded="false" />
+            <element signature="e#12745#12746#0" expanded="false" />
+            <element signature="e#12791#12792#0" expanded="false" />
+            <element signature="e#12836#12837#0" expanded="false" />
+            <element signature="e#12881#12882#0" expanded="false" />
+            <element signature="e#12926#12927#0" expanded="false" />
+            <element signature="e#12971#12972#0" expanded="false" />
+            <element signature="e#13011#13012#0" expanded="false" />
+            <element signature="e#13074#13075#0" expanded="false" />
+            <element signature="e#24136#24137#0" expanded="false" />
+            <element signature="e#24191#24192#0" expanded="false" />
+            <element signature="e#25128#25129#0" expanded="false" />
+            <element signature="e#25196#25197#0" expanded="false" />
+            <element signature="e#25246#25247#0" expanded="false" />
+            <element signature="e#25302#25303#0" expanded="false" />
+            <element signature="e#25352#25353#0" expanded="false" />
+            <element signature="e#25406#25407#0" expanded="false" />
+            <element signature="e#27503#27504#0" expanded="false" />
+            <element signature="e#27552#27553#0" expanded="false" />
+            <element signature="e#28486#28487#0" expanded="false" />
+            <element signature="e#28529#28530#0" expanded="false" />
+            <element signature="e#28571#28572#0" expanded="false" />
+            <element signature="e#28618#28619#0" expanded="false" />
+            <element signature="e#36656#36657#0" expanded="false" />
+            <element signature="e#36696#36697#0" expanded="false" />
+            <element signature="e#40874#40875#0" expanded="false" />
+            <element signature="e#40911#40912#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_test/nars/perf/BagPerf.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
+        <state relative-caret-position="170">
           <caret line="40" column="13" lean-forward="false" selection-start-line="40" selection-start-column="13" selection-end-line="40" selection-end-column="13" />
-          <folding />
+          <folding>
+            <element signature="e#0#9326#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#3574#3575#0" expanded="false" />
+            <element signature="e#3671#3672#0" expanded="false" />
+            <element signature="e#3886#3887#0" expanded="false" />
+            <element signature="e#3920#3921#0" expanded="false" />
+            <element signature="e#6701#6702#0" expanded="false" />
+            <element signature="e#6765#6766#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1131,7 +1635,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1139,7 +1645,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="7" column="27" lean-forward="false" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1147,9 +1655,35 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
           <caret line="18" column="8" lean-forward="false" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_gui/automenta/vivisect/gui/GCheckbox.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="349">
+          <caret line="70" column="41" lean-forward="false" selection-start-line="70" selection-start-column="41" selection-end-line="70" selection-end-column="41" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#2455#0" expanded="false" />
+            <element signature="e#1475#1476#0" expanded="false" />
+            <element signature="e#1517#1518#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/config/Parameters.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="125" column="51" lean-forward="false" selection-start-line="125" selection-start-column="51" selection-end-line="125" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nars_core/nars/config/RuntimeParameters.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="51" column="71" lean-forward="false" selection-start-line="51" selection-start-column="71" selection-end-line="51" selection-end-column="71" />
+          <folding />
         </state>
       </provider>
     </entry>

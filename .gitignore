@@ -3,6 +3,7 @@
 /nars-dist/
 /nbproject/private/
 
+/out/
 /dist/
 /nars_web/client/lib/jquery-ui/themes/
 /nars_web/client/lib/jquery/src/
