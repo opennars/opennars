@@ -1261,8 +1261,8 @@ public class Pong extends Frame {
             //mem.simulate_damping=0.90;
             //size(worldSize-200,worldSize-200);
             hamlib.Init(false);
-            im[0]=loadImage("."+File.separator+"nars_lab"+File.separator+"nars"+File.separator+"lab"+File.separator+"microworld"+File.separator+"agent.png");
-            im[1]=loadImage("."+File.separator+"nars_lab"+File.separator+"nars"+File.separator+"lab"+File.separator+"microworld"+File.separator+"food.png");
+            im[0]=loadImage("."+File.separator+"nars_lab"+File.separator+"nars"+File.separator+"lab"+File.separator+"microworld"+File.separator+"bar.png");
+            im[1]=loadImage("."+File.separator+"nars_lab"+File.separator+"nars"+File.separator+"lab"+File.separator+"microworld"+File.separator+"ball.png");
             im[2]=loadImage("."+File.separator+"nars_lab"+File.separator+"nars"+File.separator+"lab"+File.separator+"microworld"+File.separator+"fire.png");
             for(int i=0;i<1;i++)
             {
