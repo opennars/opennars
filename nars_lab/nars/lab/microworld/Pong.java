@@ -31,6 +31,7 @@ public class Pong extends Frame {
     public Pong() {
         String[] args = {"Pong"};
         MyPapplet mp = new MyPapplet ();
+        mp.setSize(800,600);
         PApplet.runSketch(args, mp);
     }
     
@@ -1250,7 +1251,7 @@ public class Pong extends Frame {
         }
 
         public void settings() {
-            size(600,600);
+            size(800,600);
         }
 
         public void setup()
