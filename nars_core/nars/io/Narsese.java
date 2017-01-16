@@ -444,13 +444,16 @@ public class Narsese {
      * parsed into a Term
      * @return the Term generated from the String
      */
-    private static Term parseAtomicTerm(String s0) throws InvalidInputException {
+    private Term parseAtomicTerm(String s0) throws InvalidInputException {
         String s = s0.trim();
         if (s.length() == 0) {
             throw new InvalidInputException("missing term");
         }
         
-        
+        Operator op = memory.getOperator(s0);
+        if(op != null) {
+            return op;
+        }
         
         if (s.contains(" ")) { // invalid characters in a name
             throw new InvalidInputException("invalid term");

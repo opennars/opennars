@@ -7,11 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30ccc499-a9a1-4a74-8896-3f16e16c3486" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_core/nars/config/RuntimeParameters.java" afterPath="$PROJECT_DIR$/nars_core/nars/config/RuntimeParameters.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nars_web/src/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/nars_web/src/META-INF/MANIFEST.MF" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/opennars16.iml" afterPath="$PROJECT_DIR$/opennars16.iml" />
     </list>
     <ignored path="opennars16.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -182,9 +179,11 @@
       <file leaf-file-name="NALStressMeasure.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nars_test/nars/perf/NALStressMeasure.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
+            <state relative-caret-position="255">
               <caret line="18" column="8" lean-forward="false" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -192,7 +191,7 @@
       <file leaf-file-name="GCheckbox.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nars_gui/automenta/vivisect/gui/GCheckbox.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="349">
+            <state relative-caret-position="799">
               <caret line="70" column="41" lean-forward="false" selection-start-line="70" selection-start-column="41" selection-end-line="70" selection-end-column="41" />
               <folding>
                 <element signature="e#0#2455#0" expanded="false" />
@@ -206,9 +205,11 @@
       <file leaf-file-name="Parameters.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nars_core/nars/config/Parameters.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
+            <state relative-caret-position="1802">
               <caret line="125" column="51" lean-forward="false" selection-start-line="125" selection-start-column="51" selection-end-line="125" selection-end-column="51" />
-              <folding />
+              <folding>
+                <element signature="e#0#13033#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -216,8 +217,8 @@
       <file leaf-file-name="RuntimeParameters.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/nars_core/nars/config/RuntimeParameters.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
-              <caret line="51" column="71" lean-forward="false" selection-start-line="51" selection-start-column="71" selection-end-line="51" selection-end-column="71" />
+            <state relative-caret-position="281">
+              <caret line="50" column="55" lean-forward="true" selection-start-line="50" selection-start-column="55" selection-end-line="50" selection-end-column="55" />
               <folding />
             </state>
           </provider>
@@ -259,7 +260,6 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
-    <option name="y" value="-8" />
     <option name="width" value="1612" />
     <option name="height" value="886" />
   </component>
@@ -279,8 +279,8 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -428,11 +428,11 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Problems" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="project.propDebugger" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RunManager" selected="Application.SimNAR">
     <configuration default="false" name="NARSwing" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -794,13 +794,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1612" height="886" extended-state="1" />
+    <frame x="-8" y="0" width="1612" height="886" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34877735" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34877735" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -950,7 +950,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1048,24 +1050,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="455" column="60" lean-forward="false" selection-start-line="455" selection-start-column="60" selection-end-line="455" selection-end-column="60" />
-          <folding>
-            <element signature="e#0#48539#0" expanded="false" />
-            <element signature="imports" expanded="false" />
-            <element signature="e#5474#5475#0" expanded="false" />
-            <element signature="e#5501#5502#0" expanded="false" />
-            <element signature="e#41700#41701#0" expanded="false" />
-            <element signature="e#41740#41741#0" expanded="false" />
-            <element signature="e#46106#46107#0" expanded="false" />
-            <element signature="e#46138#46139#0" expanded="false" />
-            <element signature="e#48119#48120#0" expanded="false" />
-            <element signature="e#48157#48158#0" expanded="false" />
-            <element signature="e#48186#48187#0" expanded="false" />
-            <element signature="e#48213#48214#0" expanded="false" />
-            <element signature="e#48312#48313#0" expanded="false" />
-            <element signature="e#48372#48373#0" expanded="false" />
-            <element signature="e#48475#48476#0" expanded="false" />
-            <element signature="e#48535#48536#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1073,10 +1057,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="205" column="0" lean-forward="false" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#8547#0" expanded="false" />
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1484,10 +1464,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2958">
           <caret line="205" column="0" lean-forward="false" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#8547#0" expanded="false" />
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1495,24 +1471,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6613">
           <caret line="455" column="60" lean-forward="false" selection-start-line="455" selection-start-column="60" selection-end-line="455" selection-end-column="60" />
-          <folding>
-            <element signature="e#0#48539#0" expanded="false" />
-            <element signature="imports" expanded="false" />
-            <element signature="e#5474#5475#0" expanded="false" />
-            <element signature="e#5501#5502#0" expanded="false" />
-            <element signature="e#41700#41701#0" expanded="false" />
-            <element signature="e#41740#41741#0" expanded="false" />
-            <element signature="e#46106#46107#0" expanded="false" />
-            <element signature="e#46138#46139#0" expanded="false" />
-            <element signature="e#48119#48120#0" expanded="false" />
-            <element signature="e#48157#48158#0" expanded="false" />
-            <element signature="e#48186#48187#0" expanded="false" />
-            <element signature="e#48213#48214#0" expanded="false" />
-            <element signature="e#48312#48313#0" expanded="false" />
-            <element signature="e#48372#48373#0" expanded="false" />
-            <element signature="e#48475#48476#0" expanded="false" />
-            <element signature="e#48535#48536#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1653,15 +1611,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_test/nars/perf/NALStressMeasure.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
+        <state relative-caret-position="255">
           <caret line="18" column="8" lean-forward="false" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_gui/automenta/vivisect/gui/GCheckbox.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
+        <state relative-caret-position="799">
           <caret line="70" column="41" lean-forward="false" selection-start-line="70" selection-start-column="41" selection-end-line="70" selection-end-column="41" />
           <folding>
             <element signature="e#0#2455#0" expanded="false" />
@@ -1673,16 +1633,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_core/nars/config/Parameters.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
+        <state relative-caret-position="1802">
           <caret line="125" column="51" lean-forward="false" selection-start-line="125" selection-start-column="51" selection-end-line="125" selection-end-column="51" />
-          <folding />
+          <folding>
+            <element signature="e#0#13033#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nars_core/nars/config/RuntimeParameters.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="51" column="71" lean-forward="false" selection-start-line="51" selection-start-column="71" selection-end-line="51" selection-end-column="71" />
+        <state relative-caret-position="281">
+          <caret line="50" column="55" lean-forward="true" selection-start-line="50" selection-start-column="55" selection-end-line="50" selection-end-column="55" />
           <folding />
         </state>
       </provider>
@@ -1729,7 +1691,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>1.8</last-edited>
+          <last-edited>1.8 (1)</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
