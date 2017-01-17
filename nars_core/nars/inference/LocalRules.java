@@ -148,6 +148,10 @@ public class LocalRules {
             return false;
         }
         
+        if(task.sentence.containQueryVar() && belief.containQueryVar()) {
+            return false; //it's not an answer to question/quest/goal, since it contains question var
+        }
+        
         Sentence oldBest = task.getBestSolution();
         float newQ = TemporalRules.solutionQuality(problem, belief, memory);
         if (oldBest != null) {
