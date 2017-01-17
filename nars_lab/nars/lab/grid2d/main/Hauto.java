@@ -199,7 +199,7 @@ public class Hauto {
                     nar.addInput("(^" + oper + ","+readCells[x][y].name+")! :|:"); //we will force the action
                 }
                 else {
-                    nar.addInput("(^" + oper + ","+readCells[x][y].name+"). :|:");
+                    nar.executeDummyDecision("(^" + oper + ","+readCells[x][y].name+")");
                     TestChamber.operateObj(readCells[x][y].name, oper);
                 }
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+"). :|:"); //in order to make NARS an observer
@@ -212,10 +212,10 @@ public class Hauto {
                     nar.addInput("(^" + oper + ","+s+")! :|:"); 
                 }
                 else {
-                    nar.addInput("(^" + oper + ","+s+"). :|:"); 
+                    nar.executeDummyDecision("(^" + oper + ","+s+")"); 
                     TestChamber.operateObj(s, oper);
                 }
-                //nar.addInput("(^" + oper + ","+s+"). :|:");
+                //nar.executeDummyDecision("(^" + oper + ","+s+")");
                 //--nar.step(1);
                // TestChamber.operateObj(s, oper);
             }
