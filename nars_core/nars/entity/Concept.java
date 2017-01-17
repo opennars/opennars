@@ -66,6 +66,7 @@ import nars.util.Events.EnactableExplainationAdd;
 import nars.util.Events.EnactableExplainationRemove;
 import static nars.inference.UtilityFunctions.or;
 import nars.operator.mental.Anticipate;
+import nars.util.Events;
 
 public class Concept extends Item<Term> {
 
@@ -625,18 +626,16 @@ public class Concept extends Item<Term> {
      */
     protected void processQuestion(final DerivationContext nal, final Task task) {
 
-        Sentence ques = task.sentence;
-
+        Task quesTask = task;
         boolean newQuestion = true;
         for (final Task t : questions) {
-            final Sentence q = t.sentence;
-            if (q.equalsContent(ques)) {
-                ques = q;
+            if (t.sentence.equalsContent(quesTask.sentence)) {
+                quesTask = t;
                 newQuestion = false;
                 break;
             }
         }
-
+        
         if (newQuestion) {
             if (questions.size() + 1 > Parameters.CONCEPT_QUESTIONS_MAX) {
                 Task removed = questions.remove(0);    // FIFO
@@ -647,12 +646,17 @@ public class Concept extends Item<Term> {
             memory.event.emit(ConceptQuestionAdd.class, this, task);
         }
 
+        Sentence ques = task.sentence;
         final Task newAnswerT = (ques.isQuestion())
                 ? selectCandidate(ques, beliefs, false)
                 : selectCandidate(ques, desires, false);
 
         if (newAnswerT != null) {
             trySolution(newAnswerT.sentence, task, nal);
+        } 
+        else
+        if(task.isInput() && quesTask.getBestSolution() != null) { //show previously found solution anyway in case of input
+            memory.emit(Events.Answer.class, quesTask, quesTask.getBestSolution()); 
         }
     }
 

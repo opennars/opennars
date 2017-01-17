@@ -126,6 +126,10 @@ public class Sentence<T extends Term> implements Cloneable {
         
         this.punctuation = punctuation;
         
+        if(this.isJudgment() && _content.hasVarQuery()) {
+            truth.setConfidence(0.0f);
+        }
+        
         if (_content instanceof Interval && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK)
         {
             truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
