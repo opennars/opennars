@@ -5,7 +5,7 @@
 <(*,{Edward},{Frank}) --> Friends>. %1.00;0.99%
 <(*,{Gary},{Helen}) --> Friends>. %1.00;0.99%
 (--,<(*,{Gary},{Frank}) --> Friends>). %1.00;0.99%
-<{Anna} --> [Smokes]>. %1.00;0.99%
+<{Anna} --> [Drinks]>. %1.00;0.99%
 <{Edward} --> [Smokes]>. %1.00;0.99%
 
 //Rule0:
