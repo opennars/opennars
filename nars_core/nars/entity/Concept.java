@@ -261,7 +261,6 @@ public class Concept extends Item<Term> {
         //if taskLink predicts this concept then add to predictive 
         Task target = task;
         Term term = target.getTerm();
-        boolean wat = target.sentence.isJudgment();
         if(//target.isObservablePrediction() &&
            target.sentence.isEternal() && 
            term instanceof Implication &&
@@ -308,8 +307,8 @@ public class Concept extends Item<Term> {
                             }
                             
                             Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
-                            if(prec[0] instanceof Operation) {
-                                return;
+                            if(prec[0] instanceof Operation) { //don't react to a precondition starting with an operation
+                                return; //would cause strange feedback to what was just executed
                             }
                             
                             //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
@@ -372,52 +371,12 @@ public class Concept extends Item<Term> {
                 if(!oper.call(op, memory)) {
                     return false;
                 }
-                this.memory.lastDecision = t;
-                //delete everything related to the last decisions
-                successfulOperationHandler(this.memory);
                 
                 //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
                 return true;
             }
         }
         return false;
-    }
-
-    public static void successfulOperationHandler(Memory memory) {
-        //multiple versions are necessary, but we do not allow duplicates
-       /* Task removal = null;
-        do
-        {
-            removal = null;
-            for(Task s : memory.sequenceTasks) {
-                
-                
-                if(memory.lastDecision != null && (s.getTerm() instanceof Operation)) {
-                    if(!s.getTerm().equals(memory.lastDecision.getTerm())) {
-                        removal = s;
-                        break;
-                    }
-                }
-                if(memory.lastDecision != null && (s.getTerm() instanceof Conjunction)) {
-                    Conjunction seq = (Conjunction) s.getTerm();
-                    if(seq.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                        for(Term w : seq.term) {
-                            if((w instanceof Operation) && !w.equals(memory.lastDecision.getTerm())) {
-                                removal = s;
-                                break;
-                            }
-                        }
-                        if(removal != null) {
-                            break;
-                        }
-                    }
-                }
-            }
-            if(removal != null) {
-                memory.sequenceTasks.take(removal);
-            }
-        }
-        while(removal != null);*/
     }
     
     /**
@@ -501,6 +460,7 @@ public class Concept extends Item<Term> {
                 Operation bestop = null;
                 float bestop_truthexp = 0.0f;
                 TruthValue bestop_truth = null;
+                long distance = -1;
                 for(Task t: this.executable_preconditions) {
                     Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
                     Term[] newprec = new Term[prec.length-3];
@@ -508,6 +468,7 @@ public class Concept extends Item<Term> {
                         newprec[i] = prec[i];
                     }
                     
+                    distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
                     Operation op = (Operation) prec[prec.length-2];
                     Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
 
@@ -531,7 +492,7 @@ public class Concept extends Item<Term> {
                         //and the truth of the hypothesis:
                         TruthValue Hyp = t.sentence.truth;
                         //and the truth of the precondition:
-                        Sentence projectedPrecon = bestsofar.sentence.projection(memory.time(), memory.time());
+                        Sentence projectedPrecon = bestsofar.sentence.projection(memory.time() - distance, memory.time());
                         
                         if(projectedPrecon.isEternal()) {
                             continue; //projection wasn't better than eternalization, too long in the past
@@ -543,9 +504,9 @@ public class Concept extends Item<Term> {
                         //debug end
                         TruthValue precon = projectedPrecon.truth;
                         //and derive the conjunction of the left side:
-                        TruthValue leftside = TruthFunctions.desireStrong(A, Hyp);
+                        TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
                         //in order to derive the operator desire value:
-                        TruthValue opdesire = TruthFunctions.desireStrong(precon, leftside);
+                        TruthValue opdesire = TruthFunctions.desireDed(precon, leftside);
 
                         float expecdesire = opdesire.getExpectation();
                         if(expecdesire > bestop_truthexp) {

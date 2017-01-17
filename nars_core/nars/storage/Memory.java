@@ -91,7 +91,6 @@ public class Memory implements Serializable {
     public final Emotions emotion = new Emotions();   
     
     public boolean allowExecution = true;
-    public Task lastDecision = null;
     private long timeRealStart;
     private long timeRealNow;
     private long timePreviousCycle;
