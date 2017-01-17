@@ -162,8 +162,10 @@ public abstract class DerivationContext implements Runnable {
         }
         
         task.setElemOfSequenceBuffer(false);
-        task.getBudget().setDurability(task.getBudget().getDurability()*Parameters.DERIVATION_DURABILITY_LEAK);
-        task.getBudget().setPriority(task.getBudget().getPriority()*Parameters.DERIVATION_PRIORITY_LEAK);
+        if(!revised) {
+            task.getBudget().setDurability(task.getBudget().getDurability()*Parameters.DERIVATION_DURABILITY_LEAK);
+            task.getBudget().setPriority(task.getBudget().getPriority()*Parameters.DERIVATION_PRIORITY_LEAK);
+        }
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
         //memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
         
