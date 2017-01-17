@@ -307,8 +307,10 @@ public class Concept extends Item<Term> {
                             }
                             
                             Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
-                            if(prec[0] instanceof Operation) { //don't react to a precondition starting with an operation
-                                return; //would cause strange feedback to what was just executed
+                            for(int i=0;i<prec.length-2;i++) {
+                                if(prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
+                                    return; //for now, these can be decomposed into smaller such statements anyway
+                                }
                             }
                             
                             //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
@@ -460,7 +462,7 @@ public class Concept extends Item<Term> {
                 Operation bestop = null;
                 float bestop_truthexp = 0.0f;
                 TruthValue bestop_truth = null;
-                long distance = -1;
+                //long distance = -1;
                 for(Task t: this.executable_preconditions) {
                     Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
                     Term[] newprec = new Term[prec.length-3];
@@ -468,7 +470,7 @@ public class Concept extends Item<Term> {
                         newprec[i] = prec[i];
                     }
                     
-                    distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
+                    //distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
                     Operation op = (Operation) prec[prec.length-2];
                     Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
 
@@ -492,7 +494,7 @@ public class Concept extends Item<Term> {
                         //and the truth of the hypothesis:
                         TruthValue Hyp = t.sentence.truth;
                         //and the truth of the precondition:
-                        Sentence projectedPrecon = bestsofar.sentence.projection(memory.time() - distance, memory.time());
+                        Sentence projectedPrecon = bestsofar.sentence.projection(memory.time() /*- distance*/, memory.time());
                         
                         if(projectedPrecon.isEternal()) {
                             continue; //projection wasn't better than eternalization, too long in the past
