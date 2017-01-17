@@ -306,23 +306,19 @@ public class Concept extends Item<Term> {
                             if(i_delete != -1) {
                                 pred_conc.executable_preconditions.remove(i_delete);
                             }
+                            
+                            Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
+                            if(prec[0] instanceof Operation) {
+                                return;
+                            }
+                            
                             //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
                             pred_conc.addToTable(strongest_target, true, pred_conc.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, EnactableExplainationAdd.class, EnactableExplainationRemove.class);
-                            int b = pred_conc.executable_preconditions.size();
-                            if(b < a) {
-                                int h = 0;
-                                b = 0;
-                            }
                         }
                     }
                 }
             }
         }
-            
-            
-            
-
-            
         }
     }
 
@@ -389,7 +385,7 @@ public class Concept extends Item<Term> {
 
     public static void successfulOperationHandler(Memory memory) {
         //multiple versions are necessary, but we do not allow duplicates
-        Task removal = null;
+       /* Task removal = null;
         do
         {
             removal = null;
@@ -421,7 +417,7 @@ public class Concept extends Item<Term> {
                 memory.sequenceTasks.take(removal);
             }
         }
-        while(removal != null);
+        while(removal != null);*/
     }
     
     /**

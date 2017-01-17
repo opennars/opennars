@@ -289,8 +289,8 @@ public class TemporalRules {
         TruthValue givenTruth2 = s2.truth;
         
         //This code adds a penalty for large time distance (TODO probably revise)
-        //Sentence s3 = s2.projection(s1.getOccurenceTime(), nal.memory.time());
-        //givenTruth2 = s3.truth;
+        Sentence s3 = s2.projection(s1.getOccurenceTime(), nal.memory.time());
+        givenTruth2 = s3.truth;
         
      //   TruthFunctions.
         TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
