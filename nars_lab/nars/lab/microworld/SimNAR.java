@@ -319,12 +319,12 @@ public class SimNAR extends Frame {
                     lastAction = (int)random((float)nActions);
                     if(lastAction == 1) {
                         //System.out.println("random left");
-                        nar.executeDummyDecision("Right(SELF)");
+                        nar.addInput("Right(SELF). :|:");
                        // nar.addInput("Left(SELF). :|:");
                     }
                     if(lastAction == 2) {
                         //System.out.println("random right");
-                        nar.executeDummyDecision("Left(SELF)");
+                        nar.addInput("Left(SELF). :|:");
                        /// nar.addInput("Right(SELF). :|:");
                     }
                 }

@@ -199,20 +199,6 @@ public class NAR implements Runnable {
         return addInput(text, text.contains("\n") ? -1 : time());
     }
     
-    public void executeDummyDecision(String name) { //mainly for RL tasks where a random action is tried
-        Task t;
-        try {        
-            t = new Narsese(this.memory).parseTask(name + ". :|:");
-        } catch (InvalidInputException ex) {
-            return;
-        }
-        t.sentence.stamp.setOccurrenceTime(this.memory.time());
-        this.addInput(t);
-        this.memory.lastDecision = t;
-        Concept.successfulOperationHandler(this.memory);
-    }
-    
-    
     /** add text input at a specific time, which can be set to current time (regardless of when it will reach the memory), backdated, or forward dated */
     public TextInput addInput(final String text, long creationTime) {
         final TextInput i = new TextInput(text);

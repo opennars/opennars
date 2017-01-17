@@ -49,6 +49,7 @@ public class Pong extends Frame {
         class Hai
         {
             Hai(){}
+            public Obj obj;
             NAR nar;
             String LastInput ="";
             int nActions = 3;
@@ -206,16 +207,22 @@ public class Pong extends Frame {
                 
                 nar.step(500);
 
-                if(lastAction==0 && random(1.0f) < Alpha) { //if NAR hasn't decided chose a random action
+                if(lastAction==0 && random(1.0f) < Alpha) { //if NAR hasn't decided chose a executable random action
                     lastAction = (int) random((float) nActions);
+                    if(obj.x == 0) {
+                        lastAction = 1;
+                    }
+                    if(obj.x == width) {
+                        lastAction = 2;
+                    }
                     if(lastAction == 1) {
                         //System.out.println("random left");
                         //nar.addInput("Left(SELF). :|:");
                         
-                        nar.executeDummyDecision("Right(SELF)");
+                        nar.addInput("Right(SELF). :|:");
                     }
                     if(lastAction == 2) {
-                        nar.executeDummyDecision("Left(SELF)");
+                        nar.addInput("Left(SELF). :|:");
                         //System.out.println("random right");
                         //nar.addInput("Right(SELF). :|:");
                     }
@@ -1272,6 +1279,7 @@ public class Pong extends Frame {
                 //h.som=new Hsom(SomSize,Hsim_eyesize*2);
                 //h.som.Leaky=false;
                 agent=new Obj(new Hsim_Custom(),h,(int)(random(1)*(double)width),(int)(random(1)*(double)height),random(1)*2*PI-PI,random(1),0,0,random(1)*5+20,0,Hsim_eyesize);
+                h.obj = agent;
                 hsim.obj.add(agent);
             }
             lastclicked=((Obj)hsim.obj.get(0));
