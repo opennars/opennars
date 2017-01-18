@@ -65,6 +65,7 @@ import nars.language.Interval;
 import nars.util.Events.EnactableExplainationAdd;
 import nars.util.Events.EnactableExplainationRemove;
 import static nars.inference.UtilityFunctions.or;
+import nars.language.Variables;
 import nars.operator.mental.Anticipate;
 import nars.util.Events;
 
@@ -209,7 +210,7 @@ public class Concept extends Item<Term> {
 
         if (task.aboveThreshold()) {    // still need to be processed
             //memory.logic.LINK_TO_TASK.commit();
-            linkToTask(task);
+            linkToTask(task,nal);
         }
 
         return true;
@@ -224,7 +225,7 @@ public class Concept extends Item<Term> {
      */
     protected void processJudgment(final DerivationContext nal, final Task task) {
         final Sentence judg = task.sentence;
-        final Task oldBeliefT = selectCandidate(judg, beliefs, true);   // only revise with the strongest -- how about projection?
+        final Task oldBeliefT = selectCandidate(judg, beliefs, true, false);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
             oldBelief = oldBeliefT.sentence;
@@ -392,7 +393,7 @@ public class Concept extends Item<Term> {
     protected boolean processGoal(final DerivationContext nal, final Task task, boolean shortcut) {        
         
         final Sentence goal = task.sentence;
-        final Task oldGoalT = selectCandidate(goal, desires, true); // revise with the existing desire values
+        final Task oldGoalT = selectCandidate(goal, desires, true, false); // revise with the existing desire values
         Sentence oldGoal = null;
         
         if (oldGoalT != null) {
@@ -437,7 +438,7 @@ public class Concept extends Item<Term> {
         
         if (task.aboveThreshold()) {
 
-            final Task beliefT = selectCandidate(goal, beliefs, false); // check if the Goal is already satisfied
+            final Task beliefT = selectCandidate(goal, beliefs, false, false); // check if the Goal is already satisfied
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
@@ -607,8 +608,8 @@ public class Concept extends Item<Term> {
 
         Sentence ques = task.sentence;
         final Task newAnswerT = (ques.isQuestion())
-                ? selectCandidate(ques, beliefs, false)
-                : selectCandidate(ques, desires, false);
+                ? selectCandidate(ques, beliefs, false, false)
+                : selectCandidate(ques, desires, false, false);
 
         if (newAnswerT != null) {
             trySolution(newAnswerT.sentence, task, nal);
@@ -628,11 +629,11 @@ public class Concept extends Item<Term> {
      * @param task The task to be linked
      * @param content The content of the task
      */
-    public void linkToTask(final Task task) {
+    public void linkToTask(final Task task, DerivationContext cont) {
         final BudgetValue taskBudget = task.budget;
 
         insertTaskLink(new TaskLink(task, null, taskBudget,
-                Parameters.TERM_LINK_RECORD_LENGTH));  // link type: SELF
+                Parameters.TERM_LINK_RECORD_LENGTH), cont);  // link type: SELF
 
         if (!(term instanceof CompoundTerm)) {
             return;
@@ -656,7 +657,7 @@ public class Concept extends Item<Term> {
 
                 if (componentConcept != null) {
                     componentConcept.insertTaskLink(
-                        new TaskLink(task, termLink, subBudget, Parameters.TERM_LINK_RECORD_LENGTH)
+                        new TaskLink(task, termLink, subBudget, Parameters.TERM_LINK_RECORD_LENGTH), cont
                     );
                 }
 //              }
@@ -714,7 +715,7 @@ public class Concept extends Item<Term> {
      * @param list The list of beliefs or desires to be used
      * @return The best candidate selected
      */
-    public Task selectCandidate(final Sentence query, final List<Task> list, boolean forRevision) {
+    public Task selectCandidate(final Sentence query, final List<Task> list, boolean forRevision, boolean tasklinkCandidate) {
  //        if (list == null) {
         //            return null;
         //        }
@@ -724,6 +725,21 @@ public class Concept extends Item<Term> {
         synchronized (list) {            
             for (int i = 0; i < list.size(); i++) {
                 Task judgT = list.get(i);
+                
+                //because for question variable matching also check tasklinks! (new strategy)
+                if(tasklinkCandidate) {
+                    if(query.isQuestion() && !judgT.sentence.isJudgment()) {
+                        continue;
+                    }
+                    if(query.isQuest()&& !judgT.sentence.isGoal()) {
+                        continue;
+                    }
+                    Term[] u = new Term[] { query.term, judgT.sentence.term };
+                    if (!Variables.unify(Symbols.VAR_QUERY, u)) {
+                        continue;
+                    }
+                }
+                
                 Sentence judg = judgT.sentence;
                 beliefQuality = solutionQuality(query, judg, memory); //makes revision explicitly search for 
                 if (beliefQuality > currentBest /*&& (!forRevision || judgT.sentence.equalsContent(query)) */ /*&& (!forRevision || !Stamp.baseOverlap(query.stamp.evidentialBase, judg.stamp.evidentialBase)) */) {
@@ -743,8 +759,20 @@ public class Concept extends Item<Term> {
      *
      * @param taskLink The termLink to be inserted
      */
-    protected boolean insertTaskLink(final TaskLink taskLink) {        
+    protected boolean insertTaskLink(final TaskLink taskLink, DerivationContext nal) {        
         Task target = taskLink.getTarget();
+        
+        Task ques = taskLink.getTarget();
+        if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) { //ok query var, search
+            ArrayList<Task> tasks = new ArrayList<Task>();
+            for(TaskLink t : this.taskLinks) {
+                tasks.add(t.getTarget());
+            }
+            final Task taskAnswer = selectCandidate(ques.sentence, tasks, false, true);
+            if(taskAnswer!=null) {
+                trySolution(taskAnswer.sentence, ques, nal); //order important here
+            }
+        }
         /*
         //if taskLink predicts this concept then add to predictive 
         
