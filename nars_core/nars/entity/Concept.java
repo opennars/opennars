@@ -225,7 +225,7 @@ public class Concept extends Item<Term> {
      */
     protected void processJudgment(final DerivationContext nal, final Task task) {
         final Sentence judg = task.sentence;
-        final Task oldBeliefT = selectCandidate(judg, beliefs, true, false);   // only revise with the strongest -- how about projection?
+        final Task oldBeliefT = selectCandidate(judg, beliefs, true);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
             oldBelief = oldBeliefT.sentence;
@@ -393,7 +393,7 @@ public class Concept extends Item<Term> {
     protected boolean processGoal(final DerivationContext nal, final Task task, boolean shortcut) {        
         
         final Sentence goal = task.sentence;
-        final Task oldGoalT = selectCandidate(goal, desires, true, false); // revise with the existing desire values
+        final Task oldGoalT = selectCandidate(goal, desires, true); // revise with the existing desire values
         Sentence oldGoal = null;
         
         if (oldGoalT != null) {
@@ -438,7 +438,7 @@ public class Concept extends Item<Term> {
         
         if (task.aboveThreshold()) {
 
-            final Task beliefT = selectCandidate(goal, beliefs, false, false); // check if the Goal is already satisfied
+            final Task beliefT = selectCandidate(goal, beliefs, false); // check if the Goal is already satisfied
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
@@ -608,8 +608,8 @@ public class Concept extends Item<Term> {
 
         Sentence ques = task.sentence;
         final Task newAnswerT = (ques.isQuestion())
-                ? selectCandidate(ques, beliefs, false, false)
-                : selectCandidate(ques, desires, false, false);
+                ? selectCandidate(ques, beliefs, false)
+                : selectCandidate(ques, desires, false);
 
         if (newAnswerT != null) {
             trySolution(newAnswerT.sentence, task, nal);
@@ -715,7 +715,7 @@ public class Concept extends Item<Term> {
      * @param list The list of beliefs or desires to be used
      * @return The best candidate selected
      */
-    public Task selectCandidate(final Sentence query, final List<Task> list, boolean forRevision, boolean tasklinkCandidate) {
+    public Task selectCandidate(final Sentence query, final List<Task> list, boolean forRevision) {
  //        if (list == null) {
         //            return null;
         //        }
@@ -725,21 +725,6 @@ public class Concept extends Item<Term> {
         synchronized (list) {            
             for (int i = 0; i < list.size(); i++) {
                 Task judgT = list.get(i);
-                
-                //because for question variable matching also check tasklinks! (new strategy)
-                if(tasklinkCandidate) {
-                    if(query.isQuestion() && !judgT.sentence.isJudgment()) {
-                        continue;
-                    }
-                    if(query.isQuest()&& !judgT.sentence.isGoal()) {
-                        continue;
-                    }
-                    Term[] u = new Term[] { query.term, judgT.sentence.term };
-                    if (!Variables.unify(Symbols.VAR_QUERY, u)) {
-                        continue;
-                    }
-                }
-                
                 Sentence judg = judgT.sentence;
                 beliefQuality = solutionQuality(query, judg, memory); //makes revision explicitly search for 
                 if (beliefQuality > currentBest /*&& (!forRevision || judgT.sentence.equalsContent(query)) */ /*&& (!forRevision || !Stamp.baseOverlap(query.stamp.evidentialBase, judg.stamp.evidentialBase)) */) {
@@ -764,13 +749,31 @@ public class Concept extends Item<Term> {
         
         Task ques = taskLink.getTarget();
         if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) { //ok query var, search
-            ArrayList<Task> tasks = new ArrayList<Task>();
+            ArrayList<Term> terms = new ArrayList<Term>();
             for(TaskLink t : this.taskLinks) {
-                tasks.add(t.getTarget());
+                
+                if(ques.sentence.isQuestion() && !t.getTarget().sentence.isJudgment()) {
+                    continue;
+                }
+                if(ques.sentence.isQuest()&& !t.getTarget().sentence.isGoal()) {
+                    continue;
+                }
+                Term[] u = new Term[] { ques.getTerm(), t.getTarget().sentence.term };
+                if (!Variables.unify(Symbols.VAR_QUERY, u)) {
+                    continue;
+                }
+                
+                terms.add(t.getTarget().getTerm()); //one of the concepts that could match
             }
-            final Task taskAnswer = selectCandidate(ques.sentence, tasks, false, true);
-            if(taskAnswer!=null) {
-                trySolution(taskAnswer.sentence, ques, nal); //order important here
+            //try the belief table of potential concepts the task was matched by:
+            for(Term t : terms) {
+                Concept c = nal.memory.concept(t);
+                if(c != null && c.beliefs.size() > 0) {
+                    final Task taskAnswer = selectCandidate(ques.sentence, ques.sentence.isQuestion() ? c.beliefs : c.desires, false);
+                    if(taskAnswer!=null) {
+                        trySolution(taskAnswer.sentence, ques, nal); //order important here
+                    }
+                }
             }
         }
         /*
