@@ -750,25 +750,12 @@ public class Concept extends Item<Term> {
         Task ques = taskLink.getTarget();
         if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) { //ok query var, search
             boolean newAnswer = false;
-            if(this.termLinkTemplates != null) {
-                ArrayList<Term> concepts = new ArrayList<Term>();
-                //1. get the tasks in the subterm concepts and add these which match the query to the concepts whose belief table has to be checked
-                for(TermLink t : this.termLinkTemplates) {
-                    Concept d = nal.memory.concept(t.getTarget());
-                    //check the tasks in there whose content unifies with the question
-                    if(d!=null) {
-                        for(TaskLink tl : d.taskLinks) {
-                            Term[] u = new Term[] { ques.getTerm(), tl.getTerm() };
-                            if (!tl.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
-                                concepts.add(tl.getTerm());
-                            }
-                        }
-                    }
-                }
-                //2. try the belief tables of the potential concepts the task was matched by:
-                for(Term t : concepts)
-                {
-                    Concept c = nal.memory.concept(t);
+            
+            for(TaskLink t : this.taskLinks) {
+                
+                Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
+                if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
+                    Concept c = nal.memory.concept(t.getTerm());
                     if(c != null && ques.sentence.isQuestion() && c.beliefs.size() > 0) {
                         final Task taskAnswer = c.beliefs.get(0);
                         if(taskAnswer!=null) {
