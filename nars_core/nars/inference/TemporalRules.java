@@ -532,7 +532,7 @@ public class TemporalRules {
      * @return The budget for the new task which is the belief activated, if
      * necessary
      */
-    public static BudgetValue solutionEval(boolean rateByConfidence, final Task problem, final Sentence solution, Task task, final nars.control.DerivationContext nal) {
+    public static BudgetValue solutionEval(final Task problem, final Sentence solution, Task task, final nars.control.DerivationContext nal) {
         BudgetValue budget = null;
         boolean feedbackToLinks = false;
         if (task == null) {
@@ -540,7 +540,13 @@ public class TemporalRules {
             feedbackToLinks = true;
         }
         boolean judgmentTask = task.sentence.isJudgment();
+        boolean rateByConfidence = problem.getTerm().hasVarQuery(); //here its whether its a what or where question for budget adjustment
         final float quality = TemporalRules.solutionQuality(rateByConfidence, problem, solution, nal.mem());
+        
+        if (problem.sentence.isGoal()) {
+            nal.memory.emotion.adjustHappy(quality, task.getPriority(), nal);
+        }
+        
         if (judgmentTask) {
             task.incPriority(quality);
         } else {

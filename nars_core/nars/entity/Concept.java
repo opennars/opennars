@@ -722,14 +722,11 @@ public class Concept extends Item<Term> {
         float currentBest = 0;
         float beliefQuality;
         Task candidate = null;
-         boolean rateByConfidence = false;
+        boolean rateByConfidence = true; //table vote, yes/no question / local processing
         synchronized (list) {            
             for (int i = 0; i < list.size(); i++) {
                 Task judgT = list.get(i);
                 Sentence judg = judgT.sentence;
-                if(i == 0) { //assuming all list entries to be the same, less time loss
-                    rateByConfidence = query.getBestSolution() == null || (query.getBestSolution().getTerm().equals(judg.getTerm()));
-                }
                 beliefQuality = solutionQuality(rateByConfidence, query, judg, memory); //makes revision explicitly search for 
                 if (beliefQuality > currentBest /*&& (!forRevision || judgT.sentence.equalsContent(query)) */ /*&& (!forRevision || !Stamp.baseOverlap(query.stamp.evidentialBase, judg.stamp.evidentialBase)) */) {
                     currentBest = beliefQuality;
@@ -778,56 +775,36 @@ public class Concept extends Item<Term> {
                 memory.emit(Events.Answer.class, ques, ques.getBestSolution()); 
             }
         }
-        /*
-        //if taskLink predicts this concept then add to predictive 
         
-        Term term = target.getTerm();
-        boolean wat = target.sentence.isJudgment();
-        if(//target.isObservablePrediction() &&
-           target.sentence.isJudgment() && 
-           target.sentence.isEternal() && 
-           term instanceof Implication &&
-                   !term.hasVarIndep() && //Might be relaxed in the future!!
-           !(this.name() instanceof Operation)) 
-        {
-            
-            Implication imp = (Implication) term;
-            if(imp.getTemporalOrder() == TemporalRules.ORDER_FORWARD && imp.getPredicate().equals(this.name())) {
-                //also it has to be enactable, meaning the last entry of the sequence before the interval is an operation:
-                Term subj = imp.getSubject();
-                if(subj instanceof Conjunction) {
-                    Conjunction conj = (Conjunction) subj;
-                    if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
-                            conj.term.length == 4 && 
-                            conj.term[conj.term.length-1] instanceof Interval && 
-                            conj.term[conj.term.length-2] instanceof Operation) {
-                        
-                        //we do not add the target, instead the strongest belief in the target concept
-                        Concept conc = memory.concept(target.getTerm());
-                        if(conc != null && conc.beliefs.size() > 0) {
-                            Task strongest_target = conc.beliefs.get(0);
-                            //at first we have to remove the last one with same content from table
-                            int i_delete = -1;
-                            for(int i=0; i<this.executable_preconditions.size(); i++) {
-                                if(this.executable_preconditions.get(i).getTerm().equals(strongest_target.getTerm())) {
-                                    i_delete = i;
-                                    break;
-                                }
+        //belief side:
+        Task t = taskLink.getTarget();
+        if(t.sentence.isJudgment()) { //ok query var, search
+            for(TaskLink quess: this.taskLinks) {
+                ques = quess.getTarget();
+                if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) {
+                    boolean newAnswer = false;
+                    Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
+                    if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
+                        Concept c = nal.memory.concept(t.getTerm());
+                        if(c != null && ques.sentence.isQuestion() && c.beliefs.size() > 0) {
+                            final Task taskAnswer = c.beliefs.get(0);
+                            if(taskAnswer!=null) {
+                                newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
                             }
-                            if(i_delete != -1) {
-                                executable_preconditions.remove(i_delete);
-                            }
-                            //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-                            
-                            addToTable(strongest_target, true, executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, EnactableExplainationAdd.class, EnactableExplainationRemove.class);
                         }
+                        if(c != null && ques.sentence.isQuest() &&  c.desires.size() > 0) {
+                            final Task taskAnswer = c.desires.get(0);
+                            if(taskAnswer!=null) {
+                                newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
+                            }
+                        }
+                    }
+                    if(newAnswer && ques.isInput()) {
+                        memory.emit(Events.Answer.class, ques, ques.getBestSolution()); 
                     }
                 }
             }
         }
-        if(this.name().equals(target.getTerm())) {
-            
-        }*/
         
         //HANDLE MAX PER CONTENT
         //if taskLinks already contain a certain amount of tasks with same content then one has to go
