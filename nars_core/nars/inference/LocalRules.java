@@ -144,9 +144,9 @@ public class LocalRules {
         Memory memory = nal.mem();
         
         Sentence oldBest = task.getBestSolution();
-        boolean rateByConfidence = task.getBestSolution() == null || (task.getBestSolution().getTerm().equals(belief.getTerm()));
-        float newQ = TemporalRules.solutionQuality(rateByConfidence, task, belief, memory);
         if (oldBest != null) {
+            boolean rateByConfidence = oldBest.getTerm().equals(belief.getTerm());
+            float newQ = TemporalRules.solutionQuality(rateByConfidence, task, belief, memory);
             float oldQ = TemporalRules.solutionQuality(rateByConfidence, task, oldBest, memory);
             if (oldQ >= newQ) {
                 if (problem.isGoal()) {
@@ -176,12 +176,8 @@ public class LocalRules {
         task.setBestSolution(memory,belief);
         
         //memory.logic.SOLUTION_BEST.commit(task.getPriority());
-
-        if (problem.isGoal()) {
-            memory.emotion.adjustHappy(newQ, task.getPriority(), nal);
-        }
         
-        BudgetValue budget = TemporalRules.solutionEval(rateByConfidence, task, belief, task, nal);
+        BudgetValue budget = TemporalRules.solutionEval(task, belief, task, nal);
         if ((budget != null) && budget.aboveThreshold()) {                       
             
             //Solution Activated
