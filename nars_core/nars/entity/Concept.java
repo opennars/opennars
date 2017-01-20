@@ -225,7 +225,7 @@ public class Concept extends Item<Term> {
      */
     protected void processJudgment(final DerivationContext nal, final Task task) {
         final Sentence judg = task.sentence;
-        final Task oldBeliefT = selectCandidate(judg, beliefs, true);   // only revise with the strongest -- how about projection?
+        final Task oldBeliefT = selectCandidate(task, beliefs, true);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
             oldBelief = oldBeliefT.sentence;
@@ -393,7 +393,7 @@ public class Concept extends Item<Term> {
     protected boolean processGoal(final DerivationContext nal, final Task task, boolean shortcut) {        
         
         final Sentence goal = task.sentence;
-        final Task oldGoalT = selectCandidate(goal, desires, true); // revise with the existing desire values
+        final Task oldGoalT = selectCandidate(task, desires, true); // revise with the existing desire values
         Sentence oldGoal = null;
         
         if (oldGoalT != null) {
@@ -438,7 +438,7 @@ public class Concept extends Item<Term> {
         
         if (task.aboveThreshold()) {
 
-            final Task beliefT = selectCandidate(goal, beliefs, false); // check if the Goal is already satisfied
+            final Task beliefT = selectCandidate(task, beliefs, false); // check if the Goal is already satisfied
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
@@ -608,8 +608,8 @@ public class Concept extends Item<Term> {
 
         Sentence ques = task.sentence;
         final Task newAnswerT = (ques.isQuestion())
-                ? selectCandidate(ques, beliefs, false)
-                : selectCandidate(ques, desires, false);
+                ? selectCandidate(task, beliefs, false)
+                : selectCandidate(task, desires, false);
 
         if (newAnswerT != null) {
             trySolution(newAnswerT.sentence, task, nal, true);
@@ -715,18 +715,22 @@ public class Concept extends Item<Term> {
      * @param list The list of beliefs or desires to be used
      * @return The best candidate selected
      */
-    public Task selectCandidate(final Sentence query, final List<Task> list, boolean forRevision) {
+    public Task selectCandidate(final Task query, final List<Task> list, boolean forRevision) {
  //        if (list == null) {
         //            return null;
         //        }
         float currentBest = 0;
         float beliefQuality;
         Task candidate = null;
+         boolean rateByConfidence = false;
         synchronized (list) {            
             for (int i = 0; i < list.size(); i++) {
                 Task judgT = list.get(i);
                 Sentence judg = judgT.sentence;
-                beliefQuality = solutionQuality(query, judg, memory); //makes revision explicitly search for 
+                if(i == 0) { //assuming all list entries to be the same, less time loss
+                    rateByConfidence = query.getBestSolution() == null || (query.getBestSolution().getTerm().equals(judg.getTerm()));
+                }
+                beliefQuality = solutionQuality(rateByConfidence, query, judg, memory); //makes revision explicitly search for 
                 if (beliefQuality > currentBest /*&& (!forRevision || judgT.sentence.equalsContent(query)) */ /*&& (!forRevision || !Stamp.baseOverlap(query.stamp.evidentialBase, judg.stamp.evidentialBase)) */) {
                     currentBest = beliefQuality;
                     candidate = judgT;

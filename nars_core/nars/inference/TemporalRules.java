@@ -497,7 +497,8 @@ public class TemporalRules {
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
-    public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
+    public static float solutionQuality(boolean rateByConfidence, final Task probT, final Sentence solution, Memory memory) {
+        Sentence problem = probT.sentence;
         
         if (!matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
             return 0.0F;
@@ -508,8 +509,10 @@ public class TemporalRules {
             truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time());            
         }
         
-        //when query var is involved
-        if (problem.containQueryVar()) {
+        //when the solutions are comparable, we have to use confidence!! else truth expectation.
+        //this way negative evidence can update the solution instead of getting ignored due to lower truth expectation.
+        //so the previous handling to let whether the problem has query vars decide was wrong.
+        if (!rateByConfidence) {
             return truth.getExpectation() / (solution.term.getComplexity()*Parameters.COMPLEXITY_UNIT);
         } else {
             return truth.getConfidence();
@@ -529,7 +532,7 @@ public class TemporalRules {
      * @return The budget for the new task which is the belief activated, if
      * necessary
      */
-    public static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final nars.control.DerivationContext nal) {
+    public static BudgetValue solutionEval(boolean rateByConfidence, final Task problem, final Sentence solution, Task task, final nars.control.DerivationContext nal) {
         BudgetValue budget = null;
         boolean feedbackToLinks = false;
         if (task == null) {
@@ -537,7 +540,7 @@ public class TemporalRules {
             feedbackToLinks = true;
         }
         boolean judgmentTask = task.sentence.isJudgment();
-        final float quality = TemporalRules.solutionQuality(problem, solution, nal.mem());
+        final float quality = TemporalRules.solutionQuality(rateByConfidence, problem, solution, nal.mem());
         if (judgmentTask) {
             task.incPriority(quality);
         } else {
