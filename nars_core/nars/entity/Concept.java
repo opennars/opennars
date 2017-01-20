@@ -783,7 +783,7 @@ public class Concept extends Item<Term> {
                     }
                 }
             }
-            if(newAnswer) {
+            if(newAnswer && ques.isInput()) {
                 memory.emit(Events.Answer.class, ques, ques.getBestSolution()); 
             }
         }
