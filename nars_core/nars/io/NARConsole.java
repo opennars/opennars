@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nars.NAR;
 import nars.io.CommandLineNARBuilder;
 
@@ -102,12 +104,14 @@ public class NARConsole {
         output.setErrors(true);
         output.setErrorStackTrace(true);
         InputThread it;
+        int sleep = -1;
         
         if (args.length > 0) {
             try {
                 nar.addInput(new TextInput(new File(args[0])));
-            } catch (FileNotFoundException ex) {
-                System.err.println("NARRun.init: " + ex);
+            } catch (Exception ex) {
+                sleep = Integer.valueOf(args[0]); //Integer.valueOf(args[0]);
+                //System.err.println("NARRun.init: " + ex);
             }
         }
         else {     
@@ -115,15 +119,21 @@ public class NARConsole {
             it.start();
             //nar.addInput(new TextInput(new BufferedReader(new InputStreamReader(System.in))));
         }
-        
                while (true) {
             if (logging)
                 log("NARSBatch.run():"
                         + " step " + nar.time()
                         + " " + nar.inputChannels.size());
             
-
             nar.step(1);
+            try {
+                if(sleep > -1) {
+                    Thread.sleep(sleep);
+                }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(NARConsole.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            //System.out.println("step");
             
             
             if (logging)
