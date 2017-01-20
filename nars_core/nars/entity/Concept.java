@@ -254,7 +254,7 @@ public class Concept extends Item<Term> {
         if (task.aboveThreshold()) {
             int nnq = questions.size();       
             for (int i = 0; i < nnq; i++) {                
-                trySolution(judg, questions.get(i), nal);
+                trySolution(judg, questions.get(i), nal, true);
             }
             
         addToTable(task, false, beliefs, Parameters.CONCEPT_BELIEFS_MAX, ConceptBeliefAdd.class, ConceptBeliefRemove.class);
@@ -444,7 +444,7 @@ public class Concept extends Item<Term> {
             if (beliefT != null) {
                 Sentence belief = beliefT.sentence;
                 Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.memory.param.duration.get());
-                trySolution(projectedBelief, task, nal); // check if the Goal is already satisfied (manipulate budget)
+                trySolution(projectedBelief, task, nal, true); // check if the Goal is already satisfied (manipulate budget)
                 AntiSatisfaction = task.sentence.truth.getExpDifAbs(belief.truth);
             }    
             
@@ -612,7 +612,7 @@ public class Concept extends Item<Term> {
                 : selectCandidate(ques, desires, false);
 
         if (newAnswerT != null) {
-            trySolution(newAnswerT.sentence, task, nal);
+            trySolution(newAnswerT.sentence, task, nal, true);
         } 
         else
         if(task.isInput() && !task.getTerm().hasVarQuery() && quesTask.getBestSolution() != null) { //show previously found solution anyway in case of input
@@ -749,6 +749,7 @@ public class Concept extends Item<Term> {
         
         Task ques = taskLink.getTarget();
         if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) { //ok query var, search
+            boolean newAnswer = false;
             if(this.termLinkTemplates != null) {
                 ArrayList<Term> concepts = new ArrayList<Term>();
                 //1. get the tasks in the subterm concepts and add these which match the query to the concepts whose belief table has to be checked
@@ -771,16 +772,19 @@ public class Concept extends Item<Term> {
                     if(c != null && ques.sentence.isQuestion() && c.beliefs.size() > 0) {
                         final Task taskAnswer = c.beliefs.get(0);
                         if(taskAnswer!=null) {
-                            trySolution(taskAnswer.sentence, ques, nal); //order important here
+                            newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
                         }
                     }
                     if(c != null && ques.sentence.isQuest() &&  c.desires.size() > 0) {
                         final Task taskAnswer = c.desires.get(0);
                         if(taskAnswer!=null) {
-                            trySolution(taskAnswer.sentence, ques, nal); //order important here
+                            newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
                         }
                     }
                 }
+            }
+            if(newAnswer) {
+                memory.emit(Events.Answer.class, ques, ques.getBestSolution()); 
             }
         }
         /*
