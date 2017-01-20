@@ -79,22 +79,7 @@ public class LocalRules {
             if (matchingOrder(sentence, belief)) {
                 Term[] u = new Term[] { sentence.term, belief.term };
                 if (Variables.unify(Symbols.VAR_QUERY, u)) {
-                    
-                    Concept c = nal.memory.concept(belief.term);
-                    if(c != null && sentence.isQuestion() && c.beliefs.size() > 0) {
-                        final Task taskAnswer = c.beliefs.get(0);
-                        if(taskAnswer!=null) {
-                            trySolution(taskAnswer.sentence, task, nal); //order important here
-                        }
-                    }
-                    if(c != null && sentence.isQuest() && c.desires.size() > 0) {
-                        final Task taskAnswer = c.desires.get(0);
-                        if(taskAnswer!=null) {
-                            trySolution(taskAnswer.sentence, task, nal); //order important here
-                        }
-                    }
-                    //nope: would lead to confidence issue of what question answering, ignoring new neg. evidence
-                    //trySolution(belief, task, nal);
+                    trySolution(belief, task, nal, true);
                 }
             }
         }
@@ -154,7 +139,7 @@ public class LocalRules {
      * @param task The task to be processed
      * @param memory Reference to the memory
      */
-    public static boolean trySolution(Sentence belief, final Task task, final DerivationContext nal) {
+    public static boolean trySolution(Sentence belief, final Task task, final DerivationContext nal, boolean report) {
         Sentence problem = task.sentence;
         Memory memory = nal.mem();
         
@@ -200,7 +185,7 @@ public class LocalRules {
             
             //Solution Activated
             if(task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK) {
-                if(task.isInput()) { //only show input tasks as solutions
+                if(task.isInput() && report) { //only show input tasks as solutions
                     memory.emit(Answer.class, task, belief); 
                 } else {
                     memory.emit(Output.class, task, belief);   //solution to quests and questions can be always showed   
