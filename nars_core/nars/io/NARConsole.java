@@ -105,16 +105,18 @@ public class NARConsole {
         output.setErrorStackTrace(true);
         InputThread it;
         int sleep = -1;
+        boolean noFile = false;
         
         if (args.length > 0) {
             try {
                 nar.addInput(new TextInput(new File(args[0])));
             } catch (Exception ex) {
+                noFile = true;
                 sleep = Integer.valueOf(args[0]); //Integer.valueOf(args[0]);
                 //System.err.println("NARRun.init: " + ex);
             }
         }
-        else {     
+        if(args.length == 0 || noFile) {   
             it=new InputThread(System.in,nar);
             it.start();
             //nar.addInput(new TextInput(new BufferedReader(new InputStreamReader(System.in))));
