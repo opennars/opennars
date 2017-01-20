@@ -27,6 +27,7 @@ import nars.util.Events.Unsolved;
 import nars.storage.Memory;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -78,7 +79,22 @@ public class LocalRules {
             if (matchingOrder(sentence, belief)) {
                 Term[] u = new Term[] { sentence.term, belief.term };
                 if (Variables.unify(Symbols.VAR_QUERY, u)) {
-                    trySolution(belief, task, nal);
+                    
+                    Concept c = nal.memory.concept(belief.term);
+                    if(c != null && sentence.isQuestion() && c.beliefs.size() > 0) {
+                        final Task taskAnswer = c.beliefs.get(0);
+                        if(taskAnswer!=null) {
+                            trySolution(taskAnswer.sentence, task, nal); //order important here
+                        }
+                    }
+                    if(c != null && sentence.isQuest() && c.desires.size() > 0) {
+                        final Task taskAnswer = c.desires.get(0);
+                        if(taskAnswer!=null) {
+                            trySolution(taskAnswer.sentence, task, nal); //order important here
+                        }
+                    }
+                    //nope: would lead to confidence issue of what question answering, ignoring new neg. evidence
+                    //trySolution(belief, task, nal);
                 }
             }
         }

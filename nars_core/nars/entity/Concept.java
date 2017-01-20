@@ -615,7 +615,7 @@ public class Concept extends Item<Term> {
             trySolution(newAnswerT.sentence, task, nal);
         } 
         else
-        if(task.isInput() && quesTask.getBestSolution() != null) { //show previously found solution anyway in case of input
+        if(task.isInput() && !task.getTerm().hasVarQuery() && quesTask.getBestSolution() != null) { //show previously found solution anyway in case of input
             memory.emit(Events.Answer.class, quesTask, quesTask.getBestSolution()); 
         }
     }
@@ -749,29 +749,36 @@ public class Concept extends Item<Term> {
         
         Task ques = taskLink.getTarget();
         if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) { //ok query var, search
-            ArrayList<Term> terms = new ArrayList<Term>();
-            for(TaskLink t : this.taskLinks) {
-                
-                if(ques.sentence.isQuestion() && !t.getTarget().sentence.isJudgment()) {
-                    continue;
+            if(this.termLinkTemplates != null) {
+                ArrayList<Term> concepts = new ArrayList<Term>();
+                //1. get the tasks in the subterm concepts and add these which match the query to the concepts whose belief table has to be checked
+                for(TermLink t : this.termLinkTemplates) {
+                    Concept d = nal.memory.concept(t.getTarget());
+                    //check the tasks in there whose content unifies with the question
+                    if(d!=null) {
+                        for(TaskLink tl : d.taskLinks) {
+                            Term[] u = new Term[] { ques.getTerm(), tl.getTerm() };
+                            if (!tl.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
+                                concepts.add(tl.getTerm());
+                            }
+                        }
+                    }
                 }
-                if(ques.sentence.isQuest()&& !t.getTarget().sentence.isGoal()) {
-                    continue;
-                }
-                Term[] u = new Term[] { ques.getTerm(), t.getTarget().sentence.term };
-                if (!Variables.unify(Symbols.VAR_QUERY, u)) {
-                    continue;
-                }
-                
-                terms.add(t.getTarget().getTerm()); //one of the concepts that could match
-            }
-            //try the belief table of potential concepts the task was matched by:
-            for(Term t : terms) {
-                Concept c = nal.memory.concept(t);
-                if(c != null && c.beliefs.size() > 0) {
-                    final Task taskAnswer = selectCandidate(ques.sentence, ques.sentence.isQuestion() ? c.beliefs : c.desires, false);
-                    if(taskAnswer!=null) {
-                        trySolution(taskAnswer.sentence, ques, nal); //order important here
+                //2. try the belief tables of the potential concepts the task was matched by:
+                for(Term t : concepts)
+                {
+                    Concept c = nal.memory.concept(t);
+                    if(c != null && ques.sentence.isQuestion() && c.beliefs.size() > 0) {
+                        final Task taskAnswer = c.beliefs.get(0);
+                        if(taskAnswer!=null) {
+                            trySolution(taskAnswer.sentence, ques, nal); //order important here
+                        }
+                    }
+                    if(c != null && ques.sentence.isQuest() &&  c.desires.size() > 0) {
+                        final Task taskAnswer = c.desires.get(0);
+                        if(taskAnswer!=null) {
+                            trySolution(taskAnswer.sentence, ques, nal); //order important here
+                        }
                     }
                 }
             }

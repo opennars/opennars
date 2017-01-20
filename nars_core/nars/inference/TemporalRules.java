@@ -508,6 +508,7 @@ public class TemporalRules {
             truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time());            
         }
         
+        //when query var is involved
         if (problem.containQueryVar()) {
             return truth.getExpectation() / (solution.term.getComplexity()*Parameters.COMPLEXITY_UNIT);
         } else {
