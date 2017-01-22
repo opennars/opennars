@@ -45,6 +45,7 @@ import nars.control.ImmediateProcess;
 import nars.plugin.mental.Emotions;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
+import static nars.entity.Concept.successfulOperationHandler;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -90,6 +91,7 @@ public class Memory implements Serializable {
     //emotion meter keeping track of global emotion
     public final Emotions emotion = new Emotions();   
     
+    public Task lastDecision = null;
     public boolean allowExecution = true;
     private long timeRealStart;
     private long timeRealNow;
@@ -304,6 +306,12 @@ public class Memory implements Serializable {
             if (task.budget.aboveThreshold()) {
                 
                 addNewTask(task, "Perceived");
+                
+                if(task.sentence.isJudgment() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
+                    this.lastDecision = task;
+                    //depriorize everything related to the previous decisions:
+                    successfulOperationHandler(this);
+                }
                 
             } else {
                 removeTask(task, "Neglected");
