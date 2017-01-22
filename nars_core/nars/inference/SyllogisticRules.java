@@ -108,7 +108,7 @@ public final class SyllogisticRules {
         if ((content1 == null) || (content2 == null))
             return;
         
-        nal.doublePremiseTask(content1, truth1, budget1,false, true);
+        nal.doublePremiseTask(content1, truth1, budget1,false, false); //(allow overlap) but not needed here, isn't detachment
         nal.doublePremiseTask(content2, truth2, budget2,false, false);
     }
 
@@ -254,7 +254,7 @@ public final class SyllogisticRules {
         }
         
         //nal.mem().logic.ANALOGY.commit();
-        nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,false, true);
+        nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,false, false); //(allow overlap) but not needed here, isn't detachment
     }
 
     /**
@@ -303,7 +303,7 @@ public final class SyllogisticRules {
         }
         Statement s=Statement.make(higherOrder ? NativeOperator.EQUIVALENCE : NativeOperator.SIMILARITY, term1, term2, order);
         //if(!Terms.equalSubTermsInRespectToImageAndProduct(term2, term2))
-            nal.doublePremiseTask( s, truth, budget,false, true );
+            nal.doublePremiseTask( s, truth, budget,false, false); //(allow overlap) but not needed here, isn't detachment
         // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
         
        if(Parameters.BREAK_NAL_HOL_BOUNDARY && !sentence.term.hasVarIndep() && (st instanceof Equivalence) && order1==order2 && belief.term.isHigherOrderStatement() && sentence.term.isHigherOrderStatement()) {
@@ -409,7 +409,7 @@ public final class SyllogisticRules {
         TruthValue truth1 = mainSentence.truth;
         TruthValue truth2 = subSentence.truth;
         TruthValue truth = null;
-        boolean strong=false;
+        boolean strong = false;
         BudgetValue budget;
         if (taskSentence.isQuestion()) {
             if (statement instanceof Equivalence) {
@@ -431,20 +431,20 @@ public final class SyllogisticRules {
             if (taskSentence.isGoal()) {
                 if (statement instanceof Equivalence) {
                     truth = TruthFunctions.desireStrong(truth1, truth2);
-                    strong=true;
+                    strong = true; //not for goals anymore
                 } else if (side == 0) {
                     truth = TruthFunctions.desireInd(truth1, truth2);
                 } else {
                     truth = TruthFunctions.desireDed(truth1, truth2);
-                    strong=true;
+                    strong = true; //not for goals anymore
                 }
             } else { // isJudgment
                 if (statement instanceof Equivalence) {
                     truth = TruthFunctions.analogy(truth2, truth1);
-                    strong=true;
+                    strong = true;
                 } else if (side == 0) {
                     truth = TruthFunctions.deduction(truth1, truth2);
-                    strong=true;
+                    strong = true;
                 } else {
                     truth = TruthFunctions.abduction(truth2, truth1);
                 }
@@ -452,7 +452,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         if(!Variables.indepVarUsedInvalid(content)) {
-            nal.doublePremiseTask(content, truth, budget,false, strong);
+            nal.doublePremiseTask(content, truth, budget, false, taskSentence.isJudgment() && strong); //(strong) when strong on judgement
         }
     }
 
@@ -604,7 +604,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         
-        nal.doublePremiseTask(content, truth, budget,false, deduction);
+        nal.doublePremiseTask(content, truth, budget,false, taskSentence.isJudgment() && deduction); //(allow overlap) when deduction on judgment
     }
 
     /**
@@ -705,7 +705,7 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
-        nal.doublePremiseTask(content, truth, budget,false,!conditionalTask);
+        nal.doublePremiseTask(content, truth, budget, false, taskSentence.isJudgment() && !conditionalTask); //(allow overlap) when !conditionalTask on judgment
     }
 
     /**

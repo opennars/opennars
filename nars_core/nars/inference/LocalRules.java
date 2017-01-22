@@ -269,7 +269,7 @@ public class LocalRules {
         TruthValue value2 = judgment2.truth;
         TruthValue truth = TruthFunctions.intersection(value1, value2);
         BudgetValue budget = BudgetFunctions.forward(truth, nal);
-        nal.doublePremiseTask(content, truth, budget,false, true);
+        nal.doublePremiseTask(content, truth, budget,false, false); //(allow overlap) but not needed here, isn't detachment
     }
 
     /**
