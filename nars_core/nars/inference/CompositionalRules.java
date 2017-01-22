@@ -172,7 +172,7 @@ public final class CompositionalRules {
             return;
         }
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, false, true);
+        nal.doublePremiseTask(content, truth, budget, false, false); //(allow overlap) but not needed here, isn't detachment, this one would be even problematic from control perspective because its composition
     }
 
     /**
@@ -269,7 +269,7 @@ public final class CompositionalRules {
         }
         if (truth != null) {
             BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-            nal.doublePremiseTask(content, truth, budget, false, true);
+            nal.doublePremiseTask(content, truth, budget, false, true); //(allow overlap), a form of detachment
         }
     }
 
