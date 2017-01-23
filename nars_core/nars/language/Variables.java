@@ -101,6 +101,21 @@ public class Variables {
         } else if ((term1HasVar || term2HasVar) && (term1 instanceof CompoundTerm) && term1.getClass().equals(term2.getClass())) {
             final CompoundTerm cTerm1 = (CompoundTerm) term1;
             final CompoundTerm cTerm2 = (CompoundTerm) term2;
+            
+            //consider temporal order on term matching
+            if(term1 instanceof Conjunction && term2 instanceof Conjunction) {
+                if(((Conjunction)term1).getTemporalOrder() != ((Conjunction)term2).getTemporalOrder())
+                    return false;
+            }
+            if(term1 instanceof Implication && term2 instanceof Implication) {
+                if(((Implication)term1).getTemporalOrder() != ((Implication)term2).getTemporalOrder())
+                    return false;
+            }
+            if(term1 instanceof Equivalence && term2 instanceof Equivalence) {
+                if(((Equivalence)term1).getTemporalOrder() != ((Equivalence)term2).getTemporalOrder())
+                    return false;
+            }
+            
             if (cTerm1.size() != cTerm2.size()) {
                 return false;
             }

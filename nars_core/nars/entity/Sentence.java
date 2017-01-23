@@ -37,6 +37,8 @@ import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
+import nars.language.Equivalence;
+import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Interval.AtomicDuration;
 import nars.language.Statement;
@@ -129,7 +131,14 @@ public class Sentence<T extends Term> implements Cloneable {
         if(this.isJudgment() && _content.hasVarQuery()) {
             truth.setConfidence(0.0f);
         }
-        
+        else
+        if(_content instanceof Implication || _content instanceof Equivalence) {
+            if(((Statement) _content).getSubject().hasVarIndep() && !((Statement) _content).getPredicate().hasVarIndep())
+                truth.setConfidence(0.0f);
+            if(((Statement) _content).getPredicate().hasVarIndep() && !((Statement) _content).getSubject().hasVarIndep())
+                truth.setConfidence(0.0f);
+        }
+        else
         if (_content instanceof Interval && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK)
         {
             truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
