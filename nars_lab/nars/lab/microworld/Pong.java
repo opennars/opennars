@@ -101,6 +101,7 @@ public class Pong extends Frame {
 
             int k=0;
             float Alpha=0.08f;
+            boolean lastWasMiddle = false;
             int UpdateSOM(float[] viewField,float reward) //input and reward
             {
                 /*for(int i=0;i<viewField.length;i++) {
@@ -177,15 +178,18 @@ public class Pong extends Frame {
                 float accepted_distance = 20.0f;
                 if(Math.abs(agent.x - ball.x) < accepted_distance ) {
                     String s = "<{\"1\"} --> [on]>. :|:";
-                    if(k%20 == 0 || !s.equals(this.LastInput)) {
+                    
+                    if(!lastWasMiddle || !s.equals(this.LastInput)) {
                         System.out.println("good mr_nars");
                         nar.addInput(s);
                         System.out.println(s);
                     }
+                    lastWasMiddle = true;
                     this.LastInput = s;
                 } else {
                     if(agent.x < ball.x) {
                         String s = "<{right} --> [on]>. :|:";
+                        lastWasMiddle = false;
                         if(k%20 == 0 || !s.equals(this.LastInput)) {
                             nar.addInput(s);
                             System.out.println(s);
@@ -193,6 +197,7 @@ public class Pong extends Frame {
                         this.LastInput = s;
                     } else {
                         String s = "<{left} --> [on]>. :|:";
+                        lastWasMiddle = false;
                         if(k%20 == 0 || !s.equals(this.LastInput)) {
                             nar.addInput(s);
                             System.out.println(s);
