@@ -468,8 +468,8 @@ public final class SyllogisticRules {
     public static void generatePotentialNegConfirmation(DerivationContext nal, Sentence mainSentence, BudgetValue budget, long mintime, long maxtime, float priority) {
         //derivation was successful and it was a judgment event
         
-        try {
-        float immediateDisappointmentConfidence = 0.1f; //that was predicted by an eternal belief that shifted time
+        try { //that was predicted by an eternal belief that shifted time
+        float immediateDisappointmentConfidence = 0.42f; //0.42 so it has same confidence as a single temporal induction step on input
         Stamp stamp = new Stamp(nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         //long serial = stamp.evidentialBase[0];
@@ -477,7 +477,7 @@ public final class SyllogisticRules {
         //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
         Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f)); //Budget for one-time processing
         Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
-        if(c != null && mintime > nal.memory.time() && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+        if(c != null && maxtime > nal.memory.time() && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
                 c.negConfirmation = t;
                 c.negConfirmationPriority = priority;
@@ -586,9 +586,11 @@ public final class SyllogisticRules {
              if (newCondition instanceof Interval) {
                  content = premise1.getPredicate();
                  delta = ((Interval) newCondition).getTime(duration);
-                 mintime = nal.memory.time() + Interval.magnitudeToTime(((Interval) newCondition).magnitude - 1, duration);
-                 maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval) newCondition).magnitude + 1, duration);
-                 predictedEvent = true;
+                 if(taskSentence.getOccurenceTime() != Stamp.ETERNAL) {
+                    mintime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude - 1, duration);
+                    maxtime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude + 1, duration);
+                    predictedEvent = true;
+                 }
              } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
                  Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
                  delta = interval.getTime(duration);
@@ -645,7 +647,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         
-        if(predictedEvent) {
+        if(predictedEvent && taskSentence.isJudgment() && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
             SyllogisticRules.generatePotentialNegConfirmation(nal, premise1Sentence, budget, mintime, maxtime, 1);
         }
         

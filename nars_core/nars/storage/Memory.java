@@ -158,6 +158,7 @@ public class Memory implements Serializable {
         concepts.reset();
         novelTasks.clear();
         newTasks.clear();    
+        sequenceTasks.clear();
         cycle = 0;
         timeRealStart = timeRealNow = System.currentTimeMillis();
         timePreviousCycle = time();
@@ -564,9 +565,9 @@ public class Memory implements Serializable {
         if (newEvent.isEternal() || !isInputOrOperation(controllerTask)) {
             return false;
         }
-        if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
+        /*if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
             return false;
-        }
+        }*/
         
         if(newEvent.punctuation!=Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
             return false; //temporal inductions for judgements only
@@ -610,8 +611,17 @@ public class Memory implements Serializable {
             }*/
             
             //also attempt direct
-            for(int i =0 ;i<Math.min(this.sequenceTasks.size(), Parameters.SEQUENCE_BAG_ATTEMPTS);i++) {
+            HashSet<Task> already_attempted = new HashSet<Task>();
+            for(int i =0 ;i<Parameters.SEQUENCE_BAG_ATTEMPTS;i++) {
                 Task takeout = this.sequenceTasks.takeNext();
+                if(takeout == null) {
+                    break; //there were no elements in the bag to try
+                }
+                if(already_attempted.contains(takeout)) {
+                    this.sequenceTasks.putBack(takeout, cycles(this.param.sequenceForgetDurations), this);
+                    continue;
+                }
+                already_attempted.add(takeout);
                 proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true);
                 this.sequenceTasks.putBack(takeout, cycles(this.param.sequenceForgetDurations), this);
             }
@@ -670,11 +680,11 @@ public class Memory implements Serializable {
         this.sequenceTasks.putIn(t2);
 
         //debug:
-        /*System.out.println("---------");
+        System.out.println("---------");
         for(Task t : this.sequenceTasks) {
             System.out.println(t.getTerm().toString());
         }
-        System.out.println("^^^^^^");*/
+        System.out.println("^^^^^^");
     }
     
     /** converts durations to cycles */

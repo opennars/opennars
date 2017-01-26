@@ -236,7 +236,7 @@ public class Concept extends Item<Term> {
         if(task.isInput() && !task.sentence.isEternal() && this.negConfirmation != null && task.sentence.getOccurenceTime() > this.negConfirm_abort_mintime) {
             if(task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
                 if(((Statement) this.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
-                    nal.memory.emit(Output.CONFIRM.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
+                    //nal.memory.emit(Output.CONFIRM.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
                     this.negConfirmation = null; //confirmed
                 }
             }
@@ -1151,7 +1151,7 @@ public class Concept extends Item<Term> {
             //if(this.negConfirmationPriority >= 2) {
             //    System.out.println(this.negConfirmation.sentence.term);
             //}
-            memory.emit(Output.DISAPPOINT.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
+            //memory.emit(Output.DISAPPOINT.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
             this.negConfirmation = null;
         }
     }

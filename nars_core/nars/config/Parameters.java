@@ -229,7 +229,7 @@ public class Parameters {
     
     
    // public static int STM_SIZE = 1;
-    public static int SEQUENCE_BAG_ATTEMPTS = 20; //5
+    public static int SEQUENCE_BAG_ATTEMPTS = 10; //5 //20
     
     public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=true; //this should be true to restore 1.6.1 strategy
 
