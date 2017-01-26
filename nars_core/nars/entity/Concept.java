@@ -553,7 +553,7 @@ public class Concept extends Item<Term> {
 
                 if(bestop != null && bestop_truthexp > memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
                     Task t = new Task(new Sentence(bestop,Symbols.JUDGMENT_MARK,bestop_truth, projectedGoal.stamp), new BudgetValue(1.0f,1.0f,1.0f));
-                    System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
+                    //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
                     if(!executeDecision(t)) { //this task is just used as dummy
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     } else {
