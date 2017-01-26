@@ -159,13 +159,13 @@ public class RuleTables {
                     case TermLink.COMPONENT_CONDITION:
                         if ((belief != null) && (taskTerm instanceof Implication)) {
                             bIndex = bLink.getIndex(1);
-                            SyllogisticRules.conditionalDedInd((Implication) taskTerm, bIndex, beliefTerm, tIndex, nal);
+                            SyllogisticRules.conditionalDedInd(task.sentence,(Implication) taskTerm, bIndex, beliefTerm, tIndex, nal);
                         }
                         break;
                     case TermLink.COMPOUND_CONDITION:
                         if ((belief != null) && (taskTerm instanceof Implication) && (beliefTerm instanceof Implication)) {
                             bIndex = bLink.getIndex(1);
-                            SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, tIndex, nal);
+                            SyllogisticRules.conditionalDedInd(belief,(Implication) beliefTerm, bIndex, taskTerm, tIndex, nal);
                         }
                         break;
                 }
@@ -187,7 +187,7 @@ public class RuleTables {
                                     Sentence newTaskSentence = taskSentence.clone(u[1]);
                                     detachmentWithVar(newBelief, newTaskSentence, bIndex, nal);
                                 } else {
-                                    SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, -1, nal);
+                                    SyllogisticRules.conditionalDedInd(belief, (Implication) beliefTerm, bIndex, taskTerm, -1, nal);
                                 }                                
                                 
                             } else if (beliefTerm instanceof Equivalence) {
@@ -219,7 +219,7 @@ public class RuleTables {
                             bIndex = bLink.getIndex(1);
                             if ((taskTerm instanceof Statement) && (beliefTerm instanceof Implication)) {
                                 
-                                    conditionalDedIndWithVar((Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
+                                    conditionalDedIndWithVar(belief, (Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
                             }
                         }
                         break;
@@ -245,7 +245,7 @@ public class RuleTables {
                                     componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, nal);
                                     }
                                     } else {
-                                    conditionalDedIndWithVar((Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, nal);
+                                    conditionalDedIndWithVar(task.sentence, (Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, nal);
                                     }
                                 }
                                 break;
@@ -678,7 +678,7 @@ public class RuleTables {
      * @param side The location of the shared term in the statement
      * @param nal Reference to the memory
      */
-    private static void conditionalDedIndWithVar(Implication conditional, short index, Statement statement, short side, DerivationContext nal) {
+    private static void conditionalDedIndWithVar(Sentence conditionalSentence, Implication conditional, short index, Statement statement, short side, DerivationContext nal) {
         
         if (!(conditional.getSubject() instanceof CompoundTerm))
             return;
@@ -703,7 +703,7 @@ public class RuleTables {
             if (unifiable) {
                 conditional = (Implication) u[0];
                 statement = (Statement) u[1];
-                SyllogisticRules.conditionalDedInd(conditional, index, statement, side, nal);
+                SyllogisticRules.conditionalDedInd(conditionalSentence, conditional, index, statement, side, nal);
             }
         }
     }

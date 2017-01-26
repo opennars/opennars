@@ -69,6 +69,9 @@ import static nars.inference.UtilityFunctions.or;
 import nars.language.Variables;
 import nars.operator.mental.Anticipate;
 import nars.util.Events;
+import static nars.inference.UtilityFunctions.or;
+import nars.io.Output;
+import nars.language.Statement;
 
 public class Concept extends Item<Term> {
 
@@ -208,6 +211,8 @@ public class Concept extends Item<Term> {
             default:
                 return false;
         }
+        
+        maintainDisappointedAnticipations();
 
         if (task.aboveThreshold()) {    // still need to be processed
             //memory.logic.LINK_TO_TASK.commit();
@@ -226,6 +231,17 @@ public class Concept extends Item<Term> {
      */
     protected void processJudgment(final DerivationContext nal, final Task task) {
         final Sentence judg = task.sentence;
+        
+        //check whether it satisfies anticipation:
+        if(task.isInput() && !task.sentence.isEternal() && this.negConfirmation != null && task.sentence.getOccurenceTime() > this.negConfirm_abort_mintime) {
+            if(task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
+                if(((Statement) this.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
+                    nal.memory.emit(Output.CONFIRM.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
+                    this.negConfirmation = null; //confirmed
+                }
+            }
+        }
+        
         final Task oldBeliefT = selectCandidate(task, beliefs, true);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
@@ -494,6 +510,8 @@ public class Concept extends Item<Term> {
                 TruthValue bestop_truth = null;
                 Task executable_precond = null;
                 //long distance = -1;
+                long mintime = -1;
+                long maxtime = -1;
                 for(Task t: this.executable_preconditions) {
                     Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
                     Term[] newprec = new Term[prec.length-3];
@@ -502,6 +520,9 @@ public class Concept extends Item<Term> {
                     }
                     
                     //distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
+                    mintime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude-1, nal.memory.param.duration);
+                    maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+1, nal.memory.param.duration);
+                    
                     Operation op = (Operation) prec[prec.length-2];
                     Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
 
@@ -557,7 +578,7 @@ public class Concept extends Item<Term> {
                     if(!executeDecision(t)) { //this task is just used as dummy
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     } else {
-                        SyllogisticRules.discountPredictiveHypothesis(nal, executable_precond.sentence, executable_precond.budget);
+                        SyllogisticRules.generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
                     }
                 }
                 }catch(Exception ex){
@@ -641,16 +662,16 @@ public class Concept extends Item<Term> {
             memory.event.emit(ConceptQuestionAdd.class, this, task);
         }
 
-        Sentence ques = task.sentence;
+        Sentence ques = quesTask.sentence;
         final Task newAnswerT = (ques.isQuestion())
-                ? selectCandidate(task, beliefs, false)
-                : selectCandidate(task, desires, false);
+                ? selectCandidate(quesTask, beliefs, false)
+                : selectCandidate(quesTask, desires, false);
 
         if (newAnswerT != null) {
             trySolution(newAnswerT.sentence, task, nal, true);
         } 
         else
-        if(task.isInput() && !task.getTerm().hasVarQuery() && quesTask.getBestSolution() != null) { //show previously found solution anyway in case of input
+        if(task.isInput() && !quesTask.getTerm().hasVarQuery() && quesTask.getBestSolution() != null) { //show previously found solution anyway in case of input
             memory.emit(Events.Answer.class, quesTask, quesTask.getBestSolution()); 
         }
     }
@@ -772,6 +793,11 @@ public class Concept extends Item<Term> {
         return candidate;
     }
 
+    public float negConfirmationPriority = 0.0f;
+    public Task negConfirmation = null;
+    public long negConfirm_abort_mintime = 0;
+    public long negConfirm_abort_maxtime = 0;
+    
     /* ---------- insert Links for indirect processing ---------- */
     /**
      * Insert a TaskLink into the TaskLink bag
@@ -1118,6 +1144,18 @@ public class Concept extends Item<Term> {
         return buffer.toString();
     }
 
+    public void maintainDisappointedAnticipations() {
+        //here we can check the expiration of the feedback:
+        if(this.negConfirmation != null && this.memory.time() > this.negConfirm_abort_maxtime) {
+            memory.inputTask(this.negConfirmation, false); //disappointed
+            //if(this.negConfirmationPriority >= 2) {
+            //    System.out.println(this.negConfirmation.sentence.term);
+            //}
+            memory.emit(Output.DISAPPOINT.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
+            this.negConfirmation = null;
+        }
+    }
+    
     /**
      * Replace default to prevent repeated inference, by checking TaskLink
      *
@@ -1127,7 +1165,7 @@ public class Concept extends Item<Term> {
      */
     public TermLink selectTermLink(final TaskLink taskLink, final long time) {
         
-        
+        maintainDisappointedAnticipations();
         int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
             
