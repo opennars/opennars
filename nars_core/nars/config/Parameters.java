@@ -136,7 +136,7 @@ public class Parameters {
     public static final int NOVEL_TASK_BAG_SIZE = 100;
     public static final int NOVEL_TASK_BAG_LEVELS = 10;
     /*  Size of sequence/input event bag */
-    public static final int SEQUENCE_BAG_SIZE = 100;
+    public static final int SEQUENCE_BAG_SIZE = 30;
     public static final int SEQUENCE_BAG_LEVELS = 10;
     
     /* ---------- avoiding repeated reasoning ---------- */
@@ -229,7 +229,7 @@ public class Parameters {
     
     
    // public static int STM_SIZE = 1;
-    public static int SEQUENCE_BAG_ATTEMPTS = 10; //5 //20
+    public static int SEQUENCE_BAG_ATTEMPTS = 20; //5 //20
     
     public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=true; //this should be true to restore 1.6.1 strategy
 

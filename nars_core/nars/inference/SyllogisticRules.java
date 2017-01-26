@@ -469,7 +469,7 @@ public final class SyllogisticRules {
         //derivation was successful and it was a judgment event
         
         try { //that was predicted by an eternal belief that shifted time
-        float immediateDisappointmentConfidence = 0.42f; //0.42 so it has same confidence as a single temporal induction step on input
+        float immediateDisappointmentConfidence = 0.42f;
         Stamp stamp = new Stamp(nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         //long serial = stamp.evidentialBase[0];
@@ -588,7 +588,7 @@ public final class SyllogisticRules {
                  delta = ((Interval) newCondition).getTime(duration);
                  if(taskSentence.getOccurenceTime() != Stamp.ETERNAL) {
                     mintime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude - 1, duration);
-                    maxtime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude + 1, duration);
+                    maxtime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude + 2, duration);
                     predictedEvent = true;
                  }
              } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
