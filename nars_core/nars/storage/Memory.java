@@ -564,9 +564,9 @@ public class Memory implements Serializable {
         if (newEvent.isEternal() || !isInputOrOperation(controllerTask)) {
             return false;
         }
-        if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
+        /*if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
             return false;
-        }
+        }*/
         
         if(newEvent.punctuation!=Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
             return false; //temporal inductions for judgements only
