@@ -136,7 +136,23 @@ public class Sentence<T extends Term> implements Cloneable {
             if(((Statement) _content).getSubject().hasVarIndep() && !((Statement) _content).getPredicate().hasVarIndep())
                 truth.setConfidence(0.0f);
             if(((Statement) _content).getPredicate().hasVarIndep() && !((Statement) _content).getSubject().hasVarIndep())
-                truth.setConfidence(0.0f);
+                truth.setConfidence(0.0f); //TODO:
+            if(_content.getTemporalOrder() == TemporalRules.ORDER_FORWARD && truth != null) { //do not allow =/> statements without conjunction on left
+                if(!(((Statement) _content).getSubject() instanceof Conjunction)) { //because at least a time measurement has to be givem
+                    truth.setConfidence(0.0f); //else ==> is more appropriate
+                } else {
+                    Conjunction conj = (Conjunction) ((Statement) _content).getSubject();
+                    if(conj.getTemporalOrder() != TemporalRules.ORDER_FORWARD &&
+                           conj.getTemporalOrder() != TemporalRules.ORDER_BACKWARD) {
+                        truth.setConfidence(0.0f);
+                    } else {
+                        //when the last two are intervals, its not valid
+                       if(conj.term[conj.term.length-1] instanceof Interval && conj.term[conj.term.length-2] instanceof Interval) {
+                            truth.setConfidence(0.0f);
+                        }
+                    }
+                }
+            }
         }
         else
         if (_content instanceof Interval && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK)

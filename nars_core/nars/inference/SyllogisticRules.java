@@ -38,6 +38,7 @@ import static nars.inference.TemporalRules.analogyOrder;
 import static nars.inference.TemporalRules.dedExeOrder;
 import static nars.inference.TemporalRules.resemblanceOrder;
 import static nars.inference.TemporalRules.reverseOrder;
+import nars.io.Output;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
@@ -396,7 +397,7 @@ public final class SyllogisticRules {
             return;
         
         int order = statement.getTemporalOrder();
-        boolean shiftedTime = false;
+        boolean shiftedTimeForward = false;
         if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
             long baseTime = subSentence.getOccurenceTime();
             if (baseTime == Stamp.ETERNAL) {
@@ -404,7 +405,7 @@ public final class SyllogisticRules {
             }
             long inc = order * nal.mem().param.duration.get();
             long time = (side == 0) ? baseTime+inc : baseTime-inc;
-            shiftedTime = true;
+            shiftedTimeForward = (side == 0);
             nal.getTheNewStamp().setOccurrenceTime(time);
         }
 
@@ -458,28 +459,35 @@ public final class SyllogisticRules {
         if(!Variables.indepVarUsedInvalid(content)) {
             boolean allowOverlap = taskSentence.isJudgment() && strong;
             List<Task> ret = nal.doublePremiseTask(content, truth, budget, false, allowOverlap); //(strong) when strong on judgement
-            if(ret != null && ret.size() > 0 && mainSentence.isEternal() && taskSentence.isJudgment() && mainSentence.isJudgment() && shiftedTime) {
-                discountPredictiveHypothesis(nal, mainSentence, budget);
+            if(ret != null && ret.size() > 0 && mainSentence.isEternal() && taskSentence.isJudgment() && mainSentence.isJudgment() && shiftedTimeForward) {
+                //discountPredictiveHypothesis(nal, mainSentence, budget);
             }
         }
     }
 
-    public static void discountPredictiveHypothesis(DerivationContext nal, Sentence mainSentence, BudgetValue budget) {
+    public static void generatePotentialNegConfirmation(DerivationContext nal, Sentence mainSentence, BudgetValue budget, long mintime, long maxtime, float priority) {
         //derivation was successful and it was a judgment event
-        float immediateDisappointmentConfidence = 0.005f; //that was predicted by an eternal belief that shifted time
+        
+        try {
+        float immediateDisappointmentConfidence = 0.1f; //that was predicted by an eternal belief that shifted time
         Stamp stamp = new Stamp(nal.memory);
-        stamp.setOccurrenceTime(mainSentence.getOccurenceTime());
+        stamp.setOccurrenceTime(Stamp.ETERNAL);
         //long serial = stamp.evidentialBase[0];
         Sentence s = new Sentence(mainSentence.term, mainSentence.punctuation, new TruthValue(0.0f, immediateDisappointmentConfidence), stamp);
         //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
         Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f)); //Budget for one-time processing
-        Concept c = nal.memory.concept(s.getTerm());
-        if(c != null) {
-          //  final Task oldBeliefT = c.selectCandidate(t, c.beliefs, true);
-            //always revisable since it has new evidental base so this check we can let
-           // Task rev = LocalRules.revision(t.sentence, oldBeliefT.sentence, false, nal);
-           //c.processJudgment(nal, t);
-           nal.memory.inputTask(t, false); //no derivation, its just a mistrust in the hypothesis that grows over time and gets rejected by pos observation
+        Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
+        if(c != null && mintime > nal.memory.time() && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
+                c.negConfirmation = t;
+                c.negConfirmationPriority = priority;
+                c.negConfirm_abort_maxtime = maxtime;
+                c.negConfirm_abort_mintime = mintime;
+                //nal.memory.emit(Output.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate());
+            }
+       }
+        }catch(Exception ex) {
+            System.out.println("problem in anticipation handling");
         }
     }
 
@@ -496,7 +504,7 @@ public final class SyllogisticRules {
      * for predicate, -1 for the whole term
      * @param nal Reference to the memory
      */
-    static void conditionalDedInd(Implication premise1, short index, Term premise2, int side, DerivationContext nal) {
+    static void conditionalDedInd(Sentence premise1Sentence, Implication premise1, short index, Term premise2, int side, DerivationContext nal) {
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
         Sentence belief = nal.getCurrentBelief();
@@ -569,12 +577,18 @@ public final class SyllogisticRules {
         Term content;
         
         long delta = 0;
+        long mintime = 0;
+        long maxtime = 0;
+        boolean predictedEvent = false;
         final Interval.AtomicDuration duration = nal.mem().param.duration;
         
         if (newCondition != null) {
              if (newCondition instanceof Interval) {
                  content = premise1.getPredicate();
                  delta = ((Interval) newCondition).getTime(duration);
+                 mintime = nal.memory.time() + Interval.magnitudeToTime(((Interval) newCondition).magnitude - 1, duration);
+                 maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval) newCondition).magnitude + 1, duration);
+                 predictedEvent = true;
              } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
                  Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
                  delta = interval.getTime(duration);
@@ -629,6 +643,10 @@ public final class SyllogisticRules {
                 }
             }
             budget = BudgetFunctions.forward(truth, nal);
+        }
+        
+        if(predictedEvent) {
+            SyllogisticRules.generatePotentialNegConfirmation(nal, premise1Sentence, budget, mintime, maxtime, 1);
         }
         
         nal.doublePremiseTask(content, truth, budget,false, taskSentence.isJudgment() && deduction); //(allow overlap) when deduction on judgment
