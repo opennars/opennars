@@ -139,7 +139,7 @@ public class Sentence<T extends Term> implements Cloneable {
                 truth.setConfidence(0.0f); //TODO:
             if(_content.getTemporalOrder() == TemporalRules.ORDER_FORWARD && truth != null) { //do not allow =/> statements without conjunction on left
                 if(!(((Statement) _content).getSubject() instanceof Conjunction)) { //because at least a time measurement has to be givem
-                    truth.setConfidence(0.0f); //else ==> is more appropriate
+                   // truth.setConfidence(0.0f); //not necessary and consider disjunction case!!
                 } else {
                     Conjunction conj = (Conjunction) ((Statement) _content).getSubject();
                     if(conj.getTemporalOrder() != TemporalRules.ORDER_FORWARD &&
