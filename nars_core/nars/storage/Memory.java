@@ -680,11 +680,11 @@ public class Memory implements Serializable {
         this.sequenceTasks.putIn(t2);
 
         //debug:
-        System.out.println("---------");
+        /*System.out.println("---------");
         for(Task t : this.sequenceTasks) {
             System.out.println(t.getTerm().toString());
         }
-        System.out.println("^^^^^^");
+        System.out.println("^^^^^^");*/
     }
     
     /** converts durations to cycles */

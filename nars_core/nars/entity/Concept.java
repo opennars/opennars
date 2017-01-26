@@ -521,7 +521,7 @@ public class Concept extends Item<Term> {
                     
                     //distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
                     mintime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude-1, nal.memory.param.duration);
-                    maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+1, nal.memory.param.duration);
+                    maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+2, nal.memory.param.duration);
                     
                     Operation op = (Operation) prec[prec.length-2];
                     Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
