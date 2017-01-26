@@ -675,7 +675,7 @@ public class Memory implements Serializable {
         while(removal != null);
         //ok now add the new one:
         //making sure we do not mess with budget of the task:
-        Task t2 = new Task(newEvent.sentence, new BudgetValue(0.9f*periority_penalty,1.0f/(float)newEvent.sentence.term.getComplexity(),0.1f), newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
+        Task t2 = new Task(newEvent.sentence, new BudgetValue(0.9f*periority_penalty/(float)newEvent.sentence.term.getComplexity(),1.0f/(float)newEvent.sentence.term.getComplexity(),0.1f), newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
         //we use a event default budget here so the time it appeared and whether it was selected is key criteria currently divided by complexity
         this.sequenceTasks.putIn(t2);
 

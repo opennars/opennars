@@ -125,7 +125,7 @@ public class Parameters {
     public static final int CONCEPT_BAG_SIZE = 10000;
     public static final int CONCEPT_BAG_LEVELS = 1000;
     /** Size of TaskLinkBag */
-    public static final int TASK_LINK_BAG_SIZE = 100;  //was 200 in new experiment
+    public static final int TASK_LINK_BAG_SIZE = 10;  //was 200 in new experiment
     public static final int TASK_LINK_BAG_LEVELS = 10;
     /** Size of TermLinkBag */
     public static final int TERM_LINK_BAG_SIZE = 100;  //was 1000 in new experiment
@@ -271,7 +271,7 @@ public class Parameters {
     
     public static boolean COMPOUND_OPERATIONS=true;
     
-    public static int TASKLINK_PER_CONTENT = 2; //eternal/event are also seen extra
+    public static int TASKLINK_PER_CONTENT = 4; //eternal/event are also seen extra
     
     /** Default priority of exection feedback */
     public static float DEFAULT_FEEDBACK_PRIORITY = (float) 0.9;

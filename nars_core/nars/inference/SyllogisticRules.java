@@ -469,7 +469,7 @@ public final class SyllogisticRules {
         //derivation was successful and it was a judgment event
         
         try { //that was predicted by an eternal belief that shifted time
-        float immediateDisappointmentConfidence = 0.42f;
+        float immediateDisappointmentConfidence = 0.1f;
         Stamp stamp = new Stamp(nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         //long serial = stamp.evidentialBase[0];
@@ -477,7 +477,7 @@ public final class SyllogisticRules {
         //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
         Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f)); //Budget for one-time processing
         Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
-        if(c != null && maxtime > nal.memory.time() && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+        if(c != null && mintime > nal.memory.time() && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
                 c.negConfirmation = t;
                 c.negConfirmationPriority = priority;
@@ -647,9 +647,9 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         
-        if(predictedEvent && taskSentence.isJudgment() && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
+        /*if(predictedEvent && taskSentence.isJudgment() && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
             SyllogisticRules.generatePotentialNegConfirmation(nal, premise1Sentence, budget, mintime, maxtime, 1);
-        }
+        }*/
         
         nal.doublePremiseTask(content, truth, budget,false, taskSentence.isJudgment() && deduction); //(allow overlap) when deduction on judgment
     }
