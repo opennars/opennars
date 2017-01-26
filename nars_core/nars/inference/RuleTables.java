@@ -111,9 +111,9 @@ public class RuleTables {
             }*/
             
             //too restrictive, its checked for non-deductive inference rules in derivedTask (also for single prem)
-            /*if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief.stamp.evidentialBase)) {
+            if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief.stamp.evidentialBase)) {
                 return;
-            }*/
+            }
             //comment out for recursive examples, this is for the future, it generates a lot of potentially useless tasks
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);

@@ -262,16 +262,16 @@ public abstract class Statement extends CompoundTerm {
      * @param predicate The second component
      * @return Whether The Statement is invalid
      */
-    final public static boolean invalidStatement(final Term subject, final Term predicate) {
+    final public static boolean invalidStatement(final Term subject, final Term predicate, boolean checkSameTermInPredicateAndSubject) {
         if (subject==null || predicate==null) return true;
         
-        if (subject.equals(predicate)) {
+        if (checkSameTermInPredicateAndSubject && subject.equals(predicate)) {
             return true;
         }        
-        if (invalidReflexive(subject, predicate)) {
+        if (checkSameTermInPredicateAndSubject && invalidReflexive(subject, predicate)) {
             return true;
         }
-        if (invalidReflexive(predicate, subject)) {
+        if (checkSameTermInPredicateAndSubject && invalidReflexive(predicate, subject)) {
             return true;
         }
         if ((subject instanceof Statement) && (predicate instanceof Statement)) {
@@ -286,6 +286,10 @@ public abstract class Statement extends CompoundTerm {
             }
         }
         return false;
+    }
+    
+    final public static boolean invalidStatement(final Term subject, final Term predicate) {
+        return invalidStatement(subject, predicate, true);
     }
 
     /**

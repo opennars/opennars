@@ -163,7 +163,7 @@ public class TemporalRules {
         Term t1 = s1.term;
         Term t2 = s2.term;
                 
-        if (Statement.invalidStatement(t1, t2))
+        if (Statement.invalidStatement(t1, t2, false))
             return Collections.EMPTY_LIST;
         
         Term t11=null;
