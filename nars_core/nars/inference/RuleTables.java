@@ -79,7 +79,7 @@ public class RuleTables {
         final Sentence taskSentence = task.sentence;
         
         final Term taskTerm = taskSentence.term;         // cloning for substitution
-        final Term beliefTerm = bLink.target;       // cloning for substitution
+        Term beliefTerm = bLink.target;       // cloning for substitution
         
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
            return;
@@ -91,6 +91,7 @@ public class RuleTables {
         nal.setCurrentBelief( belief );
         
         if (belief != null) {   
+            beliefTerm = belief.term; //because interval handling that differs on conceptual level
             
           /*Sentence belief_event = beliefConcept.getBeliefForTemporalInference(task);
             if(belief_event != null) {
