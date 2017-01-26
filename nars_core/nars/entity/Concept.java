@@ -46,6 +46,7 @@ import static nars.inference.BudgetFunctions.rankBelief;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
+import nars.inference.SyllogisticRules;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
 import nars.io.Symbols;
@@ -388,12 +389,11 @@ public class Concept extends Item<Term> {
     
     public static void successfulOperationHandler(Memory memory) {
         //multiple versions are necessary, but we do not allow duplicates
-        Task removal = null;
         for(Task s : memory.sequenceTasks) {
             
             if(memory.lastDecision != null && (s.getTerm() instanceof Operation)) {
                 if(!s.getTerm().equals(memory.lastDecision.getTerm())) {
-                    s.setPriority(removal.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
+                    s.setPriority(s.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
                     continue; //depriorized already, we can look at the next now
                 }
             }
@@ -402,7 +402,7 @@ public class Concept extends Item<Term> {
                 if(seq.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
                     for(Term w : seq.term) {
                         if((w instanceof Operation) && !w.equals(memory.lastDecision.getTerm())) {
-                            s.setPriority(removal.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
+                            s.setPriority(s.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
                             break; //break because just penalty once, not for each term ^^
                         }
                     }
@@ -492,6 +492,7 @@ public class Concept extends Item<Term> {
                 Operation bestop = null;
                 float bestop_truthexp = 0.0f;
                 TruthValue bestop_truth = null;
+                Task executable_precond = null;
                 //long distance = -1;
                 for(Task t: this.executable_preconditions) {
                     Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
@@ -545,18 +546,23 @@ public class Concept extends Item<Term> {
                             bestop = op;
                             bestop_truthexp = expecdesire;
                             bestop_truth = opdesire;
+                            executable_precond = t;
                         }
                     }
                 }
 
                 if(bestop != null && bestop_truthexp > memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
                     Task t = new Task(new Sentence(bestop,Symbols.JUDGMENT_MARK,bestop_truth, projectedGoal.stamp), new BudgetValue(1.0f,1.0f,1.0f));
-                    System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
+                    //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
                     if(!executeDecision(t)) { //this task is just used as dummy
                         memory.emit(UnexecutableGoal.class, task, this, nal);
+                    } else {
+                        SyllogisticRules.discountPredictiveHypothesis(nal, executable_precond.sentence, executable_precond.budget);
                     }
                 }
-                }catch(Exception ex){}
+                }catch(Exception ex){
+                    System.out.println("Failure in operation choice rule, analyze!");
+                }
                 
                 questionFromGoal(task, nal);
                 

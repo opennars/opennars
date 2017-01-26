@@ -290,7 +290,7 @@ public class Memory implements Serializable {
         return false;
     }
     
-    public void inputTask(final Item t) {
+    public void inputTask(final Item t, boolean emitIn) {
         if(!checked) {
             checked=true;
             isjUnit=isJUnitTest();
@@ -301,7 +301,9 @@ public class Memory implements Serializable {
             if (s.getCreationTime()==-1)
                 s.setCreationTime(time(), param.duration.get());
 
-            emit(IN.class, task);
+            if(emitIn) {
+                emit(IN.class, task);
+            }
 
             if (task.budget.aboveThreshold()) {
                 
@@ -344,6 +346,10 @@ public class Memory implements Serializable {
         else {
             emit(IN.class, "Unrecognized Input Task: " + t);
         }
+    }
+    
+    public void inputTask(final Item t) {
+        inputTask(t, true);
     }
 
 

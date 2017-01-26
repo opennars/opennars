@@ -154,12 +154,13 @@ public abstract class DerivationContext implements Runnable {
             }
         }
         
-        if(task.sentence.getOccurenceTime()>memory.time() && ((this.getCurrentTask()!=null && (this.getCurrentTask().isInput() || this.getCurrentTask().sentence.producedByTemporalInduction)) || (this.getCurrentBelief()!=null && this.getCurrentBelief().producedByTemporalInduction))) {
+        //deactivated, new anticipation handling is attempted instead
+        /*if(task.sentence.getOccurenceTime()>memory.time() && ((this.getCurrentTask()!=null && (this.getCurrentTask().isInput() || this.getCurrentTask().sentence.producedByTemporalInduction)) || (this.getCurrentBelief()!=null && this.getCurrentBelief().producedByTemporalInduction))) {
             Anticipate ret = ((Anticipate)memory.getOperator("^anticipate"));
             if(ret!=null) {
                 ret.anticipate(task.sentence.term, memory, task.sentence.getOccurenceTime(),task);
             }
-        }
+        }*/
         
         task.setElemOfSequenceBuffer(false);
         if(!revised) {

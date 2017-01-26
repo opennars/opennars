@@ -20,9 +20,11 @@
  */
 package nars.inference;
 
+import java.util.List;
 import nars.config.Parameters;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -394,6 +396,7 @@ public final class SyllogisticRules {
             return;
         
         int order = statement.getTemporalOrder();
+        boolean shiftedTime = false;
         if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
             long baseTime = subSentence.getOccurenceTime();
             if (baseTime == Stamp.ETERNAL) {
@@ -401,6 +404,7 @@ public final class SyllogisticRules {
             }
             long inc = order * nal.mem().param.duration.get();
             long time = (side == 0) ? baseTime+inc : baseTime-inc;
+            shiftedTime = true;
             nal.getTheNewStamp().setOccurrenceTime(time);
         }
 
@@ -452,7 +456,30 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         if(!Variables.indepVarUsedInvalid(content)) {
-            nal.doublePremiseTask(content, truth, budget, false, taskSentence.isJudgment() && strong); //(strong) when strong on judgement
+            boolean allowOverlap = taskSentence.isJudgment() && strong;
+            List<Task> ret = nal.doublePremiseTask(content, truth, budget, false, allowOverlap); //(strong) when strong on judgement
+            if(ret != null && ret.size() > 0 && mainSentence.isEternal() && taskSentence.isJudgment() && mainSentence.isJudgment() && shiftedTime) {
+                discountPredictiveHypothesis(nal, mainSentence, budget);
+            }
+        }
+    }
+
+    public static void discountPredictiveHypothesis(DerivationContext nal, Sentence mainSentence, BudgetValue budget) {
+        //derivation was successful and it was a judgment event
+        float immediateDisappointmentConfidence = 0.005f; //that was predicted by an eternal belief that shifted time
+        Stamp stamp = new Stamp(nal.memory);
+        stamp.setOccurrenceTime(mainSentence.getOccurenceTime());
+        //long serial = stamp.evidentialBase[0];
+        Sentence s = new Sentence(mainSentence.term, mainSentence.punctuation, new TruthValue(0.0f, immediateDisappointmentConfidence), stamp);
+        //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
+        Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f)); //Budget for one-time processing
+        Concept c = nal.memory.concept(s.getTerm());
+        if(c != null) {
+          //  final Task oldBeliefT = c.selectCandidate(t, c.beliefs, true);
+            //always revisable since it has new evidental base so this check we can let
+           // Task rev = LocalRules.revision(t.sentence, oldBeliefT.sentence, false, nal);
+           //c.processJudgment(nal, t);
+           nal.memory.inputTask(t, false); //no derivation, its just a mistrust in the hypothesis that grows over time and gets rejected by pos observation
         }
     }
 
