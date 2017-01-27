@@ -376,7 +376,6 @@ public class Concept extends Item<Term> {
      * Returns true if the Task has a Term which can be executed
      */
     public boolean executeDecision(final Task t) {
-
         //if (isDesired()) 
         if(memory.allowExecution)
         {
@@ -392,7 +391,6 @@ public class Concept extends Item<Term> {
                 if(!oper.call(op, memory)) {
                     return false;
                 }
-                
                 this.memory.lastDecision = t;
                 //depriorize everything related to the previous decisions:
                 successfulOperationHandler(this.memory);
@@ -579,15 +577,16 @@ public class Concept extends Item<Term> {
                 if(bestop != null && bestop_truthexp > memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
                     Task t = new Task(new Sentence(bestop,Symbols.JUDGMENT_MARK,bestop_truth, projectedGoal.stamp), new BudgetValue(1.0f,1.0f,1.0f));
                     //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
-                    if(!executeDecision(t)) { //this task is just used as dummy
-                        memory.emit(UnexecutableGoal.class, task, this, nal);
-                    } else {
-                        if(!task.sentence.stamp.evidenceIsCyclic()) {
+                    if(!task.sentence.stamp.evidenceIsCyclic()) {
+                        if(!executeDecision(t)) { //this task is just used as dummy
+                            memory.emit(UnexecutableGoal.class, task, this, nal);
+                        } else {
+                            memory.decisionBlock = memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
                             SyllogisticRules.generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
                         }
                     }
                 }
-                }catch(Exception ex){
+                }catch(Exception ex) {
                     System.out.println("Failure in operation choice rule, analyze!");
                 }
                 
@@ -597,7 +596,7 @@ public class Concept extends Item<Term> {
                 
                 InternalExperience.InternalExperienceFromTask(memory,task,false);
                 
-                if(!executeDecision(task)) {
+                if(nal.memory.time() >= memory.decisionBlock && !executeDecision(task)) {
                     memory.emit(UnexecutableGoal.class, task, this, nal);
                     return true; //it was made true by itself
                 }

@@ -91,6 +91,7 @@ public class Memory implements Serializable {
     //emotion meter keeping track of global emotion
     public final Emotions emotion = new Emotions();   
     
+    public long decisionBlock = 0;
     public Task lastDecision = null;
     public boolean allowExecution = true;
     private long timeRealStart;
@@ -155,6 +156,7 @@ public class Memory implements Serializable {
     
     public void reset() {
         event.emit(ResetStart.class);
+        decisionBlock = 0;
         concepts.reset();
         novelTasks.clear();
         newTasks.clear();    
