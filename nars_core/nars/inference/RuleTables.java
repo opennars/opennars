@@ -116,7 +116,7 @@ public class RuleTables {
                 if(!task.sentence.isEternal() || !belief.isEternal()) {
                     return; //only allow for eternal reasoning for now to prevent derived event floods
                 }
-                return; //preparisons are made now to support this nicely
+                //return; //preparisons are made now to support this nicely
             }
             //comment out for recursive examples, this is for the future, it generates a lot of potentially useless tasks
             
