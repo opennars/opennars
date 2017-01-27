@@ -125,7 +125,7 @@ public class Parameters {
     public static final int CONCEPT_BAG_SIZE = 10000;
     public static final int CONCEPT_BAG_LEVELS = 1000;
     /** Size of TaskLinkBag */
-    public static final int TASK_LINK_BAG_SIZE = 10;  //was 200 in new experiment
+    public static final int TASK_LINK_BAG_SIZE = 100;  //was 200 in new experiment
     public static final int TASK_LINK_BAG_LEVELS = 10;
     /** Size of TermLinkBag */
     public static final int TERM_LINK_BAG_SIZE = 100;  //was 1000 in new experiment
@@ -261,7 +261,7 @@ public class Parameters {
     
     public static float ANTICIPATION_CONFIDENCE = 0.90f;
     
-    public static float CONSIDER_NEW_OPERATION_BIAS = 0.05f; //depriorizes older operation-related events in temporal inference
+    public static float CONSIDER_NEW_OPERATION_BIAS = 0.5f; //depriorizes older operation-related events in temporal inference
     
     public static float TEMPORAL_INDUCTION_PRIORITY_PENALTY = 0.1f;
     
