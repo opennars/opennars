@@ -46,7 +46,7 @@ public abstract class DerivationContext implements Runnable {
         
     }
     
-        
+    public boolean evidentalOverlap = false;
     public final Memory memory;
     protected Term currentTerm;
     protected Concept currentConcept;
@@ -145,7 +145,7 @@ public abstract class DerivationContext implements Runnable {
             for (int i = 0; i < stampLength; i++) {
                 final long baseI = stamp.evidentialBase[i];
                 for (int j = 0; j < stampLength; j++) {
-                    if ((i != j) && (baseI == stamp.evidentialBase[j])) {
+                    if (this.evidentalOverlap || ((i != j) && (baseI == stamp.evidentialBase[j]))) {
                         memory.removeTask(task, "Overlapping Evidenctal Base");
                         //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
                         return false;
