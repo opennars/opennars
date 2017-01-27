@@ -405,6 +405,9 @@ public class Concept extends Item<Term> {
     
     public static void successfulOperationHandler(Memory memory) {
         //multiple versions are necessary, but we do not allow duplicates
+        if(Parameters.CONSIDER_NEW_OPERATION_BIAS == 1.0f) {
+            return;
+        }
         for(Task s : memory.sequenceTasks) {
             
             if(memory.lastDecision != null && (s.getTerm() instanceof Operation)) {
