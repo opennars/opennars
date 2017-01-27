@@ -11,7 +11,7 @@ knowledge=""""""
 
 def init_proc():
     global proc
-    proc = subprocess.Popen(["java","-cp","OpenNARS.jar","nars.core.NARRun"], stdin=subprocess.PIPE, stdout=subprocess.PIPE) 
+    proc = subprocess.Popen(["java","-cp","OpenNARS.jar","nars.io.NARConsole","1"], stdin=subprocess.PIPE, stdout=subprocess.PIPE) 
 
 server = "irc.freenode.net"
 channel = "#nars"
