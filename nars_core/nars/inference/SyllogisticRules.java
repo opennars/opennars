@@ -647,7 +647,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         
-        if(predictedEvent && taskSentence.isJudgment() && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
+        if(predictedEvent && taskSentence.isJudgment() && premise1Sentence.isEternal() && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
             SyllogisticRules.generatePotentialNegConfirmation(nal, premise1Sentence, budget, mintime, maxtime, 1);
         }
         
