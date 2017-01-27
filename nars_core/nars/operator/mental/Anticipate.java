@@ -43,6 +43,7 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
+import nars.io.Output;
 import nars.io.Output.ANTICIPATE;
 import nars.io.Output.CONFIRM;
 import nars.io.Output.DISAPPOINT;
@@ -167,11 +168,11 @@ public class Anticipate extends Operator implements EventObserver {
     
     @Override
     public void event(Class event, Object[] args) {
-        if (event == Events.InduceSucceedingEvent.class) {            
+        if (event == Events.InduceSucceedingEvent.class || event == Events.TaskDerive.class) {            
             Task newEvent = (Task)args[0];
             this.nal= (DerivationContext)args[1];
             
-            if (newEvent.sentence.truth != null && newEvent.sentence.isJudgment() && !newEvent.sentence.isEternal()) {
+            if (newEvent.sentence.truth != null && newEvent.sentence.isJudgment() && newEvent.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION && !newEvent.sentence.isEternal()) {
                 newTasks.add(newEvent.getTerm()); //new: always add but keep truth value in mind
             }
         }
@@ -190,7 +191,7 @@ public class Anticipate extends Operator implements EventObserver {
    //  *
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        if(operation!=null) {
+        if(operation==null) {
             return null; //not as mental operator but as fundamental principle
         }
         
@@ -214,20 +215,24 @@ public class Anticipate extends Operator implements EventObserver {
         //if(true)
         //    return;
         
-        if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+        /*if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
             return;
-        }
+        }*/
         
-        if(t.sentence.truth.getExpectation() < Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
+        if(t!=null && t.sentence.truth.getExpectation() < Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
             return;
         } 
         
-        Concept c = memory.concept(t.getTerm());
-        if(!c.observable) {
+       // Concept c = memory.concept(t.getTerm());
+       /* if(!c.observable) {
             return;
-        }
+        }*/
         
-        nal.memory.emit(ANTICIPATE.class, t);
+       if(t != null) {
+           memory.emit(ANTICIPATE.class, t);
+       } else  {
+          memory.emit(ANTICIPATE.class, content);
+       }
         
         LinkedHashSet<Term> ae = new LinkedHashSet();
         anticipations.put(new Vector2Int(memory.time(),occurenceTime), ae);
