@@ -22,6 +22,7 @@ package nars.entity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import nars.inference.TruthFunctions;
@@ -236,7 +237,7 @@ public class Concept extends Item<Term> {
         if(task.isInput() && !task.sentence.isEternal() && this.negConfirmation != null && task.sentence.getOccurenceTime() > this.negConfirm_abort_mintime) {
             if(task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
                 if(((Statement) this.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
-                    //nal.memory.emit(Output.CONFIRM.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
+                    nal.memory.emit(Output.CONFIRM.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
                     this.negConfirmation = null; //confirmed
                 }
             }
@@ -581,7 +582,9 @@ public class Concept extends Item<Term> {
                     if(!executeDecision(t)) { //this task is just used as dummy
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     } else {
-                        SyllogisticRules.generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
+                        if(!task.sentence.stamp.evidenceIsCyclic()) {
+                            SyllogisticRules.generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
+                        }
                     }
                 }
                 }catch(Exception ex){
@@ -1154,7 +1157,7 @@ public class Concept extends Item<Term> {
             //if(this.negConfirmationPriority >= 2) {
             //    System.out.println(this.negConfirmation.sentence.term);
             //}
-            //memory.emit(Output.DISAPPOINT.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
+            memory.emit(Output.DISAPPOINT.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
             this.negConfirmation = null;
         }
     }

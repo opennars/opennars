@@ -459,8 +459,9 @@ public final class SyllogisticRules {
         if(!Variables.indepVarUsedInvalid(content)) {
             boolean allowOverlap = taskSentence.isJudgment() && strong;
             List<Task> ret = nal.doublePremiseTask(content, truth, budget, false, allowOverlap); //(strong) when strong on judgement
-            if(ret != null && ret.size() > 0 && mainSentence.isEternal() && taskSentence.isJudgment() && mainSentence.isJudgment() && shiftedTimeForward) {
+            if(shiftedTimeForward && ret != null && ret.size() > 0 && mainSentence.isEternal() && taskSentence.isJudgment() && mainSentence.isJudgment() && shiftedTimeForward) {
                 //discountPredictiveHypothesis(nal, mainSentence, budget);
+               // SyllogisticRules.generatePotentialNegConfirmation(nal, mainSentence, budget, mintime, maxtime, 1);
             }
         }
     }
@@ -483,7 +484,7 @@ public final class SyllogisticRules {
                 c.negConfirmationPriority = priority;
                 c.negConfirm_abort_maxtime = maxtime;
                 c.negConfirm_abort_mintime = mintime;
-                //nal.memory.emit(Output.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate());
+                nal.memory.emit(Output.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate());
             }
        }
         }catch(Exception ex) {
@@ -647,11 +648,12 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         
-        if(predictedEvent && taskSentence.isJudgment() && premise1Sentence.isEternal() && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
-            SyllogisticRules.generatePotentialNegConfirmation(nal, premise1Sentence, budget, mintime, maxtime, 1);
+        List<Task> ret = nal.doublePremiseTask(content, truth, budget,false, taskSentence.isJudgment() && deduction); //(allow overlap) when deduction on judgment
+        if(!nal.evidentalOverlap && ret != null && ret.size() > 0) {
+            if(predictedEvent && taskSentence.isJudgment() && premise1Sentence.isEternal() && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
+                SyllogisticRules.generatePotentialNegConfirmation(nal, premise1Sentence, budget, mintime, maxtime, 1);
+            }
         }
-        
-        nal.doublePremiseTask(content, truth, budget,false, taskSentence.isJudgment() && deduction); //(allow overlap) when deduction on judgment
     }
 
     /**
