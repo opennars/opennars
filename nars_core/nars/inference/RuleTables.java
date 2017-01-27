@@ -152,7 +152,9 @@ public class RuleTables {
                                 SyllogisticRules.detachment(taskSentence, belief, bIndex, nal);
                             }
                         } //else {
-                            goalFromQuestion(task, taskTerm, nal);
+                        try {
+                            goalFromQuestion(task, taskTerm, nal); 
+                        }catch(Exception ex) {} //todo fix
                         //}
                         break;
                     case TermLink.COMPOUND_STATEMENT:

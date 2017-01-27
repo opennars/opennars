@@ -624,7 +624,13 @@ public class Memory implements Serializable {
                     continue;
                 }
                 already_attempted.add(takeout);
+                try {
                 proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true);
+                } catch (Exception ex) {
+                    if(Parameters.DEBUG) {
+                        System.out.println("issue in temporal induction");
+                    }
+                }
                 this.sequenceTasks.putBack(takeout, cycles(this.param.sequenceForgetDurations), this);
             }
             //for (Task stmLast : stm) {

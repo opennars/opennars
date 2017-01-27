@@ -39,7 +39,8 @@ public class TestChamber {
 
         //set NAR architecture parameters:
         //builder...
-        Parameters.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
+        Parameters.CONSIDER_NEW_OPERATION_BIAS = 1.0f; //not that much events in testchamber anyway
+        Parameters.SEQUENCE_BAG_SIZE = 100; //but many possible different ways to achieve certain things
         NAR nar = new NAR();
         //set NAR runtime parmeters:  
 

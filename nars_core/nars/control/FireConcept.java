@@ -96,8 +96,13 @@ abstract public class FireConcept extends DerivationContext {
                 setCurrentBeliefLink(termLink);
 
 
-
-                reason(currentTaskLink, termLink);                    
+                try {
+                    reason(currentTaskLink, termLink);        
+                } catch(Exception ex) {
+                    if(Parameters.DEBUG) {
+                        System.out.println("issue in inference");
+                    }
+                }
 
                 emit(Events.TermLinkSelect.class, termLink, currentConcept, this);
                 //memory.logic.REASON.commit(termLink.getPriority());                    
