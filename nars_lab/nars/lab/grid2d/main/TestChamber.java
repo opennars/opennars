@@ -56,7 +56,7 @@ public class TestChamber {
         new NARSwing(nar);
 
         new TestChamber(nar);
-                
+        
         nar.start(narUpdatePeriod);   
         
     }
