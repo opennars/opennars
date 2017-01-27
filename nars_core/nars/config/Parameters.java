@@ -261,7 +261,7 @@ public class Parameters {
     
     public static float ANTICIPATION_CONFIDENCE = 0.90f;
     
-    public static float CONSIDER_NEW_OPERATION_BIAS = 0.5f; //depriorizes older operation-related events in temporal inference
+    public static float CONSIDER_NEW_OPERATION_BIAS = 1.0f; //depriorizes older operation-related events in temporal inference
     
     public static float TEMPORAL_INDUCTION_PRIORITY_PENALTY = 0.1f;
     
