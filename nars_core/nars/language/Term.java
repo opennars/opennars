@@ -65,9 +65,9 @@ public class Term implements AbstractTerm {
         if(isOp) {
             Operator op=((Operation)this).getOperator(); //the following part may be refactored after we
             //know more about how the NAL9 concepts should really interact together:
-            if(op.equals(mem.getOperator("^want")) || op.equals(mem.getOperator("^believe"))) {
+            /*if(op.equals(mem.getOperator("^want")) || op.equals(mem.getOperator("^believe"))) {
                 return false;
-            }
+            }*/
         }
         return isOp;
     }
