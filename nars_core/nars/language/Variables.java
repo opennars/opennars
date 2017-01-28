@@ -131,8 +131,8 @@ public class Variables {
                 if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
                 }
-                int success = 0;
                 for(int i = 0; i < list.length; i++) {
+                    boolean succeeded = false;
                     for(int j = 0; j < list.length; j++) {
                         Term ti = list[i].clone();
                         
@@ -159,13 +159,13 @@ public class Variables {
                             for(Term c : mapNew[1].keySet()) {
                                 map[1].put(c, mapNew[1].get(c));
                             }
-                            success += 1;
+                            succeeded = true;
                             break;
                         }
                     }
-                }
-                if(success == list.length) {
-                    return true;
+                    if(!succeeded) {
+                        return false;
+                    }
                 }
                 return false;
             }
