@@ -135,8 +135,7 @@ public class Variables {
                     boolean succeeded = false;
                     for(int j = 0; j < list.length; j++) {
                         Term ti = list[i].clone();
-                        
-                        //clone map:
+                        //clone map also:
                         Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
                         mapNew[0] = new HashMap<Term,Term>();
                         mapNew[1] = new HashMap<Term,Term>();
@@ -152,6 +151,7 @@ public class Variables {
                         for(Term c : map[1].keySet()) {
                             mapNew[1].put(c, map[1].get(c));
                         }
+                        //attempt unification:
                         if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
                             for(Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
                                 map[0].put(c, mapNew[0].get(c));
