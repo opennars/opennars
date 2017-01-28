@@ -872,7 +872,18 @@ public final class SyllogisticRules {
      * @param nal Reference to the memory
      */
     static void elimiVarDep(CompoundTerm compound, Term component, boolean compoundTask, DerivationContext nal) {
-        Term content = reduceComponents(compound, component, nal.mem());
+        Term comp = null;
+        for(Term t : compound) {
+            Term[] unify = new Term[] { t, component };
+            if(Variables.unify(Symbols.VAR_DEPENDENT, unify)) {
+                comp = t;
+                break;
+            }
+        }
+        if(comp == null) {
+            return;
+        }
+        Term content = reduceComponents(compound, comp, nal.mem());
         if ((content == null) || ((content instanceof Statement) && ((Statement) content).invalid())) {
             return;
         }
