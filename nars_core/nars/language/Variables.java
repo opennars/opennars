@@ -160,6 +160,7 @@ public class Variables {
                                 map[1].put(c, mapNew[1].get(c));
                             }
                             success += 1;
+                            break;
                         }
                     }
                 }
