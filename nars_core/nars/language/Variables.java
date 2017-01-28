@@ -1,6 +1,7 @@
 package nars.language;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import nars.storage.Memory;
 import nars.io.Symbols;
@@ -125,6 +126,47 @@ public class Variables {
             Term[] list = cTerm1.cloneTerms();
             if (cTerm1.isCommutative()) {
                 CompoundTerm.shuffle(list, Memory.randomNumber);
+                HashSet<Integer> alreadyMatched = new HashSet<Integer>();
+                //ok attempt unification
+                if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
+                    return false;
+                }
+                int success = 0;
+                for(int i = 0; i < list.length; i++) {
+                    for(int j = 0; j < list.length; j++) {
+                        Term ti = list[i].clone();
+                        
+                        //clone map:
+                        Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
+                        mapNew[0] = new HashMap<Term,Term>();
+                        mapNew[1] = new HashMap<Term,Term>();
+                        if(map[0] == null) {
+                            map[0] = new HashMap<Term,Term>();
+                        }
+                        if(map[1] == null) {
+                            map[1] = new HashMap<Term,Term>();
+                        }
+                        for(Term c : map[0].keySet()) {
+                            mapNew[0].put(c, map[0].get(c));
+                        }
+                        for(Term c : map[1].keySet()) {
+                            mapNew[1].put(c, map[1].get(c));
+                        }
+                        if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
+                            for(Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
+                                map[0].put(c, mapNew[0].get(c));
+                            }
+                            for(Term c : mapNew[1].keySet()) {
+                                map[1].put(c, mapNew[1].get(c));
+                            }
+                            success += 1;
+                        }
+                    }
+                }
+                if(success == list.length) {
+                    return true;
+                }
+                return false;
             }
             for (int i = 0; i < cTerm1.size(); i++) {
                 Term t1 = list[i];
