@@ -131,9 +131,13 @@ public class Variables {
                 if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
                 }
+                HashSet<Integer> matchedJ = new HashSet<Integer>();
                 for(int i = 0; i < list.length; i++) {
                     boolean succeeded = false;
                     for(int j = 0; j < list.length; j++) {
+                        if(matchedJ.contains(j)) { //this one already was used to match one of the i's
+                            continue;
+                        }
                         Term ti = list[i].clone();
                         //clone map also:
                         Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
@@ -160,6 +164,7 @@ public class Variables {
                                 map[1].put(c, mapNew[1].get(c));
                             }
                             succeeded = true;
+                            matchedJ.add(j);
                             break;
                         }
                     }
@@ -167,7 +172,7 @@ public class Variables {
                         return false;
                     }
                 }
-                return false;
+                return true;
             }
             for (int i = 0; i < cTerm1.size(); i++) {
                 Term t1 = list[i];
