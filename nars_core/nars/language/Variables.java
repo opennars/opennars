@@ -131,7 +131,7 @@ public class Variables {
                 if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
                 }
-                HashSet<Integer> matchedJ = new HashSet<Integer>();
+                HashSet<Integer> matchedJ = new HashSet<Integer>(list.length);
                 for(int i = 0; i < list.length; i++) {
                     boolean succeeded = false;
                     for(int j = 0; j < list.length; j++) {
