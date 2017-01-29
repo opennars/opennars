@@ -42,6 +42,7 @@ public class TestChamber {
         Parameters.CONSIDER_NEW_OPERATION_BIAS = 1.0f; //not that much events in testchamber anyway
         Parameters.SEQUENCE_BAG_SIZE = 100; //but many possible different ways to achieve certain things
         NAR nar = new NAR();
+        nar.param.decisionThreshold.set(0.51);
         //set NAR runtime parmeters:  
 
         /*for(NAR.PluginState pluginstate : nar.getPlugins()) {
