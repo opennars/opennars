@@ -608,8 +608,15 @@ public final class SyllogisticRules {
         if (content == null)
             return;        
         
-        if(!predictedEvent && ((Conjunction) subj).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-            return; //only allow this rule to be used for this detachment case and for non-seq conjunction (multiple interval issue else)
+        if(!predictedEvent && ((Conjunction) subj).getTemporalOrder() == TemporalRules.ORDER_FORWARD) { //do not allow sequences
+            boolean last_ival = false; //which have two intervals as result of this, makes sure we only detach (&/ from left side
+            for(Term t: ((Conjunction) subj).term) {
+                boolean ival = t instanceof Interval; 
+                if(last_ival && ival) {
+                    return;
+                }
+                last_ival = ival;
+            }
         }
         
         if (delta != 0) {
