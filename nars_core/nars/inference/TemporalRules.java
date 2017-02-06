@@ -514,7 +514,7 @@ public class TemporalRules {
         //this way negative evidence can update the solution instead of getting ignored due to lower truth expectation.
         //so the previous handling to let whether the problem has query vars decide was wrong.
         if (!rateByConfidence) {
-            return truth.getExpectation(); //(float) (truth.getExpectation() / Math.sqrt(solution.term.getComplexity()*Parameters.COMPLEXITY_UNIT));
+            return (float) (truth.getExpectation() / Math.sqrt(Math.sqrt(Math.sqrt(solution.term.getComplexity()*Parameters.COMPLEXITY_UNIT))));
         } else {
             return truth.getConfidence();
         }
