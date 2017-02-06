@@ -484,7 +484,7 @@ public final class SyllogisticRules {
                 c.negConfirmationPriority = priority;
                 c.negConfirm_abort_maxtime = maxtime;
                 c.negConfirm_abort_mintime = mintime;
-                //nal.memory.emit(Output.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
+                nal.memory.emit(Output.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
             }
        }
         }catch(Exception ex) {
