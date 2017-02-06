@@ -1152,6 +1152,26 @@ public class Concept extends Item<Term> {
     public void maintainDisappointedAnticipations() {
         //here we can check the expiration of the feedback:
         if(this.negConfirmation != null && this.memory.time() > this.negConfirm_abort_maxtime) {
+            
+            //at first search beliefs for input tasks:
+            boolean cancelled = false;
+            for(TaskLink tl : this.taskLinks) { //search for input in tasklinks (beliefs alone can not take temporality into account as the eternals will win)
+                Task t = tl.targetTask;
+                if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && t.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION &&
+                        CompoundTerm.cloneDeepReplaceIntervals(t.sentence.term).equals(CompoundTerm.cloneDeepReplaceIntervals(this.getTerm()))) {
+                    if(t.sentence.getOccurenceTime() >= this.negConfirm_abort_mintime && t.sentence.getOccurenceTime() <= this.negConfirm_abort_maxtime) {
+                        cancelled = true;
+                        break;
+                    }
+                }
+            }
+            
+            if(cancelled) {
+                memory.emit(Output.CONFIRM.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
+                this.negConfirmation = null; //confirmed
+                return;
+            }
+            
             memory.inputTask(this.negConfirmation, false); //disappointed
             //if(this.negConfirmationPriority >= 2) {
             //    System.out.println(this.negConfirmation.sentence.term);

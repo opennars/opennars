@@ -192,9 +192,15 @@ public class Conjunction extends CompoundTerm {
             
             // sort/merge arguments
             final TreeSet<Term> set = new TreeSet<>();
-            for (Term t : argList) set.add(t);
+            for (Term t : argList) {
+                if(!(t instanceof Interval)) { //intervals only for seqs
+                    set.add(t);
+                }
+            }
             
-            if (set.size() == 1) return set.first();
+            if (set.size() == 1) {
+                return set.first();
+            }
             
             return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder, false);
         }

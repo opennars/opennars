@@ -54,6 +54,8 @@ public class Stamp implements Cloneable {
     private long[] evidentialSet = null;
     /*Tense of the item*/
     private Tense tense;
+    /*True when its a neg confirmation task that was already checked:*/
+    public boolean alreadyAnticipatedNegConfirmation = false;
     
     /** caches  */
     transient CharSequence name = null;

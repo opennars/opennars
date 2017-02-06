@@ -162,14 +162,15 @@ public class TemporalRules {
         
         Term t1 = s1.term;
         Term t2 = s2.term;
-                
+               
+        boolean deriveSequenceOnly = Statement.invalidStatement(t1, t2, true);
         if (Statement.invalidStatement(t1, t2, false))
             return Collections.EMPTY_LIST;
         
         Term t11=null;
         Term t22=null;
         
-        if (termForTemporalInduction(t1) && termForTemporalInduction(t2)) {
+        if (!deriveSequenceOnly && termForTemporalInduction(t1) && termForTemporalInduction(t2)) {
             
             Statement ss1 = (Statement) t1;
             Statement ss2 = (Statement) t2;
@@ -339,7 +340,7 @@ public class TemporalRules {
         //maybe this way is also the more flexible and intelligent way to introduce variables for the case above
         //TODO: rethink this for 1.6.3
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
-        if(statement2!=null) { //there is no general form
+        if(!deriveSequenceOnly && statement2!=null) { //there is no general form
             //ok then it may be the (&/ =/> case which 
             //is discussed here: https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
             Statement st=statement2;
@@ -369,7 +370,7 @@ public class TemporalRules {
         }
         
         List<Task> success=new ArrayList<Task>();
-        if(t11!=null && t22!=null) {
+        if(!deriveSequenceOnly && t11!=null && t22!=null) {
             Statement statement11 = Implication.make(t11, t22, order);
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
@@ -392,7 +393,7 @@ public class TemporalRules {
                 }
             }
         }
-        if(!tooMuchTemporalStatements(statement1)) {
+        if(!deriveSequenceOnly && !tooMuchTemporalStatements(statement1)) {
             List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
             if(t!=null) {
                 success.addAll(t);
@@ -403,7 +404,7 @@ public class TemporalRules {
             }
         }
         
-        if(!tooMuchTemporalStatements(statement2)) {
+        if(!deriveSequenceOnly && !tooMuchTemporalStatements(statement2)) {
             List<Task> t=nal.doublePremiseTask(statement2, truth2, budget2,true, false);
                  if(t!=null) {
                     success.addAll(t);
@@ -439,7 +440,7 @@ public class TemporalRules {
                     questionFromLowConfidenceHighPriorityJudgement(task, conf, nal); */
                 }
             }
-        if(!tooMuchTemporalStatements(statement3)) {
+        if(!deriveSequenceOnly && !tooMuchTemporalStatements(statement3)) {
             List<Task> t=nal.doublePremiseTask(statement3, truth3, budget3,true, false);
             if(t!=null) {
                 for(Task task : t) {
@@ -513,7 +514,7 @@ public class TemporalRules {
         //this way negative evidence can update the solution instead of getting ignored due to lower truth expectation.
         //so the previous handling to let whether the problem has query vars decide was wrong.
         if (!rateByConfidence) {
-            return truth.getExpectation() / (solution.term.getComplexity()*Parameters.COMPLEXITY_UNIT);
+            return truth.getExpectation(); //(float) (truth.getExpectation() / Math.sqrt(solution.term.getComplexity()*Parameters.COMPLEXITY_UNIT));
         } else {
             return truth.getConfidence();
         }

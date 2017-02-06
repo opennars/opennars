@@ -478,13 +478,13 @@ public final class SyllogisticRules {
         //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
         Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f)); //Budget for one-time processing
         Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
-        if(c != null && mintime > nal.memory.time() && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
                 c.negConfirmation = t;
                 c.negConfirmationPriority = priority;
                 c.negConfirm_abort_maxtime = maxtime;
                 c.negConfirm_abort_mintime = mintime;
-                nal.memory.emit(Output.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate());
+                //nal.memory.emit(Output.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
             }
        }
         }catch(Exception ex) {
@@ -608,6 +608,10 @@ public final class SyllogisticRules {
         if (content == null)
             return;        
         
+        if(!predictedEvent && ((Conjunction) subj).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            return; //only allow this rule to be used for this detachment case and for non-seq conjunction (multiple interval issue else)
+        }
+        
         if (delta != 0) {
             long baseTime = (belief.term instanceof Implication) ?
                 taskSentence.getOccurenceTime() : belief.getOccurenceTime();
@@ -650,7 +654,9 @@ public final class SyllogisticRules {
         
         List<Task> ret = nal.doublePremiseTask(content, truth, budget,false, taskSentence.isJudgment() && deduction); //(allow overlap) when deduction on judgment
         if(!nal.evidentalOverlap && ret != null && ret.size() > 0) {
-            if(predictedEvent && taskSentence.isJudgment() && premise1Sentence.isEternal() && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
+            if(predictedEvent && taskSentence.isJudgment() && truth != null && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION &&
+                    !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
+                premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
                 SyllogisticRules.generatePotentialNegConfirmation(nal, premise1Sentence, budget, mintime, maxtime, 1);
             }
         }
