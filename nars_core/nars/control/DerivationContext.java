@@ -90,6 +90,25 @@ public abstract class DerivationContext implements Runnable {
             System.out.println(a);
         }*/
         
+        /*if(task.sentence.term instanceof Implication) {
+            Implication imp = (Implication) task.sentence.term;
+            if(imp.getSubject() instanceof Conjunction) {
+                Conjunction conj = (Conjunction) imp.getSubject();
+                boolean lastWasIval = false;
+                for(Term t : conj.term) {
+                    if(t instanceof Interval) {
+                        if(lastWasIval) {
+                            int a = 0;
+                            System.out.println(a); //only decompose compound is allowed to do this!
+                        } //this debug code helps identifying cases
+                        lastWasIval = true;
+                    } else {
+                        lastWasIval = false;
+                    }
+                }
+            }
+        }*/
+        
         
         if (derivationFilters!=null) {            
             for (int i = 0; i < derivationFilters.size(); i++) {
