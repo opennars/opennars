@@ -71,7 +71,7 @@ public class MultiModePanel extends NPanel implements EventObserver {
         public DirectedMultigraph getGraph() {
             //TODO udpate this
             return new NARGraph().add(nar, NARGraph.IncludeEverything,
-                    new DefaultGraphizer(true,true,true,true,0,false, false) 
+                    new DefaultGraphizer(true,true,true,true,0,false, false, null) 
             );
         }
 
