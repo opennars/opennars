@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
 import nars.util.Events.ResetEnd;
@@ -78,6 +79,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         
     }
     
+    JTextField filterBox = new JTextField();
     public class ConceptGraphMode extends MinPriorityGraphMode implements GraphMode {
         private boolean showBeliefs = false;    
         private boolean showQuestions = false;
@@ -88,7 +90,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
 
         @Override
         public Graph nextGraph() {
-            return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new DefaultGraphizer(showBeliefs, showBeliefs, showQuestions, showTermContent, 0, showTermLinks, showTaskLinks));
+            return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new DefaultGraphizer(showBeliefs, showBeliefs, showQuestions, showTermContent, 0, showTermLinks, showTaskLinks, filterBox));
         }
 
         @Override
@@ -115,7 +117,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
             });
             j.add(taskLinkEnable);
 
-            final JCheckBox beliefsEnable = new JCheckBox("Beliefs");
+           /* final JCheckBox beliefsEnable = new JCheckBox("Beliefs");
             beliefsEnable.setSelected(showBeliefs);
             beliefsEnable.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
@@ -123,7 +125,10 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
                     setUpdateNext();
                 }
             });
-            j.add(beliefsEnable);
+            j.add(beliefsEnable);*/
+            
+            filterBox.setPreferredSize(new Dimension(255,20));
+            j.add(filterBox);
 
             return j;
             
@@ -162,8 +167,8 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         super(null, new GraphDisplays());
         this.nar = n;
         this.displays = (GraphDisplays)getDisplay();
-        
-        update(new NARGraphDisplay(), new FastOrganicLayout());
+        NARGraphDisplay grap = new NARGraphDisplay();
+        update(grap, new FastOrganicLayout());
     }
     
     public void update(NARGraphDisplay style, GraphDisplay layout) {
