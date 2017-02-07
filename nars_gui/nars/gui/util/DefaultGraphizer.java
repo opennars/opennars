@@ -3,6 +3,7 @@ package nars.gui.util;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JTextField;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -44,11 +45,11 @@ public class DefaultGraphizer implements NARGraph.Graphize {
     //avoid loops
 
     public DefaultGraphizer() {
-        this(false, false, false, false,0,false,false);
+        this(false, false, false, false,0,false,false, null);
     }
     
-    
-    public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, int includeSyntax, boolean includeTermLinks, boolean includeTaskLinks) {
+    JTextField filterBox;
+    public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, int includeSyntax, boolean includeTermLinks, boolean includeTaskLinks, JTextField filterBox) {
         this.includeBeliefs = includeBeliefs;
         this.includeQuestions = includeQuestions;
         this.includeTermContent = includeTermContent;
@@ -56,6 +57,7 @@ public class DefaultGraphizer implements NARGraph.Graphize {
         this.includeSyntax = includeSyntax;
         this.includeTermLinks = includeTermLinks;
         this.includeTaskLinks = includeTaskLinks;
+        this.filterBox = filterBox;
     }
     //if (terms.put(t)) {
     //}
@@ -84,11 +86,16 @@ public class DefaultGraphizer implements NARGraph.Graphize {
 
     @Override
     public void onConcept(NARGraph g, Concept c) {
-        g.addVertex(c);
+       
         
         Term t = c.term;
         
-        terms.put(c.term, c);
+        if(this.filterBox != null && ("".equals(this.filterBox.getText()) || t.toString().contains(this.filterBox.getText()))){
+            g.addVertex(c);
+            terms.put(c.term, c);
+        } else {
+            return;
+        }
                 
         if (includeTermLinks) {
             for (TermLink x : c.termLinks) {
