@@ -6,7 +6,6 @@
 #   Input from file
 #       nars.sh [filename]
 
-java -cp dist/OpenNARS.jar nars.core.NARRun $1
-
-
+#java -cp target/opennars-1.6.5.jar nars.io.NARConsole $1
+mvn exec:java -Dexec.mainClass="nars.io.NARConsole"  -Dexec.args="$1"
 
