@@ -26,6 +26,7 @@ public class SimNAR extends Frame {
     public SimNAR() {
         String[] args = {"Microworld"};
         MyPapplet mp = new MyPapplet ();
+        mp.setSize(800,600);
         PApplet.runSketch(args, mp);
     }
 
