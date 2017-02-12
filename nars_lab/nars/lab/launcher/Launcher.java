@@ -211,7 +211,7 @@ public class Launcher extends javax.swing.JFrame {
 
         jLabel10.setBackground(new java.awt.Color(255, 255, 255));
         jLabel10.setForeground(new java.awt.Color(254, 255, 255));
-        jLabel10.setText("NAR Pong");
+        jLabel10.setText("Microworld");
         jLabel10.setToolTipText("");
         jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
