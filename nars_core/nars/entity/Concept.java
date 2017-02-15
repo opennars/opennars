@@ -449,7 +449,7 @@ public class Concept extends Item<Term> {
             final Stamp oldStamp = oldGoal.stamp;
             
             
-            if (newStamp.equals(oldStamp,false,true,true,false)) {
+            if (newStamp.equals(oldStamp,false,false,true,false)) {
                 return false; // duplicate
             }
             if (revisible(goal, oldGoal)) {
@@ -476,11 +476,11 @@ public class Concept extends Item<Term> {
         Stamp s2=goal.stamp.clone();
         s2.setOccurrenceTime(memory.time());
         if(s2.after(task.sentence.stamp, nal.memory.param.duration.get())) { //this task is not up to date we have to project it first
-            Sentence projectedGoal = task.sentence.projection(memory.time(), nal.memory.param.duration.get());
-            if(projectedGoal!=null) {
-                nal.singlePremiseTask(projectedGoal, task.budget.clone()); //it has to be projected
-                return false;
-            }
+            Sentence projGoal = task.sentence.projection(memory.time(), nal.memory.param.duration.get());
+            if(projGoal!=null && projGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
+                nal.singlePremiseTask(projGoal, task.budget.clone()); //keep goal updated
+               // return false; //outcommented, allowing "roundtrips now", relevant for executing multiple steps of learned implication chains
+            } 
         }
         
         if (task.aboveThreshold()) {
@@ -523,7 +523,7 @@ public class Concept extends Item<Term> {
                     
                     //distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
                     mintime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude-1, nal.memory.param.duration);
-                    maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+2, nal.memory.param.duration);
+                    maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+3, nal.memory.param.duration);
                     
                     Operation op = (Operation) prec[prec.length-2];
                     Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
