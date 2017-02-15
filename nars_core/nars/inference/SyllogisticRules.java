@@ -589,7 +589,7 @@ public final class SyllogisticRules {
                  delta = ((Interval) newCondition).getTime(duration);
                  if(taskSentence.getOccurenceTime() != Stamp.ETERNAL) {
                     mintime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude - 1, duration);
-                    maxtime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude + 2, duration);
+                    maxtime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude + 3, duration);
                     predictedEvent = true;
                  }
              } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
