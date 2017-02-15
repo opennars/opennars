@@ -49,7 +49,7 @@ public class RuntimeParameters implements Serializable {
     
     /** Minimum expectation for a desire value. 
      *  the range of "now" is [-DURATION, DURATION]; */
-    public final AtomicDouble decisionThreshold = new AtomicDouble(0.6);
+    public final AtomicDouble decisionThreshold = new AtomicDouble(0.51);
     
     
 //    //let NARS use NARS+ ideas (counting etc.)
