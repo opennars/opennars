@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -20,7 +22,6 @@ import nars.io.Answered;
 import nars.io.Narsese;
 import nars.io.TextInput;
 import static nars.lab.launcher.Launcher.resource;
-import sun.misc.IOUtils;
 
 /**
  *
@@ -103,7 +104,7 @@ public class LanguageGUI extends javax.swing.JFrame {
 
         jLabel4.setText("Sentence attribute relations:");
 
-        attributePanel.setText("PLACE TIME");
+        attributePanel.setText("PLACE TIME IT");
         jScrollPane3.setViewportView(attributePanel);
 
         jLabel5.setText("For perceiving the sentence in pieces");
@@ -159,29 +160,45 @@ public class LanguageGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public String considerQWord(String s, HashSet<String> qwords) {
+        for(String q : qwords) {
+            if(q.equals(s)) {
+                return "?"+s;
+            }
+        }
+        return s;
+    }
+    
     //NAR learnerNAR = new NAR(); //for learning language structure
     static NAR languageNAR;
     static NAR reasonerNAR;
+    ArrayList<Answered> q = new ArrayList<Answered>();
+    int seed = 1;
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String text = this.inputPanel.getText();
         List<String> inputs = new ArrayList<String>();
         this.inputPanel.setText("");
-        String[] spl = text.split(" ");
-        for(int i=0;i<spl.length;i++) {
-            for(int len=spl.length; len>=Integer.valueOf(spliceField.getText()); len--) {
+        String[] words = text.split(" ");
+        String punctuation = "sentence";
+        for(int i=0;i<words.length;i++) {
+            for(int len=words.length; len>=Integer.valueOf(spliceField.getText()); len--) {
                 String narsese = "<(*,";
-                if(i+len > spl.length) { //this length is not possible
+                if(i+len > words.length) { //this length is not possible
                     continue;
                 }
                 for(int k=i;k<i+len;k++) {
-                    narsese += "\"" + spl[k].replace(".","")+"\"" + ",";
+                    if(words[k].contains("?")) {
+                        punctuation = "question";
+                    }
+                    words[k] = words[k].replace(".","").replace("?",""); //skip puncutation in words
+                    narsese += "\"" + words[k]+"\"" + ",";
                 }
                 narsese = narsese.substring(0, narsese.length()-1);
                 narsese+=") --> PART>.";
@@ -196,18 +213,45 @@ public class LanguageGUI extends javax.swing.JFrame {
         }
         
         languageNAR.stop();
+        for(Answered ans : q) {
+            ans.off();
+        }
         languageNAR.reset();
+        languageNAR.memory.randomNumber.setSeed(seed);
+        seed++;
+        
         try {
+            HashMap<String,String> wordTypes = new HashMap<String,String>();
+            HashSet<String> qWords = new HashSet<String>();
             for(String s : jTextPane1.getText().split("\n")) {
-                languageNAR.addInput(s);
+                //if its a word type definition we won't add it directly but only when used in the sentence
+                if(s.startsWith("<\"")) {
+                    String word = s.split("\"")[1];
+                    wordTypes.put(word, s);
+                    if(s.contains("QWORD>.")) {
+                        qWords.add(word);
+                    }
+                } else {
+                    languageNAR.addInput(s);
+                }
             }
             languageNAR.step(100);
+            //add word categories of all words that occurred
+            for(String word : words) {
+                if(wordTypes.containsKey(word)) {
+                    languageNAR.addInput(wordTypes.get(word));
+                }
+            }
+            languageNAR.step(10);
             for(String s : inputs) {
                 languageNAR.addInput(s);
                 languageNAR.step(1);
             }
+            
+            boolean isQuestion = punctuation.equals("question");
+            String punct = (isQuestion ? "?" : ". :|:");
             //Interpretation of Inheritance
-            languageNAR.ask("<(*,(/,REPRESENT,?a,_),(/,REPRESENT,?b,_)) --> (/,REPRESENT,?v,_)>", new Answered() {
+            Answered cur = new Answered() {
 
                     @Override
                     public void onSolution(Sentence belief) {
@@ -217,23 +261,24 @@ public class LanguageGUI extends javax.swing.JFrame {
                         if(concepts.length < 6) {
                             return; //just an example, no " included
                         }
-                        String s = concepts[1].toUpperCase();
-                        String p = concepts[3].toUpperCase();
-                        String v = concepts[5].toUpperCase();
-                        String inp = "<(*,"+s+","+p+") --> "+v+">. :|:";
-                        if(v.equals("IS")) {
-                            inp = "<"+s + " --> "+p + ">. :|:";
+                        String s = considerQWord(concepts[1],qWords).toUpperCase();
+                        String p = considerQWord(concepts[3],qWords).toUpperCase();
+                        String v = considerQWord(concepts[5],qWords).toUpperCase();
+                        String inp = "<(*,"+s+","+p+") --> "+v+">" + punct;
+                        if(v.equals("IS") || v.equals("ARE")) {
+                            inp = "<"+s + " --> "+p + ">" + punct;
                         }
-                        reasonerNAR.addInput(inp+ " " + belief.truth.toString());
+                        reasonerNAR.addInput(inp+ " " + (isQuestion ? "" : belief.truth.toString()));
                     }
 
                     @Override
                     public void onChildSolution(Task child, Sentence belief) {}
-                });       
+                };
+            languageNAR.ask("<(*,(/,REPRESENT,?a,_),(/,REPRESENT,?b,_)) --> (/,REPRESENT,?v,_)>", cur); 
+            q.add(cur);
             
             for(String attribute : attributePanel.getText().split(" ")) {
-            languageNAR.ask("<?what --> " + attribute + ">", new Answered() {
-
+                cur = new Answered() {
                     @Override
                     public void onSolution(Sentence belief) {
                         //System.out.println("solution: " + belief);
@@ -242,14 +287,16 @@ public class LanguageGUI extends javax.swing.JFrame {
                         if(concepts.length < 2) {
                             return; //just an example, no " included
                         }
-                        String s = concepts[1].toUpperCase();
-                        String inp = "<"+s + " --> " + attribute + ">. :|:";
-                        reasonerNAR.addInput(inp+ " " + belief.truth.toString());
+                        String s = considerQWord(concepts[1],qWords).toUpperCase();
+                        String inp = "<"+s + " --> " + attribute + ">" + punct;
+                        reasonerNAR.addInput(inp+ " " + (isQuestion ? "" : belief.truth.toString()));
                     }
 
                     @Override
                     public void onChildSolution(Task child, Sentence belief) {}
-                }); 
+                };
+                languageNAR.ask("<?what --> " + attribute + ">", cur); 
+                q.add(cur);
             }
             
             languageNAR.start(0);

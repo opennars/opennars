@@ -81,7 +81,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane2" pref="254" max="32767" attributes="0"/>
+              <Component id="jScrollPane2" pref="469" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -158,7 +158,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="attributePanel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="PLACE TIME"/>
+            <Property name="text" type="java.lang.String" value="PLACE TIME IT"/>
           </Properties>
         </Component>
       </SubComponents>
