@@ -1,0 +1,15 @@
+//Basic subject predicate "tim eats ice"
+<<(*,$N1,$V,$N2) --> PART> ==> <(*,(/,REPRESENT,$N1,_),(/,REPRESENT,$N2,_)) --> (/,REPRESENT,$V,_)>>.
+//With determiner:
+<"a" --> DET>.
+<"an" --> DET>.
+<(&&,<$a --> DET>,<(*,$N1,$V,$a,$N2) --> PART>) ==> <(*,(/,REPRESENT,$N1,_),(/,REPRESENT,$N2,_)) --> (/,REPRESENT,$V,_)>>.
+<(&&,<$a --> DET>,<(*,$a,$N1,$V,$N2) --> PART>) ==> <(*,(/,REPRESENT,$N1,_),(/,REPRESENT,$N2,_)) --> (/,REPRESENT,$V,_)>>.
+<(&&,<$b --> DET>,<(*,$N1,$V,$b,$N2) --> PART>) ==> <(*,(/,REPRESENT,$N1,_),(/,REPRESENT,$N2,_)) --> (/,REPRESENT,$V,_)>>.
+<(&&,<$a --> DET>,<$b --> DET>,<(*,$N1,$V,$a,$N2) --> PART>) ==> <(*,(/,REPRESENT,$N1,_),(/,REPRESENT,$N2,_)) --> (/,REPRESENT,$V,_)>>.
+<(&&,<$a --> DET>,<$b --> DET>,<(*,$N1,$a,"is",$b,$N2) --> PART>) ==> <(*,(/,REPRESENT,$N1,_),(/,REPRESENT,$N2,_)) --> (/,REPRESENT,$V,_)>>.
+//With prepositions:
+<"in" --> PLACE_PREP>.
+<(&&,<$IN --> PLACE_PREP>,<(*,$IN,$PLACE) --> PART>) ==> <(/,REPRESENT,$PLACE,_) --> PLACE>>.
+<"at" --> TIME_PREP>.
+<(&&,<$AT --> TIME_PREP>,<(*,$AT,$TIME) --> PART>) ==> <(/,REPRESENT,$TIME,_) --> TIME>>.
