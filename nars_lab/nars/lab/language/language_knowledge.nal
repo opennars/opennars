@@ -20,6 +20,7 @@ $0.1;0.9$ <(&&,<#at --> TIME_PREP>,<(*,#at,$TIME) --> PART>) ==> <(/,REPRESENT,$
 //Verbs:
 <"is" --> VERB>.
 <"are" --> VERB>.
+<"was" --> VERB>.
 <"likes" --> VERB>.
 <"hates" --> VERB>.
 <"eats" --> VERB>.

@@ -87,7 +87,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane2" pref="469" max="32767" attributes="0"/>
+              <Component id="jScrollPane2" pref="493" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -131,7 +131,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Enter a sentence. Example: &quot;tim eats ice in manchester.&quot;"/>
+        <Property name="text" type="java.lang.String" value="Enter a sentence. Example: &quot;tim eats ice in manchester.&quot; Try re-Input in case that it was misinterpreted."/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="spliceCheckbox">
