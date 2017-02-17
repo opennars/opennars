@@ -151,14 +151,14 @@ public final class SyllogisticRules {
             budget3 = BudgetFunctions.backwardWeak(value2, nal);            
         } else {
             if (sentence1.isGoal()) {
-                truth1 = TruthFunctions.desireStrong(value1, value2);
-                truth2 = TruthFunctions.desireWeak(value2, value1);
-                truth3 = TruthFunctions.desireStrong(value1, value2);
+                truth1 = TruthFunctions.desireStrong(value1, value2); //P --> S
+                truth2 = TruthFunctions.desireWeak(value2, value1); //S --> P
+                truth3 = TruthFunctions.desireStrong(value1, value2); //S <-> P
             } else { 
                 // isJudgment
-                truth1 = TruthFunctions.abduction(value1, value2);
-                truth2 = TruthFunctions.abduction(value2, value1);
-                truth3 = TruthFunctions.comparison(value1, value2);
+                truth1 = TruthFunctions.abduction(value1, value2); //P --> S
+                truth2 = TruthFunctions.abduction(value2, value1); //S --> P
+                truth3 = TruthFunctions.comparison(value1, value2); //S <-> P
             }
 
             budget1 = BudgetFunctions.forward(truth1, nal);
