@@ -5,8 +5,8 @@
 <(&&,<#a --> DET>,<(*,#a,$N1,$V,$N2) --> PART>) ==> <(*,(/,REPRESENT,$N1,_),(/,REPRESENT,$N2,_)) --> (/,REPRESENT,$V,_)>>.
 <(&&,<#a --> DET>,<(*,$N1,$V,#a,$N2) --> PART>) ==> <(*,(/,REPRESENT,$N1,_),(/,REPRESENT,$N2,_)) --> (/,REPRESENT,$V,_)>>.
 //With prepositions:
-<(&&,<#in --> PLACE_PREP>,<(*,#in,$PLACE) --> PART>) ==> <(/,REPRESENT,$PLACE,_) --> PLACE>>.
-<(&&,<#at --> TIME_PREP>,<(*,#at,$TIME) --> PART>) ==> <(/,REPRESENT,$TIME,_) --> TIME>>.
+$0.1;0.9$ <(&&,<#in --> PLACE_PREP>,<(*,#in,$PLACE) --> PART>) ==> <(/,REPRESENT,$PLACE,_) --> PLACE>>.
+$0.1;0.9$ <(&&,<#at --> TIME_PREP>,<(*,#at,$TIME) --> PART>) ==> <(/,REPRESENT,$TIME,_) --> TIME>>.
 //Subject or object:
 <(&&,<#a --> DET>,<(*,#a,$NOUN) --> PART>) ==> <(/,REPRESENT,$NOUN,_) --> IT>>.
 //Determiners:
