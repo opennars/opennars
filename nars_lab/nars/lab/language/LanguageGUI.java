@@ -94,7 +94,7 @@ public class LanguageGUI extends javax.swing.JFrame {
 
         jLabel1.setText("Start knowledge and potential training samples:");
 
-        jLabel2.setText("Enter a sentence. Example: \"tim eats ice in manchester.\"");
+        jLabel2.setText("Enter a sentence. Example: \"tim eats ice in manchester.\" Try re-Input in case that it was misinterpreted.");
 
         spliceCheckbox.setSelected(true);
         spliceCheckbox.setText("Cut up");
@@ -168,7 +168,7 @@ public class LanguageGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
