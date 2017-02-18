@@ -20,7 +20,7 @@ import nars.NAR;
 import nars.lab.grid2d.main.Cell.Logic;
 import nars.lab.grid2d.main.Cell.Material;
 import nars.lab.grid2d.gui.EditorPanel;
-import nars.lab.grid2d.particle.ParticleSystem;
+//import nars.lab.grid2d.particle.ParticleSystem;
 import processing.core.PApplet;
 import static processing.core.PConstants.DOWN;
 import static processing.core.PConstants.LEFT;
@@ -64,7 +64,7 @@ public class Grid2DSpace extends PApplet {
     float sy = 800;
     long lasttime = -1;
     double realtime;
-    public ParticleSystem particles;
+    //public ParticleSystem particles;
     public NAR nar;
     
     public Grid2DSpace(Hauto cells, NAR nar) {
@@ -270,7 +270,7 @@ public class Grid2DSpace extends PApplet {
         else
             frameRate(FrameRate);
         
-        particles = new ParticleSystem(this);
+        //particles = new ParticleSystem(this);
     }
     
     int time = 0;

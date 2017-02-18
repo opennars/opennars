@@ -287,7 +287,7 @@ public class Cell {
                     break;
                 case Turret:            
                     if (charge > 0)
-                        s.particles.emitParticles(0.5f, 0.3f, s.getTime()/40f, 0.07f, state.x+0.5f, state.y+0.5f, 1);
+                        //s.particles.emitParticles(0.5f, 0.3f, s.getTime()/40f, 0.07f, state.x+0.5f, state.y+0.5f, 1);
                     break;
             }
         }
