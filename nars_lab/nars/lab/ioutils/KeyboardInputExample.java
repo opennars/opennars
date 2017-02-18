@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.lab.dialog;
+package nars.lab.ioutils;
 
 import automenta.vivisect.swing.NWindow;
 import nars.NAR;
