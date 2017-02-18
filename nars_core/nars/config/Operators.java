@@ -5,7 +5,7 @@ import nars.operator.NullOperator;
 import nars.operator.Operator;
 import nars.operator.misc.Add;
 import nars.operator.misc.Count;
-import nars.lab.operator.math.MathExpression;
+import nars.operator.misc.MathExpression;
 import nars.operator.mental.Believe;
 import nars.operator.mental.Consider;
 import nars.operator.mental.Doubt;
@@ -20,7 +20,6 @@ import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
 import nars.operator.misc.Reflect;
 import nars.operator.misc.Javascript;
-import nars.lab.operator.software.NumericCertainty;
 
 
 public class Operators {
@@ -84,12 +83,12 @@ public class Operators {
             // math operations
             new Count(),
             new Add(),
-            new MathExpression(),
+           // new MathExpression(),
                         
 
             js,      // javascript evaluation
             
-            new NumericCertainty()
+           // new NumericCertainty()
 
          /* 
 +         *          I/O operations under consideration

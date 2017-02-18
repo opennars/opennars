@@ -1,4 +1,4 @@
-package nars.multistep;
+package nars.core;
 
 import nars.NAR;
 import nars.config.Plugins;

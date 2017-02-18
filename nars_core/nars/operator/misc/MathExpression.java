@@ -1,4 +1,4 @@
-package nars.lab.operator.math;
+package nars.operator.misc;
 
 import java.util.List;
 import nars.storage.Memory;
