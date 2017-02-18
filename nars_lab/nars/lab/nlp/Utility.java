@@ -1,4 +1,4 @@
-package nars.lab.io.nlp;
+package nars.lab.nlp;
 
 import java.util.ArrayList;
 

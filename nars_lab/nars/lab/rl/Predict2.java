@@ -281,11 +281,11 @@ public class Predict2 {
 
         };
 
-        n.ask("<<x_t0 --> $e> =/> ?f>");
-        n.ask("<(&/,<x_t0 --> $a>,+1) =|> ?x>");
-        n.ask("<(&/,<x_t0 --> $b>,+2) =|> ?y>");
-        n.ask("<(&/,<x_t0 --> $c>,+3) =|> ?z>");
-        n.ask("<(&/,<x_t0 --> $d>,+4) =|> ?w>");
+        n.ask("<<x_t0 --> ?e> =/> ?f>");
+        n.ask("<(&/,<x_t0 --> ?a>,+1) =|> ?x>");
+        n.ask("<(&/,<x_t0 --> ?b>,+2) =|> ?y>");
+        n.ask("<(&/,<x_t0 --> ?c>,+3) =|> ?z>");
+        n.ask("<(&/,<x_t0 --> ?d>,+4) =|> ?w>");
 
         TreeMLData observed = new TreeMLData("value", Color.WHITE).setRange(0, 1f);
         //error = new TreeMLData("error", Color.ORANGE, numIterations).setRange(0, discretization);

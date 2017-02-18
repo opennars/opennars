@@ -1,4 +1,4 @@
-package nars.lab.io.nlp;
+package nars.lab.nlp;
 
 import com.google.gson.Gson;
 import java.awt.BorderLayout;
@@ -135,6 +135,8 @@ public class NlpStoryGui extends JFrame {
     
     
     public static void main(String[] args) {
+        NARSwing.themeInvert();
+        
         NAR nar = new NAR();
         
         new NARSwing(nar);

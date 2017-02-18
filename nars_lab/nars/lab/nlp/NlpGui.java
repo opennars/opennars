@@ -1,4 +1,4 @@
-package nars.lab.io.nlp;
+package nars.lab.nlp;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -191,6 +191,9 @@ public class NlpGui extends JFrame {
     }
     
     public static void main(String[] args) {
+        
+        NARSwing.themeInvert();
+        
         NAR nar = new NAR();
         
         new NARSwing(nar);
