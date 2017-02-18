@@ -41,7 +41,7 @@ import org.jgrapht.graph.DirectedSubgraph;
  * 
  * @see http://jgrapht.org/javadoc/org/jgrapht/alg/package-summary.html
  */
-public class LogicPerformance {
+public class ReasoningGraph {
     private final TaskReasonGraph essential;
     private final Collection<Task> solutionTask;
     
@@ -154,7 +154,7 @@ public class LogicPerformance {
     /** 'solution' is the subgraph of 'process' which contains the derivation
      *  of the sought results
      */
-    public LogicPerformance(TaskReasonGraph process, Collection<Task> solutionTasks) {
+    public ReasoningGraph(TaskReasonGraph process, Collection<Task> solutionTasks) {
         Set<TimeNode> allCycles = process.vertices(TimeNode.class);        
      
         System.out.println("\n--------------- ANALYSIS ----------\n");
@@ -224,10 +224,14 @@ public class LogicPerformance {
     public boolean connectsAny(Object source, Iterable<? extends Object> targets) { 
         
         for (Object o : targets) {
-            if (source.equals(o))
+            if (source.equals((source instanceof Term && o instanceof Task) ? ((Task) o).sentence.getTerm() : o))
                 return true;
-            
-            DijkstraShortestPath d = new DijkstraShortestPath<>(essential, source, o);
+            DijkstraShortestPath d = null;
+            try {
+            d = new DijkstraShortestPath<>(essential, source, o);
+            }catch(Exception ex) {
+                return false;
+            }
             
             if (d.getPath()!=null)
                 return true;            
@@ -283,8 +287,9 @@ public class LogicPerformance {
                     
                     for (Task task : t) {      
                         solutionTasks.add(task);
-                        
+                        try {
                         process.addEdge(task, "SOLUTION", new UniqueEdge(c.toString()));
+                        }catch(Exception ex){}
                     }
                 }
                 else {
@@ -301,7 +306,7 @@ public class LogicPerformance {
         
         //allTasks.graphMLWrite("/tmp/logicperf.graphml");
         
-        new LogicPerformance(process, solutionTasks);
+        new ReasoningGraph(process, solutionTasks);
                 
     }
 }
