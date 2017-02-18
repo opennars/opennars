@@ -64,9 +64,9 @@ public class Hauto {
                         }
                     }
                     if(!nope) {
-                        TestChamber.space.add(new Pizza((int)i, (int)j, "{pizza"+entityID.toString()+"}"));
+                        TestChamber.space.add(new Pizza((int)i, (int)j, ""));
                         if(TestChamber.staticInformation)
-                        nar.addInput("<{pizza"+entityID.toString()+"} --> pizza>."); 
+                        //nar.addInput("<{pizza"+entityID.toString()+"} --> pizza>."); 
                         entityID++;
                     }
                 }
@@ -182,12 +182,12 @@ public class Hauto {
         }
         
         if(oper.equals("perceive")) {
-             readCells[(int) x][(int) y].name = "place"+entityID.toString();
-            writeCells[(int) x][(int) y].name = "place"+entityID.toString();
+             readCells[(int) x][(int) y].name = "{place"+entityID.toString()+"}";
+            writeCells[(int) x][(int) y].name = "{place"+entityID.toString()+"}";
             if(TestChamber.staticInformation)
             nar.addInput("<"+"{place"+entityID.toString()+"} --> place>.");
             if(TestChamber.curiousity) {
-                space.nar.addInput("<(^go-to," + "place"+entityID.toString() + ") =/> <Self --> [curious]>>.");
+                space.nar.addInput("<(^go-to," + "{place"+entityID.toString() + "}) =/> <Self --> [curious]>>.");
             }
             entityID++;
             return;
@@ -298,7 +298,7 @@ public class Hauto {
             if(selected.machine==Machine.Light) 
                 name="light";
             if(selected.machine==Machine.Turret) 
-                name="firework";
+                name="oven";
             String Klass=name;
             name += (entityID.toString());
             if(selected.material==Material.Door) {
