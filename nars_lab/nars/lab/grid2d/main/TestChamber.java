@@ -19,6 +19,7 @@ import nars.lab.grid2d.operator.Deactivate;
 import nars.lab.grid2d.operator.Goto;
 import nars.lab.grid2d.operator.Pick;
 import nars.gui.NARSwing;
+import nars.lab.grid2d.object.Pizza;
 import processing.core.PVector;
 
 public class TestChamber {
@@ -112,7 +113,7 @@ public class TestChamber {
     public static boolean active=true;
     public static boolean executed=false;
     public static boolean needpizza=false;
-    public static int hungry=250;
+    public static int hungry=0;
     public List<PVector> path=null;
     public static boolean ComplexFeedback=true; //false is minimal feedback
     
@@ -190,7 +191,7 @@ public class TestChamber {
                     if(needpizza) {
                         hungry--;
                         if(hungry<0) {
-                            hungry=250;
+                            hungry=20;
                           //  nar.addInput("(&&,<#1 --> pizza>,<#1 --> [at]>)!"); //also works but better:
                             nar.addInput("<SELF --> [replete]>!");
                             /*for (GridObject obj : space.objects) {
@@ -323,12 +324,22 @@ public class TestChamber {
                                             nar.addInput("<"+goal+" --> [at]>. :|:");
                                         }
                                         lastgone=goal;
-                                        if (goal.startsWith("{pizza")) {
+                                        if (true /*goal.startsWith("{pizza")*/) {
+                                            int x= 0;
+                                            int y = 0;
+                                            for (GridObject obj : space.objects) { 
+                                                if(obj instanceof GridAgent) {
+                                                    GridAgent ag = (GridAgent) obj;
+                                                    x = ag.x;
+                                                    y = ag.y;
+                                                }
+                                            }
+                                            
                                             GridObject ToRemove = null;
                                             for (GridObject obj : space.objects) { //remove pizza
-                                                if (obj instanceof LocalGridObject) {
+                                                if (obj instanceof Pizza) {
                                                     LocalGridObject obo = (LocalGridObject) obj;
-                                                    if (obo.doorname.equals(goal)) {
+                                                    if (obo.x == x && obo.y == y /*obo.doorname.equals(goal)*/) {
                                                         ToRemove = obj;
                                                     }
                                                 }
@@ -336,9 +347,9 @@ public class TestChamber {
                                             if (ToRemove != null) {
                                                 space.objects.remove(ToRemove);
                                             }
-                                            hungry=500;
+                                            hungry=20;
                                             //nar.addInput("<"+goal+" --> eat>. :|:"); //that is sufficient:
-                                            nar.addInput("<"+goal+" --> [at]>. :|:");
+                                            nar.addInput("<SELF --> [replete]>. :|:");
                                         }
                                         active=true;
                                     }
