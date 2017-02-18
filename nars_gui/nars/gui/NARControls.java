@@ -59,7 +59,6 @@ import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TaskTree;
 import nars.gui.output.NARFacePanel;
-import nars.gui.output.TimelinePanel;
 import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
 import nars.io.TextInput;

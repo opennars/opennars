@@ -3,12 +3,13 @@ package nars.core.bag;
 import nars.storage.Bag;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
  * @author me
  */
-public class AdaptiveContinuousBagTest {
+public class BagPinTest {
 
     @Test
     public void test() {
