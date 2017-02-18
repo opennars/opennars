@@ -42,6 +42,7 @@ public class LanguageGUI extends javax.swing.JFrame {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(LanguageGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.jTextPane1.setCaretPosition(0);
             
         languageNAR = new NAR();
         reasonerNAR = new NAR();
@@ -168,7 +169,7 @@ public class LanguageGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

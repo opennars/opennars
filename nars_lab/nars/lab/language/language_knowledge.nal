@@ -17,6 +17,7 @@ $0.1;0.9$ <(&&,<#at --> TIME_PREP>,<(*,#at,$TIME) --> PART>) ==> <(/,REPRESENT,$
 <"in" --> PLACE_PREP>.
 <"at" --> TIME_PREP>.
 <"on" --> PLACE_PREP>.
+<"to" --> PLACE_PREP>.
 //Verbs:
 <"is" --> VERB>.
 <"are" --> VERB>.
@@ -24,7 +25,11 @@ $0.1;0.9$ <(&&,<#at --> TIME_PREP>,<(*,#at,$TIME) --> PART>) ==> <(/,REPRESENT,$
 <"likes" --> VERB>.
 <"hates" --> VERB>.
 <"eats" --> VERB>.
+<"walks" --> VERB>.
+<"goes" --> VERB>.
+<"drinks" --> VER>.
 //Question words
 <"what" --> QWORD>.
 <"who" --> QWORD>.
 <"where" --> QWORD>.
+<"when" --> QWORD>.
