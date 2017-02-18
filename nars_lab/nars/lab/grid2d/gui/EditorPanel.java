@@ -224,7 +224,7 @@ public class EditorPanel extends JPanel {
                                         s.cells.writeCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
                                         if(s.cells.readCells[i][j].machine==Machine.Turret) {
                                             if(TestChamber.staticInformation)
-                                                s.nar.addInput("<"+c[11]+" --> firework>.");
+                                                s.nar.addInput("<"+c[11]+" --> oven>.");
                                             if(s.cells.readCells[i][j].light==1.0f) {
                                                 //s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                             }
@@ -283,7 +283,7 @@ public class EditorPanel extends JPanel {
                                     if(obj.equals("\n"))
                                         continue;
                                     String[] val=obj.split(",");
-                                    if(val.length==0) {
+                                    if(val.length<=1) {
                                         continue;
                                     }
                                     
@@ -525,8 +525,8 @@ public class EditorPanel extends JPanel {
                 s.cells.click("Light", "", "");
             }
         });
-        //since firework doesnt serve a special functionality yet
-        machineMenu.add(new EditorMode("Firework") {
+        //since oven doesnt serve a special functionality yet
+        machineMenu.add(new EditorMode("Oven") {
          @Override public void run() { s.cells.click("Turret","",""); }
          });
 
@@ -674,22 +674,22 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 TestChamber.active=true;
-                s.nar.addInput("<<$1 --> [on]> <=> <(*,$1,SHOULD,BE,SWITCHED,ON) --> sentence>>.");
-                s.nar.addInput("<(--,<$1 --> [on]>) <=> <(*,$1,SHOULD,BE,OFF) --> sentence>>.");
-                s.nar.addInput("<<$1 --> [opened]> <=> <(*,$1,SHOULD,BE,OPENED) --> sentence>>.");
-                s.nar.addInput("<(--,<$1 --> [opened]>) <=> <(*,$1,SHOULD,BE,CLOSED) --> sentence>>.");
-                s.nar.addInput("<<$1 --> [hold]> <=> <(*,$1,SHOULD,BE,HOLD) --> sentence>>.");
-                s.nar.addInput("<<$1 --> [at]> <=> <(*,SHOULD,BE,AT,$1) --> sentence>>.");
-                s.nar.addInput("<(^pick,$1) <=> <(*,$1,SHOULD,BE,PICKED) --> sentence>>.");
-                s.nar.addInput("<(^activate,$1) <=> <(*,$1,SHOULD,BE,ACTIVE) --> sentence>>.");
-                s.nar.addInput("<(^deactivate,$1) <=> <(*,$1,SHOULD,BE,NOT,ACTIVE) --> sentence>>.");
-                s.nar.addInput("<(^go-to,$1) <=> <(*,SHOULD,GO,TO,$1) --> sentence>>.");
-                s.nar.addInput("<(&&,<$1 --> sentence>,(^say,$1)) =/> <I --> chatty>>.");
-                s.nar.addInput("<I --> chatty>!");
-                s.nar.addInput("<I --> chatty>!");
-                s.nar.addInput("<I --> chatty>!");
-                s.nar.addInput("<I --> chatty>!");
-                s.nar.addInput("<I --> chatty>!");
+                s.nar.addInput("<<$1 --> [on]> <|> <(*,$1,SHOULD,BE,SWITCHED,ON) --> sentence>>.");
+                s.nar.addInput("<(--,<$1 --> [on]>) <|> <(*,$1,SHOULD,BE,OFF) --> sentence>>.");
+                s.nar.addInput("<<$1 --> [opened]> <|> <(*,$1,SHOULD,BE,OPENED) --> sentence>>.");
+                s.nar.addInput("<(--,<$1 --> [opened]>) <|> <(*,$1,IS,CLOSED) --> sentence>>.");
+                s.nar.addInput("<<$1 --> [hold]> <|> <(*,I,HOLD,$1) --> sentence>>.");
+                s.nar.addInput("<<$1 --> [at]> <|> <(*,I,AM,AT,$1) --> sentence>>.");
+                s.nar.addInput("<(^pick,$1) <|> <(*,I,PICK,$1) --> sentence>>.");
+                s.nar.addInput("<(^activate,$1) <|> <(*,I,ACTIVATE,$1) --> sentence>>.");
+                s.nar.addInput("<(^deactivate,$1) <|> <(*,I,DEACTIVATE,$1) --> sentence>>.");
+                s.nar.addInput("<(^go-to,$1) <|> <(*,I,GO,TO,$1) --> sentence>>.");
+                s.nar.addInput("<(&&,<$1 --> sentence>,(^say,$1)) =/> <SELF --> chatty>>.");
+                s.nar.addInput("<SELF --> chatty>!");
+                s.nar.addInput("<SELF --> chatty>!");
+                s.nar.addInput("<SELF --> chatty>!");
+                s.nar.addInput("<SELF --> chatty>!");
+                s.nar.addInput("<SELF --> chatty>!");
             }
         });
 
@@ -737,7 +737,7 @@ public class EditorPanel extends JPanel {
             public void run() {
                 wu.run();
                 //s.nar.addInput("<(&&,<$1 --> pizza>,(^go-to,$1)) =/> <$1 --> eat>>."); //also works but better:
-                s.nar.addInput("<(^go-to,$1) =/> <$1 --> [at]>>.");
+                //s.nar.addInput("<(^go-to,$1) =/> <$1 --> [at]>>.");
                 TestChamber.needpizza=true;
             }
         });
