@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.lab.util;
+package nars.lab.testutils;
 
 import nars.NAR;
 import nars.entity.Concept;

@@ -21,7 +21,7 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.Narsese;
-import nars.lab.util.ConceptMonitor;
+import nars.lab.testutils.ConceptMonitor;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;

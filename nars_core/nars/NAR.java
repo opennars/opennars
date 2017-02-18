@@ -46,7 +46,7 @@ import nars.io.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
 import nars.io.Echo;
-import nars.lab.util.ConceptMonitor;
+import nars.lab.testutils.ConceptMonitor;
 import nars.storage.LevelBag;
 
 
