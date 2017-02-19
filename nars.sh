@@ -6,7 +6,7 @@
 #   Input from file
 #       nars.sh [filename]
 
-java -cp dist/OpenNARS.jar nars.core.NARRun $1
+java -cp dist/OpenNARS.jar nars.io.NARConsole $1
 
 
 
