@@ -280,5 +280,10 @@ public class Parameters {
     /** Default durability of exection feedback */
     public static float DEFAULT_FEEDBACK_DURABILITY = (float) 0.5; //was 0.8 in 1.5.5; 0.5 after
     
+    /* Priority penalty for sequences that start with an operation */
+    public static float OPERATION_SEQUENCE_START_PENALTY = 0.05f;
+    /* Priority penalty for sequences that end with an operation */
+    public static float OPERATION_SEQUENCE_END_PENALTY = 0.5f;
+    
 }
 

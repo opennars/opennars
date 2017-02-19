@@ -292,7 +292,7 @@ public class Concept extends Item<Term> {
                 Term subj = imp.getSubject();
                 Term pred = imp.getPredicate();
                 Concept pred_conc = nal.memory.concept(pred);
-                if(pred_conc != null && !(pred instanceof Operation) && (subj instanceof Conjunction)) {
+                if(pred_conc != null /*&& !(pred instanceof Operation)*/ && (subj instanceof Conjunction)) {
                     Conjunction conj = (Conjunction) subj;
                     if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
                             conj.term.length >= 4 && conj.term.length%2 == 0 &&
