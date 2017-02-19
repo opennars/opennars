@@ -93,7 +93,7 @@
             <zipgroupfileset dir="lib/gui" includes="*.jar"/>            
 
             <manifest>
-                <attribute name="Main-Class" value="nars.Launcher"/>
+                <attribute name="Main-Class" value="nars.lab.launcher.Launcher"/>
             </manifest>
             
         </jar>
