@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 import nars.config.Parameters;
 import nars.entity.Item;
+import nars.inference.BudgetFunctions;
 
 
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
@@ -140,7 +141,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      */    
     public E putBack(final E oldItem, final float forgetCycles, final Memory m) {
         float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
-        m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
+        BudgetFunctions.applyForgetting(oldItem.budget, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
         return putIn(oldItem);
     }
     

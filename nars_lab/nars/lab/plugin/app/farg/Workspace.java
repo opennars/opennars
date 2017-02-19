@@ -51,7 +51,7 @@ public class Workspace {
     public double calc_temperature() {
         double s=0.0f;
         n_concepts=0;
-        for(Concept node : nar.memory.concepts) {
+        for(Concept node : nar.memory) {
             if(!node.desires.isEmpty()) {
                 s+=node.getPriority()*node.desires.get(0).sentence.truth.getExpectation();
             }

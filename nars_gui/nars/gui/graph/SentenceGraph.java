@@ -172,7 +172,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
         needInitialConcepts = false;
 
         try {
-            for (final Concept c : memory.concepts) {
+            for (final Concept c : memory) {
                 for (final Task ts : c.beliefs) {                
                     add(ts.sentence, c);
                 }

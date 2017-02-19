@@ -12,13 +12,12 @@ import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.storage.Bag;
-import nars.config.Plugins;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
  * for development and testing.
  */
-public class WorkingCycle implements Iterable<Concept> {
+public class WorkingCycle {
 
 
     /* ---------- Long-term storage for multiple cycles ---------- */
@@ -26,7 +25,6 @@ public class WorkingCycle implements Iterable<Concept> {
      * Concept bag. Containing all Concepts of the system
      */
     public final Bag<Concept,Term> concepts;
-    
     private Memory memory;
          
     public WorkingCycle(Bag<Concept,Term> concepts) {
@@ -40,58 +38,6 @@ public class WorkingCycle implements Iterable<Concept> {
             
     public void init(Memory m) {
         this.memory = m;
-    }
-    
-    protected FireConcept next() {       
-
-        Concept currentConcept = concepts.takeNext();
-        if (currentConcept==null)
-            return null;
-        
-        if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
-            this.memory.concepts.takeOut(currentConcept.getTerm());
-            conceptRemoved(currentConcept);
-            return null;
-        }
-        if(currentConcept.termLinks.size() == 0) {  //remove concepts without tasklinks and without termlinks
-            this.memory.concepts.takeOut(currentConcept.getTerm());
-            conceptRemoved(currentConcept);
-            return null;
-        }
-            
-        return new FireConcept(memory, currentConcept, 1) {
-            
-            @Override public void onFinished() {
-                float forgetCycles = memory.cycles(memory.param.conceptForgetDurations);
-
-                concepts.putBack(currentConcept, forgetCycles, memory);
-            }
-        };
-        
-    }
-
-    public void cycle() {
-        cycleSequential();
-    }
-
-    public boolean noResult() {
-        return memory.newTasks.isEmpty();
-    }
-    
-    public void cycleSequential() {
-        
-        memory.processNewTasks();
-        //if(noResult())
-            memory.processNovelTask();
-        //if(noResult())
-            processConcept();
-    }
-    
-    public void processConcept() {
-        FireConcept f = next();
-            if (f!=null)
-                f.run();  
-        
     }
 
     public void reset() {
@@ -107,7 +53,7 @@ public class WorkingCycle implements Iterable<Concept> {
         memory.emit(ConceptForget.class, c);
     }
     
-    public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing) {
+    public Concept conceptualize(BudgetValue budget, Term term) {
         
         if(term instanceof Interval) {
             return null;
@@ -118,7 +64,7 @@ public class WorkingCycle implements Iterable<Concept> {
         //see if concept is active
         Concept concept = concepts.take(term);
         
-        if ((concept == null) && (createIfMissing)) {                            
+        if (concept == null) {                            
             //create new concept, with the applied budget
             
             concept = new Concept(budget, term, memory);
@@ -156,9 +102,6 @@ public class WorkingCycle implements Iterable<Concept> {
             return null;
         }        
         else {
-            //replaced something else
-            //System.out.println("replace: " + removed + " -> " + concept);            
-
             conceptRemoved(displaced);
             return concept;
         }
@@ -170,14 +113,6 @@ public class WorkingCycle implements Iterable<Concept> {
         concepts.take(c.name());
         BudgetFunctions.activate(c.budget, b, mode);
         concepts.putBack(c, memory.cycles(memory.param.conceptForgetDurations), memory);
-    }
-
-    public Iterator<Concept> iterator() {
-        return concepts.iterator();
-    }
-
-    public Memory getMemory() {
-        return memory;
     }
     
 }

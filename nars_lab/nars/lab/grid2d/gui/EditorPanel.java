@@ -81,7 +81,7 @@ public class EditorPanel extends JPanel {
         mindSettings.add(new EditorMode("Delete all desires") {
             @Override
             public void run() {
-                for(Concept c : s.nar.memory.concepts) {
+                for(Concept c : s.nar.memory) {
                     if(c.desires!=null && !c.desires.isEmpty()) {
                         c.desires.clear();
                     }

@@ -189,7 +189,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param forgetCycles The budget for the new item
      * @param relativeThreshold The relative threshold of the bag
      */
-    public static float forgetIterative(final BudgetValue budget, final float forgetCycles, final float relativeThreshold) {
+    public static float applyForgetting(final BudgetValue budget, final float forgetCycles, final float relativeThreshold) {
         float quality = budget.getQuality() * relativeThreshold;      // re-scaled quality
         final float p = budget.getPriority() - quality;                     // priority above quality
         if (p > 0) {
@@ -197,41 +197,6 @@ public final class BudgetFunctions extends UtilityFunctions {
         }    // priority Durability
         budget.setPriority(quality);
         return quality;
-    }
-
-    /** forgetting calculation for real-time timing */
-    public static float forgetPeriodic(final BudgetValue budget, final float forgetTime, float minPriority, final long currentTime) {
-        long forgetDelta = budget.setLastForgetTime(currentTime);        
-        
-        minPriority *= budget.getQuality();
-        
-        float currentPriority = budget.getPriority();
-        if (currentPriority < minPriority) {
-            //priority already below threshold, don't decrease any further
-            return currentPriority;
-        }
-        
-        float forgetProportion = forgetDelta / forgetTime;
-        if (forgetProportion <= 0) return currentPriority;
-
-        //more durability = slower forgetting
-        forgetProportion *= (1.0 - budget.getDurability());        
-
-        float newPriority;
-        if (forgetProportion > 1.0f) {
-            //forgetProportion = 1.0f;
-            newPriority = minPriority;
-        }
-        else {       
-            newPriority  = currentPriority * (1.0f - forgetProportion) + minPriority * (forgetProportion);
-        }
-        
-        budget.setPriority(newPriority);
-        return newPriority;
-        
-        /*if (forgetDelta > 0)
-            System.out.println("  " + currentPriority + " -> " + budget.getPriority());*/
-        
     }
 
     

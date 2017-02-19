@@ -87,7 +87,7 @@ public class BubbleChart extends NPanel implements EventObserver {
         float conceptOpacity = 0.65f;
         float statementOpacity = 0.9f;
                 
-        for (final Concept c : nar.memory.concepts) {
+        for (final Concept c : nar.memory) {
             float priority = c.getPriority();
             if (priority < minPriority)
                 continue;

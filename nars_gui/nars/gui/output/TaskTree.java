@@ -34,8 +34,10 @@ import nars.util.Events.TaskRemove;
 import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.entity.TaskLink;
 import nars.entity.TruthValue;
 import nars.gui.WrapLayout;
+import nars.storage.Memory;
 
 /**
  *
@@ -153,10 +155,34 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
         return t.getPriority() >= priorityThreshold;
     }
     
+    /** get all tasks in the system by iterating all newTasks, novelTasks, Concept TaskLinks */
+    //not part of Memory.java anymore as this is not something nars_core needs!
+    public Set<Task> getTasks(Memory mem, boolean includeTaskLinks, boolean includeNewTasks, boolean includeNovelTasks) {
+        
+        Set<Task> t = new HashSet();
+        
+        if (includeTaskLinks) {
+            for (Concept c : mem) {
+                for (TaskLink tl : c.taskLinks) {
+                    t.add(tl.targetTask);
+                }
+            }
+        }
+        
+        if (includeNewTasks)
+            t.addAll(mem.newTasks);
+        
+        if (includeNovelTasks)
+            for (Task n : mem.novelTasks)
+                t.add(n);
+            
+        return t;        
+    }
+    
     public void update() {
         //TODO get existing Tasks at the next frame event by new method: memory.getTasks() which iterates all concepts tasklinks
         if (needsRestart) {
-            Set<Task> tasks = nar.memory.getTasks(true, false, false);
+            Set<Task> tasks = getTasks(nar.memory, true, false, false);
             for (Task t : tasks)
                 add(t);
         }
