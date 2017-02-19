@@ -19,16 +19,12 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
-import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.operator.Operation;
-import nars.language.Implication;
-import nars.language.Conjunction;
-import nars.operator.mental.Anticipate;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.

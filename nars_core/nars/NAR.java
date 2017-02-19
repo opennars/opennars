@@ -25,7 +25,6 @@ import nars.util.Events.FrameStart;
 import nars.util.Events.Perceive;
 import nars.config.Plugins;
 import nars.control.DerivationContext.DerivationFilter;
-import nars.control.WorkingCycle;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -148,7 +147,7 @@ public class NAR implements Runnable {
     
     public Memory NewMemory(RuntimeParameters p) {
         return new Memory(p, 
-                new WorkingCycle(new LevelBag(Parameters.CONCEPT_BAG_LEVELS, Parameters.CONCEPT_BAG_SIZE)), 
+                new LevelBag(Parameters.CONCEPT_BAG_LEVELS, Parameters.CONCEPT_BAG_SIZE), 
                 new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
                 new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE));
     }
