@@ -91,10 +91,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     public long decisionBlock = 0;
     public Task lastDecision = null;
     public boolean allowExecution = true;
-    private long timeRealStart;
-    private long timeRealNow;
     private long timePreviousCycle;
-    private long timeSimulation;
     
     public static long randomSeed = 1;
     public static Random randomNumber = new Random(randomSeed);
@@ -154,7 +151,7 @@ public class Memory implements Serializable, Iterable<Concept> {
         newTasks.clear();    
         sequenceTasks.clear();
         cycle = 0;
-        timeRealStart = timeRealNow = System.currentTimeMillis();
+        //timeRealStart = timeRealNow = System.currentTimeMillis();
         timePreviousCycle = time();
         inputPausedUntil = 0;
         emotion.set(0.5f, 0.5f);
@@ -405,32 +402,30 @@ public class Memory implements Serializable, Iterable<Concept> {
         emit(Events.ConceptForget.class, c);
     }
 
-    protected FireConcept next() {       
+    protected void processConcept() {       
 
         Concept currentConcept = concepts.takeNext();
         if (currentConcept==null)
-            return null;
+            return;
         
         if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
             this.concepts.take(currentConcept.getTerm());
             conceptRemoved(currentConcept);
-            return null;
+            return;
         }
         if(currentConcept.termLinks.size() == 0) {  //remove concepts without tasklinks and without termlinks
             this.concepts.take(currentConcept.getTerm());
             conceptRemoved(currentConcept);
-            return null;
+            return;
         }
             
-        return new FireConcept(this, currentConcept, 1) {
-            
+        new FireConcept(this, currentConcept, 1) {
             @Override public void onFinished() {
                 float forgetCycles = memory.cycles(memory.param.conceptForgetDurations);
 
                 concepts.putBack(currentConcept, forgetCycles, memory);
             }
-        };
-        
+        }.run();
     }
     
     public void cycle(final NAR inputs) {
@@ -443,23 +438,21 @@ public class Memory implements Serializable, Iterable<Concept> {
             if (t!=null) 
                 inputTask(t);            
         }
-      
+        
         this.processNewTasks();
     //if(noResult()) //newTasks empty
         this.processNovelTask();
     //if(noResult()) //newTasks empty
-        FireConcept f = next();
-        if (f!=null)
-            f.run(); 
+        this.processConcept();
         
         event.emit(Events.CycleEnd.class);
         event.synch();
         
         timePreviousCycle = time();
         cycle++;
-        timeRealNow = System.currentTimeMillis();
+        //timeRealNow = System.currentTimeMillis();
     }
-   
+    
     /**
      * Process the newTasks accumulated in the previous workCycle, accept input
      * ones and those that corresponding to existing concepts, plus one from the
@@ -715,6 +708,4 @@ public class Memory implements Serializable, Iterable<Concept> {
     public Iterator<Concept> iterator() {
         return concepts.iterator();
     }
-    
-   
 }
