@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 import nars.storage.Memory;
 import nars.language.Term;
+import nars.operator.Operation;
 import nars.plugin.mental.InternalExperience;
 
 /**
@@ -378,8 +379,7 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
         return sentence.getTerm();
     }
 
-
-
-    
-    
+    public boolean isInputOrOperation() {
+        return this.isInput() || (this.sentence.term instanceof Operation);
+    }
 }
