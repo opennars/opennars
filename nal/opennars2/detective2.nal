@@ -1,0 +1,18 @@
+'the detective claims that tim lives in graz
+<{tim} --> (/,livingIn,_,{graz})>.
+'the lawyer claims that this is not the case
+<{tim} --> (/,livingIn,_,{graz})>. %0%
+100
+'the first deponent, a psychologist,
+'claims that people with sunglasses are more aggressive
+<<(*,$1,sunglasses) --> own> ==> <$1 --> [aggressive]>>.
+'the third deponent claims, that he has seen tom with black glasses on:
+<(*,{tom},(&,[black],glasses)) --> own>.
+'the teacher claims, that people who are aggressive tend to be murders
+<<$1 --> [aggressive]> ==> <$1 --> murder>>.
+'the second deponent claims, that if the person lives in Graz, he is surely the murder
+<<$1 --> (/,livingIn,_,{graz})> ==> <$1 --> murder>>.
+'the system knows that sunglasses are a special case of black glasses
+<sunglasses --> (&,[black],glasses)>.
+'who is the murder?
+<{?who} --> murder>?
