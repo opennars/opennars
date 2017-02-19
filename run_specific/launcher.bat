@@ -7,7 +7,7 @@
 #       nars.sh [filename]
 
 cd ..
-java -cp OpenNARS_GUI.jar nars.Launcher
+java -cp OpenNARS_GUI.jar nars.lab.launcher.Launcher
 
 
 
