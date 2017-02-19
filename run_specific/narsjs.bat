@@ -7,7 +7,7 @@
 #       nars.sh [filename]
 
 cd ..
-java -cp ./run_specific/OpenNARS.jar nars.core.NARjs
+java -cp ./run_specific/OpenNARS.jar nars.lab.launcher.NARjs
 
 
 
