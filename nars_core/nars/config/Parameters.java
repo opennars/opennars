@@ -283,7 +283,7 @@ public class Parameters {
     /* Priority penalty for sequences that start with an operation */
     public static float OPERATION_SEQUENCE_START_PENALTY = 0.05f;
     /* Priority penalty for sequences that end with an operation */
-    public static float OPERATION_SEQUENCE_END_PENALTY = 0.5f;
+    public static float NOT_OPERATION_SEQUENCE_END_PENALTY = 0.5f;
     
 }
 
