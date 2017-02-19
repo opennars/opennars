@@ -18,8 +18,9 @@
 package nars.operator.mental;
 
 import java.util.ArrayList;
+import nars.control.DerivationContext;
 import nars.storage.Memory;
-import nars.control.FireConcept;
+import nars.control.GeneralInferenceControl;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
@@ -55,11 +56,9 @@ public class Consider extends Operator {
         
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         
-        new FireConcept(memory, concept, 1) {
-
-            @Override public void onFinished() {             }
-
-        }.run();
+        DerivationContext cont = new DerivationContext(memory);
+        cont.setCurrentConcept(concept);
+        GeneralInferenceControl.fireConcept(cont, 1);
         
         return null;
     }

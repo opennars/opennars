@@ -7,7 +7,7 @@ package nars.lab.predict;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.NAR;
-import nars.control.ImmediateProcess;
+//import nars.control.ImmediateProcess;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.io.Symbols;
@@ -156,8 +156,8 @@ public class Discretize {
             
             if (mode == BeliefInsertion.MemoryInput)
                 nar.memory.inputTask(t);
-            else if (mode == BeliefInsertion.ImmediateProcess)
-                new ImmediateProcess(nar.memory, t).run();
+            //else if (mode == BeliefInsertion.ImmediateProcess)
+            //    new ImmediateProcess(nar.memory, t).run();
             
         }
     }            

@@ -283,6 +283,17 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
     /**
+     * Get the current activation level of a concept.
+     *
+     * @param t The Term naming a concept
+     * @return the priority value of the concept
+     */
+    public static float conceptActivation(Memory mem, final Term t) {
+        final Concept c = mem.concept(t);
+        return (c == null) ? 0f : c.getPriority();
+    }
+    
+    /**
      * Common processing for all inference step
      *
      * @param qual Quality of the inference
@@ -302,7 +313,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         if (bLink != null) {
             priority = or(priority, bLink.getPriority());
             durability = and(durability, bLink.getDurability());
-            final float targetActivation = nal.mem().conceptActivation(bLink.target);
+            final float targetActivation = conceptActivation(nal.memory, bLink.target);
             bLink.incPriority(or(quality, targetActivation));
             bLink.incDurability(quality);
         }

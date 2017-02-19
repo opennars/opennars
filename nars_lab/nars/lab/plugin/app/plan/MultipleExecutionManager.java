@@ -408,7 +408,7 @@ public class MultipleExecutionManager {
         if (currentTerm instanceof Operation) {
             Concept conc = memory.concept(currentTerm);
             execute((Operation) currentTerm, task.t);
-            task.delayUntil = now + memory.getDuration();
+            task.delayUntil = now + memory.param.duration.get();
             s++;
         } else if (currentTerm instanceof Interval) {
             Interval ui = (Interval) currentTerm;

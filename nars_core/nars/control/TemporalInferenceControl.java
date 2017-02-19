@@ -14,14 +14,13 @@ import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.operator.Operation;
-import nars.storage.Memory;
 import nars.util.Events;
 
 /**
  *
  * @author patrick.hammer
  */
-public class TemporalInference {
+public class TemporalInferenceControl {
     public static boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, DerivationContext nal, boolean SucceedingEventsInduction) {
         
         if(SucceedingEventsInduction && !controllerTask.isElemOfSequenceBuffer()) { //todo refine, add directbool in task

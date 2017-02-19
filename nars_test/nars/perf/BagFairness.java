@@ -17,9 +17,10 @@ import nars.storage.Bag;
 import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.MultiTimeline;
 import automenta.vivisect.timeline.StackedPercentageChart;
-import nars.control.FireConcept;
+import nars.control.DerivationContext;
 
 /**
+ **
  *
  * @author me
  */
@@ -57,7 +58,7 @@ public class BagFairness {
                 if (nextConceptPriority!=-1)
                     throw new RuntimeException("Only supports 1 concept per cycle");
                 
-                nextConceptPriority = ((FireConcept)arguments[0]).getCurrentConcept().getPriority();
+                nextConceptPriority = ((DerivationContext)arguments[0]).getCurrentConcept().getPriority();
             }
             
         });
