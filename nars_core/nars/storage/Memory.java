@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -41,6 +42,7 @@ import nars.util.Events.ResetStart;
 import nars.util.Events.TaskRemove;
 import nars.control.WorkingCycle;
 import nars.control.DerivationContext;
+import nars.control.FireConcept;
 import nars.control.ImmediateProcess;
 import nars.plugin.mental.Emotions;
 import nars.entity.BudgetValue;
@@ -50,9 +52,7 @@ import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
-import nars.entity.TaskLink;
 import nars.entity.TruthValue;
-import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.truthToQuality;
 import nars.inference.TemporalRules;
 import nars.io.Output.IN;
@@ -61,7 +61,6 @@ import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Tense;
 import nars.language.Term;
-import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.io.Echo;
@@ -70,7 +69,6 @@ import nars.io.Reset;
 import nars.io.SetDecisionThreshold;
 import nars.io.SetVolume;
 import nars.language.CompoundTerm;
-import nars.language.Interval;
 
 
 /**
@@ -86,7 +84,7 @@ import nars.language.Interval;
  * 
  * Memory is serializable so it can be persisted and transported.
  */
-public class Memory implements Serializable {
+public class Memory implements Serializable, Iterable<Concept> {
     
     //emotion meter keeping track of global emotion
     public final Emotions emotion = new Emotions();   
@@ -129,10 +127,6 @@ public class Memory implements Serializable {
     
     /* System parameters that can be changed at runtime */
     public final RuntimeParameters param;
-    
-    //index of Conjunction questions
-    transient private Set<Task> questionsConjunction = new HashSet();
-
     
     /* ---------- Constructor ---------- */
     /**
@@ -220,15 +214,8 @@ public class Memory implements Serializable {
      * @param term indicating the concept
      * @return an existing Concept, or a new one, or null 
      */
-    public Concept conceptualize(final BudgetValue budget, final Term term) {
-        boolean createIfMissing = true;
-        
-        /*Concept c = concept(term);
-        if (c!=null)
-            System.out.print(c.budget + "   ");
-        System.out.println(term + " conceptualize: " + budget);*/
-                
-        return concepts.conceptualize(budget, term, createIfMissing);
+    public Concept conceptualize(final BudgetValue budget, final Term term) {   
+        return concepts.conceptualize(budget, term);
     }
 
     /**
@@ -241,21 +228,6 @@ public class Memory implements Serializable {
         final Concept c = concept(t);
         return (c == null) ? 0f : c.getPriority();
     }
-    
-    /** 
-     * this will not remove a concept.  it is not good to use directly because it can disrupt 
-     * the bag's priority order. it should only be used after it has been removed then before inserted */
-    public void forget(final Item x, final float forgetCycles, final float relativeThreshold) {
-        BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
-        /*switch (param.forgetting) {
-            case Iterative:                
-                BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
-                break;
-            case Periodic:
-                BudgetFunctions.forgetPeriodic(x.budget, forgetCycles, relativeThreshold, time());
-                break;
-        }*/
-    }    
     
     /* ---------- new task entries ---------- */
     /**
@@ -397,7 +369,39 @@ public class Memory implements Serializable {
     final public boolean emitting(final Class channel) {
         return event.isActive(channel);
     }
+    
+    public void conceptRemoved(Concept c) {
+        emit(Events.ConceptForget.class, c);
+    }
 
+    protected FireConcept next() {       
+
+        Concept currentConcept = concepts.concepts.takeNext();
+        if (currentConcept==null)
+            return null;
+        
+        if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
+            this.concepts.takeOut(currentConcept.getTerm());
+            conceptRemoved(currentConcept);
+            return null;
+        }
+        if(currentConcept.termLinks.size() == 0) {  //remove concepts without tasklinks and without termlinks
+            this.concepts.takeOut(currentConcept.getTerm());
+            conceptRemoved(currentConcept);
+            return null;
+        }
+            
+        return new FireConcept(this, currentConcept, 1) {
+            
+            @Override public void onFinished() {
+                float forgetCycles = memory.cycles(memory.param.conceptForgetDurations);
+
+                concepts.concepts.putBack(currentConcept, forgetCycles, memory);
+            }
+        };
+        
+    }
+    
     public void cycle(final NAR inputs) {
     
         event.emit(Events.CycleStart.class);                
@@ -409,7 +413,13 @@ public class Memory implements Serializable {
                 inputTask(t);            
         }
       
-        concepts.cycle();         
+        this.processNewTasks();
+    //if(noResult()) //newTasks empty
+        this.processNovelTask();
+    //if(noResult()) //newTasks empty
+        FireConcept f = next();
+        if (f!=null)
+            f.run(); 
         
         event.emit(Events.CycleEnd.class);
         event.synch();
@@ -494,29 +504,6 @@ public class Memory implements Serializable {
         inputPausedUntil = (int) (time() + cycles);
     }    
     
-    /** get all tasks in the system by iterating all newTasks, novelTasks, Concept TaskLinks */
-    public Set<Task> getTasks(boolean includeTaskLinks, boolean includeNewTasks, boolean includeNovelTasks) {
-        
-        Set<Task> t = new HashSet();
-        
-        if (includeTaskLinks) {
-            for (Concept c : concepts) {
-                for (TaskLink tl : c.taskLinks) {
-                    t.add(tl.targetTask);
-                }
-            }
-        }
-        
-        if (includeNewTasks)
-            t.addAll(newTasks);
-        
-        if (includeNovelTasks)
-            for (Task n : novelTasks)
-                t.add(n);
-            
-        return t;        
-    }
-
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability) {
         return newTask(content, sentenceType, freq, conf, priority, durability, (Task)null);
     }
@@ -543,13 +530,6 @@ public class Memory implements Serializable {
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         Task task = new Task(sentence, budget, parentTask);
         return task;
-    }
-    
-    public Collection<Task> conceptQuestions(Class c) {
-        if (c == Conjunction.class) {
-            return questionsConjunction;
-        }
-        throw new RuntimeException("Questions index for " + c + " does not exist");
     }
     
     //TODO put probably in extra class involved for event chaining?
@@ -698,6 +678,11 @@ public class Memory implements Serializable {
     /** converts durations to cycles */
     public final float cycles(AtomicDouble durations) {
         return param.duration.floatValue() * durations.floatValue();
+    }
+
+    @Override
+    public Iterator<Concept> iterator() {
+        return concepts.concepts.iterator();
     }
     
    
