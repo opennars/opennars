@@ -5,7 +5,6 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.NAR;
 import nars.config.Parameters;
-import nars.config.Plugins;
 import nars.lab.grid2d.main.Cell.Logic;
 import nars.lab.grid2d.main.Cell.Material;
 import static nars.lab.grid2d.main.Hauto.DOWN;
@@ -113,7 +112,8 @@ public class TestChamber {
     public static boolean active=true;
     public static boolean executed=false;
     public static boolean needpizza=false;
-    public static int hungry=0;
+    public static int hungry = 0;
+    public static int lastgoaltime = 0;
     public List<PVector> path=null;
     public static boolean ComplexFeedback=true; //false is minimal feedback
     
@@ -199,6 +199,13 @@ public class TestChamber {
                                     nar.addInput("<" + ((Pizza) obj).doorname + "--> at>!");
                                 }
                             }*/
+                        }
+                    }
+                    if(Hauto.goalInputPeriodic) {
+                        lastgoaltime--;
+                        if(lastgoaltime < 0) {
+                            lastgoaltime = 20;
+                            nar.addInput(Hauto.lastWish);
                         }
                     }
                 }

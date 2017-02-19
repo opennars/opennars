@@ -172,6 +172,8 @@ public class Hauto {
     String doorname="";
     public static Integer entityID=0;
     public static boolean allow_imitating=false;
+    public static String lastWish = "";
+    public static boolean goalInputPeriodic = true;
     public void clicked(int x,int y, Grid2DSpace space)
     {
         if((int)x == 0 || (int) y==0 || (int)x == w-1 || (int) y==h-1)
@@ -231,9 +233,13 @@ public class Hauto {
             if(!"".equals(readCells[x][y].name)) {
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
                 if(!inverse) {
-                    nar.addInput("<" + readCells[x][y].name+" --> ["+wishreal+"]>! :|:"); //in order to make NARS an observer
+                    String inp = "<" + readCells[x][y].name+" --> ["+wishreal+"]>! :|:";
+                    nar.addInput(inp); //in order to make NARS an observer
+                    lastWish = inp;
                 } else {
-                    nar.addInput("(--,<" + readCells[x][y].name+" --> ["+wishreal+"]>)! :|: %1.00;0.90%");
+                    String inp = "(--,<" + readCells[x][y].name+" --> ["+wishreal+"]>)! :|: %1.00;0.90%";
+                    nar.addInput(inp);
+                    lastWish = inp;
                 }
                 //--nar.step(1);
             }
@@ -241,9 +247,13 @@ public class Hauto {
             if(!s.equals("")) {
                 //nar.addInput("(^" + oper + ","+s+")!"); 
                 if(!inverse) {
-                    nar.addInput("<" + s +" --> ["+wishreal+"]>! :|:"); //in order to make NARS an observer
+                    String inp = "<" + s +" --> ["+wishreal+"]>! :|:";
+                    nar.addInput(inp); //in order to make NARS an observer
+                    lastWish = inp;
                 } else {
-                    nar.addInput("(--,<" + s +" --> ["+wishreal+"]>)! :|: %1.00;0.90%");
+                    String inp = "(--,<" + s +" --> ["+wishreal+"]>)! :|: %1.00;0.90%";
+                    nar.addInput(inp);
+                    lastWish = inp;
                 }
                 //--nar.step(1);
             }

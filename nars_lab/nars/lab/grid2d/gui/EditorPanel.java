@@ -112,6 +112,22 @@ public class EditorPanel extends JPanel {
             }
         });
         
+        
+        mindSettings.add(new EditorMode("Goal input periodic") {
+            @Override
+            public void run() {
+                Hauto.goalInputPeriodic=true;
+            }
+        });
+        
+        mindSettings.add(new EditorMode("Goal input once") {
+            @Override
+            public void run() {
+                Hauto.goalInputPeriodic=false;
+            }
+        });
+        
+        
         mindSettings.add(new EditorMode("Tell object categories") {
             @Override
             public void run() {
