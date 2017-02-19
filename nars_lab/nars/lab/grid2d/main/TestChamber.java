@@ -343,20 +343,24 @@ public class TestChamber {
                                             }
                                             
                                             GridObject ToRemove = null;
+                                            boolean atePizza = false;
                                             for (GridObject obj : space.objects) { //remove pizza
                                                 if (obj instanceof Pizza) {
                                                     LocalGridObject obo = (LocalGridObject) obj;
                                                     if (obo.x == x && obo.y == y /*obo.doorname.equals(goal)*/) {
                                                         ToRemove = obj;
+                                                        atePizza = true;
                                                     }
                                                 }
                                             }
                                             if (ToRemove != null) {
                                                 space.objects.remove(ToRemove);
                                             }
-                                            hungry=20;
-                                            //nar.addInput("<"+goal+" --> eat>. :|:"); //that is sufficient:
-                                            nar.addInput("<SELF --> [replete]>. :|:");
+                                            if(atePizza) {
+                                                hungry=20;
+                                                //nar.addInput("<"+goal+" --> eat>. :|:"); //that is sufficient:
+                                                nar.addInput("<SELF --> [replete]>. :|:");
+                                            }
                                         }
                                         active=true;
                                     }
