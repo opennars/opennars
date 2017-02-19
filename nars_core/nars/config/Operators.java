@@ -5,7 +5,6 @@ import nars.operator.NullOperator;
 import nars.operator.Operator;
 import nars.operator.misc.Add;
 import nars.operator.misc.Count;
-import nars.operator.misc.MathExpression;
 import nars.operator.mental.Believe;
 import nars.operator.mental.Consider;
 import nars.operator.mental.Doubt;

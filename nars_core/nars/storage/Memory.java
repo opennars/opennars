@@ -26,21 +26,18 @@ import nars.util.EventEmitter;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import nars.NAR;
 import nars.config.RuntimeParameters;
 import nars.config.Parameters;
 import nars.util.Events.ResetEnd;
 import nars.util.Events.ResetStart;
 import nars.util.Events.TaskRemove;
-import nars.control.WorkingCycle;
 import nars.control.DerivationContext;
 import nars.control.FireConcept;
 import nars.control.ImmediateProcess;
@@ -53,6 +50,7 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.truthToQuality;
 import nars.inference.TemporalRules;
 import nars.io.Output.IN;
@@ -69,6 +67,7 @@ import nars.io.Reset;
 import nars.io.SetDecisionThreshold;
 import nars.io.SetVolume;
 import nars.language.CompoundTerm;
+import nars.language.Interval;
 
 
 /**
@@ -104,7 +103,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     }
     
     //todo make sense of this class and de-obfuscate
-    public final WorkingCycle concepts;
+    public final Bag<Concept,Term> concepts;
     public final EventEmitter event;
     
     /* InnateOperator registry. Containing all registered operators of the system */
@@ -134,13 +133,12 @@ public class Memory implements Serializable, Iterable<Concept> {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(RuntimeParameters param, WorkingCycle concepts, Bag<Task<Term>,Sentence<Term>> novelTasks,
+    public Memory(RuntimeParameters param, Bag<Concept,Term> concepts, Bag<Task<Term>,Sentence<Term>> novelTasks,
             Bag<Task<Term>,Sentence<Term>> sequenceTasks) {                
 
         this.param = param;
         this.event = new EventEmitter();
         this.concepts = concepts;
-        this.concepts.init(this);
         this.novelTasks = novelTasks;                
         this.newTasks = new ArrayDeque<>();
         this.sequenceTasks = sequenceTasks;
@@ -151,7 +149,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     public void reset() {
         event.emit(ResetStart.class);
         decisionBlock = 0;
-        concepts.reset();
+        concepts.clear();
         novelTasks.clear();
         newTasks.clear();    
         sequenceTasks.clear();
@@ -197,7 +195,7 @@ public class Memory implements Serializable, Iterable<Concept> {
      * @return a Concept or null
      */
     public Concept concept(final Term t) {
-        return concepts.concept(t);
+        return concepts.get(CompoundTerm.cloneDeepReplaceIntervals(t));
     }
 
     /**
@@ -214,8 +212,43 @@ public class Memory implements Serializable, Iterable<Concept> {
      * @param term indicating the concept
      * @return an existing Concept, or a new one, or null 
      */
-    public Concept conceptualize(final BudgetValue budget, final Term term) {   
-        return concepts.conceptualize(budget, term);
+    public Concept conceptualize(final BudgetValue budget, Term term) {   
+        if(term instanceof Interval) {
+            return null;
+        }
+        term = CompoundTerm.cloneDeepReplaceIntervals(term);
+        //see if concept is active
+        Concept concept = concepts.take(term);
+        if (concept == null) {                            
+            //create new concept, with the applied budget
+            concept = new Concept(budget, term, this);
+            //if (memory.logic!=null)
+            //    memory.logic.CONCEPT_NEW.commit(term.getComplexity());
+            emit(Events.ConceptNew.class, concept);                
+        }
+        else if (concept!=null) {            
+            //apply budget to existing concept
+            //memory.logic.CONCEPT_ACTIVATE.commit(term.getComplexity());
+            BudgetFunctions.activate(concept.budget, budget, BudgetFunctions.Activating.TaskLink);            
+        }
+        else {
+            //unable to create, ex: has variables
+            return null;
+        }
+        Concept displaced = concepts.putBack(concept, cycles(param.conceptForgetDurations), this);   
+        if (displaced == null) {
+            //added without replacing anything
+            return concept;
+        }        
+        else if (displaced == concept) {
+            //not able to insert
+            conceptRemoved(displaced);
+            return null;
+        }        
+        else {
+            conceptRemoved(displaced);
+            return concept;
+        }
     }
 
     /**
@@ -327,8 +360,6 @@ public class Memory implements Serializable, Iterable<Concept> {
         inputTask(t, true);
     }
 
-
-
     public void removeTask(final Task task, final String reason) {        
         emit(TaskRemove.class, task, reason);
         task.end();        
@@ -376,17 +407,17 @@ public class Memory implements Serializable, Iterable<Concept> {
 
     protected FireConcept next() {       
 
-        Concept currentConcept = concepts.concepts.takeNext();
+        Concept currentConcept = concepts.takeNext();
         if (currentConcept==null)
             return null;
         
         if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
-            this.concepts.takeOut(currentConcept.getTerm());
+            this.concepts.take(currentConcept.getTerm());
             conceptRemoved(currentConcept);
             return null;
         }
         if(currentConcept.termLinks.size() == 0) {  //remove concepts without tasklinks and without termlinks
-            this.concepts.takeOut(currentConcept.getTerm());
+            this.concepts.take(currentConcept.getTerm());
             conceptRemoved(currentConcept);
             return null;
         }
@@ -396,7 +427,7 @@ public class Memory implements Serializable, Iterable<Concept> {
             @Override public void onFinished() {
                 float forgetCycles = memory.cycles(memory.param.conceptForgetDurations);
 
-                concepts.concepts.putBack(currentConcept, forgetCycles, memory);
+                concepts.putBack(currentConcept, forgetCycles, memory);
             }
         };
         
@@ -682,7 +713,7 @@ public class Memory implements Serializable, Iterable<Concept> {
 
     @Override
     public Iterator<Concept> iterator() {
-        return concepts.concepts.iterator();
+        return concepts.iterator();
     }
     
    

@@ -22,6 +22,7 @@ import nars.config.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.inference.BudgetFunctions;
 import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
 import nars.operator.Operation;
@@ -37,6 +38,12 @@ public class Remind extends Operator {
     public Remind() {
         super("^remind");
     }
+    
+    public void activate(Memory memory, final Concept c, final BudgetValue b, Activating mode) {
+        memory.concepts.take(c.name());
+        BudgetFunctions.activate(c.budget, b, mode);
+        memory.concepts.putBack(c, memory.cycles(memory.param.conceptForgetDurations), memory);
+    }
 
     /**
      * To activate a concept as if a question has been asked about it
@@ -50,7 +57,7 @@ public class Remind extends Operator {
         Term term = args[0];
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
-        memory.concepts.activate(concept, budget, Activating.TaskLink);
+        activate(memory, concept, budget, Activating.TaskLink);
         return null;
     }
 
