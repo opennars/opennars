@@ -28,7 +28,6 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -39,8 +38,8 @@ import nars.util.Events.ResetEnd;
 import nars.util.Events.ResetStart;
 import nars.util.Events.TaskRemove;
 import nars.control.DerivationContext;
-import nars.control.FireConcept;
-import nars.control.ImmediateProcess;
+import nars.control.GeneralInferenceControl;
+import nars.control.TemporalInferenceControl;
 import nars.plugin.mental.Emotions;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -52,11 +51,9 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.truthToQuality;
-import nars.inference.TemporalRules;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
 import nars.io.Symbols;
-import nars.language.Conjunction;
 import nars.language.Tense;
 import nars.language.Term;
 import nars.operator.Operation;
@@ -91,8 +88,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     public long decisionBlock = 0;
     public Task lastDecision = null;
     public boolean allowExecution = true;
-    private long timePreviousCycle;
-    
+
     public static long randomSeed = 1;
     public static Random randomNumber = new Random(randomSeed);
     public static void resetStatic() {
@@ -151,8 +147,6 @@ public class Memory implements Serializable, Iterable<Concept> {
         newTasks.clear();    
         sequenceTasks.clear();
         cycle = 0;
-        //timeRealStart = timeRealNow = System.currentTimeMillis();
-        timePreviousCycle = time();
         inputPausedUntil = 0;
         emotion.set(0.5f, 0.5f);
         resetStatic();
@@ -160,27 +154,8 @@ public class Memory implements Serializable, Iterable<Concept> {
     }
 
     public long time() {
-        return getCycleTime();
-    }
-    
-    public int getDuration() {
-        return param.duration.get();
-    }
-    
-    /** internal, subjective time (inference steps) */
-    public long getCycleTime() {
         return cycle;
     }
-    
-    /** difference in time since last cycle */
-    public long getTimeDelta() {
-        return time() - timePreviousCycle;
-    }
-
-    public Deque<Task> getNewTasks() {
-        return newTasks;
-    }
-    
 
     /* ---------- conversion utilities ---------- */
     /**
@@ -246,17 +221,6 @@ public class Memory implements Serializable, Iterable<Concept> {
             conceptRemoved(displaced);
             return concept;
         }
-    }
-
-    /**
-     * Get the current activation level of a concept.
-     *
-     * @param t The Term naming a concept
-     * @return the priority value of the concept
-     */
-    public float conceptActivation(final Term t) {
-        final Concept c = concept(t);
-        return (c == null) ? 0f : c.getPriority();
     }
     
     /* ---------- new task entries ---------- */
@@ -401,32 +365,6 @@ public class Memory implements Serializable, Iterable<Concept> {
     public void conceptRemoved(Concept c) {
         emit(Events.ConceptForget.class, c);
     }
-
-    protected void processConcept() {       
-
-        Concept currentConcept = concepts.takeNext();
-        if (currentConcept==null)
-            return;
-        
-        if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
-            this.concepts.take(currentConcept.getTerm());
-            conceptRemoved(currentConcept);
-            return;
-        }
-        if(currentConcept.termLinks.size() == 0) {  //remove concepts without tasklinks and without termlinks
-            this.concepts.take(currentConcept.getTerm());
-            conceptRemoved(currentConcept);
-            return;
-        }
-            
-        new FireConcept(this, currentConcept, 1) {
-            @Override public void onFinished() {
-                float forgetCycles = memory.cycles(memory.param.conceptForgetDurations);
-
-                concepts.putBack(currentConcept, forgetCycles, memory);
-            }
-        }.run();
-    }
     
     public void cycle(final NAR inputs) {
     
@@ -443,14 +381,32 @@ public class Memory implements Serializable, Iterable<Concept> {
     //if(noResult()) //newTasks empty
         this.processNovelTask();
     //if(noResult()) //newTasks empty
-        this.processConcept();
+        GeneralInferenceControl.selectConceptForInference(this);
         
         event.emit(Events.CycleEnd.class);
         event.synch();
         
-        timePreviousCycle = time();
         cycle++;
-        //timeRealNow = System.currentTimeMillis();
+    }
+    
+    public void localInference(Task task) {
+        DerivationContext cont = new DerivationContext(this);
+        cont.setCurrentTask(task);
+        cont.setCurrentTerm(task.getTerm());
+        cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
+        if (cont.getCurrentConcept() != null) {
+            boolean processed = cont.getCurrentConcept().directProcess(cont, task);
+            if (processed) {
+                event.emit(Events.ConceptDirectProcessedTask.class, task);
+            }
+        }
+        
+        if (!task.sentence.isEternal()) {
+            TemporalInferenceControl.eventInference(task, cont);
+        }
+        
+        //memory.logic.TASK_IMMEDIATE_PROCESS.commit();
+        emit(Events.TaskImmediateProcess.class, task, cont);
     }
     
     /**
@@ -465,7 +421,7 @@ public class Memory implements Serializable, Iterable<Concept> {
             task = newTasks.removeFirst();
             boolean enterDirect = true;
             if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ enterDirect ||  task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
-                new ImmediateProcess(this, task).run(); 
+                localInference(task);
             } else {
                 Sentence s = task.sentence;
                 if (s.isJudgment() || s.isGoal()) {
@@ -493,7 +449,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     public void processNovelTask() {
         final Task task = novelTasks.takeNext();
         if (task != null) {            
-                new ImmediateProcess(this, task).run();
+            localInference(task);
         }
     }
 

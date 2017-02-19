@@ -3,7 +3,7 @@ package nars.util;
 import java.util.Arrays;
 import java.util.List;
 import nars.util.EventEmitter.EventObserver;
-import nars.control.FireConcept;
+import nars.control.GeneralInferenceControl;
 import nars.control.DerivationContext;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -109,10 +109,10 @@ public class Events {
          * Concept n.getCurrentConcept()
          * TaskLink n.getCurrentTaskLink()
          */
-        abstract public void onFire(FireConcept n);
+        abstract public void onFire(GeneralInferenceControl n);
         
         @Override public void event(Class event, Object[] args) {
-            onFire((FireConcept)args[0]);
+            onFire((GeneralInferenceControl)args[0]);
         }
         
     }

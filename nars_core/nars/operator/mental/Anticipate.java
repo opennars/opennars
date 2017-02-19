@@ -36,19 +36,15 @@ import nars.NAR;
 import nars.config.Parameters;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
-import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.inference.TemporalRules;
-import nars.io.Output;
 import nars.io.Output.ANTICIPATE;
 import nars.io.Output.CONFIRM;
 import nars.io.Output.DISAPPOINT;
 import nars.io.Symbols;
-import nars.language.Conjunction;
 import nars.language.Interval;
 import nars.language.Product;
 import nars.language.Term;
@@ -195,7 +191,7 @@ public class Anticipate extends Operator implements EventObserver {
             return null; //not as mental operator but as fundamental principle
         }
         
-        anticipate(args[0],memory,memory.time()+memory.getDuration(), null);
+        anticipate(args[0],memory,memory.time()+memory.param.duration.get(), null);
         
         return null;
     }

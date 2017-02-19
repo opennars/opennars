@@ -2,19 +2,17 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.lab.inference;
+package nars.lab.testutils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import nars.util.Events.Answer;
 import nars.NAR;
-import nars.config.Plugins;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.util.AbstractObserver;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
-import nars.io.TextOutput;
 import nars.io.Narsese;
 import nars.language.Term;
 

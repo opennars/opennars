@@ -29,7 +29,7 @@ import nars.operator.Operation;
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.
  */
-public abstract class DerivationContext implements Runnable {
+public class DerivationContext {
 
     public interface DerivationFilter extends Plugin {
         /** returns null if allowed to derive, or a String containing a short rejection reason for logging */
@@ -519,4 +519,8 @@ public abstract class DerivationContext implements Runnable {
                 "Activated");        
     }    
     
+    @Override
+    public String toString() {
+        return "DerivationContext[" + currentConcept + "," + currentTaskLink + "]";
+    }
 }

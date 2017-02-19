@@ -107,7 +107,7 @@ abstract public class RNNBeliefPrediction extends BeliefPrediction {
         //new Sample(data, target, 2, length, 1, 1);
         TreeMap<Integer, double[]> d = new TreeMap();
         int cc = 0;
-        int hd = Math.round(predictionTimeSpanFactor * nar.memory.getDuration() / 2f / downSample);
+        int hd = Math.round(predictionTimeSpanFactor * nar.memory.param.duration.get() / 2f / downSample);
         for (Concept c : concepts) {
             for (Task ts : c.beliefs) {
                 Sentence s = ts.sentence;
