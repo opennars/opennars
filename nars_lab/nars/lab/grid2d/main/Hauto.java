@@ -173,7 +173,7 @@ public class Hauto {
     public static Integer entityID=0;
     public static boolean allow_imitating=false;
     public static String lastWish = "";
-    public static boolean goalInputPeriodic = true;
+    public static boolean goalInputPeriodic = false;
     public void clicked(int x,int y, Grid2DSpace space)
     {
         if((int)x == 0 || (int) y==0 || (int)x == w-1 || (int) y==h-1)
