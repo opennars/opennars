@@ -116,7 +116,7 @@ public class TemporalInferenceControl {
         if(newEvent.getTerm() instanceof Conjunction) {
             Conjunction term = ((Conjunction)newEvent.getTerm());
             if(!(term.term[term.term.length-1] instanceof Operation)) {
-                periority_penalty *= Parameters.OPERATION_SEQUENCE_END_PENALTY;
+                periority_penalty *= Parameters.NOT_OPERATION_SEQUENCE_END_PENALTY;
             }
             if(term.term[0] instanceof Operation) { //also try to start with a condition
                 periority_penalty *= Parameters.OPERATION_SEQUENCE_START_PENALTY;
