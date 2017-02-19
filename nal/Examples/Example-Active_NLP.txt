@@ -1,6 +1,5 @@
-IN: <(&&,<$1 --> sentence>,(^say,$1)) =/> <NARS --> chatty>>. %1.00;0.90%
-IN: <NARS --> chatty>! %1.00;0.90%
-IN: <(*,CAT,FISH) --> EATS>. :|:
-IN: 6
-IN: <(*,cat,eats,fish) --> sentence>. :|:
-EXE: ^say [(*,cat,eats,fish)]
+<(&&,<#1 --> sentence>,(^say,#1)) ==> <NARS --> chatty>>. %1.00;0.90%
+<NARS --> chatty>! %1.00;0.90%
+<(*,CAT,FISH) --> EATS>. :|:
+6
+<(*,cat,eats,fish) --> sentence>. :|:
