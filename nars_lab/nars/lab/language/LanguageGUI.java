@@ -111,6 +111,7 @@ public class LanguageGUI extends javax.swing.JFrame {
 
         jLabel5.setText("For perceiving the sentence in pieces");
 
+        eventCheck.setSelected(true);
         eventCheck.setText("Input as event");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
