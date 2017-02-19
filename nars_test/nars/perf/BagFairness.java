@@ -8,8 +8,6 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.NAR;
 import nars.config.Parameters;
-import nars.config.Plugins;
-import nars.entity.Concept;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.timeline.LineChart;
 import nars.io.Input;
@@ -20,7 +18,6 @@ import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.MultiTimeline;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import nars.control.FireConcept;
-import nars.storage.LevelBag;
 
 /**
  *

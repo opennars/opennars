@@ -35,13 +35,6 @@ abstract public class FireConcept extends DerivationContext {
     
     @Override
     public void run() {     
-        fire();        
-        onFinished();                
-    }
-    
-    
-    protected void fire() {
-
         if (currentTaskLink !=null) {
             fireTaskLink(termLinkCount);
             returnTaskLink(currentTaskLink);
@@ -62,15 +55,13 @@ abstract public class FireConcept extends DerivationContext {
 
                 returnTaskLink(currentTaskLink);
             }
-        }
-        
+        }     
+        onFinished();                
     }
-
     
     protected void returnTaskLink(TaskLink t) {
         currentConcept.taskLinks.putBack(t, 
-                memory.cycles(memory.param.taskLinkForgetDurations), memory);
-        
+        memory.cycles(memory.param.taskLinkForgetDurations), memory);
     }
     
     protected void fireTaskLink(int termLinks) {
@@ -97,7 +88,7 @@ abstract public class FireConcept extends DerivationContext {
 
 
                 try {
-                    reason(currentTaskLink, termLink);        
+                    RuleTables.reason(currentTaskLink, termLink, this);
                 } catch(Exception ex) {
                     if(Parameters.DEBUG) {
                         System.out.println("issue in inference");
@@ -115,20 +106,10 @@ abstract public class FireConcept extends DerivationContext {
                 
         emit(Events.ConceptFire.class, this);
         //memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
-        
     }
-
-    
-    protected void reason(TaskLink currentTaskLink, TermLink termLink) {
-        RuleTables.reason(currentTaskLink, termLink, this);
-    }
-
     
     @Override
     public String toString() {
         return "FireConcept[" + currentConcept + "," + currentTaskLink + "]";
     }
-
-    
-    
 }
