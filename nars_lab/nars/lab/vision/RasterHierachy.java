@@ -95,7 +95,7 @@ public class RasterHierachy extends JPanel {
      * @param input The image to rasterize
      * @return The rasterized image.
      */
-    int updaterate=20;
+    int updaterate=10;
     int cnt=1;
     static int arrsz=1000; //todo refine
     HashMap<Integer,Float> lastvalR=new HashMap<>();
@@ -211,7 +211,7 @@ public class RasterHierachy extends JPanel {
 
                         double area = blockXSize * blockYSize;
                         double diff = Math.abs(fred - (lastvalR.get(key))) + Math.abs(fgreen - (lastvalG.get(key))) + Math.abs(fblue - (lastvalB.get(key)));
-                        double vote = diff;// / area;
+                        double vote = diff * area;// / area;
                        // vote*=step;
                         voter.put(key, new Value(step, x + blockXSize / 2, y + blockYSize / 2, vote));
                     }
