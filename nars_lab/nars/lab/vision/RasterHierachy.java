@@ -95,7 +95,7 @@ public class RasterHierachy extends JPanel {
      * @param input The image to rasterize
      * @return The rasterized image.
      */
-    int updaterate=60;
+    int updaterate=20;
     int cnt=1;
     static int arrsz=1000; //todo refine
     HashMap<Integer,Float> lastvalR=new HashMap<>();
@@ -323,7 +323,7 @@ public class RasterHierachy extends JPanel {
         //RasterHierarchy rh = new RasterHierarchy(8, 640, 480, 12, 2);
        // RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 5, 2);
         nar = new NAR();
-
+        NARSwing.themeInvert();
         NARSwing swing = new NARSwing(nar);
 
         RasterHierachy rh = new RasterHierachy(3, 640, 480, 4, 3);
