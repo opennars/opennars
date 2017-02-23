@@ -1,6 +1,6 @@
 **Open-NARS** is the open-source version of [NARS](https://sites.google.com/site/narswang/home), a general-purpose AI system, designed in the framework of a reasoning system.  This project is an evolution of the [v1.5 system](http://code.google.com/p/open-nars/).  The [mailing list](https://groups.google.com/forum/?fromgroups#!forum/open-nars) discusses both its theory and implementation.
 
-![OpenNARS Logo](https://raw.githubusercontent.com/opennars/opennars/graphplan1/doc/opennars_logo.png)
+![OpenNARS Logo](https://github.com/opennars/opennars/blob/bf53ceef9f2399de70dc63e5507e42d639144c96/doc/opennars_logo2.png)
 
 Theory Overview
 ---------------
