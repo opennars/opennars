@@ -95,7 +95,7 @@ public class RasterHierachy extends JPanel {
      * @param input The image to rasterize
      * @return The rasterized image.
      */
-    int updaterate=10;
+    int updaterate=1; //1ß
     int cnt=1;
     static int arrsz=1000; //todo refine
     HashMap<Integer,Float> lastvalR=new HashMap<>();
@@ -117,6 +117,7 @@ public class RasterHierachy extends JPanel {
         }
     }
 
+    boolean even = false;
     public BufferedImage rasterizeImage(BufferedImage input)
     {
         voter = new HashMap<>();
@@ -177,9 +178,11 @@ public class RasterHierachy extends JPanel {
 
             int pixelCount = blockXSize * blockYSize; // Number of pixels per block
 
+            even = !even;
             int h=0,j=0;
             for (x = newX; x < ((step == 1 ? 0 : startX) + regionWidth); x += blockXSize) {
                 h++;
+                j = 0;
                 for (y = newY; y < ((step == 1 ? 0 : startY) + regionHeight); y += blockYSize) {
                     j++;
 
@@ -220,10 +223,22 @@ public class RasterHierachy extends JPanel {
                     lastvalB.put(key, fblue);
 
 
-                    if(putin && step==numberRasters) {
-                        //input Narsese translation
-                        String st="<(*,r"+ String.valueOf(step)+","+String.valueOf(h)+","+String.valueOf(j)+") --> RED>. :|: %"+String.valueOf(fred)+"%";
-                        nar.addInput(st);
+                    float inputChance = 0.33f; //approx 6 inputs per image
+                    if(putin && step==numberRasters) { //only most finest raster
+                        //input Narsese translation //String.valueOf(step)
+                        String st="<r_"+ String.valueOf(h)+"_"+String.valueOf(j)+" --> RED>. :|: %"+String.valueOf(fred)+"%";
+                       // String st="<(*,r"+ String.valueOf(step)+","+String.valueOf(h)+","+String.valueOf(j)+") --> RED>. :|: %"+String.valueOf(fred)+"%";
+                       if(((h%2 == 0 && j%2 == 0 && even) || 
+                               (h%2 == 1 && j%2 == 1 && !even)) && Math.random() < inputChance) { //not every pixel needs to go in
+                            nar.addInput(st);
+                       }
+                       //focal point:
+                       if(x == 0 && y == 0){
+                        nar.addInput("<p_" + String.valueOf(this.focusX/100) + " --> pointX>. :|:");
+                        nar.addInput("<p_" + String.valueOf(this.focusY/100) + " --> pointY>. :|:");
+                       }
+                       
+                       nar.step(10);
                     }
                     // Here we can generate NAL, since we know all of the required values.
 
@@ -247,7 +262,8 @@ public class RasterHierachy extends JPanel {
             }
 
             if (maxvalue != null && maxvalue.x!=0 && maxvalue.y!=0) {
-                this.setFocus(maxvalue.x, maxvalue.y);
+                this.setFocus((this.focusX+maxvalue.x)/2, (this.focusY+maxvalue.y)/2);
+               // this.setFocus(maxvalue.x, maxvalue.y);
             }
         }
 
@@ -323,10 +339,12 @@ public class RasterHierachy extends JPanel {
         //RasterHierarchy rh = new RasterHierarchy(8, 640, 480, 12, 2);
        // RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 5, 2);
         nar = new NAR();
+        nar.param.noiseLevel.set(0);
         NARSwing.themeInvert();
         NARSwing swing = new NARSwing(nar);
+       // nar.start(0);
 
-        RasterHierachy rh = new RasterHierachy(3, 640, 480, 4, 3);
+        RasterHierachy rh = new RasterHierachy(3, 640, 480, 5, 3); //new RasterHierachy(3, 640, 480, 8, 3);
 
         rh.process();
     }
