@@ -1,0 +1,19 @@
+'********** compound composition, two premises
+
+'Swan is a type of swimmer.
+<swan --> swimmer>. %0.90% 
+
+'Swan is a type of bird.
+<swan --> bird>. %0.80% 
+
+16
+
+'Swan is a type of bird or a type of swimmer. 
+''outputMustContain('<swan --> (|,bird,swimmer)>. %0.98;0.81%')
+
+
+'Swan is a type of swimming bird. 
+''outputMustContain('<swan --> (&,bird,swimmer)>. %0.72;0.81%')
+ 
+
+

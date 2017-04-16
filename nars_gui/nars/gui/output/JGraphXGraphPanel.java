@@ -6,8 +6,8 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import nars.core.NAR;
-import nars.graph.NARGraph;
-import static nars.graph.NARGraph.IncludeEverything;
+import nars.util.NARGraph;
+import static nars.util.NARGraph.IncludeEverything;
 import org.jgrapht.ext.JGraphXAdapter;
 
 /**

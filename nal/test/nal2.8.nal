@@ -1,0 +1,12 @@
+'********** structure transformation
+
+'Bright is similar to smart. 
+<bright <-> smart>. %0.90% 
+
+'Is bright thing a type of smart thing?
+<[bright] --> [smart]>?  
+
+6
+
+'Bright thing is a type of smart thing. 
+''outputMustContain('<[bright] <-> [smart]>. %0.90;0.90%')

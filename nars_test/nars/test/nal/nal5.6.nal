@@ -1,8 +1,0 @@
-'********** detachment
-<<robin --> bird> ==> <robin --> animal>>. %0.70;0.90% 
-'Usually if robin is a type of bird then robin is a type of animal. 
-<robin --> animal>.
-'Robin is a type of animal. 
-1
-''test.outputContains('<robin --> bird>. %1.00;0.36%
-'I guess robin is a type of bird. 

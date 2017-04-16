@@ -1,9 +1,0 @@
-'********** compound decomposition, one premises
-(&&,<robin --> swimmer>,<robin --> [flying]>). %0.9%  
-'Robin can fly and swim.
-1
-''test.outputContains('<robin --> swimmer>. %0.90;0.73% 
-'Robin can swim. 
-3
-''test.outputContains('<robin --> [flying]>. %0.90;0.73% 
-'Robin can fly. 

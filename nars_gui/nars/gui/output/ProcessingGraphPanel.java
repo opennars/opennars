@@ -1,5 +1,6 @@
 package nars.gui.output;
 
+import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.model.mxGeometry;
 import java.awt.BorderLayout;
@@ -14,17 +15,24 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
-import nars.graph.NARGraph;
-import nars.graph.NARGraph.DefaultGraphizer;
-import nars.graph.NARGraph.Filter;
-import static nars.graph.NARGraph.IncludeEverything;
+import nars.util.NARGraph;
+import nars.util.NARGraph.DefaultGraphizer;
 import nars.gui.NSlider;
+import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.storage.Memory;
 import org.jgrapht.ext.JGraphXAdapter;
@@ -56,6 +64,7 @@ class papplet extends PApplet implements ActionListener
     Hamlib hamlib = new Hamlib();
 
 
+    
     public Button getBack;
     public Button conceptsView;
     public Button memoryView;
@@ -227,7 +236,10 @@ class papplet extends PApplet implements ActionListener
     public static float getVertexSize(Object o, float nodeSize) {
         if (o instanceof Sentence) {
             Sentence s = (Sentence)o;
-            return (float)(nodeSize * (0.25 + 0.75 * s.getTruth().getConfidence()));
+            if (s.getTruth()!=null)
+                return (float)(nodeSize * (0.25 + 0.75 * s.getTruth().getConfidence()));
+            else
+                return (float)(nodeSize * (0.5));
         }
         else if (o instanceof Term) {
             Term t = (Term)o;
@@ -489,21 +501,20 @@ public class ProcessingGraphPanel extends JFrame {
 
     papplet app = null;
     private final NAR nar;
-    private final Filter filter;
     float edgeDistance = 10;
     private boolean showSyntax;
-    private final DefaultGraphizer graphizer;
-
-    public ProcessingGraphPanel(NAR n) {
-        this(n, new DefaultGraphizer(true,true,true,true,true), IncludeEverything);        
-    }
+    private DefaultGraphizer graphizer;
+    private final List<Sentence> sentences;
+    private int sentenceIndex = -1;
+    String layoutMode;
     
-    public ProcessingGraphPanel(NAR n, DefaultGraphizer graphizer, Filter filter) {
+
+    
+    public ProcessingGraphPanel(NAR n, List<Sentence> sentences) {
         super("NARS Graph");
         
         this.nar = n;
-        this.filter = filter;
-        this.graphizer = graphizer;
+        this.sentences = sentences;
 
         app = new papplet();
         
@@ -518,6 +529,17 @@ public class ProcessingGraphPanel extends JFrame {
 
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
        
+        final JComboBox layoutSelect = new JComboBox();
+        layoutSelect.addItem("Graph");
+        layoutSelect.addItem("Tree");
+        layoutSelect.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                layoutMode = layoutSelect.getSelectedItem().toString();
+                update();
+            }
+        });
+        layoutMode = layoutSelect.getSelectedItem().toString();
+        menu.add(layoutSelect);
         
         final JCheckBox beliefsEnable = new JCheckBox("Syntax");
         beliefsEnable.addActionListener(new ActionListener() {
@@ -549,6 +571,32 @@ public class ProcessingGraphPanel extends JFrame {
         edgeDist.setPreferredSize(new Dimension(125, 25));
         menu.add(edgeDist);        
         
+        
+        if (sentences.size() > 1) {
+            final JTextField ssl = new JTextField();
+            final JSlider indexSlider = new JSlider(-1, sentences.size()-1, -1);        
+            indexSlider.setSnapToTicks(true);
+            indexSlider.setMajorTickSpacing(1);
+            indexSlider.setMinorTickSpacing(1);
+            indexSlider.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    int i = indexSlider.getValue();
+                    sentenceIndex = i;
+                    if (i == -1) {
+                        update();
+                        ssl.setText("All Sentences");
+                    }
+                    else {
+                        update();
+                        ssl.setText(ProcessingGraphPanel.this.sentences.get(i).toString());
+                    }
+                }            
+            });
+            menu.add(indexSlider);
+            menu.add(ssl);        
+        }
+
         content.add(menu, BorderLayout.NORTH);
         content.add(app, BorderLayout.CENTER);
 
@@ -566,45 +614,149 @@ public class ProcessingGraphPanel extends JFrame {
             
         });
         
+        
     }
     
     
+    public NARGraph.Filter newSelectedGraphFilter() {
+        
+        final List<Sentence> selected = getSentences();
 
+        final Set<Term> include = new HashSet();
+        for (final Sentence s : selected) {
+            Term t = s.getContent();
+            include.add(t);
+            if (t instanceof CompoundTerm) {
+                CompoundTerm ct = (CompoundTerm)t;
+                include.addAll(ct.getContainedTerms());
+            }                        
+        }
+        
+        return new NARGraph.Filter() {
+
+            @Override
+            public boolean includeLevel(int l) {  return true; }
+
+            @Override
+            public boolean includeConcept(final Concept c) {
+                
+                final Term t = c.getTerm();
+                if (include.contains(t))
+                    return true;
+                
+                /*
+                if (t instanceof CompoundTerm) {
+                    
+                    Set<Term> contents = ((CompoundTerm)t).getContainedTerms();
+                    for (Term s : contents)
+                        if (include.contains(s))
+                            return true;
+                }
+                */
+                
+                return false;
+            }
+            
+        };
+    }
+    
+
+    public List<Sentence> getSentences() {
+        List<Sentence> displayed;
+        if (sentenceIndex == -1) {
+            displayed = sentences;
+        }
+        else {
+            displayed = new ArrayList(1);
+            displayed.add(sentences.get(sentenceIndex));
+        }
+        return displayed;
+    }
 
     public void update() {
+        
+        graphizer = new DefaultGraphizer(true,true,true,true,false) {
+
+            @Override
+            public void onTime(NARGraph g, long time) {
+                super.onTime(g, time);
+
+               
+                    
+                for (Sentence s : getSentences()) {
+                    g.addVertex(s);
+                    
+                    Term t = s.getContent();
+                    addTerm(g, t);
+                    g.addEdge(s.getContent(), s, new NARGraph.SentenceContent());
+                    
+                    if (t instanceof CompoundTerm) {
+                        CompoundTerm ct = ((CompoundTerm)t);
+                        Set<Term> contained = ct.getContainedTerms();
+                        
+                        for (Term x : contained) {                            
+                            addTerm(g, x);
+                            if (ct.containComponent(x))
+                                g.addEdge(x, t, new NARGraph.TermContent());
+                            
+                            
+                            for (Term y : contained) {
+                                addTerm(g, y);
+                                
+                                if (x != y)
+                                    if (x.containComponent(y))
+                                        g.addEdge(y, x, new NARGraph.TermContent());
+                            }
+                            
+                                
+                            
+                        }
+                    }
+                    
+                    
+                }
+                //add sentences
+            }
+            
+        };
+        
+        
         app.updating = true;
         
         graphizer.setShowSyntax(showSyntax);
         
         NARGraph g = new NARGraph();
-        g.add(nar, filter, graphizer);                
+        g.add(nar, newSelectedGraphFilter(), graphizer);                
         app.graph = g;
         
 
         // create a visualization using JGraph, via an adapter
-        JGraphXAdapter layout = new JGraphXAdapter(g) {           
-            
-        };                
+        JGraphXAdapter layout = new JGraphXAdapter(g);
         app.layout = layout;
         
        
         /*
-        mxCompactTreeLayout layout2 = 
-                new mxCompactTreeLayout(jgxAdapter);                
-        layout2.setUseBoundingBox(false);
-        layout2.setResizeParent(true);
-        layout2.setLevelDistance(30);
-        layout2.setNodeDistance(50);
-        layout2.execute(jgxAdapter.getDefaultParent());
+
         */
         
+        if (layoutMode.equals("Graph")) {
+            mxFastOrganicLayout l = new mxFastOrganicLayout(layout);
+                    //new mxCompactTreeLayout(jgxAdapter);
+                    //new mxCircleLayout(jgxAdapter);        
+            l.setForceConstant(edgeDistance*10f);
+            l.execute(layout.getDefaultParent());            
+        }
+        else if (layoutMode.equals("Tree")) {
+            mxCompactTreeLayout layout2 =  new mxCompactTreeLayout(layout);                
+            layout2.setUseBoundingBox(true);
+            layout2.setResizeParent(true);
+            layout2.setLevelDistance(50);
+            layout2.setNodeDistance(50);
+            layout2.execute(layout.getDefaultParent());
         
-        mxFastOrganicLayout l = 
-                //new mxCompactTreeLayout(jgxAdapter);
-                new mxFastOrganicLayout(layout);
-                //new mxCircleLayout(jgxAdapter);        
-        l.setForceConstant(edgeDistance*10f);
-        l.execute(layout.getDefaultParent());
+        }
+        
+        
         
         
 

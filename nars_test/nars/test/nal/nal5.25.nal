@@ -1,9 +1,0 @@
-'********** conditional deduction
-<(&&,<robin --> bird>,<robin --> [living]>) ==> <robin --> animal>>.  
-'If robin is a bird and it's living, then robin is an animal
-<<robin --> [flying]> ==> <robin --> bird>>. 
-'If robin can fly, then robin is a bird
-1
-''test.outputContains('<(&&,<robin --> [flying]>,<robin --> [living]>) ==> <robin --> animal>>. %1.00;0.81% 
-'If robin is living and it can fly, then robin is an animal.
-

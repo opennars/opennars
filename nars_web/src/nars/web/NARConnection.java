@@ -12,7 +12,7 @@ import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.TextOutput.LineOutput;
 import nars.core.NAR;
-import nars.io.TextInputParser;
+import nars.io.TextReaction;
 
 /**
  * An instance of a web socket session to a NAR
@@ -22,7 +22,7 @@ abstract public class NARConnection implements LineOutput {
     public final NAR nar;
     protected final TextOutput writer;
     int cycleIntervalMS;
-    //private final TextInputParser extraParser;
+    //private final TextReaction extraParser;
         
     
     public NARConnection(NAR nar, int cycleIntervalMS) {

@@ -1,9 +1,0 @@
-'********** negation
-<robin --> [flying]>. %0.9%
-'Robin can fly. 
-(--,<robin --> [flying]>)?  
-'Can robin fly or not?
-15
-''test.outputContains('(--,<robin --> [flying]>). %0.10;0.90% 
-'It is unlikely that robin cannot fly. 
-

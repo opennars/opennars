@@ -1,8 +1,0 @@
-'********** conditional induction
-<(&&,<robin --> [chirping]>,<robin --> [flying]>) ==> <robin --> bird>>. 
-'If robin can fly and robin chirps, then robin is a bird
-<<robin --> [flying]> ==> <robin --> [with-beak]>>. %0.90%  
-'If robin can fly then usually robin has a beak.
-18
-''test.outputContains('<(&&,<robin --> [chirping]>,<robin --> [with-beak]>) ==> <robin --> bird>>. %1.00;0.42%
-'I guess that if robin chirps and robin has a beak, then robin is a bird.

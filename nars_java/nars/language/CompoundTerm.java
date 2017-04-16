@@ -243,53 +243,6 @@ public abstract class CompoundTerm extends Term {
      * @param memory Reference to the memory
      * @return A compound term or null
      */    
-    public static Term make(final String op, final ArrayList<Term> arg, final Memory memory) {
-        final int length = op.length();
-        if (length == 1) {
-            final char c = op.charAt(0);
-            switch (c) {
-                case Symbols.SET_EXT_OPENER: 
-                    return SetExt.make(arg, memory);
-                case Symbols.SET_INT_OPENER: 
-                    return SetInt.make(arg, memory);
-                case Symbols.INTERSECTION_EXT_OPERATORc: 
-                    return IntersectionExt.make(arg, memory);
-                case Symbols.INTERSECTION_INT_OPERATORc:
-                    return IntersectionInt.make(arg, memory);
-                case Symbols.DIFFERENCE_EXT_OPERATORc:
-                    return DifferenceExt.make(arg, memory);
-                case Symbols.DIFFERENCE_INT_OPERATORc:
-                    return DifferenceInt.make(arg, memory);
-                case Symbols.PRODUCT_OPERATORc:
-                    return Product.make(arg, memory);
-                case Symbols.IMAGE_EXT_OPERATORc:
-                    return ImageExt.make(arg, memory);
-                case Symbols.IMAGE_INT_OPERATORc:
-                    return ImageInt.make(arg, memory);                    
-            }            
-        }
-        else if (length == 2) {
-            //since these symbols are the same character repeated, we only need to compare the first character
-            final char c1 = op.charAt(0);
-            final char c2 = op.charAt(1);
-            if (c1 == c2) {
-                switch (c1) {
-                    case Symbols.NEGATION_OPERATORc:
-                        return Negation.make(arg, memory);            
-                    case Symbols.DISJUNCTION_OPERATORc:
-                        return Disjunction.make(arg, memory);            
-                    case Symbols.CONJUNCTION_OPERATORc:
-                        return Conjunction.make(arg, memory);
-                }            
-            } else if (op.equals(Symbols.SEQUENCE_OPERATOR)) {
-                return Conjunction.make(arg, TemporalRules.ORDER_FORWARD, memory);
-            } else if (op.equals(Symbols.PARALLEL_OPERATOR)) {
-                return Conjunction.make(arg, TemporalRules.ORDER_CONCURRENT, memory);
-            }
-        }
-        throw new RuntimeException("Unknown Term operator: " + op);
-    }
-    
     public static Term make(final Operator op, final ArrayList<Term> arg, final Memory memory) {
         switch (op) {
             case SET_EXT_OPENER: 
@@ -331,7 +284,7 @@ public abstract class CompoundTerm extends Term {
      * @return if the given String is an operator symbol
      * @param s The String to be checked
      */
-    public static boolean isOperator(final String op) {       
+    public static boolean isOperator(final String op) {               
         final int length = op.length();
         if (length == 1) {
             final char c = op.charAt(0);
@@ -851,4 +804,54 @@ public abstract class CompoundTerm extends Term {
             }
         }
     }
+
+    /*
+    @Deprecated public static Term make(final String op, final ArrayList<Term> arg, final Memory memory) {
+        final int length = op.length();
+        if (length == 1) {
+            final char c = op.charAt(0);
+            switch (c) {
+                case Symbols.SET_EXT_OPENER: 
+                    return SetExt.make(arg, memory);
+                case Symbols.SET_INT_OPENER: 
+                    return SetInt.make(arg, memory);
+                case Symbols.INTERSECTION_EXT_OPERATORc: 
+                    return IntersectionExt.make(arg, memory);
+                case Symbols.INTERSECTION_INT_OPERATORc:
+                    return IntersectionInt.make(arg, memory);
+                case Symbols.DIFFERENCE_EXT_OPERATORc:
+                    return DifferenceExt.make(arg, memory);
+                case Symbols.DIFFERENCE_INT_OPERATORc:
+                    return DifferenceInt.make(arg, memory);
+                case Symbols.PRODUCT_OPERATORc:
+                    return Product.make(arg, memory);
+                case Symbols.IMAGE_EXT_OPERATORc:
+                    return ImageExt.make(arg, memory);
+                case Symbols.IMAGE_INT_OPERATORc:
+                    return ImageInt.make(arg, memory);                    
+            }            
+        }
+        else if (length == 2) {
+            //since these symbols are the same character repeated, we only need to compare the first character
+            final char c1 = op.charAt(0);
+            final char c2 = op.charAt(1);
+            if (c1 == c2) {
+                switch (c1) {
+                    case Symbols.NEGATION_OPERATORc:
+                        return Negation.make(arg, memory);            
+                    case Symbols.DISJUNCTION_OPERATORc:
+                        return Disjunction.make(arg, memory);            
+                    case Symbols.CONJUNCTION_OPERATORc:
+                        return Conjunction.make(arg, memory);
+                }            
+            } else if (op.equals(Symbols.SEQUENCE_OPERATOR)) {
+                return Conjunction.make(arg, TemporalRules.ORDER_FORWARD, memory);
+            } else if (op.equals(Symbols.PARALLEL_OPERATOR)) {
+                return Conjunction.make(arg, TemporalRules.ORDER_CONCURRENT, memory);
+            }
+        }
+        throw new RuntimeException("Unknown Term operator: " + op);
+    }
+    */
+
 }

@@ -1,8 +1,0 @@
-'********** comparison
-<<robin --> bird> ==> <robin --> animal>>. 
-'If robin is a type of bird then robin is a type of animal. 
-<<robin --> bird> ==> <robin --> [flying]>>. %0.80%  
-'If robin is a type of bird then robin can fly.
-14
-''test.outputContains('<<robin --> animal> <=> <robin --> [flying]>>. %0.80;0.45%
-'I guess robin is a type of animal if and only if robin can fly.

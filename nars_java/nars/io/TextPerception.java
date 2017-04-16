@@ -23,20 +23,19 @@ import nars.language.Variable;
 import nars.storage.Memory;
 
 /**
- *
- * @author me
+ * Processes text input
  */
 public class TextPerception {
     
     private final NAR nar;
 
-    public static final List<TextInputParser> defaultParsers = new ArrayList();
+    public static final List<TextReaction> defaultParsers = new ArrayList();
     
     static {
         initDefaultParsers(); //shared by all ExperienceReaders
     }
     
-    public final List<TextInputParser> parsers;
+    public final List<TextReaction> parsers;
     
     
     /**
@@ -54,7 +53,7 @@ public class TextPerception {
         }
     }    
 
-    public TextPerception(NAR n, List<TextInputParser> parsers) {
+    public TextPerception(NAR n, List<TextReaction> parsers) {
         this.nar = n;
         this.parsers = parsers;        
     }
@@ -73,10 +72,10 @@ public class TextPerception {
             line = line.trim();
             if (line.isEmpty()) continue;
 
-            TextInputParser lastHandled = null;
-            for (TextInputParser p : parsers) {            
+            TextReaction lastHandled = null;
+            for (TextReaction p : parsers) {            
 
-                boolean result = p.parse(nar, line, lastHandled);
+                boolean result = p.react(nar, line, lastHandled);
 
                 //System.out.println(line + " parser " + p + " " + result);
 
@@ -95,9 +94,9 @@ public class TextPerception {
     
     private static void initDefaultParsers() {
         //integer, # of cycles to stepLater
-        defaultParsers.add(new TextInputParser() {
+        defaultParsers.add(new TextReaction() {
             @Override
-            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
+            public boolean react(NAR nar, String input, TextReaction lastHandler) {
                 try {
                     int cycles = Integer.parseInt(input);
                     nar.step(cycles);
@@ -110,9 +109,9 @@ public class TextPerception {
         });
         
         //reset
-        defaultParsers.add(new TextInputParser() {
+        defaultParsers.add(new TextReaction() {
             @Override
-            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {                
+            public boolean react(NAR nar, String input, TextReaction lastHandler) {                
                 if (input.equals(Symbols.RESET_COMMAND)) {
                     nar.reset();
                     return true;
@@ -122,9 +121,9 @@ public class TextPerception {
         });
         
         //stop
-        defaultParsers.add(new TextInputParser() {
+        defaultParsers.add(new TextReaction() {
             @Override
-            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
+            public boolean react(NAR nar, String input, TextReaction lastHandler) {
                 if (!nar.isWorking())  {
                     if (input.equals(Symbols.STOP_COMMAND)) {
                         nar.output(Output.OUT.class, "stopping.");
@@ -137,9 +136,9 @@ public class TextPerception {
         });    
         
         //start
-        defaultParsers.add(new TextInputParser() {
+        defaultParsers.add(new TextReaction() {
             @Override
-            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {                
+            public boolean react(NAR nar, String input, TextReaction lastHandler) {                
                 if (nar.isWorking()) {
                     if (input.equals(Symbols.START_COMMAND)) {
                         nar.setWorking(true);
@@ -152,9 +151,9 @@ public class TextPerception {
         });
         
         //silence
-        defaultParsers.add(new TextInputParser() {
+        defaultParsers.add(new TextReaction() {
             @Override
-            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {                
+            public boolean react(NAR nar, String input, TextReaction lastHandler) {                
 
                 if (input.indexOf(Symbols.SILENCE_COMMAND)==0) {
                     String[] p = input.split("=");
@@ -172,9 +171,9 @@ public class TextPerception {
         });
         
         //URL include
-        defaultParsers.add(new TextInputParser() {
+        defaultParsers.add(new TextReaction() {
             @Override
-            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
+            public boolean react(NAR nar, String input, TextReaction lastHandler) {
                 char c = input.charAt(0);
                 if (c == Symbols.URL_INCLUDE_MARK) {            
                     try {
@@ -189,9 +188,9 @@ public class TextPerception {
         });        
 
         //echo
-        defaultParsers.add(new TextInputParser() {
+        defaultParsers.add(new TextReaction() {
             @Override
-            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
+            public boolean react(NAR nar, String input, TextReaction lastHandler) {
                 char c = input.charAt(0);
                 if (c == Symbols.ECHO_MARK) {            
                     String echoString = input.substring(1);
@@ -203,9 +202,9 @@ public class TextPerception {
         });
         
         //narsese
-        defaultParsers.add(new TextInputParser() {
+        defaultParsers.add(new TextReaction() {
             @Override
-            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
+            public boolean react(NAR nar, String input, TextReaction lastHandler) {
                 if (lastHandler != null)
                     return false;
 
@@ -326,7 +325,7 @@ public class TextPerception {
 
     }
 
-    /* ---------- parse values ---------- */
+    /* ---------- react values ---------- */
     /**
      * Return the prefix of a task string that contains a BudgetValue
      *
@@ -378,7 +377,7 @@ public class TextPerception {
     }
 
     /**
-     * parse the addInput String into a TruthValue (or DesireValue)
+     * react the addInput String into a TruthValue (or DesireValue)
      *
      * @param s addInput String
      * @param type Task type
@@ -403,7 +402,7 @@ public class TextPerception {
     }
 
     /**
-     * parse the addInput String into a BudgetValue
+     * react the addInput String into a BudgetValue
      *
      * @param truth the TruthValue of the task
      * @param s addInput String
@@ -454,10 +453,10 @@ public class TextPerception {
         return t;
     }
 
-    /* ---------- parse String into term ---------- */
+    /* ---------- react String into term ---------- */
     /**
-     * Top-level method that parse a Term in general, which may recursively call
-     * itself.
+     * Top-level method that react a Term in general, which may recursively call
+ itself.
      * <p>
      * There are 5 valid cases: 1. (Op, A1, ..., An) is a CompoundTerm if Op is
      * a built-in operator 2. {A1, ..., An} is an SetExt; 3. [A1, ..., An] is an
@@ -578,15 +577,19 @@ public class TextPerception {
      * @throws nars.io.StringParser.InvalidInputException the String cannot be
      * parsed into a Term
      */
-    private static Term parseCompoundTerm(String s0, Memory memory) throws InvalidInputException {
+    private static Term parseCompoundTerm(final String s0, final Memory memory) throws InvalidInputException {
         String s = s0.trim();
         int firstSeparator = s.indexOf(ARGUMENT_SEPARATOR);
         String op = s.substring(0, firstSeparator).trim();
         if (!CompoundTerm.isOperator(op)) {
             throw new InvalidInputException("unknown operator: " + op);
         }
+        Operator o = Symbols.operator(op);        
+        
         ArrayList<Term> arg = parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR, memory);
-        Term t = CompoundTerm.make(op, arg, memory);
+        
+        Term t = CompoundTerm.make(o, arg, memory);
+        
         if (t == null) {
             throw new InvalidInputException("invalid compound term");
         }

@@ -1,0 +1,12 @@
+'********** compound decomposition, two premises
+
+'Robin is not a type of swimmer. 
+<robin --> swimmer>. %0.00%  
+
+'Robin is not a nonswimming mammal. 
+<robin --> (-,mammal,swimmer)>. %0.00%  
+
+32
+
+'Robin is not a type of mammal.
+''outputMustContain('<robin --> mammal>. %0.00;0.81%')

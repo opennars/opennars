@@ -1,8 +1,0 @@
-'********** compound decomposition, two premises
-(&&,<robin --> [flying]>,<robin --> swimmer>). %0% 
-'Robin cannot be both a flyer and a swimmer. 
-<robin --> [flying]>. 
-'Robin can fly. 
-6
-''test.outputContains('<robin --> swimmer>. %0.00;0.81%
-'Robin cannot swim. 

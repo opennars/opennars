@@ -1,0 +1,15 @@
+'********** comparison
+
+'Swan is a type of swimmer.
+<swan --> swimmer>. %0.90% 
+
+'Swan is a type of bird. 
+<swan --> bird>.  
+
+3
+
+'I guess that bird is similar to swimmer.
+''outputMustContain('<bird <-> swimmer>. %0.90;0.45%')
+
+
+

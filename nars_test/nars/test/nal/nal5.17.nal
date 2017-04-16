@@ -1,9 +1,0 @@
-'********** compound decomposition, two premises
-(||,<robin --> [flying]>,<robin --> swimmer>).  
-'Robin can fly or swim. 
-<robin --> swimmer>. %0% 
-'Robin cannot swim.
-2
-''test.outputContains('<robin --> [flying]>. %1.00;0.81%
- 'Robin can fly. 
-

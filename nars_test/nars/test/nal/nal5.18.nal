@@ -1,8 +1,0 @@
-'********** compound composition, one premises
-<robin --> [flying]>.
-'Robin can fly. 
-(||,<robin --> [flying]>,<robin --> swimmer>)?  
-'Can robin fly or swim?
-6
-''test.outputContains('(||,<robin --> swimmer>,<robin --> [flying]>). %1.00;0.81%
-'Robin can fly or swim.

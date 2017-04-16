@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import nars.core.NARState;
+import nars.util.NARState;
 
 /**
  * http://jchart2d.sourceforge.net/usage.shtml

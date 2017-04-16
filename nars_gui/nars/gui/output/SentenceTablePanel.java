@@ -19,10 +19,10 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.TruthValue;
-import nars.graph.NARGraph;
-import nars.graph.NARGraph.DefaultGraphizer;
-import nars.graph.NARGraph.Filter;
-import nars.graph.NARGraph.SentenceContent;
+import nars.util.NARGraph;
+import nars.util.NARGraph.DefaultGraphizer;
+import nars.util.NARGraph.Filter;
+import nars.util.NARGraph.SentenceContent;
 import nars.gui.NPanel;
 import nars.io.Output;
 import nars.language.CompoundTerm;
@@ -97,92 +97,9 @@ public class SentenceTablePanel extends NPanel implements Output {
         return data;
     }
 
-    public Filter newSelectedGraphFilter() {
-        
-        final List<Sentence> selected = getSelectedRows();
-
-        final Set<Term> include = new HashSet();
-        for (final Sentence s : selected) {
-            Term t = s.getContent();
-            include.add(t);
-            if (t instanceof CompoundTerm) {
-                CompoundTerm ct = (CompoundTerm)t;
-                include.addAll(ct.getContainedTerms());
-            }                        
-        }
-        
-        return new Filter() {
-
-            @Override
-            public boolean includeLevel(int l) {  return true; }
-
-            @Override
-            public boolean includeConcept(final Concept c) {
-                
-                final Term t = c.getTerm();
-                if (include.contains(t))
-                    return true;
-                
-                /*
-                if (t instanceof CompoundTerm) {
-                    
-                    Set<Term> contents = ((CompoundTerm)t).getContainedTerms();
-                    for (Term s : contents)
-                        if (include.contains(s))
-                            return true;
-                }
-                */
-                
-                return false;
-            }
-            
-        };
-    }
     
     public void newSelectedGraphPanel() {
-        DefaultGraphizer graphizer = new DefaultGraphizer(true,true,true,true,false) {
-
-            @Override
-            public void onTime(NARGraph g, long time) {
-                super.onTime(g, time);
-                
-                for (Sentence s : getSelectedRows()) {
-                    g.addVertex(s);
-                    
-                    Term t = s.getContent();
-                    addTerm(g, t);
-                    g.addEdge(s.getContent(), s, new SentenceContent());
-                    
-                    if (t instanceof CompoundTerm) {
-                        CompoundTerm ct = ((CompoundTerm)t);
-                        Set<Term> contained = ct.getContainedTerms();
-                        
-                        for (Term x : contained) {                            
-                            addTerm(g, x);
-                            if (ct.containComponent(x))
-                                g.addEdge(x, t, new NARGraph.TermContent());
-                            
-                            
-                            for (Term y : contained) {
-                                addTerm(g, y);
-                                
-                                if (x != y)
-                                    if (x.containComponent(y))
-                                        g.addEdge(y, x, new NARGraph.TermContent());
-                            }
-                            
-                                
-                            
-                        }
-                    }
-                    
-                    
-                }
-                //add sentences
-            }
-            
-        };
-        new ProcessingGraphPanel(nar, graphizer, newSelectedGraphFilter());        
+        new ProcessingGraphPanel(nar, getSelectedRows());        
     }
     
     @Override

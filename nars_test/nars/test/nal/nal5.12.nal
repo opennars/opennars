@@ -1,9 +1,0 @@
-'********** conversions between Implication and Equivalence
-<<robin --> [flying]> ==> <robin --> bird>>. %0.9% 
-'If robin can fly then robin is a type of bird. 
-<<robin --> bird> ==> <robin --> [flying]>>. %0.9% 
-'If robin is a type of bird then robin can fly.
-7
-''test.outputContains('<<robin --> bird> <=> <robin --> [flying]>>. %0.81;0.81%
-'Robin can fly if and only if robin is a type of bird. 
-

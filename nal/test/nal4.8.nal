@@ -1,0 +1,12 @@
+'********** composition on both sides of a statement
+
+'Soda is a type of base.
+<soda --> base>.
+
+'What is something that can neutralize a base?
+<(/,neutralization,_,base) --> ?x>?
+
+6
+
+'What can neutraliz base can react with base. 
+''outputMustContain('<(/,neutralization,_,base) --> (/,neutralization,_,soda)>. %1.00;0.81%')

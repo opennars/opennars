@@ -1,9 +1,0 @@
-'********** conditional deduction
-<(&&,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>.  
-'If robin can fly and has wings then robin is a bird.
-<robin --> [flying]>.  
-'robin can fly.
-1
-''test.outputContains('<<robin --> [with-wings]> ==> <robin --> bird>>. %1.00;0.81%
-'If robin has wings then robin is a bird
-

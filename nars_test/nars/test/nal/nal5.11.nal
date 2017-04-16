@@ -1,9 +1,0 @@
-'********** resemblance
-<<robin --> animal> <=> <robin --> bird>>.  
-'Robin is a type of animal if and only if robin is a type of bird. 
-<<robin --> bird> <=> <robin --> [flying]>>. %0.9% 
-'Robin is a type of bird if and only if robin can fly. 
-19
-''test.outputContains('<<robin --> animal> <=> <robin --> [flying]>>. %0.90;0.81% 
-'Robin is a type of animal if and only if robin can fly. 
-

@@ -1,0 +1,10 @@
+'********** compound decomposition, one premise
+
+'Robin is a type of nonswimming bird. 
+<robin --> (-,bird,swimmer)>. %0.90% 
+
+32
+
+'Robin is a type of bird. 
+''outputMustContain('<robin --> bird>. %0.90;0.73%')
+

@@ -1,9 +1,0 @@
-'********** analogy
-<robin --> bird>. 
-'Robin is a type of bird. 
-<<robin --> bird> <=> <robin --> [flying]>>. %0.80% 
-'Usually, robin is a type of bird if and only if robin can fly. 
-1
-''test.outputContains('<robin --> [flying]>. %0.80;0.65%
-'I guess usually robin can fly.
-

@@ -1,8 +1,0 @@
-'********** contraposition
-<(--,<robin --> bird>) ==> <robin --> [flying]>>. %0.1% 
-'It is unlikely that if robin is not a type of bird then robin can fly. 
-<(--,<robin --> [flying]>) ==> <robin --> bird>>?  
-'If robin cannot fly then is robin a type of bird?
-29
-''test.outputContains('<(--,<robin --> [flying]>) ==> <robin --> bird>>. %0.00;0.45%
-'I guess it is unlikely that if robin cannot fly then robin is a type of bird.
