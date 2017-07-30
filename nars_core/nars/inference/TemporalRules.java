@@ -329,7 +329,8 @@ public class TemporalRules {
         BudgetValue budget4 = BudgetFunctions.forward(truth4, nal); //this one is sequence in sequenceBag, no need to reduce here
         
         //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
-        /*if(!SucceedingEventsInduction)*/ 
+        if(!SucceedingEventsInduction) //not used currently as succeeding event induction (involving sequence bag elements)
+                                       //is the current temporal induction strategy
         { //reduce priority according to temporal distance
             //it was not "semantically" connected by temporal succession
             int tt1=(int) s1.getOccurenceTime();
