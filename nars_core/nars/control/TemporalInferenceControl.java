@@ -101,12 +101,12 @@ public class TemporalInferenceControl {
         }
         
         addToSequenceTasks(nal, newEvent);
-        
-        /*System.out.println("----------");
-        for(Task t : this.sequenceTasks) {
+        for (int i = 0; i < 10; ++i) System.out.println();
+        System.out.println("----------");
+        for(Task t : nal.memory.sequenceTasks) {
             System.out.println(t.sentence.getTerm().toString()+ " " +String.valueOf(t.getPriority()));
         }
-        System.out.println("^^^^^^^^^");*/
+        System.out.println("^^^^^^^^^");
         return true;
     }
     
