@@ -163,11 +163,13 @@ public class Stamp implements Cloneable {
         occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
         
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143        
-        while (i2 < secondLength && j < baseLength) {
-            evidentialBase[j++] = secondBase[i2++];
-        }
-        while (i1 < firstLength && j < baseLength) {
-            evidentialBase[j++] = firstBase[i1++];
+        while (j < baseLength) {
+            if(i2 < secondLength) {
+                evidentialBase[j++] = secondBase[i2++];
+            }
+            if(i1 < firstLength) {
+                evidentialBase[j++] = firstBase[i1++];
+            }
         }
     }
 
