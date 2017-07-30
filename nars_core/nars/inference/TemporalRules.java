@@ -25,6 +25,7 @@ import nars.config.Parameters;
 import nars.control.DerivationContext;
 import nars.control.TemporalInferenceControl;
 import nars.entity.BudgetValue;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -155,6 +156,26 @@ public class TemporalRules {
         return (t instanceof Inheritance) || (t instanceof Similarity);
     }
     
+    public static float ConjunctionPriority(final nars.control.DerivationContext nal, Term t, float value) {
+        if(t instanceof Conjunction) {
+            Conjunction conj = (Conjunction) t;
+            for(Term comp: conj.term) {
+                if(!(comp instanceof Interval))
+                    value = BudgetFunctions.and(value, ConjunctionPriority(nal, comp, value));
+            }
+        } else {
+            Concept c = nal.memory.concept(t);
+            float mul = 0.0f;
+            if(c != null)
+                mul = c.getPriority();
+            value *= mul;
+        }
+        return value;
+    } 
+    public static float ConjunctionPriority(final nars.control.DerivationContext nal, Term t)
+    {
+        return ConjunctionPriority(nal, t, 1.0f);
+    }
     public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.control.DerivationContext nal, boolean SucceedingEventsInduction) {
         
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK
@@ -308,13 +329,18 @@ public class TemporalRules {
         BudgetValue budget4 = BudgetFunctions.forward(truth4, nal); //this one is sequence in sequenceBag, no need to reduce here
         
         //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
-        if(!SucceedingEventsInduction) { //reduce priority according to temporal distance
+        /*if(!SucceedingEventsInduction)*/ 
+        { //reduce priority according to temporal distance
             //it was not "semantically" connected by temporal succession
             int tt1=(int) s1.getOccurenceTime();
-            int tt2=(int) s1.getOccurenceTime();
+            int tt2=(int) s2.getOccurenceTime();
             int d=Math.abs(tt1-tt2)/Parameters.DURATION;
             if(d!=0) {
                 double mul=1.0/((double)d);
+                
+                mul *= ConjunctionPriority(nal, t1);
+                mul *= ConjunctionPriority(nal, t2);
+                
                 budget1.setPriority((float) (budget1.getPriority()*mul));
                 budget2.setPriority((float) (budget2.getPriority()*mul));
                 budget3.setPriority((float) (budget3.getPriority()*mul));
