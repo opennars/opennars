@@ -43,7 +43,6 @@ import nars.control.TemporalInferenceControl;
 import nars.plugin.mental.Emotions;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import static nars.entity.Concept.successfulOperationHandler;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -106,7 +105,8 @@ public class Memory implements Serializable, Iterable<Concept> {
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
     
     /* Input event tasks that were either input events or derived sequences*/
-    public Bag<Task<Term>,Sentence<Term>> sequenceTasks;
+    public Bag<Task<Term>,Sentence<Term>> seq_current;
+    public Bag<Task<Term>,Sentence<Term>> seq_before;
 
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
@@ -127,14 +127,16 @@ public class Memory implements Serializable, Iterable<Concept> {
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
     public Memory(RuntimeParameters param, Bag<Concept,Term> concepts, Bag<Task<Term>,Sentence<Term>> novelTasks,
-            Bag<Task<Term>,Sentence<Term>> sequenceTasks) {                
+            Bag<Task<Term>,Sentence<Term>> seq_current,
+            Bag<Task<Term>,Sentence<Term>> seq_before) {                
 
         this.param = param;
         this.event = new EventEmitter();
         this.concepts = concepts;
         this.novelTasks = novelTasks;                
         this.newTasks = new ArrayDeque<>();
-        this.sequenceTasks = sequenceTasks;
+        this.seq_before = seq_before;
+        this.seq_current = seq_current;
         this.operators = new HashMap<>();
         reset();
     }
@@ -145,7 +147,8 @@ public class Memory implements Serializable, Iterable<Concept> {
         concepts.clear();
         novelTasks.clear();
         newTasks.clear();    
-        sequenceTasks.clear();
+        this.seq_before.clear();
+        this.seq_current.clear();
         cycle = 0;
         inputPausedUntil = 0;
         emotion.set(0.5f, 0.5f);
@@ -279,9 +282,7 @@ public class Memory implements Serializable, Iterable<Concept> {
                 addNewTask(task, "Perceived");
                 
                 if(task.sentence.isJudgment() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
-                    this.lastDecision = task;
-                    //depriorize everything related to the previous decisions:
-                    successfulOperationHandler(this);
+                    TemporalInferenceControl.NewOperationFrame(this, task);
                 }
                 
             } else {

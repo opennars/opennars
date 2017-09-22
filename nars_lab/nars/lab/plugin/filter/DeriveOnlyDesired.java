@@ -16,7 +16,7 @@ import nars.entity.Task;
 public class DeriveOnlyDesired implements DerivationFilter {
 
     @Override
-    public String reject(DerivationContext nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief) {
+    public String reject(DerivationContext nal, Task task, boolean revised, boolean single) {
         if (!task.sentence.isGoal()) {
             if (task.sentence.isEternal())
                 return "Not Goal";

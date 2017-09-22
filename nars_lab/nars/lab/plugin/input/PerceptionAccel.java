@@ -173,7 +173,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             
             longest_result_derived_already=true;
             
-            nal.derivedTask(T, false, false, null, null, false); //lets make the new event the parent task, and derive it
+            nal.derivedTask(T, false, false, false); //lets make the new event the parent task, and derive it
         }
     }
     

@@ -33,7 +33,7 @@ public class DerivationContext {
 
     public interface DerivationFilter extends Plugin {
         /** returns null if allowed to derive, or a String containing a short rejection reason for logging */
-        public String reject(DerivationContext nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief);
+        public String reject(DerivationContext nal, Task task, boolean revised, boolean single);
 
         @Override
         public default boolean setEnabled(NAR n, boolean enabled) {
@@ -68,15 +68,16 @@ public class DerivationContext {
         memory.emit(c, o);
     }
 
-
-    
     /**
      * Derived task comes from the inference rules.
      *
      * @param task the derived task
      * @param overlapAllowed //https://groups.google.com/forum/#!topic/open-nars/FVbbKq5En-M
      */
-    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Task parent,Sentence occurence2, boolean overlapAllowed) {                        
+    public boolean derivedTask(final Task task, final boolean revised, final boolean single, boolean overlapAllowed) {
+        return derivedTask(task, revised, single, overlapAllowed, true);
+    }
+    public boolean derivedTask(final Task task, final boolean revised, final boolean single, boolean overlapAllowed, boolean addToMemory) {                        
 
         /*if(task.sentence.truth.getConfidence() > 0.98 && (task.getTerm() instanceof Implication) && 
                 (((Implication) task.getTerm()).getSubject() instanceof Conjunction) && 
@@ -104,27 +105,21 @@ public class DerivationContext {
                 }
             }
         }*/
-        
-        
+
         if (derivationFilters!=null) {            
             for (int i = 0; i < derivationFilters.size(); i++) {
                 DerivationFilter d = derivationFilters.get(i);
-                String rejectionReason = d.reject(this, task, revised, single, parent, occurence2);
+                String rejectionReason = d.reject(this, task, revised, single);
                 if (rejectionReason!=null) {
                     memory.removeTask(task, rejectionReason);
                     return false;
                 }
             }
         }
-        
-        final Sentence occurence = parent!=null ? parent.sentence : null;
-
-        
         if (!task.budget.aboveThreshold()) {
             memory.removeTask(task, "Insufficient Budget");
             return false;
-        }
-        
+        } 
         if (task.sentence != null && task.sentence.truth != null) {
             float conf = task.sentence.truth.getConfidence();
             if (conf == 0) {
@@ -133,9 +128,6 @@ public class DerivationContext {
                 return false;
             }
         }
-        
-
-    
         if (task.sentence.term instanceof Operation) {
             Operation op = (Operation) task.sentence.term;
             if (op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
@@ -143,16 +135,8 @@ public class DerivationContext {
                 return false;
             }
         }
-        
-        
-        
+
         final Stamp stamp = task.sentence.stamp;
-        if (occurence != null && !occurence.isEternal()) {
-            stamp.setOccurrenceTime(occurence.getOccurenceTime());
-        }
-        if (occurence2 != null && !occurence2.isEternal()) {
-            stamp.setOccurrenceTime(occurence2.getOccurenceTime());
-        }
         
         //its revision, of course its cyclic, apply evidental base policy
         if(!overlapAllowed) { //todo reconsider
@@ -182,10 +166,12 @@ public class DerivationContext {
             task.getBudget().setDurability(task.getBudget().getDurability()*Parameters.DERIVATION_DURABILITY_LEAK);
             task.getBudget().setPriority(task.getBudget().getPriority()*Parameters.DERIVATION_PRIORITY_LEAK);
         }
-        memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
+        memory.event.emit(Events.TaskDerive.class, task, revised, single);
         //memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
         
-        addTask(task, "Derived");
+        if(addToMemory) {
+            addTask(task, "Derived");
+        }
         return true;
     }
 
@@ -201,7 +187,7 @@ public class DerivationContext {
     public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-        return derivedTask(newTask, true, false, null, null, true); //allows overlap since overlap was already checked on revisable( function
+        return derivedTask(newTask, true, false, true); //allows overlap since overlap was already checked on revisable( function
     }                                                               //which is not the case for other single premise tasks
 
     /**
@@ -215,6 +201,9 @@ public class DerivationContext {
      * @param overlapAllowed // https://groups.google.com/forum/#!topic/open-nars/FVbbKq5En-M
      */
     public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed) {
+        return doublePremiseTask(newContent, newTruth, newBudget, temporalInduction, overlapAllowed, true);
+    }
+    public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed, boolean addToMemory) {
                 
         List<Task> ret = new ArrayList<Task>();
         if(newContent == null) {
@@ -237,7 +226,7 @@ public class DerivationContext {
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 
                 if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, null, null, overlapAllowed);
+                    boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
                     if(added) {
                         ret.add(newTask);
                     }
@@ -260,7 +249,7 @@ public class DerivationContext {
                 newSentence.producedByTemporalInduction=temporalInduction;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, null, null, overlapAllowed);
+                    boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
                     if(added) {
                         ret.add(newTask);
                     }
@@ -350,7 +339,7 @@ public class DerivationContext {
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
         Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
         if (newTask!=null) {
-            return derivedTask(newTask, false, true, null, null, false);
+            return derivedTask(newTask, false, true, false);
         }
         return false;
     }
@@ -360,7 +349,7 @@ public class DerivationContext {
             return false;
         }
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        return derivedTask(newTask, false, true, null, null, false);
+        return derivedTask(newTask, false, true, false);
     }
 
     public long getTime() {

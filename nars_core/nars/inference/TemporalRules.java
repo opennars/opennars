@@ -156,27 +156,8 @@ public class TemporalRules {
         return (t instanceof Inheritance) || (t instanceof Similarity);
     }
     
-    public static float ConjunctionPriority(final nars.control.DerivationContext nal, Term t, float value) {
-        if(t instanceof Conjunction) {
-            Conjunction conj = (Conjunction) t;
-            for(Term comp: conj.term) {
-                if(!(comp instanceof Interval))
-                    value = BudgetFunctions.and(value, ConjunctionPriority(nal, comp, value));
-            }
-        } else {
-            Concept c = nal.memory.concept(t);
-            float mul = 0.0f;
-            if(c != null)
-                mul = c.getPriority();
-            value *= mul;
-        }
-        return value;
-    } 
-    public static float ConjunctionPriority(final nars.control.DerivationContext nal, Term t)
-    {
-        return ConjunctionPriority(nal, t, 1.0f);
-    }
-    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.control.DerivationContext nal, boolean SucceedingEventsInduction) {
+    //TODO maybe split &/ case into own function
+    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.control.DerivationContext nal, boolean SucceedingEventsInduction, boolean addToMemory, boolean allowSequence) {
         
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK
                 || s1.isEternal() || s2.isEternal())
@@ -185,7 +166,7 @@ public class TemporalRules {
         Term t1 = s1.term;
         Term t2 = s2.term;
                
-        boolean deriveSequenceOnly = Statement.invalidStatement(t1, t2, true);
+        boolean deriveSequenceOnly = (!addToMemory) || Statement.invalidStatement(t1, t2, true);
         if (Statement.invalidStatement(t1, t2, false))
             return Collections.EMPTY_LIST;
         
@@ -328,27 +309,6 @@ public class TemporalRules {
         budget3.setPriority(budget3.getPriority() * Parameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         BudgetValue budget4 = BudgetFunctions.forward(truth4, nal); //this one is sequence in sequenceBag, no need to reduce here
         
-        //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
-        if(!SucceedingEventsInduction) //not used currently as succeeding event induction (involving sequence bag elements)
-                                       //is the current temporal induction strategy
-        { //reduce priority according to temporal distance
-            //it was not "semantically" connected by temporal succession
-            int tt1=(int) s1.getOccurenceTime();
-            int tt2=(int) s2.getOccurenceTime();
-            int d=Math.abs(tt1-tt2)/Parameters.DURATION;
-            if(d!=0) {
-                double mul=1.0/((double)d);
-                
-                mul *= ConjunctionPriority(nal, t1);
-                mul *= ConjunctionPriority(nal, t2);
-                
-                budget1.setPriority((float) (budget1.getPriority()*mul));
-                budget2.setPriority((float) (budget2.getPriority()*mul));
-                budget3.setPriority((float) (budget3.getPriority()*mul));
-                budget4.setPriority((float) (budget4.getPriority()*mul));
-            }
-        }
-        
         Statement statement1 = Implication.make(t1, t2, order);
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
         Statement statement3 = Equivalence.make(t1, t2, order);
@@ -478,11 +438,15 @@ public class TemporalRules {
             }
         }
         if(!tooMuchTemporalStatements(statement4)) {
-            List<Task> tl=nal.doublePremiseTask(statement4, truth4, budget4,true, false);
+            if(!allowSequence) {
+                return success;
+            }
+            List<Task> tl=nal.doublePremiseTask(statement4, truth4, budget4,true, false, addToMemory);
             if(tl!=null) {
                 for(Task t : tl) {
                     //fill sequenceTask buffer due to the new derived sequence
-                    if(t.sentence.isJudgment() &&
+                    if(addToMemory &&
+                            t.sentence.isJudgment() &&
                             !t.sentence.isEternal() && 
                             t.sentence.term instanceof Conjunction && 
                             ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_NONE &&
@@ -496,27 +460,6 @@ public class TemporalRules {
         }
 
         return success;
-    }
-
-    private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final DerivationContext nal) {
-        if(nal.memory.emotion.busy()<Parameters.CURIOSITY_BUSINESS_THRESHOLD &&  Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
-            if(task.sentence.term instanceof Implication) {
-                boolean valid=false;
-                if(task.sentence.term instanceof Implication) {
-                    Implication equ=(Implication) task.sentence.term;
-                    if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-                        valid=true;
-                    }
-                }
-                if(valid) {
-                    Sentence tt2=new Sentence(task.sentence.term.clone(),Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp.clone(),nal.memory.time()));
-                    BudgetValue budg=task.budget.clone();
-                    budg.setPriority(budg.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL);
-                    budg.setDurability(budg.getPriority()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL);
-                    nal.singlePremiseTask(tt2, task.budget.clone());
-                }
-            }
-        }
     }
     
     /**
