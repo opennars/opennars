@@ -267,7 +267,7 @@ public class Anticipate extends Operator implements EventObserver {
         
         Sentence S = new Sentence(aTerm, Symbols.JUDGMENT_MARK, truth, stamp);
         Task task = new Task(S, budget);
-        nal.derivedTask(task, false, true, null, null, false); 
+        nal.derivedTask(task, false, true, false); 
         task.setElemOfSequenceBuffer(true);
         nal.memory.emit(DISAPPOINT.class, task);
     }

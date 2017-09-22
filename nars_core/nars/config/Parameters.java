@@ -230,6 +230,7 @@ public class Parameters {
     
    // public static int STM_SIZE = 1;
     public static int SEQUENCE_BAG_ATTEMPTS = 20; //5 //20
+    public static int CONDITION_BAG_ATTEMPTS = 20; //5 //20
     
     public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=true; //this should be true to restore 1.6.1 strategy
 
@@ -263,7 +264,7 @@ public class Parameters {
     
     public static float CONSIDER_NEW_OPERATION_BIAS = 0.05f; //depriorizes older operation-related events in temporal inference
     
-    public static float TEMPORAL_INDUCTION_PRIORITY_PENALTY = 0.1f;
+    public static float TEMPORAL_INDUCTION_PRIORITY_PENALTY = 1.0f; //was 0.1
     
     public static int AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES = 2100;
     

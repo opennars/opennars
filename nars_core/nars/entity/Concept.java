@@ -42,6 +42,7 @@ import nars.storage.Memory;
 import nars.io.NARConsole;
 import nars.config.Parameters;
 import nars.control.DerivationContext;
+import nars.control.TemporalInferenceControl;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import static nars.inference.LocalRules.revisible;
@@ -375,7 +376,7 @@ public class Concept extends Item<Term> {
      * Entry point for all potentially executable tasks.
      * Returns true if the Task has a Term which can be executed
      */
-    public boolean executeDecision(final Task t) {
+    public boolean executeDecision(DerivationContext nal, final Task t) {
         //if (isDesired()) 
         if(memory.allowExecution)
         {
@@ -391,42 +392,13 @@ public class Concept extends Item<Term> {
                 if(!oper.call(op, memory)) {
                     return false;
                 }
-                this.memory.lastDecision = t;
-                //depriorize everything related to the previous decisions:
-                successfulOperationHandler(this.memory);
+                TemporalInferenceControl.NewOperationFrame(nal.memory, t);
                 
                 //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
                 return true;
             }
         }
         return false;
-    }
-    
-    public static void successfulOperationHandler(Memory memory) {
-        //multiple versions are necessary, but we do not allow duplicates
-        if(Parameters.CONSIDER_NEW_OPERATION_BIAS == 1.0f) {
-            return;
-        }
-        for(Task s : memory.sequenceTasks) {
-            
-            if(memory.lastDecision != null && (s.getTerm() instanceof Operation)) {
-                if(!s.getTerm().equals(memory.lastDecision.getTerm())) {
-                    s.setPriority(s.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
-                    continue; //depriorized already, we can look at the next now
-                }
-            }
-            if(memory.lastDecision != null && (s.getTerm() instanceof Conjunction)) {
-                Conjunction seq = (Conjunction) s.getTerm();
-                if(seq.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                    for(Term w : seq.term) {
-                        if((w instanceof Operation) && !w.equals(memory.lastDecision.getTerm())) {
-                            s.setPriority(s.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
-                            break; //break because just penalty once, not for each term ^^
-                        }
-                    }
-                }
-            }
-        }
     }
     
     /**
@@ -534,7 +506,7 @@ public class Concept extends Item<Term> {
                     if(preconc != null) { //ok we can look now how much it is fullfilled
                         
                         //check recent events in event bag
-                        for(Task p : this.memory.sequenceTasks) {
+                        for(Task p : this.memory.seq_current) {
                             if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= memory.time()) {
                                 newesttime = p.sentence.getOccurenceTime();
                                 bestsofar = p; //we use the newest for now
@@ -578,7 +550,7 @@ public class Concept extends Item<Term> {
                     Task t = new Task(new Sentence(bestop,Symbols.JUDGMENT_MARK,bestop_truth, projectedGoal.stamp), new BudgetValue(1.0f,1.0f,1.0f));
                     //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
                     if(!task.sentence.stamp.evidenceIsCyclic()) {
-                        if(!executeDecision(t)) { //this task is just used as dummy
+                        if(!executeDecision(nal, t)) { //this task is just used as dummy
                             memory.emit(UnexecutableGoal.class, task, this, nal);
                         } else {
                             memory.decisionBlock = memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
@@ -596,7 +568,7 @@ public class Concept extends Item<Term> {
                 
                 InternalExperience.InternalExperienceFromTask(memory,task,false);
                 
-                if(nal.memory.time() >= memory.decisionBlock && !executeDecision(task)) {
+                if(nal.memory.time() >= memory.decisionBlock && !executeDecision(nal, task)) {
                     memory.emit(UnexecutableGoal.class, task, this, nal);
                     return true; //it was made true by itself
                 }

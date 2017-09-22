@@ -20,7 +20,7 @@ import nars.operator.Operation;
 public class DeriveOnlyDemandedTasks implements DerivationFilter {
 
     @Override
-    public String reject(DerivationContext nal, Task task, boolean revised, boolean single, Task parent, Sentence otherBelief) {
+    public String reject(DerivationContext nal, Task task, boolean revised, boolean single) {
         
         Sentence s = task.sentence;
         
