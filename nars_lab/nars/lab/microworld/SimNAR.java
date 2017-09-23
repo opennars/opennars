@@ -14,7 +14,6 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import nars.config.Plugins;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.language.Term;
@@ -287,12 +286,13 @@ public class SimNAR extends Frame {
             int k=0;
             float Alpha=0.1f;
             String lastInput = "";
+            int lasthealthy = 0;
             int UpdateSOM(float[] viewField,float reward) //input and reward
             {
                 for(int i=0;i<viewField.length;i++) {
                     if(viewField[i]>0.1f) {
                         String s = "<{\""+String.valueOf(i)+"\"} --> [on]>. :|:"; // %"+String.valueOf(0.5f+0.5f*viewField[i])+"%";
-                        if(!lastInput.equals(s)) {
+                        if(!lastInput.equals(s) || k%5 == 0) {
                             nar.addInput(s);
                         }
                         lastInput = s;
@@ -301,20 +301,29 @@ public class SimNAR extends Frame {
                 }
                 lastAction = 0;
                 k++;
-                if(k%4==0) {
-                    nar.addInput("<SELF --> [good]>! :|:");
-                    //System.out.println("food urge input");
+               if(k%2==0) {
+                   if(k%4 == 0) { //les priority than eating ^^
+                        nar.addInput("<SELF --> [healthy]>! :|:");
+                   }
+                   nar.addInput("<SELF --> [replete]>! :|:");
+                   //System.out.println("food urge input");
                 }
                 if(reward > 0) {
                     System.out.println("good mr_nars");
-                    nar.addInput("<SELF --> [good]>. :|:");
+                    nar.addInput("<SELF --> [replete]>. :|:");
                 }
                 if(reward < 0) {
                     System.out.println("bad mr_nars");
-                    nar.addInput("(--,<SELF --> [good]>). :|:");
+                    lasthealthy = k;
+                    //nar.addInput("(--,<SELF --> [good]>). :|:");   
                 }
                 
-                nar.step(500);
+                if(k - lasthealthy > 200 && k%20 == 0) {
+                    nar.addInput("<SELF --> [healthy]>. :|:");
+                    System.err.println("I'm healthy "+String.valueOf(k));
+                }
+                
+                nar.step(10);
 
                 if(lastAction==0 && random(1.0f)<Alpha) { //if NAR hasn't decided chose a random action
                     lastAction = (int)random((float)nActions);
@@ -439,14 +448,14 @@ public class SimNAR extends Frame {
                 if(action==2)
                 {
                     oi.a+=0.5f;
-                    oi.v=5.0f;
+                    //oi.v=5.0f;
                     //mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
                 }
                 else
                 if(action==1)
                 {
                     oi.a-=0.5f;
-                    oi.v=5.0f;
+                    //oi.v=5.0f;
                     // mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
                 }
                 else
@@ -1324,7 +1333,7 @@ public class SimNAR extends Frame {
         public void setup()
         {
             this.size(800, 600);
-            this.frameRate(20);
+            this.frameRate(50);
             //mem.simulate_consistency=0.05;
             //mem.simulate_damping=0.90;
             //size(worldSize-200,worldSize-200);
