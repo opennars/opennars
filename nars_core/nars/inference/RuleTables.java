@@ -725,7 +725,11 @@ public class RuleTables {
      */
      private static void compoundAndSelf(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
         if ((compound instanceof Conjunction) || (compound instanceof Disjunction)) {
-            if (nal.getCurrentBelief() != null && nal.getCurrentBelief().projection(nal.memory.time(), nal.memory.time()).getTruth().getExpectation() > Parameters.NEXT_CONDITION_THRESHOLD) {
+            if (nal.getCurrentBelief() != null) {
+                if(((component instanceof Statement) || (component instanceof Conjunction) || (component instanceof Negation) || (component instanceof Disjunction)) 
+                && (compound.containsTerm(component))) {
+                    StructuralRules.structuralCompound(compound, component, compoundTask, index, nal);
+                }
                 CompositionalRules.decomposeStatement(compound, component, compoundTask, index, nal);
             } else if (compound.containsTerm(component)) {
                 StructuralRules.structuralCompound(compound, component, compoundTask, index, nal);

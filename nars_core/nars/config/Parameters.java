@@ -245,8 +245,6 @@ public class Parameters {
     public static boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all <a =/> b> statement, so that a has to be an operator
     public static boolean CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=false;
     
-    public static float NEXT_CONDITION_THRESHOLD=0.9f; 
-    
     public static float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
     public static float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;
     public static float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
