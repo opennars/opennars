@@ -118,7 +118,7 @@ public class Pong extends Frame {
                 }*/
                 lastAction = 0;
                 k++;
-                if(k%4==0 && agent.y < 50) {
+                if(k%4==0) {
                     nar.addInput("<{\"1\"} --> [on]>! :|:"); //future extension: change to self good
                     //System.out.println("food urge input");
                 }
@@ -153,38 +153,39 @@ public class Pong extends Frame {
                 Sentence hypo_left = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
                         "<(&/,<{left} --> [on]>,+1,(^Right,SELF),+1) =/> <{\"1\"} --> [on]>>");
                 if(hypo_left != null) {
-                    System.out.println("HypLeft: " + hypo_left.truth);
+                    System.out.println("HypLeftWrong: " + hypo_left.truth);
                 }
                 
                 Sentence hypo_right = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
                         "<(&/,<{right} --> [on]>,+12,(^Left,SELF),+13) =/> <{\"1\"} --> [on]>>");
                 if(hypo_right != null) {
-                    System.out.println("HypRight: " + hypo_right.truth);
+                    System.out.println("HypRightWrong: " + hypo_right.truth);
                 }
                 
                 Sentence hypo_left_false = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
                         "<(&/,<{left} --> [on]>,+1,(^Left,SELF),+1) =/> <{\"1\"} --> [on]>>");
                 if(hypo_left_false != null) {
-                    System.out.println("HypLefFalse: " + hypo_left_false.truth);
+                    System.out.println("HypLeft: " + hypo_left_false.truth);
                 }
                 
                 Sentence hypo_right_false = ConceptMonitor.strongestPrecondition(nar,  "<{\"1\"} --> [on]>",
                         "<(&/,<{right} --> [on]>,+12,(^Right,SELF),+13) =/> <{\"1\"} --> [on]>>");
                 if(hypo_right_false != null) {
-                    System.out.println("HypRigFalse: " + hypo_right_false.truth);
+                    System.out.println("HypRight: " + hypo_right_false.truth);
                 }
                 }
                 
                 float accepted_distance = 20.0f;
-                if(Math.abs(agent.x - ball.x) < accepted_distance ) {
+                if(Math.abs(agent.x - ball.x) < accepted_distance) {
                     String s = "<{\"1\"} --> [on]>. :|:";
-                    
-                    if(!lastWasMiddle || !s.equals(this.LastInput)) {
-                        System.out.println("good mr_nars");
-                        nar.addInput(s);
-                        System.out.println(s);
+                    if(agent.y < 50) {
+                        if(!lastWasMiddle || !s.equals(this.LastInput)) {
+                            System.out.println("good mr_nars");
+                            nar.addInput(s);
+                            System.out.println(s);
+                        }
+                        lastWasMiddle = true;
                     }
-                    lastWasMiddle = true;
                     this.LastInput = s;
                 } else {
                     if(agent.x < ball.x) {
