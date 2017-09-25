@@ -318,7 +318,7 @@ public class Stamp implements Cloneable {
      * @param that The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
-    public boolean equals(Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase, final boolean derivationChain) {
+    public boolean equals(Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase) {
         if (this == s) return true;
 
         if (creationTime)

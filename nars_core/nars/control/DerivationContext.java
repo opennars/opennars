@@ -79,33 +79,6 @@ public class DerivationContext {
     }
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, boolean overlapAllowed, boolean addToMemory) {                        
 
-        /*if(task.sentence.truth.getConfidence() > 0.98 && (task.getTerm() instanceof Implication) && 
-                (((Implication) task.getTerm()).getSubject() instanceof Conjunction) && 
-                ((Conjunction) ((Implication) task.getTerm()).getSubject()).term.length == 4) {
-            int a = 3;
-            a = 0;
-            System.out.println(a);
-        }*/
-        
-        /*if(task.sentence.term instanceof Implication) {
-            Implication imp = (Implication) task.sentence.term;
-            if(imp.getSubject() instanceof Conjunction) {
-                Conjunction conj = (Conjunction) imp.getSubject();
-                boolean lastWasIval = false;
-                for(Term t : conj.term) {
-                    if(t instanceof Interval) {
-                        if(lastWasIval) {
-                            int a = 0;
-                            System.out.println(a); //only decompose compound is allowed to do this!
-                        } //this debug code helps identifying cases
-                        lastWasIval = true;
-                    } else {
-                        lastWasIval = false;
-                    }
-                }
-            }
-        }*/
-
         if (derivationFilters!=null) {            
             for (int i = 0; i < derivationFilters.size(); i++) {
                 DerivationFilter d = derivationFilters.get(i);
@@ -204,7 +177,7 @@ public class DerivationContext {
         return doublePremiseTask(newContent, newTruth, newBudget, temporalInduction, overlapAllowed, true);
     }
     public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed, boolean addToMemory) {
-                
+        
         List<Task> ret = new ArrayList<Task>();
         if(newContent == null) {
             return null;
@@ -322,7 +295,7 @@ public class DerivationContext {
             }
         }
         Sentence taskSentence = getCurrentTask().sentence;
-        if (taskSentence.isJudgment() || getCurrentBelief() == null) {
+        if (taskSentence.isGoal() || taskSentence.isJudgment() || getCurrentBelief() == null) {
             setTheNewStamp(new Stamp(taskSentence.stamp, getTime()));
         } else {
             // to answer a question with negation in NAL-5 --- move to activated task?

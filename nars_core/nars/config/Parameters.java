@@ -170,10 +170,6 @@ public class Parameters {
 
     /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle */
     public static final int NOVELTY_HORIZON = 10;
-    
-    public static int NOVEL_TASKS_TRACK_SIZE=1000; //inference rules like temporal induction
-    //work a bit differently, in order for it not to bypass the novelty strategy (because it doesn't use a termlink
-    //for inference, we track the tasks extra for now
 
     /**
      * The rate of confidence decrease in mental operations Doubt and Hesitate
@@ -248,6 +244,8 @@ public class Parameters {
     public static float CURIOSITY_DESIRE_DURABILITY_MUL=0.3f; //how much durability should curiosity have?
     public static boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all <a =/> b> statement, so that a has to be an operator
     public static boolean CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=false;
+    
+    public static float NEXT_CONDITION_THRESHOLD=0.9f; 
     
     public static float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
     public static float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;

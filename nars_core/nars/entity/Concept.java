@@ -250,7 +250,7 @@ public class Concept extends Item<Term> {
             oldBelief = oldBeliefT.sentence;
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;       //when table is full, the latter check is especially important too
-            if (newStamp.equals(oldStamp,false,true,true,false) && task.sentence.truth.equals(oldBelief.truth)) {
+            if (newStamp.equals(oldStamp,false,false,true)) {
                 //if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
                     ////task.budget.decPriority(0);    // duplicated task
                 //}   //// else: activated belief
@@ -421,7 +421,7 @@ public class Concept extends Item<Term> {
             final Stamp oldStamp = oldGoal.stamp;
             
             
-            if (newStamp.equals(oldStamp,false,false,true,false)) {
+            if (newStamp.equals(oldStamp,false,false,true)) {
                 return false; // duplicate
             }
             if (revisible(goal, oldGoal)) {
@@ -476,91 +476,9 @@ public class Concept extends Item<Term> {
             
             Sentence projectedGoal = goal.projection(nal.memory.time(),nal.memory.time());
             
-            if (projectedGoal != null && task.aboveThreshold() && !fullfilled && projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
+            if (projectedGoal != null && task.aboveThreshold() && !fullfilled) {
 
-                try{
-                Operation bestop = null;
-                float bestop_truthexp = 0.0f;
-                TruthValue bestop_truth = null;
-                Task executable_precond = null;
-                //long distance = -1;
-                long mintime = -1;
-                long maxtime = -1;
-                for(Task t: this.executable_preconditions) {
-                    Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
-                    Term[] newprec = new Term[prec.length-3];
-                    for(int i=0;i<prec.length-3;i++) { //skip the last part: interval, operator, interval
-                        newprec[i] = prec[i];
-                    }
-                    
-                    //distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
-                    mintime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude-1, nal.memory.param.duration);
-                    maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+2, nal.memory.param.duration);
-                    
-                    Operation op = (Operation) prec[prec.length-2];
-                    Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
-
-                    Concept preconc = nal.memory.concept(precondition);
-                    long newesttime = -1;
-                    Task bestsofar = null;
-                    if(preconc != null) { //ok we can look now how much it is fullfilled
-                        
-                        //check recent events in event bag
-                        for(Task p : this.memory.seq_current) {
-                            if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= memory.time()) {
-                                newesttime = p.sentence.getOccurenceTime();
-                                bestsofar = p; //we use the newest for now
-                            }
-                        }
-                        if(bestsofar == null) {
-                            continue;
-                        }
-                        //ok now we can take the desire value:
-                        TruthValue A = projectedGoal.getTruth();
-                        //and the truth of the hypothesis:
-                        TruthValue Hyp = t.sentence.truth;
-                        //and the truth of the precondition:
-                        Sentence projectedPrecon = bestsofar.sentence.projection(memory.time() /*- distance*/, memory.time());
-                        
-                        if(projectedPrecon.isEternal()) {
-                            continue; //projection wasn't better than eternalization, too long in the past
-                        }
-                        //debug start
-                        //long timeA = memory.time();
-                        //long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
-                        //long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
-                        //debug end
-                        TruthValue precon = projectedPrecon.truth;
-                        //and derive the conjunction of the left side:
-                        TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
-                        //in order to derive the operator desire value:
-                        TruthValue opdesire = TruthFunctions.desireDed(precon, leftside);
-
-                        float expecdesire = opdesire.getExpectation();
-                        if(expecdesire > bestop_truthexp) {
-                            bestop = op;
-                            bestop_truthexp = expecdesire;
-                            bestop_truth = opdesire;
-                            executable_precond = t;
-                        }
-                    }
-                }
-
-                if(bestop != null && bestop_truthexp > memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
-                    Task t = new Task(new Sentence(bestop,Symbols.JUDGMENT_MARK,bestop_truth, projectedGoal.stamp), new BudgetValue(1.0f,1.0f,1.0f));
-                    //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
-                    if(!task.sentence.stamp.evidenceIsCyclic()) {
-                        if(!executeDecision(nal, t)) { //this task is just used as dummy
-                            memory.emit(UnexecutableGoal.class, task, this, nal);
-                        } else {
-                            memory.decisionBlock = memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
-                            SyllogisticRules.generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
-                        }
-                    }
-                }
-                }catch(Exception ex) {
-                    System.out.println("Failure in operation choice rule, analyze!");
-                }
+                potentialReaction(nal, projectedGoal, task);
                 
                 questionFromGoal(task, nal);
                 
@@ -568,7 +486,7 @@ public class Concept extends Item<Term> {
                 
                 InternalExperience.InternalExperienceFromTask(memory,task,false);
                 
-                if(nal.memory.time() >= memory.decisionBlock && !executeDecision(nal, task)) {
+                if(projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && nal.memory.time() >= memory.decisionBlock && !executeDecision(nal, task)) {
                     memory.emit(UnexecutableGoal.class, task, this, nal);
                     return true; //it was made true by itself
                 }
@@ -577,6 +495,92 @@ public class Concept extends Item<Term> {
             return fullfilled;
         }
         return false;
+    }
+
+    private void potentialReaction(final DerivationContext nal, Sentence projectedGoal, final Task task) {
+        try{
+            Operation bestop = null;
+            float bestop_truthexp = 0.0f;
+            TruthValue bestop_truth = null;
+            Task executable_precond = null;
+            //long distance = -1;
+            long mintime = -1;
+            long maxtime = -1;
+            for(Task t: this.executable_preconditions) {
+                Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
+                Term[] newprec = new Term[prec.length-3];
+                for(int i=0;i<prec.length-3;i++) { //skip the last part: interval, operator, interval
+                    newprec[i] = prec[i];
+                }
+                
+                //distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
+                mintime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude-1, nal.memory.param.duration);
+                maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+2, nal.memory.param.duration);
+                
+                Operation op = (Operation) prec[prec.length-2];
+                Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
+                
+                Concept preconc = nal.memory.concept(precondition);
+                long newesttime = -1;
+                Task bestsofar = null;
+                if(preconc != null) { //ok we can look now how much it is fullfilled
+                    
+                    //check recent events in event bag
+                    for(Task p : this.memory.seq_current) {
+                        if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= memory.time()) {
+                            newesttime = p.sentence.getOccurenceTime();
+                            bestsofar = p; //we use the newest for now
+                        }
+                    }
+                    if(bestsofar == null) {
+                        continue;
+                    }
+                    //ok now we can take the desire value:
+                    TruthValue A = projectedGoal.getTruth();
+                    //and the truth of the hypothesis:
+                    TruthValue Hyp = t.sentence.truth;
+                    //and the truth of the precondition:
+                    Sentence projectedPrecon = bestsofar.sentence.projection(memory.time() /*- distance*/, memory.time());
+                    
+                    if(projectedPrecon.isEternal()) {
+                        continue; //projection wasn't better than eternalization, too long in the past
+                    }
+                    //debug start
+                    //long timeA = memory.time();
+                    //long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
+                    //long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
+                    //debug end
+                    TruthValue precon = projectedPrecon.truth;
+                    //and derive the conjunction of the left side:
+                    TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
+                    //in order to derive the operator desire value:
+                    TruthValue opdesire = TruthFunctions.desireDed(precon, leftside);
+                    
+                    float expecdesire = opdesire.getExpectation();
+                    if(expecdesire > bestop_truthexp) {
+                        bestop = op;
+                        bestop_truthexp = expecdesire;
+                        bestop_truth = opdesire;
+                        executable_precond = t;
+                    }
+                }
+            }
+            
+            if(bestop != null && bestop_truthexp > memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
+                Task t = new Task(new Sentence(bestop,Symbols.JUDGMENT_MARK,bestop_truth, projectedGoal.stamp), new BudgetValue(1.0f,1.0f,1.0f));
+                //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
+                if(!task.sentence.stamp.evidenceIsCyclic()) {
+                    if(!executeDecision(nal, t)) { //this task is just used as dummy
+                        memory.emit(UnexecutableGoal.class, task, this, nal);
+                    } else {
+                        memory.decisionBlock = memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
+                        SyllogisticRules.generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
+                    }
+                }
+            }
+        }catch(Exception ex) {
+            System.out.println("Failure in operation choice rule, analyze!");
+        }
     }
 
     private void questionFromGoal(final Task task, final DerivationContext nal) {

@@ -297,6 +297,10 @@ public class Sentence<T extends Term> implements Cloneable {
             else if (!truth.equals(t.truth)) return false;            
             
             if (!term.equals(t.term)) return false;
+            
+            if(!stamp.equals(t.stamp, false, true, true)) {
+                return false;
+            }
                     
             return true;
         }
@@ -327,7 +331,7 @@ public class Sentence<T extends Term> implements Cloneable {
                 throw new RuntimeException("invalid comparison for Sentence.equivalentTo");
             }
         }
-        return (truth.equals(that.truth) && stamp.equals(that.stamp,false,true,true,true));
+        return (truth.equals(that.truth) && stamp.equals(that.stamp,false,true,true));
     }
 
     /**
