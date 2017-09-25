@@ -132,10 +132,11 @@ public class InternalExperience implements Plugin, EventObserver {
         }
         
         Term opTerm = mem.getOperator(opName);
-        Term[] arg = new Term[ s.truth==null ? 1 : 2 ];
-        arg[0]=s.getTerm();
+        Term[] arg = new Term[ s.truth==null ? 2 : 3 ];
+        arg[0]=Term.SELF;
+        arg[1]=s.getTerm();
         if (s.truth != null) {
-            arg[1] = s.truth.toWordTerm();            
+            arg[2] = s.truth.toWordTerm();            
         }
         
         //Operation.make ?
