@@ -725,7 +725,7 @@ public class RuleTables {
      */
      private static void compoundAndSelf(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
         if ((compound instanceof Conjunction) || (compound instanceof Disjunction)) {
-            if (nal.getCurrentBelief() != null) {
+            if (nal.getCurrentBelief() != null && nal.getCurrentBelief().projection(nal.memory.time(), nal.memory.time()).getTruth().getExpectation() > Parameters.NEXT_CONDITION_THRESHOLD) {
                 CompositionalRules.decomposeStatement(compound, component, compoundTask, index, nal);
             } else if (compound.containsTerm(component)) {
                 StructuralRules.structuralCompound(compound, component, compoundTask, index, nal);
@@ -780,11 +780,14 @@ public class RuleTables {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
                 Term[] u = new Term[] { compound, statement };
                 if (Variables.unify(VAR_DEPENDENT, component, statement, u)) {
-                    compound = (CompoundTerm) u[0];
+                    compound = (Conjunction) u[0];
                     statement = (Statement) u[1];
-                    SyllogisticRules.elimiVarDep(compound, component, 
-                            statement.equals(beliefTerm),
-                            nal);
+                    if(compound.getTemporalOrder() != TemporalRules.ORDER_FORWARD || //only allow dep var elimination
+                            index == 0) { //for (&/ on first component!!
+                        SyllogisticRules.elimiVarDep(compound, component, 
+                                statement.equals(beliefTerm),
+                                nal);
+                    }
                 } else if (task.sentence.isJudgment()) { // && !compound.containsTerm(component)) {
                     CompositionalRules.introVarInner(statement, (Statement) component, compound, nal);
                 } else if (Variables.unify(VAR_QUERY, component, statement, u)) {

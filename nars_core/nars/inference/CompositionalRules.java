@@ -63,6 +63,7 @@ import nars.language.Variables;
 import static nars.inference.TruthFunctions.abduction;
 import static nars.inference.TruthFunctions.abduction;
 import static nars.inference.TruthFunctions.abduction;
+import nars.language.Interval;
 
 /**
  * Compound term composition and decomposition rules, with two premises.
@@ -284,6 +285,12 @@ public final class CompositionalRules {
     static void decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
         if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
             return;
+        }
+        if((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+            if(!nal.getCurrentTask().sentence.isEternal() && compound.term[index + 1] instanceof Interval) {
+                long shift_occurrence = ((Interval)compound.term[1]).getTime(nal.memory);
+                nal.getTheNewStamp().setOccurrenceTime(nal.getCurrentTask().sentence.getOccurenceTime() + shift_occurrence);
+            }
         }
 
         Task task = nal.getCurrentTask();

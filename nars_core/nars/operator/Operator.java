@@ -43,7 +43,7 @@ import nars.language.Term;
  */
 public abstract class Operator extends Term implements Plugin {
 
-    public static final float executionConfidence = Parameters.MAX_CONFIDENCE; // 0.9999f;
+    public static final float executionConfidence = Parameters.DEFAULT_JUDGMENT_CONFIDENCE; // 0.9999f;
     
     protected Operator() {   super();    }
     
