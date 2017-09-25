@@ -118,7 +118,7 @@ public class Pong extends Frame {
                 }*/
                 lastAction = 0;
                 k++;
-                if(k%4==0) {
+                if(k%4==0 && agent.y < 50) {
                     nar.addInput("<{\"1\"} --> [on]>! :|:"); //future extension: change to self good
                     //System.out.println("food urge input");
                 }
@@ -210,7 +210,7 @@ public class Pong extends Frame {
                     nar.addInput("(--,<SELF --> [good]>). :|:");
                 }*/
                 
-                nar.step(500);
+                nar.step(10);
 
                 if(lastAction==0 && random(1.0f) < Alpha) { //if NAR hasn't decided chose a executable random action
                     lastAction = (int) random((float) nActions);
@@ -1269,7 +1269,7 @@ public class Pong extends Frame {
         public void setup()
         {
             this.size(800, 600);
-            this.frameRate(20);
+            this.frameRate(50);
             //mem.simulate_consistency=0.05;
             //mem.simulate_damping=0.90;
             //size(worldSize-200,worldSize-200);
@@ -1290,7 +1290,7 @@ public class Pong extends Frame {
             lastclicked=((Obj)hsim.obj.get(0));
             for(int i=0;i<1;i++)
             {
-                ball = new Obj(null,null,width / 2,height / 2,random(1)*2*PI,0,0,0,random(1)*5+20,1,10);
+                ball = new Obj(null,null,width / 2,height / 2,random(1)*2*PI,0,0,0,25,1,10);
                 hsim.obj.add(ball);
             }
             /*for(int i=0;i<5;i++)
