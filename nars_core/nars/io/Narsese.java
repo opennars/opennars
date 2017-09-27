@@ -179,8 +179,14 @@ public class Narsese {
         TruthValue truth = parseTruth(truthString, punc);
         Term content = parseTerm(str.substring(0, last));
         if (content == null) throw new InvalidInputException("Content term missing");
-            
-        Sentence sentence = new Sentence(content, punc, truth, stamp);
+
+        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+        sentenceMakeParameters.term = content;
+        sentenceMakeParameters.punctuation = punc;
+        sentenceMakeParameters.truth = truth;
+        sentenceMakeParameters.stamp = stamp;
+        Sentence sentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
         //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
         //    sentence.setRevisible(false);
         //}

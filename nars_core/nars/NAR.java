@@ -238,15 +238,17 @@ public class NAR implements Runnable {
     }
     
     public NAR ask(String termString, Answered answered) throws InvalidInputException {
-        
+        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+        sentenceMakeParameters.term = new Narsese(this).parseTerm(termString);
+        sentenceMakeParameters.punctuation = Symbols.QUESTION_MARK;
+        sentenceMakeParameters.truth = null;
+        sentenceMakeParameters.stamp = new Stamp(memory, Tense.Eternal);
+        Sentence sentence=Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
         Task t;
         addInput(
                 t = new Task(
-                        new Sentence(
-                                new Narsese(this).parseTerm(termString),
-                                Symbols.QUESTION_MARK, 
-                                null, 
-                                new Stamp(memory, Tense.Eternal)), 
+                        sentence,
                         new BudgetValue(
                                 Parameters.DEFAULT_QUESTION_PRIORITY, 
                                 Parameters.DEFAULT_QUESTION_DURABILITY, 
@@ -261,15 +263,17 @@ public class NAR implements Runnable {
     }
     
     public NAR askNow(String termString, Answered answered) throws InvalidInputException {
-        
+        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+        sentenceMakeParameters.term = new Narsese(this).parseTerm(termString);
+        sentenceMakeParameters.punctuation = Symbols.QUESTION_MARK;
+        sentenceMakeParameters.truth = null;
+        sentenceMakeParameters.stamp = new Stamp(memory, Tense.Present);
+        Sentence sentence=Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
         Task t;
         addInput(
                 t = new Task(
-                        new Sentence(
-                                new Narsese(this).parseTerm(termString),
-                                Symbols.QUESTION_MARK, 
-                                null, 
-                                new Stamp(memory, Tense.Present)), 
+                        sentence,
                         new BudgetValue(
                                 Parameters.DEFAULT_QUESTION_PRIORITY, 
                                 Parameters.DEFAULT_QUESTION_DURABILITY, 

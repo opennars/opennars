@@ -158,7 +158,13 @@ public class DerivationContext {
      * @param newBudget The budget value in task
      */
     public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
-        Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+        sentenceMakeParameters.term = newContent;
+        sentenceMakeParameters.punctuation =  getCurrentTask().sentence.punctuation;
+        sentenceMakeParameters.truth = newTruth;
+        sentenceMakeParameters.stamp = getTheNewStamp();
+        Sentence newSentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
         return derivedTask(newTask, true, false, true); //allows overlap since overlap was already checked on revisable( function
     }                                                               //which is not the case for other single premise tasks
@@ -194,8 +200,14 @@ public class DerivationContext {
             }
 
             try {
-                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
-                newSentence.producedByTemporalInduction=temporalInduction;
+                Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+                sentenceMakeParameters.term = newContent;
+                sentenceMakeParameters.punctuation = getCurrentTask().sentence.punctuation;
+                sentenceMakeParameters.truth = newTruth;
+                sentenceMakeParameters.stamp = getTheNewStamp();
+                final Sentence newSentence=Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
+                newSentence.producedByTemporalInduction = temporalInduction;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 
                 if (newTask!=null) {
@@ -214,24 +226,30 @@ public class DerivationContext {
             if(temporalInduction && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
                 
                 try {
+                    TruthValue truthEt = TruthFunctions.eternalize(newTruth);
+                    Stamp st = getTheNewStamp().clone();
+                    st.setEternal();
 
-                TruthValue truthEt=TruthFunctions.eternalize(newTruth);               
-                Stamp st=getTheNewStamp().clone();
-                st.setEternal();
-                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
-                newSentence.producedByTemporalInduction=temporalInduction;
-                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
-                    if(added) {
-                        ret.add(newTask);
+                    Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+                    sentenceMakeParameters.term = newContent;
+                    sentenceMakeParameters.punctuation = getCurrentTask().sentence.punctuation;
+                    sentenceMakeParameters.truth = truthEt;
+                    sentenceMakeParameters.stamp = st;
+                    final Sentence newSentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
+                    newSentence.producedByTemporalInduction=temporalInduction;
+                    final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                    if (newTask!=null) {
+                        boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
+                        if(added) {
+                            ret.add(newTask);
+                        }
                     }
+
                 }
-                
-            }
-            catch (CompoundTerm.UnableToCloneException e) {
-                return null;
-            }
+                catch (CompoundTerm.UnableToCloneException e) {
+                    return null;
+                }
                 
             }
             return ret;
@@ -309,7 +327,14 @@ public class DerivationContext {
         if(newContent instanceof Interval) {
             return false;
         }
-        Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
+
+        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+        sentenceMakeParameters.term = newContent;
+        sentenceMakeParameters.punctuation = punctuation;
+        sentenceMakeParameters.truth = newTruth;
+        sentenceMakeParameters.stamp = getTheNewStamp();
+        Sentence newSentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
         Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
         if (newTask!=null) {
             return derivedTask(newTask, false, true, false);
