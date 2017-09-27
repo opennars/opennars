@@ -212,14 +212,7 @@ public class InternalExperience implements Plugin, EventObserver {
         if (ret==null) {
             return true;
         }
-
-        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-        sentenceMakeParameters.term = ret;
-        sentenceMakeParameters.punctuation = Symbols.JUDGMENT_MARK;
-        sentenceMakeParameters.truth = truth;
-        sentenceMakeParameters.stamp = stamp;
-        Sentence j = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
-
+        Sentence j = new Sentence(ret, Symbols.JUDGMENT_MARK, truth, stamp);
         BudgetValue newbudget=new BudgetValue(
                 Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
                 Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
@@ -256,14 +249,11 @@ public class InternalExperience implements Plugin, EventObserver {
             if(op!=null && prod!=null) {
                 
                 Term new_term=Inheritance.make(prod, op);
-
-                Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-                sentenceMakeParameters.term = new_term;
-                sentenceMakeParameters.punctuation = Symbols.GOAL_MARK;
-                sentenceMakeParameters.truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);  // a naming convension
-                sentenceMakeParameters.stamp = new Stamp(memory);
-                Sentence sentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
-
+                Sentence sentence = new Sentence(
+                    new_term, Symbols.GOAL_MARK, 
+                    new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                    new Stamp(memory));
+                
                 float quality = BudgetFunctions.truthToQuality(sentence.truth);
                 BudgetValue budget = new BudgetValue(
                     Parameters.DEFAULT_GOAL_PRIORITY*INTERNAL_EXPERIENCE_PRIORITY_MUL, 
@@ -305,12 +295,10 @@ public class InternalExperience implements Plugin, EventObserver {
                     Product args=new Product(new Term[]{imp.getPredicate()});
                     Term new_term=Operation.make(args,op);
 
-                    Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-                    sentenceMakeParameters.term = new_term;
-                    sentenceMakeParameters.punctuation = Symbols.GOAL_MARK;
-                    sentenceMakeParameters.truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);  // a naming convension
-                    sentenceMakeParameters.stamp = new Stamp(memory);
-                    Sentence sentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+                    Sentence sentence = new Sentence(
+                        new_term, Symbols.GOAL_MARK, 
+                        new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                        new Stamp(memory));
 
                     float quality = BudgetFunctions.truthToQuality(sentence.truth);
                     BudgetValue budget = new BudgetValue(

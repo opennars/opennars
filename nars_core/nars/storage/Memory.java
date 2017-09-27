@@ -336,15 +336,8 @@ public class Memory implements Serializable, Iterable<Concept> {
         Task opTask = operation.getTask();
        // logic.TASK_EXECUTED.commit(opTask.budget.getPriority());
                 
-        Stamp stamp = new Stamp(this, Tense.Present);
-
-
-        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-        sentenceMakeParameters.term = operation;
-        sentenceMakeParameters.punctuation = Symbols.JUDGMENT_MARK;
-        sentenceMakeParameters.truth = truth;
-        sentenceMakeParameters.stamp = stamp;
-        Sentence sentence=Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+        Stamp stamp = new Stamp(this, Tense.Present); 
+        Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
         
         Task task = new Task(sentence, new BudgetValue(Parameters.DEFAULT_FEEDBACK_PRIORITY, Parameters.DEFAULT_FEEDBACK_DURABILITY,
                                         truthToQuality(sentence.getTruth())), operation.getTask());
@@ -510,14 +503,11 @@ public class Memory implements Serializable, Iterable<Concept> {
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense) {
         
         TruthValue truth = new TruthValue(freq, conf);
-
-        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-        sentenceMakeParameters.term = content;
-        sentenceMakeParameters.punctuation = sentenceType;
-        sentenceMakeParameters.truth = truth;
-        sentenceMakeParameters.stamp = new Stamp(this, tense);
-        Sentence sentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
-
+        Sentence sentence = new Sentence(
+                content, 
+                sentenceType, 
+                truth, 
+                new Stamp(this, tense));
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         Task task = new Task(sentence, budget, parentTask);
         return task;
