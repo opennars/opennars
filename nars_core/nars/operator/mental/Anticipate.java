@@ -246,7 +246,13 @@ public class Anticipate extends Operator implements EventObserver {
                 st.setOccurrenceTime(memory.time());
             }
 
-            Sentence s=new Sentence(op,Symbols.JUDGMENT_MARK,truth,st);
+            Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+            sentenceMakeParameters.term = op;
+            sentenceMakeParameters.punctuation = Symbols.JUDGMENT_MARK;
+            sentenceMakeParameters.truth = truth;
+            sentenceMakeParameters.stamp = st;
+            Sentence s = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
             Task newTask=new Task(s,new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
                     Parameters.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
@@ -264,9 +270,15 @@ public class Anticipate extends Operator implements EventObserver {
         //stamp.setOccurrenceTime(nal.memory.time());
         stamp.setOccurrenceTime(expectedOccurenceTime); //it did not happen, so the time of when it did not 
         //happen is exactly the time it was expected
-        
-        Sentence S = new Sentence(aTerm, Symbols.JUDGMENT_MARK, truth, stamp);
-        Task task = new Task(S, budget);
+
+        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+        sentenceMakeParameters.term = aTerm;
+        sentenceMakeParameters.punctuation = Symbols.JUDGMENT_MARK;
+        sentenceMakeParameters.truth = truth;
+        sentenceMakeParameters.stamp = stamp;
+        Sentence s = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
+        Task task = new Task(s, budget);
         nal.derivedTask(task, false, true, false); 
         task.setElemOfSequenceBuffer(true);
         nal.memory.emit(DISAPPOINT.class, task);

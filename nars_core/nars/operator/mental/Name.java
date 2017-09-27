@@ -57,7 +57,13 @@ public class Name extends Operator {
         Similarity content = Similarity.make(compound, atomic);
         
         TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
-        Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, new Stamp(memory));
+
+        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+        sentenceMakeParameters.term = content;
+        sentenceMakeParameters.punctuation = Symbols.JUDGMENT_MARK;
+        sentenceMakeParameters.truth = truth;
+        sentenceMakeParameters.stamp = new Stamp(memory);
+        Sentence sentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
         
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         

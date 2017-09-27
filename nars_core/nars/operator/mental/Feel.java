@@ -65,7 +65,14 @@ public abstract class Feel extends Operator {
         Term predicate = new SetInt(feelingTerm); 
         
         Term content = Inheritance.make(selfSubject, predicate);
-        Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, stamp);
+
+        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+        sentenceMakeParameters.term = content;
+        sentenceMakeParameters.punctuation = Symbols.JUDGMENT_MARK;
+        sentenceMakeParameters.truth = truth;
+        sentenceMakeParameters.stamp = stamp;
+        Sentence sentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
         float quality = BudgetFunctions.truthToQuality(truth);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
         

@@ -50,8 +50,14 @@ public class Evaluate extends Operator {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term content = args[0];
-        
-        Sentence sentence = new Sentence(content, Symbols.QUEST_MARK, null, new Stamp(memory));
+
+        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+        sentenceMakeParameters.term = content;
+        sentenceMakeParameters.punctuation = Symbols.QUEST_MARK;
+        sentenceMakeParameters.truth = null;
+        sentenceMakeParameters.stamp = new Stamp(memory);
+        Sentence sentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUEST_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
         
         return Lists.newArrayList( new Task(sentence, budget) );        

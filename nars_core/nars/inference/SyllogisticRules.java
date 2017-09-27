@@ -470,24 +470,31 @@ public final class SyllogisticRules {
         //derivation was successful and it was a judgment event
         
         try { //that was predicted by an eternal belief that shifted time
-        float immediateDisappointmentConfidence = 0.1f;
-        Stamp stamp = new Stamp(nal.memory);
-        stamp.setOccurrenceTime(Stamp.ETERNAL);
-        //long serial = stamp.evidentialBase[0];
-        Sentence s = new Sentence(mainSentence.term, mainSentence.punctuation, new TruthValue(0.0f, immediateDisappointmentConfidence), stamp);
-        //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
-        Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f)); //Budget for one-time processing
-        Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
-        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-            if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
-                c.negConfirmation = t;
-                c.negConfirmationPriority = priority;
-                c.negConfirm_abort_maxtime = maxtime;
-                c.negConfirm_abort_mintime = mintime;
-                nal.memory.emit(Output.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
+            float immediateDisappointmentConfidence = 0.1f;
+            Stamp stamp = new Stamp(nal.memory);
+            stamp.setOccurrenceTime(Stamp.ETERNAL);
+            //long serial = stamp.evidentialBase[0];
+
+            Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
+            sentenceMakeParameters.term = mainSentence.term;
+            sentenceMakeParameters.punctuation = mainSentence.punctuation;
+            sentenceMakeParameters.truth = new TruthValue(0.0f, immediateDisappointmentConfidence);
+            sentenceMakeParameters.stamp = stamp;
+            Sentence s = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+
+            //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
+            Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f)); //Budget for one-time processing
+            Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
+            if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
+                    c.negConfirmation = t;
+                    c.negConfirmationPriority = priority;
+                    c.negConfirm_abort_maxtime = maxtime;
+                    c.negConfirm_abort_mintime = mintime;
+                    nal.memory.emit(Output.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
+                }
             }
-       }
-        }catch(Exception ex) {
+        } catch(Exception ex) {
             System.out.println("problem in anticipation handling");
         }
     }
