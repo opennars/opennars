@@ -246,7 +246,12 @@ public class Anticipate extends Operator implements EventObserver {
                 st.setOccurrenceTime(memory.time());
             }
 
-            Sentence s=new Sentence(op,Symbols.JUDGMENT_MARK,truth,st);
+            Sentence s=new Sentence(
+                op,
+                Symbols.JUDGMENT_MARK,
+                truth,
+                st);
+
             Task newTask=new Task(s,new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
                     Parameters.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
@@ -265,7 +270,12 @@ public class Anticipate extends Operator implements EventObserver {
         stamp.setOccurrenceTime(expectedOccurenceTime); //it did not happen, so the time of when it did not 
         //happen is exactly the time it was expected
         
-        Sentence S = new Sentence(aTerm, Symbols.JUDGMENT_MARK, truth, stamp);
+        Sentence S = new Sentence(
+            aTerm,
+            Symbols.JUDGMENT_MARK,
+            truth,
+            stamp);
+
         Task task = new Task(S, budget);
         nal.derivedTask(task, false, true, false); 
         task.setElemOfSequenceBuffer(true);

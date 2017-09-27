@@ -126,7 +126,11 @@ public class Emotions implements Plugin {
                 Term subject=new Term("SELF");
                 Inheritance inh=Inheritance.make(subject, predicate);
                 TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
+                Sentence s = new Sentence(
+                    inh,
+                    Symbols.JUDGMENT_MARK,
+                    truth,
+                    new Stamp(nal.memory));
                 s.stamp.setOccurrenceTime(nal.memory.time());
                 Task t=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth)));
                 nal.addTask(t, "emotion");

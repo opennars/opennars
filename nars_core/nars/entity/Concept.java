@@ -567,7 +567,13 @@ public class Concept extends Item<Term> {
             }
             
             if(bestop != null && bestop_truthexp > memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
-                Task t = new Task(new Sentence(bestop,Symbols.JUDGMENT_MARK,bestop_truth, projectedGoal.stamp), new BudgetValue(1.0f,1.0f,1.0f));
+                Sentence createdSentence = new Sentence(
+                    bestop,
+                    Symbols.JUDGMENT_MARK,
+                    bestop_truth,
+                    projectedGoal.stamp);
+
+                Task t = new Task(createdSentence, new BudgetValue(1.0f,1.0f,1.0f));
                 //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
                 if(!task.sentence.stamp.evidenceIsCyclic()) {
                     if(!executeDecision(nal, t)) { //this task is just used as dummy
@@ -605,7 +611,12 @@ public class Concept extends Item<Term> {
                 if(q!=null) {
                     Stamp st = new Stamp(task.sentence.stamp,nal.memory.time());
                     st.setOccurrenceTime(task.sentence.getOccurenceTime()); //set tense of question to goal tense
-                    Sentence s=new Sentence(q,Symbols.QUESTION_MARK,null,st);
+                    Sentence s = new Sentence(
+                        q,
+                        Symbols.QUESTION_MARK,
+                        null,
+                        st);
+
                     if(s!=null) {
                         BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
                         nal.singlePremiseTask(s, budget);

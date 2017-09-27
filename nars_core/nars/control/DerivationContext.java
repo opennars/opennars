@@ -158,7 +158,12 @@ public class DerivationContext {
      * @param newBudget The budget value in task
      */
     public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
-        Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+        Sentence newSentence = new Sentence(
+            newContent,
+            getCurrentTask().sentence.punctuation,
+            newTruth,
+            getTheNewStamp());
+
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
         return derivedTask(newTask, true, false, true); //allows overlap since overlap was already checked on revisable( function
     }                                                               //which is not the case for other single premise tasks
@@ -194,7 +199,12 @@ public class DerivationContext {
             }
 
             try {
-                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+                final Sentence newSentence = new Sentence(
+                    newContent,
+                    getCurrentTask().sentence.punctuation,
+                    newTruth,
+                    getTheNewStamp());
+
                 newSentence.producedByTemporalInduction=temporalInduction;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 
@@ -218,7 +228,12 @@ public class DerivationContext {
                 TruthValue truthEt=TruthFunctions.eternalize(newTruth);               
                 Stamp st=getTheNewStamp().clone();
                 st.setEternal();
-                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
+                final Sentence newSentence = new Sentence(
+                    newContent,
+                    getCurrentTask().sentence.punctuation,
+                    truthEt,
+                    st);
+
                 newSentence.producedByTemporalInduction=temporalInduction;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 if (newTask!=null) {
@@ -309,7 +324,13 @@ public class DerivationContext {
         if(newContent instanceof Interval) {
             return false;
         }
-        Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
+
+        Sentence newSentence = new Sentence(
+            newContent,
+            punctuation,
+            newTruth,
+            getTheNewStamp());
+
         Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
         if (newTask!=null) {
             return derivedTask(newTask, false, true, false);
