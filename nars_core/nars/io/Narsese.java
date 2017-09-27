@@ -180,7 +180,12 @@ public class Narsese {
         Term content = parseTerm(str.substring(0, last));
         if (content == null) throw new InvalidInputException("Content term missing");
             
-        Sentence sentence = new Sentence(content, punc, truth, stamp);
+        Sentence sentence = new Sentence(
+            content,
+            punc,
+            truth,
+            stamp);
+
         //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
         //    sentence.setRevisible(false);
         //}

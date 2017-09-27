@@ -71,7 +71,11 @@ public class Counting implements Plugin {
                                 
                                 TruthValue truth = task.sentence.truth.clone();
                                 Stamp stampi = task.sentence.stamp.clone();
-                                Sentence j = new Sentence(new_term, Symbols.JUDGMENT_MARK, truth, stampi);
+                                Sentence j = new Sentence(
+                                    new_term,
+                                    Symbols.JUDGMENT_MARK,
+                                    truth,
+                                    stampi);
                                 BudgetValue budg = task.budget.clone();
                                 Task newTask = new Task(j, budg,task);                               
 

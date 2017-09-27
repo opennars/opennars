@@ -212,7 +212,12 @@ public class InternalExperience implements Plugin, EventObserver {
         if (ret==null) {
             return true;
         }
-        Sentence j = new Sentence(ret, Symbols.JUDGMENT_MARK, truth, stamp);
+        Sentence j = new Sentence(
+            ret,
+            Symbols.JUDGMENT_MARK,
+            truth,
+            stamp);
+
         BudgetValue newbudget=new BudgetValue(
                 Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
                 Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
@@ -250,7 +255,8 @@ public class InternalExperience implements Plugin, EventObserver {
                 
                 Term new_term=Inheritance.make(prod, op);
                 Sentence sentence = new Sentence(
-                    new_term, Symbols.GOAL_MARK, 
+                    new_term,
+                    Symbols.GOAL_MARK,
                     new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                     new Stamp(memory));
                 
@@ -296,7 +302,8 @@ public class InternalExperience implements Plugin, EventObserver {
                     Term new_term=Operation.make(args,op);
 
                     Sentence sentence = new Sentence(
-                        new_term, Symbols.GOAL_MARK, 
+                        new_term,
+                        Symbols.GOAL_MARK,
                         new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                         new Stamp(memory));
 

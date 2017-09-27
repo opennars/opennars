@@ -356,9 +356,11 @@ public class Sentence<T extends Term> implements Cloneable {
 
     /** Clone with a different Term */    
     public final Sentence clone(final Term t) {
-        return new Sentence(t, punctuation, 
-                truth!=null ? new TruthValue(truth) : null, 
-                stamp.clone());
+        return new Sentence(
+            t,
+            punctuation,
+            truth!=null ? new TruthValue(truth) : null,
+            stamp.clone());
     }
 
     /**
@@ -377,7 +379,12 @@ public class Sentence<T extends Term> implements Cloneable {
         Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : 
                                         stamp.cloneWithNewOccurrenceTime(targetTime);
         
-        return new Sentence(term, punctuation, newTruth, newStamp, false);
+        return new Sentence(
+            term,
+            punctuation,
+            newTruth,
+            newStamp,
+            false);
     }
 
     

@@ -184,12 +184,22 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
                  
                 if(right_in_time && Variables.hasSubstitute(Symbols.VAR_INDEPENDENT,imp.getPredicate(),lastEvents.get(args.length-off).sentence.term)) { //it matched and same consequence, so positive evidence
                     //c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
-                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT_MARK,new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(nal.memory));
+                    Sentence s2=new Sentence(
+                        c.sentence.term.clone(),
+                        Symbols.JUDGMENT_MARK,
+                        new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
+                        new Stamp(nal.memory));
+
                     Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
                     derivetasks.add(t);
                 } else { //it matched and other consequence, so negative evidence
                    // c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
-                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT_MARK,new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(nal.memory));
+                    Sentence s2=new Sentence(
+                        c.sentence.term.clone(),
+                        Symbols.JUDGMENT_MARK,
+                        new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
+                        new Stamp(nal.memory));
+
                     Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
                     derivetasks.add(t);
                 } //todo use derived task with revision instead
