@@ -59,15 +59,13 @@ public class Abbreviation implements Plugin {
             Term compound = args[0];
             
             Term atomic = newSerialTerm(Symbols.TERM_PREFIX);
-
-
-            Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-            sentenceMakeParameters.term = Similarity.make(compound, atomic);
-            sentenceMakeParameters.punctuation = Symbols.JUDGMENT_MARK;
-            sentenceMakeParameters.truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE); // a naming convension;
-            sentenceMakeParameters.stamp = new Stamp(memory);
-            Sentence sentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
-
+                        
+            Sentence sentence = new Sentence(
+                    Similarity.make(compound, atomic), 
+                    Symbols.JUDGMENT_MARK, 
+                    new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                    new Stamp(memory));
+            
             float quality = BudgetFunctions.truthToQuality(sentence.truth);
             
             BudgetValue budget = new BudgetValue(

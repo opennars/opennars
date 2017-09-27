@@ -610,15 +610,7 @@ public class GraphExecutive {
 
 
             this.goal = goal;
-
-            Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-            sentenceMakeParameters.term = imp;
-            sentenceMakeParameters.punctuation = punctuation;
-            sentenceMakeParameters.truth = truth;
-            sentenceMakeParameters.stamp = stamp;
-            Sentence s = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
-
-            this.solution = new Task(s, budget, goal);
+            this.solution = new Task(new Sentence(imp, punctuation, truth, stamp), budget, goal);
             return solution;
         }
         

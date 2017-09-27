@@ -301,26 +301,12 @@ public class RuleTables {
             TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE*Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL);
             if(goalterm!=null && !(goalterm instanceof Variable) && goalterm instanceof CompoundTerm) {
                 goalterm=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm);
-
-                Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-                sentenceMakeParameters.term = goalterm;
-                sentenceMakeParameters.punctuation = Symbols.GOAL_MARK;
-                sentenceMakeParameters.truth = truth;
-                sentenceMakeParameters.stamp = new Stamp(task.sentence.stamp,nal.memory.time());
-                Sentence sent=Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
-
+                Sentence sent=new Sentence(goalterm,Symbols.GOAL_MARK,truth,new Stamp(task.sentence.stamp,nal.memory.time()));
                 nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
             }
             if(goalterm2!=null && !(goalterm2 instanceof Variable) && goalterm2 instanceof CompoundTerm) {
                 goalterm2=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm2);
-
-                Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-                sentenceMakeParameters.term = goalterm2;
-                sentenceMakeParameters.punctuation = Symbols.GOAL_MARK;
-                sentenceMakeParameters.truth = truth.clone();
-                sentenceMakeParameters.stamp = new Stamp(task.sentence.stamp,nal.memory.time());
-                Sentence sent = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
-
+                Sentence sent=new Sentence(goalterm2,Symbols.GOAL_MARK,truth.clone(),new Stamp(task.sentence.stamp,nal.memory.time()));
                 nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
             }
         }

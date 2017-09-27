@@ -417,13 +417,7 @@ public class Terms {
         
         for (int i = 0; i < t.size(); i++) {
             Term t1 = t.term[i];
-
-            Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-            sentenceMakeParameters.term = t1;
-            sentenceMakeParameters.punctuation = Symbols.TERM_NORMALIZING_WORKAROUND_MARK;
-            sentenceMakeParameters.truth = null;
-            sentenceMakeParameters.stamp = null;
-            t1=Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters).term;
+            t1=new Sentence(t1,Symbols.TERM_NORMALIZING_WORKAROUND_MARK,null,null).term;
             
             
             if (!(t1 instanceof Variable)) {
@@ -438,14 +432,7 @@ public class Terms {
                 
                 for (int j = 0; j < ct1Size; j++) {
                     Term t2 = ct1.term[j];
-
-                    sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-                    sentenceMakeParameters.term = t2;
-                    sentenceMakeParameters.punctuation = Symbols.TERM_NORMALIZING_WORKAROUND_MARK;
-                    sentenceMakeParameters.truth = null;
-                    sentenceMakeParameters.stamp = null;
-                    t2=Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters).term;
-
+                    t2=new Sentence(t2,Symbols.TERM_NORMALIZING_WORKAROUND_MARK,null,null).term;
                     if (!t2.hasVar()) {
                         if (t1ProductOrImage) {
                             if (type == TermLink.COMPOUND_CONDITION) {
@@ -463,14 +450,7 @@ public class Terms {
                         
                         for (int k = 0; k < ct2Size; k++) {
                             Term t3 = ct2.term[k];
-
-                            sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-                            sentenceMakeParameters.term = t3;
-                            sentenceMakeParameters.punctuation = Symbols.TERM_NORMALIZING_WORKAROUND_MARK;
-                            sentenceMakeParameters.truth = null;
-                            sentenceMakeParameters.stamp = null;
-                            t3=Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters).term;
-
+                            t3=new Sentence(t3,Symbols.TERM_NORMALIZING_WORKAROUND_MARK,null,null).term;
                             if (!t3.hasVar()) {
                                 if (type == TermLink.COMPOUND_CONDITION) {
                                     componentLinks.add(new TermLink(TermLink.TRANSFORM, t3, 0, i, j, k));

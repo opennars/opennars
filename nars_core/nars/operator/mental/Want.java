@@ -54,13 +54,7 @@ public class Want extends Operator {
         Term content = args[0];                
         
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-
-        Sentence.MakeByTermPunctuationTruthStampNormalizeParameters sentenceMakeParameters = new Sentence.MakeByTermPunctuationTruthStampNormalizeParameters();
-        sentenceMakeParameters.term = content;
-        sentenceMakeParameters.punctuation = Symbols.GOAL_MARK;
-        sentenceMakeParameters.truth = truth;
-        sentenceMakeParameters.stamp = new Stamp(memory);
-        Sentence sentence = Sentence.makeByTermPunctuationTruthStampNormalize(sentenceMakeParameters);
+        Sentence sentence = new Sentence(content, Symbols.GOAL_MARK, truth, new Stamp(memory));
         
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, truth);
 
