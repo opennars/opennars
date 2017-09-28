@@ -69,12 +69,16 @@ public class ConceptProcessing {
     protected static void processJudgment(Concept concept, final DerivationContext nal, final Task task) {
         final Sentence judg = task.sentence;
 
-        //check whether it satisfies anticipation:
-        if(task.isInput() && !task.sentence.isEternal() && concept.negConfirmation != null && task.sentence.getOccurenceTime() > concept.negConfirm_abort_mintime) {
+        boolean satisfiesAnticipation =
+            task.isInput() &&
+            !task.sentence.isEternal() &&
+            concept.negConfirmation != null &&
+            task.sentence.getOccurenceTime() > concept.negConfirm_abort_mintime;
+        if(satisfiesAnticipation) {
             if(task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
                 if(((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
-                    nal.memory.emit(Output.CONFIRM.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
-                    concept.negConfirmation = null; //confirmed
+                    nal.memory.emit(Output.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
+                    concept.negConfirmation = null; // confirmed
                 }
             }
         }
