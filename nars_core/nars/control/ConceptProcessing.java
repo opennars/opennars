@@ -161,7 +161,6 @@ public class ConceptProcessing {
 
         Task strongest_target = returnFirstEternal(concept);
 
-        Term pred = imp.getPredicate();
         Concept pred_conc = nal.memory.concept(pred);
         int a = pred_conc.executable_preconditions.size();
 
