@@ -144,20 +144,13 @@ public class ConceptProcessing {
             return;
         }
 
-        Implication imp = (Implication) term;
-        if(imp.getTemporalOrder() != TemporalRules.ORDER_FORWARD) {
-            return;
-        }
+        Implication imp = (Implication)term;
+        if(imp.getTemporalOrder() != TemporalRules.ORDER_FORWARD)   return;
 
-        // also it has to be enactable, meaning the last entry of the sequence before the interval is an operation:
+        // also it has to be enactable, meaning the last entry of the sequence before the interval is an operation
+        if(!checkEnactable(imp, nal))    return;
+
         Term subj = imp.getSubject();
-        Term pred = imp.getPredicate();
-        Concept pred_conc = nal.memory.concept(pred);
-        if(pred_conc == null /*|| (pred instanceof Operation)*/ || !(subj instanceof Conjunction)) {
-
-            return;
-        }
-
         Conjunction conj = (Conjunction) subj;
         if(!(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
                 conj.term.length >= 4 && conj.term.length%2 == 0 &&
@@ -169,19 +162,13 @@ public class ConceptProcessing {
         }
 
         // we do not add the target, instead the strongest belief in the target concept
-        if(concept.beliefs.size() == 0) {
-            return;
-        }
+        if(concept.beliefs.size() == 0)   return;
 
-        Task strongest_target = null; //beliefs.get(0);
-        //get the first eternal:
-        for(Task t : concept.beliefs) {
-            if(t.sentence.isEternal()) {
-                strongest_target = t;
-                break;
-            }
-        }
 
+        Task strongest_target = returnFirstEternal(concept);
+
+        Term pred = imp.getPredicate();
+        Concept pred_conc = nal.memory.concept(pred);
         int a = pred_conc.executable_preconditions.size();
 
         //at first we have to remove the last one with same content from table
@@ -199,13 +186,27 @@ public class ConceptProcessing {
 
         Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
         for(int i=0;i<prec.length-2;i++) {
-            if(prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
-                return; //for now, these can be decomposed into smaller such statements anyway
+            if(prec[i] instanceof Operation) { // don't react to precondition with an operation before the last
+                return; // for now, these can be decomposed into smaller such statements anyway
             }
         }
 
         //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
         pred_conc.addToTable(strongest_target, true, pred_conc.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+    }
+
+    private static Task returnFirstEternal(Concept concept) {
+        for(Task t : concept.beliefs)
+            if(t.sentence.isEternal())   return t;
+
+        return null;
+    }
+
+    private static boolean checkEnactable(Implication imp, DerivationContext nal) {
+        Term subj = imp.getSubject();
+        Term pred = imp.getPredicate();
+        Concept predConcept = nal.memory.concept(pred);
+        return predConcept != null /*&& !(pred instanceof Operation)*/ && (subj instanceof Conjunction);
     }
 
     /**
