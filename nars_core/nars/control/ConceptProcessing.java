@@ -87,103 +87,125 @@ public class ConceptProcessing {
             }
         }
 
+        if (processJudgmentBelief(concept, nal, task, judg))    return;
+
+        if (task.aboveThreshold()) {
+            processJudgmentCore(concept, nal, task, judg);
+        }
+    }
+
+    private static boolean processJudgmentBelief(Concept concept, DerivationContext nal, Task task, Sentence judg) {
         final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs, true);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
-        if (oldBeliefT != null) {
-            oldBelief = oldBeliefT.sentence;
-            final Stamp newStamp = judg.stamp;
-            final Stamp oldStamp = oldBelief.stamp;       //when table is full, the latter check is especially important too
-            if (newStamp.equals(oldStamp,false,false,true)) {
-                //if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
-                ////task.budget.decPriority(0);    // duplicated task
-                //}   //// else: activated belief
 
-                concept.memory.removeTask(task, "Duplicated");
-                return;
-            } else if (revisible(judg, oldBelief)) {
+        if (oldBeliefT == null)   return false;
 
-                nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
-                Sentence projectedBelief = oldBelief.projection(concept.memory.time(), newStamp.getOccurrenceTime());
-                if (projectedBelief!=null) {
-                    if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
-                        // nal.singlePremiseTask(projectedBelief, task.budget);
-                    }
-                    nal.setCurrentBelief(projectedBelief);
-                    revision(judg, projectedBelief, false, nal);
+        oldBelief = oldBeliefT.sentence;
+        final Stamp newStamp = judg.stamp;
+        final Stamp oldStamp = oldBelief.stamp;       //when table is full, the latter check is especially important too
+        if (newStamp.equals(oldStamp,false,false,true)) {
+            //if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
+            ////task.budget.decPriority(0);    // duplicated task
+            //}   //// else: activated belief
+
+            concept.memory.removeTask(task, "Duplicated");
+            return true;
+        } else if (revisible(judg, oldBelief)) {
+
+            nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
+            Sentence projectedBelief = oldBelief.projection(concept.memory.time(), newStamp.getOccurrenceTime());
+            if (projectedBelief!=null) {
+                if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
+                    // nal.singlePremiseTask(projectedBelief, task.budget);
                 }
+                nal.setCurrentBelief(projectedBelief);
+                revision(judg, projectedBelief, false, nal);
             }
         }
-        if (task.aboveThreshold()) {
-            int nnq = concept.questions.size();
-            for (int i = 0; i < nnq; i++) {
-                trySolution(judg, concept.questions.get(i), nal, true);
-            }
+        return false;
+    }
 
-            concept.addToTable(task, false, concept.beliefs, Parameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
+    private static void processJudgmentCore(Concept concept, DerivationContext nal, Task task, Sentence judg) {
+        int nnq = concept.questions.size();
+        for (int i = 0; i < nnq; i++) {
+            trySolution(judg, concept.questions.get(i), nal, true);
+        }
 
-            //if taskLink predicts this concept then add to predictive
-            Task target = task;
-            Term term = target.getTerm();
-            if(//target.isObservablePrediction() &&
-                    target.sentence.isEternal() &&
-                            term instanceof Implication &&
-                            !term.hasVarIndep())  //Might be relaxed in the future!!
-            {
+        concept.addToTable(task, false, concept.beliefs, Parameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
 
-                Implication imp = (Implication) term;
-                if(imp.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                    //also it has to be enactable, meaning the last entry of the sequence before the interval is an operation:
-                    Term subj = imp.getSubject();
-                    Term pred = imp.getPredicate();
-                    Concept pred_conc = nal.memory.concept(pred);
-                    if(pred_conc != null /*&& !(pred instanceof Operation)*/ && (subj instanceof Conjunction)) {
-                        Conjunction conj = (Conjunction) subj;
-                        if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
-                                conj.term.length >= 4 && conj.term.length%2 == 0 &&
-                                conj.term[conj.term.length-1] instanceof Interval &&
-                                conj.term[conj.term.length-2] instanceof Operation) {
+        //if taskLink predicts this concept then add to predictive
+        Task target = task;
+        Term term = target.getTerm();
+        if(//!target.isObservablePrediction() ||
+                !target.sentence.isEternal() ||
+                        !(term instanceof Implication) ||
+                        term.hasVarIndep())  //Might be relaxed in the future!!
+        {
+            return;
+        }
 
-                            //we do not add the target, instead the strongest belief in the target concept
-                            if(concept.beliefs.size() > 0) {
-                                Task strongest_target = null; //beliefs.get(0);
-                                //get the first eternal:
-                                for(Task t : concept.beliefs) {
-                                    if(t.sentence.isEternal()) {
-                                        strongest_target = t;
-                                        break;
-                                    }
-                                }
+        Implication imp = (Implication) term;
+        if(imp.getTemporalOrder() != TemporalRules.ORDER_FORWARD) {
+            return;
+        }
 
-                                int a = pred_conc.executable_preconditions.size();
+        // also it has to be enactable, meaning the last entry of the sequence before the interval is an operation:
+        Term subj = imp.getSubject();
+        Term pred = imp.getPredicate();
+        Concept pred_conc = nal.memory.concept(pred);
+        if(pred_conc == null /*|| (pred instanceof Operation)*/ || !(subj instanceof Conjunction)) {
 
-                                //at first we have to remove the last one with same content from table
-                                int i_delete = -1;
-                                for(int i=0; i < pred_conc.executable_preconditions.size(); i++) {
-                                    if(CompoundTerm.cloneDeepReplaceIntervals(pred_conc.executable_preconditions.get(i).getTerm()).equals(
-                                            CompoundTerm.cloneDeepReplaceIntervals(strongest_target.getTerm()))) {
-                                        i_delete = i; //even these with same term but different intervals are removed here
-                                        break;
-                                    }
-                                }
-                                if(i_delete != -1) {
-                                    pred_conc.executable_preconditions.remove(i_delete);
-                                }
+            return;
+        }
 
-                                Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
-                                for(int i=0;i<prec.length-2;i++) {
-                                    if(prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
-                                        return; //for now, these can be decomposed into smaller such statements anyway
-                                    }
-                                }
+        Conjunction conj = (Conjunction) subj;
+        if(!(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                conj.term.length >= 4 && conj.term.length%2 == 0 &&
+                conj.term[conj.term.length-1] instanceof Interval &&
+                conj.term[conj.term.length-2] instanceof Operation)
+        ) {
 
-                                //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-                                pred_conc.addToTable(strongest_target, true, pred_conc.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
-                            }
-                        }
-                    }
-                }
+            return;
+        }
+
+        // we do not add the target, instead the strongest belief in the target concept
+        if(concept.beliefs.size() == 0) {
+            return;
+        }
+
+        Task strongest_target = null; //beliefs.get(0);
+        //get the first eternal:
+        for(Task t : concept.beliefs) {
+            if(t.sentence.isEternal()) {
+                strongest_target = t;
+                break;
             }
         }
+
+        int a = pred_conc.executable_preconditions.size();
+
+        //at first we have to remove the last one with same content from table
+        int i_delete = -1;
+        for(int i=0; i < pred_conc.executable_preconditions.size(); i++) {
+            if(CompoundTerm.cloneDeepReplaceIntervals(pred_conc.executable_preconditions.get(i).getTerm()).equals(
+                    CompoundTerm.cloneDeepReplaceIntervals(strongest_target.getTerm()))) {
+                i_delete = i; //even these with same term but different intervals are removed here
+                break;
+            }
+        }
+        if(i_delete != -1) {
+            pred_conc.executable_preconditions.remove(i_delete);
+        }
+
+        Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
+        for(int i=0;i<prec.length-2;i++) {
+            if(prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
+                return; //for now, these can be decomposed into smaller such statements anyway
+            }
+        }
+
+        //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
+        pred_conc.addToTable(strongest_target, true, pred_conc.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
     }
 
     /**
