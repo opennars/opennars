@@ -151,7 +151,8 @@ public class ConceptProcessing {
         Term subj = imp.getSubject();
         Term pred = imp.getPredicate();
         Concept predConcept = nal.memory.concept(pred);
-        if(!(predConcept != null /*&& !(pred instanceof Operation)*/ && (subj instanceof Conjunction)))    return;
+        boolean isEnactable = predConcept != null /*&& !(pred instanceof Operation)*/ && (subj instanceof Conjunction);
+        if(!isEnactable)    return;
 
         if(!checkPreconditionStatement(imp))    return;
 
