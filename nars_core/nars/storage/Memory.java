@@ -21,6 +21,7 @@
 package nars.storage;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import nars.inference.ConceptProcessing;
 import nars.util.Events;
 import nars.util.EventEmitter;
 import java.io.Serializable;
@@ -400,7 +401,7 @@ public class Memory implements Serializable, Iterable<Concept> {
         cont.setCurrentTerm(task.getTerm());
         cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
         if (cont.getCurrentConcept() != null) {
-            boolean processed = cont.getCurrentConcept().directProcess(cont, task);
+            boolean processed = ConceptProcessing.directProcess(cont.getCurrentConcept(), cont, task);
             if (processed) {
                 event.emit(Events.ConceptDirectProcessedTask.class, task);
             }
