@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import nars.inference.ConceptProcessing;
 import nars.inference.TruthFunctions;
 import nars.util.Events.BeliefSelect;
 import nars.util.Events.ConceptBeliefAdd;
@@ -242,97 +243,6 @@ public class Concept extends Item<Term> {
     
 
 
-    public void potentialReaction(final DerivationContext nal, Sentence projectedGoal, final Task task) {
-        try{
-            Operation bestop = null;
-            float bestop_truthexp = 0.0f;
-            TruthValue bestop_truth = null;
-            Task executable_precond = null;
-            //long distance = -1;
-            long mintime = -1;
-            long maxtime = -1;
-            for(Task t: this.executable_preconditions) {
-                Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
-                Term[] newprec = new Term[prec.length-3];
-                for(int i=0;i<prec.length-3;i++) { //skip the last part: interval, operator, interval
-                    newprec[i] = prec[i];
-                }
-                
-                //distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
-                mintime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude-1, nal.memory.param.duration);
-                maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+2, nal.memory.param.duration);
-                
-                Operation op = (Operation) prec[prec.length-2];
-                Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
-                
-                Concept preconc = nal.memory.concept(precondition);
-                long newesttime = -1;
-                Task bestsofar = null;
-                if(preconc != null) { //ok we can look now how much it is fullfilled
-                    
-                    //check recent events in event bag
-                    for(Task p : this.memory.seq_current) {
-                        if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= memory.time()) {
-                            newesttime = p.sentence.getOccurenceTime();
-                            bestsofar = p; //we use the newest for now
-                        }
-                    }
-                    if(bestsofar == null) {
-                        continue;
-                    }
-                    //ok now we can take the desire value:
-                    TruthValue A = projectedGoal.getTruth();
-                    //and the truth of the hypothesis:
-                    TruthValue Hyp = t.sentence.truth;
-                    //and the truth of the precondition:
-                    Sentence projectedPrecon = bestsofar.sentence.projection(memory.time() /*- distance*/, memory.time());
-                    
-                    if(projectedPrecon.isEternal()) {
-                        continue; //projection wasn't better than eternalization, too long in the past
-                    }
-                    //debug start
-                    //long timeA = memory.time();
-                    //long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
-                    //long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
-                    //debug end
-                    TruthValue precon = projectedPrecon.truth;
-                    //and derive the conjunction of the left side:
-                    TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
-                    //in order to derive the operator desire value:
-                    TruthValue opdesire = TruthFunctions.desireDed(precon, leftside);
-                    
-                    float expecdesire = opdesire.getExpectation();
-                    if(expecdesire > bestop_truthexp) {
-                        bestop = op;
-                        bestop_truthexp = expecdesire;
-                        bestop_truth = opdesire;
-                        executable_precond = t;
-                    }
-                }
-            }
-            
-            if(bestop != null && bestop_truthexp > memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
-                Sentence createdSentence = new Sentence(
-                    bestop,
-                    Symbols.JUDGMENT_MARK,
-                    bestop_truth,
-                    projectedGoal.stamp);
-
-                Task t = new Task(createdSentence, new BudgetValue(1.0f,1.0f,1.0f));
-                //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
-                if(!task.sentence.stamp.evidenceIsCyclic()) {
-                    if(!executeDecision(nal, t)) { //this task is just used as dummy
-                        memory.emit(UnexecutableGoal.class, task, this, nal);
-                    } else {
-                        memory.decisionBlock = memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
-                        SyllogisticRules.generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
-                    }
-                }
-            }
-        }catch(Exception ex) {
-            System.out.println("Failure in operation choice rule, analyze!");
-        }
-    }
 
     public void questionFromGoal(final Task task, final DerivationContext nal) {
         if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
@@ -840,37 +750,6 @@ public class Concept extends Item<Term> {
         return buffer.toString();
     }
 
-    public void maintainDisappointedAnticipations() {
-        //here we can check the expiration of the feedback:
-        if(this.negConfirmation != null && this.memory.time() > this.negConfirm_abort_maxtime) {
-            
-            //at first search beliefs for input tasks:
-            boolean cancelled = false;
-            for(TaskLink tl : this.taskLinks) { //search for input in tasklinks (beliefs alone can not take temporality into account as the eternals will win)
-                Task t = tl.targetTask;
-                if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && t.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION &&
-                        CompoundTerm.cloneDeepReplaceIntervals(t.sentence.term).equals(CompoundTerm.cloneDeepReplaceIntervals(this.getTerm()))) {
-                    if(t.sentence.getOccurenceTime() >= this.negConfirm_abort_mintime && t.sentence.getOccurenceTime() <= this.negConfirm_abort_maxtime) {
-                        cancelled = true;
-                        break;
-                    }
-                }
-            }
-            
-            if(cancelled) {
-                memory.emit(Output.CONFIRM.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
-                this.negConfirmation = null; //confirmed
-                return;
-            }
-            
-            memory.inputTask(this.negConfirmation, false); //disappointed
-            //if(this.negConfirmationPriority >= 2) {
-            //    System.out.println(this.negConfirmation.sentence.term);
-            //}
-            memory.emit(Output.DISAPPOINT.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
-            this.negConfirmation = null;
-        }
-    }
     
     /**
      * Replace default to prevent repeated inference, by checking TaskLink
@@ -880,8 +759,8 @@ public class Concept extends Item<Term> {
      * @return The selected TermLink
      */
     public TermLink selectTermLink(final TaskLink taskLink, final long time) {
-        
-        maintainDisappointedAnticipations();
+        ConceptProcessing.maintainDisappointedAnticipations(this);
+
         int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
             
