@@ -474,7 +474,12 @@ public final class SyllogisticRules {
         Stamp stamp = new Stamp(nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         //long serial = stamp.evidentialBase[0];
-        Sentence s = new Sentence(mainSentence.term, mainSentence.punctuation, new TruthValue(0.0f, immediateDisappointmentConfidence), stamp);
+        Sentence s = new Sentence(
+            mainSentence.term,
+            mainSentence.punctuation,
+            new TruthValue(0.0f, immediateDisappointmentConfidence),
+            stamp);
+
         //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
         Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f)); //Budget for one-time processing
         Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept

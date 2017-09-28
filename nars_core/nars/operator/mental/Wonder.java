@@ -52,7 +52,12 @@ public class Wonder extends Operator {
         Term content = args[0];
         
         
-        Sentence sentence = new Sentence(content, Symbols.QUESTION_MARK, null, new Stamp(memory));
+        Sentence sentence = new Sentence(
+            content,
+            Symbols.QUESTION_MARK,
+            null,
+            new Stamp(memory));
+
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
         return Lists.newArrayList( new Task(sentence, budget) );
     }
