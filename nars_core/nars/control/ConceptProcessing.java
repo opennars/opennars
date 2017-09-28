@@ -148,7 +148,10 @@ public class ConceptProcessing {
         if(imp.getTemporalOrder() != TemporalRules.ORDER_FORWARD)   return;
 
         // also it has to be enactable, meaning the last entry of the sequence before the interval is an operation
-        if(!checkEnactable(imp, nal))    return;
+        Term subj = imp.getSubject();
+        Term pred = imp.getPredicate();
+        Concept predConcept = nal.memory.concept(pred);
+        if(!(predConcept != null /*&& !(pred instanceof Operation)*/ && (subj instanceof Conjunction)))    return;
 
         if(!checkPreconditionStatement(imp))    return;
 
@@ -203,13 +206,6 @@ public class ConceptProcessing {
             if(t.sentence.isEternal())   return t;
 
         return null;
-    }
-
-    private static boolean checkEnactable(Implication imp, DerivationContext nal) {
-        Term subj = imp.getSubject();
-        Term pred = imp.getPredicate();
-        Concept predConcept = nal.memory.concept(pred);
-        return predConcept != null /*&& !(pred instanceof Operation)*/ && (subj instanceof Conjunction);
     }
 
     /**
