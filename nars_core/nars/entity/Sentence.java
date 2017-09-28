@@ -254,18 +254,8 @@ public class Sentence<T extends Term> implements Cloneable {
         else {
             this.term = _content;
         }
-        
-    
-        if (isUniqueByOcurrenceTime())
-            this.hash = Objects.hash(term, punctuation, truth, stamp.getOccurrenceTime());
-        else 
-            this.hash = Objects.hash(term, punctuation, truth );
-    }
 
-    
-
-    protected boolean isUniqueByOcurrenceTime() {
-        return ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
+        this.hash = Objects.hash(term, punctuation, truth, stamp.getOccurrenceTime());
     }
     
     /**
@@ -284,9 +274,8 @@ public class Sentence<T extends Term> implements Cloneable {
             if (hash!=t.hash) return false;
             
             if (punctuation!=t.punctuation) return false;
-            if (isUniqueByOcurrenceTime()) {
-                if (stamp.getOccurrenceTime()!=t.stamp.getOccurrenceTime()) return false;
-            }                
+            
+            if (stamp.getOccurrenceTime()!=t.stamp.getOccurrenceTime()) return false;          
             
             if (truth==null) {
                 if (t.truth!=null) return false;
