@@ -150,16 +150,7 @@ public class ConceptProcessing {
         // also it has to be enactable, meaning the last entry of the sequence before the interval is an operation
         if(!checkEnactable(imp, nal))    return;
 
-        Term subj = imp.getSubject();
-        Conjunction conj = (Conjunction) subj;
-        if(!(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
-                conj.term.length >= 4 && conj.term.length%2 == 0 &&
-                conj.term[conj.term.length-1] instanceof Interval &&
-                conj.term[conj.term.length-2] instanceof Operation)
-        ) {
-
-            return;
-        }
+        if(!checkPreconditionStatement(imp))    return;
 
         // we do not add the target, instead the strongest belief in the target concept
         if(concept.beliefs.size() == 0)   return;
@@ -193,6 +184,18 @@ public class ConceptProcessing {
 
         //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
         pred_conc.addToTable(strongest_target, true, pred_conc.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+    }
+
+    // check for the form (&/,a,Interval1,Op(),Interval2) =/> c
+    private static boolean checkPreconditionStatement(Implication imp) {
+        Term subj = imp.getSubject();
+        Conjunction conj = (Conjunction) subj;
+
+        return
+            conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+            conj.term.length >= 4 && conj.term.length%2 == 0 &&
+            conj.term[conj.term.length-1] instanceof Interval &&
+            conj.term[conj.term.length-2] instanceof Operation;
     }
 
     private static Task returnFirstEternal(Concept concept) {
