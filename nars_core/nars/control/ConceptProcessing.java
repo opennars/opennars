@@ -160,7 +160,7 @@ public class ConceptProcessing {
         if(concept.beliefs.size() == 0)   return;
 
 
-        Task strongest_target = returnFirstEternal(concept);
+        Task strongest_target = returnStrongestEternalBelief(concept);
 
         Concept pred_conc = nal.memory.concept(pred);
         int a = pred_conc.executable_preconditions.size();
@@ -201,7 +201,7 @@ public class ConceptProcessing {
             conj.term[conj.term.length-2] instanceof Operation;
     }
 
-    private static Task returnFirstEternal(Concept concept) {
+    private static Task returnStrongestEternalBelief(Concept concept) {
         for(Task t : concept.beliefs)
             if(t.sentence.isEternal())   return t;
 
