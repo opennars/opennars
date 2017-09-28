@@ -22,59 +22,27 @@ package nars.entity;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
-import nars.inference.ConceptProcessing;
-import nars.inference.TruthFunctions;
+import nars.control.ConceptProcessing;
 import nars.util.Events.BeliefSelect;
-import nars.util.Events.ConceptBeliefAdd;
-import nars.util.Events.ConceptBeliefRemove;
-import nars.util.Events.ConceptGoalAdd;
-import nars.util.Events.ConceptGoalRemove;
-import nars.util.Events.ConceptQuestionAdd;
-import nars.util.Events.ConceptQuestionRemove;
 import nars.util.Events.TaskLinkAdd;
 import nars.util.Events.TaskLinkRemove;
 import nars.util.Events.TermLinkAdd;
 import nars.util.Events.TermLinkRemove;
-import nars.util.Events.UnexecutableGoal;
 import nars.storage.Memory;
 import nars.io.NARConsole;
 import nars.config.Parameters;
 import nars.control.DerivationContext;
-import nars.control.TemporalInferenceControl;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
-import static nars.inference.LocalRules.revisible;
-import static nars.inference.LocalRules.revision;
-import static nars.inference.LocalRules.trySolution;
-import nars.inference.SyllogisticRules;
-import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
-import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
-import nars.language.Equivalence;
-import nars.language.Implication;
 import nars.language.Term;
-import nars.language.Variable;
-import nars.operator.Operation;
-import nars.operator.Operator;
-import nars.plugin.mental.InternalExperience;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
-import nars.language.Conjunction;
-import nars.language.Interval;
-import nars.util.Events.EnactableExplainationAdd;
-import nars.util.Events.EnactableExplainationRemove;
 import static nars.inference.UtilityFunctions.or;
-import nars.language.Variables;
-import nars.operator.mental.Anticipate;
-import nars.util.Events;
-import static nars.inference.UtilityFunctions.or;
-import nars.io.Output;
-import nars.language.Statement;
 
 public class Concept extends Item<Term> {
 
@@ -200,88 +168,7 @@ public class Concept extends Item<Term> {
             memory.event.emit(eventAdd, this, task, extraEventArguments);
         }
     }
-
-    /**
-     * whether a concept's desire exceeds decision threshold
-     */
-    public boolean isDesired() {
-        TruthValue desire=this.getDesire();
-        if(desire==null) {
-            return false;
-        }
-        return desire.getExpectation() > memory.param.decisionThreshold.get();
-    }
-
-    /**
-     * Entry point for all potentially executable tasks.
-     * Returns true if the Task has a Term which can be executed
-     */
-    public boolean executeDecision(DerivationContext nal, final Task t) {
-        //if (isDesired()) 
-        if(memory.allowExecution)
-        {
-            
-            Term content = t.getTerm();
-
-            if(content instanceof Operation && !content.hasVarDep() && !content.hasVarIndep()) {
-
-                Operation op=(Operation)content;
-                Operator oper = op.getOperator();
-
-                op.setTask(t);
-                if(!oper.call(op, memory)) {
-                    return false;
-                }
-                TemporalInferenceControl.NewOperationFrame(nal.memory, t);
-                
-                //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
-                return true;
-            }
-        }
-        return false;
-    }
     
-
-
-
-    public void questionFromGoal(final Task task, final DerivationContext nal) {
-        if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
-            //ok, how can we achieve it? add a question of whether it is fullfilled
-            ArrayList<Term> qu=new ArrayList<Term>();
-            if(Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
-                if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
-                    Variable how=new Variable("?how");
-                    //Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
-                    Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
-                    //qu.add(imp);
-                    if(!(task.sentence.term instanceof Operation)) {
-                        qu.add(imp2);
-                    }
-                }
-            }
-            if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING) {
-                qu.add(task.sentence.term);
-            }
-            for(Term q : qu) {
-                if(q!=null) {
-                    Stamp st = new Stamp(task.sentence.stamp,nal.memory.time());
-                    st.setOccurrenceTime(task.sentence.getOccurenceTime()); //set tense of question to goal tense
-                    Sentence s = new Sentence(
-                        q,
-                        Symbols.QUESTION_MARK,
-                        null,
-                        st);
-
-                    if(s!=null) {
-                        BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
-                        nal.singlePremiseTask(s, budget);
-                    }
-                }
-            }
-        }
-    }
-
-
     /**
      * Link to a new task from all relevant concepts for continued processing in
      * the near future for unspecified time.
@@ -415,63 +302,13 @@ public class Concept extends Item<Term> {
     protected boolean insertTaskLink(final TaskLink taskLink, DerivationContext nal) {        
         Task target = taskLink.getTarget();
         
+        //what question answering, question side:
         Task ques = taskLink.getTarget();
-        if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) { //ok query var, search
-            boolean newAnswer = false;
-            
-            for(TaskLink t : this.taskLinks) {
-                
-                Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
-                if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
-                    Concept c = nal.memory.concept(t.getTerm());
-                    if(c != null && ques.sentence.isQuestion() && c.beliefs.size() > 0) {
-                        final Task taskAnswer = c.beliefs.get(0);
-                        if(taskAnswer!=null) {
-                            newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
-                        }
-                    }
-                    if(c != null && ques.sentence.isQuest() &&  c.desires.size() > 0) {
-                        final Task taskAnswer = c.desires.get(0);
-                        if(taskAnswer!=null) {
-                            newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
-                        }
-                    }
-                }
-            }
-            if(newAnswer && ques.isInput()) {
-                memory.emit(Events.Answer.class, ques, ques.getBestSolution()); 
-            }
-        }
+        ConceptProcessing.ProcessWhatQuestion(this, ques, nal);
         
-        //belief side:
+        //what question answering, belief side:
         Task t = taskLink.getTarget();
-        if(t.sentence.isJudgment()) { //ok query var, search
-            for(TaskLink quess: this.taskLinks) {
-                ques = quess.getTarget();
-                if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) {
-                    boolean newAnswer = false;
-                    Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
-                    if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
-                        Concept c = nal.memory.concept(t.getTerm());
-                        if(c != null && ques.sentence.isQuestion() && c.beliefs.size() > 0) {
-                            final Task taskAnswer = c.beliefs.get(0);
-                            if(taskAnswer!=null) {
-                                newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
-                            }
-                        }
-                        if(c != null && ques.sentence.isQuest() &&  c.desires.size() > 0) {
-                            final Task taskAnswer = c.desires.get(0);
-                            if(taskAnswer!=null) {
-                                newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
-                            }
-                        }
-                    }
-                    if(newAnswer && ques.isInput()) {
-                        memory.emit(Events.Answer.class, ques, ques.getBestSolution()); 
-                    }
-                }
-            }
-        }
+        ConceptProcessing.ProcessWhatQuestionAnswer(this, t, nal);
         
         //HANDLE MAX PER CONTENT
         //if taskLinks already contain a certain amount of tasks with same content then one has to go
@@ -513,6 +350,7 @@ public class Concept extends Item<Term> {
         memory.emit(TaskLinkAdd.class, taskLink, this);
         return true;
     }
+
 
     /**
      * Recursively build TermLinks between a compound and its components
@@ -677,27 +515,6 @@ public class Concept extends Item<Term> {
         }
         return null;
     }
-    
-    public Sentence getBeliefForTemporalInference(final Task task) {
-        
-        if(task.sentence.isEternal()) { //this is for event-event inference only
-            return null;
-        }
-        
-        Sentence bestSoFar = null;
-        long distance = Long.MAX_VALUE;
-
-        for (final Task beliefT : beliefs) {  
-            if(!beliefT.sentence.isEternal()) {
-                long distance_new = Math.abs(task.sentence.getOccurenceTime() - beliefT.sentence.getOccurenceTime());
-                if(distance_new < distance) {
-                    distance = distance_new;
-                    bestSoFar = beliefT.sentence;
-                }
-            }
-        }
-        return bestSoFar;
-    }
 
     /**
      * Get the current overall desire value. TODO to be refined
@@ -726,30 +543,6 @@ public class Concept extends Item<Term> {
         beliefs.clear();
         termLinkTemplates.clear();
     }
-    
-
-    /**
-     * Collect direct isBelief, questions, and desires for display
-     *
-     * @return String representation of direct content
-     */
-    public String displayContent() {
-        final StringBuilder buffer = new StringBuilder(18);
-        buffer.append("\n  Beliefs:\n");
-        if (!beliefs.isEmpty()) {
-            for (Task t : beliefs) {
-                buffer.append(t.sentence).append('\n');
-            }
-        }
-        if (!questions.isEmpty()) {
-            buffer.append("\n  Question:\n");
-            for (Task t : questions) {
-                buffer.append(t).append('\n');
-            }
-        }
-        return buffer.toString();
-    }
-
     
     /**
      * Replace default to prevent repeated inference, by checking TaskLink
@@ -801,57 +594,6 @@ public class Concept extends Item<Term> {
                 t.sentence.discountConfidence();
             }
         }
-    }
-
-    /** get a random belief, weighted by their sentences confidences */
-    public Sentence getBeliefRandomByConfidence() {        
-        if (beliefs.isEmpty()) return null;
-        
-        float totalConfidence = getBeliefConfidenceSum();
-        float r = Memory.randomNumber.nextFloat() * totalConfidence;
-                
-        Sentence s = null;
-        for (int i = 0; i < beliefs.size(); i++) {
-            s = beliefs.get(i).sentence;            
-            r -= s.truth.getConfidence();
-            if (r < 0)
-                return s;
-        }
-        
-        return s;
-    }
-    
-    public float getBeliefConfidenceSum() {
-        float t = 0;
-        for (final Task ts : beliefs)
-            t += ts.sentence.truth.getConfidence();
-        return t;
-    }
-    public float getBeliefFrequencyMean() {
-        if (beliefs.isEmpty()) return 0.5f;
-        
-        float t = 0;
-        for (final Task s : beliefs)
-            t += s.sentence.truth.getFrequency();
-        return t / beliefs.size();        
-    }
-
-    
-    public CharSequence getBeliefsSummary() {
-        if (beliefs.isEmpty())
-            return "0 beliefs";        
-        StringBuilder sb = new StringBuilder();
-        for (Task ts : beliefs)
-            sb.append(ts.toString()).append('\n');       
-        return sb;
-    }
-    public CharSequence getDesiresSummary() {
-        if (desires.isEmpty())
-            return "0 desires";        
-        StringBuilder sb = new StringBuilder();
-        for (Task ts : desires)
-            sb.append(ts.sentence.toString()).append('\n');       
-        return sb;
     }
 
     public NativeOperator operator() {

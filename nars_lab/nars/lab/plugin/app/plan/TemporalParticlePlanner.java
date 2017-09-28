@@ -30,6 +30,7 @@ import nars.util.Plugin;
 import nars.control.DerivationContext;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.entity.TruthValue;
 import nars.lab.plugin.app.plan.MultipleExecutionManager;
 import nars.lab.plugin.app.plan.MultipleExecutionManager.Execution;
 import static nars.lab.plugin.app.plan.MultipleExecutionManager.isPlanTerm;
@@ -141,9 +142,20 @@ public class TemporalParticlePlanner implements Plugin, EventObserver {
         }
     }
     
+       /**
+     * whether a concept's desire exceeds decision threshold
+     */
+    public boolean isDesired(DerivationContext nal, Concept concept) {
+        TruthValue desire=concept.getDesire();
+        if(desire==null) {
+            return false;
+        }
+        return desire.getExpectation() > nal.memory.param.decisionThreshold.get();
+    }
+    
     public void decisionPlanning(final DerivationContext nal, final Task t, final Concept concept) {
 
-        if (!concept.isDesired()) {
+        if (!isDesired(nal, concept)) {
             return;
         }
 
