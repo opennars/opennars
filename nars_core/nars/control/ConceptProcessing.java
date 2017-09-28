@@ -1,8 +1,11 @@
-package nars.inference;
+package nars.control;
 
+import java.util.ArrayList;
 import nars.config.Parameters;
-import nars.control.DerivationContext;
 import nars.entity.*;
+import nars.inference.SyllogisticRules;
+import nars.inference.TemporalRules;
+import nars.inference.TruthFunctions;
 import nars.io.Output;
 import nars.io.Symbols;
 import nars.language.*;
@@ -13,6 +16,7 @@ import nars.util.Events;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
+import nars.operator.Operator;
 
 public class ConceptProcessing {
     /**
@@ -25,7 +29,7 @@ public class ConceptProcessing {
      * @param task The task to be processed
      * @return whether it was processed
      */
-    public static boolean directProcess(Concept concept, final DerivationContext nal, final Task task) {
+    public static boolean processTask(Concept concept, final DerivationContext nal, final Task task) {
         if(task.isInput()) {
             concept.observable = true;
         }
@@ -184,7 +188,7 @@ public class ConceptProcessing {
 
     /**
      * To accept a new goal, and check for revisions and realization, then
-     * decide whether to actively pursue it
+     * decide whether to actively pursue it, potentially executing in case of an operation goal
      *
      * @param judg The judgment to be accepted
      * @param task The task to be processed
@@ -259,15 +263,15 @@ public class ConceptProcessing {
 
             if (projectedGoal != null && task.aboveThreshold() && !fullfilled) {
 
-                potentialReaction(concept, nal, projectedGoal, task);
+                bestReactionForGoal(concept, nal, projectedGoal, task);
 
-                concept.questionFromGoal(task, nal);
+                questionFromGoal(task, nal);
 
                 concept.addToTable(task, false, concept.desires, Parameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
 
                 InternalExperience.InternalExperienceFromTask(concept.memory,task,false);
 
-                if(projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && nal.memory.time() >= concept.memory.decisionBlock && !concept.executeDecision(nal, task)) {
+                if(projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && nal.memory.time() >= concept.memory.decisionBlock && !executeDecision(nal, task)) {
                     concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
                     return true; //it was made true by itself
                 }
@@ -276,6 +280,43 @@ public class ConceptProcessing {
             return fullfilled;
         }
         return false;
+    }
+    
+    public static void questionFromGoal(final Task task, final DerivationContext nal) {
+        if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+            //ok, how can we achieve it? add a question of whether it is fullfilled
+            ArrayList<Term> qu=new ArrayList<Term>();
+            if(Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+                if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
+                    Variable how=new Variable("?how");
+                    //Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
+                    Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
+                    //qu.add(imp);
+                    if(!(task.sentence.term instanceof Operation)) {
+                        qu.add(imp2);
+                    }
+                }
+            }
+            if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING) {
+                qu.add(task.sentence.term);
+            }
+            for(Term q : qu) {
+                if(q!=null) {
+                    Stamp st = new Stamp(task.sentence.stamp,nal.memory.time());
+                    st.setOccurrenceTime(task.sentence.getOccurenceTime()); //set tense of question to goal tense
+                    Sentence s = new Sentence(
+                        q,
+                        Symbols.QUESTION_MARK,
+                        null,
+                        st);
+
+                    if(s!=null) {
+                        BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
+                        nal.singlePremiseTask(s, budget);
+                    }
+                }
+            }
+        }
     }
 
 
@@ -320,10 +361,12 @@ public class ConceptProcessing {
         }
     }
 
-
-
-
-    protected static void potentialReaction(Concept concept, final DerivationContext nal, Sentence projectedGoal, final Task task) {
+    /**
+    * When a goal is processed, use the best memorized reaction
+    * that is applicable to the current context (recent events) in case that it exists.
+    * This is a special case of the choice rule and allows certain behaviors to be automated.
+    */
+    protected static void bestReactionForGoal(Concept concept, final DerivationContext nal, Sentence projectedGoal, final Task task) {
         try{
             Operation bestop = null;
             float bestop_truthexp = 0.0f;
@@ -402,7 +445,7 @@ public class ConceptProcessing {
                 Task t = new Task(createdSentence, new BudgetValue(1.0f,1.0f,1.0f));
                 //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
                 if(!task.sentence.stamp.evidenceIsCyclic()) {
-                    if(!concept.executeDecision(nal, t)) { //this task is just used as dummy
+                    if(!executeDecision(nal, t)) { //this task is just used as dummy
                         concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
                     } else {
                         concept.memory.decisionBlock = concept.memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
@@ -413,6 +456,35 @@ public class ConceptProcessing {
         } catch(Exception ex) {
             System.out.println("Failure in operation choice rule, analyze!");
         }
+    }
+    
+    /**
+     * Entry point for all potentially executable tasks.
+     * Returns true if the Task has a Term which can be executed
+     */
+    public static boolean executeDecision(DerivationContext nal, final Task t) {
+        //if (isDesired()) 
+        if(nal.memory.allowExecution)
+        {
+            
+            Term content = t.getTerm();
+
+            if(content instanceof Operation && !content.hasVarDep() && !content.hasVarIndep()) {
+
+                Operation op=(Operation)content;
+                Operator oper = op.getOperator();
+
+                op.setTask(t);
+                if(!oper.call(op, nal.memory)) {
+                    return false;
+                }
+                TemporalInferenceControl.NewOperationFrame(nal.memory, t);
+                
+                //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void maintainDisappointedAnticipations(Concept concept) {
@@ -446,5 +518,65 @@ public class ConceptProcessing {
         //}
         concept.memory.emit(Output.DISAPPOINT.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
         concept.negConfirmation = null;
+    }
+    
+    public static void ProcessWhatQuestionAnswer(Concept concept, Task t, DerivationContext nal) {
+        Task ques;
+        if(t.sentence.isJudgment()) { //ok query var, search
+            for(TaskLink quess: concept.taskLinks) {
+                ques = quess.getTarget();
+                if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) {
+                    boolean newAnswer = false;
+                    Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
+                    if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
+                        Concept c = nal.memory.concept(t.getTerm());
+                        if(c != null && ques.sentence.isQuestion() && c.beliefs.size() > 0) {
+                            final Task taskAnswer = c.beliefs.get(0);
+                            if(taskAnswer!=null) {
+                                newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
+                            }
+                        }
+                        if(c != null && ques.sentence.isQuest() &&  c.desires.size() > 0) {
+                            final Task taskAnswer = c.desires.get(0);
+                            if(taskAnswer!=null) {
+                                newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
+                            }
+                        }
+                    }
+                    if(newAnswer && ques.isInput()) {
+                       nal.memory.emit(Events.Answer.class, ques, ques.getBestSolution());
+                    }
+                }
+            }
+        }
+    }
+
+    public static void ProcessWhatQuestion(Concept concept, Task ques, DerivationContext nal) {
+        if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) { //ok query var, search
+            boolean newAnswer = false;
+            
+            for(TaskLink t : concept.taskLinks) {
+                
+                Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
+                if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
+                    Concept c = nal.memory.concept(t.getTerm());
+                    if(c != null && ques.sentence.isQuestion() && c.beliefs.size() > 0) {
+                        final Task taskAnswer = c.beliefs.get(0);
+                        if(taskAnswer!=null) {
+                            newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
+                        }
+                    }
+                    if(c != null && ques.sentence.isQuest() &&  c.desires.size() > 0) {
+                        final Task taskAnswer = c.desires.get(0);
+                        if(taskAnswer!=null) {
+                            newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
+                        }
+                    }
+                }
+            }
+            if(newAnswer && ques.isInput()) {
+                nal.memory.emit(Events.Answer.class, ques, ques.getBestSolution());
+            }
+        }
     }
 }
