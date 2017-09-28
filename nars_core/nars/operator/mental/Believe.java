@@ -59,7 +59,12 @@ public class Believe extends Operator {
         Term content = args[0];
         
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, new Stamp(memory));
+        Sentence sentence = new Sentence(
+            content,
+            Symbols.JUDGMENT_MARK,
+            truth,
+            new Stamp(memory));
+
         float quality = BudgetFunctions.truthToQuality(truth);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
         

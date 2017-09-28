@@ -21,6 +21,7 @@
 package nars.storage;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import nars.inference.ConceptProcessing;
 import nars.util.Events;
 import nars.util.EventEmitter;
 import java.io.Serializable;
@@ -337,7 +338,11 @@ public class Memory implements Serializable, Iterable<Concept> {
        // logic.TASK_EXECUTED.commit(opTask.budget.getPriority());
                 
         Stamp stamp = new Stamp(this, Tense.Present); 
-        Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
+        Sentence sentence = new Sentence(
+            operation,
+            Symbols.JUDGMENT_MARK,
+            truth,
+            stamp);
         
         Task task = new Task(sentence, new BudgetValue(Parameters.DEFAULT_FEEDBACK_PRIORITY, Parameters.DEFAULT_FEEDBACK_DURABILITY,
                                         truthToQuality(sentence.getTruth())), operation.getTask());
@@ -396,7 +401,7 @@ public class Memory implements Serializable, Iterable<Concept> {
         cont.setCurrentTerm(task.getTerm());
         cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
         if (cont.getCurrentConcept() != null) {
-            boolean processed = cont.getCurrentConcept().directProcess(cont, task);
+            boolean processed = ConceptProcessing.directProcess(cont.getCurrentConcept(), cont, task);
             if (processed) {
                 event.emit(Events.ConceptDirectProcessedTask.class, task);
             }
@@ -504,10 +509,10 @@ public class Memory implements Serializable, Iterable<Concept> {
         
         TruthValue truth = new TruthValue(freq, conf);
         Sentence sentence = new Sentence(
-                content, 
-                sentenceType, 
-                truth, 
-                new Stamp(this, tense));
+            content,
+            sentenceType,
+            truth,
+            new Stamp(this, tense));
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         Task task = new Task(sentence, budget, parentTask);
         return task;
