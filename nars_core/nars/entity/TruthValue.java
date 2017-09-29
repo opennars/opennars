@@ -199,7 +199,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      */
     @Override
     public int hashCode() {
-        return (int) (getExpectation() * 37);
+        return ((int)(0xFFFF * this.frequency) << 16) | (int)(0xFFFF * this.confidence);
     }
 
     @Override
