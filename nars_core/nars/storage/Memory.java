@@ -238,18 +238,6 @@ public class Memory implements Serializable, Iterable<Concept> {
         output(t);
     }
     
-    /* There are several types of new tasks, all added into the
-     newTasks list, to be processed in the next cycleMemory.
-     Some of them are reported and/or logged. */
-    /**
-     * Input task processing. Invoked by the outside or inside environment.
- Outside: StringParser (addInput); Inside: InnateOperator (feedback). Input
- tasks with low priority are ignored, and the others are put into task
- buffer.
-     *
-     * @param t The addInput task
-     */
-    
     boolean checked=false;
     boolean isjUnit=false;
     public static boolean isJUnitTest() {
@@ -263,6 +251,17 @@ public class Memory implements Serializable, Iterable<Concept> {
         return false;
     }
     
+    /* There are several types of new tasks, all added into the
+     newTasks list, to be processed in the next cycleMemory.
+     Some of them are reported and/or logged. */
+    /**
+     * Input task processing. Invoked by the outside or inside environment.
+ Outside: StringParser (addInput); Inside: InnateOperator (feedback). Input
+ tasks with low priority are ignored, and the others are put into task
+ buffer.
+     *
+     * @param t The addInput task
+     */
     public void inputTask(final Item t, boolean emitIn) {
         if(!checked) {
             checked=true;
