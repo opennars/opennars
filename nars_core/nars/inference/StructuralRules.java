@@ -587,8 +587,7 @@ public final class StructuralRules {
         if (component.hasVarIndep()) {
             return false;
         }
-        
-        if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
+        if ((compound instanceof Conjunction) && !compound.getIsSpatial() && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
             return false;
         }        
         
@@ -613,7 +612,7 @@ public final class StructuralRules {
             //[03:25] <patham9> <a --> b>.     (&&,<a --> b>,<x --> y>).   =>    <x --> y>
             if ((sentence.isJudgment() || sentence.isGoal()) && ((!compoundTask && compound instanceof Disjunction) ||
                           (compoundTask && compound instanceof Conjunction))) {
-                truth = TruthFunctions.deduction(truth, reliance);
+                truth = TruthFunctions.deduction(truth, reliance); 
             }else {
                 TruthValue v1, v2;
                 v1 = TruthFunctions.negation(truth);
