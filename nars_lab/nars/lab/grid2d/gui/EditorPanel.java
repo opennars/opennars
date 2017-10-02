@@ -5,7 +5,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -28,7 +33,6 @@ import nars.lab.grid2d.main.TestChamber;
 import nars.lab.grid2d.object.Key;
 import nars.lab.grid2d.object.Pizza;
 import nars.io.Symbols;
-import org.parboiled.common.FileUtils;
 import processing.core.PVector;
 
 /**
@@ -179,7 +183,12 @@ public class EditorPanel extends JPanel {
                         load.add(new EditorMode(name) {
                             @Override
                             public void run() {
-                                String allText = FileUtils.readAllText(path);
+                                String allText= "";
+                                try {
+                                    allText = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+                                } catch (IOException ex) {
+                                    Logger.getLogger(EditorPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                }
                                 //todo: fill level according to read text
                                 String[] values=allText.split("OBJECTS")[0].split(";");
                                 for(String cell : values) {

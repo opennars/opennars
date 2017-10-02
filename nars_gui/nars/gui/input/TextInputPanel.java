@@ -66,11 +66,6 @@ import static nars.gui.output.SwingLogPanel.setConsoleFont;
 import nars.gui.output.SwingText;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
-import nars.gui.input.NarseseParser;
-import org.parboiled.errors.InvalidInputError;
-import org.parboiled.parserunners.ReportingParseRunner;
-import org.parboiled.support.MatcherPath;
-import org.parboiled.support.ParsingResult;
 
 
 public class TextInputPanel extends NPanel /*implements ActionListener*/ {
@@ -213,7 +208,6 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
     }
     
     public class NarseseInput implements TextInputMode {
-        public final NarseseParser p = NarseseParser.newParser();
         
         private String input;
         private NAR nar;
@@ -226,32 +220,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
         @Override
         public String getInterpretation() {
-            if (input.length() == 0)
-                return null;
-            
-            ReportingParseRunner rpr = new ReportingParseRunner(p.Input());
-            ParsingResult r = rpr.run(input);
-
-            String s = "";
-            boolean valid = (r.parseErrors.isEmpty());
-            if (!valid) {
-                for (Object e : r.parseErrors) {
-                    if (e instanceof InvalidInputError) {
-                        InvalidInputError iie = (InvalidInputError) e;
-                        s += iie.getClass().getSimpleName() + " " + iie.getErrorMessage() + "\n";
-                        s += (" at: " + iie.getStartIndex() + " to " + iie.getEndIndex()) + "\n";
-
-                        for (MatcherPath m : iie.getFailedMatchers()) {
-                            s += ("  ?-> " + m + '\n');
-                        }
-                    } else {
-                        s += e.toString();
-                    }
-                }
-            } else {
-                s = "OK. ";
-            }
-            return s;
+            return "";
         }
 
         public InputAction inputDirect = new InputAction() {
@@ -331,56 +300,6 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         
     }
     
-    /*
-    public class EnglishInput implements TextInputMode {
-        private NAR nar;
-        private String input = "";
-        private Englisch englisch;
-        private List<AbstractTask> nextTasks;
-
-        @Override
-        public void setInputState(NAR nar, String input) {
-            this.nar = nar;
-            this.englisch = nar.perception.getText().englisch;
-
-            input = input.trim();
-            if (!this.input.equals(input)) {
-                this.input = input;
-
-                if (input.length() == 0) {
-                    this.nextTasks = null;
-                    return;
-                }
-
-                try {
-                    this.nextTasks = englisch.parse(input, nar.perception.getText().narsese, false);
-                    if (nextTasks.isEmpty())
-                        nextTasks = null;
-                } catch (Narsese.InvalidInputException ex) {
-                    
-                }
-            }
-        }
-
-        @Override
-        public String getInterpretation() {
-            if (nextTasks!=null) {
-                return nextTasks.toString();
-            }
-            return null;
-        }
-
-        @Override
-        public void getActions(List<InputAction> actionsCollected) {
-            
-            
-            //Actions:
-            //    interpret
-            
-
-        }
-    }*/
-    
     private final NAR nar;
 
     /**
@@ -432,54 +351,23 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
     }
 
-//    private void updateMode(int selectedIndex) {
-//        centerPanel.removeAll();
-//        if (selectedIndex == 0) {
-//            centerPanel.add(narseseInput, BorderLayout.CENTER);
-//        } else if (selectedIndex == 1) {
-//            centerPanel.add(new JScrollPane(fileTree), BorderLayout.CENTER);
-//        }
-//        centerPanel.validate();
-//        repaint();
-//    }
-
     public class ReactionPanel extends JPanel {
-        private SwingText comments;
+       // private SwingText comments;
         
 
         /**
          * List with buttons (instant invoke) and checkboxes with 'All' at the top when two or more are selected
          */
         //private final JPanel list;
-        JScrollPane scrollp = new JScrollPane(comments);
         Date date = new Date();
         public ReactionPanel() {
             super(new BorderLayout());
 
             //list = new JPanel(new GridBagLayout());
             //add(new JScrollPane(list), BorderLayout.CENTER);
-            comments = new SwingText();
-            comments.setEditable(false);
-            setConsoleFont(comments, 12);
-            
-            /*JPanel pj = new JPanel(new BorderLayout());
-            pj.add(j, BorderLayout.CENTER);*/
-            scrollp = new JScrollPane(comments);
-            add(scrollp, BorderLayout.CENTER);
-            
-            scrollp.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {  
-                public void adjustmentValueChanged(AdjustmentEvent e) {  
-                    if(Math.abs(date.getSeconds()-new Date().getSeconds()) < 1)
-                        e.getAdjustable().setValue(e.getAdjustable().getMinimum()); 
-                }
-            });
-            
-            scrollp.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {  
-                public void adjustmentValueChanged(AdjustmentEvent e) {  
-                    if(Math.abs(date.getSeconds()-new Date().getSeconds()) < 1)
-                        e.getAdjustable().setValue(e.getAdjustable().getMinimum()); 
-                }
-            });
+            //comments = new SwingText();
+            //comments.setEditable(false);
+            //setConsoleFont(comments, 12);
         }
 
         public void update() {
@@ -511,39 +399,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             
             
             menu.removeAll();
-            
-            comments.setText("");
-            for (String[] i : interpretations) {
-                Color c = Color.WHITE; //Video.getColor(i[0], 0.7f, 0.6f);
-                comments.print(Color.WHITE, c, i[0] + ":\n", null);
-                Color c2 = Color.DARK_GRAY; //DARK_GRAY; //Video.getColor(i[0], 0.5f, 0.3f);
-                comments.print(Color.WHITE, c2, i[1] + "\n\n", null);
-            }
-            comments.setText(comments.getText().trim());
-             //comments.setText(""); //syntax panel deactivated here !!!!!
 
-            
-            if (comments.getText().length() > 0) {
-                if (!isVisible()) {
-                    /*int ll = mainSplit.getLastDividerLocation();
-                    if (ll <= 0)
-                        ll = (int)(getWidth() * 0.75);
-                    if (getWidth() == 0) {
-                        //component hasnt been instantiated yet, guessing at size
-                        //TODO use actual planned size
-                        ll = 500;
-                    }*/
-                    mainSplit.setDividerLocation(400);
-                    mainSplit.setLastDividerLocation(400);
-                    setVisible(true);
-                }                
-            }
-            else {                
-                if (isVisible()) {                    
-                    mainSplit.setLastDividerLocation(mainSplit.getDividerLocation());
-                    setVisible(false);
-                }
-            }
             
             defaultButton = null;
             double maxStrength = 0;
