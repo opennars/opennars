@@ -191,17 +191,18 @@ public class Conjunction extends CompoundTerm {
         }                         // special case: single component
         
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            Term[] newArgList = removeFirstInterval(flatten(argList, temporalOrder, spatial));
+            Term[] newArgList = removeFirstInterval(argList);
             if(newArgList.length == 1) {
                 return newArgList[0];
             }
             return new Conjunction(newArgList, temporalOrder, false, spatial);
             
-        } else {
+        } 
+        else {
             
             // sort/merge arguments
             final TreeSet<Term> set = new TreeSet<>();
-            for (Term t : argList) {
+            for (Term t : flatten(argList, temporalOrder, spatial)) {
                 if(!(t instanceof Interval)) { //intervals only for seqs
                     set.add(t);
                 }
