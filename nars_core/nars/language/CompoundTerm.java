@@ -42,13 +42,6 @@ import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.makeCompoundName;
 import static nars.language.Interval.interval;
-import static nars.language.Interval.interval;
-import static nars.language.Interval.interval;
-import static nars.language.Interval.interval;
-import static nars.language.Interval.interval;
-import static nars.language.Interval.interval;
-import static nars.language.Interval.interval;
-import static nars.language.Interval.interval;
 
 
 public abstract class CompoundTerm extends Term implements Iterable<Term> {
@@ -922,7 +915,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         if (getComplexity()!= t.getComplexity())
             return false;
 
-        if (getTemporalOrder()!=t.getTemporalOrder())
+        if (getTemporalOrder() != t.getTemporalOrder())
+            return false;
+        
+        if(getIsSpatial() != t.getIsSpatial())
             return false;
 
         if (!equals2(t))

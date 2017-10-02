@@ -613,7 +613,7 @@ public final class SyllogisticRules {
         if (content == null)
             return;        
         
-        if(!predictedEvent && ((Conjunction) subj).getTemporalOrder() == TemporalRules.ORDER_FORWARD) { //do not allow sequences
+        if(!predictedEvent && !((Conjunction) subj).isSpatial && ((Conjunction) subj).getTemporalOrder() == TemporalRules.ORDER_FORWARD) { //do not allow sequences
             boolean last_ival = false; //which have two intervals as result of this, makes sure we only detach (&/ from left side
             for(Term t: ((Conjunction) subj).term) {
                 boolean ival = t instanceof Interval; 
@@ -630,10 +630,10 @@ public final class SyllogisticRules {
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = nal.getTime();
             }
-            if(premise1.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)
+            if(premise1.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
                 return; //https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M - Interval Simplification
-            
-                baseTime += delta;
+            }
+            baseTime += delta;
             nal.getTheNewStamp().setOccurrenceTime(baseTime);
         }
         

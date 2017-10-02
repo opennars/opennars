@@ -283,10 +283,11 @@ public final class CompositionalRules {
      * @param nal Reference to the memory
      */
     static void decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
-        if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
+        boolean isTemporalConjunction = (compound instanceof Conjunction) && !((Conjunction) compound).isSpatial;
+        if (isTemporalConjunction && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
             return;
         }
-        if((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+        if(isTemporalConjunction && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
             if(!nal.getCurrentTask().sentence.isEternal() && compound.term[index + 1] instanceof Interval) {
                 long shift_occurrence = ((Interval)compound.term[1]).getTime(nal.memory);
                 nal.getTheNewStamp().setOccurrenceTime(nal.getCurrentTask().sentence.getOccurenceTime() + shift_occurrence);

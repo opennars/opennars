@@ -105,7 +105,8 @@ public class Symbols {
         DISJUNCTION("||", false, true),
         CONJUNCTION("&&", false, true),    
         SEQUENCE("&/", false, true),    
-        PARALLEL("&|", false, true),        
+        PARALLEL("&|", false, true), 
+        SPATIAL("#", false, true),   
         
         
         /* CompountTerm delimitors, must use 4 different pairs */

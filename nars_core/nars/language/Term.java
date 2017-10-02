@@ -193,7 +193,11 @@ public class Term implements AbstractTerm {
     
     public int getTemporalOrder() {
         return TemporalRules.ORDER_NONE;
-    }   
+    }
+    
+    public boolean getIsSpatial() {
+        return false;
+    }
 
     public void recurseTerms(final TermVisitor v, Term parent) {
         v.visit(this, parent);

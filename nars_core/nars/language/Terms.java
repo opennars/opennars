@@ -209,6 +209,8 @@ public class Terms {
                 return Conjunction.make(a);
             case SEQUENCE:
                 return Conjunction.make(a, TemporalRules.ORDER_FORWARD);
+            case SPATIAL:
+                return Conjunction.make(a, TemporalRules.ORDER_FORWARD, true);
             case PARALLEL:
                 return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT);
             case IMPLICATION:

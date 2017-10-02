@@ -105,7 +105,8 @@ public class Variables {
             
             //consider temporal order on term matching
             if(term1 instanceof Conjunction && term2 instanceof Conjunction) {
-                if(((Conjunction)term1).getTemporalOrder() != ((Conjunction)term2).getTemporalOrder())
+                if(((Conjunction)term1).getTemporalOrder() != ((Conjunction)term2).getTemporalOrder() ||
+                   ((Conjunction)term1).getIsSpatial() != ((Conjunction)term2).getIsSpatial())
                     return false;
             }
             if(term1 instanceof Implication && term2 instanceof Implication) {
