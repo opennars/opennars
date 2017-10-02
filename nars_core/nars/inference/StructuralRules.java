@@ -505,6 +505,7 @@ public final class StructuralRules {
                     newSubj = ImageInt.make(image, predicate, i);
                     newPred = image.term[i];
                 }
+                
                 inheritance = Inheritance.make(newSubj, newPred);
                 if (inheritance != null) {
                     if (truth == null) {
@@ -559,6 +560,18 @@ public final class StructuralRules {
                     newSubj = image.term[i];
                     newPred = ImageExt.make(image, subject, i);
                 }
+                
+                if(newSubj instanceof CompoundTerm && newPred.equals(Term.SEQ)) {
+                    Term seq = Conjunction.make(((CompoundTerm)newSubj).term, TemporalRules.ORDER_FORWARD, true);
+                    if (truth == null) {
+                        budget = BudgetFunctions.compoundBackward(seq, nal);
+                    } else {
+                        budget = BudgetFunctions.compoundForward(truth, seq, nal);
+                    }
+                    nal.singlePremiseTask(seq, truth, budget);
+                    return;
+                }
+                
                 inheritance = Inheritance.make(newSubj, newPred);
                 if (inheritance != null) { // jmv <<<<<
                     if (truth == null) {
@@ -739,6 +752,15 @@ public final class StructuralRules {
         }
     }
     
+    public static void seqToImage(CompoundTerm compound, int index, DerivationContext nal) {
+        int side = 0; //extensional
+        short[] indices = new short[] { (short)side, (short)index };
+        Product subject = Product.make(compound.term);
+        Term predicate = Term.SEQ;
+        Inheritance inh = Inheritance.make(subject, predicate);
+        StructuralRules.transformProductImage(inh, inh, indices, nal);
+    }
+    
     /* --------------- Disjunction and Conjunction transform --------------- */
     /**
      * {(&&, A, B), A@(&&, A, B)} |- A, or answer (&&, A, B)? using A {(||, A,
@@ -758,6 +780,7 @@ public final class StructuralRules {
                 groupSequence(compound, component, compoundTask, index, nal);
                 takeOutFromConjunction(compound, component, compoundTask, index, nal);
                 splitConjunctionApart(compound, component, compoundTask, index, nal);
+                seqToImage(compound, index, nal);
             }
         }
         
