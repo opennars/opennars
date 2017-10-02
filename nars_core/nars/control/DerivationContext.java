@@ -117,7 +117,7 @@ public class DerivationContext {
             for (int i = 0; i < stampLength; i++) {
                 final long baseI = stamp.evidentialBase[i];
                 for (int j = 0; j < stampLength; j++) {
-                    if (this.evidentalOverlap || ((i != j) && (baseI == stamp.evidentialBase[j]))) {
+                    if ((!single && this.evidentalOverlap) || ((i != j) && (baseI == stamp.evidentialBase[j]))) {
                         memory.removeTask(task, "Overlapping Evidenctal Base");
                         //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
                         return false;

@@ -111,15 +111,23 @@ public class Sentence<T extends Term> implements Cloneable {
                 Conjunction c=(Conjunction)_content;
                 if(c.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                     if(c.term[c.term.length-1] instanceof Interval) {
-                        Term[] term2=new Term[c.term.length-1];
-                        for(int i=0;i<c.term.length-1;i++) {
+                        long time=0; 
+                        //refined:
+                        int u = 0;
+                        while(c.term[c.term.length-1-u] instanceof Interval) {
+                            time += Interval.magnitudeToTime(((Interval)c.term[c.term.length-1]).magnitude,new AtomicDuration(Parameters.DURATION));
+                            u++;
+                        }
+                        
+                        Term[] term2=new Term[c.term.length-u];
+                        for(int i=0;i<term2.length;i++) {
                             term2[i]=c.term[i];
                         }
                         _content=(T) Conjunction.make(term2, c.getTemporalOrder(), c.isSpatial);
                         //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
                         //accordingly
-                        long time=Interval.magnitudeToTime(((Interval)c.term[c.term.length-1]).magnitude,new AtomicDuration(Parameters.DURATION));
-                        if(!c.isSpatial && stamp!=null)
+                        
+                        if(!c.isSpatial && stamp!=null && stamp.getOccurrenceTime() != Stamp.ETERNAL)
                             stamp.setOccurrenceTime(stamp.getOccurrenceTime()-time);
                     }
                 }

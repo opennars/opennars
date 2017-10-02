@@ -191,7 +191,7 @@ public class Conjunction extends CompoundTerm {
         }                         // special case: single component
         
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            Term[] newArgList = removeFirstInterval(argList);
+            Term[] newArgList = removeFirstInterval(spatial ? argList : flatten(argList, temporalOrder, spatial));
             if(newArgList.length == 1) {
                 return newArgList[0];
             }

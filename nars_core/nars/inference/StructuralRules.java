@@ -572,20 +572,20 @@ public final class StructuralRules {
         }
     }
 
-    /* --------------- Flatten transform --------------- */
+    /* --------------- Flatten sequence transform --------------- */
     /**
      * {(#,(#,A,B),C), (#,A,B)@(#,(#,A,B), C)} |- (#,A,B,C)
-     *
+     * (same for &/)
      * @param compound The premise
      * @param component The recognized component in the premise
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      */
-    static void flattenCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
+    static void flattenSequence(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
         if(compound instanceof Conjunction && component instanceof Conjunction) {
             Conjunction conjCompound = (Conjunction) compound;
             Conjunction conjComponent = (Conjunction) component;
-            if(conjCompound.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+            if(conjCompound.getTemporalOrder() == TemporalRules.ORDER_FORWARD && //since parallel conjunction and normal one already is flattened
                     conjComponent.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
                     conjCompound.getIsSpatial() == conjComponent.getIsSpatial()) { //because also when both are tmporal
                 Term[] newTerm = new Term[conjCompound.size() - 1 + conjComponent.size()];
@@ -606,6 +606,139 @@ public final class StructuralRules {
         }
     }
     
+    /* --------------- Take out from conjunction --------------- */
+    /**
+     * {(&&,A,B,C), B@(&&,A,B,C)} |- (&&,A,C)
+     * Works for all conjunctions
+     * @param compound The premise
+     * @param component The recognized component in the premise
+     * @param compoundTask Whether the compound comes from the task
+     * @param nal Reference to the memory
+     */
+    static void takeOutFromConjunction(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
+        if(compound instanceof Conjunction) {
+            Conjunction conjCompound = (Conjunction) compound;
+            Term[] newTerm = new Term[conjCompound.size() - 1];
+            for(int i=0;i<index;i++) { //until index everything stays the same
+                newTerm[i] = conjCompound.term[i];
+            }
+            for(int i=index; i<newTerm.length; i++) { //we only skip index
+                newTerm[i] = conjCompound.term[i + 1];
+            }
+            Term cont = Conjunction.make(newTerm, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
+            TruthValue truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, Parameters.reliance);
+            BudgetValue budget = BudgetFunctions.forward(truth, nal);
+            nal.singlePremiseTask(cont, truth, budget);
+        }
+    }
+    
+    /* --------------- Split sequence apart --------------- */
+    /**
+     * {(#,A,B,C,D,E), C@(#,A,B,C,D,E)} |- (#,A,B,C), (#,C,D,E)
+     * Works for all conjunctions
+     * @param compound The premise
+     * @param component The recognized component in the premise
+     * @param compoundTask Whether the compound comes from the task
+     * @param nal Reference to the memory
+     */
+    static void splitConjunctionApart(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
+        if(compound instanceof Conjunction) {
+            Conjunction conjCompound = (Conjunction) compound;
+            Term[] newTermLeft = new Term[index+1];
+            Term[] newTermRight = new Term[conjCompound.size()-index];
+            if(newTermLeft.length == compound.size() || //since nothing was splitted
+               newTermRight.length == compound.size()) {
+                return;
+            }
+            for(int i=0;i < newTermLeft.length;i++) { //everything from left including index
+                newTermLeft[i] = conjCompound.term[i];
+            }
+            for(int i=0; i<newTermRight.length; i++) { //everything from right including index
+                newTermRight[i] = conjCompound.term[i+index];
+            }
+            Conjunction cont1 = (Conjunction) Conjunction.make(newTermLeft, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
+            Conjunction cont2 = (Conjunction) Conjunction.make(newTermRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
+            TruthValue truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, Parameters.reliance);
+            BudgetValue budget = BudgetFunctions.forward(truth, nal);
+            nal.singlePremiseTask(cont1, truth,         budget);
+            nal.singlePremiseTask(cont2, truth.clone(), budget.clone());
+        }
+    }
+    
+    /* --------------- Group sequence left and right --------------- */
+    /**
+     * {(#,A,B,C,D,E), C@(#,A,B,C,D,E)} |- (#,(#,A,B),C,D,E), (#,A,B,C,(#,D,E))
+     * Works for all conjunctions
+     * @param compound The premise
+     * @param component The recognized component in the premise
+     * @param compoundTask Whether the compound comes from the task
+     * @param nal Reference to the memory
+     */
+    static void groupSequence(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
+        if(compound instanceof Conjunction) {
+            Conjunction conjCompound = (Conjunction) compound;
+            if(conjCompound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                boolean hasLeft = index > 1;
+                boolean hasRight = index < compound.size() - 2;
+                if(hasLeft) {
+                    int minIndex = Memory.randomNumber.nextInt(index-1); //if index-1 it would have length 1, no group
+                    Term[] newTermLeft = new Term[(index-minIndex)];
+                    for(int i=minIndex; i<index; i++) { //everything from left excluding index
+                        newTermLeft[i-minIndex] = conjCompound.term[i];
+                    }
+                    Term contLeft  = Conjunction.make(newTermLeft,  conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
+                    Term[] totalLeft =  new Term[conjCompound.size() - newTermLeft.length + 1];
+                    //1. add left of min index
+                    int k=0;
+                    for(int i=0;i<minIndex;i++) {
+                        totalLeft[k++] = conjCompound.term[i];
+                    }
+                    //add formed group
+                    totalLeft[k] = contLeft;
+                    k+=newTermLeft.length-1;
+                    //and add what is after
+                    for(int i=index; i<conjCompound.size(); i++) {
+                        totalLeft[k++] = conjCompound.term[i];
+                    }
+                    Term cont1 = Conjunction.make(totalLeft,  conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
+                    if(cont1 instanceof Conjunction && totalLeft.length != conjCompound.size()) {
+                        TruthValue truth = nal.getCurrentTask().sentence.truth.clone();
+                        BudgetValue budget = BudgetFunctions.forward(truth, nal);
+                        nal.singlePremiseTask(cont1, truth, budget);
+                    }
+                }
+                if(hasRight) {
+                    int maxIndex = compound.term.length - 1 - (Memory.randomNumber.nextInt(1 + (compound.term.length - 1) - (index + 2)));
+                    Term[] newTermRight = new Term[maxIndex -index];
+                    for(int i=index+1; i<=maxIndex; i++) { //everything from right excluding index
+                        newTermRight[i - (index + 1)] = conjCompound.term[i];
+                    }
+                    Term contRight = Conjunction.make(newTermRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
+                    Term[] totalRight = new Term[conjCompound.size() - newTermRight.length + 1];
+
+                    //2. add left of index
+                    int k=0;
+                    for(int i=0; i<=index; i++) {
+                        totalRight[k++] = conjCompound.term[i];
+                    }
+                    //add formed group
+                    totalRight[k] = contRight;
+                    k+=newTermRight.length-1-1;
+                    //and add what is after
+                    for(int i=maxIndex+1;i<conjCompound.size();i++) {
+                        totalRight[k++] = conjCompound.term[i];
+                    }
+                    Term cont2 = Conjunction.make(totalRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
+                    if(cont2 instanceof Conjunction && totalRight.length != conjCompound.size()) {
+                        TruthValue truth = nal.getCurrentTask().sentence.truth.clone();
+                        BudgetValue budget = BudgetFunctions.forward(truth, nal);
+                        nal.singlePremiseTask(cont2, truth, budget);
+                    }
+                }
+            }
+        }
+    }
+    
     /* --------------- Disjunction and Conjunction transform --------------- */
     /**
      * {(&&, A, B), A@(&&, A, B)} |- A, or answer (&&, A, B)? using A {(||, A,
@@ -617,7 +750,16 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static boolean structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
-        flattenCompound(compound, component, compoundTask, index, nal);
+        
+        if(compound instanceof Conjunction) {
+            Conjunction conj = (Conjunction) compound; //only for # for now, will be gradually applied to &/ later
+            if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD && conj.isSpatial) { //and some also to && &|
+                flattenSequence(compound, component, compoundTask, index, nal);
+                groupSequence(compound, component, compoundTask, index, nal);
+                takeOutFromConjunction(compound, component, compoundTask, index, nal);
+                splitConjunctionApart(compound, component, compoundTask, index, nal);
+            }
+        }
         
         if (component.hasVarIndep()) { //moved down here since flattening also works when indep
             return false;
