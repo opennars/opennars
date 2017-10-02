@@ -45,7 +45,8 @@ public class Term implements AbstractTerm {
     private static final Map<CharSequence,Term> atoms = new HashMap();
 
     final public static Term SELF = Term.get("SELF");
-    final public static Term SEQ = Term.get("#");
+    final public static Term SEQ_SPATIAL = Term.get("#");
+    final public static Term SEQ_TEMPORAL = Term.get("#");
 
     final public static boolean isSelf(final Term t) {
         return SELF.equals(t);
