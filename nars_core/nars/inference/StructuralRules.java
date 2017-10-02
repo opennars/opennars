@@ -584,13 +584,6 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static boolean structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, DerivationContext nal) {
-        if (component.hasVarIndep()) {
-            return false;
-        }
-        if ((compound instanceof Conjunction) && !compound.getIsSpatial() && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
-            return false;
-        }        
-        
         final Term content = compoundTask ? component : compound;
         
         
@@ -610,9 +603,32 @@ public final class StructuralRules {
             //[03:25] <patham9> <a --> b>.     (||,<a --> b>,<x --> y>).     => dont derive it  "outputMustNotContain(<x --> y>)"
             //[03:25] <patham9> <a --> b>.     (&&,<a --> b>,<x --> y>)?    =>      dont derive it   "outputMustNotContain( (&&,<a --> b>,<x --> y>))"
             //[03:25] <patham9> <a --> b>.     (&&,<a --> b>,<x --> y>).   =>    <x --> y>
-            if ((sentence.isJudgment() || sentence.isGoal()) && ((!compoundTask && compound instanceof Disjunction) ||
-                          (compoundTask && compound instanceof Conjunction))) {
-                truth = TruthFunctions.deduction(truth, reliance); 
+            if ((sentence.isJudgment() || sentence.isGoal()) && 
+                ((!compoundTask && compound instanceof Disjunction) ||
+                (compoundTask && compound instanceof Conjunction))) {
+                truth = TruthFunctions.deduction(truth, reliance);
+                if(compound instanceof Conjunction && component instanceof Conjunction) {
+                    Conjunction conjCompound = (Conjunction) compound;
+                    Conjunction conjComponent = (Conjunction) component;
+                    if(conjCompound.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                            conjComponent.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                            conjCompound.getIsSpatial() == conjComponent.getIsSpatial()) { //because also when both are tmporal
+                        Term[] newTerm = new Term[conjCompound.size() - 1 + conjComponent.size()];
+                        for(int i=0;i<index;i++) { //until index everything stays the same
+                            newTerm[i] = conjCompound.term[i];
+                        }
+                        for(int i=0;i<conjComponent.size();i++) { //but beginning from there
+                            newTerm[index+i] = conjComponent.term[i]; //we add the component subterms
+                        }
+                        for(int i=index+conjComponent.size(); i<newTerm.length; i++) { //and after the remaining
+                            newTerm[i] = conjCompound.term[i - conjComponent.size() + 1];
+                        }
+                        Conjunction cont = (Conjunction) Conjunction.make(newTerm, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
+                        TruthValue tru = truth.clone();
+                        BudgetValue bud = budget = BudgetFunctions.forward(tru, nal);
+                        return nal.singlePremiseTask(cont, truth, budget);
+                    }
+                }
             }else {
                 TruthValue v1, v2;
                 v1 = TruthFunctions.negation(truth);
@@ -621,6 +637,12 @@ public final class StructuralRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
+        if (component.hasVarIndep()) { //moved down here since flattening also works when indep
+            return false;
+        } //and also for &/ with index > 0
+        if ((compound instanceof Conjunction) && !compound.getIsSpatial() && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
+            return false;
+        } 
         //if (content instanceof CompoundTerm)
             return nal.singlePremiseTask(content, truth, budget);
        // else

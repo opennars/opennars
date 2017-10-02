@@ -179,7 +179,7 @@ public class RuleTables {
             case TermLink.COMPOUND:
                 switch (bLink.type) {
                     case TermLink.COMPOUND:
-                        compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, bIndex, nal);
+                        compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, tIndex, bIndex, nal);
                         break;
                     case TermLink.COMPOUND_STATEMENT:
                         compoundAndStatement((CompoundTerm) taskTerm, tIndex, (Statement) beliefTerm, bIndex, beliefTerm, nal);
@@ -762,12 +762,12 @@ public class RuleTables {
      * @param beliefTerm The compound from the belief
      * @param nal Reference to the memory
      */
-    private static void compoundAndCompound(CompoundTerm taskTerm, CompoundTerm beliefTerm, int index, DerivationContext nal) {
+    private static void compoundAndCompound(CompoundTerm taskTerm, CompoundTerm beliefTerm, int tindex, int bindex, DerivationContext nal) {
         if (taskTerm.getClass() == beliefTerm.getClass()) {
             if (taskTerm.size() >= beliefTerm.size()) {
-                compoundAndSelf(taskTerm, beliefTerm, true, index, nal);
+                compoundAndSelf(taskTerm, beliefTerm, true, tindex, nal);
             } else if (taskTerm.size() < beliefTerm.size()) {
-                compoundAndSelf(beliefTerm, taskTerm, false, index, nal);
+                compoundAndSelf(beliefTerm, taskTerm, false, bindex, nal);
             }
         }
     }
