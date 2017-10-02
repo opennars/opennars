@@ -561,8 +561,11 @@ public final class StructuralRules {
                     newPred = ImageExt.make(image, subject, i);
                 }
                 
-                if(newSubj instanceof CompoundTerm && newPred.equals(Term.SEQ)) {
-                    Term seq = Conjunction.make(((CompoundTerm)newSubj).term, TemporalRules.ORDER_FORWARD, true);
+                if(newSubj instanceof CompoundTerm && 
+                        (newPred.equals(Term.SEQ_TEMPORAL) || newPred.equals(Term.SEQ_SPATIAL))) {
+                    Term seq = Conjunction.make(((CompoundTerm)newSubj).term, 
+                                                TemporalRules.ORDER_FORWARD, 
+                                                newPred.equals(Term.SEQ_SPATIAL));
                     if (truth == null) {
                         budget = BudgetFunctions.compoundBackward(seq, nal);
                     } else {
@@ -752,11 +755,14 @@ public final class StructuralRules {
         }
     }
     
-    public static void seqToImage(CompoundTerm compound, int index, DerivationContext nal) {
+    public static void seqToImage(Conjunction conj, int index, DerivationContext nal) {
         int side = 0; //extensional
         short[] indices = new short[] { (short)side, (short)index };
-        Product subject = Product.make(compound.term);
-        Term predicate = Term.SEQ;
+        Product subject = Product.make(conj.term);
+        Term predicate = Term.SEQ_TEMPORAL;
+        if(conj.isSpatial) {
+            predicate = Term.SEQ_SPATIAL;
+        }
         Inheritance inh = Inheritance.make(subject, predicate);
         StructuralRules.transformProductImage(inh, inh, indices, nal);
     }
@@ -780,7 +786,9 @@ public final class StructuralRules {
                 groupSequence(compound, component, compoundTask, index, nal);
                 takeOutFromConjunction(compound, component, compoundTask, index, nal);
                 splitConjunctionApart(compound, component, compoundTask, index, nal);
-                seqToImage(compound, index, nal);
+            }
+            if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                seqToImage(conj, index, nal);
             }
         }
         
