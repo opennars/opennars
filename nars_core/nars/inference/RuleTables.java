@@ -792,11 +792,12 @@ public class RuleTables {
         Task task = nal.getCurrentTask();
         if (component.getClass() == statement.getClass()) {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
+                Conjunction conj = (Conjunction) compound;
                 Term[] u = new Term[] { compound, statement };
                 if (Variables.unify(VAR_DEPENDENT, component, statement, u)) {
                     compound = (Conjunction) u[0];
                     statement = (Statement) u[1];
-                    if(compound.getTemporalOrder() != TemporalRules.ORDER_FORWARD || //only allow dep var elimination
+                    if(conj.isSpatial || compound.getTemporalOrder() != TemporalRules.ORDER_FORWARD || //only allow dep var elimination
                             index == 0) { //for (&/ on first component!!
                         SyllogisticRules.elimiVarDep(compound, component, 
                                 statement.equals(beliefTerm),

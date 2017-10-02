@@ -138,7 +138,7 @@ public class ConceptProcessing {
                     Concept pred_conc = nal.memory.concept(pred);
                     if(pred_conc != null /*&& !(pred instanceof Operation)*/ && (subj instanceof Conjunction)) {
                         Conjunction conj = (Conjunction) subj;
-                        if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                        if(!conj.isSpatial && conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
                                 conj.term.length >= 4 && conj.term.length%2 == 0 &&
                                 conj.term[conj.term.length-1] instanceof Interval &&
                                 conj.term[conj.term.length-2] instanceof Operation) {

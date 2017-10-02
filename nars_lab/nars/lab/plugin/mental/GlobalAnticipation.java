@@ -118,9 +118,11 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
             args[0]=imp.getSubject();
             if(imp.getSubject() instanceof Conjunction) {
                 Conjunction conj=(Conjunction) imp.getSubject();
-                if(conj.temporalOrder==TemporalRules.ORDER_FORWARD || conj.temporalOrder==TemporalRules.ORDER_CONCURRENT) {
-                    concurrent_conjunction=conj.temporalOrder==TemporalRules.ORDER_CONCURRENT;
-                    args=conj.term; //in case of &/ this are the terms
+                if(!conj.isSpatial) {
+                    if(conj.temporalOrder==TemporalRules.ORDER_FORWARD || conj.temporalOrder==TemporalRules.ORDER_CONCURRENT) {
+                        concurrent_conjunction=conj.temporalOrder==TemporalRules.ORDER_CONCURRENT;
+                        args=conj.term; //in case of &/ this are the terms
+                    }
                 }
             }
             int i=0;

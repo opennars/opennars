@@ -36,6 +36,7 @@ import nars.io.Symbols.NativeOperator;
 public class Conjunction extends CompoundTerm {
 
     public final int temporalOrder;
+    public final boolean isSpatial;
 
     public static Term[] removeFirstInterval(Term[] arg) {
         if(arg[0] instanceof Interval) {
@@ -55,9 +56,10 @@ public class Conjunction extends CompoundTerm {
      * @param order
      * @param normalized
      */
-    protected Conjunction(Term[] arg, final int order, boolean normalized) {
+    protected Conjunction(Term[] arg, final int order, boolean normalized, boolean spatial) {
         super(arg);
         
+        this.isSpatial = spatial;
         temporalOrder = order;
         init(this.term);
 
@@ -72,7 +74,7 @@ public class Conjunction extends CompoundTerm {
 
 
     @Override public Term clone(Term[] t) {        
-        return make(t, temporalOrder);
+        return make(t, temporalOrder, isSpatial);
     }
 
     /**
@@ -82,7 +84,7 @@ public class Conjunction extends CompoundTerm {
      */
     @Override
     public Conjunction clone() {
-        return new Conjunction(term, temporalOrder, isNormalized());
+        return new Conjunction(term, temporalOrder, isNormalized(), isSpatial);
     }
     
     
@@ -95,7 +97,11 @@ public class Conjunction extends CompoundTerm {
     public NativeOperator operator() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                return NativeOperator.SEQUENCE;
+                if(isSpatial) {
+                    return NativeOperator.SPATIAL;
+                } else {
+                    return NativeOperator.SEQUENCE;
+                }
             case TemporalRules.ORDER_CONCURRENT:
                 return NativeOperator.PARALLEL;
             default:
@@ -134,12 +140,12 @@ public class Conjunction extends CompoundTerm {
         return false;
     }
     
-    public static Term[] flatten(Term[] args, int order) { //flatten only same order!
+    public static Term[] flatten(Term[] args, int order, boolean isSpatial) { //flatten only same order!
         //determine how many there are with same order
         int sz=0;
         for(int i=0;i<args.length;i++) {
             Term a=args[i];
-            if(isConjunctionAndHasSameOrder(a, order)) {
+            if(isConjunctionAndHasSameOrder(a, order) && isSpatial == ((Conjunction) a).isSpatial) {
                 sz+=((Conjunction)a).term.length;
             } else {
                 sz+=1;
@@ -149,7 +155,7 @@ public class Conjunction extends CompoundTerm {
         int k=0;
         for(int i=0;i<args.length;i++) {
             Term a=args[i];
-            if(isConjunctionAndHasSameOrder(a, order)) {
+            if(isConjunctionAndHasSameOrder(a, order) && isSpatial == ((Conjunction) a).isSpatial) {
                 Conjunction c=((Conjunction)a);
                 for(Term t: c.term) {
                     ret[k]=t;
@@ -172,6 +178,9 @@ public class Conjunction extends CompoundTerm {
      * @return the Term generated from the arguments, or null if not possible
      */
     final public static Term make(final Term[] argList, final int temporalOrder) {
+        return make(argList, temporalOrder, false);
+    }
+    final public static Term make(final Term[] argList, final int temporalOrder, boolean spatial) {
         if (Parameters.DEBUG) {  Terms.verifyNonNull(argList);}
         
         if (argList.length == 0) {
@@ -182,11 +191,11 @@ public class Conjunction extends CompoundTerm {
         }                         // special case: single component
         
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            Term[] newArgList = removeFirstInterval(flatten(argList, temporalOrder));
+            Term[] newArgList = removeFirstInterval(flatten(argList, temporalOrder, spatial));
             if(newArgList.length == 1) {
                 return newArgList[0];
             }
-            return new Conjunction(newArgList, temporalOrder, false);
+            return new Conjunction(newArgList, temporalOrder, false, spatial);
             
         } else {
             
@@ -202,7 +211,7 @@ public class Conjunction extends CompoundTerm {
                 return set.first();
             }
             
-            return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder, false);
+            return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder, false, spatial);
         }
     }
 
@@ -267,7 +276,9 @@ public class Conjunction extends CompoundTerm {
                 ArrayList<Term> list = new ArrayList<>(cterm1.size());
                 cterm1.addTermsTo(list);
                         
-                if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) { 
+                if ((term2 instanceof Conjunction) && 
+                        cterm1.getIsSpatial() == ((CompoundTerm) term2).getIsSpatial() && 
+                        term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD) { 
                     // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
                     ((CompoundTerm) term2).addTermsTo(list);
                 } 
@@ -318,5 +329,9 @@ public class Conjunction extends CompoundTerm {
     public int getTemporalOrder() {
         return temporalOrder;
     }
-
+    
+    @Override
+    public boolean getIsSpatial() {
+        return isSpatial;
+    }
 }

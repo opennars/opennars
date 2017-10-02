@@ -115,11 +115,11 @@ public class Sentence<T extends Term> implements Cloneable {
                         for(int i=0;i<c.term.length-1;i++) {
                             term2[i]=c.term[i];
                         }
-                        _content=(T) Conjunction.make(term2, c.getTemporalOrder());
+                        _content=(T) Conjunction.make(term2, c.getTemporalOrder(), c.isSpatial);
                         //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
                         //accordingly
                         long time=Interval.magnitudeToTime(((Interval)c.term[c.term.length-1]).magnitude,new AtomicDuration(Parameters.DURATION));
-                        if(stamp!=null)
+                        if(!c.isSpatial && stamp!=null)
                             stamp.setOccurrenceTime(stamp.getOccurrenceTime()-time);
                     }
                 }
@@ -137,15 +137,11 @@ public class Sentence<T extends Term> implements Cloneable {
                 truth.setConfidence(0.0f);
             if(((Statement) _content).getPredicate().hasVarIndep() && !((Statement) _content).getSubject().hasVarIndep())
                 truth.setConfidence(0.0f); //TODO:
-            if(_content.getTemporalOrder() == TemporalRules.ORDER_FORWARD && truth != null) { //do not allow =/> statements without conjunction on left
-                if(!(((Statement) _content).getSubject() instanceof Conjunction)) { //because at least a time measurement has to be givem
-                   // truth.setConfidence(0.0f); //not necessary and consider disjunction case!!
-                } else {
+            if(_content.getTemporalOrder() != TemporalRules.ORDER_NONE &&
+               _content.getTemporalOrder() != TemporalRules.ORDER_INVALID) { //do not allow =/> statements without conjunction on left
+                if((((Statement) _content).getSubject() instanceof Conjunction)) {
                     Conjunction conj = (Conjunction) ((Statement) _content).getSubject();
-                    if(conj.getTemporalOrder() != TemporalRules.ORDER_FORWARD &&
-                           conj.getTemporalOrder() != TemporalRules.ORDER_BACKWARD) {
-                        truth.setConfidence(0.0f);
-                    } else {
+                    if(!conj.isSpatial && conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
                         //when the last two are intervals, its not valid
                        if(conj.term[conj.term.length-1] instanceof Interval && conj.term[conj.term.length-2] instanceof Interval) {
                             truth.setConfidence(0.0f);
