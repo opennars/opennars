@@ -250,11 +250,11 @@ public class RuleTables {
                                     } else {
                                     componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, nal);
                                     }
-                                    } else {
-                                    conditionalDedIndWithVar(task.sentence, (Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, nal);
-                                    }
+                                } else {
+                                conditionalDedIndWithVar(task.sentence, (Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, nal);
                                 }
-                                break;
+                            }
+                            break;
                             
                         }
                         break;
@@ -662,7 +662,7 @@ public class RuleTables {
         
         Term component = statement.term[index];
         Term content = subSentence.term;
-        if (((component instanceof Inheritance) || (component instanceof Negation)) && (nal.getCurrentBelief() != null)) {
+        if (nal.getCurrentBelief() != null) {
             
             Term[] u = new Term[] { statement, content };
             
@@ -699,7 +699,18 @@ public class RuleTables {
         if (!(conditional.getSubject() instanceof CompoundTerm))
             return;
         
-        CompoundTerm condition = (CompoundTerm) conditional.getSubject();        
+        CompoundTerm condition = (CompoundTerm) conditional.getSubject();  
+        
+        if(condition instanceof Conjunction && ((Conjunction) condition).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            return; 
+            /* See case of:
+            <(#,$1,<is --> IS>,$2) ==> <(/,REPRESENT,$1,_) --> (/,REPRESENT,$2,_)>>. %1.00;0.90%
+            (#,<a --> A>,<is --> IS>,<b --> B>). %1.00;0.90%
+            in which case it would derive:
+             <(#,<is --> IS>,$1) ==> <(/,REPRESENT,<is --> IS>,_) --> (/,REPRESENT,$1,_)>>. by twice deduction
+            TODO analyze why it happens at all with # and not with &/ ! this function should not be called for both!
+            */
+        }
         
         Term component = condition.term[index];
         Term component2 = null;
