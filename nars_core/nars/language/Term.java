@@ -46,7 +46,7 @@ public class Term implements AbstractTerm {
 
     final public static Term SELF = Term.get("SELF");
     final public static Term SEQ_SPATIAL = Term.get("#");
-    final public static Term SEQ_TEMPORAL = Term.get("#");
+    final public static Term SEQ_TEMPORAL = Term.get("&/");
 
     final public static boolean isSelf(final Term t) {
         return SELF.equals(t);
