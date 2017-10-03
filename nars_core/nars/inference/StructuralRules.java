@@ -41,6 +41,7 @@ import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.IntersectionExt;
 import nars.language.IntersectionInt;
+import nars.language.Interval;
 import nars.language.Negation;
 import nars.language.Product;
 import nars.language.SetExt;
@@ -484,6 +485,9 @@ public final class StructuralRules {
             for (short i = 0; i < product.size(); i++) {
                 newSubj = product.term[i];
                 newPred = ImageExt.make(product, predicate, i);
+                if(newSubj instanceof Interval) { //no intervals as subjects
+                    continue;
+                }
                 inheritance = Inheritance.make(newSubj, newPred);
                 if (inheritance != null) {
                     if (truth == null) {
