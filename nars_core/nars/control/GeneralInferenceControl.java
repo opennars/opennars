@@ -10,6 +10,7 @@ import nars.util.Events;
 import nars.entity.Task;
 import nars.entity.TermLink;
 import nars.inference.RuleTables;
+import nars.language.Term;
 import nars.storage.Memory;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
@@ -65,8 +66,10 @@ public class GeneralInferenceControl {
         
         if (nal.currentTaskLink.type == TermLink.TRANSFORM) {
             nal.setCurrentBelief(null);
-            
-            RuleTables.transformTask(nal.currentTaskLink, nal); // to turn this into structural inference as below?
+            TermLink tasklink_as_termlink = new TermLink(nal.currentTaskLink.getTerm(), TermLink.TRANSFORM, nal.getCurrentTaskLink().index);
+            if(nal.currentTaskLink.novel(tasklink_as_termlink, nal.memory.time(), true)) { //then record yourself, but also here novelty counts
+                RuleTables.transformTask(nal.currentTaskLink, nal); // to turn this into structural inference as below?
+            }
             
         } else {            
             while (termLinks > 0) {

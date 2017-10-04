@@ -117,6 +117,7 @@ public class DerivationContext {
             for (int i = 0; i < stampLength; i++) {
                 final long baseI = stamp.evidentialBase[i];
                 for (int j = 0; j < stampLength; j++) {
+                    //!single since the derivation shouldn't depend on whether there is a current belief or not!!
                     if ((!single && this.evidentalOverlap) || ((i != j) && (baseI == stamp.evidentialBase[j]))) {
                         memory.removeTask(task, "Overlapping Evidenctal Base");
                         //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/

@@ -152,14 +152,15 @@ public class TaskLink extends Item<Task> implements TLink<Task> {
      * @return Whether they are novel to each other
      */
     public boolean novel(final TermLink termLink, final long currentTime) {
+        return novel(termLink, currentTime, false);
+    }
+    public boolean novel(final TermLink termLink, final long currentTime, boolean transformTask) {
         final Term bTerm = termLink.target;
-        if (bTerm.equals(targetTask.sentence.term)) {            
+        if (!transformTask && bTerm.equals(targetTask.sentence.term)) {            
             return false;
         }
         TermLink linkKey = termLink.name();
         int next, i;
-        
-        
                 
         //iterating the FIFO deque from oldest (first) to newest (last)
         Iterator<Recording> ir = records.iterator();
