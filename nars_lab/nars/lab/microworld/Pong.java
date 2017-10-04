@@ -146,30 +146,30 @@ public class Pong extends Frame {
                 if(left != null || middle != null || right != null) {
                     System.out.println();
                 }*/
-                                                   //                                         <(&/,<{right} --> [on]>,+12,(^Left,SELF),+13) =/> <{"1"} --> [on]>>
+                                                   //                                         <(&/,<{right} --> [on]>,+12,(^Left,{SELF}),+13) =/> <{"1"} --> [on]>>
                                                    
                 
                 if(k%4 == 0) {
                 Sentence hypo_left = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
-                        "<(&/,<{left} --> [on]>,+1,(^Right,SELF),+1) =/> <{\"1\"} --> [on]>>");
+                        "<(&/,<{left} --> [on]>,+1,(^Right,{SELF}),+1) =/> <{\"1\"} --> [on]>>");
                 if(hypo_left != null) {
                     System.out.println("HypLeftWrong: " + hypo_left.truth);
                 }
                 
                 Sentence hypo_right = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
-                        "<(&/,<{right} --> [on]>,+12,(^Left,SELF),+13) =/> <{\"1\"} --> [on]>>");
+                        "<(&/,<{right} --> [on]>,+12,(^Left,{SELF}),+13) =/> <{\"1\"} --> [on]>>");
                 if(hypo_right != null) {
                     System.out.println("HypRightWrong: " + hypo_right.truth);
                 }
                 
                 Sentence hypo_left_false = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
-                        "<(&/,<{left} --> [on]>,+1,(^Left,SELF),+1) =/> <{\"1\"} --> [on]>>");
+                        "<(&/,<{left} --> [on]>,+1,(^Left,{SELF}),+1) =/> <{\"1\"} --> [on]>>");
                 if(hypo_left_false != null) {
                     System.out.println("HypLeft: " + hypo_left_false.truth);
                 }
                 
                 Sentence hypo_right_false = ConceptMonitor.strongestPrecondition(nar,  "<{\"1\"} --> [on]>",
-                        "<(&/,<{right} --> [on]>,+12,(^Right,SELF),+13) =/> <{\"1\"} --> [on]>>");
+                        "<(&/,<{right} --> [on]>,+12,(^Right,{SELF}),+13) =/> <{\"1\"} --> [on]>>");
                 if(hypo_right_false != null) {
                     System.out.println("HypRight: " + hypo_right_false.truth);
                 }
@@ -208,7 +208,7 @@ public class Pong extends Frame {
                 }
                 /*/if(reward < 0) {
                     System.out.println("bad mr_nars");
-                    nar.addInput("(--,<SELF --> [good]>). :|:");
+                    nar.addInput("(--,<{SELF} --> [good]>). :|:");
                 }*/
                 
                 nar.step(10);
@@ -223,14 +223,14 @@ public class Pong extends Frame {
                     }
                     if(lastAction == 1) {
                         //System.out.println("random left");
-                        //nar.addInput("Left(SELF). :|:");
+                        //nar.addInput("Left({SELF}). :|:");
                         
-                        nar.addInput("Right(SELF). :|:");
+                        nar.addInput("Right({SELF}). :|:");
                     }
                     if(lastAction == 2) {
-                        nar.addInput("Left(SELF). :|:");
+                        nar.addInput("Left({SELF}). :|:");
                         //System.out.println("random right");
-                        //nar.addInput("Right(SELF). :|:");
+                        //nar.addInput("Right({SELF}). :|:");
                     }
                 }
 

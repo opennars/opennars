@@ -189,7 +189,7 @@ public class Hauto {
             if(TestChamber.staticInformation)
             nar.addInput("<"+"{place"+entityID.toString()+"} --> place>.");
             if(TestChamber.curiousity) {
-                space.nar.addInput("<(^go-to," + "{place"+entityID.toString() + "}) =/> <Self --> [curious]>>.");
+                space.nar.addInput("<(^go-to,{SELF}," + "{place"+entityID.toString() + "}) =/> <{SELF} --> [curious]>>.");
             }
             entityID++;
             return;
@@ -198,26 +198,26 @@ public class Hauto {
         if(!"".equals(oper)) {
             if(!"".equals(readCells[x][y].name) && !"pick".equals(oper)) {
                 if(allow_imitating) {
-                    nar.addInput("(^" + oper + ","+readCells[x][y].name+")! :|:"); //we will force the action
+                    nar.addInput("(^" + oper + ",{SELF},"+readCells[x][y].name+")! :|:"); //we will force the action
                 }
                 else {
-                    nar.addInput("(^" + oper + ","+readCells[x][y].name+"). :|:");
+                    nar.addInput("(^" + oper + ",{SELF},"+readCells[x][y].name+"). :|:");
                     TestChamber.operateObj(readCells[x][y].name, oper);
                 }
-                //nar.addInput("(^" + oper + ","+readCells[x][y].name+"). :|:"); //in order to make NARS an observer
+                //nar.addInput("(^" + oper + ",{SELF},"+readCells[x][y].name+"). :|:"); //in order to make NARS an observer
                 //--nar.step(1);
                 //.operateObj(readCells[x][y].name, oper);
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
                 if(allow_imitating) {
-                    nar.addInput("(^" + oper + ","+s+")! :|:"); 
+                    nar.addInput("(^" + oper + ",{SELF},"+s+")! :|:"); 
                 }
                 else {
-                    nar.addInput("(^" + oper + ","+s+"). :|:"); 
+                    nar.addInput("(^" + oper + ",{SELF},"+s+"). :|:"); 
                     TestChamber.operateObj(s, oper);
                 }
-                //nar.executeDummyDecision("(^" + oper + ","+s+")");
+                //nar.executeDummyDecision("(^" + oper + ",{SELF},"+s+")");
                 //--nar.step(1);
                // TestChamber.operateObj(s, oper);
             }
@@ -231,7 +231,7 @@ public class Hauto {
             }
             String wishreal=wish.replace("closed", "opened").replace("off", "on");
             if(!"".equals(readCells[x][y].name)) {
-                //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
+                //nar.addInput("(^" + oper + ",{SELF},"+readCells[x][y].name+")!"); //we will force the action
                 if(!inverse) {
                     String inp = "<" + readCells[x][y].name+" --> ["+wishreal+"]>! :|:";
                     nar.addInput(inp); //in order to make NARS an observer
@@ -245,7 +245,7 @@ public class Hauto {
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
-                //nar.addInput("(^" + oper + ","+s+")!"); 
+                //nar.addInput("(^" + oper + ",{SELF},"+s+")!"); 
                 if(!inverse) {
                     String inp = "<" + s +" --> ["+wishreal+"]>! :|:";
                     nar.addInput(inp); //in order to make NARS an observer
@@ -265,8 +265,8 @@ public class Hauto {
             if(TestChamber.staticInformation)
             nar.addInput("<"+doorname.replace("door", "key")+" --> key>.");
             if(TestChamber.curiousity) {
-                space.nar.addInput("<(^go-to," +doorname.replace("door", "key") + ") =/> <Self --> [curious]>>.");
-                space.nar.addInput("<(^pick," + doorname.replace("door", "key") + ") =/> <Self --> [curious]>>.");
+                space.nar.addInput("<(^go-to,{SELF}," +doorname.replace("door", "key") + ") =/> <{SELF} --> [curious]>>.");
+                space.nar.addInput("<(^pick,{SELF}," + doorname.replace("door", "key") + ") =/> <{SELF} --> [curious]>>.");
             }
             doorname="";
             return;
@@ -279,7 +279,7 @@ public class Hauto {
             if(TestChamber.staticInformation)
             nar.addInput("<"+doorname+" --> pizza>.");
             if(TestChamber.curiousity) {
-                space.nar.addInput("<(^go-to," + doorname + ") =/> <Self --> [curious]>>.");
+                space.nar.addInput("<(^go-to,{SELF}," + doorname + ") =/> <{SELF} --> [curious]>>.");
             }
             entityID++;
             doorname="";
@@ -326,17 +326,17 @@ public class Hauto {
                 if(selected.logic==Logic.OFFSWITCH) {
                     nar.addInput("(--,<"+name+" --> "+"[on]>). :|: %1.00;0.90%");
                     if(TestChamber.curiousity) {
-                        space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
-                        space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
-                        space.nar.addInput("<(^deactivate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^go-to,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
+                        space.nar.addInput("<(^activate,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
+                        space.nar.addInput("<(^deactivate,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
                     }
                 }
                 if(selected.logic==Logic.SWITCH) {
                     nar.addInput("<"+name+" --> "+"[on]>. :|:");
                     if(TestChamber.curiousity) {
-                        space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
-                        space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
-                        space.nar.addInput("<(^deactivate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^go-to,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
+                        space.nar.addInput("<(^activate,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
+                        space.nar.addInput("<(^deactivate,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
                     }
                 }
             }
@@ -345,17 +345,17 @@ public class Hauto {
                 if(selected.logic==Logic.OFFSWITCH) { //already has a name so use this one
                     nar.addInput("<"+readCells[(int) x][(int) y].name+" --> "+"[off]>. :|:");
                     if(TestChamber.curiousity) {
-                        space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
-                        space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
-                        space.nar.addInput("<(^deactivate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^go-to,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
+                        space.nar.addInput("<(^activate,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
+                        space.nar.addInput("<(^deactivate,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
                     }
                 }
                 if(selected.logic==Logic.SWITCH) {
                     nar.addInput("<"+readCells[(int) x][(int) y].name+" --> "+"[on]>. :|:");
                     if(TestChamber.curiousity) {
-                        space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
-                        space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
-                        space.nar.addInput("<(^deactivate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^go-to,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
+                        space.nar.addInput("<(^activate,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
+                        space.nar.addInput("<(^deactivate,{SELF}," + readCells[(int) x][(int) y].name + ") =/> <{SELF} --> [curious]>>.");
                     }
                 }
             }

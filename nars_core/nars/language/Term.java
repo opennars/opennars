@@ -44,7 +44,7 @@ import nars.operator.Operator;
 public class Term implements AbstractTerm {
     private static final Map<CharSequence,Term> atoms = new HashMap();
 
-    final public static Term SELF = Term.get("SELF");
+    final public static Term SELF = SetExt.make(Term.get("SELF"));
     final public static Term SEQ_SPATIAL = Term.get("#");
     final public static Term SEQ_TEMPORAL = Term.get("&/");
 

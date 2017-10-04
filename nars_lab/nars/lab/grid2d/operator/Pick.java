@@ -48,6 +48,8 @@ public class Pick extends Operator {
         TestChamber.executed=true;
         System.out.println("Executed: " + this);
         for (Term t : args) {
+            if(t.equals(Term.SELF))
+                continue;
             System.out.print(" --- " + t);
             chamb.operateObj(t.toString(),"pick");
             break;

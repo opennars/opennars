@@ -473,6 +473,11 @@ public class ConceptProcessing {
 
                 Operation op=(Operation)content;
                 Operator oper = op.getOperator();
+                Product prod = (Product) op.getSubject();
+                Term arg = prod.term[0];
+                if(!arg.equals(Term.SELF)) { //will be deprecated in the future
+                    return false;
+                }
 
                 op.setTask(t);
                 if(!oper.call(op, nal.memory)) {
