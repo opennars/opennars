@@ -378,9 +378,7 @@ public class ConceptProcessing {
             for(Task t: concept.executable_preconditions) {
                 Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
                 Term[] newprec = new Term[prec.length-3];
-                for(int i=0;i<prec.length-3;i++) { //skip the last part: interval, operator, interval
-                    newprec[i] = prec[i];
-                }
+                System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
 
                 //distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
                 mintime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude-1, nal.memory.param.duration);
