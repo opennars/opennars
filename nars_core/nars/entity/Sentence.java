@@ -120,9 +120,7 @@ public class Sentence<T extends Term> implements Cloneable {
                         }
                         
                         Term[] term2=new Term[c.term.length-u];
-                        for(int i=0;i<term2.length;i++) {
-                            term2[i]=c.term[i];
-                        }
+                        System.arraycopy(c.term, 0, term2, 0, term2.length);
                         _content=(T) Conjunction.make(term2, c.getTemporalOrder(), c.isSpatial);
                         //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
                         //accordingly
