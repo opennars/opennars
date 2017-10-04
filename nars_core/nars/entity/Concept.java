@@ -371,24 +371,23 @@ public class Concept extends Item<Term> {
         }
 
         for (final TermLink template : termLinkTemplates) {
-            if (template.type != TermLink.TRANSFORM) {
+            if (template.type == TermLink.TRANSFORM) {
+                continue;
+            }
 
-                Term target = template.target;
+            Term target = template.target;
 
-                final Concept concept = memory.conceptualize(taskBudget, target);
-                if (concept == null) {
-                    continue;
-                }
+            final Concept concept = memory.conceptualize(taskBudget, target);
+            if (concept == null) {
+                continue;
+            }
 
-                // this termLink to that
-                insertTermLink(new TermLink(target, template, subBudget));
+            // this termLink to that and vice versa
+            insertTermLink(new TermLink(target, template, subBudget));
+            concept.insertTermLink(new TermLink(term, template, subBudget));
 
-                // that termLink to this
-                concept.insertTermLink(new TermLink(term, template, subBudget));
-
-                if (target instanceof CompoundTerm && template.type != TermLink.TEMPORAL) {
-                    concept.buildTermLinks(subBudget);
-                }
+            if (target instanceof CompoundTerm && template.type != TermLink.TEMPORAL) {
+                concept.buildTermLinks(subBudget);
             }
         }
     }
