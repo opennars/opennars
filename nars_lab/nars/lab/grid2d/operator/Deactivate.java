@@ -48,6 +48,8 @@ public class Deactivate extends Operator {
         TestChamber.executed=true;
         System.out.println("Executed: " + this);
         for (Term t : args) {
+            if(t.equals(Term.SELF))
+                continue;
             System.out.println(" --- " + t);
             chamb.operateObj(t.toString(),"deactivate");
             break;

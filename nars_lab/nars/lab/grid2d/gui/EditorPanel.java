@@ -613,12 +613,12 @@ public class EditorPanel extends JPanel {
                     if (g instanceof LocalGridObject) {
                         LocalGridObject obi = (LocalGridObject) g;
                         if (obi instanceof Key) {
-                            //s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
-                            //s.nar.addInput("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^go-to,{SELF}," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^pick,{SELF}," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=2;
                         }
                         if (obi instanceof Pizza) {
-                            //s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^go-to,{SELF}," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                     }
@@ -626,12 +626,12 @@ public class EditorPanel extends JPanel {
                 for (int i = 0; i < s.cells.w; i++) {
                     for (int j = 0; j < s.cells.h; j++) {
                         if (s.cells.readCells[i][j].name.startsWith("switch") || s.cells.readCells[i][j].name.startsWith("place")) {
-                            //s.nar.addInput("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^go-to,{SELF}," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                         if (s.cells.readCells[i][j].logic == Logic.SWITCH || s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
-                            s.nar.addInput("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^activate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
-                            s.nar.addInput("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^deactivate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
+                            s.nar.addInput("<(&/,"+"(^go-to,{SELF},"+s.cells.readCells[i][j].name+"),(^activate,{SELF}," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
+                            s.nar.addInput("<(&/,"+"(^go-to,{SELF},"+s.cells.readCells[i][j].name+"),(^deactivate,{SELF}," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                     }
@@ -705,16 +705,16 @@ public class EditorPanel extends JPanel {
                 s.nar.addInput("<(--,<$1 --> [opened]>) <|> <(*,$1,IS,CLOSED) --> sentence>>.");
                 s.nar.addInput("<<$1 --> [hold]> <|> <(*,I,HOLD,$1) --> sentence>>.");
                 s.nar.addInput("<<$1 --> [at]> <|> <(*,I,AM,AT,$1) --> sentence>>.");
-                s.nar.addInput("<(^pick,$1) <|> <(*,I,PICK,$1) --> sentence>>.");
-                s.nar.addInput("<(^activate,$1) <|> <(*,I,ACTIVATE,$1) --> sentence>>.");
-                s.nar.addInput("<(^deactivate,$1) <|> <(*,I,DEACTIVATE,$1) --> sentence>>.");
-                s.nar.addInput("<(^go-to,$1) <|> <(*,I,GO,TO,$1) --> sentence>>.");
-                s.nar.addInput("<(&&,<$1 --> sentence>,(^say,$1)) =/> <SELF --> chatty>>.");
-                s.nar.addInput("<SELF --> chatty>!");
-                s.nar.addInput("<SELF --> chatty>!");
-                s.nar.addInput("<SELF --> chatty>!");
-                s.nar.addInput("<SELF --> chatty>!");
-                s.nar.addInput("<SELF --> chatty>!");
+                s.nar.addInput("<(^pick,{SELF},$1) <|> <(*,I,PICK,$1) --> sentence>>.");
+                s.nar.addInput("<(^activate,{SELF},$1) <|> <(*,I,ACTIVATE,$1) --> sentence>>.");
+                s.nar.addInput("<(^deactivate,{SELF},$1) <|> <(*,I,DEACTIVATE,$1) --> sentence>>.");
+                s.nar.addInput("<(^go-to,{SELF},$1) <|> <(*,I,GO,TO,$1) --> sentence>>.");
+                s.nar.addInput("<(&&,<$1 --> sentence>,(^say,{SELF},$1)) =/> <{SELF} --> chatty>>.");
+                s.nar.addInput("<{SELF} --> chatty>!");
+                s.nar.addInput("<{SELF} --> chatty>!");
+                s.nar.addInput("<{SELF} --> chatty>!");
+                s.nar.addInput("<{SELF} --> chatty>!");
+                s.nar.addInput("<{SELF} --> chatty>!");
             }
         });
 
@@ -722,10 +722,10 @@ public class EditorPanel extends JPanel {
         knowMenu.add(new EditorMode("common sense") {
             @Override
             public void run() {
-                s.nar.addInput("<(&/,<$1 --> [at]>,(^pick,$1)) =/> <$1 --> [hold]>>.");
-                s.nar.addInput("<(^go-to,$1) =/> <$1 --> [at]>>.");
-                s.nar.addInput("<(&/,<$1 --> [at]>,(^activate,$1)) =/> <$1 --> [on]>>.");
-                s.nar.addInput("(--,<(&/,<$1 --> [at]>,(^deactivate,$1)) =/> <$1 --> [on]>>). %1.00;0.90%");
+                s.nar.addInput("<(&/,<$1 --> [at]>,(^pick,{SELF},$1)) =/> <$1 --> [hold]>>.");
+                s.nar.addInput("<(^go-to,{SELF},$1) =/> <$1 --> [at]>>.");
+                s.nar.addInput("<(&/,<$1 --> [at]>,(^activate,{SELF},$1)) =/> <$1 --> [on]>>.");
+                s.nar.addInput("(--,<(&/,<$1 --> [at]>,(^deactivate,{SELF},$1)) =/> <$1 --> [on]>>). %1.00;0.90%");
                 //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> on>>).");
                 //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> opened>>).");
             }
@@ -734,34 +734,34 @@ public class EditorPanel extends JPanel {
         knowMenu.add(new EditorMode("if you go to somewhere you will be there") {
             @Override
             public void run() {
-                s.nar.addInput("<(^go-to,$1) =/> <$1 --> [at]>>.");
+                s.nar.addInput("<(^go-to,{SELF},$1) =/> <$1 --> [at]>>.");
             }
         });
 
         knowMenu.add(new EditorMode("if you are somewhere and you pick whats there, you will hold it") {
             @Override
-            public void run() { /*s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>."); */
+            public void run() { /*s.nar.addInput("<(&/,<$1 --> at>,(^pick,{SELF},$1)) =/> <$1 --> hold>>."); */
 
                 for (GridObject g : s.objects) {
                     if (g instanceof LocalGridObject) {
                         LocalGridObject obi = (LocalGridObject) g;
                         if (obi instanceof Key) {
-                            s.nar.addInput("<(&/,<" + obi.doorname + " --> [at]>,(^pick," + obi.doorname + ")) =/> <" + obi.doorname + " --> [hold]>>.");
+                            s.nar.addInput("<(&/,<" + obi.doorname + " --> [at]>,(^pick,{SELF}," + obi.doorname + ")) =/> <" + obi.doorname + " --> [hold]>>.");
                         }
                     }
                 }
-                /*s.nar.addInput("<(&/,<key0 --> at>,(^pick,key0)) =/> <key0 --> hold>>.");
-                 s.nar.addInput("<(&/,<key1 --> at>,(^pick,key1)) =/> <key1 --> hold>>.");
-                 s.nar.addInput("<(&/,<key2 --> at>,(^pick,key2)) =/> <key2 --> hold>>.");
-                 s.nar.addInput("<(&/,<key3 --> at>,(^pick,key3)) =/> <key3 --> hold>>.");*/
+                /*s.nar.addInput("<(&/,<key0 --> at>,(^pick,{SELF},key0)) =/> <key0 --> hold>>.");
+                 s.nar.addInput("<(&/,<key1 --> at>,(^pick,{SELF},key1)) =/> <key1 --> hold>>.");
+                 s.nar.addInput("<(&/,<key2 --> at>,(^pick,{SELF},key2)) =/> <key2 --> hold>>.");
+                 s.nar.addInput("<(&/,<key3 --> at>,(^pick,{SELF},key3)) =/> <key3 --> hold>>.");*/
             }
-        });  //s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
+        });  //s.nar.addInput("<(&/,<$1 --> at>,(^pick,{SELF},$1)) =/> <$1 --> hold>>.");
 
         resourceMenu.add(new EditorMode("need pizza") {
             @Override
             public void run() {
-                //s.nar.addInput("<(&&,<$1 --> pizza>,(^go-to,$1)) =/> <$1 --> eat>>."); //also works but better:
-                //s.nar.addInput("<(^go-to,$1) =/> <$1 --> [at]>>.");
+                //s.nar.addInput("<(&&,<$1 --> pizza>,(^go-to,{SELF},$1)) =/> <$1 --> eat>>."); //also works but better:
+                //s.nar.addInput("<(^go-to,{SELF},$1) =/> <$1 --> [at]>>.");
                 TestChamber.needpizza=true;
             }
         });

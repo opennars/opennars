@@ -303,23 +303,23 @@ public class SimNAR extends Frame {
                 k++;
                if(k%2==0) {
                    if(k%4 == 0) { //les priority than eating ^^
-                        nar.addInput("<SELF --> [healthy]>! :|:");
+                        nar.addInput("<{SELF} --> [healthy]>! :|:");
                    }
-                   nar.addInput("<SELF --> [replete]>! :|:");
+                   nar.addInput("<{SELF} --> [replete]>! :|:");
                    //System.out.println("food urge input");
                 }
                 if(reward > 0) {
                     System.out.println("good mr_nars");
-                    nar.addInput("<SELF --> [replete]>. :|:");
+                    nar.addInput("<{SELF} --> [replete]>. :|:");
                 }
                 if(reward < 0) {
                     System.out.println("bad mr_nars");
                     lasthealthy = k;
-                    //nar.addInput("(--,<SELF --> [good]>). :|:");   
+                    //nar.addInput("(--,<{SELF} --> [good]>). :|:");   
                 }
                 
                 if(k - lasthealthy > 200 && k%20 == 0) {
-                    nar.addInput("<SELF --> [healthy]>. :|:");
+                    nar.addInput("<{SELF} --> [healthy]>. :|:");
                     System.err.println("I'm healthy "+String.valueOf(k));
                 }
                 
@@ -329,13 +329,13 @@ public class SimNAR extends Frame {
                     lastAction = (int)random((float)nActions);
                     if(lastAction == 1) {
                         //System.out.println("random left");
-                        nar.addInput("Right(SELF). :|:");
-                       // nar.addInput("Left(SELF). :|:");
+                        nar.addInput("Right({SELF}). :|:");
+                       // nar.addInput("Left({SELF}). :|:");
                     }
                     if(lastAction == 2) {
                         //System.out.println("random right");
-                        nar.addInput("Left(SELF). :|:");
-                       /// nar.addInput("Right(SELF). :|:");
+                        nar.addInput("Left({SELF}). :|:");
+                       /// nar.addInput("Right({SELF}). :|:");
                     }
                 }
 
