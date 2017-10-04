@@ -169,7 +169,7 @@ public class Parameters {
 
 
     /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle */
-    public static final int NOVELTY_HORIZON = 10;
+    public static final int NOVELTY_HORIZON = 10000;
 
     /**
      * The rate of confidence decrease in mental operations Doubt and Hesitate
