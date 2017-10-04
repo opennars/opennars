@@ -374,18 +374,18 @@ public final class StructuralRules {
         final Memory memory = nal.mem();
         Term subject = inh.getSubject();
         Term predicate = inh.getPredicate();
+        short index = indices[indices.length - 1];
+        short side = indices[indices.length - 2];
         if (inh.equals(oldContent)) {
             if (subject instanceof CompoundTerm) {
-                transformSubjectPI((CompoundTerm) subject, predicate, nal);
+                transformSubjectPI(index, (CompoundTerm) subject, predicate, nal);
             }
             if (predicate instanceof CompoundTerm) {
-                transformPredicatePI(subject, (CompoundTerm) predicate, nal);
+                transformPredicatePI(index, subject, (CompoundTerm) predicate, nal);
             }
             return;
         }
-        short index = indices[indices.length - 1];
-        short side = indices[indices.length - 2];
-        
+
         Term compT = inh.term[side];
         if (!(compT instanceof CompoundTerm))
             return;
@@ -475,27 +475,26 @@ public final class StructuralRules {
      * @param predicate The predicate term
      * @param nal Reference to the memory
      */
-    private static void transformSubjectPI(CompoundTerm subject, Term predicate, DerivationContext nal) {
+    private static void transformSubjectPI(short index, CompoundTerm subject, Term predicate, DerivationContext nal) {
         TruthValue truth = nal.getCurrentTask().sentence.truth;
         BudgetValue budget;
         Inheritance inheritance;
         Term newSubj, newPred;
         if (subject instanceof Product) {
             Product product = (Product) subject;
-            for (short i = 0; i < product.size(); i++) {
+            short i = index; /*for (short i = 0; i < product.size(); i++)*/ {
                 newSubj = product.term[i];
                 newPred = ImageExt.make(product, predicate, i);
-                if(newSubj instanceof Interval) { //no intervals as subjects
-                    continue;
-                }
-                inheritance = Inheritance.make(newSubj, newPred);
-                if (inheritance != null) {
-                    if (truth == null) {
-                        budget = BudgetFunctions.compoundBackward(inheritance, nal);
-                    } else {
-                        budget = BudgetFunctions.compoundForward(truth, inheritance, nal);
+                if(!(newSubj instanceof Interval)) { //no intervals as subjects
+                    inheritance = Inheritance.make(newSubj, newPred);
+                    if (inheritance != null) {
+                        if (truth == null) {
+                            budget = BudgetFunctions.compoundBackward(inheritance, nal);
+                        } else {
+                            budget = BudgetFunctions.compoundForward(truth, inheritance, nal);
+                        }
+                        nal.singlePremiseTask(inheritance, truth, budget);
                     }
-                    nal.singlePremiseTask(inheritance, truth, budget);
                 }
             }
         } else if (subject instanceof ImageInt) {
@@ -533,14 +532,14 @@ public final class StructuralRules {
      * @param predicate The predicate term
      * @param nal Reference to the memory
      */
-    private static void transformPredicatePI(Term subject, CompoundTerm predicate, DerivationContext nal) {
+    private static void transformPredicatePI(short index, Term subject, CompoundTerm predicate, DerivationContext nal) {
         TruthValue truth = nal.getCurrentTask().sentence.truth;
         BudgetValue budget;
         Inheritance inheritance;
         Term newSubj, newPred;
         if (predicate instanceof Product) {
             Product product = (Product) predicate;
-            for (short i = 0; i < product.size(); i++) {
+            short i = index; /*for (short i = 0; i < product.size(); i++)*/ {
                 newSubj = ImageInt.make(product, subject, i);
                 newPred = product.term[i];
                 inheritance = Inheritance.make(newSubj, newPred);
