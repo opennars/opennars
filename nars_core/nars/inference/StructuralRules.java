@@ -608,15 +608,9 @@ public final class StructuralRules {
                     conjComponent.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
                     conjCompound.getIsSpatial() == conjComponent.getIsSpatial()) { //because also when both are tmporal
                 Term[] newTerm = new Term[conjCompound.size() - 1 + conjComponent.size()];
-                for(int i=0;i<index;i++) { //until index everything stays the same
-                    newTerm[i] = conjCompound.term[i];
-                }
-                for(int i=0;i<conjComponent.size();i++) { //but beginning from there
-                    newTerm[index+i] = conjComponent.term[i]; //we add the component subterms
-                }
-                for(int i=index+conjComponent.size(); i<newTerm.length; i++) { //and after the remaining
-                    newTerm[i] = conjCompound.term[i - conjComponent.size() + 1];
-                }
+                System.arraycopy(conjCompound.term, 0, newTerm, 0, index);
+                System.arraycopy(conjComponent.term, 0, newTerm, index + 0, conjComponent.size());
+                System.arraycopy(conjCompound.term, index + conjComponent.size() - conjComponent.size() + 1, newTerm, index + conjComponent.size(), newTerm.length - (index + conjComponent.size()));
                 Conjunction cont = (Conjunction) Conjunction.make(newTerm, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
                 TruthValue truth = nal.getCurrentTask().sentence.truth.clone();
                 BudgetValue budget = BudgetFunctions.forward(truth, nal);
@@ -638,12 +632,8 @@ public final class StructuralRules {
         if(compound instanceof Conjunction) {
             Conjunction conjCompound = (Conjunction) compound;
             Term[] newTerm = new Term[conjCompound.size() - 1];
-            for(int i=0;i<index;i++) { //until index everything stays the same
-                newTerm[i] = conjCompound.term[i];
-            }
-            for(int i=index; i<newTerm.length; i++) { //we only skip index
-                newTerm[i] = conjCompound.term[i + 1];
-            }
+            System.arraycopy(conjCompound.term, 0, newTerm, 0, index);
+            System.arraycopy(conjCompound.term, index + 1, newTerm, index, newTerm.length - index);
             Term cont = Conjunction.make(newTerm, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
             TruthValue truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, Parameters.reliance);
             BudgetValue budget = BudgetFunctions.forward(truth, nal);
@@ -669,12 +659,8 @@ public final class StructuralRules {
                newTermRight.length == compound.size()) {
                 return;
             }
-            for(int i=0;i < newTermLeft.length;i++) { //everything from left including index
-                newTermLeft[i] = conjCompound.term[i];
-            }
-            for(int i=0; i<newTermRight.length; i++) { //everything from right including index
-                newTermRight[i] = conjCompound.term[i+index];
-            }
+            System.arraycopy(conjCompound.term, 0, newTermLeft, 0, newTermLeft.length);
+            System.arraycopy(conjCompound.term, 0 + index, newTermRight, 0, newTermRight.length);
             Conjunction cont1 = (Conjunction) Conjunction.make(newTermLeft, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
             Conjunction cont2 = (Conjunction) Conjunction.make(newTermRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
             TruthValue truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, Parameters.reliance);
@@ -702,9 +688,7 @@ public final class StructuralRules {
                 if(hasLeft) {
                     int minIndex = Memory.randomNumber.nextInt(index-1); //if index-1 it would have length 1, no group
                     Term[] newTermLeft = new Term[(index-minIndex)];
-                    for(int i=minIndex; i<index; i++) { //everything from left excluding index
-                        newTermLeft[i-minIndex] = conjCompound.term[i];
-                    }
+                    System.arraycopy(conjCompound.term, minIndex, newTermLeft, minIndex - minIndex, index - minIndex);
                     Term contLeft  = Conjunction.make(newTermLeft,  conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
                     Term[] totalLeft =  new Term[conjCompound.size() - newTermLeft.length + 1];
                     //1. add left of min index
@@ -729,9 +713,7 @@ public final class StructuralRules {
                 if(hasRight) {
                     int maxIndex = compound.term.length - 1 - (Memory.randomNumber.nextInt(1 + (compound.term.length - 1) - (index + 2)));
                     Term[] newTermRight = new Term[maxIndex -index];
-                    for(int i=index+1; i<=maxIndex; i++) { //everything from right excluding index
-                        newTermRight[i - (index + 1)] = conjCompound.term[i];
-                    }
+                    System.arraycopy(conjCompound.term, index + 1, newTermRight, index + 1 - (index + 1), maxIndex + 1 - (index + 1));
                     Term contRight = Conjunction.make(newTermRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
                     Term[] totalRight = new Term[conjCompound.size() - newTermRight.length + 1];
 

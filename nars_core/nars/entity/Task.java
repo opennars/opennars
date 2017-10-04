@@ -370,8 +370,7 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
     
     public static Set<Task> getTasks(Collection<Task> tasks) {
         Set<Task> tl = new HashSet();
-        for (Task t : tasks)
-            tl.add(t);
+        tl.addAll(tasks);
         return tl;
     }
 
