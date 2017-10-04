@@ -20,10 +20,8 @@
  */
 package nars.language;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
+
 import nars.storage.Memory;
 import nars.config.Parameters;
 import nars.inference.TemporalRules;
@@ -361,7 +359,7 @@ public class Term implements AbstractTerm {
     public static TreeSet<Term> toSortedSet(final Term... arg) {
         //use toSortedSetArray where possible
         TreeSet<Term> t = new TreeSet();
-        for (Term x : arg) t.add(x);
+        Collections.addAll(t, arg);
         return t;        
     }
     
@@ -396,8 +394,8 @@ public class Term implements AbstractTerm {
         TreeSet<Term> s = new TreeSet();
         //SortedList<Term> s = new SortedList(arg.length);
         //s.setAllowDuplicate(false);
-        
-        for (Term a: arg) s.add(a);        
+
+        Collections.addAll(s, arg);
         
         return s.toArray(new Term[s.size()] );
         
