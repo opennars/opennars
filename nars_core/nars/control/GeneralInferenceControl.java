@@ -66,10 +66,10 @@ public class GeneralInferenceControl {
         
         if (nal.currentTaskLink.type == TermLink.TRANSFORM) {
             nal.setCurrentBelief(null);
-            TermLink tasklink_as_termlink = new TermLink(nal.currentTaskLink.getTerm(), TermLink.TRANSFORM, nal.getCurrentTaskLink().index);
-            if(nal.currentTaskLink.novel(tasklink_as_termlink, nal.memory.time(), true)) { //then record yourself, but also here novelty counts
+            //TermLink tasklink_as_termlink = new TermLink(nal.currentTaskLink.getTerm(), TermLink.TRANSFORM, nal.getCurrentTaskLink().index);
+            //if(nal.currentTaskLink.novel(tasklink_as_termlink, nal.memory.time(), true)) { //then record yourself, but also here novelty counts
                 RuleTables.transformTask(nal.currentTaskLink, nal); // to turn this into structural inference as below?
-            }
+            //}
             
         } else {            
             while (termLinks > 0) {
