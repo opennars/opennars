@@ -701,15 +701,12 @@ public class RuleTables {
         
         CompoundTerm condition = (CompoundTerm) conditional.getSubject();  
         
-        if(condition instanceof Conjunction && ((Conjunction) condition).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-            return; 
-            /* See case of:
-            <(#,$1,<is --> IS>,$2) ==> <(/,REPRESENT,$1,_) --> (/,REPRESENT,$2,_)>>. %1.00;0.90%
-            (#,<a --> A>,<is --> IS>,<b --> B>). %1.00;0.90%
-            in which case it would derive:
-             <(#,<is --> IS>,$1) ==> <(/,REPRESENT,<is --> IS>,_) --> (/,REPRESENT,$1,_)>>. by twice deduction
-            TODO analyze why it happens at all with # and not with &/ ! this function should not be called for both!
-            */
+        if(condition instanceof Conjunction) { //conditionalDedIndWithVar
+            for(Term t : condition.term) {     //does not support the case where
+                if(t instanceof Variable) {    //we have a variable inside of a conjunction
+                    return;                    //(this can happen since we have # due to image transform,
+                }                              //although not for other conjunctions)
+            }
         }
         
         Term component = condition.term[index];
