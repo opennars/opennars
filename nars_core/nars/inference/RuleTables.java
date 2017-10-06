@@ -859,13 +859,13 @@ public class RuleTables {
             }            
         } 
         
-       /* else if ((statement instanceof Implication) && (compound instanceof Negation)) {
+        else if ((statement instanceof Implication) && (compound instanceof Negation)) {
             if (index == 0) {
                 StructuralRules.contraposition(statement, nal.getCurrentTask().sentence, nal);
             } else {
                 StructuralRules.contraposition(statement, nal.getCurrentBelief(), nal);
             }        
-        }*/
+        }
         
     }
 
