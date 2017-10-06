@@ -45,7 +45,7 @@ public class Register extends Operator {
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Operator op=new NullOperator(args[0].toString());
+        Operator op=new NullOperator(args[1].toString());
         memory.addOperator(op);  // add error checking
         return null;
     }

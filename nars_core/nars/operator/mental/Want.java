@@ -51,7 +51,7 @@ public class Want extends Operator {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
 
-        Term content = args[0];                
+        Term content = args[1];                
         
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(

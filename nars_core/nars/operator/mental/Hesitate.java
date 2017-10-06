@@ -45,7 +45,7 @@ public class Hesitate extends Operator {
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term term = args[0];
+        Term term = args[1];
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         concept.discountConfidence(false);
         return null;

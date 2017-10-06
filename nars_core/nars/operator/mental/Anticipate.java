@@ -191,7 +191,7 @@ public class Anticipate extends Operator implements EventObserver {
             return null; //not as mental operator but as fundamental principle
         }
         
-        anticipate(args[0],memory,memory.time()+memory.param.duration.get(), null);
+        anticipate(args[1],memory,memory.time()+memory.param.duration.get(), null);
         
         return null;
     }
