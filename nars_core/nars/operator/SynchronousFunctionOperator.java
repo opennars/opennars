@@ -42,9 +42,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory m) {
         //TODO make memory access optional by constructor argument
         //TODO allow access to NAR instance?
-        int numArgs = args.length;
-        if (args[args.length-1].equals(Term.SELF))
-            numArgs--;
+        int numArgs = args.length -1;
         
         if (numArgs < 1) {
             throw new RuntimeException("Requires at least 1 arguments");
@@ -55,7 +53,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
         }
         
         //last argument a variable?
-        Term lastTerm = args[numArgs-1];
+        Term lastTerm = args[numArgs];
         boolean variable = lastTerm instanceof Variable;
         
         if(!variable && !(this instanceof Javascript)) { 
@@ -71,7 +69,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
         }
         
         Term[] x = new Term[numParam];
-        System.arraycopy(args, 0, x, 0, numParam);
+        System.arraycopy(args, 1, x, 0, numParam);
         
         Term y;
         //try {
@@ -94,15 +92,15 @@ public abstract class SynchronousFunctionOperator extends Operator {
         //Term actual_dep_part = Similarity.make(vardep, y);
         operation=(Operation) operation.setComponent(0, 
                 ((CompoundTerm)operation.getSubject()).setComponent(
-                        numArgs-1, y, m), m); 
+                        numArgs, y, m), m); 
         
         //<3 --> (/,^add,1,2,_,SELF)>.
         //transform to image for perception variable introduction rule (is more efficient representation
-        ImageExt ing=(ImageExt) ImageExt.make((Product)operation.getSubject(),operation.getPredicate(), (short)(numArgs-1));
+        ImageExt ing=(ImageExt) ImageExt.make((Product)operation.getSubject(),operation.getPredicate(), (short)(numArgs));
         Inheritance inh=Inheritance.make(y, ing);
         Term actual=inh; //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
-        float confidence = 0.99f;
+        float confidence = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
         if (variable) {
             return Lists.newArrayList( 
                     m.newTask(actual, Symbols.JUDGMENT_MARK, 
