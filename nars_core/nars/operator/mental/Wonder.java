@@ -49,7 +49,7 @@ public class Wonder extends Operator {
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term content = args[0];
+        Term content = args[1];
         
         
         Sentence sentence = new Sentence(

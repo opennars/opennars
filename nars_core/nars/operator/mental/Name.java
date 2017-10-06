@@ -52,8 +52,8 @@ public class Name extends Operator {
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term compound = args[0];
-        Term atomic = args[1];
+        Term compound = args[1];
+        Term atomic = args[2];
         Similarity content = Similarity.make(compound, atomic);
         
         TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension

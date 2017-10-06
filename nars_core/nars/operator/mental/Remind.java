@@ -54,7 +54,7 @@ public class Remind extends Operator {
      */
     @Override    
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term term = args[0];
+        Term term = args[1];
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
         activate(memory, concept, budget, Activating.TaskLink);
