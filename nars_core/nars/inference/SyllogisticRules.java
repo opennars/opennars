@@ -371,6 +371,9 @@ public final class SyllogisticRules {
      * @param nal Reference to the memory
      */
     static void detachment(Sentence mainSentence, Sentence subSentence, int side, DerivationContext nal) {
+        detachment(mainSentence, subSentence, side, true, nal);
+    }
+    static void detachment(Sentence mainSentence, Sentence subSentence, int side, boolean checkTermAgain, DerivationContext nal) {
         Statement statement = (Statement) mainSentence.term;
         if (!(statement instanceof Implication) && !(statement instanceof Equivalence)) {
             return;
@@ -379,9 +382,9 @@ public final class SyllogisticRules {
         Term predicate = statement.getPredicate();
         Term content;
         Term term = subSentence.term;
-        if ((side == 0) && term.equals(subject)) {
+        if ((side == 0) && (!checkTermAgain || term.equals(subject))) {
             content = predicate;
-        } else if ((side == 1) && term.equals(predicate)) {
+        } else if ((side == 1) && (!checkTermAgain || term.equals(predicate))) {
             content = subject;
         } else {
             return;
