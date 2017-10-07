@@ -767,9 +767,9 @@ public final class StructuralRules {
         if(compound instanceof Conjunction) {
             Conjunction conj = (Conjunction) compound; //only for # for now, will be gradually applied to &/ later
             if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD && conj.isSpatial) { //and some also to && &|
-                flattenSequence(compound, component, compoundTask, index, nal);
+                //flattenSequence(compound, component, compoundTask, index, nal);
                 groupSequence(compound, component, compoundTask, index, nal);
-                takeOutFromConjunction(compound, component, compoundTask, index, nal);
+                //takeOutFromConjunction(compound, component, compoundTask, index, nal);
                 splitConjunctionApart(compound, component, compoundTask, index, nal);
             }
             if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {

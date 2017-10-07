@@ -188,10 +188,10 @@ public class RuleTables {
                         if (belief != null) {
                             if (beliefTerm instanceof Implication) {
                                 Term[] u = new Term[] { beliefTerm, taskTerm };
-                                if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u)) {
-                                    Sentence newBelief = belief.clone(u[0]);
+                                if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u, true)) { //only secure place that
+                                    Sentence newBelief = belief.clone(u[0]);                                                //allows partial match
                                     Sentence newTaskSentence = taskSentence.clone(u[1]);
-                                    detachmentWithVar(newBelief, newTaskSentence, bIndex, nal);
+                                    detachmentWithVar(newBelief, newTaskSentence, bIndex, false, nal);
                                 } else {
                                     SyllogisticRules.conditionalDedInd(belief, (Implication) beliefTerm, bIndex, taskTerm, -1, nal);
                                 }                                
@@ -650,6 +650,9 @@ public class RuleTables {
      * @param nal Reference to the memory
      */
     private static void detachmentWithVar(Sentence originalMainSentence, Sentence subSentence, int index, DerivationContext nal) {
+        detachmentWithVar(originalMainSentence, subSentence, index, true, nal);
+    }
+    private static void detachmentWithVar(Sentence originalMainSentence, Sentence subSentence, int index, boolean checkTermAgain, DerivationContext nal) {
         if(originalMainSentence==null)  {
             return;
         }
@@ -667,8 +670,8 @@ public class RuleTables {
             Term[] u = new Term[] { statement, content };
             
             if (!component.hasVarIndep() && !component.hasVarDep()) { //because of example: <<(*,w1,#2) --> [good]> ==> <w1 --> TRANSLATE>>. <(*,w1,w2) --> [good]>.
-                SyllogisticRules.detachment(mainSentence, subSentence, index, nal);
-            } else if (Variables.unify(VAR_INDEPENDENT, component, content, u)) {
+                SyllogisticRules.detachment(mainSentence, subSentence, index, checkTermAgain, nal);
+            } else if (Variables.unify(VAR_INDEPENDENT, component, content, u)) { //happens through syllogisms
                 mainSentence = mainSentence.clone(u[0]);
                 subSentence = subSentence.clone(u[1]);
                 SyllogisticRules.detachment(mainSentence, subSentence, index, nal);
