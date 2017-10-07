@@ -207,7 +207,7 @@ public class LanguageGUI extends javax.swing.JFrame {
         String punctuation = "sentence";
         for(int i=0;i<words.length;i++) {
             for(int len=words.length; len>=Integer.valueOf(spliceField.getText()); len--) {
-                String narsese = "<(*,";
+                String narsese = "(#,";
                 if(i+len > words.length) { //this length is not possible
                     continue;
                 }
@@ -219,15 +219,17 @@ public class LanguageGUI extends javax.swing.JFrame {
                     narsese += "\"" + words[k]+"\"" + ",";
                 }
                 narsese = narsese.substring(0, narsese.length()-1);
-                narsese+=") --> PART>.";
-                inputs.add(narsese);
+                narsese+=").";
+                inputs.add("$1.0;0.99;0.99$"+narsese);
                 if(!spliceCheckbox.isSelected()) {
                     break;
                 }
+                break;
             }
             if(!spliceCheckbox.isSelected()) {
                 break;
             }
+            break;
         }
         
         languageNAR.stop();
@@ -276,7 +278,7 @@ public class LanguageGUI extends javax.swing.JFrame {
                         //System.out.println("solution: " + belief);
                         System.out.println(belief);
                         String[] concepts = belief.term.toString().split("\"");
-                        if(concepts.length < 6) {
+                        if(concepts.length < 6 || belief.toString().contains("#")) {
                             return; //just an example, no " included
                         }
                         String s = considerQWord(concepts[1],qWords).toUpperCase();
@@ -286,7 +288,9 @@ public class LanguageGUI extends javax.swing.JFrame {
                         if(v.equals("IS") || v.equals("ARE")) {
                             inp = "<"+s + " --> "+p + ">" + punct;
                         }
+                        reasonerNAR.stop();
                         reasonerNAR.addInput(inp+ " " + (isQuestion ? "" : belief.truth.toString()));
+                        reasonerNAR.start(0);
                     }
 
                     @Override
@@ -307,14 +311,18 @@ public class LanguageGUI extends javax.swing.JFrame {
                         }
                         String s = considerQWord(concepts[1],qWords).toUpperCase();
                         String inp = "<"+s + " --> " + attribute + ">" + punct;
+                        reasonerNAR.stop();
                         reasonerNAR.addInput(inp+ " " + (isQuestion ? "" : belief.truth.toString()));
+                        reasonerNAR.start(0);
                     }
 
                     @Override
                     public void onChildSolution(Task child, Sentence belief) {}
                 };
-                languageNAR.ask("<?what --> " + attribute + ">", cur); 
-                q.add(cur);
+                if(!attribute.trim().equals("")) {
+                    languageNAR.ask("<?what --> " + attribute + ">", cur); 
+                    q.add(cur);
+                }
             }
             
             languageNAR.start(0);
