@@ -316,19 +316,6 @@ public class BudgetValue implements Cloneable {
             .toString();                
     }
 
-    /**
-     * linear interpolate the priority value to another value
-     * @see https://en.wikipedia.org/wiki/Linear_interpolation
-     */
-    /*public void lerpPriority(final float targetValue, final float momentum) {
-        if (momentum == 1.0) 
-            return;
-        else if (momentum == 0) 
-            setPriority(targetValue);
-        else
-            setPriority( (getPriority() * momentum) + ((1f - momentum) * targetValue) );
-    }*/
-
     /** returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime */
     public long setLastForgetTime(final long currentTime) {
         long period;
