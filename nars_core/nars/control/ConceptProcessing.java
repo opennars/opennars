@@ -1,8 +1,10 @@
 package nars.control;
 
 import java.util.ArrayList;
+import java.util.List;
 import nars.config.Parameters;
 import nars.entity.*;
+import nars.inference.BudgetFunctions;
 import nars.inference.SyllogisticRules;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
@@ -87,7 +89,7 @@ public class ConceptProcessing {
             }
         }
 
-        final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs, true);   // only revise with the strongest -- how about projection?
+        final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
             oldBelief = oldBeliefT.sentence;
@@ -117,6 +119,11 @@ public class ConceptProcessing {
             int nnq = concept.questions.size();
             for (int i = 0; i < nnq; i++) {
                 trySolution(judg, concept.questions.get(i), nal, true);
+            }
+            
+            int nng = concept.desires.size();
+            for (int i = 0; i < nng; i++) {
+                trySolution(judg, concept.desires.get(i), nal, true);
             }
 
             concept.addToTable(task, false, concept.beliefs, Parameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
@@ -197,20 +204,32 @@ public class ConceptProcessing {
     protected static boolean processGoal(Concept concept, final DerivationContext nal, final Task task, boolean shortcut) {
 
         final Sentence goal = task.sentence;
-        final Task oldGoalT = concept.selectCandidate(task, concept.desires, true); // revise with the existing desire values
+        final Task oldGoalT = concept.selectCandidate(task, concept.desires); // revise with the existing desire values
         Sentence oldGoal = null;
-
+        final Stamp newStamp = goal.stamp;
         if (oldGoalT != null) {
             oldGoal = oldGoalT.sentence;
-            final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
-
 
             if (newStamp.equals(oldStamp,false,false,true)) {
                 return false; // duplicate
             }
-            if (revisible(goal, oldGoal)) {
+        }
+        Task beliefT = null;
 
+        if(task.aboveThreshold()) {
+            beliefT = concept.selectCandidate(task, concept.beliefs); // check if the Goal is already satisfied
+            int nnq = concept.quests.size();
+            for (int i = 0; i < nnq; i++) {
+                trySolution(task.sentence, concept.quests.get(i), nal, true);
+            }
+            if (beliefT != null) { 
+                trySolution(beliefT.sentence, task, nal, true); // check if the Goal is already satisfied (manipulate budget)
+            }
+        }
+        if (oldGoalT != null) {
+            if (revisible(goal, oldGoal)) {
+                final Stamp oldStamp = oldGoal.stamp;
                 nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
 
                 Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime());
@@ -242,14 +261,11 @@ public class ConceptProcessing {
 
         if (task.aboveThreshold()) {
 
-            final Task beliefT = concept.selectCandidate(task, concept.beliefs, false); // check if the Goal is already satisfied
-
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
                 Sentence belief = beliefT.sentence;
                 Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.memory.param.duration.get());
-                trySolution(projectedBelief, task, nal, true); // check if the Goal is already satisfied (manipulate budget)
-                AntiSatisfaction = task.sentence.truth.getExpDifAbs(belief.truth);
+                AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
             }
 
             double Satisfaction=1.0-AntiSatisfaction;
@@ -330,7 +346,12 @@ public class ConceptProcessing {
 
         Task quesTask = task;
         boolean newQuestion = true;
-        for (final Task t : concept.questions) {
+        
+        List<Task> questions = concept.questions;
+        if(task.sentence.punctuation == Symbols.QUEST_MARK) {
+            questions = concept.quests;
+        }
+        for (final Task t : questions) {
             if (t.sentence.equalsContent(quesTask.sentence)) {
                 quesTask = t;
                 newQuestion = false;
@@ -339,19 +360,19 @@ public class ConceptProcessing {
         }
 
         if (newQuestion) {
-            if (concept.questions.size() + 1 > Parameters.CONCEPT_QUESTIONS_MAX) {
-                Task removed = concept.questions.remove(0);    // FIFO
+            if (questions.size() + 1 > Parameters.CONCEPT_QUESTIONS_MAX) {
+                Task removed = questions.remove(0);    // FIFO
                 concept.memory.event.emit(Events.ConceptQuestionRemove.class, concept, removed);
             }
 
-            concept.questions.add(task);
+            questions.add(task);
             concept.memory.event.emit(Events.ConceptQuestionAdd.class, concept, task);
         }
 
         Sentence ques = quesTask.sentence;
         final Task newAnswerT = (ques.isQuestion())
-                ? concept.selectCandidate(quesTask, concept.beliefs, false)
-                : concept.selectCandidate(quesTask, concept.desires, false);
+                ? concept.selectCandidate(quesTask, concept.beliefs)
+                : concept.selectCandidate(quesTask, concept.desires);
 
         if (newAnswerT != null) {
             trySolution(newAnswerT.sentence, task, nal, true);
@@ -455,6 +476,7 @@ public class ConceptProcessing {
             System.out.println("Failure in operation choice rule, analyze!");
         }
     }
+
     
     /**
      * Entry point for all potentially executable tasks.
@@ -524,23 +546,18 @@ public class ConceptProcessing {
     }
     
     public static void ProcessWhatQuestionAnswer(Concept concept, Task t, DerivationContext nal) {
-        Task ques;
-        if(t.sentence.isJudgment()) { //ok query var, search
+        if(t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
             for(TaskLink quess: concept.taskLinks) {
-                ques = quess.getTarget();
-                if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) {
+                Task ques = quess.getTarget();
+                if(((ques.sentence.isQuestion() && t.sentence.isJudgment()) || 
+                    (ques.sentence.isQuest()    && t.sentence.isGoal())) && ques.getTerm().hasVarQuery()) {
                     boolean newAnswer = false;
                     Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
                     if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
                         Concept c = nal.memory.concept(t.getTerm());
-                        if(c != null && ques.sentence.isQuestion() && c.beliefs.size() > 0) {
-                            final Task taskAnswer = c.beliefs.get(0);
-                            if(taskAnswer!=null) {
-                                newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
-                            }
-                        }
-                        if(c != null && ques.sentence.isQuest() &&  c.desires.size() > 0) {
-                            final Task taskAnswer = c.desires.get(0);
+                        List<Task> answers = ques.sentence.isQuestion() ? c.beliefs : c.desires;
+                        if(c != null && answers.size() > 0) {
+                            final Task taskAnswer = answers.get(0);
                             if(taskAnswer!=null) {
                                 newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
                             }
@@ -563,14 +580,9 @@ public class ConceptProcessing {
                 Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
                 if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
                     Concept c = nal.memory.concept(t.getTerm());
-                    if(c != null && ques.sentence.isQuestion() && c.beliefs.size() > 0) {
-                        final Task taskAnswer = c.beliefs.get(0);
-                        if(taskAnswer!=null) {
-                            newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
-                        }
-                    }
-                    if(c != null && ques.sentence.isQuest() &&  c.desires.size() > 0) {
-                        final Task taskAnswer = c.desires.get(0);
+                    List<Task> answers = ques.sentence.isQuestion() ? c.beliefs : c.desires;
+                    if(c != null && answers.size() > 0) {
+                        final Task taskAnswer = answers.get(0);
                         if(taskAnswer!=null) {
                             newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
                         }

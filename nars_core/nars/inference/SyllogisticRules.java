@@ -900,6 +900,10 @@ public final class SyllogisticRules {
                 comp = t;
                 break;
             }
+            if(Variables.unify(Symbols.VAR_QUERY, unify)) {
+                comp = t;
+                break;
+            }
         }
         if(comp == null) {
             return;

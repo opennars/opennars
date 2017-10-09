@@ -134,10 +134,6 @@ public class Sentence<T extends Term> implements Cloneable {
         
         this.punctuation = punctuation;
         
-        if(this.isJudgment() && _content.hasVarQuery()) {
-            truth.setConfidence(0.0f);
-        }
-        else
         if(_content instanceof Implication || _content instanceof Equivalence) {
             if(((Statement) _content).getSubject().hasVarIndep() && !((Statement) _content).getPredicate().hasVarIndep())
                 truth.setConfidence(0.0f);

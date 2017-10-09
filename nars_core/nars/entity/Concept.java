@@ -36,7 +36,7 @@ import nars.config.Parameters;
 import nars.control.DerivationContext;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
-import static nars.inference.TemporalRules.solutionQuality;
+import nars.inference.LocalRules;
 import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
 import nars.language.Term;
@@ -80,7 +80,7 @@ public class Concept extends Item<Term> {
     /**
      * Pending Quests to be answered by new desire values
      */
-    public final ArrayList<Task> quests;
+    public final List<Task> quests;
 
     /**
      * Judgments directly made about the term Use ArrayList because of access
@@ -264,7 +264,7 @@ public class Concept extends Item<Term> {
      * @param list The list of beliefs or desires to be used
      * @return The best candidate selected
      */
-    public Task selectCandidate(final Task query, final List<Task> list, boolean forRevision) {
+    public Task selectCandidate(final Task query, final List<Task> list) {
  //        if (list == null) {
         //            return null;
         //        }
@@ -276,7 +276,7 @@ public class Concept extends Item<Term> {
             for (int i = 0; i < list.size(); i++) {
                 Task judgT = list.get(i);
                 Sentence judg = judgT.sentence;
-                beliefQuality = solutionQuality(rateByConfidence, query, judg, memory); //makes revision explicitly search for 
+                beliefQuality = LocalRules.solutionQuality(rateByConfidence, query, judg, memory); //makes revision explicitly search for 
                 if (beliefQuality > currentBest /*&& (!forRevision || judgT.sentence.equalsContent(query)) */ /*&& (!forRevision || !Stamp.baseOverlap(query.stamp.evidentialBase, judg.stamp.evidentialBase)) */) {
                     currentBest = beliefQuality;
                     candidate = judgT;
@@ -581,7 +581,10 @@ public class Concept extends Item<Term> {
      * dedConjunctionByQuestion only
      */
     public List<Task> getQuestions() {
-        return questions;
+        return Collections.unmodifiableList(questions);
+    }
+    public List<Task> getQuess() {
+        return Collections.unmodifiableList(quests);
     }
 
     public void discountConfidence(final boolean onBeliefs) {

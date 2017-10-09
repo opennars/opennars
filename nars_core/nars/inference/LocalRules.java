@@ -31,6 +31,8 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.entity.TaskLink;
+import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import static nars.inference.TemporalRules.matchingOrder;
 import static nars.inference.TemporalRules.reverseOrder;
@@ -43,7 +45,6 @@ import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variables;
-import static nars.inference.TemporalRules.matchingOrder;
 
 
 /**
@@ -147,8 +148,8 @@ public class LocalRules {
         Sentence oldBest = task.getBestSolution();
         if (oldBest != null) {
             boolean rateByConfidence = oldBest.getTerm().equals(belief.getTerm());
-            float newQ = TemporalRules.solutionQuality(rateByConfidence, task, belief, memory);
-            float oldQ = TemporalRules.solutionQuality(rateByConfidence, task, oldBest, memory);
+            float newQ = solutionQuality(rateByConfidence, task, belief, memory);
+            float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory);
             if (oldQ >= newQ) {
                 if (problem.isGoal()) {
                     memory.emotion.adjustHappy(oldQ, task.getPriority(),nal);
@@ -178,7 +179,7 @@ public class LocalRules {
         
         //memory.logic.SOLUTION_BEST.commit(task.getPriority());
         
-        BudgetValue budget = TemporalRules.solutionEval(task, belief, task, nal);
+        BudgetValue budget = solutionEval(task, belief, task, nal);
         if ((budget != null) && budget.aboveThreshold()) {                       
             
             //Solution Activated
@@ -209,6 +210,82 @@ public class LocalRules {
             memory.emit(Unsolved.class, task, belief, "Insufficient budget");
         }
         return false;
+    }
+    
+    /**
+     * Evaluate the quality of the judgment as a solution to a problem
+     *
+     * @param problem A goal or question
+     * @param solution The solution to be evaluated
+     * @return The quality of the judgment as the solution
+     */
+    public static float solutionQuality(boolean rateByConfidence, final Task probT, final Sentence solution, Memory memory) {
+        Sentence problem = probT.sentence;
+        
+        if ((probT.sentence.punctuation != solution.punctuation && solution.term.hasVarQuery()) || !matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
+            return 0.0F;
+        }
+        
+        TruthValue truth = solution.truth;
+        if (problem.getOccurenceTime()!=solution.getOccurenceTime()) {
+            truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time());            
+        }
+        
+        //when the solutions are comparable, we have to use confidence!! else truth expectation.
+        //this way negative evidence can update the solution instead of getting ignored due to lower truth expectation.
+        //so the previous handling to let whether the problem has query vars decide was wrong.
+        if (!rateByConfidence) {
+            return (float) (truth.getExpectation() / Math.sqrt(Math.sqrt(Math.sqrt(solution.term.getComplexity()*Parameters.COMPLEXITY_UNIT))));
+        } else {
+            return truth.getConfidence();
+        }
+    }
+
+
+    /* ----- Functions used both in direct and indirect processing of tasks ----- */
+    /**
+     * Evaluate the quality of a belief as a solution to a problem, then reward
+     * the belief and de-prioritize the problem
+     *
+     * @param problem The problem (question or goal) to be solved
+     * @param solution The belief as solution
+     * @param task The task to be immediately processed, or null for continued
+     * process
+     * @return The budget for the new task which is the belief activated, if
+     * necessary
+     */
+    public static BudgetValue solutionEval(final Task problem, final Sentence solution, Task task, final nars.control.DerivationContext nal) {
+        if(problem.sentence.punctuation != solution.punctuation && solution.term.hasVarQuery()) {
+            return null;
+        }
+        BudgetValue budget = null;
+        boolean feedbackToLinks = false;
+        if (task == null) {
+            task = nal.getCurrentTask();
+            feedbackToLinks = true;
+        }
+        boolean judgmentTask = task.sentence.isJudgment();
+        boolean rateByConfidence = problem.getTerm().hasVarQuery(); //here its whether its a what or where question for budget adjustment
+        final float quality = solutionQuality(rateByConfidence, problem, solution, nal.mem());
+        
+        if (problem.sentence.isGoal()) {
+            nal.memory.emotion.adjustHappy(quality, task.getPriority(), nal);
+        }
+        
+        if (judgmentTask) {
+            task.incPriority(quality);
+        } else {
+            float taskPriority = task.getPriority(); //+goal satisfication is a matter of degree - https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M
+            budget = new BudgetValue(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.truth));
+            task.setPriority(Math.min(1 - quality, taskPriority));
+        }
+        if (feedbackToLinks) {
+            TaskLink tLink = nal.getCurrentTaskLink();
+            tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
+            TermLink bLink = nal.getCurrentBeliefLink();
+            bLink.incPriority(quality);
+        }
+        return budget;
     }
 
 

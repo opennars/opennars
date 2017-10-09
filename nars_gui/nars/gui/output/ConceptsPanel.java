@@ -314,13 +314,17 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             }
             else {
                 subtitle.setText("");
-                if (!concept.questions.isEmpty())
+                if (!concept.questions.isEmpty() || !concept.quests.isEmpty())
                     subtitle.setText("?(question)");
                 beliefTime.setVisible(false);
             }
 
-            if (!concept.questions.isEmpty())
-                questionChart.update( unmodifiableList( concept.questions ) );
+            if (!concept.questions.isEmpty() || !concept.quests.isEmpty()) {
+                ArrayList<Task> qu = new ArrayList<Task>();
+                qu.addAll(concept.questions);
+                qu.addAll(concept.quests);
+                questionChart.update( unmodifiableList( qu ) );
+            }
             
             if (!concept.desires.isEmpty()) {
                 List<Task> ddT = concept.getDesires();
