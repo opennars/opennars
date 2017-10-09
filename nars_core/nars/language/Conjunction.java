@@ -241,9 +241,9 @@ public class Conjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    final private static Term make(final Collection<Term> set, int temporalOrder) {
+    final private static Term make(final Collection<Term> set, int temporalOrder, boolean spatial) {
         Term[] argument = set.toArray(new Term[set.size()]);
-        return make(argument, temporalOrder);
+        return make(argument, temporalOrder, spatial);
     }
 
     @Override
@@ -266,6 +266,9 @@ public class Conjunction extends CompoundTerm {
     }
 
     final public static Term make(final Term term1, final Term term2, int temporalOrder) {
+        return make(term1, term2, temporalOrder, false);
+    }
+    final public static Term make(final Term term1, final Term term2, int temporalOrder, boolean spatial) {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             
             final Term[] components;
@@ -298,7 +301,7 @@ public class Conjunction extends CompoundTerm {
             } else {
                 components = new Term[] { term1, term2 };
             }
-            return make(components, temporalOrder);
+            return make(components, temporalOrder, spatial);
             
         } else {
             
@@ -322,7 +325,7 @@ public class Conjunction extends CompoundTerm {
                 set.add(term2);
             }
             
-            return make(set, temporalOrder);
+            return make(set, temporalOrder, spatial);
         }
     }
 
