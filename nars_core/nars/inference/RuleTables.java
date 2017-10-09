@@ -804,7 +804,9 @@ public class RuleTables {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
                 Conjunction conj = (Conjunction) compound;
                 Term[] u = new Term[] { compound, statement };
+                boolean unified_dep = false;
                 if (Variables.unify(VAR_DEPENDENT, component, statement, u)) {
+                    unified_dep = true;
                     compound = (Conjunction) u[0];
                     statement = (Statement) u[1];
                     if(conj.isSpatial || compound.getTemporalOrder() != TemporalRules.ORDER_FORWARD || //only allow dep var elimination
@@ -813,12 +815,19 @@ public class RuleTables {
                                 statement.equals(beliefTerm),
                                 nal);
                     }
-                } else if (task.sentence.isJudgment()) { // && !compound.containsTerm(component)) {
-                    CompositionalRules.introVarInner(statement, (Statement) component, compound, nal);
                 } else if (Variables.unify(VAR_QUERY, component, statement, u)) {
                     compound = (CompoundTerm) u[0];
                     statement = (Statement) u[1];                    
-                    CompositionalRules.decomposeStatement(compound, component, true, index, nal);                    
+                    CompositionalRules.decomposeStatement(compound, component, true, index, nal);
+                    if(conj.isSpatial || compound.getTemporalOrder() != TemporalRules.ORDER_FORWARD || //only allow dep var elimination
+                            index == 0) { //for (&/ on first component!!
+                        SyllogisticRules.elimiVarDep(compound, component, 
+                                statement.equals(beliefTerm),
+                                nal);
+                    }
+                }
+                if (!unified_dep && task.sentence.isJudgment()) { // && !compound.containsTerm(component)) {
+                    CompositionalRules.introVarInner(statement, (Statement) component, compound, nal);
                 }
             }
         } else {
