@@ -135,9 +135,13 @@ public class Parameters {
     /** Size of Novel Task Buffer */
     public static final int NOVEL_TASK_BAG_SIZE = 100;
     public static final int NOVEL_TASK_BAG_LEVELS = 10;
-    /*  Size of sequence/input event bag */
+    /*  Size of derived sequence and input event bag */
     public static int SEQUENCE_BAG_SIZE = 30;
     public static final int SEQUENCE_BAG_LEVELS = 10;
+    /*  Size of remembered last operation tasks */
+    public static int OPERATION_BAG_SIZE = 10;
+    public static final int OPERATION_BAG_LEVELS = 10;
+    public static int OPERATION_SAMPLES = 2; //should be at least 2 to not only consider last decision
     
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */
@@ -227,11 +231,7 @@ public class Parameters {
    // public static int STM_SIZE = 1;
     public static int SEQUENCE_BAG_ATTEMPTS = 10; //5 //20
     public static int CONDITION_BAG_ATTEMPTS = 10; //5 //20
-    
-    public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=true; //this should be true to restore 1.6.1 strategy
 
-    public static int TEMPORAL_INDUCTION_SAMPLES = 1; //normal inference rule, this should be 0 to restore 1.6.1 strategy, 1 to restore 1.6.3 strategy
-    
     public static float DERIVATION_PRIORITY_LEAK = 0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
     
     public static float DERIVATION_DURABILITY_LEAK = 0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs

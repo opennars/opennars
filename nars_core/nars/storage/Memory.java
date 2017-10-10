@@ -107,7 +107,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     
     /* Input event tasks that were either input events or derived sequences*/
     public Bag<Task<Term>,Sentence<Term>> seq_current;
-    public Bag<Task<Term>,Sentence<Term>> seq_before;
+    public Bag<Task<Term>,Sentence<Term>> recent_operations;
 
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
@@ -129,14 +129,14 @@ public class Memory implements Serializable, Iterable<Concept> {
      */
     public Memory(RuntimeParameters param, Bag<Concept,Term> concepts, Bag<Task<Term>,Sentence<Term>> novelTasks,
             Bag<Task<Term>,Sentence<Term>> seq_current,
-            Bag<Task<Term>,Sentence<Term>> seq_before) {                
+            Bag<Task<Term>,Sentence<Term>> recent_operations) {                
 
         this.param = param;
         this.event = new EventEmitter();
         this.concepts = concepts;
         this.novelTasks = novelTasks;                
         this.newTasks = new ArrayDeque<>();
-        this.seq_before = seq_before;
+        this.recent_operations = recent_operations;
         this.seq_current = seq_current;
         this.operators = new HashMap<>();
         reset();
@@ -148,7 +148,6 @@ public class Memory implements Serializable, Iterable<Concept> {
         concepts.clear();
         novelTasks.clear();
         newTasks.clear();    
-        this.seq_before.clear();
         this.seq_current.clear();
         cycle = 0;
         inputPausedUntil = 0;
@@ -280,10 +279,6 @@ public class Memory implements Serializable, Iterable<Concept> {
             if (task.budget.aboveThreshold()) {
                 
                 addNewTask(task, "Perceived");
-                
-                if(task.sentence.isJudgment() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
-                    TemporalInferenceControl.NewOperationFrame(this, task);
-                }
                 
             } else {
                 removeTask(task, "Neglected");
