@@ -821,8 +821,8 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         p.add(new NSlider(memory.param.taskLinkForgetDurations, "Task Duration", 0.5f, 20), c);
         p.add(new NSlider(memory.param.termLinkForgetDurations, "Belief Duration", 0.5f, 20), c);
         p.add(new NSlider(memory.param.conceptForgetDurations, "Concept Duration", 0.5f, 20), c);
-        p.add(new NSlider(memory.param.novelTaskForgetDurations, "Novel Duration", 0.5f, 20), c);
-        p.add(new NSlider(memory.param.sequenceForgetDurations, "Sequence Duration", 0.5f, 20), c);
+        p.add(new NSlider(memory.param.sequenceForgetDurations, "Event Duration", 0.5f, 20), c);
+        p.add(new NSlider(memory.param.operationForgetDurations, "Operation Duration", 0.5f, 20), c);
 
         
 //

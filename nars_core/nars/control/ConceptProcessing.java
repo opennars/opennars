@@ -33,6 +33,9 @@ public class ConceptProcessing {
      */
     public static boolean processTask(Concept concept, final DerivationContext nal, final Task task) {
         if(task.isInput()) {
+            if(task.sentence.isJudgment() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
+                TemporalInferenceControl.NewOperationFrame(nal.memory, task);
+            }
             concept.observable = true;
         }
 

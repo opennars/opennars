@@ -51,6 +51,10 @@ public class Concept extends Item<Term> {
      * The term is the unique ID of the concept
      */
     public final Term term;
+    
+    //recent events that happened before the operation the
+    //concept represents was executed
+    public Bag<Task<Term>,Sentence<Term>> seq_before;
 
     /**
      * Task links for indirect processing

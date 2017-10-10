@@ -58,21 +58,6 @@ public class RuntimeNARSettings implements Plugin {
         Parameters.HORIZON=(float) val;
     }
     
-    public boolean isInductionOnSucceedingEvents() {
-        return Parameters.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS;
-    }
-    
-    public void setInductionOnSucceedingEvents(boolean val) {
-        Parameters.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=val;
-    }
-
-    public double getInductionSamples() {
-        return Parameters.TEMPORAL_INDUCTION_SAMPLES;
-    }
-    public void setInductionSamples(double val) {
-        Parameters.TEMPORAL_INDUCTION_SAMPLES=(int) val;
-    }
-    
     public double getCuriosityDesireConfidenceMul() {
         return Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL;
     }
