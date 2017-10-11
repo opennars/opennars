@@ -178,7 +178,7 @@ public class Pong extends Frame {
                     this.LastInput = ""; //periodically receive new input even when not changed
                 }
                 
-                float middle_distance = 100.0f; //approximately the drawing size of paddle plus ball radius
+                float middle_distance = 20.0f; //approximately the drawing size of paddle plus ball radius
                 if(Math.abs(agent.x - ball.x) < middle_distance) {
                     //touching the ball?
                     if(Math.abs(agent.x - ball.x) < middle_distance && ball.y < 120) { //same here
