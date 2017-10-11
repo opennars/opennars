@@ -101,7 +101,6 @@ public class Pong extends Frame {
 
             int k=0;
             float Alpha=0.08f;
-            boolean lastWasMiddle = false;
             int UpdateSOM(float[] viewField,float reward) //input and reward
             {
                 /*for(int i=0;i<viewField.length;i++) {
@@ -119,7 +118,7 @@ public class Pong extends Frame {
                 lastAction = 0;
                 k++;
                 if(k%4==0) {
-                    nar.addInput("<{\"1\"} --> [on]>! :|:"); //future extension: change to self good
+                    nar.addInput("<{SELF} --> [good]>! :|:"); //future extension: change to self good
                     //System.out.println("food urge input");
                 }
                 //if(reward > 0) { //even more delayed reward (for the future)
@@ -150,56 +149,64 @@ public class Pong extends Frame {
                                                    
                 
                 if(k%4 == 0) {
-                Sentence hypo_left = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
-                        "<(&/,<{left} --> [on]>,+1,(^Right,{SELF}),+1) =/> <{\"1\"} --> [on]>>");
+                Sentence hypo_left = ConceptMonitor.strongestPrecondition(nar, "<{SELF} --> [good]>",
+                        "<(&/,<{left} --> [on]>,+1,(^Right,{SELF}),+1) =/> <{SELF} --> [good]>>");
                 if(hypo_left != null) {
                     System.out.println("HypLeftWrong: " + hypo_left.truth);
                 }
                 
-                Sentence hypo_right = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
-                        "<(&/,<{right} --> [on]>,+12,(^Left,{SELF}),+13) =/> <{\"1\"} --> [on]>>");
+                Sentence hypo_right = ConceptMonitor.strongestPrecondition(nar, "<{SELF} --> [good]>",
+                        "<(&/,<{right} --> [on]>,+12,(^Left,{SELF}),+13) =/> <{SELF} --> [good]>>");
                 if(hypo_right != null) {
                     System.out.println("HypRightWrong: " + hypo_right.truth);
                 }
                 
-                Sentence hypo_left_false = ConceptMonitor.strongestPrecondition(nar, "<{\"1\"} --> [on]>",
-                        "<(&/,<{left} --> [on]>,+1,(^Left,{SELF}),+1) =/> <{\"1\"} --> [on]>>");
+                Sentence hypo_left_false = ConceptMonitor.strongestPrecondition(nar, "<{SELF} --> [good]>",
+                        "<(&/,<{left} --> [on]>,+1,(^Left,{SELF}),+1) =/> <{SELF} --> [good]>>");
                 if(hypo_left_false != null) {
                     System.out.println("HypLeft: " + hypo_left_false.truth);
                 }
                 
-                Sentence hypo_right_false = ConceptMonitor.strongestPrecondition(nar,  "<{\"1\"} --> [on]>",
-                        "<(&/,<{right} --> [on]>,+12,(^Right,{SELF}),+13) =/> <{\"1\"} --> [on]>>");
+                Sentence hypo_right_false = ConceptMonitor.strongestPrecondition(nar,  "<{SELF} --> [good]>",
+                        "<(&/,<{right} --> [on]>,+12,(^Right,{SELF}),+13) =/> <{SELF} --> [good]>>");
                 if(hypo_right_false != null) {
                     System.out.println("HypRight: " + hypo_right_false.truth);
                 }
                 }
                 
-                float accepted_distance = 20.0f;
-                if(Math.abs(agent.x - ball.x) < accepted_distance) {
-                    String s = "<{\"1\"} --> [on]>. :|:";
-                    if(agent.y < 50) {
-                        if(!lastWasMiddle || !s.equals(this.LastInput)) {
+                if(k%20 == 0) {
+                    this.LastInput = ""; //periodically receive new input even when not changed
+                }
+                
+                float middle_distance = 100.0f; //approximately the drawing size of paddle plus ball radius
+                if(Math.abs(agent.x - ball.x) < middle_distance) {
+                    //touching the ball?
+                    if(Math.abs(agent.x - ball.x) < middle_distance && ball.y < 120) { //same here
+                        String s = "<{SELF} --> [good]>. :|:";
+                        if(!s.equals(this.LastInput)) {
                             System.out.println("good mr_nars");
                             nar.addInput(s);
                             System.out.println(s);
                         }
-                        lastWasMiddle = true;
+                        this.LastInput = s;
+                    } else {
+                        String s = "<{middle} --> [on]>. :|:";
+                        if(!s.equals(this.LastInput)) {
+                            nar.addInput(s);
+                        }
+                        this.LastInput = s;
                     }
-                    this.LastInput = s;
                 } else {
                     if(agent.x < ball.x) {
                         String s = "<{right} --> [on]>. :|:";
-                        lastWasMiddle = false;
-                        if(k%20 == 0 || !s.equals(this.LastInput)) {
+                        if(!s.equals(this.LastInput)) {
                             nar.addInput(s);
                             System.out.println(s);
                         }
                         this.LastInput = s;
                     } else {
                         String s = "<{left} --> [on]>. :|:";
-                        lastWasMiddle = false;
-                        if(k%20 == 0 || !s.equals(this.LastInput)) {
+                        if(!s.equals(this.LastInput)) {
                             nar.addInput(s);
                             System.out.println(s);
                         }

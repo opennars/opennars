@@ -406,8 +406,10 @@ public class ConceptProcessing {
                 System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
 
                 //distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
-                mintime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude-1, nal.memory.param.duration);
-                maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+2, nal.memory.param.duration);
+                long test = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
+                long add_tolerance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+3, nal.memory.param.duration);
+                mintime = nal.memory.time();
+                maxtime = nal.memory.time() + add_tolerance;
 
                 Operation op = (Operation) prec[prec.length-2];
                 Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
