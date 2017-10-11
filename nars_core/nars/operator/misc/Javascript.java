@@ -9,12 +9,12 @@ import nars.storage.Memory;
 import nars.io.Output.ERR;
 import nars.io.Texts;
 import nars.language.Term;
-import nars.operator.SynchronousFunctionOperator;
+import nars.operator.FunctionOperator;
 
 /**
  * Executes a Javascript expression
  */
-public class Javascript extends SynchronousFunctionOperator {
+public class Javascript extends FunctionOperator {
     
     ScriptEngine js = null;   
     Bindings bindings = null;

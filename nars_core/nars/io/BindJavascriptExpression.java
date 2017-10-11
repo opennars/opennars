@@ -12,7 +12,7 @@ import nars.config.Parameters;
 import nars.io.Output.ERR;
 import nars.language.Term;
 import nars.operator.Operator;
-import nars.operator.SynchronousFunctionOperator;
+import nars.operator.FunctionOperator;
 
 /**
  *
@@ -72,7 +72,7 @@ public class BindJavascriptExpression implements TextReaction {
                 js.eval(jsFunc);
                 js.put("memory", memory);
                 
-                memory.addOperator(new SynchronousFunctionOperator(newOp) {
+                memory.addOperator(new FunctionOperator(newOp) {
                     
 
                     @Override

@@ -41,10 +41,7 @@ public class RuntimeParameters implements Serializable {
     public final AtomicDouble taskLinkForgetDurations = new AtomicDouble(4.0);
     
     /** Sequence bag forget durations **/
-    public final AtomicDouble sequenceForgetDurations = new AtomicDouble(4.0);
-    
-    /** Operation bag forget durations **/
-    public final AtomicDouble operationForgetDurations = new AtomicDouble(4.0);
+    public final AtomicDouble eventForgetDurations = new AtomicDouble(4.0);
 
     
     /** Minimum expectation for a desire value. 

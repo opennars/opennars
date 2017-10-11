@@ -27,7 +27,13 @@ public class Variables {
             return true;
         }
         if(uniType == Symbols.VAR_INDEPENDENT) { //the now allowed case
-            if(type == Symbols.VAR_DEPENDENT) {
+            if(type == Symbols.VAR_DEPENDENT ||
+               type == Symbols.VAR_QUERY) {
+                return true;
+            }
+        }
+        if(uniType == Symbols.VAR_DEPENDENT) { //the now allowed case
+            if(type == Symbols.VAR_QUERY) {
                 return true;
             }
         }
@@ -44,7 +50,14 @@ public class Variables {
     }
     public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map, boolean allowPartial) {
 
-        final boolean term1HasVar = term1.hasVar(type);
+        boolean term1HasVar = term1.hasVar(type);
+        if(type == Symbols.VAR_INDEPENDENT) {
+            term1HasVar |= term1.hasVarDep();
+            term1HasVar |= term1.hasVarQuery();
+        }
+        if(type == Symbols.VAR_DEPENDENT) {
+            term1HasVar |= term1.hasVarQuery();
+        }
         final boolean term2HasVar = term2.hasVar(type);
         
         
@@ -353,8 +366,8 @@ public class Variables {
 
     public static Variable makeCommonVariable(final Term v1, final Term v2) {
         //TODO use more efficient string construction
-        return new Variable(v1.toString() + v2.toString() + '$');
-    }
+        return new Variable(v2.toString() + v1.toString() + '$'); //v2 first since when type does not match
+    } //but it is an allowed rename like $1 -> #1 then the second type should be used
     
     /**
      * Check whether a term is using an

@@ -11,14 +11,14 @@ import nars.language.Product;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.operator.SynchronousFunctionOperator;
-import nars.operator.SynchronousFunctionOperator;
+import nars.operator.FunctionOperator;
+import nars.operator.FunctionOperator;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term
  * @author me
  */
-public class Reflect extends SynchronousFunctionOperator {
+public class Reflect extends FunctionOperator {
 
 
     /*

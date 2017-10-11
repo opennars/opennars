@@ -7,7 +7,7 @@ import static nars.io.Texts.unescape;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
-import nars.operator.SynchronousFunctionOperator;
+import nars.operator.FunctionOperator;
 import org.encog.ml.prg.EncogProgram;
 import org.encog.ml.prg.EncogProgramContext;
 import org.encog.ml.prg.ProgramNode;
@@ -18,7 +18,7 @@ import org.encog.ml.tree.TreeNode;
  * Parses an expression string to terms
  * @see https://github.com/encog/encog-java-core/blob/master/src/test/java/org/encog/ml/prg/TestProgramClone.java
  */
-public class MathExpression  extends SynchronousFunctionOperator {
+public class MathExpression  extends FunctionOperator {
 
     static EncogProgramContext context;
 

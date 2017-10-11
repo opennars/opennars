@@ -18,12 +18,12 @@ package nars.operator.misc;
 
 import nars.storage.Memory;
 import nars.language.Term;
-import nars.operator.SynchronousFunctionOperator;
+import nars.operator.FunctionOperator;
 
 /**
  * Count the number of elements in a set
  */
-public class Add extends SynchronousFunctionOperator {
+public class Add extends FunctionOperator {
 
     public Add() {
         super("^add");
