@@ -14,6 +14,7 @@ import nars.language.*;
 import nars.operator.Operation;
 import nars.plugin.mental.InternalExperience;
 import nars.util.Events;
+import nars.storage.LevelBag;
 
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
@@ -95,6 +96,7 @@ public class ConceptProcessing {
 
         final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
+        boolean wasRevised = false;
         if (oldBeliefT != null) {
             oldBelief = oldBeliefT.sentence;
             final Stamp newStamp = judg.stamp;
@@ -115,7 +117,7 @@ public class ConceptProcessing {
                         // nal.singlePremiseTask(projectedBelief, task.budget);
                     }
                     nal.setCurrentBelief(projectedBelief);
-                    revision(judg, projectedBelief, false, nal);
+                    wasRevised = revision(judg, projectedBelief, false, nal);
                 }
             }
         }
@@ -132,6 +134,19 @@ public class ConceptProcessing {
 
             concept.addToTable(task, false, concept.beliefs, Parameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
 
+            //now try to trigger a reaction:
+            if(concept.target_goals != null && !wasRevised) {
+                Task goal = concept.target_goals.takeNext();
+                if(goal != null) {
+                    Concept goalC = nal.memory.concept(goal.getTerm());
+                    if(goalC != null && !goalC.desires.isEmpty()) {
+                        Task highest_desire = goalC.desires.get(0);
+                        bestReactionForGoal(goalC, nal, highest_desire.sentence.projection(nal.memory.time(), nal.memory.time()), highest_desire);
+                    }
+                    concept.target_goals.putBack(goal, nng, nal.memory);
+                }
+            }
+            
             //if taskLink predicts this concept then add to predictive
             Task target = task;
             Term term = target.getTerm();
@@ -393,10 +408,14 @@ public class ConceptProcessing {
     */
     protected static void bestReactionForGoal(Concept concept, final DerivationContext nal, Sentence projectedGoal, final Task task) {
         try{
+            if(task.getPriority() < nal.memory.param.reactionPriorityThreshold.get()) {
+                return;
+            }
             Operation bestop = null;
             float bestop_truthexp = 0.0f;
             TruthValue bestop_truth = null;
             Task executable_precond = null;
+            Concept best_precond = null;
             //long distance = -1;
             long mintime = -1;
             long maxtime = -1;
@@ -466,11 +485,22 @@ public class ConceptProcessing {
                         bestop_truthexp = expecdesire;
                         bestop_truth = opdesire;
                         executable_precond = t;
+                        best_precond = preconc;
                     }
                 }
             }
 
             if(bestop != null && bestop_truthexp > concept.memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
+                
+                 //insert this task as a viable target goal in this concept
+                //this way fullfilled preconditions can also attempt to trigger a proper goal processing
+                if(best_precond != null) {
+                    if(best_precond.target_goals == null) {
+                        best_precond.target_goals = new LevelBag<>(Parameters.TARGET_GOAL_BAG_LEVELS, Parameters.TARGET_GOAL_BAG_SIZE);
+                    }
+                    best_precond.target_goals.putIn(task);
+                }
+                
                 Sentence createdSentence = new Sentence(
                         bestop,
                         Symbols.JUDGMENT_MARK,

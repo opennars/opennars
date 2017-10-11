@@ -144,6 +144,9 @@ public class Parameters {
     public static int OPERATION_BAG_SIZE = 10;
     public static final int OPERATION_BAG_LEVELS = 10;
     public static int OPERATION_SAMPLES = 2; //should be at least 2 to not only consider last decision
+    public static int TARGET_GOAL_BAG_SIZE = 10;
+    public static final int TARGET_GOAL_BAG_LEVELS = 10;
+    public static int TARGET_GOAL_SAMPLES = 2;
     
     /** How fast events decay in confidence **/
     public static final AtomicDouble projectionDecay = new AtomicDouble(0.1);
