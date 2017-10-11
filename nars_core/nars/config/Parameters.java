@@ -20,6 +20,8 @@
  */
 package nars.config;
 
+import com.google.common.util.concurrent.AtomicDouble;
+
 
 /**
  * NAR operating parameters.
@@ -143,6 +145,9 @@ public class Parameters {
     public static final int OPERATION_BAG_LEVELS = 10;
     public static int OPERATION_SAMPLES = 2; //should be at least 2 to not only consider last decision
     
+    /** How fast events decay in confidence **/
+    public static final AtomicDouble projectionDecay = new AtomicDouble(0.1);
+    
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */
     public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 20000;
@@ -262,7 +267,7 @@ public class Parameters {
     
     public static float TEMPORAL_INDUCTION_PRIORITY_PENALTY = 1.0f; //was 0.1
     
-    public static int AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES = 2100;
+    public static int AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES = 500;
     
     public static float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
     

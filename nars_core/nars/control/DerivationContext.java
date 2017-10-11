@@ -21,6 +21,8 @@ import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.TruthFunctions;
 import nars.language.CompoundTerm;
+import nars.language.Equivalence;
+import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.language.Variable;
@@ -79,6 +81,11 @@ public class DerivationContext {
     }
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, boolean overlapAllowed, boolean addToMemory) {                        
 
+        if(task.sentence.isGoal() && (task.sentence.term instanceof Implication ||
+                                      task.sentence.term instanceof Equivalence)) {
+            return false; //implication and equivalence goals are not supported anymore
+        }
+        
         if (derivationFilters!=null) {            
             for (int i = 0; i < derivationFilters.size(); i++) {
                 DerivationFilter d = derivationFilters.get(i);

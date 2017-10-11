@@ -20,10 +20,10 @@ import nars.operator.misc.Javascript;
  * N input parameters and one variable argument (as the final argument), generating a new task
  * with the result of the function substituted in the variable's place.
  */
-public abstract class SynchronousFunctionOperator extends Operator {
+public abstract class FunctionOperator extends Operator {
 
     
-    protected SynchronousFunctionOperator(String name) {
+    protected FunctionOperator(String name) {
         super(name);
     }
 

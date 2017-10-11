@@ -674,7 +674,7 @@ public class RuleTables {
             } else if (Variables.unify(VAR_INDEPENDENT, component, content, u)) { //happens through syllogisms
                 mainSentence = mainSentence.clone(u[0]);
                 subSentence = subSentence.clone(u[1]);
-                SyllogisticRules.detachment(mainSentence, subSentence, index, nal);
+                SyllogisticRules.detachment(mainSentence, subSentence, index, false, nal);
             } else if ((statement instanceof Implication) && (statement.getPredicate() instanceof Statement) && (nal.getCurrentTask().sentence.isJudgment())) {
                 Statement s2 = (Statement) statement.getPredicate();
                 if ((content instanceof Statement) && (s2.getSubject().equals(((Statement) content).getSubject()))) {
@@ -723,11 +723,7 @@ public class RuleTables {
 
         if (component2 != null) {
             Term[] u = new Term[] { conditional, statement };
-            boolean unifiable = Variables.unify(VAR_INDEPENDENT, component, component2, u);
-            if (!unifiable) {
-                unifiable = Variables.unify(VAR_DEPENDENT, component, component2, u);
-            }
-            if (unifiable) {
+            if (Variables.unify(VAR_INDEPENDENT, component, component2, u)) {
                 conditional = (Implication) u[0];
                 statement = (Statement) u[1];
                 SyllogisticRules.conditionalDedInd(conditionalSentence, conditional, index, statement, side, nal);
@@ -804,9 +800,7 @@ public class RuleTables {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
                 Conjunction conj = (Conjunction) compound;
                 Term[] u = new Term[] { compound, statement };
-                boolean unified_dep = false;
                 if (Variables.unify(VAR_DEPENDENT, component, statement, u)) {
-                    unified_dep = true;
                     compound = (Conjunction) u[0];
                     statement = (Statement) u[1];
                     if(conj.isSpatial || compound.getTemporalOrder() != TemporalRules.ORDER_FORWARD || //only allow dep var elimination
@@ -815,18 +809,7 @@ public class RuleTables {
                                 statement.equals(beliefTerm),
                                 nal);
                     }
-                } else if (Variables.unify(VAR_QUERY, component, statement, u)) {
-                    compound = (CompoundTerm) u[0];
-                    statement = (Statement) u[1];                    
-                    CompositionalRules.decomposeStatement(compound, component, true, index, nal);
-                    if(conj.isSpatial || compound.getTemporalOrder() != TemporalRules.ORDER_FORWARD || //only allow dep var elimination
-                            index == 0) { //for (&/ on first component!!
-                        SyllogisticRules.elimiVarDep(compound, component, 
-                                statement.equals(beliefTerm),
-                                nal);
-                    }
-                }
-                if (!unified_dep && task.sentence.isJudgment()) { // && !compound.containsTerm(component)) {
+                } else if (task.sentence.isJudgment()) { // && !compound.containsTerm(component)) {
                     CompositionalRules.introVarInner(statement, (Statement) component, compound, nal);
                 }
             }
