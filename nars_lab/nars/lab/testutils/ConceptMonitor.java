@@ -8,7 +8,6 @@ import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.entity.TruthValue;
 import nars.io.Narsese;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
@@ -75,8 +74,8 @@ public class ConceptMonitor {
         Term st = stringToTerm(nar, statement);
         if(c != null && st != null) {
             for(Task t : c.executable_preconditions) {
-                if(CompoundTerm.cloneDeepReplaceIntervals(t.getTerm()).equals(
-                        CompoundTerm.cloneDeepReplaceIntervals(st))) {
+                if(CompoundTerm.replaceIntervals(t.getTerm()).equals(
+                        CompoundTerm.replaceIntervals(st))) {
                     return t.sentence;
                 }
             }

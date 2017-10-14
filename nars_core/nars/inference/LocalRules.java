@@ -20,14 +20,12 @@
  */
 package nars.inference;
 
-import java.util.Arrays;
 import nars.config.Parameters;
 import nars.util.Events.Answer;
 import nars.util.Events.Unsolved;
 import nars.storage.Memory;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
-import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -100,7 +98,7 @@ public class LocalRules {
         }
         return (s1.getRevisible() && 
                 matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()) &&
-                CompoundTerm.cloneDeepReplaceIntervals(s1.term).equals(CompoundTerm.cloneDeepReplaceIntervals(s2.term)) && 
+                CompoundTerm.replaceIntervals(s1.term).equals(CompoundTerm.replaceIntervals(s2.term)) &&
                 !Stamp.baseOverlap(s1.stamp.evidentialBase, s2.stamp.evidentialBase));
     }
 
