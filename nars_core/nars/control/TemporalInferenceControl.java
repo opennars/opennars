@@ -12,6 +12,7 @@ import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
@@ -188,15 +189,18 @@ public class TemporalInferenceControl {
     
     public static void NewOperationFrame(Memory mem, Task task) {
         List<Task> toRemove = new LinkedList<Task>(); //can there be more than one? I don't think so..
+        float priorityGain = 0.0f;
         for(Task t : mem.recent_operations) {   //when made sure, make single element and add break
             if(t.getTerm().equals(task.getTerm())) {
+                priorityGain = BudgetFunctions.or(priorityGain, t.getPriority());
                 toRemove.add(t);
             }
         }
         for(Task t : toRemove) {
             mem.recent_operations.take(t);
         }
-        mem.recent_operations.putIn(task);
+        task.setPriority(BudgetFunctions.or(task.getPriority(), priorityGain)); //this way operations priority of previous exections
+        mem.recent_operations.putIn(task);                 //contributes to the current (enhancement)
         mem.lastDecision = task;
         Concept c = (Concept) mem.concept(task.getTerm());
         if(c != null) {
