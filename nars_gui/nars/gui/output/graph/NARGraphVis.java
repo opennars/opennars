@@ -15,6 +15,7 @@ import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.GraphDisplays;
 import automenta.vivisect.swing.NSlider;
+import com.google.common.util.concurrent.AtomicDouble;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -79,7 +80,13 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         
     }
     
+    public final AtomicDouble conceptPriorityThreshold = new AtomicDouble(0.0);
+    public final AtomicDouble taskPriorityThreshold = new AtomicDouble(0.1);
+    public final AtomicDouble nConcepts = new AtomicDouble(0.004); //10000*0.001=50
     JTextField filterBox = new JTextField();
+    NSlider conceptPriSlider = new NSlider(conceptPriorityThreshold, "ConcP", 0.0f, 1.0f);
+    NSlider taskPriSlider = new NSlider(taskPriorityThreshold, "TaskP", 0.0f, 1.0f);
+    NSlider nConceptsSlider = new NSlider(nConcepts, "number of Concepts: The maximum number of concepts (long slider for a good accuracy)", 0.0f, 1.0f);
     public class ConceptGraphMode extends MinPriorityGraphMode implements GraphMode {
         private boolean showBeliefs = false;    
         private boolean showQuestions = false;
@@ -90,7 +97,9 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
 
         @Override
         public Graph nextGraph() {
-            return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new DefaultGraphizer(showBeliefs, showBeliefs, showQuestions, showTermContent, 0, showTermLinks, showTaskLinks, filterBox));
+            return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), 
+                    new DefaultGraphizer(showBeliefs, showBeliefs, showQuestions, showTermContent, 
+                            0, showTermLinks, showTaskLinks, filterBox, conceptPriorityThreshold, taskPriorityThreshold, nConcepts));
         }
 
         @Override
@@ -127,8 +136,11 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
             });
             j.add(beliefsEnable);*/
             
-            filterBox.setPreferredSize(new Dimension(255,20));
+            filterBox.setPreferredSize(new Dimension(100,20));
             j.add(filterBox);
+            j.add(conceptPriSlider);
+            j.add(taskPriSlider);
+            j.add(nConceptsSlider);
 
             return j;
             
