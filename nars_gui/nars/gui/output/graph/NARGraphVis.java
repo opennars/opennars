@@ -65,7 +65,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         public JPanel newControlPanel() {
             JPanel j = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-            NSlider maxLevels = new NSlider(1, 0, 1) {
+            /*NSlider maxLevels = new NSlider(1, 0, 1) {
                 @Override
                 public void onChange(float v) {
                     minPriority = (float) (1.0 - v);
@@ -73,8 +73,8 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
                 }
             };
             maxLevels.setPrefix("Min Level: ");
-            maxLevels.setPreferredSize(new Dimension(80, 25));
-            j.add(maxLevels);  
+            maxLevels.setPreferredSize(new Dimension(80, 25));*/
+            //j.add(conceptPriSlider);  
             j.add(conceptPriSlider);
             return j;
         }
@@ -287,18 +287,17 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
             @Override public void actionPerformed(ActionEvent e) {
                 switch (layoutSelect.getSelectedIndex()) {
                     case 0:
-                        update(style, new FastOrganicLayout());
+                        update(style, new FastOrganicLayout());     
                         break;
                     case 1:
-                        update(style, new HashPriorityPolarLayout(0f, 1f, 50));     
+                        update(style, new HyperassociativeLayout());
                         break;
                     case 2:
-                        update(style, new HashPriorityPolarLayout(0.25f, 0.75f, 75));     
+                        update(style, new HashPriorityPolarLayout(0f, 1f, 50));     
                         break;
                     case 3:
-                        update(style, new HyperassociativeLayout());     
+                        update(style, new HashPriorityPolarLayout(0.25f, 0.75f, 75));     
                         break;
-
                 }
 //cg.mode = modeSelect.getSelectedIndex();
                 setUpdateNext();
