@@ -16,9 +16,7 @@ import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
-import nars.language.Conjunction;
 import nars.operator.Operation;
-import nars.storage.Bag;
 import nars.storage.LevelBag;
 import nars.storage.Memory;
 import nars.util.Events;
@@ -161,8 +159,8 @@ public class TemporalInferenceControl {
         //multiple versions are necessary, but we do not allow duplicates
         List<Task> removals = new LinkedList<Task>();
         for(Task s : nal.memory.seq_current) {
-            if(CompoundTerm.cloneDeepReplaceIntervals(s.getTerm()).equals(
-                    CompoundTerm.cloneDeepReplaceIntervals(newEvent.getTerm()))) {
+            if(CompoundTerm.replaceIntervals(s.getTerm()).equals(
+                    CompoundTerm.replaceIntervals(newEvent.getTerm()))) {
                     // && //-- new outcommented
                     //s.sentence.stamp.equals(newEvent.sentence.stamp,false,true,true,false) ) {
                 //&& newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime() ) { 
