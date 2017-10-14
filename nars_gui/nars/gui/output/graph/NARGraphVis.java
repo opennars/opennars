@@ -84,7 +84,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
     
     public final AtomicDouble conceptPriorityThreshold = new AtomicDouble(0.0);
     public final AtomicDouble taskPriorityThreshold = new AtomicDouble(0.1);
-    public final AtomicDouble nConcepts = new AtomicDouble(0.004); //10000*0.001=50
+    public final AtomicDouble nConcepts = new AtomicDouble(0.004); //10000*0.004=40
     JTextField filterBox = new JTextField();
     NSlider conceptPriSlider = new NSlider(conceptPriorityThreshold, "ConcP", 0.0f, 1.0f);
     NSlider taskPriSlider = new NSlider(taskPriorityThreshold, "TaskP", 0.0f, 1.0f);
