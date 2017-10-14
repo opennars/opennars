@@ -29,11 +29,12 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
 import nars.util.Events.ResetEnd;
 import nars.NAR;
-import nars.gui.output.graph.layout.HashPriorityPolarLayout;
+import nars.gui.output.graph.layout.CircleLayout;
 import nars.gui.util.DefaultGraphizer;
 import nars.gui.util.NARGraph;
 import nars.gui.graph.InheritanceGraph;
 import nars.gui.graph.ImplicationGraph;
+import nars.gui.output.graph.layout.SpiralLayout;
 import org.jgrapht.Graph;
 
 /**
@@ -276,8 +277,9 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         final JComboBox layoutSelect = new JComboBox();
         layoutSelect.addItem("Organic");
         layoutSelect.addItem("Hyperassociative");
-        layoutSelect.addItem("Circle Fixed");       
-        layoutSelect.addItem("Circle Fixed (Half)");
+        layoutSelect.addItem("Circle");       
+        layoutSelect.addItem("Circle (Half)");
+        layoutSelect.addItem("Spiral");
         //layoutSelect.addItem("GridSort");
         //layoutSelect.addItem("Circle Anim");
         //layoutSelect.addItem("Grid");
@@ -293,10 +295,13 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
                         update(style, new HyperassociativeLayout());
                         break;
                     case 2:
-                        update(style, new HashPriorityPolarLayout(0f, 1f, 50));     
+                        update(style, new CircleLayout(nar, 0f, 1f, 50));     
                         break;
                     case 3:
-                        update(style, new HashPriorityPolarLayout(0.25f, 0.75f, 75));     
+                        update(style, new CircleLayout(nar, 0.25f, 0.75f, 75));     
+                        break;
+                    case 4:
+                        update(style, new SpiralLayout(nar, 75));     
                         break;
                 }
 //cg.mode = modeSelect.getSelectedIndex();
