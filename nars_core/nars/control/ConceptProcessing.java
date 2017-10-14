@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import nars.config.Parameters;
 import nars.entity.*;
-import nars.inference.BudgetFunctions;
 import nars.inference.SyllogisticRules;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
@@ -185,8 +184,8 @@ public class ConceptProcessing {
                                 //at first we have to remove the last one with same content from table
                                 int i_delete = -1;
                                 for(int i=0; i < pred_conc.executable_preconditions.size(); i++) {
-                                    if(CompoundTerm.cloneDeepReplaceIntervals(pred_conc.executable_preconditions.get(i).getTerm()).equals(
-                                            CompoundTerm.cloneDeepReplaceIntervals(strongest_target.getTerm()))) {
+                                    if(CompoundTerm.replaceIntervals(pred_conc.executable_preconditions.get(i).getTerm()).equals(
+                                            CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
                                         i_delete = i; //even these with same term but different intervals are removed here
                                         break;
                                     }
@@ -580,7 +579,7 @@ public class ConceptProcessing {
         for(TaskLink tl : concept.taskLinks) { //search for input in tasklinks (beliefs alone can not take temporality into account as the eternals will win)
             Task t = tl.targetTask;
             if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && t.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION &&
-                    CompoundTerm.cloneDeepReplaceIntervals(t.sentence.term).equals(CompoundTerm.cloneDeepReplaceIntervals(concept.getTerm()))) {
+                    CompoundTerm.replaceIntervals(t.sentence.term).equals(CompoundTerm.replaceIntervals(concept.getTerm()))) {
                 if(t.sentence.getOccurenceTime() >= concept.negConfirm_abort_mintime && t.sentence.getOccurenceTime() <= concept.negConfirm_abort_maxtime) {
                     cancelled = true;
                     break;
