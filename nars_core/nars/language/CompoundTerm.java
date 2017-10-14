@@ -157,7 +157,15 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             }
         }
     }
-    
+
+    public static Term replaceIntervals(Term T) {
+        if(T instanceof CompoundTerm) {
+            T=T.cloneDeep(); //we will operate on a copy
+            ReplaceIntervals((CompoundTerm) T);
+        }
+        return T;
+    }
+
     public static Term cloneDeepReplaceIntervals(Term T) {
         T=T.cloneDeep(); //we will operate on a copy
         if(T instanceof CompoundTerm) {
@@ -165,7 +173,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
         return T;
     }
-    
+
+
     public CompoundTerm transformIndependentVariableToDependentVar(CompoundTerm T) {
         T=T.cloneDeep(); //we will operate on a copy
         int counter = 0;
