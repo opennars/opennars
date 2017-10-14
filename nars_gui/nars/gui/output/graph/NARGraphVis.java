@@ -33,6 +33,7 @@ import nars.gui.output.graph.layout.HashPriorityPolarLayout;
 import nars.gui.util.DefaultGraphizer;
 import nars.gui.util.NARGraph;
 import nars.gui.graph.InheritanceGraph;
+import nars.gui.graph.ImplicationGraph;
 import org.jgrapht.Graph;
 
 /**
@@ -73,7 +74,8 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
             };
             maxLevels.setPrefix("Min Level: ");
             maxLevels.setPreferredSize(new Dimension(80, 25));
-            j.add(maxLevels);        
+            j.add(maxLevels);  
+            j.add(conceptPriSlider);
             return j;
         }
         
@@ -153,7 +155,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         @Override
         public Graph nextGraph() {
             if (this.ig==null) {
-                this.ig = new InheritanceGraph(nar, true, true);
+                this.ig = new InheritanceGraph(nar, true, true, conceptPriorityThreshold);
                 ig.start();
             }
             
@@ -170,6 +172,28 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         
     }
 
+    public class ImplicationGraphMode extends MinPriorityGraphMode implements GraphMode {
+        private ImplicationGraph ig;
+
+        @Override
+        public Graph nextGraph() {
+            if (this.ig==null) {
+                this.ig = new ImplicationGraph(nar, true, true, conceptPriorityThreshold);
+                ig.start();
+            }
+            
+            return ig;
+        }        
+
+        @Override
+        public void stop() {
+            if (ig!=null) {
+                ig.stop();
+                ig = null;
+            }
+        }
+        
+    }
     
     public GraphMode mode = new ConceptGraphMode();
     
@@ -251,12 +275,12 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         JPanel j = new JPanel(new FlowLayout(FlowLayout.LEFT));
         final JComboBox layoutSelect = new JComboBox();
         layoutSelect.addItem("Organic");
+        layoutSelect.addItem("Hyperassociative");
         layoutSelect.addItem("Circle Fixed");       
         layoutSelect.addItem("Circle Fixed (Half)");
-        layoutSelect.addItem("Hyperassociative");
-        layoutSelect.addItem("GridSort");
-        layoutSelect.addItem("Circle Anim");
-        layoutSelect.addItem("Grid");
+        //layoutSelect.addItem("GridSort");
+        //layoutSelect.addItem("Circle Anim");
+        //layoutSelect.addItem("Grid");
         
         //modeSelect.setSelectedIndex(cg.mode);
         layoutSelect.addActionListener(new ActionListener() {
@@ -301,6 +325,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         final JComboBox modeSel = new JComboBox();
         modeSel.addItem("Concepts");
         modeSel.addItem("Inheritance");       
+        modeSel.addItem("Implication");  
         //modeSelect.setSelectedIndex(cg.mode);
         modeSel.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
@@ -310,6 +335,9 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
                         break;
                     case 1:
                         setMode(new InheritanceGraphMode());
+                        break;
+                    case 2:
+                        setMode(new ImplicationGraphMode());
                         break;
 
                 }

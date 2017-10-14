@@ -28,7 +28,6 @@ import nars.operator.Operator;
  */
 public class MultipleExecutionManager {
 
-    public final GraphExecutive graph;
     public final Memory memory;
     public final NavigableSet<Execution> tasks;
     private final Set<Execution> tasksToRemove = new ConcurrentSkipListSet();
@@ -54,8 +53,6 @@ public class MultipleExecutionManager {
 
     public MultipleExecutionManager(Memory mem) {
         this.memory = mem;
-        
-        this.graph = new GraphExecutive(mem, this);
 
         this.tasks = new ConcurrentSkipListSet<Execution>() {
 
@@ -451,44 +448,7 @@ public class MultipleExecutionManager {
         //if (newEvent.getCause()!=null) return true;       
         return false;
     }
-    
-    /*
-     public boolean isActionable(final Task newEvent, Memory mem) {
-     if(!((newEvent.isInput()))) {
-     return false;
-     }
-     Term newcontent=newEvent.sentence.content;
-     if(newcontent instanceof Operation) {
-     Term pred=((Operation)newcontent).getPredicate();
-     if(pred.equals(mem.getOperator("^want")) || pred.equals(mem.getOperator("^believe"))) {
-     return false;
-     }
-     }
-     return true;
-     }*/
 
-//    public static class TaskConceptContent {
-//        
-//        public final Task task;
-//        public final Concept concept;
-//        public final Term content;
-//
-//        public static TaskConceptContent NULL = new TaskConceptContent();
-//        
-//        /** null placeholder */
-//        protected TaskConceptContent() {
-//            this.task = null;
-//            this.concept = null;
-//            this.content = null;
-//        }
-//
-//        public TaskConceptContent(Task task, Concept concept, Term content) {
-//            this.task = task;
-//            this.concept = concept;
-//            this.content = content;
-//        }
-//        
-//    }
     protected void updateSensors() {
         //memory.logic.PLAN_GRAPH_EDGE.commit(graph.implication.edgeSet().size());
        // memory.logic.PLAN_GRAPH_VERTEX.commit(graph.implication.vertexSet().size());

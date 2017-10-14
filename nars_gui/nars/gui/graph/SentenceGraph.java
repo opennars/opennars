@@ -1,5 +1,6 @@
 package nars.gui.graph;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,8 +33,9 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     public final Map<Sentence, List<E>> components = new HashMap();
     
     public final EventEmitter event = new EventEmitter( GraphChange.class );
-    
-    public SentenceGraph(Memory memory) {
+    AtomicDouble minConceptPri;
+            
+    public SentenceGraph(Memory memory, AtomicDouble minConceptPri) {
         super(/*null*/new EdgeFactory() {
 
             @Override public Object createEdge(Object v, Object v1) {
@@ -41,7 +43,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
             }
             
         });
-        
+        this.minConceptPri = minConceptPri;
         this.memory = memory;
         
         reset();
@@ -76,6 +78,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
         setEvents(false);
     }
 
+    
     @Override
     public void event(final Class event, final Object[] a) {
 //        if (event!=FrameEnd.class)
@@ -93,14 +96,16 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
         else if (event == Events.ConceptBeliefAdd.class) {
             Concept c = (Concept)a[0];
             Sentence s = ((Task)a[1]).sentence;
-            add(s, c);
+            if(c.getPriority() > minConceptPri.get()) {
+                add(s, c);
+            }
         }
         else if (event == Events.ConceptBeliefRemove.class) {
             Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
             remove(s);
         }
-        else if (event == Events.ConceptGoalAdd.class) {
+        /*else if (event == Events.ConceptGoalAdd.class) {
             Concept c = (Concept)a[0];
             Sentence s = ((Task)a[1]).sentence;
             add(s, c);
@@ -109,7 +114,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
             Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
             remove(s);
-        }
+        }*/
         else if (event == Events.FrameEnd.class) {
             if (needInitialConcepts)
                 getInitialConcepts();
