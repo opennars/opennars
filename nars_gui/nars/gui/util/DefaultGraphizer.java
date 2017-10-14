@@ -1,9 +1,11 @@
 package nars.gui.util;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JTextField;
+import nars.config.Parameters;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -45,11 +47,16 @@ public class DefaultGraphizer implements NARGraph.Graphize {
     //avoid loops
 
     public DefaultGraphizer() {
-        this(false, false, false, false,0,false,false, null);
+        this(false, false, false, false,0,false,false, null, null, null, null);
     }
     
     JTextField filterBox;
-    public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, int includeSyntax, boolean includeTermLinks, boolean includeTaskLinks, JTextField filterBox) {
+    AtomicDouble conceptPriorityThreshold;
+    AtomicDouble taskPriorityThreshold;
+    AtomicDouble nConcepts;
+    public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, 
+            int includeSyntax, boolean includeTermLinks, boolean includeTaskLinks, JTextField filterBox,
+             AtomicDouble conceptPriorityThreshold, AtomicDouble taskPriorityThreshold, AtomicDouble nConcepts) {
         this.includeBeliefs = includeBeliefs;
         this.includeQuestions = includeQuestions;
         this.includeTermContent = includeTermContent;
@@ -58,6 +65,9 @@ public class DefaultGraphizer implements NARGraph.Graphize {
         this.includeTermLinks = includeTermLinks;
         this.includeTaskLinks = includeTaskLinks;
         this.filterBox = filterBox;
+        this.conceptPriorityThreshold = conceptPriorityThreshold;
+        this.taskPriorityThreshold = taskPriorityThreshold;
+        this.nConcepts = nConcepts;
     }
     //if (terms.put(t)) {
     //}
@@ -90,7 +100,9 @@ public class DefaultGraphizer implements NARGraph.Graphize {
         
         Term t = c.term;
         
-        if(this.filterBox != null && ("".equals(this.filterBox.getText()) || t.toString().contains(this.filterBox.getText()))){
+        if(this.filterBox != null && terms.size() < nConcepts.get()*((double) Parameters.CONCEPT_BAG_SIZE) &&
+                c.getPriority() > this.conceptPriorityThreshold.get() &&
+                ("".equals(this.filterBox.getText()) || t.toString().contains(this.filterBox.getText()))){
             g.addVertex(c);
             terms.put(c.term, c);
         } else {
@@ -104,7 +116,9 @@ public class DefaultGraphizer implements NARGraph.Graphize {
         }
         if (includeTaskLinks) {
             for (TaskLink x : c.taskLinks) {
-                taskLinks.put(x, c);
+                if(x.getPriority() > this.taskPriorityThreshold.get()) {
+                    taskLinks.put(x, c);
+                }
             }
         }
         if (includeTermContent) {
@@ -220,24 +234,26 @@ public class DefaultGraphizer implements NARGraph.Graphize {
         if (includeTaskLinks) {
             for (Map.Entry<TaskLink, Concept> et : taskLinks.entrySet()) {
                 TaskLink t = et.getKey();
-                Concept from = et.getValue();
-                if (t.targetTask != null) {
-                    Task theTask = t.targetTask;
-                    if (!g.containsVertex(theTask)) {
-                        g.addVertex(theTask);
-                        Term term = theTask.getTerm();
-                        if (term != null) {
-                            Concept c = terms.get(term);
-                            if (c != null) {
-                                if (g.containsVertex(c)) {
-                                    g.addVertex(c);
+                if(this.taskPriorityThreshold != null && t.getPriority() > this.taskPriorityThreshold.get()) {
+                    Concept from = et.getValue();
+                    if (t.targetTask != null) {
+                        Task theTask = t.targetTask;
+                        if (!g.containsVertex(theTask)) {
+                            g.addVertex(theTask);
+                            Term term = theTask.getTerm();
+                            if (term != null) {
+                                Concept c = terms.get(term);
+                                if (c != null) {
+                                    if (g.containsVertex(c)) {
+                                        g.addVertex(c);
+                                    }
+                                    g.addEdge(c, theTask, new NARGraph.TermContent());
                                 }
-                                g.addEdge(c, theTask, new NARGraph.TermContent());
                             }
+                            onTask(theTask);
                         }
-                        onTask(theTask);
+                        g.addEdge(from, t.targetTask, new NARGraph.TaskLinkEdge(t));
                     }
-                    g.addEdge(from, t.targetTask, new NARGraph.TaskLinkEdge(t));
                 }
             }
         }
