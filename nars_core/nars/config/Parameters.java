@@ -143,7 +143,7 @@ public class Parameters {
     /*  Size of remembered last operation tasks */
     public static int OPERATION_BAG_SIZE = 10;
     public static final int OPERATION_BAG_LEVELS = 10;
-    public static int OPERATION_SAMPLES = 2; //should be at least 2 to not only consider last decision
+    public static int OPERATION_SAMPLES = 6; //should be at least 2 to not only consider last decision
     public static int TARGET_GOAL_BAG_SIZE = 10;
     public static final int TARGET_GOAL_BAG_LEVELS = 10;
     public static int TARGET_GOAL_SAMPLES = 2;
