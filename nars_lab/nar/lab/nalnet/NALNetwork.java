@@ -83,7 +83,7 @@ public class NALNetwork
         
         @Override
         public String toString() {
-            if(this.truth == null) {
+            if(this.truth == null || this.term == null) {
                 if(calculated) {
                     return "No connection to input evidence";
                 } else {
