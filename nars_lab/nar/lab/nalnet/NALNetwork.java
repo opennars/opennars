@@ -4,8 +4,13 @@
  */
 package nar.lab.nalnet;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
 import com.mxgraph.analysis.mxFibonacciHeap.Node;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -31,16 +36,19 @@ import nars.language.Term;
 
 public class NALNetwork
 {
+    
     public class NALNode
     {
         public Term term;
-        public TruthValue truth; //no evidental base check, NALNet is assumed to not use a node twice!
+        public TruthValue truth;
+        public long[] evidentalBase;
         public NALNode[] neighbours; //the "neighbours" the truth calculation is based on
         
         //A NALNode can be a term with a certain truth
-        public NALNode(Term term, TruthValue truth) {
+        public NALNode(Term term, TruthValue truth, long base) {
             this.term = term;
             this.truth = truth;
+            this.evidentalBase = new long[] { base };
         }
         //or is a composition of neighbours
         public NALNode(NALNode[] neighbours) {
@@ -53,29 +61,38 @@ public class NALNetwork
             if(truth != null) {
                 return truth;
             }
-            Term[] components = new Term[neighbours.length];
+            List<Term> components = new LinkedList<Term>();
+            
+            HashSet<Long> evidence_bases = new HashSet<Long>();
             for(int i=0;i<neighbours.length;i++) {
                 neighbours[i].calculate();
                 if(neighbours[i].truth == null) {
                     continue;
                 }
                 TruthValue t = neighbours[i].truth;
+                Term component = null;
                 if(t.getFrequency() < 0.5) { //local decision
-                //if(new java.util.Random().nextFloat() > 0.5) { //interesting
-                    components[i] = Negation.make(neighbours[i].term);
+                    component = Negation.make(neighbours[i].term);
                     t = TruthFunctions.negation(t);
                 } else {
-                    components[i] = neighbours[i].term;
+                    component = neighbours[i].term;
                 }
                 if(truth == null) {
                     truth = t;
+                    evidence_bases.addAll(Longs.asList(neighbours[i].evidentalBase));
+                    components.add(component);
                 } else {
-                    truth = TruthFunctions.intersection(truth, t);
+                    if(!Stamp.baseOverlap(Longs.toArray(evidence_bases), neighbours[i].evidentalBase)) {
+                        truth = TruthFunctions.intersection(truth, t);
+                        evidence_bases.addAll(Longs.asList(neighbours[i].evidentalBase));
+                        components.add(component);
+                    }
                 }
             }
+            this.evidentalBase = Longs.toArray(evidence_bases);
             if(this.neighbours.length > 0) {
                 try {
-                    this.term = Conjunction.make(components, TemporalRules.ORDER_CONCURRENT);
+                    this.term = Conjunction.make(components.toArray(new Term[0]), TemporalRules.ORDER_CONCURRENT);
                 }catch(Exception ex){}
             }
             return this.truth;
@@ -90,7 +107,14 @@ public class NALNetwork
                     return "Node not connected to input";
                 }
             }
-            return this.term.toString() + ". :|: " + this.truth.toString();
+            String evidences = "";
+            for(long s : this.evidentalBase) {
+                evidences += s + ",";
+            }
+            if(!evidences.isEmpty()) {
+                evidences = evidences.substring(0, evidences.length()-1);
+            }
+            return this.term.toString() + ". :|: " + this.truth.toString() + " {" + evidences + "}";
         }
         
         public void inputInto(NAR nar) {
@@ -108,11 +132,14 @@ public class NALNetwork
         }
     }
     
+    Random rnd = new Random();
     public class NALNet 
     {    
         public int[] layers;
-        public NALNet(int[] layers) { //how many layers?
+        float connectChance = 0.0f;
+        public NALNet(int[] layers, float connectChance) { //how many layers?
             this.layers = layers;
+            this.connectChance = connectChance;
         }
         
         public float[] input(float[] input_frequencies) { //default confidence
@@ -127,8 +154,7 @@ public class NALNetwork
             }
             return output_frequencies;
         }
-        
-        Random rnd = new Random();
+
         NALNode[] outputs;
         TruthValue[] output_truths;
         Term[] output_terms;
@@ -139,7 +165,7 @@ public class NALNetwork
             NALNode[][] network = new NALNode[this.layers.length][];
             NALNode[] inputs = new NALNode[this.layers[0]];
             for(int i=0; i<inputs.length; i++) {
-                inputs[i] = new NALNode(new Term("input" + (i+1)),input_values[i]);
+                inputs[i] = new NALNode(new Term("input" + (i+1)),input_values[i], i+1);
             }
             network[0] = inputs;
             //ok create the succeeding layers too
@@ -149,7 +175,7 @@ public class NALNetwork
                 for(int i=0; i<network[layer].length; i++) {
                     List<NALNode> toAdd = new LinkedList<NALNode>();
                     for(NALNode previous : network[layer-1]) {
-                        if(rnd.nextDouble() > 0.5) {
+                        if(rnd.nextDouble() < connectChance) {
                             toAdd.add(previous);
                         }
                     }
@@ -174,20 +200,21 @@ public class NALNetwork
     }
     
     public void demoNALNode() {
-        NALNode node1 = new NALNode(new Term("input1"),new TruthValue(1.0f,0.9f));
-        NALNode node2 = new NALNode(new Term("input2"),new TruthValue(0.4f,0.9f));
-        NALNode node3 = new NALNode(new Term("input3"),new TruthValue(0.6f,0.9f));
-        NALNode node4 = new NALNode(new Term("input4"),new TruthValue(0.6f,0.9f));
+        NALNode node1 = new NALNode(new Term("input1"),new TruthValue(1.0f,0.9f),1);
+        NALNode node2 = new NALNode(new Term("input2"),new TruthValue(0.4f,0.9f),2);
+        NALNode node3 = new NALNode(new Term("input3"),new TruthValue(0.6f,0.9f),3);
+        NALNode node4 = new NALNode(new Term("input4"),new TruthValue(0.6f,0.9f),4);
         NALNode result = new NALNode(new NALNode[]{node1, node2, node3, node4});
         result.calculate();
         String res = result.toString();
-        assert(res.equals("(&|,(--,input2),input1,input3,input4). :|: %0.22;0.66%"));
+        assert(res.equals("(&|,(--,input2),input1,input3,input4). :|: %0.22;0.66% {1,2,3,4}"));
         System.out.println(res);
     }
     
-    //same as before but with working with layers
+    //similar as before but with working with layers
     public void demoNALNet() {
-        NALNet nalnet = new NALNet(new int[]{4,3,2});
+        rnd.setSeed(1);
+        NALNet nalnet = new NALNet(new int[]{4,1}, 1.0f);
         float[] result = nalnet.input(new float[]{1.0f, 0.4f, 0.6f, 0.6f});
         for(int i=0;i<result.length;i++) {
             System.out.println(nalnet.outputs[i]);
@@ -196,6 +223,7 @@ public class NALNetwork
 
     public static void main(String args[]) {
         NALNetwork nalnet = new NALNetwork();
+        nalnet.demoNALNode();
         nalnet.demoNALNet();
     }
 }
