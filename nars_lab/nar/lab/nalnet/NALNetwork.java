@@ -65,8 +65,7 @@ public class NALNetwork
             
             HashSet<Long> evidence_bases = new HashSet<Long>();
             for(int i=0;i<neighbours.length;i++) {
-                neighbours[i].calculate();
-                if(neighbours[i].truth == null) {
+                if(neighbours[i].calculate() == null) {
                     continue;
                 }
                 TruthValue t = neighbours[i].truth;
@@ -104,7 +103,7 @@ public class NALNetwork
                 if(calculated) {
                     return "No connection to input evidence";
                 } else {
-                    return "Node not connected to input";
+                    return "Node not evaluated";
                 }
             }
             String evidences = "";
