@@ -49,7 +49,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v1 Truth value of the premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue negation(final TruthValue v1) {
+    public static final TruthValue negation(final TruthValue v1) {
         final float f = 1 - v1.getFrequency();
         final float c = v1.getConfidence();
         return new TruthValue(f, c);
@@ -307,7 +307,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue union(final TruthValue v1, final TruthValue v2) {
+    public static final TruthValue union(final TruthValue v1, final TruthValue v2) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float c1 = v1.getConfidence();
@@ -323,7 +323,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue intersection(final TruthValue v1, final TruthValue v2) {
+    public static final TruthValue intersection(final TruthValue v1, final TruthValue v2) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float c1 = v1.getConfidence();

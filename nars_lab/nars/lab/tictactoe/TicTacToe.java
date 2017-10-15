@@ -227,7 +227,7 @@ public class TicTacToe extends JPanel {
 
             int i = -1;
             try {
-                i = Integer.parseInt( args[0].toString() );
+                i = Integer.parseInt( args[1].toString() );
             }
             catch (Throwable e) {
                 return null;
@@ -348,40 +348,40 @@ public class TicTacToe extends JPanel {
         String rules = "";
         rules+=("<nars --> win>! %1.0;0.99%\n");
 
-        //+"<(^addO,$1) =/> <input --> succeeded>>.\n"); //usually input succeeds
-        //+"<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>.\n"); //usually input succeeds but not when it was set by player cause overwrite is not valid
-        //+"<(&/,(^addO,$1),(^addO,$1)) =/> (--,<input --> succeeded>)>.\n"); //also overwriting on own is not valid
+        //+"<(^addO,{SELF},$1) =/> <input --> succeeded>>.\n"); //usually input succeeds
+        //+"<(&/,<1 --> set>,(^addO,{SELF},$1)) =/> (--,<input --> succeeded>)>.\n"); //usually input succeeds but not when it was set by player cause overwrite is not valid
+        //+"<(&/,(^addO,{SELF},$1),(^addO,{SELF},$1)) =/> (--,<input --> succeeded>)>.\n"); //also overwriting on own is not valid
                 
         for (int[] h : howToWin) {                
             int a = h[0];
             int b = h[1];
             int c = h[2];
-            rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <nars --> win>>.\n");
+            rules+=("<(&|,(^addO,{SELF}," + a + "),<input --> succeeded>,(^addO,{SELF}," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <nars --> win>>.\n");
             rules+=("<(&|,<" + a + " --> $1>,<" + b + " --> $1>,<" + c + " --> $1>) =/> <$1 --> win>>.\n");
         }
         
         //for NAL9 (anticipate)
         if (nar.memory.getOperator("^anticipate")!=null) {
-            rules+=("<(&/,(--,<$1 --> empty>),(^add0,$1)) =/> (--,<input --> succeeded>)>>.\n");
-            rules+=("<(&/,(--,<$1 --> field>),(^add0,$1)) =/> (--,<input --> succeeded>)>.\n");
+            rules+=("<(&/,(--,<$1 --> empty>),(^add0,{SELF},$1)) =/> (--,<input --> succeeded>)>>.\n");
+            rules+=("<(&/,(--,<$1 --> field>),(^add0,{SELF},$1)) =/> (--,<input --> succeeded>)>.\n");
         }
         
         rules+=("<nars --> win>! %1.0;0.99%\n");
         rules+=("<human --> win>! %0.0;0.99%\n");
 
-        rules+=("(&/,<#1 --> field>,(^addO,#1))!\n"); //doing something is also a goal :D
+        rules+=("(&/,<#1 --> field>,(^addO,{SELF},#1))!\n"); //doing something is also a goal :D
         
 
         
-        rules+=("(^addO,0)! %1.0;0.7%\n");
-        rules+=("(^addO,1)! %1.0;0.7%\n");
-        rules+=("(^addO,2)! %1.0;0.7%\n");
-        rules+=("(^addO,3)! %1.0;0.7%\n");
-        rules+=("(^addO,4)! %1.0;0.7%\n");
-        rules+=("(^addO,5)! %1.0;0.7%\n");
-        rules+=("(^addO,6)! %1.0;0.7%\n");
-        rules+=("(^addO,7)! %1.0;0.7%\n");
-        rules+=("(^addO,8)! %1.0;0.7%\n");
+        rules+=("(^addO,{SELF},0)! %1.0;0.7%\n");
+        rules+=("(^addO,{SELF},1)! %1.0;0.7%\n");
+        rules+=("(^addO,{SELF},2)! %1.0;0.7%\n");
+        rules+=("(^addO,{SELF},3)! %1.0;0.7%\n");
+        rules+=("(^addO,{SELF},4)! %1.0;0.7%\n");
+        rules+=("(^addO,{SELF},5)! %1.0;0.7%\n");
+        rules+=("(^addO,{SELF},6)! %1.0;0.7%\n");
+        rules+=("(^addO,{SELF},7)! %1.0;0.7%\n");
+        rules+=("(^addO,{SELF},8)! %1.0;0.7%\n");
          
         
         rules+=("<{nars,human,empty} <-> field>.\n");        
