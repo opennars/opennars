@@ -54,7 +54,6 @@ import nars.storage.Memory;
 import nars.NAR;
 import nars.config.Parameters;
 import nars.gui.input.TextInputPanel;
-import nars.gui.input.image.SketchPointCloudPanel;
 import nars.gui.output.PluginPanel;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
