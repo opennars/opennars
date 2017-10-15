@@ -1,10 +1,7 @@
 package nars.gui;
 
 import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.LogPanel;
 import nars.gui.output.SwingLogPanel;
