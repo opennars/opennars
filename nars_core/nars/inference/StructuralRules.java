@@ -419,7 +419,17 @@ public final class StructuralRules {
             return;
         }
         
-        Inheritance newInh = Inheritance.make(subject, predicate);
+        CompoundTerm newInh = null;
+        if(predicate.equals(Term.SEQ_SPATIAL)) {
+            newInh = (CompoundTerm) Conjunction.make(((CompoundTerm) subject).term, TemporalRules.ORDER_FORWARD, true);
+        } else
+        if(predicate.equals(Term.SEQ_TEMPORAL)) {
+            newInh = (CompoundTerm) Conjunction.make(((CompoundTerm) subject).term, TemporalRules.ORDER_FORWARD, false);
+        }
+        else 
+        {
+            newInh = Inheritance.make(subject, predicate);
+        }
         if (newInh == null)
             return;
         
