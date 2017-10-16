@@ -127,32 +127,6 @@ public class Narsese {
         }
         return parseTask(buffer.toString().trim());
     }
-
-
-//    public static Sentence parseOutput(String s) {
-//        Term content = null;
-//        char punc = 0;
-//        TruthValue truth = null;
-//
-//        try {
-//            StringBuilder buffer = new StringBuilder(s);
-//            //String budgetString = getBudgetString(buffer);
-//            String truthString = getTruthString(buffer);
-//            String str = buffer.toString().trim();
-//            int last = str.length() - 1;
-//            punc = str.charAt(last);
-//            //Stamp stamp = new Stamp(time);
-//            truth = parseTruth(truthString, punc);
-//
-//
-//            /*Term content = parseTerm(str.substring(0, last));
-//            if (content == null) throw new InvalidInputException("Content term missing");*/
-//        }
-//        catch (InvalidInputException e) {
-//            System.err.println("TextInput.parseOutput: " + s + " : " + e.toString());
-//        }
-//        return new Sentence(content, punc, truth, null);
-//    }
     
     /**
      * Enter a new Task in String into the memory, called from InputWindow or
@@ -469,7 +443,7 @@ public class Narsese {
             return Interval.interval(s);
         }
  
-        if (containVar(s)) {
+        if (containVar(s) && !s.equals("#")) {
             return new Variable(s);
         } else {
             return Term.get(s);
