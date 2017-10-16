@@ -191,9 +191,9 @@ public class TestChamber {
                     if(needpizza) {
                         hungry--;
                         if(hungry<0) {
-                            hungry=20;
+                            hungry=10;
                           //  nar.addInput("(&&,<#1 --> pizza>,<#1 --> [at]>)!"); //also works but better:
-                            nar.addInput("<SELF --> [replete]>!");
+                            nar.addInput("<SELF --> [replete]>! :|:");
                             /*for (GridObject obj : space.objects) {
                                 if (obj instanceof Pizza) {
                                     nar.addInput("<" + ((Pizza) obj).doorname + "--> at>!");
