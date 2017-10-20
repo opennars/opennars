@@ -4,12 +4,7 @@
  */
 package nar.lab.nalnet;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
-import com.mxgraph.analysis.mxFibonacciHeap.Node;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,16 +38,30 @@ public class NALNetwork
         public TruthValue truth;
         public long[] evidentalBase;
         public NALNode[] neighbours; //the "neighbours" the truth calculation is based on
+        public boolean negated;
         
         //A NALNode can be a term with a certain truth
         public NALNode(Term term, TruthValue truth, long base) {
-            this.term = term;
-            this.truth = truth;
+            this(term, truth, base, false);
+        }
+        public NALNode(Term term, TruthValue truth, long base, boolean negated) {
+            this.negated = negated;
+            if(negated) {
+                this.term = Negation.make(term);
+                this.truth = TruthFunctions.negation(truth);
+            } else {
+                this.term = term;
+                this.truth = truth;
+            }
             this.evidentalBase = new long[] { base };
         }
         //or is a composition of neighbours
         public NALNode(NALNode[] neighbours) {
+            this(neighbours, false);
+        }
+        public NALNode(NALNode[] neighbours, boolean negated) {
             this.neighbours = neighbours;
+            this.negated = negated;
         }
         
         boolean calculated = false;
@@ -69,13 +78,7 @@ public class NALNetwork
                     continue;
                 }
                 TruthValue t = neighbours[i].truth;
-                Term component = null;
-                if(t.getFrequency() < 0.5) { //local decision
-                    component = Negation.make(neighbours[i].term);
-                    t = TruthFunctions.negation(t);
-                } else {
-                    component = neighbours[i].term;
-                }
+                Term component = neighbours[i].term;
                 if(truth == null) {
                     truth = t;
                     evidence_bases.addAll(Longs.asList(neighbours[i].evidentalBase));
@@ -93,6 +96,10 @@ public class NALNetwork
                 try {
                     this.term = Conjunction.make(components.toArray(new Term[0]), TemporalRules.ORDER_CONCURRENT);
                 }catch(Exception ex){}
+            }
+            if(this.negated) {
+                this.term = Negation.make(this.term);
+                this.truth = TruthFunctions.negation(this.truth);
             }
             return this.truth;
         }
@@ -134,11 +141,9 @@ public class NALNetwork
     Random rnd = new Random();
     public class NALNet 
     {    
-        public int[] layers;
-        float connectChance = 0.0f;
-        public NALNet(int[] layers, float connectChance) { //how many layers?
-            this.layers = layers;
-            this.connectChance = connectChance;
+        public boolean[][] negated;
+        public NALNet(boolean[][] negated) { //how many layers and what amount of nodes per layer?
+            this.negated = negated;
         }
         
         public float[] input(float[] input_frequencies) { //default confidence
@@ -161,24 +166,22 @@ public class NALNetwork
             if(output_truths != null) {
                 return output_truths;
             }
-            NALNode[][] network = new NALNode[this.layers.length][];
-            NALNode[] inputs = new NALNode[this.layers[0]];
+            NALNode[][] network = new NALNode[this.negated.length][];
+            NALNode[] inputs = new NALNode[this.negated[0].length];
             for(int i=0; i<inputs.length; i++) {
-                inputs[i] = new NALNode(new Term("input" + (i+1)),input_values[i], i+1);
+                inputs[i] = new NALNode(new Term("input" + (i+1)),input_values[i], i+1, this.negated[0][i]);
             }
             network[0] = inputs;
             //ok create the succeeding layers too
-            for(int layer = 1; layer < this.layers.length; layer++) {
-                network[layer] = new NALNode[this.layers[layer]];
+            for(int layer = 1; layer < this.negated.length; layer++) {
+                network[layer] = new NALNode[this.negated[layer].length];
                 //whereby each node in next layer is connected to a subset of previous
                 for(int i=0; i<network[layer].length; i++) {
                     List<NALNode> toAdd = new LinkedList<NALNode>();
                     for(NALNode previous : network[layer-1]) {
-                        if(rnd.nextDouble() < connectChance) {
-                            toAdd.add(previous);
-                        }
+                        toAdd.add(previous);
                     }
-                    network[layer][i] = new NALNode(toAdd.toArray(new NALNode[0]));
+                    network[layer][i] = new NALNode(toAdd.toArray(new NALNode[0]), this.negated[layer][i]);
                 }
             }
             //ok calculate the outputs now:
@@ -200,10 +203,10 @@ public class NALNetwork
     
     public void demoNALNode() {
         NALNode node1 = new NALNode(new Term("input1"),new TruthValue(1.0f,0.9f),1);
-        NALNode node2 = new NALNode(new Term("input2"),new TruthValue(0.4f,0.9f),2);
+        NALNode node2 = new NALNode(new Term("input2"),new TruthValue(0.4f,0.9f),2,true);
         NALNode node3 = new NALNode(new Term("input3"),new TruthValue(0.6f,0.9f),3);
         NALNode node4 = new NALNode(new Term("input4"),new TruthValue(0.6f,0.9f),4);
-        NALNode result = new NALNode(new NALNode[]{node1, node2, node3, node4});
+        NALNode result = new NALNode(new NALNode[]{node1, node2, node3, node4}, false);
         result.calculate();
         String res = result.toString();
         assert(res.equals("(&|,(--,input2),input1,input3,input4). :|: %0.22;0.66% {1,2,3,4}"));
@@ -213,7 +216,7 @@ public class NALNetwork
     //similar as before but with working with layers
     public void demoNALNet() {
         rnd.setSeed(1);
-        NALNet nalnet = new NALNet(new int[]{4,1}, 1.0f);
+        NALNet nalnet = new NALNet(new boolean[][]{new boolean[]{false,true,false,false},new boolean[]{false}});
         float[] result = nalnet.input(new float[]{1.0f, 0.4f, 0.6f, 0.6f});
         for(int i=0;i<result.length;i++) {
             System.out.println(nalnet.outputs[i]);
