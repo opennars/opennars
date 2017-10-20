@@ -49,28 +49,6 @@ public class Texts {
         for (Map.Entry<Character, Character> e : escapeMap.entrySet())
             escapeMapReverse.put(e.getValue(), e.getKey());
     }
-
-    public static final Field sbval;
-    public static final Field val;
-    
-    //Add reflection for String value access
-    static {
-        Field sv = null, sbv = null;
-        try {
-            sv = String.class.getDeclaredField("value"); 
-            //o = String.class.getDeclaredField("offset");
-            sbv = StringBuilder.class.getSuperclass().getDeclaredField("value");
-            
-            sv.setAccessible(true); 
-            sbv.setAccessible(true);
-            //o.setAccessible(true);         
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.exit(1);
-        }
-        val = sv;        
-        sbval = sbv;
-    }    
     
 
     protected static StringBuilder escape(CharSequence s, boolean unescape, boolean useQuotes) {       
@@ -168,7 +146,7 @@ public class Texts {
      */
     public static char[] getCharArray(String s) {
         try {
-            return (char[]) val.get(s);
+            return (char[]) s.toCharArray();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -177,7 +155,7 @@ public class Texts {
 
     public static char[] getCharArray(StringBuilder s) {
         try {
-            return (char[]) sbval.get(s);
+            return (char[]) s.toString().toCharArray();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -233,7 +211,7 @@ public class Texts {
      */
     public static void overwrite(String s, String t) {
         try {
-            char[] value = (char[]) val.get(s);
+            char[] value = (char[]) s.toCharArray();
             for (int i = 0; i < Math.min(s.length(), t.length()); i++) {
                 value[i] = t.charAt(i);
             }
@@ -371,31 +349,5 @@ public class Texts {
     public static CharSequence n2(final double p) {
         return n2((float)p);
     }
-
-//    /** fast append to CharBuffer */
-//    public final static CharBuffer append(final CharBuffer c, final CharSequence s) {
-//        if (s instanceof CharBuffer) {            
-//            
-//            c.append((CharBuffer)s);
-//            return c;
-//        }
-//        else if (s instanceof String) {
-//            //c.put(getCharArray((String)s), 0, s.length());            
-//            return c.append(s);
-//        }
-//        else {
-//            return c.append(s);
-//        }
-//    }
-    
-//    public final static CharBuffer append(final CharBuffer c, final CharBuffer s) {
-//        return c.put(s);        
-//    }
-//    public final static CharBuffer append(final CharBuffer c, final String s) {
-//        return c.put(getCharArray(s));        
-//    }
-//    public final static CharBuffer append(final CharBuffer b, final char c) {
-//        return b.put(c);        
-//    }
 
 }

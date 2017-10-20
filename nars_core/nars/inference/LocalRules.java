@@ -223,6 +223,9 @@ public class LocalRules {
         if ((probT.sentence.punctuation != solution.punctuation && solution.term.hasVarQuery()) || !matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
             return 0.0F;
         }
+        if(probT.sentence.term.hasVarQuery() && (solution.term.hasVarIndep() || solution.term.hasVarDep())) {
+            return 0.0F;
+        }
         
         TruthValue truth = solution.truth;
         if (problem.getOccurenceTime()!=solution.getOccurenceTime()) {
