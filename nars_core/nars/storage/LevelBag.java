@@ -505,6 +505,11 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             int count = 0;
 
             @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public boolean hasNext() {
                 if (next != null) {
                     return true;
