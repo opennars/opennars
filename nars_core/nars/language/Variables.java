@@ -138,7 +138,19 @@ public class Variables {
             return true;
         }*/
         
-        Term t;                
+        Term t;  
+        //variable "renaming" to variable of same type is always valid
+        if(term1 instanceof Variable && term2 instanceof Variable) {
+            Variable v1 = (Variable) term1;
+            Variable v2 = (Variable) term2;
+            if(v1.getType() == v2.getType()) {
+                Variable CommonVar = makeCommonVariable(term1, term2);    
+                if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }                
+                map[0].put(v1, CommonVar);
+                map[1].put(v2, CommonVar);
+                return true;
+            }
+        }
         if (term1Var && allowUnification(((Variable) term1).getType(), type)) {
             final Variable var1 = (Variable) term1;            
             t = map[0]!=null ? map[0].get(var1) : null;
