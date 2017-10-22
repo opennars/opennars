@@ -244,7 +244,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
             }
         });
         
-        parsers.add(new BindJavascriptExpression(memory));
+        //parsers.add(new BindJavascriptExpression(memory));
         //narsese
         parsers.add(new TextReaction() {
             @Override

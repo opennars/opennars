@@ -1,11 +1,11 @@
 package nars.gui.graph;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import nars.NAR;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Interval.PortableDouble;
 import nars.language.Statement;
 import nars.language.Term;
 
@@ -16,7 +16,7 @@ public class ImplicationGraph extends SentenceGraph {
     private final boolean includeImplication;
     private final boolean includeEquivalence;
 
-    public ImplicationGraph(NAR nar, boolean includeImplication, boolean includeEquivalence, AtomicDouble minConceptPri) {
+    public ImplicationGraph(NAR nar, boolean includeImplication, boolean includeEquivalence, PortableDouble minConceptPri) {
         super(nar.memory, minConceptPri);
         this.includeImplication = includeImplication;
         this.includeEquivalence = includeEquivalence;

@@ -12,7 +12,7 @@ import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
 import nars.language.Variable;
-import nars.operator.misc.Javascript;
+//import nars.operator.misc.Javascript;
 
 
 /** 
@@ -48,7 +48,7 @@ public abstract class FunctionOperator extends Operator {
             throw new RuntimeException("Requires at least 1 arguments");
         }
         
-        if (numArgs < 2 && !(this instanceof Javascript)) {
+        if (numArgs < 2 /*&& !(this instanceof Javascript)*/) {
             throw new RuntimeException("Requires at least 2 arguments");
         }
         
@@ -56,7 +56,7 @@ public abstract class FunctionOperator extends Operator {
         Term lastTerm = args[numArgs];
         boolean variable = lastTerm instanceof Variable;
         
-        if(!variable && !(this instanceof Javascript)) { 
+        if(!variable /*&& !(this instanceof Javascript)*/) { 
             throw new RuntimeException("output can not be specified");
         }
         
@@ -64,9 +64,9 @@ public abstract class FunctionOperator extends Operator {
         
         int numParam = numArgs-1;
         
-        if(this instanceof Javascript && !variable) {
+        /*if(this instanceof Javascript && !variable) {
             numParam++;
-        }
+        }*/
         
         Term[] x = new Term[numParam];
         System.arraycopy(args, 1, x, 0, numParam);
@@ -77,9 +77,9 @@ public abstract class FunctionOperator extends Operator {
             if (y == null) {
                 return null;
             }
-            if(!variable && this instanceof Javascript) {
+            /*if(!variable && this instanceof Javascript) {
                 return null;
-            }
+            }*/
             //m.emit(SynchronousFunctionOperator.class, Arrays.toString(x) + " | " + y);
         /*}
         catch (Exception e) {

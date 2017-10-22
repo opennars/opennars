@@ -1,13 +1,13 @@
 package nars.config;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import nars.language.Interval.AtomicDuration;
-import com.google.common.util.concurrent.AtomicDouble;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import nars.control.DerivationContext.DerivationFilter;
+import nars.language.Interval.PortableDouble;
+import nars.language.Interval.PortableInteger;
 
 /**
  * NAR Parameters which can be changed during runtime.
@@ -19,7 +19,7 @@ public class RuntimeParameters implements Serializable {
     /** Silent threshold for task reporting, in [0, 100]. 
      *  Noise level = 100 - silence level; noise 0 = always silent, noise 100 = never silent
      */
-    public final AtomicInteger noiseLevel = new AtomicInteger(100);
+    public final PortableInteger noiseLevel = new PortableInteger(100);
     
     /** 
        Cycles per duration.
@@ -32,24 +32,24 @@ public class RuntimeParameters implements Serializable {
      *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
      *  Lower means faster rate of decay.
      */
-    public final AtomicDouble conceptForgetDurations = new AtomicDouble(2.0);
+    public final PortableDouble conceptForgetDurations = new PortableDouble(2.0);
     
     /** TermLink decay rate in TermLinkBag, in [1, 99]. originally: TERM_LINK_FORGETTING_CYCLE */
-    public final AtomicDouble termLinkForgetDurations = new AtomicDouble(10.0);
+    public final PortableDouble termLinkForgetDurations = new PortableDouble(10.0);
     
     /** TaskLink decay rate in TaskLinkBag, in [1, 99]. originally: TASK_LINK_FORGETTING_CYCLE */
-    public final AtomicDouble taskLinkForgetDurations = new AtomicDouble(4.0);
+    public final PortableDouble taskLinkForgetDurations = new PortableDouble(4.0);
     
     /** Sequence bag forget durations **/
-    public final AtomicDouble eventForgetDurations = new AtomicDouble(4.0);
+    public final PortableDouble eventForgetDurations = new PortableDouble(4.0);
     
     /** How much priority a goal must have to trigger an automatic reaction **/
-    public final AtomicDouble reactionPriorityThreshold = new AtomicDouble(0.1);
+    public final PortableDouble reactionPriorityThreshold = new PortableDouble(0.1);
 
     
     /** Minimum expectation for a desire value. 
      *  the range of "now" is [-DURATION, DURATION]; */
-    public final AtomicDouble decisionThreshold = new AtomicDouble(0.51);
+    public final PortableDouble decisionThreshold = new PortableDouble(0.51);
     
     
 //    //let NARS use NARS+ ideas (counting etc.)
@@ -60,8 +60,8 @@ public class RuntimeParameters implements Serializable {
     
     //these two are AND-coupled:
     //when a concept is important and exceeds a syntactic complexity, let NARS name it: 
-    //public final AtomicInteger abbreviationMinComplexity = new AtomicInteger();
-    //public final AtomicDouble abbreviationMinQuality = new AtomicDouble();
+    //public final PortableInteger abbreviationMinComplexity = new PortableInteger();
+    //public final PortableDouble abbreviationMinQuality = new PortableDouble();
     
 
 

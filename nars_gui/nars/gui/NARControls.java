@@ -38,8 +38,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -63,6 +61,7 @@ import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
+import nars.language.Interval.PortableInteger;
 
 public class NARControls extends JPanel implements ActionListener, EventObserver {
 
@@ -518,15 +517,9 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
     
     /** in memory cycles */
     
-    
-    
-    AtomicBoolean updateScheduled = new AtomicBoolean(false);
-    
     protected void updateGUI() {
                 
         speedSlider.repaint();
-
-        updateScheduled.set(false);
 
     }
     
@@ -538,9 +531,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             long now = System.currentTimeMillis();
             long deltaTime = now - lastUpdateTime;
             
-            if ((deltaTime >= GUIUpdatePeriodMS) /*|| (!updateScheduled.get())*/) {
-                
-                updateScheduled.set(true);                
+            if ((deltaTime >= GUIUpdatePeriodMS) /*|| (!updateScheduled.get())*/) {              
                                                 
                 speedSlider.repaint();
                 
@@ -846,7 +837,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         return p;
     }
 
-    private NSlider newIntSlider(final AtomicInteger x, final String prefix, int min, int max) {
+    private NSlider newIntSlider(final PortableInteger x, final String prefix, int min, int max) {
         final NSlider s = new NSlider(x.intValue(), min, max) {
 
             @Override

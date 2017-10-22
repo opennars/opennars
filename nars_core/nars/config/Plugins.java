@@ -2,7 +2,7 @@ package nars.config;
 
 import nars.NAR;
 import nars.io.DefaultTextPerception;
-import nars.operator.misc.Javascript;
+//import nars.operator.misc.Javascript;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
 import nars.plugin.mental.FullInternalExperience;
@@ -22,8 +22,8 @@ public class Plugins {
     public NAR init(NAR n) {
         
         //allow javascript 
-        Javascript js=new Javascript();
-        js.setEnabled(n, true);
+        //Javascript js=new Javascript();
+        //js.setEnabled(n, true);
         
         for (Operator o : Operators.get(n))
             n.memory.addOperator(o);

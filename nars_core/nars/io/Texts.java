@@ -41,7 +41,7 @@ public class Texts {
             Character existing = escapeMap.put(pair[0], pair[1]);
             if (existing!=null) {
                 System.err.println("escapeMap has duplicate key: " + pair[0] + " can not apply to both " + existing + " and " + pair[1] );
-                System.exit(1);
+                //--System.exit(1);
             }
         }
 

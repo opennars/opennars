@@ -18,7 +18,6 @@
 package nars.perf;
 
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.AtomicDouble;
 import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -31,6 +30,7 @@ import nars.config.Parameters;
 import nars.config.Plugins;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
+import nars.language.Interval.PortableDouble;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
 
@@ -42,7 +42,7 @@ public class BagPerf {
     
     int repeats = 8;
     int warmups = 1;
-    final static AtomicDouble forgetRate = (new NAR(new Plugins()).param).conceptForgetDurations;
+    final static PortableDouble forgetRate = (new NAR(new Plugins()).param).conceptForgetDurations;
     int randomAccesses;
     double insertRatio = 0.9;
     
@@ -50,7 +50,7 @@ public class BagPerf {
     
     public float totalPriority, totalMass, totalMinItemsPerLevel, totalMaxItemsPerLevel;
 
-    public void testBag(final boolean arraylist, final int levels, final int capacity, final AtomicDouble forgetRate) {
+    public void testBag(final boolean arraylist, final int levels, final int capacity, final PortableDouble forgetRate) {
         
         totalPriority = 0;
         totalMass = 0;

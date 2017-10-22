@@ -18,7 +18,7 @@ import nars.operator.mental.Remind;
 import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
 import nars.operator.misc.Reflect;
-import nars.operator.misc.Javascript;
+//import nars.operator.misc.Javascript;
 
 
 public class Operators {
@@ -31,8 +31,8 @@ public class Operators {
      */    
     public static Operator[] get(NAR nar) {
         
-        Javascript js=new Javascript();
-        js.setEnabled(nar, true);
+        //Javascript js=new Javascript();
+        //js.setEnabled(nar, true);
         
         return new Operator[] {
             
@@ -85,7 +85,7 @@ public class Operators {
            // new MathExpression(),
                         
 
-            js,      // javascript evaluation
+           // js,      // javascript evaluation
             
            // new NumericCertainty()
 
