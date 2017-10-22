@@ -20,7 +20,6 @@ package nars.language;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import nars.storage.Memory;
 import nars.io.Symbols;
 
@@ -33,7 +32,32 @@ import nars.io.Symbols;
  */
 public class Interval extends Term {
 
-    public static class AtomicDuration extends AtomicInteger {
+    //Because AtomicInteger/Double ot supported by teavm
+    public static class PortableInteger {
+        public PortableInteger(){}
+        Object lock = new Object();
+        int VAL = 0;
+        public PortableInteger(int VAL){synchronized(lock){this.VAL = VAL;}}
+        public void set(int VAL){synchronized(lock){this.VAL = VAL;}}
+        public int get() {return this.VAL;}
+        public float floatValue() {return (float)this.VAL;}
+        public float doubleValue() {return (float)this.VAL;}
+        public int intValue() {return (int)this.VAL;}
+        public int incrementAndGet(){synchronized(lock){this.VAL++;} return VAL;}
+    }
+    public static class PortableDouble {
+        Object lock = new Object();
+        public PortableDouble(){}
+        double VAL = 0;
+        public PortableDouble(double VAL){synchronized(lock){this.VAL = VAL;}}
+        public void set(double VAL){synchronized(lock){this.VAL = VAL;}}
+        public double get() {return this.VAL;}
+        public float floatValue() {return (float)this.VAL;}
+        public float doubleValue() {return (float)this.VAL;}
+        public int intValue() {return (int)this.VAL;}
+    }
+    
+    public static class AtomicDuration extends PortableInteger {
         
         /** this represents the amount of time in proportion to a duration in which
          *  Interval resolution calculates.  originally, NARS had a hardcoded duration of 5

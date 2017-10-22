@@ -1,11 +1,11 @@
 package nars.gui.graph;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import nars.NAR;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Interval.PortableDouble;
 import nars.language.Statement;
 import nars.language.Term;
 
@@ -16,7 +16,7 @@ public class InheritanceGraph extends SentenceGraph {
     private final boolean includeInheritance;
     private final boolean includeSimilarity;
 
-    public InheritanceGraph(NAR nar, boolean includeInheritance, boolean includeSimilarity, AtomicDouble minConceptPri) {
+    public InheritanceGraph(NAR nar, boolean includeInheritance, boolean includeSimilarity, PortableDouble minConceptPri) {
         super(nar.memory, minConceptPri);
         this.includeInheritance = includeInheritance;
         this.includeSimilarity = includeSimilarity;

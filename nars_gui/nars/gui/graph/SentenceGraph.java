@@ -1,6 +1,5 @@
 package nars.gui.graph;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +14,7 @@ import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.language.CompoundTerm;
+import nars.language.Interval.PortableDouble;
 import nars.language.Statement;
 import nars.language.Term;
 import org.jgrapht.EdgeFactory;
@@ -33,9 +33,9 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     public final Map<Sentence, List<E>> components = new HashMap();
     
     public final EventEmitter event = new EventEmitter( GraphChange.class );
-    AtomicDouble minConceptPri;
+    PortableDouble minConceptPri;
             
-    public SentenceGraph(Memory memory, AtomicDouble minConceptPri) {
+    public SentenceGraph(Memory memory, PortableDouble minConceptPri) {
         super(/*null*/new EdgeFactory() {
 
             @Override public Object createEdge(Object v, Object v1) {

@@ -15,7 +15,6 @@ import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.GraphDisplays;
 import automenta.vivisect.swing.NSlider;
-import com.google.common.util.concurrent.AtomicDouble;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -35,6 +34,7 @@ import nars.gui.util.NARGraph;
 import nars.gui.graph.InheritanceGraph;
 import nars.gui.graph.ImplicationGraph;
 import nars.gui.output.graph.layout.SpiralLayout;
+import nars.language.Interval.PortableDouble;
 import org.jgrapht.Graph;
 
 /**
@@ -83,9 +83,9 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
         
     }
     
-    public final AtomicDouble conceptPriorityThreshold = new AtomicDouble(0.0);
-    public final AtomicDouble taskPriorityThreshold = new AtomicDouble(0.1);
-    public final AtomicDouble nConcepts = new AtomicDouble(0.004); //10000*0.004=40
+    public final PortableDouble conceptPriorityThreshold = new PortableDouble(0.0);
+    public final PortableDouble taskPriorityThreshold = new PortableDouble(0.1);
+    public final PortableDouble nConcepts = new PortableDouble(0.004); //10000*0.004=40
     JTextField filterBox = new JTextField();
     NSlider conceptPriSlider = new NSlider(conceptPriorityThreshold, "ConcP", 0.0f, 1.0f);
     NSlider taskPriSlider = new NSlider(taskPriorityThreshold, "TaskP", 0.0f, 1.0f);

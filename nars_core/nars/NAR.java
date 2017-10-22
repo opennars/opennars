@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
 import nars.util.Events.FrameStart;
@@ -124,7 +123,7 @@ public class NAR implements Runnable {
         }
     }
 
-    protected final List<PluginState> plugins = new CopyOnWriteArrayList<>();
+    protected final List<PluginState> plugins = new ArrayList<>(); //was CopyOnWriteArrayList
 
     /** Flag for running continuously  */
     private boolean running = false;
@@ -162,7 +161,7 @@ public class NAR implements Runnable {
 
         //needs to be concurrent in case we change this while running
         inputChannels = new ArrayList();
-        newInputChannels = new CopyOnWriteArrayList();
+        newInputChannels = new ArrayList(); //was CopyOnWriteArrayList
         b.init(this);
     }
 

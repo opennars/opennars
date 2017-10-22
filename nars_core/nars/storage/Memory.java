@@ -20,7 +20,6 @@
  */
 package nars.storage;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import nars.control.ConceptProcessing;
 import nars.util.Events;
 import nars.util.EventEmitter;
@@ -65,6 +64,7 @@ import nars.io.SetDecisionThreshold;
 import nars.io.SetVolume;
 import nars.language.CompoundTerm;
 import nars.language.Interval;
+import nars.language.Interval.PortableDouble;
 
 
 /**
@@ -513,7 +513,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     }
 
     /** converts durations to cycles */
-    public final float cycles(AtomicDouble durations) {
+    public final float cycles(PortableDouble durations) {
         return param.duration.floatValue() * durations.floatValue();
     }
 

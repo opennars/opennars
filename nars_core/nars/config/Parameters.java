@@ -20,7 +20,7 @@
  */
 package nars.config;
 
-import com.google.common.util.concurrent.AtomicDouble;
+import nars.language.Interval.PortableDouble;
 
 
 /**
@@ -149,7 +149,7 @@ public class Parameters {
     public static int TARGET_GOAL_SAMPLES = 2;
     
     /** How fast events decay in confidence **/
-    public static final AtomicDouble projectionDecay = new AtomicDouble(0.1);
+    public static final PortableDouble projectionDecay = new PortableDouble(0.1);
     
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */

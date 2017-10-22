@@ -3,7 +3,6 @@ package nars.plugin.mental;
 import nars.util.Plugin;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.TaskDerive;
 import nars.storage.Memory;
@@ -17,11 +16,12 @@ import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
 import static nars.language.CompoundTerm.termArray;
+import nars.language.Interval.PortableDouble;
+import nars.language.Interval.PortableInteger;
 import nars.language.Similarity;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import com.google.common.util.concurrent.AtomicDouble;
 
 /**
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.
@@ -40,7 +40,7 @@ public class Abbreviation implements Plugin {
             super("^abbreviate");
         }
 
-        private static AtomicInteger currentTermSerial = new AtomicInteger(1);
+        private static PortableInteger currentTermSerial = new PortableInteger(1);
 
         public Term newSerialTerm(char prefix) {
             return new Term(prefix + String.valueOf(currentTermSerial.incrementAndGet()));
@@ -79,12 +79,12 @@ public class Abbreviation implements Plugin {
 
     }
     
-    public AtomicInteger abbreviationComplexityMin = new AtomicInteger(20);
-    public AtomicDouble abbreviationQualityMin = new AtomicDouble(0.95f);
+    public PortableInteger abbreviationComplexityMin = new PortableInteger(20);
+    public PortableDouble abbreviationQualityMin = new PortableDouble(0.95f);
     public EventObserver obs;
     
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
-    //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
+    //public PortableDouble priorityFactor = new PortableDouble(1.0);
     
     public boolean canAbbreviate(Task task) {
         return !(task.sentence.term instanceof Operation) && 

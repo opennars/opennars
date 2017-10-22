@@ -7,8 +7,6 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import nars.config.Parameters;
 
 /**
  * Adapted from http://www.recursiverobot.com/post/86215392884/witness-a-simple-android-and-java-event-emitter
@@ -35,7 +33,7 @@ public class EventEmitter {
             events = new ConcurrentHashMap<>();
         else*/
             //events = new HashMap<>();
-        events = new ConcurrentHashMap<>();
+        events = new HashMap<>();
     }
 
     /** EventEmitter with a fixed set of known events; the 'events' map

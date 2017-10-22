@@ -18,7 +18,6 @@
 package automenta.vivisect.swing;
 
 import automenta.vivisect.Video;
-import com.google.common.util.concurrent.AtomicDouble;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -27,6 +26,7 @@ import java.awt.event.MouseMotionListener;
 import java.text.NumberFormat;
 import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
+import nars.language.Interval.PortableDouble;
 
 
 
@@ -35,7 +35,7 @@ import javax.swing.border.LineBorder;
  * @author me
  */
 public class NSlider extends JLabel implements MouseListener, MouseMotionListener {
-    public final AtomicDouble value;
+    public final PortableDouble value;
     protected float min;
     protected float max;
     protected Color barColor = null;
@@ -49,15 +49,15 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     }
     
     public NSlider(float initialValue, float min, float max) {
-        this(new AtomicDouble(initialValue), min, max);
+        this(new PortableDouble(initialValue), min, max);
     }
 
-    public NSlider(AtomicDouble value, String prefix, float min, float max) {
+    public NSlider(PortableDouble value, String prefix, float min, float max) {
         this(value, min, max);
         this.prefix = prefix;        
     }
     
-    public NSlider(AtomicDouble value, float min, float max) {
+    public NSlider(PortableDouble value, float min, float max) {
         super();
         
         

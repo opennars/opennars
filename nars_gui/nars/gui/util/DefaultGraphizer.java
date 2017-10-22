@@ -1,6 +1,5 @@
 package nars.gui.util;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +11,7 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.CompoundTerm;
+import nars.language.Interval.PortableDouble;
 import nars.language.Term;
 
 
@@ -51,12 +51,12 @@ public class DefaultGraphizer implements NARGraph.Graphize {
     }
     
     JTextField filterBox;
-    AtomicDouble conceptPriorityThreshold;
-    AtomicDouble taskPriorityThreshold;
-    AtomicDouble nConcepts;
+    PortableDouble conceptPriorityThreshold;
+    PortableDouble taskPriorityThreshold;
+    PortableDouble nConcepts;
     public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, 
             int includeSyntax, boolean includeTermLinks, boolean includeTaskLinks, JTextField filterBox,
-             AtomicDouble conceptPriorityThreshold, AtomicDouble taskPriorityThreshold, AtomicDouble nConcepts) {
+             PortableDouble conceptPriorityThreshold, PortableDouble taskPriorityThreshold, PortableDouble nConcepts) {
         this.includeBeliefs = includeBeliefs;
         this.includeQuestions = includeQuestions;
         this.includeTermContent = includeTermContent;

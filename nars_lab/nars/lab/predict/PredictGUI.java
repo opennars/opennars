@@ -12,7 +12,6 @@ import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.StackedPercentageChart;
 import automenta.vivisect.timeline.TimelineVis;
-import com.google.common.util.concurrent.AtomicDouble;
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.WEST;
@@ -40,6 +39,7 @@ import nars.language.Interval;
 import nars.language.Tense;
 import nars.language.Term;
 import nars.lab.plugin.filter.LimitDerivationPriority;
+import nars.language.Interval.PortableDouble;
 
 /**
  *
@@ -70,11 +70,11 @@ public class PredictGUI extends JPanel {
     private final NAR n;
     private final GridBagConstraints cons;
 
-    private final AtomicDouble noiseRate;
-    private final AtomicDouble missingRate;
-    private final AtomicDouble discretizationAtomic;
-    private final AtomicDouble signalPeriod;
-    private final AtomicDouble signalType;
+    private final PortableDouble noiseRate;
+    private final PortableDouble missingRate;
+    private final PortableDouble discretizationAtomic;
+    private final PortableDouble signalPeriod;
+    private final PortableDouble signalType;
     
         TreeMLData observed = new TreeMLData("observed", Color.WHITE, historySize*8).setRange(0, 1f);
         TreeMLData observedDiscrete = new TreeMLData("observed", Color.WHITE, historySize/4);
@@ -275,11 +275,11 @@ public class PredictGUI extends JPanel {
         setPreferredSize(new Dimension(150, 500));
         
         
-        addSlider("Signal Type", signalType = new AtomicDouble(1), 0, 5f);
-        addSlider("Signal Period", signalPeriod = new AtomicDouble(80), 0, 200f);
-        addSlider("Noise Rate", noiseRate = new AtomicDouble(0), 0, 1.0f);
-        addSlider("Missing Rate", missingRate = new AtomicDouble(0), 0, 1.0f);
-        addSlider("Discretization", discretizationAtomic = new AtomicDouble(3), 2, maxDiscretization);
+        addSlider("Signal Type", signalType = new PortableDouble(1), 0, 5f);
+        addSlider("Signal Period", signalPeriod = new PortableDouble(80), 0, 200f);
+        addSlider("Noise Rate", noiseRate = new PortableDouble(0), 0, 1.0f);
+        addSlider("Missing Rate", missingRate = new PortableDouble(0), 0, 1.0f);
+        addSlider("Discretization", discretizationAtomic = new PortableDouble(3), 2, maxDiscretization);
         
         Parameters.DEBUG = true;
 
@@ -447,7 +447,7 @@ public class PredictGUI extends JPanel {
 
     }
 
-    private NSlider addSlider(String label, AtomicDouble value, float min, float max) {
+    private NSlider addSlider(String label, PortableDouble value, float min, float max) {
         NSlider slider;
         add(new JLabel(label), cons);        
         add(slider = new NSlider(value, min, max), cons);        
