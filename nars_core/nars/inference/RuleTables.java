@@ -207,6 +207,7 @@ public class RuleTables {
                 switch (bLink.type) {
                     case TermLink.COMPONENT:
                         if (taskTerm instanceof Statement) {
+                            goalFromWantBelief(task, tIndex, bIndex, taskTerm, nal, beliefTerm);
                             componentAndStatement((CompoundTerm) nal.getCurrentTerm(), bIndex, (Statement) taskTerm, tIndex, nal);
                         }
                         break;
@@ -259,6 +260,16 @@ public class RuleTables {
                         }
                         break;
                 }
+        }
+    }
+
+    public static void goalFromWantBelief(final Task task, final short tIndex, short bIndex, final Term taskTerm, final DerivationContext nal, Term beliefTerm) {
+        if(task.sentence.isJudgment() && tIndex == 0 && bIndex == 1 && taskTerm instanceof Operation) {
+            Operation op = (Operation) taskTerm;
+            if(op.getPredicate() == nal.memory.getOperator("^want")) {
+                TruthValue newTruth = TruthFunctions.deduction(task.sentence.truth, Parameters.reliance);
+                nal.singlePremiseTask(beliefTerm, Symbols.GOAL_MARK, newTruth, BudgetFunctions.forward(newTruth, nal));
+            }
         }
     }
 
