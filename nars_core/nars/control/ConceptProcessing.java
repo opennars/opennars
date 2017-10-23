@@ -605,13 +605,14 @@ public class ConceptProcessing {
         if(t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
             for(TaskLink quess: concept.taskLinks) {
                 Task ques = quess.getTarget();
-                if(((ques.sentence.isQuestion() && t.sentence.isJudgment()) || 
+                if(((ques.sentence.isQuestion() && t.sentence.isJudgment()) ||
+                    (ques.sentence.isGoal()     && t.sentence.isJudgment()) ||
                     (ques.sentence.isQuest()    && t.sentence.isGoal())) && ques.getTerm().hasVarQuery()) {
                     boolean newAnswer = false;
                     Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
                     if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
                         Concept c = nal.memory.concept(t.getTerm());
-                        List<Task> answers = ques.sentence.isQuestion() ? c.beliefs : c.desires;
+                        List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
                         if(c != null && answers.size() > 0) {
                             final Task taskAnswer = answers.get(0);
                             if(taskAnswer!=null) {
@@ -628,7 +629,7 @@ public class ConceptProcessing {
     }
 
     public static void ProcessWhatQuestion(Concept concept, Task ques, DerivationContext nal) {
-        if((ques.sentence.isQuestion() || ques.sentence.isQuest()) && ques.getTerm().hasVarQuery()) { //ok query var, search
+        if(!(ques.sentence.isJudgment()) && ques.getTerm().hasVarQuery()) { //ok query var, search
             boolean newAnswer = false;
             
             for(TaskLink t : concept.taskLinks) {
@@ -636,7 +637,7 @@ public class ConceptProcessing {
                 Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
                 if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
                     Concept c = nal.memory.concept(t.getTerm());
-                    List<Task> answers = ques.sentence.isQuestion() ? c.beliefs : c.desires;
+                    List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
                     if(c != null && answers.size() > 0) {
                         final Task taskAnswer = answers.get(0);
                         if(taskAnswer!=null) {
