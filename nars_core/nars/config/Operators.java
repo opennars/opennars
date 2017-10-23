@@ -48,6 +48,7 @@ public class Operators {
             new NullOperator("^deactivate"),
             new NullOperator("^lighter"),
             new NullOperator("^reshape"),
+            new NullOperator("^escape"),
             new NullOperator("^say"),
             new NullOperator("^Right"),
             new NullOperator("^Left"),
