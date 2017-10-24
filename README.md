@@ -137,6 +137,9 @@ Discussion Group:
  
  IRC:
  * http://webchat.freenode.net?channels=nars
+ 
+ Try online:
+ * http://91.203.212.130/NARS
 
 Credits:
 -------
