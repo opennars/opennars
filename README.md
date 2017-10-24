@@ -135,6 +135,9 @@ This version was however developed on Github:
 
 Discussion Group:
  * https://groups.google.com/forum/?fromgroups#!forum/open-nars
+ 
+ IRC:
+ * http://webchat.freenode.net?channels=nars
 
 Credits:
 -------
