@@ -43,15 +43,14 @@ Beginners can start at the following online materials:
 
 Contents
 --------
- * **nars_java** - main logic engine
+ * **nars_core** - reasoning engine
  * **nars_gui** - java.swing GUI
- * **nars_scala** - embryo of NARS in Scala (not currently active, just to see how NARS could look in Scala)
  * **nars_web** - web server
  * **nars_lab** - experiments & demos
  * **nars_test** - unit tests
  * **nal** - examples
 
-In nars_java/ and nars_gui/ are the NARS core and the Swing GUI in Java. This is derived from the code of Pei Wang in nars_java.0/ directory.
+In nars_core/ and nars_gui/ are the NARS core and the Swing GUI in Java. This is derived from the code of Pei Wang in nars_java.0/ directory.
 
 For an overview of reasoning features, see working examples explained in SingleStepTestingCases and MultiStepExamples.
 
