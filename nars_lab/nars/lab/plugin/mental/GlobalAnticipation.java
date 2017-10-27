@@ -192,7 +192,7 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
                         new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
                         new Stamp(nal.memory));
 
-                    Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
+                    Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth), true);
                     derivetasks.add(t);
                 } else { //it matched and other consequence, so negative evidence
                    // c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
@@ -202,7 +202,7 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
                         new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
                         new Stamp(nal.memory));
 
-                    Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
+                    Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth), true);
                     derivetasks.add(t);
                 } //todo use derived task with revision instead
             }

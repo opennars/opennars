@@ -180,7 +180,7 @@ public class TemporalInferenceControl {
             if(c != null) {
                 event_priority = Math.max(event_quality, c.getPriority());
             }
-            Task t2 = new Task(newEvent.sentence, new BudgetValue(event_priority, 1.0f/(float)newEvent.sentence.term.getComplexity(), event_quality), newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
+            Task t2 = new Task(newEvent.sentence, new BudgetValue(event_priority, 1.0f/(float)newEvent.sentence.term.getComplexity(), event_quality), newEvent.getParentBelief(), newEvent.getBestSolution());
             nal.memory.seq_current.putIn(t2);
         }
     }

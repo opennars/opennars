@@ -73,7 +73,7 @@ public class Abbreviation implements Plugin {
                     Parameters.DEFAULT_JUDGMENT_DURABILITY, 
                     quality);
 
-            return Lists.newArrayList( new Task(sentence, budget) );        
+            return Lists.newArrayList( new Task(sentence, budget, true) );        
 
         }
 

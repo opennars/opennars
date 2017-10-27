@@ -255,7 +255,8 @@ public class Anticipate extends Operator implements EventObserver {
             Task newTask=new Task(s,new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
                     Parameters.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
-                    BudgetFunctions.truthToQuality(truth)));
+                    BudgetFunctions.truthToQuality(truth)),
+                    true);
             memory.addNewTask(newTask, "Perceived (Internal Experience: Anticipation)");
         }
     }
@@ -276,7 +277,7 @@ public class Anticipate extends Operator implements EventObserver {
             truth,
             stamp);
 
-        Task task = new Task(S, budget);
+        Task task = new Task(S, budget, true);
         nal.derivedTask(task, false, true, false); 
         task.setElemOfSequenceBuffer(true);
         nal.memory.emit(DISAPPOINT.class, task);

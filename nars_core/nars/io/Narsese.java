@@ -164,7 +164,7 @@ public class Narsese {
         //    sentence.setRevisible(false);
         //}
         BudgetValue budget = parseBudget(budgetString, punc, truth);
-        Task task = new Task(sentence, budget);
+        Task task = new Task(sentence, budget, true);
         return task;
 
     }

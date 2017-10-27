@@ -109,7 +109,8 @@ public abstract class FunctionOperator extends Operator {
                     new Task(s, 
                             new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, 
                                             Parameters.DEFAULT_FEEDBACK_DURABILITY,
-                                            truthToQuality(s.getTruth()))));
+                                            truthToQuality(s.getTruth())), 
+                            true));
         }
         else {
             
