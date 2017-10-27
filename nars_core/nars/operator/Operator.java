@@ -85,8 +85,10 @@ public abstract class Operator extends Term implements Plugin {
     public final boolean call(final Operation operation, final Term[] args, final Memory memory) {
         try {
             List<Task> feedback = execute(operation, args, memory);            
-            
-            memory.executedTask(operation, new TruthValue(1f,executionConfidence));
+                       
+            if(feedback == null || feedback.isEmpty()) { //null operator case
+                memory.executedTask(operation, new TruthValue(1f,executionConfidence));
+            }
             
             reportExecution(operation, args, feedback, memory);
             

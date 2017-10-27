@@ -559,7 +559,6 @@ public class ConceptProcessing {
                 if(!oper.call(op, nal.memory)) {
                     return false;
                 }
-                TemporalInferenceControl.NewOperationFrame(nal.memory, t);
                 
                 //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
                 return true;

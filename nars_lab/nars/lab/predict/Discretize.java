@@ -150,12 +150,13 @@ public class Discretize {
         }
         else if ((mode == BeliefInsertion.MemoryInput)|| (mode == BeliefInsertion.ImmediateProcess)) {
             
+            /*  comment in again if example should work, and adapt to new code
             Task t = nar.memory.newTask(getValueTerm(variable, level), Symbols.JUDGMENT_MARK, freq, conf, 1.0f, 0.8f);
         
             System.out.println(t);
             
             if (mode == BeliefInsertion.MemoryInput)
-                nar.memory.inputTask(t);
+                nar.memory.inputTask(t);*/
             //else if (mode == BeliefInsertion.ImmediateProcess)
             //    new ImmediateProcess(nar.memory, t).run();
             

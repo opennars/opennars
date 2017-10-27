@@ -339,7 +339,7 @@ public class Memory implements Serializable, Iterable<Concept> {
             stamp);
         
         Task task = new Task(sentence, new BudgetValue(Parameters.DEFAULT_FEEDBACK_PRIORITY, Parameters.DEFAULT_FEEDBACK_DURABILITY,
-                                        truthToQuality(sentence.getTruth())), operation.getTask());
+                                        truthToQuality(sentence.getTruth())));
         task.setElemOfSequenceBuffer(true);
         addNewTask(task, "Executed");
     }
@@ -483,15 +483,6 @@ public class Memory implements Serializable, Iterable<Concept> {
     public void stepLater(final int cycles) {
         inputPausedUntil = (int) (time() + cycles);
     }    
-    
-    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability) {
-        return newTask(content, sentenceType, freq, conf, priority, durability, (Task)null);
-    }
-            
-            
-    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, final Task parentTask) {
-        return newTask(content, sentenceType, freq, conf, priority, durability, parentTask, Tense.Present);
-    }
     
     /** convenience method for forming a new Task from a term */
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Tense tense) {

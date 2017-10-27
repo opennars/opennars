@@ -4,7 +4,12 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import nars.storage.Memory;
 import nars.config.Parameters;
+import nars.entity.BudgetValue;
+import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.entity.TruthValue;
+import static nars.inference.BudgetFunctions.truthToQuality;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.ImageExt;
@@ -93,40 +98,20 @@ public abstract class FunctionOperator extends Operator {
         operation=(Operation) operation.setComponent(0, 
                 ((CompoundTerm)operation.getSubject()).setComponent(
                         numArgs, y, m), m); 
-        
-        //<3 --> (/,^add,1,2,_,SELF)>.
-        //transform to image for perception variable introduction rule (is more efficient representation
-        ImageExt ing=(ImageExt) ImageExt.make((Product)operation.getSubject(),operation.getPredicate(), (short)(numArgs));
-        Inheritance inh=Inheritance.make(y, ing);
-        Term actual=inh; //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         float confidence = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
         if (variable) {
+            Sentence s = new Sentence(operation, 
+                                      Symbols.JUDGMENT_MARK,
+                                      new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
+                                      new Stamp(m));
             return Lists.newArrayList( 
-                    m.newTask(actual, Symbols.JUDGMENT_MARK, 
-                            1f, confidence, 
-                            Parameters.DEFAULT_JUDGMENT_PRIORITY, 
-                            Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
-            ));    
+                    new Task(s, 
+                            new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, 
+                                            Parameters.DEFAULT_FEEDBACK_DURABILITY,
+                                            truthToQuality(s.getTruth()))));
         }
         else {
-            /*float equal = equals(lastTerm, y);
-            ArrayList<Task> rt = Lists.newArrayList( 
-                    m.newTask(actual, Symbols.JUDGMENT_MARK, 
-                            1.0f, confidence, 
-                            Parameters.DEFAULT_JUDGMENT_PRIORITY, 
-                            Parameters.DEFAULT_JUDGMENT_DURABILITY, 
-                            operation.getTask()));    
-            
-            if (equal < 1.0f) {
-                rt.add(m.newTask(operation, Symbols.JUDGMENT_MARK, 
-                            equal, confidence, 
-                            Parameters.DEFAULT_JUDGMENT_PRIORITY, 
-                            Parameters.DEFAULT_JUDGMENT_DURABILITY, 
-                            operation.getTask()));
-            }
-            return rt;
-            */
             
             return null;
             
