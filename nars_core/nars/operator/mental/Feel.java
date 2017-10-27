@@ -28,11 +28,9 @@ import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
 import nars.language.Inheritance;
-import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Tense;
 import nars.language.Term;
-import nars.operator.Operator;
 import nars.operator.Operator;
 
 /**
@@ -45,11 +43,10 @@ public abstract class Feel extends Operator {
         super(name);
         
         // remove the "^feel" prefix from name
-        this.feelingTerm = Term.get(((String)name()).substring(5));
+        this.feelingTerm = Term.get(((String)name()).substring(5).toLowerCase());
     }
 
-    final static Term self = Term.get(Symbols.SELF);
-    final static Term selfSubject = SetExt.make(self);
+    final static Term selfSubject = Term.SELF;
     
     /**
      * To get the current value of an internal sensor

@@ -24,8 +24,14 @@ public class Emotions implements Plugin {
     /** average priority */
     private float busy;
 
-    public Emotions() {
+    public void resetEmotions() {
+        this.happy = 0.5f;
+        this.busy = 0.5f;
+        this.lastbusy = 0.5f;
+        this.lasthappy = 0.5f;
     }
+    
+    public Emotions() {}
 
     public Emotions(float happy, float busy) {
         set(happy, busy);
@@ -44,7 +50,7 @@ public class Emotions implements Plugin {
         return busy;
     }
 
-    public double lasthappy=-1;
+    public double lasthappy=0.5;
     public void adjustHappy(float newValue, float weight, DerivationContext nal) {
         if(!enabled) {
             return;
@@ -61,16 +67,16 @@ public class Emotions implements Plugin {
             if(happy<Parameters.HAPPY_EVENT_LOWER_THRESHOLD && lasthappy>=Parameters.HAPPY_EVENT_LOWER_THRESHOLD) {
                 frequency=0.0f;
             }
-            /*if(frequency!=-1) { //ok lets add an event now
+            if(frequency!=-1) { //ok lets add an event now
                 Term predicate=SetInt.make(new Term("satisfied"));
-                Term subject=new Term("SELF");
+                Term subject=Term.SELF;
                 Inheritance inh=Inheritance.make(subject, predicate);
-                TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                TruthValue truth=new TruthValue(happy,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
                 s.stamp.setOccurrenceTime(nal.memory.time());
-                Task t=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                Task t=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth)), true);
                 nal.addTask(t, "emotion");
-                if(Parameters.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
+                /*if(Parameters.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
                     TruthValue truth2=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE);
                     Sentence s2=new Sentence(inh,Symbols.GOAL_MARK,truth2,new Stamp(nal.memory));
                     s2.stamp.setOccurrenceTime(nal.memory.time());
@@ -100,15 +106,15 @@ public class Emotions implements Plugin {
                             nal.addTask(t3, "internal experience for consider and remind");
                         }
                     }
-                }
-            }*/
+                }*/
+            }
         }
         lasthappy=happy;
         //        if (Math.abs(oldV - happyValue) > 0.1) {
         //            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happyValue*10.0) + "\n");
     }
     
-    public double lastbusy=-1;
+    public double lastbusy=0.5;
     public void manageBusy(DerivationContext nal) {
         if(!enabled) {
             return;
@@ -125,7 +131,7 @@ public class Emotions implements Plugin {
                 Term predicate=SetInt.make(new Term("busy"));
                 Term subject=new Term("SELF");
                 Inheritance inh=Inheritance.make(subject, predicate);
-                TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                TruthValue truth=new TruthValue(busy,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 Sentence s = new Sentence(
                     inh,
                     Symbols.JUDGMENT_MARK,

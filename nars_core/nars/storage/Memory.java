@@ -151,7 +151,7 @@ public class Memory implements Serializable, Iterable<Concept> {
         this.seq_current.clear();
         cycle = 0;
         inputPausedUntil = 0;
-        emotion.set(0.5f, 0.5f);
+        emotion.resetEmotions();
         resetStatic();
         event.emit(ResetEnd.class);
     }
