@@ -132,7 +132,11 @@ public class Emotions implements Plugin {
                     truth,
                     new Stamp(nal.memory));
                 s.stamp.setOccurrenceTime(nal.memory.time());
-                Task t=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                Task t=new Task(s,
+                                new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
+                                                Parameters.DEFAULT_JUDGMENT_DURABILITY,
+                                                BudgetFunctions.truthToQuality(truth)),
+                                true);
                 nal.addTask(t, "emotion");
             }
         }

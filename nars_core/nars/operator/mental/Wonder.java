@@ -59,7 +59,7 @@ public class Wonder extends Operator {
             new Stamp(memory));
 
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
-        return Lists.newArrayList( new Task(sentence, budget) );
+        return Lists.newArrayList( new Task(sentence, budget, true) );
     }
         
 }

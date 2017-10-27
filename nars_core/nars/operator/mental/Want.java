@@ -62,7 +62,7 @@ public class Want extends Operator {
         
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, truth);
 
-        return Lists.newArrayList( new Task(sentence, budget) );        
+        return Lists.newArrayList( new Task(sentence, budget, true) );        
     }
     
 }

@@ -338,8 +338,11 @@ public class Memory implements Serializable, Iterable<Concept> {
             truth,
             stamp);
         
-        Task task = new Task(sentence, new BudgetValue(Parameters.DEFAULT_FEEDBACK_PRIORITY, Parameters.DEFAULT_FEEDBACK_DURABILITY,
-                                        truthToQuality(sentence.getTruth())));
+        Task task = new Task(sentence, 
+                             new BudgetValue(Parameters.DEFAULT_FEEDBACK_PRIORITY, 
+                                             Parameters.DEFAULT_FEEDBACK_DURABILITY,
+                                             truthToQuality(sentence.getTruth())),
+                             true);
         task.setElemOfSequenceBuffer(true);
         addNewTask(task, "Executed");
     }

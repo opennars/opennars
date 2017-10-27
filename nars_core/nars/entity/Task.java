@@ -20,14 +20,8 @@
  */
 package nars.entity;
 
-import com.google.common.base.Strings;
-import java.lang.ref.WeakReference;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import nars.storage.Memory;
 import nars.language.Term;
-import nars.operator.Operation;
 import nars.plugin.mental.InternalExperience;
 
 /**
@@ -38,63 +32,49 @@ import nars.plugin.mental.InternalExperience;
  */
 public class Task<T extends Term> extends Item<Sentence<T>>  {
 
-    /** placeholder for a forgotten task */
-    public static final Task Forgotten = new Task();
-
     /* The sentence of the Task*/
     public final Sentence<T> sentence;
-    /* Task from which the Task is derived, or null if input*/
-    final WeakReference<Task> parentTask;
     /* Belief from which the Task is derived, or null if derived from a theorem*/
-    public final  WeakReference<Sentence> parentBelief;
+    public final  Sentence parentBelief;
     /* For Question and Goal: best solution found so far*/
     private Sentence bestSolution;
     
-    /** causal factor; usually an instance of Operation */
-    private WeakReference<Term> cause;
-    
-    
-    
     /**
-     * Constructor for input task
+     * Constructor for input task and single premise task
      *
      * @param s The sentence
      * @param b The budget
-     */
-    public Task(final Sentence<T> s, final BudgetValue b) {
-        this(s, b, (WeakReference)null, null, null);
-    }
- 
-    public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask) {
-        this(s, b, parentTask, null);        
+     */ 
+    public Task(final Sentence<T> s, final BudgetValue b, boolean isInput) {
+        this(s, b, null, null);  
+        this.isInput = isInput;
     }
 
     protected Task() {
-        this(null, null);
+        this(null, null, null, null);
     }
     
     private boolean partOfSequenceBuffer = false;
     private boolean observablePrediction = false;
+    private boolean isInput = false;
     
     /**
      * Constructor for a derived task
      *
      * @param s The sentence
      * @param b The budget
-     * @param parentTask The task from which this new task is derived
      * @param parentBelief The belief from which this new task is derived
      */
-    public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief) {
-        this(s, b, new WeakReference(parentTask), new WeakReference(parentBelief), null);
+    public Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief) {
+        this(s, b, parentBelief, null);
     }
-
-    public Task(final Sentence<T> s, final BudgetValue b, final WeakReference<Task> parentTask, final WeakReference<Sentence> parentBelief, Sentence solution) {    
+    public Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, Sentence solution) {    
         super(b);
         this.sentence = s;
-        this.parentTask = parentTask;
         this.parentBelief = parentBelief;
         this.bestSolution = solution;   
     }
+    
     /**
      * Constructor for an activated task
      *
@@ -105,15 +85,7 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
      * @param solution The belief to be used in future inference
      */
     public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
-        this(s, b, new WeakReference(parentTask), new WeakReference(parentBelief), solution);
-    }
-
-    public Task clone() {
-        return new Task(sentence, budget, parentTask, parentBelief, bestSolution);
-    }
-    
-    public Task clone(final Sentence replacedSentence) {
-        return new Task(replacedSentence, budget, parentTask, parentBelief, bestSolution);
+        this(s, b, parentBelief, solution);
     }
     
     @Override public Sentence name() {
@@ -141,10 +113,7 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
     
     public static Task make(Sentence s, BudgetValue b, Task parent, Sentence belief) {
         Term t = s.term;
-        //if (isValidTerm(t)) { sentence wouldnt exist if it wouldnt be valid..
-            return new Task(s, b, parent, belief);
-        //}
-        //return null;
+        return new Task(s, b, belief);
     }
     
     /**
@@ -162,7 +131,7 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
      * @return Whether the Task is derived from another task
      */
     public boolean isInput() {
-        return parentTask == null;
+        return isInput;
     }
     
     public boolean aboveThreshold() {
@@ -210,17 +179,7 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
      */
     public Sentence getParentBelief() {
         if (parentBelief == null) return null;
-        return parentBelief.get();
-    }
-    
-    /**
-     * Get the parent task of a task
-     *
-     * @return The task from which the task is derived
-     */
-    public Task getParentTask() {
-        if (parentTask == null) return null;
-        return parentTask.get();
+        return parentBelief;
     }
 
     /**

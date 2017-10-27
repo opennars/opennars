@@ -131,9 +131,11 @@ public class NALNetwork
                                              Symbols.JUDGMENT_MARK, 
                                              this.truth, 
                                              stamp);
-            Task task = new Task(sentence, new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
-                                                           Parameters.DEFAULT_JUDGMENT_DURABILITY,
-                                                           BudgetFunctions.truthToQuality(this.truth)));
+            Task task = new Task(sentence, 
+                                 new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
+                                                 Parameters.DEFAULT_JUDGMENT_DURABILITY,
+                                                 BudgetFunctions.truthToQuality(this.truth)),
+                                 true);
             nar.addInput(task);
         }
     }

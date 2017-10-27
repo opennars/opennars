@@ -172,7 +172,7 @@ public class DerivationContext {
             newTruth,
             getTheNewStamp());
 
-        Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+        Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
         return derivedTask(newTask, true, false, true); //allows overlap since overlap was already checked on revisable( function
     }                                                               //which is not the case for other single premise tasks
 
@@ -305,18 +305,6 @@ public class DerivationContext {
         if (!newBudget.aboveThreshold())
             return false;
         
-        Task parentTask = getCurrentTask().getParentTask();
-        if (parentTask != null) {
-            if (parentTask.getTerm() == null) {
-                return false;
-            }
-            if (newContent == null) {
-                return false;
-            }
-            if (newContent.equals(parentTask.getTerm())) {
-                return false;
-            }
-        }
         Sentence taskSentence = getCurrentTask().sentence;
         if (taskSentence.isGoal() || taskSentence.isJudgment() || getCurrentBelief() == null) {
             setTheNewStamp(new Stamp(taskSentence.stamp, getTime()));
@@ -350,7 +338,7 @@ public class DerivationContext {
         if (!newBudget.aboveThreshold()) {
             return false;
         }
-        Task newTask = new Task(newSentence, newBudget, getCurrentTask());
+        Task newTask = new Task(newSentence, newBudget, false);
         return derivedTask(newTask, false, true, false);
     }
 

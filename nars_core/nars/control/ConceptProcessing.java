@@ -506,7 +506,9 @@ public class ConceptProcessing {
                         bestop_truth,
                         projectedGoal.stamp);
 
-                Task t = new Task(createdSentence, new BudgetValue(1.0f,1.0f,1.0f));
+                Task t = new Task(createdSentence, 
+                                  new BudgetValue(1.0f,1.0f,1.0f),
+                                  false);
                 //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
                 if(!task.sentence.stamp.evidenceIsCyclic()) {
                     if(!executeDecision(nal, t)) { //this task is just used as dummy

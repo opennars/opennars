@@ -65,6 +65,6 @@ public class Name extends Operator {
         
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         
-        return Lists.newArrayList( new Task(sentence, budget) );        
+        return Lists.newArrayList( new Task(sentence, budget, true) );        
     }
 }

@@ -228,8 +228,7 @@ public class InternalExperience implements Plugin, EventObserver {
             newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
         }
         
-        Task newTask = new Task(j, (BudgetValue) newbudget,
-                full ? null : task);
+        Task newTask = new Task(j, (BudgetValue) newbudget, full);
         memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
         return false;
     }
@@ -266,7 +265,7 @@ public class InternalExperience implements Plugin, EventObserver {
                     Parameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                     quality);
 
-                Task newTask = new Task(sentence, budget);       
+                Task newTask = new Task(sentence, budget, true);       
                 nal.derivedTask(newTask, false, false, false);
             }
         }
@@ -313,7 +312,7 @@ public class InternalExperience implements Plugin, EventObserver {
                         Parameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                         quality);
 
-                    Task newTask = new Task(sentence, budget);       
+                    Task newTask = new Task(sentence, budget, true);       
                     nal.derivedTask(newTask, false, false, false);
                 }
             }

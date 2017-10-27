@@ -230,7 +230,8 @@ public class NAR implements Runnable {
                         new BudgetValue(
                                 Parameters.DEFAULT_QUESTION_PRIORITY,
                                 Parameters.DEFAULT_QUESTION_DURABILITY,
-                                1))
+                                1),
+                        true)
         );
 
         if (answered!=null) {
@@ -253,7 +254,8 @@ public class NAR implements Runnable {
                         new BudgetValue(
                                 Parameters.DEFAULT_QUESTION_PRIORITY,
                                 Parameters.DEFAULT_QUESTION_DURABILITY,
-                                1))
+                                1),
+                        true)
         );
 
         if (answered!=null) {
@@ -272,8 +274,9 @@ public class NAR implements Runnable {
                 Parameters.DEFAULT_JUDGMENT_DURABILITY;
 
         return addInput(
-                new Task(sentence, new
-                        BudgetValue(priority, durability, sentence.truth))
+                new Task(sentence, 
+                        new BudgetValue(priority, durability, sentence.truth), 
+                        true)
         );
     }
 
