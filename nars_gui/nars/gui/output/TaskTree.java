@@ -214,7 +214,7 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
         }
         
         for (Task t : toAdd) {
-            Task parent = t.getParentTask();
+            Task parent = null; //t.getParentTask();
             if (parent!=null && parent.equals(t)) {
                 //System.err.println(t + " has parentTask equal to itself");
                 parent = null;
@@ -291,11 +291,11 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
                 conPri = con.getPriority();
             }
             float taskPri = t.getPriority();
-            TruthValue desire = t.getDesire();
+            TruthValue desire = t.sentence.truth;
             
             Color iColor;
             if (desire!=null) {
-                float confidence = t.getDesire().getConfidence();
+                float confidence = t.sentence.truth.getConfidence();
                 iColor = new Color(0,confidence/1.5f,conPri/1.5f,0.75f + 0.25f * confidence);
             }        
             else {

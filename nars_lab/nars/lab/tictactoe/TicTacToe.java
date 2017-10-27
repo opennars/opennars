@@ -252,7 +252,7 @@ public class TicTacToe extends JPanel {
                     nar.addInput("<input --> succeeded>. :|: %" + (success ? "1.00" : "0.00") + "%" );
                     nar.addInput("<(*," + i + ",nars) --> move>. :|:");
                     
-                    System.out.println( operation.getTask().getExplanation() );
+                    //System.out.println( operation.getTask().getExplanation() );
 
                     updateField();
 

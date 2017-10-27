@@ -117,8 +117,6 @@ public class SupervisedRecognition {
                     public void onSolution(Sentence belief) {
                         System.out.println(belief);
                     }
-                    @Override
-                    public void onChildSolution(Task child, Sentence belief) {}
                 });
             } catch (Narsese.InvalidInputException ex) {
         }

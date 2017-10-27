@@ -135,10 +135,6 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
         return sentence.hashCode();
     }
     
-    //public static boolean isValidTerm(Term t) {
-   //     return t instanceof CompoundTerm;
-   // }
-    
     public static Task make(Sentence s, BudgetValue b, Task parent) {
         return make(s, b, parent, null);
     }
@@ -151,9 +147,6 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
         //return null;
     }
     
-
-    
-
     /**
      * Directly get the creation time of the sentence
      *
@@ -175,15 +168,7 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
     public boolean aboveThreshold() {
         return budget.aboveThreshold();
     }
-
-    /**
-     * Check if a Task is derived by a StructuralRule
-     *
-     * @return Whether the Task is derived by a StructuralRule
-     */
-//    public boolean isStructural() {
-//        return (parentBelief == null) && (parentTask != null);
-//    }
+    
     /**
      * Merge one Task into another
      *
@@ -227,7 +212,7 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
         if (parentBelief == null) return null;
         return parentBelief.get();
     }
-
+    
     /**
      * Get the parent task of a task
      *
@@ -247,108 +232,11 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
     public String toStringLong() {
         final StringBuilder s = new StringBuilder();
         s.append(super.toString()).append(' ').append(sentence.stamp.name());
-        
-        Task pt = getParentTask();
-        if (pt != null) {
-            s.append("  \n from task: ").append(pt.toStringExternal());
-            if (parentBelief != null) {
-                s.append("  \n from belief: ").append(parentBelief.toString());
-            }
-        }
         if (bestSolution != null) {
             s.append("  \n solution: ").append(bestSolution.toString());
         }
         return s.toString();
     }
-
-
-    public boolean hasParent(Task t) {
-        if (getParentTask() == null)
-            return false;
-        Task p=getParentTask();
-        do {            
-            Task n = p.getParentTask();
-            if (n!=null) {
-                if (n.equals(t))
-                    return true;
-                p = n;
-            }
-            else
-                break;
-        } while (p!=null);
-        return false;        
-    }    
-    
-    public Task getRootTask() {
-        if (getParentTask() == null) {
-            return null;
-        }
-        Task p=getParentTask();
-        do {            
-            Task n = p.getParentTask();
-            if (n!=null)
-                p = n;
-            else
-                break;
-        } while (p!=null);
-        return p;
-    }
-
-    public String getExplanation() {
-        String x = toString() + "\n";
-        if (bestSolution!=null) {
-            if (!getTerm().equals(bestSolution.term))
-                x += "  solution=" + bestSolution + "\n";
-        }
-        if (parentBelief!=null)
-            x += "  parentBelief=" + parentBelief + " @ " + parentBelief.get().getCreationTime() + "\n";
-        
-        Task pt = getParentTask();
-        if (pt!=null) {
-            x += "  parentTask=" + pt + " @ " + pt.getCreationTime() + "\n";
-        
-            int indentLevel = 1;
-            Task p=getParentTask();
-            do {            
-                indentLevel++;
-                Task n = p.getParentTask();
-                if (n!=null) {
-                    x += Strings.repeat("  ",indentLevel) + n.toString();
-                    p = n;
-                }
-                else
-                    break;
-                
-            } while (p!=null);
-        }
-        
-        return x;
-    }
-
-    public TruthValue getDesire() { return sentence.truth; }
-    
-//    /** returns the goal term for this task, which may be either the predicate of a forward implication,
-//     * an operation.  if neither, returns null      */
-//    public Term getGoalTerm() {
-//        Term t = getContent();
-//        if (t instanceof Implication) {
-//            Implication i = (Implication)t;
-//            if (i.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
-//                return i.getPredicate();
-//            else if (i.getTemporalOrder() == TemporalRules.ORDER_BACKWARD) {
-//                throw new RuntimeException("Term getGoal reversed");
-//            }
-//        }
-//        else if (t instanceof Operation)
-//            return t;
-//        else if (Executive.isSequenceConjunction(t))
-//            return t;
-//        
-//        return null;
-//    }
-//
-    
-    
 
     /** flag to indicate whether this Event Task participates in tempporal induction */
     public void setElemOfSequenceBuffer(boolean b) {
@@ -367,18 +255,7 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
         return this.observablePrediction;
     }
 
-    
-    public static Set<Task> getTasks(Collection<Task> tasks) {
-        Set<Task> tl = new HashSet();
-        tl.addAll(tasks);
-        return tl;
-    }
-
     public T getTerm() {
         return sentence.getTerm();
-    }
-
-    public boolean isInputOrOperation() {
-        return this.isInput() || (this.sentence.term instanceof Operation);
     }
 }

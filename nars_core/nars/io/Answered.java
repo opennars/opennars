@@ -42,15 +42,9 @@ public abstract class Answered implements EventObserver {
             if (task.equals(question)) {
                 onSolution(belief);
             }
-            else if (task.hasParent(question)) {
-                onChildSolution(task, belief);
-            }
         }
     }
     
     /** called when the question task has been solved directly */
     abstract public void onSolution(Sentence belief);
-    
-    /** called when a subtask of the question has been solved */
-    abstract public void onChildSolution(Task child, Sentence belief);
 }

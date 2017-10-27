@@ -292,9 +292,6 @@ public class LanguageGUI extends javax.swing.JFrame {
                         reasonerNAR.addInput(inp+ " " + (isQuestion ? "" : belief.truth.toString()));
                         reasonerNAR.start(0);
                     }
-
-                    @Override
-                    public void onChildSolution(Task child, Sentence belief) {}
                 };
             languageNAR.ask("<(*,(/,REPRESENT,?a,_),(/,REPRESENT,?b,_)) --> (/,REPRESENT,?v,_)>", cur); 
             q.add(cur);
@@ -315,9 +312,6 @@ public class LanguageGUI extends javax.swing.JFrame {
                         reasonerNAR.addInput(inp+ " " + (isQuestion ? "" : belief.truth.toString()));
                         reasonerNAR.start(0);
                     }
-
-                    @Override
-                    public void onChildSolution(Task child, Sentence belief) {}
                 };
                 if(!attribute.trim().equals("")) {
                     languageNAR.ask("<?what --> " + attribute + ">", cur); 
