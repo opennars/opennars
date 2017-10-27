@@ -1,5 +1,6 @@
 **Open-NARS** is the open-source version of [NARS](https://sites.google.com/site/narswang/home), a general-purpose AI system, designed in the framework of a reasoning system.  This project is an evolution of the [v1.5 system](http://code.google.com/p/open-nars/).  The [mailing list](https://groups.google.com/forum/?fromgroups#!forum/open-nars) discusses both its theory and implementation.
 
+
 ![OpenNARS Logo](https://github.com/opennars/opennars/blob/bf53ceef9f2399de70dc63e5507e42d639144c96/doc/opennars_logo2.png)
 
 Theory Overview
@@ -42,15 +43,14 @@ Beginners can start at the following online materials:
 
 Contents
 --------
- * **nars_java** - main logic engine
+ * **nars_core** - reasoning engine
  * **nars_gui** - java.swing GUI
- * **nars_scala** - embryo of NARS in Scala (not currently active, just to see how NARS could look in Scala)
  * **nars_web** - web server
  * **nars_lab** - experiments & demos
  * **nars_test** - unit tests
  * **nal** - examples
 
-In nars_java/ and nars_gui/ are the NARS core and the Swing GUI in Java. This is derived from the code of Pei Wang in nars_java.0/ directory.
+In nars_core/ and nars_gui/ are the NARS core and the Swing GUI in Java. This is derived from the code of Pei Wang in nars_java.0/ directory.
 
 For an overview of reasoning features, see working examples explained in SingleStepTestingCases and MultiStepExamples.
 
@@ -117,6 +117,12 @@ Current version has been fully tested for single capability at a time; there may
 
 Links
 -----
+Website:
+ * http://opennars.github.io/opennars/
+ 
+All downloads:
+*  https://drive.google.com/drive/folders/0B8Z4Yige07tBUk5LSUtxSGY0eVk?usp=sharing
+
 An (outdated) HTML user manual:
  * http://www.cis.temple.edu/~pwang/Implementation/NARS/NARS-GUI-Guide.html
 
@@ -128,6 +134,12 @@ This version was however developed on Github:
 
 Discussion Group:
  * https://groups.google.com/forum/?fromgroups#!forum/open-nars
+ 
+ IRC:
+ * http://webchat.freenode.net?channels=nars
+ 
+ Try online:
+ * http://91.203.212.130/NARS
 
 Credits:
 -------
