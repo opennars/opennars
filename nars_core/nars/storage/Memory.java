@@ -483,25 +483,6 @@ public class Memory implements Serializable, Iterable<Concept> {
     public void stepLater(final int cycles) {
         inputPausedUntil = (int) (time() + cycles);
     }    
-    
-    /** convenience method for forming a new Task from a term */
-    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Tense tense) {
-        return newTask(content, sentenceType, freq, conf, priority, durability, null, tense);
-    }
-    
-    /** convenience method for forming a new Task from a term */
-    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense) {
-        
-        TruthValue truth = new TruthValue(freq, conf);
-        Sentence sentence = new Sentence(
-            content,
-            sentenceType,
-            truth,
-            new Stamp(this, tense));
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
-        Task task = new Task(sentence, budget, parentTask);
-        return task;
-    }
 
     /** converts durations to cycles */
     public final float cycles(PortableDouble durations) {

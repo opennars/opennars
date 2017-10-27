@@ -412,7 +412,9 @@ public class PredictGUI extends JPanel {
                             System.out.println("@" + n.time() + " dt=" + dt + " +" + interval + " dtError=" + dtError + " (" + ((dtError / dt)*100.0) + "%)");
 
                             String prevBelief = "<{x} --> y"+lastVal+">";
-                            n.believe("<(&/," + prevBelief + ",+" + interval + ") =/> " + nowBelief + ">",Tense.Present, 1.0f, 0.9f /*1.0f / getDiscretization()*/);
+                            //that example didn't work yet, wasn't finished,
+                            //either I will soon make it work, or it will soon be gone.
+                            //n.believe("<(&/," + prevBelief + ",+" + interval + ") =/> " + nowBelief + ">",Tense.Present, 1.0f, 0.9f /*1.0f / getDiscretization()*/);
                             
                             lastTime = now;
                             
@@ -425,7 +427,7 @@ public class PredictGUI extends JPanel {
                     
                     lastVal = val;
                                                   
-                    n.believe(0.95f, 0.8f, nowBelief, Tense.Present, 1.0f, 0.95f);
+                    //n.believe(0.95f, 0.8f, nowBelief, Tense.Present, 1.0f, 0.95f);
                     
                     //n.ask("<{x} --> ?>");
                     

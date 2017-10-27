@@ -211,26 +211,10 @@ public class NAR implements Runnable {
         return addInput(-1, -1, taskText, frequency, confidence);
     }
 
-    public NAR believe(float pri, float dur, String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-
-        return addInput(memory.newTask(new Narsese(this).parseTerm(termString),
-                Symbols.JUDGMENT_MARK, freq, conf, pri, dur, tense));
-    }
-
-
-    public NAR believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-
-        return believe(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, termString, tense, freq, conf);
-    }
-
 
     /** gets a concept if it exists, or returns null if it does not */
     public Concept concept(String concept) throws InvalidInputException {
         return memory.concept(new Narsese(this).parseTerm(concept));
-    }
-
-    public NAR ask(String termString) throws InvalidInputException {
-        return ask(termString, null);
     }
 
     public NAR ask(String termString, Answered answered) throws InvalidInputException {

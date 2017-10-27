@@ -138,13 +138,14 @@ public class Discretize {
     void believe(String variable, int level, int dt, float freq, float conf, BeliefInsertion mode) {
                 //TODO handle 'dt'
 
-        if (mode == BeliefInsertion.Input) {
-            try {
-
+         if (mode == BeliefInsertion.Input) {
+            /* try { comment in again if example should work, and adapt to new code 
+                    //that example was never finished/working so I don't care at all
+                    //either I will come back to it and complete it, or it will soon be gone ;)
                 nar.believe(getValueTerm(variable, level).toString(), Tense.Present, freq, conf);
             } catch (Narsese.InvalidInputException ex) {
                 Logger.getLogger(Discretize.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }*/
             
           
         }

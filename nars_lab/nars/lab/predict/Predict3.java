@@ -154,11 +154,13 @@ public class Predict3 {
             }
         };
 
-        for (Term t : discretize.getValueTerms("x"))
-            n.believe(t.toString(), Tense.Present, 0.5f, 0.5f);
+        //that example never worked before, so either I will come back and complete
+        //it or it will soon be gone
+        //for (Term t : discretize.getValueTerms("x"))
+        //    n.believe(t.toString(), Tense.Present, 0.5f, 0.5f);
         
         //TODO move this to discretize.getDisjunctionBelief
-        n.believe("<(||,y0,y1,y2,y3,y4,y5,y6,y7) --> y>", Tense.Eternal, 1.0f, 0.95f);
+        //n.believe("<(||,y0,y1,y2,y3,y4,y5,y6,y7) --> y>", Tense.Eternal, 1.0f, 0.95f);
         
         n.run(discretization*4);
 
