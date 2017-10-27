@@ -204,7 +204,6 @@ public class Concept extends Item<Term> {
 
                if(termLink.type == TermLink.TEMPORAL)
                     continue;
-//              if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
                 Term componentTerm = termLink.target;
 
                 Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
@@ -214,7 +213,6 @@ public class Concept extends Item<Term> {
                         new TaskLink(task, termLink, subBudget, Parameters.TERM_LINK_RECORD_LENGTH), cont
                     );
                 }
-//              }
             }
 
             buildTermLinks(taskBudget);  // recursively insert TermLink

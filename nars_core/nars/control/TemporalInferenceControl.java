@@ -31,7 +31,7 @@ public class TemporalInferenceControl {
         if(SucceedingEventsInduction && !controllerTask.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
             return null;
         }
-        if (newEvent.isEternal() || !controllerTask.isInputOrOperation()) {
+        if (newEvent.isEternal() || !controllerTask.isInput()) {
             return null;
         }
         /*if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
@@ -61,7 +61,7 @@ public class TemporalInferenceControl {
 
         nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
 
-        if (!newEvent.sentence.isJudgment() || newEvent.sentence.isEternal() || !newEvent.isInputOrOperation()) {
+        if (!newEvent.sentence.isJudgment() || newEvent.sentence.isEternal() || !newEvent.isInput()) {
             return false;
        }
 
