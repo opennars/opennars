@@ -170,7 +170,7 @@ public class InternalExperience implements Plugin, EventObserver {
     }
     
     public static void InternalExperienceFromBelief(Memory memory, Task task, Sentence belief) {
-        Task T=new Task(belief.clone(),task.budget.clone(),null);
+        Task T=new Task(belief.clone(),task.budget.clone(),true);
         InternalExperienceFromTask(memory,T,false);
     }
     
@@ -228,7 +228,7 @@ public class InternalExperience implements Plugin, EventObserver {
             newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
         }
         
-        Task newTask = new Task(j, (BudgetValue) newbudget, full);
+        Task newTask = new Task(j, (BudgetValue) newbudget, true);
         memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
         return false;
     }

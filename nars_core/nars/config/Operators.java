@@ -10,7 +10,7 @@ import nars.operator.mental.Consider;
 import nars.operator.mental.Doubt;
 import nars.operator.mental.Evaluate;
 import nars.operator.mental.FeelBusy;
-import nars.operator.mental.FeelHappy;
+import nars.operator.mental.FeelSatisfied;
 import nars.operator.mental.Hesitate;
 import nars.operator.mental.Name;
 import nars.operator.mental.Register;
@@ -52,6 +52,7 @@ public class Operators {
             new NullOperator("^say"),
             new NullOperator("^Right"),
             new NullOperator("^Left"),
+            new NullOperator("^Run"),
             
             //new Wait(),            
             //new Wait(),            
@@ -77,7 +78,7 @@ public class Operators {
             new Reflect(),
             
             // feeling operations
-            new FeelHappy(),
+            new FeelSatisfied(),
             new FeelBusy(),
 
             // math operations

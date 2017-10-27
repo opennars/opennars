@@ -22,15 +22,14 @@ import nars.storage.Memory;
 import nars.entity.Task;
 import nars.language.Term;
 import nars.operator.Operation;
-import nars.operator.Operation;
 
 /**
  * Feeling happy value
  */
-public class FeelHappy extends Feel {
+public class FeelSatisfied extends Feel {
 
-    public FeelHappy() {
-        super("^feelHappy");
+    public FeelSatisfied() {
+        super("^feelSatisfied");
     }
 
     /**
