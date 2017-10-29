@@ -237,7 +237,7 @@ public class Concept extends Item<Term> {
             Sentence judgment2 = table.get(i).sentence;
             rank2 = rankBelief(judgment2, rankTruthExpectation);
             if (rank1 >= rank2) {
-                if (newSentence.equivalentTo(judgment2)) {
+                if (newSentence.truth.equals(judgment2.truth) && newSentence.stamp.equals(judgment2.stamp,false,true,true)) {
                     //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
                     return null;
                 }

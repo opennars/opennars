@@ -213,21 +213,11 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         return this;
     }
 
-    
-
     /**
      * A simplified String representation of a TruthValue, where each factor is
      * accruate to 1%
      */
-    public StringBuilder appendString(final StringBuilder sb, final boolean external) {
-        /*String s1 = DELIMITER + frequency.toStringBrief() + SEPARATOR;
-        String s2 = confidence.toStringBrief();
-        if (s2.equals("1.00")) {
-            return s1 + "0.99" + DELIMITER;
-        } else {
-            return s1 + s2 + DELIMITER;
-        }*/
-        
+    public StringBuilder appendString(final StringBuilder sb, final boolean external) {        
         sb.ensureCapacity(11);
         return sb
             .append(DELIMITER)
@@ -238,7 +228,6 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     }
 
     public CharSequence name() {
-        //1 + 4 + 1 + 4 + 1
         StringBuilder sb =  new StringBuilder();
         return appendString(sb, false);
     }
@@ -257,26 +246,8 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     @Override
     public String toString() {
         //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
-        
-        //1 + 6 + 1 + 6 + 1
         return name().toString();
     }
-
-    
-    
-    /** displays the truth value as a short string indicating degree of true/false */
-    public String toTrueFalseString() {        
-        //TODO:
-        //  F,f,~,t,T
-        return null;
-    }
-    /** displays the truth value as a short string indicating degree of yes/no */
-    public String toYesNoString() {        
-        //TODO
-        // N,n,~,y,Y
-        return null;
-    }
-
     
     public Term toWordTerm() {
         float e = getExpectation();
@@ -294,18 +265,5 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         setFrequency(frequency);
         setConfidence(confidence);
         return this;
-    }
-    
-    public enum TruthComponent {
-        Frequency, Confidence, Expectation
-    }
-    
-    public float getComponent(TruthComponent c) {
-        switch (c) {
-            case Frequency: return frequency;
-            case Confidence: return confidence;
-            case Expectation: return getExpectation();                
-        }
-        return Float.NaN;
     }
 }
