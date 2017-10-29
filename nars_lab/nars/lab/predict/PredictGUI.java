@@ -224,7 +224,7 @@ public class PredictGUI extends JPanel {
                 float conf = t.sentence.truth.getConfidence();
                 boolean positive = freq >= 0.5;
                 float magnitude = 2f * Math.abs( freq - 0.5f ) * conf;
-                long now = t.sentence.getCreationTime(); //n.memory.time();
+                long now = t.sentence.stamp.getCreationTime(); //n.memory.time();
                 
                 //float exp = t.sentence.truth.getExpectation();
                 Term term = t.getTerm();

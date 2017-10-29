@@ -370,7 +370,7 @@ public class ConceptProcessing {
             questions = concept.quests;
         }
         for (final Task t : questions) {
-            if (t.sentence.equalsContent(quesTask.sentence)) {
+            if (t.sentence.term.equals(quesTask.sentence.term)) {
                 quesTask = t;
                 newQuestion = false;
                 break;

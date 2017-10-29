@@ -108,7 +108,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             }
             //decide on the tense of &/ by looking if the first event happens parallel with the last one
             //Todo refine in 1.6.3 if we want to allow input of difference occurence time
-            boolean after=newEvent.sentence.after(eventbuffer.get(eventbuffer.size()-1-(Len-1)).sentence, nal.memory.param.duration.get());
+            boolean after=newEvent.sentence.stamp.after(eventbuffer.get(eventbuffer.size()-1-(Len-1)).sentence.stamp, nal.memory.param.duration.get());
             
             //critical part: (not checked for correctness yet):
             //we now have to look at if the first half + the second half already exists as concept, before we add it
