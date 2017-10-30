@@ -20,6 +20,8 @@ import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import nars.operator.FunctionOperator;
 import nars.operator.Operator;
+import nars.operator.mental.Anticipate;
+import static nars.plugin.mental.InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE;
 
 public class ConceptProcessing {
     /**
@@ -515,7 +517,7 @@ public class ConceptProcessing {
                         concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
                     } else {
                         concept.memory.decisionBlock = concept.memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
-                        SyllogisticRules.generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
+                        generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
                     }
                 }
             }
@@ -524,7 +526,47 @@ public class ConceptProcessing {
         }
     }
 
-    
+    public static void generatePotentialNegConfirmation(DerivationContext nal, Sentence mainSentence, BudgetValue budget, long mintime, long maxtime, float priority) {
+        //derivation was successful and it was a judgment event
+        
+        try { //that was predicted by an eternal belief that shifted time
+        float immediateDisappointmentConfidence = 0.1f;
+        Stamp stamp = new Stamp(nal.memory);
+        stamp.setOccurrenceTime(Stamp.ETERNAL);
+        //long serial = stamp.evidentialBase[0];
+        Sentence s = new Sentence(
+            mainSentence.term,
+            mainSentence.punctuation,
+            new TruthValue(0.0f, immediateDisappointmentConfidence),
+            stamp);
+
+        //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
+        Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f), false); //Budget for one-time processing
+        Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
+        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
+                c.negConfirmation = t;
+                c.negConfirmationPriority = priority;
+                c.negConfirm_abort_maxtime = maxtime;
+                c.negConfirm_abort_mintime = mintime;
+                
+                
+                if(c.negConfirmation.sentence.term instanceof Implication) {
+                    Implication imp = (Implication) c.negConfirmation.sentence.term;
+                    Concept ctarget = nal.memory.concept(imp.getPredicate());
+                    if(ctarget != null && ctarget.getBudget().summary()>=InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE_ANTICIPATION) {
+                        ((Anticipate)c.memory.getOperator("^anticipate")).anticipationFeedback(imp.getPredicate(), null, c.memory);
+                    }
+                }
+                
+                nal.memory.emit(Output.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
+            }
+       }
+        }catch(Exception ex) {
+            System.out.println("problem in anticipation handling");
+        }
+    }
+
     /**
      * Entry point for all potentially executable tasks.
      * Returns true if the Task has a Term which can be executed
@@ -593,7 +635,7 @@ public class ConceptProcessing {
             concept.negConfirmation = null; //confirmed
             return;
         }
-
+        
         concept.memory.inputTask(concept.negConfirmation, false); //disappointed
         //if(this.negConfirmationPriority >= 2) {
         //    System.out.println(this.negConfirmation.sentence.term);
@@ -603,7 +645,7 @@ public class ConceptProcessing {
     }
     
     public static void ProcessWhatQuestionAnswer(Concept concept, Task t, DerivationContext nal) {
-        if(t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
+        if(!t.sentence.term.hasVarQuery() && t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
             for(TaskLink quess: concept.taskLinks) {
                 Task ques = quess.getTarget();
                 if(((ques.sentence.isQuestion() && t.sentence.isJudgment()) ||
@@ -611,7 +653,7 @@ public class ConceptProcessing {
                     (ques.sentence.isQuest()    && t.sentence.isGoal())) && ques.getTerm().hasVarQuery()) {
                     boolean newAnswer = false;
                     Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
-                    if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
+                    if(ques.sentence.term.hasVarQuery() && !t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
                         Concept c = nal.memory.concept(t.getTerm());
                         List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
                         if(c != null && answers.size() > 0) {

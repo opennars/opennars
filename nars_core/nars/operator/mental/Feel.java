@@ -57,7 +57,7 @@ public abstract class Feel extends Operator {
      */
     protected ArrayList<Task> feeling(float value, Memory memory) {
         Stamp stamp = new Stamp(memory, Tense.Present);
-        TruthValue truth = new TruthValue(value, 0.999f);
+        TruthValue truth = new TruthValue(value, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 
         Term predicate = new SetInt(feelingTerm); 
         
