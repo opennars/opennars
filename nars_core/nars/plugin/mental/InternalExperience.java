@@ -35,6 +35,7 @@ public class InternalExperience implements Plugin, EventObserver {
         
     public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f; //0.92
     public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE=0.92f;
+    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_ANTICIPATION=0.92f;
     
     //internal experience has less durability?
     public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
@@ -229,7 +230,7 @@ public class InternalExperience implements Plugin, EventObserver {
         }
         
         Task newTask = new Task(j, (BudgetValue) newbudget, true);
-        memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
+        memory.addNewTask(newTask, "Reflected mental operation (Internal Experience)");
         return false;
     }
 

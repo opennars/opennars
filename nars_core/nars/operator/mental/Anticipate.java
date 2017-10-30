@@ -196,8 +196,8 @@ public class Anticipate extends Operator implements EventObserver {
         return null;
     }
     
-    boolean anticipationOperator=false; //a parameter which tells whether NARS should know if it anticipated or not
-    //in one case its the base functionality needed for NAL8 and in the other its a mental NAL9 operator
+    boolean anticipationOperator=true; //a parameter which tells whether NARS should know if it anticipated or not
+    //in one case its the base functionality needed for NAL7 and in the other its a mental NAL9 operator
     
     public boolean isAnticipationAsOperator() {
         return anticipationOperator;
@@ -234,10 +234,13 @@ public class Anticipate extends Operator implements EventObserver {
         anticipations.put(new Vector2Int(memory.time(),occurenceTime), ae);
 
         ae.add(content);
-        
+        anticipationFeedback(content, t, memory);
+    }
+
+    public void anticipationFeedback(Term content, Task t, Memory memory) {
         if(anticipationOperator) {
-            Operation op=(Operation) Operation.make(Product.make(content), this);
-            TruthValue truth=new TruthValue(1.0f,0.90f);
+            Operation op=(Operation) Operation.make(Product.make(Term.SELF,content), this);
+            TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
             Stamp st;
             if(t==null) {
                 st=new Stamp(memory);
@@ -247,10 +250,10 @@ public class Anticipate extends Operator implements EventObserver {
             }
 
             Sentence s=new Sentence(
-                op,
-                Symbols.JUDGMENT_MARK,
-                truth,
-                st);
+                    op,
+                    Symbols.JUDGMENT_MARK,
+                    truth,
+                    st);
 
             Task newTask=new Task(s,new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
