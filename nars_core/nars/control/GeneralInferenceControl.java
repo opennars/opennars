@@ -64,6 +64,8 @@ public class GeneralInferenceControl {
         nal.setCurrentBeliefLink(null);
         nal.setCurrentTask(task); // one of the two places where this variable is set
         
+        nal.memory.emotion.adjustBusy(nal.currentTaskLink.getPriority(),nal.currentTaskLink.getDurability(),nal);
+        
         if (nal.currentTaskLink.type == TermLink.TRANSFORM) {
             nal.setCurrentBelief(null);
             //TermLink tasklink_as_termlink = new TermLink(nal.currentTaskLink.getTerm(), TermLink.TRANSFORM, nal.getCurrentTaskLink().index);
