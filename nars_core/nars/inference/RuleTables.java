@@ -72,8 +72,6 @@ public class RuleTables {
      */
     public static void reason(final TaskLink tLink, final TermLink bLink, final DerivationContext nal) {
         final Memory memory = nal.mem();
-                        
-        memory.emotion.manageBusy(nal);
         
         final Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
