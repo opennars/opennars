@@ -400,7 +400,7 @@ public final class TruthFunctions extends UtilityFunctions {
     }
     
     public static final float temporalProjection(final long sourceTime, final long targetTime, final long currentTime) {
-        double a = 10000.0 * Parameters.projectionDecay.get(); //projection less strict as we changed in v2.0.0  10000.0 slower decay than 100000.0
+        double a = 100000.0 * Parameters.projectionDecay.get(); //projection less strict as we changed in v2.0.0  10000.0 slower decay than 100000.0
         return 1.0f - abs(sourceTime - targetTime) / (float) (abs(sourceTime - currentTime) + abs(targetTime - currentTime) + a);
     }
 }
