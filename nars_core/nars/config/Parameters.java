@@ -146,7 +146,7 @@ public class Parameters {
     public static int OPERATION_SAMPLES = 6; //should be at least 2 to not only consider last decision
     public static int TARGET_GOAL_BAG_SIZE = 10;
     public static final int TARGET_GOAL_BAG_LEVELS = 10;
-    public static int TARGET_GOAL_SAMPLES = 2;
+    public static int TARGET_GOAL_SAMPLES = 0;
     
     /** How fast events decay in confidence **/
     public static final PortableDouble projectionDecay = new PortableDouble(0.1);
