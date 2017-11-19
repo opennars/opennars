@@ -146,14 +146,9 @@ public class Interval extends Term {
         this.magnitude = magnitude;
         setName(Symbols.INTERVAL_PREFIX + String.valueOf(1+magnitude));        
     }
-    
-//    protected Interval(final String s) {
-//        magnitude = Integer.parseInt(s.substring(1));
-//        setName(s);
-//    }
 
     public static int timeToMagnitude(final long timeDiff, final AtomicDuration duration) {
-        int m = (int) Math.round(Math.log(timeDiff) / duration.getSubDurationLog());
+        int m = (int) timeDiff; //Math.round(Math.log(timeDiff) / duration.getSubDurationLog());
         if (m < 0) return 0;
         return m;
     }
@@ -161,23 +156,11 @@ public class Interval extends Term {
     public static double magnitudeToTime(final double magnitude, final AtomicDuration duration) {
         if (magnitude <= 0)
             return 1;
-        return Math.exp(magnitude * duration.getSubDurationLog());
+        return magnitude; //Math.exp(magnitude * duration.getSubDurationLog());
     }
     
     public static long magnitudeToTime(final int magnitude, final AtomicDuration duration) {
         return (long)Math.round(magnitudeToTime((double)magnitude, duration));
-    }
-    
-    /** Calculates the average of the -0.5, +0.5 interval surrounding the integer magnitude */
-    public static long magnitudeToTimeHalfRadius(final int magnitude, final AtomicDuration duration) {
-        //TODO cache this result because it will be equal for all similar integer magnitudes
-        double magMin = magnitude - 0.5;
-        double magMax = magnitude + 0.5;
-        return (long)Math.round((magnitudeToTime(magMin,duration) + magnitudeToTime(magMax, duration))/2.0);
-    }
-    
-    @Deprecated public static long magnitudeToTime(int magnitude) {
-        return (long) Math.ceil(Math.exp(magnitude));
     }
     
     public final long getTime(final AtomicDuration duration) {
@@ -198,50 +181,7 @@ public class Interval extends Term {
 
     /** returns a sequence of intervals which approximate a time period with a maximum number of consecutive Interval terms */
     public static List<Interval> intervalTimeSequence(final long t, final int maxTerms, final Memory memory) {
-        if (maxTerms == 1)
-            return Lists.newArrayList(interval(t, memory));
-        
-        long a; //current approximation value
-        Interval first;
-        first = interval(t, memory);
-        a = first.getTime(memory);
-        if (a == t) return Lists.newArrayList(first);
-        else if (a < t) {
-            //ok we will add to it. nothing to do here
-        }
-        else if ((a > t) && (first.magnitude > 0)) {
-            //use next lower magnitude
-            first = interval(first.magnitude - 1);
-            a = first.getTime(memory);
-        }
-                
-        List c = new ArrayList(maxTerms);
-        c.add(first);
-        
-        long remaining = t - a;
-        c.addAll( intervalTimeSequence(remaining, maxTerms-1, memory));
-        
-        /*
-        Interval approx = Interval.intervalTime(t, memory);                
-        System.out.println(t + " = " + c + "; ~= " + 
-                        approx + " (t=" + t + ", seq=" + intervalSequenceTime(c, memory) + ", one=" + approx.getTime(memory) + ")");
-        */
-        
-        return c;
+        return Lists.newArrayList(interval(t, memory));
     }
-
-    /** sum the time period contained in the Intervals (if any) in a sequence of objects (usually list of Terms) */
-    public static long intervalSequenceTime(final Iterable s, final Memory memory) {
-        long time = 0;
-        for (final Object t : s) {
-            if (t instanceof Interval) {
-                Interval i = (Interval)t;
-                time += i.getTime(memory);
-            }
-        }
-        return time;
-    }
-
-    
 
 }

@@ -265,6 +265,7 @@ public class Parameters {
     public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=true;
     
     public static float ANTICIPATION_CONFIDENCE = 0.90f;
+    public static float ANTICIPATION_TOLERANCE = 10.0f;
     
     public static float CONSIDER_NEW_OPERATION_BIAS = 0.05f; //depriorizes older operation-related events in temporal inference
     

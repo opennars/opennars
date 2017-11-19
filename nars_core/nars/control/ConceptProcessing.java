@@ -424,9 +424,7 @@ public class ConceptProcessing {
                 Term[] newprec = new Term[prec.length-3];
                 System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
 
-                //distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
-                long test = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
-                long add_tolerance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+3, nal.memory.param.duration);
+                long add_tolerance = (long) Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude*Parameters.ANTICIPATION_TOLERANCE, nal.memory.param.duration);
                 mintime = nal.memory.time();
                 maxtime = nal.memory.time() + add_tolerance;
 
