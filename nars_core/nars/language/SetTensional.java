@@ -52,12 +52,6 @@ abstract public class SetTensional extends CompoundTerm {
         
         return n.compact().toString();
     }
-
-    
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }
     
 
     /**

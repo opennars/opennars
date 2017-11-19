@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import nars.config.Parameters;
 import nars.entity.*;
-import nars.inference.SyllogisticRules;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.io.Output;
