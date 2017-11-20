@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import nars.NAR;
+import nars.config.Parameters;
 import nars.entity.Sentence;
 import nars.io.Answered;
 import nars.io.Narsese;
@@ -36,12 +37,12 @@ public class SymRecognizer extends javax.swing.JFrame {
         return resizedimage;
     }
     
-    int SZ = 20;
+    static int SZ = 20;
     private void canvasMousePressed(MouseEvent evt) {
         int X = evt.getX()/10;
         int Y = evt.getY()/10;
         
-        int RAD = 2;
+        int RAD = 1;
         for(int x=X-RAD;x<X+RAD;x++) {
             for(int y=Y-RAD;y<Y+RAD;y++) {
                 if(x<0 || y<0 || x>=SZ || y>=SZ) {
@@ -56,7 +57,7 @@ public class SymRecognizer extends javax.swing.JFrame {
                 //maxDistance*=maxDistance;
                 float R = 255.0f - 255.0f*(distance / maxDistance);
                 Color col1 = new Color(canvasIMG.getRGB(x, y));
-                R*=0.1;
+                R*=0.25;
                 R+=col1.getRed();
                 if(R > 255) {
                     R = 255;
@@ -78,6 +79,7 @@ public class SymRecognizer extends javax.swing.JFrame {
     
     public SymRecognizer() {
         initComponents();
+        invar.setSelected(true);
         //NAR nar = new NAR();
         //NARSwing gui = new NARSwing(nar);
         jButton3.setForeground(Color.RED);
@@ -261,6 +263,10 @@ public class SymRecognizer extends javax.swing.JFrame {
         }
     }
     
+    static {
+        Parameters.SEQUENCE_BAG_ATTEMPTS = SZ*SZ;
+    }
+    
     NAR nar = new NAR();
     NARSwing gui = new NARSwing(nar);
     ArrayList<Answered> q = new ArrayList<Answered>();
@@ -276,8 +282,8 @@ public class SymRecognizer extends javax.swing.JFrame {
                 Color col1 = new Color(canvasIMG.getRGB(x, y));
                 
                 float col = ((float)col1.getRed()) / 255.0f;
-                if(col > 0) { 
-                    float freq = 0.5f+col/2.0f;
+                if(col > 0.5) { 
+                    float freq = 0.5f+(col - 0.5f);
                     if(invar.isSelected()) {
                         build.append("<p["+String.valueOf(used_X)+","+String.valueOf(used_Y)+"] --> [on]>. :|: %"+String.valueOf(freq)+"%");
                         build.append("\n");
@@ -287,7 +293,20 @@ public class SymRecognizer extends javax.swing.JFrame {
                         build.append("\n");
                         build2.append("<p_"+String.valueOf(used_X)+"_"+String.valueOf(used_Y)+" --> [on]>,");
                     }
-                }
+                } /*else {
+                    if(col < 0.5) { 
+                        float freq = 1.0f-col;
+                        if(invar.isSelected()) {
+                            build.append("(--,<p["+String.valueOf(used_X)+","+String.valueOf(used_Y)+"] --> [on]>). :|: %"+String.valueOf(freq)+"%");
+                            build.append("\n");
+                            build2.append("(--,<p["+String.valueOf(used_X)+","+String.valueOf(used_Y)+"] --> [on]>),");
+                        } else {
+                            build.append("(--,<p_"+String.valueOf(used_X)+"_"+String.valueOf(used_Y)+" --> [on]>). :|: %"+String.valueOf(freq)+"%");
+                            build.append("\n");
+                            build2.append("(--,<p_"+String.valueOf(used_X)+"_"+String.valueOf(used_Y)+" --> [on]>),");
+                        }
+                    }
+                }*/
             }
         }
         inputPanel.setText(build.toString());
