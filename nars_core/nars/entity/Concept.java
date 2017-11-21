@@ -91,7 +91,6 @@ public class Concept extends Item<Term> {
      * and insertion in the middle
      */
     public final ArrayList<Task> beliefs;
-    public Bag<Task<Term>,Sentence<Term>> target_goals;
     public final ArrayList<Task> executable_preconditions;
 
     /**
