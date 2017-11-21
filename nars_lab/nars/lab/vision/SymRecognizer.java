@@ -37,7 +37,7 @@ public class SymRecognizer extends javax.swing.JFrame {
         return resizedimage;
     }
     
-    static int SZ = 10;
+    static int SZ = 5;
     private void canvasMousePressed(MouseEvent evt) {
         int X = evt.getX()/(jLabel1.getWidth() / SZ);
         int Y = evt.getY()/(jLabel1.getHeight() / SZ);
@@ -304,7 +304,7 @@ public class SymRecognizer extends javax.swing.JFrame {
         resetDetection();
         StringBuilder build = new StringBuilder();
         StringBuilder build2 = new StringBuilder();
-        build2.append("(&|,");
+        build2.append("<(&|,");
         for(int x=0;x<SZ;x+=1) {
             for(int y=0;y<SZ;y+=1) {
                 int used_X = x;
@@ -323,7 +323,8 @@ public class SymRecognizer extends javax.swing.JFrame {
                         build.append("\n");
                         build2.append("<p_"+String.valueOf(used_X)+"_"+String.valueOf(used_Y)+" --> [on]>,");
                     }
-                } /*else {
+                }
+                /*else {
                     if(col < 0.5) { 
                         float freq = 1.0f-col;
                         if(invar.isSelected()) {
@@ -339,14 +340,18 @@ public class SymRecognizer extends javax.swing.JFrame {
                 }*/
             }
         }
+        String s2 = build2.toString();
+        s2 = s2.substring(0, s2.length()-1);
+        s2=s2+")";
         inputPanel.setText(build.toString());
+        
         if(evt == null) {
-            String s2 = build2.toString();
-            s2 = s2.substring(0, s2.length()-1);
-            s2=s2+")?";
-            inputPanel2.setText(s2);
+            String question = "<{example"+exid+"} --> [observed]>?";
+            additional[exid]=s2+" ==> <{example"+exid+"} --> [observed]>>.";
+            inputPanel2.setText(question);
         }
         else {
+            
             nar = new NAR();
             if(invar1.isSelected()) {
                 gui = new NARSwing(nar);
@@ -357,11 +362,13 @@ public class SymRecognizer extends javax.swing.JFrame {
             //Map<Integer,Integer> bestAnswer = new HashMap<Integer,Integer>();
             Map<Integer,Float> truthExp = new HashMap<Integer,Float>();
             Map<Integer,Float> truthConf = new HashMap<Integer,Float>();
-            for(int i=0;i<10;i++) {
+            for(int i=0;i<maxExamples;i++) {
                 truthExp.put(i, 0.0f);
                 truthConf.put(i, 0.0f);
             }
+            int h=-1;
             for(String s : questions) {
+                h++;
                 if(s!=null) {
                     Answered cur = new Answered() {
                         @Override
@@ -371,7 +378,7 @@ public class SymRecognizer extends javax.swing.JFrame {
                             int index = lookup.get(this);
                             float howconf = belief.truth.getConfidence();
                             float confsofar = truthConf.get(index);
-                            if(howconf > confsofar) {
+                            if(howconf > confsofar && howconf > 0.1f) {
                                 truthExp.put(index, belief.truth.getExpectation());
                                 truthConf.put(index, belief.truth.getConfidence());
                                 //also mark image:
@@ -400,7 +407,8 @@ public class SymRecognizer extends javax.swing.JFrame {
                     };
                     q.add(cur);
                     lookup.put(cur, u);
-                    try { 
+                    try {
+                        nar.addInput(additional[h]);
                         nar.ask(s.substring(0,s.length()-1), cur);
                     } catch (Narsese.InvalidInputException ex) {
                         Logger.getLogger(SymRecognizer.class.getName()).log(Level.SEVERE, null, ex);
@@ -417,8 +425,10 @@ public class SymRecognizer extends javax.swing.JFrame {
 
     int maxExamples = 50;
     String[] questions = new String[maxExamples];
+    String[] additional = new String[maxExamples];
     int k =0;
     int j=0;
+    int exid=0;
     int[] getJ= new int[maxExamples];
     int[] getK= new int[maxExamples];
     private void addPatternButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPatternButtonActionPerformed
@@ -443,6 +453,7 @@ public class SymRecognizer extends javax.swing.JFrame {
             j++;
             k=0;
         }
+        exid++;
     }//GEN-LAST:event_addPatternButtonActionPerformed
 
 
