@@ -98,8 +98,10 @@ public class Term implements AbstractTerm {
     
     /** gets the atomic term given a name */
     public final static Term get(final CharSequence name) {
-        Term x = atoms.get(name);
-        if (x != null) return x;
+        Term x = atoms.get(name); //only
+        if (x != null && !x.toString().endsWith("]")) { //return only if it isn't an index term
+            return x;
+        }
 
         String namestr = name.toString();
         //p[s,i,j]

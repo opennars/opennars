@@ -53,6 +53,8 @@
                   <Group type="102" attributes="0">
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Component id="invar1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="invar" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -83,6 +85,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="invar" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="invar1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="69" max="-2" attributes="0"/>
@@ -183,6 +186,12 @@
       <Properties>
         <Property name="actionCommand" type="java.lang.String" value="Assume translation invariance"/>
         <Property name="label" type="java.lang.String" value="Assume translation invariance"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="invar1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Show reasoner GUI"/>
+        <Property name="actionCommand" type="java.lang.String" value="Assume translation invariance"/>
       </Properties>
     </Component>
   </SubComponents>

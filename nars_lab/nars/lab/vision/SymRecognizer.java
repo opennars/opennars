@@ -37,14 +37,14 @@ public class SymRecognizer extends javax.swing.JFrame {
         return resizedimage;
     }
     
-    static int SZ = 20;
+    static int SZ = 10;
     private void canvasMousePressed(MouseEvent evt) {
-        int X = evt.getX()/10;
-        int Y = evt.getY()/10;
+        int X = evt.getX()/(jLabel1.getWidth() / SZ);
+        int Y = evt.getY()/(jLabel1.getHeight() / SZ);
         
-        int RAD = 1;
-        for(int x=X-RAD;x<X+RAD;x++) {
-            for(int y=Y-RAD;y<Y+RAD;y++) {
+        int RAD = 0;
+        for(int x=X-RAD;x<X+RAD+1;x++) {
+            for(int y=Y-RAD;y<Y+RAD+1;y++) {
                 if(x<0 || y<0 || x>=SZ || y>=SZ) {
                     continue;
                 }
@@ -55,9 +55,9 @@ public class SymRecognizer extends javax.swing.JFrame {
                 float maxDistance = (float) Math.sqrt(Math.pow(Math.abs(X-RAD - X),2)+
                                             Math.pow(Math.abs(Y-RAD - Y),2));
                 //maxDistance*=maxDistance;
-                float R = 255.0f - 255.0f*(distance / maxDistance);
+                float R = 255.0f;// - 255.0f*(distance / maxDistance);
                 Color col1 = new Color(canvasIMG.getRGB(x, y));
-                R*=0.25;
+                R*=0.2;
                 R+=col1.getRed();
                 if(R > 255) {
                     R = 255;
@@ -80,14 +80,12 @@ public class SymRecognizer extends javax.swing.JFrame {
     public SymRecognizer() {
         initComponents();
         invar.setSelected(true);
-        //NAR nar = new NAR();
-        //NARSwing gui = new NARSwing(nar);
         jButton3.setForeground(Color.RED);
         exampleIMG = new BufferedImage(SZ*10,SZ*10,BufferedImage.TYPE_INT_RGB);
         canvasIMG = new BufferedImage(SZ,SZ,BufferedImage.TYPE_INT_RGB);
         //JLabel picLabel = new JLabel(new ImageIcon(canvasIMG));
         jLabel1.setIcon(new ImageIcon(fitimage(canvasIMG,jLabel1.getWidth(), jLabel1.getHeight())));
-        estimate.setIcon(new ImageIcon(exampleIMG));
+        estimate.setIcon(new ImageIcon(fitimage(exampleIMG,estimate.getWidth(), estimate.getHeight())));
         jLabel1.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent evt) {
                 canvasMousePressed(evt);
@@ -129,6 +127,7 @@ public class SymRecognizer extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         invar = new javax.swing.JCheckBox();
+        invar1 = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(102, 204, 0));
@@ -176,6 +175,9 @@ public class SymRecognizer extends javax.swing.JFrame {
         invar.setActionCommand("Assume translation invariance");
         invar.setLabel("Assume translation invariance");
 
+        invar1.setText("Show reasoner GUI");
+        invar1.setActionCommand("Assume translation invariance");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -203,6 +205,8 @@ public class SymRecognizer extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(invar1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(invar)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -225,7 +229,8 @@ public class SymRecognizer extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(invar))
+                    .addComponent(invar)
+                    .addComponent(invar1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -247,29 +252,54 @@ public class SymRecognizer extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     public void clear() {
-        for(int x=0;x<SZ*10;x+=1) {
-            for(int y=0;y<SZ;y+=1) {
-                exampleIMG.setRGB(x, y+SZ, Color.BLACK.getRGB());
+        int max_per_row = exampleIMG.getWidth()/(scale_palette*SZ);
+        for(int k=0;k<max_per_row;k+=1) {
+            for(int j=0;;j+=1) {
+                boolean break3 = false;
+                for(int x=0;x<SZ*scale_palette;x+=1) {
+                    for(int y=0;y<SZ*scale_palette;y+=1) {
+                        int Y = y+(3*j+1)*scale_palette*SZ;
+                        if(Y >= exampleIMG.getHeight()) {
+                            break3=true;break;
+                        }
+                        exampleIMG.setRGB(x+k*scale_palette*SZ, Y, 
+                                Color.BLACK.getRGB());
+                    }
+                }
+                if(break3){break;}
             }
         }
+        estimate.setIcon(new ImageIcon(fitimage(exampleIMG,estimate.getWidth(), estimate.getHeight())));
         estimate.repaint();
     }
     
     public void resetDetection() {
         clear();
-        nar.stop();
         for(Answered ans : q) {
             ans.off();
         }
+        q = new ArrayList<Answered>();
+        if(nar != null) {
+            nar.stop();
+            nar.reset();
+            if(gui != null)
+                gui.mainWindow.setVisible(false);
+            nar = null;
+            gui = null;
+        }
+        
     }
     
     static {
-        Parameters.SEQUENCE_BAG_ATTEMPTS = SZ*SZ;
+        Parameters.SEQUENCE_BAG_ATTEMPTS = 10000;
+        Parameters.SEQUENCE_BAG_LEVELS = 1000;
+        Parameters.SEQUENCE_BAG_SIZE=10000;
     }
     
-    NAR nar = new NAR();
-    NARSwing gui = new NARSwing(nar);
+    NAR nar = null;
+    NARSwing gui = null;
     ArrayList<Answered> q = new ArrayList<Answered>();
+    int scale_palette=2;
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         resetDetection();
         StringBuilder build = new StringBuilder();
@@ -282,7 +312,7 @@ public class SymRecognizer extends javax.swing.JFrame {
                 Color col1 = new Color(canvasIMG.getRGB(x, y));
                 
                 float col = ((float)col1.getRed()) / 255.0f;
-                if(col > 0.5) { 
+                if(col > 0.0) { 
                     float freq = 0.5f+(col - 0.5f);
                     if(invar.isSelected()) {
                         build.append("<p["+String.valueOf(used_X)+","+String.valueOf(used_Y)+"] --> [on]>. :|: %"+String.valueOf(freq)+"%");
@@ -317,7 +347,11 @@ public class SymRecognizer extends javax.swing.JFrame {
             inputPanel2.setText(s2);
         }
         else {
-            nar.reset();
+            nar = new NAR();
+            if(invar1.isSelected()) {
+                gui = new NARSwing(nar);
+            }
+            
             int u = 0;
             Map<Answered,Integer> lookup = new HashMap<Answered,Integer>();
             //Map<Integer,Integer> bestAnswer = new HashMap<Integer,Integer>();
@@ -350,13 +384,16 @@ public class SymRecognizer extends javax.swing.JFrame {
                                     }
                                 }
                                 clear();
-                                for(int x=0;x<SZ;x+=1) {
-                                    for(int y=0;y<SZ;y+=1) {
-                                        Color col = new Color(canvasIMG.getRGB(x, y));
-                                        exampleIMG.setRGB(x+maxu*SZ, y+SZ, 
+                                for(int x=0;x<SZ*scale_palette;x+=1) {
+                                    for(int y=0;y<SZ*scale_palette;y+=1) {
+                                        Color col = new Color(canvasIMG.getRGB(x/scale_palette, y/scale_palette));
+                                        int k = getK[maxu];
+                                        int j = getJ[maxu];
+                                        exampleIMG.setRGB(x+k*scale_palette*SZ, y+(3*j+1)*scale_palette*SZ, 
                                                 new Color(col.getRed(),0,0).getRGB());
                                     }
                                 }
+                                estimate.setIcon(new ImageIcon(fitimage(exampleIMG,estimate.getWidth(), estimate.getHeight())));
                                 estimate.repaint();
                             }
                         }
@@ -378,19 +415,34 @@ public class SymRecognizer extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    String[] questions = new String[10];
+    int maxExamples = 50;
+    String[] questions = new String[maxExamples];
     int k =0;
+    int j=0;
+    int[] getJ= new int[maxExamples];
+    int[] getK= new int[maxExamples];
     private void addPatternButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPatternButtonActionPerformed
         invar.setEnabled(false);
-        for(int x=0;x<SZ;x+=1) {
-            for(int y=0;y<SZ;y+=1) {
-                exampleIMG.setRGB(x+k*SZ, y, canvasIMG.getRGB(x, y));
+        for(int x=0;x<SZ*scale_palette;x+=1) {
+            for(int y=0;y<SZ*scale_palette;y+=1) {
+                Color col = new Color(canvasIMG.getRGB(x/scale_palette, y/scale_palette));
+                exampleIMG.setRGB(x+k*scale_palette*SZ, y+3*j*scale_palette*SZ, 
+                        col.getRGB());
             }
         }
+        estimate.setIcon(new ImageIcon(fitimage(exampleIMG,estimate.getWidth(), estimate.getHeight())));
         estimate.repaint();
         jButton3ActionPerformed(null);
-        questions[k]=inputPanel2.getText();
+        int max_per_row = exampleIMG.getWidth()/(scale_palette*SZ);
+        int index=max_per_row*j+k;
+        questions[index]=inputPanel2.getText();
+        getJ[index]=j;
+        getK[index]=k;
         k+=1;
+        if(k >= max_per_row) {
+            j++;
+            k=0;
+        }
     }//GEN-LAST:event_addPatternButtonActionPerformed
 
 
@@ -409,6 +461,7 @@ public class SymRecognizer extends javax.swing.JFrame {
     private javax.swing.JTextPane inputPanel;
     private javax.swing.JTextPane inputPanel2;
     private javax.swing.JCheckBox invar;
+    private javax.swing.JCheckBox invar1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
