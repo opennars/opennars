@@ -324,20 +324,6 @@ public class SymRecognizer extends javax.swing.JFrame {
                         build2.append("<p_"+String.valueOf(used_X)+"_"+String.valueOf(used_Y)+" --> [on]>,");
                     }
                 }
-                /*else {
-                    if(col < 0.5) { 
-                        float freq = 1.0f-col;
-                        if(invar.isSelected()) {
-                            build.append("(--,<p["+String.valueOf(used_X)+","+String.valueOf(used_Y)+"] --> [on]>). :|: %"+String.valueOf(freq)+"%");
-                            build.append("\n");
-                            build2.append("(--,<p["+String.valueOf(used_X)+","+String.valueOf(used_Y)+"] --> [on]>),");
-                        } else {
-                            build.append("(--,<p_"+String.valueOf(used_X)+"_"+String.valueOf(used_Y)+" --> [on]>). :|: %"+String.valueOf(freq)+"%");
-                            build.append("\n");
-                            build2.append("(--,<p_"+String.valueOf(used_X)+"_"+String.valueOf(used_Y)+" --> [on]>),");
-                        }
-                    }
-                }*/
             }
         }
         String s2 = build2.toString();
@@ -346,9 +332,9 @@ public class SymRecognizer extends javax.swing.JFrame {
         inputPanel.setText(build.toString());
         
         if(evt == null) {
-            String question = "<{example"+exid+"} --> [observed]>?";
+            String question = "<{?what} --> [observed]>?";
             additional[exid]=s2+" ==> <{example"+exid+"} --> [observed]>>.";
-            inputPanel2.setText(question);
+            inputPanel2.setText(additional[exid]+"\n"+question);
         }
         else {
             
@@ -358,38 +344,19 @@ public class SymRecognizer extends javax.swing.JFrame {
             }
             
             int u = 0;
-            Map<Answered,Integer> lookup = new HashMap<Answered,Integer>();
-            //Map<Integer,Integer> bestAnswer = new HashMap<Integer,Integer>();
-            Map<Integer,Float> truthExp = new HashMap<Integer,Float>();
-            Map<Integer,Float> truthConf = new HashMap<Integer,Float>();
-            for(int i=0;i<maxExamples;i++) {
-                truthExp.put(i, 0.0f);
-                truthConf.put(i, 0.0f);
-            }
-            int h=-1;
-            for(String s : questions) {
-                h++;
+            inputPanel2.setText("");
+            //for(String s : questions) {
+            String s = question; {
                 if(s!=null) {
                     Answered cur = new Answered() {
                         @Override
                         public void onSolution(Sentence belief) {
                             //System.out.println("solution: " + belief);
                             System.out.println(belief);
-                            int index = lookup.get(this);
                             float howconf = belief.truth.getConfidence();
-                            float confsofar = truthConf.get(index);
-                            if(howconf > confsofar && howconf > 0.1f) {
-                                truthExp.put(index, belief.truth.getExpectation());
-                                truthConf.put(index, belief.truth.getConfidence());
+                            if(howconf > 0.1f) { //only mark if above 0.1 confidence
                                 //also mark image:
-                                int maxu = 0;
-                                float maxexp = 0.0f;
-                                for(int u=0;u<10;u++) {
-                                    if(truthExp.get(u) > maxexp) {
-                                        maxu = u;
-                                        maxexp = truthExp.get(u);
-                                    }
-                                }
+                                int maxu = Integer.valueOf(belief.getTerm().toString().split("example")[1].split("}")[0]);
                                 clear();
                                 for(int x=0;x<SZ*scale_palette;x+=1) {
                                     for(int y=0;y<SZ*scale_palette;y+=1) {
@@ -406,9 +373,13 @@ public class SymRecognizer extends javax.swing.JFrame {
                         }
                     };
                     q.add(cur);
-                    lookup.put(cur, u);
                     try {
-                        nar.addInput(additional[h]);
+                        for(int h=0;h<exid;h++) {
+                            inputPanel2.setText(inputPanel2.getText()+additional[h]+"\n");
+                            nar.addInput(additional[h]);
+                        }
+                        
+                        inputPanel2.setText(inputPanel2.getText()+s+"\n");
                         nar.ask(s.substring(0,s.length()-1), cur);
                     } catch (Narsese.InvalidInputException ex) {
                         Logger.getLogger(SymRecognizer.class.getName()).log(Level.SEVERE, null, ex);
@@ -424,7 +395,8 @@ public class SymRecognizer extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     int maxExamples = 50;
-    String[] questions = new String[maxExamples];
+    //String[] questions = new String[maxExamples];
+    String question ="<{?what} --> [observed]>?";
     String[] additional = new String[maxExamples];
     int k =0;
     int j=0;
@@ -445,7 +417,7 @@ public class SymRecognizer extends javax.swing.JFrame {
         jButton3ActionPerformed(null);
         int max_per_row = exampleIMG.getWidth()/(scale_palette*SZ);
         int index=max_per_row*j+k;
-        questions[index]=inputPanel2.getText();
+        //questions[index]=inputPanel2.getText();
         getJ[index]=j;
         getK[index]=k;
         k+=1;
