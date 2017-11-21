@@ -196,7 +196,10 @@ public class Conjunction extends CompoundTerm {
                    ",j" + PositiveIntString(relativeSizeY);
                 s+=",k" + PositiveIntString(relativePositionX);
                 s+=",l" + PositiveIntString(relativePositionY)+"]";
-                return Term.get(s);
+                Term ret = Term.get(s);
+                ret.term_indices = term.term_indices;
+                ret.index_variable = term.index_variable;
+                return ret;
             } else {
                 return term; //another atomic term
             }
@@ -245,7 +248,7 @@ public class Conjunction extends CompoundTerm {
                     } 
                     else 
                     if(t instanceof CompoundTerm)
-                    {
+                    {   
                         Term updated = UpdateRelativeIndices(rect.term_indices[2], rect.term_indices[3], rect.term_indices[4], rect.term_indices[5], t.cloneDeep());
                         set.add(updated);
                     }

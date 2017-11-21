@@ -445,8 +445,17 @@ public class Sentence<T extends Term> implements Cloneable {
                 stringLength += (showOcurrenceTime ? 8 : 0) + 11 /*truthString.length()*/;
             }
 
+            String conv = "";
+            if(term.term_indices != null) {
+                conv = " [i,j,k,l]=[";
+                for(int i = 0; i<4; i++) { //skip min sizes
+                    conv += String.valueOf(term.term_indices[i])+",";
+                }
+                conv = conv.substring(0, conv.length()-1) + "]";
+            }
+            
             //suffix = [punctuation][ ][truthString][ ][occurenceTimeString]
-            final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation);
+            final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation).append(conv);
 
             if (truth != null) {
                 suffix.append(' ');

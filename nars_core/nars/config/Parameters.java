@@ -139,7 +139,7 @@ public class Parameters {
     public static final int NOVEL_TASK_BAG_LEVELS = 10;
     /*  Size of derived sequence and input event bag */
     public static int SEQUENCE_BAG_SIZE = 30;
-    public static final int SEQUENCE_BAG_LEVELS = 10;
+    public static int SEQUENCE_BAG_LEVELS = 10;
     /*  Size of remembered last operation tasks */
     public static int OPERATION_BAG_SIZE = 10;
     public static final int OPERATION_BAG_LEVELS = 10;
