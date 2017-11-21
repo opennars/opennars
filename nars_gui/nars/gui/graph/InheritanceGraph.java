@@ -54,6 +54,12 @@ public class InheritanceGraph extends SentenceGraph {
             Term predicate = st.getPredicate();
             addVertex(subject);
             addVertex(predicate);
+            System.out.println(subject.toString().trim() + " " +
+                               predicate.toString().trim()+" " +
+                               s.truth.getExpectation() +
+                               s.truth.getFrequency() + " " + 
+                               s.truth.getConfidence() + " " +
+                               " Inheritance");
             addEdge(subject, predicate, s);        
             return true;
         }
