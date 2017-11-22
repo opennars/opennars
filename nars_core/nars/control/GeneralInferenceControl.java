@@ -9,6 +9,7 @@ import nars.entity.Concept;
 import nars.util.Events;
 import nars.entity.Task;
 import nars.entity.TermLink;
+import nars.inference.BudgetFunctions;
 import nars.inference.RuleTables;
 import nars.language.Term;
 import nars.storage.Memory;
@@ -54,6 +55,7 @@ public class GeneralInferenceControl {
             nal.currentConcept.taskLinks.putBack(nal.currentTaskLink, nal.memory.cycles(nal.memory.param.taskLinkForgetDurations), nal.memory);
         }
         float forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
+        nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
         nal.memory.concepts.putBack(nal.currentConcept, forgetCycles, nal.memory);
     }
     
