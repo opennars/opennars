@@ -7,14 +7,12 @@ package nars.lab.predict;
 import automenta.vivisect.TreeMLData;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
-import automenta.vivisect.timeline.BarChart;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import java.awt.Color;
 import nars.util.Events.TaskImmediateProcess;
 import nars.NAR;
 import nars.config.Parameters;
-import nars.config.Plugins;
 import nars.control.DerivationContext;
 import nars.entity.Task;
 import nars.gui.NARSwing;
@@ -42,7 +40,7 @@ public class Predict_NARS_Core {
         int duration = 8;
         float freq = 1.0f / duration * 0.1f;        
         int thinkInterval = 50;
-        double discretization = 3;
+        double discretization = 5;
 
         NAR n = new NAR();
         n.param.duration.set(duration);

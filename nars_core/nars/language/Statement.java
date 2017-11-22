@@ -143,38 +143,14 @@ public abstract class Statement extends CompoundTerm {
      * @param statement A sample statement providing the class type
      * @param memory Reference to the memory
      */
-//    public static Statement make(final Statement statement, final Term subj, final Term pred, final Memory memory) {
-//        return make(statement, subj, pred, TemporalRules.ORDER_NONE, memory);
-//    }
-    
     final public static Statement make(NativeOperator op, final Term subj, final Term pred, int order) {
 
         return make(op, subj, pred, true, order);
     }
     
-    //++ TODO
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
 
         return make(statement.operator(), subj, pred, true, order);
-        /*
-        if (invalidStatement(subj, pred)) {
-            return null;
-        }
-        if (statement instanceof Inheritance) {
-            return Inheritance.make(subj, pred);
-        }
-        if (statement instanceof Similarity) {
-            return Similarity.make(subj, pred);
-        }
-        if (statement instanceof Implication) {
-            return Implication.make(subj, pred, order);
-        }
-        if (statement instanceof Equivalence) {
-            return Equivalence.make(subj, pred, order);
-        }
-        
-        throw new RuntimeException("Unrecognized type for Statement.make: " + statement.getClass().getSimpleName() + ", subj=" + subj + ", pred=" + pred + ", order=" + order);        
-        */
     }
 
     /**
@@ -209,29 +185,6 @@ public abstract class Statement extends CompoundTerm {
     @Override
     protected CharSequence makeName() {
         return makeStatementName(getSubject(), operator(), getPredicate());
-    }
-
-    /**
-     * Default method to make the nameStr of an image term from given fields
-     *
-     * @param subject The first component
-     * @param predicate The second component
-     * @param relation The relation operator
-     * @return The nameStr of the term
-     */
-    final protected static CharSequence makeStatementNameSB(final Term subject, final NativeOperator relation, final Term predicate) {
-        final CharSequence subjectName = subject.name();
-        final CharSequence predicateName = predicate.name();
-        int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
-        
-        StringBuilder sb = new StringBuilder(length)
-            .append(STATEMENT_OPENER.ch)
-            .append(subjectName)
-            .append(' ').append(relation).append(' ')
-            .append(predicateName)
-            .append(STATEMENT_CLOSER.ch);
-            
-        return sb.toString();
     }
     
     final protected static CharSequence makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {

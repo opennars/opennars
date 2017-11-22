@@ -11,11 +11,13 @@ import nars.config.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Conjunction;
 import nars.operator.Operation;
 import nars.storage.LevelBag;
 import nars.storage.Memory;
@@ -73,7 +75,10 @@ public class TemporalInferenceControl {
             if(takeout == null) {
                 break; //there were no elements in the bag to try
             }
-            if(already_attempted.contains(takeout)) {
+
+            if(already_attempted.contains(takeout) || 
+                    Stamp.baseOverlap(newEvent.sentence.stamp.evidentialBase,
+                            takeout.sentence.stamp.evidentialBase)) {
                 nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
                 continue;
             }
@@ -164,6 +169,18 @@ public class TemporalInferenceControl {
                     // && //-- new outcommented
                     //s.sentence.stamp.equals(newEvent.sentence.stamp,false,true,true,false) ) {
                 //&& newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime() ) { 
+                //check term indices
+                if(s.getTerm().term_indices != null && newEvent.getTerm().term_indices != null) {
+                    boolean differentTermIndices = false;
+                    for(int i=0;i<s.getTerm().term_indices.length;i++) {
+                       if(s.getTerm().term_indices[i] != newEvent.getTerm().term_indices[i]) {
+                           differentTermIndices = true;
+                       }
+                    }
+                    if(differentTermIndices) {
+                        continue;
+                    }
+                }
                 removals.add(s);
                 break;
             }

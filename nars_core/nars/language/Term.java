@@ -98,28 +98,50 @@ public class Term implements AbstractTerm {
     
     /** gets the atomic term given a name */
     public final static Term get(final CharSequence name) {
-        Term x = atoms.get(name);
-        if (x != null) return x;
-        x = new Term(name);
-        atoms.put(name, x);
+        Term x = atoms.get(name); //only
+        if (x != null && !x.toString().endsWith("]")) { //return only if it isn't an index term
+            return x;
+        }
+
+        String namestr = name.toString();
+        //p[s,i,j]
+        int[] term_indices = null;
+        String before_indices_str = null;
+        if(namestr.endsWith("]") && namestr.contains("[")) { //simple check, failing for most terms
+            String indices_str = namestr.split("\\[")[1].split("\\]")[0];
+            before_indices_str = namestr.split("\\[")[0];
+            String[] inds = indices_str.split(",");
+            if(inds.length == 2) { //only position info given
+                indices_str="1,1,"+indices_str;
+                inds = indices_str.split(",");
+            }
+            term_indices = new int[inds.length];
+            for(int i=0;i<inds.length;i++) {
+                try {
+                    term_indices[i] = Integer.valueOf(inds[i]);
+                }
+                catch(NumberFormatException ex)
+                {
+                    term_indices = null;
+                    break;
+                }
+            }
+        }
+        
+        CharSequence name2 = name;
+        if(term_indices != null) { //only on conceptual level not
+            name2 = before_indices_str + "[i,j,k,l]";
+        }
+        x = new Term(name2);
+        x.term_indices = term_indices;
+        x.index_variable = before_indices_str;
+        atoms.put(name2, x);
+        
         return x;
     }
     
     /** gets the atomic term of an integer */
     public final static Term get(final int i) {
-        //fast lookup for single digits
-        switch (i) {
-            case 0: return get("0");
-            case 1: return get("1");
-            case 2: return get("2");
-            case 3: return get("3");
-            case 4: return get("4");
-            case 5: return get("5");
-            case 6: return get("6");
-            case 7: return get("7");
-            case 8: return get("8");
-            case 9: return get("9");
-        }
         return get(Integer.toString(i));
     }
     
@@ -133,6 +155,9 @@ public class Term implements AbstractTerm {
     public CharSequence name() {
         return name;
     }
+    
+    public int[] term_indices = null;
+    public String index_variable = "";
 
     /**
      * Make a new Term with the same name.
@@ -143,7 +168,12 @@ public class Term implements AbstractTerm {
     public Term clone() {
         //avoids setName and its intern(); the string will already be intern:
         Term t = new Term();
+        if(term_indices != null) {
+            t.term_indices = term_indices.clone();
+            t.index_variable = index_variable;
+        }
         t.name = name();
+        
         return t;
     }
     
@@ -221,7 +251,6 @@ public class Term implements AbstractTerm {
             }
         }
     }
-    
          
     /**
      * The syntactic complexity, for constant atomic Term, is 1.
@@ -237,24 +266,6 @@ public class Term implements AbstractTerm {
      */
     protected void setName(final CharSequence newName) {
         this.name = newName;
-//        if (this.name!=null) {
-//            if (this.name.equals(newName)) {
-//                //name is the same
-//                return false;
-//            }
-//        }
-//        
-//        if (newName == null)
-//            return this.name != null;
-//        
-//        if ((newName.getClass() == String.class) && (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN)) {
-//            
-//            this.name = ((String)newName).intern();
-//        }
-//        else {
-//            this.name = newName;
-//        }
-//        return true;
     }
     
     /**
@@ -398,17 +409,6 @@ public class Term implements AbstractTerm {
         Collections.addAll(s, arg);
         
         return s.toArray(new Term[s.size()] );
-        
-        /*
-        TreeSet<Term> s = toSortedSet(arg);
-        //toArray didnt seem to work, but it might. in the meantime:
-        Term[] n = new Term[s.size()];
-        int j = 0;
-        for (Term x : s) {
-            n[j++] = x;
-        }                    
-        return n;
-        */
     }
 
     /** performs a thorough check of the validity of a term (by cloneDeep it) to see if it's valid */

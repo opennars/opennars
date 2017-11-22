@@ -22,9 +22,10 @@ package nars.language;
 
 import static java.lang.System.arraycopy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import nars.config.Parameters;
 import nars.inference.TemporalRules;
@@ -56,22 +57,21 @@ public class Conjunction extends CompoundTerm {
      * @param order
      * @param normalized
      */
+    //avoids re-calculates of conv rectangle
+    protected Conjunction(Term[] arg, final int order, boolean normalized, boolean spatial, CompoundTerm.ConvRectangle rect) {
+        super(arg);
+        this.isSpatial = spatial;
+        temporalOrder = order;
+        this.index_variable = rect.index_variable;
+        this.term_indices = rect.term_indices;
+        init(this.term);
+    }
     protected Conjunction(Term[] arg, final int order, boolean normalized, boolean spatial) {
         super(arg);
-        
         this.isSpatial = spatial;
         temporalOrder = order;
         init(this.term);
-
-        /*if (normalized)
-            setNormalized(true);*/
     }
-
-    @Override
-    final public int getMinimumRequiredComponents() {
-        return 1;
-    }
-
 
     @Override public Term clone(Term[] t) {        
         return make(t, temporalOrder, isSpatial);
@@ -169,6 +169,43 @@ public class Conjunction extends CompoundTerm {
         return ret;
     }
     
+    public static String PositiveIntString(int value) {
+        if(value == 0) {
+            return "";
+        } else {
+            return "+"+String.valueOf(value);
+        }
+    }
+    public static Term UpdateRelativeIndices(int minX, int minY, int minsX, int minsY, Term term) {
+        if(term instanceof CompoundTerm) {
+            CompoundTerm ct = ((CompoundTerm)term);
+            for(int i=0;i<ct.term.length;i++) {
+                ct.term[i]=UpdateRelativeIndices(minX, minY, minsX, minsY, ct.term[i]);
+            }
+            return ct;
+        } else {
+            if(term.term_indices != null) {
+                //term indices remain the same, but representation changes
+                String s = term.index_variable;
+                int relativeSizeX = term.term_indices[0]-minsX;
+                int relativeSizeY = term.term_indices[1]-minsY;
+                int relativePositionX = term.term_indices[2]-minX;
+                int relativePositionY = term.term_indices[3]-minY;
+                
+                s+="[i" + PositiveIntString(relativeSizeX)+
+                   ",j" + PositiveIntString(relativeSizeY);
+                s+=",k" + PositiveIntString(relativePositionX);
+                s+=",l" + PositiveIntString(relativePositionY)+"]";
+                Term ret = Term.get(s);
+                ret.term_indices = term.term_indices;
+                ret.index_variable = term.index_variable;
+                return ret;
+            } else {
+                return term; //another atomic term
+            }
+        }
+    }
+    
     /**
      * Try to make a new compound from a list of term. Called by StringParser.
      *
@@ -202,9 +239,19 @@ public class Conjunction extends CompoundTerm {
             
             // sort/merge arguments
             final TreeSet<Term> set = new TreeSet<>();
-            for (Term t : flatten(argList, temporalOrder, spatial)) {
+            Term[] flattened = flatten(argList, temporalOrder, spatial);
+            ConvRectangle rect = UpdateConvRectangle(flattened);
+            for (Term t : flattened) {
                 if(!(t instanceof Interval)) { //intervals only for seqs
-                    set.add(t);
+                    if(t.term_indices == null || rect.term_indices == null) {
+                        set.add(t);
+                    } 
+                    else 
+                    if(t instanceof CompoundTerm)
+                    {   
+                        Term updated = UpdateRelativeIndices(rect.term_indices[2], rect.term_indices[3], rect.term_indices[4], rect.term_indices[5], t.cloneDeep());
+                        set.add(updated);
+                    }
                 }
             }
             
@@ -212,7 +259,7 @@ public class Conjunction extends CompoundTerm {
                 return set.first();
             }
             
-            return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder, false, spatial);
+            return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder, false, spatial, rect);
         }
     }
 
