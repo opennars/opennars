@@ -116,7 +116,7 @@ public class Anticipate extends Operator implements EventObserver {
             //ok we know the magnitude now, let's now construct a interval with magnitude one higher
             //(this we can skip because magnitudeToTime allows it without being explicitly constructed)
             //ok, and what predicted occurence time would that be? because only if now is bigger or equal, didnt happen is true
-            double expiredate=predictionstarted+Interval.magnitudeToTime(Int.magnitude+2, nal.memory.param.duration);
+            double expiredate=predictionstarted+Interval.magnitudeToTime(Int.magnitude*Parameters.ANTICIPATION_TOLERANCE, nal.memory.param.duration);
             //
             
             boolean didntHappen = (now>=expiredate);

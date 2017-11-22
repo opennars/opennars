@@ -119,13 +119,6 @@ abstract public class Image extends CompoundTerm {
         return term[relationIndex];
     }
 
-
-    
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 2;
-    }
-
     /**
      * Get the other term in the Image
      * @return The term related

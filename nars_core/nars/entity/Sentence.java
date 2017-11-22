@@ -278,6 +278,14 @@ public class Sentence<T extends Term> implements Cloneable {
             
             if (!term.equals(t.term)) return false;
             
+            if(term.term_indices != null && t.term.term_indices != null) {
+                for(int i=0;i<term.term_indices.length;i++) {
+                    if(term.term_indices[i] != t.term.term_indices[i]) {
+                        return false; //position or scale was different
+                    }
+                }
+            }
+            
             if(!stamp.equals(t.stamp, false, true, true)) {
                 return false;
             }
@@ -437,8 +445,17 @@ public class Sentence<T extends Term> implements Cloneable {
                 stringLength += (showOcurrenceTime ? 8 : 0) + 11 /*truthString.length()*/;
             }
 
+            String conv = "";
+            if(term.term_indices != null) {
+                conv = " [i,j,k,l]=[";
+                for(int i = 0; i<4; i++) { //skip min sizes
+                    conv += String.valueOf(term.term_indices[i])+",";
+                }
+                conv = conv.substring(0, conv.length()-1) + "]";
+            }
+            
             //suffix = [punctuation][ ][truthString][ ][occurenceTimeString]
-            final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation);
+            final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation).append(conv);
 
             if (truth != null) {
                 suffix.append(' ');
@@ -496,9 +513,17 @@ public class Sentence<T extends Term> implements Cloneable {
         if (showStamp)
             stringLength += stampString.length()+1;
         
+        String conv = "";
+        if(term.term_indices != null) {
+            conv = " [i,j,k,l]=[";
+            for(int i = 0; i<4; i++) { //skip min sizes
+                conv += String.valueOf(term.term_indices[i])+",";
+            }
+            conv = conv.substring(0, conv.length()-1) + "]";
+        }
         
         final StringBuilder buffer = new StringBuilder(stringLength).
-                    append(contentName).append(punctuation);
+                    append(contentName).append(punctuation).append(conv);
         
         if (tenseString.length() > 0)
             buffer.append(' ').append(tenseString);

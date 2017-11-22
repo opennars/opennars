@@ -46,14 +46,7 @@ public class Product extends CompoundTerm {
     
     public static Product make(final Term... arg) {
         return new Product(arg);
-    }
-    
-
-    
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }    
+    }   
     
     /**
      * Clone a Product

@@ -96,6 +96,13 @@ public class LocalRules {
         if(!s1.isEternal() && !s2.isEternal() && Math.abs(s1.getOccurenceTime() - s2.getOccurenceTime()) > Parameters.REVISION_MAX_OCCURRENCE_DISTANCE) {
             return false;
         }
+        if(s1.term.term_indices != null && s2.term.term_indices != null) {
+            for(int i=0;i<s1.term.term_indices.length;i++) {
+                if(s1.term.term_indices[i] != s2.term.term_indices[i]) {
+                    return false;
+                }
+            }
+        }
         return (s1.getRevisible() && 
                 matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()) &&
                 CompoundTerm.replaceIntervals(s1.term).equals(CompoundTerm.replaceIntervals(s2.term)) &&

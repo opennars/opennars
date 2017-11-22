@@ -139,14 +139,11 @@ public class Parameters {
     public static final int NOVEL_TASK_BAG_LEVELS = 10;
     /*  Size of derived sequence and input event bag */
     public static int SEQUENCE_BAG_SIZE = 30;
-    public static final int SEQUENCE_BAG_LEVELS = 10;
+    public static int SEQUENCE_BAG_LEVELS = 10;
     /*  Size of remembered last operation tasks */
     public static int OPERATION_BAG_SIZE = 10;
     public static final int OPERATION_BAG_LEVELS = 10;
     public static int OPERATION_SAMPLES = 6; //should be at least 2 to not only consider last decision
-    public static int TARGET_GOAL_BAG_SIZE = 10;
-    public static final int TARGET_GOAL_BAG_LEVELS = 10;
-    public static int TARGET_GOAL_SAMPLES = 0;
     
     /** How fast events decay in confidence **/
     public static final PortableDouble projectionDecay = new PortableDouble(0.1);
@@ -265,6 +262,7 @@ public class Parameters {
     public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=true;
     
     public static float ANTICIPATION_CONFIDENCE = 0.90f;
+    public static float ANTICIPATION_TOLERANCE = 50.0f;
     
     public static float CONSIDER_NEW_OPERATION_BIAS = 0.05f; //depriorizes older operation-related events in temporal inference
     

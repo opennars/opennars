@@ -42,13 +42,6 @@ public class Negation extends CompoundTerm {
         return makeCompoundName(NativeOperator.NEGATION, term[0]);
     }
     
-    
-
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }
-    
     /**
      * Clone an object
      *

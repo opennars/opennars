@@ -82,11 +82,74 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                 
     }
     
+    public static class ConvRectangle
+    {
+        public String index_variable = null;
+        public int[] term_indices = null; //size X, size Y, pos X, pos Y, min size X, min size Y
+        public ConvRectangle(){} //the latter two for being able to assing a relative index for size too
+    }
+    public static ConvRectangle UpdateConvRectangle(Term[] term) {
+        String index_last_var = null;
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = 0, maxY = 0, 
+                minsX = Integer.MAX_VALUE, minsY = Integer.MAX_VALUE;
+        boolean hasTermIndices = false;
+        boolean calculateTermIndices = true;
+        for (final Term t : term) {
+            if(t.term_indices != null) {
+                if(!calculateTermIndices || 
+                        (t.index_variable != null && index_last_var != null &&
+                        (!t.index_variable.equals(index_last_var)))) {
+                    calculateTermIndices = false;
+                    hasTermIndices = false;
+                    continue; //different "channels", don't calculate term indices
+                }
+                hasTermIndices = true;
+                int size_X = t.term_indices[0];
+                if(size_X < minsX)
+                    minsX = size_X;
+                int size_Y = t.term_indices[1];
+                if(size_Y < minsY)
+                    minsY = size_Y;
+                int pos_X = t.term_indices[2];
+                int pos_Y = t.term_indices[3];
+                if(pos_X < minX)
+                    minX = pos_X;
+                if(pos_Y < minY)
+                    minY = pos_Y;
+                if(pos_X+size_X > maxX)
+                    maxX = pos_X+size_X;
+                if(pos_Y+size_Y > maxY)
+                    maxY = pos_Y+size_Y;
+                
+                index_last_var = t.index_variable;
+            }
+        }
+        ConvRectangle rect = new ConvRectangle();// = new ConvRectangle();
+        if(hasTermIndices) {
+            rect.term_indices = new int[6];
+            rect.term_indices[0] = maxX-minX;
+            rect.term_indices[1] = maxY-minY;
+            rect.term_indices[2] = minX;
+            rect.term_indices[3] = minY;
+            rect.term_indices[4] = minsX;
+            rect.term_indices[5] = minsY;
+            rect.index_variable = index_last_var;
+        }
+        return rect;
+    }
+    
     /** call this after changing Term[] contents */
     protected void init(Term[] term) {
 
         this.complexity = 1;
         this.hasVariables = this.hasVarDeps = this.hasVarIndeps = this.hasVarQueries = false;
+        
+        if(this.term_indices == null) {
+            ConvRectangle rect = UpdateConvRectangle(term);
+            this.index_variable = rect.index_variable;
+            this.term_indices = rect.term_indices;
+        }
+        
         for (final Term t : term) {
             this.complexity += t.getComplexity();        
             hasVariables |= t.hasVar();
@@ -225,38 +288,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         cc.setNormalized(isNormalized());
         return cc;
     }
-    
-    /** override in subclasses to avoid unnecessary reinit */
-    /*public CompoundTerm _clone(final Term[] replaced) {
-        if (Terms.equals(term, replaced)) {
-            return this;
-        }
-        return clone(replaced);
-    }*/
-
-
-    
-    //TODO not used yet
-    private Term[] ensureValidComponents(final Term[] components) {
-        if (components.length < getMinimumRequiredComponents()) {
-            throw new RuntimeException(getClass().getSimpleName() + " requires >=" + getMinimumRequiredComponents() + " components, invalid argument:" + Arrays.toString(components));
-        }
-        
-        //return Collections.unmodifiableList( term );
-        return components;
-    }
-
-    /**
-     * default value, override in subclasses.
-     * may not be enforced yet.
-     */
-    public int getMinimumRequiredComponents() {
-        return 2;
-    }
-
-   
- 
-
 
     @Override
     public int containedTemporalRelations() {
@@ -315,33 +346,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         return this.name;
     }
     
-//    @Override
-//    public boolean equals(final Object that) {
-//        if (!(that instanceof CompoundTerm))
-//            return false;
-//        
-//        final CompoundTerm t = (CompoundTerm)that;
-//        return name().equals(t.name());
-//        
-//        /*if (hashCode() != t.hashCode())
-//            return false;
-//        
-//        if (operator() != t.operator())
-//            return false;
-//        
-//        if (size() != t.size())
-//            return false;
-//        
-//        for (int i = 0; i < term.size(); i++) {
-//            final Term c = term.get(i);
-//            if (!c.equals(t.componentAt(i)))
-//                return false;
-//        }
-//        
-//        return true;*/
-//        
-//    }
-    
     
     
     /**
@@ -358,7 +362,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         size += opString.length();
         for (final Term t : arg) 
             size += 1 + t.name().length();
-        
         
         final CharBuffer n = CharBuffer.allocate(size)
             .append(COMPOUND_TERM_OPENER.ch).append(opString);
@@ -526,41 +529,22 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             l.add(t.clone());
         return l;        
     }
-
     
-
-    
-    /*static void shuffle(final Term[] list, final Random randomNumber) {
-        if (list.length < 2)  {
+    static void shuffle(final Term[] ar,final Random randomNumber)
+    {
+        if (ar.length < 2)  {
             return;
         }
-        
-        
-        int n = list.length;
-        for (int i = 0; i < n; i++) {
-            // between i and n-1
-            int r = i + (randomNumber.nextInt() % (n-i));
-            Term tmp = list[i];    // swap
-            list[i] = list[r];
-            list[r] = tmp;
-        }
-    }*/
-    
-        static void shuffle(final Term[] ar,final Random randomNumber)
-        {
-            if (ar.length < 2)  {
-                return;
-            }
 
-          for (int i = ar.length - 1; i > 0; i--)
-          {
-            int index = randomNumber.nextInt(i + 1);
-            // Simple swap
-            Term a = ar[index];
-            ar[index] = ar[i];
-            ar[i] = a;
-          }
-        }
+      for (int i = ar.length - 1; i > 0; i--)
+      {
+        int index = randomNumber.nextInt(i + 1);
+        // Simple swap
+        Term a = ar[index];
+        ar[index] = ar[i];
+        ar[i] = a;
+      }
+    }
     
     
 
@@ -610,30 +594,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             return Terms.contains(term, t);
         }
     }
-
-//    /**
-//     * Try to add a component into a compound
-//     *
-//     * @param t1 The compound
-//     * @param t2 The component
-//     * @param memory Reference to the memory
-//     * @return The new compound
-//     */
-//    public static Term addComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
-//        if (t2 == null)
-//            return t1;
-//        
-//        boolean success;
-//        Term[] terms;
-//        if (t2 instanceof CompoundTerm) {
-//            terms = t1.cloneTerms(((CompoundTerm) t2).term);
-//        } else {
-//            terms = t1.cloneTerms(t2);
-//        }
-//        return Memory.make(t1, terms, memory);
-//    }
-
-
 
     /**
      * Try to replace a component in a compound at a given index by another one
@@ -685,95 +645,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     @Override
     public boolean hasVarQuery() {
         return hasVarQueries;
-    }
-    
-    
-
-    
-    
-//    /** caches a static copy of commonly uesd index variables of each variable type */
-//    public static final int maxCachedVariableIndex = 32;
-//    public static final Variable[][] varCache = (Variable[][]) Array.newInstance(Variable.class, 3, maxCachedVariableIndex);
-//    
-//    public static Variable getIndexVariable(final char type, final int i) {
-//        int typeI;
-//        switch (type) {
-//            case '#': typeI = 0; break;
-//            case '$': typeI = 1; break;
-//            case '?': typeI = 2; break;
-//            default: throw new RuntimeException("Invalid variable type: " + type + ", index " + i);
-//        }
-//        
-//        if (i < maxCachedVariableIndex) {
-//            Variable existing = varCache[typeI][i];
-//            if (existing == null)
-//                existing = varCache[typeI][i] = new Variable(type + String.valueOf(i));
-//            return existing;
-//        }
-//        else
-//            return new Variable(type + String.valueOf(i));
-//    }
-
-
-
-    
-//    /**
-//     * Recursively rename the variables in the compound
-//     *
-//     * @param map The substitution established so far
-//     * @return an array of terms, normalized; may return the original Term[] array if nothing changed,
-//     * otherwise a clone of the array will be returned
-//     */
-//    public static Term[] normalizeVariableNames(String prefix, final Term[] s, final HashMap<Variable, Variable> map) {
-//        
-//        boolean renamed = false;
-//        Term[] t = s.clone();
-//        char c = 'a';
-//        for (int i = 0; i < t.length; i++) {
-//            final Term term = t[i];
-//            
-//
-//            if (term instanceof Variable) {
-//
-//                Variable termV = (Variable)term;                
-//                Variable var;
-//
-//                var = map.get(termV);
-//                if (var == null) {
-//                    //var = getIndexVariable(termV.getType(), map.size() + 1);
-//                    var = new Variable(termV.getType() + /*prefix + */String.valueOf(map.size() + 1));
-//                }
-//                
-//                if (!termV.equals(var)) {
-//                    t[i] = var;
-//                    renamed = true;
-//                }
-//
-//                map.put(termV, var);
-//
-//            } else if (term instanceof CompoundTerm) {
-//                CompoundTerm ct = (CompoundTerm)term;
-//                if (ct.containVar()) {
-//                    Term[] d = normalizeVariableNames(prefix + Character.toString(c),  ct.term, map);
-//                    if (d!=ct.term) {                        
-//                        t[i] = ct.clone(d, true);
-//                        renamed = true;
-//                    }
-//                }
-//            }        
-//            c++;
-//        }
-//            
-//        if (renamed) {            
-//            return t;
-//        }
-//        else 
-//            return s;
-//    }
-
-    /** NOT TESTED YET */
-    public boolean containsAnyTermsOf(final Collection<Term> c) {
-        return Terms.containsAny(term, c);
     }
     
     /**
@@ -943,102 +814,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         return true;
     }
 
-//    /** may be overridden in subclass to include other details */
-//    protected int calcHash() {
-//        //return Objects.hash(operator(), Arrays.hashCode(term), getTemporalOrder());
-//        return name().hashCode();
-//    }
-    
-//
-//    /**
-//     * Orders among terms: variable < atomic < compound
-//     *
-//     * @param that The Term to be compared with the current Term
-//\     * @return The order of the two terms
-//     */
-//    @Override
-//    public int compareTo(final AbstractTerm that) {
-//        if (this == that) return 0;
-//        
-//        if (that instanceof CompoundTerm) {
-//            final CompoundTerm t = (CompoundTerm) that;
-//            if (size() == t.size()) {
-//                int opDiff = this.operator().ordinal() - t.operator().ordinal(); //should be faster faster than Enum.compareTo                
-//                if (opDiff != 0) {
-//                    return opDiff;
-//                }
-//                
-//                int tDiff = this.getTemporalOrder() - t.getTemporalOrder(); //should be faster faster than Enum.compareTo                
-//                if (tDiff != 0) {
-//                    return tDiff;
-//                }
-//
-//                for (int i = 0; i < term.length; i++) {
-//                    final int diff = term[i].compareTo(t.term[i]);
-//                    if (diff != 0) {
-//                        return diff;
-//                    }
-//                }
-//
-//                return 0;
-//            } else {
-//                return size() - t.size();
-//            }
-//        } else {
-//            return 1;
-//        }
-//    }
-
-    
-    
-    /*
-    @Override
-    public boolean equals(final Object that) {
-        return (that instanceof Term) && (compareTo((Term) that) == 0);
-    }
-    */
-
-    
-//
-//
-//        
-//
-//    /**
-//     * Orders among terms: variable < atomic < compound
-//     *
-//     * @param that The Term to be compared with the current Term
-//\     * @return The order of the two terms
-//     */
-//    @Override
-//    public int compareTo(final Term that) {
-//        /*if (!(that instanceof CompoundTerm)) {
-//            return getClass().getSimpleName().compareTo(that.getClass().getSimpleName());
-//        }
-//        */        
-//        return -name.compareTo(that.name());
-//            /*
-//            if (size() == t.size()) {
-//                int opDiff = this.operator().ordinal() - t.operator().ordinal(); //should be faster faster than Enum.compareTo                
-//                if (opDiff != 0) {
-//                    return opDiff;
-//                }
-//
-//                for (int i = 0; i < term.length; i++) {
-//                    final int diff = term[i].compareTo(t.term[i]);
-//                    if (diff != 0) {
-//                        return diff;
-//                    }
-//                }
-//
-//                return 0;
-//            } else {
-//                return size() - t.size();
-//            }
-//        } else {
-//            return 1;
-//            */
-//    }
-
     public void setNormalized(boolean b) {        
         this.normalized = b;
     }
@@ -1046,22 +821,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     public boolean isNormalized() {
         return normalized;
     }
-
-    /** compare subterms where any variables matched are not compared */
-    public boolean equalsVariablesAsWildcards(final CompoundTerm c) {
-        if (operator()!=c.operator()) return false;
-        if (size()!=c.size()) return false;
-        for (int i = 0; i < size(); i++) {
-            Term a = term[i];
-            Term b = c.term[i];
-            if ((a instanceof Variable) && (a.hasVarDep()) || 
-                    ((b instanceof Variable) && (b.hasVarDep())))
-                continue;
-            if (!a.equals(b)) return false;
-        }
-        return true;
-    }
-
     
     public Term[] cloneTermsReplacing(Term from, Term to) {
         Term[] y = new Term[term.length];

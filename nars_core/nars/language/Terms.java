@@ -533,33 +533,5 @@ public class Terms {
                 throw new RuntimeException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + Arrays.toString(s));
         }        
         return s;
-    }
-
-    /**
-     * comparison that will match constant terms, allowing variables to match regardless
-     * ex: (&&,<a --> b>,<b --> c>) also contains <a --> #1>
-     */
-    static boolean containsVariablesAsWildcard(final Term[] term, final Term b) {        
-        CompoundTerm bCompound = (b instanceof CompoundTerm) ? ((CompoundTerm)b) : null;
-        for (Term a : term) {
-            if (a.equals(b)) return true;
-            
-            if ((a instanceof CompoundTerm) && (bCompound!=null))  {
-                if (((CompoundTerm)a).equalsVariablesAsWildcards(bCompound))
-                        return true;
-            }
-        }
-        return false;
-    }
-
-    
-    /** true if any of the terms contains a variable */
-    public static boolean containsVariables(Term... args) {
-        for (Term t : args) {
-            if (t.hasVar())
-                return true;
-        }
-        return false;
-    }
-    
+    }    
 }
