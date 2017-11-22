@@ -6,10 +6,9 @@ import nars.config.Parameters;
 import nars.entity.Item;
 import nars.inference.BudgetFunctions;
 
-
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
-    public static final int bin(final float x, final int bins) {
+    public static int bin(final float x, final int bins) {
         int i = (int)Math.floor((x + 0.5f/bins) * bins);
         return i;
     }
@@ -24,9 +23,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      */
     public boolean contains(final E it) {
         E exist = get(it.name());
-        if (exist.equals(it))
-            return true;
-        return false;
+        return exist.equals(it);
     }
     
     /**
@@ -94,7 +91,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     abstract public E take(final K key);
 
-    public E take(E value) { return take(value.name()); }
+    public E take(E value) {
+        return take(value.name());
+    }
     
     
     /**
@@ -118,7 +117,10 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     public float getTotalPriority() {
         int size = size();
-        if (size == 0) return 0;
+        if (size == 0) {
+            return 0;
+        }
+
         return getAveragePriority() * size();
     }
 
@@ -153,8 +155,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     public E processNext(final float forgetCycles, final Memory m) {
                 
         final E x = takeNext();
-        if (x == null)
+        if (x == null) {
             return null;
+        }
         
         E r = putBack(x, forgetCycles, m);
         if (r!=null) {
