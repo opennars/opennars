@@ -453,16 +453,21 @@ public class ConceptProcessing {
                     if(projectedPrecon.isEternal()) {
                         continue; //projection wasn't better than eternalization, too long in the past
                     }
-                    //debug start
-                    //long timeA = memory.time();
-                    //long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
-                    //long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
-                    //debug end
+                    
+                    
                     TruthValue precon = projectedPrecon.truth;
-                    //and derive the conjunction of the left side:
+                    // and derive the conjunction of the left side in order to derive the operator desire value
                     TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
-                    //in order to derive the operator desire value:
                     TruthValue opdesire = TruthFunctions.desireDed(precon, leftside);
+
+                    boolean debugTime = false;
+                    if (debugTime) { // debug
+                        long timeA = memory.time();
+                        long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
+                        long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
+                        
+                        int breakMeHere = 0; // set breakpoint here
+                    }
 
                     float expecdesire = opdesire.getExpectation();
                     if(expecdesire > bestop_truthexp) {
