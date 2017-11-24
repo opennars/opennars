@@ -38,11 +38,11 @@ public class Variable extends Term {
 
     
     /** caches the type character for faster lookup than charAt(0) */
-    private transient char type = 0;
+    private char type = 0;
     
     private Term scope;
 
-    private transient int hash;
+    private int hash;
     
 
     public Variable(final CharSequence name) {

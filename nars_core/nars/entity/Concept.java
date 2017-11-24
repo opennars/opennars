@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +45,7 @@ import nars.storage.Bag;
 import nars.storage.LevelBag;
 import static nars.inference.UtilityFunctions.or;
 
-public class Concept extends Item<Term> {
+public class Concept extends Item<Term> implements Serializable {
 
     
     /**

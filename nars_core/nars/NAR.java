@@ -9,7 +9,12 @@ import nars.util.EventEmitter;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import static com.google.common.collect.Iterators.singletonIterator;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -55,7 +60,7 @@ import nars.storage.LevelBag;
  *   * step mode - controlled by an outside system, such as during debugging or testing
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class NAR implements Runnable {
+public class NAR implements Serializable,Runnable {
 
     /**
      * The information about the version and date of the project.
@@ -72,6 +77,24 @@ public class NAR implements Runnable {
                     "    IRC:  http://webchat.freenode.net/?channels=nars \n";    ;
 
 
+    public void SaveToFile(String name) throws FileNotFoundException, IOException {
+        FileOutputStream outStream = new FileOutputStream(name);
+        ObjectOutputStream stream = new ObjectOutputStream(outStream);
+        stream.writeObject(this);
+        outStream.close();
+    }
+    
+    public static NAR LoadFromFile(String name) throws FileNotFoundException, IOException, ClassNotFoundException {
+        FileInputStream inStream = new FileInputStream(name);
+        ObjectInputStream stream = new ObjectInputStream(inStream);
+        NAR ret = (NAR) stream.readObject();
+        ret.memory.event = new EventEmitter();
+        ret.plugins = new ArrayList<>(); 
+        ret.inputChannels = new ArrayList();
+        ret.newInputChannels = new ArrayList(); //was CopyOnWriteArrayList
+        new Plugins().init(ret);
+        return ret;
+    }
 
     private Thread thread = null;
     long minCyclePeriodMS;
@@ -88,13 +111,10 @@ public class NAR implements Runnable {
 
 
     /** The addInput channels of the reasoner     */
-    public final List<InPort<Object,Item>> inputChannels;
+    public transient List<InPort<Object,Item>> inputChannels;
 
     /** pending input and output channels to add on the next cycle. */
-    private final List<InPort<Object,Item>> newInputChannels;
-
-
-
+    private transient List<InPort<Object,Item>> newInputChannels;
 
 
     public class PluginState implements Serializable {
@@ -123,7 +143,7 @@ public class NAR implements Runnable {
         }
     }
 
-    protected final List<PluginState> plugins = new ArrayList<>(); //was CopyOnWriteArrayList
+    protected transient List<PluginState> plugins = new ArrayList<>(); //was CopyOnWriteArrayList
 
     /** Flag for running continuously  */
     private boolean running = false;
@@ -323,8 +343,8 @@ public class NAR implements Runnable {
         return cyclesPerFrame;
     }
 
-    final class ObjectTaskInPort extends InPort<Object,Item> {
-
+    final class ObjectTaskInPort extends InPort<Object,Item> implements Serializable {
+        
         @Override
         public void remove() {
             throw new UnsupportedOperationException();

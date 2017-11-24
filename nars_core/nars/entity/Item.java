@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import nars.storage.Memory;
 
@@ -29,7 +30,7 @@ import nars.storage.Memory;
  * <p>
  * It has a key and a budget. Cannot be cloned
  */
-public abstract class Item<K> {
+public abstract class Item<K> implements Serializable {
 
     public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
 

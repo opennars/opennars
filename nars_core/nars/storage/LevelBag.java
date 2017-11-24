@@ -20,6 +20,7 @@
  */
 package nars.storage;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +36,7 @@ import nars.entity.Item;
  * Original Bag implementation which distributes items into
  * discrete levels (queues) according to priority
  */
-public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
+public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializable {
 
     /**
      * priority levels
@@ -104,7 +105,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         clear();
     }
 
-    public class Level<E> implements Iterable<E> {
+    public class Level<E> implements Iterable<E>, Serializable {
         private final int thisLevel;
         
         //Deque<E> items;

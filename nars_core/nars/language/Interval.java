@@ -18,6 +18,7 @@
 package nars.language;
 
 import com.google.common.collect.Lists;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import nars.storage.Memory;
@@ -32,10 +33,11 @@ import nars.io.Symbols;
  */
 public class Interval extends Term {
 
+    public static class Lock extends Object implements Serializable { }
     //Because AtomicInteger/Double ot supported by teavm
-    public static class PortableInteger {
+    public static class PortableInteger implements Serializable {
         public PortableInteger(){}
-        Object lock = new Object();
+        Lock lock = new Lock();
         int VAL = 0;
         public PortableInteger(int VAL){synchronized(lock){this.VAL = VAL;}}
         public void set(int VAL){synchronized(lock){this.VAL = VAL;}}
@@ -43,10 +45,10 @@ public class Interval extends Term {
         public float floatValue() {return (float)this.VAL;}
         public float doubleValue() {return (float)this.VAL;}
         public int intValue() {return (int)this.VAL;}
-        public int incrementAndGet(){synchronized(lock){this.VAL++;} return VAL;}
+        public int incrementAndGet(){int ret = 0; synchronized(lock){this.VAL++; ret=this.VAL;} return ret;}
     }
-    public static class PortableDouble {
-        Object lock = new Object();
+    public static class PortableDouble implements Serializable {
+        Lock lock = new Lock();
         public PortableDouble(){}
         double VAL = 0;
         public PortableDouble(double VAL){synchronized(lock){this.VAL = VAL;}}
@@ -67,8 +69,8 @@ public class Interval extends Term {
          */
         double linear = 0.5;
         
-        transient double log; //caches the value here
-        transient int lastValue = -1;
+        double log; //caches the value here
+        int lastValue = -1;
 
         public AtomicDuration() {
             super();

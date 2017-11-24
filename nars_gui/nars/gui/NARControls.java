@@ -38,6 +38,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -59,6 +62,7 @@ import nars.gui.output.TaskTree;
 import nars.gui.output.NARFacePanel;
 import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
+import nars.io.Output;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.language.Interval.PortableInteger;
@@ -119,18 +123,13 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
      * @param nar
      * @param title
      */
-    
-    public NARControls(final NAR nar) {
+    public NARSwing parent;
+    public NARControls(final NAR nar, NARSwing parent) {
         super(new BorderLayout());
         
         this.nar = nar;
-        memory = nar.memory;        
-        
-        
-
-        
-        
-        
+        memory = nar.memory; 
+        this.parent = parent;
         
         experienceWriter = new TextOutput(nar);
         
@@ -143,7 +142,10 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         addJMenuItem(m, "Reset");
         m.addSeparator();
         addJMenuItem(m, "Load Experience");
-        addJMenuItem(m, "Save Experience");        
+        addJMenuItem(m, "Save Experience");
+
+        addJMenuItem(m, "Save Memory");     
+        addJMenuItem(m, "Load Memory");
         
         /*internalExperienceItem = addJMenuItem(m, "Enable Internal Experience (NAL9)");
         fullInternalExp = addJMenuItem(m, "Enable Full Internal Experience");
@@ -578,7 +580,42 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 //                    internalExperienceItem.setEnabled(false);
 //                    nar.memory.param.internalExperience.set(true);
 //                    break;
-                    
+                     
+                case "Save Memory":
+                {
+                    try {
+                        FileDialog dialog = new FileDialog((Dialog) null, "Save memory", FileDialog.SAVE);
+                        dialog.setVisible(true);
+                        String directoryName = dialog.getDirectory();
+                        String fileName = dialog.getFile();
+                        String path = directoryName + fileName;
+                        nar.SaveToFile(path);
+                    } catch (IOException ex) {
+                        Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                    break;
+                case "Load Memory":
+                {
+                    try {
+                        FileDialog dialog = new FileDialog((Dialog) null, "Load memory", FileDialog.LOAD);
+                        dialog.setVisible(true);
+                        String directoryName = dialog.getDirectory();
+                        String fileName = dialog.getFile();
+                        String filePath = directoryName + fileName;
+                        NAR loadedNAR = NAR.LoadFromFile(filePath);
+                        new NARSwing(loadedNAR);
+                        loadedNAR.memory.emit(Output.ECHO.class, "Memory file " + fileName + " loaded successfully.");
+                        //new javax.swing.JOptionPane.showInputDialog(new javax.swing.JFrame(), "Memory loaded");
+                        parent.mainWindow.setVisible(false);
+                        parent.mainWindow.dispose();
+                    } catch (IOException ex) {
+                        Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
+                } 
                 case "Load Experience":
                     openLoadFile();
                     break;

@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -34,7 +35,7 @@ import nars.language.Term;
  * 
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Task> implements TLink<Task> {
+public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
 
     /**
      * The Task linked. The "target" field in TermLink is not used here.
@@ -44,7 +45,7 @@ public class TaskLink extends Item<Task> implements TLink<Task> {
     
     
     /* Remember the TermLinks, and when they has been used recently with this TaskLink */
-    public final static class Recording {
+    public final static class Recording implements Serializable {
     
         public final TermLink link;
         long time;

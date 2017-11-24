@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import java.io.Serializable;
 import nars.storage.Memory;
 import nars.language.Term;
 import nars.plugin.mental.InternalExperience;
@@ -30,7 +31,7 @@ import nars.plugin.mental.InternalExperience;
  * garbage collection process.  Otherwise, Task ancestry would grow unbounded,
  * violating the assumption of insufficient resources (AIKR).
  */
-public class Task<T extends Term> extends Item<Sentence<T>>  {
+public class Task<T extends Term> extends Item<Sentence<T>> implements Serializable  {
 
     /* The sentence of the Task*/
     public final Sentence<T> sentence;

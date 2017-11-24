@@ -1,5 +1,6 @@
 package nars.io;
 
+import java.io.Serializable;
 import static java.lang.Float.parseFloat;
 import java.util.ArrayList;
 import nars.storage.Memory;
@@ -49,18 +50,13 @@ import static java.lang.String.valueOf;
 import static nars.io.Symbols.getOperator;
 import static nars.language.Variables.containVar;
 import static nars.language.Statement.make;
-import static nars.language.Statement.make;
-import static java.lang.String.valueOf;
-import static nars.io.Symbols.getOperator;
-import static nars.language.Variables.containVar;
-import static nars.language.Statement.make;
 
 /**
  * Utility methods for working and reacting to Narsese input.
  * This will eventually be integrated with NarseseParser for systematic
  * parsing and prediction of input.
  */
-public class Narsese {
+public class Narsese implements Serializable {
     
     public final Memory memory;
 

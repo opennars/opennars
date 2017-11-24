@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import java.io.Serializable;
 import java.util.*;
 
 import nars.storage.Memory;
@@ -39,7 +40,7 @@ import nars.operator.Operator;
  * It is not linked in the Term, because a Concept may be forgot while the Term
  * exists. Multiple objects may represent the same Term.
  */
-public class Term implements AbstractTerm {
+public class Term implements AbstractTerm, Serializable {
     private static final Map<CharSequence,Term> atoms = new HashMap();
 
     final public static Term SELF = SetExt.make(Term.get("SELF"));

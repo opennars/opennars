@@ -97,7 +97,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     
     //todo make sense of this class and de-obfuscate
     public final Bag<Concept,Term> concepts;
-    public final EventEmitter event;
+    public transient EventEmitter event;
     
     /* InnateOperator registry. Containing all registered operators of the system */
     public final HashMap<CharSequence, Operator> operators;

@@ -21,6 +21,7 @@
 package nars.entity;
 
 import com.google.common.collect.Iterators;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ import static nars.language.Tense.Present;
 import nars.language.Term;
 import static nars.inference.TemporalRules.order;
 
-public class Stamp implements Cloneable {
+public class Stamp implements Cloneable, Serializable {
 
     /*serial numbers. not to be modified after Stamp constructor has initialized it*/
     public long[] evidentialBase;
@@ -58,7 +59,7 @@ public class Stamp implements Cloneable {
     public boolean alreadyAnticipatedNegConfirmation = false;
     
     /** caches  */
-    transient CharSequence name = null;
+    CharSequence name = null;
     
     /**
      * derivation chain containing the used premises and conclusions which made
@@ -68,7 +69,7 @@ public class Stamp implements Cloneable {
      */
     
     /** cache of hashcode of evidential base */
-    transient private int evidentialHash;
+    private int evidentialHash;
 
     
     public boolean before(Stamp s, int duration) {

@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 import nars.io.Symbols;
@@ -37,7 +38,7 @@ import nars.language.Term;
  * <p>
  * This class is mainly used in inference.RuleTable to dispatch premises to inference rules
  */
-public class TermLink extends Item<TermLink> implements TLink<Term> {
+public class TermLink extends Item<TermLink> implements TLink<Term>, Serializable {
     
     
     /** At C, point to C; TaskLink only */

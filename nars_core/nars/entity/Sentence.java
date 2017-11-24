@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,7 @@ import nars.language.Variable;
  * <p>
  * It is used as the premises and conclusions of all inference rules.
  */
-public class Sentence<T extends Term> implements Cloneable {
+public class Sentence<T extends Term> implements Cloneable, Serializable {
 
     public boolean producedByTemporalInduction=false;
 
@@ -80,7 +81,7 @@ public class Sentence<T extends Term> implements Cloneable {
     private boolean revisible;
 
     /** caches the 'getKey()' result */
-    private transient CharSequence key;
+    private CharSequence key;
 
     private final int hash;
     

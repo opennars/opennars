@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import java.io.Serializable;
 import nars.config.Parameters;
 import static nars.config.Parameters.TRUTH_EPSILON;
 import nars.io.Symbols;
@@ -27,7 +28,7 @@ import nars.io.Texts;
 import nars.language.Term;
 
 
-public class TruthValue implements Cloneable { // implements Cloneable {
+public class TruthValue implements Cloneable, Serializable { // implements Cloneable {
 
 
     final static Term Truth_TRUE = new Term("TRUE");
