@@ -25,6 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Arrays;
 import nars.util.Events.Answer;
@@ -44,7 +45,7 @@ import nars.operator.Operator;
 /**
  * To read and write experience as Task streams
  */
-public class TextOutput extends Output {
+public class TextOutput extends Output implements Serializable {
 
 
     private final NAR nar;

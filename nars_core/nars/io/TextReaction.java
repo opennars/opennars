@@ -1,8 +1,10 @@
 package nars.io;
 
+import java.io.Serializable;
+
 /** A low-level handler for parsing text.  
  *  Named reaction because it is analogous to an automatic reflex or reaction. */
-public interface TextReaction {
+public interface TextReaction extends Serializable {
     
     /**
      * 

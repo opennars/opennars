@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import java.io.Serializable;
 import nars.config.Parameters;
 import static nars.config.Parameters.TRUTH_EPSILON;
 import nars.inference.BudgetFunctions;
@@ -32,7 +33,7 @@ import static nars.inference.UtilityFunctions.or;
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).
  */
-public class BudgetValue implements Cloneable {
+public class BudgetValue implements Cloneable, Serializable {
 
     /** The character that marks the two ends of a budget value */
     private static final char MARK = Symbols.BUDGET_VALUE_MARK;

@@ -49,13 +49,13 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
  plus 1
         TODO make final again
      */
-    transient public short complexity;
+    public short complexity;
     
     
     /** Whether contains a variable */
-    transient private boolean hasVariables, hasVarQueries, hasVarIndeps, hasVarDeps;
+    private boolean hasVariables, hasVarQueries, hasVarIndeps, hasVarDeps;
     
-    transient int containedTemporalRelations = -1;
+    int containedTemporalRelations = -1;
     int hash;
     private boolean normalized;
     

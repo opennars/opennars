@@ -3,6 +3,7 @@ package nars.io;
 import com.google.common.collect.Iterators;
 import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,9 +20,6 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.Output.IN;
 import nars.io.Narsese.InvalidInputException;
-/*import nars.io.nlp.Englisch;
-import nars.io.nlp.NaturalLanguagePerception;
-import nars.io.nlp.Twenglish;*/
 
 /**
  *  Default handlers for text perception.
@@ -30,7 +28,7 @@ import nars.io.nlp.Twenglish;*/
  *  
  *  TODO break into separate subclasses for each text mode
  */
-public class DefaultTextPerception implements Plugin, EventObserver {
+public class DefaultTextPerception implements Plugin, EventObserver, Serializable {
     
     private Memory memory;
     
@@ -38,8 +36,6 @@ public class DefaultTextPerception implements Plugin, EventObserver {
     
     
     public Narsese narsese;    
-    //public Englisch englisch;
-    //public Twenglish twenglish;
     
     private boolean enableNarsese = true;
 
@@ -157,36 +153,6 @@ public class DefaultTextPerception implements Plugin, EventObserver {
                 return null;
             }
         });
-
-//      TODO implement these with AbstractTask's        
-//        //stop
-//        parsers.add(new TextReaction() {
-//            @Override
-//            public Object react(String input) {
-//                if (!memory.isWorking())  {
-//                    if (input.equals(Symbols.STOP_COMMAND)) {
-//                        memory.output(Output.IN.class, input);
-//                        memory.setWorking(false);
-//                        return Boolean.TRUE;                        
-//                    }
-//                }
-//                return null;                
-//            }
-//        });    
-//        
-//        //start
-//        parsers.add(new TextReaction() {
-//            @Override public Object react(String input) {                
-//                if (memory.isWorking()) {
-//                    if (input.equals(Symbols.START_COMMAND)) {
-//                        memory.setWorking(true);
-//                        memory.output(Output.IN.class, input);
-//                        return Boolean.TRUE;                        
-//                    }
-//                }
-//                return null;                
-//            }
-//        });
         
         //silence
         parsers.add(new TextReaction() {
@@ -208,24 +174,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
                 return null;                
             }
         });
-        
-//        //URL include
-//        parsers.add(new TextReaction() {
-//            @Override
-//            public Object react(Memory m, String input) {
-//                char c = input.charAt(0);
-//                if (c == Symbols.URL_INCLUDE_MARK) {            
-//                    try {
-//                        nar.addInput(new TextInput(new URL(input.substring(1))));
-//                    } catch (IOException ex) {
-//                        m.output(ERR.class, ex);
-//                    }
-//                    return true;
-//                }
-//                return false;                
-//            }
-//        });        
-
+   
         //echo
         //TODO standardize on an echo/comment format
         parsers.add(new TextReaction() {

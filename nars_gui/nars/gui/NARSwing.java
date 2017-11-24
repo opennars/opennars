@@ -159,7 +159,7 @@ public class NARSwing  {
                 
         this.nar = nar;                
         
-        controls = new NARControls(nar);    
+        controls = new NARControls(nar, this);    
         controls.setPreferredSize(new Dimension(200,10));
         mainWindow = new NWindow(NAR.VERSION);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
