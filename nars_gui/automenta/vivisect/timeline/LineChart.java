@@ -5,7 +5,9 @@ import automenta.vivisect.timeline.Chart.MultiChart;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LineChart extends Chart implements MultiChart {
     protected final List<TreeMLData> data;
@@ -49,6 +51,8 @@ public class LineChart extends Chart implements MultiChart {
         this.lineThickness = thick;
         return this;
     }
+    
+    public Map<Integer,Integer> customColor = new HashMap<Integer,Integer>();
 
 
     @Override
@@ -164,12 +168,20 @@ public class LineChart extends Chart implements MultiChart {
                 float py = y + yScale1 - h;
                                 
                 if (firstPoint) {
+                    boolean hadCustom = false;
+                    if(this.customColor.containsKey(t)) {
+                        hadCustom = true;
+                        l.g.stroke(this.customColor.get(t));
+                    }
                     if (showVerticalLines) {
                         l.g.line(px, py, px, py + h);
                     }
 
                     if (t != l.cycleStart) {
                         l.g.line(lx, ly, px, py);
+                    }
+                    if(hadCustom) {
+                        l.g.stroke(ccolor);
                     }
                 }
                 

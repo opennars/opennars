@@ -102,132 +102,6 @@ public class TimelineVis implements Vis {
         return cycleEnd;
     }
     
-
-//    @Override
-//    public void mouseWheelMoved(MouseWheelEvent e) {
-//        super.mouseWheelMoved(e);
-//        /*int wr = e.getWheelRotation();
-//         camScale += wr * dScale;
-//         if (wr != 0)
-//         updateNext();*/
-//    }
-//
-//    @Override
-//    public void keyPressed(KeyEvent event) {
-//        super.keyPressed(event);
-//        if (event.getKey() == 'l') {
-//            showItemLabels = !showItemLabels;
-//            updateNext();
-//        }
-//
-//    }
-
-//    @Override
-//    public void mouseMoved() {
-//        updateMouse();
-//    }
-//
-//    
-//    @Override
-//    public void mouseReleased() {
-//        updateMouse();
-//    }
-    
-    
-    
-//
-//    protected void updateMouse() {
-//        
-//        boolean changed = false;
-//
-//        
-//        //scale limits
-//        if (mouseButton > 0) {
-//            long now = System.nanoTime();
-//            
-//            if (Float.isFinite(lastMousePressX)) {
-//                float dt = (now - lastUpdate)/1e9f;
-//         
-//                
-//                //float dx = (mouseX - lastMousePressX);
-//                //float dy = (mouseY - lastMousePressY);
-//                float dx = mouseX - pmouseX;
-//                float dy = mouseY - pmouseY;
-//                
-//                if (mouseButton == 37) {
-//                    //left mouse button
-//                    if ((dx != 0) || (dy != 0)) {
-//                        camera.camX -= dx;
-//                        camera.camY -= dy;
-//                        changed = true;
-//                    }
-//                } else if (mouseButton == 39) {
-//                    //right mouse button
-//                    
-//                    
-//                    float sx = dx * scaleSpeed * dt;
-//                    float sy = dy * scaleSpeed * dt;         
-//                    
-//                    camera.camX += sx / camera.timeScale;
-//                    camera.camY += sy / camera.yScale;
-//                    
-//                    camera.timeScale += sx;
-//                    camera.yScale += sy;
-//
-//                    changed = true;
-//                    //System.out.println(camX +  " " + camY + " " + sx + " "  + sy);
-//                }
-//                else {
-//                    lastMousePressX = Float.NaN;
-//                }
-////                else if (mouseButton == 3) {
-////                    //middle mouse button (wheel)
-////                    rotZ -= dx * rotSpeed;
-////                }
-//            }
-//
-//            lastMousePressX = mouseX;
-//            lastMousePressY = mouseY;
-//
-//            lastUpdate = now;
-//            
-//        } else {
-//            lastMousePressX = Float.NaN;
-//        }
-//        
-//               
-//        if (changed) {            
-//            camera.lastUpdate = System.currentTimeMillis();
-//            updateNext();
-//        }
-//
-//    }
-//
-//    protected void updateCamera() {
-//            
-//        if (camera.yScale < minYScale) camera.yScale = minYScale;
-//        if (camera.yScale > maxYScale) camera.yScale = maxYScale;
-//        if (camera.timeScale < minTimeScale)  camera.timeScale = minTimeScale;
-//        if (camera.timeScale > maxTimeScale) camera.timeScale = maxTimeScale;
-//
-//        translate(-camera.camX + width / 2, -camera.camY + height / 2);
-//
-//        cycleStart = (int) (Math.floor((camera.camX - width / 2) / camera.timeScale) - 1);
-//        cycleStart = Math.max(0, cycleStart);
-//        cycleEnd = (int) (Math.ceil((camera.camX + width / 2) / camera.timeScale) + 1);
-//
-//        if (cycleEnd < cycleStart) cycleEnd = cycleStart;
-//
-//        drawnTextScale = Math.min(camera.yScale, camera.timeScale) * textScale;
-//        
-//        if (camera.lastUpdate > lastCameraUpdate) {
-//            updating = true;
-//        }
-//
-//        
-//        
-//    }
-    
     public void updateNext() {
         if (!updating) {
             for (Chart c : charts) {
@@ -248,19 +122,6 @@ public class TimelineVis implements Vis {
         int originalColorMode = g.colorMode;
         g.colorMode(HSB);
         
-        //updateMouse();
-        
-        /*if (!isDisplayable() || !isVisible())
-            return true;*/
-            
-        //updateCamera();
-
-        /*if (!updating) {
-            return true;
-        }
-
-        updating = false;*/
-        
         lastCameraUpdate = camera.lastUpdate;
 
         //background(0);
@@ -279,6 +140,10 @@ public class TimelineVis implements Vis {
         for (Chart c : charts) {
             float h = c.height * camera.yScale;
             c.draw(this, y, camera.timeScale, camera.yScale);
+            if(c.drawOverlapped) {
+                y += 10;
+                continue;
+            }
             y += (h + yMargin);
         }
                
@@ -294,67 +159,6 @@ public class TimelineVis implements Vis {
     public float getMinLabelScale() {
         return minLabelScale;
     }
-
-    
-    
-    /*
-    
-    
-     import picking.*;
-
-     Picker picker;
-     float a = 0.0;
-
-     void setup() {
-     size(200, 150, P3D);
-     picker = new Picker(this);
-     }
-
-     void draw() {
-     a += 0.01;
-
-     background(255);
-
-     picker.start(0);
-     drawBox(80, 75, 50, #ff8800);
-
-     picker.start(1);
-     drawBox(140, 75, 20, #eeee00);
-
-     picker.stop();
-
-     color c = 0;
-     int id = picker.get(mouseX, mouseY);
-     switch (id) {
-     case 0:
-     c = #ff8800;
-     break;
-     case 1:
-     c = #eeee00;
-     break;
-     }
-     drawBorder(10, c);
-     }
-
-     void drawBox(int x, int y, int w, color c) {
-     stroke(0);
-     fill(c);
-     pushMatrix();
-     translate(x, y);
-     rotateX(a); rotateY(a);
-     box(w);
-     popMatrix();
-     }
-
-     void drawBorder(int w, color c) {
-     noStroke();
-     fill(c);
-     rect(0,   0, width, w);
-     rect(0, height - w, width, w);
-     rect(0,   0, w, height);
-     rect(width - w, 0, w, height);
-     }
-     */
 
     public float getDrawnTextScale() {
         return drawnTextScale;

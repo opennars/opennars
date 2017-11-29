@@ -16,6 +16,7 @@ public abstract class Chart {
     protected float height = 1.0f;
     protected float width = 1.0f;
     protected boolean overlayEnable = false;
+    boolean drawOverlapped = false;
 
     public interface MultiChart {
         public List<TreeMLData> getData();
@@ -36,6 +37,10 @@ public abstract class Chart {
     }
     public Chart width(float w) {
         this.width = w;
+        return this;
+    }
+    public Chart drawOverlapped() {
+        this.drawOverlapped = true;
         return this;
     }
     
