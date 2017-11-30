@@ -120,7 +120,9 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final DerivationContext nal) {
-        if (newBelief.term==null) return false;
+        if (newBelief.term==null) { 
+            return false;
+        }
         
         newBelief.stamp.alreadyAnticipatedNegConfirmation = oldBelief.stamp.alreadyAnticipatedNegConfirmation;
         TruthValue newTruth = newBelief.truth;
@@ -135,7 +137,7 @@ public class LocalRules {
             }
         }
         
-       return false;
+        return false;
     }
 
 
@@ -149,39 +151,21 @@ public class LocalRules {
     public static boolean trySolution(Sentence belief, final Task task, final DerivationContext nal, boolean report) {
         Sentence problem = task.sentence;
         Memory memory = nal.mem();
-        
         Sentence oldBest = task.getBestSolution();
+        
         if (oldBest != null) {
             boolean rateByConfidence = oldBest.getTerm().equals(belief.getTerm());
             float newQ = solutionQuality(rateByConfidence, task, belief, memory);
             float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory);
             if (oldQ >= newQ) {
                 if (problem.isGoal()) {
-                    memory.emotion.adjustHappy(oldQ, task.getPriority(),nal);
+                    memory.emotion.adjustSatisfaction(oldQ, task.getPriority(),nal);
                 }
-                //System.out.println("Unsolved: Solution of lesser quality");
                 memory.emit(Unsolved.class, task, belief, "Lower quality");               
                 return false;
             }
         }
-        
-        /* //TODO evaluate why this was necessary at all!!
-        Term content = belief.term;
-        if (content.hasVarIndep()) {
-            Term u[] = new Term[] { content, problem.term };
-            
-            boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u);            
-            content = u[0];
-            
-            belief = belief.clone(content);
-            
-            if ((!unified) || (content == null)) {
-                throw new RuntimeException("Unification invalid: " + Arrays.toString(u));
-            }
-        }*/
-
         task.setBestSolution(memory,belief);
-        
         //memory.logic.SOLUTION_BEST.commit(task.getPriority());
         
         BudgetValue budget = solutionEval(task, belief, task, nal);
@@ -197,17 +181,7 @@ public class LocalRules {
             } else {
                 memory.emit(Output.class, task, belief);   //goal things only show silence related 
             }
-            
-            
-            /*memory.output(task);
-                        
-            //only questions and quests get here because else output is spammed
-            if(task.sentence.isQuestion() || task.sentence.isQuest()) {
-                memory.emit(Solved.class, task, belief);          
-            } else {
-                memory.emit(Output.class, task, belief);            
-            }*/
-                        
+
             nal.addTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
             return true;
         }
@@ -274,7 +248,7 @@ public class LocalRules {
         final float quality = solutionQuality(rateByConfidence, problem, solution, nal.mem());
         
         if (problem.sentence.isGoal()) {
-            nal.memory.emotion.adjustHappy(quality, task.getPriority(), nal);
+            nal.memory.emotion.adjustSatisfaction(quality, task.getPriority(), nal);
         }
         
         if (judgmentTask) {
@@ -433,7 +407,9 @@ public class LocalRules {
             content = Statement.make(content, subjT, otherTerm, order);
         }
         
-        if (content == null) return;
+        if (content == null) { 
+            return;
+        }
         
         nal.singlePremiseTask(content, Symbols.JUDGMENT_MARK, newTruth, newBudget);
     }
