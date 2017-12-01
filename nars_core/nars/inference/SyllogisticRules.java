@@ -25,7 +25,6 @@ import nars.config.Parameters;
 import nars.control.ConceptProcessing;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
-import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -39,7 +38,6 @@ import static nars.inference.TemporalRules.analogyOrder;
 import static nars.inference.TemporalRules.dedExeOrder;
 import static nars.inference.TemporalRules.resemblanceOrder;
 import static nars.inference.TemporalRules.reverseOrder;
-import nars.io.Output;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
@@ -52,7 +50,6 @@ import nars.language.Term;
 import nars.language.Terms;
 import static nars.language.Terms.reduceComponents;
 import nars.language.Variables;
-import nars.operator.mental.Anticipate;
 
 
 /**
@@ -307,11 +304,9 @@ public final class SyllogisticRules {
             }
         }
         Statement s=Statement.make(higherOrder ? NativeOperator.EQUIVALENCE : NativeOperator.SIMILARITY, term1, term2, order);
-        //if(!Terms.equalSubTermsInRespectToImageAndProduct(term2, term2))
-            nal.doublePremiseTask( s, truth, budget,false, false); //(allow overlap) but not needed here, isn't detachment
-        // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
+        nal.doublePremiseTask( s, truth, budget,false, false); //(allow overlap) but not needed here, isn't detachment
         
-       if(Parameters.BREAK_NAL_HOL_BOUNDARY && !sentence.term.hasVarIndep() && (st instanceof Equivalence) && order1==order2 && belief.term.isHigherOrderStatement() && sentence.term.isHigherOrderStatement()) {
+        if(Parameters.BREAK_NAL_HOL_BOUNDARY && !sentence.term.hasVarIndep() && (st instanceof Equivalence) && order1==order2 && belief.term.isHigherOrderStatement() && sentence.term.isHigherOrderStatement()) {
            
             BudgetValue budget1=null, budget2=null, budget3=null;
             TruthValue truth1=null, truth2=null, truth3=null;
@@ -414,7 +409,6 @@ public final class SyllogisticRules {
             nal.getTheNewStamp().setOccurrenceTime(time);
         }
 
-        
         TruthValue beliefTruth = beliefSentence.truth;
         TruthValue truth1 = mainSentence.truth;
         TruthValue truth2 = subSentence.truth;
@@ -463,11 +457,7 @@ public final class SyllogisticRules {
         }
         if(!Variables.indepVarUsedInvalid(content)) {
             boolean allowOverlap = taskSentence.isJudgment() && strong;
-            List<Task> ret = nal.doublePremiseTask(content, truth, budget, false, allowOverlap); //(strong) when strong on judgement
-            if(shiftedTimeForward && ret != null && ret.size() > 0 && mainSentence.isEternal() && taskSentence.isJudgment() && mainSentence.isJudgment() && shiftedTimeForward) {
-                //discountPredictiveHypothesis(nal, mainSentence, budget);
-               // SyllogisticRules.generatePotentialNegConfirmation(nal, mainSentence, budget, mintime, maxtime, 1);
-            }
+            nal.doublePremiseTask(content, truth, budget, false, allowOverlap); //(strong) when strong on judgement
         }
     }
 
@@ -508,7 +498,6 @@ public final class SyllogisticRules {
             return;
         }
         Conjunction oldCondition = (Conjunction) subj;
-
         
         int index2 = Terms.indexOf(oldCondition.term,commonComponent);
         if (index2 >= 0) {
@@ -519,7 +508,7 @@ public final class SyllogisticRules {
             premise1 = (Implication) u[0]; premise2 = u[1];
             
             if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
-            
+
                 CompoundTerm compoundCommonComponent = ((CompoundTerm) commonComponent);
                 
                 if ((oldCondition.term.length > index) && (compoundCommonComponent.term.length > index)) { // assumption: { was missing
@@ -773,11 +762,9 @@ public final class SyllogisticRules {
         }
         Term term1 = null;
         Term term2 = null;
-//        if ((cond1 instanceof Conjunction) && !Variable.containVarDep(cond1.getName())) {
         if (cond1 instanceof Conjunction) {
             term1 = reduceComponents((CompoundTerm) cond1, cond2, nal.mem());
         }
-//        if ((cond2 instanceof Conjunction) && !Variable.containVarDep(cond2.getName())) {
         if (cond2 instanceof Conjunction) {
             term2 = reduceComponents((CompoundTerm) cond2, cond1, nal.mem());
         }
@@ -795,10 +782,7 @@ public final class SyllogisticRules {
         
         TruthValue truth = null;
         BudgetValue budget;
-        
-        //is this correct because the second term2!=null condition may overwrite the first
-        //should the inner if be: if (term2 == null) then it makes sense.
-        
+
         if (term1 != null) {
             if (term2 != null) {
                 content = Statement.make(st2, term2, term1, st2.getTemporalOrder());

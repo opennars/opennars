@@ -53,7 +53,7 @@ public class Emotions implements Plugin {
     public long last_happy_time = 0;
     public long last_busy_time = 0;
     public long change_steps_demanded = 1000;
-    public void adjustHappy(float newValue, float weight, DerivationContext nal) {
+    public void adjustSatisfaction(float newValue, float weight, DerivationContext nal) {
         
         //        float oldV = happyValue;
         happy += newValue * weight;

@@ -20,17 +20,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import nars.storage.Memory;
 import nars.config.Parameters;
-import nars.control.DerivationContext;
 import nars.control.TemporalInferenceControl;
 import nars.entity.BudgetValue;
-import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
@@ -71,7 +66,6 @@ public class TemporalRules {
         return matchingOrder(a.getTemporalOrder(), b.getTemporalOrder());
     }
     
-
     public final static boolean matchingOrder(final int order1, final int order2) {
         return (order1 == order2) || (order1 == ORDER_NONE) || (order2 == ORDER_NONE);
     }
@@ -180,14 +174,6 @@ public class TemporalRules {
 
             Variable var1 = new Variable("$0");
             Variable var2 = new Variable("$1");
-
-           /* if (ss1.getSubject().equals(ss2.getSubject())) {
-                t11 = Statement.make(ss1, var1, ss1.getPredicate());
-                t22 = Statement.make(ss2, var2, ss2.getPredicate());
-            } else if (ss1.getPredicate().equals(ss2.getPredicate())) {
-                t11 = Statement.make(ss1, ss1.getSubject(), var1);
-                t22 = Statement.make(ss2, ss2.getSubject(), var2);
-            }*/
             
             if(ss2.containsTermRecursively(ss1.getSubject())) {
                 HashMap<Term,Term> subs=new HashMap();
@@ -214,22 +200,19 @@ public class TemporalRules {
                 if(ss2 instanceof Operation && !(ss2.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
                     Term comp=ss1.getSubject();
                     Term ss2_term = ((Operation)ss2).getSubject();
-                    
                     boolean applicableVariableType = !(comp instanceof Variable && ((Variable)comp).hasVarIndep());
                     
                     if(ss2_term instanceof Product) {
                         Product ss2_prod=(Product) ss2_term;
                         
                         if(applicableVariableType && Terms.contains(ss2_prod.term, comp)) { //only if there is one and it isnt a variable already
-                            Term[] ars = ss2_prod.cloneTermsReplacing(comp, var1);
-
-                            t11 = Statement.make(ss1, var1, ss1.getPredicate());
                             
+                            Term[] ars = ss2_prod.cloneTermsReplacing(comp, var1);
+                            t11 = Statement.make(ss1, var1, ss1.getPredicate());
                             Operation op=(Operation) Operation.make(
                                     new Product(ars), 
                                     ss2.getPredicate()
                             );
-                            
                             t22 = op;
                         }
                     }
@@ -246,15 +229,11 @@ public class TemporalRules {
                         if(applicableVariableType && Terms.contains(ss1_prod.term, comp)) { //only if there is one and it isnt a variable already
                             
                             Term[] ars = ss1_prod.cloneTermsReplacing(comp, var1);
-                            
-
                             t22 = Statement.make(ss2, var1, ss2.getPredicate());
-                            
                             Operation op=(Operation) Operation.make(
                                     new Product(ars), 
                                     ss1.getPredicate()
                             );
-                            
                             t11 = op;
                         }
                     }
