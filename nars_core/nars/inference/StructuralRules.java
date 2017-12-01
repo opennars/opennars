@@ -71,14 +71,9 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralCompose2(CompoundTerm compound, short index, Statement statement, short side, DerivationContext nal) {
-        final Memory mem = nal.mem();
-        
         if (compound.equals(statement.term[side])) {
             return;
         }
-        /*if (!memory.getCurrentTask().sentence.isJudgment() || (compound.size() == 1)) {
-            return; // forward inference only
-        }*/
         Term sub = statement.getSubject();
         Term pred = statement.getPredicate();
         List<Term> components = compound.asTermList();
@@ -241,9 +236,6 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralDecompose1(CompoundTerm compound, short index, Statement statement, DerivationContext nal) {
-//        if (!memory.getCurrentTask().sentence.isJudgment()) {
-//            return;
-//        }
         if(index >= compound.term.length) {
             return;
         }
@@ -825,10 +817,7 @@ public final class StructuralRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
-        //if (content instanceof CompoundTerm)
-            return nal.singlePremiseTask(content, truth, budget);
-       // else
-       //     return false;
+        return nal.singlePremiseTask(content, truth, budget);
     }
 
     /* --------------- Negation related rules --------------- */

@@ -20,7 +20,6 @@
  */
 package nars.inference;
 
-import java.util.HashSet;
 import nars.util.Events;
 import nars.storage.Memory;
 import nars.config.Parameters;
@@ -152,7 +151,11 @@ public class RuleTables {
                         } //else {
                         try {
                             goalFromQuestion(task, taskTerm, nal); 
-                        }catch(Exception ex) {} //todo fix
+                        }catch(Exception ex) {
+                            if(Parameters.DEBUG) {
+                                System.out.print("Error in goalFromQuestion");
+                            }
+                        } //todo fix
                         //}
                         break;
                     case TermLink.COMPOUND_STATEMENT:
@@ -223,8 +226,7 @@ public class RuleTables {
                         if (belief != null) {
                             bIndex = bLink.getIndex(1);
                             if ((taskTerm instanceof Statement) && (beliefTerm instanceof Implication)) {
-                                
-                                    conditionalDedIndWithVar(belief, (Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
+                                conditionalDedIndWithVar(belief, (Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
                             }
                         }
                         break;
@@ -245,16 +247,15 @@ public class RuleTables {
                                 Term subj = ((Statement) taskTerm).getSubject();
                                 if (subj instanceof Negation) {
                                     if (taskSentence.isJudgment()) {
-                                    componentAndStatement((CompoundTerm) subj, bIndex, (Statement) taskTerm, tIndex, nal);
+                                        componentAndStatement((CompoundTerm) subj, bIndex, (Statement) taskTerm, tIndex, nal);
                                     } else {
-                                    componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, nal);
+                                        componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, nal);
                                     }
                                 } else {
-                                conditionalDedIndWithVar(task.sentence, (Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, nal);
+                                    conditionalDedIndWithVar(task.sentence, (Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, nal);
                                 }
                             }
                             break;
-                            
                         }
                         break;
                 }
@@ -891,11 +892,12 @@ public class RuleTables {
             if ((component instanceof Conjunction) && (((content instanceof Implication) && (indices[0] == 0)) || (content instanceof Equivalence))) {
                 
                 Term[] cterms = ((CompoundTerm) component).term;
-                if (indices[1] < cterms.length-1)
+                if (indices[1] < cterms.length-1) {
                     inh = cterms[indices[1]];
-                else
+                }
+                else {
                     return;
-                
+                }
             } else {
                 return;
             }
