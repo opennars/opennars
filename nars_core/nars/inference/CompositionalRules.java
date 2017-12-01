@@ -20,17 +20,14 @@
  */
 package nars.inference;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-import nars.storage.Memory;
+import nars.config.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.control.DerivationContext;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import static nars.inference.TruthFunctions.abduction;
 import static nars.inference.TruthFunctions.comparison;
 import static nars.inference.TruthFunctions.induction;
 import static nars.inference.TruthFunctions.intersection;
@@ -61,8 +58,6 @@ import static nars.language.Terms.reduceComponents;
 import nars.language.Variable;
 import nars.language.Variables;
 import static nars.inference.TruthFunctions.abduction;
-import static nars.inference.TruthFunctions.abduction;
-import static nars.inference.TruthFunctions.abduction;
 import nars.language.Interval;
 
 /**
@@ -87,7 +82,7 @@ public final class CompositionalRules {
     static void composeCompound(final Statement taskContent, final Statement beliefContent, final int index, final DerivationContext nal) {
         if ((!nal.getCurrentTask().sentence.isJudgment()) || (taskContent.getClass() != beliefContent.getClass())) {
             return;
-        }
+        }   
         final Term componentT = taskContent.term[1 - index];
         final Term componentB = beliefContent.term[1 - index];
         final Term componentCommon = taskContent.term[index];
@@ -96,7 +91,7 @@ public final class CompositionalRules {
         int order = TemporalRules.composeOrder(order1, order2);
         if (order == TemporalRules.ORDER_INVALID) {
             return;
-        }
+        } 
         if ((componentT instanceof CompoundTerm) && ((CompoundTerm) componentT).containsAllTermsOf(componentB)) {
             decomposeCompound((CompoundTerm) componentT, componentB, componentCommon, index, true, order, nal);
             return;
@@ -200,8 +195,7 @@ public final class CompositionalRules {
         Sentence sentence = task.sentence;
         Sentence belief = nal.getCurrentBelief();
         Statement oldContent = (Statement) task.getTerm();
-        TruthValue v1,
-                v2;
+        TruthValue v1, v2;
         if (compoundTask) {
             v1 = sentence.truth;
             v2 = belief.truth;
@@ -360,15 +354,8 @@ public final class CompositionalRules {
         nal.doublePremiseTask(content, truth, budget, false, false);
     }
 
-    /* till this general code is ready, the easier solution
-    public static void FindSame(Term a, Term b, HashMap<Term, Term> subs) {
-        if(b.containsTermRecursively(a)) {
-            
-        }
-    }*/
     
     /* --------------- rules used for variable introduction --------------- */
-    // forward inference only?
     /**
      * Introduce a dependent variable in an outer-layer conjunction {<S --> P1>,
      * <S --> P2>} |- (&&, <#x --> P1>, <#x --> P2>)
@@ -399,7 +386,7 @@ public final class CompositionalRules {
             term12dependent=term12;
             term22dependent=term22;
             if (term12 instanceof ImageExt) {
-                
+
                 if ((/*(ImageExt)*/term12).containsTermRecursively(term22)) {
                     commonTerm = term22;
                 }
@@ -531,14 +518,10 @@ public final class CompositionalRules {
 
         TruthValue truthT = nal.getCurrentTask().sentence.truth;
         TruthValue truthB = nal.getCurrentBelief().truth;
-        /*
-        if (truthT == null)
-            throw new RuntimeException("CompositionalRules.introVarOuter: current task has null truth: " + memory.getCurrentTask());
-        
-        if (truthB == null)
-            throw new RuntimeException("CompositionalRules.introVarOuter: current belief has null truth: " + memory.getCurrentBelief());
-         */
         if ((truthT == null) || (truthB == null)) {
+            if(Parameters.DEBUG) {
+                System.out.println("ERROR: Belief with null truth value. (introVarOuter)");
+            }
             return;
         }
 
