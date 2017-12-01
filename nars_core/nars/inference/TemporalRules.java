@@ -241,14 +241,10 @@ public class TemporalRules {
             }
         }
 
-        
         int durationCycles = Parameters.DURATION;
-        
         long time1 = s1.getOccurenceTime();
         long time2 = s2.getOccurenceTime();
-        
         long timeDiff = time2 - time1;
-        
         List<Interval> interval=null;
         
         if (!concurrent(time1, time2, durationCycles)) {
@@ -275,7 +271,7 @@ public class TemporalRules {
         Sentence s3 = s2.projection(s1.getOccurenceTime(), nal.memory.time());
         givenTruth2 = s3.truth; 
         
-     //   TruthFunctions.
+        //Truth and priority calculations
         TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
         TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
@@ -379,32 +375,6 @@ public class TemporalRules {
                     for(Task task : t) {
                         task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
                     }
-                    /*Task task=t;
-                    
-                    //micropsi inspired strive for knowledge
-                    //get strongest belief of that concept and use the revison truth, if there is no, use this truth
-                    double conf=task.sentence.truth.getConfidence();
-                    Concept C=nal.memory.concept(task.sentence.term);
-                    if(C!=null && C.beliefs!=null && C.beliefs.size()>0) {
-                        Sentence bel=C.beliefs.get(0).sentence;
-                        TruthValue cur=bel.truth;
-                        conf=Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
-                        //if there is no overlapping evidental base, use revision:
-                        boolean revisable=true;
-                        for(long l: bel.stamp.evidentialBase) {
-                            for(long h: task.sentence.stamp.evidentialBase) {
-                                if(l==h) {
-                                    revisable=false;
-                                    break;
-                                }
-                            }
-                        }
-                        if(revisable) {
-                            conf=TruthFunctions.revision(task.sentence.truth, bel.truth).getConfidence();
-                        }
-                    }
-                    
-                    questionFromLowConfidenceHighPriorityJudgement(task, conf, nal); */
                 }
             }
         if(!deriveSequenceOnly && !tooMuchTemporalStatements(statement3)) {
