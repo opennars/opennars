@@ -170,7 +170,7 @@ public class Memory implements Serializable, Iterable<Concept> {
      * @return a Concept or null
      */
     public Concept concept(final Term t) {
-        return concepts.get(CompoundTerm.cloneDeepReplaceIntervals(t));
+        return concepts.get(CompoundTerm.replaceIntervals(t));
     }
 
     /**
@@ -191,7 +191,7 @@ public class Memory implements Serializable, Iterable<Concept> {
         if(term instanceof Interval) {
             return null;
         }
-        term = CompoundTerm.cloneDeepReplaceIntervals(term);
+        term = CompoundTerm.replaceIntervals(term);
         //see if concept is active
         Concept concept = concepts.take(term);
         if (concept == null) {                            
