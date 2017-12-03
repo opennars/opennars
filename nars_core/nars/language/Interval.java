@@ -131,6 +131,11 @@ public class Interval extends Term {
         return existing;            
     }
     
+    @Override
+    public boolean hasInterval() {
+        return true;
+    }
+    
     
     public final int magnitude;
 
@@ -156,22 +161,22 @@ public class Interval extends Term {
     }
     
     public static double magnitudeToTime(final double magnitude, final AtomicDuration duration) {
-        if (magnitude <= 0)
-            return 1;
+        //if (magnitude <= 0)
+        //    return 1;
         return magnitude; //Math.exp(magnitude * duration.getSubDurationLog());
     }
     
     public static long magnitudeToTime(final int magnitude, final AtomicDuration duration) {
-        return (long)Math.round(magnitudeToTime((double)magnitude, duration));
+        return magnitude; //(long)Math.round(magnitudeToTime((double)magnitude, duration));
     }
     
     public final long getTime(final AtomicDuration duration) {
         //TODO use a lookup table for this
-        return magnitudeToTime(magnitude, duration);
+        return magnitude; //magnitudeToTime(magnitude, duration);
     }
     
     public final long getTime(final Memory memory) {        
-        return getTime(memory.param.duration);
+        return magnitude; //getTime(memory.param.duration);
     }
     
     @Override

@@ -53,7 +53,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
     
     /** Whether contains a variable */
-    private boolean hasVariables, hasVarQueries, hasVarIndeps, hasVarDeps;
+    private boolean hasVariables, hasVarQueries, hasVarIndeps, hasVarDeps, hasIntervals;
     
     int containedTemporalRelations = -1;
     int hash;
@@ -156,6 +156,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             hasVarDeps |= t.hasVarDep();
             hasVarIndeps |= t.hasVarIndep();
             hasVarQueries |= t.hasVarQuery();
+            hasIntervals |= t.hasInterval();
         }
         
         invalidateName();        
@@ -228,16 +229,29 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
         return T;
     }
-
-    public static Term cloneDeepReplaceIntervals(Term T) {
-        T=T.cloneDeep(); //we will operate on a copy
-        if(T instanceof CompoundTerm) {
-            ReplaceIntervals((CompoundTerm) T);
+    
+    private static void ExtractIntervals(Memory mem, ArrayList<Long> ivals, CompoundTerm comp) {
+        for(int i=0; i<comp.term.length; i++) {
+            Term t = comp.term[i];
+            if(t instanceof Interval) {
+                ivals.add(((Interval) t).getTime(mem.param.duration));
+            }
+            else
+            if(t instanceof CompoundTerm) {
+                ExtractIntervals(mem, ivals, (CompoundTerm) t);
+            }
         }
-        return T;
     }
 
+    public static ArrayList<Long> extractIntervals(Memory mem, Term T) {
+        ArrayList<Long> ret = new ArrayList<>();
+        if(T instanceof CompoundTerm) {
+            ExtractIntervals(mem, ret, (CompoundTerm) T);
+        }
+        return ret;
+    }
 
+    
     public CompoundTerm transformIndependentVariableToDependentVar(CompoundTerm T) {
         T=T.cloneDeep(); //we will operate on a copy
         int counter = 0;
@@ -645,6 +659,11 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     @Override
     public boolean hasVarQuery() {
         return hasVarQueries;
+    }
+    
+    @Override
+    public boolean hasInterval() {
+        return hasIntervals;
     }
     
     /**

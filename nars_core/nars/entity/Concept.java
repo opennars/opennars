@@ -103,11 +103,12 @@ public class Concept extends Item<Term> implements Serializable {
      * Reference to the memory to which the Concept belongs
      */
     public final Memory memory;
-    /**
-     * The display window
-     */
-    //public final ArrayList<ArrayList<Long>> evidentalDiscountBases=new ArrayList<ArrayList<Long>>();
+    
 
+    //use to create averaging stats of occurring intervals
+    //so that revision can decide whether to use the new or old term
+    //based on which intervals are closer to the average
+    public ArrayList<Float> recent_intervals = new ArrayList<Float>();
 
     public boolean observable = false;
 

@@ -359,6 +359,10 @@ public class Term implements AbstractTerm, Serializable {
     public boolean hasVarIndep() {
         return false;
     }
+    
+    public boolean hasInterval() {
+        return false;
+    }
 
     public boolean hasVarDep() {
         return false;

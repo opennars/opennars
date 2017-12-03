@@ -20,12 +20,14 @@
  */
 package nars.inference;
 
+import java.util.ArrayList;
 import nars.config.Parameters;
 import nars.util.Events.Answer;
 import nars.util.Events.Unsolved;
 import nars.storage.Memory;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -34,9 +36,12 @@ import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import static nars.inference.TemporalRules.matchingOrder;
 import static nars.inference.TemporalRules.reverseOrder;
+import static nars.inference.TruthFunctions.temporalProjection;
 import nars.io.Output;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import static nars.language.CompoundTerm.extractIntervals;
+import static nars.language.CompoundTerm.replaceIntervals;
 import nars.language.Equivalence;
 import nars.language.Inheritance;
 import nars.language.Similarity;
@@ -125,13 +130,51 @@ public class LocalRules {
         }
         
         newBelief.stamp.alreadyAnticipatedNegConfirmation = oldBelief.stamp.alreadyAnticipatedNegConfirmation;
-        TruthValue newTruth = newBelief.truth;
+        TruthValue newTruth = newBelief.truth.clone();
         TruthValue oldTruth = oldBelief.truth;
+        boolean useNewBeliefTerm = false;
+        
+        if(newBelief.getTerm().hasInterval()) {
+            Term cterm = replaceIntervals(newBelief.getTerm());
+            Concept c = nal.memory.concept(cterm);
+            ArrayList<Long> ivalOld = extractIntervals(nal.memory, oldBelief.getTerm());
+            if(c.recent_intervals.size() == 0) {
+                for(Long l : ivalOld) {
+                    c.recent_intervals.add((float) l);
+                }
+            }
+            ArrayList<Long> ivalNew = extractIntervals(nal.memory, newBelief.getTerm());
+            for(int i=0;i<ivalNew.size();i++) {
+                float Inbetween = (c.recent_intervals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
+                float speed = 1.0f / (float) (10.0f*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower
+                c.recent_intervals.set(i,c.recent_intervals.get(i)+speed*(Inbetween - c.recent_intervals.get(i)));
+            }
+            long AbsDiffSumNew = 0;
+            for(int i=0;i<ivalNew.size();i++) {
+                AbsDiffSumNew += Math.abs(ivalNew.get(i) - c.recent_intervals.get(i));
+            }
+            long AbsDiffSumOld = 0;
+            for(int i=0;i<ivalNew.size();i++) {
+                AbsDiffSumOld += Math.abs(ivalOld.get(i) - c.recent_intervals.get(i));
+            }
+            long AbsDiffSum = 0;
+            for(int i=0;i<ivalNew.size();i++) {
+                AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
+            }
+            float a = temporalProjection(0, AbsDiffSum, 0); //re-project, and it's safe:
+                                                            //we won't count more confidence than
+                                                            //when the second premise would have been shifted
+                                                            //to the necessary time in the first place
+                                                            //to build the hypothesis newBelief encodes
+            newTruth.setConfidence(newTruth.getConfidence()*a);
+            useNewBeliefTerm = AbsDiffSumNew < AbsDiffSumOld;
+        }
+        
         TruthValue truth = TruthFunctions.revision(newTruth, oldTruth);
         BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
         
         if (budget.aboveThreshold()) {
-            if (nal.doublePremiseTaskRevised(newBelief.term, truth, budget)) {
+            if (nal.doublePremiseTaskRevised(useNewBeliefTerm ? newBelief.term : oldBelief.term, truth, budget)) {
                 //nal.mem().logic.BELIEF_REVISION.commit();
                 return true;
             }
