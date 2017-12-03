@@ -274,6 +274,8 @@ public class Parameters {
     
     public static float COMPLEXITY_UNIT=1.0f; //1.0 - oo
     
+    public static float INTERVAL_ADAPT_SPEED = 4.0f;
+    
     public static boolean COMPOUND_OPERATIONS=true;
     
     public static int TASKLINK_PER_CONTENT = 4; //eternal/event are also seen extra
