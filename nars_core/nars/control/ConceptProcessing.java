@@ -505,7 +505,7 @@ public class ConceptProcessing {
         //derivation was successful and it was a judgment event
         
         try { //that was predicted by an eternal belief that shifted time
-        float immediateDisappointmentConfidence = 0.1f;
+        float immediateDisappointmentConfidence = 0.33f; //same as induction + eternalization if input confs
         Stamp stamp = new Stamp(nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         //long serial = stamp.evidentialBase[0];
