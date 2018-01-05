@@ -19,8 +19,12 @@ import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.FrameEnd;
 import nars.util.Events.FrameStart;
@@ -47,6 +51,9 @@ import nars.io.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
 import nars.io.Echo;
+import nars.io.SensoryChannel;
+import nars.language.Inheritance;
+import nars.language.Term;
 import nars.storage.LevelBag;
 
 
@@ -60,7 +67,7 @@ import nars.storage.LevelBag;
  *   * step mode - controlled by an outside system, such as during debugging or testing
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class NAR implements Serializable,Runnable {
+public class NAR extends SensoryChannel implements Serializable,Runnable {
 
     /**
      * The information about the version and date of the project.
@@ -77,6 +84,15 @@ public class NAR implements Serializable,Runnable {
                     "    IRC:  http://webchat.freenode.net/?channels=nars \n";    ;
 
 
+    Map<Term,SensoryChannel> sensoryChannels = new HashMap<Term,SensoryChannel>();
+    public void addSensoryChannel(String term, SensoryChannel channel) {
+        try {
+            sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
+        } catch (InvalidInputException ex) {
+            Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void SaveToFile(String name) throws FileNotFoundException, IOException {
         FileOutputStream outStream = new FileOutputStream(name);
         ObjectOutputStream stream = new ObjectOutputStream(outStream);
@@ -152,8 +168,6 @@ public class NAR implements Serializable,Runnable {
     /** used by stop() to signal that a running loop should be interrupted */
     private boolean stopped = false;
 
-
-    private boolean inputting = true;
     private boolean threadYield;
 
     private int inputSelected = 0; //counter for the current selected input channel
@@ -419,13 +433,6 @@ public class NAR implements Serializable,Runnable {
         return i;
     }
 
-//    /** Explicitly removes an input channel and notifies it, via Input.finished(true) that is has been removed */
-//    public Input removeInput(Input channel) {
-//        inputChannels.remove(channel);
-//        channel.finished(true);
-//        return channel;
-//    }
-
 
     public void addPlugin(Plugin p) {
         if (p instanceof Operator) {
@@ -437,6 +444,10 @@ public class NAR implements Serializable,Runnable {
         PluginState ps = new PluginState(p);
         plugins.add(ps);
         emit(Events.PluginsChange.class, p, null);
+    }
+    
+    public void addSensoryChannel() {
+        
     }
 
     public void removePlugin(PluginState ps) {
@@ -476,13 +487,6 @@ public class NAR implements Serializable,Runnable {
     public void start(final long minCyclePeriodMS) {
         start(minCyclePeriodMS, 1);
     }
-
-
-    /** Can be used to pause/resume input */
-    public void setInputting(boolean inputEnabled) {
-        this.inputting = inputEnabled;
-    }
-
 
     public EventEmitter event() { return memory.event; }
 
@@ -571,17 +575,6 @@ public class NAR implements Serializable,Runnable {
         }
     }
 
-
-    private void debugTime() {
-        //if (running || stepsQueued > 0 || !finishedInputs) {
-        System.out.println("// doTick: "
-                //+ "walkingSteps " + stepsQueued
-                + ", clock " + time());
-
-        System.out.flush();
-        //}
-    }
-
     protected void resetPorts() {
         for (InPort<Object, Item> i : getInPorts()) {
             i.reset();
@@ -607,7 +600,7 @@ public class NAR implements Serializable,Runnable {
      * @return whether to finish the reasoner afterward, which is true if any input exists.
      */
     public Item nextTask() {
-        if ((!inputting) || (inputChannels.isEmpty()))
+        if (inputChannels.isEmpty())
             return null;
 
         int remainingChannels = inputChannels.size(); //remaining # of channels to poll
@@ -632,6 +625,18 @@ public class NAR implements Serializable,Runnable {
             if (i.hasNext()) {
                 Item task = i.next();
                 if (task!=null) {
+                    if(task instanceof Task) {
+                        //check if it should go to a sensory channel instead.
+                        Term t = ((Task) task).getTerm();
+                        if(t != null && t instanceof Inheritance) {
+                            Term predicate = ((Inheritance) t).getPredicate();
+                            if(this.sensoryChannels.containsKey(predicate)) {
+                                this.sensoryChannels.get(predicate).addInput((Task) task);
+                                continue;
+                            }
+                        }
+                    }
+                    //return to process for NAR instead
                     return task;
                 }
             }
@@ -664,8 +669,6 @@ public class NAR implements Serializable,Runnable {
      * A frame, consisting of one or more NAR memory cycles
      */
     public void frame(int cycles) {
-
-        long timeStart = System.currentTimeMillis();
 
         emit(FrameStart.class);
 
