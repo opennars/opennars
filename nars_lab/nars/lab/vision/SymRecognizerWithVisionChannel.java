@@ -35,7 +35,7 @@ public class SymRecognizerWithVisionChannel extends javax.swing.JFrame {
         return resizedimage;
     }
     
-    static int SZ = 10;
+    static int SZ = 5;
     private void canvasMousePressed(MouseEvent evt) {
         int X = evt.getX()/(jLabel1.getWidth() / SZ);
         int Y = evt.getY()/(jLabel1.getHeight() / SZ);
@@ -339,7 +339,7 @@ public class SymRecognizerWithVisionChannel extends javax.swing.JFrame {
             nar = new NAR(); //add vision channel for [on] property
             //to the nar instance, and nar is also the "next higher" sensory channel
             //to report the results to
-            nar.addSensoryChannel("[on]", new VisionChannel(nar, nar, SZ, SZ));
+            nar.addSensoryChannel("[on]", new SpatialSamplingVisionChannel(nar, nar, SZ, SZ));
             
             if(invar1.isSelected()) {
                 gui = new NARSwing(nar);
@@ -356,7 +356,7 @@ public class SymRecognizerWithVisionChannel extends javax.swing.JFrame {
                             //System.out.println("solution: " + belief);
                             System.out.println(belief);
                             float howconf = belief.truth.getConfidence();
-                            if(howconf > 0.1f) { //only mark if above 0.1 confidence
+                            if(howconf >= 0.001f) { //only mark if above 0.1 confidence
                                 //also mark image:
                                 int maxu = Integer.valueOf(belief.getTerm().toString().split("example")[1].split("}")[0]);
                                 clear();
