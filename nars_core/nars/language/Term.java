@@ -25,6 +25,7 @@ import java.util.*;
 
 import nars.storage.Memory;
 import nars.config.Parameters;
+import nars.imagination.ImaginationSpace;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
@@ -41,6 +42,7 @@ import nars.operator.Operator;
  * exists. Multiple objects may represent the same Term.
  */
 public class Term implements AbstractTerm, Serializable {
+    public ImaginationSpace imagination;
     private static final Map<CharSequence,Term> atoms = new HashMap();
 
     final public static Term SELF = SetExt.make(Term.get("SELF"));
