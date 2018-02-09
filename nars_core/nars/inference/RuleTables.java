@@ -78,9 +78,6 @@ public class RuleTables {
         final Term taskTerm = taskSentence.term;         // cloning for substitution
         Term beliefTerm = bLink.target;       // cloning for substitution
         
-        if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
-           return;
-        
         final Concept beliefConcept = memory.concept(beliefTerm);
         
         Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task) : null;
@@ -127,6 +124,10 @@ public class RuleTables {
         //current belief and task may have changed, so set again:
         nal.setCurrentBelief(belief);
         nal.setCurrentTask(task);
+        
+        //put here since LocalRules match should be possible even if the belief is foreign
+        if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
+           return;
         
         /*if ((memory.getNewTaskCount() > 0) && taskSentence.isJudgment()) {
             return;

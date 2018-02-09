@@ -33,7 +33,7 @@ public class Terms {
         }
         Term[] A = ((CompoundTerm) a).term;
         Term[] B = ((CompoundTerm) b).term;
-        if (A.length != B.length) {
+        if (A.length != B.length || !(a.operator().equals(b.operator()))) {
             return false;
         } else {
             for (int i = 0; i < A.length; i++) {

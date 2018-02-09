@@ -568,7 +568,7 @@ public class Concept extends Item<Term> implements Serializable {
                 //return, will be re-inserted in caller method when finished processing it
                 return termLink;
             }
-            
+            //just put back since it isn't novel
             returnTermLink(termLink);
         }
         return null;
