@@ -5,6 +5,7 @@ import nars.NAR;
 import nars.config.Parameters;
 import nars.entity.TruthValue;
 import nars.inference.TemporalRules;
+import nars.inference.TruthFunctions;
 import nars.language.Conjunction;
 import nars.language.Term;
 import nars.operator.NullOperator;
@@ -17,8 +18,8 @@ import nars.operator.Operator;
  */
 public class VisualSpace implements ImaginationSpace {
 
-    public double[][] source; //assumed to be set from outside
-    public double[][] cropped; //all elements assumed to be in [0,1] range
+    public float[][] source; //assumed to be set from outside
+    public float[][] cropped; //all elements assumed to be in [0,1] range
     public int height;
     public int width;
     public int px = 0;
@@ -32,12 +33,12 @@ public class VisualSpace implements ImaginationSpace {
     HashSet<Operator> ops = new HashSet<Operator>();
     NAR nar;
     
-    public VisualSpace(NAR nar, double[][] source, int py, int px, int height, int width) {
+    public VisualSpace(NAR nar, float[][] source, int py, int px, int height, int width) {
         this.nar = nar;
         this.height = height;
         this.width = width;    
-        this.cropped = new double[height][width];
-        this.source = new double[source.length][source[0].length];
+        this.cropped = new float[height][width];
+        this.source = new float[source.length][source[0].length];
         for(int i=0;i<source.length;i++) { //"snapshot" from source
             for(int j=0; j<source[0].length; j++) {
                 this.source[i][j] = source[i][j];
@@ -60,23 +61,25 @@ public class VisualSpace implements ImaginationSpace {
     }
 
     @Override
-    public TruthValue DetermineSimilarityTo(ImaginationSpace obj) {
+    public TruthValue AbductionOrComparisonTo(ImaginationSpace obj, boolean comparison) {
         if(!(obj instanceof VisualSpace)) {
             return new TruthValue(1.0f,0.0f);
         }
         VisualSpace other = (VisualSpace) obj;
         double kh = ((float) other.height) / ((double) this.height);
         double kw = ((float) other.width)  / ((double) this.width);
-        double differences = 0.0;
+        TruthValue sim = new TruthValue(1.0f, 0.0f);
         for(int i=0; i<this.height; i++) {
             for(int j=0; j<this.width; j++) {
                 int i2 = (int) (((double) this.height) * kh);
                 int j2 = (int) (((double) this.width)  * kw);
-                differences += Math.abs(cropped[i][j] - other.cropped[i2][j2]);
+                TruthValue t1 = new TruthValue(cropped[i][j], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                TruthValue t2 = new TruthValue(other.cropped[i2][j2], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                TruthValue t3 = comparison ? TruthFunctions.comparison(t1,t2) : TruthFunctions.abduction(t1,t2);
+                sim = TruthFunctions.revision(sim, t3);                
             }
         }
-        differences /= (double) (this.width*this.height);
-        return new TruthValue(1.0f-(float) differences, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+        return sim;
     }
 
     @Override
