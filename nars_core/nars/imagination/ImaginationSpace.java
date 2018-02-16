@@ -10,7 +10,7 @@ import nars.operator.Operator;
  */
 public interface ImaginationSpace {
     //a group of operations that when executed add up to a certain declarative "picture".
-    public TruthValue DetermineSimilarityTo(final ImaginationSpace obj);
+    public TruthValue AbductionOrComparisonTo(final ImaginationSpace obj, boolean comparison);
     //attaches an imagination space to the conjunction that is constructed
     //by starting with the leftmost element of the conjunction
     //and then gradually moving to the right
