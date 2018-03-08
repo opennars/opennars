@@ -8,8 +8,8 @@ import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.io.Narsese;
-import nars.io.Symbols;
+import nars.parser.Narsese;
+import nars.parser.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 

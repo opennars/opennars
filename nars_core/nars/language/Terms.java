@@ -10,7 +10,7 @@ import nars.storage.Memory;
 import nars.entity.Sentence;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;
-import nars.io.Symbols;
+import nars.parser.Symbols;
 
 /**
  * Static utility class for static methods related to Terms

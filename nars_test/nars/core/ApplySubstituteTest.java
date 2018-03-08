@@ -8,7 +8,7 @@ import nars.language.CompoundTerm;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import nars.io.Narsese;
+import nars.parser.Narsese;
 
 
 public class ApplySubstituteTest {

@@ -19,7 +19,7 @@ import nars.NAR;
 import nars.config.Parameters;
 import nars.entity.Sentence;
 import nars.io.Answered;
-import nars.io.Narsese;
+import nars.parser.Narsese;
 
 
 

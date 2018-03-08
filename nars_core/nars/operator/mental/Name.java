@@ -27,7 +27,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.io.Symbols;
+import nars.parser.Symbols;
 import nars.language.Similarity;
 import nars.language.Term;
 import nars.operator.Operation;

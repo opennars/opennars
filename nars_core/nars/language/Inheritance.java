@@ -22,7 +22,7 @@ package nars.language;
 
 import java.util.Arrays;
 import nars.config.Parameters;
-import nars.io.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
 import nars.operator.Operation;
 import nars.operator.Operator;
 

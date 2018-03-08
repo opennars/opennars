@@ -31,8 +31,8 @@ import nars.config.Parameters;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.inference.TruthFunctions.EternalizedTruthValue;
-import nars.io.Symbols;
-import nars.io.Texts;
+import nars.parser.Symbols;
+import nars.util.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Equivalence;
@@ -467,7 +467,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                 stamp.appendOcurrenceTime(suffix);
             }
 
-            key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, 
+            key = Texts.yarn( 
                     contentName,//.toString(), 
                     suffix); //.toString());
             //key = new FlatCharArrayRope(StringUtil.getCharArray(k));

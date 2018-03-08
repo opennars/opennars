@@ -23,13 +23,13 @@ package nars.language;
 import static java.lang.System.arraycopy;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeSet;
 import nars.config.Parameters;
+import nars.imagination.ImaginationSpace;
 import nars.inference.TemporalRules;
-import nars.io.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
+import nars.operator.Operation;
 
 /**
  * Conjunction of statements
@@ -71,6 +71,10 @@ public class Conjunction extends CompoundTerm {
         this.isSpatial = spatial;
         temporalOrder = order;
         init(this.term);
+        //update imagination space if it exsists (also type checking the operations):
+        if(arg[0].imagination != null) {
+            this.imagination=arg[0].imagination.ConstructSpace(this);
+        }
     }
 
     @Override public Term clone(Term[] t) {        

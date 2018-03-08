@@ -44,7 +44,7 @@ import nars.inference.BudgetFunctions;
 import nars.io.Output.ANTICIPATE;
 import nars.io.Output.CONFIRM;
 import nars.io.Output.DISAPPOINT;
-import nars.io.Symbols;
+import nars.parser.Symbols;
 import nars.language.Interval;
 import nars.language.Product;
 import nars.language.Term;

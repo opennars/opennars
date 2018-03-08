@@ -35,7 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.NAR;
-import nars.io.CommandLineNARBuilder;
+import nars.io.console.CommandLineNARBuilder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 

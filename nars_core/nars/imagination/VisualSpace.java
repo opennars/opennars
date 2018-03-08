@@ -98,18 +98,16 @@ public class VisualSpace implements ImaginationSpace {
                 return null;
             }
             Operation oper = (Operation) program.term[i];
-            Operator op = (Operator) oper.getPredicate();
-            if(!ops.contains(op)) { //not an operation of VisualSpace
+            if(!IsOperationInSpace(oper)) {
                 return null;
             }
-            cur = cur.ProgressSpace(op, cur);
+            cur = cur.ProgressSpace(oper, cur);
             i++;
-            
         }
         return null;
     }
 
-    public ImaginationSpace ProgressSpace(Operator op, ImaginationSpace b) {
+    public ImaginationSpace ProgressSpace(Operation op, ImaginationSpace b) {
         if(!(b instanceof VisualSpace)) {
             return null; //incompatible
         }
@@ -121,8 +119,13 @@ public class VisualSpace implements ImaginationSpace {
         int maxPX = Math.min(this.px+this.width, B.px+B.width);
         int minPY = Math.min(this.py, B.py);
         int maxPY = Math.min(this.py+this.height, B.py+B.height);
-        VisualSpace progressed = new VisualSpace(nar, this.source, minPY, minPX, maxPY, maxPY);
+        VisualSpace progressed = new VisualSpace(nar, this.source, minPY, minPX, maxPY, maxPX);
         return progressed;
+    }
+    
+    public boolean IsOperationInSpace(Operation oper) {
+        Operator op = (Operator) oper.getPredicate();
+        return ops.contains(op);
     }
     
     //Needs to be resolved:

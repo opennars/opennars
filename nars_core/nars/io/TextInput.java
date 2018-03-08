@@ -20,6 +20,7 @@
  */
 package nars.io;
 
+import nars.parser.Symbols;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;

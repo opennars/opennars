@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.io;
+package nars.parser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,42 +36,17 @@ public class Symbols {
     public static final char QUEST_MARK = '@';
     public static final char TERM_NORMALIZING_WORKAROUND_MARK = 'T';
     
-    
-    
     /* Tense markers */
     public static final String TENSE_MARK = ":";
     public static final String TENSE_PAST = ":\\:";
     public static final String TENSE_PRESENT = ":|:";
     public static final String TENSE_FUTURE = ":/:";
     
-    
-    
-    
     /* variable type  ------------------ */
-   
     public static final char VAR_INDEPENDENT = '$';
-    public static final String VAR_INDEPENDENT_DEFAULT = VAR_INDEPENDENT + "it";
-    
-    //#sth talks about a thinkg without naming it
     public static final char VAR_DEPENDENT = '#';
-    public static final String VAR_DEPENDENT_DEFAULT = VAR_DEPENDENT + "sth";
-    
-    //?any asks for a concrete thing
     public static final char VAR_QUERY = '?';
-    public static final String VAR_QUERY_DEFAULT = VAR_QUERY + "any";
 
-    /*
-        $it $eth $1 $sth,   #sth #1    ?what      
-        $it #sth ?what
-    */
-    
-    
-    
-    
-    
-    
-    
-    
     /* numerical value delimitors, must be different from the Term delimitors */
     public static final char BUDGET_VALUE_MARK = '$';
     public static final char TRUTH_VALUE_MARK = '%';
@@ -86,8 +61,6 @@ public class Symbols {
     public static final char OPERATOR_PREFIX = '^';
     public static final char TERM_PREFIX = 'T';
     public static final char QUOTE = '\"';
-    
-
     
     public enum NativeOperator {
         
@@ -107,8 +80,7 @@ public class Symbols {
         SEQUENCE("&/", false, true),    
         PARALLEL("&|", false, true), 
         SPATIAL("#", false, true),   
-        
-        
+            
         /* CompountTerm delimitors, must use 4 different pairs */
         SET_INT_OPENER("[", false, true),
         SET_INT_CLOSER("]", false, false),
@@ -120,7 +92,6 @@ public class Symbols {
         COMPOUND_TERM_CLOSER(")", false, false),
         STATEMENT_OPENER("<", false, false),
         STATEMENT_CLOSER(">", false, false),
-        
         
         /* Relations */
         INHERITANCE("-->", true),
@@ -182,8 +153,6 @@ public class Symbols {
 
         @Override
         public String toString() { return symbol; }
-                
-        
     }    
 
     protected static final Map<String,NativeOperator> stringToOperator 
@@ -246,8 +215,6 @@ public class Symbols {
         return getRelation(s)!=null;
     }
     
-    
-
     /* experience line prefix */
     public static final String INPUT_LINE_PREFIX = IN.class.getSimpleName();
     public static final String OUTPUT_LINE_PREFIX = OUT.class.getSimpleName();
@@ -278,50 +245,6 @@ public class Symbols {
     public static final String TO_COMPONENT_2 = ")_";
     public static final String TO_COMPOUND_1 = "_@(";
     public static final String TO_COMPOUND_2 = ")";
-
-
-
-    /*
-    @Deprecated public static NativeOperator opInnate(final String op) {
-        NativeOperator i = getOperator(op);
-        if (i == null) return null;
-        
-        final int length = op.length();
-        if (length == 1) {
-            final char c = op.charAt(0);
-            switch (c) {
-                case Symbols.SET_EXT_OPENER: 
-                case Symbols.SET_INT_OPENER: 
-                case Symbols.INTERSECTION_EXT_OPERATORc: 
-                case Symbols.INTERSECTION_INT_OPERATORc:
-                case Symbols.DIFFERENCE_EXT_OPERATORc:
-                case Symbols.DIFFERENCE_INT_OPERATORc:
-                case Symbols.PRODUCT_OPERATORc:
-                case Symbols.IMAGE_EXT_OPERATORc:
-                case Symbols.IMAGE_INT_OPERATORc:        
-                    return true;
-            }            
-        }
-        else if (length == 2) {
-            //since these symbols are the same character repeated, we only need to compare the first character
-            final char c1 = op.charAt(0);
-            final char c2 = op.charAt(1);
-            if (c1 == c2) {
-                switch (c1) {
-                    case Symbols.NEGATION_OPERATORc:
-                    case Symbols.DISJUNCTION_OPERATORc:
-                    case Symbols.CONJUNCTION_OPERATORc:
-                        return true;                        
-                }            
-            } else if ((op.equals(Symbols.SEQUENCE_OPERATOR)) || (op.equals(Symbols.PARALLEL_OPERATOR))) {
-                return true;
-            }
-            
-        }        
-        
-        return false;
-    }
-    */
 
     public static String SELF = "SELF";
 }

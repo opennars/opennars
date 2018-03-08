@@ -10,7 +10,7 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.Answered;
-import nars.io.Narsese;
+import nars.parser.Narsese;
 
 /**
  *
