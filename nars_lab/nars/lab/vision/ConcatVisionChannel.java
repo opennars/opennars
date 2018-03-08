@@ -6,7 +6,7 @@ import nars.NAR;
 import nars.control.DerivationContext;
 import static nars.control.TemporalInferenceControl.proceedWithTemporalInduction;
 import nars.entity.Task;
-import nars.io.SensoryChannel;
+import nars.perception.SensoryChannel;
 
 public class ConcatVisionChannel extends SensoryChannel {
     public class Position {

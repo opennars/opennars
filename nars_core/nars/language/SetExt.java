@@ -21,9 +21,9 @@
 package nars.language;
 
 import java.util.Collection;
-import nars.parser.Symbols.NativeOperator;
-import static nars.parser.Symbols.NativeOperator.SET_EXT_CLOSER;
-import static nars.parser.Symbols.NativeOperator.SET_EXT_OPENER;
+import nars.language.Narsese.Symbols.NativeOperator;
+import static nars.language.Narsese.Symbols.NativeOperator.SET_EXT_CLOSER;
+import static nars.language.Narsese.Symbols.NativeOperator.SET_EXT_OPENER;
 
 /**
  * An extensionally defined set, which contains one or more instances.

@@ -31,7 +31,7 @@ import nars.config.Parameters;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.ORDER_BACKWARD;
 import static nars.inference.TemporalRules.ORDER_FORWARD;
-import nars.parser.Symbols;
+import nars.language.Narsese.Symbols;
 import nars.language.Tense;
 import static nars.language.Tense.Future;
 import static nars.language.Tense.Past;

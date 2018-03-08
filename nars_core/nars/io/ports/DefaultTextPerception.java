@@ -1,7 +1,13 @@
-package nars.io;
+package nars.io.ports;
 
-import nars.parser.Narsese;
-import nars.parser.Symbols;
+import nars.io.commands.Echo;
+import nars.io.commands.PauseInput;
+import nars.io.commands.SetDecisionThreshold;
+import nars.io.commands.SetVolume;
+import nars.io.commands.Reset;
+import nars.io.commands.Reboot;
+import nars.language.Narsese.Narsese;
+import nars.language.Narsese.Symbols;
 import com.google.common.collect.Iterators;
 import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
@@ -20,8 +26,8 @@ import nars.entity.Item;
 import nars.util.Plugin;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.io.Output.IN;
-import nars.parser.Narsese.InvalidInputException;
+import nars.io.ports.Output.IN;
+import nars.language.Narsese.Narsese.InvalidInputException;
 
 /**
  *  Default handlers for text perception.
@@ -33,29 +39,19 @@ import nars.parser.Narsese.InvalidInputException;
 public class DefaultTextPerception implements Plugin, EventObserver, Serializable {
     
     private Memory memory;
-    
-    public List<TextReaction> parsers;
-    
-    
+    public List<TextReaction> parsers;    
     public Narsese narsese;    
-    
-    private boolean enableNarsese = true;
 
-    private boolean enableNaturalLanguage = true; //the NLP mode we should strive for
-    private boolean enableEnglisch = false;
+    public interface TextReaction extends Serializable {
+        public Object react(String input);
+    }
     
-    private boolean enableTwenglish = false; //the events should be introduced event-wise
-    //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal inference
-
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
         if (enabled) {
             this.memory = n.memory;
             this.narsese = new Narsese(memory);
-            //this.englisch = new Englisch();
-            //this.twenglish = new Twenglish(memory);
             this.parsers = getParsers();
-            
         }
         n.memory.event.set(this, enabled, Events.Perceive.class);
         return true;
@@ -101,11 +97,8 @@ public class DefaultTextPerception implements Plugin, EventObserver, Serializabl
     }
     
     public List<TextReaction> getParsers() {
-
-        
+   
         ArrayList<TextReaction> parsers = new ArrayList();
-        
-        
         
         //integer, # of cycles to step
         parsers.add(new TextReaction() {
@@ -195,92 +188,24 @@ public class DefaultTextPerception implements Plugin, EventObserver, Serializabl
             }
         });
         
-        //parsers.add(new BindJavascriptExpression(memory));
         //narsese
         parsers.add(new TextReaction() {
             @Override
             public Object react(String input) {
-
-                if (enableNarsese) {
-                    char c = input.charAt(0);
-                    if (c != Symbols.COMMENT_MARK) {
-                        try {
-                            Item task = narsese.parseNarsese(new StringBuilder(input));
-                            if (task != null) {
-                                return task;
-                            }
-                        } catch (InvalidInputException ex) {
-                            return ex;
+                char c = input.charAt(0);
+                if (c != Symbols.COMMENT_MARK) {
+                    try {
+                        Item task = narsese.parseNarsese(new StringBuilder(input));
+                        if (task != null) {
+                            return task;
                         }
+                    } catch (InvalidInputException ex) {
+                        return ex;
                     }
                 }
                 return null;
             }
         });             
-
-        //englisch
-        parsers.add(new TextReaction() {
-            @Override
-            public Object react(String line) {
-                
-                /*if (enableEnglisch) {
-                    //if (!possiblyNarsese(line)) 
-                    {                    
-                        List<AbstractTask> l;
-                        try {
-                            l = englisch.parse(line, narsese, true);
-                            if ((l == null) || (l.isEmpty())) 
-                                return null;
-                            return l;
-                        } catch (InvalidInputException ex) {
-                            return null;
-                        }
-                    }
-                }*/
-                return null;            
-            }
-        });
-        
-    //englisch
-        parsers.add(new TextReaction() {
-            @Override
-            public Object react(String line) {
-                
-                /*if (enableTwenglish) {
-                    //if (!possiblyNarsese(line))
-                    {                    
-                        List<AbstractTask> l;
-                        try {
-                            l = twenglish.parse(line, narsese, true);
-                            if ((l == null) || (l.isEmpty())) 
-                                return null;
-                            return l;
-                        } catch (InvalidInputException ex) {
-                            return null;
-                        }
-                    }
-                }*/
-                return null;            
-            }
-        });
-        
-        // natural language
-        parsers.add(new TextReaction() {
-            @Override
-            public Object react(String line) {
-                
-                /*if (enableNaturalLanguage) {
-                    //if (!possiblyNarsese(line)) 
-                    {                    
-                        List<AbstractTask> l = NaturalLanguagePerception.parseLine(line, narsese, "word");
-                        if ((l == null) || (l.isEmpty())) 
-                            return null;
-                        return l;
-                    }
-                }*/
-                return null;            
-            }
-        });
         
         return parsers;           
     }
@@ -322,15 +247,4 @@ public class DefaultTextPerception implements Plugin, EventObserver, Serializabl
         
         return null;
     }
-
-    public void enableEnglisch(boolean enableEnglisch) {
-        this.enableEnglisch = enableEnglisch;
-    }
-
-    public void enableNarsese(boolean enableNarsese) {
-        this.enableNarsese = enableNarsese;
-    }
-
-    
-    
 }

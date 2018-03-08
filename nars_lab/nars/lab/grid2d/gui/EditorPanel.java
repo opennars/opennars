@@ -32,7 +32,7 @@ import nars.lab.grid2d.main.LocalGridObject;
 import nars.lab.grid2d.main.TestChamber;
 import nars.lab.grid2d.object.Key;
 import nars.lab.grid2d.object.Pizza;
-import nars.parser.Symbols;
+import nars.language.Narsese.Symbols;
 import processing.core.PVector;
 
 /**

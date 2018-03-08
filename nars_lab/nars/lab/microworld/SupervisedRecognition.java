@@ -9,8 +9,8 @@ import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.io.Answered;
-import nars.parser.Narsese;
+import nars.io.handlers.AnswerHandler;
+import nars.language.Narsese.Narsese;
 
 /**
  *
@@ -112,7 +112,7 @@ public class SupervisedRecognition {
                 "ooxoo" + "\n", -1);
         
         try {
-                nar.askNow("<?what --> EXAMPLE>", new Answered() {
+                nar.askNow("<?what --> EXAMPLE>", new AnswerHandler() {
                     @Override
                     public void onSolution(Sentence belief) {
                         System.out.println(belief);

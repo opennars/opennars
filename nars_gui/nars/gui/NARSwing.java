@@ -214,7 +214,7 @@ public class NARSwing  {
         
         
         if (args.length > 0
-                && CommandLineNARBuilder.isReallyFile(args[0])) {
+                && CommandLineNARBuilder.notSilenceLevel(args[0])) {
 
             try {
                 nar.addInput(new TextInput(new File(args[0])));

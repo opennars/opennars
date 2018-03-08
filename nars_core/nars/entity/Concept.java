@@ -38,7 +38,7 @@ import nars.control.DerivationContext;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.LocalRules;
-import nars.parser.Symbols.NativeOperator;
+import nars.language.Narsese.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.storage.Bag;

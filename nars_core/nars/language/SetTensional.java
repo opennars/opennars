@@ -2,7 +2,7 @@ package nars.language;
 
 import java.nio.CharBuffer;
 import nars.config.Parameters;
-import nars.parser.Symbols;
+import nars.language.Narsese.Symbols;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set)

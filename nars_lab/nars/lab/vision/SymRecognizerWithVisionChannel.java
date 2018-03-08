@@ -18,8 +18,8 @@ import javax.swing.*;
 import nars.NAR;
 import nars.config.Parameters;
 import nars.entity.Sentence;
-import nars.io.Answered;
-import nars.parser.Narsese;
+import nars.io.handlers.AnswerHandler;
+import nars.language.Narsese.Narsese;
 
 
 
@@ -273,10 +273,10 @@ public class SymRecognizerWithVisionChannel extends javax.swing.JFrame {
     
     public void resetDetection() {
         clear();
-        for(Answered ans : q) {
+        for(AnswerHandler ans : q) {
             ans.off();
         }
-        q = new ArrayList<Answered>();
+        q = new ArrayList<AnswerHandler>();
         if(nar != null) {
             nar.stop();
             nar.reset();
@@ -296,7 +296,7 @@ public class SymRecognizerWithVisionChannel extends javax.swing.JFrame {
     
     NAR nar = null;
     NARSwing gui = null;
-    ArrayList<Answered> q = new ArrayList<Answered>();
+    ArrayList<AnswerHandler> q = new ArrayList<AnswerHandler>();
     int scale_palette=2;
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         resetDetection();
@@ -350,7 +350,7 @@ public class SymRecognizerWithVisionChannel extends javax.swing.JFrame {
             //for(String s : questions) {
             String s = question; {
                 if(s!=null) {
-                    Answered cur = new Answered() {
+                    AnswerHandler cur = new AnswerHandler() {
                         @Override
                         public void onSolution(Sentence belief) {
                             //System.out.println("solution: " + belief);

@@ -62,7 +62,7 @@ import nars.gui.output.TaskTree;
 import nars.gui.output.NARFacePanel;
 import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
-import nars.io.Output;
+import nars.io.ports.Output;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.language.Interval.PortableInteger;

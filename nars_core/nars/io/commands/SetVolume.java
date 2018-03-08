@@ -1,4 +1,4 @@
-package nars.io;
+package nars.io.commands;
 
 import nars.entity.Item;
 

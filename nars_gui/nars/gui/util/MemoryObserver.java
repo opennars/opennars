@@ -1,6 +1,6 @@
 package nars.gui.util;
 
-import nars.util.AbstractObserver;
+import nars.io.handlers.EventHandler;
 import nars.util.Events;
 import nars.util.Events.CycleEnd;
 import nars.util.Events.CycleStart;
@@ -8,9 +8,9 @@ import nars.storage.Memory;
 import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.io.Output;
+import nars.io.ports.Output;
 
-public abstract class MemoryObserver extends AbstractObserver {
+public abstract class MemoryObserver extends EventHandler {
 
     private final Memory memory;
 

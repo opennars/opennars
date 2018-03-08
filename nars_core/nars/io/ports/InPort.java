@@ -1,12 +1,13 @@
-package nars.io;
+package nars.io.ports;
 
+import nars.io.commands.Reboot;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Iterator;
 
 
 /**
- * An attached Input, Buffer, and Attention Allocation State
+ * An attached Input and Buffer
  * @author me
  */
 abstract public class InPort<X,Y> implements Iterator<Y> {
@@ -74,14 +75,8 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
         return input.finished(false);
     }
     
-    public Y next() {
-        /*if (buffer == null)
-            return nextXDirect();*/
-        
+    public Y next() {   
         Y n = buffer.poll();
-        
-        //TODO update statistics
-        
         return n;
     }
     
@@ -93,12 +88,4 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
     public int getItemsBuffered() {
         return buffer.size();
     }
-    
-    //public float getMass(X input) // allows variable weighting of input items; default=1.0
-    
-    //public double getInputMassRate(double windowSeconds); // calculates throughput rate in mass/sec within a given past window size, using an internal histogram of finite resolution
-
-    
-    
-    
 }

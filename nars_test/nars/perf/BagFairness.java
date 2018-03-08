@@ -10,7 +10,7 @@ import nars.NAR;
 import nars.config.Parameters;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.timeline.LineChart;
-import nars.io.Input;
+import nars.io.ports.Input;
 import nars.util.Texts;
 import nars.language.Term;
 import nars.storage.Bag;

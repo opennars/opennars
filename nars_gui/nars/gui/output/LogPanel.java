@@ -32,10 +32,10 @@ import nars.gui.InferenceLogger;
 import nars.gui.InferenceLogger.LogOutput;
 import nars.gui.NARControls;
 import nars.gui.WrapLayout;
-import nars.util.AbstractObserver;
-import nars.io.Output;
-import nars.io.Output.ERR;
-import nars.io.Output.EXE;
+import nars.io.handlers.EventHandler;
+import nars.io.ports.Output;
+import nars.io.ports.Output.ERR;
+import nars.io.ports.Output.EXE;
 import nars.io.TextOutput;
 
 abstract public class LogPanel extends NPanel implements LogOutput {
@@ -46,7 +46,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
 
     protected final NAR nar;
 
-    private AbstractObserver out;
+    private EventHandler out;
     
     public static final int maxIOTextSize = (int) 3E5;
     public static final int clearMargin = (int) 3E4;
@@ -81,7 +81,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
         this.nar = c.nar;
         this.logger = c.logger;
 
-        out = new AbstractObserver(nar, false, events) {
+        out = new EventHandler(nar, false, events) {
             @Override public void event(final Class event, final Object[] arguments) {
                 LogPanel.this.output(event, arguments.length > 1 ? arguments : arguments[0]);
             }

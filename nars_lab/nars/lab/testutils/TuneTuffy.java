@@ -10,10 +10,10 @@ import nars.util.Events.Answer;
 import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.util.AbstractObserver;
-import nars.io.Output.OUT;
+import nars.io.handlers.EventHandler;
+import nars.io.ports.Output.OUT;
 import nars.io.TextInput;
-import nars.parser.Narsese;
+import nars.language.Narsese.Narsese;
 import nars.language.Term;
 
 /**
@@ -22,7 +22,7 @@ import nars.language.Term;
  */
 public class TuneTuffy {
     
-    public static class SolutionMonitor extends AbstractObserver {
+    public static class SolutionMonitor extends EventHandler {
         private final Term term;
         Sentence mostConfident = null;
         

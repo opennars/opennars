@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.io;
+package nars.io.handlers;
 
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.Answer;
@@ -14,7 +14,7 @@ import nars.entity.Task;
  *
  * @author me
  */
-public abstract class Answered implements EventObserver {
+public abstract class AnswerHandler implements EventObserver {
     
     private Task question;
     private NAR nar;

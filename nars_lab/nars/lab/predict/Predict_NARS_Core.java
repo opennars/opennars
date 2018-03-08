@@ -24,9 +24,9 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.inference.TruthFunctions;
-import nars.io.Answered;
+import nars.io.handlers.AnswerHandler;
 import nars.lab.ioutils.ChangedTextInput;
-import nars.parser.Narsese;
+import nars.language.Narsese.Narsese;
 import nars.language.Term;
 
 /**
@@ -265,7 +265,7 @@ public class Predict_NARS_Core {
                     String S = "<(&/,"+"<{"+val+"} --> value>,?I1) =/> ?what>";
                     if(!qus.contains(S)) {
                         //n.addInput(S);
-                        Answered cur = new Answered() 
+                        AnswerHandler cur = new AnswerHandler() 
                         {
                             @Override
                             public void onSolution(Sentence belief) {

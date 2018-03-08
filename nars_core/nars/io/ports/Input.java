@@ -17,7 +17,7 @@
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.io;
+package nars.io.ports;
 
 import java.io.IOException;
 
@@ -35,8 +35,7 @@ public interface Input<X> {
      * @param stop - if true, this Input should terminate (ex: close connections) because 
      * it has been removed from NAR.
      * @return whether this input is finished
-     */
-    //public boolean finished(boolean stop);        
+     */      
     default public boolean finished(boolean stop) {
         return false;
     }

@@ -4,6 +4,7 @@
  */
 package nars.io;
 
+import nars.io.ports.Input;
 import java.io.IOException;
 import nars.entity.Task;
 
@@ -34,8 +35,4 @@ public class TaskInput implements Input {
         if (stop) finished = true;
         return finished;
     }
-    
-    
-    
-    
 }

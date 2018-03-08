@@ -1,6 +1,6 @@
-package nars.io;
+package nars.perception;
 
-import nars.parser.Narsese;
+import nars.language.Narsese.Narsese;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.io.TextInput;
 import nars.language.Term;
-import nars.storage.Memory;
 
 public abstract class SensoryChannel implements Serializable {
     private Collection<SensoryChannel> reportResultsTo;

@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import nars.util.Events.Answer;
 import nars.NAR;
 import nars.config.Plugins;
-import nars.util.AbstractObserver;
+import nars.io.handlers.EventHandler;
 import nars.lab.testutils.OutputContainsCondition;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -35,7 +35,7 @@ public class VariableTest {
             A "Solved" solution of: <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
             shouldn't happen because it should not unify #wat with 4 because its not a query variable      
         */        
-        new AbstractObserver(n, true, Answer.class) {            
+        new EventHandler(n, true, Answer.class) {            
             @Override public void event(Class event, Object[] args) {
                 //nothing should arrive via Solved.class channel
                 assertTrue(false);
@@ -63,7 +63,7 @@ public class VariableTest {
         n.addInput("<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
         
         AtomicBoolean solutionFound = new AtomicBoolean(false);
-        new AbstractObserver(n, true, Answer.class) {            
+        new EventHandler(n, true, Answer.class) {            
             @Override public void event(Class event, Object[] args) {                
                 solutionFound.set(true);
                 n.stop();

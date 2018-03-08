@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import nars.NAR;
 import nars.entity.Sentence;
 import nars.gui.NARSwing;
-import nars.io.Answered;
+import nars.io.handlers.AnswerHandler;
 
 /**
  *
@@ -194,7 +194,7 @@ public class LanguageGUI extends javax.swing.JFrame {
     //NAR learnerNAR = new NAR(); //for learning language structure
     static NAR languageNAR;
     static NAR reasonerNAR;
-    ArrayList<Answered> q = new ArrayList<Answered>();
+    ArrayList<AnswerHandler> q = new ArrayList<AnswerHandler>();
     int seed = 1;
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String text = this.inputPanel.getText();
@@ -230,7 +230,7 @@ public class LanguageGUI extends javax.swing.JFrame {
         }
         
         languageNAR.stop();
-        for(Answered ans : q) {
+        for(AnswerHandler ans : q) {
             ans.off();
         }
         languageNAR.reset();
@@ -268,7 +268,7 @@ public class LanguageGUI extends javax.swing.JFrame {
             boolean isQuestion = punctuation.equals("question");
             String punct = (isQuestion ? "?" : "." + (eventCheck.isSelected() ? " :|:" : ""));
             //Interpretation of Inheritance
-            Answered cur = new Answered() {
+            AnswerHandler cur = new AnswerHandler() {
 
                     @Override
                     public void onSolution(Sentence belief) {
@@ -294,7 +294,7 @@ public class LanguageGUI extends javax.swing.JFrame {
             q.add(cur);
             
             for(String attribute : attributePanel.getText().split(" ")) {
-                cur = new Answered() {
+                cur = new AnswerHandler() {
                     @Override
                     public void onSolution(Sentence belief) {
                         //System.out.println("solution: " + belief);

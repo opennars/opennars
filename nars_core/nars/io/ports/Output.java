@@ -1,15 +1,15 @@
-package nars.io;
+package nars.io.ports;
 
+import nars.io.handlers.EventHandler;
 import nars.util.EventEmitter;
 import nars.util.Events.Answer;
 import nars.storage.Memory;
 import nars.NAR;
-import nars.util.AbstractObserver;
 
 /**
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels
  */
-public abstract class Output extends AbstractObserver {
+public abstract class Output extends EventHandler {
     
     
     /** implicitly repeated input (a repetition of all input) */

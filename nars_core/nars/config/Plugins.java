@@ -1,15 +1,14 @@
 package nars.config;
 
 import nars.NAR;
-import nars.io.DefaultTextPerception;
-//import nars.operator.misc.Javascript;
+import nars.io.ports.DefaultTextPerception;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
 import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.InternalExperience;
 import nars.plugin.misc.RuntimeNARSettings;
 import nars.plugin.mental.Emotions;
-import nars.plugin.misc.Counting;
+import nars.plugin.mental.Counting;
 import nars.plugin.mental.Abbreviation;
 
 /**
@@ -20,10 +19,6 @@ public class Plugins {
     public RuntimeParameters param = new RuntimeParameters();
 
     public NAR init(NAR n) {
-        
-        //allow javascript 
-        //Javascript js=new Javascript();
-        //js.setEnabled(n, true);
         
         for (Operator o : Operators.get(n))
             n.memory.addOperator(o);

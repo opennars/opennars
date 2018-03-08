@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 import nars.config.Parameters;
-import nars.parser.Symbols.NativeOperator;
+import nars.language.Narsese.Symbols.NativeOperator;
 
 /**
  * A compound term whose extension is the intersection of the extensions of its term

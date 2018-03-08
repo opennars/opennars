@@ -37,7 +37,6 @@ public class CommandLineNARBuilder extends Plugins {
             else {
                 filesToLoad.add(arg);
             }
-
         }        
     }
 
@@ -63,7 +62,7 @@ public class CommandLineNARBuilder extends Plugins {
      * @param param Given argument
      * @return Whether the argument is not the silence level
      */
-    public static boolean isReallyFile(String param) {
+    public static boolean notSilenceLevel(String param) {
         return !"--silence".equals(param);
     }
 }

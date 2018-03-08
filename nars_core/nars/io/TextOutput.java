@@ -21,6 +21,7 @@
  */
 package nars.io;
 
+import nars.io.ports.Output;
 import nars.util.Texts;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -35,11 +36,11 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.io.Output.ECHO;
-import nars.io.Output.ERR;
-import nars.io.Output.EXE;
-import nars.io.Output.IN;
-import nars.io.Output.OUT;
+import nars.io.ports.Output.ECHO;
+import nars.io.ports.Output.ERR;
+import nars.io.ports.Output.EXE;
+import nars.io.ports.Output.IN;
+import nars.io.ports.Output.OUT;
 import nars.language.Statement;
 import nars.operator.Operator;
 

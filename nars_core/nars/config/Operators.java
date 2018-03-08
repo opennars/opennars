@@ -50,9 +50,9 @@ public class Operators {
             new NullOperator("^reshape"),
             new NullOperator("^escape"),
             new NullOperator("^say"),
-            new NullOperator("^Right"),
-            new NullOperator("^Left"),
-            new NullOperator("^Run"),
+            new NullOperator("^right"),
+            new NullOperator("^left"),
+            new NullOperator("^run"),
             
             //new Wait(),            
             //new Wait(),            

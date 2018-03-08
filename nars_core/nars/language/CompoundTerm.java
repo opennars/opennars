@@ -28,10 +28,10 @@ import nars.storage.Memory;
 import nars.config.Parameters;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;
-import nars.parser.Symbols;
-import nars.parser.Symbols.NativeOperator;
-import static nars.parser.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.parser.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
+import nars.language.Narsese.Symbols;
+import nars.language.Narsese.Symbols.NativeOperator;
+import static nars.language.Narsese.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static nars.language.Narsese.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.makeCompoundName;
 import static nars.language.Interval.interval;
 
