@@ -1,6 +1,6 @@
 package nars.util;
 
-import nars.parser.Symbols;
+import nars.language.Narsese.Symbols;
 import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 import java.text.Format;

@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import nars.inference.TemporalRules;
 import nars.storage.Memory;
-import nars.parser.Symbols;
+import nars.language.Narsese.Symbols;
 
 /**
  * Static utility class for static methods related to Variables

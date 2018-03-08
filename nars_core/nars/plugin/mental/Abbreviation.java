@@ -14,7 +14,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.parser.Symbols;
+import nars.language.Narsese.Symbols;
 import static nars.language.CompoundTerm.termArray;
 import nars.language.Interval.PortableDouble;
 import nars.language.Interval.PortableInteger;

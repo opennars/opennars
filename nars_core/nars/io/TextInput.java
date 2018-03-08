@@ -20,7 +20,8 @@
  */
 package nars.io;
 
-import nars.parser.Symbols;
+import nars.io.ports.Input;
+import nars.language.Narsese.Symbols;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,7 +34,7 @@ import java.net.URL;
 /**
  * To read and write experience as Task streams
  */
-public class TextInput extends Symbols implements Input {
+public class TextInput implements Input {
 
 
     
@@ -112,16 +113,7 @@ public class TextInput extends Symbols implements Input {
         }
 
         if (line!=null)
-            return process(line);
+            return line;
         return null;
     }
-
-    
-    /** can be overridden in subclasses to preprocess addInput */
-    public String process(String input) {
-        return input;
-    }
-
-
-    
 }

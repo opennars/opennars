@@ -1,4 +1,4 @@
-package nars.plugin.misc;
+package nars.plugin.mental;
 
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
@@ -10,7 +10,7 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.parser.Symbols;
+import nars.language.Narsese.Symbols;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.SetExt;

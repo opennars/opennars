@@ -20,7 +20,7 @@
  */
 package nars.language;
 
-import nars.parser.Symbols.NativeOperator;
+import nars.language.Narsese.Symbols.NativeOperator;
 
 /**
  * A Statement about a Similarity relation.

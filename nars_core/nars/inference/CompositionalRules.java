@@ -36,7 +36,7 @@ import static nars.inference.TruthFunctions.reduceConjunction;
 import static nars.inference.TruthFunctions.reduceConjunctionNeg;
 import static nars.inference.TruthFunctions.reduceDisjunction;
 import static nars.inference.TruthFunctions.union;
-import nars.parser.Symbols;
+import nars.language.Narsese.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.DifferenceExt;

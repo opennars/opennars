@@ -2,7 +2,6 @@ package nars.config;
 
 import nars.language.Interval.AtomicDuration;
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import nars.control.DerivationContext.DerivationFilter;

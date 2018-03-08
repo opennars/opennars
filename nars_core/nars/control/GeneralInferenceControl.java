@@ -11,7 +11,6 @@ import nars.entity.Task;
 import nars.entity.TermLink;
 import nars.inference.BudgetFunctions;
 import nars.inference.RuleTables;
-import nars.language.Term;
 import nars.storage.Memory;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */

@@ -15,7 +15,7 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
-import nars.parser.Symbols;
+import nars.language.Narsese.Symbols;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Inheritance;

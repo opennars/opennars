@@ -22,9 +22,9 @@ package nars.language;
 
 import java.nio.CharBuffer;
 import nars.config.Parameters;
-import static nars.parser.Symbols.VAR_DEPENDENT;
-import static nars.parser.Symbols.VAR_INDEPENDENT;
-import static nars.parser.Symbols.VAR_QUERY;
+import static nars.language.Narsese.Symbols.VAR_DEPENDENT;
+import static nars.language.Narsese.Symbols.VAR_INDEPENDENT;
+import static nars.language.Narsese.Symbols.VAR_QUERY;
 import nars.util.Texts;
 import static nars.language.Variable.newName;
 

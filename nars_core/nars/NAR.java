@@ -37,21 +37,21 @@ import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
-import nars.io.Answered;
-import nars.io.InPort;
-import nars.io.Input;
-import nars.io.Output;
-import nars.io.Output.ERR;
-import nars.io.Output.IN;
-import nars.parser.Symbols;
+import nars.io.handlers.AnswerHandler;
+import nars.io.ports.InPort;
+import nars.io.ports.Input;
+import nars.io.ports.Output;
+import nars.io.ports.Output.ERR;
+import nars.io.ports.Output.IN;
+import nars.language.Narsese.Symbols;
 import nars.io.TaskInput;
 import nars.io.TextInput;
-import nars.parser.Narsese;
-import nars.parser.Narsese.InvalidInputException;
+import nars.language.Narsese.Narsese;
+import nars.language.Narsese.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
-import nars.io.Echo;
-import nars.io.SensoryChannel;
+import nars.io.commands.Echo;
+import nars.perception.SensoryChannel;
 import nars.language.Inheritance;
 import nars.language.Term;
 import nars.storage.LevelBag;
@@ -251,7 +251,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         return memory.concept(new Narsese(this).parseTerm(concept));
     }
 
-    public NAR ask(String termString, Answered answered) throws InvalidInputException {
+    public NAR ask(String termString, AnswerHandler answered) throws InvalidInputException {
 
         Task t;
         addInput(
@@ -275,7 +275,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
     }
 
-    public NAR askNow(String termString, Answered answered) throws InvalidInputException {
+    public NAR askNow(String termString, AnswerHandler answered) throws InvalidInputException {
 
         Task t;
         addInput(

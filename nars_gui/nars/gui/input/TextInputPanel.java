@@ -64,7 +64,7 @@ import nars.gui.input.TextInputPanel.InputAction;
 import nars.gui.input.TextInputPanel.TextInputMode;
 import static nars.gui.output.SwingLogPanel.setConsoleFont;
 import nars.gui.output.SwingText;
-import nars.io.Output.OUT;
+import nars.io.ports.Output.OUT;
 import nars.io.TextInput;
 
 

@@ -30,7 +30,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.parser.Symbols;
+import nars.language.Narsese.Symbols;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operation;

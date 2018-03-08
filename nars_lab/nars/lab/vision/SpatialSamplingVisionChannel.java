@@ -7,7 +7,7 @@ import nars.control.DerivationContext;
 import static nars.control.TemporalInferenceControl.proceedWithTemporalInduction;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.io.SensoryChannel;
+import nars.perception.SensoryChannel;
 import nars.language.Term;
 import nars.storage.LevelBag;
 

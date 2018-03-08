@@ -15,7 +15,7 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.TruthFunctions;
 import nars.inference.UtilityFunctions;
-import nars.io.Output.OUT;
+import nars.io.ports.Output.OUT;
 
 
 public class SwingLogText extends SwingText  {
