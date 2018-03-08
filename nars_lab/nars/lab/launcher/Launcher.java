@@ -29,7 +29,7 @@ import javax.swing.ImageIcon;
 import nars.NAR;
 import nars.config.Plugins;
 import nars.gui.NARSwing;
-import nars.io.Narsese;
+import nars.language.Narsese.Narsese;
 import nars.web.NARServer;
 
 /**

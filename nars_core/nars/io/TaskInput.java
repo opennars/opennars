@@ -20,7 +20,6 @@ public class TaskInput implements Input {
         this.task = t;
     }
     
-    
     @Override
     public Object next() throws IOException {
         if (!finished) {

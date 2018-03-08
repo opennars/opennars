@@ -21,7 +21,6 @@
 package nars.io;
 
 import nars.io.ports.Input;
-import nars.language.Narsese.Symbols;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,8 +35,6 @@ import java.net.URL;
  */
 public class TextInput implements Input {
 
-
-    
     /**
      * Input experience from a file
      */
@@ -62,14 +59,11 @@ public class TextInput implements Input {
         setInput(input);
     }
     
-    public TextInput() {
-        
-    }
+    public TextInput() {}
     
     protected void setInput(BufferedReader input) {
         this.input = input;
     }
-
 
     @Override
     public boolean finished(boolean forceStop) {
