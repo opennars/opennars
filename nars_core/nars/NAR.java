@@ -43,11 +43,11 @@ import nars.io.Input;
 import nars.io.Output;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
-import nars.io.Symbols;
+import nars.parser.Symbols;
 import nars.io.TaskInput;
 import nars.io.TextInput;
-import nars.io.Narsese;
-import nars.io.Narsese.InvalidInputException;
+import nars.parser.Narsese;
+import nars.parser.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
 import nars.io.Echo;
@@ -366,8 +366,8 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
         private long creationTime = -1;
 
-        public ObjectTaskInPort(Input input, ArrayDeque buffer, float initialAttention) {
-            super(input, buffer, initialAttention);
+        public ObjectTaskInPort(Input input, ArrayDeque buffer) {
+            super(input, buffer);
         }
 
         @Override public void perceive(final Object x) {
@@ -414,7 +414,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
     /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
     public ObjectTaskInPort addInput(final Input channel) {
-        ObjectTaskInPort i = new ObjectTaskInPort(channel, new ArrayDeque(), 1.0f);
+        ObjectTaskInPort i = new ObjectTaskInPort(channel, new ArrayDeque());
 
         try {
             i.update();

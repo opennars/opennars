@@ -8,7 +8,7 @@ import nars.control.DerivationContext;
 import nars.control.DerivationContext.DerivationFilter;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.io.Symbols;
+import nars.parser.Symbols;
 import nars.operator.Operation;
 
 /**

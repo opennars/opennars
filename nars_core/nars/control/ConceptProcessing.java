@@ -7,7 +7,7 @@ import nars.entity.*;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.io.Output;
-import nars.io.Symbols;
+import nars.parser.Symbols;
 import nars.language.*;
 import nars.operator.Operation;
 import nars.plugin.mental.InternalExperience;

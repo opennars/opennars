@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.io;
+package nars.io.console;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,7 +28,9 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.NAR;
-import nars.io.CommandLineNARBuilder;
+import nars.io.TextInput;
+import nars.io.TextOutput;
+import nars.io.console.CommandLineNARBuilder;
 
 /**
  * Run Reasoner

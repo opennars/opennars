@@ -15,7 +15,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
-import nars.io.Symbols;
+import nars.parser.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.operator.Operation;

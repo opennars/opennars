@@ -19,7 +19,7 @@ import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
-import nars.io.Symbols;
+import nars.parser.Symbols;
 import nars.language.Conjunction;
 import nars.language.Negation;
 import nars.language.Term;

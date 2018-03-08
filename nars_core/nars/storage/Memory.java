@@ -52,7 +52,7 @@ import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.truthToQuality;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
-import nars.io.Symbols;
+import nars.parser.Symbols;
 import nars.language.Tense;
 import nars.language.Term;
 import nars.operator.Operation;

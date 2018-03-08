@@ -13,7 +13,7 @@ import nars.entity.Task;
 import nars.util.AbstractObserver;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
-import nars.io.Narsese;
+import nars.parser.Narsese;
 import nars.language.Term;
 
 /**

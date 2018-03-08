@@ -2,13 +2,14 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.io;
+package nars.io.console;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import nars.NAR;
 import nars.config.Plugins;
+import nars.io.TextInput;
 
 /**
  *

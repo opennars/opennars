@@ -21,6 +21,7 @@
  */
 package nars.io;
 
+import nars.util.Texts;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;

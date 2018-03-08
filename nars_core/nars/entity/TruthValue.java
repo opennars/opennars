@@ -23,8 +23,8 @@ package nars.entity;
 import java.io.Serializable;
 import nars.config.Parameters;
 import static nars.config.Parameters.TRUTH_EPSILON;
-import nars.io.Symbols;
-import nars.io.Texts;
+import nars.parser.Symbols;
+import nars.util.Texts;
 import nars.language.Term;
 
 

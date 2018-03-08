@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 import nars.config.Parameters;
-import nars.io.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
 import static nars.language.IntersectionExt.make;
 import static nars.language.IntersectionExt.make;
 import static nars.language.IntersectionExt.make;

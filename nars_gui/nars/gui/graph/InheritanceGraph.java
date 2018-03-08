@@ -3,7 +3,7 @@ package nars.gui.graph;
 import nars.NAR;
 import nars.entity.Item;
 import nars.entity.Sentence;
-import nars.io.Symbols;
+import nars.parser.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Interval.PortableDouble;
 import nars.language.Statement;

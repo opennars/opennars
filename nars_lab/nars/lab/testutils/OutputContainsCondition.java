@@ -12,7 +12,7 @@ import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.TextOutput;
-import nars.io.Texts;
+import nars.util.Texts;
 import nars.operator.Operator.ExecutionResult;
 
 /**
@@ -86,6 +86,39 @@ public class OutputContainsCondition extends OutputCondition<Task> {
     public Collection<SimilarOutput> getCandidates(int max) {
         return almost;
     }
+    
+        /**
+     * @author http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Java
+     */
+    public static int levenshteinDistance(final CharSequence a, final CharSequence b) {
+        int len0 = a.length() + 1;
+        int len1 = b.length() + 1;
+        int[] cost = new int[len0];
+        int[] newcost = new int[len0];
+        for (int i = 0; i < len0; i++) {
+            cost[i] = i;
+        }
+        for (int j = 1; j < len1; j++) {
+            newcost[0] = j;
+            final char bj = b.charAt(j - 1);
+            for (int i = 1; i < len0; i++) {
+                int match = (a.charAt(i - 1) == bj) ? 0 : 1;
+                int cost_replace = cost[i - 1] + match;
+                int cost_insert = cost[i] + 1;
+                int cost_delete = newcost[i - 1] + 1;
+                
+                int c = cost_insert;
+                if (cost_delete < c) c = cost_delete;
+                if (cost_replace < c) c = cost_replace;
+                
+                newcost[i] = c;
+            }
+            int[] swap = cost;
+            cost = newcost;
+            newcost = swap;
+        }
+        return cost[len0 - 1];
+    }
 
     public boolean cond(Class channel, Object signal) {
         if ((channel == OUT.class) || (channel == EXE.class)) {
@@ -117,7 +150,7 @@ public class OutputContainsCondition extends OutputCondition<Task> {
                 }                
             }
             if (saveSimilar) {
-                int dist = Texts.levenshteinDistance(o, containing);
+                int dist = levenshteinDistance(o, containing);
                 
                 if (almost.size() >= maxSimilars) {
                     SimilarOutput last = almost.last();

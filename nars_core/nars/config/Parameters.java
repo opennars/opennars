@@ -219,7 +219,6 @@ public class Parameters {
      * 
      * Optimal value to be determined.
      */
-    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 64;
     
     /** max number of interval to combine in sequence to approximate a time period (cycles) */
     public static int TEMPORAL_INTERVAL_PRECISION = 1;

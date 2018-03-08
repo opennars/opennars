@@ -26,7 +26,7 @@ import nars.gui.NARSwing;
 import nars.inference.TruthFunctions;
 import nars.io.Answered;
 import nars.lab.ioutils.ChangedTextInput;
-import nars.io.Narsese;
+import nars.parser.Narsese;
 import nars.language.Term;
 
 /**

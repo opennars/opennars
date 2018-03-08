@@ -12,19 +12,11 @@ import java.util.Iterator;
 abstract public class InPort<X,Y> implements Iterator<Y> {
     public final Input<X> input;
     public final ArrayDeque<Y> buffer;
-    private float attention;
     
-    
-//    /** initializes with default FIFO and attention=1.0 */
-//    public InPort(Input<X> input, float initialAttention) {        
-//        this(input, new FIFO(), 1.0);
-//    }
-    
-    public InPort(Input<X> input, ArrayDeque<Y> buffer, float initialAttention) {
+    public InPort(Input<X> input, ArrayDeque<Y> buffer) {
         super();
         this.input = input;
         this.buffer = buffer;
-        this.attention = initialAttention;
     }
  
     /** add a task to the end of the buffer */
@@ -48,22 +40,6 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
         return buffer.size() > 0;
     }
     
-//    protected X nextXDirect() {
-//        try {
-//            if (input.finished(false))
-//                return null;
-//            
-//            X x = input.next();
-//            if (x == null)
-//                return null;
-//            return x;
-//        }
-//        catch (IOException e) {
-//            return null;
-//        }
-//            
-//    }
-    
     /** takes input object. any tasks that it generates are input into the InPort
      *  via queue() methods.
      */
@@ -84,11 +60,7 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
             
             perceive(x);
         }
-    }
-
-    public float getAttention() {
-        return attention;
-    }        
+    }     
     
     public boolean finish() {
         return input.finished(true);

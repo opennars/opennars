@@ -1,5 +1,7 @@
 package nars.io;
 
+import nars.parser.Narsese;
+import nars.parser.Symbols;
 import com.google.common.collect.Iterators;
 import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
@@ -19,7 +21,7 @@ import nars.util.Plugin;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.Output.IN;
-import nars.io.Narsese.InvalidInputException;
+import nars.parser.Narsese.InvalidInputException;
 
 /**
  *  Default handlers for text perception.

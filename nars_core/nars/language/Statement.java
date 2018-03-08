@@ -25,9 +25,9 @@ import java.util.Arrays;
 import nars.config.Parameters;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.ORDER_NONE;
-import nars.io.Symbols.NativeOperator;
-import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
-import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
+import nars.parser.Symbols.NativeOperator;
+import static nars.parser.Symbols.NativeOperator.STATEMENT_CLOSER;
+import static nars.parser.Symbols.NativeOperator.STATEMENT_OPENER;
 
 /**
  * A statement is a compound term, consisting of a subject, a predicate, and a

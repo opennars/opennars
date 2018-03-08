@@ -38,7 +38,7 @@ import static nars.inference.TemporalRules.matchingOrder;
 import static nars.inference.TemporalRules.reverseOrder;
 import static nars.inference.TruthFunctions.temporalProjection;
 import nars.io.Output;
-import nars.io.Symbols;
+import nars.parser.Symbols;
 import nars.language.CompoundTerm;
 import static nars.language.CompoundTerm.extractIntervals;
 import static nars.language.CompoundTerm.replaceIntervals;

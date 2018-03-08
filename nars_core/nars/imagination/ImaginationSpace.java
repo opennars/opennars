@@ -2,7 +2,7 @@ package nars.imagination;
 
 import nars.entity.TruthValue;
 import nars.language.Conjunction;
-import nars.operator.Operator;
+import nars.operator.Operation;
 
 /**
  *
@@ -16,5 +16,7 @@ public interface ImaginationSpace {
     //and then gradually moving to the right
     public ImaginationSpace ConstructSpace(Conjunction program);
     //Has to return a new instance, not changing "this"!
-    public ImaginationSpace ProgressSpace(Operator op, ImaginationSpace B);
+    public ImaginationSpace ProgressSpace(Operation op, ImaginationSpace B);
+    //Check whether the operation is part of the space:
+    public boolean IsOperationInSpace(Operation oper);
 }
