@@ -9,8 +9,8 @@ import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.io.handlers.AnswerHandler;
-import nars.language.Narsese.Narsese;
+import nars.output.AnswerHandler;
+import nars.parser.Narsese;
 
 /**
  *

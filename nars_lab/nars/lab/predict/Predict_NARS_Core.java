@@ -24,9 +24,9 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.inference.TruthFunctions;
-import nars.io.handlers.AnswerHandler;
+import nars.output.AnswerHandler;
 import nars.lab.ioutils.ChangedTextInput;
-import nars.language.Narsese.Narsese;
+import nars.parser.Narsese;
 import nars.language.Term;
 
 /**

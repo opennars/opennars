@@ -23,7 +23,7 @@ package nars.entity;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
-import nars.language.Narsese.Symbols;
+import nars.parser.Symbols;
 import nars.language.Term;
 
 /**

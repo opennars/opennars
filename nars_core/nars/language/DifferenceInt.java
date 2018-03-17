@@ -22,7 +22,7 @@ package nars.language;
 
 import java.util.TreeSet;
 import nars.config.Parameters;
-import nars.language.Narsese.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
 
 /**
  * A compound term whose extension is the difference of the intensions of its term

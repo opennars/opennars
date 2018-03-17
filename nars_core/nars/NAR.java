@@ -30,11 +30,11 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
-import nars.io.handlers.AnswerHandler;
-import nars.io.handlers.OutputHandler.ERR;
-import nars.language.Narsese.Symbols;
-import nars.language.Narsese.Narsese;
-import nars.language.Narsese.Narsese.InvalidInputException;
+import nars.output.AnswerHandler;
+import nars.output.OutputHandler.ERR;
+import nars.parser.Symbols;
+import nars.parser.Narsese;
+import nars.parser.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
 import nars.perception.SensoryChannel;
@@ -140,28 +140,17 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
     /** Flag for running continuously  */
     private boolean running = false;
-
-
     /** used by stop() to signal that a running loop should be interrupted */
     private boolean stopped = false;
-
     private boolean threadYield;
 
-    public Memory NewMemory(RuntimeParameters p) {
-        return new Memory(p,
+    public NAR() {
+        Plugins b = new Plugins();
+        Memory m = new Memory(b.param,
                 new LevelBag(Parameters.CONCEPT_BAG_LEVELS, Parameters.CONCEPT_BAG_SIZE),
                 new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
                 new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE),
                 new LevelBag<>(Parameters.OPERATION_BAG_LEVELS, Parameters.OPERATION_BAG_SIZE));
-    }
-
-    public NAR() {
-        this(new Plugins());
-    }
-
-    /** normal way to construct a NAR, using a particular Build instance */
-    public NAR(Plugins b) {
-        Memory m = NewMemory(b.param);
         this.memory = m;
         this.param = m.param;
         b.init(this);

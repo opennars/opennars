@@ -11,7 +11,7 @@ import java.util.TreeSet;
 import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.io.handlers.TextOutputHandler;
+import nars.output.TextOutputHandler;
 import nars.operator.Operator.ExecutionResult;
 
 /**

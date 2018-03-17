@@ -20,7 +20,7 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.language.Narsese.Narsese;
+import nars.parser.Narsese;
 import nars.lab.testutils.ConceptMonitor;
 import nars.language.Term;
 import nars.operator.Operation;

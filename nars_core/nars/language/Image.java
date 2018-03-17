@@ -2,10 +2,10 @@ package nars.language;
 
 import java.util.Objects;
 import nars.config.Parameters;
-import nars.language.Narsese.Symbols;
-import nars.language.Narsese.Symbols.NativeOperator;
-import static nars.language.Narsese.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.language.Narsese.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
+import nars.parser.Symbols;
+import nars.parser.Symbols.NativeOperator;
+import static nars.parser.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static nars.parser.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 
 /**
  *

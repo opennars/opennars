@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import nars.config.Plugins;
 import nars.gui.InferenceLogger;
-import nars.io.handlers.TextOutputHandler;
+import nars.output.TextOutputHandler;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
@@ -69,7 +69,7 @@ public class NALTest  {
     }
     
     public NAR newNAR() {
-        return new NAR(new Plugins());
+        return new NAR();
         //return NAR.build(Default.fromJSON("nal/build/pei1.fast.nar"));        
         //return new ContinuousBagNARBuilder().build();
         //return new DiscretinuousBagNARBuilder().build();

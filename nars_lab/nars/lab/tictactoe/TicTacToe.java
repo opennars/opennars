@@ -44,7 +44,7 @@ import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.io.handlers.OutputHandler.OUT;
+import nars.output.OutputHandler.OUT;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;

@@ -9,7 +9,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.language.Narsese.Symbols;
+import nars.parser.Symbols;
 import nars.language.Inheritance;
 import nars.language.SetInt;
 import nars.language.Term;

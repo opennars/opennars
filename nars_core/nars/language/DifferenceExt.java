@@ -21,7 +21,7 @@
 package nars.language;
 
 import java.util.TreeSet;
-import nars.language.Narsese.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
 import static nars.language.DifferenceInt.ensureValidDifferenceArguments;
 
 /**

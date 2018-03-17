@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.io.console;
+package nars;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -28,6 +26,7 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.NAR;
+import nars.output.TextOutputHandler;
 
 /**
  * Run Reasoner
@@ -37,7 +36,7 @@ import nars.NAR;
  * <p>
  * Manage the internal working thread. Communicate with Reasoner only.
  */
-public class NARConsole {
+public class Shell {
 
     private final NAR nar;
 
@@ -53,7 +52,7 @@ public class NARConsole {
      */
     public static void main(String args[]) {
                 
-        NARConsole nars = new NARConsole(new NAR(new CommandLineNARBuilder(args)));
+        Shell nars = new Shell(new NAR());
         nars.run(args);
         
         // TODO only if single finish ( no reset in between )
@@ -63,7 +62,7 @@ public class NARConsole {
         }
     }
 
-    public NARConsole(NAR n) {
+    public Shell(NAR n) {
         this.nar = n;
     }
 
@@ -99,6 +98,9 @@ public class NARConsole {
  an addInput file
      */
     public void run(String args[]) {
+        TextOutputHandler output = new TextOutputHandler(nar, new PrintWriter(out, true));
+        output.setErrors(true);
+        output.setErrorStackTrace(true);
         InputThread it;
         int sleep = -1;
         boolean noFile = false;
@@ -128,8 +130,9 @@ public class NARConsole {
                     Thread.sleep(sleep);
                 }
             } catch (InterruptedException ex) {
-                Logger.getLogger(NARConsole.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Shell.class.getName()).log(Level.SEVERE, null, ex);
             }
+            //System.out.println("step");
             //System.out.println("step");
             
             
