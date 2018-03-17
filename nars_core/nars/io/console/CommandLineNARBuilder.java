@@ -1,21 +1,11 @@
-/*
- * Here comes the text of your license
- * Each line should be prefixed with  * 
- */
 package nars.io.console;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import nars.NAR;
 import nars.config.Plugins;
-import nars.io.TextInput;
 
-/**
- *
- * @author patrick.hammer
- */
-public class CommandLineNARBuilder extends Plugins {
+ public class CommandLineNARBuilder extends Plugins {
         
     List<String> filesToLoad = new ArrayList();
 
@@ -46,11 +36,10 @@ public class CommandLineNARBuilder extends Plugins {
 
         for (String x : filesToLoad) {
             try {
-                n.addInput( new TextInput(new File(x) ) );
+                System.out.println("loading files is not part of NARS core anymore, just use a pipe");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            n.run(1);
         }
 
         return n;
@@ -66,3 +55,4 @@ public class CommandLineNARBuilder extends Plugins {
         return !"--silence".equals(param);
     }
 }
+

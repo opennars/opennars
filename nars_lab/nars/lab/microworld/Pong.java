@@ -218,7 +218,7 @@ public class Pong extends Frame {
                     nar.addInput("(--,<{SELF} --> [good]>). :|:");
                 }*/
                 
-                nar.step(10);
+                nar.cycles(10);
 
                 if(lastAction==0 && random(1.0f) < Alpha) { //if NAR hasn't decided chose a executable random action
                     lastAction = (int) random((float) nActions);

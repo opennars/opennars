@@ -1,7 +1,6 @@
 package nars.config;
 
 import nars.NAR;
-import nars.io.ports.DefaultTextPerception;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
 import nars.plugin.mental.FullInternalExperience;
@@ -23,7 +22,6 @@ public class Plugins {
         for (Operator o : Operators.get(n))
             n.memory.addOperator(o);
                 
-        n.addPlugin(new DefaultTextPerception());
         n.addPlugin(new RuntimeNARSettings());
         n.addPlugin(new Emotions());
         n.addPlugin(new Anticipate());      // expect an event  

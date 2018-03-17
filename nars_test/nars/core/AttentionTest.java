@@ -27,7 +27,7 @@ public class AttentionTest {
         for (int i = 0; i < numConcepts; i++)
             n.addInput("<x" + i + " <-> x" + (i+1) + ">.");
         
-        n.run(100);
+        n.cycles(100);
         
         int c = Iterables.size(n.memory.concepts);
         assertTrue(c > 32);

@@ -20,25 +20,16 @@
  */
 package nars.gui.input;
 
-import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NWindow;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +39,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
@@ -63,9 +53,7 @@ import nars.gui.FileTreeModel;
 import nars.gui.input.TextInputPanel.InputAction;
 import nars.gui.input.TextInputPanel.TextInputMode;
 import static nars.gui.output.SwingLogPanel.setConsoleFont;
-import nars.gui.output.SwingText;
-import nars.io.ports.Output.OUT;
-import nars.io.TextInput;
+import nars.io.handlers.OutputHandler.OUT;
 
 
 public class TextInputPanel extends NPanel /*implements ActionListener*/ {
@@ -160,9 +148,9 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
                                     if (!f.isDirectory()) {
                                         try {
-                                            nar.addInput(new TextInput(f));
+                                            nar.addInputFile(f.getAbsolutePath());
                                             nar.emit(OUT.class, "Loaded file: " + f.getAbsolutePath());
-                                        } catch (IOException ex) {
+                                        } catch (Exception ex) {
                                             System.err.println(ex);
                                         }
                                     }
@@ -262,7 +250,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
             @Override
             public String run() {
-                nar.step(1);
+                nar.cycles(1);
                 return input;
             }
 
@@ -294,7 +282,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         public void evaluateSeq(String input) {
             //TODO make sequential evaluation
             nar.addInput(input);
-            nar.step(1);
+            nar.cycles(1);
         }
 
         

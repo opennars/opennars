@@ -33,15 +33,15 @@ import nars.gui.InferenceLogger.LogOutput;
 import nars.gui.NARControls;
 import nars.gui.WrapLayout;
 import nars.io.handlers.EventHandler;
-import nars.io.ports.Output;
-import nars.io.ports.Output.ERR;
-import nars.io.ports.Output.EXE;
-import nars.io.TextOutput;
+import nars.io.handlers.OutputHandler;
+import nars.io.handlers.OutputHandler.ERR;
+import nars.io.handlers.OutputHandler.EXE;
+import nars.io.handlers.TextOutputHandler;
 
 abstract public class LogPanel extends NPanel implements LogOutput {
 
     static CharSequence getText(Class c, Object o, boolean showStamp, NAR nar) {
-        return TextOutput.getOutputString(c, o, showStamp, nar);
+        return TextOutputHandler.getOutputString(c, o, showStamp, nar);
     }
 
     protected final NAR nar;
@@ -65,7 +65,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
     private final InferenceLogger logger;
     private String logFilePath;
 
-    public static final Class[] outputEvents = Output.DefaultOutputEvents;
+    public static final Class[] outputEvents = OutputHandler.DefaultOutputEvents;
 
     
     

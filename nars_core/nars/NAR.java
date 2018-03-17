@@ -1,60 +1,47 @@
 package nars;
 
+import java.io.BufferedReader;
 import nars.config.Parameters;
 import nars.config.RuntimeParameters;
 import nars.util.Plugin;
 import nars.storage.Memory;
 import nars.util.Events;
 import nars.util.EventEmitter;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
-import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.util.EventEmitter.EventObserver;
-import nars.util.Events.FrameEnd;
-import nars.util.Events.FrameStart;
-import nars.util.Events.Perceive;
 import nars.config.Plugins;
 import nars.control.DerivationContext.DerivationFilter;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.io.handlers.AnswerHandler;
-import nars.io.ports.InPort;
-import nars.io.ports.Input;
-import nars.io.ports.Output;
-import nars.io.ports.Output.ERR;
-import nars.io.ports.Output.IN;
+import nars.io.handlers.OutputHandler.ERR;
 import nars.language.Narsese.Symbols;
-import nars.io.TaskInput;
-import nars.io.TextInput;
 import nars.language.Narsese.Narsese;
 import nars.language.Narsese.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
-import nars.io.commands.Echo;
 import nars.perception.SensoryChannel;
-import nars.language.Inheritance;
 import nars.language.Term;
 import nars.storage.LevelBag;
+import nars.util.Events.CyclesEnd;
+import nars.util.Events.CyclesStart;
 
 
 /**
@@ -72,7 +59,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     /**
      * The information about the version and date of the project.
      */
-    public static final String VERSION = "Open-NARS v1.6.6pre1";
+    public static final String VERSION = "Open-NARS v1.6.6pre2";
 
     /**
      * The project web sites.
@@ -106,8 +93,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         NAR ret = (NAR) stream.readObject();
         ret.memory.event = new EventEmitter();
         ret.plugins = new ArrayList<>(); 
-        ret.inputChannels = new ArrayList();
-        ret.newInputChannels = new ArrayList(); //was CopyOnWriteArrayList
         new Plugins().init(ret);
         return ret;
     }
@@ -124,14 +109,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
      */
     public Memory memory;
     public RuntimeParameters param;
-
-
-    /** The addInput channels of the reasoner     */
-    public transient List<InPort<Object,Item>> inputChannels;
-
-    /** pending input and output channels to add on the next cycle. */
-    private transient List<InPort<Object,Item>> newInputChannels;
-
 
     public class PluginState implements Serializable {
         final public Plugin plugin;
@@ -170,11 +147,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
     private boolean threadYield;
 
-    private int inputSelected = 0; //counter for the current selected input channel
-    private boolean ioChanged;
-
-    private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
-
     public Memory NewMemory(RuntimeParameters p) {
         return new Memory(p,
                 new LevelBag(Parameters.CONCEPT_BAG_LEVELS, Parameters.CONCEPT_BAG_SIZE),
@@ -192,10 +164,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         Memory m = NewMemory(b.param);
         this.memory = m;
         this.param = m.param;
-
-        //needs to be concurrent in case we change this while running
-        inputChannels = new ArrayList();
-        newInputChannels = new ArrayList(); //was CopyOnWriteArrayList
         b.init(this);
     }
 
@@ -204,16 +172,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
      * from {@link NARControls}.
      */
     public void reset() {
-        int numInputs = inputChannels.size();
-        for (int i = 0; i < numInputs; i++) {
-            InPort port = inputChannels.get(i);
-            port.input.finished(true);
-        }
-        inputChannels.clear();
-        newInputChannels.clear();
-        //newOutputChannels.clear();
-        //oldOutputChannels.clear();
-        ioChanged = false;
         memory.reset();
     }
 
@@ -224,25 +182,41 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
      * will be set to the current memory cycle time, but may be processed by
      * memory later according to the length of the input queue.
      */
-    public TextInput addInput(final String text) {
-
-        return addInput(text, text.contains("\n") ? -1 : time());
+    public void addInput(final String text) {
+        Narsese narsese = new Narsese(this);
+        try {
+            if(text.startsWith("**")) {
+                this.reset();
+                return;
+            }
+            try {
+              Integer retVal = Integer.parseInt(text);
+              if(thread == null) {
+                    for(int i=0;i<retVal;i++) {
+                        this.cycle();
+                    }
+                }
+                return;
+            } catch (NumberFormatException ex) {} //usual input (TODO without exception)
+            Task t = narsese.parseTask(text);
+            this.memory.inputTask(t);
+            if(this.thread == null) { //no thread started so absorb the input
+                this.cycle(); //else the thread will absorb it
+            }
+        } catch (InvalidInputException ex) {
+            Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
-    /** add text input at a specific time, which can be set to current time (regardless of when it will reach the memory), backdated, or forward dated */
-    public TextInput addInput(final String text, long creationTime) {
-        final TextInput i = new TextInput(text);
-
-        ObjectTaskInPort ip = addInput(i);
-
-        if (creationTime!=-1)
-            ip.setCreationTimeOverride(creationTime);
-
-        return i;
-    }
-
-    public NAR addInput(final String taskText, float frequency, float confidence) throws InvalidInputException {
-        return addInput(-1, -1, taskText, frequency, confidence);
+    
+    public void addInputFile(String s) {
+        try (BufferedReader br = new BufferedReader(new FileReader(s))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+               this.addInput(line);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 
@@ -299,43 +273,10 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
     }
 
-    public NAR addInput(final Sentence sentence) throws InvalidInputException {
-
-        //TODO use correct default values depending on sentence punctuation
-        float priority =
-                Parameters.DEFAULT_JUDGMENT_PRIORITY;
-        float durability =
-                Parameters.DEFAULT_JUDGMENT_DURABILITY;
-
-        return addInput(
-                new Task(sentence, 
-                        new BudgetValue(priority, durability, sentence.truth), 
-                        true)
-        );
-    }
-
-    public NAR addInput(float priority, float durability, final String taskText, float frequency, float confidence) throws InvalidInputException {
-
-        Task t = new Narsese(this).parseTask(taskText);
-        if (frequency!=-1)
-            t.sentence.truth.setFrequency(frequency);
-        if (confidence!=-1)
-            t.sentence.truth.setConfidence(confidence);
-        if (priority!=-1)
-            t.budget.setPriority(priority);
-        if (durability!=-1)
-            t.budget.setDurability(durability);
-
-        return addInput(t);
-    }
-
     public NAR addInput(final Task t) {
-        TaskInput ti = new TaskInput(t);
-        addInput(ti);
+        this.memory.inputTask(t);
         return this;
     }
-
-
 
     /** attach event handler */
     public void on(Class c, EventObserver o) {
@@ -352,88 +293,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         memory.event.set(e, enabled, events);
     }
 
-
-    public int getCyclesPerFrame() {
-        return cyclesPerFrame;
-    }
-
-    final class ObjectTaskInPort extends InPort<Object,Item> implements Serializable {
-        
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-
-        private long creationTime = -1;
-
-        public ObjectTaskInPort(Input input, ArrayDeque buffer) {
-            super(input, buffer);
-        }
-
-        @Override public void perceive(final Object x) {
-            memory.emit(Perceive.class, this, x);
-        }
-
-        @Override
-        public Iterator<Item> postprocess(final Iterator<Item> at) {
-            try {
-                if (creationTime == -1)
-                    return at;
-                else {
-                    //Process tasks with overrides                    
-                    final int duration = Parameters.DURATION;
-
-                    return Iterators.filter(at, new Predicate<Item>() {
-                        @Override public boolean apply(Item at) {
-                            if (at instanceof Task) {
-                                Task t = (Task)at;
-                                if (t.sentence!=null)
-                                    if (t.sentence.stamp!=null) {
-                                        t.sentence.stamp.setCreationTime(creationTime, duration);
-                                    }
-                            }
-                            return true;
-                        }
-                    });
-                }
-            }
-            catch (Throwable e) {
-                if (Parameters.DEBUG)
-                    throw e;
-                return singletonIterator(new Echo(ERR.class, e));
-            }
-        }
-
-        /** sets the 'creationTime' override for new Tasks.  sets the stamp to a particular
-         * value upon its exit from the queue.          */
-        public void setCreationTimeOverride(final long creationTime) {
-            this.creationTime = creationTime;
-        }
-
-    }
-
-    /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
-    public ObjectTaskInPort addInput(final Input channel) {
-        ObjectTaskInPort i = new ObjectTaskInPort(channel, new ArrayDeque());
-
-        try {
-            i.update();
-            newInputChannels.add(i);
-        } catch (IOException ex) {
-            if (Parameters.DEBUG)
-                throw new RuntimeException(ex.toString());
-            emit(ERR.class, ex);
-        }
-
-        ioChanged = true;
-
-        if (!running)
-            updatePorts();
-
-        return i;
-    }
-
-
     public void addPlugin(Plugin p) {
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
@@ -445,10 +304,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         plugins.add(ps);
         emit(Events.PluginsChange.class, p, null);
     }
-    
-    public void addSensoryChannel() {
-        
-    }
 
     public void removePlugin(PluginState ps) {
         if (plugins.remove(ps)) {
@@ -459,6 +314,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
             if (p instanceof DerivationFilter) {
                 param.defaultDerivationFilters.remove((DerivationFilter)p);
             }
+            //TODO sensory channels can be plugins
             ps.setEnabled(false);
             emit(Events.PluginsChange.class, null, p);
         }
@@ -469,27 +325,14 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     }
 
 
-    @Deprecated public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
+    public void start(final long minCyclePeriodMS) {
         this.minCyclePeriodMS = minCyclePeriodMS;
-        this.cyclesPerFrame = cyclesPerFrame;
         if (thread == null) {
             thread = new Thread(this, "Inference");
             thread.start();
         }
         running = true;
     }
-
-    /**
-     * Repeatedly execute NARS working cycle in a new thread with Iterative timing.
-     *
-     * @param minCyclePeriodMS minimum cycle period (milliseconds).
-     */
-    public void start(final long minCyclePeriodMS) {
-        start(minCyclePeriodMS, 1);
-    }
-
-    public EventEmitter event() { return memory.event; }
-
 
     /**
      * Stop the inference process, killing its thread.
@@ -503,58 +346,19 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         running = false;
     }
 
-    /** Execute a fixed number of frames. 
-     * may execute more than requested cycles if cyclesPerFrame > 1 */
-    public void step(final int frames) {
+    /** Execute a fixed number of cycles.*/
+    public void cycles(final int cycles) {
         memory.allowExecution = true;
-        /*if (thread!=null) {
-            memory.stepLater(cycles);
-            return;
-        }*/
-
+        emit(CyclesStart.class);
         final boolean wasRunning = running;
         running = true;
         stopped = false;
-        for (int f = 0; (f < frames) && (!stopped); f++) {
-            frame();
+        for(int i=0;i<cycles;i++) {
+            cycle();
         }
         running = wasRunning;
+        emit(CyclesEnd.class);
     }
-
-    /** Execute a fixed number of cycles, then finish any remaining walking steps. */
-    public NAR run(int cycles) {
-        if (cycles <= 0) return this;
-
-        running = true;
-        stopped = false;
-
-        updatePorts();
-
-        //clear existing input
-
-        long cycleStart = time();
-        do {
-            step(1);
-        }
-        while ((!inputChannels.isEmpty()) && (!stopped));
-
-        long cyclesCompleted = time() - cycleStart;
-
-        //queue additional cycles, 
-        cycles -= cyclesCompleted;
-        if (cycles > 0)
-            memory.stepLater(cycles);
-
-        //finish all remaining cycles
-        while (!memory.isProcessingInput() && (!stopped)) {
-            step(1);
-        }
-
-        running = false;
-
-        return this;
-    }
-
 
     /** Main loop executed by the Thread.  Should not be called directly. */
     @Override public void run() {
@@ -562,7 +366,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
         while (running && !stopped) {
 
-            frame();
+            cycle();
 
             if (minCyclePeriodMS > 0) {
                 try {
@@ -575,108 +379,16 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         }
     }
 
-    protected void resetPorts() {
-        for (InPort<Object, Item> i : getInPorts()) {
-            i.reset();
-        }
-    }
-
-    protected void updatePorts() {
-        if (!ioChanged) {
-            return;
-        }
-
-        ioChanged = false;
-
-        if (!newInputChannels.isEmpty()) {
-            inputChannels.addAll(newInputChannels);
-            newInputChannels.clear();
-        }
-
-    }
-
-    /**
-     * Processes the next input from each input channel.  Removes channels that have finished.
-     * @return whether to finish the reasoner afterward, which is true if any input exists.
-     */
-    public Item nextTask() {
-        if (inputChannels.isEmpty())
-            return null;
-
-        int remainingChannels = inputChannels.size(); //remaining # of channels to poll
-
-        while ((remainingChannels > 0) && (inputChannels.size() > 0)) {
-            inputSelected %= inputChannels.size();
-
-            final InPort<Object,Item> i = inputChannels.get(inputSelected++);
-            remainingChannels--;
-
-            if (i.finished()) {
-                inputChannels.remove(i);
-                continue;
-            }
-
-            try {
-                i.update();
-            } catch (IOException ex) {
-                emit(ERR.class, ex);
-            }
-
-            if (i.hasNext()) {
-                Item task = i.next();
-                if (task!=null) {
-                    if(task instanceof Task) {
-                        //check if it should go to a sensory channel instead.
-                        Term t = ((Task) task).getTerm();
-                        if(t != null && t instanceof Inheritance) {
-                            Term predicate = ((Inheritance) t).getPredicate();
-                            if(this.sensoryChannels.containsKey(predicate)) {
-                                this.sensoryChannels.get(predicate).addInput((Task) task);
-                                continue;
-                            }
-                        }
-                    }
-                    //return to process for NAR instead
-                    return task;
-                }
-            }
-
-        }
-
-        /** no available inputs */
-        return null;
-    }
-
-    /** count of how many items are buffered */
-    public int getInputItemsBuffered() {
-        int total = 0;
-        for (final InPort i : inputChannels)
-            total += i.getItemsBuffered();
-        return total;
-    }
-
-
     public void emit(final Class c, final Object... o) {
         memory.event.emit(c, o);
-    }
-
-
-    protected void frame() {
-        frame(cyclesPerFrame);
     }
 
     /**
      * A frame, consisting of one or more NAR memory cycles
      */
-    public void frame(int cycles) {
-
-        emit(FrameStart.class);
-
-        updatePorts();
-
+    public void cycle() {
         try {
-            for (int i = 0; i < cycles; i++)
-                memory.cycle(this);
+            memory.cycle(this);
         }
         catch (Throwable e) {
             if(Parameters.SHOW_REASONING_ERRORS) {
@@ -687,12 +399,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
                 e.printStackTrace();
             }
         }
-
-        emit(FrameEnd.class);
-    }
-
-    protected long getSimulationTimeCyclesPerFrame() {
-        return minCyclePeriodMS;
     }
 
     @Override
@@ -709,11 +415,10 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         return memory.time();
     }
 
-
     public boolean isRunning() {
         return running;
     }
-
+    
     public long getMinCyclePeriodMS() {
         return minCyclePeriodMS;
     }
@@ -723,35 +428,5 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
      */
     public void setThreadYield(boolean b) {
         this.threadYield = b;
-    }
-
-    /** stops ad empties all input channels into a receiver. this
-     results in no pending input.
-     @return total number of items flushed
-     */
-    public int flushInput(Output receiver) {
-        int total = 0;
-        for (InPort c : inputChannels) {
-            total += flushInput(c, receiver);
-        }
-        return total;
-    }
-
-    /** stops and empties an input channel into a receiver. 
-     * this results in no pending input from this channel. */
-    public int flushInput(InPort i, EventObserver receiver) {
-        int total = 0;
-        i.finish();
-
-        while (i.hasNext()) {
-            receiver.event(IN.class, new Object[] { i.next() });
-            total++;
-        }
-
-        return total;
-    }
-
-    public List<InPort<Object, Item>> getInPorts() {
-        return inputChannels;
     }
 }

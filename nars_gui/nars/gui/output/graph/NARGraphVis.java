@@ -25,7 +25,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import nars.util.EventEmitter.EventObserver;
-import nars.util.Events.FrameEnd;
+import nars.util.Events.CyclesEnd;
 import nars.util.Events.ResetEnd;
 import nars.NAR;
 import nars.gui.output.graph.layout.CircleLayout;
@@ -219,7 +219,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
 
     @Override
     public void onVisible(boolean showing) {  
-        nar.memory.event.set(this, showing, FrameEnd.class, ResetEnd.class);        
+        nar.memory.event.set(this, showing, CyclesEnd.class, ResetEnd.class);        
         if (!showing) {
             mode.stop();
         }
@@ -227,7 +227,7 @@ public class NARGraphVis extends AnimatingGraphVis<Object,Object> implements Eve
 
     @Override
     public void event(Class event, Object[] args) {
-        if (event == FrameEnd.class) {
+        if (event == CyclesEnd.class) {
             displayedGraph.set(nextGraph());
         }
         else if (event == ResetEnd.class) {

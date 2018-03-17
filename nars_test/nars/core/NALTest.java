@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Map;
 import nars.config.Plugins;
 import nars.gui.InferenceLogger;
-import nars.io.TextInput;
-import nars.io.TextOutput;
+import nars.io.handlers.TextOutputHandler;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
@@ -203,14 +202,14 @@ public class NALTest  {
                 expects.add(e1);
 
             if (showOutput)
-                new TextOutput(n, System.out);
+                new TextOutputHandler(n, System.out);
             if (showTrace) {
                 new InferenceLogger(n, System.out);
             }
 
 
-            n.addInput(new TextInput(example));
-            n.run(minCycles);
+            n.addInputFile(path);
+            n.cycles(minCycles);
         }
         catch(Throwable e){     
             System.err.println(e);

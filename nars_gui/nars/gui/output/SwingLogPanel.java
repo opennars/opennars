@@ -17,7 +17,7 @@ import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import nars.gui.NARControls;
 import nars.gui.output.SwingLogText.LogLine;
-import nars.io.TextOutput;
+import nars.io.handlers.TextOutputHandler;
 
 public class SwingLogPanel extends LogPanel {
 
@@ -75,7 +75,7 @@ public class SwingLogPanel extends LogPanel {
         }
         ioText.output(c, o);//, showStamp, nar);
 
-        CharSequence s = TextOutput.getOutputString(c, o, true, showStamp, nar);
+        CharSequence s = TextOutputHandler.getOutputString(c, o, true, showStamp, nar);
         if (logFile != null) {
             logFile.append(s).append('\n');
         }

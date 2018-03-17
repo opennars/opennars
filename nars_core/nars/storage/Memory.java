@@ -50,18 +50,13 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.truthToQuality;
-import nars.io.ports.Output.IN;
-import nars.io.ports.Output.OUT;
+import nars.io.handlers.OutputHandler.IN;
+import nars.io.handlers.OutputHandler.OUT;
 import nars.language.Narsese.Symbols;
 import nars.language.Tense;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.io.commands.Echo;
-import nars.io.commands.PauseInput;
-import nars.io.commands.Reset;
-import nars.io.commands.SetDecisionThreshold;
-import nars.io.commands.SetVolume;
 import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.Interval.PortableDouble;
@@ -112,9 +107,6 @@ public class Memory implements Serializable, Iterable<Concept> {
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
     
-    /* The remaining number of steps to be carried out (stepLater mode)*/
-    private int inputPausedUntil;
-    
     /* System clock, relatively defined to guarantee the repeatability of behaviors */
     private long cycle;
     
@@ -150,7 +142,6 @@ public class Memory implements Serializable, Iterable<Concept> {
         newTasks.clear();    
         this.seq_current.clear();
         cycle = 0;
-        inputPausedUntil = 0;
         emotion.resetEmotions();
         resetStatic();
         event.emit(ResetEnd.class);
@@ -261,7 +252,7 @@ public class Memory implements Serializable, Iterable<Concept> {
      *
      * @param t The addInput task
      */
-    public void inputTask(final Item t, boolean emitIn) {
+    public void inputTask(final Task t, boolean emitIn) {
         if(!checked) {
             checked=true;
             isjUnit=isJUnitTest();
@@ -284,36 +275,9 @@ public class Memory implements Serializable, Iterable<Concept> {
                 removeTask(task, "Neglected");
             }
         }
-        else if (t instanceof PauseInput) {            
-            stepLater(((PauseInput)t).cycles);            
-            emit(IN.class, t);
-        }
-        else if (t instanceof Reset) {
-            reset();
-            emit(OUT.class,((Reset) t).input);
-            emit(IN.class, t);
-        }
-        else if (t instanceof Echo) {
-            Echo e = (Echo)t;
-            if(!isjUnit) {
-                emit(OUT.class,((Echo) t).signal);
-            }
-            emit(e.channel, e.signal);
-        }
-        else if (t instanceof SetVolume) {            
-            param.noiseLevel.set(((SetVolume)t).volume);
-            emit(IN.class, t);
-        } 
-        else if (t instanceof SetDecisionThreshold) {
-            param.decisionThreshold.set(((SetDecisionThreshold)t).volume);
-            emit(IN.class, t);
-        } 
-        else {
-            emit(IN.class, "Unrecognized Input Task: " + t);
-        }
     }
     
-    public void inputTask(final Item t) {
+    public void inputTask(final Task t) {
         inputTask(t, true);
     }
 
@@ -371,14 +335,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     
     public void cycle(final NAR inputs) {
     
-        event.emit(Events.CycleStart.class);                
-        
-        /** adds input tasks to newTasks */
-        for(int i=0; i<1 && isProcessingInput(); i++) {
-            Item t = inputs.nextTask();                    
-            if (t!=null) 
-                inputTask(t);            
-        }
+        event.emit(Events.CycleStart.class);
         
         this.processNewTasks();
     //if(noResult()) //newTasks empty
@@ -472,20 +429,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     private long currentStampSerial = 0;
     public long newStampSerial() {
         return currentStampSerial++;
-    }
-
-    public boolean isProcessingInput() {
-        return time() >= inputPausedUntil;
-    }
-    
-    /**
-     * Queue additional cycle()'s to the inference process.
-     *
-     * @param cycles The number of inference steps
-     */
-    public void stepLater(final int cycles) {
-        inputPausedUntil = (int) (time() + cycles);
-    }    
+    }   
 
     /** converts durations to cycles */
     public final float cycles(PortableDouble durations) {

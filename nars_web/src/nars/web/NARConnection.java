@@ -7,8 +7,8 @@
 package nars.web;
 
 import nars.NAR;
-import nars.io.TextOutput;
-import nars.io.TextOutput.LineOutput;
+import nars.io.handlers.TextOutputHandler;
+import nars.io.handlers.TextOutputHandler.LineOutput;
 
 /**
  * An instance of a web socket session to a NAR
@@ -16,7 +16,7 @@ import nars.io.TextOutput.LineOutput;
  */
 abstract public class NARConnection implements LineOutput {
     public final NAR nar;
-    protected final TextOutput writer;
+    protected final TextOutputHandler writer;
     int cycleIntervalMS;
     //private final TextReaction extraParser;
         
@@ -25,7 +25,7 @@ abstract public class NARConnection implements LineOutput {
         this.nar = nar;
         this.cycleIntervalMS = cycleIntervalMS;
              
-        this.writer = new TextOutput(nar, this);
+        this.writer = new TextOutputHandler(nar, this);
     }
 
     public void read(final String message) {

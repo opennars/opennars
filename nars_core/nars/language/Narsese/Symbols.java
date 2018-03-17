@@ -22,9 +22,9 @@ package nars.language.Narsese;
 
 import java.util.HashMap;
 import java.util.Map;
-import nars.io.ports.Output.ERR;
-import nars.io.ports.Output.IN;
-import nars.io.ports.Output.OUT;
+import nars.io.handlers.OutputHandler.ERR;
+import nars.io.handlers.OutputHandler.IN;
+import nars.io.handlers.OutputHandler.OUT;
 
 
 public class Symbols {

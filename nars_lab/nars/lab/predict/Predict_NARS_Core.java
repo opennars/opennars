@@ -163,7 +163,7 @@ public class Predict_NARS_Core {
 
         new NWindow("_", new PCanvas(tc)).show(800, 800, true);
 
-        n.run((int)discretization*4);
+        n.cycles((int)discretization*4);
         
         NARSwing.themeInvert();
 
@@ -189,7 +189,7 @@ public class Predict_NARS_Core {
                 }
                 for(int i=0;i<thinkInterval;i++) 
                 {
-                    n.step(1);
+                    n.cycles(1);
                 }
                 Thread.sleep(10);
                 h++;

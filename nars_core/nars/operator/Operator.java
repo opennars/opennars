@@ -30,7 +30,7 @@ import nars.config.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.io.ports.Output.EXE;
+import nars.io.handlers.OutputHandler.EXE;
 import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;

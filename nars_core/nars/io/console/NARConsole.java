@@ -28,9 +28,6 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.NAR;
-import nars.io.TextInput;
-import nars.io.TextOutput;
-import nars.io.console.CommandLineNARBuilder;
 
 /**
  * Run Reasoner
@@ -102,16 +99,13 @@ public class NARConsole {
  an addInput file
      */
     public void run(String args[]) {
-        TextOutput output = new TextOutput(nar, new PrintWriter(out, true));
-        output.setErrors(true);
-        output.setErrorStackTrace(true);
         InputThread it;
         int sleep = -1;
         boolean noFile = false;
         
         if (args.length > 0) {
             try {
-                nar.addInput(new TextInput(new File(args[0])));
+                nar.addInputFile(args[0]);
             } catch (Exception ex) {
                 noFile = true;
                 sleep = Integer.valueOf(args[0]); //Integer.valueOf(args[0]);
@@ -126,10 +120,9 @@ public class NARConsole {
                while (true) {
             if (logging)
                 log("NARSBatch.run():"
-                        + " step " + nar.time()
-                        + " " + nar.inputChannels.size());
+                        + " step " + nar.time());
             
-            nar.step(1);
+            nar.cycles(1);
             try {
                 if(sleep > -1) {
                     Thread.sleep(sleep);
@@ -142,11 +135,10 @@ public class NARConsole {
             
             if (logging)
                 log("NARSBatch.run(): after tick"
-                        + " step " + nar.time()
-                        + " " + nar.inputChannels.size());
+                        + " step " + nar.time());
             
             if (maxTime > 0) {
-                if ((nar.inputChannels.isEmpty()) || nar.time() == maxTime) {
+                if (nar.time() == maxTime) {
                     break;
                 }
             }
