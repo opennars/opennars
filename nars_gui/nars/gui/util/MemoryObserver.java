@@ -1,6 +1,6 @@
 package nars.gui.util;
 
-import nars.io.handlers.EventHandler;
+import nars.output.EventHandler;
 import nars.util.Events;
 import nars.util.Events.CycleEnd;
 import nars.util.Events.CycleStart;
@@ -8,7 +8,7 @@ import nars.storage.Memory;
 import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.io.ports.Output;
+import nars.output.OutputHandler;
 
 public abstract class MemoryObserver extends EventHandler {
 
@@ -52,7 +52,7 @@ public abstract class MemoryObserver extends EventHandler {
     public void event(final Class event, final Object[] arguments) {
         if (event == Events.ConceptNew.class) {
             onConceptAdd((Concept) arguments[0]);
-        } else if (event == Output.OUT.class) {
+        } else if (event == OutputHandler.OUT.class) {
             output(event, arguments[0].toString());
         } else if (event == Events.ResetEnd.class) {
             output(event);        

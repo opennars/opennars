@@ -38,19 +38,17 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import nars.util.EventEmitter.EventObserver;
-import nars.util.Events.FrameEnd;
 import nars.storage.Memory;
 import nars.NAR;
-import nars.config.Parameters;
-import nars.config.Plugins;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.io.ports.Output.OUT;
+import nars.output.OutputHandler.OUT;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.util.Events.CyclesEnd;
 
 /**
  *
@@ -91,7 +89,7 @@ public class TicTacToe extends JPanel {
         (nar.param).noiseLevel.set(0);
         
         new NARSwing(nar);    
-        nar.on(FrameEnd.class, new EventObserver() {
+        nar.on(CyclesEnd.class, new EventObserver() {
 
             @Override
             public void event(Class event, Object[] args) {

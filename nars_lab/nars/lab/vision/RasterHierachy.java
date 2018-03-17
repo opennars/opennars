@@ -238,7 +238,7 @@ public class RasterHierachy extends JPanel {
                         nar.addInput("<p_" + String.valueOf(this.focusY/100) + " --> pointY>. :|:");
                        }
                        
-                       nar.step(10);
+                       nar.cycles(10);
                     }
                     // Here we can generate NAL, since we know all of the required values.
 

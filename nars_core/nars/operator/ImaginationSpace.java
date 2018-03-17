@@ -1,15 +1,17 @@
-package nars.imagination;
+package nars.operator;
 
 import nars.entity.TruthValue;
 import nars.language.Conjunction;
-import nars.operator.Operation;
 
 /**
- *
+ * ImaginationSpace: A group of operations that when executed in a certain sequence 
+ * add up to a certain declarative "picture". This "picture" might be different than the feedback of 
+ * the last operation in the sequence: for instance in case of eye movements, each movement 
+ * feedback corresponds to a sampling result, where each adds its part of information.
  * @author Patrick
  */
 public interface ImaginationSpace {
-    //a group of operations that when executed add up to a certain declarative "picture".
+    //
     public TruthValue AbductionOrComparisonTo(final ImaginationSpace obj, boolean comparison);
     //attaches an imagination space to the conjunction that is constructed
     //by starting with the leftmost element of the conjunction

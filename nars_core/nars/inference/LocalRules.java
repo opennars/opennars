@@ -37,8 +37,8 @@ import nars.entity.TruthValue;
 import static nars.inference.TemporalRules.matchingOrder;
 import static nars.inference.TemporalRules.reverseOrder;
 import static nars.inference.TruthFunctions.temporalProjection;
-import nars.io.ports.Output;
-import nars.language.Narsese.Symbols;
+import nars.output.OutputHandler;
+import nars.parser.Symbols;
 import nars.language.CompoundTerm;
 import static nars.language.CompoundTerm.extractIntervals;
 import static nars.language.CompoundTerm.replaceIntervals;
@@ -219,10 +219,10 @@ public class LocalRules {
                 if(task.isInput() && report) { //only show input tasks as solutions
                     memory.emit(Answer.class, task, belief); 
                 } else {
-                    memory.emit(Output.class, task, belief);   //solution to quests and questions can be always showed   
+                    memory.emit(OutputHandler.class, task, belief);   //solution to quests and questions can be always showed   
                 }
             } else {
-                memory.emit(Output.class, task, belief);   //goal things only show silence related 
+                memory.emit(OutputHandler.class, task, belief);   //goal things only show silence related 
             }
 
             nal.addTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());

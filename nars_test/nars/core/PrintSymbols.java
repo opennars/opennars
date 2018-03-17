@@ -1,7 +1,7 @@
 package nars.core;
 
-import nars.language.Narsese.Symbols;
-import nars.language.Narsese.Symbols.NativeOperator;/**
+import nars.parser.Symbols;
+import nars.parser.Symbols.NativeOperator;/**
  *
  * @author me
  */

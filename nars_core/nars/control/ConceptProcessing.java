@@ -6,8 +6,8 @@ import nars.config.Parameters;
 import nars.entity.*;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
-import nars.io.ports.Output;
-import nars.language.Narsese.Symbols;
+import nars.output.OutputHandler;
+import nars.parser.Symbols;
 import nars.language.*;
 import nars.operator.Operation;
 import nars.plugin.mental.InternalExperience;
@@ -88,7 +88,7 @@ public class ConceptProcessing {
         if(satisfiesAnticipation) {
             if(task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
                 if(((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
-                    nal.memory.emit(Output.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
+                    nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
                     concept.negConfirmation = null; // confirmed
                 }
             }
@@ -395,15 +395,10 @@ public class ConceptProcessing {
     */
     protected static void bestReactionForGoal(Concept concept, final DerivationContext nal, Sentence projectedGoal, final Task task) {
         try{
-            if(task.getPriority() < nal.memory.param.reactionPriorityThreshold.get()) {
-                return;
-            }
             Operation bestop = null;
             float bestop_truthexp = 0.0f;
             TruthValue bestop_truth = null;
             Task executable_precond = null;
-            Concept best_precond = null;
-            //long distance = -1;
             long mintime = -1;
             long maxtime = -1;
             for(Task t: concept.executable_preconditions) {
@@ -470,7 +465,6 @@ public class ConceptProcessing {
                         bestop_truthexp = expecdesire;
                         bestop_truth = opdesire;
                         executable_precond = t;
-                        best_precond = preconc;
                     }
                 }
             }
@@ -534,7 +528,7 @@ public class ConceptProcessing {
                     }
                 }
                 
-                nal.memory.emit(Output.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
+                nal.memory.emit(OutputHandler.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
             }
        }
         }catch(Exception ex) {
@@ -606,7 +600,7 @@ public class ConceptProcessing {
         }
 
         if(cancelled) {
-            concept.memory.emit(Output.CONFIRM.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
+            concept.memory.emit(OutputHandler.CONFIRM.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
             concept.negConfirmation = null; //confirmed
             return;
         }
@@ -615,7 +609,7 @@ public class ConceptProcessing {
         //if(this.negConfirmationPriority >= 2) {
         //    System.out.println(this.negConfirmation.sentence.term);
         //}
-        concept.memory.emit(Output.DISAPPOINT.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
+        concept.memory.emit(OutputHandler.DISAPPOINT.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
         concept.negConfirmation = null;
     }
     

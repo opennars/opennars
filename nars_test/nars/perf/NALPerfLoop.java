@@ -20,7 +20,7 @@ public class NALPerfLoop {
         int extraCycles = 2048;
         int randomExtraCycles = 512;
           
-        NAR n = new NAR(new Plugins());
+        NAR n = new NAR();
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
         //NAR n = new NAR(new Curve());
         

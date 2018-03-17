@@ -31,7 +31,7 @@ public class KeyboardInputExample {
 
         new NWindow("Direct Keyboard Input", new KeyboardInputPanel(n)).show(300, 100, false);
         
-        n.start(100, 5);
+        n.start(100);
         
         
     }

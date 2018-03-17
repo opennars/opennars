@@ -28,7 +28,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import nars.util.EventEmitter.EventObserver;
-import nars.util.Events.FrameEnd;
+import nars.util.Events.CyclesEnd;
 import nars.util.Events.TaskAdd;
 import nars.util.Events.TaskRemove;
 import nars.NAR;
@@ -124,7 +124,7 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
 
     @Override
     public void onShowing(boolean b) {
-        nar.memory.event.set(this, b, TaskAdd.class, FrameEnd.class /*, TaskRemove.class*/);
+        nar.memory.event.set(this, b, TaskAdd.class, CyclesEnd.class /*, TaskRemove.class*/);
     }
 
     public void add(Task t) {
@@ -373,7 +373,7 @@ public class TaskTree extends NPanel implements EventObserver, Runnable {
         else if (channel == TaskRemove.class) {
             //..
         }
-        else if (channel == FrameEnd.class) {
+        else if (channel == CyclesEnd.class) {
             update();
         }
     }

@@ -25,19 +25,12 @@ import java.awt.BorderLayout;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.NAR;
-import nars.io.console.CommandLineNARBuilder;
-import nars.io.TextInput;
-import nars.io.TextOutput;
+import nars.output.TextOutputHandler;
 
 /**
  * The main Swing GUI class of the open-nars project.  
@@ -180,7 +173,7 @@ public class NARSwing  {
            // nw.setVisible(true);
         }
         else {
-            new TextOutput(nar, System.out);
+            new TextOutputHandler(nar, System.out);
             //new Log4JOutput(nar, false);            
         }
         
@@ -205,20 +198,14 @@ public class NARSwing  {
     public static void main(String args[]) {
         themeInvert();
           
-        NAR nar = new NAR(new CommandLineNARBuilder(args));
-        
-        
-        
+        NAR nar = new NAR();
         NARSwing swing = new NARSwing(nar);
 
-        
-        
-        if (args.length > 0
-                && CommandLineNARBuilder.notSilenceLevel(args[0])) {
+        if (args.length > 0) {
 
             try {
-                nar.addInput(new TextInput(new File(args[0])));
-            } catch (IOException ex) {
+                nar.addInputFile(args[0]);
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -228,32 +215,6 @@ public class NARSwing  {
             swing.nar.start(0);
                 
     }
-
-
-
-
- 
-    
-//    static {
-//        try {
-//            MetalLookAndFeel.setCurrentTheme(new DefaultMetalTheme());
-//            
-//            UIManager.setLookAndFeel(new MetalLookAndFeel());
-//            //UIManager.setLookAndFeel(new GTKLookAndFeel());
-//
-//            /*
-//            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-//                System.out.println(info + " " + info.getName());
-//                if ("Nimbus".equals(info.getName())) {
-//                    UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }*/
-//            
-//        } catch (Exception e) {
-//            // If Nimbus is not available, you can set the GUI to another look and feel.
-//        }
-//    }
 
     /**
      * Color for the background of the main window

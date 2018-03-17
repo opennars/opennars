@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import nars.NAR;
-import nars.io.ports.Output;
+import nars.output.OutputHandler;
 
 /**
  * Monitors an output stream for certain conditions. Used in testing and
@@ -17,7 +17,7 @@ import nars.io.ports.Output;
  * Parameter O is the type of object which will be remembered that can make
  * the condition true
  */
-public abstract class OutputCondition<O> extends Output {
+public abstract class OutputCondition<O> extends OutputHandler {
     public boolean succeeded = false;
     
     
