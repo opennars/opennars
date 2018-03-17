@@ -25,7 +25,7 @@ import java.util.*;
 
 import nars.storage.Memory;
 import nars.config.Parameters;
-import nars.imagination.ImaginationSpace;
+import nars.operator.ImaginationSpace;
 import nars.inference.TemporalRules;
 import nars.parser.Symbols;
 import nars.parser.Symbols.NativeOperator;

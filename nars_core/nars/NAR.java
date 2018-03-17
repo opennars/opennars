@@ -165,7 +165,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     }
 
     /**
-     * Convenience method for creating a TextInput and adding as Input Channel.
      * Generally the text will consist of Task's to be parsed in Narsese, but
      * may contain other commands recognized by the system. The creationTime
      * will be set to the current memory cycle time, but may be processed by
@@ -173,27 +172,33 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
      */
     public void addInput(final String text) {
         Narsese narsese = new Narsese(this);
+        if(text.contains("\n")) {
+            String[] lines = text.split("\n");
+            for(String s : lines) {
+                addInput(s);
+                if(!running) {
+                    this.cycle();
+                }
+            }
+        }
         try {
             if(text.startsWith("**")) {
                 this.reset();
                 return;
             }
             try {
-              Integer retVal = Integer.parseInt(text);
-              if(thread == null) {
+                Integer retVal = Integer.parseInt(text);
+                if(!running) {
                     for(int i=0;i<retVal;i++) {
                         this.cycle();
                     }
                 }
                 return;
             } catch (NumberFormatException ex) {} //usual input (TODO without exception)
-            Task t = narsese.parseTask(text);
+            Task t = narsese.parseTask(text.trim());
             this.memory.inputTask(t);
-            if(this.thread == null) { //no thread started so absorb the input
-                this.cycle(); //else the thread will absorb it
-            }
-        } catch (InvalidInputException ex) {
-            Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            //Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -201,7 +206,9 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         try (BufferedReader br = new BufferedReader(new FileReader(s))) {
             String line;
             while ((line = br.readLine()) != null) {
-               this.addInput(line);
+                if(!line.isEmpty()) {
+                    this.addInput(line);
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
