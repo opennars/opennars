@@ -191,7 +191,7 @@ public class TemporalInferenceControl {
         //making sure we do not mess with budget of the task:
         if(!(newEvent.sentence.getTerm() instanceof Operation)) {
             Concept c = nal.memory.concept(newEvent.getTerm());
-            float event_quality = 0.1f;
+            float event_quality = BudgetFunctions.truthToQuality(newEvent.sentence.truth);
             float event_priority = event_quality;
             if(c != null) {
                 event_priority = Math.max(event_quality, c.getPriority());
