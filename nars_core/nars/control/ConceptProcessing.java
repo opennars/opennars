@@ -1,6 +1,7 @@
 package nars.control;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import nars.config.Parameters;
 import nars.entity.*;
@@ -291,9 +292,26 @@ public class ConceptProcessing {
 
                 InternalExperience.InternalExperienceFromTask(concept.memory,task,false);
 
-                if(projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && nal.memory.time() >= concept.memory.decisionBlock && !executeDecision(nal, task)) {
-                    concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
-                    return true; //it was made true by itself
+                if(projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && nal.memory.time() >= concept.memory.decisionBlock) {
+                    //see whether the goal evidence is fully included in the old goal, if yes don't execute
+                    //as execution for this reason already happened (or did not since there was evidence against it)
+                    HashSet<Long> oldEvidence = new HashSet<Long>();
+                    boolean Subset=true;
+                    if(oldGoalT != null) {
+                        for(Long l: oldGoalT.sentence.stamp.evidentialBase) {
+                            oldEvidence.add(l);
+                        }
+                        for(Long l: task.sentence.stamp.evidentialBase) {
+                            if(!oldEvidence.contains(l)) {
+                                Subset = false;
+                                break;
+                            }
+                        }
+                    }
+                    if(!Subset && !executeDecision(nal, task)) {
+                        concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
+                        return true; //it was made true by itself
+                    }
                 }
                 return false;
             }
@@ -569,7 +587,7 @@ public class ConceptProcessing {
                 if(!oper.call(op, nal.memory)) {
                     return false;
                 }
-                
+                System.out.println(t.toStringLong());
                 //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
                 return true;
             }
