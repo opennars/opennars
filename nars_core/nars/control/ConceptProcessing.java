@@ -245,12 +245,10 @@ public class ConceptProcessing {
                     //return;
                     // }
                     nal.setCurrentBelief(projectedGoal);
-                    if(!(task.sentence.term instanceof Operation)) {
-                        boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
-                        if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
-                            return false; // with higher/lower desire
-                        } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
-                    }
+                    boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
+                    if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
+                        return false; // with higher/lower desire
+                    } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
                 }
             }
         }
@@ -518,7 +516,6 @@ public class ConceptProcessing {
                 c.negConfirmationPriority = priority;
                 c.negConfirm_abort_maxtime = maxtime;
                 c.negConfirm_abort_mintime = mintime;
-                
                 
                 if(c.negConfirmation.sentence.term instanceof Implication) {
                     Implication imp = (Implication) c.negConfirmation.sentence.term;
