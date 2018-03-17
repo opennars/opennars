@@ -361,8 +361,9 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         stopped = false;
 
         while (running && !stopped) {
-
+            emit(CyclesStart.class);
             cycle();
+            emit(CyclesEnd.class);
 
             if (minCyclePeriodMS > 0) {
                 try {
