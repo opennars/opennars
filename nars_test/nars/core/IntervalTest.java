@@ -56,7 +56,7 @@ public class IntervalTest {
     @Test
     public void testIntervalSequence() {
     
-        NAR n = new NAR(new Plugins());
+        NAR n = new NAR();
         Memory m = n.memory;
         
         List<Interval> a11 = Interval.intervalTimeSequence(1, 1, m);

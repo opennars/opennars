@@ -21,9 +21,9 @@
 package nars.language;
 
 import java.util.Collection;
-import nars.language.Narsese.Symbols.NativeOperator;
-import static nars.language.Narsese.Symbols.NativeOperator.SET_INT_CLOSER;
-import static nars.language.Narsese.Symbols.NativeOperator.SET_INT_OPENER;
+import nars.parser.Symbols.NativeOperator;
+import static nars.parser.Symbols.NativeOperator.SET_INT_CLOSER;
+import static nars.parser.Symbols.NativeOperator.SET_INT_OPENER;
 
 /**
  * An intensionally defined set, which contains one or more instances defining the Term.

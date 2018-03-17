@@ -2,7 +2,7 @@ package nars.core;
 
 import nars.NAR;
 import nars.config.Plugins;
-import nars.io.handlers.TextOutputHandler;
+import nars.output.TextOutputHandler;
 import nars.core.NALTest;
 import org.junit.Test;
 
@@ -14,7 +14,7 @@ public class TestMultistepEdited {
 
     @Test
     public void testMultistepEndState() {
-        NAR n = new NAR(new Plugins());
+        NAR n = new NAR();
         n.addInputFile("nal/Examples/Example-MultiStep-edited.txt");        
         new TextOutputHandler(n, System.out);
         /*InferenceLogger logger = new InferenceLogger(System.out);

@@ -28,7 +28,7 @@ import java.util.TreeSet;
 import nars.config.Parameters;
 import nars.imagination.ImaginationSpace;
 import nars.inference.TemporalRules;
-import nars.language.Narsese.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
 import nars.operator.Operation;
 
 /**

@@ -9,7 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import nars.NAR;
-import nars.io.handlers.OutputHandler;
+import nars.output.OutputHandler;
 
 
 public abstract class TablePanel extends NPanel  {

@@ -8,12 +8,12 @@ import nars.language.CompoundTerm;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import nars.language.Narsese.Narsese;
+import nars.parser.Narsese;
 
 
 public class ApplySubstituteTest {
     
-    NAR n = new NAR(new Plugins());
+    NAR n = new NAR();
     Narsese np = new Narsese(n);
     
     @Test
@@ -42,7 +42,7 @@ public class ApplySubstituteTest {
     @Test
     public void test2() throws Narsese.InvalidInputException {
         //substituting:  <(*,$1) --> num>.  with $1 ==> 0
-        NAR n = new NAR(new Plugins());
+        NAR n = new NAR();
             
         Map<Term,Term> h = new HashMap();
         h.put(np.parseTerm("$1"), np.parseTerm("0"));        

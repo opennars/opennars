@@ -30,8 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.NAR;
-import nars.io.handlers.TextOutputHandler;
-import nars.io.console.CommandLineNARBuilder;
+import nars.output.TextOutputHandler;
 
 /**
  * The main Swing GUI class of the open-nars project.  
@@ -199,11 +198,10 @@ public class NARSwing  {
     public static void main(String args[]) {
         themeInvert();
           
-        NAR nar = new NAR(new CommandLineNARBuilder(args));  
+        NAR nar = new NAR();
         NARSwing swing = new NARSwing(nar);
 
-        if (args.length > 0
-                && CommandLineNARBuilder.notSilenceLevel(args[0])) {
+        if (args.length > 0) {
 
             try {
                 nar.addInputFile(args[0]);

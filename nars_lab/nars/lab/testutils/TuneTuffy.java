@@ -10,9 +10,9 @@ import nars.util.Events.Answer;
 import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.io.handlers.EventHandler;
-import nars.io.handlers.OutputHandler.OUT;
-import nars.language.Narsese.Narsese;
+import nars.output.EventHandler;
+import nars.output.OutputHandler.OUT;
+import nars.parser.Narsese;
 import nars.language.Term;
 
 /**

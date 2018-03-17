@@ -20,7 +20,7 @@
  */
 package nars.language;
 
-import nars.language.Narsese.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
 
 /**
  * A negation of a statement.

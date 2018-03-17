@@ -25,7 +25,7 @@ import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
-import nars.language.Narsese.Symbols;
+import nars.parser.Symbols;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operation;

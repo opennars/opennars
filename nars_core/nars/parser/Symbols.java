@@ -18,13 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.language.Narsese;
+package nars.parser;
 
 import java.util.HashMap;
 import java.util.Map;
-import nars.io.handlers.OutputHandler.ERR;
-import nars.io.handlers.OutputHandler.IN;
-import nars.io.handlers.OutputHandler.OUT;
+import nars.output.OutputHandler.ERR;
+import nars.output.OutputHandler.IN;
+import nars.output.OutputHandler.OUT;
 
 
 public class Symbols {

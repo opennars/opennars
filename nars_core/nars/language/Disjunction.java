@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 import nars.config.Parameters;
-import nars.language.Narsese.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
 
 /** 
  * A disjunction of Statements.

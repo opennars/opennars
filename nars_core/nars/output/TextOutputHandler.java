@@ -18,9 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.io.handlers;
+package nars.output;
 
-import nars.io.handlers.OutputHandler;
+import nars.output.OutputHandler;
 import nars.util.Texts;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,17 +31,13 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import nars.util.Events.Answer;
 import nars.NAR;
-import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.entity.TruthValue;
-import nars.io.handlers.OutputHandler.ECHO;
-import nars.io.handlers.OutputHandler.ERR;
-import nars.io.handlers.OutputHandler.EXE;
-import nars.io.handlers.OutputHandler.IN;
-import nars.io.handlers.OutputHandler.OUT;
-import nars.language.Statement;
-import nars.operator.Operator;
+import nars.output.OutputHandler.ECHO;
+import nars.output.OutputHandler.ERR;
+import nars.output.OutputHandler.EXE;
+import nars.output.OutputHandler.IN;
+import nars.output.OutputHandler.OUT;
 
 /**
  * To read and write experience as Task streams
@@ -64,7 +60,6 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
         public void println(String s);
     }
 
-    
     /**
      * Default constructor; adds the reasoner to a NAR's outptu channels
      *
@@ -113,7 +108,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
      */
     public void closeSaveFile() {
         outExp.close();
-        stop();
+        setActive(false);
     }
 
     /**
@@ -147,16 +142,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
     final StringBuilder result = new StringBuilder(16 /* estimate */);
     
     public String process(final Class c, final Object o) {
-        if (o instanceof Task) {
-            if (!allowTask((Task)o))
-                return null;
-        }
         return getOutputString(c, o, true, showStamp, nar, result, minPriority);
-    }
-    
-    /** may be overridden in subclass to filter certain tasks */
-    protected boolean allowTask(Task t) {
-        return true;
     }
 
     public TextOutputHandler setErrors(boolean errors) {
@@ -168,8 +154,6 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
         this.showInput = showInput;
         return this;
     }
-    
-    
     
     public TextOutputHandler setErrorStackTrace(boolean b) {
         this.showStackTrace = true;
@@ -231,19 +215,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
                         buffer.append(t.sentence.toString(nar, showStamp));  
                 }
                 else            
-                    buffer.append(t.sentence.toString(nar, showStamp));   
-                                 
-                
-                
-                /*
-                Task root = t.getRootTask();
-                if (root!=null)
-                    buffer.append(" {{").append(root.sentence).append("}}");
-                */
-//            }            
-//            else if (signal instanceof Sentence) {
-//                Sentence s = (Sentence)signal;                
-//                buffer.append(s.toString(nar, showStamp));                        
+                    buffer.append(t.sentence.toString(nar, showStamp));         
             } else {
                 buffer.append(signal.toString());
             }
@@ -320,182 +292,4 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
         return Texts.unescape(buffer);
         
     }
-    
-    
-    public void stop() {
-        setActive(false);
-    }
-    
-    /** generates a human-readable string from an output channel and signal */
-    public static String getOutputHTML(final Class channel, Object signal, final boolean showChannel, final boolean showStamp, final NAR nar) {
-        final StringBuilder buffer = new StringBuilder();
-        
-        
-        if (channel == OUT.class) {
-            buffer.append("<div style='clear: both; float:left'>OUT:</div>");
-            if (signal instanceof Task) {
-                Task t = (Task)signal;
-                Sentence s = t.getBestSolution();
-                if (s == null)
-                    s = t.sentence;
-
-                if (s.truth!=null) {
-                    buffer.append(getTruthHTML(s.truth));
-                }
-                buffer.append("<div style='float:left'><pre>").append(escapeHTML(s.toString(nar, showStamp))).append("</pre></div>");
-                buffer.append("<br/>");
-                /*
-                Task root = t.getRootTask();
-                if (root!=null)
-                    buffer.append(" {{").append(root.sentence).append("}}");
-                */
-            }            
-            else if (signal instanceof Sentence) {
-                Sentence s = (Sentence)signal;                
-                buffer.append(s.toString(nar, showStamp));                        
-            } else {
-                buffer.append(signal.toString());
-            }
-            return Texts.unescape(buffer).toString();
-        }
-
-        if (showChannel)
-            buffer.append(channel.getSimpleName()).append(": ");        
-        
-        if (channel == ERR.class) {
-            if (signal instanceof Exception) {
-                Exception e = (Exception)signal;
-
-                buffer.append(e.toString());
-
-                /*if (showStackTrace)*/
-                
-                /*for (int i = 0; i < )
-                    buffer.append(" ").append(Arrays.asList(e.getStackTrace() ));
-                }*/
-            }
-            else {
-                buffer.append(signal.toString());
-            }                            
-            
-        }
-        else if ((channel == IN.class) || (channel == ECHO.class)) {
-            buffer.append(signal.toString());
-        }
-        else if (channel == EXE.class) {
-            if (signal instanceof Statement)
-                buffer.append(Operator.operationExecutionString((Statement)signal));
-            else {
-                buffer.append(signal.toString());
-            }
-        }
-        else {
-            buffer.append(signal.toString());
-        }
-        
-        return "<div style='clear: both'>" + escapeHTML(Texts.unescape(buffer).toString()) + "</div>";
-        
-    }    
-
-    protected static StringBuilder getTruthHTML(TruthValue truth) {
-        StringBuilder b = new StringBuilder();
-        
-        //http://css-tricks.com/html5-meter-element/
-        
-        //b.append("<meter value='" + truth.getFrequency() + "' min='0' max='1.0'></meter>");
-        //b.append("<meter value='" + truth.getConfidence()+ "' min='0' max='1.0' style='background: none'></meter>");
-        b.append(freqColor(truth.getFrequency(), "4em"));
-        b.append(meter(truth.getConfidence(), "4em", "#00F"));
-            
-        return b;
-    }
-    
-    public static String freqColor(float value, String width) {
-        String pct = ((int)(Math.round(value * 100.0))) + "%";
-        final String background = "rgba(255,255,255,0.15)";
-        String foreground  = value < 0.5 ? 
-                "rgba(" + (int)(255*(0.5 - value)*2) + ",0,0," + (0.5 - value)*2 + ")" : 
-                "rgba(0," + (int)(255*(value - 0.5)*2) + ",0," + (value-0.5)*2 + ")";
-                
-        return "<div style='float:left;width: " + width + ";padding:2px;'>" +
-          "<div style='width:100%;background-color:" + foreground + ";text-align:center;'>" +
-            "<span>" + pct + "</span></div></div>";
-    }
-    
-    public static String meter(float value, String width, String foreground) {
-        String pct = ((int)(Math.round(value * 100.0))) + "%";
-        final String background = "rgba(255,255,255,0.15)";
-        return "<div style='float:left;width: " + width + ";padding:2px;background:" + background + ";'>" +
-          "<div style='width:" + pct + ";background:" + foreground + ";text-align:center;'>" +
-            "<span>" + pct + "</span></div></div>";
-        
-    }
-    
-    /**
-     * @author http://www.rgagnon.com/javadetails/java-0306.html
-     */
-    public static String escapeHTML(CharSequence string) {
-        StringBuilder sb = new StringBuilder(string.length());
-        // true if last char was blank
-        boolean lastWasBlankChar = false;
-        int len = string.length();
-        char c;
-
-        for (int i = 0; i < len; i++) {
-            c = string.charAt(i);
-            if (c == ' ') {
-            // blank gets extra work,
-                // this solves the problem you get if you replace all
-                // blanks with &nbsp;, if you do that you loss 
-                // word breaking
-                if (lastWasBlankChar) {
-                    lastWasBlankChar = false;
-                    sb.append("&nbsp;");
-                } else {
-                    lastWasBlankChar = true;
-                    sb.append(' ');
-                }
-            } else {
-                lastWasBlankChar = false;
-            //
-                // HTML Special Chars
-                if (c == '"') {
-                    sb.append("&quot;");
-                }
-                else if (c == '\'') {
-                    sb.append("&#39;");
-                } else if (c == '&') {
-                    sb.append("&amp;");
-                } else if (c == '<') {
-                    sb.append("&lt;");
-                } else if (c == '>') {
-                    sb.append("&gt;");
-                } else if (c == '\n') { // Handle Newline
-                    //sb.append("&lt;br/&gt;");
-                } else {
-                    int ci = 0xffff & c;
-                    if (ci < 160) // nothing special only 7 Bit
-                    {
-                        sb.append(c);
-                    } else {
-                        // Not 7 Bit use the unicode system
-                        sb.append("&#");
-                        sb.append(Integer.toString(ci));
-                        sb.append(';');
-                    }
-                }
-            }
-        }
-        return sb.toString();
-    }
-    
-    public static CharSequence summarize( Iterable<? extends Concept> concepts) {
-        StringBuilder s = new StringBuilder();        
-        for (Concept c : concepts) {
-            s.append(c.toString() + "\n");
-        }
-        return s;
-    }
-
-    
 }

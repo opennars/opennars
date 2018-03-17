@@ -22,7 +22,7 @@ import static nars.inference.TemporalRules.ORDER_CONCURRENT;
 import static nars.inference.TemporalRules.ORDER_FORWARD;
 import nars.inference.TruthFunctions;
 import nars.inference.UtilityFunctions;
-import nars.language.Narsese.Symbols;
+import nars.parser.Symbols;
 import nars.language.Conjunction;
 import nars.language.Interval;
 import nars.language.Term;

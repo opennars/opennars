@@ -56,8 +56,8 @@ import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TaskTree;
 import nars.gui.output.graph.NARGraphPanel;
-import nars.io.handlers.OutputHandler;
-import nars.io.handlers.TextOutputHandler;
+import nars.output.OutputHandler;
+import nars.output.TextOutputHandler;
 import nars.language.Interval.PortableInteger;
 import nars.util.Events.CyclesEnd;
 

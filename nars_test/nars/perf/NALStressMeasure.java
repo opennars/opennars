@@ -84,7 +84,7 @@ public class NALStressMeasure  {
     
     public static void main(String[] args) {
        
-        NAR nd = new NAR(new Plugins());
+        NAR nd = new NAR();
         test(nd);
         
         

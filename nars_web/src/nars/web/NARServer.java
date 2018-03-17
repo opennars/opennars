@@ -7,7 +7,6 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import nars.NAR;
-import nars.config.Plugins;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;

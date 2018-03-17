@@ -1,6 +1,6 @@
-package nars.io.handlers;
+package nars.output;
 
-import nars.io.handlers.EventHandler;
+import nars.output.EventHandler;
 import nars.util.EventEmitter;
 import nars.util.Events.Answer;
 import nars.storage.Memory;

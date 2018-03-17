@@ -10,7 +10,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.BudgetFunctions.truthToQuality;
-import nars.language.Narsese.Symbols;
+import nars.parser.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.ImageExt;
 import nars.language.Inheritance;
