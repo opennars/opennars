@@ -59,6 +59,7 @@ import nars.gui.output.graph.NARGraphPanel;
 import nars.output.OutputHandler;
 import nars.output.TextOutputHandler;
 import nars.language.Interval.PortableInteger;
+import nars.util.Events.CycleEnd;
 import nars.util.Events.CyclesEnd;
 
 public class NARControls extends JPanel implements ActionListener, EventObserver {
