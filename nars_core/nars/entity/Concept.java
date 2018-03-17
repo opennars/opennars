@@ -32,13 +32,13 @@ import nars.util.Events.TaskLinkRemove;
 import nars.util.Events.TermLinkAdd;
 import nars.util.Events.TermLinkRemove;
 import nars.storage.Memory;
-import nars.io.console.NARConsole;
+import nars.Shell;
 import nars.config.Parameters;
 import nars.control.DerivationContext;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.LocalRules;
-import nars.language.Narsese.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.storage.Bag;
@@ -430,7 +430,7 @@ public class Concept extends Item<Term> implements Serializable {
     }
 
     /**
-     * called from {@link NARConsole}
+     * called from {@link Shell}
      */
     @Override
     public String toStringLong() {

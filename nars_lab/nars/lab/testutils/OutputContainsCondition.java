@@ -11,8 +11,7 @@ import java.util.TreeSet;
 import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.io.TextOutput;
-import nars.util.Texts;
+import nars.output.TextOutputHandler;
 import nars.operator.Operator.ExecutionResult;
 
 /**
@@ -140,7 +139,7 @@ public class OutputContainsCondition extends OutputCondition<Task> {
                 if (signal instanceof ExecutionResult)
                     t = ((ExecutionResult)signal).getTask();
                 
-                o = TextOutput.getOutputString(channel, signal, false, false, nar).toString();
+                o = TextOutputHandler.getOutputString(channel, signal, false, false, nar).toString();
                 
                 if (o.contains(containing)) {
                     if ((saveSimilar) && (t!=null)) {                        

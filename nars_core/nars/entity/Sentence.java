@@ -31,7 +31,7 @@ import nars.config.Parameters;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.inference.TruthFunctions.EternalizedTruthValue;
-import nars.language.Narsese.Symbols;
+import nars.parser.Symbols;
 import nars.util.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;

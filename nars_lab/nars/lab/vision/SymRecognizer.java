@@ -20,8 +20,8 @@ import javax.swing.*;
 import nars.NAR;
 import nars.config.Parameters;
 import nars.entity.Sentence;
-import nars.io.handlers.AnswerHandler;
-import nars.language.Narsese.Narsese;
+import nars.output.AnswerHandler;
+import nars.parser.Narsese;
 
 
 

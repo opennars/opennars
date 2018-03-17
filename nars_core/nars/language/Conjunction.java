@@ -26,10 +26,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 import nars.config.Parameters;
-import nars.imagination.ImaginationSpace;
 import nars.inference.TemporalRules;
-import nars.language.Narsese.Symbols.NativeOperator;
-import nars.operator.Operation;
+import nars.parser.Symbols.NativeOperator;
 
 /**
  * Conjunction of statements

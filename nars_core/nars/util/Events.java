@@ -13,11 +13,11 @@ import nars.entity.Task;
 public class Events {
 
 
-    /** fired at the beginning of each NAR frame */
-    public static class FrameStart {     } 
+    /** fired at the beginning of each NAR multi-cycle execution*/
+    public static class CyclesStart {     } 
     
-    /** fired at the end of each NAR frame */
-    public static class FrameEnd {     }
+    /** fired at the end of each NAR multi-cycle execution */
+    public static class CyclesEnd {     }
     
     /** fired at the beginning of each memory cycle */
     public static class CycleStart {     } 

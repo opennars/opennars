@@ -51,15 +51,5 @@ public class NALTestSome extends NALTest {
        super(scriptPath);//, true);
 
    }
-//   
-//   public NALTestSome(String scriptPath, boolean showOutput) {
-//        super(scriptPath);
-//        
-//        this.showSuccess = showOutput;
-//        this.showOutput = showOutput;
-//        this.showTrace = false;
-//        System.out.println("Running: "  + scriptPath);
-//        //setOutput(true);
-//   }
-   
+
 }

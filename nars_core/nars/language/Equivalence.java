@@ -22,7 +22,7 @@ package nars.language;
 
 import java.util.Arrays;
 import nars.inference.TemporalRules;
-import nars.language.Narsese.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
 
 /**
  * A Statement about an Equivalence relation.

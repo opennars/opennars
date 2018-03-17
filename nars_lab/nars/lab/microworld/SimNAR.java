@@ -323,7 +323,7 @@ public class SimNAR extends Frame {
                     System.err.println("I'm healthy "+String.valueOf(k));
                 }
                 
-                nar.step(10);
+                nar.cycles(10);
 
                 if(lastAction==0 && random(1.0f)<Alpha) { //if NAR hasn't decided chose a random action
                     lastAction = (int)random((float)nActions);

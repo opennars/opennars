@@ -1,6 +1,6 @@
 package nars.perception;
 
-import nars.language.Narsese.Narsese;
+import nars.parser.Narsese;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.io.TextInput;
 import nars.language.Term;
 
 public abstract class SensoryChannel implements Serializable {
@@ -26,14 +25,13 @@ public abstract class SensoryChannel implements Serializable {
     public SensoryChannel(NAR nar, SensoryChannel reportResultsTo) {
         this(nar, Arrays.asList(reportResultsTo));
     }
-    public TextInput addInput(final String text) {
+    public void addInput(final String text) {
         try {
             Task t = new Narsese(nar).parseTask(text);
             this.addInput(t);
         } catch (Narsese.InvalidInputException ex) {
             Logger.getLogger(SensoryChannel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
     }
     public abstract NAR addInput(final Task t);
     public void step_start(){} //needs to put results into results and call step_finished when ready

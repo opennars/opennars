@@ -24,7 +24,7 @@ import java.io.Serializable;
 import nars.config.Parameters;
 import static nars.config.Parameters.TRUTH_EPSILON;
 import nars.inference.BudgetFunctions;
-import nars.language.Narsese.Symbols;
+import nars.parser.Symbols;
 import nars.util.Texts;
 import static nars.inference.UtilityFunctions.and;
 import static nars.inference.UtilityFunctions.aveGeo;

@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import nars.util.Events.Answer;
 import nars.NAR;
 import nars.config.Plugins;
-import nars.io.handlers.EventHandler;
+import nars.output.EventHandler;
 import nars.lab.testutils.OutputContainsCondition;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -20,7 +20,7 @@ import org.junit.Test;
  */
 public class VariableTest {
  
-    NAR n = new NAR(new Plugins());
+    NAR n = new NAR();
     
     @Before public void init() {
         n.addInput("<a --> 3>. :|:");
@@ -44,7 +44,7 @@ public class VariableTest {
         
         OutputContainsCondition e = new OutputContainsCondition(n, "=/> <a --> 4>>.", 5);
         
-        n.run(32);
+        n.cycles(32);
   
         assertTrue(e.isTrue());
     }
@@ -70,7 +70,7 @@ public class VariableTest {
             }
         };
 
-        n.run(1024);
+        n.cycles(1024);
           
         assertTrue(solutionFound.get());
         

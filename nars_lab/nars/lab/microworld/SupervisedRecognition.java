@@ -9,8 +9,8 @@ import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.io.handlers.AnswerHandler;
-import nars.language.Narsese.Narsese;
+import nars.output.AnswerHandler;
+import nars.parser.Narsese;
 
 /**
  *
@@ -99,7 +99,7 @@ public class SupervisedRecognition {
         for(String example : map.keySet()) {
             int solution = map.get(example);
             inputExample(nar, example, solution);
-            nar.step(1000);
+            nar.cycles(1000);
         }
         
         //Test phase:
@@ -121,7 +121,7 @@ public class SupervisedRecognition {
             } catch (Narsese.InvalidInputException ex) {
         }
         
-        nar.step(100000);
+        nar.cycles(100000);
     }
 
     //Inputs an example image

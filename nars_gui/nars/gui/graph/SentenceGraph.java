@@ -55,7 +55,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     private void setEvents(boolean n) {
         if (memory!=null) {
             memory.event.set(this, n, 
-                    Events.FrameEnd.class, 
+                    Events.CyclesEnd.class, 
                     Events.ConceptForget.class, 
                     Events.ConceptBeliefAdd.class, 
                     Events.ConceptBeliefRemove.class, 
@@ -115,7 +115,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
             Sentence s = (Sentence)a[1];
             remove(s);
         }*/
-        else if (event == Events.FrameEnd.class) {
+        else if (event == Events.CyclesEnd.class) {
             if (needInitialConcepts)
                 getInitialConcepts();
         }

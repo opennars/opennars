@@ -21,9 +21,9 @@ import nars.config.Parameters;
 import java.util.TreeSet;
 import nars.config.Plugins;
 import nars.entity.Concept;
-import nars.language.Narsese.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
 import nars.util.Texts;
-import nars.language.Narsese.Narsese;
+import nars.parser.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Statement;
@@ -39,12 +39,12 @@ import org.junit.Test;
  */
 public class TermTest {
     
-    NAR n = new NAR(new Plugins());
+    NAR n = new NAR();
     Narsese np = new Narsese(n);
     
     protected void assertEquivalent(String term1String, String term2String) {
         try {
-            NAR n = new NAR(new Plugins());
+            NAR n = new NAR();
 
             Term term1 = np.parseTerm(term1String);
             Term term2 = np.parseTerm(term2String);
@@ -62,7 +62,7 @@ public class TermTest {
     
     @Test
     public void testCommutativeCompoundTerm() throws Exception {
-        NAR n = new NAR(new Plugins());
+        NAR n = new NAR();
 
         assertEquivalent("(&&,a,b)", "(&&,b,a)");
         assertEquivalent("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
@@ -72,7 +72,7 @@ public class TermTest {
     
     @Test
     public void testTermSort() throws Exception {
-        NAR n = new NAR(new Plugins());
+        NAR n = new NAR();
         
         Narsese m = new Narsese(n);
         Term a = m.parseTerm("a");
@@ -88,7 +88,7 @@ public class TermTest {
     
     @Test
     public void testConjunctionTreeSet() throws Narsese.InvalidInputException {
-        NAR n = new NAR(new Plugins());
+        NAR n = new NAR();
         
         
             
@@ -145,7 +145,7 @@ public class TermTest {
     
     @Test
     public void testUnconceptualizedTermInstancing() throws Narsese.InvalidInputException {
-       NAR n = new NAR(new Plugins());
+       NAR n = new NAR();
         
        String term1String ="<a --> b>";
        Term term1 = np.parseTerm(term1String);
@@ -164,7 +164,7 @@ public class TermTest {
     
     @Test
     public void testConceptInstancing() throws Narsese.InvalidInputException {
-       NAR n = new NAR(new Plugins());
+       NAR n = new NAR();
         
        String statement1 = "<a --> b>.";
        
@@ -174,16 +174,16 @@ public class TermTest {
        assertTrue(a.equals(a1));
        
        n.addInput(statement1);       
-       n.step(4);
+       n.cycles(4);
               
        n.addInput(" <a  --> b>.  ");
-       n.step(1);
+       n.cycles(1);
        n.addInput(" <a--> b>.  ");
-       n.step(1);
+       n.cycles(1);
        
        String statement2 = "<a --> c>.";
        n.addInput(statement2);
-       n.step(4);
+       n.cycles(4);
        
        Term a2 = np.parseTerm("a");
        assertTrue(a2!=null);
@@ -228,7 +228,7 @@ public class TermTest {
     @Test public void invalidTermIndep() {
         
         String t = "<$1 --> (~,{place4},$1)>";
-        NAR n = new NAR(new Plugins());
+        NAR n = new NAR();
         Narsese p = new Narsese(n);
         
         try {
@@ -280,7 +280,7 @@ public class TermTest {
     @Test public void testParseOperationInFunctionalForm() {
         Parameters.FUNCTIONAL_OPERATIONAL_FORMAT = true;
         
-        NAR n = new NAR(new Plugins());
+        NAR n = new NAR();
         Narsese p = new Narsese(n);
         
         try {

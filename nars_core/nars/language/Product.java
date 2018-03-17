@@ -22,7 +22,7 @@
 package nars.language;
 
 import java.util.List;
-import nars.language.Narsese.Symbols.NativeOperator;
+import nars.parser.Symbols.NativeOperator;
 
 /**
  * A Product is a sequence of 1 or more terms.

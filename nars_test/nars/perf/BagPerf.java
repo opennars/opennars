@@ -42,7 +42,7 @@ public class BagPerf {
     
     int repeats = 8;
     int warmups = 1;
-    final static PortableDouble forgetRate = (new NAR(new Plugins()).param).conceptForgetDurations;
+    final static PortableDouble forgetRate = (new NAR().param).conceptForgetDurations;
     int randomAccesses;
     double insertRatio = 0.9;
     

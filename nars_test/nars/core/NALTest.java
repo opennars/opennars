@@ -11,10 +11,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import nars.config.Plugins;
 import nars.gui.InferenceLogger;
-import nars.io.TextInput;
-import nars.io.TextOutput;
+import nars.output.TextOutputHandler;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
@@ -44,15 +42,11 @@ public class NALTest  {
     static public boolean requireSuccess = true;
     static public int similarsToSave = 5;       
     private static boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
-      
-
     protected static Map<String, String> examples = new HashMap(); //path -> script data
     public static Map<String, Boolean> tests = new HashMap();
     public static Map<String, Double> scores = new HashMap();
     final String scriptPath;
     
-
-
     public static String getExample(String path) {
         try {
             String existing = examples.get(path);
@@ -70,7 +64,7 @@ public class NALTest  {
     }
     
     public NAR newNAR() {
-        return new NAR(new Plugins());
+        return new NAR();
         //return NAR.build(Default.fromJSON("nal/build/pei1.fast.nar"));        
         //return new ContinuousBagNARBuilder().build();
         //return new DiscretinuousBagNARBuilder().build();
@@ -117,7 +111,6 @@ public class NALTest  {
         int levelSuccess[] = new int[10];
         int levelTotals[] = new int[10];
         
-        
         for (Map.Entry<String, Boolean> e : tests.entrySet()) {
             String name = e.getKey();
             int level = 0;
@@ -151,27 +144,17 @@ public class NALTest  {
 
             System.out.println("Score: " + totalScore);
         }
-        
         return totalScore;
-        
     }
     
-    public static void main(String[] args) {
-        
+    public static void main(String[] args) {   
         runTests(NALTest.class);
-
     }
 
     public NALTest(String scriptPath) {        
         this.scriptPath = scriptPath;
         
     }
-
-//    public Sentence parseOutput(String o) {
-//        //getTruthString doesnt work yet because it gets confused when Stamp is at the end of the string. either remove that first or make getTruthString aware of that
-//        return TextPerception.parseOutput(o);
-//    }
-    
     
     public double run() {               
         return testNAL(scriptPath);
@@ -186,11 +169,6 @@ public class NALTest  {
         boolean error = false;
         try {
             n = newNAR();
-
-
-            
-
-
             String example = getExample(path);
             
             if (showOutput) {
@@ -203,14 +181,13 @@ public class NALTest  {
                 expects.add(e1);
 
             if (showOutput)
-                new TextOutput(n, System.out);
+                new TextOutputHandler(n, System.out);
             if (showTrace) {
                 new InferenceLogger(n, System.out);
             }
 
-
-            n.addInput(new TextInput(example));
-            n.run(minCycles);
+            n.addInputFile(path);
+            n.cycles(minCycles);
         }
         catch(Throwable e){     
             System.err.println(e);
@@ -221,8 +198,6 @@ public class NALTest  {
             error = true;
         }
       
-        
-        
         System.err.flush();
         System.out.flush();
         
@@ -263,23 +238,11 @@ public class NALTest  {
         if (requireSuccess)
             assertTrue(path, success);
         
-        
-        return score;
-        
+        return score;  
     }
-
-    
-    
-    
     
     @Test
     public void test() {
         testNAL(scriptPath);
     }
-
-    
-    
-    
-    
-    
 }

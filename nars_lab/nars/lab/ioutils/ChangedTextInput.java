@@ -14,13 +14,11 @@ public class ChangedTextInput  {
         this.nar = n;
     }
 
-    public boolean set(String s) {
-        return set(s, -1);
-    }
+ 
     
-    public boolean set(String s, long time) {
+    public boolean set(String s) {
         if (allowRepeats || (last == null) || (!last.equals(s))) {
-            nar.addInput(s, time);
+            nar.addInput(s);
             last = s;
             return true;
         }
