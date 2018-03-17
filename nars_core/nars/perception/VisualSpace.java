@@ -1,5 +1,6 @@
-package nars.imagination;
+package nars.perception;
 
+import nars.operator.ImaginationSpace;
 import java.util.HashSet;
 import nars.NAR;
 import nars.config.Parameters;
