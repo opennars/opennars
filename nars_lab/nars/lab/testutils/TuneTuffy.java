@@ -11,8 +11,7 @@ import nars.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.io.handlers.EventHandler;
-import nars.io.ports.Output.OUT;
-import nars.io.TextInput;
+import nars.io.handlers.OutputHandler.OUT;
 import nars.language.Narsese.Narsese;
 import nars.language.Term;
 
@@ -69,11 +68,10 @@ public class TuneTuffy {
 
         
         NAR n = new NAR();
-        n.addInput(new TextInput(new File("nal/use_cases/tuffy.smokes.nal")));
+        n.addInputFile("nal/use_cases/tuffy.smokes.nal");
         
         //new TextOutput(n, System.out, 0.95f);                
         
-        n.run(0);
         
         SolutionMonitor anna0 = new SolutionMonitor(n, "<Anna <-> [Smokes]>");
         SolutionMonitor bob0 = new SolutionMonitor(n, "<Bob --> [Smokes]>");
@@ -86,7 +84,7 @@ public class TuneTuffy {
         SolutionMonitor frank = new SolutionMonitor(n, "<Frank --> [Cancer]>");
 
 
-        n.run(15000);
+        n.run();
 
         //first number is the expected Tuffy probability result
         System.out.println("0.75? " + edward);

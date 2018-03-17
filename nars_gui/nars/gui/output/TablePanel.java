@@ -9,7 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import nars.NAR;
-import nars.io.ports.Output;
+import nars.io.handlers.OutputHandler;
 
 
 public abstract class TablePanel extends NPanel  {
@@ -17,7 +17,7 @@ public abstract class TablePanel extends NPanel  {
     protected final NAR nar;
     protected DefaultTableModel data;
     protected final JTable table;
-    private final Output out;
+    private final OutputHandler out;
 
     public TablePanel(NAR nar) {
         super(new BorderLayout());
@@ -26,7 +26,7 @@ public abstract class TablePanel extends NPanel  {
         table.setFillsViewportHeight(true);
         
         add(new JScrollPane(table), CENTER);
-        out = new Output(nar, false) {
+        out = new OutputHandler(nar, false) {
 
             @Override
             public void event(Class event, Object[] arguments) {

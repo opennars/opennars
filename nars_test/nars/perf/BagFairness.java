@@ -2,7 +2,6 @@ package nars.perf;
 
 import automenta.vivisect.TreeMLData;
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
@@ -10,9 +9,7 @@ import nars.NAR;
 import nars.config.Parameters;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.timeline.LineChart;
-import nars.io.ports.Input;
 import nars.util.Texts;
-import nars.language.Term;
 import nars.storage.Bag;
 import automenta.vivisect.timeline.Chart;
 import automenta.vivisect.timeline.MultiTimeline;
@@ -38,7 +35,7 @@ public class BagFairness {
             
     float nextConceptPriority;
     
-    public BagFairness(NAR n, Input input, int maxConcepts, int iterationRecordBegin, int iterations) {
+    public BagFairness(NAR n, String file, int maxConcepts, int iterationRecordBegin, int iterations) {
 
         for (int b = 0; b < bins; b++) {
             double percentStart = ((double)b)/bins;
@@ -51,7 +48,7 @@ public class BagFairness {
         }
 
         //TODO use ConceptFire event observer impl
-        n.event().on(Events.ConceptFire.class, new EventObserver() {
+        n.memory.event.on(Events.ConceptFire.class, new EventObserver() {
 
             @Override
             public void event(Class event, Object[] arguments) {
@@ -63,7 +60,7 @@ public class BagFairness {
             
         });
         
-        n.addInput(input);
+        n.addInputFile(file);
         
         double[] d = new double[bins];
         
@@ -75,7 +72,7 @@ public class BagFairness {
             
             //((SequentialMemoryCycle)n.memory.conceptProcessor).processConcept();
             n.memory.concepts.peekNext();
-            n.step(1);
+            n.cycles(1);
             
             //if (n.memory.param.getTiming() == Timing.Simulation)
             //    n.memory.addSimulationTime(1);
@@ -122,82 +119,7 @@ public class BagFairness {
         //printResults(insertProb, removeProb);
         
     }
-
-    /*protected void removalPriority(float p) {
-        int b = (int)Math.floor(p * bins);
-        held[b]++;
-        total++;
-    }*/
     
-//    protected void printResults(double insertProb, double removeProb) {
-//        System.out.print(insertProb + ", " + removeProb + ",    ");
-//        for (int i = bins-1; i >=0; i--) {
-//            double percentStart = ((double)i)/bins;
-//            double percentEnd = ((double)(i+1))/bins;
-//            double amount = ((double)held[i]) / ((double)total);
-//            //System.out.println( percentStart + ".." + percentEnd + ":\t\t" + amount);
-//            System.out.print(amount + ", ");
-//        }
-//        System.out.println();
-//    }
-//    
-    
-    public static class RandomTermInput implements Input<String> {
-        
-        private final double minPriority;
-        private final double maxPriority;
-        private final int numTerms;
-        private final double inheritanceProb;
-        private final double similarityProb;
-        private final double productProb;
-        private final int numInputs;
-        private int inputs;
-
-        public RandomTermInput(int numTerms, int numInputs, double inheritanceProb, double similarityProb, double productProb, double minPriority, double maxPriority) {
-            this.numTerms = numTerms;
-            this.numInputs = numInputs;
-            this.inheritanceProb = inheritanceProb;
-            this.similarityProb = similarityProb;
-            this.productProb = productProb;
-            this.minPriority = minPriority;
-            this.maxPriority = maxPriority;
-            this.inputs = 0;
-            
-        }
-
-        @Override public String next() throws IOException {
-            
-            if (inputs < numInputs) {
-                
-                //uniform distribution
-                double pr = Math.random() * (maxPriority-minPriority) + minPriority;
-                float priority = (float)pr;                               
-                
-                double tp = inheritanceProb + similarityProb + productProb;                
-                double s = Math.random() * tp;
-                s -= inheritanceProb; if (s < 0) {
-                    return "$" + Texts.n2(priority) + "$ <" + randomTerm() + " --> " + randomTerm() + ">.";
-                }
-                s -= similarityProb; if (s < 0) {
-                    return "$" + Texts.n2(priority) + "$ <" + randomTerm() + " <-> " + randomTerm() + ">.";
-                }
-                s -= productProb; if (s < 0) {
-                    return "$" + Texts.n2(priority) + "$ <(*," + randomTerm() + "," + randomTerm() + ") --> " + randomTerm() + ">.";
-                }
-                
-                inputs++;
-                
-            }
-            return null;
-        }
-
-        private Term randomTerm() {
-            int t = (int)(Math.random() * numTerms);
-            return new Term("t" + t);
-        }
-
-        @Override public boolean finished(boolean stop) { return false; }
-    }
     
     public static void main(String[] args) {
         Parameters.DEBUG = true;
@@ -217,7 +139,7 @@ public class BagFairness {
                 final NAR n = new NAR();
                 
                 ArrayList<Chart> ch = new BagFairness(n, 
-                        new RandomTermInput(8, inputs, 0.01, 0.5, 0.5, minPri, maxPri), 
+                        "nal/Examples/Example-MultiStep-edited.txt", 
                         maxConcepts, /* concepts */
                         numIterations-displayedIterations, numIterations /* iterations */).charts;
                 return ch.toArray(new Chart[ch.size()]);

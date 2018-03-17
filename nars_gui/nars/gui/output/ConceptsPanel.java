@@ -6,17 +6,14 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
-import automenta.vivisect.swing.PCanvas;
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.EAST;
 import static java.awt.BorderLayout.NORTH;
 import static java.awt.BorderLayout.SOUTH;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -33,15 +30,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
-import nars.util.Events.FrameEnd;
+import nars.util.Events.CyclesEnd;
 import nars.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
-import nars.entity.TermLink;
 import nars.gui.WrapLayout;
-import nars.gui.output.graph.TermSyntaxVis;
 import nars.inference.TruthFunctions;
 
 /**
@@ -93,7 +88,7 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
     protected void onShowing(boolean showing) {
 
         nar.memory.event.set(this, showing,
-                Events.FrameEnd.class,
+                Events.CyclesEnd.class,
                 Events.ConceptBeliefAdd.class,
                 Events.ConceptBeliefRemove.class,
                 Events.ConceptQuestionAdd.class,
@@ -105,19 +100,10 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
     @Override
     public void event(Class event, Object[] args) {
 
-        if (event == FrameEnd.class) {
+        if (event == CyclesEnd.class) {
             //SwingUtilities.invokeLater(this);
             run();
         }
-        /*
-        if (!(args.length > 0) && (args[0] instanceof Concept)) {
-            return;
-        }
-        Concept c = (Concept) args[0];
-        ConceptPanel cp = concept.get(c);
-        if (cp != null) {
-            SwingUtilities.invokeLater(this);
-        }*/
     }
     
     @Override public void run() {  

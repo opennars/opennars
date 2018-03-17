@@ -44,7 +44,7 @@ public class VariableTest {
         
         OutputContainsCondition e = new OutputContainsCondition(n, "=/> <a --> 4>>.", 5);
         
-        n.run(32);
+        n.cycles(32);
   
         assertTrue(e.isTrue());
     }
@@ -70,7 +70,7 @@ public class VariableTest {
             }
         };
 
-        n.run(1024);
+        n.cycles(1024);
           
         assertTrue(solutionFound.get());
         

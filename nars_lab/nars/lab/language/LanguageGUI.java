@@ -252,17 +252,17 @@ public class LanguageGUI extends javax.swing.JFrame {
                     languageNAR.addInput(s);
                 }
             }
-            languageNAR.step(100);
+            languageNAR.cycles(100);
             //add word categories of all words that occurred
             for(String word : words) {
                 if(wordTypes.containsKey(word)) {
                     languageNAR.addInput(wordTypes.get(word));
                 }
             }
-            languageNAR.step(10);
+            languageNAR.cycles(10);
             for(String s : inputs) {
                 languageNAR.addInput(s);
-                languageNAR.step(1);
+                languageNAR.cycles(1);
             }
             
             boolean isQuestion = punctuation.equals("question");

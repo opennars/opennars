@@ -20,12 +20,9 @@
  */
 package nars.gui;
 
-import automenta.vivisect.dimensionalize.FastOrganicLayout;
-import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.swing.PCanvas;
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.NORTH;
 import java.awt.Color;
@@ -50,7 +47,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
-import nars.util.Events.FrameEnd;
 import nars.storage.Memory;
 import nars.NAR;
 import nars.config.Parameters;
@@ -59,13 +55,11 @@ import nars.gui.output.PluginPanel;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TaskTree;
-import nars.gui.output.NARFacePanel;
-import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.NARGraphPanel;
-import nars.io.ports.Output;
-import nars.io.TextInput;
-import nars.io.TextOutput;
+import nars.io.handlers.OutputHandler;
+import nars.io.handlers.TextOutputHandler;
 import nars.language.Interval.PortableInteger;
+import nars.util.Events.CyclesEnd;
 
 public class NARControls extends JPanel implements ActionListener, EventObserver {
 
@@ -84,7 +78,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
     /**
      * Reference to the experience writer
      */
-    private final TextOutput experienceWriter;
+    private final TextOutputHandler experienceWriter;
 
 
     /**
@@ -131,7 +125,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         memory = nar.memory; 
         this.parent = parent;
         
-        experienceWriter = new TextOutput(nar);
+        experienceWriter = new TextOutputHandler(nar);
         
         logger = new InferenceLogger(nar);
         logger.setActive(false);
@@ -168,20 +162,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                 }
             });
             m.add(mv3);
-            
-            //not really relevant for NARS, Im working on a active approach to detecting such patterns
-            //which will work when conditioning works good
-           /* JMenuItem cct4 = new JMenuItem("+ Input Drawing");
-            cct4.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    NWindow w = new NWindow("Sketch", new SketchPointCloudPanel(nar));
-                    w.setSize(500,500);
-                    w.setVisible(true);
-                }                
-            });
-            m.add(cct4);*/ 
-            
+                       
             JMenuItem ml = new JMenuItem("+ Output");
             ml.addActionListener(new ActionListener() {
                 @Override
@@ -203,89 +184,8 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             });
             m.add(mv);
             
-            /*JMenuItem tlp = new JMenuItem("+ Timeline");
-            tlp.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    NWindow outputWindow = new NWindow("Timeline", new TimelinePanel(nar));
-                    outputWindow.show(900, 700);        
-                }
-            });
-            m.add(tlp);*/
-
             m.addSeparator();
-
-            /* JMenuItem pml = new JMenuItem("+ Planning Log");
-            pml.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {                    
-                    new NWindow("Planning", new SwingLogPanel(NARControls.this, 
-                            MultipleExecutionManager.class, Execution.class, 
-                            GraphExecutive.ParticlePath.class, 
-                            GraphExecutive.ParticlePlan.class))
-                    .show(500, 300);
-                }
-            });
-            m.add(pml); */
-            
-            
-            
-            /* JMenuItem al = new JMenuItem("+ Activity");
-            al.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new NWindow("Activity", new MultiOutputPanel(NARControls.this)).show(500, 300);                }
-            });
-            m.add(al); */
-            
-
-
-
-            
-
-//            JMenuItem mv2 = new JMenuItem("+ Concept Graph 2");
-//            mv2.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    new NWindow("Concept Graph 2", new ProcessingGraphPanel(nar, new ConceptGraphCanvas2(nar))).show(500, 500);
-//                }
-//            });
-//            m.add(mv2);
-//
-//            
-            
-            
-
-            /*JMenuItem imv = new JMenuItem("+ Eternalized Implications Graph");
-            imv.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    //new Window("Implication Graph", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
-                    new NWindow("Implication Graph", 
-                            new PCanvas( 
-                                    new AnimatingGraphVis(
-                                            nar.memory.executive.graph.implication,
-                                            new NARGraphDisplay(),
-                                            new FastOrganicLayout()
-                                    ))).show(500, 500); 
-                }
-            });
-            m.add(imv); */
-//
-//            JMenuItem sg = new JMenuItem("+ Inheritance / Similarity Graph");
-//            sg.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    new NWindow("Inheritance Graph", 
-//                            new ProcessingGraphPanel(nar, 
-//                                    new SentenceGraphCanvas(
-//                                            new InheritanceGraph(nar)))).show(500, 500);
-//                }
-//            });
-//            m.add(sg);
-            
-           // m.addSeparator();
-            
+                        
             JMenuItem tt = new JMenuItem("+ Task Tree");
             tt.addActionListener(new ActionListener() {
                 @Override
@@ -491,7 +391,8 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         String filePath = directoryName + fileName;
 
         try {
-            nar.addInput(new TextInput(new File(filePath)));
+            System.out.println("TODO load file");
+            //nar.addInput(new TextInput(new File(filePath)));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -505,7 +406,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
         setSpeed(0);
         setSpeed(0);        //call twice to make it start as paused
         updateGUI();
-        nar.memory.event.on(FrameEnd.class, this);
+        nar.memory.event.on(CyclesEnd.class, this);
     }
 
     final Runnable updateGUIRunnable = new Runnable() {
@@ -528,7 +429,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
 
     @Override
     public void event(final Class event, final Object... arguments) {
-        if (event == FrameEnd.class) {
+        if (event == CyclesEnd.class) {
             
             long now = System.currentTimeMillis();
             long deltaTime = now - lastUpdateTime;
@@ -560,7 +461,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                 updateGUI();
             } else if (obj == walkButton) {
                 nar.stop();
-                nar.step(1);
+                nar.cycles(1);
                 updateGUI();
             }
         } else if (obj instanceof JMenuItem) {
@@ -605,7 +506,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
                         String filePath = directoryName + fileName;
                         NAR loadedNAR = NAR.LoadFromFile(filePath);
                         new NARSwing(loadedNAR);
-                        loadedNAR.memory.emit(Output.ECHO.class, "Memory file " + fileName + " loaded successfully.");
+                        loadedNAR.memory.emit(OutputHandler.ECHO.class, "Memory file " + fileName + " loaded successfully.");
                         //new javax.swing.JOptionPane.showInputDialog(new javax.swing.JFrame(), "Memory loaded");
                         parent.mainWindow.setVisible(false);
                         parent.mainWindow.dispose();
@@ -767,7 +668,7 @@ public class NARControls extends JPanel implements ActionListener, EventObserver
             }
             stopButton.setText(String.valueOf(FA_StopCharacter));
             //nar.setThreadYield(true);
-            nar.start(ms, nar.getCyclesPerFrame());
+            nar.start(ms); //nar.getCyclesPerFrame()
         } else {
             stopButton.setText(String.valueOf(FA_PlayCharacter));
             nar.stop();

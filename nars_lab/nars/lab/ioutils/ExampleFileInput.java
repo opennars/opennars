@@ -13,14 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import nars.NAR;
-import nars.NAR;
-import nars.io.TextInput;
 import nars.lab.testutils.OutputCondition;
 
 /**
  * Access to library of examples/unit tests
  */
-public class ExampleFileInput extends TextInput {
+public class ExampleFileInput {
 
     public static String load(String path) throws FileNotFoundException, IOException {
         StringBuilder  sb  = new StringBuilder();
@@ -37,7 +35,6 @@ public class ExampleFileInput extends TextInput {
     private final String source;
 
     protected ExampleFileInput(String input) throws FileNotFoundException {
-        super(input);
         this.source = input;
     }
     

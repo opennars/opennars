@@ -1,4 +1,4 @@
-package nars.io.ports;
+package nars.io.handlers;
 
 import nars.io.handlers.EventHandler;
 import nars.util.EventEmitter;
@@ -9,7 +9,7 @@ import nars.NAR;
 /**
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels
  */
-public abstract class Output extends EventHandler {
+public abstract class OutputHandler extends EventHandler {
     
     
     /** implicitly repeated input (a repetition of all input) */
@@ -36,19 +36,19 @@ public abstract class Output extends EventHandler {
 
     public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Answer.class, ANTICIPATE.class, CONFIRM.class, DISAPPOINT.class };
             
-    public Output(EventEmitter source, boolean active) {
+    public OutputHandler(EventEmitter source, boolean active) {
         super(source, active, DefaultOutputEvents );
     }
     
-    public Output(Memory m, boolean active) {
+    public OutputHandler(Memory m, boolean active) {
         this(m.event, active);
     }
 
-    public Output(NAR n, boolean active) {
+    public OutputHandler(NAR n, boolean active) {
         this(n.memory.event, active);
     }
 
-    public Output(NAR n) {
+    public OutputHandler(NAR n) {
         this(n, true);
     }
 

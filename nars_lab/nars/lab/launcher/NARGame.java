@@ -19,7 +19,7 @@ abstract public class NARGame implements EventObserver {
         //if (nar.memory.param.getTiming()!=Memory.Timing.Simulation)
         //    throw new RuntimeException(this + " requires NAR use Simulation timing");
         
-        nar.memory.event.on(Events.FrameEnd.class, this);
+        nar.memory.event.on(Events.CyclesEnd.class, this);
         sw=new NARSwing(nar);
     }
     
@@ -39,7 +39,7 @@ abstract public class NARGame implements EventObserver {
 
     @Override
     public void event(Class event, Object[] arguments) {
-        if (event == Events.FrameEnd.class) {
+        if (event == Events.CyclesEnd.class) {
             cycle();
         }
     }

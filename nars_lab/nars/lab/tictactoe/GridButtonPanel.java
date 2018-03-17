@@ -16,7 +16,7 @@ import java.lang.reflect.Array;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 import nars.util.EventEmitter.EventObserver;
-import nars.util.Events.FrameEnd;
+import nars.util.Events.CyclesEnd;
 import nars.NAR;
 import nars.entity.Concept;
 
@@ -134,12 +134,12 @@ abstract public class GridButtonPanel extends NPanel implements EventObserver {
 
     @Override
     protected void onShowing(boolean showing) {
-        nar.memory.event.set(this, showing, FrameEnd.class);
+        nar.memory.event.set(this, showing, CyclesEnd.class);
     }
     
     @Override
     public void event(Class event, Object[] arguments) {
-        if (event == FrameEnd.class) {
+        if (event == CyclesEnd.class) {
             if (updated) {
                 repaintLater();
             }
