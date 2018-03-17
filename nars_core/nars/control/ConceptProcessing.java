@@ -395,15 +395,10 @@ public class ConceptProcessing {
     */
     protected static void bestReactionForGoal(Concept concept, final DerivationContext nal, Sentence projectedGoal, final Task task) {
         try{
-            if(task.getPriority() < nal.memory.param.reactionPriorityThreshold.get()) {
-                return;
-            }
             Operation bestop = null;
             float bestop_truthexp = 0.0f;
             TruthValue bestop_truth = null;
             Task executable_precond = null;
-            Concept best_precond = null;
-            //long distance = -1;
             long mintime = -1;
             long maxtime = -1;
             for(Task t: concept.executable_preconditions) {
@@ -470,7 +465,6 @@ public class ConceptProcessing {
                         bestop_truthexp = expecdesire;
                         bestop_truth = opdesire;
                         executable_precond = t;
-                        best_precond = preconc;
                     }
                 }
             }

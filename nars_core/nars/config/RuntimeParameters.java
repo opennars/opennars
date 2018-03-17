@@ -41,9 +41,6 @@ public class RuntimeParameters implements Serializable {
     
     /** Sequence bag forget durations **/
     public final PortableDouble eventForgetDurations = new PortableDouble(4.0);
-    
-    /** How much priority a goal must have to trigger an automatic reaction **/
-    public final PortableDouble reactionPriorityThreshold = new PortableDouble(0.1);
 
     
     /** Minimum expectation for a desire value. 
