@@ -170,8 +170,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
      * will be set to the current memory cycle time, but may be processed by
      * memory later according to the length of the input queue.
      */
-    public void addInput(final String text) {
-        Narsese narsese = new Narsese(this);
+    private boolean addMultiLineInput(final String text) {
         if(text.contains("\n")) {
             String[] lines = text.split("\n");
             for(String s : lines) {
@@ -180,21 +179,47 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
                     this.cycle();
                 }
             }
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean addCommand(final String text) {
+        if(text.startsWith("**")) {
+            this.reset();
+            return true;
+        }
+        if(text.startsWith("*decisionthreshold=")) {
+            Double value = Double.valueOf(text.split("decisionthreshold=")[1]);
+            param.decisionThreshold.set(value);
+            return true;
+        }
+        if(text.startsWith("*volume=")) {
+            Integer value = Integer.valueOf(text.split("volume=")[1]);
+            param.noiseLevel.set(value);
+            return true;
         }
         try {
-            if(text.startsWith("**")) {
-                this.reset();
+            Integer retVal = Integer.parseInt(text);
+            if(!running) {
+                for(int i=0;i<retVal;i++) {
+                    this.cycle();
+                }
+            }
+            return true;
+        } catch (NumberFormatException ex) {} //usual input (TODO without exception)
+        return false;
+    }
+    
+    public void addInput(final String text) {
+        Narsese narsese = new Narsese(this);
+        if(addMultiLineInput(text)) {
+            return;
+        }
+        try {
+            if(addCommand(text)) {
                 return;
             }
-            try {
-                Integer retVal = Integer.parseInt(text);
-                if(!running) {
-                    for(int i=0;i<retVal;i++) {
-                        this.cycle();
-                    }
-                }
-                return;
-            } catch (NumberFormatException ex) {} //usual input (TODO without exception)
             Task t = narsese.parseTask(text.trim());
             this.memory.inputTask(t);
         } catch (Exception ex) {
