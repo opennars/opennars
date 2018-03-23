@@ -90,18 +90,7 @@ public class Operators {
            // js,      // javascript evaluation
             
            // new NumericCertainty()
-
-         /* 
-+         *          I/O operations under consideration
-+         * observe          // get the most active input (Channel ID: optional?)
-+         * anticipate       // get the input matching a given statement with variables (Channel ID: optional?)
-+         * tell             // output a judgment (Channel ID: optional?)
-+         * ask              // output a question/quest (Channel ID: optional?)
-+         * demand           // output a goal (Channel ID: optional?)
-+         */
                 
-//        new Wait()              // wait for a certain number of clock cycle
-        
         
         /*
          * -think            // carry out a working cycle

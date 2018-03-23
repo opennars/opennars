@@ -3,7 +3,6 @@ package nars.core;
 import java.util.HashMap;
 import java.util.Map;
 import nars.NAR;
-import nars.config.Plugins;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;

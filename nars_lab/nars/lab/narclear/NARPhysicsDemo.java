@@ -3,7 +3,6 @@ package nars.lab.narclear;
 import java.util.List;
 import nars.storage.Memory;
 import nars.NAR;
-import nars.config.Plugins;
 import nars.entity.Task;
 import nars.lab.ioutils.ChangedTextInput;
 import nars.language.Term;

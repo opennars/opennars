@@ -9,7 +9,6 @@ import nars.NAR;
 import com.google.common.collect.Iterables;
 import java.util.HashSet;
 import java.util.Set;
-import nars.config.Plugins;
 import nars.entity.Concept;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

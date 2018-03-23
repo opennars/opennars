@@ -1,6 +1,7 @@
 package nars.config;
 
 import nars.NAR;
+import nars.NAR.RuntimeParameters;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
 import nars.plugin.mental.FullInternalExperience;
@@ -15,19 +16,13 @@ import nars.plugin.mental.Abbreviation;
  */
 public class Plugins {
 
-    public RuntimeParameters param = new RuntimeParameters();
-
-    public NAR init(NAR n) {
-        
-        for (Operator o : Operators.get(n))
-            n.memory.addOperator(o);
-                
+    public NAR init(NAR n) {         
         n.addPlugin(new RuntimeNARSettings());
         n.addPlugin(new Emotions());
         n.addPlugin(new Anticipate());      // expect an event  
         
-        boolean full_interval_experience = false;
-        if(!full_interval_experience) {
+        boolean full_internal_experience = false;
+        if(!full_internal_experience) {
             n.addPlugin(new InternalExperience());
         }
         else {

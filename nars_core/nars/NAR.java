@@ -2,7 +2,6 @@ package nars;
 
 import java.io.BufferedReader;
 import nars.config.Parameters;
-import nars.config.RuntimeParameters;
 import nars.util.Plugin;
 import nars.storage.Memory;
 import nars.util.Events;
@@ -22,14 +21,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nars.config.Operators;
 import nars.util.EventEmitter.EventObserver;
 import nars.config.Plugins;
-import nars.control.DerivationContext.DerivationFilter;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.language.Interval;
 import nars.output.AnswerHandler;
 import nars.output.OutputHandler.ERR;
 import nars.parser.Symbols;
@@ -93,6 +93,8 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         NAR ret = (NAR) stream.readObject();
         ret.memory.event = new EventEmitter();
         ret.plugins = new ArrayList<>(); 
+        for (Operator o : Operators.get(ret))
+            ret.memory.addOperator(o);
         new Plugins().init(ret);
         return ret;
     }
@@ -108,6 +110,18 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
      * The memory of the reasoner
      */
     public Memory memory;
+    
+    /*NAR Parameters which can be changed during runtime.*/
+   public class RuntimeParameters implements Serializable {
+       public RuntimeParameters() {    }
+       public final Interval.PortableInteger noiseLevel = new Interval.PortableInteger(100);
+       public final Interval.AtomicDuration duration = new Interval.AtomicDuration(Parameters.DURATION);
+       public final Interval.PortableDouble conceptForgetDurations = new Interval.PortableDouble(Parameters.CONCEPT_FORGET_DURATIONS);
+       public final Interval.PortableDouble termLinkForgetDurations = new Interval.PortableDouble(Parameters.TERMLINK_FORGET_DURATIONS);
+       public final Interval.PortableDouble taskLinkForgetDurations = new Interval.PortableDouble(Parameters.TASKLINK_FORGET_DURATIONS);
+       public final Interval.PortableDouble eventForgetDurations = new Interval.PortableDouble(Parameters.EVENT_FORGET_DURATIONS);
+       public final Interval.PortableDouble decisionThreshold = new Interval.PortableDouble(Parameters.DECISION_THRESHOLD);
+   }
     public RuntimeParameters param;
 
     public class PluginState implements Serializable {
@@ -146,14 +160,16 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
     public NAR() {
         Plugins b = new Plugins();
-        Memory m = new Memory(b.param,
+        Memory m = new Memory(new RuntimeParameters(),
                 new LevelBag(Parameters.CONCEPT_BAG_LEVELS, Parameters.CONCEPT_BAG_SIZE),
                 new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
                 new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE),
                 new LevelBag<>(Parameters.OPERATION_BAG_LEVELS, Parameters.OPERATION_BAG_SIZE));
         this.memory = m;
         this.param = m.param;
-        b.init(this);
+        for (Operator o : Operators.get(this))
+            this.memory.addOperator(o);
+        new Plugins().init(this);
     }
 
     /**
@@ -318,9 +334,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
         }
-        if (p instanceof DerivationFilter) {
-            param.defaultDerivationFilters.add((DerivationFilter)p);
-        }
         PluginState ps = new PluginState(p);
         plugins.add(ps);
         emit(Events.PluginsChange.class, p, null);
@@ -331,9 +344,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
             Plugin p = ps.plugin;
             if (p instanceof Operator) {
                 memory.removeOperator((Operator)p);
-            }
-            if (p instanceof DerivationFilter) {
-                param.defaultDerivationFilters.remove((DerivationFilter)p);
             }
             //TODO sensory channels can be plugins
             ps.setEnabled(false);
