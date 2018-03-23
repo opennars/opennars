@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import nars.NAR;
-import nars.config.RuntimeParameters;
+import nars.NAR.RuntimeParameters;
 import nars.config.Parameters;
 import nars.util.Events.ResetEnd;
 import nars.util.Events.ResetStart;

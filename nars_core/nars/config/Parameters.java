@@ -20,6 +20,7 @@
  */
 package nars.config;
 
+import nars.language.Interval;
 import nars.language.Interval.PortableDouble;
 
 
@@ -288,6 +289,24 @@ public class Parameters {
     public static float OPERATION_SEQUENCE_START_PENALTY = 0.05f;
     /* Priority penalty for sequences that end with an operation */
     public static float NOT_OPERATION_SEQUENCE_END_PENALTY = 0.5f;
+    
+     /** Concept decay rate in ConceptBag, in [1, 99].  originally: CONCEPT_FORGETTING_CYCLE 
+     *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
+     *  Lower means faster rate of decay.*/
+    public static final float CONCEPT_FORGET_DURATIONS = 2.0f;
+
+    /** TermLink decay rate in TermLinkBag, in [1, 99]. originally: TERM_LINK_FORGETTING_CYCLE */
+    public static final float TERMLINK_FORGET_DURATIONS = 10.0f;
+    
+    /** TaskLink decay rate in TaskLinkBag, in [1, 99]. originally: TASK_LINK_FORGETTING_CYCLE */
+    public static final float TASKLINK_FORGET_DURATIONS = 4.0f;
+    
+    /** Sequence bag forget durations **/
+    public static final float EVENT_FORGET_DURATIONS = 4.0f;
+    
+    /** Minimum expectation for a desire value to execute an operation. 
+     *  the range of "now" is [-DURATION, DURATION]; */
+    public static final float DECISION_THRESHOLD = 0.51f;
     
 }
 

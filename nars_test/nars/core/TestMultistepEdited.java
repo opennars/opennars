@@ -1,9 +1,7 @@
 package nars.core;
 
 import nars.NAR;
-import nars.config.Plugins;
 import nars.output.TextOutputHandler;
-import nars.core.NALTest;
 import org.junit.Test;
 
 /**

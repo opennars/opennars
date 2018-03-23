@@ -5,7 +5,6 @@ import nars.NAR;
 import nars.config.Parameters;
 import static nars.perf.NALStressMeasure.perfNAL;
 import nars.core.NALTest;
-import nars.config.Plugins;
 
 /**
  * Runs NALTestPerf continuously, for profiling

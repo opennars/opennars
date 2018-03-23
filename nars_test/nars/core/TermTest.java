@@ -19,7 +19,6 @@ package nars.core;
 import nars.NAR;
 import nars.config.Parameters;
 import java.util.TreeSet;
-import nars.config.Plugins;
 import nars.entity.Concept;
 import nars.parser.Symbols.NativeOperator;
 import nars.util.Texts;

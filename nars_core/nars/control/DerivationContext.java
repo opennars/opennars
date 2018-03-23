@@ -32,18 +32,6 @@ import nars.operator.Operation;
  * NAL Reasoner Process.  Includes all reasoning process state.
  */
 public class DerivationContext {
-
-    public interface DerivationFilter extends Plugin {
-        /** returns null if allowed to derive, or a String containing a short rejection reason for logging */
-        public String reject(DerivationContext nal, Task task, boolean revised, boolean single);
-
-        @Override
-        public default boolean setEnabled(NAR n, boolean enabled) {
-            return true;
-        }
-        
-    }
-    
     public boolean evidentalOverlap = false;
     public final Memory memory;
     protected Term currentTerm;
@@ -54,16 +42,10 @@ public class DerivationContext {
     protected Sentence currentBelief;
     protected Stamp newStamp;
     public StampBuilder newStampBuilder;
-    protected List<DerivationFilter> derivationFilters = null;
     
     public DerivationContext(Memory mem) {
         super();
         this.memory = mem;
-        this.derivationFilters = mem.param.getDerivationFilters();
-    }
-
-    public void setDerivationFilters(List<DerivationFilter> derivationFilters) {
-        this.derivationFilters = derivationFilters;
     }
    
     public void emit(final Class c, final Object... o) {
@@ -85,17 +67,7 @@ public class DerivationContext {
                                       task.sentence.term instanceof Equivalence)) {
             return false; //implication and equivalence goals are not supported anymore
         }
-        
-        if (derivationFilters!=null) {            
-            for (int i = 0; i < derivationFilters.size(); i++) {
-                DerivationFilter d = derivationFilters.get(i);
-                String rejectionReason = d.reject(this, task, revised, single);
-                if (rejectionReason!=null) {
-                    memory.removeTask(task, rejectionReason);
-                    return false;
-                }
-            }
-        }
+
         if (!task.budget.aboveThreshold()) {
             memory.removeTask(task, "Insufficient Budget");
             return false;
