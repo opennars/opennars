@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.xml.transform.TransformerConfigurationException;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.TaskLink;

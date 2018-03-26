@@ -31,7 +31,7 @@ import javax.swing.JTextField;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.util.Events.CyclesEnd;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;

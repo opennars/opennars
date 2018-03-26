@@ -8,8 +8,8 @@ import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import nars.NAR;
-import nars.output.OutputHandler;
+import nars.main.NAR;
+import nars.io.handlers.OutputHandler;
 
 
 public abstract class TablePanel extends NPanel  {

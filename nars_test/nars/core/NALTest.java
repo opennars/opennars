@@ -1,7 +1,7 @@
 package nars.core;
 
-import nars.NAR;
-import nars.config.Parameters;
+import nars.main.NAR;
+import nars.main.Parameters;
 import nars.lab.ioutils.ExampleFileInput;
 import nars.storage.Memory;
 import nars.lab.testutils.OutputCondition;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import nars.gui.InferenceLogger;
-import nars.output.TextOutputHandler;
+import nars.io.handlers.TextOutputHandler;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;

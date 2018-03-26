@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.language.Term;
 
 /**

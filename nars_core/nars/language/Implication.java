@@ -22,7 +22,7 @@ package nars.language;
 
 import java.util.Arrays;
 import nars.inference.TemporalRules;
-import nars.parser.Symbols.NativeOperator;
+import nars.io.Symbols.NativeOperator;
 
 /**
  * A Statement about an Inheritance copula.

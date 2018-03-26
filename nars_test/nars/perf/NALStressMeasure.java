@@ -1,7 +1,7 @@
 package nars.perf;
 
 import java.util.Collection;
-import nars.NAR;
+import nars.main.NAR;
 import nars.core.NALTest;
 
 

@@ -17,11 +17,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import nars.NAR;
-import nars.config.Parameters;
+import nars.main.NAR;
+import nars.main.Parameters;
 import nars.entity.Sentence;
-import nars.output.AnswerHandler;
-import nars.parser.Narsese;
+import nars.io.handlers.AnswerHandler;
+import nars.io.Narsese;
 
 
 

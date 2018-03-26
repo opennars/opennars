@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import nars.NAR;
+import nars.main.NAR;
 import nars.lab.testutils.OutputCondition;
 
 /**

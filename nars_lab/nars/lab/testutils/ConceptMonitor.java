@@ -4,12 +4,12 @@
  */
 package nars.lab.testutils;
 
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.parser.Narsese;
-import nars.parser.Symbols;
+import nars.io.Narsese;
+import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 

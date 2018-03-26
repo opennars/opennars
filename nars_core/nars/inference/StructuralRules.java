@@ -21,14 +21,14 @@
 package nars.inference;
 
 import java.util.List;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.storage.Memory;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.parser.Symbols;
+import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.DifferenceExt;

@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import nars.NAR;
+import nars.main.NAR;
 import nars.gui.NARSwing;
 import nars.web.NARServer;
 

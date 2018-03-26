@@ -18,9 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.output;
+package nars.io.handlers;
 
-import nars.output.OutputHandler;
+import nars.io.handlers.OutputHandler;
 import nars.util.Texts;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,14 +30,14 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Arrays;
 import nars.util.Events.Answer;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.output.OutputHandler.ECHO;
-import nars.output.OutputHandler.ERR;
-import nars.output.OutputHandler.EXE;
-import nars.output.OutputHandler.IN;
-import nars.output.OutputHandler.OUT;
+import nars.io.handlers.OutputHandler.ECHO;
+import nars.io.handlers.OutputHandler.ERR;
+import nars.io.handlers.OutputHandler.EXE;
+import nars.io.handlers.OutputHandler.IN;
+import nars.io.handlers.OutputHandler.OUT;
 
 /**
  * To read and write experience as Task streams

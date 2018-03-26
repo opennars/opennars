@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JPanel;
-import nars.NAR;
+import nars.main.NAR;
 import nars.lab.grid2d.main.Cell.Logic;
 import nars.lab.grid2d.main.Cell.Material;
 import nars.lab.grid2d.gui.EditorPanel;

@@ -17,7 +17,7 @@ import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import nars.gui.NARControls;
 import nars.gui.output.SwingLogText.LogLine;
-import nars.output.TextOutputHandler;
+import nars.io.handlers.TextOutputHandler;
 
 public class SwingLogPanel extends LogPanel {
 

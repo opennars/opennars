@@ -2,12 +2,12 @@ package nars.core;
 
 import java.util.HashMap;
 import java.util.Map;
-import nars.NAR;
+import nars.main.NAR;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import nars.parser.Narsese;
+import nars.io.Narsese;
 
 
 public class ApplySubstituteTest {

@@ -2,8 +2,8 @@ package nars.perception;
 
 import nars.operator.ImaginationSpace;
 import java.util.HashSet;
-import nars.NAR;
-import nars.config.Parameters;
+import nars.main.NAR;
+import nars.main.Parameters;
 import nars.entity.TruthValue;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;

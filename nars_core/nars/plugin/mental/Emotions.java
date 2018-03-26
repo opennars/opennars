@@ -1,7 +1,7 @@
 package nars.plugin.mental;
 
-import nars.NAR;
-import nars.config.Parameters;
+import nars.main.NAR;
+import nars.main.Parameters;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
@@ -9,7 +9,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.parser.Symbols;
+import nars.io.Symbols;
 import nars.language.Inheritance;
 import nars.language.SetInt;
 import nars.language.Term;

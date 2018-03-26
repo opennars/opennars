@@ -9,7 +9,7 @@ import automenta.vivisect.graph.AbstractGraphVis;
 import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Concept;
 import nars.entity.Item;
 import nars.entity.Task;

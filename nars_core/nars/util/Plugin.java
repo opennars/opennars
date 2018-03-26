@@ -1,7 +1,7 @@
 package nars.util;
 
 import java.io.Serializable;
-import nars.NAR;
+import nars.main.NAR;
 
 /**
  * NAR plugin interface

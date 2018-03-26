@@ -21,7 +21,7 @@
 package nars.inference;
 
 import java.util.List;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.control.ConceptProcessing;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
@@ -38,8 +38,8 @@ import static nars.inference.TemporalRules.analogyOrder;
 import static nars.inference.TemporalRules.dedExeOrder;
 import static nars.inference.TemporalRules.resemblanceOrder;
 import static nars.inference.TemporalRules.reverseOrder;
-import nars.parser.Symbols;
-import nars.parser.Symbols.NativeOperator;
+import nars.io.Symbols;
+import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Equivalence;

@@ -3,7 +3,7 @@ package nars.lab.launcher;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.storage.Memory;
-import nars.NAR;
+import nars.main.NAR;
 import nars.gui.NARSwing;
 
 /**

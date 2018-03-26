@@ -16,13 +16,13 @@
  */
 package nars.core;
 
-import nars.NAR;
-import nars.config.Parameters;
+import nars.main.NAR;
+import nars.main.Parameters;
 import java.util.TreeSet;
 import nars.entity.Concept;
-import nars.parser.Symbols.NativeOperator;
+import nars.io.Symbols.NativeOperator;
 import nars.util.Texts;
-import nars.parser.Narsese;
+import nars.io.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Statement;

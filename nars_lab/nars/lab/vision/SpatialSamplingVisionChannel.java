@@ -2,7 +2,7 @@ package nars.lab.vision;
 
 import java.util.ArrayList;
 import java.util.List;
-import nars.NAR;
+import nars.main.NAR;
 import nars.control.DerivationContext;
 import static nars.control.TemporalInferenceControl.proceedWithTemporalInduction;
 import nars.entity.Sentence;

@@ -6,9 +6,9 @@
 
 package nars.web;
 
-import nars.NAR;
-import nars.output.TextOutputHandler;
-import nars.output.TextOutputHandler.LineOutput;
+import nars.main.NAR;
+import nars.io.handlers.TextOutputHandler;
+import nars.io.handlers.TextOutputHandler.LineOutput;
 
 /**
  * An instance of a web socket session to a NAR

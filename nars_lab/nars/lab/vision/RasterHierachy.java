@@ -13,7 +13,7 @@ import boofcv.struct.image.Planar;
 import com.github.sarxos.webcam.Webcam;
 //import georegression.struct.point.Point2D_I32;
 import nars.gui.NARSwing;
-import nars.NAR;
+import nars.main.NAR;
 //import org.infinispan.commons.hash.Hash;
 
 import javax.swing.*;

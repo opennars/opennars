@@ -21,7 +21,7 @@
 package nars.inference;
 
 import java.util.ArrayList;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.util.Events.Answer;
 import nars.util.Events.Unsolved;
 import nars.storage.Memory;
@@ -37,8 +37,8 @@ import nars.entity.TruthValue;
 import static nars.inference.TemporalRules.matchingOrder;
 import static nars.inference.TemporalRules.reverseOrder;
 import static nars.inference.TruthFunctions.temporalProjection;
-import nars.output.OutputHandler;
-import nars.parser.Symbols;
+import nars.io.handlers.OutputHandler;
+import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import static nars.language.CompoundTerm.extractIntervals;
 import static nars.language.CompoundTerm.replaceIntervals;

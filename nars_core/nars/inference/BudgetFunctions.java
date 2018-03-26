@@ -24,7 +24,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import nars.storage.Memory;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;

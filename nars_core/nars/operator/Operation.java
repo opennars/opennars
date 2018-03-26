@@ -21,9 +21,9 @@
 package nars.operator;
 
 import nars.entity.Task;
-import nars.parser.Symbols;
-import static nars.parser.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.parser.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
+import nars.io.Symbols;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;

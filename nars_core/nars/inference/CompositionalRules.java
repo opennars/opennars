@@ -21,7 +21,7 @@
 package nars.inference;
 
 import java.util.HashMap;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.control.DerivationContext;
@@ -36,7 +36,7 @@ import static nars.inference.TruthFunctions.reduceConjunction;
 import static nars.inference.TruthFunctions.reduceConjunctionNeg;
 import static nars.inference.TruthFunctions.reduceDisjunction;
 import static nars.inference.TruthFunctions.union;
-import nars.parser.Symbols;
+import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.DifferenceExt;
