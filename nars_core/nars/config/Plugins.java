@@ -1,8 +1,6 @@
 package nars.config;
 
 import nars.NAR;
-import nars.NAR.RuntimeParameters;
-import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
 import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.InternalExperience;
