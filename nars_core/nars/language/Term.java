@@ -24,11 +24,11 @@ import java.io.Serializable;
 import java.util.*;
 
 import nars.storage.Memory;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.operator.ImaginationSpace;
 import nars.inference.TemporalRules;
-import nars.parser.Symbols;
-import nars.parser.Symbols.NativeOperator;
+import nars.io.Symbols;
+import nars.io.Symbols.NativeOperator;
 import nars.util.Texts;
 import nars.operator.Operation;
 import nars.operator.Operator;

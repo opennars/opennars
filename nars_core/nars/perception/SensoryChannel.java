@@ -1,6 +1,6 @@
 package nars.perception;
 
-import nars.parser.Narsese;
+import nars.io.Narsese;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.language.Term;

@@ -4,7 +4,7 @@
  */
 package nars.control;
 
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.entity.Concept;
 import nars.util.Events;
 import nars.entity.Task;

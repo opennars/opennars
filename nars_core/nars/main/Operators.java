@@ -1,6 +1,6 @@
-package nars.config;
+package nars.main;
 
-import nars.NAR;
+import nars.main.NAR;
 import nars.operator.NullOperator;
 import nars.operator.Operator;
 import nars.operator.misc.Add;

@@ -21,7 +21,7 @@
 package nars.inference;
 
 import static java.lang.Math.abs;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.entity.TruthValue;
 
 /**

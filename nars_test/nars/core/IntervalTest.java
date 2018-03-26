@@ -2,7 +2,7 @@ package nars.core;
 
 import java.util.List;
 import nars.storage.Memory;
-import nars.NAR;
+import nars.main.NAR;
 import nars.language.Interval;
 import nars.language.Interval.AtomicDuration;
 import static org.junit.Assert.assertEquals;

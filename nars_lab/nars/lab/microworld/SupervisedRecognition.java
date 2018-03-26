@@ -5,12 +5,12 @@
 package nars.lab.microworld;
 
 import java.util.HashMap;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.output.AnswerHandler;
-import nars.parser.Narsese;
+import nars.io.handlers.AnswerHandler;
+import nars.io.Narsese;
 
 /**
  *

@@ -31,7 +31,7 @@ import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.CyclesEnd;
 import nars.util.Events.TaskAdd;
 import nars.util.Events.TaskRemove;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TaskLink;

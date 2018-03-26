@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JTextField;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;

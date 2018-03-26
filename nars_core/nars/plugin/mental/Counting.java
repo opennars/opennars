@@ -3,19 +3,18 @@ package nars.plugin.mental;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events;
 import nars.storage.Memory;
-import nars.NAR;
+import nars.main.NAR;
 import nars.util.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.parser.Symbols;
+import nars.io.Symbols;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.SetExt;
 import nars.language.Term;
-import nars.plugin.mental.InternalExperience;
 
 /**
  * Counting and Cardinality

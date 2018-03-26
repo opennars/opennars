@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.output.TextOutputHandler;
+import nars.io.handlers.TextOutputHandler;
 import nars.operator.Operator.ExecutionResult;
 
 /**

@@ -6,8 +6,8 @@
 package nars.plugin.misc;
 
 import nars.util.Plugin;
-import nars.NAR;
-import nars.config.Parameters;
+import nars.main.NAR;
+import nars.main.Parameters;
 
 /**
  *

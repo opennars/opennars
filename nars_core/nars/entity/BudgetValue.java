@@ -21,10 +21,10 @@
 package nars.entity;
 
 import java.io.Serializable;
-import nars.config.Parameters;
-import static nars.config.Parameters.TRUTH_EPSILON;
+import nars.main.Parameters;
+import static nars.main.Parameters.TRUTH_EPSILON;
 import nars.inference.BudgetFunctions;
-import nars.parser.Symbols;
+import nars.io.Symbols;
 import nars.util.Texts;
 import static nars.inference.UtilityFunctions.and;
 import static nars.inference.UtilityFunctions.aveGeo;

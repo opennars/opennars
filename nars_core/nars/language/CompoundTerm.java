@@ -25,13 +25,13 @@ import java.nio.CharBuffer;
 import java.util.*;
 
 import nars.storage.Memory;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;
-import nars.parser.Symbols;
-import nars.parser.Symbols.NativeOperator;
-import static nars.parser.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.parser.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
+import nars.io.Symbols;
+import nars.io.Symbols.NativeOperator;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.makeCompoundName;
 import static nars.language.Interval.interval;
 

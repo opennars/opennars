@@ -48,12 +48,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import nars.NAR;
+import nars.main.NAR;
 import nars.gui.FileTreeModel;
 import nars.gui.input.TextInputPanel.InputAction;
 import nars.gui.input.TextInputPanel.TextInputMode;
 import static nars.gui.output.SwingLogPanel.setConsoleFont;
-import nars.output.OutputHandler.OUT;
+import nars.io.handlers.OutputHandler.OUT;
 
 
 public class TextInputPanel extends NPanel /*implements ActionListener*/ {

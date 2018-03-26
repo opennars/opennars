@@ -7,12 +7,12 @@ package nars.lab.testutils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import nars.util.Events.Answer;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.output.EventHandler;
-import nars.output.OutputHandler.OUT;
-import nars.parser.Narsese;
+import nars.io.handlers.EventHandler;
+import nars.io.handlers.OutputHandler.OUT;
+import nars.io.Narsese;
 import nars.language.Term;
 
 /**

@@ -1,7 +1,7 @@
 package nars.lab.microworld;
 
 import nars.storage.Memory;
-import nars.NAR;
+import nars.main.NAR;
 //import nars.nal.nal8.Operation;
 //import nars.nal.nal8.operator.SyncOperator;
 //import nars.nar.Default;

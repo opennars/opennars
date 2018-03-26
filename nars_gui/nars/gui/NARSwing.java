@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import nars.NAR;
-import nars.output.TextOutputHandler;
+import nars.main.NAR;
+import nars.io.handlers.TextOutputHandler;
 
 /**
  * The main Swing GUI class of the open-nars project.  

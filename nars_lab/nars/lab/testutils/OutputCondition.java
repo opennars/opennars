@@ -7,8 +7,8 @@ package nars.lab.testutils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import nars.NAR;
-import nars.output.OutputHandler;
+import nars.main.NAR;
+import nars.io.handlers.OutputHandler;
 
 /**
  * Monitors an output stream for certain conditions. Used in testing and

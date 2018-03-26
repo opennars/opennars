@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Concept;
 import nars.language.Term;
 

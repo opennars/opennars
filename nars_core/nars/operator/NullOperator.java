@@ -22,7 +22,7 @@ package nars.operator;
 
 import java.util.List;
 import nars.storage.Memory;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.entity.Task;
 import nars.language.Term;
 

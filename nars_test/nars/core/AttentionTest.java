@@ -5,7 +5,7 @@
 package nars.core;
 
 
-import nars.NAR;
+import nars.main.NAR;
 import com.google.common.collect.Iterables;
 import java.util.HashSet;
 import java.util.Set;

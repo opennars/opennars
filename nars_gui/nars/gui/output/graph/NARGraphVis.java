@@ -27,7 +27,7 @@ import javax.swing.JTextField;
 import nars.util.EventEmitter.EventObserver;
 import nars.util.Events.CyclesEnd;
 import nars.util.Events.ResetEnd;
-import nars.NAR;
+import nars.main.NAR;
 import nars.gui.output.graph.layout.CircleLayout;
 import nars.gui.util.DefaultGraphizer;
 import nars.gui.util.NARGraph;

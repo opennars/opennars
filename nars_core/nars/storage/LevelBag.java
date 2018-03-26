@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import nars.config.Parameters;
+import nars.main.Parameters;
 import nars.entity.Item;
 
 /**

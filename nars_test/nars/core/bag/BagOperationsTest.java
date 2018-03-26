@@ -4,7 +4,7 @@
  */
 package nars.core.bag;
 
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;

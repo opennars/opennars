@@ -1,11 +1,11 @@
 package nars.language;
 
 import java.util.Objects;
-import nars.config.Parameters;
-import nars.parser.Symbols;
-import nars.parser.Symbols.NativeOperator;
-import static nars.parser.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.parser.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
+import nars.main.Parameters;
+import nars.io.Symbols;
+import nars.io.Symbols.NativeOperator;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 
 /**
  *

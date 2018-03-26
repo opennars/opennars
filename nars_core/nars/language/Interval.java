@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import nars.storage.Memory;
-import nars.parser.Symbols;
+import nars.io.Symbols;
 
 /**
  * This stores the magnitude of a time difference, which is the logarithm of the time difference

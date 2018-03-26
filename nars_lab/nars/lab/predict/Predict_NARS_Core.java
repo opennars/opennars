@@ -17,16 +17,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import nars.util.Events.TaskImmediateProcess;
-import nars.NAR;
-import nars.config.Parameters;
+import nars.main.NAR;
+import nars.main.Parameters;
 import nars.control.DerivationContext;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.inference.TruthFunctions;
-import nars.output.AnswerHandler;
+import nars.io.handlers.AnswerHandler;
 import nars.lab.ioutils.ChangedTextInput;
-import nars.parser.Narsese;
+import nars.io.Narsese;
 import nars.language.Term;
 
 /**

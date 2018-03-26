@@ -21,7 +21,7 @@
 package nars.language;
 
 import java.util.Arrays;
-import nars.parser.Symbols.NativeOperator;
+import nars.io.Symbols.NativeOperator;
 
 /**
  * An intension image.

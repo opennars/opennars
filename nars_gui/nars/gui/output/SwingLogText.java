@@ -8,14 +8,14 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import javax.swing.AbstractAction;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.TruthFunctions;
 import nars.inference.UtilityFunctions;
-import nars.output.OutputHandler.OUT;
+import nars.io.handlers.OutputHandler.OUT;
 
 
 public class SwingLogText extends SwingText  {

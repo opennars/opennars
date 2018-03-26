@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nars.NAR;
+import nars.main.NAR;
 import nars.entity.Sentence;
 import nars.gui.NARSwing;
-import nars.output.AnswerHandler;
+import nars.io.handlers.AnswerHandler;
 
 /**
  *
