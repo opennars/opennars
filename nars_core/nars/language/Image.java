@@ -11,8 +11,6 @@ import static nars.parser.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
  *
  * @author me
  */
-
-
 abstract public class Image extends CompoundTerm {
     /** The index of relation in the component list */
     public final short relationIndex;
@@ -30,7 +28,6 @@ abstract public class Image extends CompoundTerm {
         super.init(components);
         this.hash = Objects.hash(super.hashCode(), relationIndex); 
     }
-
     
     @Override
     public int hashCode() {
@@ -54,11 +51,6 @@ abstract public class Image extends CompoundTerm {
         }
         return super.compareTo(that);
     }
-
-    
-    
-    
-    
 
     //TODO replace with a special Term type
     public static boolean isPlaceHolder(final Term t) {
@@ -95,8 +87,7 @@ abstract public class Image extends CompoundTerm {
         }
         name.append(COMPOUND_TERM_CLOSER.ch);
         return name.toString();
-    }
-    
+    }    
     
     /**
      * Get the other term in the Image
@@ -107,9 +98,6 @@ abstract public class Image extends CompoundTerm {
     public CharSequence makeName() {
         return makeImageName(operator(), term, relationIndex);
     }
-
-
-    
 
     /**
      * Get the relation term in the Image
@@ -128,9 +116,6 @@ abstract public class Image extends CompoundTerm {
             return null;
         }
         return (relationIndex == 0) ? term[1] : term[0];
-    }    
-
-    
-    
+    }
 }
 
