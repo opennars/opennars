@@ -443,8 +443,6 @@ public class Stamp implements Cloneable, Serializable {
                 buffer.append(Long.toString(evidentialBase[i]));
                 if (i < (baseLength - 1)) {
                     buffer.append(Symbols.STAMP_SEPARATOR);
-                } else {
-                    buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
                 }
             }
             buffer.append(Symbols.STAMP_CLOSER).append(' ');
