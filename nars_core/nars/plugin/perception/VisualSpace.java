@@ -1,4 +1,4 @@
-package nars.perception;
+package nars.plugin.perception;
 
 import nars.operator.ImaginationSpace;
 import java.util.HashSet;
