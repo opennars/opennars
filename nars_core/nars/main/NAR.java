@@ -34,7 +34,7 @@ import nars.io.Narsese;
 import nars.io.Narsese.InvalidInputException;
 import nars.language.Tense;
 import nars.operator.Operator;
-import nars.perception.SensoryChannel;
+import nars.plugin.perception.SensoryChannel;
 import nars.language.Term;
 import nars.storage.LevelBag;
 import nars.io.events.Events.CyclesEnd;
