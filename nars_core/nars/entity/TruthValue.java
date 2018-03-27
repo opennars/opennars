@@ -24,7 +24,7 @@ import java.io.Serializable;
 import nars.main.Parameters;
 import static nars.main.Parameters.TRUTH_EPSILON;
 import nars.io.Symbols;
-import nars.util.Texts;
+import nars.io.Texts;
 import nars.language.Term;
 
 

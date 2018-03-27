@@ -13,7 +13,7 @@ import nars.io.Symbols;
 import nars.language.Inheritance;
 import nars.language.SetInt;
 import nars.language.Term;
-import nars.util.Plugin;
+import nars.plugin.Plugin;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
 public class Emotions implements Plugin {

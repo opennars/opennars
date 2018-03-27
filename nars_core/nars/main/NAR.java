@@ -1,10 +1,10 @@
 package nars.main;
 
 import java.io.BufferedReader;
-import nars.util.Plugin;
+import nars.plugin.Plugin;
 import nars.storage.Memory;
-import nars.util.Events;
-import nars.util.EventEmitter;
+import nars.io.events.Events;
+import nars.io.events.EventEmitter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,15 +20,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nars.util.EventEmitter.EventObserver;
+import nars.io.events.EventEmitter.EventObserver;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.language.Interval;
-import nars.io.handlers.AnswerHandler;
-import nars.io.handlers.OutputHandler.ERR;
+import nars.io.events.AnswerHandler;
+import nars.io.events.OutputHandler.ERR;
 import nars.io.Symbols;
 import nars.io.Narsese;
 import nars.io.Narsese.InvalidInputException;
@@ -37,8 +37,8 @@ import nars.operator.Operator;
 import nars.perception.SensoryChannel;
 import nars.language.Term;
 import nars.storage.LevelBag;
-import nars.util.Events.CyclesEnd;
-import nars.util.Events.CyclesStart;
+import nars.io.events.Events.CyclesEnd;
+import nars.io.events.Events.CyclesStart;
 
 
 /**

@@ -25,7 +25,7 @@ import nars.main.Parameters;
 import static nars.io.Symbols.VAR_DEPENDENT;
 import static nars.io.Symbols.VAR_INDEPENDENT;
 import static nars.io.Symbols.VAR_QUERY;
-import nars.util.Texts;
+import nars.io.Texts;
 import static nars.language.Variable.newName;
 
 /**

@@ -14,8 +14,8 @@ import static java.awt.event.KeyEvent.CHAR_UNDEFINED;
 import java.awt.event.KeyListener;
 import javax.swing.JTextArea;
 import nars.main.NAR;
-import nars.util.Texts;
-import static nars.util.Texts.n2;
+import nars.io.Texts;
+import static nars.io.Texts.n2;
 
 /**
  * Direct keyboard input

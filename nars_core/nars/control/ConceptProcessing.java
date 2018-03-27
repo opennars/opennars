@@ -7,12 +7,12 @@ import nars.main.Parameters;
 import nars.entity.*;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
-import nars.io.handlers.OutputHandler;
+import nars.io.events.OutputHandler;
 import nars.io.Symbols;
 import nars.language.*;
 import nars.operator.Operation;
 import nars.plugin.mental.InternalExperience;
-import nars.util.Events;
+import nars.io.events.Events;
 import nars.storage.LevelBag;
 
 import static nars.inference.LocalRules.revisible;

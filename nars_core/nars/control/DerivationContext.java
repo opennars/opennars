@@ -6,11 +6,11 @@ package nars.control;
 
 import java.util.ArrayList;
 import java.util.List;
-import nars.util.Events;
+import nars.io.events.Events;
 import nars.storage.Memory;
 import nars.main.NAR;
 import nars.main.Parameters;
-import nars.util.Plugin;
+import nars.plugin.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;

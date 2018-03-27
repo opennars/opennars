@@ -1,7 +1,6 @@
-package nars.io.handlers;
+package nars.io.events;
 
 import nars.main.NAR;
-import nars.util.EventEmitter;
 
 /**
  *

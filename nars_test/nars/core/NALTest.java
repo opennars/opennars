@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import nars.gui.InferenceLogger;
-import nars.io.handlers.TextOutputHandler;
+import nars.io.events.TextOutputHandler;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;

@@ -1,4 +1,4 @@
-package nars.util;
+package nars.plugin;
 
 import java.io.Serializable;
 import nars.main.NAR;

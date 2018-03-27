@@ -1,9 +1,9 @@
 package nars.plugin.mental;
 
-import nars.util.Plugin;
+import nars.plugin.Plugin;
 import java.util.Arrays;
-import nars.util.EventEmitter.EventObserver;
-import nars.util.Events;
+import nars.io.events.EventEmitter.EventObserver;
+import nars.io.events.Events;
 import nars.storage.Memory;
 import nars.main.NAR;
 import nars.main.Parameters;

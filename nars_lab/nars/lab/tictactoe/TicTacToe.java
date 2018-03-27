@@ -37,18 +37,18 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import nars.util.EventEmitter.EventObserver;
+import nars.io.events.EventEmitter.EventObserver;
 import nars.storage.Memory;
 import nars.main.NAR;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.io.handlers.OutputHandler.OUT;
+import nars.io.events.OutputHandler.OUT;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.util.Events.CyclesEnd;
+import nars.io.events.Events.CyclesEnd;
 
 /**
  *

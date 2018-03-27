@@ -20,7 +20,7 @@ import javax.swing.*;
 import nars.main.NAR;
 import nars.main.Parameters;
 import nars.entity.Sentence;
-import nars.io.handlers.AnswerHandler;
+import nars.io.events.AnswerHandler;
 import nars.io.Narsese;
 
 

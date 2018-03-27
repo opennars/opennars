@@ -5,11 +5,11 @@
 package nars.lab.plugin.input;
 
 import java.util.ArrayList;
-import nars.util.EventEmitter;
-import nars.util.Events;
+import nars.io.events.EventEmitter;
+import nars.io.events.Events;
 import nars.main.NAR;
 import nars.main.Parameters;
-import nars.util.Plugin;
+import nars.plugin.Plugin;
 import nars.control.DerivationContext;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;

@@ -30,7 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.main.NAR;
-import nars.io.handlers.TextOutputHandler;
+import nars.io.events.TextOutputHandler;
 
 /**
  * The main Swing GUI class of the open-nars project.  

@@ -45,8 +45,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import nars.util.EventEmitter.EventObserver;
-import nars.util.Events;
+import nars.io.events.EventEmitter.EventObserver;
+import nars.io.events.Events;
 import nars.storage.Memory;
 import nars.main.NAR;
 import nars.main.Parameters;
@@ -56,11 +56,11 @@ import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TaskTree;
 import nars.gui.output.graph.NARGraphPanel;
-import nars.io.handlers.OutputHandler;
-import nars.io.handlers.TextOutputHandler;
+import nars.io.events.OutputHandler;
+import nars.io.events.TextOutputHandler;
 import nars.language.Interval.PortableInteger;
-import nars.util.Events.CycleEnd;
-import nars.util.Events.CyclesEnd;
+import nars.io.events.Events.CycleEnd;
+import nars.io.events.Events.CyclesEnd;
 
 public class NARControls extends JPanel implements ActionListener, EventObserver {
 

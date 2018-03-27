@@ -25,7 +25,7 @@ import nars.main.Parameters;
 import static nars.main.Parameters.TRUTH_EPSILON;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
-import nars.util.Texts;
+import nars.io.Texts;
 import static nars.inference.UtilityFunctions.and;
 import static nars.inference.UtilityFunctions.aveGeo;
 import static nars.inference.UtilityFunctions.or;

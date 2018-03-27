@@ -1,5 +1,6 @@
 package nars.util;
 
+import nars.io.Texts;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
