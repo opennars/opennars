@@ -72,6 +72,9 @@ public class PluginPanel extends VerticalPanel {
                     continue;
                 
                 String[] p = c.getPackage().getName().split("\\.");
+                if(p.length < 3) {
+                    continue;
+                }
                 String category = p[2];
                 JMenu j = menus.get(category);
                 if (j == null) {
