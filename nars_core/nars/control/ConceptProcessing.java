@@ -296,8 +296,9 @@ public class ConceptProcessing {
                     //see whether the goal evidence is fully included in the old goal, if yes don't execute
                     //as execution for this reason already happened (or did not since there was evidence against it)
                     HashSet<Long> oldEvidence = new HashSet<Long>();
-                    boolean Subset=true;
+                    boolean Subset=false;
                     if(oldGoalT != null) {
+                        Subset = true;
                         for(Long l: oldGoalT.sentence.stamp.evidentialBase) {
                             oldEvidence.add(l);
                         }
