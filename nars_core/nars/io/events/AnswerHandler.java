@@ -2,10 +2,10 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.io.handlers;
+package nars.io.events;
 
-import nars.util.EventEmitter.EventObserver;
-import nars.util.Events.Answer;
+import nars.io.events.EventEmitter.EventObserver;
+import nars.io.events.Events.Answer;
 import nars.main.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;

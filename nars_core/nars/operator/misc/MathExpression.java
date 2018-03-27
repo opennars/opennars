@@ -2,8 +2,8 @@ package nars.operator.misc;
 
 import java.util.List;
 import nars.storage.Memory;
-import nars.util.Texts;
-import static nars.util.Texts.unescape;
+import nars.io.Texts;
+import static nars.io.Texts.unescape;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;

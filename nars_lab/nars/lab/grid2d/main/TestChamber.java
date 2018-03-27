@@ -1,8 +1,8 @@
 package nars.lab.grid2d.main;
 
 import java.util.List;
-import nars.util.EventEmitter.EventObserver;
-import nars.util.Events;
+import nars.io.events.EventEmitter.EventObserver;
+import nars.io.events.Events;
 import nars.main.NAR;
 import nars.main.Parameters;
 import nars.lab.grid2d.main.Cell.Logic;

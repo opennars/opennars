@@ -32,7 +32,7 @@ import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.inference.TruthFunctions.EternalizedTruthValue;
 import nars.io.Symbols;
-import nars.util.Texts;
+import nars.io.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Equivalence;

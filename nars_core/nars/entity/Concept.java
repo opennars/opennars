@@ -26,11 +26,11 @@ import java.util.Collections;
 import java.util.List;
 
 import nars.control.ConceptProcessing;
-import nars.util.Events.BeliefSelect;
-import nars.util.Events.TaskLinkAdd;
-import nars.util.Events.TaskLinkRemove;
-import nars.util.Events.TermLinkAdd;
-import nars.util.Events.TermLinkRemove;
+import nars.io.events.Events.BeliefSelect;
+import nars.io.events.Events.TaskLinkAdd;
+import nars.io.events.Events.TaskLinkRemove;
+import nars.io.events.Events.TermLinkAdd;
+import nars.io.events.Events.TermLinkRemove;
 import nars.storage.Memory;
 import nars.main.Shell;
 import nars.main.Parameters;

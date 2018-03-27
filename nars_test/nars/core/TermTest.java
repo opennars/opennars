@@ -21,7 +21,7 @@ import nars.main.Parameters;
 import java.util.TreeSet;
 import nars.entity.Concept;
 import nars.io.Symbols.NativeOperator;
-import nars.util.Texts;
+import nars.io.Texts;
 import nars.io.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Inheritance;

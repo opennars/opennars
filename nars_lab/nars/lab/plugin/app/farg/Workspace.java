@@ -5,8 +5,8 @@
 
 package nars.lab.plugin.app.farg;
 
-import nars.util.EventEmitter.EventObserver;
-import nars.util.Events.CycleEnd;
+import nars.io.events.EventEmitter.EventObserver;
+import nars.io.events.Events.CycleEnd;
 import nars.main.NAR;
 import nars.entity.Concept;
 import nars.storage.LevelBag;

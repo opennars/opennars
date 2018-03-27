@@ -20,7 +20,7 @@
  */
 package nars.inference;
 
-import nars.util.Events;
+import nars.io.events.Events;
 import nars.storage.Memory;
 import nars.main.Parameters;
 import nars.control.DerivationContext;

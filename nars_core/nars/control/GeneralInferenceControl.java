@@ -6,7 +6,7 @@ package nars.control;
 
 import nars.main.Parameters;
 import nars.entity.Concept;
-import nars.util.Events;
+import nars.io.events.Events;
 import nars.entity.Task;
 import nars.entity.TermLink;
 import nars.inference.BudgetFunctions;

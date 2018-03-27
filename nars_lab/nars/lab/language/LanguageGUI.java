@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import nars.main.NAR;
 import nars.entity.Sentence;
 import nars.gui.NARSwing;
-import nars.io.handlers.AnswerHandler;
+import nars.io.events.AnswerHandler;
 
 /**
  *

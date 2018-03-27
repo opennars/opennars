@@ -1,5 +1,5 @@
 
-package nars.util;
+package nars.io.events;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

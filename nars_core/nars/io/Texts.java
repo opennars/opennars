@@ -1,4 +1,4 @@
-package nars.util;
+package nars.io;
 
 import nars.io.Symbols;
 import java.nio.CharBuffer;

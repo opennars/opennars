@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import nars.main.NAR;
-import nars.io.handlers.OutputHandler;
+import nars.io.events.OutputHandler;
 
 /**
  * Monitors an output stream for certain conditions. Used in testing and

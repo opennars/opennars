@@ -12,7 +12,6 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.util.Texts;
 import static nars.inference.BudgetFunctions.truthToQuality;
 import static nars.io.Symbols.ARGUMENT_SEPARATOR;
 import static nars.io.Symbols.BUDGET_VALUE_MARK;

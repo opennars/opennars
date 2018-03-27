@@ -26,7 +26,7 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.main.NAR;
-import nars.io.handlers.TextOutputHandler;
+import nars.io.events.TextOutputHandler;
 
 /**
  * Run Reasoner

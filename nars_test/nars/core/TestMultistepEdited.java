@@ -1,7 +1,7 @@
 package nars.core;
 
 import nars.main.NAR;
-import nars.io.handlers.TextOutputHandler;
+import nars.io.events.TextOutputHandler;
 import org.junit.Test;
 
 /**

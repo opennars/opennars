@@ -1,10 +1,10 @@
 package nars.plugin.mental;
 
-import nars.util.Plugin;
+import nars.plugin.Plugin;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
-import nars.util.EventEmitter.EventObserver;
-import nars.util.Events.TaskDerive;
+import nars.io.events.EventEmitter.EventObserver;
+import nars.io.events.Events.TaskDerive;
 import nars.storage.Memory;
 import nars.main.NAR;
 import nars.main.Parameters;

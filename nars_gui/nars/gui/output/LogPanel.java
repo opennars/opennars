@@ -32,11 +32,11 @@ import nars.gui.InferenceLogger;
 import nars.gui.InferenceLogger.LogOutput;
 import nars.gui.NARControls;
 import nars.gui.WrapLayout;
-import nars.io.handlers.EventHandler;
-import nars.io.handlers.OutputHandler;
-import nars.io.handlers.OutputHandler.ERR;
-import nars.io.handlers.OutputHandler.EXE;
-import nars.io.handlers.TextOutputHandler;
+import nars.io.events.EventHandler;
+import nars.io.events.OutputHandler;
+import nars.io.events.OutputHandler.ERR;
+import nars.io.events.OutputHandler.EXE;
+import nars.io.events.TextOutputHandler;
 
 abstract public class LogPanel extends NPanel implements LogOutput {
 

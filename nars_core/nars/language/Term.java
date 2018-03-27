@@ -29,7 +29,7 @@ import nars.operator.ImaginationSpace;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import nars.util.Texts;
+import nars.io.Texts;
 import nars.operator.Operation;
 import nars.operator.Operator;
 //import nars.util.sort.SortedList;

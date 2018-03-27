@@ -21,7 +21,7 @@
 
 package nars.operator;
 
-import nars.util.Plugin;
+import nars.plugin.Plugin;
 import java.util.Arrays;
 import java.util.List;
 import nars.storage.Memory;
@@ -30,7 +30,7 @@ import nars.main.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.io.handlers.OutputHandler.EXE;
+import nars.io.events.OutputHandler.EXE;
 import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;

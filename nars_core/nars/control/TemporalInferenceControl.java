@@ -20,7 +20,7 @@ import nars.language.CompoundTerm;
 import nars.operator.Operation;
 import nars.storage.LevelBag;
 import nars.storage.Memory;
-import nars.util.Events;
+import nars.io.events.Events;
 
 /**
  *

@@ -24,11 +24,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
-import nars.util.EventEmitter.EventObserver;
-import nars.util.Events;
+import nars.io.events.EventEmitter.EventObserver;
+import nars.io.events.Events;
 import nars.main.NAR;
 import nars.main.NAR.PluginState;
-import nars.util.Plugin;
+import nars.plugin.Plugin;
 import nars.gui.util.PackageUtility;
 
 /**
