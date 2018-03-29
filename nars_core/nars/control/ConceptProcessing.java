@@ -621,10 +621,14 @@ public class ConceptProcessing {
         }
         
         Term T = ((Statement)concept.negConfirmation.getTerm()).getPredicate();
-        Sentence s2 = new Sentence(T, Symbols.JUDGMENT_MARK, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
+        Sentence s1 = new Sentence(T, Symbols.JUDGMENT_MARK, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
                         new Stamp(concept.memory));
-        Task negated = new Task(s2,concept.negConfirmation.getBudget().clone(),true);
-        concept.memory.inputTask(negated, false); //disappointed
+        Sentence s2 = new Sentence(Negation.make(T), Symbols.JUDGMENT_MARK, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
+                        new Stamp(concept.memory));
+        Task negated1 = new Task(s1,concept.negConfirmation.getBudget().clone(),true);
+        Task negated2 = new Task(s2,concept.negConfirmation.getBudget().clone(),true);
+        concept.memory.inputTask(negated1, false); //disappointed
+        concept.memory.inputTask(negated2, false); //disappointed
         concept.memory.emit(OutputHandler.DISAPPOINT.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
         concept.negConfirmation = null;
     }
