@@ -516,14 +516,13 @@ public class ConceptProcessing {
         //derivation was successful and it was a judgment event
         
         try { //that was predicted by an eternal belief that shifted time
-        float immediateDisappointmentConfidence = 0.33f; //same as induction + eternalization if input confs
         Stamp stamp = new Stamp(nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         //long serial = stamp.evidentialBase[0];
         Sentence s = new Sentence(
             mainSentence.term,
             mainSentence.punctuation,
-            new TruthValue(0.0f, immediateDisappointmentConfidence),
+            new TruthValue(0.0f, 0.0f),
             stamp);
 
         //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
@@ -621,10 +620,11 @@ public class ConceptProcessing {
             return;
         }
         
-        concept.memory.inputTask(concept.negConfirmation, false); //disappointed
-        //if(this.negConfirmationPriority >= 2) {
-        //    System.out.println(this.negConfirmation.sentence.term);
-        //}
+        Term T = ((Statement)concept.negConfirmation.getTerm()).getPredicate();
+        Sentence s2 = new Sentence(T, Symbols.JUDGMENT_MARK, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
+                        new Stamp(concept.memory));
+        Task negated = new Task(s2,concept.negConfirmation.getBudget().clone(),true);
+        concept.memory.inputTask(negated, false); //disappointed
         concept.memory.emit(OutputHandler.DISAPPOINT.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
         concept.negConfirmation = null;
     }
