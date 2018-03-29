@@ -274,6 +274,7 @@ public class ConceptProcessing {
             }
 
             double Satisfaction=1.0-AntiSatisfaction;
+            task.setPriority(task.getPriority()* (float)AntiSatisfaction);
             TruthValue T=goal.truth.clone();
 
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
