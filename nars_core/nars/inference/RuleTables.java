@@ -150,6 +150,9 @@ public class RuleTables {
                                 SyllogisticRules.detachment(taskSentence, belief, bIndex, nal);
                             }
                         } //else {
+                        if(taskSentence.term instanceof Inheritance || taskSentence.term instanceof Similarity) {
+                            StructuralRules.transformNegation((CompoundTerm) Negation.make(taskSentence.term), nal);
+                        }
                         try {
                             goalFromQuestion(task, taskTerm, nal); 
                         }catch(Exception ex) {
