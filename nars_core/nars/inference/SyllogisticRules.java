@@ -551,20 +551,20 @@ public final class SyllogisticRules {
         
         if (newCondition != null) {
              if (newCondition instanceof Interval) {
-                 content = premise1.getPredicate();
-                 delta = ((Interval) newCondition).getTime(duration);
-                 if(taskSentence.getOccurenceTime() != Stamp.ETERNAL) {
-                    mintime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude - 1, duration);
-                    maxtime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude + 2, duration);
-                    predictedEvent = true;
-                 }
-             } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
-                 Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
-                 delta = interval.getTime(duration);
-                 newCondition = ((CompoundTerm)newCondition).setComponent(0, null, nal.mem());
-                 content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
+                content = premise1.getPredicate();
+                delta = ((Interval) newCondition).getTime(duration);
+                if(taskSentence.getOccurenceTime() != Stamp.ETERNAL) {
+                   mintime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude - 1, duration);
+                   maxtime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude + 2, duration);
+                   predictedEvent = true;
+                }
              } else {
-                 content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
+                while ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
+                    Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
+                    delta += interval.getTime(duration);
+                    newCondition = ((CompoundTerm)newCondition).setComponent(0, null, nal.mem());
+                }
+                content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
              }
                
         } else {
