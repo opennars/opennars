@@ -542,7 +542,7 @@ public class ConceptProcessing {
                 if(c.negConfirmation.sentence.term instanceof Implication) {
                     Implication imp = (Implication) c.negConfirmation.sentence.term;
                     Concept ctarget = nal.memory.concept(imp.getPredicate());
-                    if(ctarget != null && ctarget.getBudget().summary()>=InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE_ANTICIPATION) {
+                    if(ctarget != null && ctarget.getPriority()>=InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE_ANTICIPATION) {
                         ((Anticipate)c.memory.getOperator("^anticipate")).anticipationFeedback(imp.getPredicate(), null, c.memory);
                     }
                 }

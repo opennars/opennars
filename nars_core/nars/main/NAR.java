@@ -202,11 +202,13 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
             this.reset();
             return true;
         }
+        else
         if(text.startsWith("*decisionthreshold=")) {
             Double value = Double.valueOf(text.split("decisionthreshold=")[1]);
             param.decisionThreshold.set(value);
             return true;
         }
+        else
         if(text.startsWith("*volume=")) {
             Integer value = Integer.valueOf(text.split("volume=")[1]);
             param.noiseLevel.set(value);
