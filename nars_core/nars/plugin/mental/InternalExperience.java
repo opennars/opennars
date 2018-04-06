@@ -33,9 +33,9 @@ import nars.operator.Operator;
  */
 public class InternalExperience implements Plugin, EventObserver {
         
-    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f; //0.92
-    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE=0.92f;
-    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_ANTICIPATION=0.92f;
+    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.4f; //0.92
+    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE=0.4f;
+    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_ANTICIPATION=0.25f;
     
     //internal experience has less durability?
     public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
@@ -137,7 +137,7 @@ public class InternalExperience implements Plugin, EventObserver {
         arg[0]=Term.SELF;
         arg[1]=s.getTerm();
         if (s.truth != null) {
-            arg[2] = s.truth.toWordTerm();            
+            arg[2] = s.projection(mem.time(), mem.time()).truth.toWordTerm();            
         }
         
         //Operation.make ?
@@ -190,12 +190,12 @@ public class InternalExperience implements Plugin, EventObserver {
        //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK))) {
         {
             if(task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK) {
-                if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
+                if(task.getPriority()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
                     return false;
                 }
             }
             else
-            if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
+            if(task.getPriority()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                 return false;
             }
         }

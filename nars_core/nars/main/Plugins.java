@@ -1,6 +1,5 @@
 package nars.main;
 
-import nars.main.NAR;
 import nars.operator.mental.Anticipate;
 import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.InternalExperience;
@@ -8,7 +7,6 @@ import nars.plugin.misc.RuntimeNARSettings;
 import nars.plugin.mental.Emotions;
 import nars.plugin.mental.Counting;
 import nars.plugin.mental.Abbreviation;
-import nars.plugin.mental.ComplexEmotions;
 import nars.language.SetInt;
 import nars.language.Term;
 import nars.plugin.perception.VisionChannel;
@@ -22,7 +20,6 @@ public class Plugins {
         n.addPlugin(new RuntimeNARSettings());
         n.addPlugin(new Emotions());
         n.addPlugin(new Anticipate());      // expect an event 
-        n.addPlugin(new ComplexEmotions());
         Term label = SetInt.make(new Term("bright"));
         n.addSensoryChannel(label.toString(),
                             new VisionChannel(label, n, n, 1, 1));

@@ -1,0 +1,7 @@
+<{SELF} --> [hurt]>! %0%
+<(&/,<a --> A>,+1000) =/> <{SELF} --> [hurt]>>.
+<a --> A>. :|:
+//make observable for anticipation:
+<{SELF} --> [hurt]>. :|: %1.0;0.01%
+<(&|,(^want,{SELF},#1,FALSE),(^anticipate,{SELF},#1)) =|> <{SELF} --> [afraid]>>.
+<{SELF} --> [afraid]>?

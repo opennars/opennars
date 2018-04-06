@@ -38,7 +38,7 @@ public class Counting implements Plugin {
                         return;
 
                     Task task = (Task)a[0];
-                    if(task.budget.summary() < InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
+                    if(task.getPriority() < InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                         return;
                     }
 
