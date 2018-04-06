@@ -397,15 +397,13 @@ public final class SyllogisticRules {
             return;
         
         int order = statement.getTemporalOrder();
-        boolean shiftedTimeForward = false;
-        if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
-            long baseTime = subSentence.getOccurenceTime();
-            if (baseTime == Stamp.ETERNAL) {
+        if ((order != ORDER_NONE) && (order!=ORDER_INVALID)) {
+            long baseTime = subSentence.getOccurenceTime(); 
+            if (baseTime == Stamp.ETERNAL) { // =/> always should produce events
                 baseTime = nal.getTime();
             }
             long inc = order * nal.mem().param.duration.get();
             long time = (side == 0) ? baseTime+inc : baseTime-inc;
-            shiftedTimeForward = (side == 0);
             nal.getTheNewStamp().setOccurrenceTime(time);
         }
 
@@ -588,16 +586,11 @@ public final class SyllogisticRules {
         }
         
         if (delta != 0) {
-            long baseTime = (belief.term instanceof Implication) ?
-                taskSentence.getOccurenceTime() : belief.getOccurenceTime();
-            if (baseTime == Stamp.ETERNAL) {
-                baseTime = nal.getTime();
+            long baseTime = taskSentence.getOccurenceTime();
+            if (baseTime != Stamp.ETERNAL) {
+                baseTime += delta;
+                nal.getTheNewStamp().setOccurrenceTime(baseTime);
             }
-            if(premise1.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                return; //https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M - Interval Simplification
-            }
-            baseTime += delta;
-            nal.getTheNewStamp().setOccurrenceTime(baseTime);
         }
         
         TruthValue truth1 = taskSentence.truth;
