@@ -194,10 +194,10 @@ public final class CompositionalRules {
         }
         
         long delta = 0;
-        if ((term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
-                 Interval interval = (Interval) ((CompoundTerm) term2).term[0];
-                 delta = interval.getTime(nal.memory);
-                 term2 = ((CompoundTerm)term2).setComponent(0, null, nal.mem());
+        while ((term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
+            Interval interval = (Interval) ((CompoundTerm) term2).term[0];
+            delta += interval.getTime(nal.memory);
+            term2 = ((CompoundTerm)term2).setComponent(0, null, nal.mem());
         }
         
         Task task = nal.getCurrentTask();
