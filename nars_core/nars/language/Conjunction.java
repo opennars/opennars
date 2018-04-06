@@ -37,17 +37,6 @@ public class Conjunction extends CompoundTerm {
     public final int temporalOrder;
     public final boolean isSpatial;
 
-    public static Term[] removeFirstInterval(Term[] arg) {
-        if(arg[0] instanceof Interval) {
-            Term[] argNew = new Term[arg.length - 1];
-            for(int i=1;i<arg.length;i++) {
-                argNew[i - 1] = arg[i];
-            }
-            return argNew;
-        }
-        return arg;
-    }
-    
     /**
      * Constructor with partial values, called by make
      *
@@ -230,7 +219,8 @@ public class Conjunction extends CompoundTerm {
         }                         // special case: single component
         
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            Term[] newArgList = removeFirstInterval(spatial ? argList : flatten(argList, temporalOrder, spatial));
+            Term[] newArgList = spatial ? argList : flatten(argList, temporalOrder, spatial);
+            
             if(newArgList.length == 1) {
                 return newArgList[0];
             }

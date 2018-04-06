@@ -26,6 +26,7 @@ import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.control.DerivationContext;
 import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.TruthFunctions.comparison;
@@ -191,6 +192,14 @@ public final class CompositionalRules {
         if (term2 == null) {
             return;
         }
+        
+        long delta = 0;
+        if ((term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
+                 Interval interval = (Interval) ((CompoundTerm) term2).term[0];
+                 delta = interval.getTime(nal.memory);
+                 term2 = ((CompoundTerm)term2).setComponent(0, null, nal.mem());
+        }
+        
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         Sentence belief = nal.getCurrentBelief();
@@ -264,6 +273,14 @@ public final class CompositionalRules {
         }
         if (truth != null) {
             BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
+            if (delta != 0) {
+                long baseTime = task.sentence.getOccurenceTime();
+                if (baseTime != Stamp.ETERNAL) {
+                    baseTime += delta;
+                    nal.getTheNewStamp().setOccurrenceTime(baseTime);
+                }
+            }
+            
             nal.doublePremiseTask(content, truth, budget, false, true); //(allow overlap), a form of detachment
         }
     }
