@@ -83,7 +83,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
                 if(i!=Len-1) { //if its not the last one, then there is a next one for which we have to put an interval
                     truth=TruthFunctions.deduction(truth, current.sentence.truth);
                     Task next=eventbuffer.get(j+1);
-                    relterms[k+1]=Interval.interval(next.sentence.getOccurenceTime()-current.sentence.getOccurenceTime(), nal.memory);
+                    relterms[k+1]=new Interval(next.sentence.getOccurenceTime()-current.sentence.getOccurenceTime());
                 }
                 k+=2;
             }
@@ -108,7 +108,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
             }
             //decide on the tense of &/ by looking if the first event happens parallel with the last one
             //Todo refine in 1.6.3 if we want to allow input of difference occurence time
-            boolean after=newEvent.sentence.stamp.after(eventbuffer.get(eventbuffer.size()-1-(Len-1)).sentence.stamp, nal.memory.param.duration.get());
+            boolean after=newEvent.sentence.stamp.after(eventbuffer.get(eventbuffer.size()-1-(Len-1)).sentence.stamp, Parameters.DURATION);
             
             //critical part: (not checked for correctness yet):
             //we now have to look at if the first half + the second half already exists as concept, before we add it

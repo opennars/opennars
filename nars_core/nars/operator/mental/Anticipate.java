@@ -112,11 +112,11 @@ public class Anticipate extends Operator implements EventObserver {
             //since there is no way anymore that the observation would support <(&/,a,+4) =/> b> at this time,
             //also this way it is not applied to early, it seems to be the perfect time to me,
             //making hopeExpirationWindow parameter entirely osbolete
-            Interval Int=Interval.interval(aTime-predictionstarted, nal.memory);
+            Interval Int=new Interval(aTime-predictionstarted);
             //ok we know the magnitude now, let's now construct a interval with magnitude one higher
             //(this we can skip because magnitudeToTime allows it without being explicitly constructed)
             //ok, and what predicted occurence time would that be? because only if now is bigger or equal, didnt happen is true
-            double expiredate=predictionstarted+Interval.magnitudeToTime(Int.magnitude*Parameters.ANTICIPATION_TOLERANCE, nal.memory.param.duration);
+            double expiredate=predictionstarted+Int.time*Parameters.ANTICIPATION_TOLERANCE;
             //
             
             boolean didntHappen = (now>=expiredate);
@@ -191,7 +191,7 @@ public class Anticipate extends Operator implements EventObserver {
             return null; //not as mental operator but as fundamental principle
         }
         
-        anticipate(args[1],memory,memory.time()+memory.param.duration.get(), null);
+        anticipate(args[1],memory,memory.time()+Parameters.DURATION, null);
         
         return null;
     }

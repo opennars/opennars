@@ -1,13 +1,11 @@
 package nars.gui.output;
 
-import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import java.awt.BorderLayout;
 import java.util.Map;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import nars.main.NAR;
 import nars.gui.util.DefaultGraphizer;
 import nars.gui.util.NARGraph;

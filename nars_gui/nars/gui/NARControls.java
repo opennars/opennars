@@ -34,7 +34,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,7 +57,7 @@ import nars.gui.output.TaskTree;
 import nars.gui.output.graph.NARGraphPanel;
 import nars.io.events.OutputHandler;
 import nars.io.events.TextOutputHandler;
-import nars.language.Interval.PortableInteger;
+import nars.main.NAR.PortableInteger;
 import nars.io.events.Events.CycleEnd;
 import nars.io.events.Events.CyclesEnd;
 
