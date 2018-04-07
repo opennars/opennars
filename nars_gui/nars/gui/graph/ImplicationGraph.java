@@ -5,7 +5,7 @@ import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
-import nars.language.Interval.PortableDouble;
+import nars.main.NAR.PortableDouble;
 import nars.language.Statement;
 import nars.language.Term;
 

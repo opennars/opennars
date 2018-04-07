@@ -263,8 +263,8 @@ public class ConceptProcessing {
 
         Stamp s2=goal.stamp.clone();
         s2.setOccurrenceTime(concept.memory.time());
-        if(s2.after(task.sentence.stamp, nal.memory.param.duration.get())) { //this task is not up to date we have to project it first
-            Sentence projGoal = task.sentence.projection(concept.memory.time(), nal.memory.param.duration.get());
+        if(s2.after(task.sentence.stamp, Parameters.DURATION)) { //this task is not up to date we have to project it first
+            Sentence projGoal = task.sentence.projection(concept.memory.time(), Parameters.DURATION);
             if(projGoal!=null && projGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
                 nal.singlePremiseTask(projGoal, task.budget.clone()); //keep goal updated
                 // return false; //outcommented, allowing "roundtrips now", relevant for executing multiple steps of learned implication chains
@@ -276,7 +276,7 @@ public class ConceptProcessing {
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
                 Sentence belief = beliefT.sentence;
-                Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.memory.param.duration.get());
+                Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), Parameters.DURATION);
                 AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
             }
 
@@ -434,7 +434,7 @@ public class ConceptProcessing {
                 Term[] newprec = new Term[prec.length-3];
                 System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
 
-                long add_tolerance = (long) Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude*Parameters.ANTICIPATION_TOLERANCE, nal.memory.param.duration);
+                long add_tolerance = (long) (((Interval)prec[prec.length-1]).time*Parameters.ANTICIPATION_TOLERANCE);
                 mintime = nal.memory.time();
                 maxtime = nal.memory.time() + add_tolerance;
 

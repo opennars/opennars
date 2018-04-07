@@ -108,16 +108,41 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
      */
     public Memory memory;
     
+    
+    public static class Lock extends Object implements Serializable { }
+    //Because AtomicInteger/Double ot supported by teavm
+    public static class PortableInteger implements Serializable {
+        public PortableInteger(){}
+        Lock lock = new Lock();
+        int VAL = 0;
+        public PortableInteger(int VAL){synchronized(lock){this.VAL = VAL;}}
+        public void set(int VAL){synchronized(lock){this.VAL = VAL;}}
+        public int get() {return this.VAL;}
+        public float floatValue() {return (float)this.VAL;}
+        public float doubleValue() {return (float)this.VAL;}
+        public int intValue() {return (int)this.VAL;}
+        public int incrementAndGet(){int ret = 0; synchronized(lock){this.VAL++; ret=this.VAL;} return ret;}
+    }
+    public static class PortableDouble implements Serializable {
+        Lock lock = new Lock();
+        public PortableDouble(){}
+        double VAL = 0;
+        public PortableDouble(double VAL){synchronized(lock){this.VAL = VAL;}}
+        public void set(double VAL){synchronized(lock){this.VAL = VAL;}}
+        public double get() {return this.VAL;}
+        public float floatValue() {return (float)this.VAL;}
+        public float doubleValue() {return (float)this.VAL;}
+        public int intValue() {return (int)this.VAL;}
+    }
     /*NAR Parameters which can be changed during runtime.*/
    public class RuntimeParameters implements Serializable {
        public RuntimeParameters() {    }
-       public final Interval.PortableInteger noiseLevel = new Interval.PortableInteger(100);
-       public final Interval.AtomicDuration duration = new Interval.AtomicDuration(Parameters.DURATION);
-       public final Interval.PortableDouble conceptForgetDurations = new Interval.PortableDouble(Parameters.CONCEPT_FORGET_DURATIONS);
-       public final Interval.PortableDouble termLinkForgetDurations = new Interval.PortableDouble(Parameters.TERMLINK_FORGET_DURATIONS);
-       public final Interval.PortableDouble taskLinkForgetDurations = new Interval.PortableDouble(Parameters.TASKLINK_FORGET_DURATIONS);
-       public final Interval.PortableDouble eventForgetDurations = new Interval.PortableDouble(Parameters.EVENT_FORGET_DURATIONS);
-       public final Interval.PortableDouble decisionThreshold = new Interval.PortableDouble(Parameters.DECISION_THRESHOLD);
+       public final PortableInteger noiseLevel = new PortableInteger(100);
+       public final PortableDouble conceptForgetDurations = new PortableDouble(Parameters.CONCEPT_FORGET_DURATIONS);
+       public final PortableDouble termLinkForgetDurations = new PortableDouble(Parameters.TERMLINK_FORGET_DURATIONS);
+       public final PortableDouble taskLinkForgetDurations = new PortableDouble(Parameters.TASKLINK_FORGET_DURATIONS);
+       public final PortableDouble eventForgetDurations = new PortableDouble(Parameters.EVENT_FORGET_DURATIONS);
+       public final PortableDouble decisionThreshold = new PortableDouble(Parameters.DECISION_THRESHOLD);
    }
     public RuntimeParameters param;
 

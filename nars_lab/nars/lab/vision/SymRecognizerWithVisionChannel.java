@@ -389,7 +389,6 @@ public class SymRecognizerWithVisionChannel extends javax.swing.JFrame {
                 }
                 u++;
             }
-            nar.param.duration.set(1000);
             nar.param.noiseLevel.set(0);
             nar.addInput(inputPanel.getText());
             nar.start(0);
@@ -433,6 +432,7 @@ public class SymRecognizerWithVisionChannel extends javax.swing.JFrame {
 
     public static void main(String args[]) {
         NARSwing.themeInvert();
+        Parameters.DURATION = 1000;
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new SymRecognizerWithVisionChannel().setVisible(true);

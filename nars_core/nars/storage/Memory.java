@@ -59,7 +59,7 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.language.CompoundTerm;
 import nars.language.Interval;
-import nars.language.Interval.PortableDouble;
+import nars.main.NAR.PortableDouble;
 
 
 /**
@@ -261,7 +261,7 @@ public class Memory implements Serializable, Iterable<Concept> {
             Task task = (Task)t;
             Stamp s = task.sentence.stamp;                        
             if (s.getCreationTime()==-1)
-                s.setCreationTime(time(), param.duration.get());
+                s.setCreationTime(time(), Parameters.DURATION);
 
             if(emitIn) {
                 emit(IN.class, task);
@@ -433,7 +433,7 @@ public class Memory implements Serializable, Iterable<Concept> {
 
     /** converts durations to cycles */
     public final float cycles(PortableDouble durations) {
-        return param.duration.floatValue() * durations.floatValue();
+        return Parameters.DURATION * durations.floatValue();
     }
 
     @Override
