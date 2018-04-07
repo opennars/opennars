@@ -245,11 +245,11 @@ public class TemporalRules {
         long time1 = s1.getOccurenceTime();
         long time2 = s2.getOccurenceTime();
         long timeDiff = time2 - time1;
-        List<Interval> interval=null;
+        Interval interval=null;
         
         if (!concurrent(time1, time2, durationCycles)) {
             
-            interval = Interval.intervalTimeSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
+            interval = new Interval(Math.abs(timeDiff));
             
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD);

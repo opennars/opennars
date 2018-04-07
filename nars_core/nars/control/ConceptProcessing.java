@@ -13,15 +13,16 @@ import nars.language.*;
 import nars.operator.Operation;
 import nars.plugin.mental.InternalExperience;
 import nars.io.events.Events;
-import nars.storage.LevelBag;
-
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import nars.operator.FunctionOperator;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
-import static nars.plugin.mental.InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE;
+import nars.operator.mental.Believe;
+import nars.operator.mental.Want;
+import nars.operator.mental.Evaluate;
+import nars.operator.mental.Wonder;
 
 public class ConceptProcessing {
     /**
@@ -37,7 +38,13 @@ public class ConceptProcessing {
     public static boolean processTask(Concept concept, final DerivationContext nal, final Task task) {
         if(task.isInput()) {
             if(task.sentence.isJudgment() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
-                TemporalInferenceControl.NewOperationFrame(nal.memory, task);
+                Operation op = (Operation) task.sentence.term;
+                Operator o = (Operator) op.getPredicate();
+                //only consider these mental ops an operation to track when executed not already when generated as internal event
+                if(!(o instanceof Believe) && !(o instanceof Want) && !(o instanceof Wonder)
+                        && !(o instanceof Evaluate) && !(o instanceof Anticipate)) {
+                    TemporalInferenceControl.NewOperationFrame(nal.memory, task);
+                }
             }
             concept.observable = true;
         }
@@ -256,8 +263,8 @@ public class ConceptProcessing {
 
         Stamp s2=goal.stamp.clone();
         s2.setOccurrenceTime(concept.memory.time());
-        if(s2.after(task.sentence.stamp, nal.memory.param.duration.get())) { //this task is not up to date we have to project it first
-            Sentence projGoal = task.sentence.projection(concept.memory.time(), nal.memory.param.duration.get());
+        if(s2.after(task.sentence.stamp, Parameters.DURATION)) { //this task is not up to date we have to project it first
+            Sentence projGoal = task.sentence.projection(concept.memory.time(), Parameters.DURATION);
             if(projGoal!=null && projGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
                 nal.singlePremiseTask(projGoal, task.budget.clone()); //keep goal updated
                 // return false; //outcommented, allowing "roundtrips now", relevant for executing multiple steps of learned implication chains
@@ -269,7 +276,7 @@ public class ConceptProcessing {
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
                 Sentence belief = beliefT.sentence;
-                Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.memory.param.duration.get());
+                Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), Parameters.DURATION);
                 AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
             }
 
@@ -427,7 +434,7 @@ public class ConceptProcessing {
                 Term[] newprec = new Term[prec.length-3];
                 System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
 
-                long add_tolerance = (long) Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude*Parameters.ANTICIPATION_TOLERANCE, nal.memory.param.duration);
+                long add_tolerance = (long) (((Interval)prec[prec.length-1]).time*Parameters.ANTICIPATION_TOLERANCE);
                 mintime = nal.memory.time();
                 maxtime = nal.memory.time() + add_tolerance;
 
@@ -542,7 +549,7 @@ public class ConceptProcessing {
                 if(c.negConfirmation.sentence.term instanceof Implication) {
                     Implication imp = (Implication) c.negConfirmation.sentence.term;
                     Concept ctarget = nal.memory.concept(imp.getPredicate());
-                    if(ctarget != null && ctarget.getBudget().summary()>=InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE_ANTICIPATION) {
+                    if(ctarget != null && ctarget.getPriority()>=InternalExperience.MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION) {
                         ((Anticipate)c.memory.getOperator("^anticipate")).anticipationFeedback(imp.getPredicate(), null, c.memory);
                     }
                 }

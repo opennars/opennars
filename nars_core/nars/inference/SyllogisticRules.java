@@ -125,7 +125,7 @@ public final class SyllogisticRules {
      * removed?
      * @param nal Reference to the memory
      */
-    static void abdIndCom(final Term term1, final Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final DerivationContext nal) {
+    static void abdIndCom(Term term1, Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final DerivationContext nal) {
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1, term2)) {
             return;
         }
@@ -164,13 +164,30 @@ public final class SyllogisticRules {
             budget2 = BudgetFunctions.forward(truth2, nal);
             budget3 = BudgetFunctions.forward(truth3, nal);
         }
+        
+        long delta2 = 0;
+        while ((term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
+            Interval interval = (Interval) ((CompoundTerm) term2).term[0];
+            delta2 += interval.time;
+            term2 = ((CompoundTerm)term2).setComponent(0, null, nal.mem());
+        }
+        long delta1 = 0;
+        while ((term1 instanceof Conjunction) && (((CompoundTerm) term1).term[0] instanceof Interval)) {
+            Interval interval = (Interval) ((CompoundTerm) term1).term[0];
+            delta1 += interval.time;
+            term1 = ((CompoundTerm)term1).setComponent(0, null, nal.mem());
+        }
+        
         if (order != ORDER_INVALID) {
+            nal.getTheNewStamp().setOccurrenceTime(delta1);
             nal.doublePremiseTask(
                     Statement.make(taskContent, term1, term2, order), 
                         truth1, budget1,false, false);
+            nal.getTheNewStamp().setOccurrenceTime(delta2);
             nal.doublePremiseTask(
                     Statement.make(taskContent, term2, term1, reverseOrder(order)), 
                         truth2, budget2,false, false);
+            nal.getTheNewStamp().setOccurrenceTime(delta1);
             nal.doublePremiseTask(
                     Statement.makeSym(taskContent, term1, term2, order), 
                         truth3, budget3,false, false);
@@ -397,16 +414,14 @@ public final class SyllogisticRules {
             return;
         
         int order = statement.getTemporalOrder();
-        boolean shiftedTimeForward = false;
-        if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
-            long baseTime = subSentence.getOccurenceTime();
-            if (baseTime == Stamp.ETERNAL) {
+        long occurrence_time = nal.getTheNewStamp().getOccurrenceTime();
+        if ((order != ORDER_NONE) && (order!=ORDER_INVALID)) {
+            long baseTime = subSentence.getOccurenceTime(); 
+            if (baseTime == Stamp.ETERNAL) { // =/> always should produce events
                 baseTime = nal.getTime();
             }
-            long inc = order * nal.mem().param.duration.get();
-            long time = (side == 0) ? baseTime+inc : baseTime-inc;
-            shiftedTimeForward = (side == 0);
-            nal.getTheNewStamp().setOccurrenceTime(time);
+            long inc = order * Parameters.DURATION;
+            occurrence_time = (side == 0) ? baseTime+inc : baseTime-inc;
         }
 
         TruthValue beliefTruth = beliefSentence.truth;
@@ -457,6 +472,7 @@ public final class SyllogisticRules {
         }
         if(!Variables.indepVarUsedInvalid(content)) {
             boolean allowOverlap = taskSentence.isJudgment() && strong;
+            nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
             nal.doublePremiseTask(content, truth, budget, false, allowOverlap); //(strong) when strong on judgement
         }
     }
@@ -549,24 +565,23 @@ public final class SyllogisticRules {
         long mintime = 0;
         long maxtime = 0;
         boolean predictedEvent = false;
-        final Interval.AtomicDuration duration = nal.mem().param.duration;
         
         if (newCondition != null) {
              if (newCondition instanceof Interval) {
-                 content = premise1.getPredicate();
-                 delta = ((Interval) newCondition).getTime(duration);
-                 if(taskSentence.getOccurenceTime() != Stamp.ETERNAL) {
-                    mintime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude - 1, duration);
-                    maxtime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude + 2, duration);
-                    predictedEvent = true;
-                 }
-             } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
-                 Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
-                 delta = interval.getTime(duration);
-                 newCondition = ((CompoundTerm)newCondition).setComponent(0, null, nal.mem());
-                 content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
+                content = premise1.getPredicate();
+                delta = ((Interval) newCondition).time;
+                if(taskSentence.getOccurenceTime() != Stamp.ETERNAL) {
+                   mintime = taskSentence.getOccurenceTime() + ((Interval) newCondition).time - 1;
+                   maxtime = taskSentence.getOccurenceTime() + ((Interval) newCondition).time + 2;
+                   predictedEvent = true;
+                }
              } else {
-                 content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
+                while ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
+                    Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
+                    delta += interval.time;
+                    newCondition = ((CompoundTerm)newCondition).setComponent(0, null, nal.mem());
+                }
+                content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
              }
                
         } else {
@@ -576,28 +591,13 @@ public final class SyllogisticRules {
         if (content == null)
             return;        
         
-        if(!predictedEvent && !((Conjunction) subj).isSpatial && ((Conjunction) subj).getTemporalOrder() == TemporalRules.ORDER_FORWARD) { //do not allow sequences
-            boolean last_ival = false; //which have two intervals as result of this, makes sure we only detach (&/ from left side
-            for(Term t: ((Conjunction) subj).term) {
-                boolean ival = t instanceof Interval; 
-                if(last_ival && ival) {
-                    return;
-                }
-                last_ival = ival;
-            }
-        }
-        
+        long occurrence_time = nal.getTheNewStamp().getOccurrenceTime();
         if (delta != 0) {
-            long baseTime = (belief.term instanceof Implication) ?
-                taskSentence.getOccurenceTime() : belief.getOccurenceTime();
-            if (baseTime == Stamp.ETERNAL) {
-                baseTime = nal.getTime();
+            long baseTime = taskSentence.getOccurenceTime();
+            if (baseTime != Stamp.ETERNAL) {
+                baseTime += delta;
+                occurrence_time = baseTime;
             }
-            if(premise1.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                return; //https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M - Interval Simplification
-            }
-            baseTime += delta;
-            nal.getTheNewStamp().setOccurrenceTime(baseTime);
         }
         
         TruthValue truth1 = taskSentence.truth;
@@ -627,6 +627,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         
+        nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
         List<Task> ret = nal.doublePremiseTask(content, truth, budget,false, taskSentence.isJudgment() && deduction); //(allow overlap) when deduction on judgment
         if(!nal.evidentalOverlap && ret != null && ret.size() > 0) {
             if(predictedEvent && taskSentence.isJudgment() && truth != null && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION &&

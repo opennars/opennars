@@ -38,7 +38,6 @@ import nars.language.Conjunction;
 import nars.language.Equivalence;
 import nars.language.Implication;
 import nars.language.Interval;
-import nars.language.Interval.AtomicDuration;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
@@ -111,7 +110,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                         //refined:
                         int u = 0;
                         while(c.term[c.term.length-1-u] instanceof Interval) {
-                            time += Interval.magnitudeToTime(((Interval)c.term[c.term.length-1]).magnitude,new AtomicDuration(Parameters.DURATION));
+                            time += ((Interval)c.term[c.term.length-1]).time;
                             u++;
                         }
                         
@@ -491,11 +490,11 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         long diffabs = Math.abs(diff);
         
         String timediff = "";
-        if(diffabs < nar.memory.param.duration.get()) {
+        if(diffabs < Parameters.DURATION) {
             timediff = "|";
         }
         else {
-            int Int = Interval.timeToMagnitude(diffabs, nar.param.duration);
+            Long Int = diffabs;
             timediff = diff>0 ? "+"+String.valueOf(Int) : "-"+String.valueOf(Int);
         }
         String tenseString = ":"+timediff+":"; //stamp.getTense(t, nar.memory.getDuration());

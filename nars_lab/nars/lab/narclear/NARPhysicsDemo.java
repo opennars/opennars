@@ -6,6 +6,7 @@ import nars.main.NAR;
 import nars.entity.Task;
 import nars.lab.ioutils.ChangedTextInput;
 import nars.language.Term;
+import nars.main.Parameters;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
 import org.jbox2d.common.MathUtils;
@@ -173,8 +174,8 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     }
 
     public static void main(String[] args) {
+        Parameters.DURATION = 20;
         NAR n = new NAR();
-        (n.param).duration.set(20);
         (n.param).decisionThreshold.set(0);
         (n.param).noiseLevel.set(5);
         //PhysicsModel model = new Car();

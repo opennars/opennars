@@ -29,7 +29,7 @@ import nars.main.NAR;
 import nars.main.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
-import nars.language.Interval.PortableDouble;
+import nars.main.NAR.PortableDouble;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
 

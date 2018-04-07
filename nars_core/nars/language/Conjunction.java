@@ -37,17 +37,6 @@ public class Conjunction extends CompoundTerm {
     public final int temporalOrder;
     public final boolean isSpatial;
 
-    public static Term[] removeFirstInterval(Term[] arg) {
-        if(arg[0] instanceof Interval) {
-            Term[] argNew = new Term[arg.length - 1];
-            for(int i=1;i<arg.length;i++) {
-                argNew[i - 1] = arg[i];
-            }
-            return argNew;
-        }
-        return arg;
-    }
-    
     /**
      * Constructor with partial values, called by make
      *
@@ -230,7 +219,8 @@ public class Conjunction extends CompoundTerm {
         }                         // special case: single component
         
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            Term[] newArgList = removeFirstInterval(spatial ? argList : flatten(argList, temporalOrder, spatial));
+            Term[] newArgList = spatial ? argList : flatten(argList, temporalOrder, spatial);
+            
             if(newArgList.length == 1) {
                 return newArgList[0];
             }
@@ -265,21 +255,19 @@ public class Conjunction extends CompoundTerm {
         }
     }
 
-    final public static Term make(final Term prefix, final List<Interval> suffix, final int temporalOrder) {
-        Term[] t = new Term[suffix.size()+1];
+    final public static Term make(final Term prefix, final Interval suffix, final int temporalOrder) {
+        Term[] t = new Term[1+1];
         int i = 0;
         t[i++] = prefix;
-        for (Term x : suffix)
-            t[i++] = x;
+        t[i++] = suffix;
         return make(t, temporalOrder);        
     }
     
-    final public static Term make(final Term prefix, final List<Interval> ival, final Term suffix, final int temporalOrder) {
-        Term[] t = new Term[ival.size()+2];
+    final public static Term make(final Term prefix, final Interval ival, final Term suffix, final int temporalOrder) {
+        Term[] t = new Term[1+2];
         int i = 0;
         t[i++] = prefix;
-        for (Term x : ival)
-            t[i++] = x;
+        t[i++] = ival;
         t[i++] = suffix;
         return make(t, temporalOrder);        
     }

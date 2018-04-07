@@ -49,6 +49,7 @@ import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.io.events.Events.CyclesEnd;
+import nars.main.Parameters;
 
 /**
  *
@@ -81,11 +82,10 @@ public class TicTacToe extends JPanel {
     
     public TicTacToe() {
         super(new BorderLayout());
-
+        Parameters.DURATION = 1000;
         nar = new NAR();
         
         nar.memory.addOperator(new AddO("^addO"));        
-        (nar.param).duration.set(1000);
         (nar.param).noiseLevel.set(0);
         
         new NARSwing(nar);    

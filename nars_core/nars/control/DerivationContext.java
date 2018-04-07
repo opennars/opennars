@@ -138,12 +138,13 @@ public class DerivationContext {
      * @param newBudget The budget value in task
      */
     public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
+        Stamp derived_stamp = getTheNewStamp().clone();
+        this.resetOccurrenceTime(); //stamp was already obsorbed
         Sentence newSentence = new Sentence(
             newContent,
             getCurrentTask().sentence.punctuation,
             newTruth,
-            getTheNewStamp());
-
+            derived_stamp);
         Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
         return derivedTask(newTask, true, false, true); //allows overlap since overlap was already checked on revisable( function
     }                                                               //which is not the case for other single premise tasks
@@ -177,13 +178,14 @@ public class DerivationContext {
             if(newContent.subjectOrPredicateIsIndependentVar()) {
                 return null;
             }
-
+            Stamp derive_stamp = getTheNewStamp().clone(); //because occurrence time will be reset:
+            this.resetOccurrenceTime(); //stamp was already obsorbed into task
             try {
                 final Sentence newSentence = new Sentence(
                     newContent,
                     getCurrentTask().sentence.punctuation,
                     newTruth,
-                    getTheNewStamp());
+                    derive_stamp);
 
                 newSentence.producedByTemporalInduction=temporalInduction;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
@@ -206,7 +208,7 @@ public class DerivationContext {
                 try {
 
                 TruthValue truthEt=TruthFunctions.eternalize(newTruth);               
-                Stamp st=getTheNewStamp().clone();
+                Stamp st=derive_stamp.clone();
                 st.setEternal();
                 final Sentence newSentence = new Sentence(
                     newContent,
@@ -292,12 +294,15 @@ public class DerivationContext {
         if(newContent instanceof Interval) {
             return false;
         }
+        
+        Stamp derive_stamp = this.getTheNewStamp().clone();
+        this.resetOccurrenceTime(); //stamp was already obsorbed into task
 
         Sentence newSentence = new Sentence(
             newContent,
             punctuation,
             newTruth,
-            getTheNewStamp());
+            derive_stamp);
 
         Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
         if (newTask!=null) {
@@ -347,13 +352,19 @@ public class DerivationContext {
     /**
      * @return the newStamp
      */
+    private long original_time = 0;
     public Stamp getTheNewStamp() {
         if (newStamp == null) {
             //if newStamp==null then newStampBuilder must be available. cache it's return value as newStamp
             newStamp = newStampBuilder.build();
+            original_time = newStamp.getOccurrenceTime();
             newStampBuilder = null;
         }
         return newStamp;
+    }
+    
+    public void resetOccurrenceTime() {
+        newStamp.setOccurrenceTime(original_time);
     }
 
     /**

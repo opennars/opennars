@@ -34,7 +34,7 @@ import nars.gui.util.NARGraph;
 import nars.gui.graph.InheritanceGraph;
 import nars.gui.graph.ImplicationGraph;
 import nars.gui.output.graph.layout.SpiralLayout;
-import nars.language.Interval.PortableDouble;
+import nars.main.NAR.PortableDouble;
 import org.jgrapht.Graph;
 
 /**

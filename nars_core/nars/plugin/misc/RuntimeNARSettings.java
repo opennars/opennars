@@ -29,13 +29,6 @@ public class RuntimeNARSettings implements Plugin {
         Parameters.IMMEDIATE_ETERNALIZATION=val;
     }
     
-    public double getDuration() {
-        return n.param.duration.get();
-    }
-    public void setDuration(double val) {
-        n.param.duration.set((int) val);
-    }
-    
     public double getDerivationPriorityLeak() {
         return Parameters.DERIVATION_PRIORITY_LEAK;
     }

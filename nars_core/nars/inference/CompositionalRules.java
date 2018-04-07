@@ -26,6 +26,7 @@ import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.control.DerivationContext;
 import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.TruthFunctions.comparison;
@@ -191,6 +192,14 @@ public final class CompositionalRules {
         if (term2 == null) {
             return;
         }
+        
+        long delta = 0;
+        while ((term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
+            Interval interval = (Interval) ((CompoundTerm) term2).term[0];
+            delta += interval.time;
+            term2 = ((CompoundTerm)term2).setComponent(0, null, nal.mem());
+        }
+        
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         Sentence belief = nal.getCurrentBelief();
@@ -264,6 +273,13 @@ public final class CompositionalRules {
         }
         if (truth != null) {
             BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
+            if (delta != 0) {
+                long baseTime = task.sentence.getOccurenceTime();
+                if (baseTime != Stamp.ETERNAL) {
+                    baseTime += delta;
+                    nal.getTheNewStamp().setOccurrenceTime(baseTime);
+                }
+            }
             nal.doublePremiseTask(content, truth, budget, false, true); //(allow overlap), a form of detachment
         }
     }
@@ -281,10 +297,11 @@ public final class CompositionalRules {
         if (isTemporalConjunction && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
             return;
         }
+        long occurrence_time = nal.getTheNewStamp().getOccurrenceTime();
         if(isTemporalConjunction && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
             if(!nal.getCurrentTask().sentence.isEternal() && compound.term[index + 1] instanceof Interval) {
-                long shift_occurrence = ((Interval)compound.term[1]).getTime(nal.memory);
-                nal.getTheNewStamp().setOccurrenceTime(nal.getCurrentTask().sentence.getOccurenceTime() + shift_occurrence);
+                long shift_occurrence = ((Interval)compound.term[1]).time;
+                occurrence_time = nal.getCurrentTask().sentence.getOccurenceTime() + shift_occurrence;
             }
         }
 
@@ -299,6 +316,7 @@ public final class CompositionalRules {
         BudgetValue budget;
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
+            nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
             nal.doublePremiseTask(content, truth, budget, false, false);
             // special inference to answer conjunctive questions with query variables
             if (taskSentence.term.hasVarQuery()) {
@@ -315,6 +333,7 @@ public final class CompositionalRules {
                 Term conj = Conjunction.make(component, content);
                 truth = intersection(contentBelief.truth, belief.truth);
                 budget = BudgetFunctions.compoundForward(truth, conj, nal);
+                nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
                 nal.doublePremiseTask(conj, truth, budget, false, false);
             }
         } else {
@@ -351,6 +370,7 @@ public final class CompositionalRules {
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
+        nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
         nal.doublePremiseTask(content, truth, budget, false, false);
     }
 
