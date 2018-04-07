@@ -13,15 +13,16 @@ import nars.language.*;
 import nars.operator.Operation;
 import nars.plugin.mental.InternalExperience;
 import nars.io.events.Events;
-import nars.storage.LevelBag;
-
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import nars.operator.FunctionOperator;
 import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
-import static nars.plugin.mental.InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE;
+import nars.operator.mental.Believe;
+import nars.operator.mental.Want;
+import nars.operator.mental.Evaluate;
+import nars.operator.mental.Wonder;
 
 public class ConceptProcessing {
     /**
@@ -37,7 +38,13 @@ public class ConceptProcessing {
     public static boolean processTask(Concept concept, final DerivationContext nal, final Task task) {
         if(task.isInput()) {
             if(task.sentence.isJudgment() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
-                TemporalInferenceControl.NewOperationFrame(nal.memory, task);
+                Operation op = (Operation) task.sentence.term;
+                Operator o = (Operator) op.getPredicate();
+                //only consider these mental ops an operation to track when executed not already when generated as internal event
+                if(!(o instanceof Believe) && !(o instanceof Want) && !(o instanceof Wonder)
+                        && !(o instanceof Evaluate) && !(o instanceof Anticipate)) {
+                    TemporalInferenceControl.NewOperationFrame(nal.memory, task);
+                }
             }
             concept.observable = true;
         }
@@ -542,7 +549,7 @@ public class ConceptProcessing {
                 if(c.negConfirmation.sentence.term instanceof Implication) {
                     Implication imp = (Implication) c.negConfirmation.sentence.term;
                     Concept ctarget = nal.memory.concept(imp.getPredicate());
-                    if(ctarget != null && ctarget.getPriority()>=InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE_ANTICIPATION) {
+                    if(ctarget != null && ctarget.getPriority()>=InternalExperience.MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION) {
                         ((Anticipate)c.memory.getOperator("^anticipate")).anticipationFeedback(imp.getPredicate(), null, c.memory);
                     }
                 }
