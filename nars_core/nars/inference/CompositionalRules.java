@@ -196,7 +196,7 @@ public final class CompositionalRules {
         long delta = 0;
         while ((term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
             Interval interval = (Interval) ((CompoundTerm) term2).term[0];
-            delta += interval.getTime(nal.memory);
+            delta += interval.time;
             term2 = ((CompoundTerm)term2).setComponent(0, null, nal.mem());
         }
         
@@ -300,7 +300,7 @@ public final class CompositionalRules {
         long occurrence_time = nal.getTheNewStamp().getOccurrenceTime();
         if(isTemporalConjunction && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
             if(!nal.getCurrentTask().sentence.isEternal() && compound.term[index + 1] instanceof Interval) {
-                long shift_occurrence = ((Interval)compound.term[1]).getTime(nal.memory);
+                long shift_occurrence = ((Interval)compound.term[1]).time;
                 occurrence_time = nal.getCurrentTask().sentence.getOccurenceTime() + shift_occurrence;
             }
         }

@@ -20,8 +20,7 @@
  */
 package nars.main;
 
-import nars.language.Interval;
-import nars.language.Interval.PortableDouble;
+import nars.main.NAR.PortableDouble;
 
 
 /**

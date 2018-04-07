@@ -20,12 +20,9 @@
  */
 package nars.entity;
 
-import com.google.common.collect.Iterators;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import nars.storage.Memory;
 import nars.main.Parameters;
 import nars.inference.TemporalRules;
@@ -36,7 +33,6 @@ import nars.language.Tense;
 import static nars.language.Tense.Future;
 import static nars.language.Tense.Past;
 import static nars.language.Tense.Present;
-import nars.language.Term;
 import static nars.inference.TemporalRules.order;
 
 public class Stamp implements Cloneable, Serializable {
@@ -85,10 +81,6 @@ public class Stamp implements Cloneable, Serializable {
 
     public float getOriginality() {
         return 1.0f / (evidentialBase.length + 1);
-    }
-    
-    public interface DerivationBuilder {
-        LinkedHashSet<Term> build();
     }
     
     /** used for when the ocrrence time will be set later; so should not be called from externally but through another Stamp constructor */
@@ -175,7 +167,7 @@ public class Stamp implements Cloneable, Serializable {
     }
 
     public Stamp(final Memory memory, final Tense tense) {
-        this(memory.time(), tense, memory.newStampSerial(), memory.param.duration.get());
+        this(memory.time(), tense, memory.newStampSerial(), Parameters.DURATION);
     }
 
     /** creates a stamp with default Present tense */
@@ -203,7 +195,6 @@ public class Stamp implements Cloneable, Serializable {
     
     public boolean evidenceIsCyclic() {
         HashSet<Long> task_base = new HashSet<Long>(this.evidentialBase.length);
-        boolean cyclic = false;
         for(int i=0; i < this.evidentialBase.length; i++) {
             if(task_base.contains(Long.valueOf(this.evidentialBase[i]))) { //can have an overlap in itself already
                 return true;
@@ -332,17 +323,6 @@ public class Stamp implements Cloneable, Serializable {
         }
         
         return true;        
-    }
-            
-
-    /** necessary because LinkedHashSet.equals does not compare order, only set content */
-    public static boolean chainEquals(final Collection<Term> a, final Collection<Term> b) {
-        if (a == b) return true;
-        
-        if ((a instanceof LinkedHashSet) && (b instanceof LinkedHashSet))
-            return Iterators.elementsEqual(a.iterator(), b.iterator());        
-        else
-            return a.equals(b);
     }
     
     /**

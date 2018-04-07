@@ -26,8 +26,7 @@ import java.awt.event.MouseMotionListener;
 import java.text.NumberFormat;
 import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
-import nars.language.Interval.PortableDouble;
-
+import nars.main.NAR.PortableDouble;
 
 
 /**

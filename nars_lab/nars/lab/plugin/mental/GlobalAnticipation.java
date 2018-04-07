@@ -107,7 +107,7 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
             return;
         }
         
-        final long duration = nal.memory.param.duration.get();
+        final long duration = Parameters.DURATION;
         ArrayList<Task> derivetasks=new ArrayList<Task>();
         
         for(final Task c : current_tasks) { //a =/> b or (&/ a1...an) =/> b
@@ -134,7 +134,7 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
                 //handling of intervals:
                 if(args[i] instanceof Interval) {
                     if(!concurrent_conjunction) {
-                        expected_time+=((Interval)args[i]).getTime(nal.memory);
+                        expected_time+=((Interval)args[i]).time;
                     }
                     off++;
                     continue;

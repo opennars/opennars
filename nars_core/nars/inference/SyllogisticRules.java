@@ -168,13 +168,13 @@ public final class SyllogisticRules {
         long delta2 = 0;
         while ((term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
             Interval interval = (Interval) ((CompoundTerm) term2).term[0];
-            delta2 += interval.getTime(nal.memory);
+            delta2 += interval.time;
             term2 = ((CompoundTerm)term2).setComponent(0, null, nal.mem());
         }
         long delta1 = 0;
         while ((term1 instanceof Conjunction) && (((CompoundTerm) term1).term[0] instanceof Interval)) {
             Interval interval = (Interval) ((CompoundTerm) term1).term[0];
-            delta1 += interval.getTime(nal.memory);
+            delta1 += interval.time;
             term1 = ((CompoundTerm)term1).setComponent(0, null, nal.mem());
         }
         
@@ -420,7 +420,7 @@ public final class SyllogisticRules {
             if (baseTime == Stamp.ETERNAL) { // =/> always should produce events
                 baseTime = nal.getTime();
             }
-            long inc = order * nal.mem().param.duration.get();
+            long inc = order * Parameters.DURATION;
             occurrence_time = (side == 0) ? baseTime+inc : baseTime-inc;
         }
 
@@ -565,21 +565,20 @@ public final class SyllogisticRules {
         long mintime = 0;
         long maxtime = 0;
         boolean predictedEvent = false;
-        final Interval.AtomicDuration duration = nal.mem().param.duration;
         
         if (newCondition != null) {
              if (newCondition instanceof Interval) {
                 content = premise1.getPredicate();
-                delta = ((Interval) newCondition).getTime(duration);
+                delta = ((Interval) newCondition).time;
                 if(taskSentence.getOccurenceTime() != Stamp.ETERNAL) {
-                   mintime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude - 1, duration);
-                   maxtime = taskSentence.getOccurenceTime() + Interval.magnitudeToTime(((Interval) newCondition).magnitude + 2, duration);
+                   mintime = taskSentence.getOccurenceTime() + ((Interval) newCondition).time - 1;
+                   maxtime = taskSentence.getOccurenceTime() + ((Interval) newCondition).time + 2;
                    predictedEvent = true;
                 }
              } else {
                 while ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
                     Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
-                    delta += interval.getTime(duration);
+                    delta += interval.time;
                     newCondition = ((CompoundTerm)newCondition).setComponent(0, null, nal.mem());
                 }
                 content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());

@@ -207,7 +207,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
     }
     
-    static Interval conceptival = interval(1);
+    static Interval conceptival = new Interval(1);
     private static void ReplaceIntervals(CompoundTerm comp) {
         for(int i=0; i<comp.term.length; i++) {
             Term t = comp.term[i];
@@ -234,7 +234,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         for(int i=0; i<comp.term.length; i++) {
             Term t = comp.term[i];
             if(t instanceof Interval) {
-                ivals.add(((Interval) t).getTime(mem.param.duration));
+                ivals.add(((Interval) t).time);
             }
             else
             if(t instanceof CompoundTerm) {

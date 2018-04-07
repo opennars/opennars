@@ -1,6 +1,5 @@
 package nars.gui.util;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JTextField;
@@ -11,7 +10,7 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.CompoundTerm;
-import nars.language.Interval.PortableDouble;
+import nars.main.NAR.PortableDouble;
 import nars.language.Term;
 
 

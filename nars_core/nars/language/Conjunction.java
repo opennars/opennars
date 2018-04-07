@@ -255,21 +255,19 @@ public class Conjunction extends CompoundTerm {
         }
     }
 
-    final public static Term make(final Term prefix, final List<Interval> suffix, final int temporalOrder) {
-        Term[] t = new Term[suffix.size()+1];
+    final public static Term make(final Term prefix, final Interval suffix, final int temporalOrder) {
+        Term[] t = new Term[1+1];
         int i = 0;
         t[i++] = prefix;
-        for (Term x : suffix)
-            t[i++] = x;
+        t[i++] = suffix;
         return make(t, temporalOrder);        
     }
     
-    final public static Term make(final Term prefix, final List<Interval> ival, final Term suffix, final int temporalOrder) {
-        Term[] t = new Term[ival.size()+2];
+    final public static Term make(final Term prefix, final Interval ival, final Term suffix, final int temporalOrder) {
+        Term[] t = new Term[1+2];
         int i = 0;
         t[i++] = prefix;
-        for (Term x : ival)
-            t[i++] = x;
+        t[i++] = ival;
         t[i++] = suffix;
         return make(t, temporalOrder);        
     }

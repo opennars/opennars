@@ -144,7 +144,7 @@ public class Narsese implements Serializable {
         char punc = str.charAt(last);
         
         Stamp stamp = new Stamp(-1 /* if -1, will be set right before the Task is input */, 
-                tense, memory.newStampSerial(), memory.param.duration.get());
+                tense, memory.newStampSerial(), Parameters.DURATION);
 
         TruthValue truth = parseTruth(truthString, punc);
         Term content = parseTerm(str.substring(0, last));
