@@ -39,6 +39,7 @@ import nars.language.Term;
 import nars.storage.LevelBag;
 import nars.io.events.Events.CyclesEnd;
 import nars.io.events.Events.CyclesStart;
+import nars.language.Inheritance;
 
 
 /**
@@ -260,8 +261,18 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
             if(addCommand(text)) {
                 return;
             }
-            Task t = narsese.parseTask(text.trim());
-            this.memory.inputTask(t);
+            Task task = narsese.parseTask(text.trim());
+            //check if it should go to a sensory channel instead:
+            Term t = ((Task) task).getTerm();
+            if(t != null && t instanceof Inheritance) {
+                Term predicate = ((Inheritance) t).getPredicate();
+                if(this.sensoryChannels.containsKey(predicate)) {
+                    this.sensoryChannels.get(predicate).addInput((Task) task);
+                    return;
+                }
+            }
+            //else input into NARS directly:
+            this.memory.inputTask(task);
         } catch (Exception ex) {
             //Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
         }
