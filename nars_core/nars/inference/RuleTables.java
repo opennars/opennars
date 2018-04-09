@@ -440,8 +440,10 @@ public class RuleTables {
                     }
                     t1 = beliefStatement.getPredicate();
                     t2 = taskStatement.getPredicate();
-                    SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
-
+                    boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                    if(sensational) {
+                        return;
+                    }
                     CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, nal);
                     //if(taskSentence.getOccurenceTime()==Stamp.ETERNAL && belief.getOccurenceTime()==Stamp.ETERNAL)
                     CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, nal);//introVarImage(taskContent, beliefContent, index, memory);             
@@ -495,7 +497,10 @@ public class RuleTables {
                     t1 = taskStatement.getSubject();
                     t2 = beliefStatement.getSubject();
                     if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
-                        SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                        boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                        if(sensational) {
+                            return;
+                        }
                         CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, nal);
                         CompositionalRules.introVarOuter(taskStatement, beliefStatement, 1, nal);// introVarImage(taskContent, beliefContent, index, memory);
 
