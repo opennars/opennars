@@ -41,10 +41,13 @@ public class VisionChannel extends SensoryChannel {
         }
         int x = t.getTerm().term_indices[2];
         int y = t.getTerm().term_indices[3];
-        inputs[y][x] = t.sentence.getTruth().getFrequency();
         if(!updated[y][x]) {
+            inputs[y][x] = t.sentence.getTruth().getFrequency();
             cnt_updated++;
             updated[y][x] = true;
+        } else { //a second value, so take average of frequencies
+                 //revision wouldn't be proper as each sensory point can just have 1 vote
+            inputs[y][x] = (inputs[y][x]+t.sentence.getTruth().getFrequency()) / 2.0f;
         }
         if(cnt_updated == height*width) {
             cnt_updated = 0;
