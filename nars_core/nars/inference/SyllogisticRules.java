@@ -125,9 +125,9 @@ public final class SyllogisticRules {
      * removed?
      * @param nal Reference to the memory
      */
-    static void abdIndCom(Term term1, Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final DerivationContext nal) {
+    static boolean abdIndCom(Term term1, Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final DerivationContext nal) {
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1, term2)) {
-            return;
+            return false;
         }
         int order1 = sentence1.term.getTemporalOrder();
         int order2 = sentence2.term.getTemporalOrder();
@@ -165,6 +165,22 @@ public final class SyllogisticRules {
             budget3 = BudgetFunctions.forward(truth3, nal);
         }
         
+        if(term1.imagination != null && term2.imagination != null) {
+            TruthValue T = term1.imagination.AbductionOrComparisonTo(term2.imagination, true);
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE), 
+                    T, budget3.clone(),false, false);   
+            TruthValue T2 = term1.imagination.AbductionOrComparisonTo(term2.imagination, false);
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term1, term2, TemporalRules.ORDER_NONE), 
+                    T2, budget3.clone(),false, false);   
+            TruthValue T3 = term2.imagination.AbductionOrComparisonTo(term1.imagination, false);
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term2, term1, TemporalRules.ORDER_NONE), 
+                    T3, budget3.clone(),false, false);   
+            return true; //no need for other syllogistic inference, it were sensational terms,
+        }           //but it would not hurt to allow it either.. but why afford tasks that summarize
+                    //so little evidence in comparison to the amount summarized by the array comparison.
         long delta2 = 0;
         while ((term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
             Interval interval = (Interval) ((CompoundTerm) term2).term[0];
@@ -217,6 +233,7 @@ public final class SyllogisticRules {
                 Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE), 
                     truth3, budget3.clone(),false, false);
         }
+        return false;
     }
     
     

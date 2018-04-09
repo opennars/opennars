@@ -72,8 +72,8 @@ public class VisualSpace implements ImaginationSpace {
         TruthValue sim = new TruthValue(1.0f, 0.0f);
         for(int i=0; i<this.height; i++) {
             for(int j=0; j<this.width; j++) {
-                int i2 = (int) (((double) this.height) * kh);
-                int j2 = (int) (((double) this.width)  * kw);
+                int i2 = (int) (((double) i) * kh);
+                int j2 = (int) (((double) j)  * kw);
                 TruthValue t1 = new TruthValue(cropped[i][j], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 TruthValue t2 = new TruthValue(other.cropped[i2][j2], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 TruthValue t3 = comparison ? TruthFunctions.comparison(t1,t2) : TruthFunctions.abduction(t1,t2);

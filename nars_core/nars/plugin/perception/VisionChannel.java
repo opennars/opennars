@@ -8,6 +8,7 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
+import nars.io.events.OutputHandler.IN;
 import nars.language.Inheritance;
 import nars.language.Term;
 import nars.main.Parameters;
@@ -36,6 +37,7 @@ public class VisionChannel extends SensoryChannel {
     public boolean AddToMatrix(Task t) {
         Inheritance inh = (Inheritance) t.getTerm(); //channels receive inheritances
         String cur_subj = inh.getSubject().index_variable.toString();
+        nar.emit(IN.class, t);
         if(!cur_subj.equals(subj)) { //when subject changes, we start to collect from scratch,
             cnt_updated = 0; //this way multiple matrices can be processed by the same vision channel
             updated = new boolean[height][width];
@@ -73,7 +75,7 @@ public class VisionChannel extends SensoryChannel {
         float[][] cpy = new float[height][width];
         for(int i=0;i<height;i++) {
             for(int j=0;j<width;j++) {
-                cpy[i][j] = cpy[i][j];
+                cpy[i][j] = (float) inputs[i][j];
             }
         } 
         VisualSpace vspace = new VisualSpace(nar, cpy, py, px, height, width);
