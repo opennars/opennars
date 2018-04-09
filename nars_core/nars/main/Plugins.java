@@ -22,7 +22,7 @@ public class Plugins {
         n.addPlugin(new Anticipate());      // expect an event 
         Term label = SetInt.make(new Term("bright"));
         n.addSensoryChannel(label.toString(),
-                            new VisionChannel(label, n, n, 1, 1));
+                            new VisionChannel(label, n, n, 30, 30));
         boolean full_internal_experience = false;
         if(!full_internal_experience) {
             n.addPlugin(new InternalExperience());
