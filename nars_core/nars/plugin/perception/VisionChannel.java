@@ -73,7 +73,7 @@ public class VisionChannel extends SensoryChannel {
         float[][] cpy = new float[height][width];
         for(int i=0;i<height;i++) {
             for(int j=0;j<width;j++) {
-                cpy[height][width] = cpy[height][width];
+                cpy[i][j] = cpy[i][j];
             }
         } 
         VisualSpace vspace = new VisualSpace(nar, cpy, py, px, height, width);
