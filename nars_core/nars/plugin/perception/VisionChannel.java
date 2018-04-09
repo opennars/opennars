@@ -30,7 +30,15 @@ public class VisionChannel extends SensoryChannel {
         updated = new boolean[height][width];
     }
     
+    String subj = ""; 
     public boolean AddToMatrix(Task t) {
+        Inheritance inh = (Inheritance) t.getTerm(); //channels receive inheritances
+        String cur_subj = inh.getSubject().index_variable.toString();
+        if(!cur_subj.equals(subj)) { //when subject changes, we start to collect from scratch,
+            cnt_updated = 0; //this way multiple matrices can be processed by the same vision channel
+            updated = new boolean[height][width];
+            subj = cur_subj;
+        }
         int x = t.getTerm().term_indices[2];
         int y = t.getTerm().term_indices[3];
         inputs[y][x] = t.sentence.getTruth().getFrequency();
@@ -53,10 +61,12 @@ public class VisionChannel extends SensoryChannel {
         return nar;
     }
     
+    int termid=0;
     @Override
     public void step_start()
     {
-        Sentence s = new Sentence(Inheritance.make(new Term("A"), this.label), 
+        termid++;
+        Sentence s = new Sentence(Inheritance.make(new Term(subj+termid), this.label), 
                                                    Symbols.JUDGMENT_MARK, 
                                                    new TruthValue(1.0f,
                                                    Parameters.DEFAULT_JUDGMENT_CONFIDENCE), 
