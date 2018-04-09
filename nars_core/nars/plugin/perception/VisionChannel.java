@@ -18,6 +18,8 @@ public class VisionChannel extends SensoryChannel {
     int cnt_updated = 0;
     int height = 0;
     int width = 0;
+    int px = 0;
+    int py = 0;
     Term label;
     NAR nar;
     public VisionChannel(Term label, NAR nar, SensoryChannel reportResultsTo, int width, int height) {
@@ -66,7 +68,19 @@ public class VisionChannel extends SensoryChannel {
     public void step_start()
     {
         termid++;
-        Sentence s = new Sentence(Inheritance.make(new Term(subj+termid), this.label), 
+        Term V = new Term(subj+termid);
+        //the visual space has to be a copy.
+        float[][] cpy = new float[height][width];
+        for(int i=0;i<height;i++) {
+            for(int j=0;j<width;j++) {
+                cpy[height][width] = cpy[height][width];
+            }
+        } 
+        VisualSpace vspace = new VisualSpace(nar, cpy, py, px, height, width);
+        //attach sensation to term:
+        V.imagination = vspace;
+        
+        Sentence s = new Sentence(Inheritance.make(V, this.label), 
                                                    Symbols.JUDGMENT_MARK, 
                                                    new TruthValue(1.0f,
                                                    Parameters.DEFAULT_JUDGMENT_CONFIDENCE), 
@@ -77,5 +91,4 @@ public class VisionChannel extends SensoryChannel {
         this.results.add(T);//feeds results into "upper" sensory channels:
         this.step_finished(); 
     }
-    
 }
