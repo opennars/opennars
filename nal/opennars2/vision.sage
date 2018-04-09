@@ -1,9 +1,5 @@
 #Generates input for the vision system, use https://sagecell.sagemath.org/
 A=random_matrix(RR,30,30)
-size=30
-for i in range(size):
-    for j in range(size):
-        A[i,j]=random()
 with open("Output.txt", "w") as text_file:
     for i in range(30):
         for j in range(30):
