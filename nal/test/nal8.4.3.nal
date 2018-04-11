@@ -3,4 +3,4 @@
 1
 <(*,Self,key001) --> hold>. :|:
 5
-''outputMustContain('<(*,Self,key001) --> hold>. :!1: %1.00;0.93%%') 
+''outputMustContain('<(*,Self,key001) --> hold>. :!1: %1.00;0.93%') 
