@@ -833,8 +833,7 @@ public class RuleTables {
                             || compound instanceof Conjunction || compound instanceof Disjunction)) {
                         StructuralRules.structuralCompose2(compound, index, statement, side, nal);
                     }    // {A --> B, A @ (A&C)} |- (A&C) --> (B&C)
-                } else if (!(compound instanceof SetExt || compound instanceof SetInt || compound instanceof Negation
-                            || compound instanceof Conjunction || compound instanceof Disjunction)) {
+                } else if (!(compound instanceof Negation || compound instanceof Conjunction || compound instanceof Disjunction)) {
                     StructuralRules.structuralCompose2(compound, index, statement, side, nal);
                 }       // {A <-> B, A @ (A&C)} |- (A&C) <-> (B&C)
             }

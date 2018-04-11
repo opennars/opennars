@@ -181,13 +181,13 @@ public final class SyllogisticRules {
             return true; //no need for other syllogistic inference, it were sensational terms,
         }           //but it would not hurt to allow it either.. but why afford tasks that summarize
                     //so little evidence in comparison to the amount summarized by the array comparison.
-        long occurrence_time2 = nal.getTheNewStamp().getOccurrenceTime();
+        long occurrence_time2 = nal.getCurrentTask().sentence.getOccurenceTime();
         while (occurrence_time2!=Stamp.ETERNAL && (term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
             Interval interval = (Interval) ((CompoundTerm) term2).term[0];
             occurrence_time2 += interval.time;
             term2 = ((CompoundTerm)term2).setComponent(0, null, nal.mem());
         }
-        long occurrence_time1 = nal.getTheNewStamp().getOccurrenceTime();
+        long occurrence_time1 = nal.getCurrentTask().sentence.getOccurenceTime();
         while (occurrence_time1!=Stamp.ETERNAL && (term1 instanceof Conjunction) && (((CompoundTerm) term1).term[0] instanceof Interval)) {
             Interval interval = (Interval) ((CompoundTerm) term1).term[0];
             occurrence_time1 += interval.time;
@@ -431,14 +431,13 @@ public final class SyllogisticRules {
             return;
         
         int order = statement.getTemporalOrder();
-        long occurrence_time = nal.getTheNewStamp().getOccurrenceTime();
+        long occurrence_time = nal.getCurrentTask().sentence.getOccurenceTime();
         if ((order != ORDER_NONE) && (order!=ORDER_INVALID)) {
             long baseTime = subSentence.getOccurenceTime(); 
-            if (baseTime == Stamp.ETERNAL) { // =/> always should produce events
-                baseTime = nal.getTime();
+            if (baseTime != Stamp.ETERNAL) {
+                long inc = order * Parameters.DURATION;
+                occurrence_time = (side == 0) ? baseTime+inc : baseTime-inc;
             }
-            long inc = order * Parameters.DURATION;
-            occurrence_time = (side == 0) ? baseTime+inc : baseTime-inc;
         }
 
         TruthValue beliefTruth = beliefSentence.truth;
@@ -608,7 +607,7 @@ public final class SyllogisticRules {
         if (content == null)
             return;        
         
-        long occurrence_time = nal.getTheNewStamp().getOccurrenceTime();
+        long occurrence_time = nal.getCurrentTask().sentence.getOccurenceTime();
         if (delta != 0) {
             long baseTime = taskSentence.getOccurenceTime();
             if (baseTime != Stamp.ETERNAL) {
