@@ -267,7 +267,7 @@ public class RuleTables {
             Operation op = (Operation) taskTerm;
             if(op.getPredicate() == nal.memory.getOperator("^want")) {
                 TruthValue newTruth = TruthFunctions.deduction(task.sentence.truth, Parameters.reliance);
-                nal.singlePremiseTask(beliefTerm, Symbols.GOAL_MARK, newTruth, BudgetFunctions.forward(newTruth, nal));
+                nal.singlePremiseTask(((Operation)taskTerm).getArguments().term[1], Symbols.GOAL_MARK, newTruth, BudgetFunctions.forward(newTruth, nal));
             }
         }
     }
