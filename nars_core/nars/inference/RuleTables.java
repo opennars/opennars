@@ -829,10 +829,12 @@ public class RuleTables {
             if (task.sentence.isJudgment()) {
                 if (statement instanceof Inheritance) {
                     StructuralRules.structuralCompose1(compound, index, statement, nal);
-                    if (!(compound instanceof SetExt || compound instanceof SetInt || compound instanceof Negation)) {
+                    if (!(compound instanceof SetExt || compound instanceof SetInt || compound instanceof Negation
+                            || compound instanceof Conjunction || compound instanceof Disjunction)) {
                         StructuralRules.structuralCompose2(compound, index, statement, side, nal);
                     }    // {A --> B, A @ (A&C)} |- (A&C) --> (B&C)
-                } else if ((statement instanceof Similarity) && !(compound instanceof Conjunction)) {
+                } else if (!(compound instanceof SetExt || compound instanceof SetInt || compound instanceof Negation
+                            || compound instanceof Conjunction || compound instanceof Disjunction)) {
                     StructuralRules.structuralCompose2(compound, index, statement, side, nal);
                 }       // {A <-> B, A @ (A&C)} |- (A&C) <-> (B&C)
             }
