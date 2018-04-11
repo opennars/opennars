@@ -6,5 +6,5 @@
 
 3 
 
-''outputMustContain('<(*,John,key_101) --> hold>. :\: %1.00;0.45%')
+''outputMustContain('<(*,John,key_101) --> hold>. :!-10: %1.00;0.45%')
 

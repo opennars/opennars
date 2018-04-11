@@ -16,8 +16,8 @@ public class VisionChannel extends SensoryChannel {
     double[][] inputs;
     boolean[][] updated;
     int cnt_updated = 0;
-    int height = 0;
-    int width = 0;
+    int px = 0;
+    int py = 0;
     Term label;
     NAR nar;
     public VisionChannel(Term label, NAR nar, SensoryChannel reportResultsTo, int width, int height) {
@@ -30,13 +30,24 @@ public class VisionChannel extends SensoryChannel {
         updated = new boolean[height][width];
     }
     
+    String subj = ""; 
     public boolean AddToMatrix(Task t) {
+        Inheritance inh = (Inheritance) t.getTerm(); //channels receive inheritances
+        String cur_subj = inh.getSubject().index_variable.toString();
+        if(!cur_subj.equals(subj)) { //when subject changes, we start to collect from scratch,
+            cnt_updated = 0; //this way multiple matrices can be processed by the same vision channel
+            updated = new boolean[height][width];
+            subj = cur_subj;
+        }
         int x = t.getTerm().term_indices[2];
         int y = t.getTerm().term_indices[3];
-        inputs[y][x] = t.sentence.getTruth().getFrequency();
         if(!updated[y][x]) {
+            inputs[y][x] = t.sentence.getTruth().getFrequency();
             cnt_updated++;
             updated[y][x] = true;
+        } else { //a second value, so take average of frequencies
+                 //revision wouldn't be proper as each sensory point can just have 1 vote
+            inputs[y][x] = (inputs[y][x]+t.sentence.getTruth().getFrequency()) / 2.0f;
         }
         if(cnt_updated == height*width) {
             cnt_updated = 0;
@@ -53,10 +64,24 @@ public class VisionChannel extends SensoryChannel {
         return nar;
     }
     
+    int termid=0;
     @Override
     public void step_start()
     {
-        Sentence s = new Sentence(Inheritance.make(new Term("A"), this.label), 
+        termid++;
+        Term V = new Term(subj+termid);
+        //the visual space has to be a copy.
+        float[][] cpy = new float[height][width];
+        for(int i=0;i<height;i++) {
+            for(int j=0;j<width;j++) {
+                cpy[i][j] = (float) inputs[i][j];
+            }
+        } 
+        VisualSpace vspace = new VisualSpace(nar, cpy, py, px, height, width);
+        //attach sensation to term:
+        V.imagination = vspace;
+        
+        Sentence s = new Sentence(Inheritance.make(V, this.label), 
                                                    Symbols.JUDGMENT_MARK, 
                                                    new TruthValue(1.0f,
                                                    Parameters.DEFAULT_JUDGMENT_CONFIDENCE), 
@@ -67,5 +92,4 @@ public class VisionChannel extends SensoryChannel {
         this.results.add(T);//feeds results into "upper" sensory channels:
         this.step_finished(); 
     }
-    
 }

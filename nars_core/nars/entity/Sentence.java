@@ -110,7 +110,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                         //refined:
                         int u = 0;
                         while(c.term[c.term.length-1-u] instanceof Interval) {
-                            time += ((Interval)c.term[c.term.length-1]).time;
+                            time += ((Interval)c.term[c.term.length-1-u]).time;
                             u++;
                         }
                         
@@ -122,6 +122,24 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                         
                         if(!c.isSpatial && stamp!=null && stamp.getOccurrenceTime() != Stamp.ETERNAL)
                             stamp.setOccurrenceTime(stamp.getOccurrenceTime()-time);
+                    }
+                    if(c.term[0] instanceof Interval) {
+                        long time=0; 
+                        //refined:
+                        int u = 0;
+                        while(c.term[u] instanceof Interval) {
+                            time += ((Interval)c.term[u]).time;
+                            u++;
+                        }
+                        
+                        Term[] term2=new Term[c.term.length-u];
+                        System.arraycopy(c.term, u, term2, 0, term2.length);
+                        _content=(T) Conjunction.make(term2, c.getTemporalOrder(), c.isSpatial);
+                        //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
+                        //accordingly
+                        
+                        if(!c.isSpatial && stamp!=null && stamp.getOccurrenceTime() != Stamp.ETERNAL)
+                            stamp.setOccurrenceTime(stamp.getOccurrenceTime()+time);
                     }
                 }
             }
@@ -497,11 +515,14 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             Long Int = diffabs;
             timediff = diff>0 ? "+"+String.valueOf(Int) : "-"+String.valueOf(Int);
         }
-        String tenseString = ":"+timediff+":"; //stamp.getTense(t, nar.memory.getDuration());
         
+        if(Parameters.TEST_RUNNING) {
+            timediff = "!"+String.valueOf(stamp.getOccurrenceTime());
+        }
+        
+        String tenseString = ":"+timediff+":"; //stamp.getTense(t, nar.memory.getDuration());
         if(stamp.getOccurrenceTime() == Stamp.ETERNAL)
             tenseString="";
-        
         
         CharSequence stampString = showStamp ? stamp.name() : null;
         

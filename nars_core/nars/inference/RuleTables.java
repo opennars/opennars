@@ -267,7 +267,7 @@ public class RuleTables {
             Operation op = (Operation) taskTerm;
             if(op.getPredicate() == nal.memory.getOperator("^want")) {
                 TruthValue newTruth = TruthFunctions.deduction(task.sentence.truth, Parameters.reliance);
-                nal.singlePremiseTask(beliefTerm, Symbols.GOAL_MARK, newTruth, BudgetFunctions.forward(newTruth, nal));
+                nal.singlePremiseTask(((Operation)taskTerm).getArguments().term[1], Symbols.GOAL_MARK, newTruth, BudgetFunctions.forward(newTruth, nal));
             }
         }
     }
@@ -440,8 +440,10 @@ public class RuleTables {
                     }
                     t1 = beliefStatement.getPredicate();
                     t2 = taskStatement.getPredicate();
-                    SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
-
+                    boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                    if(sensational) {
+                        return;
+                    }
                     CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, nal);
                     //if(taskSentence.getOccurenceTime()==Stamp.ETERNAL && belief.getOccurenceTime()==Stamp.ETERNAL)
                     CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, nal);//introVarImage(taskContent, beliefContent, index, memory);             
@@ -495,7 +497,10 @@ public class RuleTables {
                     t1 = taskStatement.getSubject();
                     t2 = beliefStatement.getSubject();
                     if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
-                        SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                        boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                        if(sensational) {
+                            return;
+                        }
                         CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, nal);
                         CompositionalRules.introVarOuter(taskStatement, beliefStatement, 1, nal);// introVarImage(taskContent, beliefContent, index, memory);
 
@@ -760,13 +765,10 @@ public class RuleTables {
             } else if (compound.containsTerm(component)) {
                 StructuralRules.structuralCompound(compound, component, compoundTask, index, nal);
             }
-//        } else if ((compound instanceof Negation) && !memory.getCurrentTask().isStructural()) {
         } else if (compound instanceof Negation) {
             if (compoundTask) {
                 if (compound.term[0] instanceof CompoundTerm)
                     StructuralRules.transformNegation((CompoundTerm)compound.term[0], nal);
-            } else {
-                StructuralRules.transformNegation(compound, nal);
             }
         }
     }
@@ -827,10 +829,11 @@ public class RuleTables {
             if (task.sentence.isJudgment()) {
                 if (statement instanceof Inheritance) {
                     StructuralRules.structuralCompose1(compound, index, statement, nal);
-                    if (!(compound instanceof SetExt || compound instanceof SetInt || compound instanceof Negation)) {
+                    if (!(compound instanceof SetExt || compound instanceof SetInt || compound instanceof Negation
+                            || compound instanceof Conjunction || compound instanceof Disjunction)) {
                         StructuralRules.structuralCompose2(compound, index, statement, side, nal);
                     }    // {A --> B, A @ (A&C)} |- (A&C) --> (B&C)
-                } else if ((statement instanceof Similarity) && !(compound instanceof Conjunction)) {
+                } else if (!(compound instanceof Negation || compound instanceof Conjunction || compound instanceof Disjunction)) {
                     StructuralRules.structuralCompose2(compound, index, statement, side, nal);
                 }       // {A <-> B, A @ (A&C)} |- (A&C) <-> (B&C)
             }

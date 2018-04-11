@@ -9,7 +9,7 @@ import nars.plugin.mental.Counting;
 import nars.plugin.mental.Abbreviation;
 import nars.language.SetInt;
 import nars.language.Term;
-//import nars.plugin.perception.VisionChannel;
+import nars.plugin.perception.VisionChannel;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
@@ -20,9 +20,9 @@ public class Plugins {
         n.addPlugin(new RuntimeNARSettings());
         n.addPlugin(new Emotions());
         n.addPlugin(new Anticipate());      // expect an event 
-        //Term label = SetInt.make(new Term("bright"));
+        Term label = SetInt.make(new Term("bright"));
         //n.addSensoryChannel(label.toString(),
-        //                    new VisionChannel(label, n, n, 1, 1));
+        //                    new VisionChannel(label, n, n, 30, 30));
         boolean full_internal_experience = false;
         if(!full_internal_experience) {
             n.addPlugin(new InternalExperience());

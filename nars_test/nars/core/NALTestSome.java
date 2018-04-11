@@ -22,7 +22,7 @@ public class NALTestSome extends NALTest {
     
    public static boolean include(String filename) {
        //return true; //filename.startsWith("nal6.8.nal");
-       return filename.startsWith("nars_multistep_3");
+       return filename.startsWith("nal7.18.nal");
    }
 
    
