@@ -765,13 +765,10 @@ public class RuleTables {
             } else if (compound.containsTerm(component)) {
                 StructuralRules.structuralCompound(compound, component, compoundTask, index, nal);
             }
-//        } else if ((compound instanceof Negation) && !memory.getCurrentTask().isStructural()) {
         } else if (compound instanceof Negation) {
             if (compoundTask) {
                 if (compound.term[0] instanceof CompoundTerm)
                     StructuralRules.transformNegation((CompoundTerm)compound.term[0], nal);
-            } else {
-                StructuralRules.transformNegation(compound, nal);
             }
         }
     }

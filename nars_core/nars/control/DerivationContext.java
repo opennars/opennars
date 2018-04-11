@@ -63,9 +63,9 @@ public class DerivationContext {
     }
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, boolean overlapAllowed, boolean addToMemory) {                        
 
-        if(task.sentence.isGoal() && (task.sentence.term instanceof Implication ||
+        if((task.sentence.isGoal() || task.sentence.isQuest()) && (task.sentence.term instanceof Implication ||
                                       task.sentence.term instanceof Equivalence)) {
-            return false; //implication and equivalence goals are not supported anymore
+            return false; //implication and equivalence goals and quests are not supported anymore
         }
 
         if (!task.budget.aboveThreshold()) {
@@ -74,7 +74,7 @@ public class DerivationContext {
         } 
         if (task.sentence != null && task.sentence.truth != null) {
             float conf = task.sentence.truth.getConfidence();
-            if (conf == 0) {
+            if (conf < Parameters.TRUTH_EPSILON) {
                 //no confidence - we can delete the wrongs out that way.
                 memory.removeTask(task, "Ignored (zero confidence)");
                 return false;
@@ -236,23 +236,6 @@ public class DerivationContext {
         return null;
     }
 
-    /**
-     * Shared final operations by all double-premise rules, called from the
-     * rules except StructuralRules
-     *
-     * @param newContent The content of the sentence in task
-     * @param newTruth The truth value of the sentence in task
-     * @param newBudget The budget value in task
-     * @param revisible Whether the sentence is revisible
-     */
-    //    public void doublePremiseTask(Term newContent, TruthValue newTruth, BudgetValue newBudget, boolean revisible) {
-    //        if (newContent != null) {
-    //            Sentence taskSentence = currentTask.getSentence();
-    //            Sentence newSentence = new Sentence(newContent, taskSentence.getPunctuation(), newTruth, newStamp, revisible);
-    //            Task newTask = new Task(newSentence, newBudget, currentTask, currentBelief);
-    //            derivedTask(newTask, false, false);
-    //        }
-    //    }
     /**
      * Shared final operations by all single-premise rules, called in
      * StructuralRules
