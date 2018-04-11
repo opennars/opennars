@@ -181,29 +181,29 @@ public final class SyllogisticRules {
             return true; //no need for other syllogistic inference, it were sensational terms,
         }           //but it would not hurt to allow it either.. but why afford tasks that summarize
                     //so little evidence in comparison to the amount summarized by the array comparison.
-        long delta2 = 0;
-        while ((term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
+        long occurrence_time2 = nal.getTheNewStamp().getOccurrenceTime();
+        while (occurrence_time2!=Stamp.ETERNAL && (term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
             Interval interval = (Interval) ((CompoundTerm) term2).term[0];
-            delta2 += interval.time;
+            occurrence_time2 += interval.time;
             term2 = ((CompoundTerm)term2).setComponent(0, null, nal.mem());
         }
-        long delta1 = 0;
-        while ((term1 instanceof Conjunction) && (((CompoundTerm) term1).term[0] instanceof Interval)) {
+        long occurrence_time1 = nal.getTheNewStamp().getOccurrenceTime();
+        while (occurrence_time1!=Stamp.ETERNAL && (term1 instanceof Conjunction) && (((CompoundTerm) term1).term[0] instanceof Interval)) {
             Interval interval = (Interval) ((CompoundTerm) term1).term[0];
-            delta1 += interval.time;
+            occurrence_time1 += interval.time;
             term1 = ((CompoundTerm)term1).setComponent(0, null, nal.mem());
         }
         
         if (order != ORDER_INVALID) {
-            nal.getTheNewStamp().setOccurrenceTime(delta1);
+            nal.getTheNewStamp().setOccurrenceTime(occurrence_time1);
             nal.doublePremiseTask(
                     Statement.make(taskContent, term1, term2, order), 
                         truth1, budget1,false, false);
-            nal.getTheNewStamp().setOccurrenceTime(delta2);
+            nal.getTheNewStamp().setOccurrenceTime(occurrence_time2);
             nal.doublePremiseTask(
                     Statement.make(taskContent, term2, term1, reverseOrder(order)), 
                         truth2, budget2,false, false);
-            nal.getTheNewStamp().setOccurrenceTime(delta1);
+            nal.getTheNewStamp().setOccurrenceTime(occurrence_time1);
             nal.doublePremiseTask(
                     Statement.makeSym(taskContent, term1, term2, order), 
                         truth3, budget3,false, false);

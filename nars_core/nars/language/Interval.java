@@ -29,7 +29,7 @@ import nars.io.Symbols;
 public class Interval extends Term {
     
     public static Interval interval(final String i) {
-        return new Interval( Long.parseLong(i.substring(1)) - 1);
+        return new Interval(Long.parseLong(i.substring(1)));
     }
     
     @Override
