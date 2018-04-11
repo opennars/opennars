@@ -125,9 +125,9 @@ public final class SyllogisticRules {
      * removed?
      * @param nal Reference to the memory
      */
-    static void abdIndCom(Term term1, Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final DerivationContext nal) {
+    static boolean abdIndCom(Term term1, Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final DerivationContext nal) {
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1, term2)) {
-            return;
+            return false;
         }
         int order1 = sentence1.term.getTemporalOrder();
         int order2 = sentence2.term.getTemporalOrder();
@@ -165,29 +165,45 @@ public final class SyllogisticRules {
             budget3 = BudgetFunctions.forward(truth3, nal);
         }
         
-        long delta2 = 0;
-        while ((term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
+        if(term1.imagination != null && term2.imagination != null) {
+            TruthValue T = term1.imagination.AbductionOrComparisonTo(term2.imagination, true);
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE), 
+                    T, budget3.clone(),false, false);   
+            TruthValue T2 = term1.imagination.AbductionOrComparisonTo(term2.imagination, false);
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term1, term2, TemporalRules.ORDER_NONE), 
+                    T2, budget3.clone(),false, false);   
+            TruthValue T3 = term2.imagination.AbductionOrComparisonTo(term1.imagination, false);
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term2, term1, TemporalRules.ORDER_NONE), 
+                    T3, budget3.clone(),false, false);   
+            return true; //no need for other syllogistic inference, it were sensational terms,
+        }           //but it would not hurt to allow it either.. but why afford tasks that summarize
+                    //so little evidence in comparison to the amount summarized by the array comparison.
+        long occurrence_time2 = nal.getCurrentTask().sentence.getOccurenceTime();
+        while (occurrence_time2!=Stamp.ETERNAL && (term2 instanceof Conjunction) && (((CompoundTerm) term2).term[0] instanceof Interval)) {
             Interval interval = (Interval) ((CompoundTerm) term2).term[0];
-            delta2 += interval.time;
+            occurrence_time2 += interval.time;
             term2 = ((CompoundTerm)term2).setComponent(0, null, nal.mem());
         }
-        long delta1 = 0;
-        while ((term1 instanceof Conjunction) && (((CompoundTerm) term1).term[0] instanceof Interval)) {
+        long occurrence_time1 = nal.getCurrentTask().sentence.getOccurenceTime();
+        while (occurrence_time1!=Stamp.ETERNAL && (term1 instanceof Conjunction) && (((CompoundTerm) term1).term[0] instanceof Interval)) {
             Interval interval = (Interval) ((CompoundTerm) term1).term[0];
-            delta1 += interval.time;
+            occurrence_time1 += interval.time;
             term1 = ((CompoundTerm)term1).setComponent(0, null, nal.mem());
         }
         
         if (order != ORDER_INVALID) {
-            nal.getTheNewStamp().setOccurrenceTime(delta1);
+            nal.getTheNewStamp().setOccurrenceTime(occurrence_time1);
             nal.doublePremiseTask(
                     Statement.make(taskContent, term1, term2, order), 
                         truth1, budget1,false, false);
-            nal.getTheNewStamp().setOccurrenceTime(delta2);
+            nal.getTheNewStamp().setOccurrenceTime(occurrence_time2);
             nal.doublePremiseTask(
                     Statement.make(taskContent, term2, term1, reverseOrder(order)), 
                         truth2, budget2,false, false);
-            nal.getTheNewStamp().setOccurrenceTime(delta1);
+            nal.getTheNewStamp().setOccurrenceTime(occurrence_time1);
             nal.doublePremiseTask(
                     Statement.makeSym(taskContent, term1, term2, order), 
                         truth3, budget3,false, false);
@@ -217,6 +233,7 @@ public final class SyllogisticRules {
                 Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE), 
                     truth3, budget3.clone(),false, false);
         }
+        return false;
     }
     
     
@@ -414,14 +431,13 @@ public final class SyllogisticRules {
             return;
         
         int order = statement.getTemporalOrder();
-        long occurrence_time = nal.getTheNewStamp().getOccurrenceTime();
+        long occurrence_time = nal.getCurrentTask().sentence.getOccurenceTime();
         if ((order != ORDER_NONE) && (order!=ORDER_INVALID)) {
             long baseTime = subSentence.getOccurenceTime(); 
-            if (baseTime == Stamp.ETERNAL) { // =/> always should produce events
-                baseTime = nal.getTime();
+            if (baseTime != Stamp.ETERNAL) {
+                long inc = order * Parameters.DURATION;
+                occurrence_time = (side == 0) ? baseTime+inc : baseTime-inc;
             }
-            long inc = order * Parameters.DURATION;
-            occurrence_time = (side == 0) ? baseTime+inc : baseTime-inc;
         }
 
         TruthValue beliefTruth = beliefSentence.truth;
@@ -591,7 +607,7 @@ public final class SyllogisticRules {
         if (content == null)
             return;        
         
-        long occurrence_time = nal.getTheNewStamp().getOccurrenceTime();
+        long occurrence_time = nal.getCurrentTask().sentence.getOccurenceTime();
         if (delta != 0) {
             long baseTime = taskSentence.getOccurenceTime();
             if (baseTime != Stamp.ETERNAL) {

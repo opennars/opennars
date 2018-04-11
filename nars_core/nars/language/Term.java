@@ -176,7 +176,7 @@ public class Term implements AbstractTerm, Serializable {
             t.index_variable = index_variable;
         }
         t.name = name();
-        
+        t.imagination = imagination;
         return t;
     }
     

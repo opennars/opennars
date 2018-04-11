@@ -1,8 +1,10 @@
 ********** [07 + 09 -> 11]:
-  IN: (^pick,key001). :|: %1.00;0.90% 
+<a --> A>. :|:
+10
+(^pick,{SELF},key001). :|: %1.00;0.90% 
 11
-  IN: <(*,Self,key001) --> hold>. :|: 
+<(*,Self,key001) --> hold>. :|: 
 16
-''outputMustContain('<(&/,(^pick,key001),+4) =/> <(*,Self,key001) --> hold>>. :|: %1.00;0.45%)
+''outputMustContain('<(&/,<a --> A>,+10,(^pick,{SELF},key001),+11) =/> <(*,Self,key001) --> hold>>. :!21: %1.00;0.42%)
 'adjusted +3 to +4 ^
 

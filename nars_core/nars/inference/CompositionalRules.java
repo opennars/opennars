@@ -297,10 +297,10 @@ public final class CompositionalRules {
         if (isTemporalConjunction && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
             return;
         }
-        long occurrence_time = nal.getTheNewStamp().getOccurrenceTime();
+        long occurrence_time = nal.getCurrentTask().sentence.getOccurenceTime();
         if(isTemporalConjunction && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
             if(!nal.getCurrentTask().sentence.isEternal() && compound.term[index + 1] instanceof Interval) {
-                long shift_occurrence = ((Interval)compound.term[1]).time;
+                long shift_occurrence = ((Interval)compound.term[index + 1]).time;
                 occurrence_time = nal.getCurrentTask().sentence.getOccurenceTime() + shift_occurrence;
             }
         }
