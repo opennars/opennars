@@ -515,11 +515,14 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             Long Int = diffabs;
             timediff = diff>0 ? "+"+String.valueOf(Int) : "-"+String.valueOf(Int);
         }
-        String tenseString = ":"+timediff+":"; //stamp.getTense(t, nar.memory.getDuration());
         
+        if(Parameters.TEST_RUNNING) {
+            timediff = "!"+String.valueOf(stamp.getOccurrenceTime());
+        }
+        
+        String tenseString = ":"+timediff+":"; //stamp.getTense(t, nar.memory.getDuration());
         if(stamp.getOccurrenceTime() == Stamp.ETERNAL)
             tenseString="";
-        
         
         CharSequence stampString = showStamp ? stamp.name() : null;
         

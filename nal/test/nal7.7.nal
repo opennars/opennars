@@ -13,6 +13,6 @@
 
 20 
 
-''outputMustContain('<(&/,<(*,John,key_101) --> hold>,+4,<(*,John,door_101) --> open>) =/> <(*,John,room_101) --> enter>>. :|: %1.00;0.45%')
+''outputMustContain('<(&|,<(*,John,door_101) --> open>,<(*,John,key_101) --> hold>) =|> <(*,John,room_101) --> enter>>. :!0: %1.00;0.40%')
 'changed fomr +2 to +4 due to changes in interval calculations
 'this one is working, just throwing exception

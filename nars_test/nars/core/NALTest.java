@@ -30,6 +30,7 @@ public class NALTest  {
     static {
         Memory.randomNumber.setSeed(1);
         Parameters.DEBUG = true;
+        Parameters.TEST_RUNNING = true;
     }
 
     int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
