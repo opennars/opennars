@@ -729,7 +729,7 @@ public class RuleTables {
         
         Term component = condition.term[index];
         Term component2 = null;
-        if (statement instanceof Inheritance) {
+        if (statement instanceof Inheritance || statement instanceof Similarity) {
             component2 = statement;
             side = -1;
         } else if (statement instanceof Implication) {
