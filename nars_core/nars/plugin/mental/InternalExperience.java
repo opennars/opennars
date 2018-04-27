@@ -35,7 +35,7 @@ public class InternalExperience implements Plugin, EventObserver {
         
     public static float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC=0.3f;
     public static float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=0.3f;
-    public static float MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION=0.1f;
+    public static float MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION=0.01f;
     
     //internal experience has less durability?
     public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;

@@ -53,7 +53,7 @@ public class Operators {
             new NullOperator("^right"),
             new NullOperator("^left"),
             new NullOperator("^run"),
-            
+            new NullOperator("^feel"),
             //new Wait(),            
             //new Wait(),            
             new NullOperator(),
