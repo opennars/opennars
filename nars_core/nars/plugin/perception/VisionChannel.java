@@ -8,11 +8,15 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
+import nars.io.events.EventEmitter;
+import nars.io.events.Events;
+import nars.io.events.Events.CycleEnd;
+import nars.io.events.Events.CyclesEnd;
 import nars.language.Inheritance;
 import nars.language.Term;
 import nars.main.Parameters;
 
-public class VisionChannel extends SensoryChannel {
+public class VisionChannel extends SensoryChannel  {
     double[][] inputs;
     boolean[][] updated;
     int cnt_updated = 0;
@@ -20,18 +24,33 @@ public class VisionChannel extends SensoryChannel {
     int py = 0;
     Term label;
     NAR nar;
-    public VisionChannel(Term label, NAR nar, SensoryChannel reportResultsTo, int width, int height) {
-        super(nar,reportResultsTo);
+    boolean HadNewInput = false; //only generate frames if at least something was input since last "commit to NAR"
+    public EventEmitter.EventObserver obs;
+    public VisionChannel(Term label, NAR nar, SensoryChannel reportResultsTo, int width, int height, int duration) {
+        super(nar,reportResultsTo, width, height, duration);
         this.nar = nar;
-        this.height = height;
-        this.width = width;
         this.label = label;
         inputs = new double[height][width];
         updated = new boolean[height][width];
+        obs = new EventEmitter.EventObserver() {
+            @Override
+            public void event(Class ev, Object[] a) {
+                if(HadNewInput && ev==CycleEnd.class) {
+                    empty_cycles++;
+                    if(empty_cycles > duration) { //a deadline, pixels can't appear more than duration after each other
+                        step_start(); //so we know we can input, not only when all pixels were re-set.
+                    }
+                }
+            }
+        };
+        nar.memory.event.set(obs, true, Events.CycleEnd.class);
     }
     
     String subj = ""; 
+    int empty_cycles = 0;
     public boolean AddToMatrix(Task t) {
+        HadNewInput = true;
+        empty_cycles = 0;
         Inheritance inh = (Inheritance) t.getTerm(); //channels receive inheritances
         String cur_subj = inh.getSubject().index_variable.toString();
         if(!cur_subj.equals(subj)) { //when subject changes, we start to collect from scratch,
@@ -68,6 +87,7 @@ public class VisionChannel extends SensoryChannel {
     @Override
     public void step_start()
     {
+        HadNewInput = false;
         termid++;
         Term V = new Term(subj+termid);
         //the visual space has to be a copy.

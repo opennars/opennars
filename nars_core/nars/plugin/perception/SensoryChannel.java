@@ -19,13 +19,17 @@ public abstract class SensoryChannel implements Serializable {
     public List<Task> results = new ArrayList<Task>();
     public int height = 0; //1D channels have height 1
     public int width = 0;
+    public int duration = -1;
     public SensoryChannel(){}
-    public SensoryChannel(NAR nar, Collection<SensoryChannel> reportResultsTo) {
+    public SensoryChannel(NAR nar, Collection<SensoryChannel> reportResultsTo, int width, int height, int duration) {
         this.reportResultsTo = reportResultsTo;
         this.nar = nar;
+        this.width = width;
+        this.height = height;
+        this.duration = duration;
     }
-    public SensoryChannel(NAR nar, SensoryChannel reportResultsTo) {
-        this(nar, Arrays.asList(reportResultsTo));
+    public SensoryChannel(NAR nar, SensoryChannel reportResultsTo, int width, int height, int duration) {
+        this(nar, Arrays.asList(reportResultsTo), width, height, duration);
     }
     public void addInput(final String text) {
         try {
