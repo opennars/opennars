@@ -53,6 +53,7 @@ public class Shell {
     public static void main(String args[]) {
                 
         Shell nars = new Shell(new NAR());
+        nars.nar.addInput("*volume=0");
         nars.run(args);
         
         // TODO only if single finish ( no reset in between )
