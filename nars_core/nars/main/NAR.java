@@ -41,6 +41,7 @@ import nars.io.events.Events.CyclesEnd;
 import nars.io.events.Events.CyclesStart;
 import nars.io.events.OutputHandler;
 import nars.language.Inheritance;
+import nars.language.SetExt;
 
 
 /**
@@ -269,16 +270,18 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
                 Term predicate = ((Inheritance) t).getPredicate();
                 if(this.sensoryChannels.containsKey(predicate)) {
                     Inheritance inh = (Inheritance) task.sentence.term;
-                    Term subj = inh.getSubject();
+                    SetExt subj = (SetExt) inh.getSubject();
                     //map to pei's -1 to 1 indexing schema
-                    if(subj.term_indices == null) {
+                    if(subj.term[0].term_indices == null) {
                         String variable = subj.toString().split("\\[")[0];
                         String[] vals = subj.toString().split("\\[")[1].split("\\]")[0].split(",");
                         double height = Double.parseDouble(vals[0]);
                         double width = Double.parseDouble(vals[1]);
                         int wval = (int) Math.round((width+1.0f)/2.0f*(this.sensoryChannels.get(predicate).width-1));
                         int hval = (int) Math.round(((height+1.0f)/2.0f*(this.sensoryChannels.get(predicate).height-1)));
-                        String newInput = "<"+variable+"["+hval+","+wval+"] --> "+predicate+">"+task.sentence.punctuation+ " :|:";
+                        String ev = task.sentence.isEternal() ? " " : " :|: ";
+                        String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" + 
+                                          task.sentence.punctuation + ev + task.sentence.truth.toString();
                         this.emit(OutputHandler.IN.class, task);
                         this.addInput(newInput);
                         return;

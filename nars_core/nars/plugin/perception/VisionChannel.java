@@ -11,8 +11,9 @@ import nars.io.Symbols;
 import nars.io.events.EventEmitter;
 import nars.io.events.Events;
 import nars.io.events.Events.CycleEnd;
-import nars.io.events.Events.CyclesEnd;
+import nars.io.events.Events.ResetEnd;
 import nars.language.Inheritance;
+import nars.language.SetExt;
 import nars.language.Term;
 import nars.main.Parameters;
 
@@ -35,29 +36,40 @@ public class VisionChannel extends SensoryChannel  {
         obs = new EventEmitter.EventObserver() {
             @Override
             public void event(Class ev, Object[] a) {
-                if(HadNewInput && ev==CycleEnd.class) {
+                if(HadNewInput && ev == CycleEnd.class) {
                     empty_cycles++;
                     if(empty_cycles > duration) { //a deadline, pixels can't appear more than duration after each other
                         step_start(); //so we know we can input, not only when all pixels were re-set.
                     }
                 }
+                else 
+                if(ev == ResetEnd.class) {
+                    inputs = new double[height][width];
+                    updated = new boolean[height][width];
+                    cnt_updated = 0;
+                    px = 0;
+                    py = 0;
+                    termid = 0;
+                }
             }
         };
         nar.memory.event.set(obs, true, Events.CycleEnd.class);
+        nar.memory.event.set(obs, true, Events.ResetEnd.class);
     }
     
     String subj = ""; 
     int empty_cycles = 0;
     public boolean AddToMatrix(Task t) {
-        HadNewInput = true;
-        empty_cycles = 0;
         Inheritance inh = (Inheritance) t.getTerm(); //channels receive inheritances
         String cur_subj = inh.getSubject().index_variable.toString();
         if(!cur_subj.equals(subj)) { //when subject changes, we start to collect from scratch,
+            step_start(); //flush to upper level what we so far had
             cnt_updated = 0; //this way multiple matrices can be processed by the same vision channel
             updated = new boolean[height][width];
             subj = cur_subj;
         }
+        HadNewInput = true;
+        empty_cycles = 0;
         int x = t.getTerm().term_indices[2];
         int y = t.getTerm().term_indices[3];
         if(!updated[y][x]) {
@@ -69,15 +81,15 @@ public class VisionChannel extends SensoryChannel  {
             inputs[y][x] = (inputs[y][x]+t.sentence.getTruth().getFrequency()) / 2.0f;
         }
         if(cnt_updated == height*width) {
-            cnt_updated = 0;
-            updated = new boolean[height][width];
             return true;
         }
         return false;
     }
     
+    boolean isEternal = false; //don't use increasing ID if eternal
     @Override
     public NAR addInput(Task t) {
+        isEternal = t.sentence.isEternal();
         if(AddToMatrix(t)) //new data complete
             step_start();
         return nar;
@@ -87,16 +99,24 @@ public class VisionChannel extends SensoryChannel  {
     @Override
     public void step_start()
     {
+        cnt_updated = 0;
         HadNewInput = false;
         termid++;
-        Term V = new Term(subj+termid);
+        Term V;
+        if(isEternal) {
+            V = SetExt.make(new Term(subj));
+        } else {
+            V = SetExt.make(new Term(subj+termid));   
+        }
         //the visual space has to be a copy.
         float[][] cpy = new float[height][width];
         for(int i=0;i<height;i++) {
             for(int j=0;j<width;j++) {
                 cpy[i][j] = (float) inputs[i][j];
             }
-        } 
+        }
+        updated = new boolean[height][width];
+        inputs = new double[height][width];
         VisualSpace vspace = new VisualSpace(nar, cpy, py, px, height, width);
         //attach sensation to term:
         V.imagination = vspace;
@@ -104,7 +124,7 @@ public class VisionChannel extends SensoryChannel  {
         Sentence s = new Sentence(Inheritance.make(V, this.label), 
                                                    Symbols.JUDGMENT_MARK, 
                                                    new TruthValue(1.0f,
-                                                   Parameters.DEFAULT_JUDGMENT_CONFIDENCE), 
+                                                   0.01f), 
                                                    new Stamp(nar.memory));
         Task T = new Task(s, new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
                                              Parameters.DEFAULT_JUDGMENT_DURABILITY,

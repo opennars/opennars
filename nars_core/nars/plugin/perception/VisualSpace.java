@@ -69,7 +69,7 @@ public class VisualSpace implements ImaginationSpace {
         VisualSpace other = (VisualSpace) obj;
         double kh = ((float) other.height) / ((double) this.height);
         double kw = ((float) other.width)  / ((double) this.width);
-        TruthValue sim = new TruthValue(1.0f, 0.0f);
+        TruthValue sim = new TruthValue(0.5f, 0.01f);
         for(int i=0; i<this.height; i++) {
             for(int j=0; j<this.width; j++) {
                 int i2 = (int) (((double) i) * kh);
