@@ -14,10 +14,12 @@ import nars.io.events.Events.CycleEnd;
 import nars.io.events.Events.ResetEnd;
 import nars.language.Inheritance;
 import nars.language.SetExt;
+import nars.language.Tense;
 import nars.language.Term;
 import nars.main.Parameters;
 
 public class VisionChannel extends SensoryChannel  {
+    public float DEFAULT_OUTPUT_CONFIDENCE = 0.2f;
     double[][] inputs;
     boolean[][] updated;
     int cnt_updated = 0;
@@ -50,6 +52,7 @@ public class VisionChannel extends SensoryChannel  {
                     px = 0;
                     py = 0;
                     termid = 0;
+                    subj = "";
                 }
             }
         };
@@ -61,9 +64,11 @@ public class VisionChannel extends SensoryChannel  {
     int empty_cycles = 0;
     public boolean AddToMatrix(Task t) {
         Inheritance inh = (Inheritance) t.getTerm(); //channels receive inheritances
-        String cur_subj = inh.getSubject().index_variable.toString();
+        String cur_subj = ((SetExt)inh.getSubject()).term[0].index_variable.toString();
         if(!cur_subj.equals(subj)) { //when subject changes, we start to collect from scratch,
-            step_start(); //flush to upper level what we so far had
+            if(!subj.isEmpty()) { //but only if subj isn't empty
+                step_start(); //flush to upper level what we so far had
+            }
             cnt_updated = 0; //this way multiple matrices can be processed by the same vision channel
             updated = new boolean[height][width];
             subj = cur_subj;
@@ -117,15 +122,17 @@ public class VisionChannel extends SensoryChannel  {
         }
         updated = new boolean[height][width];
         inputs = new double[height][width];
+        subj = "";
         VisualSpace vspace = new VisualSpace(nar, cpy, py, px, height, width);
         //attach sensation to term:
         V.imagination = vspace;
+        Stamp stamp = isEternal ? new Stamp(nar.memory, Tense.Eternal) : new Stamp(nar.memory);
         
         Sentence s = new Sentence(Inheritance.make(V, this.label), 
                                                    Symbols.JUDGMENT_MARK, 
                                                    new TruthValue(1.0f,
-                                                   0.01f), 
-                                                   new Stamp(nar.memory));
+                                                   DEFAULT_OUTPUT_CONFIDENCE), 
+                                                   stamp);
         Task T = new Task(s, new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
                                              Parameters.DEFAULT_JUDGMENT_DURABILITY,
                                              BudgetFunctions.truthToQuality(s.truth)), true);
