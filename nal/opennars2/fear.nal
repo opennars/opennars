@@ -1,6 +1,0 @@
-<{SELF} --> [hurt]>! %0%
-<{SELF} --> [hurt]>. :|: %0%
-<(&/,<(*,{SELF},wolf) --> close_to>,+1000) =/> <{SELF} --> [hurt]>>.
-<(*,{SELF},wolf) --> close_to>. :|:
-<(&|,(^want,{SELF},$1,FALSE),(^anticipate,{SELF},$1)) =|> <(*,{SELF},$1) --> afraid_of>>.
-<(*,{SELF},?what) --> afraid_of>?

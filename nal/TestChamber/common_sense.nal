@@ -1,8 +1,0 @@
-if you are somewhere and you pick whats there you will hold it
-<(&/,<$1 --> [at]>,(^pick,$1)) =/> <$1 --> [hold]>>.
-//if you go to somewhere you will be there
-<(^go-to,$1) =/> <$1 --> [at]>>.
-//if you are somewhere and you activate whats there, its on
-<(&/,<$1 --> [at]>,(^activate,$1)) =/> <$1 --> [on]>>.
-//if you are somewhere and you deactivate whats there, its off
-<(&/,<$1 --> [at]>,(^deactivate,$1)) =/> <$1 --> [off]>>.

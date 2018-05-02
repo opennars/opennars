@@ -1,4 +1,0 @@
-<cat --> (/,(/,REPRESENT,_,<(*,CAT,FISH) --> FOOD>),_,eat,fish)>.
-<cat --> CAT>. %1.00;0.90%
-300
-''outputMustContain('<<$1 --> $2> ==> <$1 --> (/,(/,REPRESENT,_,<(*,$2,FISH) --> FOOD>),_,eat,fish)>>. %1.00;0.45%')

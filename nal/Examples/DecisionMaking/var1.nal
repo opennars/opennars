@@ -1,5 +1,0 @@
-<{key0} --> key>.
-(&&,<$1 --> key>,<(^go-to,$1) =/> <goal --> reached>>).
-<goal --> reached>!
-70
-''outputMustContain('^go-to([{key0}, SELF])=null')

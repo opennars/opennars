@@ -1,6 +1,0 @@
-// Table 8.4: Sample Dependent-Variable Introduction Rule
-<M --> P>.
-<M --> S>.
-(&&,<#x --> P >, <#x --> S>) ?
-// Fint
-4

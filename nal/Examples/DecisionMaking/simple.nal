@@ -1,7 +1,0 @@
-//simple sequential example which needs variable unification
-<(&/,(^go-to,$1),(^pick,$1)) =/> <$1 --> reached>>.
-<goal --> reached>!
-15
-''outputMustContain('^go-to([goal, SELF])=null')
-10
-''outputMustContain('^pick([goal, SELF])=null')
