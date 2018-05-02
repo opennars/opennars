@@ -1,8 +1,0 @@
-//conflicting ways to achieve a goal
-<(&/,(^pick,beer),<beer --> drink>) =/> <goal --> reached>>.
-<(&/,(--,<beer --> drink>),(^pick,pizza)) =/> <goal --> reached>>.
-<goal --> reached>!
-30
-//since testing framework does not support  outputMustContain('^pick([beer])=null') xor (^pick,pizza) yet
-//and NARS currently decides to pick beer. Nice: it doesnt pick both but this is not tested here yet
-''outputMustContain('^pick([beer, SELF])=null')

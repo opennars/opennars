@@ -1,5 +1,0 @@
-<(&&,<#1 --> sentence>,(^say,#1)) ==> <NARS --> chatty>>. %1.00;0.90%
-<NARS --> chatty>! %1.00;0.90%
-<(*,CAT,FISH) --> EATS>. :|:
-6
-<(*,cat,eats,fish) --> sentence>. :|:

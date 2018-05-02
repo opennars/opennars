@@ -1,4 +1,0 @@
-pick(a). :|:
-<a --> [dead]>. :|:
-3
-''outputMustContain('<(^pick,$1) =|> <$1 --> [dead]>>. :|: %1.00;0.45%')

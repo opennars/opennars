@@ -1,6 +1,0 @@
-<PERSON1 --> (/,livingIn,_,{vienna})>.
-<PERSON1 --> (/,namedBy,_,{tom})>.
-<PERSON2 --> (/,livingIn,_,{vienna})>.
-<PERSON2 --> (/,namedBy,_,?1)>?
-
-Solved <PERSON2 --> (/,namedBy,_,{tom})>. %1.00;0.40%
