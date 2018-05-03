@@ -291,45 +291,6 @@ public class ConceptProcessing {
         return false;
     }
 
-
-    public static void questionFromGoal(final Task task, final DerivationContext nal) {
-        if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
-            //ok, how can we achieve it? add a question of whether it is fullfilled
-            ArrayList<Term> qu=new ArrayList<Term>();
-            if(Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
-                if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
-                    Variable how=new Variable("?how");
-                    //Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
-                    Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
-                    //qu.add(imp);
-                    if(!(task.sentence.term instanceof Operation)) {
-                        qu.add(imp2);
-                    }
-                }
-            }
-            if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING) {
-                qu.add(task.sentence.term);
-            }
-            for(Term q : qu) {
-                if(q!=null) {
-                    Stamp st = new Stamp(task.sentence.stamp,nal.memory.time());
-                    st.setOccurrenceTime(task.sentence.getOccurenceTime()); //set tense of question to goal tense
-                    Sentence s = new Sentence(
-                        q,
-                        Symbols.QUESTION_MARK,
-                        null,
-                        st);
-
-                    if(s!=null) {
-                        BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
-                        nal.singlePremiseTask(s, budget);
-                    }
-                }
-            }
-        }
-    }
-
-
     /**
      * To answer a question by existing beliefs
      *

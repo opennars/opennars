@@ -12,10 +12,10 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.plugin.mental.InternalExperience;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import static nars.control.ConceptProcessing.generatePotentialNegConfirmation;
-import static nars.control.ConceptProcessing.questionFromGoal;
 
 public class DecisionMaking {
     // checks if the task is firing for decision making
@@ -201,34 +201,74 @@ public class DecisionMaking {
 
         Term content = t.getTerm();
 
-        if(content instanceof Operation) {
+        if(!(content instanceof Operation)) {
+            return false;
+        }
 
-            Operation op=(Operation)content;
-            Operator oper = op.getOperator();
-            Product prod = (Product) op.getSubject();
-            Term arg = prod.term[0];
-            if(oper instanceof FunctionOperator) {
-                for(int i=0;i<prod.term.length-1;i++) { //except last one, the output arg
-                    if(prod.term[i].hasVarDep() || prod.term[i].hasVarIndep()) {
-                        return false;
-                    }
-                }
-            } else {
-                if(content.hasVarDep() || content.hasVarIndep()) {
+        Operation op=(Operation)content;
+        Operator oper = op.getOperator();
+        Product prod = (Product) op.getSubject();
+        Term arg = prod.term[0];
+        if(oper instanceof FunctionOperator) {
+            for(int i=0;i<prod.term.length-1;i++) { //except last one, the output arg
+                if(prod.term[i].hasVarDep() || prod.term[i].hasVarIndep()) {
                     return false;
                 }
             }
-            if(!arg.equals(Term.SELF)) { //will be deprecated in the future
+        } else {
+            if(content.hasVarDep() || content.hasVarIndep()) {
                 return false;
             }
+        }
+        if(!arg.equals(Term.SELF)) { //will be deprecated in the future
+            return false;
+        }
 
-            op.setTask(t);
-            if(!oper.call(op, nal.memory)) {
-                return false;
+        op.setTask(t);
+        if(!oper.call(op, nal.memory)) {
+            return false;
+        }
+        System.out.println(t.toStringLong());
+        //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
+        return true;
+    }
+
+
+
+    private static void questionFromGoal(final Task task, final DerivationContext nal) {
+        if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+            //ok, how can we achieve it? add a question of whether it is fullfilled
+            ArrayList<Term> qu=new ArrayList<Term>();
+            if(Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+                if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
+                    Variable how=new Variable("?how");
+                    //Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
+                    Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
+                    //qu.add(imp);
+                    if(!(task.sentence.term instanceof Operation)) {
+                        qu.add(imp2);
+                    }
+                }
             }
-            System.out.println(t.toStringLong());
-            //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
-            return true;
+            if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING) {
+                qu.add(task.sentence.term);
+            }
+            for(Term q : qu) {
+                if(q!=null) {
+                    Stamp st = new Stamp(task.sentence.stamp,nal.memory.time());
+                    st.setOccurrenceTime(task.sentence.getOccurenceTime()); //set tense of question to goal tense
+                    Sentence s = new Sentence(
+                        q,
+                        Symbols.QUESTION_MARK,
+                        null,
+                        st);
+
+                    if(s!=null) {
+                        BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
+                        nal.singlePremiseTask(s, budget);
+                    }
+                }
+            }
         }
     }
 }
