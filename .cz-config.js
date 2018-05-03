@@ -17,10 +17,8 @@ module.exports = {
   ],
 
   scopes: [
-    {name: 'jni'},
-    {name: 'internal'},
-    {name: 'swing'},    
-    {name: 'opencl'}
+    {name: 'reasoner'},
+    {name: 'utility'}
   ],
 
   scopeOverrides: {
