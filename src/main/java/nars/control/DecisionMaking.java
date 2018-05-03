@@ -195,42 +195,40 @@ public class DecisionMaking {
      * Returns true if the Task has a Term which can be executed
      */
     public static boolean executeDecision(DerivationContext nal, final Task t) {
-        //if (isDesired())
-        if(nal.memory.allowExecution)
-        {
+        if(!nal.memory.allowExecution) {
+            return false;
+        }
 
-            Term content = t.getTerm();
+        Term content = t.getTerm();
 
-            if(content instanceof Operation) {
+        if(content instanceof Operation) {
 
-                Operation op=(Operation)content;
-                Operator oper = op.getOperator();
-                Product prod = (Product) op.getSubject();
-                Term arg = prod.term[0];
-                if(oper instanceof FunctionOperator) {
-                    for(int i=0;i<prod.term.length-1;i++) { //except last one, the output arg
-                        if(prod.term[i].hasVarDep() || prod.term[i].hasVarIndep()) {
-                            return false;
-                        }
-                    }
-                } else {
-                    if(content.hasVarDep() || content.hasVarIndep()) {
+            Operation op=(Operation)content;
+            Operator oper = op.getOperator();
+            Product prod = (Product) op.getSubject();
+            Term arg = prod.term[0];
+            if(oper instanceof FunctionOperator) {
+                for(int i=0;i<prod.term.length-1;i++) { //except last one, the output arg
+                    if(prod.term[i].hasVarDep() || prod.term[i].hasVarIndep()) {
                         return false;
                     }
                 }
-                if(!arg.equals(Term.SELF)) { //will be deprecated in the future
+            } else {
+                if(content.hasVarDep() || content.hasVarIndep()) {
                     return false;
                 }
-
-                op.setTask(t);
-                if(!oper.call(op, nal.memory)) {
-                    return false;
-                }
-                System.out.println(t.toStringLong());
-                //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
-                return true;
             }
+            if(!arg.equals(Term.SELF)) { //will be deprecated in the future
+                return false;
+            }
+
+            op.setTask(t);
+            if(!oper.call(op, nal.memory)) {
+                return false;
+            }
+            System.out.println(t.toStringLong());
+            //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
+            return true;
         }
-        return false;
     }
 }
