@@ -32,8 +32,9 @@ public class GeneralInferenceControl {
     
     public static void selectConceptForInference(Memory mem) {
         Concept currentConcept = mem.concepts.takeNext();
-        if (currentConcept==null)
+        if (currentConcept==null) {
             return;
+        }
         
         if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
             mem.concepts.take(currentConcept.getTerm());
@@ -46,20 +47,28 @@ public class GeneralInferenceControl {
             return;
         }
         
-        DerivationContext cont = new DerivationContext(mem);
-        cont.setCurrentConcept(currentConcept);
-        fireConcept(cont, 1);
+        DerivationContext nal = new DerivationContext(mem);
+        nal.setCurrentConcept(currentConcept);
+
+        fireConcept(nal, 1);
+
+        { // put back
+            float forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
+            nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
+            nal.memory.concepts.putBack(nal.currentConcept, forgetCycles, nal.memory);
+        }
     }
     
     public static void fireConcept(DerivationContext nal, int numTaskLinks) {     
         for (int i = 0; i < numTaskLinks; i++) {
-
-            if (nal.currentConcept.taskLinks.size() == 0) 
+            if (nal.currentConcept.taskLinks.size() == 0) {
                 return;
+            }
 
             nal.currentTaskLink = nal.currentConcept.taskLinks.takeNext();                    
-            if (nal.currentTaskLink == null)
+            if (nal.currentTaskLink == null) {
                 return;
+            }
 
             if (nal.currentTaskLink.budget.aboveThreshold()) {
                 fireTaskLink(nal, Parameters.TERMLINK_MAX_REASONED);                    
@@ -67,9 +76,6 @@ public class GeneralInferenceControl {
 
             nal.currentConcept.taskLinks.putBack(nal.currentTaskLink, nal.memory.cycles(nal.memory.param.taskLinkForgetDurations), nal.memory);
         }
-        float forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
-        nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
-        nal.memory.concepts.putBack(nal.currentConcept, forgetCycles, nal.memory);
     }
     
     protected static void fireTaskLink(DerivationContext nal, int termLinks) {
