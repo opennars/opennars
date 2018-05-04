@@ -1,0 +1,23 @@
+'********** variable introduction
+
+'A swan is a bird.
+<swan --> bird>.  
+
+'A swan is usually a swimmer.
+<swan --> swimmer>. %0.80%
+
+3
+
+'I guess a bird is usually a swimmer.
+''outputMustContain('<<$1 --> bird> ==> <$1 --> swimmer>>. %0.80;0.45%')
+
+'I guess a swimmer is a bird.
+''outputMustContain('<<$1 --> swimmer> ==> <$1 --> bird>>. %1.00;0.39%')
+
+'I guess a bird is usually a swimmer, and the other way around.
+''outputMustContain('<<$1 --> bird> <=> <$1 --> swimmer>>. %0.80;0.45%')
+
+'Some bird can swim.
+''outputMustContain('(&&,<#1 --> bird>,<#1 --> swimmer>). %0.80;0.81%')
+
+

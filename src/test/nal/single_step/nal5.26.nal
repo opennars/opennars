@@ -1,0 +1,12 @@
+'********** conditional abduction
+
+'If robin can fly then robin is a bird.
+<<robin --> [flying]> ==> <robin --> bird>>.  
+
+'If robin both swims and flys then robin is a bird.
+<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>.
+
+7
+
+'I guess robin swims.
+''outputMustContain('<robin --> swimmer>. %1.00;0.45%')

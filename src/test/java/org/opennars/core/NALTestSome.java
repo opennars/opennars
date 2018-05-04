@@ -35,7 +35,7 @@ public class NALTestSome extends NALTest {
     
    public static boolean include(String filename) {
        //return true; //filename.startsWith("nal6.8.nal");
-       return filename.startsWith("nal7.18.nal");
+       return filename.startsWith("nal1.0.nal");
    }
 
    
@@ -44,7 +44,7 @@ public class NALTestSome extends NALTest {
         List l = new LinkedList();
         
         //File folder = new File("nal/ClassicalConditioning");
-        File folder = new File("nal/test");
+        File folder = new File("src/test/nal/single_step/");
         
         for (final File file : folder.listFiles()) {
             if (file.getName().equals("README.txt") || file.getName().contains(".png"))

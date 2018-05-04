@@ -1,0 +1,13 @@
+'********** resemblance
+
+'Robin is a type of animal if and only if robin is a type of bird. 
+<<robin --> animal> <=> <robin --> bird>>.  
+
+'Robin is a type of bird if and only if robin can fly. 
+<<robin --> bird> <=> <robin --> [flying]>>. %0.9% 
+
+19
+
+'Robin is a type of animal if and only if robin can fly. 
+''outputMustContain('<<robin --> [flying]> <=> <robin --> animal>>. %0.90;0.81%')
+

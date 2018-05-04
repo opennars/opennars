@@ -1,0 +1,12 @@
+'********** comparison
+
+'If robin is a type of bird then usually robin is a type of animal. 
+<<robin --> bird> ==> <robin --> animal>>. %0.70% 
+
+'If robin can fly then robin is a type of animal. 
+<<robin --> [flying]> ==> <robin --> animal>>.  
+
+19
+
+'I guess robin is a type of bird if and only if robin can fly. 
+''outputMustContain('<<robin --> [flying]> <=> <robin --> bird>>. %0.70;0.45%')

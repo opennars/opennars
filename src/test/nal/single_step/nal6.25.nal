@@ -1,0 +1,14 @@
+'***** second variable introduction (induction)
+
+'if something opens lock1, it is a key
+<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>.
+
+'lock1 is a key
+<lock1 --> lock>.
+
+7
+
+'there is a lock with the property that when opened by something, this something is a key (induction)
+''outputMustContain('<(&&,<#1 --> (/,open,$2,_)>,<#1 --> lock>) ==> <$2 --> key>>. %1.00;0.45%')
+
+

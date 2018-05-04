@@ -1,0 +1,12 @@
+'********** multiple variable elimination
+
+'There is a key that can open some lock.
+(&&,<#x --> (/,open,#y,_)>,<#x --> lock>,<#y --> key>).  
+
+'Lock-1 is a lock.
+<{lock1} --> lock>.
+
+18
+
+'I guess there is a key that can open Lock-1.
+''outputMustContain('(&&,<#1 --> key>,<{lock1} --> (/,open,#1,_)>). %1.00;0.43%')

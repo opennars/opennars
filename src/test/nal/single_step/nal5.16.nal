@@ -1,0 +1,13 @@
+'********** compound decomposition, two premises
+
+'Robin cannot be both a flyer and a swimmer. 
+(&&,<robin --> [flying]>,<robin --> swimmer>). %0% 
+
+'Robin can fly. 
+<robin --> [flying]>. 
+
+6
+
+'Robin cannot swim. 
+''outputMustContain('<robin --> swimmer>. %0.00;0.81%')
+

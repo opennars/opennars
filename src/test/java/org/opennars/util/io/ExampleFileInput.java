@@ -63,7 +63,7 @@ public class ExampleFileInput {
     public static Map<String,Object> getUnitTests() {
         Map<String,Object> l = new TreeMap();
         
-        final String[] directories = new String[] { "nal/test", "nal/Examples/DecisionMaking", "nal/Examples/ClassicalConditioning" };
+        final String[] directories = new String[] { "src/test/nal/single_step/", "src/test/nal/multi_step/", "src/test/nal/application/"  };
         
         for (String dir : directories ) {
 

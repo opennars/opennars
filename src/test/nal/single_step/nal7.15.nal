@@ -1,0 +1,5 @@
+'********** temporal analogy
+<<(*, $x, door_101) --> open> =/> <(*, $x, room_101) --> enter>>. %0.95%
+<<(*, $x, room_101) --> enter> <|> <(*, $x, corridor_100) --> leave>>.
+40
+''outputMustContain('<<(*,$1,door_101) --> open> =/> <(*,$1,corridor_100) --> leave>>. %0.95;0.81%')
