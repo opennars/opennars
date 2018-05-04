@@ -15,6 +15,8 @@
 package org.opennars.inference;
 
 import java.util.ArrayList;
+
+import org.opennars.control.Attention;
 import org.opennars.main.Parameters;
 import org.opennars.io.events.Events.Answer;
 import org.opennars.io.events.Events.Unsolved;
@@ -287,22 +289,16 @@ public class LocalRules {
         if (problem.sentence.isGoal()) {
             nal.memory.emotion.adjustSatisfaction(quality, task.getPriority(), nal);
         }
-        
-        if (judgmentTask) {
-            task.incPriority(quality);
-        } else {
-            float taskPriority = task.getPriority(); //+goal satisfication is a matter of degree - https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M
-            budget = new BudgetValue(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.truth));
-            task.setPriority(Math.min(1 - quality, taskPriority));
-        }
+
+        budget = Attention.solutionEvalTask(solution, task, budget, judgmentTask, quality);
         if (feedbackToLinks) {
-            TaskLink tLink = nal.getCurrentTaskLink();
-            tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
-            TermLink bLink = nal.getCurrentBeliefLink();
-            bLink.incPriority(quality);
+            Attention.solutionEvalLinkFeedback(nal, quality);
         }
         return budget;
     }
+
+
+
 
 
     /* -------------------- same terms, difference relations -------------------- */

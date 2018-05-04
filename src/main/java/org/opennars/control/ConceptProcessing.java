@@ -294,13 +294,14 @@ public class ConceptProcessing {
                 AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
             }
 
-            double Satisfaction=1.0-AntiSatisfaction;
-            task.setPriority(task.getPriority()* (float)AntiSatisfaction);
+
+            Attention.updatePriorityAnd(task, (float)AntiSatisfaction);
             if (!task.aboveThreshold()) {
                 return false;
             }
             TruthValue T=goal.truth.clone();
 
+            double Satisfaction=1.0-AntiSatisfaction;
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
 
             boolean fullfilled = AntiSatisfaction < Parameters.SATISFACTION_TRESHOLD;
@@ -345,7 +346,8 @@ public class ConceptProcessing {
         }
         return false;
     }
-    
+
+
     public static void questionFromGoal(final Task task, final DerivationContext nal) {
         if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled

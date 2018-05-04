@@ -16,6 +16,8 @@ package org.opennars.storage;
 
 import java.util.Iterator;
 import java.util.Set;
+
+import org.opennars.control.Attention;
 import org.opennars.main.Parameters;
 import org.opennars.entity.Item;
 import org.opennars.inference.BudgetFunctions;
@@ -157,7 +159,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      */    
     public E putBack(final E oldItem, final float forgetCycles, final Memory m) {
         float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
-        BudgetFunctions.applyForgetting(oldItem.budget, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
+        Attention.applyForgetting(oldItem.budget, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
         return putIn(oldItem);
     }
     

@@ -227,7 +227,7 @@ public class TemporalInferenceControl {
         for(Task t : toRemove) {
             mem.recent_operations.take(t);
         }
-        task.setPriority(BudgetFunctions.or(task.getPriority(), priorityGain)); //this way operations priority of previous exections
+        Attention.updatePriorityOr(task, priorityGain); //this way operations priority of previous executions
         mem.recent_operations.putIn(task);                 //contributes to the current (enhancement)
         mem.lastDecision = task;
         Concept c = (Concept) mem.concept(task.getTerm());
@@ -243,4 +243,5 @@ public class TemporalInferenceControl {
         }
         mem.seq_current.clear();
     }
+
 }
