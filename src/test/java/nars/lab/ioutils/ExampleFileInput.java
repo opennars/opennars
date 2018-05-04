@@ -68,12 +68,14 @@ public class ExampleFileInput {
         for (String dir : directories ) {
 
             File folder = new File(dir);
-        
-            for (final File file : folder.listFiles()) {
-                if (file.getName().equals("README.txt") || file.getName().contains(".png"))
-                    continue;
-                if(!("extra".equals(file.getName()))) {
-                    l.put(file.getName(), new Object[] { file.getAbsolutePath() } );
+
+            if( folder.listFiles() != null ) {
+                for (final File file : folder.listFiles()) {
+                    if (file.getName().equals("README.txt") || file.getName().contains(".png"))
+                        continue;
+                    if (!("extra".equals(file.getName()))) {
+                        l.put(file.getName(), new Object[]{file.getAbsolutePath()});
+                    }
                 }
             }
             
