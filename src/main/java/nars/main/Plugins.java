@@ -35,8 +35,12 @@ public class Plugins {
         n.addPlugin(new Emotions());
         n.addPlugin(new Anticipate());      // expect an event 
         Term label = SetInt.make(new Term("bright"));
-        //n.addSensoryChannel(label.toString(),
-        //                    new VisionChannel(label, n, n, 30, 30));
+        //Add a vision channel:
+        int sensor_W = 5;
+        int sensor_H = 5;
+        n.addSensoryChannel(label.toString(),
+                            new VisionChannel(label, n, n, sensor_H, sensor_W, sensor_W*sensor_H));
+        //allow NAL9 capabilities:
         boolean full_internal_experience = false;
         if(!full_internal_experience) {
             n.addPlugin(new InternalExperience());
