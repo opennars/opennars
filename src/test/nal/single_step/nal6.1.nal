@@ -1,0 +1,15 @@
+'********** variable unification
+
+'If something is a bird, then it is a animal. 
+<<$x --> bird> ==> <$x --> animal>>. 
+
+'If something is a robin, then it is a bird. 
+<<$y --> robin> ==> <$y --> bird>>. 
+
+3
+
+'If something is a robin, then it is a animal. 
+''outputMustContain('<<$1 --> robin> ==> <$1 --> animal>>. %1.00;0.81%')
+
+ 'I guess that if something is a animal, then it is a robin. 
+''outputMustContain('<<$1 --> animal> ==> <$1 --> robin>>. %1.00;0.45%')

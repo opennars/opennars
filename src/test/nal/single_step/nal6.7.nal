@@ -1,0 +1,14 @@
+'****** variable elimination
+
+'If something is a bird, then it is an animal.
+<<$x --> bird> ==> <$x --> animal>>.
+
+'A robin is a bird.
+<robin --> bird>. 
+
+3
+
+'A robin is an animal.
+''outputMustContain('<robin --> animal>. %1.00;0.81%')
+
+

@@ -1,0 +1,17 @@
+'********** compound composition, two premises
+
+'If robin is a type of bird then robin is a type of animal. 
+<<robin --> bird> ==> <robin --> animal>>. 
+
+'If robin is a type of bird then robin can fly.
+<<robin --> bird> ==> <robin --> [flying]>>. %0.9%  
+
+14
+
+'If robin is a type of bird then usually robin is a type of animal and can fly. 
+''outputMustContain('<<robin --> bird> ==> (&&,<robin --> [flying]>,<robin --> animal>)>. %0.90;0.81%')
+
+'If robin is a type of bird then robin is a type of animal or can fly. 
+''outputMustContain('<<robin --> bird> ==> (||,<robin --> [flying]>,<robin --> animal>)>. %1.00;0.81%')
+
+

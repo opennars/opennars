@@ -1,0 +1,14 @@
+
+'********** variable elimination
+
+'If something can fly, chirp, and eats worms, then it is a bird.
+<(&&,<$x --> flyer>,<$x --> [chirping]>, <(*, $x, worms) --> food>) ==> <$x --> bird>>. 
+
+'Tweety can fly.
+<{Tweety} --> flyer>.
+
+7
+
+'If Tweety can chirp and eats worms, then it is a bird.
+''outputMustContain('<(&&,<(*,{Tweety},worms) --> food>,<{Tweety} --> [chirping]>) ==> <{Tweety} --> bird>>. %1.00;0.81%')
+                     

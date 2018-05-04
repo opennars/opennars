@@ -1,0 +1,12 @@
+'********** conversions between Implication and Equivalence
+
+'If robin can fly then robin is a type of bird. 
+<<robin --> [flying]> ==> <robin --> bird>>. %0.9% 
+
+'If robin is a type of bird then robin can fly.
+<<robin --> bird> ==> <robin --> [flying]>>. %0.9% 
+
+7
+
+'Robin can fly if and only if robin is a type of bird. 
+''outputMustContain('<<robin --> [flying]> <=> <robin --> bird>>. %0.81;0.81%')

@@ -1,0 +1,13 @@
+'********** revision
+
+'If robin can fly then robin is a type of bird. 
+<<robin --> [flying]> ==> <robin --> bird>>. 
+
+'If robin can fly then robin may not a type of bird. 
+<<robin --> [flying]> ==> <robin --> bird>>. %0.00;0.60% 
+
+1
+
+'If robin can fly then robin is a type of bird. 
+''outputMustContain('<<robin --> [flying]> ==> <robin --> bird>>. %0.86;0.91%')
+
