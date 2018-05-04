@@ -1,0 +1,14 @@
+language: java
+
+sudo: false
+jdk:
+  - oraclejdk8
+env:
+  - CODACY_PROJECT_TOKEN=636acc26006042628c9ec9391472a1c6
+before_install:
+  - sudo apt-get install jq
+  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar https://oss.sonatype.org/service/local/repositories/releases/content/com/codacy/codacy-coverage-reporter/4.0.0/codacy-coverage-reporter-4.0.0-assembly.jar
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  - mvn site
+  - java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r target/site/jacoco/jacoco.xml
