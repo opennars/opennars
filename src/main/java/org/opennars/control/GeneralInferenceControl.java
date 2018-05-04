@@ -50,24 +50,25 @@ public class GeneralInferenceControl {
         DerivationContext nal = new DerivationContext(mem);
         nal.setCurrentConcept(currentConcept);
 
-        fireConcept(nal, 1);
+        boolean putBackConcept = fireConcept(nal, 1);
 
-        { // put back
+        if(putBackConcept) { // put back
             float forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
             nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
             nal.memory.concepts.putBack(nal.currentConcept, forgetCycles, nal.memory);
         }
     }
-    
-    public static void fireConcept(DerivationContext nal, int numTaskLinks) {     
+
+    // /return true if concept must be put back
+    public static boolean fireConcept(DerivationContext nal, int numTaskLinks) {
         for (int i = 0; i < numTaskLinks; i++) {
             if (nal.currentConcept.taskLinks.size() == 0) {
-                return;
+                return false;
             }
 
             nal.currentTaskLink = nal.currentConcept.taskLinks.takeNext();                    
             if (nal.currentTaskLink == null) {
-                return;
+                return false;
             }
 
             if (nal.currentTaskLink.budget.aboveThreshold()) {
@@ -76,6 +77,7 @@ public class GeneralInferenceControl {
 
             nal.currentConcept.taskLinks.putBack(nal.currentTaskLink, nal.memory.cycles(nal.memory.param.taskLinkForgetDurations), nal.memory);
         }
+        return true;
     }
     
     protected static void fireTaskLink(DerivationContext nal, int termLinks) {
