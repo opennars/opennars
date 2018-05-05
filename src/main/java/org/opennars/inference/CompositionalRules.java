@@ -718,6 +718,7 @@ OUT: <lock1 --> lock>.
         HashMap<Term, Term> res4 = new HashMap<>();
 
         if (figure == 21) {
+
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is 
@@ -734,55 +735,11 @@ OUT: <lock1 --> lock>.
             P1 = T2.getPredicate();
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
-            if (S1 instanceof Conjunction) {
-                //try to unify P2 with a component
-                for (final Term s1 : ((CompoundTerm) S1).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) S1).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                TruthValue truth = abduction(sentence.truth, belief.truth);
-                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
-                    }
-                }
-            }
-            if (P2 instanceof Conjunction) {
-                //try to unify S1 with a component
-                for (final Term s1 : ((CompoundTerm) P2).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) P2).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                TruthValue truth = abduction(sentence.truth, belief.truth);
-                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
-                    }
-                }
-            }
+            eliminateSubfn3(sentence, belief, nal, S1, P2, res3, res4);
+            eliminateSubfn3(sentence, belief, nal, P2, S1, res3, res4);
         }
+        else if (figure == 12) {
 
-        if (figure == 12) {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
@@ -799,55 +756,11 @@ OUT: <lock1 --> lock>.
             P1 = T2.getPredicate();
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
-            if (S2 instanceof Conjunction) {
-                //try to unify P1 with a component
-                for (final Term s1 : ((CompoundTerm) S2).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) S2).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                TruthValue truth = abduction(sentence.truth, belief.truth);
-                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
-                    }
-                }
-            }
-            if (P1 instanceof Conjunction) {
-                //try to unify S2 with a component
-                for (final Term s1 : ((CompoundTerm) P1).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) P1).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                TruthValue truth = abduction(sentence.truth, belief.truth);
-                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
-                    }
-                }
-            }
+            eliminateSubfn3(sentence, belief, nal, S2, P1, res3, res4);
+            eliminateSubfn3(sentence, belief, nal, P1, S2, res3, res4);
         }
+        else if (figure == 11) {
 
-        if (figure == 11) {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
@@ -864,55 +777,11 @@ OUT: <lock1 --> lock>.
             P1 = T2.getPredicate();
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
-            if (P1 instanceof Conjunction) {
-                //try to unify P2 with a component
-                for (final Term s1 : ((CompoundTerm) P1).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) P1).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if ((!s2.equals(s1)) && (sentence.truth != null) && (belief.truth != null)) {
-                                TruthValue truth = abduction(sentence.truth, belief.truth);
-                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
-                    }
-                }
-            }
-            if (P2 instanceof Conjunction) {
-                //try to unify P1 with a component
-                for (final Term s1 : ((CompoundTerm) P2).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) P2).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                TruthValue truth = abduction(sentence.truth, belief.truth);
-                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
-                    }
-                }
-            }
+            eliminateSubfn3(sentence, belief, nal, P1, P2, res3, res4);
+            eliminateSubfn3(sentence, belief, nal, P2, P1, res3, res4);
         }
+        else if (figure == 22) {
 
-        if (figure == 22) {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
@@ -929,52 +798,67 @@ OUT: <lock1 --> lock>.
             P1 = T2.getPredicate();
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
-            if (S1 instanceof Conjunction) {
-                //try to unify S2 with a component
-                for (final Term s1 : ((CompoundTerm) S1).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) S1).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (s2!=null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                TruthValue truth = abduction(sentence.truth, belief.truth);
-                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
-                    }
+            eliminateSubfn4(sentence, belief, nal, S1, S2, res3, res4);
+            eliminateSubfn4(sentence, belief, nal, S2, S1, res3, res4);
+        }
+    }
+
+    private static void eliminateSubfn4(Sentence sentence, Sentence belief, DerivationContext nal, Term s1Param, Term s2, HashMap<Term, Term> res3, HashMap<Term, Term> res4) {
+        if (s1Param instanceof Conjunction) {
+            //try to unify S2 with a component
+            for (final Term s1 : ((CompoundTerm) s1Param).term) {
+                res3.clear();
+                res4.clear(); //here the dependent part matters, see example of Issue40
+                if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, s2, res3, res4)) {
+                    eliminateSubfn2(sentence, belief, nal, (CompoundTerm) s1, res3, s1);
                 }
             }
-            if (S2 instanceof Conjunction) {
-                //try to unify S1 with a component
-                for (final Term s1 : ((CompoundTerm) S2).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) S2).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
+        }
+    }
 
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (s2!=null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                TruthValue truth = abduction(sentence.truth, belief.truth);
-                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
-                    }
+    private static void eliminateSubfn3(Sentence sentence, Sentence belief, DerivationContext nal, Term s1Param, Term p2, HashMap<Term, Term> res3, HashMap<Term, Term> res4) {
+        if (s1Param instanceof Conjunction) {
+            //try to unify P2 with a component
+            for (final Term s1 : ((CompoundTerm) s1Param).term) {
+                res3.clear();
+                res4.clear(); //here the dependent part matters, see example of Issue40
+                if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, p2, res3, res4)) {
+                    elimitateSubfn1(sentence, belief, nal, (CompoundTerm) s1, res3, s1);
                 }
+            }
+        }
+    }
+
+    private static void eliminateSubfn2(Sentence sentence, Sentence belief, DerivationContext nal, CompoundTerm s1, HashMap<Term, Term> res3, Term s12) {
+        for (Term s2 : s1.term) {
+            if (!(s2 instanceof CompoundTerm)) {
+                continue;
+            }
+            s2 = ((CompoundTerm) s2).applySubstitute(res3);
+            if(s2==null || s2.hasVarIndep()) {
+                continue;
+            }
+            if (s2!=null && !s2.equals(s12) && (sentence.truth != null) && (belief.truth != null)) {
+                TruthValue truth = abduction(sentence.truth, belief.truth);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
+                nal.doublePremiseTask(s2, truth, budget, false, false);
+            }
+        }
+    }
+
+    private static void elimitateSubfn1(Sentence sentence, Sentence belief, DerivationContext nal, CompoundTerm s1, HashMap<Term, Term> res3, Term s12) {
+        for (Term s2 : s1.term) {
+            if (!(s2 instanceof CompoundTerm)) {
+                continue;
+            }
+            s2 = ((CompoundTerm) s2).applySubstitute(res3);
+            if(s2==null || s2.hasVarIndep()) {
+                continue;
+            }
+            if (!s2.equals(s12) && (sentence.truth != null) && (belief.truth != null)) {
+                TruthValue truth = abduction(sentence.truth, belief.truth);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
+                nal.doublePremiseTask(s2, truth, budget, false, false);
             }
         }
     }
