@@ -512,16 +512,16 @@ public class ConceptProcessing {
             }
 
             if(bestop != null && bestop_truthexp > concept.memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
-                
-                Sentence createdSentence = new Sentence(
-                        bestop,
-                        Symbols.JUDGMENT_MARK,
-                        bestop_truth,
-                        projectedGoal.stamp);
 
-                Task t = new Task(createdSentence, 
-                                  new BudgetValue(1.0f,1.0f,1.0f),
-                                  false);
+                Sentence createdSentence = new Sentence(
+                    bestop,
+                    Symbols.JUDGMENT_MARK,
+                    bestop_truth,
+                    projectedGoal.stamp);
+
+                Task t = new Task(createdSentence,
+                    new BudgetValue(1.0f,1.0f,1.0f),
+                    false);
                 //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
                 if(!task.sentence.stamp.evidenceIsCyclic()) {
                     if(!executeDecision(nal, t)) { //this task is just used as dummy
@@ -539,85 +539,85 @@ public class ConceptProcessing {
 
     public static void generatePotentialNegConfirmation(DerivationContext nal, Sentence mainSentence, BudgetValue budget, long mintime, long maxtime, float priority) {
         //derivation was successful and it was a judgment event
-        
-        try { //that was predicted by an eternal belief that shifted time
-        Stamp stamp = new Stamp(nal.memory);
-        stamp.setOccurrenceTime(Stamp.ETERNAL);
-        //long serial = stamp.evidentialBase[0];
-        Sentence s = new Sentence(
-            mainSentence.term,
-            mainSentence.punctuation,
-            new TruthValue(0.0f, 0.0f),
-            stamp);
 
-        //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
-        Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f), false); //Budget for one-time processing
-        Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
-        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-            if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
-                c.negConfirmation = t;
-                c.negConfirmationPriority = priority;
-                c.negConfirm_abort_maxtime = maxtime;
-                c.negConfirm_abort_mintime = mintime;
-                
-                if(c.negConfirmation.sentence.term instanceof Implication) {
-                    Implication imp = (Implication) c.negConfirmation.sentence.term;
-                    Concept ctarget = nal.memory.concept(imp.getPredicate());
-                    if(ctarget != null && ctarget.getPriority()>=InternalExperience.MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION) {
-                        ((Anticipate)c.memory.getOperator("^anticipate")).anticipationFeedback(imp.getPredicate(), null, c.memory);
+        try { //that was predicted by an eternal belief that shifted time
+            Stamp stamp = new Stamp(nal.memory);
+            stamp.setOccurrenceTime(Stamp.ETERNAL);
+            //long serial = stamp.evidentialBase[0];
+            Sentence s = new Sentence(
+                mainSentence.term,
+                mainSentence.punctuation,
+                new TruthValue(0.0f, 0.0f),
+                stamp);
+
+            //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
+            Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f), false); //Budget for one-time processing
+            Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
+            if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
+                    c.negConfirmation = t;
+                    c.negConfirmationPriority = priority;
+                    c.negConfirm_abort_maxtime = maxtime;
+                    c.negConfirm_abort_mintime = mintime;
+
+                    if(c.negConfirmation.sentence.term instanceof Implication) {
+                        Implication imp = (Implication) c.negConfirmation.sentence.term;
+                        Concept ctarget = nal.memory.concept(imp.getPredicate());
+                        if(ctarget != null && ctarget.getPriority()>=InternalExperience.MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION) {
+                            ((Anticipate)c.memory.getOperator("^anticipate")).anticipationFeedback(imp.getPredicate(), null, c.memory);
+                        }
                     }
+
+                    nal.memory.emit(OutputHandler.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
                 }
-                
-                nal.memory.emit(OutputHandler.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
             }
-       }
-        }catch(Exception ex) {
+        } catch(Exception ex) {
             System.out.println("problem in anticipation handling");
         }
     }
 
     /**
      * Entry point for all potentially executable tasks.
-     * Returns true if the Task has a Term which can be executed
+     * @return true if the Task has a Term which can be executed
      */
     public static boolean executeDecision(DerivationContext nal, final Task t) {
         //if (isDesired()) 
-        if(nal.memory.allowExecution)
-        {
-            
-            Term content = t.getTerm();
+        if(!nal.memory.allowExecution) {
+            return false;
+        }
 
-            if(content instanceof Operation) {
+        Term content = t.getTerm();
 
-                Operation op=(Operation)content;
-                Operator oper = op.getOperator();
-                Product prod = (Product) op.getSubject();
-                Term arg = prod.term[0];
-                if(oper instanceof FunctionOperator) {
-                    for(int i=0;i<prod.term.length-1;i++) { //except last one, the output arg
-                        if(prod.term[i].hasVarDep() || prod.term[i].hasVarIndep()) {
-                            return false;
-                        }
-                    }
-                } else {
-                    if(content.hasVarDep() || content.hasVarIndep()) {
-                        return false;
-                    }
-                }
-                if(!arg.equals(Term.SELF)) { //will be deprecated in the future
+        if(!(content instanceof Operation)) {
+            return false;
+        }
+
+        Operation op=(Operation)content;
+        Operator oper = op.getOperator();
+        Product prod = (Product) op.getSubject();
+        Term arg = prod.term[0];
+        if(oper instanceof FunctionOperator) {
+            for(int i=0;i<prod.term.length-1;i++) { //except last one, the output arg
+                if(prod.term[i].hasVarDep() || prod.term[i].hasVarIndep()) {
                     return false;
                 }
-
-                op.setTask(t);
-                if(!oper.call(op, nal.memory)) {
-                    return false;
-                }
-                System.out.println(t.toStringLong());
-                //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
-                return true;
+            }
+        } else {
+            if(content.hasVarDep() || content.hasVarIndep()) {
+                return false;
             }
         }
-        return false;
+        if(!arg.equals(Term.SELF)) { //will be deprecated in the future
+            return false;
+        }
+
+        op.setTask(t);
+        if(!oper.call(op, nal.memory)) {
+            return false;
+        }
+        System.out.println(t.toStringLong());
+        //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
+        return true;
     }
 
     public static void maintainDisappointedAnticipations(Concept concept) {
@@ -661,26 +661,32 @@ public class ConceptProcessing {
     public static void ProcessWhatQuestionAnswer(Concept concept, Task t, DerivationContext nal) {
         if(!t.sentence.term.hasVarQuery() && t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
             for(TaskLink quess: concept.taskLinks) {
-                Task ques = quess.getTarget();
-                if(((ques.sentence.isQuestion() && t.sentence.isJudgment()) ||
-                    (ques.sentence.isGoal()     && t.sentence.isJudgment()) ||
-                    (ques.sentence.isQuest()    && t.sentence.isGoal())) && ques.getTerm().hasVarQuery()) {
-                    boolean newAnswer = false;
-                    Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
-                    if(ques.sentence.term.hasVarQuery() && !t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
-                        Concept c = nal.memory.concept(t.getTerm());
-                        List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
-                        if(c != null && answers.size() > 0) {
-                            final Task taskAnswer = answers.get(0);
-                            if(taskAnswer!=null) {
-                                newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
-                            }
-                        }
-                    }
-                    if(newAnswer && ques.isInput()) {
-                       nal.memory.emit(Events.Answer.class, ques, ques.getBestSolution());
+                processWhatQuestionAnswerForQuestion(t, nal, quess);
+            }
+        }
+    }
+
+    private static void processWhatQuestionAnswerForQuestion(Task t, DerivationContext nal, TaskLink quess) {
+        Task ques = quess.getTarget();
+        if(((ques.sentence.isQuestion() && t.sentence.isJudgment()) ||
+            (ques.sentence.isGoal()     && t.sentence.isJudgment()) ||
+            (ques.sentence.isQuest()    && t.sentence.isGoal())) && ques.getTerm().hasVarQuery()
+        ) {
+
+            boolean newAnswer = false;
+            Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
+            if(ques.sentence.term.hasVarQuery() && !t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
+                Concept c = nal.memory.concept(t.getTerm());
+                List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
+                if(c != null && answers.size() > 0) {
+                    final Task taskAnswer = answers.get(0);
+                    if(taskAnswer!=null) {
+                        newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
                     }
                 }
+            }
+            if(newAnswer && ques.isInput()) {
+               nal.memory.emit(Events.Answer.class, ques, ques.getBestSolution());
             }
         }
     }
