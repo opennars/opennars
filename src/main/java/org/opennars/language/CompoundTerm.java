@@ -509,7 +509,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     public Term[] cloneTermsDeep() {
         Term[] l = new Term[term.length];
         for (int i = 0; i < l.length; i++) 
-            l[i] = term[i].cloneDeep();
+            l[i] = (term[i] != null ? term[i].cloneDeep() : null);
         return l;        
     }    
     public Term[] cloneVariableTermsDeep() {

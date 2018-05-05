@@ -179,9 +179,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                 if (!Term.valid(_content)) {
                     truth.setConfidence(0.0f);
                     if (Parameters.DEBUG) {
-                        CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
-                        ntc.printStackTrace();
-                        throw ntc;
+                        throw new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
                     }
                 }
             }
