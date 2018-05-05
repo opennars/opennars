@@ -512,16 +512,16 @@ public class ConceptProcessing {
             }
 
             if(bestop != null && bestop_truthexp > concept.memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
-                
-                Sentence createdSentence = new Sentence(
-                        bestop,
-                        Symbols.JUDGMENT_MARK,
-                        bestop_truth,
-                        projectedGoal.stamp);
 
-                Task t = new Task(createdSentence, 
-                                  new BudgetValue(1.0f,1.0f,1.0f),
-                                  false);
+                Sentence createdSentence = new Sentence(
+                    bestop,
+                    Symbols.JUDGMENT_MARK,
+                    bestop_truth,
+                    projectedGoal.stamp);
+
+                Task t = new Task(createdSentence,
+                    new BudgetValue(1.0f,1.0f,1.0f),
+                    false);
                 //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
                 if(!task.sentence.stamp.evidenceIsCyclic()) {
                     if(!executeDecision(nal, t)) { //this task is just used as dummy
@@ -539,39 +539,39 @@ public class ConceptProcessing {
 
     public static void generatePotentialNegConfirmation(DerivationContext nal, Sentence mainSentence, BudgetValue budget, long mintime, long maxtime, float priority) {
         //derivation was successful and it was a judgment event
-        
-        try { //that was predicted by an eternal belief that shifted time
-        Stamp stamp = new Stamp(nal.memory);
-        stamp.setOccurrenceTime(Stamp.ETERNAL);
-        //long serial = stamp.evidentialBase[0];
-        Sentence s = new Sentence(
-            mainSentence.term,
-            mainSentence.punctuation,
-            new TruthValue(0.0f, 0.0f),
-            stamp);
 
-        //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
-        Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f), false); //Budget for one-time processing
-        Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
-        if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-            if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
-                c.negConfirmation = t;
-                c.negConfirmationPriority = priority;
-                c.negConfirm_abort_maxtime = maxtime;
-                c.negConfirm_abort_mintime = mintime;
-                
-                if(c.negConfirmation.sentence.term instanceof Implication) {
-                    Implication imp = (Implication) c.negConfirmation.sentence.term;
-                    Concept ctarget = nal.memory.concept(imp.getPredicate());
-                    if(ctarget != null && ctarget.getPriority()>=InternalExperience.MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION) {
-                        ((Anticipate)c.memory.getOperator("^anticipate")).anticipationFeedback(imp.getPredicate(), null, c.memory);
+        try { //that was predicted by an eternal belief that shifted time
+            Stamp stamp = new Stamp(nal.memory);
+            stamp.setOccurrenceTime(Stamp.ETERNAL);
+            //long serial = stamp.evidentialBase[0];
+            Sentence s = new Sentence(
+                mainSentence.term,
+                mainSentence.punctuation,
+                new TruthValue(0.0f, 0.0f),
+                stamp);
+
+            //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
+            Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f), false); //Budget for one-time processing
+            Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
+            if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && ((Statement)mainSentence.getTerm()).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
+                    c.negConfirmation = t;
+                    c.negConfirmationPriority = priority;
+                    c.negConfirm_abort_maxtime = maxtime;
+                    c.negConfirm_abort_mintime = mintime;
+
+                    if(c.negConfirmation.sentence.term instanceof Implication) {
+                        Implication imp = (Implication) c.negConfirmation.sentence.term;
+                        Concept ctarget = nal.memory.concept(imp.getPredicate());
+                        if(ctarget != null && ctarget.getPriority()>=InternalExperience.MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION) {
+                            ((Anticipate)c.memory.getOperator("^anticipate")).anticipationFeedback(imp.getPredicate(), null, c.memory);
+                        }
                     }
+
+                    nal.memory.emit(OutputHandler.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
                 }
-                
-                nal.memory.emit(OutputHandler.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
             }
-       }
-        }catch(Exception ex) {
+        } catch(Exception ex) {
             System.out.println("problem in anticipation handling");
         }
     }
