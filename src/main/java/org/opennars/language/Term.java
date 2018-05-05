@@ -17,6 +17,7 @@ package org.opennars.language;
 import java.io.Serializable;
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opennars.storage.Memory;
 import org.opennars.main.Parameters;
 import org.opennars.operator.ImaginationSpace;
@@ -114,11 +115,9 @@ public class Term implements AbstractTerm, Serializable {
             }
             term_indices = new int[inds.length];
             for(int i=0;i<inds.length;i++) {
-                try {
+                if(StringUtils.isNumeric(inds[i]))
                     term_indices[i] = Integer.valueOf(inds[i]);
-                }
-                catch(NumberFormatException ex)
-                {
+                else {
                     term_indices = null;
                     break;
                 }
@@ -414,19 +413,8 @@ public class Term implements AbstractTerm, Serializable {
 
     /** performs a thorough check of the validity of a term (by cloneDeep it) to see if it's valid */
     public static boolean valid(Term content) {
-        
-        try {
-            Term cloned = content.cloneDeep();
-            return cloned!=null;
-        }
-        catch (Throwable e) {
-            /*if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
-                System.err.println("INVALID TERM: " + content);
-                e.printStackTrace();
-            }*/
-            return false;
-        }
-        
+        Term cloned = content.cloneDeep();
+        return cloned != null;
     }
 
     public boolean subjectOrPredicateIsIndependentVar() {

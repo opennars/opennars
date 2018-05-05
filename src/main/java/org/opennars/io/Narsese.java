@@ -444,7 +444,7 @@ public class Narsese implements Serializable {
         }
         
         if (s.contains(" ")) { // invalid characters in a name
-            throw new InvalidInputException("invalid term");
+            throw new InvalidInputException("invalid term: " + s);
         }
         
         char c = s.charAt(0);

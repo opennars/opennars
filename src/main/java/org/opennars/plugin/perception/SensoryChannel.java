@@ -51,6 +51,7 @@ public abstract class SensoryChannel implements Serializable {
             this.addInput(t);
         } catch (Narsese.InvalidInputException ex) {
             Logger.getLogger(SensoryChannel.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IllegalStateException("Could not parse input", ex);
         }
     }
     public abstract NAR addInput(final Task t);

@@ -40,21 +40,22 @@ public class TermTest {
     Narsese np = new Narsese(n);
     
     protected void assertEquivalent(String term1String, String term2String) {
-        try {
-            NAR n = new NAR();
+        NAR n = new NAR();
 
+        try {
             Term term1 = np.parseTerm(term1String);
             Term term2 = np.parseTerm(term2String);
 
             assertTrue(term1 instanceof CompoundTerm);
             assertTrue(term2 instanceof CompoundTerm);
-            assert(!term1String.equals(term2String));
+            assertTrue(!term1String.equals(term2String));
 
-            assert(term1.hashCode() == term2.hashCode());
-            assert(term1.equals(term2));
-            assert(term1.compareTo(term2)==0);        
+            assertTrue(term1.hashCode() == term2.hashCode());
+            assertTrue(term1.equals(term2));
+            assertTrue(term1.compareTo(term2)==0);
+        } catch (Narsese.InvalidInputException e) {
+            throw new IllegalStateException("Invalid test string.", e);
         }
-        catch (Exception e) { assertTrue(e.toString(), false); }
     }
     
     @Test
@@ -222,29 +223,26 @@ public class TermTest {
         }
     }
 
-    @Test public void invalidTermIndep() {
+    @Test(expected = Narsese.InvalidInputException.class)
+    public void testInvalidInputThrowsException() throws Narsese.InvalidInputException {
+        String t = "<$1 --> (~,{place4},$1)>";
+        NAR n = new NAR();
+        Narsese p = new Narsese(n);
+
+        p.parseNarsese(new StringBuilder(t + "."));
+    }
+
+    @Test
+    public void invalidTermIndep() throws Narsese.InvalidInputException {
         
         String t = "<$1 --> (~,{place4},$1)>";
         NAR n = new NAR();
         Narsese p = new Narsese(n);
         
-        try {
-            p.parseNarsese(new StringBuilder(t + "."));
-            assertTrue(false);
-        } catch (Narsese.InvalidInputException ex) {
-            assertTrue(true);
-        }
-        
         Term subj = null, pred = null;
-        try {
-            subj = p.parseTerm("$1");
-            pred = p.parseTerm("(~,{place4},$1)");
-            
-            assertTrue(true);
-            
-        } catch (Narsese.InvalidInputException ex) {
-            assertTrue(false);
-        }
+
+        subj = p.parseTerm("$1");
+        pred = p.parseTerm("(~,{place4},$1)");
         
             
         Statement s = Statement.make(NativeOperator.INHERITANCE, subj, pred, false, 0);
@@ -253,43 +251,28 @@ public class TermTest {
         Inheritance i = Inheritance.make(subj, pred);
         assertEquals(null, i);
 
+        CompoundTerm forced = (CompoundTerm) p.parseTerm("<a --> b>");
+        assertTrue(true);
 
-        try {
-            CompoundTerm forced = (CompoundTerm) p.parseTerm("<a --> b>");
-            assertTrue(true);
-            
-            forced.term[0] = subj;
-            forced.term[1] = pred;
-            forced.invalidateName();
-            
-            assertEquals(t, forced.toString());
-            
-            CompoundTerm cloned = forced.clone();
-            assertEquals(null, cloned);
-            
-            
-        } catch (Narsese.InvalidInputException ex) {           
-            assertTrue(false);
-        }
+        forced.term[0] = subj;
+        forced.term[1] = pred;
+        forced.invalidateName();
+
+        assertEquals(t, forced.toString());
+
+        CompoundTerm cloned = forced.clone();
+        assertEquals(null, cloned);
     }
     
     
-    @Test public void testParseOperationInFunctionalForm() {
+    @Test public void testParseOperationInFunctionalForm() throws Narsese.InvalidInputException {
         Parameters.FUNCTIONAL_OPERATIONAL_FORMAT = true;
         
         NAR n = new NAR();
         Narsese p = new Narsese(n);
-        
-        try {
-            Term x = p.parseTerm("wonder(a,b)");
-            assertEquals(Operation.class, x.getClass());
-            assertEquals("(^wonder,a,b)", x.toString());
-            
-        } catch (Narsese.InvalidInputException ex) {
-            ex.printStackTrace();
-            assertTrue(false);
-        }
-        
-        
+
+        Term x = p.parseTerm("wonder(a,b)");
+        assertEquals(Operation.class, x.getClass());
+        assertEquals("(^wonder,a,b)", x.toString());
     }
 }

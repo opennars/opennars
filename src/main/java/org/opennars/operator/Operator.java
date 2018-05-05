@@ -76,24 +76,22 @@ public abstract class Operator extends Term implements Plugin {
     * @return true if successful, false if an error occurred
     */
     public final boolean call(final Operation operation, final Term[] args, final Memory memory) {
-        try {
-            List<Task> feedback = execute(operation, args, memory);            
-                       
-            if(feedback == null || feedback.isEmpty()) { //null operator case
-                memory.executedTask(operation, new TruthValue(1f,executionConfidence));
-            }
-            
-            reportExecution(operation, args, feedback, memory);
-            
+        List<Task> feedback = execute(operation, args, memory);
 
-            if (feedback!=null) {
-                for (final Task t : feedback) {
-                    memory.inputTask(t);
-                }            
-            }
-            
-            return true;
+        if(feedback == null || feedback.isEmpty()) { //null operator case
+            memory.executedTask(operation, new TruthValue(1f,executionConfidence));
         }
+
+        reportExecution(operation, args, feedback, memory);
+
+
+        if (feedback!=null) {
+            for (final Task t : feedback) {
+                memory.inputTask(t);
+            }
+        }
+
+        return true;
 //        catch (NegativeFeedback n) {
 //            
 //            if (n.freqOcurred >=0 && n.confidenceOcurred >= 0) {
@@ -117,11 +115,6 @@ public abstract class Operator extends Term implements Plugin {
 //                reportExecution(operation, args, n, memory);
 //            }
 //        }
-        catch (Exception e) {                        
-            //reportExecution(operation, args, e, memory);            
-        }
-        return false;
-        
     }
     
    

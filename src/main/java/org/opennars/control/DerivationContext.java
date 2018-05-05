@@ -192,56 +192,43 @@ public class DerivationContext {
             }
             Stamp derive_stamp = getTheNewStamp().clone(); //because occurrence time will be reset:
             this.resetOccurrenceTime(); //stamp was already obsorbed into task
-            try {
-                final Sentence newSentence = new Sentence(
-                    newContent,
-                    getCurrentTask().sentence.punctuation,
-                    newTruth,
-                    derive_stamp);
 
-                newSentence.producedByTemporalInduction=temporalInduction;
-                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                
-                if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
-                    if(added) {
-                        ret.add(newTask);
-                    }
+            Sentence newSentence = new Sentence(
+                newContent,
+                getCurrentTask().sentence.punctuation,
+                newTruth,
+                derive_stamp);
+
+            newSentence.producedByTemporalInduction=temporalInduction;
+            Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+
+            if (newTask!=null) {
+                boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
+                if(added) {
+                    ret.add(newTask);
                 }
-            }
-            catch (CompoundTerm.UnableToCloneException e) {
-                return null;
             }
             
             
             //"Since in principle it is always valid to eternalize a tensed belief"
             if(temporalInduction && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
-                
-                try {
-
                 TruthValue truthEt=TruthFunctions.eternalize(newTruth);               
                 Stamp st=derive_stamp.clone();
                 st.setEternal();
-                final Sentence newSentence = new Sentence(
+                newSentence = new Sentence(
                     newContent,
                     getCurrentTask().sentence.punctuation,
                     truthEt,
                     st);
 
                 newSentence.producedByTemporalInduction=temporalInduction;
-                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 if (newTask!=null) {
                     boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
                     if(added) {
                         ret.add(newTask);
                     }
                 }
-                
-            }
-            catch (CompoundTerm.UnableToCloneException e) {
-                return null;
-            }
-                
             }
             return ret;
         }

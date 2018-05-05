@@ -143,13 +143,7 @@ public class RuleTables {
                         if(taskSentence.term instanceof Inheritance || taskSentence.term instanceof Similarity) {
                             StructuralRules.transformNegation((CompoundTerm) Negation.make(taskSentence.term), nal);
                         }
-                        try {
-                            goalFromQuestion(task, taskTerm, nal); 
-                        }catch(Exception ex) {
-                            if(Parameters.DEBUG) {
-                                System.out.print("Error in goalFromQuestion");
-                            }
-                        } //todo fix
+                        goalFromQuestion(task, taskTerm, nal);
                         //}
                         break;
                     case TermLink.COMPOUND_STATEMENT:

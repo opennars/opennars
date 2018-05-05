@@ -96,13 +96,7 @@ public class TemporalInferenceControl {
                 continue;
             }
             already_attempted.add(takeout);
-            try {
-                proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
-            } catch (Exception ex) {
-                if(Parameters.DEBUG) {
-                    System.out.println("issue in temporal induction");
-                }
-            }
+            proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
             nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
         }
 
@@ -137,28 +131,22 @@ public class TemporalInferenceControl {
                             continue;
                         }
                         already_attempted.add(takeout);
-                        try {
-                            long x = Toperation.sentence.getOccurenceTime();
-                            long y = takeout.sentence.getOccurenceTime();
-                            if(y > x) { //something wrong here?
-                                System.out.println("analyze case in TemporalInferenceControl!");
-                                continue;
-                            }
-                            List<Task> seq_op = proceedWithTemporalInduction(Toperation.sentence, takeout.sentence, nal.memory.lastDecision, nal, true, false, true);
-                            for(Task t : seq_op) {
-                                if(!t.sentence.isEternal()) { //TODO do not return the eternal here probably..;
-                                    List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false); //only =/> </> ..
-                                    /*DEBUG: for(Task seq_op_cons : res) {
-                                        System.out.println(seq_op_cons.toString());
-                                    }*/
-                                }
-                            }
-
-                        } catch (Exception ex) {
-                            if(Parameters.DEBUG) {
-                                System.out.println("issue in temporal induction");
+                        long x = Toperation.sentence.getOccurenceTime();
+                        long y = takeout.sentence.getOccurenceTime();
+                        if(y > x) { //something wrong here?
+                            System.out.println("analyze case in TemporalInferenceControl!");
+                            continue;
+                        }
+                        List<Task> seq_op = proceedWithTemporalInduction(Toperation.sentence, takeout.sentence, nal.memory.lastDecision, nal, true, false, true);
+                        for(Task t : seq_op) {
+                            if(!t.sentence.isEternal()) { //TODO do not return the eternal here probably..;
+                                List<Task> res = proceedWithTemporalInduction(newEvent.sentence, t.sentence, newEvent, nal, true, true, false); //only =/> </> ..
+                                /*DEBUG: for(Task seq_op_cons : res) {
+                                    System.out.println(seq_op_cons.toString());
+                                }*/
                             }
                         }
+
                         opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
                     }
                 }
