@@ -118,9 +118,6 @@ public class Parameters {
 
     public static int REVISION_MAX_OCCURRENCE_DISTANCE = 10;
 
-    /** Size of ConceptBag and level amount */
-    public static final int CONCEPT_BAG_SIZE = 10000;
-    public static final int CONCEPT_BAG_LEVELS = 1000;
     /** Size of TaskLinkBag */
     public static final int TASK_LINK_BAG_SIZE = 100;  //was 200 in new experiment
     public static final int TASK_LINK_BAG_LEVELS = 10;
@@ -294,9 +291,4 @@ public class Parameters {
 
     /** Sequence bag forget durations **/
     public static final float EVENT_FORGET_DURATIONS = 4.0f;
-
-    /** Minimum expectation for a desire value to execute an operation.
-     *  the range of "now" is [-DURATION, DURATION]; */
-    public static final float DECISION_THRESHOLD = 0.51f;
-
 }

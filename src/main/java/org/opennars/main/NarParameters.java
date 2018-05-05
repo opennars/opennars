@@ -17,4 +17,12 @@ package org.opennars.main;
 public class NarParameters {
     /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle */
     public int NOVELTY_HORIZON = 100000;
+
+    /** Minimum expectation for a desire value to execute an operation.
+     *  the range of "now" is [-DURATION, DURATION]; */
+    public float DECISION_THRESHOLD = 0.51f;
+
+    /** Size of ConceptBag and level amount */
+    public int CONCEPT_BAG_SIZE = 10000;
+    public int CONCEPT_BAG_LEVELS = 1000;
 }
