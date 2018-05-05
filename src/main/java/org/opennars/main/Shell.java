@@ -63,8 +63,7 @@ public class Shell {
         this.nar = n;
     }
 
-    private class InputThread extends Thread
-    {
+    private class InputThread extends Thread {
         private BufferedReader bufIn;
         NAR nar;
         InputThread(InputStream in, NAR nar)
@@ -116,6 +115,7 @@ public class Shell {
             it.start();
             //nar.addInput(new TextInput(new BufferedReader(new InputStreamReader(System.in))));
         }
+
         while (true) {
             if (logging)
                 log("NARSBatch.run():"
