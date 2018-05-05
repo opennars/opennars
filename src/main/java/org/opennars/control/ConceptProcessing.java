@@ -661,26 +661,32 @@ public class ConceptProcessing {
     public static void ProcessWhatQuestionAnswer(Concept concept, Task t, DerivationContext nal) {
         if(!t.sentence.term.hasVarQuery() && t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
             for(TaskLink quess: concept.taskLinks) {
-                Task ques = quess.getTarget();
-                if(((ques.sentence.isQuestion() && t.sentence.isJudgment()) ||
-                    (ques.sentence.isGoal()     && t.sentence.isJudgment()) ||
-                    (ques.sentence.isQuest()    && t.sentence.isGoal())) && ques.getTerm().hasVarQuery()) {
-                    boolean newAnswer = false;
-                    Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
-                    if(ques.sentence.term.hasVarQuery() && !t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
-                        Concept c = nal.memory.concept(t.getTerm());
-                        List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
-                        if(c != null && answers.size() > 0) {
-                            final Task taskAnswer = answers.get(0);
-                            if(taskAnswer!=null) {
-                                newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
-                            }
-                        }
-                    }
-                    if(newAnswer && ques.isInput()) {
-                       nal.memory.emit(Events.Answer.class, ques, ques.getBestSolution());
+                processWhatQuestionAnswerForQuestion(t, nal, quess);
+            }
+        }
+    }
+
+    private static void processWhatQuestionAnswerForQuestion(Task t, DerivationContext nal, TaskLink quess) {
+        Task ques = quess.getTarget();
+        if(((ques.sentence.isQuestion() && t.sentence.isJudgment()) ||
+            (ques.sentence.isGoal()     && t.sentence.isJudgment()) ||
+            (ques.sentence.isQuest()    && t.sentence.isGoal())) && ques.getTerm().hasVarQuery()
+        ) {
+
+            boolean newAnswer = false;
+            Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
+            if(ques.sentence.term.hasVarQuery() && !t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
+                Concept c = nal.memory.concept(t.getTerm());
+                List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
+                if(c != null && answers.size() > 0) {
+                    final Task taskAnswer = answers.get(0);
+                    if(taskAnswer!=null) {
+                        newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
                     }
                 }
+            }
+            if(newAnswer && ques.isInput()) {
+               nal.memory.emit(Events.Answer.class, ques, ques.getBestSolution());
             }
         }
     }
