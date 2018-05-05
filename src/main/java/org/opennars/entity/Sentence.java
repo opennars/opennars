@@ -140,50 +140,49 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         }
         
         this.punctuation = punctuation;
-        
-        if(_content instanceof Implication || _content instanceof Equivalence) {
-            if(((Statement) _content).getSubject().hasVarIndep() && !((Statement) _content).getPredicate().hasVarIndep())
-                truth.setConfidence(0.0f);
-            if(((Statement) _content).getPredicate().hasVarIndep() && !((Statement) _content).getSubject().hasVarIndep())
-                truth.setConfidence(0.0f); //TODO:
-            if(_content.getTemporalOrder() != TemporalRules.ORDER_NONE &&
-               _content.getTemporalOrder() != TemporalRules.ORDER_INVALID) { //do not allow =/> statements without conjunction on left
-                if((((Statement) _content).getSubject() instanceof Conjunction)) {
-                    Conjunction conj = (Conjunction) ((Statement) _content).getSubject();
-                    if(!conj.isSpatial && conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                        //when the last two are intervals, its not valid
-                       if(conj.term[conj.term.length-1] instanceof Interval && conj.term[conj.term.length-2] instanceof Interval) {
-                            truth.setConfidence(0.0f);
+
+        if( truth != null ) {
+            if (_content instanceof Implication || _content instanceof Equivalence) {
+                if (((Statement) _content).getSubject().hasVarIndep() && !((Statement) _content).getPredicate().hasVarIndep())
+                    truth.setConfidence(0.0f);
+                if (((Statement) _content).getPredicate().hasVarIndep() && !((Statement) _content).getSubject().hasVarIndep())
+                    truth.setConfidence(0.0f); //TODO:
+                if (_content.getTemporalOrder() != TemporalRules.ORDER_NONE &&
+                    _content.getTemporalOrder() != TemporalRules.ORDER_INVALID) { //do not allow =/> statements without conjunction on left
+                    if ((((Statement) _content).getSubject() instanceof Conjunction)) {
+                        Conjunction conj = (Conjunction) ((Statement) _content).getSubject();
+                        if (!conj.isSpatial && conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                            //when the last two are intervals, its not valid
+                            if (conj.term[conj.term.length - 1] instanceof Interval && conj.term[conj.term.length - 2] instanceof Interval) {
+                                truth.setConfidence(0.0f);
+                            }
                         }
                     }
                 }
+            } else if (_content instanceof Interval && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
+                truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
+                if (Parameters.DEBUG)
+                    throw new RuntimeException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
             }
-        }
-        else
-        if (_content instanceof Interval && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK)
-        {
-            truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-            if(Parameters.DEBUG)
-                throw new RuntimeException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
-        }
-        
-        if ( (!isQuestion() && !isQuest()) && (truth == null) && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {            
-            throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
-        }
-        
-        if(_content.subjectOrPredicateIsIndependentVar() && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
-            truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-            if(Parameters.DEBUG)
-                throw new RuntimeException("A statement sentence is not allowed to have a independent variable as subj or pred");
-        }
-        
-        if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
-            if (!Term.valid(_content)) {
-                truth.setConfidence(0.0f);
-                if(Parameters.DEBUG) {
-                    CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
-                    ntc.printStackTrace();
-                    throw ntc;
+
+            if ((!isQuestion() && !isQuest()) && (truth == null) && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
+                throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
+            }
+
+            if (_content.subjectOrPredicateIsIndependentVar() && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
+                truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
+                if (Parameters.DEBUG)
+                    throw new RuntimeException("A statement sentence is not allowed to have a independent variable as subj or pred");
+            }
+
+            if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
+                if (!Term.valid(_content)) {
+                    truth.setConfidence(0.0f);
+                    if (Parameters.DEBUG) {
+                        CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
+                        ntc.printStackTrace();
+                        throw ntc;
+                    }
                 }
             }
         }
