@@ -730,9 +730,8 @@ OUT: <lock1 --> lock>.
             if(T2==null) {
                 return;
             }
+
             S1 = T2.getSubject();
-            S2 = T1.getSubject();
-            P1 = T2.getPredicate();
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
             eliminateSubfn3(sentence, belief, nal, S1, P2, res3, res4);
@@ -751,10 +750,9 @@ OUT: <lock1 --> lock>.
             if(T2==null) {
                 return;
             }
-            S1 = T2.getSubject();
+
             S2 = T1.getSubject();
             P1 = T2.getPredicate();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
             eliminateSubfn3(sentence, belief, nal, S2, P1, res3, res4);
             eliminateSubfn3(sentence, belief, nal, P1, S2, res3, res4);
@@ -772,8 +770,7 @@ OUT: <lock1 --> lock>.
             if(T2==null) {
                 return;
             }
-            S1 = T2.getSubject();
-            S2 = T1.getSubject();
+
             P1 = T2.getPredicate();
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
@@ -793,10 +790,9 @@ OUT: <lock1 --> lock>.
             if(T2==null) {
                 return;
             }
+
             S1 = T2.getSubject();
             S2 = T1.getSubject();
-            P1 = T2.getPredicate();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
             eliminateSubfn4(sentence, belief, nal, S1, S2, res3, res4);
             eliminateSubfn4(sentence, belief, nal, S2, S1, res3, res4);
