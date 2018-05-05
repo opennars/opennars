@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -63,11 +64,16 @@ public class ExampleFileInput {
     public static Map<String,Object> getUnitTests() {
         Map<String,Object> l = new TreeMap();
         
-        final String[] directories = new String[] { "src/test/nal/single_step/", "src/test/nal/multi_step/", "src/test/nal/application/"  };
+        final String[] directories = new String[] { "/nal/single_step/", "/nal/multi_step/", "/nal/application/"  };
         
         for (String dir : directories ) {
 
-            File folder = new File(dir);
+            File folder = null;
+            try {
+                folder = new File(ExampleFileInput.class.getResource(dir).toURI());
+            } catch (URISyntaxException e) {
+                throw new IllegalStateException("Could not resolve path to nal tests in reosources.", e);
+            }
 
             if( folder.listFiles() != null ) {
                 for (final File file : folder.listFiles()) {

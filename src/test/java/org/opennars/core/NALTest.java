@@ -116,7 +116,7 @@ public class NALTest  {
               
         
         for (Failure f : result.getFailures()) {
-            String test = f.getMessage().substring(f.getMessage().indexOf("src/test/nal/single_step") + 8, f.getMessage().indexOf(".nal"));
+            String test = f.getMessage().substring(f.getMessage().indexOf("/nal/single_step") + 8, f.getMessage().indexOf(".nal"));
             
             tests.put(test, false);
         }
