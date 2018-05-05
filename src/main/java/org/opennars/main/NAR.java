@@ -272,6 +272,10 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     }
     
     public void addInput(final String text) {
+        //Ignore any input that is just a comment
+        if(text.startsWith("\'"))
+            return;
+
         Narsese narsese = new Narsese(this);
         if(addMultiLineInput(text)) {
             return;
