@@ -718,64 +718,13 @@ OUT: <lock1 --> lock>.
         HashMap<Term, Term> res4 = new HashMap<>();
 
         if (figure == 21) {
-
-            res1.clear();
-            res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is 
-            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
-            if(T1==null) {
-                return;
-            }
-            T2 = (Statement) T2.applySubstitute(res1);
-            if(T2==null) {
-                return;
-            }
-
-            S1 = T2.getSubject();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
-
-            eliminateSubfn3(sentence, belief, nal, S1, P2, res3, res4);
-            eliminateSubfn3(sentence, belief, nal, P2, S1, res3, res4);
+            eliminateSubfn10(sentence, belief, nal, T1, T2, S2, P1, res1, res2, res3, res4, T2.getSubject(), T1.getPredicate());
         }
         else if (figure == 12) {
-
-            res1.clear();
-            res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
-            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
-            if(T1==null) {
-                return;
-            }
-            T2 = (Statement) T2.applySubstitute(res1);
-            if(T2==null) {
-                return;
-            }
-
-            S2 = T1.getSubject();
-            P1 = T2.getPredicate();
-
-            eliminateSubfn3(sentence, belief, nal, S2, P1, res3, res4);
-            eliminateSubfn3(sentence, belief, nal, P1, S2, res3, res4);
+            eliminateSubfn10(sentence, belief, nal, T1, T2, P2, S1, res1, res2, res3, res4, T1.getSubject(), T2.getPredicate());
         }
         else if (figure == 11) {
-
-            res1.clear();
-            res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
-            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
-            if(T1==null) {
-                return;
-            }
-            T2 = (Statement) T2.applySubstitute(res1);
-            if(T2==null) {
-                return;
-            }
-
-            P1 = T2.getPredicate();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
-
-            eliminateSubfn3(sentence, belief, nal, P1, P2, res3, res4);
-            eliminateSubfn3(sentence, belief, nal, P2, P1, res3, res4);
+            eliminateSubfn10(sentence, belief, nal, T1, T2, S2, S1, res1, res2, res3, res4, T2.getPredicate(), T1.getPredicate());
         }
         else if (figure == 22) {
 
@@ -797,6 +746,28 @@ OUT: <lock1 --> lock>.
             eliminateSubfn4(sentence, belief, nal, S1, S2, res3, res4);
             eliminateSubfn4(sentence, belief, nal, S2, S1, res3, res4);
         }
+    }
+
+    private static void eliminateSubfn10(Sentence sentence, Sentence belief, DerivationContext nal, Statement t1, Statement t2, Term s2, Term p1, HashMap<Term, Term> res1, HashMap<Term, Term> res2, HashMap<Term, Term> res3, HashMap<Term, Term> res4, Term subject, Term predicate) {
+        Term S1;
+        Term P2;
+        res1.clear();
+        res2.clear();
+        Variables.findSubstitute(Symbols.VAR_INDEPENDENT, p1, s2, res1, res2); //this part is
+        t1 = (Statement) t1.applySubstitute(res2); //independent, the rule works if it unifies
+        if (t1 == null) {
+            return;
+        }
+        t2 = (Statement) t2.applySubstitute(res1);
+        if (t2 == null) {
+            return;
+        }
+
+        S1 = subject;
+        P2 = predicate; //update the variables because T1 and T2 may have changed
+
+        eliminateSubfn3(sentence, belief, nal, S1, P2, res3, res4);
+        eliminateSubfn3(sentence, belief, nal, P2, S1, res3, res4);
     }
 
     private static void eliminateSubfn4(Sentence sentence, Sentence belief, DerivationContext nal, Term s1Param, Term s2, HashMap<Term, Term> res3, HashMap<Term, Term> res4) {
