@@ -68,6 +68,7 @@ import org.opennars.language.SetExt;
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
 public class NAR extends SensoryChannel implements Serializable,Runnable {
+    public NarParameters narParameters = new NarParameters();
 
     /**
      * The information about the version and date of the project.

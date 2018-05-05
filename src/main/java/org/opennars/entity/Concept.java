@@ -25,6 +25,7 @@ import org.opennars.io.events.Events.TaskLinkAdd;
 import org.opennars.io.events.Events.TaskLinkRemove;
 import org.opennars.io.events.Events.TermLinkAdd;
 import org.opennars.io.events.Events.TermLinkRemove;
+import org.opennars.main.NarParameters;
 import org.opennars.storage.Memory;
 import org.opennars.main.Shell;
 import org.opennars.main.Parameters;
@@ -548,7 +549,7 @@ public class Concept extends Item<Term> implements Serializable {
      * @param time The current time
      * @return The selected TermLink
      */
-    public TermLink selectTermLink(final TaskLink taskLink, final long time) {
+    public TermLink selectTermLink(final TaskLink taskLink, final long time, NarParameters narParameters) {
         ConceptProcessing.maintainDisappointedAnticipations(this);
 
         int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
@@ -558,7 +559,7 @@ public class Concept extends Item<Term> implements Serializable {
             if (termLink==null)
                 break;
             
-            if (taskLink.novel(termLink, time)) {
+            if (taskLink.novel(termLink, time, narParameters)) {
                 //return, will be re-inserted in caller method when finished processing it
                 return termLink;
             }

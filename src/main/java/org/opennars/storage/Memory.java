@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Random;
 import org.opennars.main.NAR;
 import org.opennars.main.NAR.RuntimeParameters;
+import org.opennars.main.NarParameters;
 import org.opennars.main.Parameters;
 import org.opennars.io.events.Events.ResetEnd;
 import org.opennars.io.events.Events.ResetStart;
@@ -330,11 +331,11 @@ public class Memory implements Serializable, Iterable<Concept> {
     
         event.emit(Events.CycleStart.class);
         
-        this.processNewTasks();
+        this.processNewTasks(inputs.narParameters);
     //if(noResult()) //newTasks empty
-        this.processNovelTask();
+        this.processNovelTask(inputs.narParameters);
     //if(noResult()) //newTasks empty
-        GeneralInferenceControl.selectConceptForInference(this);
+        GeneralInferenceControl.selectConceptForInference(this, inputs.narParameters);
         
         event.emit(Events.CycleEnd.class);
         event.synch();
@@ -342,8 +343,8 @@ public class Memory implements Serializable, Iterable<Concept> {
         cycle++;
     }
     
-    public void localInference(Task task) {
-        DerivationContext cont = new DerivationContext(this);
+    public void localInference(Task task, NarParameters narParameters) {
+        DerivationContext cont = new DerivationContext(this, narParameters);
         cont.setCurrentTask(task);
         cont.setCurrentTerm(task.getTerm());
         cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
@@ -367,14 +368,14 @@ public class Memory implements Serializable, Iterable<Concept> {
      * ones and those that corresponding to existing concepts, plus one from the
      * buffer.
      */
-    public void processNewTasks() {
+    public void processNewTasks(NarParameters narParameters) {
         Task task;
         int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
         while (counter-- > 0) {
             task = newTasks.removeFirst();
             boolean enterDirect = true;
             if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ enterDirect ||  task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
-                localInference(task);
+                localInference(task, narParameters);
             } else {
                 Sentence s = task.sentence;
                 if (s.isJudgment() || s.isGoal()) {
@@ -399,10 +400,10 @@ public class Memory implements Serializable, Iterable<Concept> {
      * Select a novel task to process.
      * @return whether a task was processed
      */
-    public void processNovelTask() {
+    public void processNovelTask(NarParameters narParameters) {
         final Task task = novelTasks.takeNext();
         if (task != null) {            
-            localInference(task);
+            localInference(task, narParameters);
         }
     }
 

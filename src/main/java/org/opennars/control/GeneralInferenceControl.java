@@ -18,6 +18,7 @@
  */
 package org.opennars.control;
 
+import org.opennars.main.NarParameters;
 import org.opennars.main.Parameters;
 import org.opennars.entity.Concept;
 import org.opennars.io.events.Events;
@@ -30,7 +31,7 @@ import org.opennars.storage.Memory;
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 public class GeneralInferenceControl {
     
-    public static void selectConceptForInference(Memory mem) {
+    public static void selectConceptForInference(Memory mem, NarParameters narParameters) {
         Concept currentConcept = mem.concepts.takeNext();
         if (currentConcept==null) {
             return;
@@ -47,7 +48,7 @@ public class GeneralInferenceControl {
             return;
         }
         
-        DerivationContext nal = new DerivationContext(mem);
+        DerivationContext nal = new DerivationContext(mem, narParameters);
         nal.setCurrentConcept(currentConcept);
 
         boolean putBackConcept = fireConcept(nal, 1);
@@ -98,7 +99,7 @@ public class GeneralInferenceControl {
             
         } else {            
             while (termLinks > 0) {
-                final TermLink termLink = nal.currentConcept.selectTermLink(nal.currentTaskLink, nal.memory.time());
+                final TermLink termLink = nal.currentConcept.selectTermLink(nal.currentTaskLink, nal.memory.time(), nal.narParameters);
                 if (termLink == null) {
                     break;
                 }

@@ -21,6 +21,7 @@ package org.opennars.control;
 import java.util.ArrayList;
 import java.util.List;
 import org.opennars.io.events.Events;
+import org.opennars.main.NarParameters;
 import org.opennars.storage.Memory;
 import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
@@ -54,10 +55,13 @@ public class DerivationContext {
     protected Sentence currentBelief;
     protected Stamp newStamp;
     public StampBuilder newStampBuilder;
+
+    NarParameters narParameters;
     
-    public DerivationContext(Memory mem) {
+    public DerivationContext(Memory mem, NarParameters narParameters) {
         super();
         this.memory = mem;
+        this.narParameters = narParameters;
     }
    
     public void emit(final Class c, final Object... o) {
