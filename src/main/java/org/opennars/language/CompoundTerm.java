@@ -69,9 +69,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      to allow subclass constructors to set data before calling init() */
     public CompoundTerm(final Term[] components) {
         super();
-
-        this.term = components;            
-                
+        this.term = components;
     }
     
     public static class ConvRectangle
@@ -87,7 +85,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         boolean hasTermIndices = false;
         boolean calculateTermIndices = true;
         for (final Term t : term) {
-            if(t.term_indices != null) {
+            if(t != null && t.term_indices != null) {
                 if(!calculateTermIndices || 
                         (t.index_variable != null && index_last_var != null &&
                         (!t.index_variable.equals(index_last_var)))) {
@@ -143,7 +141,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
         
         for (final Term t : term) {
-            this.complexity += t.getComplexity();        
+
+            this.complexity += t.getComplexity();
             hasVariables |= t.hasVar();
             hasVarDeps |= t.hasVarDep();
             hasVarIndeps |= t.hasVarIndep();
@@ -194,6 +193,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                     transformIndependentVariableToDependent(vars, (CompoundTerm) t);
                 } else if (t instanceof Variable) {  /* it's a variable */
                     term[i] = vars.get(t.toString());
+                    assert term[i] != null;
                 }
             }
         }
@@ -204,6 +204,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         for(int i=0; i<comp.term.length; i++) {
             Term t = comp.term[i];
             if(t instanceof Interval) {
+                assert conceptival != null;
                 comp.term[i] = conceptival;
                 comp.invalidateName();
             }
@@ -252,6 +253,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                 counter++;
             }
         }
+        if( counter == 0 )
+            return T;
         HashMap<String,Variable> vars = new HashMap<>();
         for(int i=1;i<=counter;i++) {
             vars.put(Symbols.VAR_INDEPENDENT+String.valueOf(i), new Variable(Symbols.VAR_DEPENDENT+String.valueOf(i)));
@@ -509,7 +512,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     public Term[] cloneTermsDeep() {
         Term[] l = new Term[term.length];
         for (int i = 0; i < l.length; i++) 
-            l[i] = (term[i] != null ? term[i].cloneDeep() : null);
+            l[i] = term[i].cloneDeep();
         return l;        
     }    
     public Term[] cloneVariableTermsDeep() {
