@@ -38,5 +38,5 @@ public class FeelBusy extends Feel {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         return feeling(memory.emotion.busy(), memory);
-    }    
+    }
 }

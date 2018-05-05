@@ -45,5 +45,4 @@ public class Hesitate extends Operator {
         concept.discountConfidence(false);
         return null;
     }
-    
 }

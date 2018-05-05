@@ -78,10 +78,10 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
      * The project web sites.
      */
     public static final String WEBSITE =
-            " Open-NARS website:  http://code.google.com/p/open-org.opennars/ \n"
-                    + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
-                    "    Github website:  http://github.com/opennars/ \n" +
-                    "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";    ;
+        " Open-NARS website:  http://code.google.com/p/open-org.opennars/ \n"
+            + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
+            "    Github website:  http://github.com/opennars/ \n" +
+            "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";    ;
 
 
     Map<Term,SensoryChannel> sensoryChannels = new HashMap<Term,SensoryChannel>();
@@ -92,20 +92,20 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
             Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void SaveToFile(String name) throws FileNotFoundException, IOException {
+
+    public void SaveToFile(String name) throws IOException {
         FileOutputStream outStream = new FileOutputStream(name);
         ObjectOutputStream stream = new ObjectOutputStream(outStream);
         stream.writeObject(this);
         outStream.close();
     }
-    
-    public static NAR LoadFromFile(String name) throws FileNotFoundException, IOException, ClassNotFoundException {
+
+    public static NAR LoadFromFile(String name) throws IOException, ClassNotFoundException {
         FileInputStream inStream = new FileInputStream(name);
         ObjectInputStream stream = new ObjectInputStream(inStream);
         NAR ret = (NAR) stream.readObject();
         ret.memory.event = new EventEmitter();
-        ret.plugins = new ArrayList<>(); 
+        ret.plugins = new ArrayList<>();
         for (Operator o : Operators.get(ret))
             ret.memory.addOperator(o);
         new Plugins().init(ret);
@@ -123,8 +123,8 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
      * The memory of the reasoner
      */
     public Memory memory;
-    
-    
+
+
     public static class Lock extends Object implements Serializable { }
     //Because AtomicInteger/Double ot supported by teavm
     public static class PortableInteger implements Serializable {
@@ -151,15 +151,15 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         public int intValue() {return (int)this.VAL;}
     }
     /*NAR Parameters which can be changed during runtime.*/
-   public class RuntimeParameters implements Serializable {
-       public RuntimeParameters() {    }
-       public final PortableInteger noiseLevel = new PortableInteger(100);
-       public final PortableDouble conceptForgetDurations = new PortableDouble(Parameters.CONCEPT_FORGET_DURATIONS);
-       public final PortableDouble termLinkForgetDurations = new PortableDouble(Parameters.TERMLINK_FORGET_DURATIONS);
-       public final PortableDouble taskLinkForgetDurations = new PortableDouble(Parameters.TASKLINK_FORGET_DURATIONS);
-       public final PortableDouble eventForgetDurations = new PortableDouble(Parameters.EVENT_FORGET_DURATIONS);
-       public final PortableDouble decisionThreshold = new PortableDouble(Parameters.DECISION_THRESHOLD);
-   }
+    public class RuntimeParameters implements Serializable {
+        public RuntimeParameters() {    }
+        public final PortableInteger noiseLevel = new PortableInteger(100);
+        public final PortableDouble conceptForgetDurations = new PortableDouble(Parameters.CONCEPT_FORGET_DURATIONS);
+        public final PortableDouble termLinkForgetDurations = new PortableDouble(Parameters.TERMLINK_FORGET_DURATIONS);
+        public final PortableDouble taskLinkForgetDurations = new PortableDouble(Parameters.TASKLINK_FORGET_DURATIONS);
+        public final PortableDouble eventForgetDurations = new PortableDouble(Parameters.EVENT_FORGET_DURATIONS);
+        public final PortableDouble decisionThreshold = new PortableDouble(Parameters.DECISION_THRESHOLD);
+    }
     public RuntimeParameters param;
 
     public class PluginState implements Serializable {
@@ -199,10 +199,10 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     public NAR() {
         Plugins b = new Plugins();
         Memory m = new Memory(new RuntimeParameters(),
-                new LevelBag(Parameters.CONCEPT_BAG_LEVELS, Parameters.CONCEPT_BAG_SIZE),
-                new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
-                new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE),
-                new LevelBag<>(Parameters.OPERATION_BAG_LEVELS, Parameters.OPERATION_BAG_SIZE));
+            new LevelBag(Parameters.CONCEPT_BAG_LEVELS, Parameters.CONCEPT_BAG_SIZE),
+            new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
+            new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE),
+            new LevelBag<>(Parameters.OPERATION_BAG_LEVELS, Parameters.OPERATION_BAG_SIZE));
         this.memory = m;
         this.param = m.param;
         for (Operator o : Operators.get(this))
@@ -237,7 +237,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         }
         return false;
     }
-    
+
     private boolean addCommand(final String text) {
         if(text.startsWith("**")) {
             this.reset();
@@ -266,7 +266,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         } catch (NumberFormatException ex) {} //usual input (TODO without exception)
         return false;
     }
-    
+
     public void addInput(final String text) {
         Narsese narsese = new Narsese(this);
         if(addMultiLineInput(text)) {
@@ -293,8 +293,8 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
                         int wval = (int) Math.round((width+1.0f)/2.0f*(this.sensoryChannels.get(predicate).width-1));
                         int hval = (int) Math.round(((height+1.0f)/2.0f*(this.sensoryChannels.get(predicate).height-1)));
                         String ev = task.sentence.isEternal() ? " " : " :|: ";
-                        String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" + 
-                                          task.sentence.punctuation + ev + task.sentence.truth.toString();
+                        String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" +
+                            task.sentence.punctuation + ev + task.sentence.truth.toString();
                         this.emit(OutputHandler.IN.class, task);
                         this.addInput(newInput);
                         return;
@@ -309,7 +309,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
             //Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void addInputFile(String s) {
         try (BufferedReader br = new BufferedReader(new FileReader(s))) {
             String line;
@@ -333,17 +333,17 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
         Task t;
         addInput(
-                t = new Task(
-                        new Sentence(
-                                new Narsese(this).parseTerm(termString),
-                                Symbols.QUESTION_MARK,
-                                null,
-                                new Stamp(memory, Tense.Eternal)),
-                        new BudgetValue(
-                                Parameters.DEFAULT_QUESTION_PRIORITY,
-                                Parameters.DEFAULT_QUESTION_DURABILITY,
-                                1),
-                        true)
+            t = new Task(
+                new Sentence(
+                    new Narsese(this).parseTerm(termString),
+                    Symbols.QUESTION_MARK,
+                    null,
+                    new Stamp(memory, Tense.Eternal)),
+                new BudgetValue(
+                    Parameters.DEFAULT_QUESTION_PRIORITY,
+                    Parameters.DEFAULT_QUESTION_DURABILITY,
+                    1),
+                true)
         );
 
         if (answered!=null) {
@@ -357,17 +357,17 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
         Task t;
         addInput(
-                t = new Task(
-                        new Sentence(
-                                new Narsese(this).parseTerm(termString),
-                                Symbols.QUESTION_MARK,
-                                null,
-                                new Stamp(memory, Tense.Present)),
-                        new BudgetValue(
-                                Parameters.DEFAULT_QUESTION_PRIORITY,
-                                Parameters.DEFAULT_QUESTION_DURABILITY,
-                                1),
-                        true)
+            t = new Task(
+                new Sentence(
+                    new Narsese(this).parseTerm(termString),
+                    Symbols.QUESTION_MARK,
+                    null,
+                    new Stamp(memory, Tense.Present)),
+                new BudgetValue(
+                    Parameters.DEFAULT_QUESTION_PRIORITY,
+                    Parameters.DEFAULT_QUESTION_DURABILITY,
+                    1),
+                true)
         );
 
         if (answered!=null) {
@@ -517,12 +517,12 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     public boolean isRunning() {
         return running;
     }
-    
+
     public long getMinCyclePeriodMS() {
         return minCyclePeriodMS;
     }
 
-    /** When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay). 
+    /** When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay).
      *  This is for improving program responsiveness when NAR is run with no delay.
      */
     public void setThreadYield(boolean b) {

@@ -27,7 +27,7 @@ import org.opennars.io.events.TextOutputHandler;
 /**
  * Run Reasoner
  * <p>
- Runs a NAR with addInput. useful for command line or batch functionality; 
+ Runs a NAR with addInput. useful for command line or batch functionality;
  TODO check duplicated code with {@link org.opennars.main.NARS}
  * <p>
  * Manage the internal working thread. Communicate with Reasoner only.
@@ -47,15 +47,17 @@ public class Shell {
      * @param args optional argument used : one addInput file
      */
     public static void main(String args[]) {
-                
+
         Shell nars = new Shell(new NAR());
         nars.nar.addInput("*volume=0");
         nars.run(args);
-        
+
         // TODO only if single finish ( no reset in between )
         if (nars.dumpLastState) {
-            System.out.println("\n==== Dump Last State ====\n"
-                    + nars.nar.toString());
+            System.out.println(
+                "\n==== Dump Last State ====\n"
+                + nars.nar.toString()
+            );
         }
     }
 
@@ -63,36 +65,35 @@ public class Shell {
         this.nar = n;
     }
 
-    private class InputThread extends Thread
-    {
-      private BufferedReader bufIn;
-      NAR nar;
-      InputThread(InputStream in, NAR nar)
-      {
-        this.bufIn = new BufferedReader(new InputStreamReader(in));
-        this.nar=nar;
-      }
-      public void run()
-      {
-        while(true)
+    private class InputThread extends Thread {
+        private BufferedReader bufIn;
+        NAR nar;
+        InputThread(InputStream in, NAR nar)
         {
-          try
-          {
-            String line=bufIn.readLine();
-            if(line!=null)
-                nar.addInput(line);
-          }catch(Exception ex){}
-          try
-          {
-            Thread.sleep(1);
-          }catch(Exception ex){}
+            this.bufIn = new BufferedReader(new InputStreamReader(in));
+            this.nar=nar;
         }
-      }
+        public void run()
+        {
+            while(true)
+            {
+                try
+                {
+                    String line=bufIn.readLine();
+                    if(line!=null)
+                        nar.addInput(line);
+                }catch(Exception ex){}
+                try
+                {
+                    Thread.sleep(1);
+                }catch(Exception ex){}
+            }
+        }
     }
-    
+
     /**
      * non-static equivalent to {@link #main(String[])} : finish to completion from
- an addInput file
+     an addInput file
      */
     public void run(String args[]) {
         TextOutputHandler output = new TextOutputHandler(nar, new PrintWriter(out, true));
@@ -101,26 +102,27 @@ public class Shell {
         InputThread it;
         int sleep = -1;
         boolean noFile = false;
-        
+
         if (args.length > 0) {
             try {
                 nar.addInputFile(args[0]);
             } catch (Exception ex) {
                 noFile = true;
-                sleep = Integer.valueOf(args[0]); //Integer.valueOf(args[0]);
+                sleep = Integer.valueOf(args[0]);
                 //System.err.println("NARRun.init: " + ex);
             }
         }
-        if(args.length == 0 || noFile) {   
+        if(args.length == 0 || noFile) {
             it=new InputThread(System.in,nar);
             it.start();
             //nar.addInput(new TextInput(new BufferedReader(new InputStreamReader(System.in))));
         }
-               while (true) {
+
+        while (true) {
             if (logging)
                 log("NARSBatch.run():"
-                        + " step " + nar.time());
-            
+                    + " step " + nar.time());
+
             nar.cycles(1);
             try {
                 if(sleep > -1) {
@@ -129,21 +131,18 @@ public class Shell {
             } catch (InterruptedException ex) {
                 Logger.getLogger(Shell.class.getName()).log(Level.SEVERE, null, ex);
             }
-            //System.out.println("step");
-            //System.out.println("step");
-            
-            
+
             if (logging)
                 log("NARSBatch.run(): after tick"
-                        + " step " + nar.time());
-            
+                    + " step " + nar.time());
+
             if (maxTime > 0) {
                 if (nar.time() == maxTime) {
                     break;
                 }
             }
         }
-               
+
         System.exit(0);
     }
 

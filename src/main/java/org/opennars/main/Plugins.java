@@ -30,16 +30,20 @@ import org.opennars.plugin.perception.VisionChannel;
  */
 public class Plugins {
 
-    public NAR init(NAR n) {         
+    public NAR init(NAR n) {
         n.addPlugin(new RuntimeNARSettings());
         n.addPlugin(new Emotions());
-        n.addPlugin(new Anticipate());      // expect an event 
+        n.addPlugin(new Anticipate());      // expect an event
         Term label = SetInt.make(new Term("BRIGHT"));
+
         //Add a vision channel:
         int sensor_W = 5;
         int sensor_H = 5;
-        n.addSensoryChannel(label.toString(),
-                            new VisionChannel(label, n, n, sensor_H, sensor_W, sensor_W*sensor_H));
+        n.addSensoryChannel(
+            label.toString(),
+            new VisionChannel(label, n, n, sensor_H, sensor_W, sensor_W*sensor_H)
+        );
+
         //allow NAL9 capabilities:
         boolean full_internal_experience = false;
         if(!full_internal_experience) {
@@ -50,7 +54,7 @@ public class Plugins {
             n.addPlugin(new Abbreviation());
             n.addPlugin(new Counting());
         }
-        
+
         return n;
     }
 }

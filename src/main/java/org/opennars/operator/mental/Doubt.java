@@ -45,5 +45,4 @@ public class Doubt extends Operator {
         concept.discountConfidence(true);
         return null;
     }
-
 }

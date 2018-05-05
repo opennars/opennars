@@ -49,16 +49,16 @@ public class Name extends Operator {
         Term compound = args[1];
         Term atomic = args[2];
         Similarity content = Similarity.make(compound, atomic);
-        
+
         TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
         Sentence sentence = new Sentence(
             content,
             Symbols.JUDGMENT_MARK,
             truth,
             new Stamp(memory));
-        
+
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
-        
-        return Lists.newArrayList( new Task(sentence, budget, true) );        
+
+        return Lists.newArrayList( new Task(sentence, budget, true) );
     }
 }

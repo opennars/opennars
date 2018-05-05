@@ -43,5 +43,4 @@ public class Register extends Operator {
         memory.addOperator(op);  // add error checking
         return null;
     }
-    
 }

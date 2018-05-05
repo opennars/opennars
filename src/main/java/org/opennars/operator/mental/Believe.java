@@ -43,13 +43,13 @@ public class Believe extends Operator {
      * To create a judgment with a given statement
      * @param args Arguments, a Statement followed by an optional tense
      * @param memory The memory in which the operation is executed
-+    * @return Immediate results as Tasks
+    +    * @return Immediate results as Tasks
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
 
         Term content = args[1];
-        
+
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(
             content,
@@ -59,8 +59,7 @@ public class Believe extends Operator {
 
         float quality = BudgetFunctions.truthToQuality(truth);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
-        
-        return Lists.newArrayList( new Task(sentence, budget, true) );        
 
+        return Lists.newArrayList( new Task(sentence, budget, true) );
     }
 }
