@@ -54,8 +54,10 @@ public class Shell {
 
         // TODO only if single finish ( no reset in between )
         if (nars.dumpLastState) {
-            System.out.println("\n==== Dump Last State ====\n"
-                + nars.nar.toString());
+            System.out.println(
+                "\n==== Dump Last State ====\n"
+                + nars.nar.toString()
+            );
         }
     }
 
@@ -106,7 +108,7 @@ public class Shell {
                 nar.addInputFile(args[0]);
             } catch (Exception ex) {
                 noFile = true;
-                sleep = Integer.valueOf(args[0]); //Integer.valueOf(args[0]);
+                sleep = Integer.valueOf(args[0]);
                 //System.err.println("NARRun.init: " + ex);
             }
         }
@@ -129,9 +131,6 @@ public class Shell {
             } catch (InterruptedException ex) {
                 Logger.getLogger(Shell.class.getName()).log(Level.SEVERE, null, ex);
             }
-            //System.out.println("step");
-            //System.out.println("step");
-
 
             if (logging)
                 log("NARSBatch.run(): after tick"
