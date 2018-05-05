@@ -578,46 +578,46 @@ public class ConceptProcessing {
 
     /**
      * Entry point for all potentially executable tasks.
-     * Returns true if the Task has a Term which can be executed
+     * @return true if the Task has a Term which can be executed
      */
     public static boolean executeDecision(DerivationContext nal, final Task t) {
         //if (isDesired()) 
-        if(nal.memory.allowExecution)
-        {
-            
-            Term content = t.getTerm();
+        if(!nal.memory.allowExecution) {
+            return false;
+        }
 
-            if(content instanceof Operation) {
+        Term content = t.getTerm();
 
-                Operation op=(Operation)content;
-                Operator oper = op.getOperator();
-                Product prod = (Product) op.getSubject();
-                Term arg = prod.term[0];
-                if(oper instanceof FunctionOperator) {
-                    for(int i=0;i<prod.term.length-1;i++) { //except last one, the output arg
-                        if(prod.term[i].hasVarDep() || prod.term[i].hasVarIndep()) {
-                            return false;
-                        }
-                    }
-                } else {
-                    if(content.hasVarDep() || content.hasVarIndep()) {
-                        return false;
-                    }
-                }
-                if(!arg.equals(Term.SELF)) { //will be deprecated in the future
+        if(!(content instanceof Operation)) {
+            return false;
+        }
+
+        Operation op=(Operation)content;
+        Operator oper = op.getOperator();
+        Product prod = (Product) op.getSubject();
+        Term arg = prod.term[0];
+        if(oper instanceof FunctionOperator) {
+            for(int i=0;i<prod.term.length-1;i++) { //except last one, the output arg
+                if(prod.term[i].hasVarDep() || prod.term[i].hasVarIndep()) {
                     return false;
                 }
-
-                op.setTask(t);
-                if(!oper.call(op, nal.memory)) {
-                    return false;
-                }
-                System.out.println(t.toStringLong());
-                //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
-                return true;
+            }
+        } else {
+            if(content.hasVarDep() || content.hasVarIndep()) {
+                return false;
             }
         }
-        return false;
+        if(!arg.equals(Term.SELF)) { //will be deprecated in the future
+            return false;
+        }
+
+        op.setTask(t);
+        if(!oper.call(op, nal.memory)) {
+            return false;
+        }
+        System.out.println(t.toStringLong());
+        //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
+        return true;
     }
 
     public static void maintainDisappointedAnticipations(Concept concept) {
