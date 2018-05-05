@@ -15,6 +15,7 @@
 package org.opennars.core;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,10 +43,14 @@ public class NALTestSome extends NALTest {
     @Parameterized.Parameters
     public static Collection params() {
         List l = new LinkedList();
-        
-        //File folder = new File("nal/ClassicalConditioning");
-        File folder = new File("src/test/nal/single_step/");
-        
+
+        File folder = null;
+        try {
+            folder = new File(NALTestSome.class.getResource("/nal/single_step").toURI());
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Could not parse URI to nal test files.", e);
+        }
+
         for (final File file : folder.listFiles()) {
             if (file.getName().equals("README.txt") || file.getName().contains(".png"))
                 continue;
