@@ -45,8 +45,8 @@ public class Wonder extends Operator {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term content = args[1];
-        
-        
+
+
         Sentence sentence = new Sentence(
             content,
             Symbols.QUESTION_MARK,
@@ -56,5 +56,4 @@ public class Wonder extends Operator {
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
         return Lists.newArrayList( new Task(sentence, budget, true) );
     }
-        
 }

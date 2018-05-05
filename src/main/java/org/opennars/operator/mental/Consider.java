@@ -33,7 +33,7 @@ public class Consider extends Operator {
     public static BudgetValue budgetMentalConcept(final Operation o) {
         return o.getTask().budget.clone();
     }
-    
+
     public Consider() {
         super("^consider");
     }
@@ -48,14 +48,13 @@ public class Consider extends Operator {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term term = args[1];
-        
+
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
-        
+
         DerivationContext cont = new DerivationContext(memory);
         cont.setCurrentConcept(concept);
         GeneralInferenceControl.fireConcept(cont, 1);
-        
+
         return null;
     }
-
 }

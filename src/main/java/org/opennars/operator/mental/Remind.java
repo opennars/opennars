@@ -34,7 +34,7 @@ public class Remind extends Operator {
     public Remind() {
         super("^remind");
     }
-    
+
     public void activate(Memory memory, final Concept c, final BudgetValue b, Activating mode) {
         memory.concepts.take(c.name());
         BudgetFunctions.activate(c.budget, b, mode);
@@ -48,7 +48,7 @@ public class Remind extends Operator {
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
-    @Override    
+    @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term term = args[1];
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
@@ -56,5 +56,4 @@ public class Remind extends Operator {
         activate(memory, concept, budget, Activating.TaskLink);
         return null;
     }
-
 }

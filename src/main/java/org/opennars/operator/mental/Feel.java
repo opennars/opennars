@@ -39,13 +39,13 @@ public abstract class Feel extends Operator {
 
     public Feel(String name) {
         super(name);
-        
+
         // remove the "^feel" prefix from name
         this.feelingTerm = Term.get(((String)name()).substring(5).toLowerCase());
     }
 
     final static Term selfSubject = Term.SELF;
-    
+
     /**
      * To get the current value of an internal sensor
      *
@@ -56,9 +56,9 @@ public abstract class Feel extends Operator {
     protected ArrayList<Task> feeling(float value, Memory memory) {
         Stamp stamp = new Stamp(memory, Tense.Present);
         TruthValue truth = new TruthValue(value, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                
-        Term predicate = new SetInt(feelingTerm); 
-        
+
+        Term predicate = new SetInt(feelingTerm);
+
         Term content = Inheritance.make(selfSubject, predicate);
         Sentence sentence = new Sentence(
             content,
@@ -68,8 +68,7 @@ public abstract class Feel extends Operator {
 
         float quality = BudgetFunctions.truthToQuality(truth);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
-        
-        return Lists.newArrayList( new Task(sentence, budget, true) );        
 
+        return Lists.newArrayList( new Task(sentence, budget, true) );
     }
 }
