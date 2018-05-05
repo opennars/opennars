@@ -271,7 +271,8 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         }
     }
     
-    public void addInput(final String text) {
+    public void addInput(String text) {
+        text = text.trim();
         //Ignore any input that is just a comment
         if(text.startsWith("\'") || text.startsWith("//") ||text.trim().length() <= 0)
             return;
@@ -285,9 +286,9 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         }
         Task task;
         try {
-            task = narsese.parseTask(text.trim());
+            task = narsese.parseTask(text);
         } catch (InvalidInputException e) {
-            throw new IllegalStateException("Invalid input: " + text.trim(), e);
+            throw new IllegalStateException("Invalid input: " + text, e);
         }
         //check if it should go to a sensory channel instead:
         Term t = ((Task) task).getTerm();
