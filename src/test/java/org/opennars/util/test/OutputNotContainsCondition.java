@@ -18,7 +18,7 @@
  */
 package org.opennars.util.test;
 
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 /**
  *
@@ -26,7 +26,7 @@ import org.opennars.main.NAR;
  */
 public class OutputNotContainsCondition extends OutputContainsCondition {
 
-    public OutputNotContainsCondition(final NAR nar, final String containing) {
+    public OutputNotContainsCondition(final Nar nar, final String containing) {
         super(nar, containing, -1);
         succeeded = true;
     }

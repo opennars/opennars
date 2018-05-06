@@ -15,7 +15,7 @@
 package org.opennars.perf;
 
 import org.opennars.core.NALTest;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 
 import java.util.Collection;
@@ -35,11 +35,11 @@ public class NALPerfLoop {
         final int extraCycles = 2048;
         final int randomExtraCycles = 512;
           
-        final NAR n = new NAR();
-        //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
-        //NAR n = new NAR(new Curve());
+        final Nar n = new Nar();
+        //Nar n = new Nar( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
+        //Nar n = new Nar(new Curve());
         
-        //NAR n = new Discretinuous().setConceptBagSize(maxConcepts).build();
+        //Nar n = new Discretinuous().setConceptBagSize(maxConcepts).build();
 
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
         

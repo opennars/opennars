@@ -20,7 +20,7 @@ import org.opennars.inference.TruthFunctions.EternalizedTruthValue;
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
 import org.opennars.language.*;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 
 import java.io.Serializable;
@@ -478,7 +478,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
      *
      * @return The String
      */
-    public CharSequence toString(final NAR nar, final boolean showStamp) {
+    public CharSequence toString(final Nar nar, final boolean showStamp) {
     
         final CharSequence contentName = term.name();
         

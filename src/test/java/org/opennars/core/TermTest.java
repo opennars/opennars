@@ -23,7 +23,7 @@ import org.opennars.language.CompoundTerm;
 import org.opennars.language.Inheritance;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 
@@ -39,11 +39,11 @@ import static org.junit.Assert.assertTrue;
  */
 public class TermTest {
     
-    final NAR n = new NAR();
+    final Nar n = new Nar();
     final Narsese np = new Narsese(n);
     
     protected void assertEquivalent(final String term1String, final String term2String) {
-        final NAR n = new NAR();
+        final Nar n = new Nar();
 
         try {
             final Term term1 = np.parseTerm(term1String);
@@ -63,7 +63,7 @@ public class TermTest {
     
     @Test
     public void testCommutativeCompoundTerm() {
-        final NAR n = new NAR();
+        final Nar n = new Nar();
 
         assertEquivalent("(&&,a,b)", "(&&,b,a)");
         assertEquivalent("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
@@ -73,7 +73,7 @@ public class TermTest {
     
     @Test
     public void testTermSort() throws Exception {
-        final NAR n = new NAR();
+        final Nar n = new Nar();
         
         final Narsese m = new Narsese(n);
         final Term a = m.parseTerm("a");
@@ -89,7 +89,7 @@ public class TermTest {
     
     @Test
     public void testConjunctionTreeSet() throws Narsese.InvalidInputException {
-        final NAR n = new NAR();
+        final Nar n = new Nar();
         
         
             
@@ -146,7 +146,7 @@ public class TermTest {
     
     @Test
     public void testUnconceptualizedTermInstancing() throws Narsese.InvalidInputException {
-       final NAR n = new NAR();
+       final Nar n = new Nar();
         
        final String term1String ="<a --> b>";
        final Term term1 = np.parseTerm(term1String);
@@ -165,7 +165,7 @@ public class TermTest {
     
     @Test
     public void testConceptInstancing() throws Narsese.InvalidInputException {
-       final NAR n = new NAR();
+       final Nar n = new Nar();
         
        final String statement1 = "<a --> b>.";
        
@@ -200,7 +200,7 @@ public class TermTest {
     public void testEscaping() {        
         bidiEscape("c d", "x$# x", "\\\"sdkf sdfjk", "_ _");
         
-//        NAR n = new Default().build();
+//        Nar n = new Default().build();
 //        n.addInput("<a --> \"b c\">.");
 //        n.step(1);
 //        n.finish(1);
@@ -229,7 +229,7 @@ public class TermTest {
     @Test(expected = Narsese.InvalidInputException.class)
     public void testInvalidInputThrowsException() throws Narsese.InvalidInputException {
         final String t = "<$1 --> (~,{place4},$1)>";
-        final NAR n = new NAR();
+        final Nar n = new Nar();
         final Narsese p = new Narsese(n);
 
         p.parseNarsese(new StringBuilder(t + "."));
@@ -239,7 +239,7 @@ public class TermTest {
     public void invalidTermIndep() throws Narsese.InvalidInputException {
         
         final String t = "<$1 --> (~,{place4},$1)>";
-        final NAR n = new NAR();
+        final Nar n = new Nar();
         final Narsese p = new Narsese(n);
         
         Term subj = null, pred = null;
@@ -271,7 +271,7 @@ public class TermTest {
     @Test public void testParseOperationInFunctionalForm() throws Narsese.InvalidInputException {
         Parameters.FUNCTIONAL_OPERATIONAL_FORMAT = true;
         
-        final NAR n = new NAR();
+        final Nar n = new Nar();
         final Narsese p = new Narsese(n);
 
         final Term x = p.parseTerm("wonder(a,b)");

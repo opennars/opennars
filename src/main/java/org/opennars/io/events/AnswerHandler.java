@@ -22,7 +22,7 @@ import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events.Answer;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 /**
  *
@@ -31,12 +31,12 @@ import org.opennars.main.NAR;
 public abstract class AnswerHandler implements EventObserver {
     
     private Task question;
-    private NAR nar;
+    private Nar nar;
     
     final static Class[] events = new Class[] { Answer.class
  };
     
-    public void start(final Task question, final NAR n) {
+    public void start(final Task question, final Nar n) {
         this.nar = n;
         this.question = question;
                 

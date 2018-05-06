@@ -19,7 +19,7 @@
 package org.opennars.util.test;
 
 import org.opennars.io.events.OutputHandler;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,10 +37,10 @@ public abstract class OutputCondition<O> extends OutputHandler {
     
     
     
-    public final NAR nar;
+    public final Nar nar;
     long successAt = -1;
 
-    public OutputCondition(final NAR nar) {
+    public OutputCondition(final Nar nar) {
         super(nar);
         this.nar = nar;
     }
@@ -79,7 +79,7 @@ public abstract class OutputCondition<O> extends OutputHandler {
 
             
     /** reads an example file line-by-line, before being processed, to extract expectations */
-    public static List<OutputCondition> getConditions(final NAR n, final String example, final int similarResultsToSave)  {
+    public static List<OutputCondition> getConditions(final Nar n, final String example, final int similarResultsToSave)  {
         final List<OutputCondition> conditions = new ArrayList();
         final String[] lines = example.split("\n");
         
