@@ -367,9 +367,9 @@ public class Term implements AbstractTerm, Serializable {
         return false;
     }
 
-    public static TreeSet<Term> toSortedSet(final Term... arg) {
+    public static NavigableSet<Term> toSortedSet(final Term... arg) {
         //use toSortedSetArray where possible
-        TreeSet<Term> t = new TreeSet();
+        NavigableSet<Term> t = new TreeSet();
         Collections.addAll(t, arg);
         return t;        
     }
@@ -402,7 +402,7 @@ public class Term implements AbstractTerm, Serializable {
         //TODO fast sorted array for arg.length == 3
 
         //terms > 2:        
-        TreeSet<Term> s = new TreeSet();
+        NavigableSet<Term> s = new TreeSet();
         //SortedList<Term> s = new SortedList(arg.length);
         //s.setAllowDuplicate(false);
 

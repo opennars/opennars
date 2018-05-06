@@ -18,9 +18,9 @@
  */
 package org.opennars.util.test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.main.NAR;
 import org.opennars.io.events.OutputHandler;
 

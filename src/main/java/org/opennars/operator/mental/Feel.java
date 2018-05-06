@@ -15,7 +15,7 @@
 package org.opennars.operator.mental;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
+import java.util.*;
 import org.opennars.storage.Memory;
 import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
@@ -53,7 +53,7 @@ public abstract class Feel extends Operator {
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
-    protected ArrayList<Task> feeling(float value, Memory memory) {
+    protected List<Task> feeling(float value, Memory memory) {
         Stamp stamp = new Stamp(memory, Tense.Present);
         TruthValue truth = new TruthValue(value, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 

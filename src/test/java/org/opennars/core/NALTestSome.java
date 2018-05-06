@@ -16,9 +16,9 @@ package org.opennars.core;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 

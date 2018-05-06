@@ -14,9 +14,9 @@
  */
 package org.opennars.control;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.main.Parameters;
 import org.opennars.entity.*;
 import org.opennars.inference.TemporalRules;
@@ -320,7 +320,7 @@ public class ConceptProcessing {
                 if(projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && nal.memory.time() >= concept.memory.decisionBlock) {
                     //see whether the goal evidence is fully included in the old goal, if yes don't execute
                     //as execution for this reason already happened (or did not since there was evidence against it)
-                    HashSet<Long> oldEvidence = new HashSet<Long>();
+                    Set<Long> oldEvidence = new HashSet<Long>();
                     boolean Subset=false;
                     if(oldGoalT != null) {
                         Subset = true;
@@ -349,7 +349,7 @@ public class ConceptProcessing {
     public static void questionFromGoal(final Task task, final DerivationContext nal) {
         if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled
-            ArrayList<Term> qu=new ArrayList<Term>();
+            List<Term> qu=new ArrayList<Term>();
             if(Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
                 if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
                     Variable how=new Variable("?how");

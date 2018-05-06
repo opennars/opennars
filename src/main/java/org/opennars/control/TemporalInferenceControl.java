@@ -18,9 +18,9 @@
  */
 package org.opennars.control;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Concept;
@@ -80,8 +80,8 @@ public class TemporalInferenceControl {
             return false;
        }
 
-        HashSet<Task> already_attempted = new HashSet<Task>();
-        HashSet<Task> already_attempted_ops = new HashSet<Task>();
+        Set<Task> already_attempted = new HashSet<Task>();
+        Set<Task> already_attempted_ops = new HashSet<Task>();
         //Sequence formation:
         for(int i =0; i<Parameters.SEQUENCE_BAG_ATTEMPTS; i++) {
             Task takeout = nal.memory.seq_current.takeNext();

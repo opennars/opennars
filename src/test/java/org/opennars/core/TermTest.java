@@ -16,7 +16,7 @@ package org.opennars.core;
 
 import org.opennars.main.NAR;
 import org.opennars.main.Parameters;
-import java.util.TreeSet;
+import java.util.*;
 import org.opennars.entity.Concept;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.io.Texts;
@@ -131,7 +131,7 @@ public class TermTest {
         System.out.println("t2 compareTo t1 " + t2c1);
         */
 
-        TreeSet<Term> set = new TreeSet<>();
+        NavigableSet<Term> set = new TreeSet<>();
         boolean added1 = set.add(term1.clone());
         boolean added2 = set.add(term2.clone());
         assertTrue("term 1 added to set", added1);

@@ -15,8 +15,8 @@
 package org.opennars.entity;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
+import java.util.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.Term;
 

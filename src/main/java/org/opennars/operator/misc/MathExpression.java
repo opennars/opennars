@@ -14,7 +14,7 @@
  */
 package org.opennars.operator.misc;
 
-import java.util.List;
+import java.util.*;
 import org.opennars.storage.Memory;
 import org.opennars.io.Texts;
 import static org.opennars.io.Texts.unescape;

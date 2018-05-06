@@ -15,7 +15,7 @@
 package org.opennars.plugin.perception;
 
 import org.opennars.operator.ImaginationSpace;
-import java.util.HashSet;
+import java.util.*;
 import org.opennars.main.NAR;
 import org.opennars.main.Parameters;
 import org.opennars.entity.TruthValue;
@@ -45,7 +45,7 @@ public class VisualSpace implements ImaginationSpace {
     static NullOperator left = new NullOperator("^left");
     static NullOperator up = new NullOperator("^up");
     static NullOperator down = new NullOperator("^down");
-    HashSet<Operator> ops = new HashSet<Operator>();
+    Set<Operator> ops = new HashSet<Operator>();
     NAR nar;
     
     public VisualSpace(NAR nar, float[][] source, int py, int px, int height, int width) {

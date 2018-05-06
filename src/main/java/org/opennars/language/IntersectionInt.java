@@ -15,9 +15,9 @@
 package org.opennars.language;
 
 import com.google.common.collect.ObjectArrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.main.Parameters;
 import org.opennars.io.Symbols.NativeOperator;
 
@@ -75,12 +75,12 @@ public class IntersectionInt extends CompoundTerm {
         }
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
             // set intersection
-            TreeSet<Term> set = Term.toSortedSet(((CompoundTerm) term1).term);
+            NavigableSet<Term> set = Term.toSortedSet(((CompoundTerm) term1).term);
             
             set.retainAll(((CompoundTerm) term2).asTermList());     
             
             //technically this can be used directly if it can be converted to array
-            //but wait until we can verify that TreeSet.toarray does it or write a helper function like existed previously
+            //but wait until we can verify that NavigableSet.toarray does it or write a helper function like existed previously
             return SetInt.make(set.toArray(new Term[set.size()]));
         }
         

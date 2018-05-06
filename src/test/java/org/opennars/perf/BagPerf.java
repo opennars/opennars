@@ -16,11 +16,11 @@ package org.opennars.perf;
 
 import com.google.common.collect.Lists;
 import java.io.PrintStream;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.storage.Memory;
 import org.opennars.main.NAR;
 import org.opennars.main.Parameters;
@@ -46,13 +46,13 @@ public class BagPerf {
     
     public float totalPriority, totalMass, totalMinItemsPerLevel, totalMaxItemsPerLevel;
 
-    public void testBag(final boolean arraylist, final int levels, final int capacity, final PortableDouble forgetRate) {
+    public void testBag(final boolean List, final int levels, final int capacity, final PortableDouble forgetRate) {
         
         totalPriority = 0;
         totalMass = 0;
         totalMaxItemsPerLevel = totalMinItemsPerLevel = 0;
         
-        Performance p = new Performance((arraylist ? "DequeArray" : "LinkedList")+","+levels+","+ capacity, repeats, warmups) {
+        Performance p = new Performance((List ? "DequeArray" : "LinkedList")+","+levels+","+ capacity, repeats, warmups) {
 
             @Override public void init() { }
 
@@ -62,7 +62,7 @@ public class BagPerf {
 
 //                    @Override
 //                    protected ArrayDeque<NullItem> newLevel() {
-//                        //if (arraylist)                                                    
+//                        //if (List)
 //                            return super.newLevel();
 //                        //return new LinkedList<>();
 //                    }

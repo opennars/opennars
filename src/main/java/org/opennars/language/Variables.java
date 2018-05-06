@@ -14,9 +14,9 @@
  */
 package org.opennars.language;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.inference.TemporalRules;
 import org.opennars.storage.Memory;
 import org.opennars.io.Symbols;
@@ -52,9 +52,9 @@ public class Variables {
         return false;
     }
     
-    /** map is a 2-element array of HashMap<Term,Term>. it may be null, in which case
+    /** map is a 2-element array of Map<Term,Term>. it may be null, in which case
      * the maps will be instantiated as necessary.  
-     * this is to delay the instantiation of the 2 HashMap until necessary to avoid
+     * this is to delay the instantiation of the 2 Map until necessary to avoid
      * wasting them if they are not used.
      */
     public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map) {
@@ -233,12 +233,12 @@ public class Variables {
             Term[] list = cTerm1.cloneTerms();
             if (cTerm1.isCommutative()) {
                 CompoundTerm.shuffle(list, Memory.randomNumber);
-                HashSet<Integer> alreadyMatched = new HashSet<Integer>();
+                Set<Integer> alreadyMatched = new HashSet<Integer>();
                 //ok attempt unification
                 if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
                 }
-                HashSet<Integer> matchedJ = new HashSet<Integer>(list.length*2);
+                Set<Integer> matchedJ = new HashSet<Integer>(list.length*2);
                 for(int i = 0; i < list.length; i++) {
                     boolean succeeded = false;
                     for(int j = 0; j < list.length; j++) {

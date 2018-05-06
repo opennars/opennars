@@ -14,7 +14,7 @@
  */
 package org.opennars.operator.mental;
 
-import java.util.ArrayList;
+import java.util.*;
 import org.opennars.storage.Memory;
 import org.opennars.entity.Task;
 import org.opennars.language.Term;
@@ -38,7 +38,7 @@ public class Register extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
         Operator op=new NullOperator(args[1].toString());
         memory.addOperator(op);  // add error checking
         return null;

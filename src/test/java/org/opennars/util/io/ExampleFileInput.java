@@ -24,9 +24,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.main.NAR;
 import org.opennars.util.test.OutputCondition;
 

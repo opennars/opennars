@@ -15,7 +15,7 @@
 package org.opennars.entity;
 
 import java.io.Serializable;
-import java.util.Comparator;
+import java.util.*;
 import org.opennars.storage.Memory;
 
 /**

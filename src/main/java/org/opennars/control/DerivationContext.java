@@ -18,8 +18,8 @@
  */
 package org.opennars.control;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.*;
 import org.opennars.io.events.Events;
 import org.opennars.storage.Memory;
 import org.opennars.main.Parameters;

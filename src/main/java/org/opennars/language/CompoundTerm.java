@@ -184,7 +184,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         return (CompoundTerm)c;
     }
     
-    protected void transformIndependentVariableToDependent(HashMap<String,Variable> vars, CompoundTerm T) { //a special instance of transformVariableTermsDeep in 1.7
+    protected void transformIndependentVariableToDependent(Map<String,Variable> vars, CompoundTerm T) { //a special instance of transformVariableTermsDeep in 1.7
         Term[] term=T.term;
         for (int i = 0; i < term.length; i++) {
             Term t = term[i];
@@ -223,7 +223,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         return T;
     }
     
-    private static void ExtractIntervals(Memory mem, ArrayList<Long> ivals, CompoundTerm comp) {
+    private static void ExtractIntervals(Memory mem, List<Long> ivals, CompoundTerm comp) {
         for(int i=0; i<comp.term.length; i++) {
             Term t = comp.term[i];
             if(t instanceof Interval) {
@@ -236,8 +236,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
     }
 
-    public static ArrayList<Long> extractIntervals(Memory mem, Term T) {
-        ArrayList<Long> ret = new ArrayList<>();
+    public static List<Long> extractIntervals(Memory mem, Term T) {
+        List<Long> ret = new ArrayList<>();
         if(T instanceof CompoundTerm) {
             ExtractIntervals(mem, ret, (CompoundTerm) T);
         }
@@ -255,7 +255,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
         if( counter == 0 )
             return T;
-        HashMap<String,Variable> vars = new HashMap<>();
+        Map<String,Variable> vars = new HashMap<>();
         for(int i=1;i<=counter;i++) {
             vars.put(Symbols.VAR_INDEPENDENT+String.valueOf(i), new Variable(Symbols.VAR_DEPENDENT+String.valueOf(i)));
         }
@@ -503,7 +503,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     }
 
     public List<Term> asTermList() {        
-        ArrayList l = new ArrayList(term.length);
+        List l = new ArrayList(term.length);
         addTermsTo(l);
         return l;
     }
@@ -532,8 +532,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     }
     
     /** forced deep clone of terms */
-    public ArrayList<Term> cloneTermsListDeep() {
-        ArrayList<Term> l = new ArrayList(term.length);
+    public List<Term> cloneTermsListDeep() {
+        List<Term> l = new ArrayList(term.length);
         for (final Term t : term)
             l.add(t.clone());
         return l;        
@@ -725,10 +725,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      *
      * @return A list of TermLink templates
      */
-    public ArrayList<TermLink> prepareComponentLinks() {
+    public List<TermLink> prepareComponentLinks() {
         //complexity seems like an upper bound for the resulting number of componentLinks. 
         //so use it as an initial size for the array list
-        final ArrayList<TermLink> componentLinks = new ArrayList<>( getComplexity() );              
+        final List<TermLink> componentLinks = new ArrayList<>( getComplexity() );
         return Terms.prepareComponentLinks(componentLinks, this);
     }
 

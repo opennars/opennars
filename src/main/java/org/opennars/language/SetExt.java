@@ -14,7 +14,7 @@
  */
 package org.opennars.language;
 
-import java.util.Collection;
+import java.util.*;
 import org.opennars.io.Symbols.NativeOperator;
 import static org.opennars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.SET_EXT_OPENER;

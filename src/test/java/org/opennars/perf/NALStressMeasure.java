@@ -14,7 +14,7 @@
  */
 package org.opennars.perf;
 
-import java.util.Collection;
+import java.util.*;
 import org.opennars.main.NAR;
 import org.opennars.core.NALTest;
 

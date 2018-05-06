@@ -14,7 +14,7 @@
  */
 package org.opennars.core.bag;
 
-import java.util.Iterator;
+import java.util.*;
 import org.opennars.perf.BagPerf.NullItem;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;

@@ -14,7 +14,7 @@
  */
 package org.opennars.operator;
 
-import java.util.List;
+import java.util.*;
 import org.opennars.storage.Memory;
 import org.opennars.main.Parameters;
 import org.opennars.entity.Task;

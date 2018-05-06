@@ -15,7 +15,7 @@
 package org.opennars.plugin.mental;
 
 import org.opennars.plugin.Plugin;
-import java.util.Arrays;
+import java.util.*;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.storage.Memory;

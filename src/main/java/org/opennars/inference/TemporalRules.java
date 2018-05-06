@@ -14,10 +14,10 @@
  */
 package org.opennars.inference;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.main.Parameters;
 import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.BudgetValue;
@@ -174,7 +174,7 @@ public class TemporalRules {
             Variable var2 = new Variable("$1");
             
             if(ss2.containsTermRecursively(ss1.getSubject())) {
-                HashMap<Term,Term> subs=new HashMap();
+                Map<Term,Term> subs=new HashMap();
                 subs.put(ss1.getSubject(), var1);
                 if(ss2.containsTermRecursively(ss1.getPredicate())) {
                     subs.put(ss1.getPredicate(), var2);
@@ -184,7 +184,7 @@ public class TemporalRules {
             }
             
             if(ss1.containsTermRecursively(ss2.getSubject())) {
-                HashMap<Term,Term> subs=new HashMap();
+                Map<Term,Term> subs=new HashMap();
                 subs.put(ss2.getSubject(), var1);
                 if(ss1.containsTermRecursively(ss2.getPredicate())) {
                     subs.put(ss2.getPredicate(), var2);
@@ -315,7 +315,7 @@ public class TemporalRules {
                 boolean SubsPred=precon.containsTermRecursively(pred);
                 Variable v1=new Variable("$91");
                 Variable v2=new Variable("$92");
-                HashMap<Term,Term> app=new HashMap<Term,Term>();
+                Map<Term,Term> app=new HashMap<Term,Term>();
                 if(SubsSub || SubsPred) {
                     if(SubsSub)
                         app.put(sub, v1);

@@ -15,12 +15,12 @@
 
 package org.opennars.operator.mental;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.CycleEnd;
@@ -179,7 +179,7 @@ public class Anticipate extends Operator implements EventObserver {
    // * @return Immediate results as Tasks
    //  *
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
         if(operation==null) {
             return null; //not as mental operator but as fundamental principle
         }

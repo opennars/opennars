@@ -21,7 +21,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.Arrays;
+import java.util.*;
 import org.opennars.io.events.Events.Answer;
 import org.opennars.main.NAR;
 import org.opennars.entity.Sentence;

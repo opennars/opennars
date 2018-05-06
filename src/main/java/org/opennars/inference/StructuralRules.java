@@ -14,7 +14,7 @@
  */
 package org.opennars.inference;
 
-import java.util.List;
+import java.util.*;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 import org.opennars.control.DerivationContext;

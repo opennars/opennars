@@ -15,7 +15,7 @@
 package org.opennars.operator;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
+import java.util.*;
 import org.opennars.storage.Memory;
 import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
@@ -24,7 +24,7 @@ import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
 import static org.opennars.inference.BudgetFunctions.truthToQuality;
-import org.opennars.io.Symbols;
+import org.opennars.io.Symbols;git add 
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
 import org.opennars.language.Variable;
@@ -55,7 +55,7 @@ public abstract class FunctionOperator extends Operator {
     //abstract protected int getMaxArity();
     
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory m) {
+    protected List<Task> execute(Operation operation, Term[] args, Memory m) {
         //TODO make memory access optional by constructor argument
         //TODO allow access to NAR instance?
         int numArgs = args.length -1;

@@ -15,7 +15,7 @@
 package org.opennars.language;
 
 import java.nio.CharBuffer;
-import java.util.Arrays;
+import java.util.*;
 import org.opennars.main.Parameters;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols.NativeOperator;

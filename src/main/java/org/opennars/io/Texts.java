@@ -17,8 +17,8 @@ package org.opennars.io;
 import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 import java.text.Format;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.*;
 
 /**
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms 

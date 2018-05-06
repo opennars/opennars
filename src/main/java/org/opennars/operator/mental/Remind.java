@@ -14,7 +14,7 @@
  */
 package org.opennars.operator.mental;
 
-import java.util.ArrayList;
+import java.util.*;
 import org.opennars.storage.Memory;
 import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
@@ -49,7 +49,7 @@ public class Remind extends Operator {
      * @return Immediate results as Tasks
      */
     @Override    
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term term = args[1];
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);

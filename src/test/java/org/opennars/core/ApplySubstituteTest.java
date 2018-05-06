@@ -14,8 +14,8 @@
  */
 package org.opennars.core;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.*;
 import org.opennars.main.NAR;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;

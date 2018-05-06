@@ -14,7 +14,7 @@
  */
 package org.opennars.inference;
 
-import java.util.ArrayList;
+import java.util.*;
 import org.opennars.main.Parameters;
 import org.opennars.io.events.Events.Answer;
 import org.opennars.io.events.Events.Unsolved;
@@ -131,13 +131,13 @@ public class LocalRules {
         if(newBelief.getTerm().hasInterval()) {
             Term cterm = replaceIntervals(newBelief.getTerm());
             Concept c = nal.memory.concept(cterm);
-            ArrayList<Long> ivalOld = extractIntervals(nal.memory, oldBelief.getTerm());
+            List<Long> ivalOld = extractIntervals(nal.memory, oldBelief.getTerm());
             if(c.recent_intervals.size() == 0) {
                 for(Long l : ivalOld) {
                     c.recent_intervals.add((float) l);
                 }
             }
-            ArrayList<Long> ivalNew = extractIntervals(nal.memory, newBelief.getTerm());
+            List<Long> ivalNew = extractIntervals(nal.memory, newBelief.getTerm());
             for(int i=0;i<ivalNew.size();i++) {
                 float Inbetween = (c.recent_intervals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
                 float speed = 1.0f / (Parameters.INTERVAL_ADAPT_SPEED*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower

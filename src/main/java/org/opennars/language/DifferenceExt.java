@@ -14,7 +14,7 @@
  */
 package org.opennars.language;
 
-import java.util.TreeSet;
+import java.util.*;
 import org.opennars.io.Symbols.NativeOperator;
 import static org.opennars.language.DifferenceInt.ensureValidDifferenceArguments;
 
@@ -66,7 +66,7 @@ public class DifferenceExt extends CompoundTerm {
         }
         if ((arg[0] instanceof SetExt) && (arg[1] instanceof SetExt)) {
             //TODO maybe a faster way to do this operation:
-            TreeSet<Term> set = new TreeSet<>(((CompoundTerm) arg[0]).asTermList());
+            NavigableSet<Term> set = new TreeSet<>(((CompoundTerm) arg[0]).asTermList());
             set.removeAll(((CompoundTerm) arg[1]).asTermList());           // set difference
             return SetExt.make(set);
         }                

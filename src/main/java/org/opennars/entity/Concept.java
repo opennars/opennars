@@ -15,9 +15,9 @@
 package org.opennars.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 
 import org.opennars.control.ConceptProcessing;
 import org.opennars.io.events.Events.BeliefSelect;
@@ -82,16 +82,16 @@ public class Concept extends Item<Term> implements Serializable {
     public final List<Task> quests;
 
     /**
-     * Judgments directly made about the term Use ArrayList because of access
+     * Judgments directly made about the term Use List because of access
      * and insertion in the middle
      */
-    public final ArrayList<Task> beliefs;
-    public final ArrayList<Task> executable_preconditions;
+    public final List<Task> beliefs;
+    public final List<Task> executable_preconditions;
 
     /**
      * Desire values on the term, similar to the above one
      */
-    public final ArrayList<Task> desires;
+    public final List<Task> desires;
 
     /**
      * Reference to the memory to which the Concept belongs
@@ -102,7 +102,7 @@ public class Concept extends Item<Term> implements Serializable {
     //use to create averaging stats of occurring intervals
     //so that revision can decide whether to use the new or old term
     //based on which intervals are closer to the average
-    public ArrayList<Float> recent_intervals = new ArrayList<Float>();
+    public List<Float> recent_intervals = new ArrayList<Float>();
 
     public boolean observable = false;
 
@@ -151,7 +151,7 @@ public class Concept extends Item<Term> implements Serializable {
 
 
 
-    public void addToTable(final Task task, final boolean rankTruthExpectation, final ArrayList<Task> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
+    public void addToTable(final Task task, final boolean rankTruthExpectation, final List<Task> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
         
         int preSize = table.size();
         Task removedT;

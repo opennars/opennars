@@ -16,7 +16,7 @@ package org.opennars.io;
 
 import java.io.Serializable;
 import static java.lang.Float.parseFloat;
-import java.util.ArrayList;
+import java.util.*;
 import org.opennars.storage.Memory;
 import org.opennars.main.NAR;
 import org.opennars.main.Parameters;
@@ -400,7 +400,7 @@ public class Narsese implements Serializable {
                 
                 Term[] a;                
                 if (argString.length() > 1) {                
-                    ArrayList<Term> args = parseArguments(argString);                                
+                    List<Term> args = parseArguments(argString);
                     a = args.toArray(new Term[args.size()]);
                 }
                 else {
@@ -509,7 +509,7 @@ public class Narsese implements Serializable {
             throw new InvalidInputException("Unknown operator: " + op);
         }
 
-        ArrayList<Term> arg = (firstSeparator < 0) ? new ArrayList<>(0)
+        List<Term> arg = (firstSeparator < 0) ? new ArrayList<>(0)
                 : parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR);
 
         Term[] argA = arg.toArray(new Term[arg.size()]);
@@ -532,14 +532,14 @@ public class Narsese implements Serializable {
     /**
      * Parse a String into the argument get of a CompoundTerm.
      *
-     * @return the arguments in an ArrayList
+     * @return the arguments in an List
      * @param s0 The String to be parsed
      * @throws org.opennars.io.StringParser.InvalidInputException the String cannot be
      * parsed into an argument get
      */
-    private ArrayList<Term> parseArguments(String s0) throws InvalidInputException {
+    private List<Term> parseArguments(String s0) throws InvalidInputException {
         String s = s0.trim();
-        ArrayList<Term> list = new ArrayList<>();
+        List<Term> list = new ArrayList<>();
         int start = 0;
         int end = 0;
         Term t;

@@ -18,10 +18,10 @@
  */
 package org.opennars.util.test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.main.NAR;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
@@ -68,7 +68,7 @@ public class OutputContainsCondition extends OutputCondition<Task> {
     
     
     final String containing;
-    public TreeSet<SimilarOutput> almost = new TreeSet();
+    public NavigableSet<SimilarOutput> almost = new TreeSet();
     final boolean saveSimilar;
     int maxSimilars = 5;
 

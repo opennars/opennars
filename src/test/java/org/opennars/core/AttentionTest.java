@@ -21,8 +21,8 @@ package org.opennars.core;
 
 import org.opennars.main.NAR;
 import com.google.common.collect.Iterables;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.*;
 import org.opennars.entity.Concept;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

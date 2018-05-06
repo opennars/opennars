@@ -14,7 +14,7 @@
  */
 package org.opennars.language;
 
-import java.util.Arrays;
+import java.util.*;
 import org.opennars.io.Symbols.NativeOperator;
 
 /**

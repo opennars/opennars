@@ -14,7 +14,7 @@
  */
 package org.opennars.core;
 
-import java.util.Arrays;
+import java.util.*;
 import static junit.framework.TestCase.assertTrue;
 import static org.opennars.entity.Stamp.toSetArray;
 import org.junit.Test;

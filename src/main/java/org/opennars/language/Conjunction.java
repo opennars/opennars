@@ -15,10 +15,10 @@
 package org.opennars.language;
 
 import static java.lang.System.arraycopy;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.main.Parameters;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols.NativeOperator;
@@ -222,7 +222,7 @@ public class Conjunction extends CompoundTerm {
         else {
             
             // sort/merge arguments
-            final TreeSet<Term> set = new TreeSet<>();
+            final NavigableSet<Term> set = new TreeSet<>();
             Term[] flattened = flatten(argList, temporalOrder, spatial);
             ConvRectangle rect = UpdateConvRectangle(flattened);
             for (Term t : flattened) {
@@ -306,7 +306,7 @@ public class Conjunction extends CompoundTerm {
                 
                 CompoundTerm cterm1 = (CompoundTerm) term1;
                 
-                ArrayList<Term> list = new ArrayList<>(cterm1.size());
+                List<Term> list = new ArrayList<>(cterm1.size());
                 cterm1.addTermsTo(list);
                         
                 if ((term2 instanceof Conjunction) && 

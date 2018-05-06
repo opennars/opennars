@@ -14,7 +14,7 @@
  */
 package org.opennars.inference;
 
-import java.util.HashMap;
+import java.util.*;
 import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Concept;
@@ -391,7 +391,7 @@ public final class CompositionalRules {
         
         Term term11dependent=null, term12dependent=null, term21dependent=null, term22dependent=null;
         Term term11, term12, term21, term22, commonTerm = null;
-        HashMap<Term, Term> subs = new HashMap<>();
+        Map<Term, Term> subs = new HashMap<>();
         if (index == 0) {
             term11 = varInd1;
             term21 = varInd1;
@@ -604,7 +604,7 @@ public final class CompositionalRules {
         }
         
         Sentence belief = nal.getCurrentBelief();
-        HashMap<Term, Term> substitute = new HashMap<>();
+        Map<Term, Term> substitute = new HashMap<>();
         
         boolean b1 = false, b2 = false;
         
@@ -712,10 +712,10 @@ OUT: <lock1 --> lock>.
         Term P1 = T2.getPredicate();
         Term P2 = T1.getPredicate();
 
-        HashMap<Term, Term> res1 = new HashMap<>();
-        HashMap<Term, Term> res2 = new HashMap<>();
-        HashMap<Term, Term> res3 = new HashMap<>();
-        HashMap<Term, Term> res4 = new HashMap<>();
+        Map<Term, Term> res1 = new HashMap<>();
+        Map<Term, Term> res2 = new HashMap<>();
+        Map<Term, Term> res3 = new HashMap<>();
+        Map<Term, Term> res4 = new HashMap<>();
 
         if (figure == 21) {
             res1.clear();

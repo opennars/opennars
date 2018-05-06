@@ -15,7 +15,7 @@
 package org.opennars.operator.mental;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
+import java.util.*;
 import org.opennars.storage.Memory;
 import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
@@ -43,7 +43,7 @@ public class Wonder extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term content = args[1];
         
         

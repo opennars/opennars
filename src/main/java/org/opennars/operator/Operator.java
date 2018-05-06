@@ -15,8 +15,8 @@
 package org.opennars.operator;
 
 import org.opennars.plugin.Plugin;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.*;
 import org.opennars.storage.Memory;
 import org.opennars.main.NAR;
 import org.opennars.main.Parameters;

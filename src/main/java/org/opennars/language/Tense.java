@@ -14,8 +14,8 @@
  */
 package org.opennars.language;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.*;
 
 public enum Tense {
     

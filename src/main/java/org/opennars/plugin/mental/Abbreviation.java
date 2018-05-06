@@ -16,7 +16,7 @@ package org.opennars.plugin.mental;
 
 import org.opennars.plugin.Plugin;
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
+import java.util.*;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events.TaskDerive;
 import org.opennars.storage.Memory;
@@ -68,7 +68,7 @@ public class Abbreviation implements Plugin {
          * @return Immediate results as Tasks
          */
         @Override
-        protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+        protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
             
             Term compound = args[0];
             

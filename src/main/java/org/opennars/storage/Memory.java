@@ -18,13 +18,13 @@ import org.opennars.control.ConceptProcessing;
 import org.opennars.io.events.Events;
 import org.opennars.io.events.EventEmitter;
 import java.io.Serializable;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
+import java.util.*;
 import org.opennars.main.NAR;
 import org.opennars.main.NAR.RuntimeParameters;
 import org.opennars.main.Parameters;
@@ -87,7 +87,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     public transient EventEmitter event;
     
     /* InnateOperator registry. Containing all registered operators of the system */
-    public final HashMap<CharSequence, Operator> operators;
+    public final Map<CharSequence, Operator> operators;
     
     /* New tasks with novel composed terms, for delayed and selective processing*/
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;

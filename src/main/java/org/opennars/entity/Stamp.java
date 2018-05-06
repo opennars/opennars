@@ -15,8 +15,8 @@
 package org.opennars.entity;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
+import java.util.*;
 import org.opennars.storage.Memory;
 import org.opennars.main.Parameters;
 import org.opennars.inference.TemporalRules;
@@ -171,7 +171,7 @@ public class Stamp implements Cloneable, Serializable {
     
     /** Detects evidental base overlaps **/
     public static boolean baseOverlap(long[] base1, long[] base2) {
-        HashSet<Long> task_base = new HashSet<>(base1.length + base2.length);
+        Set<Long> task_base = new HashSet<>(base1.length + base2.length);
         for(int i=0; i < base1.length; i++) {
             if(task_base.contains(base1[i])) { //can have an overlap in itself already
                 return true;
@@ -188,7 +188,7 @@ public class Stamp implements Cloneable, Serializable {
      }
     
     public boolean evidenceIsCyclic() {
-        HashSet<Long> task_base = new HashSet<Long>(this.evidentialBase.length);
+        Set<Long> task_base = new HashSet<Long>(this.evidentialBase.length);
         for(int i=0; i < this.evidentialBase.length; i++) {
             if(task_base.contains(Long.valueOf(this.evidentialBase[i]))) { //can have an overlap in itself already
                 return true;
@@ -282,7 +282,7 @@ public class Stamp implements Cloneable, Serializable {
     /**
      * Convert the evidentialBase into a set
      *
-     * @return The TreeSet representation of the evidential base
+     * @return The NavigableSet representation of the evidential base
      */
     private long[] toSet() {        
         if (evidentialSet == null) {        

@@ -14,8 +14,8 @@
  */
 package org.opennars.storage;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
+import java.util.*;
 import org.opennars.main.Parameters;
 import org.opennars.entity.Item;
 import org.opennars.inference.BudgetFunctions;

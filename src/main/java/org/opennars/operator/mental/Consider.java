@@ -14,7 +14,7 @@
  */
 package org.opennars.operator.mental;
 
-import java.util.ArrayList;
+import java.util.*;
 import org.opennars.control.DerivationContext;
 import org.opennars.storage.Memory;
 import org.opennars.control.GeneralInferenceControl;
@@ -46,7 +46,7 @@ public class Consider extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term term = args[1];
         
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
