@@ -298,7 +298,7 @@ public class TemporalRules {
                 boolean SubsPred=precon.containsTermRecursively(pred);
                 Variable v1=new Variable("$91");
                 Variable v2=new Variable("$92");
-                Map<Term,Term> app=new HashMap<Term,Term>();
+                Map<Term,Term> app= new HashMap<>();
                 if(SubsSub || SubsPred) {
                     if(SubsSub)
                         app.put(sub, v1);
@@ -313,7 +313,7 @@ public class TemporalRules {
              }
         }
         
-        List<Task> success=new ArrayList<Task>();
+        List<Task> success= new ArrayList<>();
         if(!deriveSequenceOnly && t11!=null && t22!=null) {
             Statement statement11 = Implication.make(t11, t22, order);
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));

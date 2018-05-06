@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 public abstract class SensoryChannel implements Serializable {
     private Collection<SensoryChannel> reportResultsTo;
     public NAR nar; //for top-down influence of concept budgets
-    public List<Task> results = new ArrayList<Task>();
+    public List<Task> results = new ArrayList<>();
     public int height = 0; //1D channels have height 1
     public int width = 0;
     public int duration = -1;

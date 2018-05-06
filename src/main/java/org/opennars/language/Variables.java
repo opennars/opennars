@@ -89,13 +89,13 @@ public class Variables {
                     //find an offset that works
                     for(int k=0;k<(c2.term.length - c1.term.length);k++) {
                         Map<Term, Term>[] mapk = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapk[0] = new HashMap<Term,Term>();
-                        mapk[1] = new HashMap<Term,Term>();
+                        mapk[0] = new HashMap<>();
+                        mapk[1] = new HashMap<>();
                         if(map[0] == null) {
-                            map[0] = new HashMap<Term,Term>();
+                            map[0] = new HashMap<>();
                         }
                         if(map[1] == null) {
-                            map[1] = new HashMap<Term,Term>();
+                            map[1] = new HashMap<>();
                         }
                         for(Term c : map[0].keySet()) {
                             mapk[0].put(c, map[0].get(c));
@@ -107,8 +107,8 @@ public class Variables {
                         for(int j=k;j<k+size_smaller;j++) {
                             int i = j-k;
                             Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                            mapNew[0] = new HashMap<Term,Term>();
-                            mapNew[1] = new HashMap<Term,Term>();
+                            mapNew[0] = new HashMap<>();
+                            mapNew[1] = new HashMap<>();
                             for(Term c : map[0].keySet()) {
                                 mapNew[0].put(c, map[0].get(c));
                             }
@@ -235,12 +235,12 @@ public class Variables {
             Term[] list = cTerm1.cloneTerms();
             if (cTerm1.isCommutative()) {
                 CompoundTerm.shuffle(list, Memory.randomNumber);
-                Set<Integer> alreadyMatched = new HashSet<Integer>();
+                Set<Integer> alreadyMatched = new HashSet<>();
                 //ok attempt unification
                 if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
                 }
-                Set<Integer> matchedJ = new HashSet<Integer>(list.length*2);
+                Set<Integer> matchedJ = new HashSet<>(list.length * 2);
                 for(int i = 0; i < list.length; i++) {
                     boolean succeeded = false;
                     for(int j = 0; j < list.length; j++) {
@@ -250,13 +250,13 @@ public class Variables {
                         Term ti = list[i].clone();
                         //clone map also:
                         Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapNew[0] = new HashMap<Term,Term>();
-                        mapNew[1] = new HashMap<Term,Term>();
+                        mapNew[0] = new HashMap<>();
+                        mapNew[1] = new HashMap<>();
                         if(map[0] == null) {
-                            map[0] = new HashMap<Term,Term>();
+                            map[0] = new HashMap<>();
                         }
                         if(map[1] == null) {
-                            map[1] = new HashMap<Term,Term>();
+                            map[1] = new HashMap<>();
                         }
                         for(Term c : map[0].keySet()) {
                             mapNew[0].put(c, map[0].get(c));

@@ -47,7 +47,7 @@ public class VisualSpace implements ImaginationSpace {
     static NullOperator left = new NullOperator("^left");
     static NullOperator up = new NullOperator("^up");
     static NullOperator down = new NullOperator("^down");
-    Set<Operator> ops = new HashSet<Operator>();
+    Set<Operator> ops = new HashSet<>();
     NAR nar;
     
     public VisualSpace(NAR nar, float[][] source, int py, int px, int height, int width) {

@@ -165,7 +165,7 @@ public class DerivationContext {
     }
     public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed, boolean addToMemory) {
         
-        List<Task> ret = new ArrayList<Task>();
+        List<Task> ret = new ArrayList<>();
         if(newContent == null) {
             return null;
         }

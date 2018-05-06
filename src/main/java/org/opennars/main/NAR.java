@@ -70,7 +70,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
                     "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";
 
 
-    Map<Term,SensoryChannel> sensoryChannels = new HashMap<Term,SensoryChannel>();
+    Map<Term,SensoryChannel> sensoryChannels = new HashMap<>();
     public void addSensoryChannel(String term, SensoryChannel channel) {
         try {
             sensoryChannels.put(new Narsese(this).parseTerm(term), channel);

@@ -317,7 +317,7 @@ public class ConceptProcessing {
                 if(projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && nal.memory.time() >= concept.memory.decisionBlock) {
                     //see whether the goal evidence is fully included in the old goal, if yes don't execute
                     //as execution for this reason already happened (or did not since there was evidence against it)
-                    Set<Long> oldEvidence = new HashSet<Long>();
+                    Set<Long> oldEvidence = new HashSet<>();
                     boolean Subset=false;
                     if(oldGoalT != null) {
                         Subset = true;
@@ -346,7 +346,7 @@ public class ConceptProcessing {
     public static void questionFromGoal(final Task task, final DerivationContext nal) {
         if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled
-            List<Term> qu=new ArrayList<Term>();
+            List<Term> qu= new ArrayList<>();
             if(Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
                 if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
                     Variable how=new Variable("?how");

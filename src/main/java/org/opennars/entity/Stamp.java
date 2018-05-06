@@ -187,7 +187,7 @@ public class Stamp implements Cloneable, Serializable {
      }
     
     public boolean evidenceIsCyclic() {
-        Set<Long> task_base = new HashSet<Long>(this.evidentialBase.length);
+        Set<Long> task_base = new HashSet<>(this.evidentialBase.length);
         for (long anEvidentialBase : this.evidentialBase) {
             if (task_base.contains(anEvidentialBase)) { //can have an overlap in itself already
                 return true;

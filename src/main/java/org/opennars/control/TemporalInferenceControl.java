@@ -78,8 +78,8 @@ public class TemporalInferenceControl {
             return false;
        }
 
-        Set<Task> already_attempted = new HashSet<Task>();
-        Set<Task> already_attempted_ops = new HashSet<Task>();
+        Set<Task> already_attempted = new HashSet<>();
+        Set<Task> already_attempted_ops = new HashSet<>();
         //Sequence formation:
         for(int i =0; i<Parameters.SEQUENCE_BAG_ATTEMPTS; i++) {
             Task takeout = nal.memory.seq_current.takeNext();
@@ -161,7 +161,7 @@ public class TemporalInferenceControl {
     
     public static void addToSequenceTasks(DerivationContext nal, final Task newEvent) {
         //multiple versions are necessary, but we do not allow duplicates
-        List<Task> removals = new LinkedList<Task>();
+        List<Task> removals = new LinkedList<>();
         for(Task s : nal.memory.seq_current) {
             if(CompoundTerm.replaceIntervals(s.getTerm()).equals(
                     CompoundTerm.replaceIntervals(newEvent.getTerm()))) {
@@ -202,7 +202,7 @@ public class TemporalInferenceControl {
     }
     
     public static void NewOperationFrame(Memory mem, Task task) {
-        List<Task> toRemove = new LinkedList<Task>(); //can there be more than one? I don't think so..
+        List<Task> toRemove = new LinkedList<>(); //can there be more than one? I don't think so..
         float priorityGain = 0.0f;
         for(Task t : mem.recent_operations) {   //when made sure, make single element and add break
             if(t.getTerm().equals(task.getTerm())) {
