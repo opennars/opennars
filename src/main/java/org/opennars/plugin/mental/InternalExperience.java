@@ -22,7 +22,7 @@ import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.language.*;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -100,7 +100,7 @@ public class InternalExperience implements Plugin, EventObserver {
     
     public static boolean enabled=false;
     
-    @Override public boolean setEnabled(final NAR n, final boolean enable) {
+    @Override public boolean setEnabled(final Nar n, final boolean enable) {
         memory = n.memory;
         
         memory.event.set(this, enable, Events.ConceptDirectProcessedTask.class);

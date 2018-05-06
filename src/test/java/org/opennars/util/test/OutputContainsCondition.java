@@ -21,7 +21,7 @@ package org.opennars.util.test;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
 import org.opennars.io.events.TextOutputHandler;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.operator.Operator.ExecutionResult;
 
 import java.util.*;
@@ -76,7 +76,7 @@ public class OutputContainsCondition extends OutputCondition<Task> {
      * @param containing
      * @param maxSimilars # of similar results to collect, -1 to disable
      */
-    public OutputContainsCondition(final NAR nar, final String containing, final int maxSimilars) {
+    public OutputContainsCondition(final Nar nar, final String containing, final int maxSimilars) {
         super(nar);
         this.containing = containing;
         this.maxSimilars = maxSimilars;

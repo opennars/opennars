@@ -22,7 +22,7 @@ import org.opennars.language.Inheritance;
 import org.opennars.language.Product;
 import org.opennars.language.SetExt;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.plugin.Plugin;
 import org.opennars.storage.Memory;
 
@@ -35,7 +35,7 @@ public class Counting implements Plugin {
     
     final static Term CARDINALITY = Term.get("CARDINALITY");
     
-    @Override public boolean setEnabled(final NAR n, final boolean enabled) {
+    @Override public boolean setEnabled(final Nar n, final boolean enabled) {
         final Memory memory = n.memory;
         
         if(obs==null) {

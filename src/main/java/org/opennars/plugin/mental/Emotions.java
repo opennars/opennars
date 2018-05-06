@@ -21,7 +21,7 @@ import org.opennars.io.Symbols;
 import org.opennars.language.Inheritance;
 import org.opennars.language.SetInt;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.plugin.Plugin;
 
@@ -175,7 +175,7 @@ public class Emotions implements Plugin {
 
     boolean enabled = false; //false means it needs to be retrieved using feelSatisfied / feelBusy instead
     @Override
-    public boolean setEnabled(final NAR n, final boolean enabled) {
+    public boolean setEnabled(final Nar n, final boolean enabled) {
         this.enabled = enabled;
         return enabled;
     }

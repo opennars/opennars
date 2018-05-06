@@ -48,12 +48,12 @@ import java.util.logging.Logger;
  *
  * Instances of this represent a reasoner connected to a Memory, and set of Input and Output channels.
  *
- * All state is contained within Memory.  A NAR is responsible for managing I/O channels and executing
+ * All state is contained within Memory.  A Nar is responsible for managing I/O channels and executing
  * memory operations.  It executesa series sof cycles in two possible modes:
  *   * step mode - controlled by an outside system, such as during debugging or testing
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class NAR extends SensoryChannel implements Serializable,Runnable {
+public class Nar extends SensoryChannel implements Serializable,Runnable {
     public NarParameters narParameters = new NarParameters();
 
     /**
@@ -76,7 +76,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         try {
             sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
         } catch (final InvalidInputException ex) {
-            Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Nar.class.getName()).log(Level.SEVERE, null, ex);
             throw new IllegalStateException("Could not add sensory channel.", ex);
         }
     }
@@ -88,10 +88,10 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         outStream.close();
     }
     
-    public static NAR LoadFromFile(final String name) throws IOException, ClassNotFoundException {
+    public static Nar LoadFromFile(final String name) throws IOException, ClassNotFoundException {
         final FileInputStream inStream = new FileInputStream(name);
         final ObjectInputStream stream = new ObjectInputStream(inStream);
-        final NAR ret = (NAR) stream.readObject();
+        final Nar ret = (Nar) stream.readObject();
         ret.memory.event = new EventEmitter();
         ret.plugins = new ArrayList<>(); 
         for (final Operator o : Operators.get(ret))
@@ -138,7 +138,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         public float doubleValue() {return (float)this.VAL;}
         public int intValue() {return (int)this.VAL;}
     }
-    /*NAR Parameters which can be changed during runtime.*/
+    /*Nar Parameters which can be changed during runtime.*/
    public class RuntimeParameters implements Serializable {
        public RuntimeParameters() {    }
        public final PortableInteger noiseLevel = new PortableInteger(100);
@@ -165,7 +165,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         public void setEnabled(final boolean enabled) {
             if (this.enabled == enabled) return;
 
-            plugin.setEnabled(NAR.this, enabled);
+            plugin.setEnabled(Nar.this, enabled);
             this.enabled = enabled;
             emit(Events.PluginsChange.class, plugin, enabled);
         }
@@ -183,7 +183,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     private boolean stopped = false;
     private boolean threadYield;
 
-    public NAR() {
+    public Nar() {
         final Plugins b = new Plugins();
         final Memory m = new Memory(new RuntimeParameters(),
                 new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE),
@@ -313,7 +313,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
                 }
             }
         } catch (final IOException ex) {
-            Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Nar.class.getName()).log(Level.SEVERE, null, ex);
             throw new IllegalStateException("Could not open specified file", ex);
         }
     }
@@ -324,7 +324,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         return memory.concept(new Narsese(this).parseTerm(concept));
     }
 
-    public NAR ask(final String termString, final AnswerHandler answered) throws InvalidInputException {
+    public Nar ask(final String termString, final AnswerHandler answered) throws InvalidInputException {
 
         final Task t;
         addInput(
@@ -348,7 +348,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
     }
 
-    public NAR askNow(final String termString, final AnswerHandler answered) throws InvalidInputException {
+    public Nar askNow(final String termString, final AnswerHandler answered) throws InvalidInputException {
 
         final Task t;
         addInput(
@@ -372,7 +372,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
     }
 
-    public NAR addInput(final Task t) {
+    public Nar addInput(final Task t) {
         this.memory.inputTask(t);
         return this;
     }
@@ -479,7 +479,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     }
 
     /**
-     * A frame, consisting of one or more NAR memory cycles
+     * A frame, consisting of one or more Nar memory cycles
      */
     public void cycle() {
         try {
@@ -515,8 +515,8 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         return minCyclePeriodMS;
     }
 
-    /** When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay). 
-     *  This is for improving program responsiveness when NAR is run with no delay.
+    /** When b is true, Nar will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay).
+     *  This is for improving program responsiveness when Nar is run with no delay.
      */
     public void setThreadYield(final boolean b) {
         this.threadYield = b;

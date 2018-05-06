@@ -18,7 +18,7 @@ import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
 import org.opennars.io.Texts;
 import org.opennars.io.events.Events.Answer;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 import java.io.*;
 import java.util.Arrays;
@@ -29,7 +29,7 @@ import java.util.Arrays;
 public class TextOutputHandler extends OutputHandler implements Serializable {
 
 
-    private final NAR nar;
+    private final Nar nar;
     
     private String prefix = "";
     private LineOutput outExp2;
@@ -45,35 +45,35 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
     }
 
     /**
-     * Default constructor; adds the reasoner to a NAR's outptu channels
+     * Default constructor; adds the reasoner to a Nar's outptu channels
      *
      * @param n
      */
-    public TextOutputHandler(final NAR n) {
+    public TextOutputHandler(final Nar n) {
         super(n, true);
         this.nar = n;
     }
-    public TextOutputHandler(final NAR n, final LineOutput outExp2) {
+    public TextOutputHandler(final Nar n, final LineOutput outExp2) {
         this(n);
         this.outExp2 = outExp2;
     }
 
-    public TextOutputHandler(final NAR n, final PrintWriter outExp) {
+    public TextOutputHandler(final Nar n, final PrintWriter outExp) {
         this(n, outExp, 0.0f);
     }
-    public TextOutputHandler(final NAR n, final PrintWriter outExp, final float minPriority) {
+    public TextOutputHandler(final Nar n, final PrintWriter outExp, final float minPriority) {
         this(n);
         this.outExp = outExp;
         this.minPriority = minPriority;
     }
-    public TextOutputHandler(final NAR n, final PrintStream ps) {
+    public TextOutputHandler(final Nar n, final PrintStream ps) {
         this(n, new PrintWriter(ps));
     }
-    public TextOutputHandler(final NAR n, final PrintStream ps, final float minPriority) {
+    public TextOutputHandler(final Nar n, final PrintStream ps, final float minPriority) {
         this(n, ps);
         this.minPriority = minPriority;
     }
-    public TextOutputHandler(final NAR n, final StringWriter s) {
+    public TextOutputHandler(final Nar n, final StringWriter s) {
         this(n, new PrintWriter(s));
     }
     /**
@@ -149,12 +149,12 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
         return this;
     }
 
-    public static String getOutputString(final Class channel, final Object signal, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
+    public static String getOutputString(final Class channel, final Object signal, final boolean showChannel, final boolean showStamp, final Nar nar, final StringBuilder buffer) {
         return getOutputString(channel, signal, showChannel, showStamp, nar, buffer, 0);
     }
             
     /** generates a human-readable string from an output channel and signal */
-    public static String getOutputString(final Class channel, final Object signal, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, final float minPriority) {
+    public static String getOutputString(final Class channel, final Object signal, final boolean showChannel, final boolean showStamp, final Nar nar, final StringBuilder buffer, final float minPriority) {
         buffer.setLength(0);
         
         if (showChannel)
@@ -213,7 +213,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
         
     }
     
-    public static CharSequence getOutputString(final Class channel, final Object signal, final boolean showChannel, final boolean showStamp, final NAR nar) {
+    public static CharSequence getOutputString(final Class channel, final Object signal, final boolean showChannel, final boolean showStamp, final Nar nar) {
         final CharSequence s = getOutputString(channel, signal, showStamp, nar);
         if (showChannel) {            
             final String channelName = channel.getSimpleName();
@@ -225,12 +225,12 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
         }
     }
 
-    public static CharSequence getOutputString(final Class channel, final Object signal, final boolean showStamp, final NAR nar) {
+    public static CharSequence getOutputString(final Class channel, final Object signal, final boolean showStamp, final Nar nar) {
         return getOutputString(channel, signal, showStamp, nar, new StringBuilder());
     }
     
     /** generates a human-readable string from an output channel and signal */
-    public static CharSequence getOutputString(final Class channel, final Object signal, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
+    public static CharSequence getOutputString(final Class channel, final Object signal, final boolean showStamp, final Nar nar, final StringBuilder buffer) {
         buffer.setLength(0);
         
         if (signal instanceof Exception) {

@@ -14,17 +14,17 @@
  */
 package org.opennars.plugin;
 
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 import java.io.Serializable;
 
 /**
- * NAR plugin interface
+ * Nar plugin interface
  */
 public interface Plugin extends Serializable {
 
     /** called when plugin is activated (enabled = true) / deactivated (enabled=false) */
-    boolean setEnabled(NAR n, boolean enabled);
+    boolean setEnabled(Nar n, boolean enabled);
     
     default CharSequence name() {
         return this.getClass().getSimpleName();
