@@ -103,7 +103,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                         long time=0; 
                         //refined:
                         int u = 0;
-                        while(c.term[c.term.length-1-u] instanceof Interval) {
+                        while(c.term.length-1-u >= 0 && c.term[c.term.length-1-u] instanceof Interval) {
                             time += ((Interval)c.term[c.term.length-1-u]).time;
                             u++;
                         }
@@ -121,7 +121,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                         long time=0; 
                         //refined:
                         int u = 0;
-                        while(c.term[u] instanceof Interval) {
+                        while(u < c.term.length && (c.term[u] instanceof Interval)) {
                             time += ((Interval)c.term[u]).time;
                             u++;
                         }
