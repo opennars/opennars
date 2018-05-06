@@ -34,13 +34,13 @@ public final class TruthFunctions extends UtilityFunctions {
     }
 
     /**
-     * returns the truth value by the truth-function for the binary case, that is with two premises.
+     * lookup the truth function and compute the value
      * @param type truth-function
      * @param a truth value of the first premise
      * @param b truth value of the second premise
      * @return truth value as computed by the truth-function
      */
-    public static TruthValue dispatchBinary(final EnumType type, final TruthValue a, final TruthValue b) {
+    public static TruthValue lookupTruthFunctionAndCompute(final EnumType type, final TruthValue a, final TruthValue b) {
         switch(type) {
             case DESIREDED: return desireDed(a, b);
             case DESIREIND: return desireInd(a, b);
@@ -54,16 +54,17 @@ public final class TruthFunctions extends UtilityFunctions {
     }
 
     /**
-     * returns the truth value by the truth-function for the binary case, that is with two premises,
-     * @param flag
+     * lookup the truth function and compute the value - for two truth functions which are decided by flag
+     * @param flag which type to choose
      * @param typeTrue truth-function for the case when the flag is true
      * @param typeFalse truth-function for the case when the flag is false
      * @param a truth value of the first premise
      * @param b truth value of the second premise
      * @return truth value as computed by the truth-function
      */
-    public static TruthValue dispatchBinaryByBool(final boolean flag, final EnumType typeTrue, final EnumType typeFalse, final TruthValue a, final TruthValue b) {
-        return flag ? dispatchBinary(typeTrue, a, b) : dispatchBinary(typeFalse, a, b);
+    public static TruthValue lookupTruthFunctionByBoolAndCompute(final boolean flag, final EnumType typeTrue, final EnumType typeFalse, final TruthValue a, final TruthValue b) {
+        final EnumType type = flag ? typeTrue : typeFalse;
+        return lookupTruthFunctionAndCompute(type, a, b);
     }
 
 
