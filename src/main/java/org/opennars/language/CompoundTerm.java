@@ -174,7 +174,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     public CompoundTerm cloneDeep() {
         Term c = clone(cloneTermsDeep());
         if (c == null)
-            throw new UnableToCloneException("Unable to cloneDeep: " + this);
+            return null;
         
         if (c.getClass()!=getClass())
             throw new UnableToCloneException("cloneDeep resulted in different class: " + c + " from " + this);
@@ -288,7 +288,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         Term c = clone( cloneVariableTermsDeep() );
         
         if (c == null)
-            throw new UnableToCloneException("clone(cloneVariableTermsDeep()) resulted in null: " + this);
+            return null;
         
         if (c.getClass()!=getClass())
             throw new UnableToCloneException("cloneDeepVariables resulted in different class: " + c + " from " + this);                

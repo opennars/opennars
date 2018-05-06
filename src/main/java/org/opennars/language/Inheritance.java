@@ -51,7 +51,7 @@ public class Inheritance extends Statement {
 
     @Override public Inheritance clone(Term[] t) {
         if (t.length!=2)
-            throw new RuntimeException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
+            throw new IllegalArgumentException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
                 
         return make(t[0], t[1]);
     }
@@ -71,7 +71,7 @@ public class Inheritance extends Statement {
      */
     public static Inheritance make(final Term subject, final Term predicate) {
                 
-        if (subject==null || predicate==null || invalidStatement(subject, predicate)) {            
+        if (subject==null || predicate==null || invalidStatement(subject, predicate)) {
             return null;
         }
         

@@ -179,7 +179,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                 if (!Term.valid(_content)) {
                     truth.setConfidence(0.0f);
                     if (Parameters.DEBUG) {
-                        throw new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
+                        System.err.println("Invalid Sentence term: " + _content);
+                        Thread.dumpStack();
                     }
                 }
             }
@@ -193,42 +194,47 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         this.truth = truth;
         this.stamp = stamp;
         this.revisible = _content instanceof Implication || _content instanceof Equivalence || !(_content.hasVarDep());
+
+        T newTerm = null;
+        if( _content instanceof CompoundTerm)
+            newTerm = (T)((CompoundTerm)_content).cloneDeepVariables();
         
         //Variable name normalization
         //TODO move this to Concept method, like cloneNormalized()
-        if (normalize && _content.hasVar() && (_content instanceof CompoundTerm) && (!((CompoundTerm)_content).isNormalized() ) ) {
+        if ( newTerm != null && normalize && _content.hasVar() && (!((CompoundTerm)_content).isNormalized() ) ) {
             
             this.term = (T)((CompoundTerm)_content).cloneDeepVariables();
             final CompoundTerm c = (CompoundTerm)term;
             List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
-            
-            c.recurseSubtermsContainingVariables(new Term.TermVisitor() {                
-                @Override public void visit(final Term t, final Term parent) {
+
+            c.recurseSubtermsContainingVariables(new Term.TermVisitor() {
+                @Override
+                public void visit(final Term t, final Term parent) {
                     if (t instanceof Variable) {
-                        Variable v = ((Variable)t);                        
+                        Variable v = ((Variable) t);
                         vars.add(v);
-                    }                    
-                }            
+                    }
+                }
             });
-            
-            Map<CharSequence,CharSequence> rename = new HashMap();            
+
+            Map<CharSequence, CharSequence> rename = new HashMap();
             boolean renamed = false;
-            
+
             for (final Variable v : vars) {
                 CharSequence vname = v.name();
                 if (!v.hasVarIndep())
-                    vname = vname + " " + v.getScope().name();                                
-                CharSequence n = rename.get(vname);                
-                if (n==null) {                            
+                    vname = vname + " " + v.getScope().name();
+                CharSequence n = rename.get(vname);
+                if (n == null) {
                     //type + id
-                    rename.put(vname, n = Variable.getName(v.getType(), rename.size()+1));
+                    rename.put(vname, n = Variable.getName(v.getType(), rename.size() + 1));
                     if (!n.equals(vname))
                         renamed = true;
-                }    
+                }
 
-                v.setScope(c, n);                
+                v.setScope(c, n);
             }
-            
+
             if (renamed) {
                 c.invalidateName();
 
@@ -239,9 +245,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                         throw ntc;
                     }
                 }
-                
+
             }
-            c.setNormalized(true);            
+            c.setNormalized(true);
         }
         else {
             this.term = _content;

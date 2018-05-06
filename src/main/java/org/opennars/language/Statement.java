@@ -209,7 +209,8 @@ public abstract class Statement extends CompoundTerm {
      * @return Whether The Statement is invalid
      */
     final public static boolean invalidStatement(final Term subject, final Term predicate, boolean checkSameTermInPredicateAndSubject) {
-        if (subject==null || predicate==null) return true;
+        if (subject==null || predicate==null)
+            return true;
         
         if (checkSameTermInPredicateAndSubject && subject.equals(predicate)) {
             return true;
