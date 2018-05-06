@@ -23,6 +23,33 @@ import static java.lang.Math.abs;
  * All truth-value (and desire-value) functions used in inference rules 
  */
 public final class TruthFunctions extends UtilityFunctions {
+    public enum EnumType {
+        DESIREDED,
+        DESIREIND,
+        DESIREWEAK,
+        DESIRESTRONG,
+        COMPARISON,
+        ANALOGY,
+        ANONYMOUSANALOGY,
+    }
+
+    public static TruthValue dispatchBinary(final EnumType type, final TruthValue a, final TruthValue b) {
+        switch(type) {
+            case DESIREDED: return desireDed(a, b);
+            case DESIREIND: return desireInd(a, b);
+            case DESIREWEAK: return desireWeak(a, b);
+            case DESIRESTRONG: return desireStrong(a, b);
+            case COMPARISON: return comparison(a, b);
+            case ANALOGY: return analogy(a, b);
+            case ANONYMOUSANALOGY: return anonymousAnalogy(a, b);
+            default: throw new RuntimeException("Encountered unimplemented case!"); // internal error
+        }
+    }
+
+    public static TruthValue dispatchBinary2(final boolean v, final EnumType typeTrue, final EnumType typeFalse, final TruthValue a, final TruthValue b) {
+        return v ? dispatchBinary(typeTrue, a, b) : dispatchBinary(typeFalse, a, b);
+    }
+
 
     /* ----- Single argument functions, called in MatchingRules ----- */
     /**
