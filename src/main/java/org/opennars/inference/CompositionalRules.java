@@ -708,14 +708,7 @@ OUT: <lock1 --> lock>.
             S1 = T2.getSubject();
             P2 = T1.getPredicate();
 
-            if (S1 instanceof Conjunction) {
-                //try to unify P2 with a component
-                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, P2, (CompoundTerm) S1, res3, res4);
-            }
-            if (P2 instanceof Conjunction) {
-                //try to unify S1 with a component
-                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, S1, (CompoundTerm) P2, res3, res4);
-            }
+            eliminateVariableOfConditionAbductiveTryCrossUnification(sentence, belief, nal, S1, P2, res3, res4);
         }
 
         else if (figure == 12) {
@@ -735,14 +728,7 @@ OUT: <lock1 --> lock>.
             S2 = T1.getSubject();
             P1 = T2.getPredicate();
 
-            if (S2 instanceof Conjunction) {
-                //try to unify P1 with a component
-                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, P1, (CompoundTerm) S2, res3, res4);
-            }
-            if (P1 instanceof Conjunction) {
-                //try to unify S2 with a component
-                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, S2, (CompoundTerm) P1, res3, res4);
-            }
+            eliminateVariableOfConditionAbductiveTryCrossUnification(sentence, belief, nal, S2, P1, res3, res4);
         }
 
         else if (figure == 11) {
@@ -760,14 +746,7 @@ OUT: <lock1 --> lock>.
             P1 = T2.getPredicate();
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
-            if (P1 instanceof Conjunction) {
-                //try to unify P2 with a component
-                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, P2, (CompoundTerm) P1, res3, res4);
-            }
-            if (P2 instanceof Conjunction) {
-                //try to unify P1 with a component
-                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, P1, (CompoundTerm) P2, res3, res4);
-            }
+            eliminateVariableOfConditionAbductiveTryCrossUnification(sentence, belief, nal, P1, P2, res3, res4);
         }
 
         else if (figure == 22) {
@@ -834,6 +813,17 @@ OUT: <lock1 --> lock>.
                     }
                 }
             }
+        }
+    }
+
+    private static void eliminateVariableOfConditionAbductiveTryCrossUnification(Sentence sentence, Sentence belief, DerivationContext nal, Term s1, Term p2, Map<Term, Term> res3, Map<Term, Term> res4) {
+        if (s1 instanceof Conjunction) {
+            //try to unify P2 with a component
+            eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, p2, (CompoundTerm) s1, res3, res4);
+        }
+        if (p2 instanceof Conjunction) {
+            //try to unify S1 with a component
+            eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, s1, (CompoundTerm) p2, res3, res4);
         }
     }
 
