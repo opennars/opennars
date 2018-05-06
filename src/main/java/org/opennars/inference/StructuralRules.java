@@ -659,55 +659,57 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void groupSequence(final CompoundTerm compound, final Term component, final boolean compoundTask, final int index, final DerivationContext nal) {
-        if(compound instanceof Conjunction) {
-            final Conjunction conjCompound = (Conjunction) compound;
-            if(conjCompound.getTemporalOrder() != TemporalRules.ORDER_FORWARD) {
-                return;
-            }
+        if(!(compound instanceof Conjunction)) {
+            return;
+        }
 
-            final boolean hasLeft = index > 1;
-            final boolean hasRight = index < compound.size() - 2;
-            if(hasLeft) {
-                final int minIndex = Memory.randomNumber.nextInt(index-1); //if index-1 it would have length 1, no group
-                final Term[] newTermLeft = new Term[(index-minIndex)];
-                System.arraycopy(conjCompound.term, minIndex, newTermLeft, minIndex - minIndex, index - minIndex);
-                final Term contLeft  = Conjunction.make(newTermLeft,  conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-                final Term[] totalLeft =  new Term[conjCompound.size() - newTermLeft.length + 1];
-                //1. add left of min index
-                int k=0;
-                for(int i=0;i<minIndex;i++) {
-                    totalLeft[k++] = conjCompound.term[i];
-                }
-                //add formed group
-                totalLeft[k] = contLeft;
-                k+=newTermLeft.length-1;
-                //and add what is after
-                for(int i=index; i<conjCompound.size(); i++) {
-                    totalLeft[k++] = conjCompound.term[i];
-                }
-                groupSequenceMakeConjunctionAndCreateTask(nal, conjCompound, totalLeft);
-            }
-            if(hasRight) {
-                final int maxIndex = compound.term.length - 1 - (Memory.randomNumber.nextInt(1 + (compound.term.length - 1) - (index + 2)));
-                final Term[] newTermRight = new Term[maxIndex -index];
-                System.arraycopy(conjCompound.term, index + 1, newTermRight, index + 1 - (index + 1), maxIndex + 1 - (index + 1));
-                final Term contRight = Conjunction.make(newTermRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-                final Term[] totalRight = new Term[conjCompound.size() - newTermRight.length + 1];
+        final Conjunction conjCompound = (Conjunction) compound;
+        if(conjCompound.getTemporalOrder() != TemporalRules.ORDER_FORWARD) {
+            return;
+        }
 
-                //2. add left of index
-                int k=0;
-                for(int i=0; i<=index; i++) {
-                    totalRight[k++] = conjCompound.term[i];
-                }
-                //add formed group
-                totalRight[k] = contRight;
-                k+=newTermRight.length-1-1;
-                //and add what is after
-                for(int i=maxIndex+1;i<conjCompound.size();i++) {
-                    totalRight[k++] = conjCompound.term[i];
-                }
-                groupSequenceMakeConjunctionAndCreateTask(nal, conjCompound, totalRight);
+        final boolean hasLeft = index > 1;
+        final boolean hasRight = index < compound.size() - 2;
+        if(hasLeft) {
+            final int minIndex = Memory.randomNumber.nextInt(index-1); //if index-1 it would have length 1, no group
+            final Term[] newTermLeft = new Term[(index-minIndex)];
+            System.arraycopy(conjCompound.term, minIndex, newTermLeft, minIndex - minIndex, index - minIndex);
+            final Term contLeft  = Conjunction.make(newTermLeft,  conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
+            final Term[] totalLeft =  new Term[conjCompound.size() - newTermLeft.length + 1];
+            //1. add left of min index
+            int k=0;
+            for(int i=0;i<minIndex;i++) {
+                totalLeft[k++] = conjCompound.term[i];
             }
+            //add formed group
+            totalLeft[k] = contLeft;
+            k+=newTermLeft.length-1;
+            //and add what is after
+            for(int i=index; i<conjCompound.size(); i++) {
+                totalLeft[k++] = conjCompound.term[i];
+            }
+            groupSequenceMakeConjunctionAndCreateTask(nal, conjCompound, totalLeft);
+        }
+        if(hasRight) {
+            final int maxIndex = compound.term.length - 1 - (Memory.randomNumber.nextInt(1 + (compound.term.length - 1) - (index + 2)));
+            final Term[] newTermRight = new Term[maxIndex -index];
+            System.arraycopy(conjCompound.term, index + 1, newTermRight, index + 1 - (index + 1), maxIndex + 1 - (index + 1));
+            final Term contRight = Conjunction.make(newTermRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
+            final Term[] totalRight = new Term[conjCompound.size() - newTermRight.length + 1];
+
+            //2. add left of index
+            int k=0;
+            for(int i=0; i<=index; i++) {
+                totalRight[k++] = conjCompound.term[i];
+            }
+            //add formed group
+            totalRight[k] = contRight;
+            k+=newTermRight.length-1-1;
+            //and add what is after
+            for(int i=maxIndex+1;i<conjCompound.size();i++) {
+                totalRight[k++] = conjCompound.term[i];
+            }
+            groupSequenceMakeConjunctionAndCreateTask(nal, conjCompound, totalRight);
         }
     }
 
