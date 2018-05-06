@@ -690,6 +690,7 @@ public final class StructuralRules {
             }
             groupSequenceMakeConjunctionAndCreateTask(nal, conjCompound, totalLeft);
         }
+
         if(hasRight) {
             final int maxIndex = compound.term.length - 1 - (Memory.randomNumber.nextInt(1 + (compound.term.length - 1) - (index + 2)));
             final Term[] newTermRight = new Term[maxIndex -index];
