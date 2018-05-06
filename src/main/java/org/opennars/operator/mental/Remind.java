@@ -14,17 +14,18 @@
  */
 package org.opennars.operator.mental;
 
-import java.util.ArrayList;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.BudgetFunctions.Activating;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.storage.Memory;
+
+import java.util.List;
 
 /**
  * Operator that activates a concept
@@ -35,7 +36,7 @@ public class Remind extends Operator {
         super("^remind");
     }
     
-    public void activate(Memory memory, final Concept c, final BudgetValue b, Activating mode) {
+    public void activate(final Memory memory, final Concept c, final BudgetValue b, final Activating mode) {
         memory.concepts.take(c.name());
         BudgetFunctions.activate(c.budget, b, mode);
         memory.concepts.putBack(c, memory.cycles(memory.param.conceptForgetDurations), memory);
@@ -49,10 +50,10 @@ public class Remind extends Operator {
      * @return Immediate results as Tasks
      */
     @Override    
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term term = args[1];
-        Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+        final Term term = args[1];
+        final Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
+        final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
         activate(memory, concept, budget, Activating.TaskLink);
         return null;
     }

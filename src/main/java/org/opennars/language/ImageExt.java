@@ -14,8 +14,9 @@
  */
 package org.opennars.language;
 
-import java.util.Arrays;
 import org.opennars.io.Symbols.NativeOperator;
+
+import java.util.Arrays;
 
 /**
  * An extension image.
@@ -47,7 +48,7 @@ public class ImageExt extends Image {
         return new ImageExt(term, relationIndex);
     }
     @Override
-    public Term clone(Term[] replaced) {
+    public Term clone(final Term[] replaced) {
         if (replaced.length != term.length)
             throw new IllegalStateException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
         
@@ -62,12 +63,12 @@ public class ImageExt extends Image {
      * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Term[] argList) {
+    public static Term make(final Term[] argList) {
         if (argList.length < 2) {
             return argList[0];
         }
-        Term relation = argList[0];
-        Term[] argument = new Term[argList.length-1];
+        final Term relation = argList[0];
+        final Term[] argument = new Term[argList.length-1];
         int index = 0, n = 0;
         for (int j = 1; j < argList.length; j++) {
             if (isPlaceHolder(argList[j])) {
@@ -88,9 +89,9 @@ public class ImageExt extends Image {
      * @param index The index of the place-holder
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Product product, Term relation, short index) {
+    public static Term make(final Product product, final Term relation, final short index) {
         if (relation instanceof Product) {
-            Product p2 = (Product) relation;
+            final Product p2 = (Product) relation;
             if ((product.size() == 2) && (p2.size() == 2)) {
                 if ((index == 0) && product.term[1].equals(p2.term[1])) { // (/,_,(*,a,b),b) is reduced to a
                     return p2.term[0];
@@ -100,7 +101,7 @@ public class ImageExt extends Image {
                 }
             }
         }
-        Term[] argument = product.cloneTerms(); //TODO is this clone needed?
+        final Term[] argument = product.cloneTerms(); //TODO is this clone needed?
         argument[index] = relation;
         return new ImageExt(argument, index);
     }
@@ -112,10 +113,10 @@ public class ImageExt extends Image {
      * @param index The index of the place-holder in the new Image
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(ImageExt oldImage, Term component, short index) {
-        Term[] argList = oldImage.cloneTerms();
-        int oldIndex = oldImage.relationIndex;
-        Term relation = argList[oldIndex];
+    public static Term make(final ImageExt oldImage, final Term component, final short index) {
+        final Term[] argList = oldImage.cloneTerms();
+        final int oldIndex = oldImage.relationIndex;
+        final Term relation = argList[oldIndex];
         argList[oldIndex] = component;
         argList[index] = relation;
         return new ImageExt(argList, index);

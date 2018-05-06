@@ -15,20 +15,17 @@
 package org.opennars.operator;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
-import static org.opennars.inference.BudgetFunctions.truthToQuality;
+import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
 import org.opennars.language.Variable;
-//import org.opennars.operator.misc.Javascript;
+import org.opennars.main.Parameters;
+import org.opennars.storage.Memory;
+
+import java.util.List;
+
+import static org.opennars.inference.BudgetFunctions.truthToQuality;
 
 
 /** 
@@ -39,7 +36,7 @@ import org.opennars.language.Variable;
 public abstract class FunctionOperator extends Operator {
 
     
-    protected FunctionOperator(String name) {
+    protected FunctionOperator(final String name) {
         super(name);
     }
 
@@ -55,10 +52,10 @@ public abstract class FunctionOperator extends Operator {
     //abstract protected int getMaxArity();
     
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory m) {
+    protected List<Task> execute(Operation operation, final Term[] args, final Memory m) {
         //TODO make memory access optional by constructor argument
         //TODO allow access to NAR instance?
-        int numArgs = args.length -1;
+        final int numArgs = args.length -1;
         
         if (numArgs < 1) {
             throw new IllegalStateException("Requires at least 1 arguments");
@@ -69,8 +66,8 @@ public abstract class FunctionOperator extends Operator {
         }
         
         //last argument a variable?
-        Term lastTerm = args[numArgs];
-        boolean variable = lastTerm instanceof Variable;
+        final Term lastTerm = args[numArgs];
+        final boolean variable = lastTerm instanceof Variable;
         
         if(!variable /*&& !(this instanceof Javascript)*/) { 
             throw new IllegalStateException("output can not be specified");
@@ -78,16 +75,16 @@ public abstract class FunctionOperator extends Operator {
         
         
         
-        int numParam = numArgs-1;
+        final int numParam = numArgs-1;
         
         /*if(this instanceof Javascript && !variable) {
             numParam++;
         }*/
         
-        Term[] x = new Term[numParam];
+        final Term[] x = new Term[numParam];
         System.arraycopy(args, 1, x, 0, numParam);
         
-        Term y;
+        final Term y;
         //try {
             y = function(m, x);
             if (y == null) {
@@ -102,7 +99,7 @@ public abstract class FunctionOperator extends Operator {
             throw e;
         }*/
           
-        Variable var=new Variable("$1");
+        final Variable var=new Variable("$1");
       //  Term actual_part = Similarity.make(var, y);
       //  Variable vardep=new Variable("#1");
         //Term actual_dep_part = Similarity.make(vardep, y);
@@ -110,9 +107,9 @@ public abstract class FunctionOperator extends Operator {
                 ((CompoundTerm)operation.getSubject()).setComponent(
                         numArgs, y, m), m); 
 
-        float confidence = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
+        final float confidence = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
         if (variable) {
-            Sentence s = new Sentence(operation, 
+            final Sentence s = new Sentence(operation,
                                       Symbols.JUDGMENT_MARK,
                                       new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
                                       new Stamp(m));
@@ -133,7 +130,7 @@ public abstract class FunctionOperator extends Operator {
     /** (can be overridden in subclasses) the extent to which it is truth 
      * that the 2 given terms are equal.  in other words, a distance metric
      */
-    public float equals(Term a, Term b) {
+    public float equals(final Term a, final Term b) {
         //default: Term equality
         return a.equals(b) ? 1.0f : 0.0f;
     }

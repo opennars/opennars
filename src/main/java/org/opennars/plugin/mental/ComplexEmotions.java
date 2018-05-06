@@ -20,7 +20,6 @@ package org.opennars.plugin.mental;
 
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
-import static org.opennars.inference.LocalRules.solutionQuality;
 import org.opennars.io.events.EventEmitter;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
@@ -28,6 +27,8 @@ import org.opennars.io.events.Events.Answer;
 import org.opennars.main.NAR;
 import org.opennars.plugin.Plugin;
 import org.opennars.storage.Memory;
+
+import static org.opennars.inference.LocalRules.solutionQuality;
 
 /**
  *
@@ -38,43 +39,40 @@ public class ComplexEmotions implements Plugin {
     public EventEmitter.EventObserver obs;
     float fear = 0.5f;
     @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
+    public boolean setEnabled(final NAR n, final boolean enabled) {
         if(enabled) {
             
-            Memory memory = n.memory;
+            final Memory memory = n.memory;
         
             if(obs==null) {
-                obs=new EventObserver() {
-                    @Override
-                    public void event(Class event, Object[] a) {
-                        if (event != Events.TaskDerive.class &&
-                                event != Events.InduceSucceedingEvent.class)
-                            return;
-                        Task future_task = (Task)a[0];
-                        
-                        if(future_task.sentence.getOccurenceTime() > n.time()) {
-                            Concept c = n.memory.concept(future_task.getTerm());
-                            float true_expectation = 0.5f;
-                            float false_expectation = 0.5f;
-                            if(c != null) {
-                                if(c.desires.size() > 0 && c.beliefs.size() > 0) {
-                                    //Fear:
-                                    if(future_task.sentence.truth.getExpectation() > true_expectation &&
-                                       c.desires.get(0).sentence.truth.getExpectation() < false_expectation) {
-                                        //n.addInput("<(*,{SELF},fear) --> ^feel>. :|:");
-                                        float weight = future_task.getPriority();
-                                        float fear = solutionQuality(true, c.desires.get(0), future_task.sentence, memory);
-                                        float newValue = fear*weight;
-                                        fear += newValue * weight;
-                                        fear /= 1.0f + weight;
-                                        //incrase concept priority by fear value:
-                                        Concept C1 = memory.concept(future_task.getTerm());
-                                        if(C1 != null) {
-                                            C1.incPriority(fear);
-                                        }
-                                        memory.emit(Answer.class, "Fear value="+fear);
-                                        System.out.println("Fear value="+fear);
+                obs= (event, a) -> {
+                    if (event != Events.TaskDerive.class &&
+                            event != Events.InduceSucceedingEvent.class)
+                        return;
+                    final Task future_task = (Task)a[0];
+
+                    if(future_task.sentence.getOccurenceTime() > n.time()) {
+                        final Concept c = n.memory.concept(future_task.getTerm());
+                        final float true_expectation = 0.5f;
+                        final float false_expectation = 0.5f;
+                        if(c != null) {
+                            if(c.desires.size() > 0 && c.beliefs.size() > 0) {
+                                //Fear:
+                                if(future_task.sentence.truth.getExpectation() > true_expectation &&
+                                   c.desires.get(0).sentence.truth.getExpectation() < false_expectation) {
+                                    //n.addInput("<(*,{SELF},fear) --> ^feel>. :|:");
+                                    final float weight = future_task.getPriority();
+                                    float fear = solutionQuality(true, c.desires.get(0), future_task.sentence, memory);
+                                    final float newValue = fear*weight;
+                                    fear += newValue * weight;
+                                    fear /= 1.0f + weight;
+                                    //incrase concept priority by fear value:
+                                    final Concept C1 = memory.concept(future_task.getTerm());
+                                    if(C1 != null) {
+                                        C1.incPriority(fear);
                                     }
+                                    memory.emit(Answer.class, "Fear value="+fear);
+                                    System.out.println("Fear value="+fear);
                                 }
                             }
                         }

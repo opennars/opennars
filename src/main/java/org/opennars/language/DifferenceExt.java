@@ -14,8 +14,11 @@
  */
 package org.opennars.language;
 
-import java.util.TreeSet;
 import org.opennars.io.Symbols.NativeOperator;
+
+import java.util.NavigableSet;
+import java.util.TreeSet;
+
 import static org.opennars.language.DifferenceInt.ensureValidDifferenceArguments;
 
 /**
@@ -28,7 +31,7 @@ public class DifferenceExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private DifferenceExt(Term[] arg) {
+    private DifferenceExt(final Term[] arg) {
         super(arg);
         
         ensureValidDifferenceArguments(arg);        
@@ -46,7 +49,7 @@ public class DifferenceExt extends CompoundTerm {
         return new DifferenceExt(term);
     }
 
-    @Override public Term clone(Term[] replaced) {
+    @Override public Term clone(final Term[] replaced) {
         return make(replaced);
     }
 
@@ -57,7 +60,7 @@ public class DifferenceExt extends CompoundTerm {
      * @param arg The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Term[] arg) {
+    public static Term make(final Term[] arg) {
         if (arg.length == 1) { // special case from CompoundTerm.reduceComponent
             return arg[0];
         }
@@ -66,7 +69,7 @@ public class DifferenceExt extends CompoundTerm {
         }
         if ((arg[0] instanceof SetExt) && (arg[1] instanceof SetExt)) {
             //TODO maybe a faster way to do this operation:
-            TreeSet<Term> set = new TreeSet<>(((CompoundTerm) arg[0]).asTermList());
+            final NavigableSet<Term> set = new TreeSet<>(((CompoundTerm) arg[0]).asTermList());
             set.removeAll(((CompoundTerm) arg[1]).asTermList());           // set difference
             return SetExt.make(set);
         }                

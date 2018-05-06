@@ -14,12 +14,14 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import org.opennars.main.Parameters;
-import static org.opennars.main.Parameters.TRUTH_EPSILON;
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
+
+import java.io.Serializable;
+
+import static org.opennars.main.Parameters.TRUTH_EPSILON;
 
 
 public class TruthValue implements Cloneable, Serializable { // implements Cloneable {
@@ -113,7 +115,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         return this;
     }
     
-    public TruthValue setConfidence(float c) {
+    public TruthValue setConfidence(final float c) {
         this.confidence = (c < Parameters.MAX_CONFIDENCE) ? c : Parameters.MAX_CONFIDENCE;
         return this;
     }
@@ -163,8 +165,8 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         return getFrequency() < 0.5;
     }
 
-    public static boolean isEqual(final float a, final float b, float epsilon) {
-        float d = Math.abs(a - b);
+    public static boolean isEqual(final float a, final float b, final float epsilon) {
+        final float d = Math.abs(a - b);
         return (d < epsilon);
     }
     
@@ -180,9 +182,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
             final TruthValue t = ((TruthValue) that);
             if (!isEqual(getFrequency(), t.getFrequency(), TRUTH_EPSILON))
                 return false;
-            if (!isEqual(getConfidence(), t.getConfidence(), TRUTH_EPSILON))
-                return false;
-            return true;
+            return isEqual(getConfidence(), t.getConfidence(), TRUTH_EPSILON);
         }
         return false;
     }
@@ -223,14 +223,14 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     }
 
     public CharSequence name() {
-        StringBuilder sb =  new StringBuilder();
+        final StringBuilder sb =  new StringBuilder();
         return appendString(sb, false);
     }
 
     /** output representation */
     public CharSequence toStringExternal() {
         //return name().toString();
-        StringBuilder sb =  new StringBuilder();
+        final StringBuilder sb =  new StringBuilder();
         return appendString(sb, true);
     }
     /**
@@ -245,8 +245,8 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     }
     
     public Term toWordTerm() {
-        float e = getExpectation();
-        float t = Parameters.DEFAULT_CREATION_EXPECTATION;
+        final float e = getExpectation();
+        final float t = Parameters.DEFAULT_CREATION_EXPECTATION;
         if (e > t) {
             return Truth_TRUE;
         }
@@ -256,7 +256,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         return Truth_UNSURE;
     }
 
-    public TruthValue set(float frequency, float confidence) {
+    public TruthValue set(final float frequency, final float confidence) {
         setFrequency(frequency);
         setConfidence(confidence);
         return this;

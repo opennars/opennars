@@ -18,20 +18,20 @@
  */
 package org.opennars.control;
 
-import org.opennars.main.Parameters;
 import org.opennars.entity.Concept;
-import org.opennars.io.events.Events;
 import org.opennars.entity.Task;
 import org.opennars.entity.TermLink;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.RuleTables;
+import org.opennars.io.events.Events;
+import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 public class GeneralInferenceControl {
     
-    public static void selectConceptForInference(Memory mem) {
-        Concept currentConcept = mem.concepts.takeNext();
+    public static void selectConceptForInference(final Memory mem) {
+        final Concept currentConcept = mem.concepts.takeNext();
         if (currentConcept==null) {
             return;
         }
@@ -47,20 +47,20 @@ public class GeneralInferenceControl {
             return;
         }
         
-        DerivationContext nal = new DerivationContext(mem);
+        final DerivationContext nal = new DerivationContext(mem);
         nal.setCurrentConcept(currentConcept);
 
-        boolean putBackConcept = fireConcept(nal, 1);
+        final boolean putBackConcept = fireConcept(nal, 1);
 
         if(putBackConcept) { // put back
-            float forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
+            final float forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
             nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
             nal.memory.concepts.putBack(nal.currentConcept, forgetCycles, nal.memory);
         }
     }
 
     // /return true if concept must be put back
-    public static boolean fireConcept(DerivationContext nal, int numTaskLinks) {
+    public static boolean fireConcept(final DerivationContext nal, final int numTaskLinks) {
         for (int i = 0; i < numTaskLinks; i++) {
             if (nal.currentConcept.taskLinks.size() == 0) {
                 return false;
@@ -80,7 +80,7 @@ public class GeneralInferenceControl {
         return true;
     }
     
-    protected static void fireTaskLink(DerivationContext nal, int termLinks) {
+    protected static void fireTaskLink(final DerivationContext nal, int termLinks) {
         final Task task = nal.currentTaskLink.getTarget();
         nal.setCurrentTerm(nal.currentConcept.term);
         nal.setCurrentTaskLink(nal.currentTaskLink);
@@ -112,7 +112,7 @@ public class GeneralInferenceControl {
         //memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
     }
 
-    public static boolean fireTermlink(final TermLink termLink, DerivationContext nal) {
+    public static boolean fireTermlink(final TermLink termLink, final DerivationContext nal) {
         nal.setCurrentBeliefLink(termLink);
         RuleTables.reason(nal.currentTaskLink, termLink, nal);
 

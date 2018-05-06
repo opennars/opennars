@@ -14,9 +14,10 @@
  */
 package org.opennars.util;
 
-import org.opennars.io.Texts;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import org.opennars.io.Texts;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class TextsTest {

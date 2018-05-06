@@ -14,15 +14,11 @@
  */
 package org.opennars.main;
 
-import org.opennars.operator.mental.Anticipate;
-import org.opennars.plugin.mental.FullInternalExperience;
-import org.opennars.plugin.mental.InternalExperience;
-import org.opennars.plugin.misc.RuntimeNARSettings;
-import org.opennars.plugin.mental.Emotions;
-import org.opennars.plugin.mental.Counting;
-import org.opennars.plugin.mental.Abbreviation;
 import org.opennars.language.SetInt;
 import org.opennars.language.Term;
+import org.opennars.operator.mental.Anticipate;
+import org.opennars.plugin.mental.*;
+import org.opennars.plugin.misc.RuntimeNARSettings;
 import org.opennars.plugin.perception.VisionChannel;
 
 /**
@@ -30,18 +26,18 @@ import org.opennars.plugin.perception.VisionChannel;
  */
 public class Plugins {
 
-    public NAR init(NAR n) {         
+    public NAR init(final NAR n) {
         n.addPlugin(new RuntimeNARSettings());
         n.addPlugin(new Emotions());
         n.addPlugin(new Anticipate());      // expect an event 
-        Term label = SetInt.make(new Term("BRIGHT"));
+        final Term label = SetInt.make(new Term("BRIGHT"));
         //Add a vision channel:
-        int sensor_W = 5;
-        int sensor_H = 5;
+        final int sensor_W = 5;
+        final int sensor_H = 5;
         n.addSensoryChannel(label.toString(),
                             new VisionChannel(label, n, n, sensor_H, sensor_W, sensor_W*sensor_H));
         //allow NAL9 capabilities:
-        boolean full_internal_experience = false;
+        final boolean full_internal_experience = false;
         if(!full_internal_experience) {
             n.addPlugin(new InternalExperience());
         }

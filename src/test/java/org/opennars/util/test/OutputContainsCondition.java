@@ -18,15 +18,13 @@
  */
 package org.opennars.util.test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
-import org.opennars.main.NAR;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
 import org.opennars.io.events.TextOutputHandler;
+import org.opennars.main.NAR;
 import org.opennars.operator.Operator.ExecutionResult;
+
+import java.util.*;
 
 /**
  * OutputCondition that watches for a specific String output,
@@ -35,13 +33,13 @@ import org.opennars.operator.Operator.ExecutionResult;
  */
 public class OutputContainsCondition extends OutputCondition<Task> {
     
-    public List<Task> exact = new ArrayList();
+    public final List<Task> exact = new ArrayList();
     
     public static class SimilarOutput implements Comparable<SimilarOutput> {
         public final String signal;
         public final int distance;
 
-        public SimilarOutput(String signal, int distance) {
+        public SimilarOutput(final String signal, final int distance) {
             this.signal = signal;
             this.distance = distance;
         }
@@ -50,7 +48,7 @@ public class OutputContainsCondition extends OutputCondition<Task> {
         public int hashCode() {  return signal.hashCode();        }
 
         @Override
-        public boolean equals(Object obj) { return signal.equals(((SimilarOutput)obj).signal); }
+        public boolean equals(final Object obj) { return signal.equals(((SimilarOutput)obj).signal); }
 
         @Override
         public String toString() {
@@ -58,7 +56,7 @@ public class OutputContainsCondition extends OutputCondition<Task> {
         }
 
         @Override
-        public int compareTo(SimilarOutput o) {
+        public int compareTo(final SimilarOutput o) {
             return Integer.compare(distance, o.distance);
         }
         
@@ -68,7 +66,7 @@ public class OutputContainsCondition extends OutputCondition<Task> {
     
     
     final String containing;
-    public TreeSet<SimilarOutput> almost = new TreeSet();
+    public final NavigableSet<SimilarOutput> almost = new TreeSet();
     final boolean saveSimilar;
     int maxSimilars = 5;
 
@@ -78,7 +76,7 @@ public class OutputContainsCondition extends OutputCondition<Task> {
      * @param containing
      * @param maxSimilars # of similar results to collect, -1 to disable
      */
-    public OutputContainsCondition(NAR nar, String containing, int maxSimilars) {
+    public OutputContainsCondition(final NAR nar, final String containing, final int maxSimilars) {
         super(nar);
         this.containing = containing;
         this.maxSimilars = maxSimilars;
@@ -89,14 +87,14 @@ public class OutputContainsCondition extends OutputCondition<Task> {
     public String getFalseReason() {
         String s = "FAIL: No substring match: " + containing;
         if (!almost.isEmpty()) {
-            for (SimilarOutput cs : getCandidates(5)) {
+            for (final SimilarOutput cs : getCandidates(5)) {
                 s += "\n\t" + cs;
             }
         }
         return s;
     }
 
-    public Collection<SimilarOutput> getCandidates(int max) {
+    public Collection<SimilarOutput> getCandidates(final int max) {
         return almost;
     }
     
@@ -104,8 +102,8 @@ public class OutputContainsCondition extends OutputCondition<Task> {
      * @author http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Java
      */
     public static int levenshteinDistance(final CharSequence a, final CharSequence b) {
-        int len0 = a.length() + 1;
-        int len1 = b.length() + 1;
+        final int len0 = a.length() + 1;
+        final int len1 = b.length() + 1;
         int[] cost = new int[len0];
         int[] newcost = new int[len0];
         for (int i = 0; i < len0; i++) {
@@ -115,10 +113,10 @@ public class OutputContainsCondition extends OutputCondition<Task> {
             newcost[0] = j;
             final char bj = b.charAt(j - 1);
             for (int i = 1; i < len0; i++) {
-                int match = (a.charAt(i - 1) == bj) ? 0 : 1;
-                int cost_replace = cost[i - 1] + match;
-                int cost_insert = cost[i] + 1;
-                int cost_delete = newcost[i - 1] + 1;
+                final int match = (a.charAt(i - 1) == bj) ? 0 : 1;
+                final int cost_replace = cost[i - 1] + match;
+                final int cost_insert = cost[i] + 1;
+                final int cost_delete = newcost[i - 1] + 1;
                 
                 int c = cost_insert;
                 if (cost_delete < c) c = cost_delete;
@@ -126,21 +124,21 @@ public class OutputContainsCondition extends OutputCondition<Task> {
                 
                 newcost[i] = c;
             }
-            int[] swap = cost;
+            final int[] swap = cost;
             cost = newcost;
             newcost = swap;
         }
         return cost[len0 - 1];
     }
 
-    public boolean cond(Class channel, Object signal) {
+    public boolean cond(final Class channel, final Object signal) {
         if ((channel == OUT.class) || (channel == EXE.class)) {
-            String o;
+            final String o;
             if (signal instanceof Task) {
                 //only compare for Sentence string, faster than TextOutput.getOutputString
                 //which also does unescaping, etc..
-                Task t = (Task)signal;
-                Sentence s = t.sentence;
+                final Task t = (Task)signal;
+                final Sentence s = t.sentence;
                 o = s.toString(nar, false).toString();
                 if (o.contains(containing)) {
                     if (saveSimilar) {
@@ -163,10 +161,10 @@ public class OutputContainsCondition extends OutputCondition<Task> {
                 }                
             }
             if (saveSimilar) {
-                int dist = levenshteinDistance(o, containing);
+                final int dist = levenshteinDistance(o, containing);
                 
                 if (almost.size() >= maxSimilars) {
-                    SimilarOutput last = almost.last();
+                    final SimilarOutput last = almost.last();
                     
                     if (dist < last.distance) {
                         almost.remove(last);
@@ -185,7 +183,7 @@ public class OutputContainsCondition extends OutputCondition<Task> {
     }
 
     @Override
-    public boolean condition(Class channel, Object signal) {
+    public boolean condition(final Class channel, final Object signal) {
         if (succeeded) {
             return true;
         }

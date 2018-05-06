@@ -14,16 +14,17 @@
  */
 package org.opennars.storage;
 
-import java.util.Iterator;
-import java.util.Set;
-import org.opennars.main.Parameters;
 import org.opennars.entity.Item;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.main.Parameters;
+
+import java.util.Iterator;
+import java.util.Set;
 
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
     public static int bin(final float x, final int bins) {
-        int i = (int)Math.floor((x + 0.5f/bins) * bins);
+        final int i = (int)Math.floor((x + 0.5f/bins) * bins);
         return i;
     }
 
@@ -36,7 +37,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @return Whether the Item is in the Bag
      */
     public boolean contains(final E it) {
-        E exist = get(it.name());
+        final E exist = get(it.name());
         return exist.equals(it);
     }
     
@@ -105,7 +106,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     abstract public E take(final K key);
 
-    public E take(E value) {
+    public E take(final E value) {
         return take(value.name());
     }
     
@@ -119,9 +120,8 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
     
     public void printAll() {
-        Iterator<E> d = iterator();
-        while (d.hasNext()) {
-            System.out.println("  " + d.next() + "\n" );
+        for (final E e : this) {
+            System.out.println("  " + e + "\n");
         }
     }
     
@@ -130,7 +130,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     public abstract float getAveragePriority();
 
     public float getTotalPriority() {
-        int size = size();
+        final int size = size();
         if (size == 0) {
             return 0;
         }
@@ -156,7 +156,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @return the item which was removed, or null if none removed
      */    
     public E putBack(final E oldItem, final float forgetCycles, final Memory m) {
-        float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
+        final float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
         BudgetFunctions.applyForgetting(oldItem.budget, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
         return putIn(oldItem);
     }
@@ -173,19 +173,19 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
             return null;
         }
         
-        E r = putBack(x, forgetCycles, m);
+        final E r = putBack(x, forgetCycles, m);
         if (r!=null) {
             throw new IllegalStateException("Bag.processNext should always be able to re-insert item: " + r);
         }
         return x;
     }
     
-    public double[] getPriorityDistribution(double[] x) {
-        int bins = x.length;
+    public double[] getPriorityDistribution(final double[] x) {
+        final int bins = x.length;
         double total = 0;
-        for (E e : values()) {
-            float p = e.budget.getPriority();
-            int b = bin(p, bins-1);
+        for (final E e : values()) {
+            final float p = e.budget.getPriority();
+            final int b = bin(p, bins-1);
             x[b]++;
             total++;
         }
@@ -204,8 +204,8 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     /** slow, probably want to override in subclasses */
     public float getMinPriority() {
         float min = 1.0f;
-        for (Item e : this) {
-            float p = e.getPriority();
+        for (final Item e : this) {
+            final float p = e.getPriority();
             if (p < min) min = p;
         }
         return min;            
@@ -214,8 +214,8 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     /** slow, probably want to override in subclasses */
     public float getMaxPriority() {
         float max = 0.0f;
-        for (Item e : this) {
-            float p = e.getPriority();
+        for (final Item e : this) {
+            final float p = e.getPriority();
             if (p > max) max = p;
         }
         return max;

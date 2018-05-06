@@ -18,18 +18,19 @@
  */
 package org.opennars.util.test;
 
+import org.opennars.main.NAR;
+
 import java.util.LinkedList;
 import java.util.List;
-import org.opennars.main.NAR;
 
 /**
  *
  * @author me
  */
 public class OutputEmptyCondition extends OutputCondition {
-    List<String> output = new LinkedList();
+    final List<String> output = new LinkedList();
 
-    public OutputEmptyCondition(NAR nar) {
+    public OutputEmptyCondition(final NAR nar) {
         super(nar);
         succeeded = true;
     }
@@ -39,10 +40,10 @@ public class OutputEmptyCondition extends OutputCondition {
     }
 
     @Override
-    public boolean condition(Class channel, Object signal) {
+    public boolean condition(final Class channel, final Object signal) {
         //any OUT or ERR output is a failure
         if ((channel == OUT.class) || (channel == ERR.class)) {
-            output.add(channel.getSimpleName().toString() + ": " + signal.toString());
+            output.add(channel.getSimpleName() + ": " + signal.toString());
             succeeded = false;
             return false;
         }

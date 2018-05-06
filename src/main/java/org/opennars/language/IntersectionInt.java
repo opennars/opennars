@@ -15,13 +15,12 @@
 package org.opennars.language;
 
 import com.google.common.collect.ObjectArrays;
+import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
-import org.opennars.main.Parameters;
-import org.opennars.io.Symbols.NativeOperator;
-
-import static org.opennars.language.IntersectionExt.make;
+import java.util.NavigableSet;
 
 /**
  * A compound term whose intension is the intersection of the extensions of its term
@@ -52,7 +51,7 @@ public class IntersectionInt extends CompoundTerm {
     }
 
   @Override
-    public Term clone(Term[] replaced) {
+    public Term clone(final Term[] replaced) {
         return make(replaced);
     }
         
@@ -64,27 +63,27 @@ public class IntersectionInt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Term term1, Term term2) {
+    public static Term make(final Term term1, final Term term2) {
         
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
             // set union
-            Term[] both = ObjectArrays.concat(
+            final Term[] both = ObjectArrays.concat(
                     ((CompoundTerm) term1).term, 
                     ((CompoundTerm) term2).term, Term.class);
             return SetExt.make(both);
         }
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
             // set intersection
-            TreeSet<Term> set = Term.toSortedSet(((CompoundTerm) term1).term);
+            final NavigableSet<Term> set = Term.toSortedSet(((CompoundTerm) term1).term);
             
             set.retainAll(((CompoundTerm) term2).asTermList());     
             
             //technically this can be used directly if it can be converted to array
-            //but wait until we can verify that TreeSet.toarray does it or write a helper function like existed previously
+            //but wait until we can verify that NavigableSet.toarray does it or write a helper function like existed previously
             return SetInt.make(set.toArray(new Term[set.size()]));
         }
         
-        List<Term> se = new ArrayList();
+        final List<Term> se = new ArrayList();
         if (term1 instanceof IntersectionInt) {
             ((CompoundTerm) term1).addTermsTo(se);
             if (term2 instanceof IntersectionInt) {

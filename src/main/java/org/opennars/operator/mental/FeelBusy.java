@@ -14,11 +14,12 @@
  */
 package org.opennars.operator.mental;
 
-import java.util.ArrayList;
-import org.opennars.storage.Memory;
 import org.opennars.entity.Task;
 import org.opennars.language.Term;
 import org.opennars.operator.Operation;
+import org.opennars.storage.Memory;
+
+import java.util.List;
 
 /**
  * Feeling busy value
@@ -36,7 +37,7 @@ public class FeelBusy extends Feel {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
         return feeling(memory.emotion.busy(), memory);
     }    
 }

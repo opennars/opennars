@@ -14,19 +14,19 @@
  */
 package org.opennars.language;
 
-import java.io.Serializable;
-import java.util.*;
-
 import org.apache.commons.lang3.StringUtils;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
-import org.opennars.operator.ImaginationSpace;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.io.Texts;
+import org.opennars.main.Parameters;
+import org.opennars.operator.ImaginationSpace;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.storage.Memory;
+
+import java.io.Serializable;
+import java.util.*;
 //import org.opennars.util.sort.SortedList;
 
 /**
@@ -56,12 +56,12 @@ public class Term implements AbstractTerm, Serializable {
         return (this instanceof Equivalence) || (this instanceof Implication);
     }
     
-    public boolean isExecutable(Memory mem) {
+    public boolean isExecutable(final Memory mem) {
         //don't allow ^want and ^believe to be active/have an effect, 
         //which means its only used as monitor
-        boolean isOp=this instanceof Operation;
+        final boolean isOp=this instanceof Operation;
         if(isOp) {
-            Operator op=((Operation)this).getOperator(); //the following part may be refactored after we
+            final Operator op=((Operation)this).getOperator(); //the following part may be refactored after we
             //know more about how the NAL9 concepts should really interact together:
             /*if(op.equals(mem.getOperator("^want")) || op.equals(mem.getOperator("^believe"))) {
                 return false;
@@ -72,7 +72,7 @@ public class Term implements AbstractTerm, Serializable {
 
 
     public interface TermVisitor {
-        public void visit(Term t, Term superterm);
+        void visit(Term t, Term superterm);
     }
     
     
@@ -101,7 +101,7 @@ public class Term implements AbstractTerm, Serializable {
             return x;
         }
 
-        String namestr = name.toString();
+        final String namestr = name.toString();
         //p[s,i,j]
         int[] term_indices = null;
         String before_indices_str = null;
@@ -163,7 +163,7 @@ public class Term implements AbstractTerm, Serializable {
     @Override
     public Term clone() {
         //avoids setName and its intern(); the string will already be intern:
-        Term t = new Term();
+        final Term t = new Term();
         if(term_indices != null) {
             t.term_indices = term_indices.clone();
             t.index_variable = index_variable;
@@ -225,10 +225,10 @@ public class Term implements AbstractTerm, Serializable {
         return false;
     }
 
-    public void recurseTerms(final TermVisitor v, Term parent) {
+    public void recurseTerms(final TermVisitor v, final Term parent) {
         v.visit(this, parent);
         if (this instanceof CompoundTerm) {            
-            for (Term t : ((CompoundTerm)this).term) {
+            for (final Term t : ((CompoundTerm)this).term) {
                 t.recurseTerms(v, this);
             }
         }
@@ -238,11 +238,11 @@ public class Term implements AbstractTerm, Serializable {
         recurseTerms(v, null);
     }
     
-    public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
+    public void recurseSubtermsContainingVariables(final TermVisitor v, final Term parent) {
         if (!hasVar()) return;
         v.visit(this, parent);
         if (this instanceof CompoundTerm) {
-            for (Term t : ((CompoundTerm)this).term) {
+            for (final Term t : ((CompoundTerm)this).term) {
                 t.recurseSubtermsContainingVariables(v, this);
             }
         }
@@ -328,7 +328,7 @@ public class Term implements AbstractTerm, Serializable {
     }
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
-    public static Term text(String t) {
+    public static Term text(final String t) {
         return Term.get(Texts.escape('"' + t + '"').toString());
     }
 
@@ -367,9 +367,9 @@ public class Term implements AbstractTerm, Serializable {
         return false;
     }
 
-    public static TreeSet<Term> toSortedSet(final Term... arg) {
+    public static NavigableSet<Term> toSortedSet(final Term... arg) {
         //use toSortedSetArray where possible
-        TreeSet<Term> t = new TreeSet();
+        final NavigableSet<Term> t = new TreeSet();
         Collections.addAll(t, arg);
         return t;        
     }
@@ -381,13 +381,13 @@ public class Term implements AbstractTerm, Serializable {
             case 0: return EmptyTermArray;                
             case 1: return new Term[] { arg[0] };
             case 2: 
-                Term a = arg[0];
-                Term b = arg[1];
-                int c = a.compareTo(b);
+                final Term a = arg[0];
+                final Term b = arg[1];
+                final int c = a.compareTo(b);
 
                 if (Parameters.DEBUG) {
                     //verify consistency of compareTo() and equals()
-                    boolean equal = a.equals(b);
+                    final boolean equal = a.equals(b);
                     if ((equal && (c!=0)) || (!equal && (c==0))) {
                         throw new IllegalStateException("invalid order: " + a + " = " + b);
                     }
@@ -402,7 +402,7 @@ public class Term implements AbstractTerm, Serializable {
         //TODO fast sorted array for arg.length == 3
 
         //terms > 2:        
-        TreeSet<Term> s = new TreeSet();
+        final NavigableSet<Term> s = new TreeSet();
         //SortedList<Term> s = new SortedList(arg.length);
         //s.setAllowDuplicate(false);
 
@@ -412,25 +412,23 @@ public class Term implements AbstractTerm, Serializable {
     }
 
     /** performs a thorough check of the validity of a term (by cloneDeep it) to see if it's valid */
-    public static boolean valid(Term content) {
-        Term cloned = content.cloneDeep();
+    public static boolean valid(final Term content) {
+        final Term cloned = content.cloneDeep();
         return cloned != null;
     }
 
     public boolean subjectOrPredicateIsIndependentVar() {
         if(this instanceof Statement) {
-            Statement cont=(Statement)this;
+            final Statement cont=(Statement)this;
             if(cont.getSubject() instanceof Variable) {
-                Variable v=(Variable) cont.getSubject();
+                final Variable v=(Variable) cont.getSubject();
                 if(v.hasVarIndep()) {
                     return true;
                 }
             }
             if(cont.getPredicate()instanceof Variable) {
-                Variable v=(Variable) cont.getPredicate();
-                if(v.hasVarIndep()) {
-                    return true;
-                }
+                final Variable v=(Variable) cont.getPredicate();
+                return v.hasVarIndep();
             }
         }
         return false;

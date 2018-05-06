@@ -26,7 +26,7 @@ import org.opennars.main.NAR;
  */
 public class OutputNotContainsCondition extends OutputContainsCondition {
 
-    public OutputNotContainsCondition(NAR nar, String containing) {
+    public OutputNotContainsCondition(final NAR nar, final String containing) {
         super(nar, containing, -1);
         succeeded = true;
     }
@@ -37,7 +37,7 @@ public class OutputNotContainsCondition extends OutputContainsCondition {
     }
 
     @Override
-    public boolean condition(Class channel, Object signal) {
+    public boolean condition(final Class channel, final Object signal) {
         if (!succeeded) {
             return false;
         }
@@ -53,7 +53,7 @@ public class OutputNotContainsCondition extends OutputContainsCondition {
         return true;
     }
 
-    protected void onFailure(Class channel, Object signal) {
+    protected void onFailure(final Class channel, final Object signal) {
     }
     
 }

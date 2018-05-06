@@ -14,11 +14,11 @@
  */
 package org.opennars.main;
 
+import org.opennars.io.events.TextOutputHandler;
+
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.opennars.io.events.TextOutputHandler;
 
 /**
  * Run Reasoner
@@ -35,16 +35,16 @@ public class Shell {
     private boolean logging;
     private PrintStream out = System.out;
     private final boolean dumpLastState = true;
-    int maxTime = 0;
+    final int maxTime = 0;
 
     /**
      * The entry point of the standalone application.
      * <p>
      * @param args optional argument used : one addInput file
      */
-    public static void main(String args[]) {
+    public static void main(final String[] args) {
                 
-        Shell nars = new Shell(new NAR());
+        final Shell nars = new Shell(new NAR());
         nars.nar.addInput("*volume=0");
         nars.run(args);
         
@@ -55,15 +55,15 @@ public class Shell {
         }
     }
 
-    public Shell(NAR n) {
+    public Shell(final NAR n) {
         this.nar = n;
     }
 
     private class InputThread extends Thread
     {
-      private BufferedReader bufIn;
-      NAR nar;
-      InputThread(InputStream in, NAR nar)
+      private final BufferedReader bufIn;
+      final NAR nar;
+      InputThread(final InputStream in, final NAR nar)
       {
         this.bufIn = new BufferedReader(new InputStreamReader(in));
         this.nar=nar;
@@ -73,16 +73,16 @@ public class Shell {
         while(true)
         {
             try {
-                String line=bufIn.readLine();
+                final String line=bufIn.readLine();
                 if(line!=null)
                     nar.addInput(line);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new IllegalStateException("Could not read line.", e);
             }
 
             try {
                 Thread.sleep(1);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 throw new IllegalStateException("Unexpectadly interrupted while sleeping.", e);
             }
         }
@@ -93,13 +93,13 @@ public class Shell {
      * non-static equivalent to {@link #main(String[])} : finish to completion from
  an addInput file
      */
-    public void run(String args[]) {
-        TextOutputHandler output = new TextOutputHandler(nar, new PrintWriter(out, true));
+    public void run(final String[] args) {
+        final TextOutputHandler output = new TextOutputHandler(nar, new PrintWriter(out, true));
         output.setErrors(true);
         output.setErrorStackTrace(true);
-        InputThread it;
-        int sleep = -1;
-        boolean noFile = false;
+        final InputThread it;
+        final int sleep = -1;
+        final boolean noFile = false;
         
         if (args.length > 0) {
             nar.addInputFile(args[0]);
@@ -119,7 +119,7 @@ public class Shell {
                 if(sleep > -1) {
                     Thread.sleep(sleep);
                 }
-            } catch (InterruptedException ex) {
+            } catch (final InterruptedException ex) {
                 Logger.getLogger(Shell.class.getName()).log(Level.SEVERE, null, ex);
             }
             //System.out.println("step");
@@ -140,11 +140,11 @@ public class Shell {
         System.exit(0);
     }
 
-    public void setPrintStream(PrintStream out) {
+    public void setPrintStream(final PrintStream out) {
         this.out = out;
     }
 
-    private void log(String mess) {
+    private void log(final String mess) {
         if (logging) {
             System.out.println("/ " + mess);
         }

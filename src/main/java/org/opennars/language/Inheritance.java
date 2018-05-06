@@ -14,11 +14,12 @@
  */
 package org.opennars.language;
 
-import java.util.Arrays;
-import org.opennars.main.Parameters;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+
+import java.util.Arrays;
 
 /**
  * A Statement about an Inheritance relation.
@@ -49,7 +50,7 @@ public class Inheritance extends Statement {
         return make(getSubject(), getPredicate());
     }
 
-    @Override public Inheritance clone(Term[] t) {
+    @Override public Inheritance clone(final Term[] t) {
         if (t.length!=2)
             throw new IllegalArgumentException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
                 
@@ -75,8 +76,8 @@ public class Inheritance extends Statement {
             return null;
         }
         
-        boolean subjectProduct = subject instanceof Product;
-        boolean predicateOperator = predicate instanceof Operator;
+        final boolean subjectProduct = subject instanceof Product;
+        final boolean predicateOperator = predicate instanceof Operator;
         
         if (Parameters.DEBUG) {
             if (!predicateOperator && predicate.toString().startsWith("^")) {

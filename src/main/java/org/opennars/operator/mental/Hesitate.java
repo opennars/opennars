@@ -14,13 +14,14 @@
  */
 package org.opennars.operator.mental;
 
-import java.util.ArrayList;
-import org.opennars.storage.Memory;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
 import org.opennars.language.Term;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.storage.Memory;
+
+import java.util.List;
 
 /**
  * Operator that activates a concept
@@ -39,9 +40,9 @@ public class Hesitate extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term term = args[1];
-        Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+        final Term term = args[1];
+        final Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         concept.discountConfidence(false);
         return null;
     }

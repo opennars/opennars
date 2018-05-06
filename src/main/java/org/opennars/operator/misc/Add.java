@@ -15,9 +15,9 @@
 package org.opennars.operator.misc;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opennars.storage.Memory;
 import org.opennars.language.Term;
 import org.opennars.operator.FunctionOperator;
+import org.opennars.storage.Memory;
 
 /**
  * Count the number of elements in a set
@@ -29,13 +29,14 @@ public class Add extends FunctionOperator {
     }
 
     @Override
-    protected Term function(Memory memory, Term[] x) {
+    protected Term function(final Memory memory, final Term[] x) {
         if (x.length!= 2) {
             throw new IllegalStateException("Requires 2 arguments");
         }
         
-        int n1, n2;
-        
+        final int n1;
+        final int n2;
+
         if(StringUtils.isNumeric(x[0].name())) {
             n1 = Integer.parseInt(String.valueOf(x[0].name()));
         } else {

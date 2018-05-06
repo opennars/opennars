@@ -14,21 +14,12 @@
  */
 package org.opennars.inference;
 
-import static java.lang.Math.max;
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Item;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Task;
-import org.opennars.entity.TaskLink;
-import org.opennars.entity.TermLink;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.language.Term;
-import static java.lang.Math.max;
+import org.opennars.main.Parameters;
+import org.opennars.storage.Memory;
+
+import static java.lang.Math.*;
 
 /**
  * Budget functions for resources allocation
@@ -80,18 +71,18 @@ public final class BudgetFunctions extends UtilityFunctions {
         task.decPriority(1 - difT);
         task.decDurability(1 - difT);
         if (feedbackToLinks) {
-            TaskLink tLink = nal.getCurrentTaskLink();
+            final TaskLink tLink = nal.getCurrentTaskLink();
             tLink.decPriority(1 - difT);
             tLink.decDurability(1 - difT);
-            TermLink bLink = nal.getCurrentBeliefLink();
+            final TermLink bLink = nal.getCurrentBeliefLink();
             final float difB = truth.getExpDifAbs(bTruth);
             bLink.decPriority(1 - difB);
             bLink.decDurability(1 - difB);
         }
-        float dif = truth.getConfidence() - max(tTruth.getConfidence(), bTruth.getConfidence());
-        float priority = or(dif, task.getPriority());
-        float durability = aveAri(dif, task.getDurability());
-        float quality = truthToQuality(truth);
+        final float dif = truth.getConfidence() - max(tTruth.getConfidence(), bTruth.getConfidence());
+        final float priority = or(dif, task.getPriority());
+        final float durability = aveAri(dif, task.getDurability());
+        final float quality = truthToQuality(truth);
         
         /*
         if (priority < 0) {
@@ -155,7 +146,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param receiver The budget receiving the activation
      * @param amount The budget for the new item
      */
-    public static void activate(final BudgetValue receiver, final BudgetValue amount, Activating mode) {        
+    public static void activate(final BudgetValue receiver, final BudgetValue amount, final Activating mode) {
         switch (mode) {
             case Max:
                 BudgetFunctions.merge(receiver, amount);
@@ -282,7 +273,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param t The Term naming a concept
      * @return the priority value of the concept
      */
-    public static float conceptActivation(Memory mem, final Term t) {
+    public static float conceptActivation(final Memory mem, final Term t) {
         final Concept c = mem.concept(t);
         return (c == null) ? 0f : c.getPriority();
     }
@@ -314,11 +305,11 @@ public final class BudgetFunctions extends UtilityFunctions {
         return new BudgetValue(priority, durability, quality);
     }
 
-    @Deprecated static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
+    @Deprecated static BudgetValue solutionEval(final Sentence problem, final Sentence solution, final Task task, final Memory memory) {
         throw new IllegalStateException("Moved to TemporalRules.java");
     }    
 
-    public static BudgetValue budgetTermLinkConcept(Concept c, BudgetValue taskBudget, TermLink termLink) {
+    public static BudgetValue budgetTermLinkConcept(final Concept c, final BudgetValue taskBudget, final TermLink termLink) {
         return taskBudget.clone();
     }
 

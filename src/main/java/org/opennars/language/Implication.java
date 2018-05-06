@@ -14,9 +14,10 @@
  */
 package org.opennars.language;
 
-import java.util.Arrays;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols.NativeOperator;
+
+import java.util.Arrays;
 
 /**
  * A Statement about an Inheritance copula.
@@ -28,7 +29,7 @@ public class Implication extends Statement {
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    public Implication(Term[] arg, int order) {
+    public Implication(final Term[] arg, final int order) {
         super(arg);
                 
         temporalOrder = order;
@@ -36,7 +37,7 @@ public class Implication extends Statement {
         init(arg);
     }
     
-    public Implication(Term subject, Term predicate, int order) {
+    public Implication(final Term subject, final Term predicate, final int order) {
         this(new Term[] { subject, predicate }, order);
     }
 
@@ -72,7 +73,7 @@ public class Implication extends Statement {
     }
 
     public static CharSequence makeName(final Term subject, final int temporalOrder, final Term predicate) {
-        NativeOperator copula;
+        final NativeOperator copula;
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
                 copula = NativeOperator.IMPLICATION_AFTER;
@@ -89,7 +90,7 @@ public class Implication extends Statement {
         return makeStatementName(subject, copula, predicate);
     }
     
-    public static Implication make(final Term subject, final Term predicate, int temporalOrder) {
+    public static Implication make(final Term subject, final Term predicate, final int temporalOrder) {
         if (invalidStatement(subject, predicate, temporalOrder != TemporalRules.ORDER_FORWARD && temporalOrder != TemporalRules.ORDER_CONCURRENT)) {
             return null;
         }
@@ -108,7 +109,7 @@ public class Implication extends Statement {
             int order = temporalOrder;
             boolean spatial = false;
             if(subject instanceof Conjunction) {
-                Conjunction conj = (Conjunction) subject;
+                final Conjunction conj = (Conjunction) subject;
                 order = conj.getTemporalOrder();
                 spatial = conj.getIsSpatial();
             }

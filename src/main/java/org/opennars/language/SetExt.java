@@ -14,8 +14,10 @@
  */
 package org.opennars.language;
 
-import java.util.Collection;
 import org.opennars.io.Symbols.NativeOperator;
+
+import java.util.Collection;
+
 import static org.opennars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.SET_EXT_OPENER;
 
@@ -45,7 +47,7 @@ public class SetExt extends SetTensional {
         return new SetExt(term);
     }
     
-    @Override public SetExt clone(Term[] replaced) {
+    @Override public SetExt clone(final Term[] replaced) {
         return make(replaced);
     }
     
@@ -55,7 +57,7 @@ public class SetExt extends SetTensional {
         return new SetExt(t);
     }
 
-    public static SetExt make(Collection<Term> l) {
+    public static SetExt make(final Collection<Term> l) {
         return make(l.toArray(new Term[l.size()]));
     }
     
