@@ -18,11 +18,12 @@
  */
 package org.opennars.util.test;
 
+import org.opennars.io.events.OutputHandler;
+import org.opennars.main.NAR;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.opennars.main.NAR;
-import org.opennars.io.events.OutputHandler;
 
 /**
  * Monitors an output stream for certain conditions. Used in testing and
@@ -39,7 +40,7 @@ public abstract class OutputCondition<O> extends OutputHandler {
     public final NAR nar;
     long successAt = -1;
 
-    public OutputCondition(NAR nar) {
+    public OutputCondition(final NAR nar) {
         super(nar);
         this.nar = nar;
     }
@@ -50,12 +51,12 @@ public abstract class OutputCondition<O> extends OutputHandler {
     }
 
     @Override
-    public void event(Class channel, Object... args) {
+    public void event(final Class channel, final Object... args) {
         if ((succeeded) && (!isInverse())) {
             return;
         }
         if ((channel == OUT.class) || (channel == EXE.class)) {
-            Object signal = args[0];
+            final Object signal = args[0];
             if (condition(channel, signal)) {
                 setTrue();
             }
@@ -78,9 +79,9 @@ public abstract class OutputCondition<O> extends OutputHandler {
 
             
     /** reads an example file line-by-line, before being processed, to extract expectations */
-    public static List<OutputCondition> getConditions(NAR n, String example, int similarResultsToSave)  {
-        List<OutputCondition> conditions = new ArrayList();
-        String[] lines = example.split("\n");
+    public static List<OutputCondition> getConditions(final NAR n, final String example, final int similarResultsToSave)  {
+        final List<OutputCondition> conditions = new ArrayList();
+        final String[] lines = example.split("\n");
         
         for (String s : lines) {
             s = s.trim();
@@ -91,7 +92,7 @@ public abstract class OutputCondition<O> extends OutputHandler {
             if (s.indexOf(expectOutContains2)==0) {
 
                 //remove ') suffix:
-                String e = s.substring(expectOutContains2.length(), s.length()-2); 
+                final String e = s.substring(expectOutContains2.length(), s.length()-2);
                 
                 /*try {                    
                     Task t = narsese.parseTask(e);                    
@@ -109,7 +110,7 @@ public abstract class OutputCondition<O> extends OutputHandler {
             if (s.indexOf(expectOutNotContains2)==0) {
 
                 //remove ') suffix:
-                String e = s.substring(expectOutNotContains2.length(), s.length()-2);                 
+                final String e = s.substring(expectOutNotContains2.length(), s.length()-2);
                 conditions.add(new OutputNotContainsCondition(n, e));
 
             }   
@@ -133,8 +134,8 @@ public abstract class OutputCondition<O> extends OutputHandler {
     }
 
     public List<O> getTrueReasons() {
-        if (!isTrue()) throw new RuntimeException(this + " is not true so has no true reasons");
-        return Collections.EMPTY_LIST;
+        if (!isTrue()) throw new IllegalStateException(this + " is not true so has no true reasons");
+        return Collections.emptyList();
     }
     
     /** if false, a reported reason why this condition is false */

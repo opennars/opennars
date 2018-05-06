@@ -14,9 +14,10 @@
  */
 package org.opennars.inference;
 
+import org.opennars.main.Parameters;
+
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
-import org.opennars.main.Parameters;
 
 /**
  * Common functions on real numbers, mostly in [0,1].

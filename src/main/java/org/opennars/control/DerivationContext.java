@@ -18,28 +18,17 @@
  */
 package org.opennars.control;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.opennars.entity.*;
+import org.opennars.inference.TruthFunctions;
 import org.opennars.io.events.Events;
 import org.opennars.main.NarParameters;
-import org.opennars.storage.Memory;
+import org.opennars.language.*;
 import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TaskLink;
-import org.opennars.entity.TermLink;
-import org.opennars.entity.TruthValue;
-import org.opennars.inference.TruthFunctions;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Equivalence;
-import org.opennars.language.Implication;
-import org.opennars.language.Interval;
-import org.opennars.language.Term;
-import org.opennars.language.Variable;
 import org.opennars.operator.Operation;
+import org.opennars.storage.Memory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.
@@ -58,7 +47,7 @@ public class DerivationContext {
 
     public NarParameters narParameters;
     
-    public DerivationContext(Memory mem, NarParameters narParameters) {
+    public DerivationContext(final Memory mem, NarParameters narParameters) {
         super();
         this.memory = mem;
         this.narParameters = narParameters;
@@ -74,10 +63,10 @@ public class DerivationContext {
      * @param task the derived task
      * @param overlapAllowed //https://groups.google.com/forum/#!topic/open-nars/FVbbKq5En-M
      */
-    public boolean derivedTask(final Task task, final boolean revised, final boolean single, boolean overlapAllowed) {
+    public boolean derivedTask(final Task task, final boolean revised, final boolean single, final boolean overlapAllowed) {
         return derivedTask(task, revised, single, overlapAllowed, true);
     }
-    public boolean derivedTask(final Task task, final boolean revised, final boolean single, boolean overlapAllowed, boolean addToMemory) {                        
+    public boolean derivedTask(final Task task, final boolean revised, final boolean single, final boolean overlapAllowed, final boolean addToMemory) {
 
         if((task.sentence.isGoal() || task.sentence.isQuest()) && (task.sentence.term instanceof Implication ||
                                       task.sentence.term instanceof Equivalence)) {
@@ -89,7 +78,7 @@ public class DerivationContext {
             return false;
         } 
         if (task.sentence != null && task.sentence.truth != null) {
-            float conf = task.sentence.truth.getConfidence();
+            final float conf = task.sentence.truth.getConfidence();
             if (conf < Parameters.TRUTH_EPSILON) {
                 //no confidence - we can delete the wrongs out that way.
                 memory.removeTask(task, "Ignored (zero confidence)");
@@ -97,7 +86,7 @@ public class DerivationContext {
             }
         }
         if (task.sentence.term instanceof Operation) {
-            Operation op = (Operation) task.sentence.term;
+            final Operation op = (Operation) task.sentence.term;
             if (op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
                 memory.removeTask(task, "Operation with variable as subject or predicate");
                 return false;
@@ -154,14 +143,14 @@ public class DerivationContext {
      * @param newBudget The budget value in task
      */
     public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
-        Stamp derived_stamp = getTheNewStamp().clone();
+        final Stamp derived_stamp = getTheNewStamp().clone();
         this.resetOccurrenceTime(); //stamp was already obsorbed
-        Sentence newSentence = new Sentence(
+        final Sentence newSentence = new Sentence(
             newContent,
             getCurrentTask().sentence.punctuation,
             newTruth,
             derived_stamp);
-        Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
+        final Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
         return derivedTask(newTask, true, false, true); //allows overlap since overlap was already checked on revisable( function
     }                                                               //which is not the case for other single premise tasks
 
@@ -175,12 +164,12 @@ public class DerivationContext {
      * @param temporalInduction
      * @param overlapAllowed // https://groups.google.com/forum/#!topic/open-nars/FVbbKq5En-M
      */
-    public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed) {
+    public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, final boolean temporalInduction, final boolean overlapAllowed) {
         return doublePremiseTask(newContent, newTruth, newBudget, temporalInduction, overlapAllowed, true);
     }
-    public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed, boolean addToMemory) {
+    public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, final boolean temporalInduction, final boolean overlapAllowed, final boolean addToMemory) {
         
-        List<Task> ret = new ArrayList<Task>();
+        final List<Task> ret = new ArrayList<>();
         if(newContent == null) {
             return null;
         }
@@ -194,58 +183,45 @@ public class DerivationContext {
             if(newContent.subjectOrPredicateIsIndependentVar()) {
                 return null;
             }
-            Stamp derive_stamp = getTheNewStamp().clone(); //because occurrence time will be reset:
+            final Stamp derive_stamp = getTheNewStamp().clone(); //because occurrence time will be reset:
             this.resetOccurrenceTime(); //stamp was already obsorbed into task
-            try {
-                final Sentence newSentence = new Sentence(
-                    newContent,
-                    getCurrentTask().sentence.punctuation,
-                    newTruth,
-                    derive_stamp);
 
-                newSentence.producedByTemporalInduction=temporalInduction;
-                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                
-                if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
-                    if(added) {
-                        ret.add(newTask);
-                    }
+            Sentence newSentence = new Sentence(
+                newContent,
+                getCurrentTask().sentence.punctuation,
+                newTruth,
+                derive_stamp);
+
+            newSentence.producedByTemporalInduction=temporalInduction;
+            Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+
+            if (newTask!=null) {
+                final boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
+                if(added) {
+                    ret.add(newTask);
                 }
-            }
-            catch (CompoundTerm.UnableToCloneException e) {
-                return null;
             }
             
             
             //"Since in principle it is always valid to eternalize a tensed belief"
             if(temporalInduction && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
-                
-                try {
-
-                TruthValue truthEt=TruthFunctions.eternalize(newTruth);               
-                Stamp st=derive_stamp.clone();
+                final TruthValue truthEt=TruthFunctions.eternalize(newTruth);
+                final Stamp st=derive_stamp.clone();
                 st.setEternal();
-                final Sentence newSentence = new Sentence(
+                newSentence = new Sentence(
                     newContent,
                     getCurrentTask().sentence.punctuation,
                     truthEt,
                     st);
 
                 newSentence.producedByTemporalInduction=temporalInduction;
-                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
                 if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
+                    final boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
                     if(added) {
                         ret.add(newTask);
                     }
                 }
-                
-            }
-            catch (CompoundTerm.UnableToCloneException e) {
-                return null;
-            }
-                
             }
             return ret;
         }
@@ -260,7 +236,7 @@ public class DerivationContext {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public boolean singlePremiseTask(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
+    public boolean singlePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         return singlePremiseTask(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
     }
 
@@ -278,7 +254,7 @@ public class DerivationContext {
         if (!newBudget.aboveThreshold())
             return false;
         
-        Sentence taskSentence = getCurrentTask().sentence;
+        final Sentence taskSentence = getCurrentTask().sentence;
         if (taskSentence.isGoal() || taskSentence.isJudgment() || getCurrentBelief() == null) {
             setTheNewStamp(new Stamp(taskSentence.stamp, getTime()));
         } else {
@@ -294,27 +270,27 @@ public class DerivationContext {
             return false;
         }
         
-        Stamp derive_stamp = this.getTheNewStamp().clone();
+        final Stamp derive_stamp = this.getTheNewStamp().clone();
         this.resetOccurrenceTime(); //stamp was already obsorbed into task
 
-        Sentence newSentence = new Sentence(
+        final Sentence newSentence = new Sentence(
             newContent,
             punctuation,
             newTruth,
             derive_stamp);
 
-        Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
+        final Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
         if (newTask!=null) {
             return derivedTask(newTask, false, true, false);
         }
         return false;
     }
 
-    public boolean singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
+    public boolean singlePremiseTask(final Sentence newSentence, final BudgetValue newBudget) {
         if (!newBudget.aboveThreshold()) {
             return false;
         }
-        Task newTask = new Task(newSentence, newBudget, false);
+        final Task newTask = new Task(newSentence, newBudget, false);
         return derivedTask(newTask, false, true, false);
     }
 
@@ -326,7 +302,7 @@ public class DerivationContext {
         return newStamp;
     }
 
-    public void setNewStamp(Stamp newStamp) {
+    public void setNewStamp(final Stamp newStamp) {
         this.newStamp = newStamp;
     }
 
@@ -340,11 +316,11 @@ public class DerivationContext {
     /**
      * @param currentTask the currentTask to set
      */
-    public void setCurrentTask(Task currentTask) {        
+    public void setCurrentTask(final Task currentTask) {
         this.currentTask = currentTask;
     }
 
-    public void setCurrentConcept(Concept currentConcept) {
+    public void setCurrentConcept(final Concept currentConcept) {
         this.currentConcept = currentConcept;
     }
 
@@ -369,7 +345,7 @@ public class DerivationContext {
     /**
      * @param newStamp the newStamp to set
      */
-    public Stamp setTheNewStamp(Stamp newStamp) {
+    public Stamp setTheNewStamp(final Stamp newStamp) {
         this.newStamp = newStamp;
         this.newStampBuilder = null;
         return newStamp;
@@ -383,12 +359,7 @@ public class DerivationContext {
     /** creates a lazy/deferred StampBuilder which only constructs the stamp if getTheNewStamp() is actually invoked */
     public void setTheNewStamp(final Stamp first, final Stamp second, final long time) {
         newStamp = null;
-        newStampBuilder = new StampBuilder() {
-            @Override
-            public Stamp build() {
-                return new Stamp(first, second, time);
-            }
-        };
+        newStampBuilder = () -> new Stamp(first, second, time);
     }
 
     /**
@@ -401,7 +372,7 @@ public class DerivationContext {
     /**
      * @param currentBelief the currentBelief to set
      */
-    public void setCurrentBelief(Sentence currentBelief) {
+    public void setCurrentBelief(final Sentence currentBelief) {
         this.currentBelief = currentBelief;
     }
 
@@ -415,7 +386,7 @@ public class DerivationContext {
     /**
      * @param currentBeliefLink the currentBeliefLink to set
      */
-    public void setCurrentBeliefLink(TermLink currentBeliefLink) {
+    public void setCurrentBeliefLink(final TermLink currentBeliefLink) {
         this.currentBeliefLink = currentBeliefLink;
     }
 
@@ -429,7 +400,7 @@ public class DerivationContext {
     /**
      * @param currentTaskLink the currentTaskLink to set
      */
-    public void setCurrentTaskLink(TaskLink currentTaskLink) {
+    public void setCurrentTaskLink(final TaskLink currentTaskLink) {
         this.currentTaskLink = currentTaskLink;
     }
 
@@ -443,7 +414,7 @@ public class DerivationContext {
     /**
      * @param currentTerm the currentTerm to set
      */
-    public void setCurrentTerm(Term currentTerm) {
+    public void setCurrentTerm(final Term currentTerm) {
         this.currentTerm = currentTerm;
     }
 
@@ -459,7 +430,7 @@ public class DerivationContext {
     }
     
     /** tasks added with this method will be remembered by this NAL instance; useful for feedback */
-    public void addTask(Task t, String reason) {
+    public void addTask(final Task t, final String reason) {
         if(t.sentence.term==null) {
             return;
         }

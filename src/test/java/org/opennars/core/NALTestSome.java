@@ -14,13 +14,14 @@
  */
 package org.opennars.core;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 
 /**
@@ -34,7 +35,7 @@ public class NALTestSome extends NALTest {
         showSuccess = showOutput;
     }
     
-   public static boolean include(String filename) {
+   public static boolean include(final String filename) {
        //return true; //filename.startsWith("nal6.8.nal");
        return filename.startsWith("nal1.0.nal");
    }
@@ -42,12 +43,12 @@ public class NALTestSome extends NALTest {
    
     @Parameterized.Parameters
     public static Collection params() {
-        List l = new LinkedList();
+        final List l = new LinkedList();
 
         File folder = null;
         try {
             folder = new File(NALTestSome.class.getResource("/nal/single_step").toURI());
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new IllegalStateException("Could not parse URI to nal test files.", e);
         }
 
@@ -61,11 +62,11 @@ public class NALTestSome extends NALTest {
         return l;
     }
    
-   public static void main(String[] args) {
+   public static void main(final String[] args) {
         org.junit.runner.JUnitCore.runClasses(NALTestSome.class);
    }    
 
-   public NALTestSome(String scriptPath) {
+   public NALTestSome(final String scriptPath) {
        super(scriptPath);//, true);
 
    }

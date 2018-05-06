@@ -29,7 +29,7 @@ public enum Tense {
 
     public static final Tense Eternal = null;
     
-    private Tense(String string) {
+    Tense(final String string) {
         this.symbol = string;
     }
 

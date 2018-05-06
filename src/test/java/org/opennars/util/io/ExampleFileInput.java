@@ -18,28 +18,28 @@
  */
 package org.opennars.util.io;
 
+import org.opennars.main.NAR;
+import org.opennars.util.test.OutputCondition;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import org.opennars.main.NAR;
-import org.opennars.util.test.OutputCondition;
 
 /**
  * Access to library of examples/unit tests
  */
 public class ExampleFileInput {
 
-    public static String load(String path) throws FileNotFoundException, IOException {
-        StringBuilder  sb  = new StringBuilder();
+    public static String load(final String path) throws IOException {
+        final StringBuilder  sb  = new StringBuilder();
         String line;
-        File fp = new File(path);
-        BufferedReader br = new BufferedReader(new FileReader(fp));
+        final File fp = new File(path);
+        final BufferedReader br = new BufferedReader(new FileReader(fp));
         while ((line = br.readLine())!=null) {
             sb.append(line).append("\n");
         }
@@ -49,29 +49,29 @@ public class ExampleFileInput {
     /** narsese source code, one instruction per line */
     private final String source;
 
-    protected ExampleFileInput(String input) throws FileNotFoundException {
+    protected ExampleFileInput(final String input) {
         this.source = input;
     }
     
-    public static ExampleFileInput get(String id) throws Exception {
+    public static ExampleFileInput get(final String id) throws Exception {
         return new ExampleFileInput(load("./nal/" + id +".nal"));
     }
     
-    public List<OutputCondition> enableConditions(NAR n, int similarResultsToSave) {
+    public List<OutputCondition> enableConditions(final NAR n, final int similarResultsToSave) {
         return OutputCondition.getConditions(n, source, similarResultsToSave);
     }
     
     public static Map<String,Object> getUnitTests() {
-        Map<String,Object> l = new TreeMap();
+        final Map<String,Object> l = new TreeMap();
         
         final String[] directories = new String[] { "/nal/single_step/", "/nal/multi_step/", "/nal/application/"  };
         
-        for (String dir : directories ) {
+        for (final String dir : directories ) {
 
             File folder = null;
             try {
                 folder = new File(ExampleFileInput.class.getResource(dir).toURI());
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 throw new IllegalStateException("Could not resolve path to nal tests in reosources.", e);
             }
 

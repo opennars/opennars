@@ -14,11 +14,13 @@
  */
 package org.opennars.language;
 
-import java.nio.CharBuffer;
-import java.util.Arrays;
-import org.opennars.main.Parameters;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+
+import java.nio.CharBuffer;
+import java.util.Arrays;
+
 import static org.opennars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.STATEMENT_OPENER;
 
@@ -40,17 +42,17 @@ public abstract class Statement extends CompoundTerm {
     
 
     @Override
-    protected void init(Term[] t) {
+    protected void init(final Term[] t) {
         if (t.length!=2)
-            throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
+            throw new IllegalStateException("Requires 2 terms: " + Arrays.toString(t));
         if (t[0]==null)
-            throw new RuntimeException("Null subject: " + this);
+            throw new IllegalStateException("Null subject: " + this);
         if (t[1]==null)
-            throw new RuntimeException("Null predicate: " + this);        
+            throw new IllegalStateException("Null predicate: " + this);
         if (Parameters.DEBUG) {                
             if (isCommutative()) {
                 if (t[0].compareTo(t[1])==1) {
-                    throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
+                    throw new IllegalStateException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
                 }
             }
         }
@@ -90,7 +92,7 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    final public static Statement make(final NativeOperator o, final Term subject, final Term predicate, boolean customOrder, int order) {
+    final public static Statement make(final NativeOperator o, final Term subject, final Term predicate, final boolean customOrder, final int order) {
         
         if(Terms.equalSubTermsInRespectToImageAndProduct(subject, predicate)) {
             return null;
@@ -136,12 +138,12 @@ public abstract class Statement extends CompoundTerm {
      * @param statement A sample statement providing the class type
      * @param memory Reference to the memory
      */
-    final public static Statement make(NativeOperator op, final Term subj, final Term pred, int order) {
+    final public static Statement make(final NativeOperator op, final Term subj, final Term pred, final int order) {
 
         return make(op, subj, pred, true, order);
     }
     
-    final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
+    final public static Statement make(final Statement statement, final Term subj, final Term pred, final int order) {
 
         return make(statement.operator(), subj, pred, true, order);
     }
@@ -183,9 +185,9 @@ public abstract class Statement extends CompoundTerm {
     final protected static CharSequence makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
         final CharSequence subjectName = subject.name();
         final CharSequence predicateName = predicate.name();
-        int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
+        final int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
         
-        CharBuffer cb = CharBuffer.allocate(length);
+        final CharBuffer cb = CharBuffer.allocate(length);
         
         cb.append(STATEMENT_OPENER.ch);
         
@@ -208,8 +210,9 @@ public abstract class Statement extends CompoundTerm {
      * @param predicate The second component
      * @return Whether The Statement is invalid
      */
-    final public static boolean invalidStatement(final Term subject, final Term predicate, boolean checkSameTermInPredicateAndSubject) {
-        if (subject==null || predicate==null) return true;
+    final public static boolean invalidStatement(final Term subject, final Term predicate, final boolean checkSameTermInPredicateAndSubject) {
+        if (subject==null || predicate==null)
+            return true;
         
         if (checkSameTermInPredicateAndSubject && subject.equals(predicate)) {
             return true;
@@ -227,9 +230,7 @@ public abstract class Statement extends CompoundTerm {
             final Term t22 = s2.getPredicate();
             final Term t12 = s1.getPredicate();
             final Term t21 = s2.getSubject();
-            if (t11.equals(t22) && t12.equals(t21)) {
-                return true;
-            }
+            return t11.equals(t22) && t12.equals(t21);
         }
         return false;
     }
@@ -259,14 +260,11 @@ public abstract class Statement extends CompoundTerm {
 
    
     public static boolean invalidPair(final Term s1, final Term s2) {
-        boolean s1Indep = s1.hasVarIndep();
-        boolean s2Indep = s2.hasVarIndep();
+        final boolean s1Indep = s1.hasVarIndep();
+        final boolean s2Indep = s2.hasVarIndep();
         if (s1Indep && !s2Indep) {
             return true;
-        } else if (!s1Indep && s2Indep) {
-            return true;
-        }
-        return false;
+        } else return !s1Indep && s2Indep;
     }
     
 

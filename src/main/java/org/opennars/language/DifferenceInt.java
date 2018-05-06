@@ -14,9 +14,11 @@
  */
 package org.opennars.language;
 
-import java.util.TreeSet;
-import org.opennars.main.Parameters;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+
+import java.util.NavigableSet;
+import java.util.TreeSet;
 
 /**
  * A compound term whose extension is the difference of the intensions of its term
@@ -36,13 +38,13 @@ public class DifferenceInt extends CompoundTerm {
         init(arg);
     }
 
-    public static void ensureValidDifferenceArguments(Term[] arg) {
+    public static void ensureValidDifferenceArguments(final Term[] arg) {
         if (arg.length!=2)
-            throw new RuntimeException("Requires 2 components");
+            throw new IllegalStateException("Requires 2 components");
         
         if (Parameters.DEBUG) {
             if (arg[0].equals(arg[1]))
-                throw new RuntimeException("Equal arguments invalid");
+                throw new IllegalStateException("Equal arguments invalid");
         }                
     }
 
@@ -55,7 +57,7 @@ public class DifferenceInt extends CompoundTerm {
         return new DifferenceInt(term);
     }
     
-    @Override public Term clone(Term[] replaced) {
+    @Override public Term clone(final Term[] replaced) {
         return make(replaced);
     }
 
@@ -65,7 +67,7 @@ public class DifferenceInt extends CompoundTerm {
      * @param arg The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Term[] arg) {
+    public static Term make(final Term[] arg) {
         if (arg.length == 1) { // special case from CompoundTerm.reduceComponent
             return arg[0];
         }
@@ -75,7 +77,7 @@ public class DifferenceInt extends CompoundTerm {
         
         if ((arg[0] instanceof SetInt) && (arg[1] instanceof SetInt)) {
             //TODO maybe a faster way to calculate:
-            TreeSet<Term> set = new TreeSet<>(((CompoundTerm) arg[0]).asTermList());
+            final NavigableSet<Term> set = new TreeSet<>(((CompoundTerm) arg[0]).asTermList());
             set.removeAll(((CompoundTerm) arg[1]).asTermList());           // set difference
             return SetInt.make(set);
         }

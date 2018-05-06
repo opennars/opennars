@@ -14,11 +14,11 @@
  */
 package org.opennars.language;
 
+import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.opennars.main.Parameters;
-import org.opennars.io.Symbols.NativeOperator;
 
 /** 
  * A disjunction of Statements.
@@ -48,7 +48,7 @@ public class Disjunction extends CompoundTerm {
     }
 
     @Override
-    public Term clone(Term[] x) {
+    public Term clone(final Term[] x) {
         return make(x);
     }
     
@@ -60,8 +60,8 @@ public class Disjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A Disjunction generated or a Term it reduced to
      */
-    public static Term make(Term term1, Term term2) {
-        List<Term> set = new ArrayList();
+    public static Term make(final Term term1, final Term term2) {
+        final List<Term> set = new ArrayList();
         if (term1 instanceof Disjunction) {
             set.addAll(((CompoundTerm) term1).asTermList());
             if (term2 instanceof Disjunction) {
@@ -80,7 +80,7 @@ public class Disjunction extends CompoundTerm {
             set.add(term1);
             set.add(term2);
         }
-        return make(set.toArray(new Term[set.size()]));
+        return make(set.toArray(new Term[0]));
     }
 
 

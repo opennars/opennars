@@ -15,35 +15,27 @@
 
 package org.opennars.operator.mental;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import org.opennars.control.DerivationContext;
+import org.opennars.entity.*;
+import org.opennars.inference.BudgetFunctions;
+import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.CycleEnd;
-import org.opennars.storage.Memory;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
-import org.opennars.control.DerivationContext;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
-import org.opennars.inference.BudgetFunctions;
 import org.opennars.io.events.OutputHandler.ANTICIPATE;
 import org.opennars.io.events.OutputHandler.CONFIRM;
 import org.opennars.io.events.OutputHandler.DISAPPOINT;
-import org.opennars.io.Symbols;
 import org.opennars.language.Interval;
 import org.opennars.language.Product;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.storage.Memory;
+
+import java.util.*;
 
 //**
 //* Operator that creates a judgment with a given statement
@@ -63,15 +55,15 @@ public class Anticipate extends Operator implements EventObserver {
     }
 
     @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
+    public boolean setEnabled(final NAR n, final boolean enabled) {
         n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.CycleEnd.class);
         return true;
     }
     
     class Vector2Int {
-        public long predictionCreationTime; //2014 and this is still the best way to define a data structure that simple?
-        public long predictedOccurenceTime; 
-        public Vector2Int(long predictionCreationTime, long predictedOccurenceTime) { //rest of the crap:
+        public final long predictionCreationTime; //2014 and this is still the best way to define a data structure that simple?
+        public final long predictedOccurenceTime;
+        public Vector2Int(final long predictionCreationTime, final long predictedOccurenceTime) { //rest of the crap:
             this.predictionCreationTime=predictionCreationTime; //when the prediction happened
             this.predictedOccurenceTime=predictedOccurenceTime; //when the event is expected
         }
@@ -81,19 +73,19 @@ public class Anticipate extends Operator implements EventObserver {
 
         if (anticipations.isEmpty()) return;
 
-        long now=nal.memory.time();
+        final long now=nal.memory.time();
                 
         //share stamps created by tasks in this cycle
         
         boolean hasNewTasks = !newTasks.isEmpty();
         
-        Iterator<Map.Entry<Vector2Int, LinkedHashSet<Term>>> aei = anticipations.entrySet().iterator();
+        final Iterator<Map.Entry<Vector2Int, LinkedHashSet<Term>>> aei = anticipations.entrySet().iterator();
         while (aei.hasNext()) {
             
-            Map.Entry<Vector2Int, LinkedHashSet<Term>> ae = aei.next();
+            final Map.Entry<Vector2Int, LinkedHashSet<Term>> ae = aei.next();
             
-            long aTime = ae.getKey().predictedOccurenceTime;
-            long predictionstarted=ae.getKey().predictionCreationTime;
+            final long aTime = ae.getKey().predictedOccurenceTime;
+            final long predictionstarted=ae.getKey().predictionCreationTime;
             if(aTime < predictionstarted) { //its about the past..
                 return;
             }
@@ -105,24 +97,24 @@ public class Anticipate extends Operator implements EventObserver {
             //since there is no way anymore that the observation would support <(&/,a,+4) =/> b> at this time,
             //also this way it is not applied to early, it seems to be the perfect time to me,
             //making hopeExpirationWindow parameter entirely osbolete
-            Interval Int=new Interval(aTime-predictionstarted);
+            final Interval Int=new Interval(aTime-predictionstarted);
             //ok we know the magnitude now, let's now construct a interval with magnitude one higher
             //(this we can skip because magnitudeToTime allows it without being explicitly constructed)
             //ok, and what predicted occurence time would that be? because only if now is bigger or equal, didnt happen is true
-            double expiredate=predictionstarted+Int.time*Parameters.ANTICIPATION_TOLERANCE;
+            final double expiredate=predictionstarted+Int.time*Parameters.ANTICIPATION_TOLERANCE;
             //
             
-            boolean didntHappen = (now>=expiredate);
-            boolean maybeHappened = hasNewTasks && !didntHappen;
+            final boolean didntHappen = (now>=expiredate);
+            final boolean maybeHappened = hasNewTasks && !didntHappen;
                 
             if ((!didntHappen) && (!maybeHappened))
                 continue;
             
-            LinkedHashSet<Term> terms = ae.getValue();
+            final LinkedHashSet<Term> terms = ae.getValue();
             
-            Iterator<Term> ii = terms.iterator();
+            final Iterator<Term> ii = terms.iterator();
             while (ii.hasNext()) {
-                Term aTerm = ii.next();
+                final Term aTerm = ii.next();
                 
                 boolean remove = false;
                 
@@ -156,9 +148,9 @@ public class Anticipate extends Operator implements EventObserver {
     }
     
     @Override
-    public void event(Class event, Object[] args) {
+    public void event(final Class event, final Object[] args) {
         if (event == Events.InduceSucceedingEvent.class || event == Events.TaskDerive.class) {            
-            Task newEvent = (Task)args[0];
+            final Task newEvent = (Task)args[0];
             this.nal= (DerivationContext)args[1];
             
             if (newEvent.sentence.truth != null && newEvent.sentence.isJudgment() && newEvent.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION && !newEvent.sentence.isEternal()) {
@@ -179,7 +171,7 @@ public class Anticipate extends Operator implements EventObserver {
    // * @return Immediate results as Tasks
    //  *
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
         if(operation==null) {
             return null; //not as mental operator but as fundamental principle
         }
@@ -196,11 +188,11 @@ public class Anticipate extends Operator implements EventObserver {
         return anticipationOperator;
     }
     
-    public void setAnticipationAsOperator(boolean val) {
+    public void setAnticipationAsOperator(final boolean val) {
         anticipationOperator=val;
     }
     
-    public void anticipate(Term content, Memory memory, long occurenceTime, Task t) {
+    public void anticipate(final Term content, final Memory memory, final long occurenceTime, final Task t) {
         //if(true)
         //    return;
         
@@ -223,18 +215,18 @@ public class Anticipate extends Operator implements EventObserver {
           memory.emit(ANTICIPATE.class, content);
        }
         
-        LinkedHashSet<Term> ae = new LinkedHashSet();
+        final LinkedHashSet<Term> ae = new LinkedHashSet();
         anticipations.put(new Vector2Int(memory.time(),occurenceTime), ae);
 
         ae.add(content);
         anticipationFeedback(content, t, memory);
     }
 
-    public void anticipationFeedback(Term content, Task t, Memory memory) {
+    public void anticipationFeedback(final Term content, final Task t, final Memory memory) {
         if(anticipationOperator) {
-            Operation op=(Operation) Operation.make(Product.make(Term.SELF,content), this);
-            TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-            Stamp st;
+            final Operation op=(Operation) Operation.make(Product.make(Term.SELF,content), this);
+            final TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+            final Stamp st;
             if(t==null) {
                 st=new Stamp(memory);
             } else {
@@ -242,13 +234,13 @@ public class Anticipate extends Operator implements EventObserver {
                 st.setOccurrenceTime(memory.time());
             }
 
-            Sentence s=new Sentence(
+            final Sentence s=new Sentence(
                     op,
                     Symbols.JUDGMENT_MARK,
                     truth,
                     st);
 
-            Task newTask=new Task(s,new BudgetValue(
+            final Task newTask=new Task(s,new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
                     Parameters.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
                     BudgetFunctions.truthToQuality(truth)),
@@ -257,23 +249,23 @@ public class Anticipate extends Operator implements EventObserver {
         }
     }
 
-    protected void deriveDidntHappen(Term aTerm, long expectedOccurenceTime) {
+    protected void deriveDidntHappen(final Term aTerm, final long expectedOccurenceTime) {
                 
-        TruthValue truth = expiredTruth;
-        BudgetValue budget = expiredBudget;
+        final TruthValue truth = expiredTruth;
+        final BudgetValue budget = expiredBudget;
 
-        Stamp stamp = new Stamp(nal.memory);
+        final Stamp stamp = new Stamp(nal.memory);
         //stamp.setOccurrenceTime(nal.memory.time());
         stamp.setOccurrenceTime(expectedOccurenceTime); //it did not happen, so the time of when it did not 
         //happen is exactly the time it was expected
         
-        Sentence S = new Sentence(
+        final Sentence S = new Sentence(
             aTerm,
             Symbols.JUDGMENT_MARK,
             truth,
             stamp);
 
-        Task task = new Task(S, budget, true);
+        final Task task = new Task(S, budget, true);
         nal.derivedTask(task, false, true, false); 
         task.setElemOfSequenceBuffer(true);
         nal.memory.emit(DISAPPOINT.class, task);

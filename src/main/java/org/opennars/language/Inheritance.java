@@ -14,11 +14,12 @@
  */
 package org.opennars.language;
 
-import java.util.Arrays;
-import org.opennars.main.Parameters;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+
+import java.util.Arrays;
 
 /**
  * A Statement about an Inheritance relation.
@@ -49,9 +50,9 @@ public class Inheritance extends Statement {
         return make(getSubject(), getPredicate());
     }
 
-    @Override public Inheritance clone(Term[] t) {
+    @Override public Inheritance clone(final Term[] t) {
         if (t.length!=2)
-            throw new RuntimeException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
+            throw new IllegalArgumentException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
                 
         return make(t[0], t[1]);
     }
@@ -71,16 +72,16 @@ public class Inheritance extends Statement {
      */
     public static Inheritance make(final Term subject, final Term predicate) {
                 
-        if (subject==null || predicate==null || invalidStatement(subject, predicate)) {            
+        if (subject==null || predicate==null || invalidStatement(subject, predicate)) {
             return null;
         }
         
-        boolean subjectProduct = subject instanceof Product;
-        boolean predicateOperator = predicate instanceof Operator;
+        final boolean subjectProduct = subject instanceof Product;
+        final boolean predicateOperator = predicate instanceof Operator;
         
         if (Parameters.DEBUG) {
             if (!predicateOperator && predicate.toString().startsWith("^")) {
-                throw new RuntimeException("operator term detected but is not an operator: " + predicate);
+                throw new IllegalStateException("operator term detected but is not an operator: " + predicate);
             }
         }
         

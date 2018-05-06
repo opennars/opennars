@@ -18,14 +18,9 @@
  */
 package org.opennars.operator.misc;
 
-import org.opennars.storage.Memory;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Inheritance;
-import org.opennars.language.Product;
-import org.opennars.language.Similarity;
-import org.opennars.language.Statement;
-import org.opennars.language.Term;
+import org.opennars.language.*;
 import org.opennars.operator.FunctionOperator;
+import org.opennars.storage.Memory;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term
@@ -46,13 +41,13 @@ public class Reflect extends FunctionOperator {
     
     
     @Override
-    protected Term function(Memory memory, Term[] x) {
+    protected Term function(final Memory memory, final Term[] x) {
         
         if (x.length!=1) {
-            throw new RuntimeException(requireMessage);
+            throw new IllegalStateException(requireMessage);
         }
 
-        Term content = x[0];
+        final Term content = x[0];
 
 
         return getMetaTerm(content);
@@ -62,29 +57,29 @@ public class Reflect extends FunctionOperator {
     /**
      * <(*,subject,object) --> predicate>
      */
-    public static Term sop(Term subject, Term object, Term predicate) {
+    public static Term sop(final Term subject, final Term object, final Term predicate) {
         return Inheritance.make(Product.make(getMetaTerm(subject),getMetaTerm(object)), predicate);
     }
-    public static Term sop(Statement s, String operatorName) {
+    public static Term sop(final Statement s, final String operatorName) {
         return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), Term.get(operatorName));
     }
-    public static Term sop(Statement s, Term predicate) {
+    public static Term sop(final Statement s, final Term predicate) {
         return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), predicate);
     }
-    public static Term sop(String operatorName, Term... t) {
-        Term[] m = new Term[t.length];
+    public static Term sop(final String operatorName, final Term... t) {
+        final Term[] m = new Term[t.length];
         int i = 0;
-        for (Term x : t)
+        for (final Term x : t)
             m[i++] = getMetaTerm(x);
         
         return Inheritance.make(Product.make(m), Term.get(operatorName));
     }
     
-    public static Term getMetaTerm(Term node) {
+    public static Term getMetaTerm(final Term node) {
         if (!(node instanceof CompoundTerm)) {
             return node;
         }
-        CompoundTerm t = (CompoundTerm)node;
+        final CompoundTerm t = (CompoundTerm)node;
         switch (t.operator()) {
             case INHERITANCE: return sop((Inheritance)t, "inheritance");
             case SIMILARITY:  return sop((Similarity)t, "similarity");

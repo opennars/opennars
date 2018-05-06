@@ -16,11 +16,12 @@ package org.opennars.operator;
 
 import org.opennars.entity.Task;
 import org.opennars.io.Symbols;
-import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import org.opennars.language.Inheritance;
 import org.opennars.language.Product;
 import org.opennars.language.Term;
+
+import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 
 /**
  * An operation is interpreted as an Inheritance relation.
@@ -35,11 +36,11 @@ public class Operation extends Inheritance {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    protected Operation(Term argProduct, Term operator) {
+    protected Operation(final Term argProduct, final Term operator) {
         super(argProduct, operator);
     }
     
-    protected Operation(Term[] t) {
+    protected Operation(final Term[] t) {
         super(t);
     }
     
@@ -62,10 +63,10 @@ public class Operation extends Inheritance {
      * @param addSelf include SELF term at end of product terms
      * @return A compound generated or null
      */
-    public static Operation make(final Operator oper, Term[] arg, boolean addSelf) {        
+    public static Operation make(final Operator oper, final Term[] arg, final boolean addSelf) {
 
 //        if (Variables.containVar(arg)) {
-//            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
+//            throw new IllegalStateException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
 //        }
         /*//new cleaner  policy: should be added by the example already
         if(addSelf && !Term.isSelf(arg[arg.length-1])) {

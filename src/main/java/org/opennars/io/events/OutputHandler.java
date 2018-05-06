@@ -15,8 +15,8 @@
 package org.opennars.io.events;
 
 import org.opennars.io.events.Events.Answer;
-import org.opennars.storage.Memory;
 import org.opennars.main.NAR;
+import org.opennars.storage.Memory;
 
 /**
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels
@@ -25,19 +25,19 @@ public abstract class OutputHandler extends EventHandler {
     
     
     /** implicitly repeated input (a repetition of all input) */
-    public static interface IN  { }
+    public interface IN  { }
     
     /** conversational (judgments, questions, etc...) output */
-    public static interface OUT  { }
+    public interface OUT  { }
     
     /** warnings, errors & exceptions */
-    public static interface ERR { }
+    public interface ERR { }
     
     /** explicitly repeated input (repetition of the content of input ECHO commands) */
-    public static interface ECHO  { }
+    public interface ECHO  { }
     
     /** operation execution */
-    public static interface EXE  { }
+    public interface EXE  { }
     
         
     public static class ANTICIPATE {}
@@ -48,19 +48,19 @@ public abstract class OutputHandler extends EventHandler {
 
     public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Answer.class, ANTICIPATE.class, CONFIRM.class, DISAPPOINT.class };
             
-    public OutputHandler(EventEmitter source, boolean active) {
+    public OutputHandler(final EventEmitter source, final boolean active) {
         super(source, active, DefaultOutputEvents );
     }
     
-    public OutputHandler(Memory m, boolean active) {
+    public OutputHandler(final Memory m, final boolean active) {
         this(m.event, active);
     }
 
-    public OutputHandler(NAR n, boolean active) {
+    public OutputHandler(final NAR n, final boolean active) {
         this(n.memory.event, active);
     }
 
-    public OutputHandler(NAR n) {
+    public OutputHandler(final NAR n) {
         this(n, true);
     }
 

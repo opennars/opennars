@@ -23,14 +23,15 @@ import org.opennars.main.NAR.PortableDouble;
  */
 public class Parameters {
 
-    public static boolean SHOW_REASONING_ERRORS=false; //currently false because the sentence constructor is the only one
-    //who creates them but is not doing it because of an error.
-
-    /**
-     Cycles per duration.
-     Past/future tense usage convention;
-     How far away "past" and "future" is from "now", in cycles.
-     The range of "now" is [-DURATION/2, +DURATION/2];      */
+    public static final boolean SHOW_REASONING_ERRORS=false; //currently false because the sentence constructor is the only one
+                                                       //who creates them but is not doing it because of an error.
+    
+    /** 
+       Cycles per duration.
+       Past/future tense usage convention;
+       How far away "past" and "future" is from "now", in cycles.         
+       The range of "now" is [-DURATION/2, +DURATION/2];      */
+    
     public static int DURATION = 5;
 
     /** use this for advanced error checking, at the expense of lower performance.
@@ -39,8 +40,8 @@ public class Parameters {
     public static boolean TEST_RUNNING = false;
 
     /** for thorough bag debugging (slow) */
-    public static boolean DEBUG_BAG = false;
-    public static boolean DEBUG_INVALID_SENTENCES = true;
+    public static final boolean DEBUG_BAG = false;
+    public static final boolean DEBUG_INVALID_SENTENCES = true;
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
@@ -68,7 +69,7 @@ public class Parameters {
      */
     public static final float TRUTH_EPSILON = 0.01f;
     public static final float TRUTH_PRECISION = 1.0f / TRUTH_EPSILON;
-    public static float MAX_CONFIDENCE = 1.0f - TRUTH_EPSILON;
+    public static final float MAX_CONFIDENCE = 1.0f - TRUTH_EPSILON;
 
     public static final float BUDGET_EPSILON = 0.0001f;
 
@@ -86,9 +87,9 @@ public class Parameters {
     /** Default confidence of input judgment. */
     public static final float DEFAULT_JUDGMENT_CONFIDENCE = (float) 0.9;
     /** Default priority of input judgment */
-    public static float DEFAULT_JUDGMENT_PRIORITY = (float) 0.8;
+    public static final float DEFAULT_JUDGMENT_PRIORITY = (float) 0.8;
     /** Default durability of input judgment */
-    public static float DEFAULT_JUDGMENT_DURABILITY = (float) 0.5; //was 0.8 in 1.5.5; 0.5 after
+    public static final float DEFAULT_JUDGMENT_DURABILITY = (float) 0.5; //was 0.8 in 1.5.5; 0.5 after
     /** Default priority of input question */
     public static final float DEFAULT_QUESTION_PRIORITY = (float) 0.9;
     /** Default durability of input question */
@@ -114,9 +115,9 @@ public class Parameters {
     public static final float BAG_THRESHOLD = 1.0f;
 
     /** (see its use in budgetfunctions iterative forgetting) */
-    public static float FORGET_QUALITY_RELATIVE = 0.1f;
+    public static final float FORGET_QUALITY_RELATIVE = 0.1f;
 
-    public static int REVISION_MAX_OCCURRENCE_DISTANCE = 10;
+    public static final int REVISION_MAX_OCCURRENCE_DISTANCE = 10;
 
     /** Size of TaskLinkBag */
     public static final int TASK_LINK_BAG_SIZE = 100;  //was 200 in new experiment
@@ -133,10 +134,10 @@ public class Parameters {
     public static int SEQUENCE_BAG_SIZE = 30;
     public static int SEQUENCE_BAG_LEVELS = 10;
     /*  Size of remembered last operation tasks */
-    public static int OPERATION_BAG_SIZE = 10;
+    public static final int OPERATION_BAG_SIZE = 10;
     public static final int OPERATION_BAG_LEVELS = 10;
-    public static int OPERATION_SAMPLES = 6; //should be at least 2 to not only consider last decision
-
+    public static final int OPERATION_SAMPLES = 6; //should be at least 2 to not only consider last decision
+    
     /** How fast events decay in confidence **/
     public static final PortableDouble projectionDecay = new PortableDouble(0.1);
 
@@ -173,7 +174,7 @@ public class Parameters {
      * The rate of confidence decrease in mental operations Doubt and Hesitate
      * set to zero to disable this feature.
      */
-    public static float DISCOUNT_RATE = 0.5f;
+    public static final float DISCOUNT_RATE = 0.5f;
 
     /** enables the parsing of functional input format for operation terms: function(a,b,...) */
     public static boolean FUNCTIONAL_OPERATIONAL_FORMAT = true;
@@ -215,15 +216,15 @@ public class Parameters {
 
 
     /** equivalency based on Term contents; experimental mode - not ready yet, leave FALSE */
-    public static boolean TERM_ELEMENT_EQUIVALENCY = false;
-
+    public static final boolean TERM_ELEMENT_EQUIVALENCY = false;
+  
     //temporary parameter for setting #threads to use, globally
     public static boolean IMMEDIATE_ETERNALIZATION=true;
 
 
     // public static int STM_SIZE = 1;
     public static int SEQUENCE_BAG_ATTEMPTS = 10; //5 //20
-    public static int CONDITION_BAG_ATTEMPTS = 10; //5 //20
+    public static final int CONDITION_BAG_ATTEMPTS = 10; //5 //20
 
     public static float DERIVATION_PRIORITY_LEAK = 0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
 
@@ -244,34 +245,35 @@ public class Parameters {
     public static float BUSY_EVENT_LOWER_THRESHOLD=0.1f;
     public static boolean REFLECT_META_HAPPY_GOAL=false;
     public static boolean CONSIDER_REMIND=false;
-    public static boolean BREAK_NAL_HOL_BOUNDARY=false;
+    public static final boolean BREAK_NAL_HOL_BOUNDARY=false;
 
     public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
     public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=true;
 
     public static float ANTICIPATION_CONFIDENCE = 0.90f;
-    public static float ANTICIPATION_TOLERANCE = 50.0f;
 
+    public static final float ANTICIPATION_TOLERANCE = 50.0f;
+    
     public static float CONSIDER_NEW_OPERATION_BIAS = 0.05f; //depriorizes older operation-related events in temporal inference
-
-    public static float TEMPORAL_INDUCTION_PRIORITY_PENALTY = 1.0f; //was 0.1
-
-    public static int AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES = 500;
-
+    
+    public static final float TEMPORAL_INDUCTION_PRIORITY_PENALTY = 1.0f; //was 0.1
+    
+    public static final int AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES = 500;
+    
     public static float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
-
-    public static float COMPLEXITY_UNIT=1.0f; //1.0 - oo
-
-    public static float INTERVAL_ADAPT_SPEED = 4.0f;
-
+    
+    public static final float COMPLEXITY_UNIT=1.0f; //1.0 - oo
+    
+    public static final float INTERVAL_ADAPT_SPEED = 4.0f;
+    
     public static boolean COMPOUND_OPERATIONS=true;
-
-    public static int TASKLINK_PER_CONTENT = 4; //eternal/event are also seen extra
-
+    
+    public static final int TASKLINK_PER_CONTENT = 4; //eternal/event are also seen extra
+    
     /** Default priority of exection feedback */
-    public static float DEFAULT_FEEDBACK_PRIORITY = (float) 0.9;
+    public static final float DEFAULT_FEEDBACK_PRIORITY = (float) 0.9;
     /** Default durability of exection feedback */
-    public static float DEFAULT_FEEDBACK_DURABILITY = (float) 0.5; //was 0.8 in 1.5.5; 0.5 after
+    public static final float DEFAULT_FEEDBACK_DURABILITY = (float) 0.5; //was 0.8 in 1.5.5; 0.5 after
 
     /* Priority penalty for sequences that start with an operation */
     public static float OPERATION_SEQUENCE_START_PENALTY = 0.05f;

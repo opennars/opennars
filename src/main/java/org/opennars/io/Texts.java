@@ -31,7 +31,7 @@ public class Texts {
     public final static Map<Character,Character> escapeMap = new HashMap(256);
     public final static Map<Character,Character> escapeMapReverse = new HashMap(256);
     static {
-        char[][] escapings = new char[][] {
+        final char[][] escapings = new char[][] {
             {':', '\u25B8'},
             {' ', '\u2581'},
             {'%', '\u25B9'}, 
@@ -51,7 +51,7 @@ public class Texts {
         };
         
         for (final char[] pair : escapings) {
-            Character existing = escapeMap.put(pair[0], pair[1]);
+            final Character existing = escapeMap.put(pair[0], pair[1]);
             if (existing!=null) {
                 System.err.println("escapeMap has duplicate key: " + pair[0] + " can not apply to both " + existing + " and " + pair[1] );
                 //--System.exit(1);
@@ -59,13 +59,13 @@ public class Texts {
         }
 
         //generate reverse mapping
-        for (Map.Entry<Character, Character> e : escapeMap.entrySet())
+        for (final Map.Entry<Character, Character> e : escapeMap.entrySet())
             escapeMapReverse.put(e.getValue(), e.getKey());
     }
     
 
-    protected static StringBuilder escape(CharSequence s, boolean unescape, boolean useQuotes) {       
-        StringBuilder b = new StringBuilder(s.length());
+    protected static StringBuilder escape(final CharSequence s, final boolean unescape, final boolean useQuotes) {
+        final StringBuilder b = new StringBuilder(s.length());
         
         
         final Map<Character,Character> map = unescape ? escapeMapReverse : escapeMap;
@@ -74,7 +74,7 @@ public class Texts {
         char lastChar = 0;
         
         for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
+            final char c = s.charAt(i);
             
             
             if (c == Symbols.QUOTE) {
@@ -108,17 +108,17 @@ public class Texts {
 
     /** returns an escaped representation for input.  ranges that begin and end with Symbols.QUOTE are escaped, otherwise the string is not modified.
      */    
-    public static StringBuilder escape(CharSequence s) {
+    public static StringBuilder escape(final CharSequence s) {
         return escape(s, false, true);
     }
 
     /** returns an unescaped represntation of input */
-    public static StringBuilder unescape(CharSequence s) {
+    public static StringBuilder unescape(final CharSequence s) {
         return escape(s, true, true);
     }       
 
     /** escapeLiteral does not involve quotes. this can be used to escape characters directly.*/
-    public static StringBuilder escapeLiteral(CharSequence s) {
+    public static StringBuilder escapeLiteral(final CharSequence s) {
         return escape(s, false, false);
     }   
 
@@ -149,7 +149,7 @@ public class Texts {
             return lastNonNull.toString();
         }
         
-        StringBuilder sb = new StringBuilder(totalLen);
+        final StringBuilder sb = new StringBuilder(totalLen);
         for (final CharSequence s : components) {
             if (s != null) {
                 sb.append(s);
@@ -173,9 +173,9 @@ public class Texts {
      
     public static final CharSequence n2(final float x) {         
         if ((x < 0) || (x > 1.0f))
-            throw new RuntimeException("Invalid value for Texts.n2");
+            throw new IllegalStateException("Invalid value for Texts.n2");
         
-        int hundredths = (int)hundredths(x);
+        final int hundredths = (int)hundredths(x);
         switch (hundredths) {
             //some common values
             case 100: return "1.00";
@@ -185,7 +185,7 @@ public class Texts {
         }
                     
         if (hundredths > 9) {
-            int tens = hundredths/10;
+            final int tens = hundredths/10;
             return new String(new char[] {
                 '0', '.', (char)('0' + tens), (char)('0' + hundredths%10)
             });
@@ -214,10 +214,10 @@ public class Texts {
         final int tl = t.length();
         
         while (i < sl && i < tl) {
-            char a = s.charAt(i);
-            char b = t.charAt(i);
+            final char a = s.charAt(i);
+            final char b = t.charAt(i);
 
-            int diff = a - b;
+            final int diff = a - b;
 
             if (diff != 0)
               return diff;

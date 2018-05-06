@@ -14,15 +14,15 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import org.opennars.main.Parameters;
-import static org.opennars.main.Parameters.TRUTH_EPSILON;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
-import static org.opennars.inference.UtilityFunctions.and;
-import static org.opennars.inference.UtilityFunctions.aveGeo;
-import static org.opennars.inference.UtilityFunctions.or;
+import org.opennars.main.Parameters;
+
+import java.io.Serializable;
+
+import static org.opennars.inference.UtilityFunctions.*;
+import static org.opennars.main.Parameters.TRUTH_EPSILON;
 
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).
@@ -71,11 +71,11 @@ public class BudgetValue implements Cloneable, Serializable {
         
         if(d>=1.0) {
             durability=(float) (1.0-TRUTH_EPSILON);
-            //throw new RuntimeException("durability value above or equal 1");
+            //throw new IllegalStateException("durability value above or equal 1");
         }
         if(p>1.0) {
             priority=1.0f;
-            //throw new RuntimeException("priority value above 1");
+            //throw new IllegalStateException("priority value above 1");
         }
     }
 
@@ -107,9 +107,9 @@ public class BudgetValue implements Cloneable, Serializable {
      * Change priority value
      * @param v The new priority
      */
-    public final void setPriority(float v) {
+    public final void setPriority(final float v) {
         if(v>1.0f) {
-            throw new RuntimeException("Priority > 1.0: " + v);
+            throw new IllegalStateException("Priority > 1.0: " + v);
             //v=1.0f;
         }
         priority = v;
@@ -240,13 +240,12 @@ public class BudgetValue implements Cloneable, Serializable {
     public boolean equalsByPrecision(final Object that) { 
         if (that instanceof BudgetValue) {
             final BudgetValue t = ((BudgetValue) that);
-            float dPrio = Math.abs(getPriority() - t.getPriority());
+            final float dPrio = Math.abs(getPriority() - t.getPriority());
             if (dPrio >= TRUTH_EPSILON) return false;
-            float dDura = Math.abs(getDurability() - t.getDurability());
+            final float dDura = Math.abs(getDurability() - t.getDurability());
             if (dDura >= TRUTH_EPSILON) return false;
-            float dQual = Math.abs(getQuality() - t.getQuality());
-            if (dQual >= TRUTH_EPSILON) return false;
-            return true;
+            final float dQual = Math.abs(getQuality() - t.getQuality());
+            return !(dQual >= TRUTH_EPSILON);
         }
         return false;
     }
@@ -292,7 +291,7 @@ public class BudgetValue implements Cloneable, Serializable {
 
     /** returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime */
     public long setLastForgetTime(final long currentTime) {
-        long period;
+        final long period;
         if (this.lastForgetTime == -1)            
             period = 0;
         else

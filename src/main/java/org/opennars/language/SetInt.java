@@ -14,8 +14,10 @@
  */
 package org.opennars.language;
 
-import java.util.Collection;
 import org.opennars.io.Symbols.NativeOperator;
+
+import java.util.Collection;
+
 import static org.opennars.io.Symbols.NativeOperator.SET_INT_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.SET_INT_OPENER;
 
@@ -45,12 +47,12 @@ public class SetInt extends SetTensional {
         return new SetInt(term);
     }
 
-    @Override public SetInt clone(Term[] replaced) {
+    @Override public SetInt clone(final Term[] replaced) {
         return make(replaced);
     }
 
-    public static SetInt make(Collection<Term> l) {
-        return make(l.toArray(new Term[l.size()]));
+    public static SetInt make(final Collection<Term> l) {
+        return make(l.toArray(new Term[0]));
     }    
     
     public static SetInt make(Term... t) {

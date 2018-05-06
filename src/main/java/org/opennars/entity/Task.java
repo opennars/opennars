@@ -14,10 +14,11 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import org.opennars.storage.Memory;
 import org.opennars.language.Term;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.storage.Memory;
+
+import java.io.Serializable;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue.
@@ -40,7 +41,7 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
      * @param s The sentence
      * @param b The budget
      */ 
-    public Task(final Sentence<T> s, final BudgetValue b, boolean isInput) {
+    public Task(final Sentence<T> s, final BudgetValue b, final boolean isInput) {
         this(s, b, null, null);  
         this.isInput = isInput;
     }
@@ -63,7 +64,7 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     public Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief) {
         this(s, b, parentBelief, null);
     }
-    public Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, Sentence solution) {    
+    public Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
         super(b);
         this.sentence = s;
         this.parentBelief = parentBelief;
@@ -91,7 +92,7 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     public boolean equals(final Object obj) {
         if (obj == this) return true;
         if (obj instanceof Task) {
-            Task t = (Task)obj;            
+            final Task t = (Task)obj;
             return t.sentence.equals(sentence);
         }
         return false;        
@@ -102,12 +103,12 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
         return sentence.hashCode();
     }
     
-    public static Task make(Sentence s, BudgetValue b, Task parent) {
+    public static Task make(final Sentence s, final BudgetValue b, final Task parent) {
         return make(s, b, parent, null);
     }
     
-    public static Task make(Sentence s, BudgetValue b, Task parent, Sentence belief) {
-        Term t = s.term;
+    public static Task make(final Sentence s, final BudgetValue b, final Task parent, final Sentence belief) {
+        final Term t = s.term;
         return new Task(s, b, belief);
     }
     
@@ -193,7 +194,7 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     }
 
     /** flag to indicate whether this Event Task participates in tempporal induction */
-    public void setElemOfSequenceBuffer(boolean b) {
+    public void setElemOfSequenceBuffer(final boolean b) {
         this.partOfSequenceBuffer = b;
     }
 
@@ -201,7 +202,7 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
         return !this.sentence.isEternal() && (this.isInput() || partOfSequenceBuffer);
     }
     
-    public void setObservablePrediction(boolean b) {
+    public void setObservablePrediction(final boolean b) {
         this.observablePrediction = b;
     }
 

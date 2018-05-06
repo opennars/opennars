@@ -18,7 +18,6 @@
  */
 package org.opennars.util.test;
 
-import org.opennars.main.NAR;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
@@ -26,6 +25,7 @@ import org.opennars.io.Narsese;
 import org.opennars.io.Symbols;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
 
 /**
  *
@@ -33,13 +33,13 @@ import org.opennars.language.Term;
  */
 public class ConceptMonitor {
     
-    public static Term stringToTerm(NAR nar, String s) {
-        Narsese narsese = new Narsese(nar.memory);
-        Task ret;
+    public static Term stringToTerm(final NAR nar, final String s) {
+        final Narsese narsese = new Narsese(nar.memory);
+        final Task ret;
         try {
             ret = narsese.parseTask(s + Symbols.JUDGMENT_MARK);
-        } catch (Narsese.InvalidInputException ex) {
-            return null;
+        } catch (final Narsese.InvalidInputException ex) {
+            throw new IllegalStateException("Could not parse task", ex);
         }
         if(ret == null) {
             return null;
@@ -47,21 +47,21 @@ public class ConceptMonitor {
         return ret.getTerm();
     }
     
-    public static Concept concept(NAR nar, String s) {
-        Term ts = stringToTerm(nar, s);
+    public static Concept concept(final NAR nar, final String s) {
+        final Term ts = stringToTerm(nar, s);
         if(ts == null) {
             return null;
         }
         return nar.memory.concept(ts);
     }
     
-    public static Sentence strongestProjectedInputEventBelief(NAR nar, String st) {
-        Concept c = ConceptMonitor.concept(nar, st);
+    public static Sentence strongestProjectedInputEventBelief(final NAR nar, final String st) {
+        final Concept c = ConceptMonitor.concept(nar, st);
         if(c != null) {
-            for(Task t : c.beliefs) {
+            for(final Task t : c.beliefs) {
                 if(t.isInput() && !t.sentence.isEternal()) {
-                    Sentence s = t.sentence;
-                    Sentence projected = s.projection(nar.memory.time(), nar.memory.time());
+                    final Sentence s = t.sentence;
+                    final Sentence projected = s.projection(nar.memory.time(), nar.memory.time());
                     if(!projected.isEternal()) {
                         return projected;
                     }
@@ -71,23 +71,23 @@ public class ConceptMonitor {
         return null;
     }
     
-    public static Sentence strongestProjectedEternalizedBelief(NAR nar, String st) {
-        Concept c = ConceptMonitor.concept(nar, st);
+    public static Sentence strongestProjectedEternalizedBelief(final NAR nar, final String st) {
+        final Concept c = ConceptMonitor.concept(nar, st);
         if(c != null) {
-            for(Task t : c.beliefs) {
-                Sentence s = t.sentence;
-                Sentence projected = s.projection(nar.memory.time(), nar.memory.time());
+            for(final Task t : c.beliefs) {
+                final Sentence s = t.sentence;
+                final Sentence projected = s.projection(nar.memory.time(), nar.memory.time());
                 return projected;
             }
         }
         return null;
     }
     
-    public static Sentence strongestPrecondition(NAR nar, String conc, String statement) {
-        Concept c = ConceptMonitor.concept(nar, conc);
-        Term st = stringToTerm(nar, statement);
+    public static Sentence strongestPrecondition(final NAR nar, final String conc, final String statement) {
+        final Concept c = ConceptMonitor.concept(nar, conc);
+        final Term st = stringToTerm(nar, statement);
         if(c != null && st != null) {
-            for(Task t : c.executable_preconditions) {
+            for(final Task t : c.executable_preconditions) {
                 if(CompoundTerm.replaceIntervals(t.getTerm()).equals(
                         CompoundTerm.replaceIntervals(st))) {
                     return t.sentence;
@@ -97,7 +97,7 @@ public class ConceptMonitor {
         return null;
     }
     
-    public static Sentence strongestPrecondition2(NAR nar, String conc, String statement) { //test to compare with previous
+    public static Sentence strongestPrecondition2(final NAR nar, final String conc, final String statement) { //test to compare with previous
         return strongestProjectedEternalizedBelief(nar, statement);
     }
 }

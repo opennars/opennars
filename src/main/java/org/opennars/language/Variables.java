@@ -14,12 +14,14 @@
  */
 package org.opennars.language;
 
+import org.opennars.inference.TemporalRules;
+import org.opennars.io.Symbols;
+import org.opennars.storage.Memory;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import org.opennars.inference.TemporalRules;
-import org.opennars.storage.Memory;
-import org.opennars.io.Symbols;
+import java.util.Set;
 
 /**
  * Static utility class for static methods related to Variables
@@ -47,22 +49,20 @@ public class Variables {
             }
         }
         if(uniType == Symbols.VAR_DEPENDENT) { //the now allowed case
-            if(type == Symbols.VAR_QUERY) {
-                return true;
-            }
+            return type == Symbols.VAR_QUERY;
         }
         return false;
     }
     
-    /** map is a 2-element array of HashMap<Term,Term>. it may be null, in which case
+    /** map is a 2-element array of Map<Term,Term>. it may be null, in which case
      * the maps will be instantiated as necessary.  
-     * this is to delay the instantiation of the 2 HashMap until necessary to avoid
+     * this is to delay the instantiation of the 2 Map until necessary to avoid
      * wasting them if they are not used.
      */
     public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map) {
         return findSubstitute(type, term1, term2, map, false);
     }
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map, boolean allowPartial) {
+    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map, final boolean allowPartial) {
 
         boolean term1HasVar = term1.hasVar(type);
         if(type == Symbols.VAR_INDEPENDENT) {
@@ -79,48 +79,48 @@ public class Variables {
         final boolean term2Var = term2 instanceof Variable;
         
         if(allowPartial && term1 instanceof Conjunction && term2 instanceof Conjunction) {
-            Conjunction c1 = (Conjunction) term1;
-            Conjunction c2 = (Conjunction) term2;
+            final Conjunction c1 = (Conjunction) term1;
+            final Conjunction c2 = (Conjunction) term2;
             //more effective matching for NLP
             if(c1.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
                     c2.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                int size_smaller = c1.size();
+                final int size_smaller = c1.size();
                 if(c1.size() < c2.size()) {
                     //find an offset that works
                     for(int k=0;k<(c2.term.length - c1.term.length);k++) {
-                        Map<Term, Term>[] mapk = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapk[0] = new HashMap<Term,Term>();
-                        mapk[1] = new HashMap<Term,Term>();
+                        final Map<Term, Term>[] mapk = (Map<Term, Term>[]) new HashMap<?,?>[2];
+                        mapk[0] = new HashMap<>();
+                        mapk[1] = new HashMap<>();
                         if(map[0] == null) {
-                            map[0] = new HashMap<Term,Term>();
+                            map[0] = new HashMap<>();
                         }
                         if(map[1] == null) {
-                            map[1] = new HashMap<Term,Term>();
+                            map[1] = new HashMap<>();
                         }
-                        for(Term c : map[0].keySet()) {
+                        for(final Term c : map[0].keySet()) {
                             mapk[0].put(c, map[0].get(c));
                         }
-                        for(Term c : map[1].keySet()) {
+                        for(final Term c : map[1].keySet()) {
                             mapk[1].put(c, map[1].get(c));
                         }
                         boolean succeeded = true;
                         for(int j=k;j<k+size_smaller;j++) {
-                            int i = j-k;
-                            Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                            mapNew[0] = new HashMap<Term,Term>();
-                            mapNew[1] = new HashMap<Term,Term>();
-                            for(Term c : map[0].keySet()) {
+                            final int i = j-k;
+                            final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
+                            mapNew[0] = new HashMap<>();
+                            mapNew[1] = new HashMap<>();
+                            for(final Term c : map[0].keySet()) {
                                 mapNew[0].put(c, map[0].get(c));
                             }
-                            for(Term c : map[1].keySet()) {
+                            for(final Term c : map[1].keySet()) {
                                 mapNew[1].put(c, map[1].get(c));
                             }
                             //attempt unification:
                             if(findSubstitute(type,c1.term[i],c2.term[j],mapNew)) {
-                                for(Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
+                                for(final Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
                                     mapk[0].put(c, mapNew[0].get(c));
                                 }
-                                for(Term c : mapNew[1].keySet()) {
+                                for(final Term c : mapNew[1].keySet()) {
                                     mapk[1].put(c, mapNew[1].get(c));
                                 }
                             } else { //another shift k is needed
@@ -129,10 +129,10 @@ public class Variables {
                             }
                         }
                         if(succeeded) {
-                            for(Term c : mapk[0].keySet()) { //ok put back the unifications that were necessary
+                            for(final Term c : mapk[0].keySet()) { //ok put back the unifications that were necessary
                                 map[0].put(c, mapk[0].get(c));
                             }
-                            for(Term c : mapk[1].keySet()) {
+                            for(final Term c : mapk[1].keySet()) {
                                 map[1].put(c, mapk[1].get(c));
                             }
                             return true;
@@ -152,13 +152,13 @@ public class Variables {
             return true;
         }*/
         
-        Term t;  
+        final Term t;
         //variable "renaming" to variable of same type is always valid
         if(term1 instanceof Variable && term2 instanceof Variable) {
-            Variable v1 = (Variable) term1;
-            Variable v2 = (Variable) term2;
+            final Variable v1 = (Variable) term1;
+            final Variable v2 = (Variable) term2;
             if(v1.getType() == v2.getType()) {
-                Variable CommonVar = makeCommonVariable(term1, term2);    
+                final Variable CommonVar = makeCommonVariable(term1, term2);
                 if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }                
                 map[0].put(v1, CommonVar);
                 map[1].put(v2, CommonVar);
@@ -176,7 +176,7 @@ public class Variables {
                 if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
                 
                 if ((term2 instanceof Variable) && allowUnification(((Variable) term2).getType(), type)) {
-                    Variable CommonVar = makeCommonVariable(term1, term2);                    
+                    final Variable CommonVar = makeCommonVariable(term1, term2);
                     map[0].put(var1, CommonVar);
                     map[1].put(term2, CommonVar);
                 } else {
@@ -213,16 +213,16 @@ public class Variables {
             
             //consider temporal order on term matching
             if(term1 instanceof Conjunction && term2 instanceof Conjunction) {
-                if(((Conjunction)term1).getTemporalOrder() != ((Conjunction)term2).getTemporalOrder() ||
-                   ((Conjunction)term1).getIsSpatial() != ((Conjunction)term2).getIsSpatial())
+                if(term1.getTemporalOrder() != term2.getTemporalOrder() ||
+                   term1.getIsSpatial() != term2.getIsSpatial())
                     return false;
             }
             if(term1 instanceof Implication && term2 instanceof Implication) {
-                if(((Implication)term1).getTemporalOrder() != ((Implication)term2).getTemporalOrder())
+                if(term1.getTemporalOrder() != term2.getTemporalOrder())
                     return false;
             }
             if(term1 instanceof Equivalence && term2 instanceof Equivalence) {
-                if(((Equivalence)term1).getTemporalOrder() != ((Equivalence)term2).getTemporalOrder())
+                if(term1.getTemporalOrder() != term2.getTemporalOrder())
                     return false;
             }
             
@@ -232,44 +232,44 @@ public class Variables {
             if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).relationIndex != ((ImageExt) cTerm2).relationIndex) || (cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).relationIndex != ((ImageInt) cTerm2).relationIndex)) {
                 return false;
             }
-            Term[] list = cTerm1.cloneTerms();
+            final Term[] list = cTerm1.cloneTerms();
             if (cTerm1.isCommutative()) {
                 CompoundTerm.shuffle(list, Memory.randomNumber);
-                HashSet<Integer> alreadyMatched = new HashSet<Integer>();
+                final Set<Integer> alreadyMatched = new HashSet<>();
                 //ok attempt unification
                 if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
                 }
-                HashSet<Integer> matchedJ = new HashSet<Integer>(list.length*2);
+                final Set<Integer> matchedJ = new HashSet<>(list.length * 2);
                 for(int i = 0; i < list.length; i++) {
                     boolean succeeded = false;
                     for(int j = 0; j < list.length; j++) {
                         if(matchedJ.contains(j)) { //this one already was used to match one of the i's
                             continue;
                         }
-                        Term ti = list[i].clone();
+                        final Term ti = list[i].clone();
                         //clone map also:
-                        Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                        mapNew[0] = new HashMap<Term,Term>();
-                        mapNew[1] = new HashMap<Term,Term>();
+                        final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
+                        mapNew[0] = new HashMap<>();
+                        mapNew[1] = new HashMap<>();
                         if(map[0] == null) {
-                            map[0] = new HashMap<Term,Term>();
+                            map[0] = new HashMap<>();
                         }
                         if(map[1] == null) {
-                            map[1] = new HashMap<Term,Term>();
+                            map[1] = new HashMap<>();
                         }
-                        for(Term c : map[0].keySet()) {
+                        for(final Term c : map[0].keySet()) {
                             mapNew[0].put(c, map[0].get(c));
                         }
-                        for(Term c : map[1].keySet()) {
+                        for(final Term c : map[1].keySet()) {
                             mapNew[1].put(c, map[1].get(c));
                         }
                         //attempt unification:
                         if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
-                            for(Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
+                            for(final Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
                                 map[0].put(c, mapNew[0].get(c));
                             }
-                            for(Term c : mapNew[1].keySet()) {
+                            for(final Term c : mapNew[1].keySet()) {
                                 map[1].put(c, mapNew[1].get(c));
                             }
                             succeeded = true;
@@ -284,8 +284,8 @@ public class Variables {
                 return true;
             }
             for (int i = 0; i < cTerm1.size(); i++) {
-                Term t1 = list[i];
-                Term t2 = cTerm2.term[i];
+                final Term t1 = list[i];
+                final Term t2 = cTerm2.term[i];
                 if (!findSubstitute(type, t1, t2, map)) {
                     return false;
                 }
@@ -350,7 +350,7 @@ public class Variables {
     public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound) { 
         return unify(type, t1, t2, compound, false);
     }
-    public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound, boolean allowPartial) {        
+    public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound, final boolean allowPartial) {
         final Map<Term, Term> map[] = new Map[2]; //begins empty: null,null
         
         final boolean hasSubs = findSubstitute(type, t1, t2, map, allowPartial);
@@ -360,10 +360,10 @@ public class Variables {
             final Term b = applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map[1]);
             if (b == null) return false;
             //only set the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
-            if(compound[0] instanceof Variable && ((Variable)compound[0]).hasVarQuery() && (((Variable)a).hasVarIndep() || ((Variable)a).hasVarIndep()) ) {
+            if(compound[0] instanceof Variable && compound[0].hasVarQuery() && (a.hasVarIndep() || a.hasVarIndep()) ) {
                 return false;
             }
-            if(compound[1] instanceof Variable && ((Variable)compound[1]).hasVarQuery() && (((Variable)b).hasVarIndep() || ((Variable)b).hasVarIndep()) ) {
+            if(compound[1] instanceof Variable && compound[1].hasVarQuery() && (b.hasVarIndep() || b.hasVarIndep()) ) {
                 return false;
             }
             compound[0] = a;
@@ -381,7 +381,7 @@ public class Variables {
             return t;
         }
         
-        Term r = t.applySubstitute(subs);
+        final Term r = t.applySubstitute(subs);
         
         if (r == null) return null;
         
@@ -402,14 +402,14 @@ public class Variables {
      * @param n The string name to be checked
      * @return Whether the name contains an independent variable
      */
-    public static boolean indepVarUsedInvalid(Term T) {
+    public static boolean indepVarUsedInvalid(final Term T) {
         
         //if its a conjunction/disjunction, this is invalid: (&&,<$1 --> test>,<$1 --> test2>), while this isnt: (&&,<$1 --> test ==> <$1 --> test2>,others)
         //this means we have to go through the conjunction, and check if the component is a indepVarUsedInvalid instance, if yes, return true
         //
         if(T instanceof Conjunction || T instanceof Disjunction) {
-            Term[] part=((CompoundTerm)T).term;
-            for(Term t : part) {
+            final Term[] part=((CompoundTerm)T).term;
+            for(final Term t : part) {
                 if(indepVarUsedInvalid(t)) {
                     return true;
                 }

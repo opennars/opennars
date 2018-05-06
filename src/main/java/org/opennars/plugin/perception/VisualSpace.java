@@ -14,18 +14,20 @@
  */
 package org.opennars.plugin.perception;
 
-import org.opennars.operator.ImaginationSpace;
-import java.util.HashSet;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
 import org.opennars.entity.TruthValue;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
+import org.opennars.operator.ImaginationSpace;
 import org.opennars.operator.NullOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -33,37 +35,33 @@ import org.opennars.operator.Operator;
  */
 public class VisualSpace implements ImaginationSpace {
 
-    public float[][] source; //assumed to be set from outside
-    public float[][] cropped; //all elements assumed to be in [0,1] range
-    public int height;
-    public int width;
-    public int px = 0;
-    public int py = 0;
+    public final float[][] source; //assumed to be set from outside
+    public final float[][] cropped; //all elements assumed to be in [0,1] range
+    public final int height;
+    public final int width;
+    public final int px = 0;
+    public final int py = 0;
     
     //those are the same for each instance:
-    static NullOperator right = new NullOperator("^right");
-    static NullOperator left = new NullOperator("^left");
-    static NullOperator up = new NullOperator("^up");
-    static NullOperator down = new NullOperator("^down");
-    HashSet<Operator> ops = new HashSet<Operator>();
-    NAR nar;
+    static final NullOperator right = new NullOperator("^right");
+    static final NullOperator left = new NullOperator("^left");
+    static final NullOperator up = new NullOperator("^up");
+    static final NullOperator down = new NullOperator("^down");
+    final Set<Operator> ops = new HashSet<>();
+    final NAR nar;
     
-    public VisualSpace(NAR nar, float[][] source, int py, int px, int height, int width) {
+    public VisualSpace(final NAR nar, final float[][] source, final int py, final int px, final int height, final int width) {
         this.nar = nar;
         this.height = height;
         this.width = width;    
         this.cropped = new float[height][width];
         this.source = new float[source.length][source[0].length];
         for(int i=0;i<source.length;i++) { //"snapshot" from source
-            for(int j=0; j<source[0].length; j++) {
-                this.source[i][j] = source[i][j];
-            }
+            System.arraycopy(source[i], 0, this.source[i], 0, source[0].length);
         }
         //now copy into data
         for(int i=0; i<height; i++) {
-            for(int j=0; j<width; j++) {
-                cropped[i][j] = source[py+i][px+j];
-            }
+            System.arraycopy(source[py + i], px + 0, cropped[i], 0, width);
         }
         nar.addPlugin(right);
         nar.addPlugin(left);
@@ -76,21 +74,21 @@ public class VisualSpace implements ImaginationSpace {
     }
 
     @Override
-    public TruthValue AbductionOrComparisonTo(ImaginationSpace obj, boolean comparison) {
+    public TruthValue AbductionOrComparisonTo(final ImaginationSpace obj, final boolean comparison) {
         if(!(obj instanceof VisualSpace)) {
             return new TruthValue(0.5f, 0.01f);
         }
-        VisualSpace other = (VisualSpace) obj;
-        double kh = ((float) other.height) / ((double) this.height);
-        double kw = ((float) other.width)  / ((double) this.width);
+        final VisualSpace other = (VisualSpace) obj;
+        final double kh = ((float) other.height) / ((double) this.height);
+        final double kw = ((float) other.width)  / ((double) this.width);
         TruthValue sim = new TruthValue(0.5f, 0.01f);
         for(int i=0; i<this.height; i++) {
             for(int j=0; j<this.width; j++) {
-                int i2 = (int) (((double) i) * kh);
-                int j2 = (int) (((double) j)  * kw);
-                TruthValue t1 = new TruthValue(cropped[i][j], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                TruthValue t2 = new TruthValue(other.cropped[i2][j2], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                TruthValue t3 = comparison ? TruthFunctions.comparison(t1,t2) : TruthFunctions.abduction(t1,t2);
+                final int i2 = (int) (((double) i) * kh);
+                final int j2 = (int) (((double) j)  * kw);
+                final TruthValue t1 = new TruthValue(cropped[i][j], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                final TruthValue t2 = new TruthValue(other.cropped[i2][j2], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                final TruthValue t3 = comparison ? TruthFunctions.comparison(t1,t2) : TruthFunctions.abduction(t1,t2);
                 sim = TruthFunctions.revision(sim, t3);                
             }
         }
@@ -98,11 +96,11 @@ public class VisualSpace implements ImaginationSpace {
     }
 
     @Override
-    public ImaginationSpace ConstructSpace(Conjunction program) {
+    public ImaginationSpace ConstructSpace(final Conjunction program) {
         if(program.isSpatial || program.getTemporalOrder() != TemporalRules.ORDER_FORWARD) {
             return null; //would be a strange program :)
         }
-        Term beginning = program.term[0];
+        final Term beginning = program.term[0];
         if(beginning.imagination == null) {
             return null;
         }
@@ -112,7 +110,7 @@ public class VisualSpace implements ImaginationSpace {
             if(!(program.term[i] instanceof Operation)) {
                 return null;
             }
-            Operation oper = (Operation) program.term[i];
+            final Operation oper = (Operation) program.term[i];
             if(!IsOperationInSpace(oper)) {
                 return null;
             }
@@ -122,24 +120,24 @@ public class VisualSpace implements ImaginationSpace {
         return null;
     }
 
-    public ImaginationSpace ProgressSpace(Operation op, ImaginationSpace b) {
+    public ImaginationSpace ProgressSpace(final Operation op, final ImaginationSpace b) {
         if(!(b instanceof VisualSpace)) {
             return null; //incompatible
         }
-        VisualSpace B = (VisualSpace) b;
+        final VisualSpace B = (VisualSpace) b;
         //construct a space which focus is on both of the focuses of the previous
         //copying the necessary part of source into data and setting width and height
         //for visual space the operation doesn't matter for constructing the compound imagination
-        int minPX = Math.min(this.px, B.px);
-        int maxPX = Math.min(this.px+this.width, B.px+B.width);
-        int minPY = Math.min(this.py, B.py);
-        int maxPY = Math.min(this.py+this.height, B.py+B.height);
-        VisualSpace progressed = new VisualSpace(nar, this.source, minPY, minPX, maxPY, maxPX);
+        final int minPX = Math.min(this.px, B.px);
+        final int maxPX = Math.min(this.px+this.width, B.px+B.width);
+        final int minPY = Math.min(this.py, B.py);
+        final int maxPY = Math.min(this.py+this.height, B.py+B.height);
+        final VisualSpace progressed = new VisualSpace(nar, this.source, minPY, minPX, maxPY, maxPX);
         return progressed;
     }
     
-    public boolean IsOperationInSpace(Operation oper) {
-        Operator op = (Operator) oper.getPredicate();
+    public boolean IsOperationInSpace(final Operation oper) {
+        final Operator op = (Operator) oper.getPredicate();
         return ops.contains(op);
     }
     

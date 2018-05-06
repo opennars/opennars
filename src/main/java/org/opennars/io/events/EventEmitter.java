@@ -15,12 +15,7 @@
 
 package org.opennars.io.events;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Adapted from http://www.recursiverobot.com/post/86215392884/witness-a-simple-android-and-java-event-emitter
@@ -31,13 +26,13 @@ public class EventEmitter {
     
     /** Observes events emitted by EventEmitter */
     public interface EventObserver<C> {
-        public void event(Class<? extends C> event, Object[] args);
+        void event(Class<? extends C> event, Object[] args);
     }
 
     private final Map<Class<?>, List<EventObserver>> events;
             
     
-    private Deque<Object[]> pendingOps = new ArrayDeque();
+    private final Deque<Object[]> pendingOps = new ArrayDeque();
     
     /** EventEmitter that allows unknown events; must use concurrent collection
      *  for multithreading since new event classes may be added at any time.
@@ -52,9 +47,9 @@ public class EventEmitter {
 
     /** EventEmitter with a fixed set of known events; the 'events' map
      *  can then be made unmodifiable and non-concurrent for speed.    */
-    public EventEmitter(Class... knownEventClasses) {
+    public EventEmitter(final Class... knownEventClasses) {
         events = new HashMap(knownEventClasses.length);
-        for (Class c : knownEventClasses) {
+        for (final Class c : knownEventClasses) {
             events.put(c, newObserverList());
         }
     }
@@ -67,8 +62,7 @@ public class EventEmitter {
     
     public final boolean isActive(final Class event) {
         if (events.get(event)!=null)
-            if (!events.get(event).isEmpty())
-                return true;
+            return !events.get(event).isEmpty();
         return false;
     }
     
@@ -76,9 +70,9 @@ public class EventEmitter {
     public void synch() {
         synchronized (pendingOps) {
             if (!pendingOps.isEmpty()) {
-                for (Object[] o : pendingOps) {
-                    Class c = (Class)o[1];
-                    EventObserver d = (EventObserver)o[2];
+                for (final Object[] o : pendingOps) {
+                    final Class c = (Class)o[1];
+                    final EventObserver d = (EventObserver)o[2];
                     if ((Boolean)o[0]) {                        
                         on(c,d);
                     }
@@ -94,7 +88,7 @@ public class EventEmitter {
         if (events.containsKey(event))
             events.get(event).add(o);
         else {
-            List<EventObserver> a = newObserverList();
+            final List<EventObserver> a = newObserverList();
             a.add(o);
             events.put(event, a);
         }       
@@ -107,16 +101,14 @@ public class EventEmitter {
      */
     public void off(final Class<?> event, final EventObserver o) {
         if (null == event || null == o)
-            throw new RuntimeException("Invalid parameter");
+            throw new IllegalStateException("Invalid parameter");
  
         if (!events.containsKey(event))
-            throw new RuntimeException("Unknown event: " + event);
-        
-        try {
+            throw new IllegalStateException("Unknown event: " + event);
+
         events.get(event).remove(o);
-        } catch(Exception ex) { }
         /*if (!removed) {
-            throw new RuntimeException("EventObserver " + o + " was not registered for events");
+            throw new IllegalStateException("EventObserver " + o + " was not registered for events");
         }*/        
     }
 
@@ -132,16 +124,13 @@ public class EventEmitter {
     
 
     public void emit(final Class eventClass, final Object... params) {
-        List<EventObserver> observers = events.get(eventClass);
+        final List<EventObserver> observers = events.get(eventClass);
         
         if ((observers == null) || (observers.isEmpty())) return;
 
-        int n = observers.size();
-        for (int i = 0; i < n; i++) {
-            try{
-            EventObserver m = observers.get(i);
+        final int n = observers.size();
+        for (final EventObserver m : observers) {
             m.event(eventClass, params);
-            }catch(Exception ex){}
         }
         
     }

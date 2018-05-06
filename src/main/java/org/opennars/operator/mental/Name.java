@@ -15,19 +15,16 @@
 package org.opennars.operator.mental;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.Similarity;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.storage.Memory;
+
+import java.util.List;
 
 /**
  * Operator that give a CompoundTerm a new name
@@ -45,19 +42,19 @@ public class Name extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term compound = args[1];
-        Term atomic = args[2];
-        Similarity content = Similarity.make(compound, atomic);
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+        final Term compound = args[1];
+        final Term atomic = args[2];
+        final Similarity content = Similarity.make(compound, atomic);
         
-        TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
-        Sentence sentence = new Sentence(
+        final TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
+        final Sentence sentence = new Sentence(
             content,
             Symbols.JUDGMENT_MARK,
             truth,
             new Stamp(memory));
         
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
+        final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         
         return Lists.newArrayList( new Task(sentence, budget, true) );        
     }

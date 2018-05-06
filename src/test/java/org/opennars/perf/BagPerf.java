@@ -15,20 +15,17 @@
 package org.opennars.perf;
 
 import com.google.common.collect.Lists;
-import java.io.PrintStream;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
-import org.opennars.storage.Memory;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Item;
+import org.opennars.main.NAR;
 import org.opennars.main.NAR.PortableDouble;
+import org.opennars.main.Parameters;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
+import org.opennars.storage.Memory;
+
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  *
@@ -36,33 +33,33 @@ import org.opennars.storage.LevelBag;
  */
 public class BagPerf {
     
-    int repeats = 8;
-    int warmups = 1;
+    final int repeats = 8;
+    final int warmups = 1;
     final static PortableDouble forgetRate = (new NAR().param).conceptForgetDurations;
     int randomAccesses;
-    double insertRatio = 0.9;
+    final double insertRatio = 0.9;
     
 
     
     public float totalPriority, totalMass, totalMinItemsPerLevel, totalMaxItemsPerLevel;
 
-    public void testBag(final boolean arraylist, final int levels, final int capacity, final PortableDouble forgetRate) {
+    public void testBag(final boolean List, final int levels, final int capacity, final PortableDouble forgetRate) {
         
         totalPriority = 0;
         totalMass = 0;
         totalMaxItemsPerLevel = totalMinItemsPerLevel = 0;
         
-        Performance p = new Performance((arraylist ? "DequeArray" : "LinkedList")+","+levels+","+ capacity, repeats, warmups) {
+        final Performance p = new Performance((List ? "DequeArray" : "LinkedList")+","+levels+","+ capacity, repeats, warmups) {
 
             @Override public void init() { }
 
             @Override
-            public void run(boolean warmup) {
-                LevelBag<NullItem,CharSequence> b = new LevelBag(levels, capacity) {
+            public void run(final boolean warmup) {
+                final LevelBag<NullItem,CharSequence> b = new LevelBag(levels, capacity) {
 
 //                    @Override
 //                    protected ArrayDeque<NullItem> newLevel() {
-//                        //if (arraylist)                                                    
+//                        //if (List)
 //                            return super.newLevel();
 //                        //return new LinkedList<>();
 //                    }
@@ -96,13 +93,13 @@ public class BagPerf {
     
     /** Empty Item implementation useful for testing */
     public static class NullItem extends Item.StringKeyItem {
-        public String key;
+        public final String key;
     
         public NullItem() {
             this(Memory.randomNumber.nextFloat() * (1.0f - Parameters.TRUTH_EPSILON));
         }
 
-        public NullItem(float priority) {
+        public NullItem(final float priority) {
             super(new BudgetValue(priority, priority, priority));
             this.key = "" + (itemID++);
         }
@@ -114,7 +111,7 @@ public class BagPerf {
         
     }
     
-    public static void randomBagIO(Bag<NullItem,CharSequence> b, int accesses, double insertProportion) {
+    public static void randomBagIO(final Bag<NullItem,CharSequence> b, final int accesses, final double insertProportion) {
         for (int i = 0; i < accesses; i++) {
             if (Memory.randomNumber.nextFloat() > insertProportion) {
                 //remove
@@ -126,8 +123,8 @@ public class BagPerf {
             }            
         }
     }
-    public static void iterate(Bag<NullItem,CharSequence> b) {
-        Iterator<NullItem> i = b.iterator();
+    public static void iterate(final Bag<NullItem,CharSequence> b) {
+        final Iterator<NullItem> i = b.iterator();
         int count = 0;
         while (i.hasNext()) {
             i.next();
@@ -139,22 +136,22 @@ public class BagPerf {
     }
     
     public interface BagBuilder<E extends Item<K>,K> {
-        public Bag<E,K> newBag();
+        Bag<E,K> newBag();
     }
     
     //final boolean first, final int levels, final int levelCapacity, 
-    public static double getTime(String label, BagBuilder b, final int iterations, final int randomAccesses, final float insertRatio, int repeats, int warmups) {
+    public static double getTime(final String label, final BagBuilder b, final int iterations, final int randomAccesses, final float insertRatio, final int repeats, final int warmups) {
         
         Memory.resetStatic();
         
-        Performance p = new Performance(label, repeats, warmups) {
+        final Performance p = new Performance(label, repeats, warmups) {
 
             @Override public void init() { }
 
             @Override
-            public void run(boolean warmup) {                                
+            public void run(final boolean warmup) {
                 
-                Bag bag = b.newBag();
+                final Bag bag = b.newBag();
                 
                 randomBagIO(bag, randomAccesses, insertRatio);
                 
@@ -183,42 +180,40 @@ public class BagPerf {
         
     }
     
-    public static Map<Bag,Double> compare(final int iterations, final int randomAccesses, final float insertRatio, int repeats, int warmups, final Bag... B) {
+    public static Map<Bag,Double> compare(final int iterations, final int randomAccesses, final float insertRatio, final int repeats, final int warmups, final Bag... B) {
         
-        Map<Bag,Double> t = new LinkedHashMap();
+        final Map<Bag,Double> t = new LinkedHashMap();
         
-        for (Bag X : B) {
+        for (final Bag X : B) {
             X.clear();
             
-            t.put(X, getTime(X.toString(), new BagBuilder() {
-                @Override public Bag newBag() {  return X; }
-            }, iterations, randomAccesses, insertRatio, repeats, warmups));
+            t.put(X, getTime(X.toString(), () -> X, iterations, randomAccesses, insertRatio, repeats, warmups));
             
         }
         return t;
         
     }
     
-    public static void printCSVLine(PrintStream out, String... s) {
+    public static void printCSVLine(final PrintStream out, final String... s) {
         printCSVLine(out, Lists.newArrayList(s));        
     }
     
-    public static void printCSVLine(PrintStream out, List<String> o) {
-        StringJoiner line = new StringJoiner(", ", "", "");
-        for (String x : o)
+    public static void printCSVLine(final PrintStream out, final List<String> o) {
+        final StringJoiner line = new StringJoiner(", ", "", "");
+        for (final String x : o)
             line.add(x);        
         out.println(line.toString());
     }
     
     
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         
-        int itemsPerLevel = 10;
-        int repeats = 10;
-        int warmups = 1;
+        final int itemsPerLevel = 10;
+        final int repeats = 10;
+        final int warmups = 1;
 
-        int iterationsPerItem = 0;
-        int accessesPerItem = 8;
+        final int iterationsPerItem = 0;
+        final int accessesPerItem = 8;
         
         boolean printedHeader = false;
         
@@ -227,13 +222,13 @@ public class BagPerf {
                 
                 final int items = levels*itemsPerLevel;
                 final int iterations = iterationsPerItem * items;
-                int randomAccesses = accessesPerItem * items;
+                final int randomAccesses = accessesPerItem * items;
                         
-                Bag[] bags = new Bag[] { 
+                final Bag[] bags = new Bag[] {
                     new LevelBag(levels, items)                        
                 };
                 
-                Map<Bag, Double> t = BagPerf.compare(                    
+                final Map<Bag, Double> t = BagPerf.compare(
                     iterations, randomAccesses, insertRatio, repeats, warmups,
                     bags
                 );
@@ -246,8 +241,8 @@ public class BagPerf {
                 
                 if (!printedHeader) {
                     
-                    List<String> ls = Lists.newArrayList("items", "io_ratio", "accesses", "nexts");
-                    for (Map.Entry<Bag, Double> e : t.entrySet())
+                    final List<String> ls = Lists.newArrayList("items", "io_ratio", "accesses", "nexts");
+                    for (final Map.Entry<Bag, Double> e : t.entrySet())
                         ls.add(e.getKey().toString());
                                         
                     printCSVLine(System.out, ls  );
@@ -255,8 +250,8 @@ public class BagPerf {
                 }
 
                 {
-                    List<String> ls = Lists.newArrayList(items+"", insertRatio+"", randomAccesses+"", iterations+"");
-                    for (Map.Entry<Bag, Double> e : t.entrySet())
+                    final List<String> ls = Lists.newArrayList(items+"", insertRatio+"", randomAccesses+"", iterations+"");
+                    for (final Map.Entry<Bag, Double> e : t.entrySet())
                         ls.add(e.getValue().toString());
                                         
                     printCSVLine(System.out, ls  );

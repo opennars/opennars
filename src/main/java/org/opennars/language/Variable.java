@@ -14,22 +14,18 @@
  */
 package org.opennars.language;
 
-import java.nio.CharBuffer;
-import org.opennars.main.Parameters;
-import static org.opennars.io.Symbols.VAR_DEPENDENT;
-import static org.opennars.io.Symbols.VAR_INDEPENDENT;
-import static org.opennars.io.Symbols.VAR_QUERY;
 import org.opennars.io.Texts;
+import org.opennars.main.Parameters;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.nio.CharBuffer;
+
+import static org.opennars.io.Symbols.*;
 
 /**
  * A variable term, which does not correspond to a concept
  */
 public class Variable extends Term {
-
-    
-    
-
-    
     /** caches the type character for faster lookup than charAt(0) */
     private char type = 0;
     
@@ -52,7 +48,7 @@ public class Variable extends Term {
         setScope(scope, name);
     }
 
-    @Override protected void setName(CharSequence newName) { }
+    @Override protected void setName(final CharSequence newName) { }
 
     public Variable setScope(final Term scope, final CharSequence n) {
         this.name = n;
@@ -60,7 +56,7 @@ public class Variable extends Term {
         this.scope = scope != null ? scope : this;
         this.hash = 0; //calculate lazily
         if (!validVariableType(type)) 
-            throw new RuntimeException("Invalid variable type: " + n);
+            throw new IllegalStateException("Invalid variable type: " + n);
         return this;
     }
     
@@ -71,7 +67,7 @@ public class Variable extends Term {
      */
     @Override
     public Variable clone() {
-        Variable v = new Variable(name(), scope);
+        final Variable v = new Variable(name(), scope);
         if (scope == this)
             v.scope = v;
         return v;
@@ -125,23 +121,28 @@ public class Variable extends Term {
     @Override public boolean equals(final Object that) {
         if (that == this) return true;
         if (!(that instanceof Variable)) return false;
+        final Variable v = (Variable)that;
+
+        if(!super.equals(that))
+            return false;
+
                 
         if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
             return equalsTerm(that);
         }
         else {
-            Variable v = (Variable)that;
             if (!name().equals(v.name())) return false;
-            if (getScope() == this) {
-                if (v.getScope()!=v) return false;
+            if ((getScope() == this && v.getScope()!=v) ||
+                (getScope() != this && v.getScope() == v)) {
+                return false;
             }
             return (v.getScope().name().equals(getScope().name()));
         }
     }
     
-    public boolean equalsTerm(Object that) {
+    public boolean equalsTerm(final Object that) {
         //TODO factor these comparisons into 2 nested if's
-        Variable v = (Variable)that;
+        final Variable v = (Variable)that;
         if ((v.scope == v) && (scope == this))
             //both are unscoped, so compare by name only
             return name().equals(v.name());
@@ -179,9 +180,35 @@ public class Variable extends Term {
         return hash;
     }
 
-    
-    
+    @Override
+    public int compareTo(final AbstractTerm that) {
+        if(this == that)
+            return 0;
+        final int superCmp = super.compareTo(that);
+        if(superCmp != 0)
+            return superCmp;
 
+        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
+            throw new NotImplementedException();
+        }
+
+        if(!(that instanceof Variable))
+            return 0;
+
+        final Variable thatVar = (Variable) that;
+
+        final int nameCmp = String.valueOf(this.name()).compareTo(String.valueOf(thatVar.name));
+        if( nameCmp != 0 )
+            return nameCmp;
+
+        if(this.getScope() == this && thatVar.getScope() != thatVar)
+            return 1;
+
+        if(this.getScope() != this && thatVar.getScope() == thatVar)
+            return -1;
+
+        return String.valueOf(this.getScope().name).compareTo(String.valueOf(thatVar.getScope().name));
+    }
 
     /**
      * variable terms are listed first alphabetically
@@ -199,8 +226,8 @@ public class Variable extends Term {
     boolean isIndependentVariable() { return getType() == VAR_INDEPENDENT;    }
 
     boolean isCommon() {     
-        CharSequence n = name();
-        int l = n.length();        
+        final CharSequence n = name();
+        final int l = n.length();
         return n.charAt(l - 1) == '$';
     }
 
@@ -211,15 +238,15 @@ public class Variable extends Term {
     //ported back from 1.7, sehs addition
     public static int compare(final Variable a, final Variable b) {
         //int i = a.name().compareTo(b.name());
-        int i=Texts.compareTo(a.name(), b.name());
+        final int i=Texts.compareTo(a.name(), b.name());
         if (i == 0) {
-            boolean ascoped = a.scope!=a;
-            boolean bscoped = b.scope!=b;
+            final boolean ascoped = a.scope!=a;
+            final boolean bscoped = b.scope!=b;
             if (!ascoped && !bscoped) {
                 //if the two variables are each without scope, they are not equal.
                 //so use their identityHashCode to determine a stable ordering
-                int as = System.identityHashCode(a.scope);
-                int bs = System.identityHashCode(b.scope);
+                final int as = System.identityHashCode(a.scope);
+                final int bs = System.identityHashCode(b.scope);
                 return Integer.compare(as, bs);
             }
             else if (ascoped && !bscoped) {
@@ -232,7 +259,7 @@ public class Variable extends Term {
                 return Texts.compareTo(a.getScope().name(), b.getScope().name());
                // return Texts.compare(a.getScope().name(), b.getScope().name());
            }
-        } 
+        }
         return i;
     }
 
@@ -247,18 +274,18 @@ public class Variable extends Term {
     private static final CharSequence[] vn3 = new CharSequence[MAX_CACHED_VARNAME_INDEXES];
     
     
-    public static CharSequence getName(char type, int index) {
+    public static CharSequence getName(final char type, final int index) {
         if (index > MAX_CACHED_VARNAME_INDEXES)
             return newName(type, index);
         
         
-        CharSequence[] cache;
+        final CharSequence[] cache;
         switch (type) {
             case VAR_INDEPENDENT: cache = vn1; break;
             case VAR_DEPENDENT: cache = vn2; break;
             case VAR_QUERY: cache = vn3; break;
             default:
-                throw new RuntimeException("Invalid variable type");
+                throw new IllegalStateException("Invalid variable type");
         }
         
         CharSequence c = cache[index];
@@ -270,10 +297,10 @@ public class Variable extends Term {
         return c;
     }
     
-    protected static CharSequence newName(char type, int index) {
+    protected static CharSequence newName(final char type, int index) {
         
-        int digits = (index >= 256 ? 3 : ((index >= 16) ? 2 : 1));
-        CharBuffer cb  = CharBuffer.allocate(1 + digits).append(type);
+        final int digits = (index >= 256 ? 3 : ((index >= 16) ? 2 : 1));
+        final CharBuffer cb  = CharBuffer.allocate(1 + digits).append(type);
         do {
             cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
         } while (index != 0);

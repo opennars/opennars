@@ -14,11 +14,12 @@
  */
 package org.opennars.entity;
 
+import org.opennars.io.Symbols;
+import org.opennars.language.Term;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
-import org.opennars.io.Symbols;
-import org.opennars.language.Term;
 
 /**
  * A link between a compound term and a component term
@@ -134,21 +135,20 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
         if (hashCode()!=obj.hashCode()) return false;
         
         if (obj instanceof TermLink) {
-            TermLink t = (TermLink)obj;
+            final TermLink t = (TermLink)obj;
             
             if (type != t.type) return false;
             if (!Arrays.equals(t.index, index)) return false;
             
             final Term tt = t.target;
             if (target == null) {
-                if (tt!=null) return false;
+                return tt == null;
             }
             else if (tt == null) {
-                if (target!=null) return false;
+                return target == null;
             }
-            else if (!target.equals(t.target)) return false;
-            
-            return true;
+            else return target.equals(t.target);
+
         }
         return false;
     }
@@ -158,7 +158,7 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
      */
     protected int init() {
         //TODO lazy calculate this?
-        int h = Objects.hash(target, type, Arrays.hashCode(index));
+        final int h = Objects.hash(target, type, Arrays.hashCode(index));
         return h;
     }
     
@@ -195,11 +195,11 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
             at2 = Symbols.TO_COMPOUND_2;
         }
         final int MAX_INDEX_DIGITS = 2;
-        int estimatedLength = 2+2+1+MAX_INDEX_DIGITS*( (index!=null ? index.length : 0) + 1);
+        final int estimatedLength = 2+2+1+MAX_INDEX_DIGITS*( (index!=null ? index.length : 0) + 1);
         final StringBuilder prefix = new StringBuilder(estimatedLength);
         prefix.append(at1).append('T').append(type);
         if (index != null) {
-            for (int i : index) {
+            for (final int i : index) {
                 prefix.append('-').append( Integer.toString(i + 1, 16 /** hexadecimal */)  );
             }
         }

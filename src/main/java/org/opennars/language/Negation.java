@@ -94,7 +94,7 @@ public class Negation extends CompoundTerm {
     }
 
     
-    public static boolean areMutuallyInverse(Term tc, Term ptc) {
+    public static boolean areMutuallyInverse(final Term tc, final Term ptc) {
         //doesnt seem necessary to check both, one seems sufficient.
         //incurs cost of creating a Negation and its id
         return (ptc.equals(Negation.make(tc)) /* || tc.equals(Negation.make(ptc))*/ );        

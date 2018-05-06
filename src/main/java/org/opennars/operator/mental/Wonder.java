@@ -15,17 +15,18 @@
 package org.opennars.operator.mental;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
 import org.opennars.io.Symbols;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.storage.Memory;
+
+import java.util.List;
 
 /**
  * Operator that creates a question with a given statement
@@ -43,17 +44,17 @@ public class Wonder extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term content = args[1];
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+        final Term content = args[1];
         
         
-        Sentence sentence = new Sentence(
+        final Sentence sentence = new Sentence(
             content,
             Symbols.QUESTION_MARK,
             null,
             new Stamp(memory));
 
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
+        final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
         return Lists.newArrayList( new Task(sentence, budget, true) );
     }
         

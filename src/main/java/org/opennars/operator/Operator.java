@@ -14,12 +14,6 @@
  */
 package org.opennars.operator;
 
-import org.opennars.plugin.Plugin;
-import java.util.Arrays;
-import java.util.List;
-import org.opennars.storage.Memory;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
@@ -27,6 +21,13 @@ import org.opennars.io.events.OutputHandler.EXE;
 import org.opennars.language.Product;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
+import org.opennars.plugin.Plugin;
+import org.opennars.storage.Memory;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * An individual operator that can be execute by the system, which can be either
@@ -40,16 +41,16 @@ public abstract class Operator extends Term implements Plugin {
     
     protected Operator() {   super();    }
     
-    protected Operator(String name) {
+    protected Operator(final String name) {
         super(name);
         if (!name.startsWith("^"))
-            throw new RuntimeException("Operator name needs ^ prefix");
+            throw new IllegalStateException("Operator name needs ^ prefix");
     }
 
     public NAR nar; 
     
     @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
+    public boolean setEnabled(final NAR n, final boolean enabled) {
         this.nar = n;
         return true;
     }        
@@ -76,24 +77,22 @@ public abstract class Operator extends Term implements Plugin {
     * @return true if successful, false if an error occurred
     */
     public final boolean call(final Operation operation, final Term[] args, final Memory memory) {
-        try {
-            List<Task> feedback = execute(operation, args, memory);            
-                       
-            if(feedback == null || feedback.isEmpty()) { //null operator case
-                memory.executedTask(operation, new TruthValue(1f,executionConfidence));
-            }
-            
-            reportExecution(operation, args, feedback, memory);
-            
+        final List<Task> feedback = execute(operation, args, memory);
 
-            if (feedback!=null) {
-                for (final Task t : feedback) {
-                    memory.inputTask(t);
-                }            
-            }
-            
-            return true;
+        if(feedback == null || feedback.isEmpty()) { //null operator case
+            memory.executedTask(operation, new TruthValue(1f,executionConfidence));
         }
+
+        reportExecution(operation, args, feedback, memory);
+
+
+        if (feedback!=null) {
+            for (final Task t : feedback) {
+                memory.inputTask(t);
+            }
+        }
+
+        return true;
 //        catch (NegativeFeedback n) {
 //            
 //            if (n.freqOcurred >=0 && n.confidenceOcurred >= 0) {
@@ -117,18 +116,13 @@ public abstract class Operator extends Term implements Plugin {
 //                reportExecution(operation, args, n, memory);
 //            }
 //        }
-        catch (Exception e) {                        
-            //reportExecution(operation, args, e, memory);            
-        }
-        return false;
-        
     }
     
    
     public static String operationExecutionString(final Statement operation) {
-        Term operator = operation.getPredicate();
-        Term arguments = operation.getSubject();
-        String argList = arguments.toString().substring(3);         // skip the product prefix "(*,"
+        final Term operator = operation.getPredicate();
+        final Term arguments = operation.getSubject();
+        final String argList = arguments.toString().substring(3);         // skip the product prefix "(*,"
         return operator + "(" + argList;        
     }
 
@@ -168,7 +162,7 @@ public abstract class Operator extends Term implements Plugin {
         private final Operation operation;
         private final Object feedback;
 
-        public ExecutionResult(Operation op, Object feedback) {
+        public ExecutionResult(final Operation op, final Object feedback) {
             this.operation = op;
             this.feedback = feedback;
         }
@@ -183,8 +177,8 @@ public abstract class Operator extends Term implements Plugin {
             if (getTask() != null) {
                 b = getTask().budget;
             }
-            Term[] args = operation.getArguments().term;
-            Operator operator = operation.getOperator();
+            final Term[] args = operation.getArguments().term;
+            final Operator operator = operation.getOperator();
             
             return ((b != null) ? (b.toStringExternal() + " ") : "") + 
                         operator + "(" + Arrays.toString(args) + ")=" + feedback;
@@ -197,12 +191,12 @@ public abstract class Operator extends Term implements Plugin {
         if(!op.isExecutable(memory)) {
             return false;
         }
-        Product args = op.getArguments();
+        final Product args = op.getArguments();
         return call(op, args.term, memory);
     }
     
 
-    public static String addPrefixIfMissing(String opName) {
+    public static String addPrefixIfMissing(final String opName) {
         if (!opName.startsWith("^"))
             return '^' + opName;
         return opName;

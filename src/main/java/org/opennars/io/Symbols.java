@@ -14,11 +14,12 @@
  */
 package org.opennars.io;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.opennars.io.events.OutputHandler.ERR;
 import org.opennars.io.events.OutputHandler.IN;
 import org.opennars.io.events.OutputHandler.OUT;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Symbols {
@@ -127,15 +128,15 @@ public class Symbols {
         /** closer? */
         public final boolean closer;
 
-        private NativeOperator(String string) {
+        NativeOperator(final String string) {
             this(string, false);
         }
         
-        private NativeOperator(String string, boolean relation) {
+        NativeOperator(final String string, final boolean relation) {
             this(string, relation, !relation);
         }
 
-        private NativeOperator(String string, boolean relation, boolean innate) {            
+        NativeOperator(final String string, final boolean relation, final boolean innate) {
             this.symbol = string;
             this.relation = relation;
             this.isNative = innate;
@@ -161,7 +162,7 @@ public class Symbols {
         
         //Setup NativeOperator Character index hashtable 
         for (final NativeOperator r : NativeOperator.values()) {
-            char c = r.ch;
+            final char c = r.ch;
             if (c!=0)
                 charToOperator.put(c, r);
         }
@@ -176,7 +177,7 @@ public class Symbols {
     }
     
     public static NativeOperator getRelation(final String s) {
-        NativeOperator o = getOperator(s);
+        final NativeOperator o = getOperator(s);
         if (o == null) return null;
         if (o.relation)
             return o;
@@ -184,7 +185,7 @@ public class Symbols {
     }
 
     public static NativeOperator getOpener(final char c) {
-        NativeOperator o = getOperator(c);
+        final NativeOperator o = getOperator(c);
         if (o == null) return null;
         if (o.opener)
             return o;
@@ -192,7 +193,7 @@ public class Symbols {
     }
     
     public static NativeOperator getCloser(final char c) {
-        NativeOperator o = getOperator(c);
+        final NativeOperator o = getOperator(c);
         if (o == null) return null;
         if (o.closer)
             return o;

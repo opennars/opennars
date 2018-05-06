@@ -15,21 +15,18 @@
 package org.opennars.operator.mental;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.io.Symbols;
 import org.opennars.language.Inheritance;
 import org.opennars.language.SetInt;
 import org.opennars.language.Tense;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operator;
+import org.opennars.storage.Memory;
+
+import java.util.List;
 
 /**
  * Feeling common operations
@@ -37,7 +34,7 @@ import org.opennars.operator.Operator;
 public abstract class Feel extends Operator {
     private final Term feelingTerm;
 
-    public Feel(String name) {
+    public Feel(final String name) {
         super(name);
         
         // remove the "^feel" prefix from name
@@ -53,21 +50,21 @@ public abstract class Feel extends Operator {
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
-    protected ArrayList<Task> feeling(float value, Memory memory) {
-        Stamp stamp = new Stamp(memory, Tense.Present);
-        TruthValue truth = new TruthValue(value, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+    protected List<Task> feeling(final float value, final Memory memory) {
+        final Stamp stamp = new Stamp(memory, Tense.Present);
+        final TruthValue truth = new TruthValue(value, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 
-        Term predicate = new SetInt(feelingTerm); 
+        final Term predicate = new SetInt(feelingTerm);
         
-        Term content = Inheritance.make(selfSubject, predicate);
-        Sentence sentence = new Sentence(
+        final Term content = Inheritance.make(selfSubject, predicate);
+        final Sentence sentence = new Sentence(
             content,
             Symbols.JUDGMENT_MARK,
             truth,
             stamp);
 
-        float quality = BudgetFunctions.truthToQuality(truth);
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
+        final float quality = BudgetFunctions.truthToQuality(truth);
+        final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
         
         return Lists.newArrayList( new Task(sentence, budget, true) );        
 

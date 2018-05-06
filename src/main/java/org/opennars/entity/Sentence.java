@@ -14,27 +14,17 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
 import org.opennars.inference.TruthFunctions.EternalizedTruthValue;
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Equivalence;
-import org.opennars.language.Implication;
-import org.opennars.language.Interval;
-import org.opennars.language.Statement;
-import org.opennars.language.Term;
-import org.opennars.language.Variable;
+import org.opennars.language.*;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
@@ -79,7 +69,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     private final int hash;
     
     
-    public Sentence(T term, char punctuation, TruthValue newTruth, Stamp newStamp) {
+    public Sentence(final T term, final char punctuation, final TruthValue newTruth, final Stamp newStamp) {
         this(term, punctuation, newTruth, newStamp, true);
     }
     
@@ -92,23 +82,23 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    private Sentence(T _content, final char punctuation, final TruthValue truth, final Stamp stamp, boolean normalize) {
+    private Sentence(T _content, final char punctuation, final TruthValue truth, final Stamp stamp, final boolean normalize) {
         
         //cut interval at end for sentence in serial conjunction, and inbetween for parallel
         if(punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
             if(_content instanceof Conjunction) {
-                Conjunction c=(Conjunction)_content;
+                final Conjunction c=(Conjunction)_content;
                 if(c.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                     if(c.term[c.term.length-1] instanceof Interval) {
                         long time=0; 
                         //refined:
                         int u = 0;
-                        while(c.term[c.term.length-1-u] instanceof Interval) {
+                        while(c.term.length-1-u >= 0 && c.term[c.term.length-1-u] instanceof Interval) {
                             time += ((Interval)c.term[c.term.length-1-u]).time;
                             u++;
                         }
                         
-                        Term[] term2=new Term[c.term.length-u];
+                        final Term[] term2=new Term[c.term.length-u];
                         System.arraycopy(c.term, 0, term2, 0, term2.length);
                         _content=(T) Conjunction.make(term2, c.getTemporalOrder(), c.isSpatial);
                         //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
@@ -121,12 +111,12 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                         long time=0; 
                         //refined:
                         int u = 0;
-                        while(c.term[u] instanceof Interval) {
+                        while(u < c.term.length && (c.term[u] instanceof Interval)) {
                             time += ((Interval)c.term[u]).time;
                             u++;
                         }
                         
-                        Term[] term2=new Term[c.term.length-u];
+                        final Term[] term2=new Term[c.term.length-u];
                         System.arraycopy(c.term, u, term2, 0, term2.length);
                         _content=(T) Conjunction.make(term2, c.getTemporalOrder(), c.isSpatial);
                         //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
@@ -140,111 +130,111 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         }
         
         this.punctuation = punctuation;
-        
-        if(_content instanceof Implication || _content instanceof Equivalence) {
-            if(((Statement) _content).getSubject().hasVarIndep() && !((Statement) _content).getPredicate().hasVarIndep())
-                truth.setConfidence(0.0f);
-            if(((Statement) _content).getPredicate().hasVarIndep() && !((Statement) _content).getSubject().hasVarIndep())
-                truth.setConfidence(0.0f); //TODO:
-            if(_content.getTemporalOrder() != TemporalRules.ORDER_NONE &&
-               _content.getTemporalOrder() != TemporalRules.ORDER_INVALID) { //do not allow =/> statements without conjunction on left
-                if((((Statement) _content).getSubject() instanceof Conjunction)) {
-                    Conjunction conj = (Conjunction) ((Statement) _content).getSubject();
-                    if(!conj.isSpatial && conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                        //when the last two are intervals, its not valid
-                       if(conj.term[conj.term.length-1] instanceof Interval && conj.term[conj.term.length-2] instanceof Interval) {
-                            truth.setConfidence(0.0f);
+
+        if( truth != null ) {
+            if (_content instanceof Implication || _content instanceof Equivalence) {
+                if (((Statement) _content).getSubject().hasVarIndep() && !((Statement) _content).getPredicate().hasVarIndep())
+                    truth.setConfidence(0.0f);
+                if (((Statement) _content).getPredicate().hasVarIndep() && !((Statement) _content).getSubject().hasVarIndep())
+                    truth.setConfidence(0.0f); //TODO:
+                if (_content.getTemporalOrder() != TemporalRules.ORDER_NONE &&
+                    _content.getTemporalOrder() != TemporalRules.ORDER_INVALID) { //do not allow =/> statements without conjunction on left
+                    if ((((Statement) _content).getSubject() instanceof Conjunction)) {
+                        final Conjunction conj = (Conjunction) ((Statement) _content).getSubject();
+                        if (!conj.isSpatial && conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                            //when the last two are intervals, its not valid
+                            if (conj.term[conj.term.length - 1] instanceof Interval && conj.term[conj.term.length - 2] instanceof Interval) {
+                                truth.setConfidence(0.0f);
+                            }
                         }
                     }
                 }
+            } else if (_content instanceof Interval && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
+                truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
+                if (Parameters.DEBUG)
+                    throw new IllegalStateException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
             }
-        }
-        else
-        if (_content instanceof Interval && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK)
-        {
-            truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-            if(Parameters.DEBUG)
-                throw new RuntimeException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
-        }
-        
-        if ( (!isQuestion() && !isQuest()) && (truth == null) && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {            
-            throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
-        }
-        
-        if(_content.subjectOrPredicateIsIndependentVar() && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
-            truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-            if(Parameters.DEBUG)
-                throw new RuntimeException("A statement sentence is not allowed to have a independent variable as subj or pred");
-        }
-        
-        if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
-            if (!Term.valid(_content)) {
-                truth.setConfidence(0.0f);
-                if(Parameters.DEBUG) {
-                    CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
-                    ntc.printStackTrace();
-                    throw ntc;
+
+            if ((!isQuestion() && !isQuest()) && (truth == null) && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
+                throw new IllegalStateException("Judgment and Goal sentences require non-null truth value");
+            }
+
+            if (_content.subjectOrPredicateIsIndependentVar() && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
+                truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
+                if (Parameters.DEBUG)
+                    throw new IllegalStateException("A statement sentence is not allowed to have a independent variable as subj or pred");
+            }
+
+            if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
+                if (!Term.valid(_content)) {
+                    truth.setConfidence(0.0f);
+                    if (Parameters.DEBUG) {
+                        System.err.println("Invalid Sentence term: " + _content);
+                        Thread.dumpStack();
+                    }
                 }
             }
         }
         
         if ((isQuestion() || isQuest()) && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK && !stamp.isEternal()) {
             stamp.setEternal();
-            //throw new RuntimeException("Questions and Quests require eternal tense");
+            //throw new IllegalStateException("Questions and Quests require eternal tense");
         }
         
         this.truth = truth;
         this.stamp = stamp;
         this.revisible = _content instanceof Implication || _content instanceof Equivalence || !(_content.hasVarDep());
+
+        T newTerm = null;
+        if( _content instanceof CompoundTerm)
+            newTerm = (T)((CompoundTerm)_content).cloneDeepVariables();
         
         //Variable name normalization
         //TODO move this to Concept method, like cloneNormalized()
-        if (normalize && _content.hasVar() && (_content instanceof CompoundTerm) && (!((CompoundTerm)_content).isNormalized() ) ) {
+        if ( newTerm != null && normalize && _content.hasVar() && (!((CompoundTerm)_content).isNormalized() ) ) {
             
             this.term = (T)((CompoundTerm)_content).cloneDeepVariables();
             final CompoundTerm c = (CompoundTerm)term;
-            List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
-            
-            c.recurseSubtermsContainingVariables(new Term.TermVisitor() {                
-                @Override public void visit(final Term t, final Term parent) {
-                    if (t instanceof Variable) {
-                        Variable v = ((Variable)t);                        
-                        vars.add(v);
-                    }                    
-                }            
+            final List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
+
+            c.recurseSubtermsContainingVariables((t, parent) -> {
+                if (t instanceof Variable) {
+                    final Variable v = ((Variable) t);
+                    vars.add(v);
+                }
             });
-            
-            Map<CharSequence,CharSequence> rename = new HashMap();            
+
+            final Map<CharSequence, CharSequence> rename = new HashMap();
             boolean renamed = false;
-            
+
             for (final Variable v : vars) {
                 CharSequence vname = v.name();
                 if (!v.hasVarIndep())
-                    vname = vname + " " + v.getScope().name();                                
-                CharSequence n = rename.get(vname);                
-                if (n==null) {                            
+                    vname = vname + " " + v.getScope().name();
+                CharSequence n = rename.get(vname);
+                if (n == null) {
                     //type + id
-                    rename.put(vname, n = Variable.getName(v.getType(), rename.size()+1));
+                    rename.put(vname, n = Variable.getName(v.getType(), rename.size() + 1));
                     if (!n.equals(vname))
                         renamed = true;
-                }    
+                }
 
-                v.setScope(c, n);                
+                v.setScope(c, n);
             }
-            
+
             if (renamed) {
                 c.invalidateName();
 
                 if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
                     if (!Term.valid(c)) {
-                        CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c + " ; prior to normalization: " + _content);
+                        final CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c + " ; prior to normalization: " + _content);
                         ntc.printStackTrace();
                         throw ntc;
                     }
                 }
-                
+
             }
-            c.setNormalized(true);            
+            c.setNormalized(true);
         }
         else {
             this.term = _content;
@@ -297,12 +287,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                     }
                 }
             }
-            
-            if(!stamp.equals(t.stamp, false, true, true)) {
-                return false;
-            }
-                    
-            return true;
+
+            return stamp.equals(t.stamp, false, true, true);
         }
         return false;
     }
@@ -327,8 +313,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         return clone(term);
     }
 
-    public Sentence clone(boolean makeEternal) {
-        Sentence clon = clone(term);
+    public Sentence clone(final boolean makeEternal) {
+        final Sentence clon = clone(term);
         if(clon.stamp.getOccurrenceTime()!=Stamp.ETERNAL && makeEternal) {
             //change occurence time of clone
             clon.stamp.setEternal();
@@ -354,10 +340,10 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
       */    
     public Sentence projection(final long targetTime, final long currentTime) {
             
-        TruthValue newTruth = projectionTruth(targetTime, currentTime);
-        boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
+        final TruthValue newTruth = projectionTruth(targetTime, currentTime);
+        final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
                 
-        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : 
+        final Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) :
                                         stamp.cloneWithNewOccurrenceTime(targetTime);
         
         return new Sentence(
@@ -375,9 +361,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         if (!stamp.isEternal()) {
             newTruth = TruthFunctions.eternalize(truth);
             if (targetTime != Stamp.ETERNAL) {
-                long occurrenceTime = stamp.getOccurrenceTime();
-                float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
-                float projectedConfidence = factor * truth.getConfidence();
+                final long occurrenceTime = stamp.getOccurrenceTime();
+                final float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
+                final float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
                     newTruth = new TruthValue(truth.getFrequency(), projectedConfidence);
                 }
@@ -492,21 +478,21 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
      *
      * @return The String
      */
-    public CharSequence toString(NAR nar, boolean showStamp) {
+    public CharSequence toString(final NAR nar, final boolean showStamp) {
     
-        CharSequence contentName = term.name();
+        final CharSequence contentName = term.name();
         
         final long t = nar.memory.time();
 
-        long diff=stamp.getOccurrenceTime()-nar.memory.time();
-        long diffabs = Math.abs(diff);
+        final long diff=stamp.getOccurrenceTime()-nar.memory.time();
+        final long diffabs = Math.abs(diff);
         
         String timediff = "";
         if(diffabs < Parameters.DURATION) {
             timediff = "|";
         }
         else {
-            Long Int = diffabs;
+            final Long Int = diffabs;
             timediff = diff>0 ? "+"+String.valueOf(Int) : "-"+String.valueOf(Int);
         }
         
@@ -518,7 +504,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         if(stamp.getOccurrenceTime() == Stamp.ETERNAL)
             tenseString="";
         
-        CharSequence stampString = showStamp ? stamp.name() : null;
+        final CharSequence stampString = showStamp ? stamp.name() : null;
         
         int stringLength = contentName.length() + tenseString.length() + 1 + 1;
                 

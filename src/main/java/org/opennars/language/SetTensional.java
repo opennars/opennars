@@ -14,9 +14,10 @@
  */
 package org.opennars.language;
 
-import java.nio.CharBuffer;
-import org.opennars.main.Parameters;
 import org.opennars.io.Symbols;
+import org.opennars.main.Parameters;
+
+import java.nio.CharBuffer;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set)
@@ -31,7 +32,7 @@ abstract public class SetTensional extends CompoundTerm {
         super(arg);
         
         if (arg.length == 0)
-            throw new RuntimeException("0-arg empty set");
+            throw new IllegalStateException("0-arg empty set");
         
         if (Parameters.DEBUG) { Terms.verifySortedAndUnique(arg, true); }
         

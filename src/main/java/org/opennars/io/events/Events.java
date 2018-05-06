@@ -14,14 +14,15 @@
  */
 package org.opennars.io.events;
 
-import java.util.Arrays;
-import java.util.List;
-import org.opennars.io.events.EventEmitter.EventObserver;
-import org.opennars.control.GeneralInferenceControl;
 import org.opennars.control.DerivationContext;
+import org.opennars.control.GeneralInferenceControl;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
+import org.opennars.io.events.EventEmitter.EventObserver;
+
+import java.util.Arrays;
+import java.util.List;
 
 /** empty event classes for use with EventEmitter */
 public class Events {
@@ -57,7 +58,7 @@ public class Events {
     
     
     public static class ConceptNew extends ParametricInferenceEvent<Concept> {
-        public ConceptNew(Concept c, long when) {
+        public ConceptNew(final Concept c, final long when) {
             super(c, when);
         }
         
@@ -77,7 +78,7 @@ public class Events {
         
         abstract public void onBeliefAdd(Concept c, Task t, Object[] extra);
         
-        @Override public void event(Class event, Object[] args) {
+        @Override public void event(final Class event, final Object[] args) {
             onBeliefAdd( (Concept)args[0], (Task)args[1], (Object[])args[2]);
         }
         
@@ -87,7 +88,7 @@ public class Events {
         
         abstract public void onBeliefRemove(Concept c, Sentence removed, Task t, Object[] extra);
         
-        @Override public void event(Class event, Object[] args) {
+        @Override public void event(final Class event, final Object[] args) {
             onBeliefRemove( (Concept)args[0], (Sentence)args[1], (Task)args[2], (Object[])args[3]);
         }        
 
@@ -125,7 +126,7 @@ public class Events {
          */
         abstract public void onFire(GeneralInferenceControl n);
         
-        @Override public void event(Class event, Object[] args) {
+        @Override public void event(final Class event, final Object[] args) {
             onFire((GeneralInferenceControl)args[0]);
         }
         
@@ -134,7 +135,7 @@ public class Events {
 
         abstract public void onProcessed(Task t, DerivationContext n);
         
-        @Override public void event(Class event, Object[] args) {
+        @Override public void event(final Class event, final Object[] args) {
             onProcessed((Task)args[0], (DerivationContext)args[1]);
         }
         
@@ -151,7 +152,7 @@ public class Events {
         
         abstract public void onTaskAdd(Task t, String reason);
         
-        @Override public void event(Class event, Object[] args) {
+        @Override public void event(final Class event, final Object[] args) {
             onTaskAdd((Task)args[0], (String)args[1]);
         }
     }
@@ -170,21 +171,21 @@ public class Events {
         public final List<StackTraceElement> stack;
 
         //how many stack frames down to record from; we don't need to include the current and the previous (InferenceEvent subclass's constructor
-        int STACK_PREFIX = 4;
+        final int STACK_PREFIX = 4;
 
-        protected InferenceEvent(long when) {
+        protected InferenceEvent(final long when) {
             this(when, 0);
         }
         
-        protected InferenceEvent(long when, int stackFrames) {
+        protected InferenceEvent(final long when, final int stackFrames) {
             this.when = when;
             
             if (stackFrames > 0) {
-                List<StackTraceElement> sl = Arrays.asList(Thread.currentThread().getStackTrace());
+                final List<StackTraceElement> sl = Arrays.asList(Thread.currentThread().getStackTrace());
 
                 int frame = 0;
                 
-                for (StackTraceElement e : sl) {
+                for (final StackTraceElement e : sl) {
                     frame++;
                     if (e.getClassName().equals("org.opennars.core.NAR")) {
                         break;
@@ -208,7 +209,7 @@ public class Events {
     abstract public static class ParametricInferenceEvent<O> extends InferenceEvent {    
         public final O object;
 
-        public ParametricInferenceEvent(O object, long when) {
+        public ParametricInferenceEvent(final O object, final long when) {
             super(when);
             this.object = object;
         }

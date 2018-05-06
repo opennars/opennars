@@ -15,11 +15,12 @@
 package org.opennars.language;
 
 import com.google.common.collect.ObjectArrays;
+import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
-import org.opennars.main.Parameters;
-import org.opennars.io.Symbols.NativeOperator;
+import java.util.NavigableSet;
 
 /**
  * A compound term whose extension is the intersection of the extensions of its term
@@ -31,7 +32,7 @@ public class IntersectionExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private IntersectionExt(Term[] arg) {
+    private IntersectionExt(final Term[] arg) {
         super(arg);
         
         if (Parameters.DEBUG) { Terms.verifySortedAndUnique(arg, false); }
@@ -51,7 +52,7 @@ public class IntersectionExt extends CompoundTerm {
     }
     
     @Override
-    public Term clone(Term[] replaced) {
+    public Term clone(final Term[] replaced) {
         return make(replaced);
     }
     
@@ -62,26 +63,26 @@ public class IntersectionExt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Term term1, Term term2) {
+    public static Term make(final Term term1, final Term term2) {
         
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
             // set union
-            Term[] both = ObjectArrays.concat(
+            final Term[] both = ObjectArrays.concat(
                     ((CompoundTerm) term1).term, 
                     ((CompoundTerm) term2).term, Term.class);
             return SetInt.make(both);
         }
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
             // set intersection
-            TreeSet<Term> set = Term.toSortedSet(((CompoundTerm) term1).term);
+            final NavigableSet<Term> set = Term.toSortedSet(((CompoundTerm) term1).term);
             
             set.retainAll(((CompoundTerm) term2).asTermList());     
             
             //technically this can be used directly if it can be converted to array
-            //but wait until we can verify that TreeSet.toarray does it or write a helper function like existed previously
-            return SetExt.make(set.toArray(new Term[set.size()]));
+            //but wait until we can verify that NavigableSet.toarray does it or write a helper function like existed previously
+            return SetExt.make(set.toArray(new Term[0]));
         }
-        List<Term> se = new ArrayList();
+        final List<Term> se = new ArrayList();
         if (term1 instanceof IntersectionExt) {
             ((CompoundTerm) term1).addTermsTo(se);
             if (term2 instanceof IntersectionExt) {
@@ -100,7 +101,7 @@ public class IntersectionExt extends CompoundTerm {
             se.add(term1);
             se.add(term2);
         }
-        return make(se.toArray(new Term[se.size()]));
+        return make(se.toArray(new Term[0]));
     }
 
 

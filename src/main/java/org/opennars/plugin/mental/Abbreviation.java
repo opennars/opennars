@@ -14,28 +14,26 @@
  */
 package org.opennars.plugin.mental;
 
-import org.opennars.plugin.Plugin;
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import org.opennars.io.events.EventEmitter.EventObserver;
-import org.opennars.io.events.Events.TaskDerive;
-import org.opennars.storage.Memory;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.io.Symbols;
-import static org.opennars.language.CompoundTerm.termArray;
-import org.opennars.main.NAR.PortableDouble;
-import org.opennars.main.NAR.PortableInteger;
+import org.opennars.io.events.EventEmitter.EventObserver;
+import org.opennars.io.events.Events.TaskDerive;
 import org.opennars.language.Similarity;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+import org.opennars.main.NAR.PortableDouble;
+import org.opennars.main.NAR.PortableInteger;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.plugin.Plugin;
+import org.opennars.storage.Memory;
+
+import java.util.List;
+
+import static org.opennars.language.CompoundTerm.termArray;
 
 /**
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.
@@ -43,7 +41,7 @@ import org.opennars.operator.Operator;
  */
 public class Abbreviation implements Plugin {
 
-    private double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
+    private final double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
     
     /**
     * Operator that give a CompoundTerm an atomic name
@@ -54,9 +52,9 @@ public class Abbreviation implements Plugin {
             super("^abbreviate");
         }
 
-        private static PortableInteger currentTermSerial = new PortableInteger(1);
+        private static final PortableInteger currentTermSerial = new PortableInteger(1);
 
-        public Term newSerialTerm(char prefix) {
+        public Term newSerialTerm(final char prefix) {
             return new Term(prefix + String.valueOf(currentTermSerial.incrementAndGet()));
         }
 
@@ -68,21 +66,21 @@ public class Abbreviation implements Plugin {
          * @return Immediate results as Tasks
          */
         @Override
-        protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+        protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
             
-            Term compound = args[0];
+            final Term compound = args[0];
             
-            Term atomic = newSerialTerm(Symbols.TERM_PREFIX);
+            final Term atomic = newSerialTerm(Symbols.TERM_PREFIX);
                         
-            Sentence sentence = new Sentence(
+            final Sentence sentence = new Sentence(
                     Similarity.make(compound, atomic), 
                     Symbols.JUDGMENT_MARK, 
                     new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                     new Stamp(memory));
             
-            float quality = BudgetFunctions.truthToQuality(sentence.truth);
+            final float quality = BudgetFunctions.truthToQuality(sentence.truth);
             
-            BudgetValue budget = new BudgetValue(
+            final BudgetValue budget = new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_PRIORITY, 
                     Parameters.DEFAULT_JUDGMENT_DURABILITY, 
                     quality);
@@ -93,14 +91,14 @@ public class Abbreviation implements Plugin {
 
     }
     
-    public PortableInteger abbreviationComplexityMin = new PortableInteger(20);
-    public PortableDouble abbreviationQualityMin = new PortableDouble(0.95f);
+    public final PortableInteger abbreviationComplexityMin = new PortableInteger(20);
+    public final PortableDouble abbreviationQualityMin = new PortableDouble(0.95f);
     public EventObserver obs;
     
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public PortableDouble priorityFactor = new PortableDouble(1.0);
     
-    public boolean canAbbreviate(Task task) {
+    public boolean canAbbreviate(final Task task) {
         return !(task.sentence.term instanceof Operation) && 
                 (task.sentence.term.getComplexity() > abbreviationComplexityMin.get()) &&
                 (task.budget.getQuality() > abbreviationQualityMin.get());
@@ -117,29 +115,27 @@ public class Abbreviation implements Plugin {
         final Operator abbreviate = _abbreviate;
         
         if(obs==null) {
-            obs=new EventObserver() {            
-                @Override public void event(Class event, Object[] a) {
-                    if (event != TaskDerive.class)
-                        return;
-                    
-                    if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() > abbreviationProbability))
-                        return;
+            obs= (event, a) -> {
+                if (event != TaskDerive.class)
+                    return;
 
-                    Task task = (Task)a[0];
+                if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() > abbreviationProbability))
+                    return;
 
-                    //is it complex and also important? then give it a name:
-                    if (canAbbreviate(task)) {
+                final Task task = (Task)a[0];
 
-                        Operation operation = Operation.make(
-                                abbreviate, termArray(task.sentence.term ), 
-                                false);
-                        
-                        operation.setTask(task);
+                //is it complex and also important? then give it a name:
+                if (canAbbreviate(task)) {
 
-                        abbreviate.call(operation, memory);
-                    }
+                    final Operation operation = Operation.make(
+                            abbreviate, termArray(task.sentence.term ),
+                            false);
 
+                    operation.setTask(task);
+
+                    abbreviate.call(operation, memory);
                 }
+
             };
         }
         
