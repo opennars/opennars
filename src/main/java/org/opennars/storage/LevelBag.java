@@ -226,7 +226,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         if (size() == 0) {
             return 0.01f;
         }
-        float f = (float) mass / (size());
+        float f = mass / (size());
         if (f > 1) {
             return 1.0f;
         }

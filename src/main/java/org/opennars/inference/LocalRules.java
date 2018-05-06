@@ -140,7 +140,7 @@ public class LocalRules {
             ArrayList<Long> ivalNew = extractIntervals(nal.memory, newBelief.getTerm());
             for(int i=0;i<ivalNew.size();i++) {
                 float Inbetween = (c.recent_intervals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
-                float speed = 1.0f / (float) (Parameters.INTERVAL_ADAPT_SPEED*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower
+                float speed = 1.0f / (Parameters.INTERVAL_ADAPT_SPEED*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower
                 c.recent_intervals.set(i,c.recent_intervals.get(i)+speed*(Inbetween - c.recent_intervals.get(i)));
             }
             long AbsDiffSumNew = 0;
@@ -168,10 +168,7 @@ public class LocalRules {
         BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
         
         if (budget.aboveThreshold()) {
-            if (nal.doublePremiseTaskRevised(useNewBeliefTerm ? newBelief.term : oldBelief.term, truth, budget)) {
-                //nal.mem().logic.BELIEF_REVISION.commit();
-                return true;
-            }
+            return nal.doublePremiseTaskRevised(useNewBeliefTerm ? newBelief.term : oldBelief.term, truth, budget);
         }
         
         return false;

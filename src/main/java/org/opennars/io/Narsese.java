@@ -642,10 +642,7 @@ public class Narsese implements Serializable {
     }
 
     public static boolean possiblyNarsese(String s) {
-        if(!s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">")) {
-            return true;
-        }
-        return false;
+        return !s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">");
     }
             
     

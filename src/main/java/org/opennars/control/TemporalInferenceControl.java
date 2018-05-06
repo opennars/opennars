@@ -218,7 +218,7 @@ public class TemporalInferenceControl {
         task.setPriority(BudgetFunctions.or(task.getPriority(), priorityGain)); //this way operations priority of previous exections
         mem.recent_operations.putIn(task);                 //contributes to the current (enhancement)
         mem.lastDecision = task;
-        Concept c = (Concept) mem.concept(task.getTerm());
+        Concept c = mem.concept(task.getTerm());
         if(c != null) {
             if(c.seq_before == null) {
                 c.seq_before = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);

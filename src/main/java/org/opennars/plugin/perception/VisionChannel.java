@@ -78,7 +78,7 @@ public class VisionChannel extends SensoryChannel  {
     int empty_cycles = 0;
     public boolean AddToMatrix(Task t) {
         Inheritance inh = (Inheritance) t.getTerm(); //channels receive inheritances
-        String cur_subj = ((SetExt)inh.getSubject()).term[0].index_variable.toString();
+        String cur_subj = ((SetExt)inh.getSubject()).term[0].index_variable;
         if(!cur_subj.equals(subj)) { //when subject changes, we start to collect from scratch,
             if(!subj.isEmpty()) { //but only if subj isn't empty
                 step_start(); //flush to upper level what we so far had
@@ -99,10 +99,7 @@ public class VisionChannel extends SensoryChannel  {
                  //revision wouldn't be proper as each sensory point can just have 1 vote
             inputs[y][x] = (inputs[y][x]+t.sentence.getTruth().getFrequency()) / 2.0f;
         }
-        if(cnt_updated == height*width) {
-            return true;
-        }
-        return false;
+        return cnt_updated == height * width;
     }
     
     boolean isEternal = false; //don't use increasing ID if eternal

@@ -243,7 +243,7 @@ public class InternalExperience implements Plugin, EventObserver {
             newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
         }
         
-        Task newTask = new Task(j, (BudgetValue) newbudget, true);
+        Task newTask = new Task(j, newbudget, true);
         memory.addNewTask(newTask, "Reflected mental operation (Internal Experience)");
         return false;
     }
@@ -263,7 +263,7 @@ public class InternalExperience implements Plugin, EventObserver {
             //also get a chance to reveal its effects to the system this way
             Operator op=memory.getOperator(nonInnateBeliefOperators[Memory.randomNumber.nextInt(nonInnateBeliefOperators.length)]);
             
-            Product prod=new Product(new Term[]{belief.term});
+            Product prod=new Product(belief.term);
             
             if(op!=null && prod!=null) {
                 
@@ -312,7 +312,7 @@ public class InternalExperience implements Plugin, EventObserver {
                     if (op == null)
                         throw new IllegalStateException(this + " requires ^anticipate operator");
                     
-                    Product args=new Product(new Term[]{imp.getPredicate()});
+                    Product args=new Product(imp.getPredicate());
                     Term new_term=Operation.make(args,op);
 
                     Sentence sentence = new Sentence(

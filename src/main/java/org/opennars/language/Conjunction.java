@@ -118,9 +118,7 @@ public class Conjunction extends CompoundTerm {
     public static boolean isConjunctionAndHasSameOrder(Term t, int order) {
         if(t instanceof Conjunction) {
             Conjunction c=(Conjunction) t;
-            if(c.getTemporalOrder()==order) {
-                return true;
-            }
+            return c.getTemporalOrder() == order;
         }
         return false;
     }
@@ -312,7 +310,7 @@ public class Conjunction extends CompoundTerm {
                 cterm1.addTermsTo(list);
                         
                 if ((term2 instanceof Conjunction) && 
-                        cterm1.getIsSpatial() == ((CompoundTerm) term2).getIsSpatial() && 
+                        cterm1.getIsSpatial() == term2.getIsSpatial() &&
                         term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD) { 
                     // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
                     ((CompoundTerm) term2).addTermsTo(list);

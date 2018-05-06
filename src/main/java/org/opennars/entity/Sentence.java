@@ -300,12 +300,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                     }
                 }
             }
-            
-            if(!stamp.equals(t.stamp, false, true, true)) {
-                return false;
-            }
-                    
-            return true;
+
+            return stamp.equals(t.stamp, false, true, true);
         }
         return false;
     }

@@ -180,9 +180,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
             final TruthValue t = ((TruthValue) that);
             if (!isEqual(getFrequency(), t.getFrequency(), TRUTH_EPSILON))
                 return false;
-            if (!isEqual(getConfidence(), t.getConfidence(), TRUTH_EPSILON))
-                return false;
-            return true;
+            return isEqual(getConfidence(), t.getConfidence(), TRUTH_EPSILON);
         }
         return false;
     }

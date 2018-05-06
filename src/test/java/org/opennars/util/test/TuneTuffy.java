@@ -77,7 +77,7 @@ public class TuneTuffy {
         
     }
     
-    public static void main(String[] args) throws FileNotFoundException, Narsese.InvalidInputException {
+    public static void main(String[] args) throws Narsese.InvalidInputException {
 
         
         NAR n = new NAR();

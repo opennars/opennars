@@ -139,7 +139,7 @@ public class BagPerf {
     }
     
     public interface BagBuilder<E extends Item<K>,K> {
-        public Bag<E,K> newBag();
+        Bag<E,K> newBag();
     }
     
     //final boolean first, final int levels, final int levelCapacity, 

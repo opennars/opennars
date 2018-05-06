@@ -313,7 +313,7 @@ public class Stamp implements Cloneable, Serializable {
             if (getOccurrenceTime()!=s.getOccurrenceTime()) return false;       
         if (evidentialBase) {
             if (evidentialHash() != s.evidentialHash()) return false;
-            if (!Arrays.equals(toSet(), s.toSet())) return false;
+            return Arrays.equals(toSet(), s.toSet());
         }
         
         return true;        

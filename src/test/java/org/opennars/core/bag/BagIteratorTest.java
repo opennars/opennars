@@ -59,9 +59,8 @@ public class BagIteratorTest {
         b.putIn(new NullItem(0.6f));
         b.putIn(new NullItem(0.7f));
         b.putIn(new NullItem(0.8f));
-                
-        if (b instanceof LevelBag)
-            assert(((LevelBag)b).numEmptyLevels() < L);
+
+        assert !(b instanceof LevelBag) || (((LevelBag) b).numEmptyLevels() < L);
         
         testIterator(b);
         

@@ -16,10 +16,10 @@ package org.opennars.entity;
 
 public interface TLink<T> {
 
-    public short getIndex(final int i);
+    short getIndex(final int i);
     
-    public T getTarget();
+    T getTarget();
     
-    public float getPriority();
+    float getPriority();
     
 }

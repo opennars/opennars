@@ -72,7 +72,7 @@ public class Term implements AbstractTerm, Serializable {
 
 
     public interface TermVisitor {
-        public void visit(Term t, Term superterm);
+        void visit(Term t, Term superterm);
     }
     
     
@@ -428,9 +428,7 @@ public class Term implements AbstractTerm, Serializable {
             }
             if(cont.getPredicate()instanceof Variable) {
                 Variable v=(Variable) cont.getPredicate();
-                if(v.hasVarIndep()) {
-                    return true;
-                }
+                return v.hasVarIndep();
             }
         }
         return false;

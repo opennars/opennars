@@ -83,7 +83,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
             " Open-NARS website:  http://code.google.com/p/open-org.opennars/ \n"
                     + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
                     "    Github website:  http://github.com/opennars/ \n" +
-                    "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";    ;
+                    "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";
 
 
     Map<Term,SensoryChannel> sensoryChannels = new HashMap<Term,SensoryChannel>();
@@ -96,14 +96,14 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         }
     }
     
-    public void SaveToFile(String name) throws FileNotFoundException, IOException {
+    public void SaveToFile(String name) throws IOException {
         FileOutputStream outStream = new FileOutputStream(name);
         ObjectOutputStream stream = new ObjectOutputStream(outStream);
         stream.writeObject(this);
         outStream.close();
     }
     
-    public static NAR LoadFromFile(String name) throws FileNotFoundException, IOException, ClassNotFoundException {
+    public static NAR LoadFromFile(String name) throws IOException, ClassNotFoundException {
         FileInputStream inStream = new FileInputStream(name);
         ObjectInputStream stream = new ObjectInputStream(inStream);
         NAR ret = (NAR) stream.readObject();
@@ -139,7 +139,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         public int get() {return this.VAL;}
         public float floatValue() {return (float)this.VAL;}
         public float doubleValue() {return (float)this.VAL;}
-        public int intValue() {return (int)this.VAL;}
+        public int intValue() {return this.VAL;}
         public int incrementAndGet(){int ret = 0; synchronized(lock){this.VAL++; ret=this.VAL;} return ret;}
     }
     public static class PortableDouble implements Serializable {
@@ -291,7 +291,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
             throw new IllegalStateException("Invalid input: " + text, e);
         }
         //check if it should go to a sensory channel instead:
-        Term t = ((Task) task).getTerm();
+        Term t = task.getTerm();
         if(t != null && t instanceof Inheritance) {
             Term predicate = ((Inheritance) t).getPredicate();
             if(this.sensoryChannels.containsKey(predicate)) {
@@ -312,7 +312,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
                     this.addInput(newInput);
                     return;
                 }
-                this.sensoryChannels.get(predicate).addInput((Task) task);
+                this.sensoryChannels.get(predicate).addInput(task);
                 return;
             }
         }

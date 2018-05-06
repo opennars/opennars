@@ -23,9 +23,9 @@ import org.opennars.main.NAR;
 public interface Plugin extends Serializable {
 
     /** called when plugin is activated (enabled = true) / deactivated (enabled=false) */
-    public boolean setEnabled(NAR n, boolean enabled);
+    boolean setEnabled(NAR n, boolean enabled);
     
-    default public CharSequence name() {
+    default CharSequence name() {
         return this.getClass().getSimpleName();
     }
 }

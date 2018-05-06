@@ -141,14 +141,13 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
             
             final Term tt = t.target;
             if (target == null) {
-                if (tt!=null) return false;
+                return tt == null;
             }
             else if (tt == null) {
-                if (target!=null) return false;
+                return target == null;
             }
-            else if (!target.equals(t.target)) return false;
-            
-            return true;
+            else return target.equals(t.target);
+
         }
         return false;
     }

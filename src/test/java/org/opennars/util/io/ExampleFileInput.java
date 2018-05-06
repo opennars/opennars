@@ -35,7 +35,7 @@ import org.opennars.util.test.OutputCondition;
  */
 public class ExampleFileInput {
 
-    public static String load(String path) throws FileNotFoundException, IOException {
+    public static String load(String path) throws IOException {
         StringBuilder  sb  = new StringBuilder();
         String line;
         File fp = new File(path);
@@ -49,7 +49,7 @@ public class ExampleFileInput {
     /** narsese source code, one instruction per line */
     private final String source;
 
-    protected ExampleFileInput(String input) throws FileNotFoundException {
+    protected ExampleFileInput(String input) {
         this.source = input;
     }
     

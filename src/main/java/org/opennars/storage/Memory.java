@@ -225,7 +225,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     boolean isjUnit=false;
     public static boolean isJUnitTest() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        List<StackTraceElement> list = Arrays.asList(stackTrace);
+        StackTraceElement[] list = stackTrace;
         for (StackTraceElement element : list) {
             if (element.getClassName().startsWith("org.junit.")) {
                 return true;
@@ -251,7 +251,7 @@ public class Memory implements Serializable, Iterable<Concept> {
             isjUnit=isJUnitTest();
         }
         if (t instanceof Task) {
-            Task task = (Task)t;
+            Task task = t;
             Stamp s = task.sentence.stamp;                        
             if (s.getCreationTime()==-1)
                 s.setCreationTime(time(), Parameters.DURATION);

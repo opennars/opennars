@@ -31,7 +31,7 @@ public class EventEmitter {
     
     /** Observes events emitted by EventEmitter */
     public interface EventObserver<C> {
-        public void event(Class<? extends C> event, Object[] args);
+        void event(Class<? extends C> event, Object[] args);
     }
 
     private final Map<Class<?>, List<EventObserver>> events;
@@ -67,8 +67,7 @@ public class EventEmitter {
     
     public final boolean isActive(final Class event) {
         if (events.get(event)!=null)
-            if (!events.get(event).isEmpty())
-                return true;
+            return !events.get(event).isEmpty();
         return false;
     }
     

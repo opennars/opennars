@@ -59,7 +59,7 @@ public class TermTest {
     }
     
     @Test
-    public void testCommutativeCompoundTerm() throws Exception {
+    public void testCommutativeCompoundTerm() {
         NAR n = new NAR();
 
         assertEquivalent("(&&,a,b)", "(&&,b,a)");
@@ -132,8 +132,8 @@ public class TermTest {
         */
 
         TreeSet<Term> set = new TreeSet<>();
-        boolean added1 = set.add((Term) term1.clone());
-        boolean added2 = set.add((Term) term2.clone());
+        boolean added1 = set.add(term1.clone());
+        boolean added2 = set.add(term2.clone());
         assertTrue("term 1 added to set", added1);
         assertTrue("term 2 added to set", added2);
 

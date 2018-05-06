@@ -197,8 +197,8 @@ public class TemporalRules {
             if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
                 if(ss2 instanceof Operation && !(ss2.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
                     Term comp=ss1.getSubject();
-                    Term ss2_term = ((Operation)ss2).getSubject();
-                    boolean applicableVariableType = !(comp instanceof Variable && ((Variable)comp).hasVarIndep());
+                    Term ss2_term = ss2.getSubject();
+                    boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
                     
                     if(ss2_term instanceof Product) {
                         Product ss2_prod=(Product) ss2_term;
@@ -217,9 +217,9 @@ public class TemporalRules {
                 }
                 if(ss1 instanceof Operation && !(ss1.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
                     Term comp=ss2.getSubject();
-                    Term ss1_term = ((Operation)ss1).getSubject();
+                    Term ss1_term = ss1.getSubject();
                     
-                    boolean applicableVariableType = !(comp instanceof Variable && ((Variable)comp).hasVarIndep());
+                    boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
                     
                     if(ss1_term instanceof Product) {
                         Product ss1_prod=(Product) ss1_term;
@@ -306,7 +306,7 @@ public class TemporalRules {
             //is discussed here: https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
             Statement st=statement2;
             if(st.getPredicate() instanceof Inheritance && (st.getSubject() instanceof Conjunction || st.getSubject() instanceof Operation)) {
-                Term precon=(Term) st.getSubject();
+                Term precon= st.getSubject();
                 Inheritance consequence=(Inheritance) st.getPredicate();
                 Term pred=consequence.getPredicate();
                 Term sub=consequence.getSubject();
@@ -321,7 +321,7 @@ public class TemporalRules {
                         app.put(sub, v1);
                     if(SubsPred)
                         app.put(pred,v2);
-                    Term res=((CompoundTerm) statement2).applySubstitute(app);
+                    Term res= statement2.applySubstitute(app);
                     if(res!=null) { //ok we applied it, all we have to do now is to use it
                         t22=((Statement)res).getSubject();
                         t11=((Statement)res).getPredicate();
@@ -396,8 +396,8 @@ public class TemporalRules {
                             t.sentence.isJudgment() &&
                             !t.sentence.isEternal() && 
                             t.sentence.term instanceof Conjunction && 
-                            ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_NONE &&
-                            ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_INVALID) {
+                            t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_NONE &&
+                            t.sentence.term.getTemporalOrder() != TemporalRules.ORDER_INVALID) {
                         TemporalInferenceControl.addToSequenceTasks(nal, t);
                     }
 

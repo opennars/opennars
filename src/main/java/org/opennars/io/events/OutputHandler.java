@@ -25,19 +25,19 @@ public abstract class OutputHandler extends EventHandler {
     
     
     /** implicitly repeated input (a repetition of all input) */
-    public static interface IN  { }
+    public interface IN  { }
     
     /** conversational (judgments, questions, etc...) output */
-    public static interface OUT  { }
+    public interface OUT  { }
     
     /** warnings, errors & exceptions */
-    public static interface ERR { }
+    public interface ERR { }
     
     /** explicitly repeated input (repetition of the content of input ECHO commands) */
-    public static interface ECHO  { }
+    public interface ECHO  { }
     
     /** operation execution */
-    public static interface EXE  { }
+    public interface EXE  { }
     
         
     public static class ANTICIPATE {}

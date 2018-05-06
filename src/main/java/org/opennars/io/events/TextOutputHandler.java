@@ -45,7 +45,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
     private float minPriority = 0;
 
     public interface LineOutput {
-        public void println(String s);
+        void println(String s);
     }
 
     /**

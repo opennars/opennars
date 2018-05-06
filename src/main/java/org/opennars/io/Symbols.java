@@ -127,15 +127,15 @@ public class Symbols {
         /** closer? */
         public final boolean closer;
 
-        private NativeOperator(String string) {
+        NativeOperator(String string) {
             this(string, false);
         }
         
-        private NativeOperator(String string, boolean relation) {
+        NativeOperator(String string, boolean relation) {
             this(string, relation, !relation);
         }
 
-        private NativeOperator(String string, boolean relation, boolean innate) {            
+        NativeOperator(String string, boolean relation, boolean innate) {
             this.symbol = string;
             this.relation = relation;
             this.isNative = innate;

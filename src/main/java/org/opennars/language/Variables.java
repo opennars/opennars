@@ -47,9 +47,7 @@ public class Variables {
             }
         }
         if(uniType == Symbols.VAR_DEPENDENT) { //the now allowed case
-            if(type == Symbols.VAR_QUERY) {
-                return true;
-            }
+            return type == Symbols.VAR_QUERY;
         }
         return false;
     }
@@ -213,16 +211,16 @@ public class Variables {
             
             //consider temporal order on term matching
             if(term1 instanceof Conjunction && term2 instanceof Conjunction) {
-                if(((Conjunction)term1).getTemporalOrder() != ((Conjunction)term2).getTemporalOrder() ||
-                   ((Conjunction)term1).getIsSpatial() != ((Conjunction)term2).getIsSpatial())
+                if(term1.getTemporalOrder() != term2.getTemporalOrder() ||
+                   term1.getIsSpatial() != term2.getIsSpatial())
                     return false;
             }
             if(term1 instanceof Implication && term2 instanceof Implication) {
-                if(((Implication)term1).getTemporalOrder() != ((Implication)term2).getTemporalOrder())
+                if(term1.getTemporalOrder() != term2.getTemporalOrder())
                     return false;
             }
             if(term1 instanceof Equivalence && term2 instanceof Equivalence) {
-                if(((Equivalence)term1).getTemporalOrder() != ((Equivalence)term2).getTemporalOrder())
+                if(term1.getTemporalOrder() != term2.getTemporalOrder())
                     return false;
             }
             
@@ -360,10 +358,10 @@ public class Variables {
             final Term b = applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map[1]);
             if (b == null) return false;
             //only set the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
-            if(compound[0] instanceof Variable && ((Variable)compound[0]).hasVarQuery() && (((Variable)a).hasVarIndep() || ((Variable)a).hasVarIndep()) ) {
+            if(compound[0] instanceof Variable && compound[0].hasVarQuery() && (a.hasVarIndep() || a.hasVarIndep()) ) {
                 return false;
             }
-            if(compound[1] instanceof Variable && ((Variable)compound[1]).hasVarQuery() && (((Variable)b).hasVarIndep() || ((Variable)b).hasVarIndep()) ) {
+            if(compound[1] instanceof Variable && compound[1].hasVarQuery() && (b.hasVarIndep() || b.hasVarIndep()) ) {
                 return false;
             }
             compound[0] = a;

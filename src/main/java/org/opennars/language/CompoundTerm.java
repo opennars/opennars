@@ -305,7 +305,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             containedTemporalRelations = 0;
             
             if ((this instanceof Equivalence) || (this instanceof Implication)) {
-                int temporalOrder = ((Statement)this).getTemporalOrder();
+                int temporalOrder = this.getTemporalOrder();
                 switch (temporalOrder) {
                     case TemporalRules.ORDER_FORWARD:
                     case TemporalRules.ORDER_CONCURRENT:

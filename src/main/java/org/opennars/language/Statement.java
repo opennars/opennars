@@ -228,9 +228,7 @@ public abstract class Statement extends CompoundTerm {
             final Term t22 = s2.getPredicate();
             final Term t12 = s1.getPredicate();
             final Term t21 = s2.getSubject();
-            if (t11.equals(t22) && t12.equals(t21)) {
-                return true;
-            }
+            return t11.equals(t22) && t12.equals(t21);
         }
         return false;
     }
@@ -264,10 +262,7 @@ public abstract class Statement extends CompoundTerm {
         boolean s2Indep = s2.hasVarIndep();
         if (s1Indep && !s2Indep) {
             return true;
-        } else if (!s1Indep && s2Indep) {
-            return true;
-        }
-        return false;
+        } else return !s1Indep && s2Indep;
     }
     
 
