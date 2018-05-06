@@ -80,7 +80,7 @@ public class IntersectionExt extends CompoundTerm {
             
             //technically this can be used directly if it can be converted to array
             //but wait until we can verify that NavigableSet.toarray does it or write a helper function like existed previously
-            return SetExt.make(set.toArray(new Term[set.size()]));
+            return SetExt.make(set.toArray(new Term[0]));
         }
         final List<Term> se = new ArrayList();
         if (term1 instanceof IntersectionExt) {
@@ -101,7 +101,7 @@ public class IntersectionExt extends CompoundTerm {
             se.add(term1);
             se.add(term2);
         }
-        return make(se.toArray(new Term[se.size()]));
+        return make(se.toArray(new Term[0]));
     }
 
 

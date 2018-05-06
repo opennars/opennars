@@ -58,7 +58,7 @@ public class SetExt extends SetTensional {
     }
 
     public static SetExt make(final Collection<Term> l) {
-        return make(l.toArray(new Term[l.size()]));
+        return make(l.toArray(new Term[0]));
     }
     
     /**

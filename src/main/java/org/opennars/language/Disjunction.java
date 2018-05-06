@@ -80,7 +80,7 @@ public class Disjunction extends CompoundTerm {
             set.add(term1);
             set.add(term2);
         }
-        return make(set.toArray(new Term[set.size()]));
+        return make(set.toArray(new Term[0]));
     }
 
 

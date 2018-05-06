@@ -80,7 +80,7 @@ public class IntersectionInt extends CompoundTerm {
             
             //technically this can be used directly if it can be converted to array
             //but wait until we can verify that NavigableSet.toarray does it or write a helper function like existed previously
-            return SetInt.make(set.toArray(new Term[set.size()]));
+            return SetInt.make(set.toArray(new Term[0]));
         }
         
         final List<Term> se = new ArrayList();
@@ -102,7 +102,7 @@ public class IntersectionInt extends CompoundTerm {
             se.add(term1);
             se.add(term2);
         }
-        return make(se.toArray(new Term[se.size()]));
+        return make(se.toArray(new Term[0]));
     }
 
     
