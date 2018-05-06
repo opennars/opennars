@@ -478,10 +478,11 @@ public final class StructuralRules {
         Term newSubj, newPred;
         if (subject instanceof Product) {
             Product product = (Product) subject;
-            short i = index; /*for (short i = 0; i < product.size(); i++)*/ {
+            short i = index;
+            if( product.term.length >= i + 1) {
                 newSubj = product.term[i];
                 newPred = ImageExt.make(product, predicate, i);
-                if(!(newSubj instanceof Interval)) { //no intervals as subjects
+                if (!(newSubj instanceof Interval)) { //no intervals as subjects
                     inheritance = Inheritance.make(newSubj, newPred);
                     if (inheritance != null) {
                         if (truth == null) {
@@ -535,7 +536,8 @@ public final class StructuralRules {
         Term newSubj, newPred;
         if (predicate instanceof Product) {
             Product product = (Product) predicate;
-            short i = index; /*for (short i = 0; i < product.size(); i++)*/ {
+            short i = index;
+            if (product.term.length >= i+1) {
                 newSubj = ImageInt.make(product, subject, i);
                 newPred = product.term[i];
                 inheritance = Inheritance.make(newSubj, newPred);

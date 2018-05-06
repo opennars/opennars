@@ -20,16 +20,12 @@ import static org.opennars.io.Symbols.VAR_DEPENDENT;
 import static org.opennars.io.Symbols.VAR_INDEPENDENT;
 import static org.opennars.io.Symbols.VAR_QUERY;
 import org.opennars.io.Texts;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * A variable term, which does not correspond to a concept
  */
 public class Variable extends Term {
-
-    
-    
-
-    
     /** caches the type character for faster lookup than charAt(0) */
     private char type = 0;
     
@@ -125,15 +121,20 @@ public class Variable extends Term {
     @Override public boolean equals(final Object that) {
         if (that == this) return true;
         if (!(that instanceof Variable)) return false;
+        Variable v = (Variable)that;
+
+        if(!super.equals(that))
+            return false;
+
                 
         if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
             return equalsTerm(that);
         }
         else {
-            Variable v = (Variable)that;
             if (!name().equals(v.name())) return false;
-            if (getScope() == this) {
-                if (v.getScope()!=v) return false;
+            if ((getScope() == this && v.getScope()!=v) ||
+                (getScope() != this && v.getScope() == v)) {
+                return false;
             }
             return (v.getScope().name().equals(getScope().name()));
         }
@@ -179,9 +180,35 @@ public class Variable extends Term {
         return hash;
     }
 
-    
-    
+    @Override
+    public int compareTo(AbstractTerm that) {
+        if(this == that)
+            return 0;
+        final int superCmp = super.compareTo(that);
+        if(superCmp != 0)
+            return superCmp;
 
+        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
+            throw new NotImplementedException();
+        }
+
+        if(!(that instanceof Variable))
+            return 0;
+
+        final Variable thatVar = (Variable) that;
+
+        final int nameCmp = String.valueOf(this.name()).compareTo(String.valueOf(thatVar.name));
+        if( nameCmp != 0 )
+            return nameCmp;
+
+        if(this.getScope() == this && thatVar.getScope() != thatVar)
+            return 1;
+
+        if(this.getScope() != this && thatVar.getScope() == thatVar)
+            return -1;
+
+        return String.valueOf(this.getScope().name).compareTo(String.valueOf(thatVar.getScope().name));
+    }
 
     /**
      * variable terms are listed first alphabetically
@@ -232,7 +259,7 @@ public class Variable extends Term {
                 return Texts.compareTo(a.getScope().name(), b.getScope().name());
                // return Texts.compare(a.getScope().name(), b.getScope().name());
            }
-        } 
+        }
         return i;
     }
 

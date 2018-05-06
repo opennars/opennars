@@ -87,7 +87,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
         try {
             outExp = new PrintWriter(new FileWriter(path));
         } catch (IOException ex) {
-            System.out.println("i/o error: " + ex.getMessage());
+            throw new IllegalStateException("Could not open save file.", ex);
         }
     }
 

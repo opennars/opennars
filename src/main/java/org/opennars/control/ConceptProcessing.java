@@ -436,111 +436,106 @@ public class ConceptProcessing {
     * This is a special case of the choice rule and allows certain behaviors to be automated.
     */
     protected static void bestReactionForGoal(Concept concept, final DerivationContext nal, Sentence projectedGoal, final Task task) {
-        try{
-            Operation bestop = null;
-            float bestop_truthexp = 0.0f;
-            TruthValue bestop_truth = null;
-            Task executable_precond = null;
-            long mintime = -1;
-            long maxtime = -1;
-            for(Task t: concept.executable_preconditions) {
-                Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
-                Term[] newprec = new Term[prec.length-3];
-                System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
+        Operation bestop = null;
+        float bestop_truthexp = 0.0f;
+        TruthValue bestop_truth = null;
+        Task executable_precond = null;
+        long mintime = -1;
+        long maxtime = -1;
+        for(Task t: concept.executable_preconditions) {
+            Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
+            Term[] newprec = new Term[prec.length-3];
+            System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
 
-                long add_tolerance = (long) (((Interval)prec[prec.length-1]).time*Parameters.ANTICIPATION_TOLERANCE);
-                mintime = nal.memory.time();
-                maxtime = nal.memory.time() + add_tolerance;
+            long add_tolerance = (long) (((Interval)prec[prec.length-1]).time*Parameters.ANTICIPATION_TOLERANCE);
+            mintime = nal.memory.time();
+            maxtime = nal.memory.time() + add_tolerance;
 
-                Operation op = (Operation) prec[prec.length-2];
-                Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
+            Operation op = (Operation) prec[prec.length-2];
+            Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
 
-                Concept preconc = nal.memory.concept(precondition);
-                long newesttime = -1;
-                Task bestsofar = null;
-                if(preconc != null) { //ok we can look now how much it is fullfilled
+            Concept preconc = nal.memory.concept(precondition);
+            long newesttime = -1;
+            Task bestsofar = null;
+            if(preconc != null) { //ok we can look now how much it is fullfilled
 
-                    //check recent events in event bag
-                    for(Task p : concept.memory.seq_current) {
-                        if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= concept.memory.time()) {
-                            newesttime = p.sentence.getOccurenceTime();
-                            bestsofar = p; //we use the newest for now
-                        }
-                    }
-                    if(bestsofar == null) {
-                        continue;
-                    }
-                    //ok now we can take the desire value:
-                    TruthValue A = projectedGoal.getTruth();
-                    //and the truth of the hypothesis:
-                    TruthValue Hyp = t.sentence.truth;
-                    //overlap will almost never happen, but to make sure
-                    if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
-                        continue; //base overlap
-                    }
-                    if(Stamp.baseOverlap(bestsofar.sentence.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
-                        continue; //base overlap
-                    }
-                    if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, bestsofar.sentence.stamp.evidentialBase)) {
-                        continue; //base overlap
-                    }
-                    //and the truth of the precondition:
-                    Sentence projectedPrecon = bestsofar.sentence.projection(concept.memory.time() /*- distance*/, concept.memory.time());
-
-                    if(projectedPrecon.isEternal()) {
-                        continue; //projection wasn't better than eternalization, too long in the past
-                    }
-                    //debug start
-                    //long timeA = memory.time();
-                    //long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
-                    //long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
-                    //debug end
-                    TruthValue precon = projectedPrecon.truth;
-                    //and derive the conjunction of the left side:
-                    TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
-                    //in order to derive the operator desire value:
-                    TruthValue opdesire = TruthFunctions.desireDed(precon, leftside);
-
-                    float expecdesire = opdesire.getExpectation();
-                    if(expecdesire > bestop_truthexp) {
-                        bestop = op;
-                        bestop_truthexp = expecdesire;
-                        bestop_truth = opdesire;
-                        executable_precond = t;
+                //check recent events in event bag
+                for(Task p : concept.memory.seq_current) {
+                    if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= concept.memory.time()) {
+                        newesttime = p.sentence.getOccurenceTime();
+                        bestsofar = p; //we use the newest for now
                     }
                 }
-            }
+                if(bestsofar == null) {
+                    continue;
+                }
+                //ok now we can take the desire value:
+                TruthValue A = projectedGoal.getTruth();
+                //and the truth of the hypothesis:
+                TruthValue Hyp = t.sentence.truth;
+                //overlap will almost never happen, but to make sure
+                if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
+                    continue; //base overlap
+                }
+                if(Stamp.baseOverlap(bestsofar.sentence.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
+                    continue; //base overlap
+                }
+                if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, bestsofar.sentence.stamp.evidentialBase)) {
+                    continue; //base overlap
+                }
+                //and the truth of the precondition:
+                Sentence projectedPrecon = bestsofar.sentence.projection(concept.memory.time() /*- distance*/, concept.memory.time());
 
-            if(bestop != null && bestop_truthexp > concept.memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
-                
-                Sentence createdSentence = new Sentence(
-                        bestop,
-                        Symbols.JUDGMENT_MARK,
-                        bestop_truth,
-                        projectedGoal.stamp);
+                if(projectedPrecon.isEternal()) {
+                    continue; //projection wasn't better than eternalization, too long in the past
+                }
+                //debug start
+                //long timeA = memory.time();
+                //long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
+                //long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
+                //debug end
+                TruthValue precon = projectedPrecon.truth;
+                //and derive the conjunction of the left side:
+                TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
+                //in order to derive the operator desire value:
+                TruthValue opdesire = TruthFunctions.desireDed(precon, leftside);
 
-                Task t = new Task(createdSentence, 
-                                  new BudgetValue(1.0f,1.0f,1.0f),
-                                  false);
-                //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
-                if(!task.sentence.stamp.evidenceIsCyclic()) {
-                    if(!executeDecision(nal, t)) { //this task is just used as dummy
-                        concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
-                    } else {
-                        concept.memory.decisionBlock = concept.memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
-                        generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
-                    }
+                float expecdesire = opdesire.getExpectation();
+                if(expecdesire > bestop_truthexp) {
+                    bestop = op;
+                    bestop_truthexp = expecdesire;
+                    bestop_truth = opdesire;
+                    executable_precond = t;
                 }
             }
-        } catch(Exception ex) {
-            System.out.println("Failure in operation choice rule, analyze!");
+        }
+
+        if(bestop != null && bestop_truthexp > concept.memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
+
+            Sentence createdSentence = new Sentence(
+                    bestop,
+                    Symbols.JUDGMENT_MARK,
+                    bestop_truth,
+                    projectedGoal.stamp);
+
+            Task t = new Task(createdSentence,
+                              new BudgetValue(1.0f,1.0f,1.0f),
+                              false);
+            //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
+            if(!task.sentence.stamp.evidenceIsCyclic()) {
+                if(!executeDecision(nal, t)) { //this task is just used as dummy
+                    concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
+                } else {
+                    concept.memory.decisionBlock = concept.memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
+                    generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
+                }
+            }
         }
     }
 
     public static void generatePotentialNegConfirmation(DerivationContext nal, Sentence mainSentence, BudgetValue budget, long mintime, long maxtime, float priority) {
         //derivation was successful and it was a judgment event
-        
-        try { //that was predicted by an eternal belief that shifted time
+
         Stamp stamp = new Stamp(nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         //long serial = stamp.evidentialBase[0];
@@ -571,9 +566,6 @@ public class ConceptProcessing {
                 nal.memory.emit(OutputHandler.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
             }
        }
-        }catch(Exception ex) {
-            System.out.println("problem in anticipation handling");
-        }
     }
 
     /**

@@ -114,13 +114,8 @@ public class GeneralInferenceControl {
 
     public static boolean fireTermlink(final TermLink termLink, DerivationContext nal) {
         nal.setCurrentBeliefLink(termLink);
-        try {
-            RuleTables.reason(nal.currentTaskLink, termLink, nal);
-        } catch(Exception ex) {
-            if(Parameters.DEBUG) {
-                System.out.println("issue in inference");
-            }
-        }
+        RuleTables.reason(nal.currentTaskLink, termLink, nal);
+
         nal.memory.emit(Events.TermLinkSelect.class, termLink, nal.currentConcept, nal);
         //memory.logic.REASON.commit(termLink.getPriority());                    
         return true;

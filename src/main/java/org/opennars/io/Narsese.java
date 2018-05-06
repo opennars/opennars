@@ -188,7 +188,7 @@ public class Narsese implements Serializable {
  parsed into a BudgetValue
      */
     private static String getBudgetString(StringBuilder s) throws InvalidInputException {
-        if (s.charAt(0) != BUDGET_VALUE_MARK) {
+        if (s.length() == 0 || s.charAt(0) != BUDGET_VALUE_MARK) {
             return null;
         }
         int i = s.indexOf(valueOf(BUDGET_VALUE_MARK), 1);    // looking for the end
@@ -213,7 +213,7 @@ public class Narsese implements Serializable {
      */
     private static String getTruthString(final StringBuilder s) throws InvalidInputException {
         final int last = s.length() - 1;
-        if (s.charAt(last) != TRUTH_VALUE_MARK) {       // use default
+        if (s.length() == 0 || s.charAt(last) != TRUTH_VALUE_MARK) {       // use default
             return null;
         }
         final int first = s.indexOf(valueOf(TRUTH_VALUE_MARK));    // looking for the beginning
@@ -444,7 +444,7 @@ public class Narsese implements Serializable {
         }
         
         if (s.contains(" ")) { // invalid characters in a name
-            throw new InvalidInputException("invalid term");
+            throw new InvalidInputException("invalid term: " + s);
         }
         
         char c = s.charAt(0);

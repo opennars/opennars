@@ -65,15 +65,14 @@ public class NALTest  {
             String existing = examples.get(path);
             if (existing!=null)
                 return existing;
-            
+
             existing = ExampleFileInput.load(path);
-            
+
             examples.put(path, existing);
             return existing;
-        } catch (Exception ex) {
-            assertTrue(path + ": " + ex.toString()  + ": ", false);
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not load path", e);
         }
-        return "";
     }
     
     public NAR newNAR() {
@@ -107,7 +106,9 @@ public class NALTest  {
             System.out.println("When ready, press enter");
             try {
                 System.in.read();
-            } catch (IOException ex) { }
+            } catch (IOException ex) {
+                throw new IllegalStateException("Could not read user input.", ex);
+            }
         }
         
         //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
@@ -127,12 +128,7 @@ public class NALTest  {
         for (Map.Entry<String, Boolean> e : tests.entrySet()) {
             String name = e.getKey();
             int level = 0;
-            try {
-                level = Integer.parseInt(name.split("\\.")[0]);
-            }
-            catch (NumberFormatException ne) {
-                
-            }
+            level = Integer.parseInt(name.split("\\.")[0]);
             levelTotals[level]++;
             if (e.getValue()) {
                 levelSuccess[level]++;
@@ -180,33 +176,23 @@ public class NALTest  {
         
         NAR n = null;
         boolean error = false;
-        try {
-            n = newNAR();
-            String example = getExample(path);
-            
-            if (showOutput) {
-                System.out.println(example);
-                System.out.println();
-            }
-            
-            List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
-            for (OutputCondition e1 : extractedExpects)
-                expects.add(e1);
+        n = newNAR();
+        String example = getExample(path);
 
-            if (showOutput)
-                new TextOutputHandler(n, System.out);
+        if (showOutput) {
+            System.out.println(example);
+            System.out.println();
+        }
 
-            n.addInputFile(path);
-            n.cycles(minCycles);
-        }
-        catch(Throwable e){     
-            System.err.println(e);
-            if (Parameters.DEBUG) {                
-                e.printStackTrace();
-            }
-            
-            error = true;
-        }
+        List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
+        for (OutputCondition e1 : extractedExpects)
+            expects.add(e1);
+
+        if (showOutput)
+            new TextOutputHandler(n, System.out);
+
+        n.addInputFile(path);
+        n.cycles(minCycles);
       
         System.err.flush();
         System.out.flush();

@@ -111,10 +111,8 @@ public class EventEmitter {
  
         if (!events.containsKey(event))
             throw new RuntimeException("Unknown event: " + event);
-        
-        try {
+
         events.get(event).remove(o);
-        } catch(Exception ex) { }
         /*if (!removed) {
             throw new RuntimeException("EventObserver " + o + " was not registered for events");
         }*/        
@@ -138,10 +136,8 @@ public class EventEmitter {
 
         int n = observers.size();
         for (int i = 0; i < n; i++) {
-            try{
             EventObserver m = observers.get(i);
             m.event(eventClass, params);
-            }catch(Exception ex){}
         }
         
     }

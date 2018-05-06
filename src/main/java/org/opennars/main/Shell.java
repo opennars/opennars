@@ -14,11 +14,7 @@
  */
 package org.opennars.main;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,16 +72,19 @@ public class Shell {
       {
         while(true)
         {
-          try
-          {
-            String line=bufIn.readLine();
-            if(line!=null)
-                nar.addInput(line);
-          }catch(Exception ex){}
-          try
-          {
-            Thread.sleep(1);
-          }catch(Exception ex){}
+            try {
+                String line=bufIn.readLine();
+                if(line!=null)
+                    nar.addInput(line);
+            } catch (IOException e) {
+                throw new IllegalStateException("Could not read line.", e);
+            }
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException("Unexpectadly interrupted while sleeping.", e);
+            }
         }
       }
     }
@@ -103,13 +102,7 @@ public class Shell {
         boolean noFile = false;
         
         if (args.length > 0) {
-            try {
-                nar.addInputFile(args[0]);
-            } catch (Exception ex) {
-                noFile = true;
-                sleep = Integer.valueOf(args[0]); //Integer.valueOf(args[0]);
-                //System.err.println("NARRun.init: " + ex);
-            }
+            nar.addInputFile(args[0]);
         }
         if(args.length == 0 || noFile) {   
             it=new InputThread(System.in,nar);

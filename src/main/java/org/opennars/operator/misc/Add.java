@@ -14,6 +14,7 @@
  */
 package org.opennars.operator.misc;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opennars.storage.Memory;
 import org.opennars.language.Term;
 import org.opennars.operator.FunctionOperator;
@@ -35,16 +36,16 @@ public class Add extends FunctionOperator {
         
         int n1, n2;
         
-        try {
+        if(StringUtils.isNumeric(x[0].name())) {
             n1 = Integer.parseInt(String.valueOf(x[0].name()));
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("1st parameter not an integer");
+        } else {
+            throw new IllegalArgumentException("1st parameter not an integer");
         }
         
-        try {
+        if( StringUtils.isNumeric((x[1].name()))) {
             n2 = Integer.parseInt(String.valueOf(x[1].name()));
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("2nd parameter not an integer");
+        } else {
+            throw new IllegalArgumentException("2nd parameter not an integer");
         }
         
         return new Term(String.valueOf(n1 + n2));            
