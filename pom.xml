@@ -60,6 +60,18 @@
             </roles>
             <timezone>-5</timezone>
         </developer>
+        <developer>
+            <id>TonyLo1</id>
+            <name>Tony Lofthouse</name>
+            <email>Tony.Lofthouse</email>
+            <organization>OpenNARS</organization>
+            <organizationUrl>http://OpenNARS.org</organizationUrl>
+            <roles>
+                <role>Project Owner</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
     </developers>
 
     <repositories>
