@@ -115,29 +115,27 @@ public class Abbreviation implements Plugin {
         final Operator abbreviate = _abbreviate;
         
         if(obs==null) {
-            obs=new EventObserver() {            
-                @Override public void event(Class event, Object[] a) {
-                    if (event != TaskDerive.class)
-                        return;
-                    
-                    if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() > abbreviationProbability))
-                        return;
+            obs= (event, a) -> {
+                if (event != TaskDerive.class)
+                    return;
 
-                    Task task = (Task)a[0];
+                if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() > abbreviationProbability))
+                    return;
 
-                    //is it complex and also important? then give it a name:
-                    if (canAbbreviate(task)) {
+                Task task = (Task)a[0];
 
-                        Operation operation = Operation.make(
-                                abbreviate, termArray(task.sentence.term ), 
-                                false);
-                        
-                        operation.setTask(task);
+                //is it complex and also important? then give it a name:
+                if (canAbbreviate(task)) {
 
-                        abbreviate.call(operation, memory);
-                    }
+                    Operation operation = Operation.make(
+                            abbreviate, termArray(task.sentence.term ),
+                            false);
 
+                    operation.setTask(task);
+
+                    abbreviate.call(operation, memory);
                 }
+
             };
         }
         

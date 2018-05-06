@@ -45,25 +45,22 @@ public class VisionChannel extends SensoryChannel  {
         this.label = label;
         inputs = new double[height][width];
         updated = new boolean[height][width];
-        obs = new EventEmitter.EventObserver() {
-            @Override
-            public void event(Class ev, Object[] a) {
-                if(HadNewInput && ev == CycleEnd.class) {
-                    empty_cycles++;
-                    if(empty_cycles > duration) { //a deadline, pixels can't appear more than duration after each other
-                        step_start(); //so we know we can input, not only when all pixels were re-set.
-                    }
+        obs = (ev, a) -> {
+            if(HadNewInput && ev == CycleEnd.class) {
+                empty_cycles++;
+                if(empty_cycles > duration) { //a deadline, pixels can't appear more than duration after each other
+                    step_start(); //so we know we can input, not only when all pixels were re-set.
                 }
-                else 
-                if(ev == ResetEnd.class) {
-                    inputs = new double[height][width];
-                    updated = new boolean[height][width];
-                    cnt_updated = 0;
-                    px = 0;
-                    py = 0;
-                    termid = 0;
-                    subj = "";
-                }
+            }
+            else
+            if(ev == ResetEnd.class) {
+                inputs = new double[height][width];
+                updated = new boolean[height][width];
+                cnt_updated = 0;
+                px = 0;
+                py = 0;
+                termid = 0;
+                subj = "";
             }
         };
         nar.memory.event.set(obs, true, Events.CycleEnd.class);

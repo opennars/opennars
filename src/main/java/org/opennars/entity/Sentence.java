@@ -197,13 +197,10 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             final CompoundTerm c = (CompoundTerm)term;
             List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
 
-            c.recurseSubtermsContainingVariables(new Term.TermVisitor() {
-                @Override
-                public void visit(final Term t, final Term parent) {
-                    if (t instanceof Variable) {
-                        Variable v = ((Variable) t);
-                        vars.add(v);
-                    }
+            c.recurseSubtermsContainingVariables((t, parent) -> {
+                if (t instanceof Variable) {
+                    Variable v = ((Variable) t);
+                    vars.add(v);
                 }
             });
 

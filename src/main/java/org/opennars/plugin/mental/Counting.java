@@ -39,57 +39,53 @@ public class Counting implements Plugin {
         Memory memory = n.memory;
         
         if(obs==null) {
-            obs=new EventObserver() {
+            obs= (event, a) -> {
 
-                @Override
-                public void event(Class event, Object[] a) {
+                if ((event!=Events.TaskDerive.class && event!=Events.TaskAdd.class))
+                    return;
 
-                    if ((event!=Events.TaskDerive.class && event!=Events.TaskAdd.class))
-                        return;
+                Task task = (Task)a[0];
+                if(task.getPriority() < InternalExperience.MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC) {
+                    return;
+                }
 
-                    Task task = (Task)a[0];
-                    if(task.getPriority() < InternalExperience.MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC) {
-                        return;
-                    }
+                if(task.sentence.punctuation==Symbols.JUDGMENT_MARK) {
+                    //lets say we have <{...} --> M>.
+                    if(task.sentence.term instanceof Inheritance) {
 
-                    if(task.sentence.punctuation==Symbols.JUDGMENT_MARK) { 
-                        //lets say we have <{...} --> M>.
-                        if(task.sentence.term instanceof Inheritance) {
+                        Inheritance inh=(Inheritance) task.sentence.term;
 
-                            Inheritance inh=(Inheritance) task.sentence.term;
+                        if(inh.getSubject() instanceof SetExt) {
 
-                            if(inh.getSubject() instanceof SetExt) {
+                            SetExt set_term=(SetExt) inh.getSubject();
 
-                                SetExt set_term=(SetExt) inh.getSubject();
+                            //this gets the cardinality of M
+                            int cardinality=set_term.size();
 
-                                //this gets the cardinality of M
-                                int cardinality=set_term.size();   
+                            //now create term <(*,M,cardinality) --> CARDINALITY>.
+                            Term[] product_args = new Term[] {
+                                inh.getPredicate(),
+                                Term.get(cardinality)
+                            };
 
-                                //now create term <(*,M,cardinality) --> CARDINALITY>.
-                                Term[] product_args = new Term[] { 
-                                    inh.getPredicate(),
-                                    Term.get(cardinality) 
-                                };
-
-                                //TODO CARDINATLITY can be a static final instance shared by all
-                                Term new_term=Inheritance.make(new Product(product_args), /* --> */ CARDINALITY);
-                                if (new_term == null) {
-                                    //this usually happens when product_args contains the term CARDINALITY in which case it is an invalid Inheritance statement
-                                    return;
-                                }
-                                
-                                TruthValue truth = task.sentence.truth.clone();
-                                Stamp stampi = task.sentence.stamp.clone();
-                                Sentence j = new Sentence(
-                                    new_term,
-                                    Symbols.JUDGMENT_MARK,
-                                    truth,
-                                    stampi);
-                                BudgetValue budg = task.budget.clone();
-                                Task newTask = new Task(j, budg, true);                               
-
-                                memory.addNewTask(newTask, "Derived (Cardinality)");
+                            //TODO CARDINATLITY can be a static final instance shared by all
+                            Term new_term=Inheritance.make(new Product(product_args), /* --> */ CARDINALITY);
+                            if (new_term == null) {
+                                //this usually happens when product_args contains the term CARDINALITY in which case it is an invalid Inheritance statement
+                                return;
                             }
+
+                            TruthValue truth = task.sentence.truth.clone();
+                            Stamp stampi = task.sentence.stamp.clone();
+                            Sentence j = new Sentence(
+                                new_term,
+                                Symbols.JUDGMENT_MARK,
+                                truth,
+                                stampi);
+                            BudgetValue budg = task.budget.clone();
+                            Task newTask = new Task(j, budg, true);
+
+                            memory.addNewTask(newTask, "Derived (Cardinality)");
                         }
                     }
                 }

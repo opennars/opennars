@@ -187,9 +187,7 @@ public class BagPerf {
         for (Bag X : B) {
             X.clear();
             
-            t.put(X, getTime(X.toString(), new BagBuilder() {
-                @Override public Bag newBag() {  return X; }
-            }, iterations, randomAccesses, insertRatio, repeats, warmups));
+            t.put(X, getTime(X.toString(), () -> X, iterations, randomAccesses, insertRatio, repeats, warmups));
             
         }
         return t;
