@@ -47,7 +47,7 @@ public class DerivationContext {
 
     public NarParameters narParameters;
     
-    public DerivationContext(final Memory mem, NarParameters narParameters) {
+    public DerivationContext(final Memory mem, final NarParameters narParameters) {
         super();
         this.memory = mem;
         this.narParameters = narParameters;

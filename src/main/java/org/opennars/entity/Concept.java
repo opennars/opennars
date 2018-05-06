@@ -543,7 +543,7 @@ public class Concept extends Item<Term> implements Serializable {
      * @param time The current time
      * @return The selected TermLink
      */
-    public TermLink selectTermLink(final TaskLink taskLink, final long time, NarParameters narParameters) {
+    public TermLink selectTermLink(final TaskLink taskLink, final long time, final NarParameters narParameters) {
         ConceptProcessing.maintainDisappointedAnticipations(this);
 
         final int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());

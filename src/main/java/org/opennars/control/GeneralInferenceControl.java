@@ -31,7 +31,7 @@ import org.opennars.storage.Memory;
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 public class GeneralInferenceControl {
     
-    public static void selectConceptForInference(final Memory mem, NarParameters narParameters) {
+    public static void selectConceptForInference(final Memory mem, final NarParameters narParameters) {
         final Concept currentConcept = mem.concepts.takeNext();
         if (currentConcept==null) {
             return;
