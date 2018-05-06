@@ -32,9 +32,9 @@ import org.opennars.language.CompoundTerm;
 import org.opennars.language.Interval;
 import org.opennars.language.Tense;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
-import org.opennars.main.NAR.PortableDouble;
-import org.opennars.main.NAR.RuntimeParameters;
+import org.opennars.main.Nar;
+import org.opennars.main.Nar.PortableDouble;
+import org.opennars.main.Nar.RuntimeParameters;
 import org.opennars.main.NarParameters;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
@@ -48,15 +48,15 @@ import static org.opennars.inference.BudgetFunctions.truthToQuality;
 
 
 /**
- * Memory consists of the run-time state of a NAR, including:
+ * Memory consists of the run-time state of a Nar, including:
  *   * term and concept memory
  *   * clock
  *   * reasoner state
  *   * etc.
  * 
- * Excluding input/output channels which are managed by a NAR.  
+ * Excluding input/output channels which are managed by a Nar.
  * 
- * A memory is controlled by zero or one NAR's at a given time.
+ * A memory is controlled by zero or one Nar's at a given time.
  * 
  * Memory is serializable so it can be persisted and transported.
  */
@@ -318,7 +318,7 @@ public class Memory implements Serializable, Iterable<Concept> {
         emit(Events.ConceptForget.class, c);
     }
     
-    public void cycle(final NAR inputs) {
+    public void cycle(final Nar inputs) {
     
         event.emit(Events.CycleStart.class);
         

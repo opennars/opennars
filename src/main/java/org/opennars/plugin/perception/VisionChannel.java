@@ -25,7 +25,7 @@ import org.opennars.language.Inheritance;
 import org.opennars.language.SetExt;
 import org.opennars.language.Tense;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 
 public class VisionChannel extends SensoryChannel  {
@@ -36,10 +36,10 @@ public class VisionChannel extends SensoryChannel  {
     int px = 0;
     int py = 0;
     final Term label;
-    final NAR nar;
-    boolean HadNewInput = false; //only generate frames if at least something was input since last "commit to NAR"
+    final Nar nar;
+    boolean HadNewInput = false; //only generate frames if at least something was input since last "commit to Nar"
     public final EventEmitter.EventObserver obs;
-    public VisionChannel(final Term label, final NAR nar, final SensoryChannel reportResultsTo, final int width, final int height, final int duration) {
+    public VisionChannel(final Term label, final Nar nar, final SensoryChannel reportResultsTo, final int width, final int height, final int duration) {
         super(nar,reportResultsTo, width, height, duration);
         this.nar = nar;
         this.label = label;
@@ -97,7 +97,7 @@ public class VisionChannel extends SensoryChannel  {
     
     boolean isEternal = false; //don't use increasing ID if eternal
     @Override
-    public NAR addInput(final Task t) {
+    public Nar addInput(final Task t) {
         isEternal = t.sentence.isEternal();
         if(AddToMatrix(t)) //new data complete
             step_start();

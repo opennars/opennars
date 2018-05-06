@@ -18,7 +18,7 @@
  */
 package org.opennars.util.io;
 
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.util.test.OutputCondition;
 
 import java.io.BufferedReader;
@@ -57,7 +57,7 @@ public class ExampleFileInput {
         return new ExampleFileInput(load("./nal/" + id +".nal"));
     }
     
-    public List<OutputCondition> enableConditions(final NAR n, final int similarResultsToSave) {
+    public List<OutputCondition> enableConditions(final Nar n, final int similarResultsToSave) {
         return OutputCondition.getConditions(n, source, similarResultsToSave);
     }
     

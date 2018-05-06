@@ -25,7 +25,7 @@ import org.opennars.io.Narsese;
 import org.opennars.io.Symbols;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 /**
  *
@@ -33,7 +33,7 @@ import org.opennars.main.NAR;
  */
 public class ConceptMonitor {
     
-    public static Term stringToTerm(final NAR nar, final String s) {
+    public static Term stringToTerm(final Nar nar, final String s) {
         final Narsese narsese = new Narsese(nar.memory);
         final Task ret;
         try {
@@ -47,7 +47,7 @@ public class ConceptMonitor {
         return ret.getTerm();
     }
     
-    public static Concept concept(final NAR nar, final String s) {
+    public static Concept concept(final Nar nar, final String s) {
         final Term ts = stringToTerm(nar, s);
         if(ts == null) {
             return null;
@@ -55,7 +55,7 @@ public class ConceptMonitor {
         return nar.memory.concept(ts);
     }
     
-    public static Sentence strongestProjectedInputEventBelief(final NAR nar, final String st) {
+    public static Sentence strongestProjectedInputEventBelief(final Nar nar, final String st) {
         final Concept c = ConceptMonitor.concept(nar, st);
         if(c != null) {
             for(final Task t : c.beliefs) {
@@ -71,7 +71,7 @@ public class ConceptMonitor {
         return null;
     }
     
-    public static Sentence strongestProjectedEternalizedBelief(final NAR nar, final String st) {
+    public static Sentence strongestProjectedEternalizedBelief(final Nar nar, final String st) {
         final Concept c = ConceptMonitor.concept(nar, st);
         if(c != null) {
             for(final Task t : c.beliefs) {
@@ -83,7 +83,7 @@ public class ConceptMonitor {
         return null;
     }
     
-    public static Sentence strongestPrecondition(final NAR nar, final String conc, final String statement) {
+    public static Sentence strongestPrecondition(final Nar nar, final String conc, final String statement) {
         final Concept c = ConceptMonitor.concept(nar, conc);
         final Term st = stringToTerm(nar, statement);
         if(c != null && st != null) {
@@ -97,7 +97,7 @@ public class ConceptMonitor {
         return null;
     }
     
-    public static Sentence strongestPrecondition2(final NAR nar, final String conc, final String statement) { //test to compare with previous
+    public static Sentence strongestPrecondition2(final Nar nar, final String conc, final String statement) { //test to compare with previous
         return strongestProjectedEternalizedBelief(nar, statement);
     }
 }

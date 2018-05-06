@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.opennars.io.Narsese;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ApplySubstituteTest {
     
-    final NAR n = new NAR();
+    final Nar n = new Nar();
     final Narsese np = new Narsese(n);
     
     @Test
@@ -57,7 +57,7 @@ public class ApplySubstituteTest {
     @Test
     public void test2() throws Narsese.InvalidInputException {
         //substituting:  <(*,$1) --> num>.  with $1 ==> 0
-        final NAR n = new NAR();
+        final Nar n = new Nar();
             
         final Map<Term,Term> h = new HashMap();
         h.put(np.parseTerm("$1"), np.parseTerm("0"));        

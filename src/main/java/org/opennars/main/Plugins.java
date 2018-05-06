@@ -22,11 +22,11 @@ import org.opennars.plugin.misc.RuntimeNARSettings;
 import org.opennars.plugin.perception.VisionChannel;
 
 /**
- * Default set of NAR parameters which have been classically used for development.
+ * Default set of Nar parameters which have been classically used for development.
  */
 public class Plugins {
 
-    public NAR init(final NAR n) {
+    public Nar init(final Nar n) {
         n.addPlugin(new RuntimeNARSettings());
         n.addPlugin(new Emotions());
         n.addPlugin(new Anticipate());      // expect an event 

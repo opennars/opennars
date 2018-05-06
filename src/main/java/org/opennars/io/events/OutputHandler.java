@@ -15,11 +15,11 @@
 package org.opennars.io.events;
 
 import org.opennars.io.events.Events.Answer;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.storage.Memory;
 
 /**
- * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels
+ * Output Channel: Implements this and Nar.addOutput(..) to receive output signals on various channels
  */
 public abstract class OutputHandler extends EventHandler {
     
@@ -56,11 +56,11 @@ public abstract class OutputHandler extends EventHandler {
         this(m.event, active);
     }
 
-    public OutputHandler(final NAR n, final boolean active) {
+    public OutputHandler(final Nar n, final boolean active) {
         this(n.memory.event, active);
     }
 
-    public OutputHandler(final NAR n) {
+    public OutputHandler(final Nar n) {
         this(n, true);
     }
 

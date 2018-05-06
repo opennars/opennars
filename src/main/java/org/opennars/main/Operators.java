@@ -31,7 +31,7 @@ public class Operators {
      * An operator name should contain at least two characters after '^'.
      *     
      */    
-    public static Operator[] get(final NAR nar) {
+    public static Operator[] get(final Nar nar) {
         
         //Javascript js=new Javascript();
         //js.setEnabled(nar, true);

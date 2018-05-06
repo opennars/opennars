@@ -21,7 +21,7 @@ import org.opennars.io.events.OutputHandler.EXE;
 import org.opennars.language.Product;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.plugin.Plugin;
 import org.opennars.storage.Memory;
@@ -47,10 +47,10 @@ public abstract class Operator extends Term implements Plugin {
             throw new IllegalStateException("Operator name needs ^ prefix");
     }
 
-    public NAR nar; 
+    public Nar nar;
     
     @Override
-    public boolean setEnabled(final NAR n, final boolean enabled) {
+    public boolean setEnabled(final Nar n, final boolean enabled) {
         this.nar = n;
         return true;
     }        
