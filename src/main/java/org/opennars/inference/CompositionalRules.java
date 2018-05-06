@@ -703,10 +703,10 @@ OUT: <lock1 --> lock>.
             if(T2==null) {
                 return;
             }
+
+            //update the variables because T1 and T2 may have changed
             S1 = T2.getSubject();
-            S2 = T1.getSubject();
-            P1 = T2.getPredicate();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+            P2 = T1.getPredicate();
 
             if (S1 instanceof Conjunction) {
                 //try to unify P2 with a component
@@ -730,10 +730,10 @@ OUT: <lock1 --> lock>.
             if(T2==null) {
                 return;
             }
-            S1 = T2.getSubject();
+
+            //update the variables because T1 and T2 may have changed
             S2 = T1.getSubject();
             P1 = T2.getPredicate();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
             if (S2 instanceof Conjunction) {
                 //try to unify P1 with a component
@@ -757,8 +757,6 @@ OUT: <lock1 --> lock>.
             if(T2==null) {
                 return;
             }
-            S1 = T2.getSubject();
-            S2 = T1.getSubject();
             P1 = T2.getPredicate();
             P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
@@ -784,10 +782,10 @@ OUT: <lock1 --> lock>.
             if(T2==null) {
                 return;
             }
+
+            //update the variables because T1 and T2 may have changed
             S1 = T2.getSubject();
             S2 = T1.getSubject();
-            P1 = T2.getPredicate();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
             if (S1 instanceof Conjunction) {
                 //try to unify S2 with a component
