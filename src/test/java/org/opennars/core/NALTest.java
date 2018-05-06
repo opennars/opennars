@@ -40,7 +40,7 @@ public class NALTest  {
 
     static {
         Memory.randomNumber.setSeed(1);
-        Parameters.DEBUG = true;
+        Parameters.DEBUG = false;
         Parameters.TEST_RUNNING = true;
     }
 
