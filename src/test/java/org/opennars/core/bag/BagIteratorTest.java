@@ -33,12 +33,10 @@ public class BagIteratorTest {
     public void testIterator(Bag<NullItem,CharSequence> b) {
         int count = 0;
         NullItem first = null, current = null;
-        Iterator<NullItem> i = b.iterator();
-        while (i.hasNext()) {
-            NullItem n = i.next();
+        for (NullItem n : b) {
             if (first == null)
                 first = n;
-            current =n;
+            current = n;
             //System.out.println(current);
             count++;
         }               

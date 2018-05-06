@@ -120,9 +120,8 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
     
     public void printAll() {
-        Iterator<E> d = iterator();
-        while (d.hasNext()) {
-            System.out.println("  " + d.next() + "\n" );
+        for (E e : this) {
+            System.out.println("  " + e + "\n");
         }
     }
     
