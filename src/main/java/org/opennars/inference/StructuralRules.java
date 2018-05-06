@@ -682,12 +682,7 @@ public final class StructuralRules {
                     for(int i=index; i<conjCompound.size(); i++) {
                         totalLeft[k++] = conjCompound.term[i];
                     }
-                    final Term cont1 = Conjunction.make(totalLeft,  conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-                    if(cont1 instanceof Conjunction && totalLeft.length != conjCompound.size()) {
-                        final TruthValue truth = nal.getCurrentTask().sentence.truth.clone();
-                        final BudgetValue budget = BudgetFunctions.forward(truth, nal);
-                        nal.singlePremiseTask(cont1, truth, budget);
-                    }
+                    groupSequenceMakeConjunctionAndCreateTask(nal, conjCompound, totalLeft);
                 }
                 if(hasRight) {
                     final int maxIndex = compound.term.length - 1 - (Memory.randomNumber.nextInt(1 + (compound.term.length - 1) - (index + 2)));
@@ -708,17 +703,21 @@ public final class StructuralRules {
                     for(int i=maxIndex+1;i<conjCompound.size();i++) {
                         totalRight[k++] = conjCompound.term[i];
                     }
-                    final Term cont2 = Conjunction.make(totalRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-                    if(cont2 instanceof Conjunction && totalRight.length != conjCompound.size()) {
-                        final TruthValue truth = nal.getCurrentTask().sentence.truth.clone();
-                        final BudgetValue budget = BudgetFunctions.forward(truth, nal);
-                        nal.singlePremiseTask(cont2, truth, budget);
-                    }
+                    groupSequenceMakeConjunctionAndCreateTask(nal, conjCompound, totalRight);
                 }
             }
         }
     }
-    
+
+    private static void groupSequenceMakeConjunctionAndCreateTask(DerivationContext nal, Conjunction conjCompound, Term[] total) {
+        final Term cont = Conjunction.make(total, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
+        if(cont instanceof Conjunction && total.length != conjCompound.size()) {
+            final TruthValue truth = nal.getCurrentTask().sentence.truth.clone();
+            final BudgetValue budget = BudgetFunctions.forward(truth, nal);
+            nal.singlePremiseTask(cont, truth, budget);
+        }
+    }
+
     public static void seqToImage(final Conjunction conj, final int index, final DerivationContext nal) {
         final int side = 0; //extensional
         final short[] indices = new short[] { (short)side, (short)index };
