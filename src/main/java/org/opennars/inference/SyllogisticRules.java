@@ -256,11 +256,7 @@ public final class SyllogisticRules {
             }
         } else {
             if (sentence.isGoal()) {
-                if (taskTerm.isCommutative()) {
-                    truth = TruthFunctions.desireWeak(asym.truth, sym.truth);
-                } else {
-                    truth = TruthFunctions.desireStrong(asym.truth, sym.truth);
-                }
+                truth = TruthFunctions.dispatchBinary2(taskTerm.isCommutative(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DESIRESTRONG, asym.truth, sym.truth);
             } else {
                 truth = TruthFunctions.analogy(asym.truth, sym.truth);
             }
@@ -720,18 +716,9 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.backwardWeak(truth2, nal);
         } else {
            if (taskSentence.isGoal()) {
-                if (conditionalTask) {
-                    truth = TruthFunctions.desireWeak(truth1, truth2);
-                } else {
-                    truth = TruthFunctions.desireDed(truth1, truth2);
-                }
- 
+               truth = TruthFunctions.dispatchBinary2(conditionalTask, TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DESIREDED, truth1, truth2);
             } else {
-                if (conditionalTask) {
-                    truth = TruthFunctions.comparison(truth1, truth2);
-                } else {
-                    truth = TruthFunctions.analogy(truth1, truth2);
-                }
+                truth = TruthFunctions.dispatchBinary2(conditionalTask, TruthFunctions.EnumType.COMPARISON, TruthFunctions.EnumType.ANALOGY, truth1, truth2);
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
@@ -796,11 +783,7 @@ public final class SyllogisticRules {
                 budget = BudgetFunctions.backwardWeak(value2, nal);
             } else {
                 if (sentence.isGoal()) {
-                    if (keepOrder) {
-                        truth = TruthFunctions.desireDed(value1, value2);
-                    } else {
-                        truth = TruthFunctions.desireInd(value1, value2);
-                    }
+                    truth = TruthFunctions.dispatchBinary2(keepOrder, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, value1, value2);
                 } else { // isJudgment
                     truth = TruthFunctions.abduction(value2, value1);
                 }
@@ -823,11 +806,7 @@ public final class SyllogisticRules {
                 budget = BudgetFunctions.backwardWeak(value2, nal);
             } else {
                 if (sentence.isGoal()) {
-                    if (keepOrder) {
-                        truth = TruthFunctions.desireDed(value1, value2);
-                    } else {
-                        truth = TruthFunctions.desireInd(value1, value2);
-                    }
+                    truth = TruthFunctions.dispatchBinary2(keepOrder, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, value1, value2);
                 } else { // isJudgment
                     truth = TruthFunctions.abduction(value1, value2);
                 }
@@ -878,7 +857,7 @@ public final class SyllogisticRules {
             budget = (compoundTask ? BudgetFunctions.backward(v2, nal) : BudgetFunctions.backwardWeak(v2, nal));
         } else {
             if (sentence.isGoal()) {
-                truth = (compoundTask ? TruthFunctions.desireDed(v1, v2) : TruthFunctions.desireInd(v1, v2));  // to check
+                truth = TruthFunctions.dispatchBinary2(compoundTask, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, v1, v2);
             } else {
                 truth = (compoundTask ? TruthFunctions.anonymousAnalogy(v1, v2) : TruthFunctions.anonymousAnalogy(v2, v1));
             }
