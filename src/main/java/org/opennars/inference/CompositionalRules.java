@@ -714,20 +714,7 @@ OUT: <lock1 --> lock>.
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) S1).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                final TruthValue truth = abduction(sentence.truth, belief.truth);
-                                final BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
+                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) S1, res3, s1);
                     }
                 }
             }
@@ -737,20 +724,7 @@ OUT: <lock1 --> lock>.
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) P2).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                final TruthValue truth = abduction(sentence.truth, belief.truth);
-                                final BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
+                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) P2, res3, s1);
                     }
                 }
             }
@@ -779,20 +753,7 @@ OUT: <lock1 --> lock>.
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) S2).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                final TruthValue truth = abduction(sentence.truth, belief.truth);
-                                final BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
+                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) S2, res3, s1);
                     }
                 }
             }
@@ -802,20 +763,7 @@ OUT: <lock1 --> lock>.
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) P1).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                final TruthValue truth = abduction(sentence.truth, belief.truth);
-                                final BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
+                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) P1, res3, s1);
                     }
                 }
             }
@@ -844,20 +792,7 @@ OUT: <lock1 --> lock>.
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) P1).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if ((!s2.equals(s1)) && (sentence.truth != null) && (belief.truth != null)) {
-                                final TruthValue truth = abduction(sentence.truth, belief.truth);
-                                final BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
+                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) P1, res3, s1);
                     }
                 }
             }
@@ -867,20 +802,7 @@ OUT: <lock1 --> lock>.
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
-                        for (Term s2 : ((CompoundTerm) P2).term) {
-                            if (!(s2 instanceof CompoundTerm)) {
-                                continue;
-                            }
-                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(s2==null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                final TruthValue truth = abduction(sentence.truth, belief.truth);
-                                final BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false, false);
-                            }
-                        }
+                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) P2, res3, s1);
                     }
                 }
             }
@@ -949,6 +871,23 @@ OUT: <lock1 --> lock>.
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private static void eliminateVariableOfConditionAbductiveInner1(Sentence sentence, Sentence belief, DerivationContext nal, CompoundTerm s1, Map<Term, Term> res3, Term s12) {
+        for (Term s2 : s1.term) {
+            if (!(s2 instanceof CompoundTerm)) {
+                continue;
+            }
+            s2 = ((CompoundTerm) s2).applySubstitute(res3);
+            if(s2==null || s2.hasVarIndep()) {
+                continue;
+            }
+            if (!s2.equals(s12) && (sentence.truth != null) && (belief.truth != null)) {
+                final TruthValue truth = abduction(sentence.truth, belief.truth);
+                final BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
+                nal.doublePremiseTask(s2, truth, budget, false, false);
             }
         }
     }
