@@ -135,7 +135,7 @@ public abstract class OutputCondition<O> extends OutputHandler {
 
     public List<O> getTrueReasons() {
         if (!isTrue()) throw new IllegalStateException(this + " is not true so has no true reasons");
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
     
     /** if false, a reported reason why this condition is false */

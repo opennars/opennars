@@ -136,14 +136,14 @@ public class TemporalRules {
         
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK
                 || s1.isEternal() || s2.isEternal())
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         
         Term t1 = s1.term;
         Term t2 = s2.term;
                
         boolean deriveSequenceOnly = (!addToMemory) || Statement.invalidStatement(t1, t2, true);
         if (Statement.invalidStatement(t1, t2, false))
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         
         Term t11=null;
         Term t22=null;

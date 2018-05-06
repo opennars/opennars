@@ -474,7 +474,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
 
     public Iterable<E> getLevel(final int i) {
         if (level[i] == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         return level[i];
     }
