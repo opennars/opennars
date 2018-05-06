@@ -601,7 +601,9 @@ public class ConceptProcessing {
                 if(!oper.call(op, nal.memory)) {
                     return false;
                 }
-                System.out.println(t.toStringLong());
+                if (Parameters.DEBUG) {
+                    System.out.println(t.toStringLong());
+                }
                 //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
                 return true;
             }
