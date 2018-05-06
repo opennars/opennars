@@ -33,6 +33,13 @@ public final class TruthFunctions extends UtilityFunctions {
         ANONYMOUSANALOGY,
     }
 
+    /**
+     * returns the truth value by the truth-function for the binary case, that is with two premises.
+     * @param type truth-function
+     * @param a truth value of the first premise
+     * @param b truth value of the second premise
+     * @return truth value as computed by the truth-function
+     */
     public static TruthValue dispatchBinary(final EnumType type, final TruthValue a, final TruthValue b) {
         switch(type) {
             case DESIREDED: return desireDed(a, b);
@@ -46,8 +53,17 @@ public final class TruthFunctions extends UtilityFunctions {
         }
     }
 
-    public static TruthValue dispatchBinaryByBool(final boolean v, final EnumType typeTrue, final EnumType typeFalse, final TruthValue a, final TruthValue b) {
-        return v ? dispatchBinary(typeTrue, a, b) : dispatchBinary(typeFalse, a, b);
+    /**
+     * returns the truth value by the truth-function for the binary case, that is with two premises,
+     * @param flag
+     * @param typeTrue truth-function for the case when the flag is true
+     * @param typeFalse truth-function for the case when the flag is false
+     * @param a truth value of the first premise
+     * @param b truth value of the second premise
+     * @return truth value as computed by the truth-function
+     */
+    public static TruthValue dispatchBinaryByBool(final boolean flag, final EnumType typeTrue, final EnumType typeFalse, final TruthValue a, final TruthValue b) {
+        return flag ? dispatchBinary(typeTrue, a, b) : dispatchBinary(typeFalse, a, b);
     }
 
 
