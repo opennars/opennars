@@ -35,6 +35,7 @@ import org.opennars.language.Term;
 import org.opennars.main.NAR;
 import org.opennars.main.NAR.PortableDouble;
 import org.opennars.main.NAR.RuntimeParameters;
+import org.opennars.main.NarParameters;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
