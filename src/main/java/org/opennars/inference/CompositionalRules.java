@@ -718,7 +718,7 @@ OUT: <lock1 --> lock>.
             }
         }
 
-        if (figure == 12) {
+        else if (figure == 12) {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
@@ -745,7 +745,7 @@ OUT: <lock1 --> lock>.
             }
         }
 
-        if (figure == 11) {
+        else if (figure == 11) {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
@@ -772,7 +772,7 @@ OUT: <lock1 --> lock>.
             }
         }
 
-        if (figure == 22) {
+        else if (figure == 22) {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
