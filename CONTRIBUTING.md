@@ -52,14 +52,15 @@ ISSUES CLOSED: #31
 
 ### Pull Request Process
 
-1. Ensure that install or build dependencies do not appear in any commits in your code branch. 
+1. Ensure that binaries such as build dependencies do not appear in any commits in your code branch. 
 2. Ensure all commit messages follow the [Conventional Changelog](https://github.com/conventional-changelog/conventional-changelog-eslint/blob/master/convention.md)
    standard explained earlier.
-3. Update the CONTRIBUTORS.md file to add your name to it if it isn't already there (one entry
+4. Update the CHANGELOG.md file to add relevant details describing any changes you've made.
+5. Update the CONTRIBUTORS.md file to add your name to it if it isn't already there (one entry
    per person).
-4. Adjust the project version to the new version that this Pull Request would represent. The
+6. If applicable adjust the project version to the new version that this Pull Request would represent. The
    versioning scheme we use is [Semantic Versioning](http://semver.org/).
-5. Your pull request will either be approved or feedback will be given on what needs to be
+7. Your pull request will either be approved or feedback will be given on what needs to be
    fixed to get approval. We usually review and comment on Pull Requests within 48 hours.
 
 ### Making a Release
