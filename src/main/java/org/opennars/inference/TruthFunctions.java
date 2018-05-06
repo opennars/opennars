@@ -46,7 +46,7 @@ public final class TruthFunctions extends UtilityFunctions {
         }
     }
 
-    public static TruthValue dispatchBinary2(final boolean v, final EnumType typeTrue, final EnumType typeFalse, final TruthValue a, final TruthValue b) {
+    public static TruthValue dispatchBinaryByBool(final boolean v, final EnumType typeTrue, final EnumType typeFalse, final TruthValue a, final TruthValue b) {
         return v ? dispatchBinary(typeTrue, a, b) : dispatchBinary(typeFalse, a, b);
     }
 
