@@ -17,8 +17,8 @@ package org.opennars.perf;
 import com.google.common.collect.Lists;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Item;
-import org.opennars.main.NAR;
-import org.opennars.main.NAR.PortableDouble;
+import org.opennars.main.Nar;
+import org.opennars.main.Nar.PortableDouble;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
@@ -35,7 +35,7 @@ public class BagPerf {
     
     final int repeats = 8;
     final int warmups = 1;
-    final static PortableDouble forgetRate = (new NAR().param).conceptForgetDurations;
+    final static PortableDouble forgetRate = (new Nar().param).conceptForgetDurations;
     int randomAccesses;
     final double insertRatio = 0.9;
     

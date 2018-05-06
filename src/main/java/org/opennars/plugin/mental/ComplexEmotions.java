@@ -21,10 +21,9 @@ package org.opennars.plugin.mental;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
 import org.opennars.io.events.EventEmitter;
-import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.Answer;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.plugin.Plugin;
 import org.opennars.storage.Memory;
 
@@ -39,7 +38,7 @@ public class ComplexEmotions implements Plugin {
     public EventEmitter.EventObserver obs;
     float fear = 0.5f;
     @Override
-    public boolean setEnabled(final NAR n, final boolean enabled) {
+    public boolean setEnabled(final Nar n, final boolean enabled) {
         if(enabled) {
             
             final Memory memory = n.memory;

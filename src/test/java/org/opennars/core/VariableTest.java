@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opennars.io.events.EventHandler;
 import org.opennars.io.events.Events.Answer;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.util.test.OutputContainsCondition;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class VariableTest {
  
-    final NAR n = new NAR();
+    final Nar n = new Nar();
     
     @Before public void init() {
         n.addInput("<a --> 3>. :|:");

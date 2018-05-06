@@ -18,7 +18,7 @@ import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
 import org.opennars.io.Narsese;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 import java.io.Serializable;
 import java.util.*;
@@ -27,20 +27,20 @@ import java.util.logging.Logger;
 
 public abstract class SensoryChannel implements Serializable {
     private Collection<SensoryChannel> reportResultsTo;
-    public NAR nar; //for top-down influence of concept budgets
+    public Nar nar; //for top-down influence of concept budgets
     public final List<Task> results = new ArrayList<>();
     public int height = 0; //1D channels have height 1
     public int width = 0;
     public int duration = -1;
     public SensoryChannel(){}
-    public SensoryChannel(final NAR nar, final Collection<SensoryChannel> reportResultsTo, final int width, final int height, final int duration) {
+    public SensoryChannel(final Nar nar, final Collection<SensoryChannel> reportResultsTo, final int width, final int height, final int duration) {
         this.reportResultsTo = reportResultsTo;
         this.nar = nar;
         this.width = width;
         this.height = height;
         this.duration = duration;
     }
-    public SensoryChannel(final NAR nar, final SensoryChannel reportResultsTo, final int width, final int height, final int duration) {
+    public SensoryChannel(final Nar nar, final SensoryChannel reportResultsTo, final int width, final int height, final int duration) {
         this(nar, Collections.singletonList(reportResultsTo), width, height, duration);
     }
     public void addInput(final String text) {
@@ -52,7 +52,7 @@ public abstract class SensoryChannel implements Serializable {
             throw new IllegalStateException("Could not parse input", ex);
         }
     }
-    public abstract NAR addInput(final Task t);
+    public abstract Nar addInput(final Task t);
     public void step_start(){} //needs to put results into results and call step_finished when ready
     public void step_finished() {
         for(final SensoryChannel ch : reportResultsTo) {
@@ -74,8 +74,8 @@ public abstract class SensoryChannel implements Serializable {
     }
     
     public double priority(final Term t) {
-        if(this instanceof NAR) { //on highest level it is simply the concept priority
-            final Concept c = ((NAR)this).memory.concept(t);
+        if(this instanceof Nar) { //on highest level it is simply the concept priority
+            final Concept c = ((Nar)this).memory.concept(t);
             if(c != null) {
                 return c.getPriority();
             }

@@ -22,7 +22,7 @@ package org.opennars.core;
 import com.google.common.collect.Iterables;
 import org.junit.Test;
 import org.opennars.entity.Concept;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -38,7 +38,7 @@ public class AttentionTest {
     @Test public void testSampleNextConcept() {
         
         final int numConcepts = 32;
-        final NAR n = new NAR();
+        final Nar n = new Nar();
         for (int i = 0; i < numConcepts; i++)
             n.addInput("<x" + i + " <-> x" + (i+1) + ">.");
         

@@ -19,7 +19,7 @@ import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.operator.ImaginationSpace;
 import org.opennars.operator.NullOperator;
@@ -48,9 +48,9 @@ public class VisualSpace implements ImaginationSpace {
     static final NullOperator up = new NullOperator("^up");
     static final NullOperator down = new NullOperator("^down");
     final Set<Operator> ops = new HashSet<>();
-    final NAR nar;
+    final Nar nar;
     
-    public VisualSpace(final NAR nar, final float[][] source, final int py, final int px, final int height, final int width) {
+    public VisualSpace(final Nar nar, final float[][] source, final int py, final int px, final int height, final int width) {
         this.nar = nar;
         this.height = height;
         this.width = width;    

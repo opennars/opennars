@@ -15,7 +15,7 @@
 package org.opennars.perf;
 
 import org.opennars.core.NALTest;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 import java.util.Collection;
 
@@ -29,7 +29,7 @@ public class NALStressMeasure  {
         //perfNAL(newNAR(), path, extraCycles, repeats, warmups, true);
     }
     
-    public static double perfNAL(final NAR n, final String path, final int extraCycles, final int repeats, final int warmups, final boolean gc) {
+    public static double perfNAL(final Nar n, final String path, final int extraCycles, final int repeats, final int warmups, final boolean gc) {
         
         final String example = NALTest.getExample(path);
         
@@ -82,7 +82,7 @@ public class NALStressMeasure  {
                    
     }
     
-    public static void test(final NAR n) {
+    public static void test(final Nar n) {
         final int repeats = 1;
         final int warmups = 0;
         final int extraCycles = 5000;
@@ -98,7 +98,7 @@ public class NALStressMeasure  {
     
     public static void main(final String[] args) {
        
-        final NAR nd = new NAR();
+        final Nar nd = new Nar();
         test(nd);
         
         
