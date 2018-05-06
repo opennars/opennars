@@ -28,7 +28,7 @@ import org.opennars.io.events.OutputHandler.DISAPPOINT;
 import org.opennars.language.Interval;
 import org.opennars.language.Product;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -55,7 +55,7 @@ public class Anticipate extends Operator implements EventObserver {
     }
 
     @Override
-    public boolean setEnabled(final NAR n, final boolean enabled) {
+    public boolean setEnabled(final Nar n, final boolean enabled) {
         n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.CycleEnd.class);
         return true;
     }

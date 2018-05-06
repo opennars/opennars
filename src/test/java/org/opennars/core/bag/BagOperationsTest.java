@@ -23,7 +23,7 @@ import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Item;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
 
@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class BagOperationsTest {
 
-    static final NAR nar = new NAR();
+    static final Nar nar = new Nar();
     static Concept makeConcept(final String name, final float priority) {
         final BudgetValue budg = new BudgetValue(priority,priority,priority);
         final Concept s = new Concept(budg,new Term(name),nar.memory);

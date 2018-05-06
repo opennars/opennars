@@ -19,7 +19,7 @@
 
 package org.opennars.plugin.misc;
 
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.plugin.Plugin;
 
@@ -29,9 +29,9 @@ import org.opennars.plugin.Plugin;
  */
 public class RuntimeNARSettings implements Plugin {
 
-    NAR n=null;
+    Nar n=null;
     @Override
-    public boolean setEnabled(final NAR n, final boolean enabled) {
+    public boolean setEnabled(final Nar n, final boolean enabled) {
         this.n=n;
         return true;
     }

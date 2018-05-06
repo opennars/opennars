@@ -25,7 +25,7 @@ import org.opennars.io.events.EventHandler;
 import org.opennars.io.events.Events.Answer;
 import org.opennars.io.events.OutputHandler.OUT;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 /**
  *
@@ -37,7 +37,7 @@ public class TuneTuffy {
         private final Term term;
         Sentence mostConfident = null;
         
-        public SolutionMonitor(final NAR n, final String term) throws Narsese.InvalidInputException {
+        public SolutionMonitor(final Nar n, final String term) throws Narsese.InvalidInputException {
             super(n, true, OUT.class, Answer.class);
             
             final Term t = new Narsese(n).parseTerm(term);
@@ -79,7 +79,7 @@ public class TuneTuffy {
     public static void main(final String[] args) throws Narsese.InvalidInputException {
 
         
-        final NAR n = new NAR();
+        final Nar n = new Nar();
         n.addInputFile("nal/use_cases/tuffy.smokes.nal");
         
         //new TextOutput(n, System.out, 0.95f);                

@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
 import org.opennars.io.events.TextOutputHandler;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 import org.opennars.util.io.ExampleFileInput;
@@ -73,9 +73,9 @@ public class NALTest  {
         }
     }
     
-    public NAR newNAR() {
-        return new NAR();
-        //return NAR.build(Default.fromJSON("nal/build/pei1.fast.nar"));        
+    public Nar newNAR() {
+        return new Nar();
+        //return Nar.build(Default.fromJSON("nal/build/pei1.fast.nar"));
         //return new ContinuousBagNARBuilder().build();
         //return new DiscretinuousBagNARBuilder().build();
     }
@@ -172,7 +172,7 @@ public class NALTest  {
         
         final List<OutputCondition> expects = new ArrayList();
         
-        NAR n = null;
+        Nar n = null;
         final boolean error = false;
         n = newNAR();
         final String example = getExample(path);

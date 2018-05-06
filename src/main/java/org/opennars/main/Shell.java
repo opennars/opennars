@@ -23,14 +23,14 @@ import java.util.logging.Logger;
 /**
  * Run Reasoner
  * <p>
- Runs a NAR with addInput. useful for command line or batch functionality; 
+ Runs a Nar with addInput. useful for command line or batch functionality;
  TODO check duplicated code with {@link org.opennars.main.NARS}
  * <p>
  * Manage the internal working thread. Communicate with Reasoner only.
  */
 public class Shell {
 
-    private final NAR nar;
+    private final Nar nar;
 
     private boolean logging;
     private PrintStream out = System.out;
@@ -44,7 +44,7 @@ public class Shell {
      */
     public static void main(final String[] args) {
                 
-        final Shell nars = new Shell(new NAR());
+        final Shell nars = new Shell(new Nar());
         nars.nar.addInput("*volume=0");
         nars.run(args);
         
@@ -55,15 +55,15 @@ public class Shell {
         }
     }
 
-    public Shell(final NAR n) {
+    public Shell(final Nar n) {
         this.nar = n;
     }
 
     private class InputThread extends Thread
     {
       private final BufferedReader bufIn;
-      final NAR nar;
-      InputThread(final InputStream in, final NAR nar)
+      final Nar nar;
+      InputThread(final InputStream in, final Nar nar)
       {
         this.bufIn = new BufferedReader(new InputStreamReader(in));
         this.nar=nar;

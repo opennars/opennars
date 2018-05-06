@@ -22,9 +22,9 @@ import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events.TaskDerive;
 import org.opennars.language.Similarity;
 import org.opennars.language.Term;
-import org.opennars.main.NAR;
-import org.opennars.main.NAR.PortableDouble;
-import org.opennars.main.NAR.PortableInteger;
+import org.opennars.main.Nar;
+import org.opennars.main.Nar.PortableDouble;
+import org.opennars.main.Nar.PortableInteger;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -105,7 +105,7 @@ public class Abbreviation implements Plugin {
     }
     
     @Override
-    public boolean setEnabled(final NAR n, final boolean enabled) {
+    public boolean setEnabled(final Nar n, final boolean enabled) {
         final Memory memory = n.memory;
         
         Operator _abbreviate = memory.getOperator("^abbreviate");
