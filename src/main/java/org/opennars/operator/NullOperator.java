@@ -31,13 +31,13 @@ public class NullOperator extends Operator {
         this("^sample");
     }
     
-    public NullOperator(String name) {
+    public NullOperator(final String name) {
         super(name);
     }
 
     /** called from Operator */
     @Override 
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
         if (Parameters.DEBUG) {
             memory.emit(getClass(), args);
         }

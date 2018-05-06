@@ -42,19 +42,19 @@ public class Name extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term compound = args[1];
-        Term atomic = args[2];
-        Similarity content = Similarity.make(compound, atomic);
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+        final Term compound = args[1];
+        final Term atomic = args[2];
+        final Similarity content = Similarity.make(compound, atomic);
         
-        TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
-        Sentence sentence = new Sentence(
+        final TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
+        final Sentence sentence = new Sentence(
             content,
             Symbols.JUDGMENT_MARK,
             truth,
             new Stamp(memory));
         
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
+        final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
         
         return Lists.newArrayList( new Task(sentence, budget, true) );        
     }

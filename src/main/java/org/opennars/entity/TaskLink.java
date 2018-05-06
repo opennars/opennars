@@ -45,7 +45,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
         public final TermLink link;
         long time;
 
-        public Recording(TermLink link, long time) {
+        public Recording(final TermLink link, final long time) {
             this.link = link;
             this.time = time;
         }
@@ -55,7 +55,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
         }
 
         
-        public void setTime(long t) {
+        public void setTime(final long t) {
             this.time = t;
         }
         
@@ -81,7 +81,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
      * @param template The TermLink template
      * @param v The budget
      */
-    public TaskLink(final Task t, final TermLink template, final BudgetValue v, int recordLength) {
+    public TaskLink(final Task t, final TermLink template, final BudgetValue v, final int recordLength) {
         super(v);
         this.type =
                 template == null ? 
@@ -114,10 +114,10 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
 
     
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this) return true;
         if (obj instanceof TaskLink) {
-            TaskLink t = (TaskLink)obj;
+            final TaskLink t = (TaskLink)obj;
             return t.targetTask.equals(targetTask);                    
         }
         return false;
@@ -150,18 +150,18 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
     public boolean novel(final TermLink termLink, final long currentTime) {
         return novel(termLink, currentTime, false);
     }
-    public boolean novel(final TermLink termLink, final long currentTime, boolean transformTask) {
+    public boolean novel(final TermLink termLink, final long currentTime, final boolean transformTask) {
         final Term bTerm = termLink.target;
         if (!transformTask && bTerm.equals(targetTask.sentence.term)) {            
             return false;
         }
-        TermLink linkKey = termLink.name();
+        final TermLink linkKey = termLink.name();
         int next, i;
                 
         //iterating the FIFO deque from oldest (first) to newest (last)
-        Iterator<Recording> ir = records.iterator();
+        final Iterator<Recording> ir = records.iterator();
         while (ir.hasNext()) {
-            Recording r = ir.next();
+            final Recording r = ir.next();
             if (linkKey.equals(r.link)) {
                 if (currentTime < r.getTime() + Parameters.NOVELTY_HORIZON) {
                     //too recent, not novel

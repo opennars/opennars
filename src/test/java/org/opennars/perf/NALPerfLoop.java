@@ -27,15 +27,15 @@ import static org.opennars.perf.NALStressMeasure.perfNAL;
  */
 public class NALPerfLoop {
     
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
        
-        int repeats = 2;
-        int warmups = 1;
-        int maxConcepts = 2000;
-        int extraCycles = 2048;
-        int randomExtraCycles = 512;
+        final int repeats = 2;
+        final int warmups = 1;
+        final int maxConcepts = 2000;
+        final int extraCycles = 2048;
+        final int randomExtraCycles = 512;
           
-        NAR n = new NAR();
+        final NAR n = new NAR();
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
         //NAR n = new NAR(new Curve());
         
@@ -43,10 +43,10 @@ public class NALPerfLoop {
 
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
         
-        Collection c = NALTest.params();
+        final Collection c = NALTest.params();
         while (true) {
-            for (Object o : c) {
-                String examplePath = (String)((Object[])o)[0];
+            for (final Object o : c) {
+                final String examplePath = (String)((Object[])o)[0];
                 Parameters.DEBUG = false;
                 
                 perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,true);

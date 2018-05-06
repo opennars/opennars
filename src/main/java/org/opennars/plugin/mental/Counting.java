@@ -35,8 +35,8 @@ public class Counting implements Plugin {
     
     final static Term CARDINALITY = Term.get("CARDINALITY");
     
-    @Override public boolean setEnabled(NAR n, boolean enabled) {
-        Memory memory = n.memory;
+    @Override public boolean setEnabled(final NAR n, final boolean enabled) {
+        final Memory memory = n.memory;
         
         if(obs==null) {
             obs= (event, a) -> {
@@ -44,7 +44,7 @@ public class Counting implements Plugin {
                 if ((event!=Events.TaskDerive.class && event!=Events.TaskAdd.class))
                     return;
 
-                Task task = (Task)a[0];
+                final Task task = (Task)a[0];
                 if(task.getPriority() < InternalExperience.MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC) {
                     return;
                 }
@@ -53,37 +53,37 @@ public class Counting implements Plugin {
                     //lets say we have <{...} --> M>.
                     if(task.sentence.term instanceof Inheritance) {
 
-                        Inheritance inh=(Inheritance) task.sentence.term;
+                        final Inheritance inh=(Inheritance) task.sentence.term;
 
                         if(inh.getSubject() instanceof SetExt) {
 
-                            SetExt set_term=(SetExt) inh.getSubject();
+                            final SetExt set_term=(SetExt) inh.getSubject();
 
                             //this gets the cardinality of M
-                            int cardinality=set_term.size();
+                            final int cardinality=set_term.size();
 
                             //now create term <(*,M,cardinality) --> CARDINALITY>.
-                            Term[] product_args = new Term[] {
+                            final Term[] product_args = new Term[] {
                                 inh.getPredicate(),
                                 Term.get(cardinality)
                             };
 
                             //TODO CARDINATLITY can be a static final instance shared by all
-                            Term new_term=Inheritance.make(new Product(product_args), /* --> */ CARDINALITY);
+                            final Term new_term=Inheritance.make(new Product(product_args), /* --> */ CARDINALITY);
                             if (new_term == null) {
                                 //this usually happens when product_args contains the term CARDINALITY in which case it is an invalid Inheritance statement
                                 return;
                             }
 
-                            TruthValue truth = task.sentence.truth.clone();
-                            Stamp stampi = task.sentence.stamp.clone();
-                            Sentence j = new Sentence(
+                            final TruthValue truth = task.sentence.truth.clone();
+                            final Stamp stampi = task.sentence.stamp.clone();
+                            final Sentence j = new Sentence(
                                 new_term,
                                 Symbols.JUDGMENT_MARK,
                                 truth,
                                 stampi);
-                            BudgetValue budg = task.budget.clone();
-                            Task newTask = new Task(j, budg, true);
+                            final BudgetValue budg = task.budget.clone();
+                            final Task newTask = new Task(j, budg, true);
 
                             memory.addNewTask(newTask, "Derived (Cardinality)");
                         }

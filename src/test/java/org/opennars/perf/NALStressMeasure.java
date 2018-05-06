@@ -25,15 +25,15 @@ import java.util.Collection;
  */
 public class NALStressMeasure  {
     
-    public static void perfNAL(final String path, final int extraCycles, int repeats, int warmups) {
+    public static void perfNAL(final String path, final int extraCycles, final int repeats, final int warmups) {
         //perfNAL(newNAR(), path, extraCycles, repeats, warmups, true);
     }
     
-    public static double perfNAL(final NAR n, final String path, final int extraCycles, int repeats, int warmups, boolean gc) {
+    public static double perfNAL(final NAR n, final String path, final int extraCycles, final int repeats, final int warmups, final boolean gc) {
         
         final String example = NALTest.getExample(path);
         
-        Performance p = new Performance(path, repeats, warmups, gc) {
+        final Performance p = new Performance(path, repeats, warmups, gc) {
             long totalCycles;
             
             @Override
@@ -43,7 +43,7 @@ public class NALStressMeasure  {
             }
 
             @Override
-            public void run(boolean warmup) {
+            public void run(final boolean warmup) {
                 n.reset();
                 n.addInput(example);
                 n.cycles(1);
@@ -62,7 +62,7 @@ public class NALStressMeasure  {
             }
             
             @Override
-            public Performance printCSV(boolean finalComma) {
+            public Performance printCSV(final boolean finalComma) {
                 super.printCSV(true);
                 System.out.print(df.format(getCycleTimeMS() / totalCycles * 1000.0) + ", " + (((float)totalCycles)/(warmups+repeats)));
                 if (finalComma)
@@ -82,23 +82,23 @@ public class NALStressMeasure  {
                    
     }
     
-    public static void test(NAR n) {
-        int repeats = 1;
-        int warmups = 0;
-        int extraCycles = 5000;
+    public static void test(final NAR n) {
+        final int repeats = 1;
+        final int warmups = 0;
+        final int extraCycles = 5000;
 
-        Collection c = NALTest.params();
+        final Collection c = NALTest.params();
         double totalTime = 0;
-        for (Object o : c) {
-            String examplePath = (String)((Object[])o)[0];
+        for (final Object o : c) {
+            final String examplePath = (String)((Object[])o)[0];
             totalTime += perfNAL(n,examplePath,extraCycles,repeats,warmups,true);
         }
         System.out.println("\n\nTotal mean runtime (ms): " + totalTime);        
     }
     
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
        
-        NAR nd = new NAR();
+        final NAR nd = new NAR();
         test(nd);
         
         

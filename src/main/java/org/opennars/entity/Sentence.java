@@ -69,7 +69,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     private final int hash;
     
     
-    public Sentence(T term, char punctuation, TruthValue newTruth, Stamp newStamp) {
+    public Sentence(final T term, final char punctuation, final TruthValue newTruth, final Stamp newStamp) {
         this(term, punctuation, newTruth, newStamp, true);
     }
     
@@ -82,12 +82,12 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    private Sentence(T _content, final char punctuation, final TruthValue truth, final Stamp stamp, boolean normalize) {
+    private Sentence(T _content, final char punctuation, final TruthValue truth, final Stamp stamp, final boolean normalize) {
         
         //cut interval at end for sentence in serial conjunction, and inbetween for parallel
         if(punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
             if(_content instanceof Conjunction) {
-                Conjunction c=(Conjunction)_content;
+                final Conjunction c=(Conjunction)_content;
                 if(c.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                     if(c.term[c.term.length-1] instanceof Interval) {
                         long time=0; 
@@ -98,7 +98,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                             u++;
                         }
                         
-                        Term[] term2=new Term[c.term.length-u];
+                        final Term[] term2=new Term[c.term.length-u];
                         System.arraycopy(c.term, 0, term2, 0, term2.length);
                         _content=(T) Conjunction.make(term2, c.getTemporalOrder(), c.isSpatial);
                         //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
@@ -116,7 +116,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                             u++;
                         }
                         
-                        Term[] term2=new Term[c.term.length-u];
+                        final Term[] term2=new Term[c.term.length-u];
                         System.arraycopy(c.term, u, term2, 0, term2.length);
                         _content=(T) Conjunction.make(term2, c.getTemporalOrder(), c.isSpatial);
                         //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
@@ -140,7 +140,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                 if (_content.getTemporalOrder() != TemporalRules.ORDER_NONE &&
                     _content.getTemporalOrder() != TemporalRules.ORDER_INVALID) { //do not allow =/> statements without conjunction on left
                     if ((((Statement) _content).getSubject() instanceof Conjunction)) {
-                        Conjunction conj = (Conjunction) ((Statement) _content).getSubject();
+                        final Conjunction conj = (Conjunction) ((Statement) _content).getSubject();
                         if (!conj.isSpatial && conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
                             //when the last two are intervals, its not valid
                             if (conj.term[conj.term.length - 1] instanceof Interval && conj.term[conj.term.length - 2] instanceof Interval) {
@@ -195,16 +195,16 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             
             this.term = (T)((CompoundTerm)_content).cloneDeepVariables();
             final CompoundTerm c = (CompoundTerm)term;
-            List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
+            final List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
 
             c.recurseSubtermsContainingVariables((t, parent) -> {
                 if (t instanceof Variable) {
-                    Variable v = ((Variable) t);
+                    final Variable v = ((Variable) t);
                     vars.add(v);
                 }
             });
 
-            Map<CharSequence, CharSequence> rename = new HashMap();
+            final Map<CharSequence, CharSequence> rename = new HashMap();
             boolean renamed = false;
 
             for (final Variable v : vars) {
@@ -227,7 +227,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
 
                 if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
                     if (!Term.valid(c)) {
-                        CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c + " ; prior to normalization: " + _content);
+                        final CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c + " ; prior to normalization: " + _content);
                         ntc.printStackTrace();
                         throw ntc;
                     }
@@ -313,8 +313,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         return clone(term);
     }
 
-    public Sentence clone(boolean makeEternal) {
-        Sentence clon = clone(term);
+    public Sentence clone(final boolean makeEternal) {
+        final Sentence clon = clone(term);
         if(clon.stamp.getOccurrenceTime()!=Stamp.ETERNAL && makeEternal) {
             //change occurence time of clone
             clon.stamp.setEternal();
@@ -340,10 +340,10 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
       */    
     public Sentence projection(final long targetTime, final long currentTime) {
             
-        TruthValue newTruth = projectionTruth(targetTime, currentTime);
-        boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
+        final TruthValue newTruth = projectionTruth(targetTime, currentTime);
+        final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
                 
-        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : 
+        final Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) :
                                         stamp.cloneWithNewOccurrenceTime(targetTime);
         
         return new Sentence(
@@ -361,9 +361,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         if (!stamp.isEternal()) {
             newTruth = TruthFunctions.eternalize(truth);
             if (targetTime != Stamp.ETERNAL) {
-                long occurrenceTime = stamp.getOccurrenceTime();
-                float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
-                float projectedConfidence = factor * truth.getConfidence();
+                final long occurrenceTime = stamp.getOccurrenceTime();
+                final float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
+                final float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
                     newTruth = new TruthValue(truth.getFrequency(), projectedConfidence);
                 }
@@ -478,21 +478,21 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
      *
      * @return The String
      */
-    public CharSequence toString(NAR nar, boolean showStamp) {
+    public CharSequence toString(final NAR nar, final boolean showStamp) {
     
-        CharSequence contentName = term.name();
+        final CharSequence contentName = term.name();
         
         final long t = nar.memory.time();
 
-        long diff=stamp.getOccurrenceTime()-nar.memory.time();
-        long diffabs = Math.abs(diff);
+        final long diff=stamp.getOccurrenceTime()-nar.memory.time();
+        final long diffabs = Math.abs(diff);
         
         String timediff = "";
         if(diffabs < Parameters.DURATION) {
             timediff = "|";
         }
         else {
-            Long Int = diffabs;
+            final Long Int = diffabs;
             timediff = diff>0 ? "+"+String.valueOf(Int) : "-"+String.valueOf(Int);
         }
         
@@ -504,7 +504,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         if(stamp.getOccurrenceTime() == Stamp.ETERNAL)
             tenseString="";
         
-        CharSequence stampString = showStamp ? stamp.name() : null;
+        final CharSequence stampString = showStamp ? stamp.name() : null;
         
         int stringLength = contentName.length() + tenseString.length() + 1 + 1;
                 

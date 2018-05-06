@@ -47,11 +47,11 @@ public class SetInt extends SetTensional {
         return new SetInt(term);
     }
 
-    @Override public SetInt clone(Term[] replaced) {
+    @Override public SetInt clone(final Term[] replaced) {
         return make(replaced);
     }
 
-    public static SetInt make(Collection<Term> l) {
+    public static SetInt make(final Collection<Term> l) {
         return make(l.toArray(new Term[l.size()]));
     }    
     

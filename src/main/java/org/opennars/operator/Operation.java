@@ -36,11 +36,11 @@ public class Operation extends Inheritance {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    protected Operation(Term argProduct, Term operator) {
+    protected Operation(final Term argProduct, final Term operator) {
         super(argProduct, operator);
     }
     
-    protected Operation(Term[] t) {
+    protected Operation(final Term[] t) {
         super(t);
     }
     
@@ -63,7 +63,7 @@ public class Operation extends Inheritance {
      * @param addSelf include SELF term at end of product terms
      * @return A compound generated or null
      */
-    public static Operation make(final Operator oper, Term[] arg, boolean addSelf) {        
+    public static Operation make(final Operator oper, final Term[] arg, final boolean addSelf) {
 
 //        if (Variables.containVar(arg)) {
 //            throw new IllegalStateException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );

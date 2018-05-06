@@ -52,7 +52,7 @@ public class Product extends CompoundTerm {
     }
 
     @Override
-    public CompoundTerm clone(Term[] replaced) {
+    public CompoundTerm clone(final Term[] replaced) {
         return new Product(replaced);
     }
 
@@ -68,7 +68,7 @@ public class Product extends CompoundTerm {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final CompoundTerm image, final Term component, final int index) {
-        Term[] argument = image.cloneTerms();
+        final Term[] argument = image.cloneTerms();
         argument[index] = component;
         return new Product(argument);
     }

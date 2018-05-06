@@ -31,7 +31,7 @@ public class RuntimeNARSettings implements Plugin {
 
     NAR n=null;
     @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
+    public boolean setEnabled(final NAR n, final boolean enabled) {
         this.n=n;
         return true;
     }
@@ -39,21 +39,21 @@ public class RuntimeNARSettings implements Plugin {
     public boolean isImmediateEternalization() {
         return Parameters.IMMEDIATE_ETERNALIZATION;
     }
-    public void setImmediateEternalization(boolean val) {
+    public void setImmediateEternalization(final boolean val) {
         Parameters.IMMEDIATE_ETERNALIZATION=val;
     }
     
     public double getDerivationPriorityLeak() {
         return Parameters.DERIVATION_PRIORITY_LEAK;
     }
-    public void setDerivationPriorityLeak(double val) {
+    public void setDerivationPriorityLeak(final double val) {
         Parameters.DERIVATION_PRIORITY_LEAK=(float) val;
     }
     
     public double getDerivationDurabilityLeak() {
         return Parameters.DERIVATION_DURABILITY_LEAK;
     }
-    public void setDerivationDurabilityLeak(double val) {
+    public void setDerivationDurabilityLeak(final double val) {
         Parameters.DERIVATION_DURABILITY_LEAK=(float) val;
     }
 
@@ -61,42 +61,42 @@ public class RuntimeNARSettings implements Plugin {
     public double getEvidentalHorizon() {
         return Parameters.HORIZON;
     }
-    public void setEvidentalHorizon(double val) {
+    public void setEvidentalHorizon(final double val) {
         Parameters.HORIZON=(float) val;
     }
     
     public double getCuriosityDesireConfidenceMul() {
         return Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL;
     }
-    public void setCuriosityDesireConfidenceMul(double val) {
+    public void setCuriosityDesireConfidenceMul(final double val) {
         Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL=(float) val;
     }
     
     public double getCuriosityDesirePriorityMul() {
         return Parameters.CURIOSITY_DESIRE_PRIORITY_MUL;
     }
-    public void setCuriosityDesirePriorityMul(double val) {
+    public void setCuriosityDesirePriorityMul(final double val) {
         Parameters.CURIOSITY_DESIRE_PRIORITY_MUL=(float)val;
     }
     
     public double getCuriosityDesireDurabilityMul() {
         return Parameters.CURIOSITY_DESIRE_DURABILITY_MUL;
     }
-    public void setCuriosityDesireDurabilityMul(double val) {
+    public void setCuriosityDesireDurabilityMul(final double val) {
         Parameters.CURIOSITY_DESIRE_DURABILITY_MUL=(float) val;
     }
     
     public double getCuriosityBusinessThreshold() {
         return Parameters.CURIOSITY_BUSINESS_THRESHOLD;
     }
-    public void setCuriosityBusinessThreshold(double val) {
+    public void setCuriosityBusinessThreshold(final double val) {
         Parameters.CURIOSITY_BUSINESS_THRESHOLD=(float) val;
     }
     
     public boolean isCuriosityForOperatorOnly() {
         return Parameters.CURIOSITY_FOR_OPERATOR_ONLY;
     }
-    public void setCuriosityForOperatorOnly(boolean val) {
+    public void setCuriosityForOperatorOnly(final boolean val) {
         Parameters.CURIOSITY_FOR_OPERATOR_ONLY=val;
     }
     
@@ -104,98 +104,98 @@ public class RuntimeNARSettings implements Plugin {
     public double getHappyEventHigherThreshold() {
         return Parameters.HAPPY_EVENT_HIGHER_THRESHOLD;
     }
-    public void setHappyEventHigherThreshold(double val) {
+    public void setHappyEventHigherThreshold(final double val) {
         Parameters.HAPPY_EVENT_HIGHER_THRESHOLD=(float) val;
     }
     
     public double getHappyEventLowerThreshold() {
         return Parameters.HAPPY_EVENT_LOWER_THRESHOLD;
     }
-    public void setHappyEventLowerThreshold(double val) {
+    public void setHappyEventLowerThreshold(final double val) {
         Parameters.HAPPY_EVENT_LOWER_THRESHOLD=(float) val;
     }
     
     public double getBusyEventHigherThreshold() {
         return Parameters.BUSY_EVENT_HIGHER_THRESHOLD;
     }
-    public void setBusyEventHigherThreshold(double val) {
+    public void setBusyEventHigherThreshold(final double val) {
         Parameters.BUSY_EVENT_HIGHER_THRESHOLD=(float) val;
     }
     
    public double getBusyEventLowerThreshold() {
         return Parameters.BUSY_EVENT_LOWER_THRESHOLD;
     }
-    public void setBusyEventLowerThreshold(double val) {
+    public void setBusyEventLowerThreshold(final double val) {
         Parameters.BUSY_EVENT_LOWER_THRESHOLD=(float) val;
     }
     
     public boolean isReflectMetaHappyGoal() {
         return Parameters.REFLECT_META_HAPPY_GOAL;
     }
-    public void setReflectMetaHappyGoal(boolean val) {
+    public void setReflectMetaHappyGoal(final boolean val) {
         Parameters.REFLECT_META_HAPPY_GOAL=val;
     }
     
     public boolean isUsingConsiderRemind() {
         return Parameters.CONSIDER_REMIND;
     }
-    public void setUsingConsiderRemind(boolean val) {
+    public void setUsingConsiderRemind(final boolean val) {
         Parameters.CONSIDER_REMIND=val;
     }
     
     public boolean isQuestionGenerationOnDecisionMaking() {
         return Parameters.QUESTION_GENERATION_ON_DECISION_MAKING;
     }
-    public void setQuestionGenerationOnDecisionMaking(boolean val) {
+    public void setQuestionGenerationOnDecisionMaking(final boolean val) {
         Parameters.QUESTION_GENERATION_ON_DECISION_MAKING=val;
     }
     
     public boolean isDecisionQuestionGen() {
         return Parameters.QUESTION_GENERATION_ON_DECISION_MAKING;
     }
-    public void setDecisionQuestionGen(boolean val) {
+    public void setDecisionQuestionGen(final boolean val) {
         Parameters.QUESTION_GENERATION_ON_DECISION_MAKING=val;
     }
     
     public boolean isHowQuestionGenerationOnDecisionMaking() {
         return Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING;
     }
-    public void setHowQuestionGenerationOnDecisionMaking(boolean val) {
+    public void setHowQuestionGenerationOnDecisionMaking(final boolean val) {
         Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING=val;
     }
     
     public boolean isCuriosityAlsoOnLowConfidentHighPriorityBelief() {
         return Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF;
     }
-    public void setCuriosityAlsoOnLowConfidentHighPriorityBelief(boolean val) {
+    public void setCuriosityAlsoOnLowConfidentHighPriorityBelief(final boolean val) {
         Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=val;
     }
     
     public double getCuriosityPriorityThreshold() {
         return Parameters.CURIOSITY_PRIORITY_THRESHOLD;
     }
-    public void setCuriosityPriorityThreshold(double val) {
+    public void setCuriosityPriorityThreshold(final double val) {
         Parameters.CURIOSITY_PRIORITY_THRESHOLD=(float) val;
     }
     
     public double getCuriosityConfidenceThreshold() {
         return Parameters.CURIOSITY_CONFIDENCE_THRESHOLD;
     }
-    public void setCuriosityConfidenceThreshold(double val) {
+    public void setCuriosityConfidenceThreshold(final double val) {
         Parameters.CURIOSITY_CONFIDENCE_THRESHOLD=(float) val;
     }
     
     public double getAnticipationConfidence() {
         return Parameters.ANTICIPATION_CONFIDENCE;
     }
-    public void setAnticipationConfidence(double val) {
+    public void setAnticipationConfidence(final double val) {
         Parameters.ANTICIPATION_CONFIDENCE=(float) val;
     }
     
     public double getSatisfactionThreshold() {
         return Parameters.SATISFACTION_TRESHOLD;
     }
-    public void setSatisfactionThreshold(double val) {
+    public void setSatisfactionThreshold(final double val) {
         Parameters.SATISFACTION_TRESHOLD=(float) val;
     }
 }

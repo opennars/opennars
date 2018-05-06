@@ -44,17 +44,17 @@ public class Wonder extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term content = args[1];
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+        final Term content = args[1];
         
         
-        Sentence sentence = new Sentence(
+        final Sentence sentence = new Sentence(
             content,
             Symbols.QUESTION_MARK,
             null,
             new Stamp(memory));
 
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
+        final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
         return Lists.newArrayList( new Task(sentence, budget, true) );
     }
         

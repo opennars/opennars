@@ -62,7 +62,7 @@ public class Concept extends Item<Term> implements Serializable {
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
      * are used to improve the efficiency of TermLink building
      */
-    public List<TermLink> termLinkTemplates;
+    public final List<TermLink> termLinkTemplates;
 
     /**
      * Pending Question directly asked about the term
@@ -99,7 +99,7 @@ public class Concept extends Item<Term> implements Serializable {
     //use to create averaging stats of occurring intervals
     //so that revision can decide whether to use the new or old term
     //based on which intervals are closer to the average
-    public List<Float> recent_intervals = new ArrayList<>();
+    public final List<Float> recent_intervals = new ArrayList<>();
 
     public boolean observable = false;
 
@@ -132,7 +132,7 @@ public class Concept extends Item<Term> implements Serializable {
 
     }
 
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Concept)) return false;
         return ((Concept)obj).name().equals(name());
@@ -150,8 +150,8 @@ public class Concept extends Item<Term> implements Serializable {
 
     public void addToTable(final Task task, final boolean rankTruthExpectation, final List<Task> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
         
-        int preSize = table.size();
-        Task removedT;
+        final int preSize = table.size();
+        final Task removedT;
         Sentence removed = null;
         removedT = addToTable(task, table, max, rankTruthExpectation);
         if(removedT != null) {
@@ -175,7 +175,7 @@ public class Concept extends Item<Term> implements Serializable {
      * @param task The task to be linked
      * @param content The content of the task
      */
-    public void linkToTask(final Task task, DerivationContext cont) {
+    public void linkToTask(final Task task, final DerivationContext cont) {
         final BudgetValue taskBudget = task.budget;
 
         insertTaskLink(new TaskLink(task, null, taskBudget,
@@ -191,12 +191,12 @@ public class Concept extends Item<Term> implements Serializable {
         final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
         if (subBudget.aboveThreshold()) {
 
-            for (TermLink termLink : termLinkTemplates) {
+            for (final TermLink termLink : termLinkTemplates) {
                 if (termLink.type == TermLink.TEMPORAL)
                     continue;
-                Term componentTerm = termLink.target;
+                final Term componentTerm = termLink.target;
 
-                Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
+                final Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
 
                 if (componentConcept != null) {
                     componentConcept.insertTaskLink(
@@ -218,13 +218,13 @@ public class Concept extends Item<Term> implements Serializable {
      * @param capacity The capacity of the table
      * @return whether table was modified
      */
-    public static Task addToTable(final Task newTask, final List<Task> table, final int capacity, boolean rankTruthExpectation) {
-        Sentence newSentence = newTask.sentence;
+    public static Task addToTable(final Task newTask, final List<Task> table, final int capacity, final boolean rankTruthExpectation) {
+        final Sentence newSentence = newTask.sentence;
         final float rank1 = rankBelief(newSentence, rankTruthExpectation);    // for the new isBelief
         float rank2;        
         int i;
         for (i = 0; i < table.size(); i++) {
-            Sentence judgment2 = table.get(i).sentence;
+            final Sentence judgment2 = table.get(i).sentence;
             rank2 = rankBelief(judgment2, rankTruthExpectation);
             if (rank1 >= rank2) {
                 if (newSentence.truth.equals(judgment2.truth) && newSentence.stamp.equals(judgment2.stamp,false,true,true)) {
@@ -240,7 +240,7 @@ public class Concept extends Item<Term> implements Serializable {
             // nothing
         }
         else if (table.size() > capacity) {
-            Task removed = table.remove(table.size() - 1);
+            final Task removed = table.remove(table.size() - 1);
             return removed;
         }
         else if (i == table.size()) { // branch implies implicit table.size() < capacity
@@ -264,10 +264,10 @@ public class Concept extends Item<Term> implements Serializable {
         float currentBest = 0;
         float beliefQuality;
         Task candidate = null;
-        boolean rateByConfidence = true; //table vote, yes/no question / local processing
+        final boolean rateByConfidence = true; //table vote, yes/no question / local processing
         synchronized (list) {
-            for (Task judgT : list) {
-                Sentence judg = judgT.sentence;
+            for (final Task judgT : list) {
+                final Sentence judg = judgT.sentence;
                 beliefQuality = LocalRules.solutionQuality(rateByConfidence, query, judg, memory); //makes revision explicitly search for 
                 if (beliefQuality > currentBest /*&& (!forRevision || judgT.sentence.equalsContent(query)) */ /*&& (!forRevision || !Stamp.baseOverlap(query.stamp.evidentialBase, judg.stamp.evidentialBase)) */) {
                     currentBest = beliefQuality;
@@ -291,25 +291,25 @@ public class Concept extends Item<Term> implements Serializable {
      *
      * @param taskLink The termLink to be inserted
      */
-    protected boolean insertTaskLink(final TaskLink taskLink, DerivationContext nal) {        
-        Task target = taskLink.getTarget();
+    protected boolean insertTaskLink(final TaskLink taskLink, final DerivationContext nal) {
+        final Task target = taskLink.getTarget();
         
         //what question answering, question side:
-        Task ques = taskLink.getTarget();
+        final Task ques = taskLink.getTarget();
         ConceptProcessing.ProcessWhatQuestion(this, ques, nal);
         
         //what question answering, belief side:
-        Task t = taskLink.getTarget();
+        final Task t = taskLink.getTarget();
         ConceptProcessing.ProcessWhatQuestionAnswer(this, t, nal);
         
         //HANDLE MAX PER CONTENT
         //if taskLinks already contain a certain amount of tasks with same content then one has to go
-        boolean isEternal = target.sentence.isEternal();
+        final boolean isEternal = target.sentence.isEternal();
         int nSameContent = 0;
         float lowest_priority = Float.MAX_VALUE;
         TaskLink lowest = null;
-        for(TaskLink tl : taskLinks) {
-            Sentence s = tl.getTarget().sentence;
+        for(final TaskLink tl : taskLinks) {
+            final Sentence s = tl.getTarget().sentence;
             if(s.getTerm().equals(taskLink.getTerm()) && s.isEternal() == isEternal) {
                 nSameContent++; //same content and occurrence-type, so count +1
                 if(tl.getPriority() < lowest_priority) { //the current one has lower priority so save as lowest
@@ -326,7 +326,7 @@ public class Concept extends Item<Term> implements Serializable {
         //END HANDLE MAX PER CONTENT
         
         
-        TaskLink removed = taskLinks.putIn(taskLink);
+        final TaskLink removed = taskLinks.putIn(taskLink);
         
         if (removed!=null) {
             if (removed == taskLink) {
@@ -356,7 +356,7 @@ public class Concept extends Item<Term> implements Serializable {
             return;
         }
         
-        BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
+        final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
 
         if (!subBudget.aboveThreshold()) {
             return;
@@ -367,7 +367,7 @@ public class Concept extends Item<Term> implements Serializable {
                 continue;
             }
 
-            Term target = template.target;
+            final Term target = template.target;
 
             final Concept concept = memory.conceptualize(taskBudget, target);
             if (concept == null) {
@@ -392,7 +392,7 @@ public class Concept extends Item<Term> implements Serializable {
      * @param termLink The termLink to be inserted
      */
     public boolean insertTermLink(final TermLink termLink) {
-        TermLink removed = termLinks.putIn(termLink);
+        final TermLink removed = termLinks.putIn(termLink);
         if (removed!=null) {
             if (removed == termLink) {
                 memory.emit(TermLinkRemove.class, termLink, this);
@@ -422,7 +422,7 @@ public class Concept extends Item<Term> implements Serializable {
      */
     @Override
     public String toStringLong() {
-        String res = 
+        final String res =
                 toStringExternal() + " " + term.name()
                 + toStringIfNotNull(termLinks.size(), "termLinks")
                 + toStringIfNotNull(taskLinks.size(), "taskLinks")
@@ -458,9 +458,9 @@ public class Concept extends Item<Term> implements Serializable {
      */
     @Override
     public float getQuality() {
-        float linkPriority = termLinks.getAveragePriority();
-        float termComplexityFactor = 1.0f / term.getComplexity()*Parameters.COMPLEXITY_UNIT;
-        float result = or(linkPriority, termComplexityFactor);
+        final float linkPriority = termLinks.getAveragePriority();
+        final float termComplexityFactor = 1.0f / term.getComplexity()*Parameters.COMPLEXITY_UNIT;
+        final float result = or(linkPriority, termComplexityFactor);
         if (result < 0) {
             throw new IllegalStateException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size());
         }
@@ -493,11 +493,11 @@ public class Concept extends Item<Term> implements Serializable {
         final long currentTime = memory.time();
 
         for (final Task beliefT : beliefs) {  
-            Sentence belief = beliefT.sentence;
+            final Sentence belief = beliefT.sentence;
             nal.emit(BeliefSelect.class, belief);
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
             
-            Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
+            final Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
             /*if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
                nal.singlePremiseTask(projectedBelief, task.budget);
             }*/
@@ -514,7 +514,7 @@ public class Concept extends Item<Term> implements Serializable {
         if (desires.isEmpty()) {
             return null;
         }
-        TruthValue topValue = desires.get(0).sentence.truth;
+        final TruthValue topValue = desires.get(0).sentence.truth;
         return topValue;
     }
 
@@ -522,8 +522,8 @@ public class Concept extends Item<Term> implements Serializable {
 
     @Override
     public void end() {
-        for (Task t : questions) t.end();
-        for (Task t : quests) t.end();
+        for (final Task t : questions) t.end();
+        for (final Task t : quests) t.end();
         
         questions.clear();
         quests.clear();                
@@ -545,7 +545,7 @@ public class Concept extends Item<Term> implements Serializable {
     public TermLink selectTermLink(final TaskLink taskLink, final long time) {
         ConceptProcessing.maintainDisappointedAnticipations(this);
 
-        int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
+        final int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
             
             final TermLink termLink = termLinks.takeNext();
@@ -563,7 +563,7 @@ public class Concept extends Item<Term> implements Serializable {
 
     }
 
-    public void returnTermLink(TermLink termLink) {
+    public void returnTermLink(final TermLink termLink) {
         termLinks.putBack(termLink, memory.cycles(memory.param.termLinkForgetDurations), memory);
     }
 

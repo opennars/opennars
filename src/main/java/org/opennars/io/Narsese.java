@@ -54,16 +54,16 @@ public class Narsese implements Serializable {
          * An invalid addInput line.
          * @param s type of error
          */
-        InvalidInputException(String s) {
+        InvalidInputException(final String s) {
             super(s);
         }
     }    
     
-    public Narsese(Memory memory) {        
+    public Narsese(final Memory memory) {
         this.memory = memory;
     }
 
-    public Narsese(NAR n) {
+    public Narsese(final NAR n) {
         this(n.memory);
     }
     
@@ -78,11 +78,11 @@ public class Narsese implements Serializable {
      * @param time The current time
      * @return An experienced task
      */
-    public Task parseNarsese(StringBuilder buffer) throws InvalidInputException {
+    public Task parseNarsese(final StringBuilder buffer) throws InvalidInputException {
         
-        int i = buffer.indexOf(valueOf(PREFIX_MARK));
+        final int i = buffer.indexOf(valueOf(PREFIX_MARK));
         if (i > 0) {
-            String prefix = buffer.substring(0, i).trim();
+            final String prefix = buffer.substring(0, i).trim();
             if (prefix.equals(INPUT_LINE_PREFIX)) {
                 buffer.delete(0, i + 1);                
             }
@@ -97,12 +97,12 @@ public class Narsese implements Serializable {
         char c = buffer.charAt(buffer.length() - 1);
         if (c == STAMP_CLOSER) {
             //ignore stamp
-            int j = buffer.lastIndexOf(valueOf(STAMP_OPENER));
+            final int j = buffer.lastIndexOf(valueOf(STAMP_OPENER));
             buffer.delete(j - 1, buffer.length());
         }
         c = buffer.charAt(buffer.length() - 1);
         if (c == ']') {
-            int j = buffer.lastIndexOf(valueOf('['));
+            final int j = buffer.lastIndexOf(valueOf('['));
             buffer.delete(j-1, buffer.length());
         }
         return parseTask(buffer.toString().trim());
@@ -117,24 +117,24 @@ public class Narsese implements Serializable {
      * @param time The current time
      * @return An experienced task
      */    
-    public Task parseTask(String s) throws InvalidInputException {
-        StringBuilder buffer = new StringBuilder(Texts.escape(s));
+    public Task parseTask(final String s) throws InvalidInputException {
+        final StringBuilder buffer = new StringBuilder(Texts.escape(s));
         
-        String budgetString = getBudgetString(buffer);
-        String truthString = getTruthString(buffer);
-        Tense tense = parseTense(buffer);
-        String str = buffer.toString().trim();
-        int last = str.length() - 1;
-        char punc = str.charAt(last);
+        final String budgetString = getBudgetString(buffer);
+        final String truthString = getTruthString(buffer);
+        final Tense tense = parseTense(buffer);
+        final String str = buffer.toString().trim();
+        final int last = str.length() - 1;
+        final char punc = str.charAt(last);
         
-        Stamp stamp = new Stamp(-1 /* if -1, will be set right before the Task is input */, 
+        final Stamp stamp = new Stamp(-1 /* if -1, will be set right before the Task is input */,
                 tense, memory.newStampSerial(), Parameters.DURATION);
 
-        TruthValue truth = parseTruth(truthString, punc);
-        Term content = parseTerm(str.substring(0, last));
+        final TruthValue truth = parseTruth(truthString, punc);
+        final Term content = parseTerm(str.substring(0, last));
         if (content == null) throw new InvalidInputException("Content term missing");
             
-        Sentence sentence = new Sentence(
+        final Sentence sentence = new Sentence(
             content,
             punc,
             truth,
@@ -143,8 +143,8 @@ public class Narsese implements Serializable {
         //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
         //    sentence.setRevisible(false);
         //}
-        BudgetValue budget = parseBudget(budgetString, punc, truth);
-        Task task = new Task(sentence, budget, true);
+        final BudgetValue budget = parseBudget(budgetString, punc, truth);
+        final Task task = new Task(sentence, budget, true);
         return task;
 
     }
@@ -158,15 +158,15 @@ public class Narsese implements Serializable {
      * @throws org.opennars.io.StringParser.InvalidInputException if the addInput cannot be
  parsed into a BudgetValue
      */
-    private static String getBudgetString(StringBuilder s) throws InvalidInputException {
+    private static String getBudgetString(final StringBuilder s) throws InvalidInputException {
         if (s.length() == 0 || s.charAt(0) != BUDGET_VALUE_MARK) {
             return null;
         }
-        int i = s.indexOf(valueOf(BUDGET_VALUE_MARK), 1);    // looking for the end
+        final int i = s.indexOf(valueOf(BUDGET_VALUE_MARK), 1);    // looking for the end
         if (i < 0) {
             throw new InvalidInputException("missing budget closer");
         }
-        String budgetString = s.substring(1, i).trim();
+        final String budgetString = s.substring(1, i).trim();
         if (budgetString.length() == 0) {
             throw new InvalidInputException("empty budget");
         }
@@ -207,7 +207,7 @@ public class Narsese implements Serializable {
      * @param type Task type
      * @return the addInput TruthValue
      */
-    private static TruthValue parseTruth(String s, char type) {
+    private static TruthValue parseTruth(final String s, final char type) {
         if ((type == QUESTION_MARK) || (type == QUEST_MARK)) {
             return null;
         }
@@ -217,7 +217,7 @@ public class Narsese implements Serializable {
             confidence = Parameters.DEFAULT_GOAL_CONFIDENCE;
         }
         if (s != null) {
-            int i = s.indexOf(VALUE_SEPARATOR);
+            final int i = s.indexOf(VALUE_SEPARATOR);
             if (i < 0) {
                 frequency = parseFloat(s);
             } else {
@@ -238,7 +238,7 @@ public class Narsese implements Serializable {
      * @throws org.opennars.io.StringParser.InvalidInputException If the String cannot
      * be parsed into a BudgetValue
      */
-    private static BudgetValue parseBudget(String s, char punctuation, TruthValue truth) throws InvalidInputException {
+    private static BudgetValue parseBudget(final String s, final char punctuation, final TruthValue truth) throws InvalidInputException {
         float priority, durability;
         switch (punctuation) {
             case JUDGMENT_MARK:
@@ -261,7 +261,7 @@ public class Narsese implements Serializable {
                 throw new InvalidInputException("unknown punctuation: '" + punctuation + "'");
         }
         if (s != null) { // overrite default
-            int i = s.indexOf(VALUE_SEPARATOR);
+            final int i = s.indexOf(VALUE_SEPARATOR);
             if (i < 0) {        // default durability
                 priority = parseFloat(s);
             } else {
@@ -272,7 +272,7 @@ public class Narsese implements Serializable {
                 durability = parseFloat(s.substring(i + 1, i2));
             }
         }
-        float quality = (truth == null) ? 1 : truthToQuality(truth);
+        final float quality = (truth == null) ? 1 : truthToQuality(truth);
         return new BudgetValue(priority, durability, quality);
     }
 
@@ -281,8 +281,8 @@ public class Narsese implements Serializable {
      * @param s the addInput in a StringBuilder
      * @return a tense value
      */
-    public static Tense parseTense(StringBuilder s) {
-        int i = s.indexOf(Symbols.TENSE_MARK);
+    public static Tense parseTense(final StringBuilder s) {
+        final int i = s.indexOf(Symbols.TENSE_MARK);
         String t = "";
         if (i > 0) {
             t = s.substring(i).trim();
@@ -312,11 +312,11 @@ public class Narsese implements Serializable {
         
         if (s.length() == 0) return null;
         
-        int index = s.length() - 1;
-        char first = s.charAt(0);
-        char last = s.charAt(index);
+        final int index = s.length() - 1;
+        final char first = s.charAt(0);
+        final char last = s.charAt(index);
 
-        NativeOperator opener = getOpener(first);
+        final NativeOperator opener = getOpener(first);
         if (opener!=null) {
             switch (opener) {
                 case COMPOUND_TERM_OPENER:
@@ -353,25 +353,25 @@ public class Narsese implements Serializable {
             //  function(a,b)
             
             //test for existence of matching parentheses at beginning at index!=0
-            int pOpen = s.indexOf('(');
-            int pClose = s.lastIndexOf(')');
+            final int pOpen = s.indexOf('(');
+            final int pClose = s.lastIndexOf(')');
             if ((pOpen!=-1) && (pClose!=-1) && (pClose==s.length()-1)) {
                 
-                String operatorString = Operator.addPrefixIfMissing( s.substring(0, pOpen) );
+                final String operatorString = Operator.addPrefixIfMissing( s.substring(0, pOpen) );
                                 
-                Operator operator = memory.getOperator(operatorString);
+                final Operator operator = memory.getOperator(operatorString);
                 
                 if (operator == null) {
                     //???
                     throw new InvalidInputException("Unknown operator: " + operatorString);
                 }
                 
-                String argString = s.substring(pOpen+1, pClose+1);               
+                final String argString = s.substring(pOpen+1, pClose+1);
                 
                 
-                Term[] a;                
+                final Term[] a;
                 if (argString.length() > 1) {                
-                    List<Term> args = parseArguments(argString);
+                    final List<Term> args = parseArguments(argString);
                     a = args.toArray(new Term[args.size()]);
                 }
                 else {
@@ -379,7 +379,7 @@ public class Narsese implements Serializable {
                     a = Operation.SELF_TERM_ARRAY;
                 }                                                            
                 
-                Operation o = Operation.make(operator, a, true);
+                final Operation o = Operation.make(operator, a, true);
                 return o;                
             }
         }
@@ -403,13 +403,13 @@ public class Narsese implements Serializable {
      * parsed into a Term
      * @return the Term generated from the String
      */
-    private Term parseAtomicTerm(String s0) throws InvalidInputException {
-        String s = s0.trim();
+    private Term parseAtomicTerm(final String s0) throws InvalidInputException {
+        final String s = s0.trim();
         if (s.length() == 0) {
             throw new InvalidInputException("missing term");
         }
         
-        Operator op = memory.getOperator(s0);
+        final Operator op = memory.getOperator(s0);
         if(op != null) {
             return op;
         }
@@ -418,7 +418,7 @@ public class Narsese implements Serializable {
             throw new InvalidInputException("invalid term: " + s);
         }
         
-        char c = s.charAt(0);
+        final char c = s.charAt(0);
         if (c == Symbols.INTERVAL_PREFIX) {
             return Interval.interval(s);
         }
@@ -438,16 +438,16 @@ public class Narsese implements Serializable {
      * @throws org.opennars.io.StringParser.InvalidInputException the String cannot be
      * parsed into a Term
      */
-    private Statement parseStatement(String s0) throws InvalidInputException {
-        String s = s0.trim();
-        int i = topRelation(s);
+    private Statement parseStatement(final String s0) throws InvalidInputException {
+        final String s = s0.trim();
+        final int i = topRelation(s);
         if (i < 0) {
             throw new InvalidInputException("invalid statement: topRelation(s) < 0");
         }
-        String relation = s.substring(i, i + 3);
-        Term subject = parseTerm(s.substring(0, i));
-        Term predicate = parseTerm(s.substring(i + 3));
-        Statement t = make(getRelation(relation), subject, predicate, false, 0);
+        final String relation = s.substring(i, i + 3);
+        final Term subject = parseTerm(s.substring(0, i));
+        final Term predicate = parseTerm(s.substring(i + 3));
+        final Statement t = make(getRelation(relation), subject, predicate, false, 0);
         if (t == null) {
             throw new InvalidInputException("invalid statement: statement unable to create: " + getOperator(relation) + " " + subject + " " + predicate);
         }
@@ -463,29 +463,29 @@ public class Narsese implements Serializable {
      * parsed into a Term
      */
     private Term parseCompoundTerm(final String s0) throws InvalidInputException {
-        String s = s0.trim();
+        final String s = s0.trim();
         if (s.isEmpty()) {
             throw new InvalidInputException("Empty compound term: " + s);
         }
-        int firstSeparator = s.indexOf(ARGUMENT_SEPARATOR);
+        final int firstSeparator = s.indexOf(ARGUMENT_SEPARATOR);
         if (firstSeparator == -1) {
             throw new InvalidInputException("Invalid compound term (missing ARGUMENT_SEPARATOR): " + s);
         }
                 
-        String op = (firstSeparator < 0) ? s : s.substring(0, firstSeparator).trim();
-        NativeOperator oNative = getOperator(op);
-        Operator oRegistered = memory.getOperator(op);
+        final String op = (firstSeparator < 0) ? s : s.substring(0, firstSeparator).trim();
+        final NativeOperator oNative = getOperator(op);
+        final Operator oRegistered = memory.getOperator(op);
         
         if ((oRegistered==null) && (oNative == null)) {
             throw new InvalidInputException("Unknown operator: " + op);
         }
 
-        List<Term> arg = (firstSeparator < 0) ? new ArrayList<>(0)
+        final List<Term> arg = (firstSeparator < 0) ? new ArrayList<>(0)
                 : parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR);
 
-        Term[] argA = arg.toArray(new Term[arg.size()]);
+        final Term[] argA = arg.toArray(new Term[arg.size()]);
         
-        Term t;
+        final Term t;
         
         if (oNative!=null) {
             t = Terms.term(oNative, argA);
@@ -508,9 +508,9 @@ public class Narsese implements Serializable {
      * @throws org.opennars.io.StringParser.InvalidInputException the String cannot be
      * parsed into an argument get
      */
-    private List<Term> parseArguments(String s0) throws InvalidInputException {
-        String s = s0.trim();
-        List<Term> list = new ArrayList<>();
+    private List<Term> parseArguments(final String s0) throws InvalidInputException {
+        final String s = s0.trim();
+        final List<Term> list = new ArrayList<>();
         int start = 0;
         int end = 0;
         Term t;
@@ -536,7 +536,7 @@ public class Narsese implements Serializable {
      * @param s The String to be parsed
      * @param first The starting index
      */
-    private static int nextSeparator(String s, int first) {
+    private static int nextSeparator(final String s, final int first) {
         int levelCounter = 0;
         int i = first;
         while (i < s.length() - 1) {
@@ -586,9 +586,9 @@ public class Narsese implements Serializable {
      * @param i The starting index
      */
     private static boolean isOpener(final String s, final int i) {
-        char c = s.charAt(i);
+        final char c = s.charAt(i);
         
-        boolean b = (getOpener(c)!=null);
+        final boolean b = (getOpener(c)!=null);
         if (!b)
             return false;
         
@@ -602,17 +602,17 @@ public class Narsese implements Serializable {
      * @param s The String to be checked
      * @param i The starting index
      */
-    private static boolean isCloser(String s, int i) {
-        char c = s.charAt(i);
+    private static boolean isCloser(final String s, final int i) {
+        final char c = s.charAt(i);
 
-        boolean b = (getCloser(c)!=null);
+        final boolean b = (getCloser(c)!=null);
         if (!b)
             return false;
         
         return i < 2 || !isRelation(s.substring(i - 2, i + 1));
     }
 
-    public static boolean possiblyNarsese(String s) {
+    public static boolean possiblyNarsese(final String s) {
         return !s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">");
     }
             

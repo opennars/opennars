@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class VariableTest {
  
-    NAR n = new NAR();
+    final NAR n = new NAR();
     
     @Before public void init() {
         n.addInput("<a --> 3>. :|:");
@@ -51,13 +51,13 @@ public class VariableTest {
             shouldn't happen because it should not unify #wat with 4 because its not a query variable      
         */        
         new EventHandler(n, true, Answer.class) {            
-            @Override public void event(Class event, Object[] args) {
+            @Override public void event(final Class event, final Object[] args) {
                 //nothing should arrive via Solved.class channel
                 assertTrue(false);
             }
         };
         
-        OutputContainsCondition e = new OutputContainsCondition(n, "=/> <a --> 4>>.", 5);
+        final OutputContainsCondition e = new OutputContainsCondition(n, "=/> <a --> 4>>.", 5);
         
         n.cycles(32);
   
@@ -77,9 +77,9 @@ public class VariableTest {
 
         n.addInput("<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
         
-        AtomicBoolean solutionFound = new AtomicBoolean(false);
+        final AtomicBoolean solutionFound = new AtomicBoolean(false);
         new EventHandler(n, true, Answer.class) {            
-            @Override public void event(Class event, Object[] args) {                
+            @Override public void event(final Class event, final Object[] args) {
                 solutionFound.set(true);
                 n.stop();
             }

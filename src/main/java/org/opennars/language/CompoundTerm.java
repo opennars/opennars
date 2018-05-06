@@ -79,7 +79,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         public int[] term_indices = null; //size X, size Y, pos X, pos Y, min size X, min size Y
         public ConvRectangle(){} //the latter two for being able to assing a relative index for size too
     }
-    public static ConvRectangle UpdateConvRectangle(Term[] term) {
+    public static ConvRectangle UpdateConvRectangle(final Term[] term) {
         String index_last_var = null;
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = 0, maxY = 0, 
                 minsX = Integer.MAX_VALUE, minsY = Integer.MAX_VALUE;
@@ -95,14 +95,14 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                     continue; //different "channels", don't calculate term indices
                 }
                 hasTermIndices = true;
-                int size_X = t.term_indices[0];
+                final int size_X = t.term_indices[0];
                 if(size_X < minsX)
                     minsX = size_X;
-                int size_Y = t.term_indices[1];
+                final int size_Y = t.term_indices[1];
                 if(size_Y < minsY)
                     minsY = size_Y;
-                int pos_X = t.term_indices[2];
-                int pos_Y = t.term_indices[3];
+                final int pos_X = t.term_indices[2];
+                final int pos_Y = t.term_indices[3];
                 if(pos_X < minX)
                     minX = pos_X;
                 if(pos_Y < minY)
@@ -115,7 +115,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                 index_last_var = t.index_variable;
             }
         }
-        ConvRectangle rect = new ConvRectangle();// = new ConvRectangle();
+        final ConvRectangle rect = new ConvRectangle();// = new ConvRectangle();
         if(hasTermIndices) {
             rect.term_indices = new int[6];
             rect.term_indices[0] = maxX-minX;
@@ -130,13 +130,13 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     }
     
     /** call this after changing Term[] contents */
-    protected void init(Term[] term) {
+    protected void init(final Term[] term) {
 
         this.complexity = 1;
         this.hasVariables = this.hasVarDeps = this.hasVarIndeps = this.hasVarQueries = false;
         
         if(this.term_indices == null) {
-            ConvRectangle rect = UpdateConvRectangle(term);
+            final ConvRectangle rect = UpdateConvRectangle(term);
             this.index_variable = rect.index_variable;
             this.term_indices = rect.term_indices;
         }
@@ -160,7 +160,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
     public void invalidateName() {        
         this.name = null; //invalidate name so it will be (re-)created lazily        
-        for (Term t : term) {
+        for (final Term t : term) {
             if (t.hasVar())
                 if (t instanceof CompoundTerm)
                     ((CompoundTerm)t).invalidateName();
@@ -173,7 +173,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
     @Override
     public CompoundTerm cloneDeep() {
-        Term c = clone(cloneTermsDeep());
+        final Term c = clone(cloneTermsDeep());
         if (c == null)
             return null;
         
@@ -185,10 +185,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         return (CompoundTerm)c;
     }
     
-    protected void transformIndependentVariableToDependent(Map<String,Variable> vars, CompoundTerm T) { //a special instance of transformVariableTermsDeep in 1.7
-        Term[] term=T.term;
+    protected void transformIndependentVariableToDependent(final Map<String,Variable> vars, final CompoundTerm T) { //a special instance of transformVariableTermsDeep in 1.7
+        final Term[] term=T.term;
         for (int i = 0; i < term.length; i++) {
-            Term t = term[i];
+            final Term t = term[i];
             if (t.hasVar()) {
                 if (t instanceof CompoundTerm) {
                     transformIndependentVariableToDependent(vars, (CompoundTerm) t);
@@ -200,10 +200,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
     }
     
-    static Interval conceptival = new Interval(1);
-    private static void ReplaceIntervals(CompoundTerm comp) {
+    static final Interval conceptival = new Interval(1);
+    private static void ReplaceIntervals(final CompoundTerm comp) {
         for(int i=0; i<comp.term.length; i++) {
-            Term t = comp.term[i];
+            final Term t = comp.term[i];
             if(t instanceof Interval) {
                 assert conceptival != null;
                 comp.term[i] = conceptival;
@@ -224,9 +224,9 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         return T;
     }
     
-    private static void ExtractIntervals(Memory mem, List<Long> ivals, CompoundTerm comp) {
+    private static void ExtractIntervals(final Memory mem, final List<Long> ivals, final CompoundTerm comp) {
         for(int i=0; i<comp.term.length; i++) {
-            Term t = comp.term[i];
+            final Term t = comp.term[i];
             if(t instanceof Interval) {
                 ivals.add(((Interval) t).time);
             }
@@ -237,8 +237,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
     }
 
-    public static List<Long> extractIntervals(Memory mem, Term T) {
-        List<Long> ret = new ArrayList<>();
+    public static List<Long> extractIntervals(final Memory mem, final Term T) {
+        final List<Long> ret = new ArrayList<>();
         if(T instanceof CompoundTerm) {
             ExtractIntervals(mem, ret, (CompoundTerm) T);
         }
@@ -249,14 +249,14 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     public CompoundTerm transformIndependentVariableToDependentVar(CompoundTerm T) {
         T=T.cloneDeep(); //we will operate on a copy
         int counter = 0;
-        for(char c : T.toString().toCharArray()) {
+        for(final char c : T.toString().toCharArray()) {
             if(c==Symbols.VAR_INDEPENDENT) {
                 counter++;
             }
         }
         if( counter == 0 )
             return T;
-        Map<String,Variable> vars = new HashMap<>();
+        final Map<String,Variable> vars = new HashMap<>();
         for(int i=1;i<=counter;i++) {
             vars.put(Symbols.VAR_INDEPENDENT+String.valueOf(i), new Variable(Symbols.VAR_DEPENDENT+String.valueOf(i)));
         }
@@ -267,7 +267,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     public static class UnableToCloneException extends RuntimeException {
 
-        public UnableToCloneException(String message) {
+        public UnableToCloneException(final String message) {
             super(message);
         }
 
@@ -286,7 +286,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     }
     
     public CompoundTerm cloneDeepVariables() {                
-        Term c = clone( cloneVariableTermsDeep() );
+        final Term c = clone( cloneVariableTermsDeep() );
         
         if (c == null)
             return null;
@@ -294,7 +294,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         if (c.getClass()!=getClass())
             throw new UnableToCloneException("cloneDeepVariables resulted in different class: " + c + " from " + this);                
         
-        CompoundTerm cc = (CompoundTerm)c;
+        final CompoundTerm cc = (CompoundTerm)c;
         cc.setNormalized(isNormalized());
         return cc;
     }
@@ -306,7 +306,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             containedTemporalRelations = 0;
             
             if ((this instanceof Equivalence) || (this instanceof Implication)) {
-                int temporalOrder = this.getTemporalOrder();
+                final int temporalOrder = this.getTemporalOrder();
                 switch (temporalOrder) {
                     case TemporalRules.ORDER_FORWARD:
                     case TemporalRules.ORDER_CONCURRENT:
@@ -368,7 +368,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     protected static CharSequence makeCompoundName(final NativeOperator op, final Term... arg) {
         int size = 1 + 1;
         
-        String opString = op.toString();
+        final String opString = op.toString();
         size += opString.length();
         for (final Term t : arg) 
             size += 1 + t.name().length();
@@ -426,8 +426,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     /** Gives a set of all contained term, recursively */
     public Set<Term> getContainedTerms() {
-        Set<Term> s = new HashSet(getComplexity());
-        for (Term t : term) {
+        final Set<Term> s = new HashSet(getComplexity());
+        for (final Term t : term) {
             s.add(t);
             if (t instanceof CompoundTerm)
                 s.addAll( ((CompoundTerm)t).getContainedTerms() );
@@ -453,7 +453,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     public Term[] cloneTermsExcept(final boolean requireModification, final Term[] toRemove) {
         //TODO if deep, this wastes created clones that are then removed.  correct this inefficiency?
         
-        List<Term> l = asTermList();
+        final List<Term> l = asTermList();
         boolean removed = false;
                 
         for (final Term t : toRemove) {
@@ -479,7 +479,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             return null;
         }        
 
-        int L = original.length + additional.length;
+        final int L = original.length + additional.length;
         if (L == 0)
             return original;
         
@@ -504,20 +504,20 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     }
 
     public List<Term> asTermList() {        
-        List l = new ArrayList(term.length);
+        final List l = new ArrayList(term.length);
         addTermsTo(l);
         return l;
     }
 
     /** forced deep clone of terms */
     public Term[] cloneTermsDeep() {
-        Term[] l = new Term[term.length];
+        final Term[] l = new Term[term.length];
         for (int i = 0; i < l.length; i++) 
             l[i] = term[i].cloneDeep();
         return l;        
     }    
     public Term[] cloneVariableTermsDeep() {
-        Term[] l = new Term[term.length];
+        final Term[] l = new Term[term.length];
         for (int i = 0; i < l.length; i++)  {     
             Term t = term[i];
             if (t.hasVar()) {
@@ -534,7 +534,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
     /** forced deep clone of terms */
     public List<Term> cloneTermsListDeep() {
-        List<Term> l = new ArrayList(term.length);
+        final List<Term> l = new ArrayList(term.length);
         for (final Term t : term)
             l.add(t.clone());
         return l;        
@@ -548,9 +548,9 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
       for (int i = ar.length - 1; i > 0; i--)
       {
-        int index = randomNumber.nextInt(i + 1);
+        final int index = randomNumber.nextInt(i + 1);
         // Simple swap
-        Term a = ar[index];
+        final Term a = ar[index];
         ar[index] = ar[i];
         ar[i] = a;
       }
@@ -615,14 +615,14 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
      * @return The new compound
      */
     public Term setComponent(final int index, final Term t, final Memory memory) {
-        List<Term> list = asTermList();//Deep();
+        final List<Term> list = asTermList();//Deep();
         list.remove(index);
         if (t != null) {
             if (getClass() != t.getClass()) {
                 list.add(index, t);
             } else {
                 //final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
-                Term[] tt = ((CompoundTerm)t).term;
+                final Term[] tt = ((CompoundTerm)t).term;
                 for (int i = 0; i < tt.length; i++) {
                     list.add(index + i, tt[i]);
                 }
@@ -672,11 +672,11 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
             return this;//.clone();
         }
                 
-        Term[] tt = new Term[term.length];
+        final Term[] tt = new Term[term.length];
         boolean modified = false;
         
         for (int i = 0; i < tt.length; i++) {
-            Term t1 = tt[i] = term[i];            
+            final Term t1 = tt[i] = term[i];
             
             if (subs.containsKey(t1)) {
                 Term t2 = subs.get(t1);                            
@@ -689,7 +689,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                     modified = true;
                 }
             } else if (t1 instanceof CompoundTerm) {
-                Term ss = ((CompoundTerm) t1).applySubstitute(subs);
+                final Term ss = ((CompoundTerm) t1).applySubstitute(subs);
                 if (ss!=null) {
                     tt[i] = ss;
                     if (!tt[i].equals(term[i]))
@@ -709,8 +709,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     /** returns result of applySubstitute, if and only if it's a CompoundTerm. 
      * otherwise it is null */
-    public CompoundTerm applySubstituteToCompound(Map<Term, Term> substitute) {
-        Term t = applySubstitute(substitute);
+    public CompoundTerm applySubstituteToCompound(final Map<Term, Term> substitute) {
+        final Term t = applySubstitute(substitute);
         if (t instanceof CompoundTerm)
             return ((CompoundTerm)t);
         return null;
@@ -755,16 +755,16 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         
         if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
             if (that instanceof CompoundTerm) {
-                CompoundTerm t = (CompoundTerm)that;
+                final CompoundTerm t = (CompoundTerm)that;
 
-                int h = Integer.compare(hashCode(), t.hashCode());
+                final int h = Integer.compare(hashCode(), t.hashCode());
                 if (h != 0) return h;
 
-                int o = operator().compareTo(t.operator());
+                final int o = operator().compareTo(t.operator());
                 if (o != 0) return o;
 
                 //same operator
-                int c = Integer.compare(getComplexity(), t.getComplexity());
+                final int c = Integer.compare(getComplexity(), t.getComplexity());
                 if (c!=0) return c;
 
                 //should almost never reach here, the hashcode above will handle > 99% of comparisons
@@ -829,7 +829,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         return true;
     }
 
-    public void setNormalized(boolean b) {        
+    public void setNormalized(final boolean b) {
         this.normalized = b;
     }
 
@@ -837,8 +837,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         return normalized;
     }
     
-    public Term[] cloneTermsReplacing(Term from, Term to) {
-        Term[] y = new Term[term.length];
+    public Term[] cloneTermsReplacing(final Term from, final Term to) {
+        final Term[] y = new Term[term.length];
         int i = 0;
         for (Term x : term) {
             if (x.equals(from))

@@ -74,12 +74,12 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
     final boolean[] levelEmpty;
     
     
-    public LevelBag(int levels, int capacity) {
+    public LevelBag(final int levels, final int capacity) {
         this(levels, capacity, (int) (Parameters.BAG_THRESHOLD * levels));
     }
 
     /** thresholdLevel = 0 disables "fire level completely" threshold effect */
-    public LevelBag(int levels, int capacity, int thresholdLevel) {
+    public LevelBag(final int levels, final int capacity, final int thresholdLevel) {
         this.levels = levels;
         this.fireCompleteLevelThreshold = thresholdLevel;
         //THRESHOLD = levels + 1; //fair/flat takeOut policy
@@ -97,9 +97,9 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         private final int thisLevel;
         
         //Deque<E> items;
-        LinkedHashSet<E> items;
+        final LinkedHashSet<E> items;
                 
-        public Level(int level, int numElements) {
+        public Level(final int level, final int numElements) {
             super();
             items = new LinkedHashSet(numElements);
             this.thisLevel = level;
@@ -133,7 +133,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
             return false;
         }
 
-        public boolean remove(E o) {
+        public boolean remove(final E o) {
             if (items.remove(o)) {
                 levelIsEmpty(items.isEmpty());
                 return true;
@@ -142,7 +142,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         }
 
         public E removeFirst() {
-            E e = items.iterator().next();
+            final E e = items.iterator().next();
             items.remove(e);
             if (e!=null) {
                 levelIsEmpty(items.isEmpty());
@@ -160,7 +160,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         }
     }
     
-    private Level<E> newLevel(int l) {
+    private Level<E> newLevel(final int l) {
         return new Level(l, 1 + capacity / levels);
     }
     
@@ -185,9 +185,9 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
      */
     @Override
     public int size() {
-        int in = nameTable.size();
+        final int in = nameTable.size();
         if (Parameters.DEBUG_BAG && (Parameters.DEBUG)) {
-            int is = sizeItems();
+            final int is = sizeItems();
             if (Math.abs(is-in) > 1 ) {                
                 throw new IllegalStateException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());
             }
@@ -198,7 +198,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
     /** this should always equal size(), but it's here for testing purposes */
     protected int sizeItems() {
         int t = 0;
-        for (Level<E> l : level) {
+        for (final Level<E> l : level) {
             if (l!=null)
                 t += l.size();
         }
@@ -220,7 +220,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         if (size() == 0) {
             return 0.01f;
         }
-        float f = mass / (size());
+        final float f = mass / (size());
         if (f > 1) {
             return 1.0f;
         }
@@ -257,7 +257,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
     public E peekNext() {
         if (size() == 0) 
             return null; // empty bag                  
-        E e = takeNext();
+        final E e = takeNext();
         putIn(e);
         return e;        
     }
@@ -294,7 +294,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
     }
 
     @Override public E take(final K name) {
-        E oldItem = nameTable.remove(name);
+        final E oldItem = nameTable.remove(name);
         if (oldItem == null) {
             return null;
         }
@@ -317,8 +317,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         //If it wasn't found, it probably was removed already.  So this check is probably not necessary
             //search other levels for this item because it's not where we thought it was according to getLevel()
         if (Parameters.DEBUG) {
-            int ns = nameTable.size();
-            int is = sizeItems();
+            final int ns = nameTable.size();
+            final int is = sizeItems();
             if (ns == is)
                 return null;
             throw new IllegalStateException("LevelBag inconsistency: " + nameTable.size() + "|" + sizeItems() + " Can not remove missing element: size inconsistency" + oldItem + " from " + this.getClass().getSimpleName());
@@ -349,7 +349,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
      */
     @Override public E addItem(final E newItem) {
         E oldItem = null;
-        int inLevel = getLevel(newItem);
+        final int inLevel = getLevel(newItem);
         if (size() >= capacity) {      // the bag will be full after the next 
             int outLevel = 0;
             while (levelEmpty[outLevel]) {
@@ -392,17 +392,17 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         return selected;
     }
 
-    protected void removeMass(E item) {
+    protected void removeMass(final E item) {
         mass -= item.getPriority();
     }
-    protected void addMass(E item) {
+    protected void addMass(final E item) {
         mass += item.getPriority();
     }
 
     /**
      * TODO refactor : paste from preceding method
      */
-    public String toStringLong(int minLevel) {
+    public String toStringLong(final int minLevel) {
         StringBuilder buf = new StringBuilder(32)
                 .append(" BAG ").append(getClass().getSimpleName())
                 .append(" ").append(showSizes());
@@ -424,10 +424,10 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
      * show item Table Sizes
      */
     public String showSizes() {
-        StringBuilder buf = new StringBuilder(" ");
+        final StringBuilder buf = new StringBuilder(" ");
         int l = 0;
-        for (Level<E> items : level) {
-            int s = items.size();
+        for (final Level<E> items : level) {
+            final int s = items.size();
             if ((items != null) && (s > 0)) {
                 l++;
                 buf.append(s).append(' ');
@@ -448,7 +448,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
     public float getMaxItemsPerLevel() {
         int max = getLevelSize(0);
         for (int i = 1; i < levels; i++) {
-            int s = getLevelSize(i);
+            final int s = getLevelSize(i);
             if (s > max) {
                 max = s;
             }
@@ -459,7 +459,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
     public float getMinItemsPerLevel() {
         int min = getLevelSize(0);
         for (int i = 1; i < levels; i++) {
-            int s = getLevelSize(i);
+            final int s = getLevelSize(i);
             if (s < min) {
                 min = s;
             }
@@ -526,7 +526,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
 
             @Override
             public E next() {
-                E e = next;
+                final E e = next;
                 next = null;
                 return e;
             }

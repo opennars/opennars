@@ -36,7 +36,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
     private PrintWriter outExp;
     private boolean showErrors = true;
     private boolean showStackTrace = false;
-    private boolean showStamp = true;
+    private final boolean showStamp = true;
     private boolean showInput = true;
     private float minPriority = 0;
 
@@ -49,40 +49,40 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
      *
      * @param n
      */
-    public TextOutputHandler(NAR n) {
+    public TextOutputHandler(final NAR n) {
         super(n, true);
         this.nar = n;
     }
-    public TextOutputHandler(NAR n, LineOutput outExp2) {
+    public TextOutputHandler(final NAR n, final LineOutput outExp2) {
         this(n);
         this.outExp2 = outExp2;
     }
 
-    public TextOutputHandler(NAR n, PrintWriter outExp) {
+    public TextOutputHandler(final NAR n, final PrintWriter outExp) {
         this(n, outExp, 0.0f);
     }
-    public TextOutputHandler(NAR n, PrintWriter outExp, float minPriority) {
+    public TextOutputHandler(final NAR n, final PrintWriter outExp, final float minPriority) {
         this(n);
         this.outExp = outExp;
         this.minPriority = minPriority;
     }
-    public TextOutputHandler(NAR n, PrintStream ps) {
+    public TextOutputHandler(final NAR n, final PrintStream ps) {
         this(n, new PrintWriter(ps));
     }
-    public TextOutputHandler(NAR n, PrintStream ps, float minPriority) {
+    public TextOutputHandler(final NAR n, final PrintStream ps, final float minPriority) {
         this(n, ps);
         this.minPriority = minPriority;
     }
-    public TextOutputHandler(NAR n, StringWriter s) {
+    public TextOutputHandler(final NAR n, final StringWriter s) {
         this(n, new PrintWriter(s));
     }
     /**
      * Open an output experience file
      */
-    public void openSaveFile(String path) {
+    public void openSaveFile(final String path) {
         try {
             outExp = new PrintWriter(new FileWriter(path));
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             throw new IllegalStateException("Could not open save file.", ex);
         }
     }
@@ -109,7 +109,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
             return;
         
         if ((outExp!=null) || (outExp2!=null)) {
-            Object o = oo[0];
+            final Object o = oo[0];
             final String s = process(channel, o);
             if (s!=null) {
                 if (outExp != null) {
@@ -129,32 +129,32 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
         return getOutputString(c, o, true, showStamp, nar, result, minPriority);
     }
 
-    public TextOutputHandler setErrors(boolean errors) {
+    public TextOutputHandler setErrors(final boolean errors) {
         this.showErrors = errors;
         return this;
     }    
 
-    public TextOutputHandler setShowInput(boolean showInput) {
+    public TextOutputHandler setShowInput(final boolean showInput) {
         this.showInput = showInput;
         return this;
     }
     
-    public TextOutputHandler setErrorStackTrace(boolean b) {
+    public TextOutputHandler setErrorStackTrace(final boolean b) {
         this.showStackTrace = true;
         return this;
     }
 
-    public TextOutputHandler setLinePrefix(String prefix) {
+    public TextOutputHandler setLinePrefix(final String prefix) {
         this.prefix = prefix;
         return this;
     }
 
-    public static String getOutputString(final Class channel, Object signal, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
+    public static String getOutputString(final Class channel, final Object signal, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
         return getOutputString(channel, signal, showChannel, showStamp, nar, buffer, 0);
     }
             
     /** generates a human-readable string from an output channel and signal */
-    public static String getOutputString(final Class channel, Object signal, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float minPriority) {
+    public static String getOutputString(final Class channel, final Object signal, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, final float minPriority) {
         buffer.setLength(0);
         
         if (showChannel)
@@ -162,7 +162,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
         
         if (channel == ERR.class) {
             if (signal instanceof Throwable) {
-                Throwable e = (Throwable)signal;
+                final Throwable e = (Throwable)signal;
 
                 buffer.append(e.toString());
 
@@ -182,7 +182,7 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
                 buffer.append(signal.toString());  
             }
             if (signal instanceof Task) {
-                Task t = (Task)signal;                
+                final Task t = (Task)signal;
                 if (t.getPriority() < minPriority)
                     return null;
                 
@@ -191,8 +191,8 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
                 }
                 else
                 if (channel == Answer.class) {
-                    Task task = t; //server / NARRun
-                    Sentence answer = task.getBestSolution();
+                    final Task task = t; //server / NARRun
+                    final Sentence answer = task.getBestSolution();
                     if(answer!=null)
                         buffer.append(answer.toString(nar, showStamp));
                     else
@@ -213,11 +213,11 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
         
     }
     
-    public static CharSequence getOutputString(Class channel, Object signal, boolean showChannel, boolean showStamp, NAR nar) {
-        CharSequence s = getOutputString(channel, signal, showStamp, nar);
+    public static CharSequence getOutputString(final Class channel, final Object signal, final boolean showChannel, final boolean showStamp, final NAR nar) {
+        final CharSequence s = getOutputString(channel, signal, showStamp, nar);
         if (showChannel) {            
-            String channelName = channel.getSimpleName();
-            StringBuilder r = new StringBuilder(s.length() + 2 + channelName.length());
+            final String channelName = channel.getSimpleName();
+            final StringBuilder r = new StringBuilder(s.length() + 2 + channelName.length());
             return r.append(channel.getSimpleName()).append(": ").append(s);
         }
         else {
@@ -225,16 +225,16 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
         }
     }
 
-    public static CharSequence getOutputString(Class channel, Object signal, final boolean showStamp, final NAR nar) {
+    public static CharSequence getOutputString(final Class channel, final Object signal, final boolean showStamp, final NAR nar) {
         return getOutputString(channel, signal, showStamp, nar, new StringBuilder());
     }
     
     /** generates a human-readable string from an output channel and signal */
-    public static CharSequence getOutputString(Class channel, Object signal, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
+    public static CharSequence getOutputString(final Class channel, final Object signal, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
         buffer.setLength(0);
         
         if (signal instanceof Exception) {
-            Exception e = (Exception)signal;
+            final Exception e = (Exception)signal;
 
             buffer.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
 
@@ -244,25 +244,25 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
             }
         }
         else if (signal instanceof Task) {
-            Task t = (Task)signal;
+            final Task t = (Task)signal;
             
-            Sentence s = t.sentence;
+            final Sentence s = t.sentence;
 
             buffer.append(s.toString(nar, showStamp));
             
         }            
         else if (signal instanceof Sentence) {
-            Sentence s = (Sentence)signal;                
+            final Sentence s = (Sentence)signal;
             buffer.append(s.toString(nar, showStamp));                        
         }                    
         else if (signal instanceof Object[]) {
             if (channel == Answer.class) {
-                Object[] o = (Object[])signal;
-                Task task = (Task)o[0];
-                Sentence belief = (Sentence)o[1];
+                final Object[] o = (Object[])signal;
+                final Task task = (Task)o[0];
+                final Sentence belief = (Sentence)o[1];
                 
-                Sentence question = task.sentence;
-                Sentence answer = belief;
+                final Sentence question = task.sentence;
+                final Sentence answer = belief;
                 
                 buffer.append(answer.toString(nar, showStamp));
             }

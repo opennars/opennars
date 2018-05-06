@@ -31,7 +31,7 @@ abstract public class Image extends CompoundTerm {
     /** The index of relation in the component list */
     public final short relationIndex;
 
-    protected Image(Term[] components, short relationIndex) {
+    protected Image(final Term[] components, final short relationIndex) {
         super(components);
         
         this.relationIndex = relationIndex;
@@ -40,7 +40,7 @@ abstract public class Image extends CompoundTerm {
     }
 
     @Override
-    protected void init(Term[] components) {
+    protected void init(final Term[] components) {
         super.init(components);
         this.hash = Objects.hash(super.hashCode(), relationIndex); 
     }
@@ -61,7 +61,7 @@ abstract public class Image extends CompoundTerm {
     @Override
     public int compareTo(final AbstractTerm that) {
         if (that instanceof Image) {
-            int r = relationIndex - ((Image)that).relationIndex;
+            final int r = relationIndex - ((Image)that).relationIndex;
             if (r!=0)
                 return r;            
         }
@@ -71,7 +71,7 @@ abstract public class Image extends CompoundTerm {
     //TODO replace with a special Term type
     public static boolean isPlaceHolder(final Term t) {
         if (t.getClass() != Term.class) return false;
-        CharSequence n = t.name();
+        final CharSequence n = t.name();
         if (n.length() != 1) return false;
         return n.charAt(0) == Symbols.IMAGE_PLACE_HOLDER;
     }    
@@ -87,7 +87,7 @@ abstract public class Image extends CompoundTerm {
     protected static String makeImageName(final NativeOperator op, final Term[] arg, final int relationIndex) {
         final int sizeEstimate = 12 * arg.length + 2;
         
-        StringBuilder name = new StringBuilder(sizeEstimate)
+        final StringBuilder name = new StringBuilder(sizeEstimate)
             .append(COMPOUND_TERM_OPENER.ch)
             .append(op)
             .append(Symbols.ARGUMENT_SEPARATOR)

@@ -56,7 +56,7 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static boolean match(final Task task, final Sentence belief, final DerivationContext nal) {
-        Sentence sentence = task.sentence;
+        final Sentence sentence = task.sentence;
         
         if (sentence.isJudgment()) {
             if (revisible(sentence, belief)) {
@@ -64,7 +64,7 @@ public class LocalRules {
             }
         } else {
             if (matchingOrder(sentence, belief)) {
-                Term[] u = new Term[] { sentence.term, belief.term };
+                final Term[] u = new Term[] { sentence.term, belief.term };
                 if (Variables.unify(Symbols.VAR_QUERY, u)) {
                     trySolution(belief, task, nal, true);
                 }
@@ -113,23 +113,23 @@ public class LocalRules {
         }
         
         newBelief.stamp.alreadyAnticipatedNegConfirmation = oldBelief.stamp.alreadyAnticipatedNegConfirmation;
-        TruthValue newTruth = newBelief.truth.clone();
-        TruthValue oldTruth = oldBelief.truth;
+        final TruthValue newTruth = newBelief.truth.clone();
+        final TruthValue oldTruth = oldBelief.truth;
         boolean useNewBeliefTerm = false;
         
         if(newBelief.getTerm().hasInterval()) {
-            Term cterm = replaceIntervals(newBelief.getTerm());
-            Concept c = nal.memory.concept(cterm);
-            List<Long> ivalOld = extractIntervals(nal.memory, oldBelief.getTerm());
+            final Term cterm = replaceIntervals(newBelief.getTerm());
+            final Concept c = nal.memory.concept(cterm);
+            final List<Long> ivalOld = extractIntervals(nal.memory, oldBelief.getTerm());
             if(c.recent_intervals.size() == 0) {
-                for(Long l : ivalOld) {
+                for(final Long l : ivalOld) {
                     c.recent_intervals.add((float) l);
                 }
             }
-            List<Long> ivalNew = extractIntervals(nal.memory, newBelief.getTerm());
+            final List<Long> ivalNew = extractIntervals(nal.memory, newBelief.getTerm());
             for(int i=0;i<ivalNew.size();i++) {
-                float Inbetween = (c.recent_intervals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
-                float speed = 1.0f / (Parameters.INTERVAL_ADAPT_SPEED*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower
+                final float Inbetween = (c.recent_intervals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
+                final float speed = 1.0f / (Parameters.INTERVAL_ADAPT_SPEED*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower
                 c.recent_intervals.set(i,c.recent_intervals.get(i)+speed*(Inbetween - c.recent_intervals.get(i)));
             }
             long AbsDiffSumNew = 0;
@@ -144,7 +144,7 @@ public class LocalRules {
             for(int i=0;i<ivalNew.size();i++) {
                 AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
             }
-            float a = temporalProjection(0, AbsDiffSum, 0); //re-project, and it's safe:
+            final float a = temporalProjection(0, AbsDiffSum, 0); //re-project, and it's safe:
                                                             //we won't count more confidence than
                                                             //when the second premise would have been shifted
                                                             //to the necessary time in the first place
@@ -153,8 +153,8 @@ public class LocalRules {
             useNewBeliefTerm = AbsDiffSumNew < AbsDiffSumOld;
         }
         
-        TruthValue truth = TruthFunctions.revision(newTruth, oldTruth);
-        BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
+        final TruthValue truth = TruthFunctions.revision(newTruth, oldTruth);
+        final BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
         
         if (budget.aboveThreshold()) {
             return nal.doublePremiseTaskRevised(useNewBeliefTerm ? newBelief.term : oldBelief.term, truth, budget);
@@ -171,15 +171,15 @@ public class LocalRules {
      * @param task The task to be processed
      * @param memory Reference to the memory
      */
-    public static boolean trySolution(Sentence belief, final Task task, final DerivationContext nal, boolean report) {
-        Sentence problem = task.sentence;
-        Memory memory = nal.mem();
-        Sentence oldBest = task.getBestSolution();
+    public static boolean trySolution(final Sentence belief, final Task task, final DerivationContext nal, final boolean report) {
+        final Sentence problem = task.sentence;
+        final Memory memory = nal.mem();
+        final Sentence oldBest = task.getBestSolution();
         
         if (oldBest != null) {
-            boolean rateByConfidence = oldBest.getTerm().equals(belief.getTerm());
-            float newQ = solutionQuality(rateByConfidence, task, belief, memory);
-            float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory);
+            final boolean rateByConfidence = oldBest.getTerm().equals(belief.getTerm());
+            final float newQ = solutionQuality(rateByConfidence, task, belief, memory);
+            final float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory);
             if (oldQ >= newQ) {
                 if (problem.isGoal()) {
                     memory.emotion.adjustSatisfaction(oldQ, task.getPriority(),nal);
@@ -191,7 +191,7 @@ public class LocalRules {
         task.setBestSolution(memory,belief);
         //memory.logic.SOLUTION_BEST.commit(task.getPriority());
         
-        BudgetValue budget = solutionEval(task, belief, task, nal);
+        final BudgetValue budget = solutionEval(task, belief, task, nal);
         if ((budget != null) && budget.aboveThreshold()) {                       
             
             //Solution Activated
@@ -221,8 +221,8 @@ public class LocalRules {
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
-    public static float solutionQuality(boolean rateByConfidence, final Task probT, final Sentence solution, Memory memory) {
-        Sentence problem = probT.sentence;
+    public static float solutionQuality(final boolean rateByConfidence, final Task probT, final Sentence solution, final Memory memory) {
+        final Sentence problem = probT.sentence;
         
         if ((probT.sentence.punctuation != solution.punctuation && solution.term.hasVarQuery()) || !matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
             return 0.0F;
@@ -266,8 +266,8 @@ public class LocalRules {
             task = nal.getCurrentTask();
             feedbackToLinks = true;
         }
-        boolean judgmentTask = task.sentence.isJudgment();
-        boolean rateByConfidence = problem.getTerm().hasVarQuery(); //here its whether its a what or where question for budget adjustment
+        final boolean judgmentTask = task.sentence.isJudgment();
+        final boolean rateByConfidence = problem.getTerm().hasVarQuery(); //here its whether its a what or where question for budget adjustment
         final float quality = solutionQuality(rateByConfidence, problem, solution, nal.mem());
         
         if (problem.sentence.isGoal()) {
@@ -277,14 +277,14 @@ public class LocalRules {
         if (judgmentTask) {
             task.incPriority(quality);
         } else {
-            float taskPriority = task.getPriority(); //+goal satisfication is a matter of degree - https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M
+            final float taskPriority = task.getPriority(); //+goal satisfication is a matter of degree - https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M
             budget = new BudgetValue(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.truth));
             task.setPriority(Math.min(1 - quality, taskPriority));
         }
         if (feedbackToLinks) {
-            TaskLink tLink = nal.getCurrentTaskLink();
+            final TaskLink tLink = nal.getCurrentTaskLink();
             tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
-            TermLink bLink = nal.getCurrentBeliefLink();
+            final TermLink bLink = nal.getCurrentBeliefLink();
             bLink.incPriority(quality);
         }
         return budget;
@@ -298,9 +298,9 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     public static void matchReverse(final DerivationContext nal) {
-        Task task = nal.getCurrentTask();
-        Sentence belief = nal.getCurrentBelief();
-        Sentence sentence = task.sentence;
+        final Task task = nal.getCurrentTask();
+        final Sentence belief = nal.getCurrentBelief();
+        final Sentence sentence = task.sentence;
         if (matchingOrder(sentence.getTemporalOrder(), reverseOrder(belief.getTemporalOrder()))) {
             if (sentence.isJudgment()) {
                 inferToSym(sentence, belief, nal);
@@ -318,7 +318,7 @@ public class LocalRules {
      * @param figure location of the shared term
      * @param nal Reference to the memory
      */
-    public static void matchAsymSym(final Sentence asym, final Sentence sym, int figure, final DerivationContext nal) {
+    public static void matchAsymSym(final Sentence asym, final Sentence sym, final int figure, final DerivationContext nal) {
         if (nal.getCurrentTask().sentence.isJudgment()) {
             inferToAsym(asym, sym, nal);
         } else {
@@ -335,20 +335,20 @@ public class LocalRules {
      * @param judgment2 The second premise
      * @param nal Reference to the memory
      */
-    private static void inferToSym(Sentence judgment1, Sentence judgment2, DerivationContext nal) {
-        Statement s1 = (Statement) judgment1.term;
-        Term t1 = s1.getSubject();
-        Term t2 = s1.getPredicate();
-        Term content;
+    private static void inferToSym(final Sentence judgment1, final Sentence judgment2, final DerivationContext nal) {
+        final Statement s1 = (Statement) judgment1.term;
+        final Term t1 = s1.getSubject();
+        final Term t2 = s1.getPredicate();
+        final Term content;
         if (s1 instanceof Inheritance) {
             content = Similarity.make(t1, t2);
         } else {
             content = Equivalence.make(t1, t2, s1.getTemporalOrder());
         }
-        TruthValue value1 = judgment1.truth;
-        TruthValue value2 = judgment2.truth;
-        TruthValue truth = TruthFunctions.intersection(value1, value2);
-        BudgetValue budget = BudgetFunctions.forward(truth, nal);
+        final TruthValue value1 = judgment1.truth;
+        final TruthValue value2 = judgment2.truth;
+        final TruthValue truth = TruthFunctions.intersection(value1, value2);
+        final BudgetValue budget = BudgetFunctions.forward(truth, nal);
         nal.doublePremiseTask(content, truth, budget,false, false); //(allow overlap) but not needed here, isn't detachment
     }
 
@@ -360,16 +360,16 @@ public class LocalRules {
      * @param sym The symmetric premise
      * @param nal Reference to the memory
      */
-    private static void inferToAsym(Sentence asym, Sentence sym, DerivationContext nal) {
-        Statement statement = (Statement) asym.term;
-        Term sub = statement.getPredicate();
-        Term pre = statement.getSubject();
+    private static void inferToAsym(final Sentence asym, final Sentence sym, final DerivationContext nal) {
+        final Statement statement = (Statement) asym.term;
+        final Term sub = statement.getPredicate();
+        final Term pre = statement.getSubject();
         
-        Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
+        final Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
         if (content == null) return;
         
-        TruthValue truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
-        BudgetValue budget = BudgetFunctions.forward(truth, nal);
+        final TruthValue truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
+        final BudgetValue budget = BudgetFunctions.forward(truth, nal);
         nal.doublePremiseTask(content, truth, budget,false, false);
     }
 
@@ -381,8 +381,8 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     private static void conversion(final DerivationContext nal) {
-        TruthValue truth = TruthFunctions.conversion(nal.getCurrentBelief().truth);
-        BudgetValue budget = BudgetFunctions.forward(truth, nal);
+        final TruthValue truth = TruthFunctions.conversion(nal.getCurrentBelief().truth);
+        final BudgetValue budget = BudgetFunctions.forward(truth, nal);
         convertedJudgment(truth, budget, nal);
     }
 
@@ -399,7 +399,7 @@ public class LocalRules {
         } else {
             truth = TruthFunctions.deduction(truth, 1.0f);
         }
-        BudgetValue budget = BudgetFunctions.forward(truth, nal);
+        final BudgetValue budget = BudgetFunctions.forward(truth, nal);
         convertedJudgment(truth, budget, nal);
     }
 
@@ -414,8 +414,8 @@ public class LocalRules {
      */
     private static void convertedJudgment(final TruthValue newTruth, final BudgetValue newBudget, final DerivationContext nal) {
         Statement content = (Statement) nal.getCurrentTask().getTerm();
-        Statement beliefContent = (Statement) nal.getCurrentBelief().term;
-        int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
+        final Statement beliefContent = (Statement) nal.getCurrentBelief().term;
+        final int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
         final Term subjT = content.getSubject();
         final Term predT = content.getPredicate();
         final Term subjB = beliefContent.getSubject();

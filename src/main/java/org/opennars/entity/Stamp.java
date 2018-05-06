@@ -61,13 +61,13 @@ public class Stamp implements Cloneable, Serializable {
     private int evidentialHash;
 
     
-    public boolean before(Stamp s, int duration) {
+    public boolean before(final Stamp s, final int duration) {
         if (isEternal() || s.isEternal())
             return false;
         return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_BACKWARD;
     }
     
-    public boolean after(Stamp s, int duration) {
+    public boolean after(final Stamp s, final int duration) {
         if (isEternal() || s.isEternal())
             return false;
         return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_FORWARD;        }
@@ -142,8 +142,8 @@ public class Stamp implements Cloneable, Serializable {
 
         final long[] firstBase = first.evidentialBase;
         final long[] secondBase = second.evidentialBase;     
-        int firstLength = firstBase.length;
-        int secondLength = secondBase.length;
+        final int firstLength = firstBase.length;
+        final int secondLength = secondBase.length;
 
         creationTime = time;
         occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
@@ -169,15 +169,15 @@ public class Stamp implements Cloneable, Serializable {
     }
     
     /** Detects evidental base overlaps **/
-    public static boolean baseOverlap(long[] base1, long[] base2) {
-        Set<Long> task_base = new HashSet<>(base1.length + base2.length);
-        for (long aBase1 : base1) {
+    public static boolean baseOverlap(final long[] base1, final long[] base2) {
+        final Set<Long> task_base = new HashSet<>(base1.length + base2.length);
+        for (final long aBase1 : base1) {
             if (task_base.contains(aBase1)) { //can have an overlap in itself already
                 return true;
             }
             task_base.add(aBase1);
         }
-        for (long aBase2 : base2) {
+        for (final long aBase2 : base2) {
             if (task_base.contains(aBase2)) {
                 return true;
             }
@@ -187,8 +187,8 @@ public class Stamp implements Cloneable, Serializable {
      }
     
     public boolean evidenceIsCyclic() {
-        Set<Long> task_base = new HashSet<>(this.evidentialBase.length);
-        for (long anEvidentialBase : this.evidentialBase) {
+        final Set<Long> task_base = new HashSet<>(this.evidentialBase.length);
+        for (final long anEvidentialBase : this.evidentialBase) {
             if (task_base.contains(anEvidentialBase)) { //can have an overlap in itself already
                 return true;
             }
@@ -198,7 +198,7 @@ public class Stamp implements Cloneable, Serializable {
     }
 
     public boolean isEternal() {
-        boolean eternalOccurrence = occurrenceTime == ETERNAL;
+        final boolean eternalOccurrence = occurrenceTime == ETERNAL;
         
         if (Parameters.DEBUG) {
             if (eternalOccurrence && tense!=Tense.Eternal) {
@@ -209,7 +209,7 @@ public class Stamp implements Cloneable, Serializable {
         return eternalOccurrence;
     }
     /** sets the creation time; used to set input tasks with the actual time they enter Memory */
-    public void setCreationTime(long time, int duration) {
+    public void setCreationTime(final long time, final int duration) {
         creationTime = time;
         
         if (tense == null) {
@@ -247,7 +247,7 @@ public class Stamp implements Cloneable, Serializable {
     }
     
     public static long[] toSetArray(final long[] x) {
-        long[] set = x.clone();
+        final long[] set = x.clone();
         
         if (x.length < 2)
             return set;
@@ -260,15 +260,15 @@ public class Stamp implements Cloneable, Serializable {
         Arrays.sort(set);
         long lastValue = -1;
         int j = 0; //# of unique items
-        for (long v : set) {
+        for (final long v : set) {
             if (lastValue != v)
                 j++;
             lastValue = v;
         }
         lastValue = -1;
-        long[] sorted = new long[j];
+        final long[] sorted = new long[j];
         j = 0;
-        for (long v : set) {
+        for (final long v : set) {
             if (lastValue != v)
                 sorted[j++] = v;
             lastValue = v;
@@ -301,7 +301,7 @@ public class Stamp implements Cloneable, Serializable {
      * @param that The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
-    public boolean equals(Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase) {
+    public boolean equals(final Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase) {
         if (this == s) return true;
 
         if (creationTime)
@@ -328,7 +328,7 @@ public class Stamp implements Cloneable, Serializable {
     }
     
     public Stamp cloneWithNewOccurrenceTime(final long newOcurrenceTime) {
-        Stamp s = clone();
+        final Stamp s = clone();
         if (newOcurrenceTime == ETERNAL)
             s.tense = Tense.Eternal;
         s.setOccurrenceTime(newOcurrenceTime);
@@ -353,7 +353,7 @@ public class Stamp implements Cloneable, Serializable {
     
     public StringBuilder appendOcurrenceTime(final StringBuilder sb) {
         if (occurrenceTime != ETERNAL) {
-            int estTimeLength = 8; /* # digits */
+            final int estTimeLength = 8; /* # digits */
             sb.ensureCapacity(estTimeLength + 1 + 1);
             sb.append('[').append(occurrenceTime).append(']').toString();
         }

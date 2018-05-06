@@ -30,8 +30,8 @@ public abstract class Item<K> implements Serializable {
     public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
 
         @Override public int compare(final E a, final E b) {
-            float ap = a.getPriority();
-            float bp = b.getPriority();
+            final float ap = a.getPriority();
+            final float bp = b.getPriority();
 
             if ((a == b) || (a.name().equals(b.name())) || (ap==bp))
                 return a.hashCode() - b.hashCode();
@@ -173,8 +173,8 @@ public abstract class Item<K> implements Serializable {
     public String toString() {        
         //return budget + " " + key ;
         
-        String budgetStr = budget!=null ? budget.toString() : "";
-        String n = name().toString();
+        final String budgetStr = budget!=null ? budget.toString() : "";
+        final String n = name().toString();
         return new StringBuilder(budgetStr.length()+n.length()+1).append(budgetStr).append(' ').append(n).toString();
     }
 
@@ -184,14 +184,14 @@ public abstract class Item<K> implements Serializable {
      */
     public String toStringExternal() {                
         final String briefBudget = budget.toStringExternal();
-        String n = name().toString();
+        final String n = name().toString();
         return new StringBuilder(briefBudget.length()+n.length()+1).append(briefBudget).append(' ').append(n).toString();
     }
     
     /** similar to toStringExternal but includes budget afterward */
     public String toStringExternal2() {
         final String briefBudget = budget.toStringExternal();
-        String n = name().toString();
+        final String n = name().toString();
         return new StringBuilder(briefBudget.length()+n.length()+1).append(n).append(' ').append(briefBudget).toString();
     }
     
@@ -241,23 +241,23 @@ public abstract class Item<K> implements Serializable {
     
     }
 
-    public static float getPrioritySum(Iterable<? extends Item> c) {
+    public static float getPrioritySum(final Iterable<? extends Item> c) {
         float totalPriority = 0;
-        for (Item i : c)
+        for (final Item i : c)
             totalPriority+=i.getPriority();
         return totalPriority;
     }
     
     /** randomly selects an item from a collection, weighted by priority */
-    public static <E extends Item> E selectRandomByPriority(Iterable<E> c) {
-        float totalPriority = getPrioritySum(c);
+    public static <E extends Item> E selectRandomByPriority(final Iterable<E> c) {
+        final float totalPriority = getPrioritySum(c);
         
         if (totalPriority == 0) return null;
         
         float r = Memory.randomNumber.nextFloat() * totalPriority;
                 
         E s = null;
-        for (E i : c) {
+        for (final E i : c) {
             s = i;
             r -= s.getPriority();
             if (r < 0)

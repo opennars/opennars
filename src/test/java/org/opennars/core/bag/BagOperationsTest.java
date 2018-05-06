@@ -36,10 +36,10 @@ import static org.junit.Assert.assertTrue;
  */
 public class BagOperationsTest {
 
-    static NAR nar = new NAR();
-    static Concept makeConcept(String name, float priority) {
-        BudgetValue budg = new BudgetValue(priority,priority,priority);
-        Concept s = new Concept(budg,new Term(name),nar.memory);
+    static final NAR nar = new NAR();
+    static Concept makeConcept(final String name, final float priority) {
+        final BudgetValue budg = new BudgetValue(priority,priority,priority);
+        final Concept s = new Concept(budg,new Term(name),nar.memory);
         return s;
     }  
     
@@ -48,7 +48,7 @@ public class BagOperationsTest {
         testBagSequence(new LevelBag(2, 2));    
     }
     
-    public static void testBagSequence(Bag b) {
+    public static void testBagSequence(final Bag b) {
 
         //different id, different priority
         b.putIn(makeConcept("a", 0.1f));
@@ -77,12 +77,12 @@ public class BagOperationsTest {
         assertEquals(0.4f, b.getMaxPriority(),0.001f);
         
         
-        Item tb = b.take(new Term("b"));
+        final Item tb = b.take(new Term("b"));
         assertTrue(tb!=null);
         assertEquals(1, b.size());
         assertEquals(0.4f, tb.getPriority(), 0.001f);
         
-        Item tc = b.takeNext();
+        final Item tc = b.takeNext();
         assertEquals(0, b.size());
         assertEquals(0.2f, tc.getPriority(), 0.001f);
         

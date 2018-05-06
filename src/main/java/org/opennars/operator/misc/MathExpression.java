@@ -49,7 +49,7 @@ public class MathExpression  extends FunctionOperator {
     
     
     @Override
-    protected Term function(Memory memory, Term[] x) {
+    protected Term function(final Memory memory, final Term[] x) {
 
         //TODO this may not be thread-safe, this block may need synchronized:
         if (context == null) {
@@ -61,7 +61,7 @@ public class MathExpression  extends FunctionOperator {
             throw new IllegalStateException(requireMessage);
         }
 
-        Term content = x[0];
+        final Term content = x[0];
         if (content.getClass()!=Term.class) {
             throw new IllegalStateException(requireMessage);
         }
@@ -70,7 +70,7 @@ public class MathExpression  extends FunctionOperator {
         if (expstring.startsWith("\""))
             expstring = expstring.substring(1, expstring.length()-1);
         
-        EncogProgram p = context.createProgram(expstring);
+        final EncogProgram p = context.createProgram(expstring);
 
         return getTerm(p.getRootNode());
     }
@@ -80,26 +80,26 @@ public class MathExpression  extends FunctionOperator {
         return exp;
     }
 
-    public static Term getTerm(TreeNode node) {
+    public static Term getTerm(final TreeNode node) {
         
-        CharSequence name = 
+        final CharSequence name =
                     node instanceof ProgramNode ? 
                     ("\"" + Texts.escape(((ProgramNode)node).getName()) + '\"'):
                     node.getClass().getSimpleName();
         
         
-        List<TreeNode> children = node.getChildNodes();
+        final List<TreeNode> children = node.getChildNodes();
         
        
         ExpressionValue[] data = null;
         
-        ProgramNode p = (ProgramNode)node;
+        final ProgramNode p = (ProgramNode)node;
         data = p.getData();
         if ((children == null) || (children.isEmpty())) {
             if ((data == null) || (data.length == 0) || (p.isVariable())) {
                 if (p.isVariable()) {
-                    long idx = data[0].toIntValue();
-                    String varname = p.getOwner().getVariables().getVariableName((int)idx);
+                    final long idx = data[0].toIntValue();
+                    final String varname = p.getOwner().getVariables().getVariableName((int)idx);
                     return Term.get(varname);
                 }
                 return Term.get(name);
@@ -114,35 +114,35 @@ public class MathExpression  extends FunctionOperator {
             return Inheritance.make(getTerms(children), Term.get(name));
     }
     
-    public static Term getTerms(List<TreeNode> children) {
+    public static Term getTerms(final List<TreeNode> children) {
         
         if (children.size() == 1)
             return getTerm(children.get(0));
         
-        Term[] c = new Term[children.size()];
+        final Term[] c = new Term[children.size()];
         int j = 0;
-        for (TreeNode t : children) {
+        for (final TreeNode t : children) {
             c[j++] = getTerm(t);
         }
         
         return new Product(c);
     }
     
-    public static Term getTerms(ExpressionValue[] data) {
+    public static Term getTerms(final ExpressionValue[] data) {
         
         if (data.length == 1)
             return getTerm(data[0]);
         
-        Term[] c = new Term[data.length];
+        final Term[] c = new Term[data.length];
         int j = 0;
-        for (ExpressionValue t : data) {
+        for (final ExpressionValue t : data) {
             c[j++] = getTerm(t);
         }
         
         return new Product(c);        
     }
 
-    public static Term getTerm(ExpressionValue t) {        
+    public static Term getTerm(final ExpressionValue t) {
         return Inheritance.make(
                 Term.get(Texts.escape(t.toStringValue())),
                 Term.get(t.getExpressionType().toString()));

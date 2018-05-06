@@ -41,14 +41,14 @@ public class Terms {
         if (a instanceof Similarity && b instanceof Similarity) {
             return equalSubjectPredicateInRespectToImageAndProduct(a, b) || equalSubjectPredicateInRespectToImageAndProduct(b, a);
         }
-        Term[] A = ((CompoundTerm) a).term;
-        Term[] B = ((CompoundTerm) b).term;
+        final Term[] A = ((CompoundTerm) a).term;
+        final Term[] B = ((CompoundTerm) b).term;
         if (A.length != B.length || !(a.operator().equals(b.operator()))) {
             return false;
         } else {
             for (int i = 0; i < A.length; i++) {
-                Term x = A[i];
-                Term y = B[i];
+                final Term x = A[i];
+                final Term y = B[i];
                 if (!x.equals(y)) {
                     if (x instanceof Inheritance && y instanceof Inheritance) {
                         if (!equalSubjectPredicateInRespectToImageAndProduct(x, y)) {
@@ -71,23 +71,23 @@ public class Terms {
         }
     }
 
-    public static Term reduceUntilLayer2(final CompoundTerm _itself, Term replacement, Memory memory) {
+    public static Term reduceUntilLayer2(final CompoundTerm _itself, final Term replacement, final Memory memory) {
         if (_itself == null)
             return null;
         
-        Term reduced = reduceComponentOneLayer(_itself, replacement, memory);
+        final Term reduced = reduceComponentOneLayer(_itself, replacement, memory);
         if (!(reduced instanceof CompoundTerm))
             return null;
         
         CompoundTerm itself = (CompoundTerm)reduced;
         int j = 0;
-        for (Term t : itself.term) {
-            Term t2 = unwrapNegation(t);
+        for (final Term t : itself.term) {
+            final Term t2 = unwrapNegation(t);
             if (!(t2 instanceof Implication) && !(t2 instanceof Equivalence) && !(t2 instanceof Conjunction) && !(t2 instanceof Disjunction)) {
                 j++;
                 continue;
             }
-            Term ret2 = reduceComponentOneLayer((CompoundTerm) t2, replacement, memory);
+            final Term ret2 = reduceComponentOneLayer((CompoundTerm) t2, replacement, memory);
             
             //CompoundTerm itselfCompound = itself;
             Term replaced = null;
@@ -124,8 +124,8 @@ public class Terms {
         }
     }
 
-    public static Term term(final CompoundTerm compound, Collection<Term> components) {
-        Term[] c = components.toArray(new Term[components.size()]);
+    public static Term term(final CompoundTerm compound, final Collection<Term> components) {
+        final Term[] c = components.toArray(new Term[components.size()]);
         return term(compound, c);
     }
     
@@ -221,8 +221,8 @@ public class Terms {
         return null;
     }
 
-    public static Term reduceComponentOneLayer(CompoundTerm t1, Term t2, Memory memory) {
-        Term[] list;
+    public static Term reduceComponentOneLayer(final CompoundTerm t1, final Term t2, final Memory memory) {
+        final Term[] list;
         if (t1.getClass() == t2.getClass()) {
             list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
         } else {
@@ -260,17 +260,17 @@ public class Terms {
             return true;
         }
         
-        Statement A = (Statement) a;
-        Statement B = (Statement) b;
+        final Statement A = (Statement) a;
+        final Statement B = (Statement) b;
         
         if (!(A instanceof Similarity && B instanceof Similarity 
                 || A instanceof Inheritance && B instanceof Inheritance))
             return false;
             
-        Term subjA = A.getSubject();
-        Term predA = A.getPredicate();
-        Term subjB = B.getSubject();
-        Term predB = B.getPredicate();
+        final Term subjA = A.getSubject();
+        final Term predA = A.getPredicate();
+        final Term subjB = B.getSubject();
+        final Term predB = B.getPredicate();
 
         Term ta = null, tb = null;
         Term sa = null, sb = null;
@@ -321,19 +321,19 @@ public class Terms {
         }
 
         if (ta!=null) {
-            Term[] sat = ((CompoundTerm)sa).term;
-            Term[] sbt = ((CompoundTerm)sb).term;
+            final Term[] sat = ((CompoundTerm)sa).term;
+            final Term[] sbt = ((CompoundTerm)sb).term;
 
             if(sa instanceof Image && sb instanceof Image) {
-                Image im1=(Image) sa;
-                Image im2=(Image) sb;
+                final Image im1=(Image) sa;
+                final Image im2=(Image) sb;
                 if(im1.relationIndex != im2.relationIndex) {
                     return false;
                 }
             }
             
-            Set<Term> componentsA = new HashSet(1+sat.length);
-            Set<Term> componentsB = new HashSet(1+sbt.length);
+            final Set<Term> componentsA = new HashSet(1+sat.length);
+            final Set<Term> componentsB = new HashSet(1+sbt.length);
 
             componentsA.add(ta);
             Collections.addAll(componentsA, sat);
@@ -341,9 +341,9 @@ public class Terms {
             componentsB.add(tb);
             Collections.addAll(componentsB, sbt);
 
-            for(Term sA : componentsA) {
+            for(final Term sA : componentsA) {
                 boolean had=false;
-                for(Term sB : componentsB) {
+                for(final Term sB : componentsB) {
                     if(sA instanceof Variable && sB instanceof Variable) {
                         if(sA.name.equals(sB.name)) {
                             had=true;
@@ -376,8 +376,8 @@ public class Terms {
      */
     public static List<TermLink> prepareComponentLinks(final List<TermLink> componentLinks, final short type, final CompoundTerm t) {
         
-        boolean tEquivalence = (t instanceof Equivalence);
-        boolean tImplication = (t instanceof Implication);
+        final boolean tEquivalence = (t instanceof Equivalence);
+        final boolean tImplication = (t instanceof Implication);
         
         for (int i = 0; i < t.size(); i++) {
             Term t1 = t.term[i];
@@ -396,7 +396,7 @@ public class Terms {
             } else if (t1 instanceof CompoundTerm) {
                 final CompoundTerm ct1 = (CompoundTerm)t1;
                 final int ct1Size = ct1.size(); //cache because this loop is critical
-                boolean t1ProductOrImage = (t1 instanceof Product) || (t1 instanceof ImageExt) || (t1 instanceof ImageInt);
+                final boolean t1ProductOrImage = (t1 instanceof Product) || (t1 instanceof ImageExt) || (t1 instanceof ImageInt);
                 
                 for (int j = 0; j < ct1Size; j++) {
                     Term t2 = ct1.term[j];
@@ -419,7 +419,7 @@ public class Terms {
                         }
                     }
                     if ((t2 instanceof Product) || (t2 instanceof ImageExt) || (t2 instanceof ImageInt)) {
-                        CompoundTerm ct2 = (CompoundTerm)t2;
+                        final CompoundTerm ct2 = (CompoundTerm)t2;
                         final int ct2Size = ct2.size();
                         
                         for (int k = 0; k < ct2Size; k++) {
@@ -446,8 +446,8 @@ public class Terms {
         return componentLinks;
     }
 
-   public  static List<TermLink> prepareComponentLinks(List<TermLink> componentLinks, CompoundTerm ct) {
-        short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
+   public  static List<TermLink> prepareComponentLinks(final List<TermLink> componentLinks, final CompoundTerm ct) {
+        final short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
         return prepareComponentLinks(componentLinks, type, ct);
     }
 
@@ -514,31 +514,31 @@ public class Terms {
         return true;
     }
 
-    public static void verifyNonNull(Collection t) {
-        for (Object o : t)
+    public static void verifyNonNull(final Collection t) {
+        for (final Object o : t)
             if (o == null)
                 throw new IllegalStateException("Element null in: " + t);
     }
 
-    static void verifyNonNull(Term... t) {
-        for (Object o : t)
+    static void verifyNonNull(final Term... t) {
+        for (final Object o : t)
             if (o == null)
                 throw new IllegalStateException("Element null in: " + Arrays.toString(t));
     }    
     
-    public static Term[] verifySortedAndUnique(final Term[] arg, boolean allowSingleton) {        
+    public static Term[] verifySortedAndUnique(final Term[] arg, final boolean allowSingleton) {
         if (arg.length == 0) {
             throw new IllegalStateException("Needs >0 components");
         }
         if (!allowSingleton && (arg.length == 1)) {
             throw new IllegalStateException("Needs >1 components: " + Arrays.toString(arg));
         }
-        Term[] s = Term.toSortedSetArray(arg);
+        final Term[] s = Term.toSortedSetArray(arg);
         if (arg.length!=s.length) {
             throw new IllegalStateException("Contains duplicates: " + Arrays.toString(arg));
         }
         int j = 0;
-        for (Term t : s) {
+        for (final Term t : s) {
             if (!t.equals(arg[j++]))
                 throw new IllegalStateException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + Arrays.toString(s));
         }        

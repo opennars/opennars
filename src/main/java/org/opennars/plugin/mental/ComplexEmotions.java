@@ -39,35 +39,35 @@ public class ComplexEmotions implements Plugin {
     public EventEmitter.EventObserver obs;
     float fear = 0.5f;
     @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
+    public boolean setEnabled(final NAR n, final boolean enabled) {
         if(enabled) {
             
-            Memory memory = n.memory;
+            final Memory memory = n.memory;
         
             if(obs==null) {
                 obs= (event, a) -> {
                     if (event != Events.TaskDerive.class &&
                             event != Events.InduceSucceedingEvent.class)
                         return;
-                    Task future_task = (Task)a[0];
+                    final Task future_task = (Task)a[0];
 
                     if(future_task.sentence.getOccurenceTime() > n.time()) {
-                        Concept c = n.memory.concept(future_task.getTerm());
-                        float true_expectation = 0.5f;
-                        float false_expectation = 0.5f;
+                        final Concept c = n.memory.concept(future_task.getTerm());
+                        final float true_expectation = 0.5f;
+                        final float false_expectation = 0.5f;
                         if(c != null) {
                             if(c.desires.size() > 0 && c.beliefs.size() > 0) {
                                 //Fear:
                                 if(future_task.sentence.truth.getExpectation() > true_expectation &&
                                    c.desires.get(0).sentence.truth.getExpectation() < false_expectation) {
                                     //n.addInput("<(*,{SELF},fear) --> ^feel>. :|:");
-                                    float weight = future_task.getPriority();
+                                    final float weight = future_task.getPriority();
                                     float fear = solutionQuality(true, c.desires.get(0), future_task.sentence, memory);
-                                    float newValue = fear*weight;
+                                    final float newValue = fear*weight;
                                     fear += newValue * weight;
                                     fear /= 1.0f + weight;
                                     //incrase concept priority by fear value:
-                                    Concept C1 = memory.concept(future_task.getTerm());
+                                    final Concept C1 = memory.concept(future_task.getTerm());
                                     if(C1 != null) {
                                         C1.incPriority(fear);
                                     }

@@ -50,7 +50,7 @@ public class ImageInt extends Image {
     }
 
     @Override
-    public Term clone(Term[] replaced) {
+    public Term clone(final Term[] replaced) {
         if (replaced.length != term.length)
             throw new IllegalStateException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
         
@@ -68,8 +68,8 @@ public class ImageInt extends Image {
         if (argList.length < 2) {
             return argList[0];
         }
-        Term relation = argList[0];
-        Term[] argument = new Term[argList.length-1];
+        final Term relation = argList[0];
+        final Term[] argument = new Term[argList.length-1];
         int index = 0, n = 0;
         for (int j = 1; j < argList.length; j++) {
             if (isPlaceHolder(argList[j])) {
@@ -93,7 +93,7 @@ public class ImageInt extends Image {
      */
     public static Term make(final Product product, final Term relation, final short index) {
         if (relation instanceof Product) {
-            Product p2 = (Product) relation;
+            final Product p2 = (Product) relation;
             if ((product.size() == 2) && (p2.size() == 2)) {
                 if ((index == 0) && product.term[1].equals(p2.term[1])) {// (\,_,(*,a,b),b) is reduced to a
                     return p2.term[0];
@@ -103,7 +103,7 @@ public class ImageInt extends Image {
                 }
             }
         }
-        Term[] argument = product.cloneTerms(); //TODO is this clone needed?
+        final Term[] argument = product.cloneTerms(); //TODO is this clone needed?
         argument[index] = relation;
         return make(argument, index);
     }
@@ -117,9 +117,9 @@ public class ImageInt extends Image {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final ImageInt oldImage, final Term component, final short index) {
-        Term[] argList = oldImage.cloneTerms();
-        int oldIndex = oldImage.relationIndex;
-        Term relation = argList[oldIndex];
+        final Term[] argList = oldImage.cloneTerms();
+        final int oldIndex = oldImage.relationIndex;
+        final Term relation = argList[oldIndex];
         argList[oldIndex] = component;
         argList[index] = relation;
         return make(argList, index);

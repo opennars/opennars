@@ -70,30 +70,30 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
                     "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";
 
 
-    Map<Term,SensoryChannel> sensoryChannels = new HashMap<>();
-    public void addSensoryChannel(String term, SensoryChannel channel) {
+    final Map<Term,SensoryChannel> sensoryChannels = new HashMap<>();
+    public void addSensoryChannel(final String term, final SensoryChannel channel) {
         try {
             sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
-        } catch (InvalidInputException ex) {
+        } catch (final InvalidInputException ex) {
             Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
             throw new IllegalStateException("Could not add sensory channel.", ex);
         }
     }
     
-    public void SaveToFile(String name) throws IOException {
-        FileOutputStream outStream = new FileOutputStream(name);
-        ObjectOutputStream stream = new ObjectOutputStream(outStream);
+    public void SaveToFile(final String name) throws IOException {
+        final FileOutputStream outStream = new FileOutputStream(name);
+        final ObjectOutputStream stream = new ObjectOutputStream(outStream);
         stream.writeObject(this);
         outStream.close();
     }
     
-    public static NAR LoadFromFile(String name) throws IOException, ClassNotFoundException {
-        FileInputStream inStream = new FileInputStream(name);
-        ObjectInputStream stream = new ObjectInputStream(inStream);
-        NAR ret = (NAR) stream.readObject();
+    public static NAR LoadFromFile(final String name) throws IOException, ClassNotFoundException {
+        final FileInputStream inStream = new FileInputStream(name);
+        final ObjectInputStream stream = new ObjectInputStream(inStream);
+        final NAR ret = (NAR) stream.readObject();
         ret.memory.event = new EventEmitter();
         ret.plugins = new ArrayList<>(); 
-        for (Operator o : Operators.get(ret))
+        for (final Operator o : Operators.get(ret))
             ret.memory.addOperator(o);
         new Plugins().init(ret);
         return ret;
@@ -109,17 +109,17 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     /**
      * The memory of the reasoner
      */
-    public Memory memory;
+    public final Memory memory;
     
     
     public static class Lock extends Object implements Serializable { }
     //Because AtomicInteger/Double ot supported by teavm
     public static class PortableInteger implements Serializable {
         public PortableInteger(){}
-        Lock lock = new Lock();
+        final Lock lock = new Lock();
         int VAL = 0;
-        public PortableInteger(int VAL){synchronized(lock){this.VAL = VAL;}}
-        public void set(int VAL){synchronized(lock){this.VAL = VAL;}}
+        public PortableInteger(final int VAL){synchronized(lock){this.VAL = VAL;}}
+        public void set(final int VAL){synchronized(lock){this.VAL = VAL;}}
         public int get() {return this.VAL;}
         public float floatValue() {return (float)this.VAL;}
         public float doubleValue() {return (float)this.VAL;}
@@ -127,11 +127,11 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         public int incrementAndGet(){int ret = 0; synchronized(lock){this.VAL++; ret=this.VAL;} return ret;}
     }
     public static class PortableDouble implements Serializable {
-        Lock lock = new Lock();
+        final Lock lock = new Lock();
         public PortableDouble(){}
         double VAL = 0;
-        public PortableDouble(double VAL){synchronized(lock){this.VAL = VAL;}}
-        public void set(double VAL){synchronized(lock){this.VAL = VAL;}}
+        public PortableDouble(final double VAL){synchronized(lock){this.VAL = VAL;}}
+        public void set(final double VAL){synchronized(lock){this.VAL = VAL;}}
         public double get() {return this.VAL;}
         public float floatValue() {return (float)this.VAL;}
         public float doubleValue() {return (float)this.VAL;}
@@ -147,22 +147,22 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
        public final PortableDouble eventForgetDurations = new PortableDouble(Parameters.EVENT_FORGET_DURATIONS);
        public final PortableDouble decisionThreshold = new PortableDouble(Parameters.DECISION_THRESHOLD);
    }
-    public RuntimeParameters param;
+    public final RuntimeParameters param;
 
     public class PluginState implements Serializable {
         final public Plugin plugin;
         boolean enabled = false;
 
-        public PluginState(Plugin plugin) {
+        public PluginState(final Plugin plugin) {
             this(plugin,true);
         }
 
-        public PluginState(Plugin plugin, boolean enabled) {
+        public PluginState(final Plugin plugin, final boolean enabled) {
             this.plugin = plugin;
             setEnabled(enabled);
         }
 
-        public void setEnabled(boolean enabled) {
+        public void setEnabled(final boolean enabled) {
             if (this.enabled == enabled) return;
 
             plugin.setEnabled(NAR.this, enabled);
@@ -184,15 +184,15 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     private boolean threadYield;
 
     public NAR() {
-        Plugins b = new Plugins();
-        Memory m = new Memory(new RuntimeParameters(),
+        final Plugins b = new Plugins();
+        final Memory m = new Memory(new RuntimeParameters(),
                 new LevelBag(Parameters.CONCEPT_BAG_LEVELS, Parameters.CONCEPT_BAG_SIZE),
                 new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
                 new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE),
                 new LevelBag<>(Parameters.OPERATION_BAG_LEVELS, Parameters.OPERATION_BAG_SIZE));
         this.memory = m;
         this.param = m.param;
-        for (Operator o : Operators.get(this))
+        for (final Operator o : Operators.get(this))
             this.memory.addOperator(o);
         new Plugins().init(this);
     }
@@ -213,8 +213,8 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
      */
     private boolean addMultiLineInput(final String text) {
         if(text.contains("\n")) {
-            String[] lines = text.split("\n");
-            for(String s : lines) {
+            final String[] lines = text.split("\n");
+            for(final String s : lines) {
                 addInput(s);
                 if(!running) {
                     this.cycle();
@@ -232,18 +232,18 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         }
         else
         if(text.startsWith("*decisionthreshold=")) {
-            Double value = Double.valueOf(text.split("decisionthreshold=")[1]);
+            final Double value = Double.valueOf(text.split("decisionthreshold=")[1]);
             param.decisionThreshold.set(value);
             return true;
         }
         else
         if(text.startsWith("*volume=")) {
-            Integer value = Integer.valueOf(text.split("volume=")[1]);
+            final Integer value = Integer.valueOf(text.split("volume=")[1]);
             param.noiseLevel.set(value);
             return true;
         }
         if(StringUtils.isNumeric(text)) {
-            Integer retVal = Integer.parseInt(text);
+            final Integer retVal = Integer.parseInt(text);
             if(!running) {
                 for(int i=0;i<retVal;i++) {
                     this.cycle();
@@ -261,36 +261,36 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         if(text.startsWith("\'") || text.startsWith("//") ||text.trim().length() <= 0)
             return;
 
-        Narsese narsese = new Narsese(this);
+        final Narsese narsese = new Narsese(this);
         if(addMultiLineInput(text)) {
             return;
         }
         if(addCommand(text)) {
             return;
         }
-        Task task;
+        final Task task;
         try {
             task = narsese.parseTask(text);
-        } catch (InvalidInputException e) {
+        } catch (final InvalidInputException e) {
             throw new IllegalStateException("Invalid input: " + text, e);
         }
         //check if it should go to a sensory channel instead:
-        Term t = task.getTerm();
+        final Term t = task.getTerm();
         if(t != null && t instanceof Inheritance) {
-            Term predicate = ((Inheritance) t).getPredicate();
+            final Term predicate = ((Inheritance) t).getPredicate();
             if(this.sensoryChannels.containsKey(predicate)) {
-                Inheritance inh = (Inheritance) task.sentence.term;
-                SetExt subj = (SetExt) inh.getSubject();
+                final Inheritance inh = (Inheritance) task.sentence.term;
+                final SetExt subj = (SetExt) inh.getSubject();
                 //map to pei's -1 to 1 indexing schema
                 if(subj.term[0].term_indices == null) {
-                    String variable = subj.toString().split("\\[")[0];
-                    String[] vals = subj.toString().split("\\[")[1].split("\\]")[0].split(",");
-                    double height = Double.parseDouble(vals[0]);
-                    double width = Double.parseDouble(vals[1]);
-                    int wval = (int) Math.round((width+1.0f)/2.0f*(this.sensoryChannels.get(predicate).width-1));
-                    int hval = (int) Math.round(((height+1.0f)/2.0f*(this.sensoryChannels.get(predicate).height-1)));
-                    String ev = task.sentence.isEternal() ? " " : " :|: ";
-                    String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" +
+                    final String variable = subj.toString().split("\\[")[0];
+                    final String[] vals = subj.toString().split("\\[")[1].split("\\]")[0].split(",");
+                    final double height = Double.parseDouble(vals[0]);
+                    final double width = Double.parseDouble(vals[1]);
+                    final int wval = (int) Math.round((width+1.0f)/2.0f*(this.sensoryChannels.get(predicate).width-1));
+                    final int hval = (int) Math.round(((height+1.0f)/2.0f*(this.sensoryChannels.get(predicate).height-1)));
+                    final String ev = task.sentence.isEternal() ? " " : " :|: ";
+                    final String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" +
                                       task.sentence.punctuation + ev + task.sentence.truth.toString();
                     this.emit(OutputHandler.IN.class, task);
                     this.addInput(newInput);
@@ -304,15 +304,15 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         this.memory.inputTask(task);
     }
     
-    public void addInputFile(String s) {
-        try (BufferedReader br = new BufferedReader(new FileReader(s))) {
+    public void addInputFile(final String s) {
+        try (final BufferedReader br = new BufferedReader(new FileReader(s))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if(!line.isEmpty()) {
                     this.addInput(line);
                 }
             }
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
             throw new IllegalStateException("Could not open specified file", ex);
         }
@@ -320,13 +320,13 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
 
     /** gets a concept if it exists, or returns null if it does not */
-    public Concept concept(String concept) throws InvalidInputException {
+    public Concept concept(final String concept) throws InvalidInputException {
         return memory.concept(new Narsese(this).parseTerm(concept));
     }
 
-    public NAR ask(String termString, AnswerHandler answered) throws InvalidInputException {
+    public NAR ask(final String termString, final AnswerHandler answered) throws InvalidInputException {
 
-        Task t;
+        final Task t;
         addInput(
                 t = new Task(
                         new Sentence(
@@ -348,9 +348,9 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
 
     }
 
-    public NAR askNow(String termString, AnswerHandler answered) throws InvalidInputException {
+    public NAR askNow(final String termString, final AnswerHandler answered) throws InvalidInputException {
 
-        Task t;
+        final Task t;
         addInput(
                 t = new Task(
                         new Sentence(
@@ -378,32 +378,32 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     }
 
     /** attach event handler */
-    public void on(Class c, EventObserver o) {
+    public void on(final Class c, final EventObserver o) {
         memory.event.on(c, o);
     }
 
     /** remove event handler */
-    public void off(Class c, EventObserver o) {
+    public void off(final Class c, final EventObserver o) {
         memory.event.on(c, o);
     }
 
     /** set an event handler. useful for multiple events. */
-    public void event(EventObserver e, boolean enabled, Class... events) {
+    public void event(final EventObserver e, final boolean enabled, final Class... events) {
         memory.event.set(e, enabled, events);
     }
 
-    public void addPlugin(Plugin p) {
+    public void addPlugin(final Plugin p) {
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
         }
-        PluginState ps = new PluginState(p);
+        final PluginState ps = new PluginState(p);
         plugins.add(ps);
         emit(Events.PluginsChange.class, p, null);
     }
 
-    public void removePlugin(PluginState ps) {
+    public void removePlugin(final PluginState ps) {
         if (plugins.remove(ps)) {
-            Plugin p = ps.plugin;
+            final Plugin p = ps.plugin;
             if (p instanceof Operator) {
                 memory.removeOperator((Operator)p);
             }
@@ -465,7 +465,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
             if (minCyclePeriodMS > 0) {
                 try {
                     Thread.sleep(minCyclePeriodMS);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                 }
             }
             else if (threadYield) {
@@ -485,7 +485,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         try {
             memory.cycle(this);
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             if(Parameters.SHOW_REASONING_ERRORS) {
                 emit(ERR.class, e);
             }
@@ -518,7 +518,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     /** When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay). 
      *  This is for improving program responsiveness when NAR is run with no delay.
      */
-    public void setThreadYield(boolean b) {
+    public void setThreadYield(final boolean b) {
         this.threadYield = b;
     }
 }

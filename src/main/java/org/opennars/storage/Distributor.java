@@ -29,7 +29,7 @@ public final class Distributor {
     public final int capacity;
 
     private final static Map<Integer,Distributor> distributors = new HashMap(8);
-    public static Distributor get(int range) {
+    public static Distributor get(final int range) {
         Distributor d = distributors.get(range);
         if (d==null) {
             d = new Distributor(range);

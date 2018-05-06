@@ -41,7 +41,7 @@ import static org.opennars.language.CompoundTerm.termArray;
  */
 public class Abbreviation implements Plugin {
 
-    private double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
+    private final double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
     
     /**
     * Operator that give a CompoundTerm an atomic name
@@ -52,9 +52,9 @@ public class Abbreviation implements Plugin {
             super("^abbreviate");
         }
 
-        private static PortableInteger currentTermSerial = new PortableInteger(1);
+        private static final PortableInteger currentTermSerial = new PortableInteger(1);
 
-        public Term newSerialTerm(char prefix) {
+        public Term newSerialTerm(final char prefix) {
             return new Term(prefix + String.valueOf(currentTermSerial.incrementAndGet()));
         }
 
@@ -66,21 +66,21 @@ public class Abbreviation implements Plugin {
          * @return Immediate results as Tasks
          */
         @Override
-        protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+        protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
             
-            Term compound = args[0];
+            final Term compound = args[0];
             
-            Term atomic = newSerialTerm(Symbols.TERM_PREFIX);
+            final Term atomic = newSerialTerm(Symbols.TERM_PREFIX);
                         
-            Sentence sentence = new Sentence(
+            final Sentence sentence = new Sentence(
                     Similarity.make(compound, atomic), 
                     Symbols.JUDGMENT_MARK, 
                     new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                     new Stamp(memory));
             
-            float quality = BudgetFunctions.truthToQuality(sentence.truth);
+            final float quality = BudgetFunctions.truthToQuality(sentence.truth);
             
-            BudgetValue budget = new BudgetValue(
+            final BudgetValue budget = new BudgetValue(
                     Parameters.DEFAULT_JUDGMENT_PRIORITY, 
                     Parameters.DEFAULT_JUDGMENT_DURABILITY, 
                     quality);
@@ -91,14 +91,14 @@ public class Abbreviation implements Plugin {
 
     }
     
-    public PortableInteger abbreviationComplexityMin = new PortableInteger(20);
-    public PortableDouble abbreviationQualityMin = new PortableDouble(0.95f);
+    public final PortableInteger abbreviationComplexityMin = new PortableInteger(20);
+    public final PortableDouble abbreviationQualityMin = new PortableDouble(0.95f);
     public EventObserver obs;
     
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public PortableDouble priorityFactor = new PortableDouble(1.0);
     
-    public boolean canAbbreviate(Task task) {
+    public boolean canAbbreviate(final Task task) {
         return !(task.sentence.term instanceof Operation) && 
                 (task.sentence.term.getComplexity() > abbreviationComplexityMin.get()) &&
                 (task.budget.getQuality() > abbreviationQualityMin.get());
@@ -122,12 +122,12 @@ public class Abbreviation implements Plugin {
                 if ((abbreviationProbability < 1.0) && (Memory.randomNumber.nextDouble() > abbreviationProbability))
                     return;
 
-                Task task = (Task)a[0];
+                final Task task = (Task)a[0];
 
                 //is it complex and also important? then give it a name:
                 if (canAbbreviate(task)) {
 
-                    Operation operation = Operation.make(
+                    final Operation operation = Operation.make(
                             abbreviate, termArray(task.sentence.term ),
                             false);
 

@@ -44,21 +44,21 @@ public class NALTest  {
         Parameters.TEST_RUNNING = true;
     }
 
-    int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
+    final int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public boolean showOutput = false;
     static public boolean saveSimilar = true;
-    static public boolean showSuccess = false;
-    static public boolean showFail = true;
-    static public boolean showReport = true;
-    static public boolean requireSuccess = true;
-    static public int similarsToSave = 5;       
-    private static boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
-    protected static Map<String, String> examples = new HashMap(); //path -> script data
-    public static Map<String, Boolean> tests = new HashMap();
-    public static Map<String, Double> scores = new HashMap();
+    static public  boolean showSuccess = false;
+    static public final boolean showFail = true;
+    static public final boolean showReport = true;
+    static public final boolean requireSuccess = true;
+    static public final int similarsToSave = 5;
+    private static final boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
+    protected static final Map<String, String> examples = new HashMap(); //path -> script data
+    public static final Map<String, Boolean> tests = new HashMap();
+    public static final Map<String, Double> scores = new HashMap();
     final String scriptPath;
     
-    public static String getExample(String path) {
+    public static String getExample(final String path) {
         try {
             String existing = examples.get(path);
             if (existing!=null)
@@ -68,7 +68,7 @@ public class NALTest  {
 
             examples.put(path, existing);
             return existing;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException("Could not load path", e);
         }
     }
@@ -83,9 +83,9 @@ public class NALTest  {
     
     @Parameterized.Parameters
     public static Collection params() {
-        Map<String, Object> et = ExampleFileInput.getUnitTests();
-        Collection t = et.values();
-        for (String x : et.keySet()) addTest(x);
+        final Map<String, Object> et = ExampleFileInput.getUnitTests();
+        final Collection t = et.values();
+        for (final String x : et.keySet()) addTest(x);
         return t;
     }
     
@@ -95,7 +95,7 @@ public class NALTest  {
         tests.put(name, true);
     }
 
-    public static double runTests(Class c) {
+    public static double runTests(final Class c) {
 
         tests.clear();
         scores.clear();
@@ -104,27 +104,27 @@ public class NALTest  {
             System.out.println("When ready, press enter");
             try {
                 System.in.read();
-            } catch (IOException ex) {
+            } catch (final IOException ex) {
                 throw new IllegalStateException("Could not read user input.", ex);
             }
         }
         
         //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
         
-        Result result = JUnitCore.runClasses(new ParallelComputer(true, true), c);
+        final Result result = JUnitCore.runClasses(new ParallelComputer(true, true), c);
               
         
-        for (Failure f : result.getFailures()) {
-            String test = f.getMessage().substring(f.getMessage().indexOf("/nal/single_step") + 8, f.getMessage().indexOf(".nal"));
+        for (final Failure f : result.getFailures()) {
+            final String test = f.getMessage().substring(f.getMessage().indexOf("/nal/single_step") + 8, f.getMessage().indexOf(".nal"));
             
             tests.put(test, false);
         }
         
-        int levelSuccess[] = new int[10];
-        int levelTotals[] = new int[10];
+        final int[] levelSuccess = new int[10];
+        final int[] levelTotals = new int[10];
         
-        for (Map.Entry<String, Boolean> e : tests.entrySet()) {
-            String name = e.getKey();
+        for (final Map.Entry<String, Boolean> e : tests.entrySet()) {
+            final String name = e.getKey();
             int level = 0;
             level = Integer.parseInt(name.split("\\.")[0]);
             levelTotals[level]++;
@@ -134,14 +134,14 @@ public class NALTest  {
         }
 
         double totalScore = 0;
-        for (Double d : scores.values())
+        for (final Double d : scores.values())
             totalScore += d;
         
         if (showReport) {
             int totalSucceeded = 0, total = 0;
             for (int i = 0; i < 9; i++) {
-                float rate = (levelTotals[i] > 0) ? ((float)levelSuccess[i]) / levelTotals[i] : 0;
-                String prefix = (i > 0) ? ("NAL" + i) : "Other";
+                final float rate = (levelTotals[i] > 0) ? ((float)levelSuccess[i]) / levelTotals[i] : 0;
+                final String prefix = (i > 0) ? ("NAL" + i) : "Other";
 
                 System.out.println(prefix + ": " + (rate*100.0) + "%  (" + levelSuccess[i] + "/" + levelTotals[i] + ")" );
                 totalSucceeded += levelSuccess[i];
@@ -154,11 +154,11 @@ public class NALTest  {
         return totalScore;
     }
     
-    public static void main(String[] args) {   
+    public static void main(final String[] args) {
         runTests(NALTest.class);
     }
 
-    public NALTest(String scriptPath) {        
+    public NALTest(final String scriptPath) {
         this.scriptPath = scriptPath;
         
     }
@@ -173,17 +173,17 @@ public class NALTest  {
         final List<OutputCondition> expects = new ArrayList();
         
         NAR n = null;
-        boolean error = false;
+        final boolean error = false;
         n = newNAR();
-        String example = getExample(path);
+        final String example = getExample(path);
 
         if (showOutput) {
             System.out.println(example);
             System.out.println();
         }
 
-        List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
-        for (OutputCondition e1 : extractedExpects)
+        final List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
+        for (final OutputCondition e1 : extractedExpects)
             expects.add(e1);
 
         if (showOutput)
@@ -196,14 +196,14 @@ public class NALTest  {
         System.out.flush();
         
         boolean success = expects.size() > 0 && (!error);
-        for (OutputCondition e: expects) {
+        for (final OutputCondition e: expects) {
             if (!e.succeeded) success = false;
         }
 
         double score = Double.POSITIVE_INFINITY;
         if (success) {
             long lastSuccess = -1;
-            for (OutputCondition e: expects) {
+            for (final OutputCondition e: expects) {
                 if (e.getTrueTime()!=-1) {
                     if (lastSuccess < e.getTrueTime())
                         lastSuccess = e.getTrueTime();
@@ -223,7 +223,7 @@ public class NALTest  {
 
         if ((!success & showFail) || (success && showSuccess)) {
             System.err.println('\n' + path + " @" + n.memory.time());
-            for (OutputCondition e: expects) {
+            for (final OutputCondition e: expects) {
                 System.err.println("  " + e);
             }
         }

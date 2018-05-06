@@ -48,19 +48,19 @@ public abstract class OutputHandler extends EventHandler {
 
     public static final Class[] DefaultOutputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Answer.class, ANTICIPATE.class, CONFIRM.class, DISAPPOINT.class };
             
-    public OutputHandler(EventEmitter source, boolean active) {
+    public OutputHandler(final EventEmitter source, final boolean active) {
         super(source, active, DefaultOutputEvents );
     }
     
-    public OutputHandler(Memory m, boolean active) {
+    public OutputHandler(final Memory m, final boolean active) {
         this(m.event, active);
     }
 
-    public OutputHandler(NAR n, boolean active) {
+    public OutputHandler(final NAR n, final boolean active) {
         this(n.memory.event, active);
     }
 
-    public OutputHandler(NAR n) {
+    public OutputHandler(final NAR n) {
         this(n, true);
     }
 

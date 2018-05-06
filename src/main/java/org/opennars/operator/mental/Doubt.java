@@ -40,9 +40,9 @@ public class Doubt extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term term = args[1];
-        Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+        final Term term = args[1];
+        final Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         concept.discountConfidence(true);
         return null;
     }

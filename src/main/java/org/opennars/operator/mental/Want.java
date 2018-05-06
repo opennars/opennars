@@ -41,18 +41,18 @@ public class Want extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
 
-        Term content = args[1];                
+        final Term content = args[1];
         
-        TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(
+        final TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+        final Sentence sentence = new Sentence(
             content,
             Symbols.GOAL_MARK,
             truth,
             new Stamp(memory));
         
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, truth);
+        final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, truth);
 
         return Lists.newArrayList( new Task(sentence, budget, true) );        
     }

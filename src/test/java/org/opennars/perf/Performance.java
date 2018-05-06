@@ -24,11 +24,11 @@ public abstract class Performance {
     private long totalMemory;
     protected final DecimalFormat df = new DecimalFormat("#.###");
 
-    public Performance(String name, int repeats, int warmups) {
+    public Performance(final String name, final int repeats, final int warmups) {
         this(name, repeats, warmups, true);
     }
     
-    public Performance(String name, int repeats, int warmups, boolean gc) {
+    public Performance(final String name, final int repeats, int warmups, final boolean gc) {
         this.repeats = repeats;        
         this.name = name;
         
@@ -37,16 +37,16 @@ public abstract class Performance {
         totalTime = 0;
         totalMemory = 0;
 
-        int total = repeats+warmups;
+        final int total = repeats+warmups;
         for (int r = 0; r < total; r++) {
 
             if (gc) {
                 System.gc();
             }
 
-            long usedMemStart = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
+            final long usedMemStart = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
             
-            long start = System.nanoTime();
+            final long start = System.nanoTime();
             
             run(warmups != 0);
 
@@ -64,7 +64,7 @@ public abstract class Performance {
         System.out.print(df.format(totalMemory/repeats/1024.0) + " kb/run");
         return this;
     }
-    public Performance printCSV(boolean finalComma) {
+    public Performance printCSV(final boolean finalComma) {
         System.out.print(name + ", " + df.format(getCycleTimeMS()) + ", ");
         System.out.print(df.format(totalMemory/repeats/1024.0));
         if (finalComma)

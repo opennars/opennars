@@ -37,26 +37,26 @@ public class AttentionTest {
     
     @Test public void testSampleNextConcept() {
         
-        int numConcepts = 32;
-        NAR n = new NAR();
+        final int numConcepts = 32;
+        final NAR n = new NAR();
         for (int i = 0; i < numConcepts; i++)
             n.addInput("<x" + i + " <-> x" + (i+1) + ">.");
         
         n.cycles(100);
         
-        int c = Iterables.size(n.memory.concepts);
+        final int c = Iterables.size(n.memory.concepts);
         assertTrue(c > 32);
         
-        Set<Concept> uniqueconcepts = new HashSet();
+        final Set<Concept> uniqueconcepts = new HashSet();
         
         for (int i = 0; i < numConcepts; i++) {
-            Concept s = n.memory.concepts.peekNext();
+            final Concept s = n.memory.concepts.peekNext();
             uniqueconcepts.add(s);
         }
 
         assertTrue(uniqueconcepts.size() > 1);
         
-        int c2 = Iterables.size(n.memory.concepts);
+        final int c2 = Iterables.size(n.memory.concepts);
         assertEquals("does not affect # of concepts", c, c2);
     }
     

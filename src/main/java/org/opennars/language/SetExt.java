@@ -47,7 +47,7 @@ public class SetExt extends SetTensional {
         return new SetExt(term);
     }
     
-    @Override public SetExt clone(Term[] replaced) {
+    @Override public SetExt clone(final Term[] replaced) {
         return make(replaced);
     }
     
@@ -57,7 +57,7 @@ public class SetExt extends SetTensional {
         return new SetExt(t);
     }
 
-    public static SetExt make(Collection<Term> l) {
+    public static SetExt make(final Collection<Term> l) {
         return make(l.toArray(new Term[l.size()]));
     }
     

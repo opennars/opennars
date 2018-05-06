@@ -37,7 +37,7 @@ public class FeelBusy extends Feel {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
         return feeling(memory.emotion.busy(), memory);
     }    
 }

@@ -37,20 +37,20 @@ public class TuneTuffy {
         private final Term term;
         Sentence mostConfident = null;
         
-        public SolutionMonitor(NAR n, String term) throws Narsese.InvalidInputException {
+        public SolutionMonitor(final NAR n, final String term) throws Narsese.InvalidInputException {
             super(n, true, OUT.class, Answer.class);
             
-            Term t = new Narsese(n).parseTerm(term);
+            final Term t = new Narsese(n).parseTerm(term);
             this.term = t;
             
             n.addInput(t.toString() + "?");
         }
 
         @Override
-        public void event(Class event, Object[] args) {
+        public void event(final Class event, final Object[] args) {
             if ((event == Answer.class) || (event == OUT.class)) {
-                Task task = (Task)args[0];
-                Term content = task.sentence.term;
+                final Task task = (Task)args[0];
+                final Term content = task.sentence.term;
                 if (task.sentence.isJudgment()) {
                     if (content.equals(term)) {
                         onJudgment(task.sentence);
@@ -59,11 +59,11 @@ public class TuneTuffy {
             }
         }
 
-        public void onJudgment(Sentence s) {
+        public void onJudgment(final Sentence s) {
             if (mostConfident == null)
                 mostConfident = s;
             else {
-                float existingConf = mostConfident.truth.getConfidence();
+                final float existingConf = mostConfident.truth.getConfidence();
                 if (existingConf < s.truth.getConfidence())
                     mostConfident = s;
             }
@@ -76,24 +76,24 @@ public class TuneTuffy {
         
     }
     
-    public static void main(String[] args) throws Narsese.InvalidInputException {
+    public static void main(final String[] args) throws Narsese.InvalidInputException {
 
         
-        NAR n = new NAR();
+        final NAR n = new NAR();
         n.addInputFile("nal/use_cases/tuffy.smokes.nal");
         
         //new TextOutput(n, System.out, 0.95f);                
         
         
-        SolutionMonitor anna0 = new SolutionMonitor(n, "<Anna <-> [Smokes]>");
-        SolutionMonitor bob0 = new SolutionMonitor(n, "<Bob --> [Smokes]>");
-        SolutionMonitor edward0 = new SolutionMonitor(n, "<Edward --> [Smokes]>");
-        SolutionMonitor frank0 = new SolutionMonitor(n, "<Frank --> [Smokes]>");
+        final SolutionMonitor anna0 = new SolutionMonitor(n, "<Anna <-> [Smokes]>");
+        final SolutionMonitor bob0 = new SolutionMonitor(n, "<Bob --> [Smokes]>");
+        final SolutionMonitor edward0 = new SolutionMonitor(n, "<Edward --> [Smokes]>");
+        final SolutionMonitor frank0 = new SolutionMonitor(n, "<Frank --> [Smokes]>");
         
-        SolutionMonitor anna = new SolutionMonitor(n, "<Anna <-> [Cancer]>");
-        SolutionMonitor bob = new SolutionMonitor(n, "<Bob --> [Cancer]>");
-        SolutionMonitor edward = new SolutionMonitor(n, "<Edward --> [Cancer]>");
-        SolutionMonitor frank = new SolutionMonitor(n, "<Frank --> [Cancer]>");
+        final SolutionMonitor anna = new SolutionMonitor(n, "<Anna <-> [Cancer]>");
+        final SolutionMonitor bob = new SolutionMonitor(n, "<Bob --> [Cancer]>");
+        final SolutionMonitor edward = new SolutionMonitor(n, "<Edward --> [Cancer]>");
+        final SolutionMonitor frank = new SolutionMonitor(n, "<Frank --> [Cancer]>");
 
 
         n.run();

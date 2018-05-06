@@ -67,8 +67,8 @@ public class Memory implements Serializable, Iterable<Concept> {
     public Task lastDecision = null;
     public boolean allowExecution = true;
 
-    public static long randomSeed = 1;
-    public static Random randomNumber = new Random(randomSeed);
+    public static final long randomSeed = 1;
+    public static final Random randomNumber = new Random(randomSeed);
     public static void resetStatic() {
         randomNumber.setSeed(randomSeed);    
     }
@@ -84,8 +84,8 @@ public class Memory implements Serializable, Iterable<Concept> {
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
     
     /* Input event tasks that were either input events or derived sequences*/
-    public Bag<Task<Term>,Sentence<Term>> seq_current;
-    public Bag<Task<Term>,Sentence<Term>> recent_operations;
+    public final Bag<Task<Term>,Sentence<Term>> seq_current;
+    public final Bag<Task<Term>,Sentence<Term>> recent_operations;
 
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
@@ -102,9 +102,9 @@ public class Memory implements Serializable, Iterable<Concept> {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(RuntimeParameters param, Bag<Concept,Term> concepts, Bag<Task<Term>,Sentence<Term>> novelTasks,
-            Bag<Task<Term>,Sentence<Term>> seq_current,
-            Bag<Task<Term>,Sentence<Term>> recent_operations) {                
+    public Memory(final RuntimeParameters param, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
+                  final Bag<Task<Term>,Sentence<Term>> seq_current,
+                  final Bag<Task<Term>,Sentence<Term>> recent_operations) {
 
         this.param = param;
         this.event = new EventEmitter();
@@ -185,7 +185,7 @@ public class Memory implements Serializable, Iterable<Concept> {
             //unable to create, ex: has variables
             return null;
         }
-        Concept displaced = concepts.putBack(concept, cycles(param.conceptForgetDurations), this);   
+        final Concept displaced = concepts.putBack(concept, cycles(param.conceptForgetDurations), this);
         if (displaced == null) {
             //added without replacing anything
             return concept;
@@ -215,9 +215,9 @@ public class Memory implements Serializable, Iterable<Concept> {
     boolean checked=false;
     boolean isjUnit=false;
     public static boolean isJUnitTest() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        StackTraceElement[] list = stackTrace;
-        for (StackTraceElement element : list) {
+        final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        final StackTraceElement[] list = stackTrace;
+        for (final StackTraceElement element : list) {
             if (element.getClassName().startsWith("org.junit.")) {
                 return true;
             }           
@@ -236,14 +236,14 @@ public class Memory implements Serializable, Iterable<Concept> {
      *
      * @param t The addInput task
      */
-    public void inputTask(final Task t, boolean emitIn) {
+    public void inputTask(final Task t, final boolean emitIn) {
         if(!checked) {
             checked=true;
             isjUnit=isJUnitTest();
         }
         if (t instanceof Task) {
-            Task task = t;
-            Stamp s = task.sentence.stamp;                        
+            final Task task = t;
+            final Stamp s = task.sentence.stamp;
             if (s.getCreationTime()==-1)
                 s.setCreationTime(time(), Parameters.DURATION);
 
@@ -275,18 +275,18 @@ public class Memory implements Serializable, Iterable<Concept> {
      *
      * @param operation The operation just executed
      */
-    public void executedTask(final Operation operation, TruthValue truth) {
-        Task opTask = operation.getTask();
+    public void executedTask(final Operation operation, final TruthValue truth) {
+        final Task opTask = operation.getTask();
        // logic.TASK_EXECUTED.commit(opTask.budget.getPriority());
                 
-        Stamp stamp = new Stamp(this, Tense.Present); 
-        Sentence sentence = new Sentence(
+        final Stamp stamp = new Stamp(this, Tense.Present);
+        final Sentence sentence = new Sentence(
             operation,
             Symbols.JUDGMENT_MARK,
             truth,
             stamp);
         
-        Task task = new Task(sentence, 
+        final Task task = new Task(sentence,
                              new BudgetValue(Parameters.DEFAULT_FEEDBACK_PRIORITY, 
                                              Parameters.DEFAULT_FEEDBACK_DURABILITY,
                                              truthToQuality(sentence.getTruth())),
@@ -313,7 +313,7 @@ public class Memory implements Serializable, Iterable<Concept> {
         return event.isActive(channel);
     }
     
-    public void conceptRemoved(Concept c) {
+    public void conceptRemoved(final Concept c) {
         emit(Events.ConceptForget.class, c);
     }
     
@@ -333,13 +333,13 @@ public class Memory implements Serializable, Iterable<Concept> {
         cycle++;
     }
     
-    public void localInference(Task task) {
-        DerivationContext cont = new DerivationContext(this);
+    public void localInference(final Task task) {
+        final DerivationContext cont = new DerivationContext(this);
         cont.setCurrentTask(task);
         cont.setCurrentTerm(task.getTerm());
         cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
         if (cont.getCurrentConcept() != null) {
-            boolean processed = ConceptProcessing.processTask(cont.getCurrentConcept(), cont, task);
+            final boolean processed = ConceptProcessing.processTask(cont.getCurrentConcept(), cont, task);
             if (processed) {
                 event.emit(Events.ConceptDirectProcessedTask.class, task);
             }
@@ -363,13 +363,13 @@ public class Memory implements Serializable, Iterable<Concept> {
         int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
         while (counter-- > 0) {
             task = newTasks.removeFirst();
-            boolean enterDirect = true;
+            final boolean enterDirect = true;
             if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ enterDirect ||  task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
                 localInference(task);
             } else {
-                Sentence s = task.sentence;
+                final Sentence s = task.sentence;
                 if (s.isJudgment() || s.isGoal()) {
-                    double d = s.getTruth().getExpectation();
+                    final double d = s.getTruth().getExpectation();
                     if (s.isJudgment() && d > Parameters.DEFAULT_CREATION_EXPECTATION) {
                         novelTasks.putIn(task);    // new concept formation
                     } else 
@@ -416,7 +416,7 @@ public class Memory implements Serializable, Iterable<Concept> {
     }   
 
     /** converts durations to cycles */
-    public final float cycles(PortableDouble durations) {
+    public final float cycles(final PortableDouble durations) {
         return Parameters.DURATION * durations.floatValue();
     }
 

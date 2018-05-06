@@ -31,7 +31,7 @@ public class Equivalence extends Statement {
      *
      * @param components The component list of the term
      */
-    private Equivalence(Term[] components, int order) {
+    private Equivalence(final Term[] components, final int order) {
         super(components);
         
         temporalOrder = order;
@@ -58,7 +58,7 @@ public class Equivalence extends Statement {
     
     /** alternate version of Inheritance.make that allows equivalent subject and predicate
      * to be reduced to the common term.      */
-    public static Term makeTerm(final Term subject, final Term predicate, int temporalOrder) {
+    public static Term makeTerm(final Term subject, final Term predicate, final int temporalOrder) {
         if (subject.equals(predicate))
             return subject;                
         return make(subject, predicate, temporalOrder);        
@@ -74,7 +74,7 @@ public class Equivalence extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Equivalence make(Term subject, Term predicate) {  // to be extended to check if subject is Conjunction
+    public static Equivalence make(final Term subject, final Term predicate) {  // to be extended to check if subject is Conjunction
         return make(subject, predicate, TemporalRules.ORDER_NONE);
     }
 
@@ -91,12 +91,12 @@ public class Equivalence extends Statement {
                 
         if ((temporalOrder == TemporalRules.ORDER_BACKWARD)
                 || ((subject.compareTo(predicate) > 0) && (temporalOrder != TemporalRules.ORDER_FORWARD))) {
-            Term interm = subject;
+            final Term interm = subject;
             subject = predicate;
             predicate = interm;
         }
         
-        NativeOperator copula;
+        final NativeOperator copula;
         switch (temporalOrder) {
             case TemporalRules.ORDER_BACKWARD:
                 temporalOrder = TemporalRules.ORDER_FORWARD;
@@ -110,7 +110,7 @@ public class Equivalence extends Statement {
             default:
                 copula = NativeOperator.EQUIVALENCE;
         }
-        Term[] t;
+        final Term[] t;
         if (temporalOrder==TemporalRules.ORDER_FORWARD)
             t = new Term[] { subject, predicate };
         else

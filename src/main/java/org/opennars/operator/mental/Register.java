@@ -39,8 +39,8 @@ public class Register extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Operator op=new NullOperator(args[1].toString());
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+        final Operator op=new NullOperator(args[1].toString());
         memory.addOperator(op);  // add error checking
         return null;
     }

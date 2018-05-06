@@ -27,13 +27,13 @@ import static org.junit.Assert.assertTrue;
 
 public class BagIteratorTest {
     
-    int L = 4;
+    final int L = 4;
 
 
-    public void testIterator(Bag<NullItem,CharSequence> b) {
+    public void testIterator(final Bag<NullItem,CharSequence> b) {
         int count = 0;
         NullItem first = null, current = null;
-        for (NullItem n : b) {
+        for (final NullItem n : b) {
             if (first == null)
                 first = n;
             current = n;
@@ -49,7 +49,7 @@ public class BagIteratorTest {
         assertTrue(count==b.size());
     }
     
-    public void testBagIterator(Bag<NullItem,CharSequence> b) {
+    public void testBagIterator(final Bag<NullItem,CharSequence> b) {
         
         b.putIn(new NullItem(0.1f));
         b.putIn(new NullItem(0.2f));

@@ -47,12 +47,12 @@ public class Consider extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term term = args[1];
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+        final Term term = args[1];
         
-        Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
+        final Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         
-        DerivationContext cont = new DerivationContext(memory);
+        final DerivationContext cont = new DerivationContext(memory);
         cont.setCurrentConcept(concept);
         GeneralInferenceControl.fireConcept(cont, 1);
         

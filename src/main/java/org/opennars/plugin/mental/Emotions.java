@@ -42,11 +42,11 @@ public class Emotions implements Plugin {
     
     public Emotions() {}
 
-    public Emotions(float happy, float busy) {
+    public Emotions(final float happy, final float busy) {
         set(happy, busy);
     }
 
-    public void set(float happy, float busy) {
+    public void set(final float happy, final float busy) {
         this.happy = happy;
         this.busy = busy;
     }
@@ -62,8 +62,8 @@ public class Emotions implements Plugin {
     public double lasthappy=0.5;
     public long last_happy_time = 0;
     public long last_busy_time = 0;
-    public long change_steps_demanded = 1000;
-    public void adjustSatisfaction(float newValue, float weight, DerivationContext nal) {
+    public final long change_steps_demanded = 1000;
+    public void adjustSatisfaction(final float newValue, final float weight, final DerivationContext nal) {
         
         //        float oldV = happyValue;
         happy += newValue * weight;
@@ -86,13 +86,13 @@ public class Emotions implements Plugin {
         }
         
         if(frequency!=-1) { //ok lets add an event now
-            Term predicate=SetInt.make(new Term("satisfied"));
-            Term subject=Term.SELF;
-            Inheritance inh=Inheritance.make(subject, predicate);
-            TruthValue truth=new TruthValue(happy,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-            Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
+            final Term predicate=SetInt.make(new Term("satisfied"));
+            final Term subject=Term.SELF;
+            final Inheritance inh=Inheritance.make(subject, predicate);
+            final TruthValue truth=new TruthValue(happy,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+            final Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
             s.stamp.setOccurrenceTime(nal.memory.time());
-            Task t=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth)), true);
+            final Task t=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth)), true);
             nal.addTask(t, "emotion");
             /*if(Parameters.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
                 TruthValue truth2=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE);
@@ -131,8 +131,8 @@ public class Emotions implements Plugin {
     }
     
     public double lastbusy=0.5;
-    public double CHANGE_THRESHOLD = 0.25f;
-    public void adjustBusy(float newValue, float weight, DerivationContext nal) {
+    public final double CHANGE_THRESHOLD = 0.25f;
+    public void adjustBusy(final float newValue, final float weight, final DerivationContext nal) {
 
         busy += newValue * weight;
         busy /= (1.0f + weight);
@@ -154,17 +154,17 @@ public class Emotions implements Plugin {
         }
         
         if(frequency!=-1) { //ok lets add an event now
-            Term predicate=SetInt.make(new Term("busy"));
-            Term subject=new Term("SELF");
-            Inheritance inh=Inheritance.make(subject, predicate);
-            TruthValue truth=new TruthValue(busy,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-            Sentence s = new Sentence(
+            final Term predicate=SetInt.make(new Term("busy"));
+            final Term subject=new Term("SELF");
+            final Inheritance inh=Inheritance.make(subject, predicate);
+            final TruthValue truth=new TruthValue(busy,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+            final Sentence s = new Sentence(
                 inh,
                 Symbols.JUDGMENT_MARK,
                 truth,
                 new Stamp(nal.memory));
             s.stamp.setOccurrenceTime(nal.memory.time());
-            Task t=new Task(s,
+            final Task t=new Task(s,
                             new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
                                             Parameters.DEFAULT_JUDGMENT_DURABILITY,
                                             BudgetFunctions.truthToQuality(truth)),
@@ -175,7 +175,7 @@ public class Emotions implements Plugin {
 
     boolean enabled = false; //false means it needs to be retrieved using feelSatisfied / feelBusy instead
     @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
+    public boolean setEnabled(final NAR n, final boolean enabled) {
         this.enabled = enabled;
         return enabled;
     }

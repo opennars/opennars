@@ -95,7 +95,7 @@ public class TemporalRules {
 
     public static final int resemblanceOrder(final int order1, final int order2, final int figure) {
         int order = ORDER_INVALID;
-        int order1Reverse = reverseOrder(order1);
+        final int order1Reverse = reverseOrder(order1);
         
         if ((order2 == TemporalRules.ORDER_NONE)) {
             order = (figure > 20) ? order1 : order1Reverse; // switch when 11 or 12
@@ -132,7 +132,7 @@ public class TemporalRules {
     }
     
     //TODO maybe split &/ case into own function
-    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, boolean SucceedingEventsInduction, boolean addToMemory, boolean allowSequence) {
+    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final org.opennars.control.DerivationContext nal, final boolean SucceedingEventsInduction, final boolean addToMemory, final boolean allowSequence) {
         
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK
                 || s1.isEternal() || s2.isEternal())
@@ -141,7 +141,7 @@ public class TemporalRules {
         Term t1 = s1.term;
         Term t2 = s2.term;
                
-        boolean deriveSequenceOnly = (!addToMemory) || Statement.invalidStatement(t1, t2, true);
+        final boolean deriveSequenceOnly = (!addToMemory) || Statement.invalidStatement(t1, t2, true);
         if (Statement.invalidStatement(t1, t2, false))
             return Collections.emptyList();
         
@@ -150,14 +150,14 @@ public class TemporalRules {
         
         if (!deriveSequenceOnly && termForTemporalInduction(t1) && termForTemporalInduction(t2)) {
             
-            Statement ss1 = (Statement) t1;
-            Statement ss2 = (Statement) t2;
+            final Statement ss1 = (Statement) t1;
+            final Statement ss2 = (Statement) t2;
 
-            Variable var1 = new Variable("$0");
-            Variable var2 = new Variable("$1");
+            final Variable var1 = new Variable("$0");
+            final Variable var2 = new Variable("$1");
             
             if(ss2.containsTermRecursively(ss1.getSubject())) {
-                Map<Term,Term> subs=new HashMap();
+                final Map<Term,Term> subs=new HashMap();
                 subs.put(ss1.getSubject(), var1);
                 if(ss2.containsTermRecursively(ss1.getPredicate())) {
                     subs.put(ss1.getPredicate(), var2);
@@ -167,7 +167,7 @@ public class TemporalRules {
             }
             
             if(ss1.containsTermRecursively(ss2.getSubject())) {
-                Map<Term,Term> subs=new HashMap();
+                final Map<Term,Term> subs=new HashMap();
                 subs.put(ss2.getSubject(), var1);
                 if(ss1.containsTermRecursively(ss2.getPredicate())) {
                     subs.put(ss2.getPredicate(), var2);
@@ -179,18 +179,18 @@ public class TemporalRules {
             //allow also temporal induction on operator arguments:
             if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
                 if(ss2 instanceof Operation && !(ss2.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
-                    Term comp=ss1.getSubject();
-                    Term ss2_term = ss2.getSubject();
-                    boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
+                    final Term comp=ss1.getSubject();
+                    final Term ss2_term = ss2.getSubject();
+                    final boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
                     
                     if(ss2_term instanceof Product) {
-                        Product ss2_prod=(Product) ss2_term;
+                        final Product ss2_prod=(Product) ss2_term;
                         
                         if(applicableVariableType && Terms.contains(ss2_prod.term, comp)) { //only if there is one and it isnt a variable already
                             
-                            Term[] ars = ss2_prod.cloneTermsReplacing(comp, var1);
+                            final Term[] ars = ss2_prod.cloneTermsReplacing(comp, var1);
                             t11 = Statement.make(ss1, var1, ss1.getPredicate());
-                            Operation op=(Operation) Operation.make(
+                            final Operation op=(Operation) Operation.make(
                                     new Product(ars), 
                                     ss2.getPredicate()
                             );
@@ -199,19 +199,19 @@ public class TemporalRules {
                     }
                 }
                 if(ss1 instanceof Operation && !(ss1.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
-                    Term comp=ss2.getSubject();
-                    Term ss1_term = ss1.getSubject();
+                    final Term comp=ss2.getSubject();
+                    final Term ss1_term = ss1.getSubject();
                     
-                    boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
+                    final boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
                     
                     if(ss1_term instanceof Product) {
-                        Product ss1_prod=(Product) ss1_term;
+                        final Product ss1_prod=(Product) ss1_term;
                                                
                         if(applicableVariableType && Terms.contains(ss1_prod.term, comp)) { //only if there is one and it isnt a variable already
                             
-                            Term[] ars = ss1_prod.cloneTermsReplacing(comp, var1);
+                            final Term[] ars = ss1_prod.cloneTermsReplacing(comp, var1);
                             t22 = Statement.make(ss2, var1, ss2.getPredicate());
-                            Operation op=(Operation) Operation.make(
+                            final Operation op=(Operation) Operation.make(
                                     new Product(ars), 
                                     ss1.getPredicate()
                             );
@@ -222,10 +222,10 @@ public class TemporalRules {
             }
         }
 
-        int durationCycles = Parameters.DURATION;
-        long time1 = s1.getOccurenceTime();
-        long time2 = s2.getOccurenceTime();
-        long timeDiff = time2 - time1;
+        final int durationCycles = Parameters.DURATION;
+        final long time1 = s1.getOccurenceTime();
+        final long time2 = s2.getOccurenceTime();
+        final long timeDiff = time2 - time1;
         Interval interval=null;
         
         if (!concurrent(time1, time2, durationCycles)) {
@@ -244,30 +244,30 @@ public class TemporalRules {
                 }
             }
         }
-        int order = order(timeDiff, durationCycles);
-        TruthValue givenTruth1 = s1.truth;
+        final int order = order(timeDiff, durationCycles);
+        final TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
         
         //This code adds a penalty for large time distance (TODO probably revise)
-        Sentence s3 = s2.projection(s1.getOccurenceTime(), nal.memory.time());
+        final Sentence s3 = s2.projection(s1.getOccurenceTime(), nal.memory.time());
         givenTruth2 = s3.truth; 
         
         //Truth and priority calculations
-        TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
-        TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
-        TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
-        TruthValue truth4 = TruthFunctions.intersection(givenTruth1, givenTruth2);
-        BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
+        final TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
+        final TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
+        final TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
+        final TruthValue truth4 = TruthFunctions.intersection(givenTruth1, givenTruth2);
+        final BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
         budget1.setPriority(budget1.getPriority() * Parameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
-        BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
+        final BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
         budget2.setPriority(budget2.getPriority() * Parameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
-        BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
+        final BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
         budget3.setPriority(budget3.getPriority() * Parameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
-        BudgetValue budget4 = BudgetFunctions.forward(truth4, nal); //this one is sequence in sequenceBag, no need to reduce here
+        final BudgetValue budget4 = BudgetFunctions.forward(truth4, nal); //this one is sequence in sequenceBag, no need to reduce here
         
-        Statement statement1 = Implication.make(t1, t2, order);
-        Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
-        Statement statement3 = Equivalence.make(t1, t2, order);
+        final Statement statement1 = Implication.make(t1, t2, order);
+        final Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
+        final Statement statement3 = Equivalence.make(t1, t2, order);
         Term statement4 = null;
         switch (order) {
             case TemporalRules.ORDER_FORWARD:
@@ -287,24 +287,24 @@ public class TemporalRules {
         if(!deriveSequenceOnly && statement2!=null) { //there is no general form
             //ok then it may be the (&/ =/> case which 
             //is discussed here: https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
-            Statement st=statement2;
+            final Statement st=statement2;
             if(st.getPredicate() instanceof Inheritance && (st.getSubject() instanceof Conjunction || st.getSubject() instanceof Operation)) {
-                Term precon= st.getSubject();
-                Inheritance consequence=(Inheritance) st.getPredicate();
-                Term pred=consequence.getPredicate();
-                Term sub=consequence.getSubject();
+                final Term precon= st.getSubject();
+                final Inheritance consequence=(Inheritance) st.getPredicate();
+                final Term pred=consequence.getPredicate();
+                final Term sub=consequence.getSubject();
                 //look if subject is contained in precon:
-                boolean SubsSub=precon.containsTermRecursively(sub);
-                boolean SubsPred=precon.containsTermRecursively(pred);
-                Variable v1=new Variable("$91");
-                Variable v2=new Variable("$92");
-                Map<Term,Term> app= new HashMap<>();
+                final boolean SubsSub=precon.containsTermRecursively(sub);
+                final boolean SubsPred=precon.containsTermRecursively(pred);
+                final Variable v1=new Variable("$91");
+                final Variable v2=new Variable("$92");
+                final Map<Term,Term> app= new HashMap<>();
                 if(SubsSub || SubsPred) {
                     if(SubsSub)
                         app.put(sub, v1);
                     if(SubsPred)
                         app.put(pred,v2);
-                    Term res= statement2.applySubstitute(app);
+                    final Term res= statement2.applySubstitute(app);
                     if(res!=null) { //ok we applied it, all we have to do now is to use it
                         t22=((Statement)res).getSubject();
                         t11=((Statement)res).getPredicate();
@@ -313,55 +313,55 @@ public class TemporalRules {
              }
         }
         
-        List<Task> success= new ArrayList<>();
+        final List<Task> success= new ArrayList<>();
         if(!deriveSequenceOnly && t11!=null && t22!=null) {
-            Statement statement11 = Implication.make(t11, t22, order);
-            Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
-            Statement statement33 = Equivalence.make(t11, t22, order);
+            final Statement statement11 = Implication.make(t11, t22, order);
+            final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
+            final Statement statement33 = Equivalence.make(t11, t22, order);
             if(!tooMuchTemporalStatements(statement11)) {
-                List<Task> t=nal.doublePremiseTask(statement11, truth1, budget1,true, false);
+                final List<Task> t=nal.doublePremiseTask(statement11, truth1, budget1,true, false);
                 if(t!=null) {
                     success.addAll(t);
                 }
             }
             if(!tooMuchTemporalStatements(statement22)) {
-               List<Task> t=nal.doublePremiseTask(statement22, truth2, budget2,true, false);
+               final List<Task> t=nal.doublePremiseTask(statement22, truth2, budget2,true, false);
                 if(t!=null) {
                     success.addAll(t);
                 }
             }
             if(!tooMuchTemporalStatements(statement33)) {
-                List<Task> t=nal.doublePremiseTask(statement33, truth3, budget3,true, false);
+                final List<Task> t=nal.doublePremiseTask(statement33, truth3, budget3,true, false);
                 if(t!=null) {
                     success.addAll(t);
                 }
             }
         }
         if(!deriveSequenceOnly && !tooMuchTemporalStatements(statement1)) {
-            List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
+            final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
             if(t!=null) {
                 success.addAll(t);
                 
-                for(Task task : t) {
+                for(final Task task : t) {
                     task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
                 }
             }
         }
         
         if(!deriveSequenceOnly && !tooMuchTemporalStatements(statement2)) {
-            List<Task> t=nal.doublePremiseTask(statement2, truth2, budget2,true, false);
+            final List<Task> t=nal.doublePremiseTask(statement2, truth2, budget2,true, false);
                  if(t!=null) {
                     success.addAll(t);
                     
-                    for(Task task : t) {
+                    for(final Task task : t) {
                         task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
                     }
                 }
             }
         if(!deriveSequenceOnly && !tooMuchTemporalStatements(statement3)) {
-            List<Task> t=nal.doublePremiseTask(statement3, truth3, budget3,true, false);
+            final List<Task> t=nal.doublePremiseTask(statement3, truth3, budget3,true, false);
             if(t!=null) {
-                for(Task task : t) {
+                for(final Task task : t) {
                     task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
                 }
                 success.addAll(t);
@@ -371,9 +371,9 @@ public class TemporalRules {
             if(!allowSequence) {
                 return success;
             }
-            List<Task> tl=nal.doublePremiseTask(statement4, truth4, budget4,true, false, addToMemory);
+            final List<Task> tl=nal.doublePremiseTask(statement4, truth4, budget4,true, false, addToMemory);
             if(tl!=null) {
-                for(Task t : tl) {
+                for(final Task t : tl) {
                     //fill sequenceTask buffer due to the new derived sequence
                     if(addToMemory &&
                             t.sentence.isJudgment() &&

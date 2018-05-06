@@ -36,7 +36,7 @@ public abstract class AnswerHandler implements EventObserver {
     final static Class[] events = new Class[] { Answer.class
  };
     
-    public void start(Task question, NAR n) {
+    public void start(final Task question, final NAR n) {
         this.nar = n;
         this.question = question;
                 
@@ -48,11 +48,11 @@ public abstract class AnswerHandler implements EventObserver {
     }
 
     @Override
-    public void event(Class event, Object[] args) {                
+    public void event(final Class event, final Object[] args) {
         
         if (event == Answer.class) {
-            Task task = (Task)args[0];
-            Sentence belief = (Sentence)args[1];
+            final Task task = (Task)args[0];
+            final Sentence belief = (Sentence)args[1];
             if (task.equals(question)) {
                 onSolution(belief);
             }
