@@ -16,11 +16,6 @@
 package org.opennars.io.events;
 
 import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
 
 /**
  * Adapted from http://www.recursiverobot.com/post/86215392884/witness-a-simple-android-and-java-event-emitter

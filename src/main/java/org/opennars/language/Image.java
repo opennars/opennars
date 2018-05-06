@@ -14,10 +14,12 @@
  */
 package org.opennars.language;
 
-import java.util.*;
-import org.opennars.main.Parameters;
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+
+import java.util.Objects;
+
 import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 

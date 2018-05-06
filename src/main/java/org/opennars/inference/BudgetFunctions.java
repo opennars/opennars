@@ -14,21 +14,12 @@
  */
 package org.opennars.inference;
 
-import static java.lang.Math.max;
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Item;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Task;
-import org.opennars.entity.TaskLink;
-import org.opennars.entity.TermLink;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.language.Term;
-import static java.lang.Math.max;
+import org.opennars.main.Parameters;
+import org.opennars.storage.Memory;
+
+import static java.lang.Math.*;
 
 /**
  * Budget functions for resources allocation

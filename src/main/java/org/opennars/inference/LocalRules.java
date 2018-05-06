@@ -14,34 +14,23 @@
  */
 package org.opennars.inference;
 
-import java.util.*;
-import org.opennars.main.Parameters;
+import org.opennars.control.DerivationContext;
+import org.opennars.entity.*;
+import org.opennars.io.Symbols;
 import org.opennars.io.events.Events.Answer;
 import org.opennars.io.events.Events.Unsolved;
+import org.opennars.io.events.OutputHandler;
+import org.opennars.language.*;
+import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
-import org.opennars.control.DerivationContext;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TaskLink;
-import org.opennars.entity.TermLink;
-import org.opennars.entity.TruthValue;
+
+import java.util.List;
+
 import static org.opennars.inference.TemporalRules.matchingOrder;
 import static org.opennars.inference.TemporalRules.reverseOrder;
 import static org.opennars.inference.TruthFunctions.temporalProjection;
-import org.opennars.io.events.OutputHandler;
-import org.opennars.io.Symbols;
-import org.opennars.language.CompoundTerm;
 import static org.opennars.language.CompoundTerm.extractIntervals;
 import static org.opennars.language.CompoundTerm.replaceIntervals;
-import org.opennars.language.Equivalence;
-import org.opennars.language.Inheritance;
-import org.opennars.language.Similarity;
-import org.opennars.language.Statement;
-import org.opennars.language.Term;
-import org.opennars.language.Variables;
 
 
 /**

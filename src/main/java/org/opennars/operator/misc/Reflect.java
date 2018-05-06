@@ -18,14 +18,9 @@
  */
 package org.opennars.operator.misc;
 
-import org.opennars.storage.Memory;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Inheritance;
-import org.opennars.language.Product;
-import org.opennars.language.Similarity;
-import org.opennars.language.Statement;
-import org.opennars.language.Term;
+import org.opennars.language.*;
 import org.opennars.operator.FunctionOperator;
+import org.opennars.storage.Memory;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term

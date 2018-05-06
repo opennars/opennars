@@ -14,36 +14,18 @@
  */
 package org.opennars.inference;
 
-import java.util.*;
-import org.opennars.main.Parameters;
 import org.opennars.control.ConceptProcessing;
 import org.opennars.control.DerivationContext;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
-import static org.opennars.inference.TemporalRules.ORDER_BACKWARD;
-import static org.opennars.inference.TemporalRules.ORDER_FORWARD;
-import static org.opennars.inference.TemporalRules.ORDER_INVALID;
-import static org.opennars.inference.TemporalRules.ORDER_NONE;
-import static org.opennars.inference.TemporalRules.abdIndComOrder;
-import static org.opennars.inference.TemporalRules.analogyOrder;
-import static org.opennars.inference.TemporalRules.dedExeOrder;
-import static org.opennars.inference.TemporalRules.resemblanceOrder;
-import static org.opennars.inference.TemporalRules.reverseOrder;
+import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Equivalence;
-import org.opennars.language.Implication;
-import org.opennars.language.Interval;
-import org.opennars.language.Statement;
-import org.opennars.language.Term;
-import org.opennars.language.Terms;
+import org.opennars.language.*;
+import org.opennars.main.Parameters;
+
+import java.util.List;
+
+import static org.opennars.inference.TemporalRules.*;
 import static org.opennars.language.Terms.reduceComponents;
-import org.opennars.language.Variables;
 
 
 /**

@@ -14,11 +14,11 @@
  */
 package org.opennars.language;
 
-import java.util.*;
-import java.util.*;
-
-import org.opennars.main.Parameters;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** 
  * A disjunction of Statements.

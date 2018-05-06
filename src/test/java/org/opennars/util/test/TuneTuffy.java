@@ -18,15 +18,14 @@
  */
 package org.opennars.util.test;
 
-import java.io.FileNotFoundException;
-import org.opennars.io.events.Events.Answer;
-import org.opennars.main.NAR;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
-import org.opennars.io.events.EventHandler;
-import org.opennars.io.events.OutputHandler.OUT;
 import org.opennars.io.Narsese;
+import org.opennars.io.events.EventHandler;
+import org.opennars.io.events.Events.Answer;
+import org.opennars.io.events.OutputHandler.OUT;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
 
 /**
  *

@@ -14,11 +14,11 @@
  */
 package org.opennars.main;
 
+import org.opennars.io.events.TextOutputHandler;
+
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.opennars.io.events.TextOutputHandler;
 
 /**
  * Run Reasoner

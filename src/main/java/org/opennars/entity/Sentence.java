@@ -14,27 +14,17 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
 import org.opennars.inference.TruthFunctions.EternalizedTruthValue;
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Equivalence;
-import org.opennars.language.Implication;
-import org.opennars.language.Interval;
-import org.opennars.language.Statement;
-import org.opennars.language.Term;
-import org.opennars.language.Variable;
+import org.opennars.language.*;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and

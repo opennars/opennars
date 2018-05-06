@@ -15,11 +15,12 @@
 package org.opennars.language;
 
 import com.google.common.collect.ObjectArrays;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.main.Parameters;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NavigableSet;
 
 /**
  * A compound term whose extension is the intersection of the extensions of its term

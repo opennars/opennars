@@ -15,20 +15,17 @@
 package org.opennars.operator;
 
 import com.google.common.collect.Lists;
-import java.util.*;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
-import static org.opennars.inference.BudgetFunctions.truthToQuality;
-import org.opennars.io.Symbols;git add 
+import org.opennars.entity.*;
+import org.opennars.io.Symbols;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
 import org.opennars.language.Variable;
-//import org.opennars.operator.misc.Javascript;
+import org.opennars.main.Parameters;
+import org.opennars.storage.Memory;
+
+import java.util.List;
+
+import static org.opennars.inference.BudgetFunctions.truthToQuality;
 
 
 /** 

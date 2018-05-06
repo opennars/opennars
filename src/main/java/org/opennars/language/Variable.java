@@ -14,13 +14,13 @@
  */
 package org.opennars.language;
 
-import java.nio.CharBuffer;
-import org.opennars.main.Parameters;
-import static org.opennars.io.Symbols.VAR_DEPENDENT;
-import static org.opennars.io.Symbols.VAR_INDEPENDENT;
-import static org.opennars.io.Symbols.VAR_QUERY;
 import org.opennars.io.Texts;
+import org.opennars.main.Parameters;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.nio.CharBuffer;
+
+import static org.opennars.io.Symbols.*;
 
 /**
  * A variable term, which does not correspond to a concept

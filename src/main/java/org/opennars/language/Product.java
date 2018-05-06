@@ -14,8 +14,9 @@
  */
 package org.opennars.language;
 
-import java.util.*;
 import org.opennars.io.Symbols.NativeOperator;
+
+import java.util.List;
 
 /**
  * A Product is a sequence of 1 or more terms.

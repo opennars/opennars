@@ -18,13 +18,13 @@
  */
 package org.opennars.control;
 
-import org.opennars.main.Parameters;
 import org.opennars.entity.Concept;
-import org.opennars.io.events.Events;
 import org.opennars.entity.Task;
 import org.opennars.entity.TermLink;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.RuleTables;
+import org.opennars.io.events.Events;
+import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */

@@ -14,39 +14,17 @@
  */
 package org.opennars.inference;
 
-import org.opennars.io.events.Events;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
 import org.opennars.control.DerivationContext;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.TLink;
-import org.opennars.entity.Task;
-import org.opennars.entity.TaskLink;
-import org.opennars.entity.TermLink;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.io.Symbols;
-import static org.opennars.io.Symbols.VAR_DEPENDENT;
-import static org.opennars.io.Symbols.VAR_INDEPENDENT;
-import static org.opennars.io.Symbols.VAR_QUERY;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Disjunction;
-import org.opennars.language.Equivalence;
-import org.opennars.language.Implication;
-import org.opennars.language.Inheritance;
-import org.opennars.language.Negation;
-import org.opennars.language.SetExt;
-import org.opennars.language.SetInt;
-import org.opennars.language.Similarity;
-import org.opennars.language.Statement;
-import org.opennars.language.Term;
-import static org.opennars.language.Terms.equalSubTermsInRespectToImageAndProduct;
-import org.opennars.language.Variable;
-import org.opennars.language.Variables;
+import org.opennars.io.events.Events;
+import org.opennars.language.*;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
+import org.opennars.storage.Memory;
+
+import static org.opennars.io.Symbols.*;
+import static org.opennars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the

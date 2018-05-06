@@ -14,21 +14,17 @@
  */
 package org.opennars.plugin.mental;
 
+import org.opennars.entity.*;
+import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
-import org.opennars.storage.Memory;
-import org.opennars.main.NAR;
-import org.opennars.plugin.Plugin;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
-import org.opennars.io.Symbols;
 import org.opennars.language.Inheritance;
 import org.opennars.language.Product;
 import org.opennars.language.SetExt;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+import org.opennars.plugin.Plugin;
+import org.opennars.storage.Memory;
 
 /**
  * Counting and Cardinality

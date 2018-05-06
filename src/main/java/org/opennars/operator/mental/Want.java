@@ -15,18 +15,15 @@
 package org.opennars.operator.mental;
 
 import com.google.common.collect.Lists;
-import java.util.*;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.storage.Memory;
+
+import java.util.List;
 
 /**
  * Operator that creates a goal with a given statement

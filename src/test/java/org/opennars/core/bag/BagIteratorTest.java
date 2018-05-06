@@ -14,12 +14,14 @@
  */
 package org.opennars.core.bag;
 
-import java.util.*;
+import org.junit.Test;
 import org.opennars.perf.BagPerf.NullItem;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
+
+import java.util.Iterator;
+
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 
 

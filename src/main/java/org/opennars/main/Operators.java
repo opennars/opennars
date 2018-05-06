@@ -16,20 +16,9 @@ package org.opennars.main;
 
 import org.opennars.operator.NullOperator;
 import org.opennars.operator.Operator;
+import org.opennars.operator.mental.*;
 import org.opennars.operator.misc.Add;
 import org.opennars.operator.misc.Count;
-import org.opennars.operator.mental.Believe;
-import org.opennars.operator.mental.Consider;
-import org.opennars.operator.mental.Doubt;
-import org.opennars.operator.mental.Evaluate;
-import org.opennars.operator.mental.FeelBusy;
-import org.opennars.operator.mental.FeelSatisfied;
-import org.opennars.operator.mental.Hesitate;
-import org.opennars.operator.mental.Name;
-import org.opennars.operator.mental.Register;
-import org.opennars.operator.mental.Remind;
-import org.opennars.operator.mental.Want;
-import org.opennars.operator.mental.Wonder;
 import org.opennars.operator.misc.Reflect;
 //import org.opennars.operator.misc.Javascript;
 

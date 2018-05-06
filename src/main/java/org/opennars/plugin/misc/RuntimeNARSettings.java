@@ -19,9 +19,9 @@
 
 package org.opennars.plugin.misc;
 
-import org.opennars.plugin.Plugin;
 import org.opennars.main.NAR;
 import org.opennars.main.Parameters;
+import org.opennars.plugin.Plugin;
 
 /**
  *

@@ -14,11 +14,12 @@
  */
 package org.opennars.operator;
 
-import java.util.*;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
 import org.opennars.entity.Task;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
+import org.opennars.storage.Memory;
+
+import java.util.List;
 
 /**
  *  A class used as a template for Operator definition.

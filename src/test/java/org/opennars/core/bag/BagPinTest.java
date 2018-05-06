@@ -14,9 +14,9 @@
  */
 package org.opennars.core.bag;
 
-import org.opennars.storage.Bag;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import org.opennars.storage.Bag;
+
 import static org.junit.Assert.assertEquals;
 
 /**

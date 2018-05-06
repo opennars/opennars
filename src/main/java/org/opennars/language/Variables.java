@@ -14,12 +14,14 @@
  */
 package org.opennars.language;
 
-import java.util.*;
-import java.util.*;
-import java.util.*;
 import org.opennars.inference.TemporalRules;
-import org.opennars.storage.Memory;
 import org.opennars.io.Symbols;
+import org.opennars.storage.Memory;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Static utility class for static methods related to Variables

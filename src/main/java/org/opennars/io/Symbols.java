@@ -14,11 +14,12 @@
  */
 package org.opennars.io;
 
-import java.util.*;
-import java.util.*;
 import org.opennars.io.events.OutputHandler.ERR;
 import org.opennars.io.events.OutputHandler.IN;
 import org.opennars.io.events.OutputHandler.OUT;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Symbols {

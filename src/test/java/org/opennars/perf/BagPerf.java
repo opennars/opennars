@@ -15,20 +15,17 @@
 package org.opennars.perf;
 
 import com.google.common.collect.Lists;
-import java.io.PrintStream;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.storage.Memory;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Item;
+import org.opennars.main.NAR;
 import org.opennars.main.NAR.PortableDouble;
+import org.opennars.main.Parameters;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
+import org.opennars.storage.Memory;
+
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  *

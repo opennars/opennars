@@ -19,14 +19,16 @@
 package org.opennars.core;
 
 
-import org.opennars.main.NAR;
 import com.google.common.collect.Iterables;
-import java.util.*;
-import java.util.*;
+import org.junit.Test;
 import org.opennars.entity.Concept;
+import org.opennars.main.NAR;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  * TODO run this for each different kind of attention/bag etc

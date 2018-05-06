@@ -14,14 +14,15 @@
  */
 package org.opennars.io.events;
 
-import java.util.*;
-import java.util.*;
-import org.opennars.io.events.EventEmitter.EventObserver;
-import org.opennars.control.GeneralInferenceControl;
 import org.opennars.control.DerivationContext;
+import org.opennars.control.GeneralInferenceControl;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
+import org.opennars.io.events.EventEmitter.EventObserver;
+
+import java.util.Arrays;
+import java.util.List;
 
 /** empty event classes for use with EventEmitter */
 public class Events {

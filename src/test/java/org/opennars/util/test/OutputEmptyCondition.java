@@ -18,9 +18,10 @@
  */
 package org.opennars.util.test;
 
-import java.util.*;
-import java.util.*;
 import org.opennars.main.NAR;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *

@@ -14,21 +14,24 @@
  */
 package org.opennars.core;
 
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
-import java.util.*;
+import org.junit.Test;
 import org.opennars.entity.Concept;
+import org.opennars.io.Narsese;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.io.Texts;
-import org.opennars.io.Narsese;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Inheritance;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
+
+import java.util.NavigableSet;
+import java.util.TreeSet;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  *

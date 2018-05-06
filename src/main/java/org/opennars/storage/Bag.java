@@ -14,11 +14,12 @@
  */
 package org.opennars.storage;
 
-import java.util.*;
-import java.util.*;
-import org.opennars.main.Parameters;
 import org.opennars.entity.Item;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.main.Parameters;
+
+import java.util.Iterator;
+import java.util.Set;
 
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     

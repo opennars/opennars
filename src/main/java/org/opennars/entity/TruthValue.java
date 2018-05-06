@@ -14,12 +14,14 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import org.opennars.main.Parameters;
-import static org.opennars.main.Parameters.TRUTH_EPSILON;
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
+
+import java.io.Serializable;
+
+import static org.opennars.main.Parameters.TRUTH_EPSILON;
 
 
 public class TruthValue implements Cloneable, Serializable { // implements Cloneable {

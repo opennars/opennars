@@ -14,11 +14,12 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.Term;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A link between a compound term and a component term

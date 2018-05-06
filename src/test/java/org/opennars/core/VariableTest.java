@@ -18,14 +18,16 @@
  */
 package org.opennars.core;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.opennars.io.events.Events.Answer;
-import org.opennars.main.NAR;
-import org.opennars.io.events.EventHandler;
-import org.opennars.util.test.OutputContainsCondition;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+import org.opennars.io.events.EventHandler;
+import org.opennars.io.events.Events.Answer;
+import org.opennars.main.NAR;
+import org.opennars.util.test.OutputContainsCondition;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  *

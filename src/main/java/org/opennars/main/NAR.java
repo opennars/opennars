@@ -14,49 +14,33 @@
  */
 package org.opennars.main;
 
-import java.io.BufferedReader;
-
 import org.apache.commons.lang3.StringUtils;
-import org.opennars.plugin.Plugin;
-import org.opennars.storage.Memory;
-import org.opennars.io.events.Events;
-import org.opennars.io.events.EventEmitter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.opennars.io.events.EventEmitter.EventObserver;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.io.events.AnswerHandler;
-import org.opennars.io.events.OutputHandler.ERR;
-import org.opennars.io.Symbols;
+import org.opennars.entity.*;
 import org.opennars.io.Narsese;
 import org.opennars.io.Narsese.InvalidInputException;
-import org.opennars.language.Tense;
-import org.opennars.operator.Operator;
-import org.opennars.plugin.perception.SensoryChannel;
-import org.opennars.language.Term;
-import org.opennars.storage.LevelBag;
+import org.opennars.io.Symbols;
+import org.opennars.io.events.AnswerHandler;
+import org.opennars.io.events.EventEmitter;
+import org.opennars.io.events.EventEmitter.EventObserver;
+import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.CyclesEnd;
 import org.opennars.io.events.Events.CyclesStart;
 import org.opennars.io.events.OutputHandler;
+import org.opennars.io.events.OutputHandler.ERR;
 import org.opennars.language.Inheritance;
 import org.opennars.language.SetExt;
+import org.opennars.language.Tense;
+import org.opennars.language.Term;
+import org.opennars.operator.Operator;
+import org.opennars.plugin.Plugin;
+import org.opennars.plugin.perception.SensoryChannel;
+import org.opennars.storage.LevelBag;
+import org.opennars.storage.Memory;
+
+import java.io.*;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**

@@ -14,31 +14,14 @@
  */
 package org.opennars.inference;
 
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.main.Parameters;
 import org.opennars.control.TemporalInferenceControl;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.io.Symbols;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Equivalence;
-import org.opennars.language.Implication;
-import org.opennars.language.Inheritance;
-import org.opennars.language.Interval;
-import org.opennars.language.Product;
-import org.opennars.language.Similarity;
-import org.opennars.language.Statement;
-import org.opennars.language.Term;
-import org.opennars.language.Terms;
-import org.opennars.language.Variable;
+import org.opennars.language.*;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
+
+import java.util.*;
 
 /**
  *

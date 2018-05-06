@@ -14,30 +14,22 @@
  */
 package org.opennars.plugin.mental;
 
-import org.opennars.plugin.Plugin;
-import java.util.*;
-import org.opennars.io.events.EventEmitter.EventObserver;
-import org.opennars.io.events.Events;
-import org.opennars.storage.Memory;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
 import org.opennars.control.DerivationContext;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
-import org.opennars.language.Conjunction;
-import org.opennars.language.Implication;
-import org.opennars.language.Inheritance;
-import org.opennars.language.Interval;
-import org.opennars.language.Product;
-import org.opennars.language.Term;
+import org.opennars.io.events.EventEmitter.EventObserver;
+import org.opennars.io.events.Events;
+import org.opennars.language.*;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.plugin.Plugin;
+import org.opennars.storage.Memory;
+
+import java.util.Arrays;
 
 /**
  * To rememberAction an internal action as an operation

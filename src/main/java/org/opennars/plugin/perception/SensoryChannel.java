@@ -14,18 +14,19 @@
  */
 package org.opennars.plugin.perception;
 
-import org.opennars.io.Narsese;
-import java.io.Serializable;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.opennars.main.NAR;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
+import org.opennars.io.Narsese;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class SensoryChannel implements Serializable {
     private Collection<SensoryChannel> reportResultsTo;

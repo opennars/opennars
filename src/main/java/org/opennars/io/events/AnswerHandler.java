@@ -18,11 +18,11 @@
  */
 package org.opennars.io.events;
 
+import org.opennars.entity.Sentence;
+import org.opennars.entity.Task;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events.Answer;
 import org.opennars.main.NAR;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Task;
 
 /**
  *

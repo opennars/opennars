@@ -18,15 +18,13 @@
  */
 package org.opennars.util.test;
 
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.main.NAR;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
 import org.opennars.io.events.TextOutputHandler;
+import org.opennars.main.NAR;
 import org.opennars.operator.Operator.ExecutionResult;
+
+import java.util.*;
 
 /**
  * OutputCondition that watches for a specific String output,

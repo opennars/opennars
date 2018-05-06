@@ -14,9 +14,10 @@
  */
 package org.opennars.language;
 
-import java.util.*;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols.NativeOperator;
+
+import java.util.Arrays;
 
 /**
  * A Statement about an Equivalence relation.

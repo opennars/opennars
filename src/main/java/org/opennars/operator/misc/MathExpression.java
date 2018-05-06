@@ -14,19 +14,21 @@
  */
 package org.opennars.operator.misc;
 
-import java.util.*;
-import org.opennars.storage.Memory;
-import org.opennars.io.Texts;
-import static org.opennars.io.Texts.unescape;
-import org.opennars.language.Inheritance;
-import org.opennars.language.Product;
-import org.opennars.language.Term;
-import org.opennars.operator.FunctionOperator;
 import org.encog.ml.prg.EncogProgram;
 import org.encog.ml.prg.EncogProgramContext;
 import org.encog.ml.prg.ProgramNode;
 import org.encog.ml.prg.expvalue.ExpressionValue;
 import org.encog.ml.tree.TreeNode;
+import org.opennars.io.Texts;
+import org.opennars.language.Inheritance;
+import org.opennars.language.Product;
+import org.opennars.language.Term;
+import org.opennars.operator.FunctionOperator;
+import org.opennars.storage.Memory;
+
+import java.util.List;
+
+import static org.opennars.io.Texts.unescape;
 
 /**
  * Parses an expression string to terms

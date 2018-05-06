@@ -14,15 +14,11 @@
  */
 package org.opennars.main;
 
-import org.opennars.operator.mental.Anticipate;
-import org.opennars.plugin.mental.FullInternalExperience;
-import org.opennars.plugin.mental.InternalExperience;
-import org.opennars.plugin.misc.RuntimeNARSettings;
-import org.opennars.plugin.mental.Emotions;
-import org.opennars.plugin.mental.Counting;
-import org.opennars.plugin.mental.Abbreviation;
 import org.opennars.language.SetInt;
 import org.opennars.language.Term;
+import org.opennars.operator.mental.Anticipate;
+import org.opennars.plugin.mental.*;
+import org.opennars.plugin.misc.RuntimeNARSettings;
 import org.opennars.plugin.perception.VisionChannel;
 
 /**

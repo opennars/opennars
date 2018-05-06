@@ -14,10 +14,12 @@
  */
 package org.opennars.core;
 
-import java.util.*;
+import org.junit.Test;
+
+import java.util.Arrays;
+
 import static junit.framework.TestCase.assertTrue;
 import static org.opennars.entity.Stamp.toSetArray;
-import org.junit.Test;
 
 /**
  *

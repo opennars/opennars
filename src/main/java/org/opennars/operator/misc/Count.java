@@ -14,12 +14,12 @@
  */
 package org.opennars.operator.misc;
 
-import org.opennars.storage.Memory;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.SetExt;
 import org.opennars.language.SetInt;
 import org.opennars.language.Term;
 import org.opennars.operator.FunctionOperator;
+import org.opennars.storage.Memory;
 
 /**
  * Count the number of elements in a set

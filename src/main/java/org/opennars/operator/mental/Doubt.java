@@ -14,13 +14,14 @@
  */
 package org.opennars.operator.mental;
 
-import java.util.*;
-import org.opennars.storage.Memory;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
 import org.opennars.language.Term;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.storage.Memory;
+
+import java.util.List;
 
 /**
  * Operator that activates a concept

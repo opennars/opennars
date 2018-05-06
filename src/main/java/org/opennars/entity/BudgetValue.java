@@ -14,15 +14,15 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import org.opennars.main.Parameters;
-import static org.opennars.main.Parameters.TRUTH_EPSILON;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
-import static org.opennars.inference.UtilityFunctions.and;
-import static org.opennars.inference.UtilityFunctions.aveGeo;
-import static org.opennars.inference.UtilityFunctions.or;
+import org.opennars.main.Parameters;
+
+import java.io.Serializable;
+
+import static org.opennars.inference.UtilityFunctions.*;
+import static org.opennars.main.Parameters.TRUTH_EPSILON;
 
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).

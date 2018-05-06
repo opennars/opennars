@@ -14,11 +14,13 @@
  */
 package org.opennars.perf;
 
-import java.util.*;
+import org.opennars.core.NALTest;
 import org.opennars.main.NAR;
 import org.opennars.main.Parameters;
+
+import java.util.Collection;
+
 import static org.opennars.perf.NALStressMeasure.perfNAL;
-import org.opennars.core.NALTest;
 
 /**
  * Runs NALTestPerf continuously, for profiling

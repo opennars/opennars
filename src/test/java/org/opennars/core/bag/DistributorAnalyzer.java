@@ -14,10 +14,11 @@
  */
 package org.opennars.core.bag;
 
-import java.util.*;
-import java.util.*;
-import org.opennars.storage.Distributor;
 import org.junit.Test;
+import org.opennars.storage.Distributor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

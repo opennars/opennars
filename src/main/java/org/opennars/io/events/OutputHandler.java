@@ -15,8 +15,8 @@
 package org.opennars.io.events;
 
 import org.opennars.io.events.Events.Answer;
-import org.opennars.storage.Memory;
 import org.opennars.main.NAR;
+import org.opennars.storage.Memory;
 
 /**
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels

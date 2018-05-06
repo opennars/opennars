@@ -16,11 +16,12 @@ package org.opennars.operator;
 
 import org.opennars.entity.Task;
 import org.opennars.io.Symbols;
-import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import org.opennars.language.Inheritance;
 import org.opennars.language.Product;
 import org.opennars.language.Term;
+
+import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 
 /**
  * An operation is interpreted as an Inheritance relation.

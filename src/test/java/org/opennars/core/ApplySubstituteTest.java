@@ -14,14 +14,16 @@
  */
 package org.opennars.core;
 
-import java.util.*;
-import java.util.*;
-import org.opennars.main.NAR;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Term;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opennars.io.Narsese;
+import org.opennars.language.CompoundTerm;
+import org.opennars.language.Term;
+import org.opennars.main.NAR;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 
 public class ApplySubstituteTest {

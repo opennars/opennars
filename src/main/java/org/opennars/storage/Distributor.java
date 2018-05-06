@@ -14,9 +14,9 @@
  */
 package org.opennars.storage;
 
-import java.util.*;
-import java.util.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A pseudo-random number generator, used in Bag.

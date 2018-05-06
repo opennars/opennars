@@ -14,28 +14,26 @@
  */
 package org.opennars.plugin.mental;
 
-import org.opennars.plugin.Plugin;
 import com.google.common.collect.Lists;
-import java.util.*;
-import org.opennars.io.events.EventEmitter.EventObserver;
-import org.opennars.io.events.Events.TaskDerive;
-import org.opennars.storage.Memory;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.io.Symbols;
-import static org.opennars.language.CompoundTerm.termArray;
-import org.opennars.main.NAR.PortableDouble;
-import org.opennars.main.NAR.PortableInteger;
+import org.opennars.io.events.EventEmitter.EventObserver;
+import org.opennars.io.events.Events.TaskDerive;
 import org.opennars.language.Similarity;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+import org.opennars.main.NAR.PortableDouble;
+import org.opennars.main.NAR.PortableInteger;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.plugin.Plugin;
+import org.opennars.storage.Memory;
+
+import java.util.List;
+
+import static org.opennars.language.CompoundTerm.termArray;
 
 /**
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.

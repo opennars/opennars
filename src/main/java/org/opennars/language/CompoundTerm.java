@@ -15,15 +15,16 @@
 package org.opennars.language;
 
 import com.google.common.collect.Iterators;
-import java.nio.CharBuffer;
-import java.util.*;
-
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
 import org.opennars.entity.TermLink;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+import org.opennars.storage.Memory;
+
+import java.nio.CharBuffer;
+import java.util.*;
+
 import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 

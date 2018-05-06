@@ -14,19 +14,6 @@
  */
 package org.opennars.core;
 
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
-import org.opennars.util.io.ExampleFileInput;
-import org.opennars.storage.Memory;
-import org.opennars.util.test.OutputCondition;
-import java.io.IOException;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.io.events.TextOutputHandler;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
@@ -34,6 +21,17 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
+import org.opennars.io.events.TextOutputHandler;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
+import org.opennars.storage.Memory;
+import org.opennars.util.io.ExampleFileInput;
+import org.opennars.util.test.OutputCondition;
+
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.assertTrue;
 
 
 @RunWith(Parameterized.class)

@@ -14,11 +14,13 @@
  */
 package org.opennars.language;
 
-import java.nio.CharBuffer;
-import java.util.*;
-import org.opennars.main.Parameters;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+
+import java.nio.CharBuffer;
+import java.util.Arrays;
+
 import static org.opennars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.STATEMENT_OPENER;
 

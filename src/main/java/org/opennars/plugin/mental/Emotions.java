@@ -14,19 +14,15 @@
  */
 package org.opennars.plugin.mental;
 
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
 import org.opennars.control.DerivationContext;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.io.Symbols;
 import org.opennars.language.Inheritance;
 import org.opennars.language.SetInt;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
 import org.opennars.plugin.Plugin;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */

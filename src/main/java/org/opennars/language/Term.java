@@ -14,19 +14,19 @@
  */
 package org.opennars.language;
 
-import java.io.Serializable;
-import java.util.*;
-
 import org.apache.commons.lang3.StringUtils;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
-import org.opennars.operator.ImaginationSpace;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.io.Texts;
+import org.opennars.main.Parameters;
+import org.opennars.operator.ImaginationSpace;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+import org.opennars.storage.Memory;
+
+import java.io.Serializable;
+import java.util.*;
 //import org.opennars.util.sort.SortedList;
 
 /**

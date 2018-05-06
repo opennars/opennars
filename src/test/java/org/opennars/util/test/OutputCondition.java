@@ -18,11 +18,12 @@
  */
 package org.opennars.util.test;
 
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.main.NAR;
 import org.opennars.io.events.OutputHandler;
+import org.opennars.main.NAR;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Monitors an output stream for certain conditions. Used in testing and

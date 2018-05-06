@@ -14,46 +14,17 @@
  */
 package org.opennars.inference;
 
-import java.util.*;
-import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Concept;
 import org.opennars.control.DerivationContext;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
-import static org.opennars.inference.TruthFunctions.comparison;
-import static org.opennars.inference.TruthFunctions.induction;
-import static org.opennars.inference.TruthFunctions.intersection;
-import static org.opennars.inference.TruthFunctions.negation;
-import static org.opennars.inference.TruthFunctions.reduceConjunction;
-import static org.opennars.inference.TruthFunctions.reduceConjunctionNeg;
-import static org.opennars.inference.TruthFunctions.reduceDisjunction;
-import static org.opennars.inference.TruthFunctions.union;
+import org.opennars.entity.*;
 import org.opennars.io.Symbols;
-import org.opennars.language.CompoundTerm;
-import org.opennars.language.Conjunction;
-import org.opennars.language.DifferenceExt;
-import org.opennars.language.DifferenceInt;
-import org.opennars.language.Disjunction;
-import org.opennars.language.Equivalence;
-import org.opennars.language.ImageExt;
-import org.opennars.language.ImageInt;
-import org.opennars.language.Implication;
-import org.opennars.language.Inheritance;
-import org.opennars.language.IntersectionExt;
-import org.opennars.language.IntersectionInt;
-import org.opennars.language.SetExt;
-import org.opennars.language.SetInt;
-import org.opennars.language.Similarity;
-import org.opennars.language.Statement;
-import org.opennars.language.Term;
+import org.opennars.language.*;
+import org.opennars.main.Parameters;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.opennars.inference.TruthFunctions.*;
 import static org.opennars.language.Terms.reduceComponents;
-import org.opennars.language.Variable;
-import org.opennars.language.Variables;
-import static org.opennars.inference.TruthFunctions.abduction;
-import org.opennars.language.Interval;
 
 /**
  * Compound term composition and decomposition rules, with two premises.

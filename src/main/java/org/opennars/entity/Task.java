@@ -14,10 +14,11 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import org.opennars.storage.Memory;
 import org.opennars.language.Term;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.storage.Memory;
+
+import java.io.Serializable;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue.

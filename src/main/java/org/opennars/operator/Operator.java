@@ -14,12 +14,6 @@
  */
 package org.opennars.operator;
 
-import org.opennars.plugin.Plugin;
-import java.util.*;
-import java.util.*;
-import org.opennars.storage.Memory;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
@@ -27,6 +21,13 @@ import org.opennars.io.events.OutputHandler.EXE;
 import org.opennars.language.Product;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
+import org.opennars.plugin.Plugin;
+import org.opennars.storage.Memory;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * An individual operator that can be execute by the system, which can be either

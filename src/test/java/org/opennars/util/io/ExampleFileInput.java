@@ -18,17 +18,17 @@
  */
 package org.opennars.util.io;
 
+import org.opennars.main.NAR;
+import org.opennars.util.test.OutputCondition;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.main.NAR;
-import org.opennars.util.test.OutputCondition;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Access to library of examples/unit tests

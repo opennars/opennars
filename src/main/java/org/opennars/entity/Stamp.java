@@ -14,20 +14,19 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.*;
-import org.opennars.storage.Memory;
-import org.opennars.main.Parameters;
 import org.opennars.inference.TemporalRules;
-import static org.opennars.inference.TemporalRules.ORDER_BACKWARD;
-import static org.opennars.inference.TemporalRules.ORDER_FORWARD;
 import org.opennars.io.Symbols;
 import org.opennars.language.Tense;
-import static org.opennars.language.Tense.Future;
-import static org.opennars.language.Tense.Past;
-import static org.opennars.language.Tense.Present;
-import static org.opennars.inference.TemporalRules.order;
+import org.opennars.main.Parameters;
+import org.opennars.storage.Memory;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.opennars.inference.TemporalRules.*;
+import static org.opennars.language.Tense.*;
 
 public class Stamp implements Cloneable, Serializable {
 

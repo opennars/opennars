@@ -14,11 +14,12 @@
  */
 package org.opennars.language;
 
-import java.util.*;
-import org.opennars.main.Parameters;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+
+import java.util.Arrays;
 
 /**
  * A Statement about an Inheritance relation.

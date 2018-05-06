@@ -14,9 +14,10 @@
  */
 package org.opennars.perf;
 
-import java.util.*;
-import org.opennars.main.NAR;
 import org.opennars.core.NALTest;
+import org.opennars.main.NAR;
+
+import java.util.Collection;
 
 
 /** tests performance of NAL, but can also uncover bugs when NAL runs with a heavy and long load

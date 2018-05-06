@@ -15,35 +15,27 @@
 
 package org.opennars.operator.mental;
 
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
+import org.opennars.control.DerivationContext;
+import org.opennars.entity.*;
+import org.opennars.inference.BudgetFunctions;
+import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.CycleEnd;
-import org.opennars.storage.Memory;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
-import org.opennars.control.DerivationContext;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
-import org.opennars.inference.BudgetFunctions;
 import org.opennars.io.events.OutputHandler.ANTICIPATE;
 import org.opennars.io.events.OutputHandler.CONFIRM;
 import org.opennars.io.events.OutputHandler.DISAPPOINT;
-import org.opennars.io.Symbols;
 import org.opennars.language.Interval;
 import org.opennars.language.Product;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
+import org.opennars.storage.Memory;
+
+import java.util.*;
 
 //**
 //* Operator that creates a judgment with a given statement

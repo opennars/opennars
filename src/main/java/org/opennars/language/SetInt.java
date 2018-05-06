@@ -14,8 +14,10 @@
  */
 package org.opennars.language;
 
-import java.util.*;
 import org.opennars.io.Symbols.NativeOperator;
+
+import java.util.Collection;
+
 import static org.opennars.io.Symbols.NativeOperator.SET_INT_CLOSER;
 import static org.opennars.io.Symbols.NativeOperator.SET_INT_OPENER;
 

@@ -18,16 +18,17 @@
  */
 package org.opennars.core.bag;
 
-import org.opennars.main.NAR;
+import org.junit.Test;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Item;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  *

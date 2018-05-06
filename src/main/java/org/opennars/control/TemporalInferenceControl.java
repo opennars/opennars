@@ -18,23 +18,21 @@
  */
 package org.opennars.control;
 
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
+import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
+import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
+import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
-import org.opennars.io.events.Events;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  *

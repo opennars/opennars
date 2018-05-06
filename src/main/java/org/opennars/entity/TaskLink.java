@@ -14,12 +14,13 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.main.Parameters;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
+
+import java.io.Serializable;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
 
 /**
  * Reference to a Task.

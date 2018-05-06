@@ -14,18 +14,14 @@
  */
 package org.opennars.io.events;
 
-import org.opennars.io.Texts;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.util.*;
-import org.opennars.io.events.Events.Answer;
-import org.opennars.main.NAR;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
+import org.opennars.io.Texts;
+import org.opennars.io.events.Events.Answer;
+import org.opennars.main.NAR;
+
+import java.io.*;
+import java.util.Arrays;
 
 /**
  * To read and write experience as Task streams

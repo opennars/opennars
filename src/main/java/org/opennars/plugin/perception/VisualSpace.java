@@ -14,18 +14,20 @@
  */
 package org.opennars.plugin.perception;
 
-import org.opennars.operator.ImaginationSpace;
-import java.util.*;
-import org.opennars.main.NAR;
-import org.opennars.main.Parameters;
 import org.opennars.entity.TruthValue;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
+import org.opennars.main.Parameters;
+import org.opennars.operator.ImaginationSpace;
 import org.opennars.operator.NullOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *

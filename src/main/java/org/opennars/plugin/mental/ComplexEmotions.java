@@ -20,7 +20,6 @@ package org.opennars.plugin.mental;
 
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
-import static org.opennars.inference.LocalRules.solutionQuality;
 import org.opennars.io.events.EventEmitter;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
@@ -28,6 +27,8 @@ import org.opennars.io.events.Events.Answer;
 import org.opennars.main.NAR;
 import org.opennars.plugin.Plugin;
 import org.opennars.storage.Memory;
+
+import static org.opennars.inference.LocalRules.solutionQuality;
 
 /**
  *

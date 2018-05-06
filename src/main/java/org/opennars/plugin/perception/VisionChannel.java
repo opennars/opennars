@@ -14,12 +14,7 @@
  */
 package org.opennars.plugin.perception;
 
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.main.NAR;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter;
@@ -30,6 +25,7 @@ import org.opennars.language.Inheritance;
 import org.opennars.language.SetExt;
 import org.opennars.language.Tense;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
 import org.opennars.main.Parameters;
 
 public class VisionChannel extends SensoryChannel  {

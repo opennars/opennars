@@ -14,29 +14,26 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-
 import org.opennars.control.ConceptProcessing;
-import org.opennars.io.events.Events.BeliefSelect;
-import org.opennars.io.events.Events.TaskLinkAdd;
-import org.opennars.io.events.Events.TaskLinkRemove;
-import org.opennars.io.events.Events.TermLinkAdd;
-import org.opennars.io.events.Events.TermLinkRemove;
-import org.opennars.storage.Memory;
-import org.opennars.main.Shell;
-import org.opennars.main.Parameters;
 import org.opennars.control.DerivationContext;
-import static org.opennars.inference.BudgetFunctions.distributeAmongLinks;
-import static org.opennars.inference.BudgetFunctions.rankBelief;
 import org.opennars.inference.LocalRules;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.io.events.Events.*;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
+import org.opennars.main.Parameters;
+import org.opennars.main.Shell;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
+import org.opennars.storage.Memory;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.opennars.inference.BudgetFunctions.distributeAmongLinks;
+import static org.opennars.inference.BudgetFunctions.rankBelief;
 import static org.opennars.inference.UtilityFunctions.or;
 
 public class Concept extends Item<Term> implements Serializable {

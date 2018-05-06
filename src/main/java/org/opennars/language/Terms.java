@@ -14,17 +14,13 @@
  */
 package org.opennars.language;
 
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.storage.Memory;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.TermLink;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
+import org.opennars.storage.Memory;
+
+import java.util.*;
 
 /**
  * Static utility class for static methods related to Terms

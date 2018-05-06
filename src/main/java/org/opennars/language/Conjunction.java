@@ -14,14 +14,13 @@
  */
 package org.opennars.language;
 
-import static java.lang.System.arraycopy;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.main.Parameters;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+
+import java.util.*;
+
+import static java.lang.System.arraycopy;
 
 /**
  * Conjunction of statements

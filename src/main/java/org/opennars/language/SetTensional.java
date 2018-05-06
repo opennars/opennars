@@ -14,9 +14,10 @@
  */
 package org.opennars.language;
 
-import java.nio.CharBuffer;
-import org.opennars.main.Parameters;
 import org.opennars.io.Symbols;
+import org.opennars.main.Parameters;
+
+import java.nio.CharBuffer;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set)

@@ -15,44 +15,35 @@
 package org.opennars.storage;
 
 import org.opennars.control.ConceptProcessing;
-import org.opennars.io.events.Events;
-import org.opennars.io.events.EventEmitter;
-import java.io.Serializable;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.main.NAR;
-import org.opennars.main.NAR.RuntimeParameters;
-import org.opennars.main.Parameters;
-import org.opennars.io.events.Events.ResetEnd;
-import org.opennars.io.events.Events.ResetStart;
-import org.opennars.io.events.Events.TaskRemove;
 import org.opennars.control.DerivationContext;
 import org.opennars.control.GeneralInferenceControl;
 import org.opennars.control.TemporalInferenceControl;
-import org.opennars.plugin.mental.Emotions;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
+import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
-import static org.opennars.inference.BudgetFunctions.truthToQuality;
+import org.opennars.io.Symbols;
+import org.opennars.io.events.EventEmitter;
+import org.opennars.io.events.Events;
+import org.opennars.io.events.Events.ResetEnd;
+import org.opennars.io.events.Events.ResetStart;
+import org.opennars.io.events.Events.TaskRemove;
 import org.opennars.io.events.OutputHandler.IN;
 import org.opennars.io.events.OutputHandler.OUT;
-import org.opennars.io.Symbols;
-import org.opennars.language.Tense;
-import org.opennars.language.Term;
-import org.opennars.operator.Operation;
-import org.opennars.operator.Operator;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Interval;
+import org.opennars.language.Tense;
+import org.opennars.language.Term;
+import org.opennars.main.NAR;
 import org.opennars.main.NAR.PortableDouble;
+import org.opennars.main.NAR.RuntimeParameters;
+import org.opennars.main.Parameters;
+import org.opennars.operator.Operation;
+import org.opennars.operator.Operator;
+import org.opennars.plugin.mental.Emotions;
+
+import java.io.Serializable;
+import java.util.*;
+
+import static org.opennars.inference.BudgetFunctions.truthToQuality;
 
 
 /**

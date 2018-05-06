@@ -14,9 +14,10 @@
  */
 package org.opennars.entity;
 
-import java.io.Serializable;
-import java.util.*;
 import org.opennars.storage.Memory;
+
+import java.io.Serializable;
+import java.util.Comparator;
 
 /**
  * An item is an object that can be put into a Bag,

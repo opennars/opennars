@@ -14,29 +14,26 @@
  */
 package org.opennars.control;
 
-import java.util.*;
-import java.util.*;
-import java.util.*;
-import org.opennars.main.Parameters;
 import org.opennars.entity.*;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
-import org.opennars.io.events.OutputHandler;
 import org.opennars.io.Symbols;
-import org.opennars.language.*;
-import org.opennars.operator.Operation;
-import org.opennars.plugin.mental.InternalExperience;
 import org.opennars.io.events.Events;
-import static org.opennars.inference.LocalRules.revisible;
-import static org.opennars.inference.LocalRules.revision;
-import static org.opennars.inference.LocalRules.trySolution;
+import org.opennars.io.events.OutputHandler;
+import org.opennars.language.*;
+import org.opennars.main.Parameters;
 import org.opennars.operator.FunctionOperator;
+import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
-import org.opennars.operator.mental.Anticipate;
-import org.opennars.operator.mental.Believe;
-import org.opennars.operator.mental.Want;
-import org.opennars.operator.mental.Evaluate;
-import org.opennars.operator.mental.Wonder;
+import org.opennars.operator.mental.*;
+import org.opennars.plugin.mental.InternalExperience;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.opennars.inference.LocalRules.*;
 
 public class ConceptProcessing {
     /**

@@ -14,9 +14,10 @@
  */
 package org.opennars.inference;
 
-import static java.lang.Math.abs;
-import org.opennars.main.Parameters;
 import org.opennars.entity.TruthValue;
+import org.opennars.main.Parameters;
+
+import static java.lang.Math.abs;
 
 /**
  * All truth-value (and desire-value) functions used in inference rules 

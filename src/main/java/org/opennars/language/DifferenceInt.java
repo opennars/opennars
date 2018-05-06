@@ -14,9 +14,11 @@
  */
 package org.opennars.language;
 
-import java.util.*;
-import org.opennars.main.Parameters;
 import org.opennars.io.Symbols.NativeOperator;
+import org.opennars.main.Parameters;
+
+import java.util.NavigableSet;
+import java.util.TreeSet;
 
 /**
  * A compound term whose extension is the difference of the intensions of its term

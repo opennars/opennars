@@ -14,55 +14,26 @@
  */
 package org.opennars.io;
 
-import java.io.Serializable;
-import static java.lang.Float.parseFloat;
-import java.util.*;
-import org.opennars.storage.Memory;
+import org.opennars.entity.*;
+import org.opennars.io.Symbols.*;
+import org.opennars.language.*;
 import org.opennars.main.NAR;
 import org.opennars.main.Parameters;
-import org.opennars.entity.BudgetValue;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
-import org.opennars.entity.TruthValue;
-import static org.opennars.inference.BudgetFunctions.truthToQuality;
-import static org.opennars.io.Symbols.ARGUMENT_SEPARATOR;
-import static org.opennars.io.Symbols.BUDGET_VALUE_MARK;
-import static org.opennars.io.Symbols.GOAL_MARK;
-import static org.opennars.io.Symbols.INPUT_LINE_PREFIX;
-import static org.opennars.io.Symbols.JUDGMENT_MARK;
-import org.opennars.io.Symbols.NativeOperator;
-import static org.opennars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static org.opennars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
-import static org.opennars.io.Symbols.NativeOperator.SET_INT_CLOSER;
-import static org.opennars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
-import static org.opennars.io.Symbols.OUTPUT_LINE_PREFIX;
-import static org.opennars.io.Symbols.PREFIX_MARK;
-import static org.opennars.io.Symbols.QUESTION_MARK;
-import static org.opennars.io.Symbols.QUEST_MARK;
-import static org.opennars.io.Symbols.STAMP_CLOSER;
-import static org.opennars.io.Symbols.STAMP_OPENER;
-import static org.opennars.io.Symbols.TRUTH_VALUE_MARK;
-import static org.opennars.io.Symbols.VALUE_SEPARATOR;
-import static org.opennars.io.Symbols.getCloser;
-import static org.opennars.io.Symbols.getOpener;
-import static org.opennars.io.Symbols.getRelation;
-import static org.opennars.io.Symbols.isRelation;
-import org.opennars.language.Interval;
-import org.opennars.language.SetExt;
-import org.opennars.language.SetInt;
-import org.opennars.language.Statement;
-import org.opennars.language.Tense;
-import org.opennars.language.Term;
-import org.opennars.language.Terms;
-import org.opennars.language.Variable;
 import org.opennars.operator.Operation;
-import static org.opennars.operator.Operation.make;
 import org.opennars.operator.Operator;
+import org.opennars.storage.Memory;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
-import static org.opennars.io.Symbols.getOperator;
+import static org.opennars.inference.BudgetFunctions.truthToQuality;
+import static org.opennars.io.Symbols.*;
+import static org.opennars.io.Symbols.NativeOperator.*;
 import static org.opennars.language.Variables.containVar;
-import static org.opennars.language.Statement.make;
+import static org.opennars.operator.Operation.make;
 
 /**
  * Utility methods for working and reacting to Narsese input.

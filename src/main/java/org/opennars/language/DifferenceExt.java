@@ -14,8 +14,11 @@
  */
 package org.opennars.language;
 
-import java.util.*;
 import org.opennars.io.Symbols.NativeOperator;
+
+import java.util.NavigableSet;
+import java.util.TreeSet;
+
 import static org.opennars.language.DifferenceInt.ensureValidDifferenceArguments;
 
 /**

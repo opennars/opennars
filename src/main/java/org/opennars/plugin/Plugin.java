@@ -14,8 +14,9 @@
  */
 package org.opennars.plugin;
 
-import java.io.Serializable;
 import org.opennars.main.NAR;
+
+import java.io.Serializable;
 
 /**
  * NAR plugin interface

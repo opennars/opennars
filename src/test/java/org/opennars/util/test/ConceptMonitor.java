@@ -18,7 +18,6 @@
  */
 package org.opennars.util.test;
 
-import org.opennars.main.NAR;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
@@ -26,6 +25,7 @@ import org.opennars.io.Narsese;
 import org.opennars.io.Symbols;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
+import org.opennars.main.NAR;
 
 /**
  *
