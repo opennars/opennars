@@ -56,7 +56,7 @@ public class Variable extends Term {
         this.scope = scope != null ? scope : this;
         this.hash = 0; //calculate lazily
         if (!validVariableType(type)) 
-            throw new RuntimeException("Invalid variable type: " + n);
+            throw new IllegalStateException("Invalid variable type: " + n);
         return this;
     }
     
@@ -285,7 +285,7 @@ public class Variable extends Term {
             case VAR_DEPENDENT: cache = vn2; break;
             case VAR_QUERY: cache = vn3; break;
             default:
-                throw new RuntimeException("Invalid variable type");
+                throw new IllegalStateException("Invalid variable type");
         }
         
         CharSequence c = cache[index];

@@ -38,11 +38,11 @@ public class DifferenceInt extends CompoundTerm {
 
     public static void ensureValidDifferenceArguments(Term[] arg) {
         if (arg.length!=2)
-            throw new RuntimeException("Requires 2 components");
+            throw new IllegalStateException("Requires 2 components");
         
         if (Parameters.DEBUG) {
             if (arg[0].equals(arg[1]))
-                throw new RuntimeException("Equal arguments invalid");
+                throw new IllegalStateException("Equal arguments invalid");
         }                
     }
 

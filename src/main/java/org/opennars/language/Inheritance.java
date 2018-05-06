@@ -80,7 +80,7 @@ public class Inheritance extends Statement {
         
         if (Parameters.DEBUG) {
             if (!predicateOperator && predicate.toString().startsWith("^")) {
-                throw new RuntimeException("operator term detected but is not an operator: " + predicate);
+                throw new IllegalStateException("operator term detected but is not an operator: " + predicate);
             }
         }
         

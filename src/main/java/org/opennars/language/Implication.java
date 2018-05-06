@@ -54,7 +54,7 @@ public class Implication extends Statement {
     
     @Override public Implication clone(final Term[] t) {        
         if (t.length!=2)
-            throw new RuntimeException("Implication requires 2 components: " + Arrays.toString(t));
+            throw new IllegalStateException("Implication requires 2 components: " + Arrays.toString(t));
         
         return make(t[0], t[1], temporalOrder);
     }

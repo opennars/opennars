@@ -203,7 +203,7 @@ public class Stamp implements Cloneable, Serializable {
         
         if (Parameters.DEBUG) {
             if (eternalOccurrence && tense!=Tense.Eternal) {
-                throw new RuntimeException("Stamp has inconsistent tense and eternal ocurrenceTime: tense=" + tense);
+                throw new IllegalStateException("Stamp has inconsistent tense and eternal ocurrenceTime: tense=" + tense);
             }
         }
         
@@ -295,7 +295,7 @@ public class Stamp implements Cloneable, Serializable {
 
     
     @Override public boolean equals(final Object that) {
-        throw new RuntimeException("Use other equals() method");
+        throw new IllegalStateException("Use other equals() method");
     }
     
     /**

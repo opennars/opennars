@@ -31,7 +31,7 @@ public class Add extends FunctionOperator {
     @Override
     protected Term function(Memory memory, Term[] x) {
         if (x.length!= 2) {
-            throw new RuntimeException("Requires 2 arguments");
+            throw new IllegalStateException("Requires 2 arguments");
         }
         
         int n1, n2;

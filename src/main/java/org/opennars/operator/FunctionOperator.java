@@ -61,11 +61,11 @@ public abstract class FunctionOperator extends Operator {
         int numArgs = args.length -1;
         
         if (numArgs < 1) {
-            throw new RuntimeException("Requires at least 1 arguments");
+            throw new IllegalStateException("Requires at least 1 arguments");
         }
         
         if (numArgs < 2 /*&& !(this instanceof Javascript)*/) {
-            throw new RuntimeException("Requires at least 2 arguments");
+            throw new IllegalStateException("Requires at least 2 arguments");
         }
         
         //last argument a variable?
@@ -73,7 +73,7 @@ public abstract class FunctionOperator extends Operator {
         boolean variable = lastTerm instanceof Variable;
         
         if(!variable /*&& !(this instanceof Javascript)*/) { 
-            throw new RuntimeException("output can not be specified");
+            throw new IllegalStateException("output can not be specified");
         }
         
         

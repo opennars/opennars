@@ -133,7 +133,7 @@ public abstract class OutputCondition<O> extends OutputHandler {
     }
 
     public List<O> getTrueReasons() {
-        if (!isTrue()) throw new RuntimeException(this + " is not true so has no true reasons");
+        if (!isTrue()) throw new IllegalStateException(this + " is not true so has no true reasons");
         return Collections.EMPTY_LIST;
     }
     

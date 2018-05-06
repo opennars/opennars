@@ -468,7 +468,7 @@ public class Concept extends Item<Term> implements Serializable {
         float termComplexityFactor = 1.0f / term.getComplexity()*Parameters.COMPLEXITY_UNIT;
         float result = or(linkPriority, termComplexityFactor);
         if (result < 0) {
-            throw new RuntimeException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size());
+            throw new IllegalStateException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size());
         }
         return result;
 

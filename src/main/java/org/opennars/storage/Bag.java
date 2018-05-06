@@ -175,7 +175,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         
         E r = putBack(x, forgetCycles, m);
         if (r!=null) {
-            throw new RuntimeException("Bag.processNext should always be able to re-insert item: " + r);
+            throw new IllegalStateException("Bag.processNext should always be able to re-insert item: " + r);
         }
         return x;
     }

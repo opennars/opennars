@@ -49,7 +49,7 @@ public class Reflect extends FunctionOperator {
     protected Term function(Memory memory, Term[] x) {
         
         if (x.length!=1) {
-            throw new RuntimeException(requireMessage);
+            throw new IllegalStateException(requireMessage);
         }
 
         Term content = x[0];

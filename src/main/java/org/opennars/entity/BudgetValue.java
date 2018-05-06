@@ -71,11 +71,11 @@ public class BudgetValue implements Cloneable, Serializable {
         
         if(d>=1.0) {
             durability=(float) (1.0-TRUTH_EPSILON);
-            //throw new RuntimeException("durability value above or equal 1");
+            //throw new IllegalStateException("durability value above or equal 1");
         }
         if(p>1.0) {
             priority=1.0f;
-            //throw new RuntimeException("priority value above 1");
+            //throw new IllegalStateException("priority value above 1");
         }
     }
 
@@ -109,7 +109,7 @@ public class BudgetValue implements Cloneable, Serializable {
      */
     public final void setPriority(float v) {
         if(v>1.0f) {
-            throw new RuntimeException("Priority > 1.0: " + v);
+            throw new IllegalStateException("Priority > 1.0: " + v);
             //v=1.0f;
         }
         priority = v;

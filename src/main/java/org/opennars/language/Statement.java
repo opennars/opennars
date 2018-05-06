@@ -42,15 +42,15 @@ public abstract class Statement extends CompoundTerm {
     @Override
     protected void init(Term[] t) {
         if (t.length!=2)
-            throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
+            throw new IllegalStateException("Requires 2 terms: " + Arrays.toString(t));
         if (t[0]==null)
-            throw new RuntimeException("Null subject: " + this);
+            throw new IllegalStateException("Null subject: " + this);
         if (t[1]==null)
-            throw new RuntimeException("Null predicate: " + this);        
+            throw new IllegalStateException("Null predicate: " + this);
         if (Parameters.DEBUG) {                
             if (isCommutative()) {
                 if (t[0].compareTo(t[1])==1) {
-                    throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
+                    throw new IllegalStateException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
                 }
             }
         }

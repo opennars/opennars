@@ -107,14 +107,14 @@ public class EventEmitter {
      */
     public void off(final Class<?> event, final EventObserver o) {
         if (null == event || null == o)
-            throw new RuntimeException("Invalid parameter");
+            throw new IllegalStateException("Invalid parameter");
  
         if (!events.containsKey(event))
-            throw new RuntimeException("Unknown event: " + event);
+            throw new IllegalStateException("Unknown event: " + event);
 
         events.get(event).remove(o);
         /*if (!removed) {
-            throw new RuntimeException("EventObserver " + o + " was not registered for events");
+            throw new IllegalStateException("EventObserver " + o + " was not registered for events");
         }*/        
     }
 

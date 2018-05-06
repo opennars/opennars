@@ -49,12 +49,12 @@ public class Count extends FunctionOperator {
     @Override
     protected Term function(Memory memory, Term[] x) {
         if (x.length!=1) {
-            throw new RuntimeException(requireMessage);
+            throw new IllegalStateException(requireMessage);
         }
 
         Term content = x[0];
         if (!(content instanceof SetExt) && !(content instanceof SetInt)) {
-            throw new RuntimeException(requireMessage);
+            throw new IllegalStateException(requireMessage);
         }       
         
         int n = ((CompoundTerm) content).size();
