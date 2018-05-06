@@ -54,7 +54,7 @@ public abstract class FunctionOperator extends Operator {
     @Override
     protected List<Task> execute(Operation operation, final Term[] args, final Memory m) {
         //TODO make memory access optional by constructor argument
-        //TODO allow access to NAR instance?
+        //TODO allow access to Nar instance?
         final int numArgs = args.length -1;
         
         if (numArgs < 1) {

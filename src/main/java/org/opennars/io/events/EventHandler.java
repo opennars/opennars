@@ -14,7 +14,7 @@
  */
 package org.opennars.io.events;
 
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 
 /**
  *
@@ -24,7 +24,7 @@ public abstract class EventHandler implements EventEmitter.EventObserver {
     protected boolean active = false;
     private final Class[] events;
 
-    public EventHandler(final NAR n, final boolean active, final Class... events) {
+    public EventHandler(final Nar n, final boolean active, final Class... events) {
         this(n.memory.event, active, events);
     }
     

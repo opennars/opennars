@@ -28,10 +28,10 @@ import java.util.List;
 public class Events {
 
 
-    /** fired at the beginning of each NAR multi-cycle execution*/
+    /** fired at the beginning of each Nar multi-cycle execution*/
     public static class CyclesStart {     } 
     
-    /** fired at the end of each NAR multi-cycle execution */
+    /** fired at the end of each Nar multi-cycle execution */
     public static class CyclesEnd {     }
     
     /** fired at the beginning of each memory cycle */
@@ -187,7 +187,7 @@ public class Events {
                 
                 for (final StackTraceElement e : sl) {
                     frame++;
-                    if (e.getClassName().equals("org.opennars.core.NAR")) {
+                    if (e.getClassName().equals("org.opennars.core.Nar")) {
                         break;
                     }                    
                 }

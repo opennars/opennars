@@ -17,7 +17,7 @@ package org.opennars.io;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols.*;
 import org.opennars.language.*;
-import org.opennars.main.NAR;
+import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -63,7 +63,7 @@ public class Narsese implements Serializable {
         this.memory = memory;
     }
 
-    public Narsese(final NAR n) {
+    public Narsese(final Nar n) {
         this(n.memory);
     }
     
