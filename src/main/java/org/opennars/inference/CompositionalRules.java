@@ -710,23 +710,11 @@ OUT: <lock1 --> lock>.
 
             if (S1 instanceof Conjunction) {
                 //try to unify P2 with a component
-                for (final Term s1 : ((CompoundTerm) S1).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
-                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) S1, res3, s1);
-                    }
-                }
+                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, P2, (CompoundTerm) S1, res3, res4);
             }
             if (P2 instanceof Conjunction) {
                 //try to unify S1 with a component
-                for (final Term s1 : ((CompoundTerm) P2).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
-                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) P2, res3, s1);
-                    }
-                }
+                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, S1, (CompoundTerm) P2, res3, res4);
             }
         }
 
@@ -749,23 +737,11 @@ OUT: <lock1 --> lock>.
 
             if (S2 instanceof Conjunction) {
                 //try to unify P1 with a component
-                for (final Term s1 : ((CompoundTerm) S2).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
-                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) S2, res3, s1);
-                    }
-                }
+                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, P1, (CompoundTerm) S2, res3, res4);
             }
             if (P1 instanceof Conjunction) {
                 //try to unify S2 with a component
-                for (final Term s1 : ((CompoundTerm) P1).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
-                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) P1, res3, s1);
-                    }
-                }
+                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, S2, (CompoundTerm) P1, res3, res4);
             }
         }
 
@@ -788,23 +764,11 @@ OUT: <lock1 --> lock>.
 
             if (P1 instanceof Conjunction) {
                 //try to unify P2 with a component
-                for (final Term s1 : ((CompoundTerm) P1).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
-                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) P1, res3, s1);
-                    }
-                }
+                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, P2, (CompoundTerm) P1, res3, res4);
             }
             if (P2 instanceof Conjunction) {
                 //try to unify P1 with a component
-                for (final Term s1 : ((CompoundTerm) P2).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
-                        eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, (CompoundTerm) P2, res3, s1);
-                    }
-                }
+                eliminateVariableOfConditionAbductiveTryUnification1(sentence, belief, nal, P1, (CompoundTerm) P2, res3, res4);
             }
         }
 
@@ -871,6 +835,16 @@ OUT: <lock1 --> lock>.
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private static void eliminateVariableOfConditionAbductiveTryUnification1(Sentence sentence, Sentence belief, DerivationContext nal, Term p1, CompoundTerm p2, Map<Term, Term> res3, Map<Term, Term> res4) {
+        for (final Term s1 : p2.term) {
+            res3.clear();
+            res4.clear(); //here the dependent part matters, see example of Issue40
+            if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, p1, res3, res4)) {
+                eliminateVariableOfConditionAbductiveInner1(sentence, belief, nal, p2, res3, s1);
             }
         }
     }
