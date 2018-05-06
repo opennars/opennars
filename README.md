@@ -59,7 +59,7 @@ For an overview of reasoning features, see working examples explained in SingleS
 
 Run Requirements
 ----------------
- * Java 7+ (OpenJDK 8 recommended)
+ * Java 8+ (OpenJDK 10 recommended)
 
 
 Command Shell Usage
