@@ -125,7 +125,7 @@ public class Terms {
     }
 
     public static Term term(final CompoundTerm compound, final Collection<Term> components) {
-        final Term[] c = components.toArray(new Term[components.size()]);
+        final Term[] c = components.toArray(new Term[0]);
         return term(compound, c);
     }
     

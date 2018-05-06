@@ -408,7 +408,7 @@ public class Term implements AbstractTerm, Serializable {
 
         Collections.addAll(s, arg);
         
-        return s.toArray(new Term[s.size()] );
+        return s.toArray(new Term[0]);
     }
 
     /** performs a thorough check of the validity of a term (by cloneDeep it) to see if it's valid */

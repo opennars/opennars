@@ -35,7 +35,7 @@ public class Product extends CompoundTerm {
     }
 
     public Product(final List<Term> x) {
-        this(x.toArray(new Term[x.size()]));
+        this(x.toArray(new Term[0]));
     }
     
     public static Product make(final Term... arg) {

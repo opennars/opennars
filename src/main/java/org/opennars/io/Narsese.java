@@ -372,7 +372,7 @@ public class Narsese implements Serializable {
                 final Term[] a;
                 if (argString.length() > 1) {                
                     final List<Term> args = parseArguments(argString);
-                    a = args.toArray(new Term[args.size()]);
+                    a = args.toArray(new Term[0]);
                 }
                 else {
                     //void "()" arguments, default to (SELF)
@@ -483,7 +483,7 @@ public class Narsese implements Serializable {
         final List<Term> arg = (firstSeparator < 0) ? new ArrayList<>(0)
                 : parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR);
 
-        final Term[] argA = arg.toArray(new Term[arg.size()]);
+        final Term[] argA = arg.toArray(new Term[0]);
         
         final Term t;
         

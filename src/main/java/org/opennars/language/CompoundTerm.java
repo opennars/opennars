@@ -463,7 +463,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         if ((!removed) && (requireModification))
             return null;
                 
-        return l.toArray(new Term[l.size()]);
+        return l.toArray(new Term[0]);
     }
     
 

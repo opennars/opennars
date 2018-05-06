@@ -21,10 +21,7 @@ import org.opennars.language.Term;
 import org.opennars.main.NAR;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,7 +41,7 @@ public abstract class SensoryChannel implements Serializable {
         this.duration = duration;
     }
     public SensoryChannel(final NAR nar, final SensoryChannel reportResultsTo, final int width, final int height, final int duration) {
-        this(nar, Arrays.asList(reportResultsTo), width, height, duration);
+        this(nar, Collections.singletonList(reportResultsTo), width, height, duration);
     }
     public void addInput(final String text) {
         try {

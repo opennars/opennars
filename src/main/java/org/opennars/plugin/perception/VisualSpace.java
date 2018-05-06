@@ -57,15 +57,11 @@ public class VisualSpace implements ImaginationSpace {
         this.cropped = new float[height][width];
         this.source = new float[source.length][source[0].length];
         for(int i=0;i<source.length;i++) { //"snapshot" from source
-            for(int j=0; j<source[0].length; j++) {
-                this.source[i][j] = source[i][j];
-            }
+            System.arraycopy(source[i], 0, this.source[i], 0, source[0].length);
         }
         //now copy into data
         for(int i=0; i<height; i++) {
-            for(int j=0; j<width; j++) {
-                cropped[i][j] = source[py+i][px+j];
-            }
+            System.arraycopy(source[py + i], px + 0, cropped[i], 0, width);
         }
         nar.addPlugin(right);
         nar.addPlugin(left);

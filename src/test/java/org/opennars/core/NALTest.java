@@ -183,8 +183,7 @@ public class NALTest  {
         }
 
         final List<OutputCondition> extractedExpects = OutputCondition.getConditions(n, example, similarsToSave);
-        for (final OutputCondition e1 : extractedExpects)
-            expects.add(e1);
+        expects.addAll(extractedExpects);
 
         if (showOutput)
             new TextOutputHandler(n, System.out);

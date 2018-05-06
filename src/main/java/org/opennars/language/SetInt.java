@@ -52,7 +52,7 @@ public class SetInt extends SetTensional {
     }
 
     public static SetInt make(final Collection<Term> l) {
-        return make(l.toArray(new Term[l.size()]));
+        return make(l.toArray(new Term[0]));
     }    
     
     public static SetInt make(Term... t) {

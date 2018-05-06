@@ -240,7 +240,7 @@ public class Conjunction extends CompoundTerm {
                 return set.first();
             }
             
-            return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder, false, spatial, rect);
+            return new Conjunction(set.toArray(new Term[0]), temporalOrder, false, spatial, rect);
         }
     }
 
@@ -268,7 +268,7 @@ public class Conjunction extends CompoundTerm {
      * @return the Term generated from the arguments
      */
     final private static Term make(final Collection<Term> set, final int temporalOrder, final boolean spatial) {
-        final Term[] argument = set.toArray(new Term[set.size()]);
+        final Term[] argument = set.toArray(new Term[0]);
         return make(argument, temporalOrder, spatial);
     }
 
@@ -317,7 +317,7 @@ public class Conjunction extends CompoundTerm {
                     list.add(term2);
                 }
                 
-                components = list.toArray(new Term[list.size()]);
+                components = list.toArray(new Term[0]);
                 
             } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
                 final CompoundTerm cterm2 = (CompoundTerm) term2;
