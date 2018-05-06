@@ -51,7 +51,7 @@ public class ImageInt extends Image {
     @Override
     public Term clone(Term[] replaced) {
         if (replaced.length != term.length)
-            throw new RuntimeException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
+            throw new IllegalStateException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
         
         return new ImageInt(replaced, relationIndex);
     }

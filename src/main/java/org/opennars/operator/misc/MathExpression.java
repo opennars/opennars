@@ -56,12 +56,12 @@ public class MathExpression  extends FunctionOperator {
         }
         
         if (x.length!=1) {
-            throw new RuntimeException(requireMessage);
+            throw new IllegalStateException(requireMessage);
         }
 
         Term content = x[0];
         if (content.getClass()!=Term.class) {
-            throw new RuntimeException(requireMessage);
+            throw new IllegalStateException(requireMessage);
         }
         
         String expstring = unescape(content.name()).toString();

@@ -194,7 +194,7 @@ public class Terms {
             case EQUIVALENCE_AFTER:
                 return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
         }
-        throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
+        throw new IllegalStateException("Unknown Term operator: " + op + " (" + op.name() + ")");
     }
     
     /**
@@ -521,30 +521,30 @@ public class Terms {
     public static void verifyNonNull(Collection t) {
         for (Object o : t)
             if (o == null)
-                throw new RuntimeException("Element null in: " + t);
+                throw new IllegalStateException("Element null in: " + t);
     }
 
     static void verifyNonNull(Term... t) {
         for (Object o : t)
             if (o == null)
-                throw new RuntimeException("Element null in: " + Arrays.toString(t));
+                throw new IllegalStateException("Element null in: " + Arrays.toString(t));
     }    
     
     public static Term[] verifySortedAndUnique(final Term[] arg, boolean allowSingleton) {        
         if (arg.length == 0) {
-            throw new RuntimeException("Needs >0 components");
+            throw new IllegalStateException("Needs >0 components");
         }
         if (!allowSingleton && (arg.length == 1)) {
-            throw new RuntimeException("Needs >1 components: " + Arrays.toString(arg));
+            throw new IllegalStateException("Needs >1 components: " + Arrays.toString(arg));
         }
         Term[] s = Term.toSortedSetArray(arg);
         if (arg.length!=s.length) {
-            throw new RuntimeException("Contains duplicates: " + Arrays.toString(arg));
+            throw new IllegalStateException("Contains duplicates: " + Arrays.toString(arg));
         }
         int j = 0;
         for (Term t : s) {
             if (!t.equals(arg[j++]))
-                throw new RuntimeException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + Arrays.toString(s));
+                throw new IllegalStateException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + Arrays.toString(s));
         }        
         return s;
     }    

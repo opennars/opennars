@@ -65,7 +65,7 @@ public class Operation extends Inheritance {
     public static Operation make(final Operator oper, Term[] arg, boolean addSelf) {        
 
 //        if (Variables.containVar(arg)) {
-//            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
+//            throw new IllegalStateException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
 //        }
         /*//new cleaner  policy: should be added by the example already
         if(addSelf && !Term.isSelf(arg[arg.length-1])) {

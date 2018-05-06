@@ -348,7 +348,7 @@ public class Term implements AbstractTerm, Serializable {
             case Symbols.VAR_INDEPENDENT: return hasVarIndep();
             case Symbols.VAR_QUERY: return hasVarQuery();
         }
-        throw new RuntimeException("Invalid variable type: " + type);
+        throw new IllegalStateException("Invalid variable type: " + type);
     }
     
     public boolean hasVarIndep() {

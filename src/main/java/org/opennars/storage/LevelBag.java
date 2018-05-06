@@ -130,7 +130,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
 
        public boolean add(final E e) {
            if (e == null)
-               throw new RuntimeException("Bag requires non-null items");
+               throw new IllegalStateException("Bag requires non-null items");
            
             if (items.add(e)) {
                 levelIsEmpty(false);
@@ -195,7 +195,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         if (Parameters.DEBUG_BAG && (Parameters.DEBUG)) {
             int is = sizeItems();
             if (Math.abs(is-in) > 1 ) {                
-                throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());
+                throw new IllegalStateException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());
             }
         }
         return in;
@@ -285,7 +285,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
             nextNonEmptyLevel();
         }
         if (levelEmpty[currentLevel]) {
-            throw new RuntimeException("Empty level selected for takeNext");
+            throw new IllegalStateException("Empty level selected for takeNext");
         }
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
         currentCounter--;        
@@ -327,7 +327,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
             int is = sizeItems();
             if (ns == is)
                 return null;
-            throw new RuntimeException("LevelBag inconsistency: " + nameTable.size() + "|" + sizeItems() + " Can not remove missing element: size inconsistency" + oldItem + " from " + this.getClass().getSimpleName());
+            throw new IllegalStateException("LevelBag inconsistency: " + nameTable.size() + "|" + sizeItems() + " Can not remove missing element: size inconsistency" + oldItem + " from " + this.getClass().getSimpleName());
         }
         return oldItem;
     }
@@ -393,7 +393,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
             removeMass(selected);
         }
         else {
-            throw new RuntimeException("Attempt to remove item from empty level: " + level);
+            throw new IllegalStateException("Attempt to remove item from empty level: " + level);
         }
         return selected;
     }

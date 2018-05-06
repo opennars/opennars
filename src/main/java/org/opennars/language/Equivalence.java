@@ -50,7 +50,7 @@ public class Equivalence extends Statement {
     
     @Override public Equivalence clone(final Term[] t) {        
         if (t.length!=2)
-            throw new RuntimeException("Equivalence requires 2 components: " + Arrays.toString(t));
+            throw new IllegalStateException("Equivalence requires 2 components: " + Arrays.toString(t));
         
         return make(t[0], t[1], temporalOrder);
     }

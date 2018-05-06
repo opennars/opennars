@@ -43,7 +43,7 @@ public abstract class Operator extends Term implements Plugin {
     protected Operator(String name) {
         super(name);
         if (!name.startsWith("^"))
-            throw new RuntimeException("Operator name needs ^ prefix");
+            throw new IllegalStateException("Operator name needs ^ prefix");
     }
 
     public NAR nar; 

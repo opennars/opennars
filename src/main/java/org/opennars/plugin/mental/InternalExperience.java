@@ -157,7 +157,7 @@ public class InternalExperience implements Plugin, EventObserver {
         //Operation.make ?
         Term operation = Inheritance.make(new Product(arg), opTerm);
         if (operation == null) {
-            throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
+            throw new IllegalStateException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
         }
         return operation;
     }
@@ -310,7 +310,7 @@ public class InternalExperience implements Plugin, EventObserver {
                 if(valid) {
                     Operator op=memory.getOperator("^anticipate");
                     if (op == null)
-                        throw new RuntimeException(this + " requires ^anticipate operator");
+                        throw new IllegalStateException(this + " requires ^anticipate operator");
                     
                     Product args=new Product(new Term[]{imp.getPredicate()});
                     Term new_term=Operation.make(args,op);

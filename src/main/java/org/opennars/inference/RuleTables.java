@@ -619,7 +619,7 @@ public class RuleTables {
                 rt2 = s2.getSubject();
                 break;
             default: 
-                throw new RuntimeException("Invalid figure: " + figure);
+                throw new IllegalStateException("Invalid figure: " + figure);
         }
         
         Term[] u = new Term[] { s1, s2 };

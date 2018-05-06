@@ -425,7 +425,7 @@ public class TemporalRules {
      */
     public static int order(final long a, final long b, final int durationCycles) {        
         if ((a == Stamp.ETERNAL) || (b == Stamp.ETERNAL))
-            throw new RuntimeException("order() does not compare ETERNAL times");
+            throw new IllegalStateException("order() does not compare ETERNAL times");
         
         return order(b - a, durationCycles);
     }

@@ -96,17 +96,17 @@ public final class BudgetFunctions extends UtilityFunctions {
         /*
         if (priority < 0) {
             memory.nar.output(ERR.class, 
-                    new RuntimeException("BudgetValue.revise resulted in negative priority; set to 0"));
+                    new IllegalStateException("BudgetValue.revise resulted in negative priority; set to 0"));
             priority = 0;
         }
         if (durability < 0) {
             memory.nar.output(ERR.class, 
-                    new RuntimeException("BudgetValue.revise resulted in negative durability; set to 0; aveAri(dif=" + dif + ", task.getDurability=" + task.getDurability() +") = " + durability));
+                    new IllegalStateException("BudgetValue.revise resulted in negative durability; set to 0; aveAri(dif=" + dif + ", task.getDurability=" + task.getDurability() +") = " + durability));
             durability = 0;
         }
         if (quality < 0) {
             memory.nar.output(ERR.class, 
-                    new RuntimeException("BudgetValue.revise resulted in negative quality; set to 0"));
+                    new IllegalStateException("BudgetValue.revise resulted in negative quality; set to 0"));
             quality = 0;
         }
         */
@@ -315,7 +315,7 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
     @Deprecated static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
-        throw new RuntimeException("Moved to TemporalRules.java");
+        throw new IllegalStateException("Moved to TemporalRules.java");
     }    
 
     public static BudgetValue budgetTermLinkConcept(Concept c, BudgetValue taskBudget, TermLink termLink) {
