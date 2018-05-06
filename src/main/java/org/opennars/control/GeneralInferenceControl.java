@@ -25,12 +25,13 @@ import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.RuleTables;
 import org.opennars.io.events.Events;
 import org.opennars.main.Parameters;
+import org.opennars.main.NarParameters;
 import org.opennars.storage.Memory;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 public class GeneralInferenceControl {
     
-    public static void selectConceptForInference(final Memory mem) {
+    public static void selectConceptForInference(final Memory mem, final NarParameters narParameters) {
         final Concept currentConcept = mem.concepts.takeNext();
         if (currentConcept==null) {
             return;
@@ -47,7 +48,7 @@ public class GeneralInferenceControl {
             return;
         }
         
-        final DerivationContext nal = new DerivationContext(mem);
+        final DerivationContext nal = new DerivationContext(mem, narParameters);
         nal.setCurrentConcept(currentConcept);
 
         final boolean putBackConcept = fireConcept(nal, 1);
@@ -98,7 +99,7 @@ public class GeneralInferenceControl {
             
         } else {            
             while (termLinks > 0) {
-                final TermLink termLink = nal.currentConcept.selectTermLink(nal.currentTaskLink, nal.memory.time());
+                final TermLink termLink = nal.currentConcept.selectTermLink(nal.currentTaskLink, nal.memory.time(), nal.narParameters);
                 if (termLink == null) {
                     break;
                 }

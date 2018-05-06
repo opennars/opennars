@@ -54,6 +54,7 @@ import java.util.logging.Logger;
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
 public class NAR extends SensoryChannel implements Serializable,Runnable {
+    public NarParameters narParameters = new NarParameters();
 
     /**
      * The information about the version and date of the project.
@@ -145,7 +146,6 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
        public final PortableDouble termLinkForgetDurations = new PortableDouble(Parameters.TERMLINK_FORGET_DURATIONS);
        public final PortableDouble taskLinkForgetDurations = new PortableDouble(Parameters.TASKLINK_FORGET_DURATIONS);
        public final PortableDouble eventForgetDurations = new PortableDouble(Parameters.EVENT_FORGET_DURATIONS);
-       public final PortableDouble decisionThreshold = new PortableDouble(Parameters.DECISION_THRESHOLD);
    }
     public final RuntimeParameters param;
 
@@ -186,7 +186,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
     public NAR() {
         final Plugins b = new Plugins();
         final Memory m = new Memory(new RuntimeParameters(),
-                new LevelBag(Parameters.CONCEPT_BAG_LEVELS, Parameters.CONCEPT_BAG_SIZE),
+                new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE),
                 new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
                 new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE),
                 new LevelBag<>(Parameters.OPERATION_BAG_LEVELS, Parameters.OPERATION_BAG_SIZE));
@@ -233,7 +233,7 @@ public class NAR extends SensoryChannel implements Serializable,Runnable {
         else
         if(text.startsWith("*decisionthreshold=")) {
             final Double value = Double.valueOf(text.split("decisionthreshold=")[1]);
-            param.decisionThreshold.set(value);
+            narParameters.DECISION_THRESHOLD = value.floatValue();
             return true;
         }
         else

@@ -21,6 +21,7 @@ package org.opennars.control;
 import org.opennars.entity.*;
 import org.opennars.inference.TruthFunctions;
 import org.opennars.io.events.Events;
+import org.opennars.main.NarParameters;
 import org.opennars.language.*;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
@@ -43,10 +44,13 @@ public class DerivationContext {
     protected Sentence currentBelief;
     protected Stamp newStamp;
     public StampBuilder newStampBuilder;
+
+    public NarParameters narParameters;
     
-    public DerivationContext(final Memory mem) {
+    public DerivationContext(final Memory mem, final NarParameters narParameters) {
         super();
         this.memory = mem;
+        this.narParameters = narParameters;
     }
    
     public void emit(final Class c, final Object... o) {

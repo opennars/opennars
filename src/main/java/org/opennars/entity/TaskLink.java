@@ -16,6 +16,7 @@ package org.opennars.entity;
 
 import org.opennars.language.Term;
 import org.opennars.main.Parameters;
+import org.opennars.main.NarParameters;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
@@ -147,10 +148,11 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
      * @param currentTime The current time
      * @return Whether they are novel to each other
      */
-    public boolean novel(final TermLink termLink, final long currentTime) {
-        return novel(termLink, currentTime, false);
+    public boolean novel(final TermLink termLink, final long currentTime, final NarParameters narParameters) {
+        return novel(termLink, currentTime, narParameters, false);
     }
-    public boolean novel(final TermLink termLink, final long currentTime, final boolean transformTask) {
+
+    public boolean novel(final TermLink termLink, final long currentTime, final NarParameters narParameters, final boolean transformTask) {
         final Term bTerm = termLink.target;
         if (!transformTask && bTerm.equals(targetTask.sentence.term)) {            
             return false;
@@ -163,7 +165,7 @@ public class TaskLink extends Item<Task> implements TLink<Task>, Serializable {
         while (ir.hasNext()) {
             final Recording r = ir.next();
             if (linkKey.equals(r.link)) {
-                if (currentTime < r.getTime() + Parameters.NOVELTY_HORIZON) {
+                if (currentTime < r.getTime() + narParameters.NOVELTY_HORIZON) {
                     //too recent, not novel
                     return false;
                 } else {

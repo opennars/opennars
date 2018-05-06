@@ -276,7 +276,7 @@ public class ConceptProcessing {
         s2.setOccurrenceTime(concept.memory.time());
         if(s2.after(task.sentence.stamp, Parameters.DURATION)) { //this task is not up to date we have to project it first
             final Sentence projGoal = task.sentence.projection(concept.memory.time(), Parameters.DURATION);
-            if(projGoal!=null && projGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
+            if(projGoal!=null && projGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD) {
                 nal.singlePremiseTask(projGoal, task.budget.clone()); //keep goal updated
                 // return false; //outcommented, allowing "roundtrips now", relevant for executing multiple steps of learned implication chains
             }
@@ -314,7 +314,7 @@ public class ConceptProcessing {
 
                 InternalExperience.InternalExperienceFromTask(concept.memory,task,false);
 
-                if(projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && nal.memory.time() >= concept.memory.decisionBlock) {
+                if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD && nal.memory.time() >= concept.memory.decisionBlock) {
                     //see whether the goal evidence is fully included in the old goal, if yes don't execute
                     //as execution for this reason already happened (or did not since there was evidence against it)
                     final Set<Long> oldEvidence = new HashSet<>();
@@ -507,7 +507,7 @@ public class ConceptProcessing {
             }
         }
 
-        if(bestop != null && bestop_truthexp > concept.memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
+        if(bestop != null && bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
 
             final Sentence createdSentence = new Sentence(
                     bestop,

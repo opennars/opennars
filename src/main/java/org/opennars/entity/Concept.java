@@ -23,6 +23,7 @@ import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
 import org.opennars.main.Parameters;
 import org.opennars.main.Shell;
+import org.opennars.main.NarParameters;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
@@ -542,7 +543,7 @@ public class Concept extends Item<Term> implements Serializable {
      * @param time The current time
      * @return The selected TermLink
      */
-    public TermLink selectTermLink(final TaskLink taskLink, final long time) {
+    public TermLink selectTermLink(final TaskLink taskLink, final long time, final NarParameters narParameters) {
         ConceptProcessing.maintainDisappointedAnticipations(this);
 
         final int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
@@ -552,7 +553,7 @@ public class Concept extends Item<Term> implements Serializable {
             if (termLink==null)
                 break;
             
-            if (taskLink.novel(termLink, time)) {
+            if (taskLink.novel(termLink, time, narParameters)) {
                 //return, will be re-inserted in caller method when finished processing it
                 return termLink;
             }
