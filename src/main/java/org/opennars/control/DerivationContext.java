@@ -56,7 +56,7 @@ public class DerivationContext {
     protected Stamp newStamp;
     public StampBuilder newStampBuilder;
 
-    NarParameters narParameters;
+    public NarParameters narParameters;
     
     public DerivationContext(Memory mem, NarParameters narParameters) {
         super();
