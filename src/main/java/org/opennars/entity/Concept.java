@@ -191,10 +191,8 @@ public class Concept extends Item<Term> implements Serializable {
         final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
         if (subBudget.aboveThreshold()) {
 
-            for (int t = 0; t < termLinkTemplates.size(); t++) {
-                TermLink termLink = termLinkTemplates.get(t);
-
-               if(termLink.type == TermLink.TEMPORAL)
+            for (TermLink termLink : termLinkTemplates) {
+                if (termLink.type == TermLink.TEMPORAL)
                     continue;
                 Term componentTerm = termLink.target;
 
@@ -267,9 +265,8 @@ public class Concept extends Item<Term> implements Serializable {
         float beliefQuality;
         Task candidate = null;
         boolean rateByConfidence = true; //table vote, yes/no question / local processing
-        synchronized (list) {            
-            for (int i = 0; i < list.size(); i++) {
-                Task judgT = list.get(i);
+        synchronized (list) {
+            for (Task judgT : list) {
                 Sentence judg = judgT.sentence;
                 beliefQuality = LocalRules.solutionQuality(rateByConfidence, query, judg, memory); //makes revision explicitly search for 
                 if (beliefQuality > currentBest /*&& (!forRevision || judgT.sentence.equalsContent(query)) */ /*&& (!forRevision || !Stamp.baseOverlap(query.stamp.evidentialBase, judg.stamp.evidentialBase)) */) {

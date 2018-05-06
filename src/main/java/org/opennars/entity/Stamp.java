@@ -171,28 +171,28 @@ public class Stamp implements Cloneable, Serializable {
     /** Detects evidental base overlaps **/
     public static boolean baseOverlap(long[] base1, long[] base2) {
         Set<Long> task_base = new HashSet<>(base1.length + base2.length);
-        for(int i=0; i < base1.length; i++) {
-            if(task_base.contains(base1[i])) { //can have an overlap in itself already
+        for (long aBase1 : base1) {
+            if (task_base.contains(aBase1)) { //can have an overlap in itself already
                 return true;
             }
-            task_base.add(base1[i]);
+            task_base.add(aBase1);
         }
-        for(int i=0; i < base2.length; i++) {
-            if(task_base.contains(base2[i])) {
+        for (long aBase2 : base2) {
+            if (task_base.contains(aBase2)) {
                 return true;
             }
-            task_base.add(base2[i]); //also add to detect collision with itself
+            task_base.add(aBase2); //also add to detect collision with itself
         }
         return false;
      }
     
     public boolean evidenceIsCyclic() {
         Set<Long> task_base = new HashSet<Long>(this.evidentialBase.length);
-        for(int i=0; i < this.evidentialBase.length; i++) {
-            if(task_base.contains(Long.valueOf(this.evidentialBase[i]))) { //can have an overlap in itself already
+        for (long anEvidentialBase : this.evidentialBase) {
+            if (task_base.contains(Long.valueOf(anEvidentialBase))) { //can have an overlap in itself already
                 return true;
             }
-            task_base.add(this.evidentialBase[i]);
+            task_base.add(anEvidentialBase);
         }
         return false;
     }
@@ -260,17 +260,15 @@ public class Stamp implements Cloneable, Serializable {
         Arrays.sort(set);
         long lastValue = -1;
         int j = 0; //# of unique items
-        for (int i = 0; i < set.length; i++) {
-            long v = set[i];
+        for (long v : set) {
             if (lastValue != v)
-                j++;                
+                j++;
             lastValue = v;
         }
         lastValue = -1;
         long[] sorted = new long[j];
         j = 0;
-        for (int i = 0; i < set.length; i++) {
-            long v = set[i];
+        for (long v : set) {
             if (lastValue != v)
                 sorted[j++] = v;
             lastValue = v;

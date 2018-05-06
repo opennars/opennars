@@ -125,26 +125,24 @@ public class Conjunction extends CompoundTerm {
     public static Term[] flatten(Term[] args, int order, boolean isSpatial) { //flatten only same order!
         //determine how many there are with same order
         int sz=0;
-        for(int i=0;i<args.length;i++) {
-            Term a=args[i];
-            if(isConjunctionAndHasSameOrder(a, order) && isSpatial == ((Conjunction) a).isSpatial) {
-                sz+=((Conjunction)a).term.length;
+        for (Term a : args) {
+            if (isConjunctionAndHasSameOrder(a, order) && isSpatial == ((Conjunction) a).isSpatial) {
+                sz += ((Conjunction) a).term.length;
             } else {
-                sz+=1;
+                sz += 1;
             }
         }
         Term[] ret=new Term[sz];
         int k=0;
-        for(int i=0;i<args.length;i++) {
-            Term a=args[i];
-            if(isConjunctionAndHasSameOrder(a, order) && isSpatial == ((Conjunction) a).isSpatial) {
-                Conjunction c=((Conjunction)a);
-                for(Term t: c.term) {
-                    ret[k]=t;
+        for (Term a : args) {
+            if (isConjunctionAndHasSameOrder(a, order) && isSpatial == ((Conjunction) a).isSpatial) {
+                Conjunction c = ((Conjunction) a);
+                for (Term t : c.term) {
+                    ret[k] = t;
                     k++;
                 }
             } else {
-                ret[k]=a;
+                ret[k] = a;
                 k++;
             }
         }
