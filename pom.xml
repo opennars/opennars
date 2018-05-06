@@ -54,7 +54,6 @@
             <organization>Syncleus</organization>
             <organizationUrl>http://syncleus.com</organizationUrl>
             <roles>
-                <role>Chief Technology Officer</role>
                 <role>Project Owner</role>
                 <role>Developer</role>
             </roles>
@@ -63,7 +62,7 @@
         <developer>
             <id>TonyLo1</id>
             <name>Tony Lofthouse</name>
-            <email>Tony.Lofthouse</email>
+            <email>Tony.Lofthouse@GMILab.com</email>
             <organization>OpenNARS</organization>
             <organizationUrl>http://OpenNARS.org</organizationUrl>
             <roles>
