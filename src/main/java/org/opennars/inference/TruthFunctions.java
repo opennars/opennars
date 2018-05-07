@@ -49,7 +49,7 @@ public final class TruthFunctions extends UtilityFunctions {
             case COMPARISON: return comparison(a, b);
             case ANALOGY: return analogy(a, b);
             case ANONYMOUSANALOGY: return anonymousAnalogy(a, b);
-            default: throw new RuntimeException("Encountered unimplemented case!"); // internal error
+            default: throw new IllegalArgumentException("Encountered unimplemented case!"); // internal error
         }
     }
 
