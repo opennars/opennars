@@ -443,7 +443,11 @@ public final class SyllogisticRules {
             } else { // isJudgment
                 strong = statement instanceof Equivalence || side == 0;
             }
+        }
 
+        if (taskSentence.isQuestion()) {
+        } else if (taskSentence.isQuest()) {
+        } else {
             if (taskSentence.isGoal()) {
                 if (statement instanceof Equivalence) {
                     truth = TruthFunctions.desireStrong(truth1, truth2);
