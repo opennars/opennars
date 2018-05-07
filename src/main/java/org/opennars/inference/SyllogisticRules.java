@@ -453,21 +453,30 @@ public final class SyllogisticRules {
         } else {
             if (taskSentence.isGoal()) {
                 if (statement instanceof Equivalence) {
-                    truth = TruthFunctions.desireStrong(truth1, truth2);
                     strong = true; //not for goals anymore
+                } else if (side == 0) {
+                } else {
+                    strong = true; //not for goals anymore
+                }
+
+                if (statement instanceof Equivalence) {
+                    truth = TruthFunctions.desireStrong(truth1, truth2);
                 } else if (side == 0) {
                     truth = TruthFunctions.desireInd(truth1, truth2);
                 } else {
                     truth = TruthFunctions.desireDed(truth1, truth2);
-                    strong = true; //not for goals anymore
                 }
             } else { // isJudgment
                 if (statement instanceof Equivalence) {
-                    truth = TruthFunctions.analogy(truth2, truth1);
                     strong = true;
                 } else if (side == 0) {
-                    truth = TruthFunctions.deduction(truth1, truth2);
                     strong = true;
+                }
+
+                if (statement instanceof Equivalence) {
+                    truth = TruthFunctions.analogy(truth2, truth1);
+                } else if (side == 0) {
+                    truth = TruthFunctions.deduction(truth1, truth2);
                 } else {
                     truth = TruthFunctions.abduction(truth2, truth1);
                 }
