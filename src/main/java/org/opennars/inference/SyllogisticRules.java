@@ -123,6 +123,22 @@ public final class SyllogisticRules {
         final BudgetValue budget3;
         final TruthValue value1 = sentence1.truth;
         final TruthValue value2 = sentence2.truth;
+
+        if (sentence1.isQuestion()) {
+        } else if (sentence1.isQuest()) {
+        } else {
+            if (sentence1.isGoal()) {
+                truth1 = TruthFunctions.desireStrong(value1, value2); //P --> S
+                truth2 = TruthFunctions.desireWeak(value2, value1); //S --> P
+                truth3 = TruthFunctions.desireStrong(value1, value2); //S <-> P
+            } else {
+                // isJudgment
+                truth1 = TruthFunctions.abduction(value1, value2); //P --> S
+                truth2 = TruthFunctions.abduction(value2, value1); //S --> P
+                truth3 = TruthFunctions.comparison(value1, value2); //S <-> P
+            }
+        }
+
         if (sentence1.isQuestion()) {
             budget1 = BudgetFunctions.backward(value2, nal);
             budget2 = BudgetFunctions.backwardWeak(value2, nal);
@@ -132,17 +148,6 @@ public final class SyllogisticRules {
             budget2 = BudgetFunctions.backward(value2, nal);
             budget3 = BudgetFunctions.backwardWeak(value2, nal);            
         } else {
-            if (sentence1.isGoal()) {
-                truth1 = TruthFunctions.desireStrong(value1, value2); //P --> S
-                truth2 = TruthFunctions.desireWeak(value2, value1); //S --> P
-                truth3 = TruthFunctions.desireStrong(value1, value2); //S <-> P
-            } else { 
-                // isJudgment
-                truth1 = TruthFunctions.abduction(value1, value2); //P --> S
-                truth2 = TruthFunctions.abduction(value2, value1); //S --> P
-                truth3 = TruthFunctions.comparison(value1, value2); //S <-> P
-            }
-
             budget1 = BudgetFunctions.forward(truth1, nal);
             budget2 = BudgetFunctions.forward(truth2, nal);
             budget3 = BudgetFunctions.forward(truth3, nal);
