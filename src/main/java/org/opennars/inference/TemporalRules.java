@@ -14,6 +14,7 @@
  */
 package org.opennars.inference;
 
+import org.opennars.control.DerivationContext;
 import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
@@ -318,24 +319,9 @@ public class TemporalRules {
             final Statement statement11 = Implication.make(t11, t22, order);
             final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             final Statement statement33 = Equivalence.make(t11, t22, order);
-            if(!tooMuchTemporalStatements(statement11)) {
-                final List<Task> t=nal.doublePremiseTask(statement11, truth1, budget1,true, false);
-                if(t!=null) {
-                    success.addAll(t);
-                }
-            }
-            if(!tooMuchTemporalStatements(statement22)) {
-               final List<Task> t=nal.doublePremiseTask(statement22, truth2, budget2,true, false);
-                if(t!=null) {
-                    success.addAll(t);
-                }
-            }
-            if(!tooMuchTemporalStatements(statement33)) {
-                final List<Task> t=nal.doublePremiseTask(statement33, truth3, budget3,true, false);
-                if(t!=null) {
-                    success.addAll(t);
-                }
-            }
+            temporalInductionAppendIfNotToManyTemporalStatements(nal, truth1, budget1, success, statement11);
+            temporalInductionAppendIfNotToManyTemporalStatements(nal, truth2, budget2, success, statement22);
+            temporalInductionAppendIfNotToManyTemporalStatements(nal, truth3, budget3, success, statement33);
         }
         if(!deriveSequenceOnly && !tooMuchTemporalStatements(statement1)) {
             final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
@@ -390,6 +376,15 @@ public class TemporalRules {
         }
 
         return success;
+    }
+
+    private static void temporalInductionAppendIfNotToManyTemporalStatements(DerivationContext nal, TruthValue truth1, BudgetValue budget1, List<Task> success, Statement statement11) {
+        if(!tooMuchTemporalStatements(statement11)) {
+            final List<Task> t=nal.doublePremiseTask(statement11, truth1, budget1,true, false);
+            if(t!=null) {
+                success.addAll(t);
+            }
+        }
     }
 
     public static int order(final long timeDiff, final int durationCycles) {
