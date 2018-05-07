@@ -434,22 +434,9 @@ public final class SyllogisticRules {
         TruthValue truth = null;
         boolean strong = false;
         final BudgetValue budget;
+
         if (taskSentence.isQuestion()) {
-            if (statement instanceof Equivalence) {
-                budget = BudgetFunctions.backward(beliefTruth, nal);
-            } else if (side == 0) {
-                budget = BudgetFunctions.backwardWeak(beliefTruth, nal);
-            } else {
-                budget = BudgetFunctions.backward(beliefTruth, nal);
-            }
         } else if (taskSentence.isQuest()) {
-            if (statement instanceof Equivalence) {
-                budget = BudgetFunctions.backwardWeak(beliefTruth, nal);
-            } else if (side == 0) {
-                budget = BudgetFunctions.backward(beliefTruth, nal);
-            } else {
-               budget = BudgetFunctions.backwardWeak(beliefTruth, nal);
-            }
         } else {
             if (taskSentence.isGoal()) {
                 strong = statement instanceof Equivalence || side != 0;
@@ -474,6 +461,25 @@ public final class SyllogisticRules {
                     truth = TruthFunctions.abduction(truth2, truth1);
                 }
             }
+        }
+
+        if (taskSentence.isQuestion()) {
+            if (statement instanceof Equivalence) {
+                budget = BudgetFunctions.backward(beliefTruth, nal);
+            } else if (side == 0) {
+                budget = BudgetFunctions.backwardWeak(beliefTruth, nal);
+            } else {
+                budget = BudgetFunctions.backward(beliefTruth, nal);
+            }
+        } else if (taskSentence.isQuest()) {
+            if (statement instanceof Equivalence) {
+                budget = BudgetFunctions.backwardWeak(beliefTruth, nal);
+            } else if (side == 0) {
+                budget = BudgetFunctions.backward(beliefTruth, nal);
+            } else {
+               budget = BudgetFunctions.backwardWeak(beliefTruth, nal);
+            }
+        } else {
             budget = BudgetFunctions.forward(truth, nal);
         }
         if(!Variables.indepVarUsedInvalid(content)) {
