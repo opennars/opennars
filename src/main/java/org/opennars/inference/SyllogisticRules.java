@@ -711,12 +711,16 @@ public final class SyllogisticRules {
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.backwardWeak(truth2, nal);
         } else {
+            budget = BudgetFunctions.forward(truth, nal);
+        }
+        
+        if (taskSentence.isQuestion() || taskSentence.isQuest()) {
+        } else {
            if (taskSentence.isGoal()) {
                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(conditionalTask, TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DESIREDED, truth1, truth2);
             } else {
                 truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(conditionalTask, TruthFunctions.EnumType.COMPARISON, TruthFunctions.EnumType.ANALOGY, truth1, truth2);
             }
-            budget = BudgetFunctions.forward(truth, nal);
         }
         nal.doublePremiseTask(content, truth, budget, false, taskSentence.isJudgment() && !conditionalTask); //(allow overlap) when !conditionalTask on judgment
     }
