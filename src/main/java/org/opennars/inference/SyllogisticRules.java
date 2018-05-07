@@ -295,11 +295,11 @@ public final class SyllogisticRules {
         final Statement st = (Statement) belief.term;
         TruthValue truth = null;
         final BudgetValue budget;
-        if (sentence.isQuestion() || sentence.isQuest()) {
-        } else {
+        if (!(sentence.isQuestion() || sentence.isQuest())) {
             if (sentence.isGoal()) {
                 truth = TruthFunctions.desireStrong(sentence.truth, belief.truth);
             } else {
+                // NOTE< this must be Judgement again ? >
                 truth = TruthFunctions.resemblance(belief.truth, sentence.truth);
             }
         }
