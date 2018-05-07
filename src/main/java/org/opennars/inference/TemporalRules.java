@@ -324,36 +324,9 @@ public class TemporalRules {
             temporalInductionAppendIfNotToManyTemporalStatements(nal, truth3, budget3, success, statement33);
         }
         if(!deriveSequenceOnly ) {
-            if(!tooMuchTemporalStatements(statement1)) {
-                final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
-                if(t!=null) {
-                    success.addAll(t);
-
-                    for(final Task task : t) {
-                        task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
-                    }
-                }
-            }
-
-            if( !tooMuchTemporalStatements(statement2)) {
-                final List<Task> t=nal.doublePremiseTask(statement2, truth2, budget2,true, false);
-                     if(t!=null) {
-                        success.addAll(t);
-
-                        for(final Task task : t) {
-                            task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
-                        }
-                    }
-                }
-            if(!tooMuchTemporalStatements(statement3)) {
-                final List<Task> t=nal.doublePremiseTask(statement3, truth3, budget3,true, false);
-                if(t!=null) {
-                    for(final Task task : t) {
-                        task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
-                    }
-                    success.addAll(t);
-                }
-            }
+            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(nal, truth1, budget1, statement1, success);
+            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(nal, truth2, budget2, statement2, success);
+            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(nal, truth3, budget3, statement3, success);
         }
 
         if(!tooMuchTemporalStatements(statement4)) {
@@ -379,6 +352,19 @@ public class TemporalRules {
         }
 
         return success;
+    }
+
+    private static void temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success) {
+        if(!tooMuchTemporalStatements(statement1)) {
+            final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
+            if(t!=null) {
+                success.addAll(t);
+
+                for(final Task task : t) {
+                    task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
+                }
+            }
+        }
     }
 
     private static void temporalInductionAppendIfNotToManyTemporalStatements(DerivationContext nal, TruthValue truth1, BudgetValue budget1, List<Task> success, Statement statement11) {
