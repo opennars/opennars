@@ -355,23 +355,24 @@ public class TemporalRules {
     }
 
     private static void temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success) {
+        temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth1, budget1, statement1, success, true);
+    }
+
+    private static void temporalInductionAppendIfNotToManyTemporalStatements(DerivationContext nal, TruthValue truth1, BudgetValue budget1, List<Task> success, Statement statement11) {
+        temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth1, budget1, statement11, success, false);
+    }
+
+    private static void temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success, boolean setObservablePrediction) {
         if(!tooMuchTemporalStatements(statement1)) {
             final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
             if(t!=null) {
                 success.addAll(t);
 
-                for(final Task task : t) {
-                    task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
+                if(setObservablePrediction) {
+                    for(final Task task : t) {
+                        task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
+                    }
                 }
-            }
-        }
-    }
-
-    private static void temporalInductionAppendIfNotToManyTemporalStatements(DerivationContext nal, TruthValue truth1, BudgetValue budget1, List<Task> success, Statement statement11) {
-        if(!tooMuchTemporalStatements(statement11)) {
-            final List<Task> t=nal.doublePremiseTask(statement11, truth1, budget1,true, false);
-            if(t!=null) {
-                success.addAll(t);
             }
         }
     }
