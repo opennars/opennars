@@ -315,15 +315,16 @@ public class TemporalRules {
         }
         
         final List<Task> success= new ArrayList<>();
-        if(!deriveSequenceOnly && t11!=null && t22!=null) {
-            final Statement statement11 = Implication.make(t11, t22, order);
-            final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
-            final Statement statement33 = Equivalence.make(t11, t22, order);
-            temporalInductionAppendIfNotToManyTemporalStatements(nal, truth1, budget1, success, statement11);
-            temporalInductionAppendIfNotToManyTemporalStatements(nal, truth2, budget2, success, statement22);
-            temporalInductionAppendIfNotToManyTemporalStatements(nal, truth3, budget3, success, statement33);
-        }
-        if(!deriveSequenceOnly ) {
+        if (!deriveSequenceOnly ) {
+            if (t11!=null && t22!=null) {
+                final Statement statement11 = Implication.make(t11, t22, order);
+                final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
+                final Statement statement33 = Equivalence.make(t11, t22, order);
+                temporalInductionAppendIfNotToManyTemporalStatements(nal, truth1, budget1, success, statement11);
+                temporalInductionAppendIfNotToManyTemporalStatements(nal, truth2, budget2, success, statement22);
+                temporalInductionAppendIfNotToManyTemporalStatements(nal, truth3, budget3, success, statement33);
+            }
+
             temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(nal, truth1, budget1, statement1, success);
             temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(nal, truth2, budget2, statement2, success);
             temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(nal, truth3, budget3, statement3, success);
