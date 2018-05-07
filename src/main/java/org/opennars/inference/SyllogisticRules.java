@@ -123,18 +123,15 @@ public final class SyllogisticRules {
         final BudgetValue budget3;
         final TruthValue value1 = sentence1.truth;
         final TruthValue value2 = sentence2.truth;
-
-        if (!(sentence1.isQuestion() || sentence1.isQuest())) {
-            if (sentence1.isGoal()) {
-                truth1 = TruthFunctions.desireStrong(value1, value2); //P --> S
-                truth2 = TruthFunctions.desireWeak(value2, value1); //S --> P
-                truth3 = TruthFunctions.desireStrong(value1, value2); //S <-> P
-            } else {
-                // isJudgment
-                truth1 = TruthFunctions.abduction(value1, value2); //P --> S
-                truth2 = TruthFunctions.abduction(value2, value1); //S --> P
-                truth3 = TruthFunctions.comparison(value1, value2); //S <-> P
-            }
+        
+        if (sentence1.isGoal()) {
+            truth1 = TruthFunctions.desireStrong(value1, value2); //P --> S
+            truth2 = TruthFunctions.desireWeak(value2, value1); //S --> P
+            truth3 = TruthFunctions.desireStrong(value1, value2); //S <-> P
+        } else if( sentence1.isJudgment() ) {
+            truth1 = TruthFunctions.abduction(value1, value2); //P --> S
+            truth2 = TruthFunctions.abduction(value2, value1); //S --> P
+            truth3 = TruthFunctions.comparison(value1, value2); //S <-> P
         }
 
         if (sentence1.isQuestion()) {
