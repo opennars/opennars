@@ -323,36 +323,39 @@ public class TemporalRules {
             temporalInductionAppendIfNotToManyTemporalStatements(nal, truth2, budget2, success, statement22);
             temporalInductionAppendIfNotToManyTemporalStatements(nal, truth3, budget3, success, statement33);
         }
-        if(!deriveSequenceOnly && !tooMuchTemporalStatements(statement1)) {
-            final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
-            if(t!=null) {
-                success.addAll(t);
-                
-                for(final Task task : t) {
-                    task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
-                }
-            }
-        }
-        
-        if(!deriveSequenceOnly && !tooMuchTemporalStatements(statement2)) {
-            final List<Task> t=nal.doublePremiseTask(statement2, truth2, budget2,true, false);
-                 if(t!=null) {
+        if(!deriveSequenceOnly ) {
+            if(!tooMuchTemporalStatements(statement1)) {
+                final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
+                if(t!=null) {
                     success.addAll(t);
-                    
+
                     for(final Task task : t) {
                         task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
                     }
                 }
             }
-        if(!deriveSequenceOnly && !tooMuchTemporalStatements(statement3)) {
-            final List<Task> t=nal.doublePremiseTask(statement3, truth3, budget3,true, false);
-            if(t!=null) {
-                for(final Task task : t) {
-                    task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
+
+            if( !tooMuchTemporalStatements(statement2)) {
+                final List<Task> t=nal.doublePremiseTask(statement2, truth2, budget2,true, false);
+                     if(t!=null) {
+                        success.addAll(t);
+
+                        for(final Task task : t) {
+                            task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
+                        }
+                    }
                 }
-                success.addAll(t);
+            if(!tooMuchTemporalStatements(statement3)) {
+                final List<Task> t=nal.doublePremiseTask(statement3, truth3, budget3,true, false);
+                if(t!=null) {
+                    for(final Task task : t) {
+                        task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
+                    }
+                    success.addAll(t);
+                }
             }
         }
+
         if(!tooMuchTemporalStatements(statement4)) {
             if(!allowSequence) {
                 return success;
