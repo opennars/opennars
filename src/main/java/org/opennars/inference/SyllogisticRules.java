@@ -435,9 +435,7 @@ public final class SyllogisticRules {
         boolean strong = false;
         final BudgetValue budget;
 
-        if (taskSentence.isQuestion()) {
-        } else if (taskSentence.isQuest()) {
-        } else {
+        if (!(taskSentence.isQuestion() || taskSentence.isQuest())) {
             if (taskSentence.isGoal()) {
                 strong = statement instanceof Equivalence || side != 0;
             } else { // isJudgment
@@ -445,9 +443,7 @@ public final class SyllogisticRules {
             }
         }
 
-        if (taskSentence.isQuestion()) {
-        } else if (taskSentence.isQuest()) {
-        } else {
+        if (!(taskSentence.isQuestion() || taskSentence.isQuest())) {
             if (taskSentence.isGoal()) {
                 if (statement instanceof Equivalence) {
                     truth = TruthFunctions.desireStrong(truth1, truth2);
