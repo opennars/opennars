@@ -14,11 +14,15 @@
  */
 package org.opennars.interfaces;
 
-import org.opennars.plugin.perception.SensoryChannel;
-
 /**
- * Implementations have sensory channels
+ * Something which can work with Narsese as a string representation
  */
-public interface HasSensoryChannels {
-    void addSensoryChannel(final String term, final SensoryChannel channel);
+public interface NarseseConsumer {
+    // TODO< split this and refactor to interface which can be used by the parser too >
+
+    /**
+     * feeds narsese input to the consumer
+     * @param narsese the narsese text
+     */
+    void addInput(String narsese);
 }

@@ -14,12 +14,16 @@
  */
 package org.opennars.interfaces;
 
+import org.opennars.plugin.perception.SensoryChannel;
+
 /**
- * Implementations can be reseted - that is to flush all content and restore the state to some default state
+ * Implementations have sensory channels
  */
-public interface Resetable {
+public interface SensoryChannelConsumer {
     /**
-     * reset
+     * registers a sensory channel by/for the term
+     * @param term term in narsese
+     * @param channel the channel to be registered
      */
-    void reset();
+    void addSensoryChannel(final String term, final SensoryChannel channel);
 }

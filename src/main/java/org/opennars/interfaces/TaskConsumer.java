@@ -15,11 +15,15 @@
 package org.opennars.interfaces;
 
 import org.opennars.entity.Task;
-import org.opennars.interfaces.pub.Reasoner;
 
 /**
  * Implementation can consume tasks
  */
-public interface TaskConsumer {
-    Reasoner addInput(final Task task);
+public interface TaskConsumer<ResultType> {
+    /**
+     * consumes a task
+     * @param task task to be consumed
+     * @return something which consumed the task or which was assigned the task
+     */
+    ResultType addInput(final Task task);
 }

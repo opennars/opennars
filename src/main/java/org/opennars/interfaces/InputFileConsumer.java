@@ -14,16 +14,14 @@
  */
 package org.opennars.interfaces;
 
-import org.opennars.main.Nar;
-import org.opennars.plugin.Plugin;
-
-import java.util.List;
-
 /**
- * Implementation can have plugins
+ * Something which can consume files
  */
-public interface HasPlugins {
-    void addPlugin(final Plugin p);
-    void removePlugin(final Nar.PluginState ps);
-    List getPlugins();
+public interface InputFileConsumer {
+    /**
+     * consumes a file
+     *
+     * @param filename optional path followed by filename
+     */
+    void addInputFile(final String filename);
 }

@@ -14,12 +14,30 @@
  */
 package org.opennars.interfaces;
 
-/**
- * Something which can work with Narsese as a string representation
- */
-public interface StringNarsese {
-    // TODO< split this and refactor to interface which can be used by the parser too >
-    void addInput(String text);
+import org.opennars.main.Nar;
+import org.opennars.plugin.Plugin;
 
-    void addInputFile(final String s);
+import java.util.List;
+
+/**
+ * Implementation can have plugins
+ */
+public interface Pluggable {
+    /**
+     * adds/registers a plugin
+     * @param plugin plugin to be registered
+     */
+    void addPlugin(final Plugin plugin);
+
+    /**
+     * removes a plugin
+     * @param pluginState plugin to be removed
+     */
+    void removePlugin(final Nar.PluginState pluginState);
+
+    /**
+     * returns all plugins which were added
+     * @return plugins
+     */
+    List getPlugins();
 }
