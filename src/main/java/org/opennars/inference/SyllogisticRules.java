@@ -598,8 +598,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        if (taskSentence.isQuestion() || taskSentence.isQuest()) {
-        } else {
+        if (!(taskSentence.isQuestion() || taskSentence.isQuest())) {
             if (taskSentence.isGoal()) {
                 if (conditionalTask) {
                     truth = TruthFunctions.desireWeak(truth1, truth2);
