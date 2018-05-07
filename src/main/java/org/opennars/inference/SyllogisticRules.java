@@ -113,6 +113,13 @@ public final class SyllogisticRules {
         final BudgetValue budget3;
         final TruthValue value1 = sentence1.truth;
         final TruthValue value2 = sentence2.truth;
+
+        if( !(sentence1.isQuestion() || sentence1.isQuest())) {
+            truth1 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence1.isGoal(), TruthFunctions.EnumType.DESIRESTRONG, TruthFunctions.EnumType.ABDUCTION, value1, value2);
+            truth2 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence1.isGoal(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.ABDUCTION, value1, value2);
+            truth3 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence1.isGoal(), TruthFunctions.EnumType.DESIRESTRONG, TruthFunctions.EnumType.COMPARISON, value1, value2);
+        }
+        
         if (sentence1.isQuestion()) {
             budget1 = BudgetFunctions.backward(value2, nal);
             budget2 = BudgetFunctions.backwardWeak(value2, nal);
@@ -122,10 +129,6 @@ public final class SyllogisticRules {
             budget2 = BudgetFunctions.backward(value2, nal);
             budget3 = BudgetFunctions.backwardWeak(value2, nal);            
         } else {
-            truth1 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence1.isGoal(), TruthFunctions.EnumType.DESIRESTRONG, TruthFunctions.EnumType.ABDUCTION, value1, value2);
-            truth2 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence1.isGoal(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.ABDUCTION, value1, value2);
-            truth3 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence1.isGoal(), TruthFunctions.EnumType.DESIRESTRONG, TruthFunctions.EnumType.COMPARISON, value1, value2);
-
             budget1 = BudgetFunctions.forward(truth1, nal);
             budget2 = BudgetFunctions.forward(truth2, nal);
             budget3 = BudgetFunctions.forward(truth3, nal);
