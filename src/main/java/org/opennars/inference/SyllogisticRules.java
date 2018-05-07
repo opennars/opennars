@@ -123,7 +123,7 @@ public final class SyllogisticRules {
         final BudgetValue budget3;
         final TruthValue value1 = sentence1.truth;
         final TruthValue value2 = sentence2.truth;
-        
+
         if (sentence1.isGoal()) {
             truth1 = TruthFunctions.desireStrong(value1, value2); //P --> S
             truth2 = TruthFunctions.desireWeak(value2, value1); //S --> P
@@ -296,15 +296,20 @@ public final class SyllogisticRules {
         TruthValue truth = null;
         final BudgetValue budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
-            budget = BudgetFunctions.backward(belief.truth, nal);
         } else {
             if (sentence.isGoal()) {
                 truth = TruthFunctions.desireStrong(sentence.truth, belief.truth);
             } else {
                 truth = TruthFunctions.resemblance(belief.truth, sentence.truth);
-            }            
+            }
+        }
+
+        if (sentence.isQuestion() || sentence.isQuest()) {
+            budget = BudgetFunctions.backward(belief.truth, nal);
+        } else {
             budget = BudgetFunctions.forward(truth, nal);
         }
+
         final boolean higherOrder=(belief.term.isHigherOrderStatement() || sentence.term.isHigherOrderStatement());
         final boolean bothHigherOrder=(belief.term.isHigherOrderStatement() && sentence.term.isHigherOrderStatement());
         if(!bothHigherOrder && higherOrder) {
