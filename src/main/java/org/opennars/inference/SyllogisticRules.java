@@ -61,25 +61,31 @@ public final class SyllogisticRules {
         TruthValue truth2 = null;
         final BudgetValue budget1;
         final BudgetValue budget2;
+
         if (sentence.isQuestion()) {
-            budget1 = BudgetFunctions.backwardWeak(value2, nal);
-            budget2 = BudgetFunctions.backwardWeak(value2, nal);       
         } else if (sentence.isQuest()) {
-             budget1 = BudgetFunctions.backward(value2, nal);
-             budget2 = BudgetFunctions.backward(value2, nal);
         } else {
             if (sentence.isGoal()) {
                 truth1 = TruthFunctions.desireWeak(value1, value2);
                 truth2 = TruthFunctions.desireWeak(value1, value2);
-            } else { 
+            } else {
                 // isJudgment
                 truth1 = TruthFunctions.deduction(value1, value2);
                 truth2 = TruthFunctions.exemplification(value1, value2);
             }
+        }
 
+        if (sentence.isQuestion()) {
+            budget1 = BudgetFunctions.backwardWeak(value2, nal);
+            budget2 = BudgetFunctions.backwardWeak(value2, nal);
+        } else if (sentence.isQuest()) {
+            budget1 = BudgetFunctions.backward(value2, nal);
+            budget2 = BudgetFunctions.backward(value2, nal);
+        } else {
             budget1 = BudgetFunctions.forward(truth1, nal);
             budget2 = BudgetFunctions.forward(truth2, nal);
         }
+
         final Statement content = (Statement) sentence.term;
         final Statement content1 = Statement.make(content, term1, term2, order);
         final Statement content2 = Statement.make(content, term2, term1, reverseOrder(order));
