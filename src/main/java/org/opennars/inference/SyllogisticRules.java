@@ -595,6 +595,11 @@ public final class SyllogisticRules {
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.backwardWeak(truth2, nal);
         } else {
+            budget = BudgetFunctions.forward(truth, nal);
+        }
+
+        if (taskSentence.isQuestion() || taskSentence.isQuest()) {
+        } else {
             if (taskSentence.isGoal()) {
                 if (conditionalTask) {
                     truth = TruthFunctions.desireWeak(truth1, truth2);
@@ -612,7 +617,6 @@ public final class SyllogisticRules {
                     truth = TruthFunctions.induction(truth1, truth2);
                 }
             }
-            budget = BudgetFunctions.forward(truth, nal);
         }
         
         nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
