@@ -68,14 +68,8 @@ public final class SyllogisticRules {
              budget1 = BudgetFunctions.backward(value2, nal);
              budget2 = BudgetFunctions.backward(value2, nal);
         } else {
-            if (sentence.isGoal()) {
-                truth1 = TruthFunctions.desireWeak(value1, value2);
-                truth2 = TruthFunctions.desireWeak(value1, value2);
-            } else { 
-                // isJudgment
-                truth1 = TruthFunctions.deduction(value1, value2);
-                truth2 = TruthFunctions.exemplification(value1, value2);
-            }
+            truth1 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence.isGoal(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DEDUCTION, value1, value2);
+            truth2 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence.isGoal(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.EXEMPLIFICATION, value1, value2);
 
             budget1 = BudgetFunctions.forward(truth1, nal);
             budget2 = BudgetFunctions.forward(truth2, nal);
@@ -119,6 +113,13 @@ public final class SyllogisticRules {
         final BudgetValue budget3;
         final TruthValue value1 = sentence1.truth;
         final TruthValue value2 = sentence2.truth;
+
+        if( !(sentence1.isQuestion() || sentence1.isQuest())) {
+            truth1 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence1.isGoal(), TruthFunctions.EnumType.DESIRESTRONG, TruthFunctions.EnumType.ABDUCTION, value1, value2);
+            truth2 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence1.isGoal(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.ABDUCTION, value1, value2);
+            truth3 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence1.isGoal(), TruthFunctions.EnumType.DESIRESTRONG, TruthFunctions.EnumType.COMPARISON, value1, value2);
+        }
+
         if (sentence1.isQuestion()) {
             budget1 = BudgetFunctions.backward(value2, nal);
             budget2 = BudgetFunctions.backwardWeak(value2, nal);
@@ -128,17 +129,6 @@ public final class SyllogisticRules {
             budget2 = BudgetFunctions.backward(value2, nal);
             budget3 = BudgetFunctions.backwardWeak(value2, nal);            
         } else {
-            if (sentence1.isGoal()) {
-                truth1 = TruthFunctions.desireStrong(value1, value2); //P --> S
-                truth2 = TruthFunctions.desireWeak(value2, value1); //S --> P
-                truth3 = TruthFunctions.desireStrong(value1, value2); //S <-> P
-            } else { 
-                // isJudgment
-                truth1 = TruthFunctions.abduction(value1, value2); //P --> S
-                truth2 = TruthFunctions.abduction(value2, value1); //S --> P
-                truth3 = TruthFunctions.comparison(value1, value2); //S <-> P
-            }
-
             budget1 = BudgetFunctions.forward(truth1, nal);
             budget2 = BudgetFunctions.forward(truth2, nal);
             budget3 = BudgetFunctions.forward(truth3, nal);
@@ -443,22 +433,25 @@ public final class SyllogisticRules {
             }
         } else {
             if (taskSentence.isGoal()) {
+                strong = statement instanceof Equivalence || side != 0;
+            }
+            else {
+                strong = statement instanceof Equivalence || side == 0;
+            }
+
+            if (taskSentence.isGoal()) {
                 if (statement instanceof Equivalence) {
                     truth = TruthFunctions.desireStrong(truth1, truth2);
-                    strong = true; //not for goals anymore
                 } else if (side == 0) {
                     truth = TruthFunctions.desireInd(truth1, truth2);
                 } else {
                     truth = TruthFunctions.desireDed(truth1, truth2);
-                    strong = true; //not for goals anymore
                 }
             } else { // isJudgment
                 if (statement instanceof Equivalence) {
                     truth = TruthFunctions.analogy(truth2, truth1);
-                    strong = true;
                 } else if (side == 0) {
                     truth = TruthFunctions.deduction(truth1, truth2);
-                    strong = true;
                 } else {
                     truth = TruthFunctions.abduction(truth2, truth1);
                 }
@@ -602,6 +595,10 @@ public final class SyllogisticRules {
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.backwardWeak(truth2, nal);
         } else {
+            budget = BudgetFunctions.forward(truth, nal);
+        }
+
+        if (!(taskSentence.isQuestion() || taskSentence.isQuest())) {
             if (taskSentence.isGoal()) {
                 if (conditionalTask) {
                     truth = TruthFunctions.desireWeak(truth1, truth2);
@@ -619,7 +616,6 @@ public final class SyllogisticRules {
                     truth = TruthFunctions.induction(truth1, truth2);
                 }
             }
-            budget = BudgetFunctions.forward(truth, nal);
         }
         
         nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
@@ -715,12 +711,16 @@ public final class SyllogisticRules {
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.backwardWeak(truth2, nal);
         } else {
+            budget = BudgetFunctions.forward(truth, nal);
+        }
+
+        if (taskSentence.isQuestion() || taskSentence.isQuest()) {
+        } else {
            if (taskSentence.isGoal()) {
                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(conditionalTask, TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DESIREDED, truth1, truth2);
             } else {
                 truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(conditionalTask, TruthFunctions.EnumType.COMPARISON, TruthFunctions.EnumType.ANALOGY, truth1, truth2);
             }
-            budget = BudgetFunctions.forward(truth, nal);
         }
         nal.doublePremiseTask(content, truth, budget, false, taskSentence.isJudgment() && !conditionalTask); //(allow overlap) when !conditionalTask on judgment
     }
@@ -801,16 +801,20 @@ public final class SyllogisticRules {
                     return false;
                 }
             }
-            if (sentence.isQuestion() || sentence.isQuest()) {
 
+            if (sentence.isQuestion() || sentence.isQuest()) {
                 budget = BudgetFunctions.backwardWeak(value2, nal);
+            } else {
+                budget = BudgetFunctions.forward(truth, nal);
+            }
+
+            if (sentence.isQuestion() || sentence.isQuest()) {
             } else {
                 if (sentence.isGoal()) {
                     truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(keepOrder, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, value1, value2);
                 } else { // isJudgment
                     truth = TruthFunctions.abduction(value1, value2);
                 }
-                budget = BudgetFunctions.forward(truth, nal);
             }
             nal.doublePremiseTask(content, truth, budget,false, false);
         }
@@ -856,12 +860,16 @@ public final class SyllogisticRules {
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = (compoundTask ? BudgetFunctions.backward(v2, nal) : BudgetFunctions.backwardWeak(v2, nal));
         } else {
+            budget = BudgetFunctions.compoundForward(truth, content, nal);
+        }
+
+        if (sentence.isQuestion() || sentence.isQuest()) {
+        } else {
             if (sentence.isGoal()) {
                 truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(compoundTask, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, v1, v2);
             } else {
                 truth = (compoundTask ? TruthFunctions.anonymousAnalogy(v1, v2) : TruthFunctions.anonymousAnalogy(v2, v1));
             }
-            budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
         nal.doublePremiseTask(content, truth, budget,false, false);
     }

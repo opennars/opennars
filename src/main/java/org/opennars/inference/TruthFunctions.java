@@ -31,6 +31,10 @@ public final class TruthFunctions extends UtilityFunctions {
         COMPARISON,
         ANALOGY,
         ANONYMOUSANALOGY,
+        DEDUCTION,
+        EXEMPLIFICATION,
+        ABDUCTION,
+        RESEMBLENCE,
     }
 
     /**
@@ -49,6 +53,10 @@ public final class TruthFunctions extends UtilityFunctions {
             case COMPARISON: return comparison(a, b);
             case ANALOGY: return analogy(a, b);
             case ANONYMOUSANALOGY: return anonymousAnalogy(a, b);
+            case DEDUCTION: return deduction(a, b);
+            case EXEMPLIFICATION: return exemplification(a, b);
+            case ABDUCTION: return abduction(a, b);
+            case RESEMBLENCE: return resemblance(a, b);
             default: throw new IllegalArgumentException("Encountered unimplemented case!"); // internal error
         }
     }
