@@ -616,8 +616,8 @@ public final class SyllogisticRules {
         final TruthValue truth2 = belief.truth;
         TruthValue truth = null;
         final BudgetValue budget;
+
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
-            budget = BudgetFunctions.backwardWeak(truth2, nal);
         } else {
             if (taskSentence.isGoal()) {
                 if (conditionalTask) {
@@ -628,7 +628,7 @@ public final class SyllogisticRules {
                     truth = TruthFunctions.desireDed(truth1, truth2);
                 }
             } else {
-               if (deduction) {
+                if (deduction) {
                     truth = TruthFunctions.deduction(truth1, truth2);
                 } else if (conditionalTask) {
                     truth = TruthFunctions.induction(truth2, truth1);
@@ -636,6 +636,11 @@ public final class SyllogisticRules {
                     truth = TruthFunctions.induction(truth1, truth2);
                 }
             }
+        }
+
+        if (taskSentence.isQuestion() || taskSentence.isQuest()) {
+            budget = BudgetFunctions.backwardWeak(truth2, nal);
+        } else {
             budget = BudgetFunctions.forward(truth, nal);
         }
         
