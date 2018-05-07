@@ -448,11 +448,15 @@ public final class SyllogisticRules {
                 }
             } else { // isJudgment
                 if (statement instanceof Equivalence) {
-                    truth = TruthFunctions.analogy(truth2, truth1);
                     strong = true;
                 } else if (side == 0) {
-                    truth = TruthFunctions.deduction(truth1, truth2);
                     strong = true;
+                }
+                
+                if (statement instanceof Equivalence) {
+                    truth = TruthFunctions.analogy(truth2, truth1);
+                } else if (side == 0) {
+                    truth = TruthFunctions.deduction(truth1, truth2);
                 } else {
                     truth = TruthFunctions.abduction(truth2, truth1);
                 }
