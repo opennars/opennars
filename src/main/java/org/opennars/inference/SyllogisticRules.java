@@ -62,9 +62,7 @@ public final class SyllogisticRules {
         final BudgetValue budget1;
         final BudgetValue budget2;
 
-        if (sentence.isQuestion()) {
-        } else if (sentence.isQuest()) {
-        } else {
+        if (!(sentence.isQuestion() || sentence.isQuest())) {
             if (sentence.isGoal()) {
                 truth1 = TruthFunctions.desireWeak(value1, value2);
                 truth2 = TruthFunctions.desireWeak(value1, value2);
