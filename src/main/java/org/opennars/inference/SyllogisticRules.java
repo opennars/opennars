@@ -879,8 +879,7 @@ public final class SyllogisticRules {
         TruthValue truth = null;
         final BudgetValue budget;
 
-        if (sentence.isQuestion() || sentence.isQuest()) {
-        } else {
+        if (!(sentence.isQuestion() || sentence.isQuest())) {
             if (sentence.isGoal()) {
                 truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(compoundTask, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, v1, v2);
             } else {
