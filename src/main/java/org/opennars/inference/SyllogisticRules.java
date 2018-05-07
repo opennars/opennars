@@ -68,14 +68,8 @@ public final class SyllogisticRules {
              budget1 = BudgetFunctions.backward(value2, nal);
              budget2 = BudgetFunctions.backward(value2, nal);
         } else {
-            if (sentence.isGoal()) {
-                truth1 = TruthFunctions.desireWeak(value1, value2);
-                truth2 = TruthFunctions.desireWeak(value1, value2);
-            } else { 
-                // isJudgment
-                truth1 = TruthFunctions.deduction(value1, value2);
-                truth2 = TruthFunctions.exemplification(value1, value2);
-            }
+            truth1 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence.isGoal(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DEDUCTION, value1, value2);
+            truth2 = TruthFunctions.lookupTruthFunctionByBoolAndCompute(sentence.isGoal(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.EXEMPLIFICATION, value1, value2);
 
             budget1 = BudgetFunctions.forward(truth1, nal);
             budget2 = BudgetFunctions.forward(truth2, nal);
