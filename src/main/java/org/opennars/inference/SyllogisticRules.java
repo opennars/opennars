@@ -807,7 +807,7 @@ public final class SyllogisticRules {
             } else {
                 budget = BudgetFunctions.forward(truth, nal);
             }
-            
+
             if (sentence.isQuestion() || sentence.isQuest()) {
             } else {
                 if (sentence.isGoal()) {
@@ -860,12 +860,16 @@ public final class SyllogisticRules {
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = (compoundTask ? BudgetFunctions.backward(v2, nal) : BudgetFunctions.backwardWeak(v2, nal));
         } else {
+            budget = BudgetFunctions.compoundForward(truth, content, nal);
+        }
+
+        if (sentence.isQuestion() || sentence.isQuest()) {
+        } else {
             if (sentence.isGoal()) {
                 truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(compoundTask, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, v1, v2);
             } else {
                 truth = (compoundTask ? TruthFunctions.anonymousAnalogy(v1, v2) : TruthFunctions.anonymousAnalogy(v2, v1));
             }
-            budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
         nal.doublePremiseTask(content, truth, budget,false, false);
     }
