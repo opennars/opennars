@@ -179,10 +179,10 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     @Override
     public boolean equals(final Object that) { 
         if (that instanceof TruthValue) {
-            final TruthValue t = ((TruthValue) that);
-            if (!isEqual(getFrequency(), t.getFrequency(), TRUTH_EPSILON))
-                return false;
-            return isEqual(getConfidence(), t.getConfidence(), TRUTH_EPSILON);
+            final TruthValue t = (TruthValue)that;
+            return
+                isEqual(getFrequency(), t.getFrequency(), TRUTH_EPSILON) &&
+                isEqual(getConfidence(), t.getConfidence(), TRUTH_EPSILON);
         }
         return false;
     }
