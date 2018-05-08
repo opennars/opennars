@@ -589,39 +589,16 @@ public class RuleTables {
     private static void symmetricSymmetric(final Sentence belief, final Sentence taskSentence, final int figure, final DerivationContext nal) {
         final Statement s1 = (Statement) belief.term;
         final Statement s2 = (Statement) taskSentence.term;
-        
-        final Term ut1;  //parameters for unify()
-        final Term ut2;
-        Term rt1, rt2;  //parameters for resemblance()
-        
-        switch (figure) {
-            case 11:
-                ut1 = s1.getSubject();
-                ut2 = s2.getSubject();
-                rt1 = s1.getPredicate();
-                rt2 = s2.getPredicate();
-                break;
-            case 12:
-                ut1 = s1.getSubject();
-                ut2 = s2.getPredicate();
-                rt1 = s1.getPredicate();
-                rt2 = s2.getSubject();
-                break;
-            case 21:
-                ut1 = s1.getPredicate();
-                ut2 = s2.getSubject();
-                rt1 = s1.getSubject();
-                rt2 = s2.getPredicate();
-                break;
-            case 22:
-                ut1 = s1.getPredicate();
-                ut2 = s2.getPredicate();
-                rt1 = s1.getSubject();
-                rt2 = s2.getSubject();
-                break;
-            default: 
-                throw new IllegalStateException("Invalid figure: " + figure);
-        }
+
+        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+
+        //parameters for unify()
+        final Term ut1 = retBySide(s1, figureLeft);
+        final Term ut2 = retBySide(s2, figureRight);
+        //parameters for resemblance()
+        Term rt1 = retBySide(s1, retOppositeSide(figureLeft));
+        Term rt2 = retBySide(s2, retOppositeSide(figureRight));
         
         final Term[] u = new Term[] { s1, s2 };
         if (Variables.unify(VAR_INDEPENDENT, ut1, ut2, u)) {
