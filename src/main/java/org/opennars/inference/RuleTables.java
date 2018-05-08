@@ -412,31 +412,25 @@ public class RuleTables {
         }
 
         switch (figure) {
-            case 11:    // induction
-            {
-                t1 = beliefStatement.getPredicate();
-                t2 = taskStatement.getPredicate();
-            }
+            case 11: // induction
+            t1 = beliefStatement.getPredicate();
+            t2 = taskStatement.getPredicate();
             break;
-            case 12:    // deduction
-            {
-                t1 = beliefStatement.getSubject();
-                t2 = taskStatement.getPredicate();
-            }
+
+            case 12: // deduction
+            t1 = beliefStatement.getSubject();
+            t2 = taskStatement.getPredicate();
             break;
-            case 21:    // exemplification
-            {
-                t1 = taskStatement.getSubject();
-                t2 = beliefStatement.getPredicate();
-            }
+
+            case 21: // exemplification
+            t1 = taskStatement.getSubject();
+            t2 = beliefStatement.getPredicate();
             break;
-            case 22:    // abduction
-            {
-                t1 = taskStatement.getSubject();
-                t2 = beliefStatement.getSubject();
-            }
+
+            case 22: // abduction
+            t1 = taskStatement.getSubject();
+            t2 = beliefStatement.getSubject();
             break;
-            default:
         }
 
         switch (figure) {
