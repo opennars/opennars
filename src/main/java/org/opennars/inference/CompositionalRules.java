@@ -365,18 +365,16 @@ public final class CompositionalRules {
         Term term11dependent=null, term12dependent=null, term21dependent=null, term22dependent=null;
         Term term11, term12, term21, term22, commonTerm = null;
         final Map<Term, Term> subs = new HashMap<>();
+
+        term11 = index == 0 ? varInd1 : taskContent.getSubject();
+        term21 = index == 0 ? varInd1 : beliefContent.getSubject();
+        term12 = index == 0 ? taskContent.getPredicate() : varInd1;
+        term22 = index == 0 ? beliefContent.getPredicate() : varInd1;
+
         if (index == 0) {
-            term11 = varInd1;
-            term21 = varInd1;
-            term12 = taskContent.getPredicate();
-            term22 = beliefContent.getPredicate();
             term12dependent=term12;
             term22dependent=term22;
         } else {
-            term11 = taskContent.getSubject();
-            term21 = beliefContent.getSubject();
-            term12 = varInd1;
-            term22 = varInd1;
             term11dependent=term11;
             term21dependent=term21;
         }
