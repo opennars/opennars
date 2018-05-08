@@ -374,12 +374,13 @@ public final class CompositionalRules {
             term22dependent=term22;
             if (term12 instanceof ImageExt) {
                 boolean enableSpecialCase = term22 instanceof ImageExt;
+                boolean enableRetCommonTerm = true;
 
                 if ((/*(ImageExt)*/term12).containsTermRecursively(term22)) {
                     commonTerm = term22;
                 }
                 
-                if(commonTerm == null) {
+                if(enableRetCommonTerm && commonTerm == null) {
 
 
                     commonTerm = retCommonTerm(term12, term22, enableSpecialCase);
@@ -397,12 +398,13 @@ public final class CompositionalRules {
             }
             if (commonTerm==null && term22 instanceof ImageExt) {
                 boolean enableSpecialCase = term12 instanceof ImageExt;
+                boolean enableRetCommonTerm = true;
 
                 if ((/*(ImageExt)*/term22).containsTermRecursively(term12)) {
                     commonTerm = term12;
                 }
                 
-                if(commonTerm == null) {
+                if(enableRetCommonTerm && commonTerm == null) {
 
 
                     commonTerm = retCommonTerm(term22, term12, enableSpecialCase);
@@ -427,12 +429,13 @@ public final class CompositionalRules {
             term21dependent=term21;
             if (term21 instanceof ImageInt) {
                 boolean enableSpecialCase = true;
+                boolean enableRetCommonTerm = term11 instanceof ImageInt;
 
                 if ((/*(ImageInt)*/term21).containsTermRecursively(term11)) {
                     commonTerm = term11;
                 }
                 
-                if(term11 instanceof ImageInt && commonTerm == null) {
+                if(enableRetCommonTerm && commonTerm == null) {
 
 
                     commonTerm = retCommonTerm(term11, term21, enableSpecialCase);
@@ -450,12 +453,13 @@ public final class CompositionalRules {
             }
             if (commonTerm==null && term11 instanceof ImageInt) {
                 boolean enableSpecialCase = true;
+                boolean enableRetCommonTerm = term21 instanceof ImageInt;
 
                 if ((/*(ImageInt)*/term11).containsTermRecursively(term21)) {
                     commonTerm = term21;
                 }
                 
-                if(term21 instanceof ImageInt && commonTerm == null) {
+                if(enableRetCommonTerm && commonTerm == null) {
 
 
                     commonTerm = retCommonTerm(term21, term11, enableSpecialCase);
