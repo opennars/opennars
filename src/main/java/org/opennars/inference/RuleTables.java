@@ -526,11 +526,11 @@ public class RuleTables {
      * @param side subject(0) or predicate(1)
      * @return the term of the side
      */
-    static Term retBySide(Statement statement, EnumStatementSide side) {
+    private static Term retBySide(Statement statement, EnumStatementSide side) {
         return side == EnumStatementSide.SUBJECT ? statement.getSubject() : statement.getPredicate();
     }
 
-    static EnumStatementSide retOppositeSide(EnumStatementSide side) {
+    private static EnumStatementSide retOppositeSide(EnumStatementSide side) {
         return side == EnumStatementSide.SUBJECT ? EnumStatementSide.PREDICATE : EnumStatementSide.SUBJECT;
     }
 
@@ -542,7 +542,7 @@ public class RuleTables {
      * @param sideOfFigure side
      * @return
      */
-    static EnumStatementSide retSideFromFigure(int figure, EnumFigureSide sideOfFigure) {
+    private static EnumStatementSide retSideFromFigure(int figure, EnumFigureSide sideOfFigure) {
         if( sideOfFigure == EnumFigureSide.LEFT ) {
             switch(figure) {
                 case 11: return EnumStatementSide.SUBJECT;
