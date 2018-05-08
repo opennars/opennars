@@ -363,13 +363,11 @@ public final class CompositionalRules {
         final Variable varInd2 = new Variable("$varInd2");
         
         Term term11dependent=null, term12dependent=null, term21dependent=null, term22dependent=null;
-        Term term11, term12, term21, term22, commonTerm = null;
-        final Map<Term, Term> subs = new HashMap<>();
 
-        term11 = index == 0 ? varInd1 : taskContent.getSubject();
-        term21 = index == 0 ? varInd1 : beliefContent.getSubject();
-        term12 = index == 0 ? taskContent.getPredicate() : varInd1;
-        term22 = index == 0 ? beliefContent.getPredicate() : varInd1;
+        Term term11 = index == 0 ? varInd1 : taskContent.getSubject();
+        Term term21 = index == 0 ? varInd1 : beliefContent.getSubject();
+        Term term12 = index == 0 ? taskContent.getPredicate() : varInd1;
+        Term term22 = index == 0 ? beliefContent.getPredicate() : varInd1;
 
         if (index == 0) {
             term12dependent=term12;
@@ -378,6 +376,9 @@ public final class CompositionalRules {
             term11dependent=term11;
             term21dependent=term21;
         }
+
+        Term commonTerm = null;
+        final Map<Term, Term> subs = new HashMap<>();
 
         if (index == 0) {
             if (term12 instanceof ImageExt) {
