@@ -220,11 +220,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         if (size() == 0) {
             return 0.01f;
         }
-        final float f = mass / (size());
-        if (f > 1) {
-            return 1.0f;
-        }
-        return f;
+        return Math.min(mass / size(), 1.0f);
     }
 
     /**

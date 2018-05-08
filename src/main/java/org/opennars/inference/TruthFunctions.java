@@ -23,6 +23,58 @@ import static java.lang.Math.abs;
  * All truth-value (and desire-value) functions used in inference rules 
  */
 public final class TruthFunctions extends UtilityFunctions {
+    public enum EnumType {
+        DESIREDED,
+        DESIREIND,
+        DESIREWEAK,
+        DESIRESTRONG,
+        COMPARISON,
+        ANALOGY,
+        ANONYMOUSANALOGY,
+        DEDUCTION,
+        EXEMPLIFICATION,
+        ABDUCTION,
+        RESEMBLENCE,
+    }
+
+    /**
+     * lookup the truth function and compute the value
+     * @param type truth-function
+     * @param a truth value of the first premise
+     * @param b truth value of the second premise
+     * @return truth value as computed by the truth-function
+     */
+    public static TruthValue lookupTruthFunctionAndCompute(final EnumType type, final TruthValue a, final TruthValue b) {
+        switch(type) {
+            case DESIREDED: return desireDed(a, b);
+            case DESIREIND: return desireInd(a, b);
+            case DESIREWEAK: return desireWeak(a, b);
+            case DESIRESTRONG: return desireStrong(a, b);
+            case COMPARISON: return comparison(a, b);
+            case ANALOGY: return analogy(a, b);
+            case ANONYMOUSANALOGY: return anonymousAnalogy(a, b);
+            case DEDUCTION: return deduction(a, b);
+            case EXEMPLIFICATION: return exemplification(a, b);
+            case ABDUCTION: return abduction(a, b);
+            case RESEMBLENCE: return resemblance(a, b);
+            default: throw new IllegalArgumentException("Encountered unimplemented case!"); // internal error
+        }
+    }
+
+    /**
+     * lookup the truth function and compute the value - for two truth functions which are decided by flag
+     * @param flag which type to choose
+     * @param typeTrue truth-function for the case when the flag is true
+     * @param typeFalse truth-function for the case when the flag is false
+     * @param a truth value of the first premise
+     * @param b truth value of the second premise
+     * @return truth value as computed by the truth-function
+     */
+    public static TruthValue lookupTruthFunctionByBoolAndCompute(final boolean flag, final EnumType typeTrue, final EnumType typeFalse, final TruthValue a, final TruthValue b) {
+        final EnumType type = flag ? typeTrue : typeFalse;
+        return lookupTruthFunctionAndCompute(type, a, b);
+    }
+
 
     /* ----- Single argument functions, called in MatchingRules ----- */
     /**
