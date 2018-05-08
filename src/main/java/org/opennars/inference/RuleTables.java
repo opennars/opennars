@@ -401,38 +401,38 @@ public class RuleTables {
         final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
         final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
+        if (Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
+            taskStatement = (Statement) u[0];
+            beliefStatement = (Statement) u[1];
+            if (taskStatement.equals(beliefStatement)) {
+                return;
+            }
+        }
+        else {
+            return;
+        }
+
         switch (figure) {
             case 11:    // induction                
-                if (Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
-                    taskStatement = (Statement) u[0];
-                    beliefStatement = (Statement) u[1];
-                    if (taskStatement.equals(beliefStatement)) {
-                        return;
-                    }
+                {
                     t1 = beliefStatement.getPredicate();
                     t2 = taskStatement.getPredicate();
                     final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
-                    if(sensational) {
+                    if (sensational) {
                         return;
                     }
                     CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, nal);
                     //if(taskSentence.getOccurenceTime()==Stamp.ETERNAL && belief.getOccurenceTime()==Stamp.ETERNAL)
-                    CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, nal);//introVarImage(taskContent, beliefContent, index, memory);             
-                    CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,nal);
-                    
-                }
+                    CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, nal);//introVarImage(taskContent, beliefContent, index, memory);
+                    CompositionalRules.eliminateVariableOfConditionAbductive(figure, taskSentence, belief, nal);
 
+                }
                 break;
             case 12:    // deduction                
-                if (Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
-                    taskStatement = (Statement) u[0];
-                    beliefStatement = (Statement) u[1];
-                    if (taskStatement.equals(beliefStatement)) {
-                        return;
-                    }
+                {
                     t1 = beliefStatement.getSubject();
                     t2 = taskStatement.getPredicate();
-                    if (Variables.unify(VAR_QUERY, t1, t2, new Term[] { taskStatement, beliefStatement })) {
+                    if (Variables.unify(VAR_QUERY, t1, t2, new Term[]{taskStatement, beliefStatement})) {
                         LocalRules.matchReverse(nal);
                     } else {
                         SyllogisticRules.dedExe(t1, t2, taskSentence, belief, nal);
@@ -440,17 +440,12 @@ public class RuleTables {
                 }
                 break;
             case 21:    // exemplification
-                if (Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
-                    taskStatement = (Statement) u[0];
-                    beliefStatement = (Statement) u[1];
-                    if (taskStatement.equals(beliefStatement)) {
-                        return;
-                    }
+                {
                     t1 = taskStatement.getSubject();
                     t2 = beliefStatement.getPredicate();
-                    
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, new Term[] { taskStatement, beliefStatement })) {
+
+
+                    if (Variables.unify(VAR_QUERY, t1, t2, new Term[]{taskStatement, beliefStatement})) {
                         LocalRules.matchReverse(nal);
                     } else {
                         SyllogisticRules.dedExe(t1, t2, taskSentence, belief, nal);
@@ -458,13 +453,7 @@ public class RuleTables {
                 }
                 break;
             case 22:    // abduction
-                if (Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
-                    taskStatement = (Statement) u[0];
-                    beliefStatement = (Statement) u[1];
-                    
-                    if (taskStatement.equals(beliefStatement)) {
-                        return;
-                    }
+                {
                     t1 = taskStatement.getSubject();
                     t2 = beliefStatement.getSubject();
                     if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
@@ -478,7 +467,7 @@ public class RuleTables {
                     }
 
                     CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,nal);
-                    
+
                 }
                 break;
             default:
