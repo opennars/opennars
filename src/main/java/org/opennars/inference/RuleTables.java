@@ -434,23 +434,20 @@ public class RuleTables {
         }
 
         switch (figure) {
-            case 11:    // induction                
-                {
-
-                    final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
-                    if (sensational) {
-                        return;
-                    }
-                    CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, nal);
-                    //if(taskSentence.getOccurenceTime()==Stamp.ETERNAL && belief.getOccurenceTime()==Stamp.ETERNAL)
-                    CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, nal);//introVarImage(taskContent, beliefContent, index, memory);
-                    CompositionalRules.eliminateVariableOfConditionAbductive(figure, taskSentence, belief, nal);
-
-                }
-                break;
-            case 22:    // abduction
+            case 11: // induction
             {
-
+                final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                if (sensational) {
+                    return;
+                }
+                CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, nal);
+                //if(taskSentence.getOccurenceTime()==Stamp.ETERNAL && belief.getOccurenceTime()==Stamp.ETERNAL)
+                CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, nal);//introVarImage(taskContent, beliefContent, index, memory);
+                CompositionalRules.eliminateVariableOfConditionAbductive(figure, taskSentence, belief, nal);
+            }
+            break;
+            case 22: // abduction
+            {
                 if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
                     final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
                     if(sensational) {
@@ -462,20 +459,19 @@ public class RuleTables {
                 }
 
                 CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,nal);
-
             }
             break;
-            case 12:    // deduction
-            case 21:    // exemplification
-                {
 
-                    if (Variables.unify(VAR_QUERY, t1, t2, new Term[]{taskStatement, beliefStatement})) {
-                        LocalRules.matchReverse(nal);
-                    } else {
-                        SyllogisticRules.dedExe(t1, t2, taskSentence, belief, nal);
-                    }
-                }
-                break;
+            case 12: // deduction
+            case 21: // exemplification
+
+            if (Variables.unify(VAR_QUERY, t1, t2, new Term[]{taskStatement, beliefStatement})) {
+                LocalRules.matchReverse(nal);
+            } else {
+                SyllogisticRules.dedExe(t1, t2, taskSentence, belief, nal);
+            }
+
+            break;
 
             default:
         }
