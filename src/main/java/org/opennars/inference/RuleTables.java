@@ -397,9 +397,13 @@ public class RuleTables {
         final Term t1;
         final Term t2;
         final Term[] u = new Term[] { taskStatement, beliefStatement };
+
+        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+
         switch (figure) {
             case 11:    // induction                
-                if (Variables.unify(VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getSubject(), u)) {                    
+                if (Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
                     taskStatement = (Statement) u[0];
                     beliefStatement = (Statement) u[1];
                     if (taskStatement.equals(beliefStatement)) {
@@ -420,7 +424,7 @@ public class RuleTables {
 
                 break;
             case 12:    // deduction                
-                if (Variables.unify(VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getPredicate(), u)) {
+                if (Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
                     taskStatement = (Statement) u[0];
                     beliefStatement = (Statement) u[1];
                     if (taskStatement.equals(beliefStatement)) {
@@ -436,7 +440,7 @@ public class RuleTables {
                 }
                 break;
             case 21:    // exemplification
-                if (Variables.unify(VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getSubject(), u)) {
+                if (Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
                     taskStatement = (Statement) u[0];
                     beliefStatement = (Statement) u[1];
                     if (taskStatement.equals(beliefStatement)) {
@@ -454,7 +458,7 @@ public class RuleTables {
                 }
                 break;
             case 22:    // abduction
-                if (Variables.unify(VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getPredicate(), u)) {
+                if (Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
                     taskStatement = (Statement) u[0];
                     beliefStatement = (Statement) u[1];
                     
