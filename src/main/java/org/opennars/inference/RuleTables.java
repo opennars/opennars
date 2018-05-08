@@ -512,7 +512,17 @@ public class RuleTables {
                         LocalRules.matchAsymSym(asym, sym, figure, nal);
                         
                     } else {
-                        SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
+                        switch (figure) {
+                            case 11:
+                            case 12:
+                            SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
+                            break;
+
+                            case 21:
+                            case 22:
+                            SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
+                            break;
+                        }
                     }
                     
                 }
