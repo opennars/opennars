@@ -381,16 +381,7 @@ public final class CompositionalRules {
                 if(commonTerm == null && term12 instanceof ImageExt) {
                     boolean enableSpecialCase = term22 instanceof ImageExt;
 
-                    commonTerm = ((Image) term12).getTheOtherComponent();
-                    if(!(term22.containsTermRecursively(commonTerm))) {
-                        commonTerm=null;
-                    }
-                    if (enableSpecialCase && ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm))) {
-                        commonTerm = ((Image) term22).getTheOtherComponent();
-                        if ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm)) {
-                            commonTerm = null;
-                        }
-                    }
+                    commonTerm = retCommonTerm(term12, term22, enableSpecialCase);
                 }
                 
                 if (commonTerm != null) {
@@ -412,16 +403,7 @@ public final class CompositionalRules {
                 if(commonTerm == null && term22 instanceof ImageExt) {
                     boolean enableSpecialCase = term12 instanceof ImageExt;
 
-                    commonTerm = ((Image) term22).getTheOtherComponent();
-                    if(!(term12.containsTermRecursively(commonTerm))) {
-                        commonTerm=null;
-                    }
-                    if (enableSpecialCase && ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm))) {
-                        commonTerm = ((Image) term12).getTheOtherComponent();
-                        if ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm)) {
-                            commonTerm = null;
-                        }
-                    }
+                    commonTerm = retCommonTerm(term22, term12, enableSpecialCase);
                 }
                 
                 if (commonTerm != null) {
@@ -450,16 +432,7 @@ public final class CompositionalRules {
                 if(term11 instanceof ImageInt && commonTerm == null && term21 instanceof ImageInt) {
                     boolean enableSpecialCase = true;
 
-                    commonTerm = ((Image) term11).getTheOtherComponent();
-                    if(!(term21.containsTermRecursively(commonTerm))) {
-                        commonTerm=null;
-                    }
-                    if (enableSpecialCase && ((commonTerm == null) || !(term21).containsTermRecursively(commonTerm))) {
-                        commonTerm = ((Image) term21).getTheOtherComponent();
-                        if ((commonTerm == null) || !(term11).containsTermRecursively(commonTerm)) {
-                            commonTerm = null;
-                        }
-                    }
+                    commonTerm = retCommonTerm(term11, term21, enableSpecialCase);
                 }
                 
                 if (commonTerm != null) {
@@ -481,16 +454,7 @@ public final class CompositionalRules {
                 if(term21 instanceof ImageInt && commonTerm == null && term11 instanceof ImageInt) {
                     boolean enableSpecialCase = true;
 
-                    commonTerm = ((Image) term21).getTheOtherComponent();
-                    if(!(term11.containsTermRecursively(commonTerm))) {
-                        commonTerm=null;
-                    }
-                    if (enableSpecialCase && ((commonTerm == null) || !(term11).containsTermRecursively(commonTerm))) {
-                        commonTerm = ((Image) term11).getTheOtherComponent();
-                        if ((commonTerm == null) || !(term21).containsTermRecursively(commonTerm)) {
-                            commonTerm = null;
-                        }
-                    }
+                    commonTerm = retCommonTerm(term21, term11, enableSpecialCase);
                 }
                 
                 if (commonTerm != null) {
@@ -548,6 +512,21 @@ public final class CompositionalRules {
         truth = intersection(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false, false);
+    }
+
+    private static Term retCommonTerm(Term term12, Term term22, boolean enableSpecialCase) {
+        Term commonTerm;
+        commonTerm = ((Image) term12).getTheOtherComponent();
+        if(!(term22.containsTermRecursively(commonTerm))) {
+            commonTerm=null;
+        }
+        if (enableSpecialCase && ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm))) {
+            commonTerm = ((Image) term22).getTheOtherComponent();
+            if ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm)) {
+                commonTerm = null;
+            }
+        }
+        return commonTerm;
     }
 
     /**
