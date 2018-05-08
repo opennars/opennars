@@ -372,6 +372,16 @@ public final class CompositionalRules {
             term22 = beliefContent.getPredicate();
             term12dependent=term12;
             term22dependent=term22;
+        } else {
+            term11 = taskContent.getSubject();
+            term21 = beliefContent.getSubject();
+            term12 = varInd1;
+            term22 = varInd1;
+            term11dependent=term11;
+            term21dependent=term21;
+        }
+
+        if (index == 0) {
             if (term12 instanceof ImageExt) {
                 boolean enableSpecialCase = term22 instanceof ImageExt;
                 boolean enableRetCommonTerm = true;
@@ -397,12 +407,6 @@ public final class CompositionalRules {
                 }
             }
         } else {
-            term11 = taskContent.getSubject();
-            term21 = beliefContent.getSubject();
-            term12 = varInd1;
-            term22 = varInd1;
-            term11dependent=term11;
-            term21dependent=term21;
             if (term21 instanceof ImageInt) {
                 boolean enableSpecialCase = true;
                 boolean enableRetCommonTerm = term11 instanceof ImageInt;
@@ -428,6 +432,7 @@ public final class CompositionalRules {
                 }
             }
         }
+
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
         Term content = Implication.make(state1, state2);
