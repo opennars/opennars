@@ -320,14 +320,14 @@ public class TemporalRules {
                 final Statement statement11 = Implication.make(t11, t22, order);
                 final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
                 final Statement statement33 = Equivalence.make(t11, t22, order);
-                temporalInductionAppendIfNotToManyTemporalStatements(nal, truth1, budget1, success, statement11);
-                temporalInductionAppendIfNotToManyTemporalStatements(nal, truth2, budget2, success, statement22);
-                temporalInductionAppendIfNotToManyTemporalStatements(nal, truth3, budget3, success, statement33);
+                temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth1, budget1, statement11, success, false);
+                temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth2, budget2, statement22, success, false);
+                temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth3, budget3, statement33, success, false);
             }
 
-            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(nal, truth1, budget1, statement1, success);
-            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(nal, truth2, budget2, statement2, success);
-            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(nal, truth3, budget3, statement3, success);
+            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth1, budget1, statement1, success, true);
+            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth2, budget2, statement2, success, true);
+            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth3, budget3, statement3, success, true);
         }
 
         if(!tooMuchTemporalStatements(statement4)) {
@@ -353,14 +353,6 @@ public class TemporalRules {
         }
 
         return success;
-    }
-
-    private static void temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePrediction(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success) {
-        temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth1, budget1, statement1, success, true);
-    }
-
-    private static void temporalInductionAppendIfNotToManyTemporalStatements(DerivationContext nal, TruthValue truth1, BudgetValue budget1, List<Task> success, Statement statement11) {
-        temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth1, budget1, statement11, success, false);
     }
 
     private static void temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success, boolean setObservablePrediction) {
