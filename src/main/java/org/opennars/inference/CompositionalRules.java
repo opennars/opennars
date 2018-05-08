@@ -481,10 +481,10 @@ public final class CompositionalRules {
     private static Term applySubstituteIfCompoundTerm(final Variable varInd2, final Term term22, Map<Term, Term> subs) {
         Term resultTerm22;
 
-        if(!(term22 instanceof CompoundTerm)) {
-            resultTerm22 = varInd2;
-        } else {
+        if(term22 instanceof CompoundTerm) {
             resultTerm22 = ((CompoundTerm) term22).applySubstitute(subs);
+        } else {
+            resultTerm22 = varInd2;
         }
         return resultTerm22;
     }
