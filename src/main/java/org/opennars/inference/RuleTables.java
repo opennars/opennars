@@ -499,30 +499,31 @@ public class RuleTables {
 
         final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
         final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
-        
-        if (Variables.unify(VAR_INDEPENDENT, retBySide(asymSt, figureLeft), retBySide(symSt, figureRight), u)) {
-            asymSt = (Statement) u[0];
-            symSt = (Statement) u[1];
-            t1 = retBySide(asymSt, retOppositeSide(figureLeft));
-            t2 = retBySide(symSt, retOppositeSide(figureRight));
 
-            if (Variables.unify(VAR_QUERY, t1, t2, u)) {
-                LocalRules.matchAsymSym(asym, sym, figure, nal);
+        if (!Variables.unify(VAR_INDEPENDENT, retBySide(asymSt, figureLeft), retBySide(symSt, figureRight), u)) {
+            return;
+        }
 
-            } else {
-                switch (figure) {
-                    case 11:
-                    case 12:
-                    SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
-                    break;
+        asymSt = (Statement) u[0];
+        symSt = (Statement) u[1];
+        t1 = retBySide(asymSt, retOppositeSide(figureLeft));
+        t2 = retBySide(symSt, retOppositeSide(figureRight));
 
-                    case 21:
-                    case 22:
-                    SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
-                    break;
-                }
+        if (Variables.unify(VAR_QUERY, t1, t2, u)) {
+            LocalRules.matchAsymSym(asym, sym, figure, nal);
+
+        } else {
+            switch (figure) {
+                case 11:
+                case 12:
+                SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
+                break;
+
+                case 21:
+                case 22:
+                SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
+                break;
             }
-
         }
     }
 
