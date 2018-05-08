@@ -381,11 +381,7 @@ public final class CompositionalRules {
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term12 = ((CompoundTerm) term12).applySubstitute(subs);
-                    if(!(term22 instanceof CompoundTerm)) {
-                        term22 = varInd2;
-                    } else {
-                        term22 = ((CompoundTerm) term22).applySubstitute(subs);
-                    }
+                    term22 = applySubstituteIfCompoundTerm(varInd2, term22, subs);
                 }
             }
             if (commonTerm==null && term22 instanceof ImageExt) {
@@ -397,11 +393,7 @@ public final class CompositionalRules {
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term22 = ((CompoundTerm) term22).applySubstitute(subs);
-                    if(!(term12 instanceof CompoundTerm)) {
-                        term12 = varInd2;
-                    } else {
-                        term12 = ((CompoundTerm) term12).applySubstitute(subs);
-                    }
+                    term12 = applySubstituteIfCompoundTerm(varInd2, term12, subs);
                 }
             }
         } else {
@@ -420,11 +412,7 @@ public final class CompositionalRules {
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term21 = ((CompoundTerm) term21).applySubstitute(subs);
-                    if(!(term11 instanceof CompoundTerm)) {
-                        term11 = varInd2;
-                    } else {
-                        term11 = ((CompoundTerm) term11).applySubstitute(subs);
-                    }
+                    term11 = applySubstituteIfCompoundTerm(varInd2, term11, subs);
                 }
             }
             if (commonTerm==null && term11 instanceof ImageInt) {
@@ -436,11 +424,7 @@ public final class CompositionalRules {
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term11 = ((CompoundTerm) term11).applySubstitute(subs);
-                    if(!(term21 instanceof CompoundTerm)) {
-                        term21 = varInd2;
-                    } else {
-                        term21 = ((CompoundTerm) term21).applySubstitute(subs);
-                    }
+                    term21 = applySubstituteIfCompoundTerm(varInd2, term21, subs);
                 }
             }
         }
@@ -488,6 +472,15 @@ public final class CompositionalRules {
         truth = intersection(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false, false);
+    }
+
+    private static Term applySubstituteIfCompoundTerm(Variable varInd2, Term term22, Map<Term, Term> subs) {
+        if(!(term22 instanceof CompoundTerm)) {
+            term22 = varInd2;
+        } else {
+            term22 = ((CompoundTerm) term22).applySubstitute(subs);
+        }
+        return term22;
     }
 
     private static Term findCommonTerm2(Term containedTest, Term tested, Term commonTerm, boolean enableSpecialCase, boolean enableRetCommonTerm) {
