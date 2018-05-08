@@ -496,13 +496,17 @@ public class RuleTables {
         final Term t1;
         final Term t2;
         final Term[] u = new Term[] { asymSt, symSt };
+
+        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+
         switch (figure) {
             case 11:
-                if (Variables.unify(VAR_INDEPENDENT, asymSt.getSubject(), symSt.getSubject(), u)) {
+                if (Variables.unify(VAR_INDEPENDENT, retBySide(asymSt, figureLeft), retBySide(symSt, figureRight), u)) {
                     asymSt = (Statement) u[0];
                     symSt = (Statement) u[1];
-                    t1 = asymSt.getPredicate();
-                    t2 = symSt.getPredicate();
+                    t1 = retBySide(asymSt, retOppositeSide(figureLeft));
+                    t2 = retBySide(symSt, retOppositeSide(figureRight));
                     
                     if (Variables.unify(VAR_QUERY, t1, t2, u)) {                        
                         LocalRules.matchAsymSym(asym, sym, figure, nal);
@@ -557,6 +561,60 @@ public class RuleTables {
                 break;
         }
     }
+
+    /**
+     * returns the subject (0) or predicate(1)
+     * @param statement statement for which the side has to be returned
+     * @param side subject(0) or predicate(1)
+     * @return the term of the side
+     */
+    static Term retBySide(Statement statement, EnumStatementSide side) {
+        return side == EnumStatementSide.SUBJECT ? statement.getSubject() : statement.getPredicate();
+    }
+
+    static EnumStatementSide retOppositeSide(EnumStatementSide side) {
+        return side == EnumStatementSide.SUBJECT ? EnumStatementSide.PREDICATE : EnumStatementSide.SUBJECT;
+    }
+
+    /**
+     * converts the side of a figure to a zero based index - which determines the side of the Statement
+     *
+     * a figure is a encoding for the sides
+     * @param figure figure encoding as 11 or 12 or 21 or 22
+     * @param sideOfFigure side
+     * @return
+     */
+    static EnumStatementSide retSideFromFigure(int figure, EnumFigureSide sideOfFigure) {
+        if( sideOfFigure == EnumFigureSide.LEFT ) {
+            switch(figure) {
+                case 11: return EnumStatementSide.SUBJECT;
+                case 12: return EnumStatementSide.SUBJECT;
+                case 21: return EnumStatementSide.PREDICATE;
+                case 22: return EnumStatementSide.PREDICATE;
+            }
+        }
+        else {
+            switch(figure) {
+                case 11: return EnumStatementSide.SUBJECT;
+                case 12: return EnumStatementSide.PREDICATE;
+                case 21: return EnumStatementSide.SUBJECT;
+                case 22: return EnumStatementSide.PREDICATE;
+            }
+        }
+
+        throw new IllegalArgumentException("figure is invalid");
+    }
+
+    enum EnumStatementSide {
+        SUBJECT,
+        PREDICATE,
+    }
+
+    enum EnumFigureSide {
+        LEFT,
+        RIGHT,
+    }
+
 
     /**
      * Syllogistic rules whose both premises are on the same symmetric relation
