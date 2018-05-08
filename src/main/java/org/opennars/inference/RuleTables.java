@@ -448,16 +448,7 @@ public class RuleTables {
 
                 }
                 break;
-            case 12:    // deduction                
-                {
-
-                    if (Variables.unify(VAR_QUERY, t1, t2, new Term[]{taskStatement, beliefStatement})) {
-                        LocalRules.matchReverse(nal);
-                    } else {
-                        SyllogisticRules.dedExe(t1, t2, taskSentence, belief, nal);
-                    }
-                }
-                break;
+            case 12:    // deduction
             case 21:    // exemplification
                 {
 
