@@ -18,12 +18,14 @@ import org.opennars.entity.Task;
 
 /**
  * Implementation can consume tasks
+ *
+ * R is result type
  */
-public interface TaskConsumer<ResultType> {
+public interface TaskConsumer<R> {
     /**
      * consumes a task
      * @param task task to be consumed
      * @return something which consumed the task or which was assigned the task
      */
-    ResultType addInput(final Task task);
+    R addInput(final Task task);
 }
