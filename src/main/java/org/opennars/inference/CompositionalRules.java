@@ -384,7 +384,7 @@ public final class CompositionalRules {
                         commonTerm=null;
                     }
                     if (term22 instanceof ImageExt && ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm))) {
-                        commonTerm = ((ImageExt) term22).getTheOtherComponent();
+                        commonTerm = ((Image) term22).getTheOtherComponent();
                         if ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm)) {
                             commonTerm = null;
                         }
@@ -413,7 +413,7 @@ public final class CompositionalRules {
                         commonTerm=null;
                     }
                     if (term12 instanceof ImageExt && ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm))) {
-                        commonTerm = ((ImageExt) term12).getTheOtherComponent();
+                        commonTerm = ((Image) term12).getTheOtherComponent();
                         if ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm)) {
                             commonTerm = null;
                         }
@@ -449,7 +449,7 @@ public final class CompositionalRules {
                         commonTerm=null;
                     }
                     if ((commonTerm == null) || !(term21).containsTermRecursively(commonTerm)) {
-                        commonTerm = ((ImageInt) term21).getTheOtherComponent();
+                        commonTerm = ((Image) term21).getTheOtherComponent();
                         if ((commonTerm == null) || !(term11).containsTermRecursively(commonTerm)) {
                             commonTerm = null;
                         }
@@ -478,7 +478,7 @@ public final class CompositionalRules {
                         commonTerm=null;
                     }
                     if ((commonTerm == null) || !(term11).containsTermRecursively(commonTerm)) {
-                        commonTerm = ((ImageInt) term11).getTheOtherComponent();
+                        commonTerm = ((Image) term11).getTheOtherComponent();
                         if ((commonTerm == null) || !(term21).containsTermRecursively(commonTerm)) {
                             commonTerm = null;
                         }
