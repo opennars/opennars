@@ -448,6 +448,23 @@ public class RuleTables {
 
                 }
                 break;
+            case 22:    // abduction
+            {
+
+                if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
+                    final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                    if(sensational) {
+                        return;
+                    }
+                    CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, nal);
+                    CompositionalRules.introVarOuter(taskStatement, beliefStatement, 1, nal);// introVarImage(taskContent, beliefContent, index, memory);
+
+                }
+
+                CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,nal);
+
+            }
+            break;
             case 12:    // deduction
             case 21:    // exemplification
                 {
@@ -459,23 +476,7 @@ public class RuleTables {
                     }
                 }
                 break;
-            case 22:    // abduction
-                {
 
-                    if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
-                        final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
-                        if(sensational) {
-                            return;
-                        }
-                        CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, nal);
-                        CompositionalRules.introVarOuter(taskStatement, beliefStatement, 1, nal);// introVarImage(taskContent, beliefContent, index, memory);
-
-                    }
-
-                    CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,nal);
-
-                }
-                break;
             default:
         }
     }
