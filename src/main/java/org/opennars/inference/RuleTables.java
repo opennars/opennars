@@ -401,14 +401,13 @@ public class RuleTables {
         final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
         final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
-        if (Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
-            taskStatement = (Statement) u[0];
-            beliefStatement = (Statement) u[1];
-            if (taskStatement.equals(beliefStatement)) {
-                return;
-            }
+        if (!Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
+            return;
         }
-        else {
+
+        taskStatement = (Statement) u[0];
+        beliefStatement = (Statement) u[1];
+        if (taskStatement.equals(beliefStatement)) {
             return;
         }
 
