@@ -378,7 +378,7 @@ public final class CompositionalRules {
                     commonTerm = term22;
                 }
                 
-                if(commonTerm == null && term12 instanceof ImageExt) {
+                if(commonTerm == null) {
                     boolean enableSpecialCase = term22 instanceof ImageExt;
 
                     commonTerm = retCommonTerm(term12, term22, enableSpecialCase);
@@ -400,7 +400,7 @@ public final class CompositionalRules {
                     commonTerm = term12;
                 }
                 
-                if(commonTerm == null && term22 instanceof ImageExt) {
+                if(commonTerm == null) {
                     boolean enableSpecialCase = term12 instanceof ImageExt;
 
                     commonTerm = retCommonTerm(term22, term12, enableSpecialCase);
@@ -429,7 +429,7 @@ public final class CompositionalRules {
                     commonTerm = term11;
                 }
                 
-                if(term11 instanceof ImageInt && commonTerm == null && term21 instanceof ImageInt) {
+                if(term11 instanceof ImageInt && commonTerm == null) {
                     boolean enableSpecialCase = true;
 
                     commonTerm = retCommonTerm(term11, term21, enableSpecialCase);
@@ -451,7 +451,7 @@ public final class CompositionalRules {
                     commonTerm = term21;
                 }
                 
-                if(term21 instanceof ImageInt && commonTerm == null && term11 instanceof ImageInt) {
+                if(term21 instanceof ImageInt && commonTerm == null) {
                     boolean enableSpecialCase = true;
 
                     commonTerm = retCommonTerm(term21, term11, enableSpecialCase);
