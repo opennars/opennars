@@ -493,25 +493,22 @@ public class RuleTables {
     private static void asymmetricSymmetric(final Sentence asym, final Sentence sym, final int figure, final DerivationContext nal) {
         Statement asymSt = (Statement) asym.term;
         Statement symSt = (Statement) sym.term;
-        final Term t1;
-        final Term t2;
-        final Term[] u = new Term[] { asymSt, symSt };
 
         final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
         final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
+        final Term[] u = new Term[] { asymSt, symSt };
         if (!Variables.unify(VAR_INDEPENDENT, retBySide(asymSt, figureLeft), retBySide(symSt, figureRight), u)) {
             return;
         }
 
         asymSt = (Statement) u[0];
         symSt = (Statement) u[1];
-        t1 = retBySide(asymSt, retOppositeSide(figureLeft));
-        t2 = retBySide(symSt, retOppositeSide(figureRight));
+        final Term t1 = retBySide(asymSt, retOppositeSide(figureLeft));
+        final Term t2 = retBySide(symSt, retOppositeSide(figureRight));
 
         if (Variables.unify(VAR_QUERY, t1, t2, u)) {
             LocalRules.matchAsymSym(asym, sym, figure, nal);
-
         } else {
             switch (figure) {
                 case 11:
