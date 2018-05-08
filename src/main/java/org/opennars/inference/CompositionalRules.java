@@ -376,16 +376,8 @@ public final class CompositionalRules {
                 boolean enableSpecialCase = term22 instanceof ImageExt;
                 boolean enableRetCommonTerm = true;
 
-                if ((/*(ImageExt)*/term12).containsTermRecursively(term22)) {
-                    commonTerm = term22;
-                }
-                
-                if(enableRetCommonTerm && commonTerm == null) {
+                commonTerm = findCommonTerm1(term12, term22, commonTerm, enableSpecialCase, enableRetCommonTerm);
 
-
-                    commonTerm = retCommonTerm(term12, term22, enableSpecialCase);
-                }
-                
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term12 = ((CompoundTerm) term12).applySubstitute(subs);
@@ -400,15 +392,7 @@ public final class CompositionalRules {
                 boolean enableSpecialCase = term12 instanceof ImageExt;
                 boolean enableRetCommonTerm = true;
 
-                if ((/*(ImageExt)*/term22).containsTermRecursively(term12)) {
-                    commonTerm = term12;
-                }
-                
-                if(enableRetCommonTerm && commonTerm == null) {
-
-
-                    commonTerm = retCommonTerm(term22, term12, enableSpecialCase);
-                }
+                commonTerm = findCommonTerm1(term22, term12, commonTerm, enableSpecialCase, enableRetCommonTerm);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -431,15 +415,7 @@ public final class CompositionalRules {
                 boolean enableSpecialCase = true;
                 boolean enableRetCommonTerm = term11 instanceof ImageInt;
 
-                if ((/*(ImageInt)*/term21).containsTermRecursively(term11)) {
-                    commonTerm = term11;
-                }
-                
-                if(enableRetCommonTerm && commonTerm == null) {
-
-
-                    commonTerm = retCommonTerm(term11, term21, enableSpecialCase);
-                }
+                commonTerm = findCommonTerm2(term11, term21, commonTerm, enableSpecialCase, enableRetCommonTerm);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -455,15 +431,7 @@ public final class CompositionalRules {
                 boolean enableSpecialCase = true;
                 boolean enableRetCommonTerm = term21 instanceof ImageInt;
 
-                if ((/*(ImageInt)*/term11).containsTermRecursively(term21)) {
-                    commonTerm = term21;
-                }
-                
-                if(enableRetCommonTerm && commonTerm == null) {
-
-
-                    commonTerm = retCommonTerm(term21, term11, enableSpecialCase);
-                }
+                commonTerm = findCommonTerm2(term21, term11, commonTerm, enableSpecialCase, enableRetCommonTerm);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -520,6 +488,28 @@ public final class CompositionalRules {
         truth = intersection(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false, false);
+    }
+
+    private static Term findCommonTerm2(Term containedTest, Term tested, Term commonTerm, boolean enableSpecialCase, boolean enableRetCommonTerm) {
+        if ((/*(ImageInt)*/tested).containsTermRecursively(containedTest)) {
+            commonTerm = containedTest;
+        }
+
+        if(enableRetCommonTerm && commonTerm == null) {
+            commonTerm = retCommonTerm(containedTest, tested, enableSpecialCase);
+        }
+        return commonTerm;
+    }
+
+    private static Term findCommonTerm1(Term tested, Term containedTest, Term commonTerm, boolean enableSpecialCase, boolean enableRetCommonTerm) {
+        if ((/*(ImageExt)*/tested).containsTermRecursively(containedTest)) {
+            commonTerm = containedTest;
+        }
+
+        if(enableRetCommonTerm && commonTerm == null) {
+            commonTerm = retCommonTerm(tested, containedTest, enableSpecialCase);
+        }
+        return commonTerm;
     }
 
     private static Term retCommonTerm(Term term12, Term term22, boolean enableSpecialCase) {
