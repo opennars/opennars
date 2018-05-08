@@ -479,14 +479,7 @@ public final class CompositionalRules {
     }
 
     private static Term applySubstituteIfCompoundTerm(final Variable varInd2, final Term term22, Map<Term, Term> subs) {
-        Term resultTerm22;
-
-        if(term22 instanceof CompoundTerm) {
-            resultTerm22 = ((CompoundTerm) term22).applySubstitute(subs);
-        } else {
-            resultTerm22 = varInd2;
-        }
-        return resultTerm22;
+        return term22 instanceof CompoundTerm ? ((CompoundTerm)term22).applySubstitute(subs) : varInd2;
     }
 
     private static Term findCommonTerm2(final Term containedTest, Term tested, final Term commonTerm, final boolean enableSpecialCase, final boolean enableRetCommonTerm) {
