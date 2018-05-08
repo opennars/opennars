@@ -499,76 +499,30 @@ public class RuleTables {
 
         final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
         final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+        
+        if (Variables.unify(VAR_INDEPENDENT, retBySide(asymSt, figureLeft), retBySide(symSt, figureRight), u)) {
+            asymSt = (Statement) u[0];
+            symSt = (Statement) u[1];
+            t1 = retBySide(asymSt, retOppositeSide(figureLeft));
+            t2 = retBySide(symSt, retOppositeSide(figureRight));
 
-        switch (figure) {
-            case 11:
-                if (Variables.unify(VAR_INDEPENDENT, retBySide(asymSt, figureLeft), retBySide(symSt, figureRight), u)) {
-                    asymSt = (Statement) u[0];
-                    symSt = (Statement) u[1];
-                    t1 = retBySide(asymSt, retOppositeSide(figureLeft));
-                    t2 = retBySide(symSt, retOppositeSide(figureRight));
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {                        
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-                        
-                    } else {
-                        switch (figure) {
-                            case 11:
-                            case 12:
-                            SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
-                            break;
+            if (Variables.unify(VAR_QUERY, t1, t2, u)) {
+                LocalRules.matchAsymSym(asym, sym, figure, nal);
 
-                            case 21:
-                            case 22:
-                            SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
-                            break;
-                        }
-                    }
-                    
+            } else {
+                switch (figure) {
+                    case 11:
+                    case 12:
+                    SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
+                    break;
+
+                    case 21:
+                    case 22:
+                    SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
+                    break;
                 }
-                break;
-            case 12:
-                if (Variables.unify(VAR_INDEPENDENT, asymSt.getSubject(), symSt.getPredicate(), u)) {
-                    asymSt = (Statement) u[0];
-                    symSt = (Statement) u[1];
-                    t1 = asymSt.getPredicate();
-                    t2 = symSt.getSubject();
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-                    } else {
-                        SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
-                    }
-                }
-                break;
-            case 21:
-                if (Variables.unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getSubject(), u)) {
-                    asymSt = (Statement) u[0];
-                    symSt = (Statement) u[1];
-                    t1 = asymSt.getSubject();
-                    t2 = symSt.getPredicate();
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {                        
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-                    } else {
-                        SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
-                    }
-                }
-                break;
-            case 22:
-                if (Variables.unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getPredicate(), u)) {
-                    asymSt = (Statement) u[0];
-                    symSt = (Statement) u[1];
-                    t1 = asymSt.getSubject();
-                    t2 = symSt.getSubject();                    
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {                        
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-                    } else {
-                        SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
-                    }
-                }
-                break;
+            }
+
         }
     }
 
