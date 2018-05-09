@@ -223,9 +223,8 @@ public class Variables {
             boolean isSameSpatial = term1.getIsSpatial() == term2.getIsSpatial();
             boolean isSameOrderAndSameSpatial = isSameOrder && isSameSpatial;
 
-            if(term1 instanceof Conjunction && term2 instanceof Conjunction) {
-                if(!isSameOrderAndSameSpatial)
-                    return false;
+            if(term1 instanceof Conjunction && term2 instanceof Conjunction && !isSameOrderAndSameSpatial) {
+                return false;
             }
             if(term1 instanceof Implication && term2 instanceof Implication && !isSameOrder) {
                 return false;
