@@ -688,7 +688,7 @@ public final class StructuralRules {
             for(int i=index; i<conjCompound.size(); i++) {
                 totalLeft[k++] = conjCompound.term[i];
             }
-            groupSequenceMakeConjunctionAndCreateTask(nal, conjCompound, totalLeft);
+            createSequenceTask(nal, conjCompound, totalLeft);
         }
 
         if(hasRight) {
@@ -710,11 +710,11 @@ public final class StructuralRules {
             for(int i=maxIndex+1;i<conjCompound.size();i++) {
                 totalRight[k++] = conjCompound.term[i];
             }
-            groupSequenceMakeConjunctionAndCreateTask(nal, conjCompound, totalRight);
+            createSequenceTask(nal, conjCompound, totalRight);
         }
     }
 
-    private static void groupSequenceMakeConjunctionAndCreateTask(DerivationContext nal, Conjunction conjCompound, Term[] total) {
+    private static void createSequenceTask(DerivationContext nal, Conjunction conjCompound, Term[] total) {
         final Term cont = Conjunction.make(total, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
         if(cont instanceof Conjunction && total.length != conjCompound.size()) {
             final TruthValue truth = nal.getCurrentTask().sentence.truth.clone();
