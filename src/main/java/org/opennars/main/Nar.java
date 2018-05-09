@@ -16,6 +16,7 @@ package org.opennars.main;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opennars.entity.*;
+import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.Narsese;
 import org.opennars.io.Narsese.InvalidInputException;
 import org.opennars.io.Symbols;
@@ -53,7 +54,7 @@ import java.util.logging.Logger;
  *   * step mode - controlled by an outside system, such as during debugging or testing
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class Nar extends SensoryChannel implements Serializable,Runnable {
+public class Nar extends SensoryChannel implements Reasoner, Serializable, Runnable {
     public NarParameters narParameters = new NarParameters();
 
     /**
@@ -498,11 +499,7 @@ public class Nar extends SensoryChannel implements Serializable,Runnable {
         return memory.toString();
     }
 
-    /**
-     * Get the current time from the clock Called in {@link org.opennars.entity.Stamp}
-     *
-     * @return The current time
-     */
+
     public long time() {
         return memory.time();
     }
