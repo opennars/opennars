@@ -165,6 +165,7 @@ public class Variables {
                 return true;
             }
         }
+        
         if (term1Var && allowUnification(((Variable) term1).getType(), type)) {
             final Variable var1 = (Variable) term1;            
             t = map[0]!=null ? map[0].get(var1) : null;
