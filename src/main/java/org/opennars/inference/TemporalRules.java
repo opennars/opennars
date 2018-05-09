@@ -320,14 +320,14 @@ public class TemporalRules {
                 final Statement statement11 = Implication.make(t11, t22, order);
                 final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
                 final Statement statement33 = Equivalence.make(t11, t22, order);
-                temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth1, budget1, statement11, success, false);
-                temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth2, budget2, statement22, success, false);
-                temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth3, budget3, statement33, success, false);
+                appendAndSetObservable(nal, truth1, budget1, statement11, success, false);
+                appendAndSetObservable(nal, truth2, budget2, statement22, success, false);
+                appendAndSetObservable(nal, truth3, budget3, statement33, success, false);
             }
 
-            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth1, budget1, statement1, success, true);
-            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth2, budget2, statement2, success, true);
-            temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(nal, truth3, budget3, statement3, success, true);
+            appendAndSetObservable(nal, truth1, budget1, statement1, success, true);
+            appendAndSetObservable(nal, truth2, budget2, statement2, success, true);
+            appendAndSetObservable(nal, truth3, budget3, statement3, success, true);
         }
 
         if(!tooMuchTemporalStatements(statement4)) {
@@ -355,7 +355,7 @@ public class TemporalRules {
         return success;
     }
 
-    private static void temporalInductionAppendIfNotToManyTemporalStatementsAndSetObservablePredictionFlag(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success, boolean setObservablePrediction) {
+    private static void appendAndSetObservable(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success, boolean setObservablePrediction) {
         if(!tooMuchTemporalStatements(statement1)) {
             final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
             if(t!=null) {
