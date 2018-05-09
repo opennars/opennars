@@ -190,41 +190,43 @@ public class ConceptProcessing {
                 conj.term[conj.term.length-2] instanceof Operation) {
 
             //we do not add the target, instead the strongest belief in the target concept
-            if(concept.beliefs.size() > 0) {
-                Task strongest_target = null; //beliefs.get(0);
-                //get the first eternal:
-                for(final Task t : concept.beliefs) {
-                    if(t.sentence.isEternal()) {
-                        strongest_target = t;
-                        break;
-                    }
-                }
-
-                final int a = pred_conc.executable_preconditions.size();
-
-                //at first we have to remove the last one with same content from table
-                int i_delete = -1;
-                for(int i=0; i < pred_conc.executable_preconditions.size(); i++) {
-                    if(CompoundTerm.replaceIntervals(pred_conc.executable_preconditions.get(i).getTerm()).equals(
-                            CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
-                        i_delete = i; //even these with same term but different intervals are removed here
-                        break;
-                    }
-                }
-                if(i_delete != -1) {
-                    pred_conc.executable_preconditions.remove(i_delete);
-                }
-
-                final Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
-                for(int i=0;i<prec.length-2;i++) {
-                    if(prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
-                        return; //for now, these can be decomposed into smaller such statements anyway
-                    }
-                }
-
-                //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-                pred_conc.addToTable(strongest_target, true, pred_conc.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+            if(concept.beliefs.size() == 0) {
+                return;
             }
+
+            Task strongest_target = null; //beliefs.get(0);
+            //get the first eternal:
+            for(final Task t : concept.beliefs) {
+                if(t.sentence.isEternal()) {
+                    strongest_target = t;
+                    break;
+                }
+            }
+
+            final int a = pred_conc.executable_preconditions.size();
+
+            //at first we have to remove the last one with same content from table
+            int i_delete = -1;
+            for(int i=0; i < pred_conc.executable_preconditions.size(); i++) {
+                if(CompoundTerm.replaceIntervals(pred_conc.executable_preconditions.get(i).getTerm()).equals(
+                        CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
+                    i_delete = i; //even these with same term but different intervals are removed here
+                    break;
+                }
+            }
+            if(i_delete != -1) {
+                pred_conc.executable_preconditions.remove(i_delete);
+            }
+
+            final Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
+            for(int i=0;i<prec.length-2;i++) {
+                if(prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
+                    return; //for now, these can be decomposed into smaller such statements anyway
+                }
+            }
+
+            //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
+            pred_conc.addToTable(strongest_target, true, pred_conc.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
         }
     }
 
