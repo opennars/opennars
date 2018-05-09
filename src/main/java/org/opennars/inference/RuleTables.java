@@ -42,6 +42,9 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     public static void reason(final TaskLink tLink, final TermLink bLink, final DerivationContext nal) {
+
+        // REFACTOR< the body should be split into another static function >
+
         final Memory memory = nal.mem();
         
         final Task task = nal.getCurrentTask();
@@ -92,15 +95,19 @@ public class RuleTables {
         //current belief and task may have changed, so set again:
         nal.setCurrentBelief(belief);
         nal.setCurrentTask(task);
-        
+
         //put here since LocalRules match should be possible even if the belief is foreign
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
-           return;
-        
+            return;
+
         /*if ((memory.getNewTaskCount() > 0) && taskSentence.isJudgment()) {
             return;
         }*/
-        
+
+        applyRuleTable(tLink, bLink, nal, task, taskSentence, taskTerm, beliefTerm, belief);
+    }
+
+    private static void applyRuleTable(TaskLink tLink, TermLink bLink, DerivationContext nal, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief) {
         final short tIndex = tLink.getIndex(0);
         short bIndex = bLink.getIndex(0);
         switch (tLink.type) {          // dispatch first by TaskLink type
@@ -161,8 +168,8 @@ public class RuleTables {
                                     detachmentWithVar(newBelief, newTaskSentence, bIndex, false, nal);
                                 } else {
                                     SyllogisticRules.conditionalDedInd(belief, (Implication) beliefTerm, bIndex, taskTerm, -1, nal);
-                                }                                
-                                
+                                }
+
                             } else if (beliefTerm instanceof Equivalence) {
                                 SyllogisticRules.conditionalAna((Equivalence) beliefTerm, bIndex, taskTerm, -1, nal);
                             }
@@ -205,7 +212,7 @@ public class RuleTables {
                             detachmentWithVar(taskSentence, belief, tIndex, nal);
                         }
                         break;
-                    
+
                     case TermLink.COMPOUND_STATEMENT:
                         if (belief != null) {
                             if (taskTerm instanceof Implication) // TODO maybe put instanceof test within conditionalDedIndWithVar()
