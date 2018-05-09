@@ -105,10 +105,10 @@ public class ConceptProcessing {
             concept.negConfirmation != null &&
             task.sentence.getOccurenceTime() > concept.negConfirm_abort_mintime;
 
-        final boolean isExpectactionAbliveThreshold = task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION;
+        final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION;
 
         if(
-            satisfiesAnticipation && isExpectactionAbliveThreshold &&
+            satisfiesAnticipation && isExpectationAboveThreshold &&
             ((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())
         ) {
             nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
