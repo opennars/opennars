@@ -42,6 +42,9 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     public static void reason(final TaskLink tLink, final TermLink bLink, final DerivationContext nal) {
+
+        // REFACTOR< the body should be split into another static function >
+
         final Memory memory = nal.mem();
         
         final Task task = nal.getCurrentTask();
@@ -92,15 +95,19 @@ public class RuleTables {
         //current belief and task may have changed, so set again:
         nal.setCurrentBelief(belief);
         nal.setCurrentTask(task);
-        
+
         //put here since LocalRules match should be possible even if the belief is foreign
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
-           return;
-        
+            return;
+
         /*if ((memory.getNewTaskCount() > 0) && taskSentence.isJudgment()) {
             return;
         }*/
-        
+
+        applyRuleTable(tLink, bLink, nal, task, taskSentence, taskTerm, beliefTerm, belief);
+    }
+
+    private static void applyRuleTable(TaskLink tLink, TermLink bLink, DerivationContext nal, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief) {
         final short tIndex = tLink.getIndex(0);
         short bIndex = bLink.getIndex(0);
         switch (tLink.type) {          // dispatch first by TaskLink type
@@ -161,8 +168,8 @@ public class RuleTables {
                                     detachmentWithVar(newBelief, newTaskSentence, bIndex, false, nal);
                                 } else {
                                     SyllogisticRules.conditionalDedInd(belief, (Implication) beliefTerm, bIndex, taskTerm, -1, nal);
-                                }                                
-                                
+                                }
+
                             } else if (beliefTerm instanceof Equivalence) {
                                 SyllogisticRules.conditionalAna((Equivalence) beliefTerm, bIndex, taskTerm, -1, nal);
                             }
@@ -205,7 +212,7 @@ public class RuleTables {
                             detachmentWithVar(taskSentence, belief, tIndex, nal);
                         }
                         break;
-                    
+
                     case TermLink.COMPOUND_STATEMENT:
                         if (belief != null) {
                             if (taskTerm instanceof Implication) // TODO maybe put instanceof test within conditionalDedIndWithVar()
@@ -394,89 +401,85 @@ public class RuleTables {
         Statement taskStatement = (Statement) taskSentence.term;
         Statement beliefStatement = (Statement) belief.term;
         
-        final Term t1;
-        final Term t2;
+        Term t1 = null;
+        Term t2 = null;
         final Term[] u = new Term[] { taskStatement, beliefStatement };
+
+        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+
+        if (!Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
+            return;
+        }
+
+        taskStatement = (Statement) u[0];
+        beliefStatement = (Statement) u[1];
+        if (taskStatement.equals(beliefStatement)) {
+            return;
+        }
+
         switch (figure) {
-            case 11:    // induction                
-                if (Variables.unify(VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getSubject(), u)) {                    
-                    taskStatement = (Statement) u[0];
-                    beliefStatement = (Statement) u[1];
-                    if (taskStatement.equals(beliefStatement)) {
-                        return;
-                    }
-                    t1 = beliefStatement.getPredicate();
-                    t2 = taskStatement.getPredicate();
+            case 11: // induction
+            t1 = beliefStatement.getPredicate();
+            t2 = taskStatement.getPredicate();
+            break;
+
+            case 12: // deduction
+            t1 = beliefStatement.getSubject();
+            t2 = taskStatement.getPredicate();
+            break;
+
+            case 21: // exemplification
+            t1 = taskStatement.getSubject();
+            t2 = beliefStatement.getPredicate();
+            break;
+
+            case 22: // abduction
+            t1 = taskStatement.getSubject();
+            t2 = beliefStatement.getSubject();
+            break;
+        }
+
+        switch (figure) {
+            case 11: // induction
+            {
+                final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                if (sensational) {
+                    return;
+                }
+                CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, nal);
+                //if(taskSentence.getOccurenceTime()==Stamp.ETERNAL && belief.getOccurenceTime()==Stamp.ETERNAL)
+                CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, nal);//introVarImage(taskContent, beliefContent, index, memory);
+                CompositionalRules.eliminateVariableOfConditionAbductive(figure, taskSentence, belief, nal);
+            }
+            break;
+            case 22: // abduction
+            {
+                if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
                     final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
                     if(sensational) {
                         return;
                     }
-                    CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, nal);
-                    //if(taskSentence.getOccurenceTime()==Stamp.ETERNAL && belief.getOccurenceTime()==Stamp.ETERNAL)
-                    CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, nal);//introVarImage(taskContent, beliefContent, index, memory);             
-                    CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,nal);
-                    
+                    CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, nal);
+                    CompositionalRules.introVarOuter(taskStatement, beliefStatement, 1, nal);// introVarImage(taskContent, beliefContent, index, memory);
+
                 }
 
-                break;
-            case 12:    // deduction                
-                if (Variables.unify(VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getPredicate(), u)) {
-                    taskStatement = (Statement) u[0];
-                    beliefStatement = (Statement) u[1];
-                    if (taskStatement.equals(beliefStatement)) {
-                        return;
-                    }
-                    t1 = beliefStatement.getSubject();
-                    t2 = taskStatement.getPredicate();
-                    if (Variables.unify(VAR_QUERY, t1, t2, new Term[] { taskStatement, beliefStatement })) {
-                        LocalRules.matchReverse(nal);
-                    } else {
-                        SyllogisticRules.dedExe(t1, t2, taskSentence, belief, nal);
-                    }
-                }
-                break;
-            case 21:    // exemplification
-                if (Variables.unify(VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getSubject(), u)) {
-                    taskStatement = (Statement) u[0];
-                    beliefStatement = (Statement) u[1];
-                    if (taskStatement.equals(beliefStatement)) {
-                        return;
-                    }
-                    t1 = taskStatement.getSubject();
-                    t2 = beliefStatement.getPredicate();
-                    
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, new Term[] { taskStatement, beliefStatement })) {
-                        LocalRules.matchReverse(nal);
-                    } else {
-                        SyllogisticRules.dedExe(t1, t2, taskSentence, belief, nal);
-                    }
-                }
-                break;
-            case 22:    // abduction
-                if (Variables.unify(VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getPredicate(), u)) {
-                    taskStatement = (Statement) u[0];
-                    beliefStatement = (Statement) u[1];
-                    
-                    if (taskStatement.equals(beliefStatement)) {
-                        return;
-                    }
-                    t1 = taskStatement.getSubject();
-                    t2 = beliefStatement.getSubject();
-                    if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
-                        final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
-                        if(sensational) {
-                            return;
-                        }
-                        CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, nal);
-                        CompositionalRules.introVarOuter(taskStatement, beliefStatement, 1, nal);// introVarImage(taskContent, beliefContent, index, memory);
+                CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,nal);
+            }
+            break;
 
-                    }
+            case 12: // deduction
+            case 21: // exemplification
 
-                    CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,nal);
-                    
-                }
-                break;
+            if (Variables.unify(VAR_QUERY, t1, t2, new Term[]{taskStatement, beliefStatement})) {
+                LocalRules.matchReverse(nal);
+            } else {
+                SyllogisticRules.dedExe(t1, t2, taskSentence, belief, nal);
+            }
+
+            break;
+
             default:
         }
     }
@@ -493,70 +496,90 @@ public class RuleTables {
     private static void asymmetricSymmetric(final Sentence asym, final Sentence sym, final int figure, final DerivationContext nal) {
         Statement asymSt = (Statement) asym.term;
         Statement symSt = (Statement) sym.term;
-        final Term t1;
-        final Term t2;
+
+        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+
         final Term[] u = new Term[] { asymSt, symSt };
-        switch (figure) {
-            case 11:
-                if (Variables.unify(VAR_INDEPENDENT, asymSt.getSubject(), symSt.getSubject(), u)) {
-                    asymSt = (Statement) u[0];
-                    symSt = (Statement) u[1];
-                    t1 = asymSt.getPredicate();
-                    t2 = symSt.getPredicate();
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {                        
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-                        
-                    } else {
-                        SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
-                    }
-                    
-                }
+        if (!Variables.unify(VAR_INDEPENDENT, retBySide(asymSt, figureLeft), retBySide(symSt, figureRight), u)) {
+            return;
+        }
+
+        asymSt = (Statement) u[0];
+        symSt = (Statement) u[1];
+        final Term t1 = retBySide(asymSt, retOppositeSide(figureLeft));
+        final Term t2 = retBySide(symSt, retOppositeSide(figureRight));
+
+        if (Variables.unify(VAR_QUERY, t1, t2, u)) {
+            LocalRules.matchAsymSym(asym, sym, figure, nal);
+        } else {
+            switch (figure) {
+                case 11:
+                case 12:
+                SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
                 break;
-            case 12:
-                if (Variables.unify(VAR_INDEPENDENT, asymSt.getSubject(), symSt.getPredicate(), u)) {
-                    asymSt = (Statement) u[0];
-                    symSt = (Statement) u[1];
-                    t1 = asymSt.getPredicate();
-                    t2 = symSt.getSubject();
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-                    } else {
-                        SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
-                    }
-                }
+
+                case 21:
+                case 22:
+                SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
                 break;
-            case 21:
-                if (Variables.unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getSubject(), u)) {
-                    asymSt = (Statement) u[0];
-                    symSt = (Statement) u[1];
-                    t1 = asymSt.getSubject();
-                    t2 = symSt.getPredicate();
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {                        
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-                    } else {
-                        SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
-                    }
-                }
-                break;
-            case 22:
-                if (Variables.unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getPredicate(), u)) {
-                    asymSt = (Statement) u[0];
-                    symSt = (Statement) u[1];
-                    t1 = asymSt.getSubject();
-                    t2 = symSt.getSubject();                    
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {                        
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-                    } else {
-                        SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
-                    }
-                }
-                break;
+            }
         }
     }
+
+    /**
+     * returns the subject (0) or predicate(1)
+     * @param statement statement for which the side has to be returned
+     * @param side subject(0) or predicate(1)
+     * @return the term of the side
+     */
+    private static Term retBySide(Statement statement, EnumStatementSide side) {
+        return side == EnumStatementSide.SUBJECT ? statement.getSubject() : statement.getPredicate();
+    }
+
+    private static EnumStatementSide retOppositeSide(EnumStatementSide side) {
+        return side == EnumStatementSide.SUBJECT ? EnumStatementSide.PREDICATE : EnumStatementSide.SUBJECT;
+    }
+
+    /**
+     * converts the side of a figure to a zero based index - which determines the side of the Statement
+     *
+     * a figure is a encoding for the sides
+     * @param figure figure encoding as 11 or 12 or 21 or 22
+     * @param sideOfFigure side
+     * @return
+     */
+    private static EnumStatementSide retSideFromFigure(int figure, EnumFigureSide sideOfFigure) {
+        if( sideOfFigure == EnumFigureSide.LEFT ) {
+            switch(figure) {
+                case 11: return EnumStatementSide.SUBJECT;
+                case 12: return EnumStatementSide.SUBJECT;
+                case 21: return EnumStatementSide.PREDICATE;
+                case 22: return EnumStatementSide.PREDICATE;
+            }
+        }
+        else {
+            switch(figure) {
+                case 11: return EnumStatementSide.SUBJECT;
+                case 12: return EnumStatementSide.PREDICATE;
+                case 21: return EnumStatementSide.SUBJECT;
+                case 22: return EnumStatementSide.PREDICATE;
+            }
+        }
+
+        throw new IllegalArgumentException("figure is invalid");
+    }
+
+    enum EnumStatementSide {
+        SUBJECT,
+        PREDICATE,
+    }
+
+    enum EnumFigureSide {
+        LEFT,
+        RIGHT,
+    }
+
 
     /**
      * Syllogistic rules whose both premises are on the same symmetric relation
@@ -569,39 +592,16 @@ public class RuleTables {
     private static void symmetricSymmetric(final Sentence belief, final Sentence taskSentence, final int figure, final DerivationContext nal) {
         final Statement s1 = (Statement) belief.term;
         final Statement s2 = (Statement) taskSentence.term;
-        
-        final Term ut1;  //parameters for unify()
-        final Term ut2;
-        Term rt1, rt2;  //parameters for resemblance()
-        
-        switch (figure) {
-            case 11:
-                ut1 = s1.getSubject();
-                ut2 = s2.getSubject();
-                rt1 = s1.getPredicate();
-                rt2 = s2.getPredicate();
-                break;
-            case 12:
-                ut1 = s1.getSubject();
-                ut2 = s2.getPredicate();
-                rt1 = s1.getPredicate();
-                rt2 = s2.getSubject();
-                break;
-            case 21:
-                ut1 = s1.getPredicate();
-                ut2 = s2.getSubject();
-                rt1 = s1.getSubject();
-                rt2 = s2.getPredicate();
-                break;
-            case 22:
-                ut1 = s1.getPredicate();
-                ut2 = s2.getPredicate();
-                rt1 = s1.getSubject();
-                rt2 = s2.getSubject();
-                break;
-            default: 
-                throw new IllegalStateException("Invalid figure: " + figure);
-        }
+
+        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+
+        //parameters for unify()
+        final Term ut1 = retBySide(s1, figureLeft);
+        final Term ut2 = retBySide(s2, figureRight);
+        //parameters for resemblance()
+        Term rt1 = retBySide(s1, retOppositeSide(figureLeft));
+        Term rt2 = retBySide(s2, retOppositeSide(figureRight));
         
         final Term[] u = new Term[] { s1, s2 };
         if (Variables.unify(VAR_INDEPENDENT, ut1, ut2, u)) {

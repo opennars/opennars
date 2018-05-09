@@ -97,44 +97,28 @@ public class Variables {
                         if(map[1] == null) {
                             map[1] = new HashMap<>();
                         }
-                        for(final Term c : map[0].keySet()) {
-                            mapk[0].put(c, map[0].get(c));
-                        }
-                        for(final Term c : map[1].keySet()) {
-                            mapk[1].put(c, map[1].get(c));
-                        }
+                        appendToMap(map[0], mapk[0]);
+                        appendToMap(map[1], mapk[1]);
                         boolean succeeded = true;
                         for(int j=k;j<k+size_smaller;j++) {
                             final int i = j-k;
                             final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
                             mapNew[0] = new HashMap<>();
                             mapNew[1] = new HashMap<>();
-                            for(final Term c : map[0].keySet()) {
-                                mapNew[0].put(c, map[0].get(c));
-                            }
-                            for(final Term c : map[1].keySet()) {
-                                mapNew[1].put(c, map[1].get(c));
-                            }
+                            appendToMap(map[0], mapNew[0]);
+                            appendToMap(map[1], mapNew[1]);
                             //attempt unification:
                             if(findSubstitute(type,c1.term[i],c2.term[j],mapNew)) {
-                                for(final Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
-                                    mapk[0].put(c, mapNew[0].get(c));
-                                }
-                                for(final Term c : mapNew[1].keySet()) {
-                                    mapk[1].put(c, mapNew[1].get(c));
-                                }
+                                appendToMap(mapNew[0], mapk[0]);
+                                appendToMap(mapNew[1], mapk[1]);
                             } else { //another shift k is needed
                                 succeeded = false;
                                 break;
                             }
                         }
                         if(succeeded) {
-                            for(final Term c : mapk[0].keySet()) { //ok put back the unifications that were necessary
-                                map[0].put(c, mapk[0].get(c));
-                            }
-                            for(final Term c : mapk[1].keySet()) {
-                                map[1].put(c, mapk[1].get(c));
-                            }
+                            appendToMap(mapk[0], map[0]);
+                            appendToMap(mapk[1], map[1]);
                             return true;
                         }
                     }
@@ -165,67 +149,77 @@ public class Variables {
                 return true;
             }
         }
-        if (term1Var && allowUnification(((Variable) term1).getType(), type)) {
-            final Variable var1 = (Variable) term1;            
-            t = map[0]!=null ? map[0].get(var1) : null;
-            
+
+        final boolean term1VarUnifyAllowed = term1Var && allowUnification(((Variable) term1).getType(), type);
+        final boolean term2VarUnifyAllowed = term2Var && allowUnification(((Variable) term2).getType(), type);
+
+        if (term1VarUnifyAllowed || term2VarUnifyAllowed) {
+
+            Term termA = term1VarUnifyAllowed ? term1 : term2;
+            Term termB = term1VarUnifyAllowed ? term2 : term1;
+            int mapIdx = term1VarUnifyAllowed ? 0 : 1;
+            Variable termAAsVariable = (Variable)termA;
+
+            t = map[mapIdx]!=null ? map[mapIdx].get(termAAsVariable) : null;
+
             if (t != null) {
-                return findSubstitute(type, t, term2, map);
-            } else {
-                
-                if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
-                
-                if ((term2 instanceof Variable) && allowUnification(((Variable) term2).getType(), type)) {
-                    final Variable CommonVar = makeCommonVariable(term1, term2);
-                    map[0].put(var1, CommonVar);
-                    map[1].put(term2, CommonVar);
+                return findSubstitute(type, t, termB, map);
+            }
+
+            if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
+
+            if (term1VarUnifyAllowed) {
+
+                if ((termB instanceof Variable) && allowUnification(((Variable) termB).getType(), type)) {
+                    final Variable CommonVar = makeCommonVariable(termA, termB);
+                    map[0].put(termAAsVariable, CommonVar);
+                    map[1].put(termB, CommonVar);
                 } else {
-                    if(term2 instanceof Variable && ((((Variable)term2).getType()==Symbols.VAR_QUERY && ((Variable)term1).getType()!=Symbols.VAR_QUERY) ||
-                                                     (((Variable)term2).getType()!=Symbols.VAR_QUERY && ((Variable)term1).getType()==Symbols.VAR_QUERY))) {
+                    if(termB instanceof Variable && ((((Variable)termB).getType()==Symbols.VAR_QUERY && ((Variable)termA).getType()!=Symbols.VAR_QUERY) ||
+                        (((Variable)termB).getType()!=Symbols.VAR_QUERY && ((Variable)termA).getType()==Symbols.VAR_QUERY))) {
                         return false;
                     }
-                    map[0].put(var1, term2);
-                    if (var1.isCommon()) {
-                        map[1].put(var1, term2);
+                    map[0].put(termAAsVariable, termB);
+                    if (termAAsVariable.isCommon()) {
+                        map[1].put(termAAsVariable, termB);
                     }
                 }
-                return true;
-            }
-        } else if (term2Var && allowUnification(((Variable) term2).getType(), type)) {
-            final Variable var2 = (Variable) term2;            
-            t = map[1]!=null ? map[1].get(var2) : null;
-            
-            if (t != null) {
-                return findSubstitute(type, term1, t, map);
             } else {
-                
-                if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
-                
-                map[1].put(var2, term1);
-                if (var2.isCommon()) {
-                    map[0].put(var2, term1);
+                map[1].put(termAAsVariable, termB);
+                if (termAAsVariable.isCommon()) {
+                    map[0].put(termAAsVariable, termB);
                 }
-                return true;
             }
-        } else if ((term1HasVar || term2HasVar) && (term1 instanceof CompoundTerm) && term1.getClass().equals(term2.getClass())) {
+
+            return true;
+
+        } else {
+            final boolean hasAnyTermVars = term1HasVar || term2HasVar;
+            final boolean termsHaveSameClass = term1.getClass().equals(term2.getClass());
+            
+            if (!(hasAnyTermVars && termsHaveSameClass && term1 instanceof CompoundTerm)) {
+                return termsEqual;
+            }
+
             final CompoundTerm cTerm1 = (CompoundTerm) term1;
             final CompoundTerm cTerm2 = (CompoundTerm) term2;
-            
+
             //consider temporal order on term matching
-            if(term1 instanceof Conjunction && term2 instanceof Conjunction) {
-                if(term1.getTemporalOrder() != term2.getTemporalOrder() ||
-                   term1.getIsSpatial() != term2.getIsSpatial())
-                    return false;
+            final boolean isSameOrder = term1.getTemporalOrder() == term2.getTemporalOrder();
+            final boolean isSameSpatial = term1.getIsSpatial() == term2.getIsSpatial();
+            final boolean isSameOrderAndSameSpatial = isSameOrder && isSameSpatial;
+
+            final boolean areBothConjuctions = term1 instanceof Conjunction && term2 instanceof Conjunction;
+            final boolean areBothImplication = term1 instanceof Implication && term2 instanceof Implication;
+            final boolean areBothEquivalence = term1 instanceof Equivalence && term2 instanceof Equivalence;
+
+            if(
+                (areBothConjuctions && !isSameOrderAndSameSpatial) ||
+                ((areBothEquivalence || areBothImplication) && !isSameOrder)
+            ) {
+                return false;
             }
-            if(term1 instanceof Implication && term2 instanceof Implication) {
-                if(term1.getTemporalOrder() != term2.getTemporalOrder())
-                    return false;
-            }
-            if(term1 instanceof Equivalence && term2 instanceof Equivalence) {
-                if(term1.getTemporalOrder() != term2.getTemporalOrder())
-                    return false;
-            }
-            
+
             if (cTerm1.size() != cTerm2.size()) {
                 return false;
             }
@@ -258,20 +252,12 @@ public class Variables {
                         if(map[1] == null) {
                             map[1] = new HashMap<>();
                         }
-                        for(final Term c : map[0].keySet()) {
-                            mapNew[0].put(c, map[0].get(c));
-                        }
-                        for(final Term c : map[1].keySet()) {
-                            mapNew[1].put(c, map[1].get(c));
-                        }
+                        appendToMap(map[0], mapNew[0]);
+                        appendToMap(map[1], mapNew[1]);
                         //attempt unification:
                         if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
-                            for(final Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
-                                map[0].put(c, mapNew[0].get(c));
-                            }
-                            for(final Term c : mapNew[1].keySet()) {
-                                map[1].put(c, mapNew[1].get(c));
-                            }
+                            appendToMap(mapNew[0], map[0]);
+                            appendToMap(mapNew[1], map[1]);
                             succeeded = true;
                             matchedJ.add(j);
                             break;
@@ -291,9 +277,14 @@ public class Variables {
                 }
             }
             return true;
+
         }
-        
-        return termsEqual;        
+    }
+
+    private static void appendToMap(Map<Term, Term> source, Map<Term, Term> target) {
+        for(final Term c : source.keySet()) {
+            target.put(c, source.get(c));
+        }
     }
 
 
