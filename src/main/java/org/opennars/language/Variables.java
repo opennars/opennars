@@ -156,48 +156,51 @@ public class Variables {
         if (term1VarUnifyAllowed || term2VarUnifyAllowed) {
             Variable termAAsVariable = null;
             Term termA = null;
+            Term termB = null;
 
             if (term1VarUnifyAllowed) {
                 termA = term1;
+                termB = term2;
                 termAAsVariable = (Variable) termA;
                 t = map[0]!=null ? map[0].get(termAAsVariable) : null;
 
                 if (t != null) {
-                    return findSubstitute(type, t, term2, map);
+                    return findSubstitute(type, t, termB, map);
                 }
 
                 if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
 
-                if ((term2 instanceof Variable) && allowUnification(((Variable) term2).getType(), type)) {
-                    final Variable CommonVar = makeCommonVariable(termA, term2);
+                if ((termB instanceof Variable) && allowUnification(((Variable) termB).getType(), type)) {
+                    final Variable CommonVar = makeCommonVariable(termA, termB);
                     map[0].put(termAAsVariable, CommonVar);
-                    map[1].put(term2, CommonVar);
+                    map[1].put(termB, CommonVar);
                 } else {
-                    if(term2 instanceof Variable && ((((Variable)term2).getType()==Symbols.VAR_QUERY && ((Variable)termA).getType()!=Symbols.VAR_QUERY) ||
-                        (((Variable)term2).getType()!=Symbols.VAR_QUERY && ((Variable)termA).getType()==Symbols.VAR_QUERY))) {
+                    if(termB instanceof Variable && ((((Variable)termB).getType()==Symbols.VAR_QUERY && ((Variable)termA).getType()!=Symbols.VAR_QUERY) ||
+                        (((Variable)termB).getType()!=Symbols.VAR_QUERY && ((Variable)termA).getType()==Symbols.VAR_QUERY))) {
                         return false;
                     }
-                    map[0].put(termAAsVariable, term2);
+                    map[0].put(termAAsVariable, termB);
                     if (termAAsVariable.isCommon()) {
-                        map[1].put(termAAsVariable, term2);
+                        map[1].put(termAAsVariable, termB);
                     }
                 }
 
 
             } else if (term2VarUnifyAllowed) {
                 termA = term2;
+                termB = term1;
                 termAAsVariable = (Variable) termA;
                 t = map[1]!=null ? map[1].get(termAAsVariable) : null;
 
                 if (t != null) {
-                    return findSubstitute(type, term1, t, map);
+                    return findSubstitute(type, termB, t, map);
                 }
 
                 if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
 
-                map[1].put(termAAsVariable, term1);
+                map[1].put(termAAsVariable, termB);
                 if (termAAsVariable.isCommon()) {
-                    map[0].put(termAAsVariable, term1);
+                    map[0].put(termAAsVariable, termB);
                 }
 
 
