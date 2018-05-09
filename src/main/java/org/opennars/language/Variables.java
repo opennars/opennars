@@ -226,13 +226,11 @@ public class Variables {
                     term1.getIsSpatial() != term2.getIsSpatial())
                     return false;
             }
-            if(term1 instanceof Implication && term2 instanceof Implication) {
-                if(!isSameOrder)
-                    return false;
+            if(term1 instanceof Implication && term2 instanceof Implication && !isSameOrder) {
+                return false;
             }
-            if(term1 instanceof Equivalence && term2 instanceof Equivalence) {
-                if(!isSameOrder)
-                    return false;
+            if(term1 instanceof Equivalence && term2 instanceof Equivalence && !isSameOrder) {
+                return false;
             }
 
             if (cTerm1.size() != cTerm2.size()) {
