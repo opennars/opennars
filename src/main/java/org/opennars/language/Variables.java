@@ -154,14 +154,12 @@ public class Variables {
         final boolean term2VarUnifyAllowed = term2Var && allowUnification(((Variable) term2).getType(), type);
 
         if (term1VarUnifyAllowed || term2VarUnifyAllowed) {
-            Variable termAAsVariable = null;
-            Term termA = null;
-            Term termB = null;
+
+            Term termA = term1VarUnifyAllowed ? term1 : term2;
+            Term termB = term1VarUnifyAllowed ? term2 : term1;
+            Variable termAAsVariable = (Variable)termA;
 
             if (term1VarUnifyAllowed) {
-                termA = term1;
-                termB = term2;
-                termAAsVariable = (Variable) termA;
                 t = map[0]!=null ? map[0].get(termAAsVariable) : null;
 
                 if (t != null) {
@@ -187,9 +185,6 @@ public class Variables {
 
 
             } else if (term2VarUnifyAllowed) {
-                termA = term2;
-                termB = term1;
-                termAAsVariable = (Variable) termA;
                 t = map[1]!=null ? map[1].get(termAAsVariable) : null;
 
                 if (t != null) {
