@@ -227,13 +227,10 @@ public class Variables {
             boolean areBothImplication = term1 instanceof Implication && term2 instanceof Implication;
             boolean areBothEquivalence = term1 instanceof Equivalence && term2 instanceof Equivalence;
 
-            if(areBothConjuctions && !isSameOrderAndSameSpatial) {
-                return false;
-            }
-            if(areBothImplication && !isSameOrder) {
-                return false;
-            }
-            if(areBothEquivalence && !isSameOrder) {
+            if(
+                (areBothConjuctions && !isSameOrderAndSameSpatial) ||
+                ((areBothEquivalence || areBothImplication) && !isSameOrder)
+            ) {
                 return false;
             }
 
