@@ -380,6 +380,14 @@ public final class CompositionalRules {
         Term commonTerm = null;
         final Map<Term, Term> subs = new HashMap<>();
 
+        // comment to firstIsImage and secondIsSameImage:
+        // Because if we have <{a} --> P> and <{a} --> C>
+        // then we want to introduce (&&,<{#1} -- P>,<{#1} --> C>).
+        // so we have to indeed check that
+        // they are equal set types (not seeing [a] and {a} as same)
+
+        // TODO< findCommonTerm1 and findCommonTerm2 are actually symmetric to each other -> merge them with a enum >
+
         if (index == 0) {
             if (term12 instanceof ImageExt) {
                 boolean firstIsImage = term22 instanceof ImageExt;
