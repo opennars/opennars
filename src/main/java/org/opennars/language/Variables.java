@@ -208,8 +208,8 @@ public class Variables {
                 return true;
             }
         } else {
-            boolean hasAnyTermVars = term1HasVar || term2HasVar;
-            boolean termsHaveSameClass = term1.getClass().equals(term2.getClass());
+            final boolean hasAnyTermVars = term1HasVar || term2HasVar;
+            final boolean termsHaveSameClass = term1.getClass().equals(term2.getClass());
             
             if (!(hasAnyTermVars && termsHaveSameClass && term1 instanceof CompoundTerm)) {
                 return termsEqual;
@@ -219,13 +219,13 @@ public class Variables {
             final CompoundTerm cTerm2 = (CompoundTerm) term2;
 
             //consider temporal order on term matching
-            boolean isSameOrder = term1.getTemporalOrder() == term2.getTemporalOrder();
-            boolean isSameSpatial = term1.getIsSpatial() == term2.getIsSpatial();
-            boolean isSameOrderAndSameSpatial = isSameOrder && isSameSpatial;
+            final boolean isSameOrder = term1.getTemporalOrder() == term2.getTemporalOrder();
+            final boolean isSameSpatial = term1.getIsSpatial() == term2.getIsSpatial();
+            final boolean isSameOrderAndSameSpatial = isSameOrder && isSameSpatial;
 
-            boolean areBothConjuctions = term1 instanceof Conjunction && term2 instanceof Conjunction;
-            boolean areBothImplication = term1 instanceof Implication && term2 instanceof Implication;
-            boolean areBothEquivalence = term1 instanceof Equivalence && term2 instanceof Equivalence;
+            final boolean areBothConjuctions = term1 instanceof Conjunction && term2 instanceof Conjunction;
+            final boolean areBothImplication = term1 instanceof Implication && term2 instanceof Implication;
+            final boolean areBothEquivalence = term1 instanceof Equivalence && term2 instanceof Equivalence;
 
             if(
                 (areBothConjuctions && !isSameOrderAndSameSpatial) ||
