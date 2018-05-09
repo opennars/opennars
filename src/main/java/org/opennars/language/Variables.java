@@ -97,44 +97,28 @@ public class Variables {
                         if(map[1] == null) {
                             map[1] = new HashMap<>();
                         }
-                        for(final Term c : map[0].keySet()) {
-                            mapk[0].put(c, map[0].get(c));
-                        }
-                        for(final Term c : map[1].keySet()) {
-                            mapk[1].put(c, map[1].get(c));
-                        }
+                        appendToMap(map[0], mapk[0]);
+                        appendToMap(map[1], mapk[1]);
                         boolean succeeded = true;
                         for(int j=k;j<k+size_smaller;j++) {
                             final int i = j-k;
                             final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
                             mapNew[0] = new HashMap<>();
                             mapNew[1] = new HashMap<>();
-                            for(final Term c : map[0].keySet()) {
-                                mapNew[0].put(c, map[0].get(c));
-                            }
-                            for(final Term c : map[1].keySet()) {
-                                mapNew[1].put(c, map[1].get(c));
-                            }
+                            appendToMap(map[0], mapNew[0]);
+                            appendToMap(map[1], mapNew[1]);
                             //attempt unification:
                             if(findSubstitute(type,c1.term[i],c2.term[j],mapNew)) {
-                                for(final Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
-                                    mapk[0].put(c, mapNew[0].get(c));
-                                }
-                                for(final Term c : mapNew[1].keySet()) {
-                                    mapk[1].put(c, mapNew[1].get(c));
-                                }
+                                appendToMap(mapNew[0], mapk[0]);
+                                appendToMap(mapNew[1], mapk[1]);
                             } else { //another shift k is needed
                                 succeeded = false;
                                 break;
                             }
                         }
                         if(succeeded) {
-                            for(final Term c : mapk[0].keySet()) { //ok put back the unifications that were necessary
-                                map[0].put(c, mapk[0].get(c));
-                            }
-                            for(final Term c : mapk[1].keySet()) {
-                                map[1].put(c, mapk[1].get(c));
-                            }
+                            appendToMap(mapk[0], map[0]);
+                            appendToMap(mapk[1], map[1]);
                             return true;
                         }
                     }
@@ -165,7 +149,7 @@ public class Variables {
                 return true;
             }
         }
-        
+
         if (term1Var && allowUnification(((Variable) term1).getType(), type)) {
             final Variable var1 = (Variable) term1;            
             t = map[0]!=null ? map[0].get(var1) : null;
@@ -267,20 +251,12 @@ public class Variables {
                         if(map[1] == null) {
                             map[1] = new HashMap<>();
                         }
-                        for(final Term c : map[0].keySet()) {
-                            mapNew[0].put(c, map[0].get(c));
-                        }
-                        for(final Term c : map[1].keySet()) {
-                            mapNew[1].put(c, map[1].get(c));
-                        }
+                        appendToMap(map[0], mapNew[0]);
+                        appendToMap(map[1], mapNew[1]);
                         //attempt unification:
                         if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
-                            for(final Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
-                                map[0].put(c, mapNew[0].get(c));
-                            }
-                            for(final Term c : mapNew[1].keySet()) {
-                                map[1].put(c, mapNew[1].get(c));
-                            }
+                            appendToMap(mapNew[0], map[0]);
+                            appendToMap(mapNew[1], map[1]);
                             succeeded = true;
                             matchedJ.add(j);
                             break;
@@ -301,6 +277,12 @@ public class Variables {
             }
             return true;
 
+        }
+    }
+
+    private static void appendToMap(Map<Term, Term> source, Map<Term, Term> target) {
+        for(final Term c : source.keySet()) {
+            target.put(c, source.get(c));
         }
     }
 
