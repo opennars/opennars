@@ -155,9 +155,11 @@ public class Variables {
 
         if (term1VarUnifyAllowed || term2VarUnifyAllowed) {
             Variable termAAsVariable = null;
+            Term termA = null;
 
             if (term1VarUnifyAllowed) {
-                termAAsVariable = (Variable) term1;
+                termA = term1;
+                termAAsVariable = (Variable) termA;
                 t = map[0]!=null ? map[0].get(termAAsVariable) : null;
 
                 if (t != null) {
@@ -167,12 +169,12 @@ public class Variables {
                 if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
 
                 if ((term2 instanceof Variable) && allowUnification(((Variable) term2).getType(), type)) {
-                    final Variable CommonVar = makeCommonVariable(term1, term2);
+                    final Variable CommonVar = makeCommonVariable(termA, term2);
                     map[0].put(termAAsVariable, CommonVar);
                     map[1].put(term2, CommonVar);
                 } else {
-                    if(term2 instanceof Variable && ((((Variable)term2).getType()==Symbols.VAR_QUERY && ((Variable)term1).getType()!=Symbols.VAR_QUERY) ||
-                        (((Variable)term2).getType()!=Symbols.VAR_QUERY && ((Variable)term1).getType()==Symbols.VAR_QUERY))) {
+                    if(term2 instanceof Variable && ((((Variable)term2).getType()==Symbols.VAR_QUERY && ((Variable)termA).getType()!=Symbols.VAR_QUERY) ||
+                        (((Variable)term2).getType()!=Symbols.VAR_QUERY && ((Variable)termA).getType()==Symbols.VAR_QUERY))) {
                         return false;
                     }
                     map[0].put(termAAsVariable, term2);
@@ -183,7 +185,8 @@ public class Variables {
 
 
             } else if (term2VarUnifyAllowed) {
-                termAAsVariable = (Variable) term2;
+                termA = term2;
+                termAAsVariable = (Variable) termA;
                 t = map[1]!=null ? map[1].get(termAAsVariable) : null;
 
                 if (t != null) {
