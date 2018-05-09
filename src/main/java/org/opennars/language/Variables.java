@@ -184,16 +184,11 @@ public class Variables {
                         map[1].put(termAAsVariable, termB);
                     }
                 }
-
-
-            } else if (term2VarUnifyAllowed) {
-
+            } else {
                 map[1].put(termAAsVariable, termB);
                 if (termAAsVariable.isCommon()) {
                     map[0].put(termAAsVariable, termB);
                 }
-
-
             }
 
             return true;
