@@ -208,7 +208,10 @@ public class Variables {
                 return true;
             }
         } else {
-            if ((term1HasVar || term2HasVar) && (term1 instanceof CompoundTerm) && term1.getClass().equals(term2.getClass())) {
+            boolean hasAnyTermVars = term1HasVar || term2HasVar;
+            boolean termsHaveSameClass = term1.getClass().equals(term2.getClass());
+            
+            if (hasAnyTermVars && termsHaveSameClass && term1 instanceof CompoundTerm) {
                 final CompoundTerm cTerm1 = (CompoundTerm) term1;
                 final CompoundTerm cTerm2 = (CompoundTerm) term2;
 
