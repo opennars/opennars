@@ -219,17 +219,19 @@ public class Variables {
             final CompoundTerm cTerm2 = (CompoundTerm) term2;
 
             //consider temporal order on term matching
+            boolean isSameOrderEqual = term1.getTemporalOrder() == term2.getTemporalOrder();
+
             if(term1 instanceof Conjunction && term2 instanceof Conjunction) {
-                if(term1.getTemporalOrder() != term2.getTemporalOrder() ||
+                if(!isSameOrderEqual ||
                     term1.getIsSpatial() != term2.getIsSpatial())
                     return false;
             }
             if(term1 instanceof Implication && term2 instanceof Implication) {
-                if(term1.getTemporalOrder() != term2.getTemporalOrder())
+                if(!isSameOrderEqual)
                     return false;
             }
             if(term1 instanceof Equivalence && term2 instanceof Equivalence) {
-                if(term1.getTemporalOrder() != term2.getTemporalOrder())
+                if(!isSameOrderEqual)
                     return false;
             }
 
