@@ -150,7 +150,10 @@ public class Variables {
             }
         }
 
-        if (term1Var && allowUnification(((Variable) term1).getType(), type)) {
+        final boolean term1VarUnifyAllowed = term1Var && allowUnification(((Variable) term1).getType(), type);
+        final boolean term2VarUnifyAllowed = term2Var && allowUnification(((Variable) term2).getType(), type);
+
+        if (term1VarUnifyAllowed) {
             final Variable var1 = (Variable) term1;
             t = map[0]!=null ? map[0].get(var1) : null;
 
@@ -176,7 +179,7 @@ public class Variables {
             }
             return true;
 
-        } else if (term2Var && allowUnification(((Variable) term2).getType(), type)) {
+        } else if (term2VarUnifyAllowed) {
             final Variable var2 = (Variable) term2;
             t = map[1]!=null ? map[1].get(var2) : null;
 
