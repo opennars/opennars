@@ -211,94 +211,95 @@ public class Variables {
             boolean hasAnyTermVars = term1HasVar || term2HasVar;
             boolean termsHaveSameClass = term1.getClass().equals(term2.getClass());
             
-            if (hasAnyTermVars && termsHaveSameClass && term1 instanceof CompoundTerm) {
-                final CompoundTerm cTerm1 = (CompoundTerm) term1;
-                final CompoundTerm cTerm2 = (CompoundTerm) term2;
+            if (!(hasAnyTermVars && termsHaveSameClass && term1 instanceof CompoundTerm)) {
+                return termsEqual;
+            }
 
-                //consider temporal order on term matching
-                if(term1 instanceof Conjunction && term2 instanceof Conjunction) {
-                    if(term1.getTemporalOrder() != term2.getTemporalOrder() ||
-                        term1.getIsSpatial() != term2.getIsSpatial())
-                        return false;
-                }
-                if(term1 instanceof Implication && term2 instanceof Implication) {
-                    if(term1.getTemporalOrder() != term2.getTemporalOrder())
-                        return false;
-                }
-                if(term1 instanceof Equivalence && term2 instanceof Equivalence) {
-                    if(term1.getTemporalOrder() != term2.getTemporalOrder())
-                        return false;
-                }
+            final CompoundTerm cTerm1 = (CompoundTerm) term1;
+            final CompoundTerm cTerm2 = (CompoundTerm) term2;
 
-                if (cTerm1.size() != cTerm2.size()) {
+            //consider temporal order on term matching
+            if(term1 instanceof Conjunction && term2 instanceof Conjunction) {
+                if(term1.getTemporalOrder() != term2.getTemporalOrder() ||
+                    term1.getIsSpatial() != term2.getIsSpatial())
+                    return false;
+            }
+            if(term1 instanceof Implication && term2 instanceof Implication) {
+                if(term1.getTemporalOrder() != term2.getTemporalOrder())
+                    return false;
+            }
+            if(term1 instanceof Equivalence && term2 instanceof Equivalence) {
+                if(term1.getTemporalOrder() != term2.getTemporalOrder())
+                    return false;
+            }
+
+            if (cTerm1.size() != cTerm2.size()) {
+                return false;
+            }
+            if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).relationIndex != ((ImageExt) cTerm2).relationIndex) || (cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).relationIndex != ((ImageInt) cTerm2).relationIndex)) {
+                return false;
+            }
+            final Term[] list = cTerm1.cloneTerms();
+            if (cTerm1.isCommutative()) {
+                CompoundTerm.shuffle(list, Memory.randomNumber);
+                final Set<Integer> alreadyMatched = new HashSet<>();
+                //ok attempt unification
+                if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
                     return false;
                 }
-                if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).relationIndex != ((ImageExt) cTerm2).relationIndex) || (cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).relationIndex != ((ImageInt) cTerm2).relationIndex)) {
-                    return false;
-                }
-                final Term[] list = cTerm1.cloneTerms();
-                if (cTerm1.isCommutative()) {
-                    CompoundTerm.shuffle(list, Memory.randomNumber);
-                    final Set<Integer> alreadyMatched = new HashSet<>();
-                    //ok attempt unification
-                    if(cTerm2 == null || list == null || cTerm2.term == null || list.length != cTerm2.term.length) {
-                        return false;
-                    }
-                    final Set<Integer> matchedJ = new HashSet<>(list.length * 2);
-                    for(int i = 0; i < list.length; i++) {
-                        boolean succeeded = false;
-                        for(int j = 0; j < list.length; j++) {
-                            if(matchedJ.contains(j)) { //this one already was used to match one of the i's
-                                continue;
-                            }
-                            final Term ti = list[i].clone();
-                            //clone map also:
-                            final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
-                            mapNew[0] = new HashMap<>();
-                            mapNew[1] = new HashMap<>();
-                            if(map[0] == null) {
-                                map[0] = new HashMap<>();
-                            }
-                            if(map[1] == null) {
-                                map[1] = new HashMap<>();
-                            }
-                            for(final Term c : map[0].keySet()) {
-                                mapNew[0].put(c, map[0].get(c));
-                            }
-                            for(final Term c : map[1].keySet()) {
-                                mapNew[1].put(c, map[1].get(c));
-                            }
-                            //attempt unification:
-                            if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
-                                for(final Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
-                                    map[0].put(c, mapNew[0].get(c));
-                                }
-                                for(final Term c : mapNew[1].keySet()) {
-                                    map[1].put(c, mapNew[1].get(c));
-                                }
-                                succeeded = true;
-                                matchedJ.add(j);
-                                break;
-                            }
+                final Set<Integer> matchedJ = new HashSet<>(list.length * 2);
+                for(int i = 0; i < list.length; i++) {
+                    boolean succeeded = false;
+                    for(int j = 0; j < list.length; j++) {
+                        if(matchedJ.contains(j)) { //this one already was used to match one of the i's
+                            continue;
                         }
-                        if(!succeeded) {
-                            return false;
+                        final Term ti = list[i].clone();
+                        //clone map also:
+                        final Map<Term, Term>[] mapNew = (Map<Term, Term>[]) new HashMap<?,?>[2];
+                        mapNew[0] = new HashMap<>();
+                        mapNew[1] = new HashMap<>();
+                        if(map[0] == null) {
+                            map[0] = new HashMap<>();
+                        }
+                        if(map[1] == null) {
+                            map[1] = new HashMap<>();
+                        }
+                        for(final Term c : map[0].keySet()) {
+                            mapNew[0].put(c, map[0].get(c));
+                        }
+                        for(final Term c : map[1].keySet()) {
+                            mapNew[1].put(c, map[1].get(c));
+                        }
+                        //attempt unification:
+                        if(findSubstitute(type,ti,cTerm2.term[i],mapNew)) {
+                            for(final Term c : mapNew[0].keySet()) { //ok put back the unifications that were necessary
+                                map[0].put(c, mapNew[0].get(c));
+                            }
+                            for(final Term c : mapNew[1].keySet()) {
+                                map[1].put(c, mapNew[1].get(c));
+                            }
+                            succeeded = true;
+                            matchedJ.add(j);
+                            break;
                         }
                     }
-                    return true;
-                }
-                for (int i = 0; i < cTerm1.size(); i++) {
-                    final Term t1 = list[i];
-                    final Term t2 = cTerm2.term[i];
-                    if (!findSubstitute(type, t1, t2, map)) {
+                    if(!succeeded) {
                         return false;
                     }
                 }
                 return true;
             }
+            for (int i = 0; i < cTerm1.size(); i++) {
+                final Term t1 = list[i];
+                final Term t2 = cTerm2.term[i];
+                if (!findSubstitute(type, t1, t2, map)) {
+                    return false;
+                }
+            }
+            return true;
+
         }
-        
-        return termsEqual;        
     }
 
 
