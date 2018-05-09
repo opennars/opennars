@@ -382,10 +382,10 @@ public final class CompositionalRules {
 
         if (index == 0) {
             if (term12 instanceof ImageExt) {
-                boolean enableSpecialCase = term22 instanceof ImageExt;
-                boolean enableRetCommonTerm = true;
+                boolean firstIsImage = term22 instanceof ImageExt;
+                boolean secondIsSameImage = true;
 
-                commonTerm = findCommonTerm1(term12, term22, commonTerm, enableSpecialCase, enableRetCommonTerm);
+                commonTerm = findCommonTerm1(term12, term22, commonTerm, firstIsImage, secondIsSameImage);
 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -394,10 +394,10 @@ public final class CompositionalRules {
                 }
             }
             if (commonTerm==null && term22 instanceof ImageExt) {
-                boolean enableSpecialCase = term12 instanceof ImageExt;
-                boolean enableRetCommonTerm = true;
+                boolean firstIsImage = term12 instanceof ImageExt;
+                boolean secondIsSameImage = true;
 
-                commonTerm = findCommonTerm1(term22, term12, commonTerm, enableSpecialCase, enableRetCommonTerm);
+                commonTerm = findCommonTerm1(term22, term12, commonTerm, firstIsImage, secondIsSameImage);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -407,10 +407,10 @@ public final class CompositionalRules {
             }
         } else {
             if (term21 instanceof ImageInt) {
-                boolean enableSpecialCase = true;
-                boolean enableRetCommonTerm = term11 instanceof ImageInt;
+                boolean firstIsImage = true;
+                boolean secondIsSameImage = term11 instanceof ImageInt;
 
-                commonTerm = findCommonTerm2(term11, term21, commonTerm, enableSpecialCase, enableRetCommonTerm);
+                commonTerm = findCommonTerm2(term11, term21, commonTerm, firstIsImage, secondIsSameImage);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -419,10 +419,10 @@ public final class CompositionalRules {
                 }
             }
             if (commonTerm==null && term11 instanceof ImageInt) {
-                boolean enableSpecialCase = true;
-                boolean enableRetCommonTerm = term21 instanceof ImageInt;
+                boolean firstIsImage = true;
+                boolean secondIsSameImage = term21 instanceof ImageInt;
 
-                commonTerm = findCommonTerm2(term21, term11, commonTerm, enableSpecialCase, enableRetCommonTerm);
+                commonTerm = findCommonTerm2(term21, term11, commonTerm, firstIsImage, secondIsSameImage);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -482,39 +482,39 @@ public final class CompositionalRules {
         return term22 instanceof CompoundTerm ? ((CompoundTerm)term22).applySubstitute(subs) : varInd2;
     }
 
-    private static Term findCommonTerm2(final Term containedTest, Term tested, final Term commonTerm, final boolean enableSpecialCase, final boolean enableRetCommonTerm) {
+    private static Term findCommonTerm2(final Term containedTest, Term tested, final Term commonTerm, final boolean firstIsImage, final boolean secondIsSameImage) {
         Term resultCommonTerm = commonTerm;
 
         if (tested.containsTermRecursively(containedTest)) {
             resultCommonTerm = containedTest;
         }
 
-        if(enableRetCommonTerm && resultCommonTerm == null) {
-            resultCommonTerm = retCommonTerm(containedTest, tested, enableSpecialCase);
+        if(secondIsSameImage && resultCommonTerm == null) {
+            resultCommonTerm = retCommonTerm(containedTest, tested, firstIsImage);
         }
         return resultCommonTerm;
     }
 
-    private static Term findCommonTerm1(Term tested, Term containedTest, Term commonTerm, boolean enableSpecialCase, boolean enableRetCommonTerm) {
+    private static Term findCommonTerm1(Term tested, Term containedTest, Term commonTerm, boolean firstIsImage, boolean secondIsSameImage) {
         Term resultCommonTerm = commonTerm;
 
         if (tested.containsTermRecursively(containedTest)) {
             resultCommonTerm = containedTest;
         }
 
-        if(enableRetCommonTerm && resultCommonTerm == null) {
-            resultCommonTerm = retCommonTerm(tested, containedTest, enableSpecialCase);
+        if(secondIsSameImage && resultCommonTerm == null) {
+            resultCommonTerm = retCommonTerm(tested, containedTest, firstIsImage);
         }
         return resultCommonTerm;
     }
 
-    private static Term retCommonTerm(Term term12, Term term22, boolean enableSpecialCase) {
+    private static Term retCommonTerm(Term term12, Term term22, boolean firstIsImage) {
         Term commonTerm;
         commonTerm = ((Image) term12).getTheOtherComponent();
         if(!(term22.containsTermRecursively(commonTerm))) {
             commonTerm=null;
         }
-        if (enableSpecialCase && ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm))) {
+        if (firstIsImage && ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm))) {
             commonTerm = ((Image) term22).getTheOtherComponent();
             if ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm)) {
                 commonTerm = null;
