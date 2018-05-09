@@ -117,7 +117,6 @@ public class ConceptProcessing {
 
         final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
-        boolean wasRevised = false;
         if (oldBeliefT != null) {
             oldBelief = oldBeliefT.sentence;
             final Stamp newStamp = judg.stamp;
@@ -138,7 +137,7 @@ public class ConceptProcessing {
                         // nal.singlePremiseTask(projectedBelief, task.budget);
                     }
                     nal.setCurrentBelief(projectedBelief);
-                    wasRevised = revision(judg, projectedBelief, false, nal);
+                    revision(judg, projectedBelief, false, nal);
                 }
             }
         }
@@ -202,8 +201,6 @@ public class ConceptProcessing {
                     break;
                 }
             }
-
-            final int a = pred_conc.executable_preconditions.size();
 
             //at first we have to remove the last one with same content from table
             int i_delete = -1;
