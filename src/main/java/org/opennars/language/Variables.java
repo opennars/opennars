@@ -221,7 +221,7 @@ public class Variables {
             //consider temporal order on term matching
             boolean isSameOrder = term1.getTemporalOrder() == term2.getTemporalOrder();
             boolean isSameSpatial = term1.getIsSpatial() == term2.getIsSpatial();
-            boolean spatialRENAMEME = !isSameOrder || !isSameSpatial;
+            boolean spatialRENAMEME = !(isSameOrder && isSameSpatial);
 
             if(term1 instanceof Conjunction && term2 instanceof Conjunction) {
                 if(spatialRENAMEME)
