@@ -220,10 +220,10 @@ public class Variables {
 
             //consider temporal order on term matching
             boolean isSameOrder = term1.getTemporalOrder() == term2.getTemporalOrder();
+            boolean isSameSpatial = term1.getIsSpatial() == term2.getIsSpatial();
 
             if(term1 instanceof Conjunction && term2 instanceof Conjunction) {
-                if(!isSameOrder ||
-                    term1.getIsSpatial() != term2.getIsSpatial())
+                if(!isSameOrder || !isSameSpatial)
                     return false;
             }
             if(term1 instanceof Implication && term2 instanceof Implication && !isSameOrder) {
