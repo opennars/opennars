@@ -104,13 +104,15 @@ public class ConceptProcessing {
             !task.sentence.isEternal() &&
             concept.negConfirmation != null &&
             task.sentence.getOccurenceTime() > concept.negConfirm_abort_mintime;
-        if(satisfiesAnticipation) {
-            if(task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
-                if(((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
-                    nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
-                    concept.negConfirmation = null; // confirmed
-                }
-            }
+
+        final boolean isExpectactionAbliveThreshold = task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION;
+
+        if(
+            satisfiesAnticipation && isExpectactionAbliveThreshold &&
+            ((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())
+        ) {
+            nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
+            concept.negConfirmation = null; // confirmed
         }
 
         final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs);   // only revise with the strongest -- how about projection?
