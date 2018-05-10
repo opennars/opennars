@@ -22,9 +22,12 @@ import org.opennars.language.*;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
+import org.opennars.util.StatementUtil;
 
 import static org.opennars.io.Symbols.*;
 import static org.opennars.language.Terms.equalSubTermsInRespectToImageAndProduct;
+import static org.opennars.util.StatementUtil.retBySide;
+import static org.opennars.util.StatementUtil.retOppositeSide;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
@@ -405,8 +408,8 @@ public class RuleTables {
         Term t2 = null;
         final Term[] u = new Term[] { taskStatement, beliefStatement };
 
-        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
-        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+        final StatementUtil.EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final StatementUtil.EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
         if (!Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
             return;
@@ -497,8 +500,8 @@ public class RuleTables {
         Statement asymSt = (Statement) asym.term;
         Statement symSt = (Statement) sym.term;
 
-        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
-        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+        final StatementUtil.EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final StatementUtil.EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
         final Term[] u = new Term[] { asymSt, symSt };
         if (!Variables.unify(VAR_INDEPENDENT, retBySide(asymSt, figureLeft), retBySide(symSt, figureRight), u)) {
@@ -528,20 +531,6 @@ public class RuleTables {
     }
 
     /**
-     * returns the subject (0) or predicate(1)
-     * @param statement statement for which the side has to be returned
-     * @param side subject(0) or predicate(1)
-     * @return the term of the side
-     */
-    private static Term retBySide(Statement statement, EnumStatementSide side) {
-        return side == EnumStatementSide.SUBJECT ? statement.getSubject() : statement.getPredicate();
-    }
-
-    private static EnumStatementSide retOppositeSide(EnumStatementSide side) {
-        return side == EnumStatementSide.SUBJECT ? EnumStatementSide.PREDICATE : EnumStatementSide.SUBJECT;
-    }
-
-    /**
      * converts the side of a figure to a zero based index - which determines the side of the Statement
      *
      * a figure is a encoding for the sides
@@ -549,30 +538,25 @@ public class RuleTables {
      * @param sideOfFigure side
      * @return
      */
-    private static EnumStatementSide retSideFromFigure(int figure, EnumFigureSide sideOfFigure) {
+    private static StatementUtil.EnumStatementSide retSideFromFigure(int figure, EnumFigureSide sideOfFigure) {
         if( sideOfFigure == EnumFigureSide.LEFT ) {
             switch(figure) {
-                case 11: return EnumStatementSide.SUBJECT;
-                case 12: return EnumStatementSide.SUBJECT;
-                case 21: return EnumStatementSide.PREDICATE;
-                case 22: return EnumStatementSide.PREDICATE;
+                case 11: return StatementUtil.EnumStatementSide.SUBJECT;
+                case 12: return StatementUtil.EnumStatementSide.SUBJECT;
+                case 21: return StatementUtil.EnumStatementSide.PREDICATE;
+                case 22: return StatementUtil.EnumStatementSide.PREDICATE;
             }
         }
         else {
             switch(figure) {
-                case 11: return EnumStatementSide.SUBJECT;
-                case 12: return EnumStatementSide.PREDICATE;
-                case 21: return EnumStatementSide.SUBJECT;
-                case 22: return EnumStatementSide.PREDICATE;
+                case 11: return StatementUtil.EnumStatementSide.SUBJECT;
+                case 12: return StatementUtil.EnumStatementSide.PREDICATE;
+                case 21: return StatementUtil.EnumStatementSide.SUBJECT;
+                case 22: return StatementUtil.EnumStatementSide.PREDICATE;
             }
         }
 
         throw new IllegalArgumentException("figure is invalid");
-    }
-
-    enum EnumStatementSide {
-        SUBJECT,
-        PREDICATE,
     }
 
     enum EnumFigureSide {
@@ -593,8 +577,8 @@ public class RuleTables {
         final Statement s1 = (Statement) belief.term;
         final Statement s2 = (Statement) taskSentence.term;
 
-        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
-        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+        final StatementUtil.EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final StatementUtil.EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
         //parameters for unify()
         final Term ut1 = retBySide(s1, figureLeft);
