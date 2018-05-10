@@ -386,14 +386,14 @@ public final class CompositionalRules {
         // so we have to indeed check that
         // they are equal set types (not seeing [a] and {a} as same)
 
-        // TODO< findCommonTerm1 and findCommonTerm2 are actually symmetric to each other -> merge them with a enum >
+        // TODO< findCommonTermPredicate and findCommonSubject are actually symmetric to each other -> merge them with a enum >
 
         if (index == 0) {
             if (term12 instanceof ImageExt) {
                 boolean firstIsImage = term22 instanceof ImageExt;
                 boolean secondIsSameImage = true;
 
-                commonTerm = findCommonTerm1(term12, term22, commonTerm, firstIsImage, secondIsSameImage);
+                commonTerm = findCommonTermPredicate(term12, term22, commonTerm, firstIsImage, secondIsSameImage);
 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -405,7 +405,7 @@ public final class CompositionalRules {
                 boolean firstIsImage = term12 instanceof ImageExt;
                 boolean secondIsSameImage = true;
 
-                commonTerm = findCommonTerm1(term22, term12, commonTerm, firstIsImage, secondIsSameImage);
+                commonTerm = findCommonTermPredicate(term22, term12, commonTerm, firstIsImage, secondIsSameImage);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -418,7 +418,7 @@ public final class CompositionalRules {
                 boolean firstIsImage = true;
                 boolean secondIsSameImage = term11 instanceof ImageInt;
 
-                commonTerm = findCommonTerm2(term11, term21, commonTerm, firstIsImage, secondIsSameImage);
+                commonTerm = findCommonSubject(term11, term21, commonTerm, firstIsImage, secondIsSameImage);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -430,7 +430,7 @@ public final class CompositionalRules {
                 boolean firstIsImage = true;
                 boolean secondIsSameImage = term21 instanceof ImageInt;
 
-                commonTerm = findCommonTerm2(term21, term11, commonTerm, firstIsImage, secondIsSameImage);
+                commonTerm = findCommonSubject(term21, term11, commonTerm, firstIsImage, secondIsSameImage);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
@@ -490,7 +490,7 @@ public final class CompositionalRules {
         return term22 instanceof CompoundTerm ? ((CompoundTerm)term22).applySubstitute(subs) : varInd2;
     }
 
-    private static Term findCommonTerm2(final Term containedTest, Term tested, final Term commonTerm, final boolean firstIsImage, final boolean secondIsSameImage) {
+    private static Term findCommonSubject(final Term containedTest, Term tested, final Term commonTerm, final boolean firstIsImage, final boolean secondIsSameImage) {
         Term resultCommonTerm = commonTerm;
 
         if (tested.containsTermRecursively(containedTest)) {
@@ -503,7 +503,7 @@ public final class CompositionalRules {
         return resultCommonTerm;
     }
 
-    private static Term findCommonTerm1(Term tested, Term containedTest, Term commonTerm, boolean firstIsImage, boolean secondIsSameImage) {
+    private static Term findCommonTermPredicate(Term tested, Term containedTest, Term commonTerm, boolean firstIsImage, boolean secondIsSameImage) {
         Term resultCommonTerm = commonTerm;
 
         if (tested.containsTermRecursively(containedTest)) {
