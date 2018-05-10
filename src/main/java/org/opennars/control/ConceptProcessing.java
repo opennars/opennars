@@ -185,6 +185,10 @@ public class ConceptProcessing {
                                         break;
                                     }
                                 }
+                                
+                                if(strongest_target == null) {
+                                    return;
+                                }
 
                                 final int a = pred_conc.executable_preconditions.size();
 
