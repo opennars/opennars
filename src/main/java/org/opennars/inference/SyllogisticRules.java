@@ -21,11 +21,14 @@ import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.language.*;
 import org.opennars.main.Parameters;
+import org.opennars.util.StatementUtil;
 
 import java.util.List;
 
 import static org.opennars.inference.TemporalRules.*;
 import static org.opennars.language.Terms.reduceComponents;
+import static org.opennars.util.StatementUtil.retBySide;
+import static org.opennars.util.StatementUtil.retOppositeSide;
 
 
 /**
@@ -511,13 +514,9 @@ public final class SyllogisticRules {
         final Term commonComponent;
         Term newComponent = null;
         if (side == 0 || side == 1) {
-            if (side == 0) {
-                commonComponent = ((Statement) premise2).getSubject();
-                newComponent = ((Statement) premise2).getPredicate();
-            } else if (side == 1) {
-                commonComponent = ((Statement) premise2).getPredicate();
-                newComponent = ((Statement) premise2).getSubject();
-            }
+            StatementUtil.EnumStatementSide sideOfCommonComponentAsEnum = side == 0 ? StatementUtil.EnumStatementSide.SUBJECT : StatementUtil.EnumStatementSide.PREDICATE;
+            commonComponent = retBySide((Statement)premise2, sideOfCommonComponentAsEnum);
+            newComponent = retBySide((Statement)premise2, retOppositeSide(sideOfCommonComponentAsEnum));
         }else {
             commonComponent = premise2;
         }
