@@ -436,6 +436,8 @@ public class ConceptProcessing {
         Operation bestop = null;
         float bestop_truthexp = 0.0f;
         TruthValue bestop_truth = null;
+        float bestop_timeDifference = Float.NaN; // the time difference from now to the best op
+
         Task executable_precond = null;
         long mintime = -1;
         long maxtime = -1;
@@ -491,6 +493,7 @@ public class ConceptProcessing {
                 //long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
                 //long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
                 //debug end
+
                 final TruthValue precon = projectedPrecon.truth;
                 //and derive the conjunction of the left side:
                 final TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
@@ -502,6 +505,10 @@ public class ConceptProcessing {
                     bestop = op;
                     bestop_truthexp = expecdesire;
                     bestop_truth = opdesire;
+
+                    // TODO< check order - might be switched >
+                    bestop_timeDifference = nal.memory.time() - projectedPrecon.stamp.getOccurrenceTime();
+
                     executable_precond = t;
                 }
             }
