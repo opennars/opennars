@@ -523,6 +523,9 @@ public class ConceptProcessing {
         // in the real world. The agent could have learned the wrong timing - so it has to have a way to
         // adapt to these timing changes by observing the reaction of the environment to different reactions (with our actions)
         // with different timing characteristics.
+        //
+        //
+        // this leads to emergent effects of curiosity and creativity
         // TODO< expose parameters to configuration >
         boolean distributionEnable = false;
         double distributionFalloff = 1.0; // TODO< tune >
@@ -533,7 +536,7 @@ public class ConceptProcessing {
             // we sample our distribution - in this case the exponential function
             boolean distributionResultFire = true;
             if (distributionEnable) {
-                double probabilityToFire = Math.exp(Math.abs(bestop_timeDifference) * distributionFalloff);
+                double probabilityToFire = Math.exp(-1.0 * Math.abs(bestop_timeDifference) * distributionFalloff);
                 distributionResultFire = Math.random() < probabilityToFire;
             }
 
