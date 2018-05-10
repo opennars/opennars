@@ -514,7 +514,34 @@ public class ConceptProcessing {
             }
         }
 
+        // one way is to stochastically fire the Op with a probability distribution
+        // we use a exponential function here because it has nice properties
+        // * falls off quickly (good for exact decision making)
+        // * integrates to integral fn [-inf; inf] to 1.0 (it will fire at some point)
+        //
+        // We do sample with a distribution function because we can't be sure about the exact timing
+        // in the real world. The agent could have learned the wrong timing - so it has to have a way to
+        // adapt to these timing changes by observing the reaction of the environment to different reactions (with our actions)
+        // with different timing characteristics.
+        // TODO< expose parameters to configuration >
+        boolean distributionEnable = false;
+        double distributionFalloff = 1.0; // TODO< tune >
+
+
         if(bestop != null && bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
+
+            // we sample our distribution - in this case the exponential function
+            boolean distributionResultFire = true;
+            if (distributionEnable) {
+                double probabilityToFire = Math.exp(Math.abs(bestop_timeDifference) * distributionFalloff);
+                distributionResultFire = Math.random() < probabilityToFire;
+            }
+
+            // we don't fire if the distribution indicated so
+            if( !distributionResultFire ) {
+                return;
+            }
+
 
             final Sentence createdSentence = new Sentence(
                     bestop,
