@@ -194,12 +194,15 @@ public class ConceptProcessing {
             }
 
             Task strongest_target = null; //beliefs.get(0);
-            //get the first eternal:
+            //get the first eternal. the highest confident one (due to the sorted order):
             for(final Task t : concept.beliefs) {
                 if(t.sentence.isEternal()) {
                     strongest_target = t;
                     break;
                 }
+            }
+            if(strongest_target == null) {
+                return;
             }
 
             //at first we have to remove the last one with same content from table
