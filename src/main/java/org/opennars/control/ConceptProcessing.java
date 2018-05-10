@@ -445,6 +445,8 @@ public class ConceptProcessing {
         Operation bestop = null;
         float bestop_truthexp = 0.0f;
         TruthValue bestop_truth = null;
+        float bestop_timeDifference = Float.NaN; // the time difference from now to the best op
+
         Task executable_precond = null;
         long mintime = -1;
         long maxtime = -1;
@@ -500,6 +502,7 @@ public class ConceptProcessing {
                 //long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
                 //long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
                 //debug end
+
                 final TruthValue precon = projectedPrecon.truth;
                 //and derive the conjunction of the left side:
                 final TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
@@ -511,12 +514,43 @@ public class ConceptProcessing {
                     bestop = op;
                     bestop_truthexp = expecdesire;
                     bestop_truth = opdesire;
+
+                    // TODO< check order - might be switched >
+                    bestop_timeDifference = nal.memory.time() - projectedPrecon.stamp.getOccurrenceTime();
+
                     executable_precond = t;
                 }
             }
         }
 
+        // one way is to stochastically fire the Op with a probability distribution
+        // we use a exponential function here because it has nice properties
+        // * falls off quickly (good for exact decision making)
+        // * integrates to integral fn [-inf; inf] to 1.0 (it will fire at some point)
+        //
+        // We do sample with a distribution function because we can't be sure about the exact timing
+        // in the real world. The agent could have learned the wrong timing - so it has to have a way to
+        // adapt to these timing changes by observing the reaction of the environment to different reactions (with our actions)
+        // with different timing characteristics.
+        // TODO< expose parameters to configuration >
+        boolean distributionEnable = false;
+        double distributionFalloff = 1.0; // TODO< tune >
+
+
         if(bestop != null && bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
+
+            // we sample our distribution - in this case the exponential function
+            boolean distributionResultFire = true;
+            if (distributionEnable) {
+                double probabilityToFire = Math.exp(Math.abs(bestop_timeDifference) * distributionFalloff);
+                distributionResultFire = Math.random() < probabilityToFire;
+            }
+
+            // we don't fire if the distribution indicated so
+            if( !distributionResultFire ) {
+                return;
+            }
+
 
             final Sentence createdSentence = new Sentence(
                     bestop,
