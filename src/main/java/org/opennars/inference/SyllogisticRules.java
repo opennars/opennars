@@ -510,13 +510,15 @@ public final class SyllogisticRules {
         final boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term);
         final Term commonComponent;
         Term newComponent = null;
-        if (side == 0) {
-            commonComponent = ((Statement) premise2).getSubject();
-            newComponent = ((Statement) premise2).getPredicate();
-        } else if (side == 1) {
-            commonComponent = ((Statement) premise2).getPredicate();
-            newComponent = ((Statement) premise2).getSubject();
-        } else {
+        if (side == 0 || side == 1) {
+            if (side == 0) {
+                commonComponent = ((Statement) premise2).getSubject();
+                newComponent = ((Statement) premise2).getPredicate();
+            } else if (side == 1) {
+                commonComponent = ((Statement) premise2).getPredicate();
+                newComponent = ((Statement) premise2).getSubject();
+            }
+        }else {
             commonComponent = premise2;
         }
         
