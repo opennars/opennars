@@ -36,7 +36,7 @@ public class GeneralInferenceControl {
         if (currentConcept==null) {
             return;
         }
-        
+        ConceptProcessing.maintainDisappointedAnticipations(currentConcept);
         if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
             mem.concepts.take(currentConcept.getTerm());
             mem.conceptRemoved(currentConcept);
@@ -47,12 +47,9 @@ public class GeneralInferenceControl {
             mem.conceptRemoved(currentConcept);
             return;
         }
-        
         final DerivationContext nal = new DerivationContext(mem, narParameters);
         nal.setCurrentConcept(currentConcept);
-
         final boolean putBackConcept = fireConcept(nal, 1);
-
         if(putBackConcept) { // put back
             final float forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
             nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
@@ -66,16 +63,13 @@ public class GeneralInferenceControl {
             if (nal.currentConcept.taskLinks.size() == 0) {
                 return false;
             }
-
             nal.currentTaskLink = nal.currentConcept.taskLinks.takeNext();                    
             if (nal.currentTaskLink == null) {
                 return false;
             }
-
             if (nal.currentTaskLink.budget.aboveThreshold()) {
                 fireTaskLink(nal, Parameters.TERMLINK_MAX_REASONED);                    
             }
-
             nal.currentConcept.taskLinks.putBack(nal.currentTaskLink, nal.memory.cycles(nal.memory.param.taskLinkForgetDurations), nal.memory);
         }
         return true;
@@ -87,16 +81,13 @@ public class GeneralInferenceControl {
         nal.setCurrentTaskLink(nal.currentTaskLink);
         nal.setCurrentBeliefLink(null);
         nal.setCurrentTask(task); // one of the two places where this variable is set
-        
         nal.memory.emotion.adjustBusy(nal.currentTaskLink.getPriority(),nal.currentTaskLink.getDurability(),nal);
-        
         if (nal.currentTaskLink.type == TermLink.TRANSFORM) {
             nal.setCurrentBelief(null);
             //TermLink tasklink_as_termlink = new TermLink(nal.currentTaskLink.getTerm(), TermLink.TRANSFORM, nal.getCurrentTaskLink().index);
             //if(nal.currentTaskLink.novel(tasklink_as_termlink, nal.memory.time(), true)) { //then record yourself, but also here novelty counts
                 RuleTables.transformTask(nal.currentTaskLink, nal); // to turn this into structural inference as below?
             //}
-            
         } else {            
             while (termLinks > 0) {
                 final TermLink termLink = nal.currentConcept.selectTermLink(nal.currentTaskLink, nal.memory.time(), nal.narParameters);
@@ -116,9 +107,7 @@ public class GeneralInferenceControl {
     public static boolean fireTermlink(final TermLink termLink, final DerivationContext nal) {
         nal.setCurrentBeliefLink(termLink);
         RuleTables.reason(nal.currentTaskLink, termLink, nal);
-
-        nal.memory.emit(Events.TermLinkSelect.class, termLink, nal.currentConcept, nal);
-        //memory.logic.REASON.commit(termLink.getPriority());                    
+        nal.memory.emit(Events.TermLinkSelect.class, termLink, nal.currentConcept, nal);                  
         return true;
     }
 }

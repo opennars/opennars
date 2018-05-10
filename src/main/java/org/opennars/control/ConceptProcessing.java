@@ -37,84 +37,192 @@ import static org.opennars.inference.LocalRules.*;
 
 public class ConceptProcessing {
     /**
-     * Directly process a new task. Called exactly once on each task. Using
-     * local information and finishing in a constant time. Provide feedback in
-     * the taskBudget value of the task.
+     * Directly process a new task within a concept. 
+     * Here task can either be a judgement, goal, question or quest.
+     * The function is called exactly once on each task. Using
+     * local information and finishing in a constant time. Also providing feedback 
+     * in the budget value of the task:
+     * de-priorize already fullfilled questions and goals
+     * increase quality of beliefs if they turned out to be useful.
+     * After the re-priorization is done, a tasklink is finally constructed.
+     * For input events the concept is set observable too. 
+        
      * <p>
-     * called in Memory.immediateProcess only
+     * called in Memory.localInference only, for both derived and input tasks
      *
      * @param task The task to be processed
      * @return whether it was processed
      */
     public static boolean processTask(final Concept concept, final DerivationContext nal, final Task task) {
-        if(task.isInput()) {
-            if(task.sentence.isJudgment() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
-                final Operation op = (Operation) task.sentence.term;
-                final Operator o = (Operator) op.getPredicate();
-                //only consider these mental ops an operation to track when executed not already when generated as internal event
-                if(!(o instanceof Believe) && !(o instanceof Want) && !(o instanceof Wonder)
-                        && !(o instanceof Evaluate) && !(o instanceof Anticipate)) {
-                    TemporalInferenceControl.NewOperationFrame(nal.memory, task);
-                }
-            }
-            concept.observable = true;
-        }
-
+        concept.observable |= task.isInput();
         final char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
-                //memory.logic.JUDGMENT_PROCESS.commit();
                 processJudgment(concept, nal, task);
                 break;
             case Symbols.GOAL_MARK:
-                //memory.logic.GOAL_PROCESS.commit();
-                processGoal(concept, nal, task, true);
+                processGoal(concept, nal, task);
                 break;
             case Symbols.QUESTION_MARK:
             case Symbols.QUEST_MARK:
-                //memory.logic.QUESTION_PROCESS.commit();
                 processQuestion(concept, nal, task);
                 break;
             default:
                 return false;
         }
-
-        maintainDisappointedAnticipations(concept);
-
         if (task.aboveThreshold()) {    // still need to be processed
-            //memory.logic.LINK_TO_TASK.commit();
             concept.linkToTask(task,nal);
         }
-
         return true;
     }
 
     /**
-     * To accept a new judgment as belief, and check for revisions and solutions
-     *
+     * Whether a processed judgement task satisfies the anticipation withon concept
+     * <p>
+     * called in processJudgment only
+     * 
+     * @param task The judgement task be checked
+     * @param concept The concept that is processed
+     * @param nal The derivation context
+     */
+    public static void confirmAnticipation(Task task, Concept concept, final DerivationContext nal) {
+        final boolean satisfiesAnticipation = task.isInput() && !task.sentence.isEternal() &&
+                                              concept.negConfirmation != null &&
+                                              task.sentence.getOccurenceTime() > concept.negConfirm_abort_mintime;
+        final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION;
+        if(satisfiesAnticipation && isExpectationAboveThreshold &&
+          ((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
+            nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
+            concept.negConfirmation = null; // confirmed
+        }
+    }
+
+    /**
+     * Handle the feedback of the operation that was processed as a judgment
+     * The purpose is to start a new operation frame which makes the operation concept 
+     * interpret current events as preconditions and future events as postconditions to the invoked operation.
+     * <p>
+     * called in processJudgment only
+     * 
+     * @param task The judgement task be checked
+     * @param nal The derivation context
+     * @return Whether to continue the processing of the task
+     */
+    public static void handleOperationFeedback(Task task, DerivationContext nal) {
+        if(task.isInput() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
+            final Operation op = (Operation) task.sentence.term;
+            final Operator o = (Operator) op.getPredicate();
+            //only consider these mental ops an operation to track when executed not already when generated as internal event
+            if(!(o instanceof Believe) && !(o instanceof Want) && !(o instanceof Wonder)
+                    && !(o instanceof Evaluate) && !(o instanceof Anticipate)) {
+                TemporalInferenceControl.NewOperationFrame(nal.memory, task);
+            }
+        }
+    }
+    
+    /**
+     * Check whether the task is an executable hypothesis of the form
+     * <(&/,a,op()) =/> b>.
+     * <p>
+     * called in processJudgment only
+     * 
+     * @param task The judgement task be checked
+     * @param nal The derivation context
+     * @return Whether task is an executable precondition
+     */
+    static boolean isExecutableHypothesis(Task task, final DerivationContext nal) {
+        final Term term = task.getTerm();
+        if(!task.sentence.isEternal() ||
+           !(term instanceof Implication) ||
+           term.hasVarIndep())  //Might be relaxed in the future!!
+        {
+            return false;
+        }
+        final Implication imp = (Implication) term;
+        if(imp.getTemporalOrder() != TemporalRules.ORDER_FORWARD) {
+            return false;
+        }
+        //also it has to be enactable, meaning the last entry of the sequence before the interval is an operation:
+        final Term subj = imp.getSubject();
+        final Term pred = imp.getPredicate();
+        final Concept pred_conc = nal.memory.concept(pred);
+        if (pred_conc == null /*|| (pred instanceof Operation)*/ || !(subj instanceof Conjunction)) {
+            return false;
+        }
+        final Conjunction conj = (Conjunction) subj;
+        if (!conj.isSpatial && conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                conj.term.length >= 4 && conj.term.length%2 == 0 &&
+                conj.term[conj.term.length-1] instanceof Interval &&
+                conj.term[conj.term.length-2] instanceof Operation) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Add <(&/,a,op()) =/> b> beliefs to preconditions in concept b
+     * <p>
+     * called in processJudgment only
+     * 
+     * @param task The potential implication task
+     * @param nal The derivation context
+     * @param concept The concept of the task
+     */
+    private static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept concept) {
+        final Concept target_concept = nal.memory.concept(((Implication)task.getTerm()).getPredicate());
+        //we do not add the target, instead the strongest belief in the target concept
+        if (concept.beliefs.isEmpty()) {
+            return;
+        }
+        Task strongest_target = null; //beliefs.get(0);
+        //get the first eternal. the highest confident one (due to the sorted order):
+        for(final Task t : concept.beliefs) {
+            if(t.sentence.isEternal()) {
+                strongest_target = t;
+                break;
+            }
+        }
+        if (strongest_target == null) {
+            return;
+        }
+        //at first we have to remove the last one with same content from table
+        int i_delete = -1;
+        for(int i=0; i < target_concept.executable_preconditions.size(); i++) {
+            if(CompoundTerm.replaceIntervals(target_concept.executable_preconditions.get(i).getTerm()).equals(
+                    CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
+                i_delete = i; //even these with same term but different intervals are removed here
+                break;
+            }
+        }
+        if(i_delete != -1) {
+            target_concept.executable_preconditions.remove(i_delete);
+        }
+        final Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
+        for (int i = 0; i<prec.length-2; i++) {
+            if (prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
+                return; //for now, these can be decomposed into smaller such statements anyway
+            }
+        }
+        //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
+        target_concept.addToTable(strongest_target, true, target_concept.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+    }
+    
+    /**
+     * To accept a new judgment as belief, and check for revisions and solutions.
+     * Revisions will be processed as judgment tasks by themselves.
+     * Due to their higher confidence, summarizing more evidence,
+     * the will become the top entries in the belief table.
+     * Additionally, judgements can themselves be the solution to existing questions
+     * and goals, which is also processed here.
+     * 
      * @param judg The judgment to be accepted
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
     protected static void processJudgment(final Concept concept, final DerivationContext nal, final Task task) {
+        handleOperationFeedback(task, nal);
         final Sentence judg = task.sentence;
-
-        final boolean satisfiesAnticipation =
-            task.isInput() &&
-            !task.sentence.isEternal() &&
-            concept.negConfirmation != null &&
-            task.sentence.getOccurenceTime() > concept.negConfirm_abort_mintime;
-
-        final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION;
-
-        if(
-            satisfiesAnticipation && isExpectationAboveThreshold &&
-            ((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())
-        ) {
-            nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
-            concept.negConfirmation = null; // confirmed
-        }
-
+        confirmAnticipation(task, concept, nal);
         final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
@@ -122,111 +230,31 @@ public class ConceptProcessing {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;       //when table is full, the latter check is especially important too
             if (newStamp.equals(oldStamp,false,false,true)) {
-                //if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
-                ////task.budget.decPriority(0);    // duplicated task
-                //}   //// else: activated belief
-
                 concept.memory.removeTask(task, "Duplicated");
                 return;
             } else if (revisible(judg, oldBelief)) {
-
                 nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
                 final Sentence projectedBelief = oldBelief.projection(concept.memory.time(), newStamp.getOccurrenceTime());
                 if (projectedBelief!=null) {
-                    if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
-                        // nal.singlePremiseTask(projectedBelief, task.budget);
-                    }
                     nal.setCurrentBelief(projectedBelief);
                     revision(judg, projectedBelief, false, nal);
                 }
             }
         }
-
         if (!task.aboveThreshold()) {
             return;
         }
-
         final int nnq = concept.questions.size();
         for (int i = 0; i < nnq; i++) {
             trySolution(judg, concept.questions.get(i), nal, true);
         }
-
         final int nng = concept.desires.size();
         for (int i = 0; i < nng; i++) {
             trySolution(judg, concept.desires.get(i), nal, true);
         }
-
         concept.addToTable(task, false, concept.beliefs, Parameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
-
-        //if taskLink predicts this concept then add to predictive
-        final Task target = task;
-        final Term term = target.getTerm();
-        if(//!target.isObservablePrediction() ||
-                !target.sentence.isEternal() ||
-                !(term instanceof Implication) ||
-                        term.hasVarIndep())  //Might be relaxed in the future!!
-        {
-            return;
-        }
-
-        final Implication imp = (Implication) term;
-        if(imp.getTemporalOrder() != TemporalRules.ORDER_FORWARD) {
-            return;
-        }
-
-        //also it has to be enactable, meaning the last entry of the sequence before the interval is an operation:
-        final Term subj = imp.getSubject();
-        final Term pred = imp.getPredicate();
-        final Concept pred_conc = nal.memory.concept(pred);
-        if(pred_conc == null /*|| (pred instanceof Operation)*/ || !(subj instanceof Conjunction)) {
-            return;
-        }
-
-        final Conjunction conj = (Conjunction) subj;
-        if(!conj.isSpatial && conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
-                conj.term.length >= 4 && conj.term.length%2 == 0 &&
-                conj.term[conj.term.length-1] instanceof Interval &&
-                conj.term[conj.term.length-2] instanceof Operation) {
-
-            //we do not add the target, instead the strongest belief in the target concept
-            if(concept.beliefs.size() == 0) {
-                return;
-            }
-
-            Task strongest_target = null; //beliefs.get(0);
-            //get the first eternal. the highest confident one (due to the sorted order):
-            for(final Task t : concept.beliefs) {
-                if(t.sentence.isEternal()) {
-                    strongest_target = t;
-                    break;
-                }
-            }
-            if(strongest_target == null) {
-                return;
-            }
-
-            //at first we have to remove the last one with same content from table
-            int i_delete = -1;
-            for(int i=0; i < pred_conc.executable_preconditions.size(); i++) {
-                if(CompoundTerm.replaceIntervals(pred_conc.executable_preconditions.get(i).getTerm()).equals(
-                        CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
-                    i_delete = i; //even these with same term but different intervals are removed here
-                    break;
-                }
-            }
-            if(i_delete != -1) {
-                pred_conc.executable_preconditions.remove(i_delete);
-            }
-
-            final Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
-            for(int i=0;i<prec.length-2;i++) {
-                if(prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
-                    return; //for now, these can be decomposed into smaller such statements anyway
-                }
-            }
-
-            //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-            pred_conc.addToTable(strongest_target, true, pred_conc.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+        if(isExecutableHypothesis(task,nal)) {
+            addToTargetConceptsPreconditions(task, nal, concept);
         }
     }
 
@@ -234,12 +262,12 @@ public class ConceptProcessing {
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it, potentially executing in case of an operation goal
      *
-     * @param judg The judgment to be accepted
-     * @param task The task to be processed
+     * @param concept The concept of the goal
+     * @param nal The derivation context
+     * @param task The goal task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected static boolean processGoal(final Concept concept, final DerivationContext nal, final Task task, final boolean shortcut) {
-
+    protected static void processGoal(final Concept concept, final DerivationContext nal, final Task task) {
         final Sentence goal = task.sentence;
         final Task oldGoalT = concept.selectCandidate(task, concept.desires); // revise with the existing desire values
         Sentence oldGoal = null;
@@ -247,13 +275,11 @@ public class ConceptProcessing {
         if (oldGoalT != null) {
             oldGoal = oldGoalT.sentence;
             final Stamp oldStamp = oldGoal.stamp;
-
             if (newStamp.equals(oldStamp,false,false,true)) {
-                return false; // duplicate
+                return; // duplicate
             }
         }
         Task beliefT = null;
-
         if(task.aboveThreshold()) {
             beliefT = concept.selectCandidate(task, concept.beliefs); // check if the Goal is already satisfied
             final int nnq = concept.quests.size();
@@ -268,22 +294,16 @@ public class ConceptProcessing {
             if (revisible(goal, oldGoal)) {
                 final Stamp oldStamp = oldGoal.stamp;
                 nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
-
                 final Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime());
                 if (projectedGoal!=null) {
-                    // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
-                    // nal.singlePremiseTask(projectedGoal, task.budget);
-                    //return;
-                    // }
                     nal.setCurrentBelief(projectedGoal);
                     final boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
                     if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
-                        return false; // with higher/lower desire
+                        return; // with higher/lower desire
                     } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
                 }
             }
         }
-
         final Stamp s2=goal.stamp.clone();
         s2.setOccurrenceTime(concept.memory.time());
         if(s2.after(task.sentence.stamp, Parameters.DURATION)) { //this task is not up to date we have to project it first
@@ -293,68 +313,78 @@ public class ConceptProcessing {
                 // return false; //outcommented, allowing "roundtrips now", relevant for executing multiple steps of learned implication chains
             }
         }
-
         if (task.aboveThreshold()) {
-
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
                 final Sentence belief = beliefT.sentence;
                 final Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), Parameters.DURATION);
                 AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
             }
-
             final double Satisfaction=1.0-AntiSatisfaction;
             task.setPriority(task.getPriority()* (float)AntiSatisfaction);
             if (!task.aboveThreshold()) {
-                return false;
+                return;
             }
             final TruthValue T=goal.truth.clone();
-
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
-
             final boolean fullfilled = AntiSatisfaction < Parameters.SATISFACTION_TRESHOLD;
-
             final Sentence projectedGoal = goal.projection(nal.memory.time(),nal.memory.time());
+            if (!(projectedGoal != null && task.aboveThreshold() && !fullfilled)) {
+                return;
+            }
+            bestReactionForGoal(concept, nal, projectedGoal, task);
+            questionFromGoal(task, nal);
+            concept.addToTable(task, false, concept.desires, Parameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
+            InternalExperience.InternalExperienceFromTask(concept.memory,task,false);
+            if(!(task.sentence.getTerm() instanceof Operation)) {
+                return;
+            }
+            processOperationGoal(projectedGoal, nal, concept, oldGoalT, task);
+        }
+    }
 
-            if (projectedGoal != null && task.aboveThreshold() && !fullfilled) {
-
-                bestReactionForGoal(concept, nal, projectedGoal, task);
-
-                questionFromGoal(task, nal);
-
-                concept.addToTable(task, false, concept.desires, Parameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
-
-                InternalExperience.InternalExperienceFromTask(concept.memory,task,false);
-
-                if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD && nal.memory.time() >= concept.memory.decisionBlock) {
-                    //see whether the goal evidence is fully included in the old goal, if yes don't execute
-                    //as execution for this reason already happened (or did not since there was evidence against it)
-                    final Set<Long> oldEvidence = new HashSet<>();
-                    boolean Subset=false;
-                    if(oldGoalT != null) {
-                        Subset = true;
-                        for(final Long l: oldGoalT.sentence.stamp.evidentialBase) {
-                            oldEvidence.add(l);
-                        }
-                        for(final Long l: task.sentence.stamp.evidentialBase) {
-                            if(!oldEvidence.contains(l)) {
-                                Subset = false;
-                                break;
-                            }
-                        }
-                    }
-                    if(!Subset && !executeDecision(nal, task)) {
-                        concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
-                        return true; //it was made true by itself
+    /**
+     * To process an operation for potential execution
+     * only called by processGoal
+     * 
+     * @param projectedGoal The current goal
+     * @param nal The derivation context
+     * @param concept The concept of the current goal
+     * @param oldGoalT The best goal in the goal table
+     * @param Task The current goal task
+     */
+    private static void processOperationGoal(final Sentence projectedGoal, final DerivationContext nal, final Concept concept, final Task oldGoalT, final Task task) {
+        if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD && nal.memory.time() >= concept.memory.decisionBlock) {
+            //see whether the goal evidence is fully included in the old goal, if yes don't execute
+            //as execution for this reason already happened (or did not since there was evidence against it)
+            final Set<Long> oldEvidence = new HashSet<>();
+            boolean Subset=false;
+            if(oldGoalT != null) {
+                Subset = true;
+                for(final Long l: oldGoalT.sentence.stamp.evidentialBase) {
+                    oldEvidence.add(l);
+                }
+                for(final Long l: task.sentence.stamp.evidentialBase) {
+                    if(!oldEvidence.contains(l)) {
+                        Subset = false;
+                        break;
                     }
                 }
-                return false;
             }
-            return fullfilled;
+            if(!Subset && !executeOperation(nal, task)) {
+                concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
+                return; //it was made true by itself
+            }
         }
-        return false;
     }
     
+    /**
+     * Generate <?how =/> g>? question for g! goal.
+     * only called by processGoal
+     * 
+     * @param Task The current goal task
+     * @param nal The derivation context
+     */    
     public static void questionFromGoal(final Task task, final DerivationContext nal) {
         if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled
@@ -400,10 +430,8 @@ public class ConceptProcessing {
      * @return Whether to continue the processing of the task
      */
     protected static void processQuestion(final Concept concept, final DerivationContext nal, final Task task) {
-
         Task quesTask = task;
         boolean newQuestion = true;
-        
         List<Task> questions = concept.questions;
         if(task.sentence.punctuation == Symbols.QUEST_MARK) {
             questions = concept.quests;
@@ -415,7 +443,6 @@ public class ConceptProcessing {
                 break;
             }
         }
-
         if (newQuestion) {
             if (questions.size() + 1 > Parameters.CONCEPT_QUESTIONS_MAX) {
                 final Task removed = questions.remove(0);    // FIFO
@@ -425,7 +452,6 @@ public class ConceptProcessing {
             questions.add(task);
             concept.memory.event.emit(Events.ConceptQuestionAdd.class, concept, task);
         }
-
         final Sentence ques = quesTask.sentence;
         final Task newAnswerT = (ques.isQuestion())
                 ? concept.selectCandidate(quesTask, concept.beliefs)
@@ -443,6 +469,11 @@ public class ConceptProcessing {
     * When a goal is processed, use the best memorized reaction
     * that is applicable to the current context (recent events) in case that it exists.
     * This is a special case of the choice rule and allows certain behaviors to be automated.
+    * 
+    * @param concept The concept of the goal to realize
+    * @param nal The derivation context
+    * @param projectedGoal The current goal
+    * @param task The goal task
     */
     protected static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
         Operation bestop = null;
@@ -455,19 +486,15 @@ public class ConceptProcessing {
             final Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
             final Term[] newprec = new Term[prec.length-3];
             System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
-
             final long add_tolerance = (long) (((Interval)prec[prec.length-1]).time*Parameters.ANTICIPATION_TOLERANCE);
             mintime = nal.memory.time();
             maxtime = nal.memory.time() + add_tolerance;
-
             final Operation op = (Operation) prec[prec.length-2];
             final Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
-
             final Concept preconc = nal.memory.concept(precondition);
             long newesttime = -1;
             Task bestsofar = null;
             if(preconc != null) { //ok we can look now how much it is fullfilled
-
                 //check recent events in event bag
                 for(final Task p : concept.memory.seq_current) {
                     if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= concept.memory.time()) {
@@ -518,21 +545,18 @@ public class ConceptProcessing {
                 }
             }
         }
-
         if(bestop != null && bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
-
             final Sentence createdSentence = new Sentence(
                     bestop,
                     Symbols.JUDGMENT_MARK,
                     bestop_truth,
                     projectedGoal.stamp);
-
             final Task t = new Task(createdSentence,
                               new BudgetValue(1.0f,1.0f,1.0f),
                               false);
             //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
             if(!task.sentence.stamp.evidenceIsCyclic()) {
-                if(!executeDecision(nal, t)) { //this task is just used as dummy
+                if(!executeOperation(nal, t)) { //this task is just used as dummy
                     concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
                 } else {
                     concept.memory.decisionBlock = concept.memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
@@ -544,7 +568,6 @@ public class ConceptProcessing {
 
     public static void generatePotentialNegConfirmation(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget, final long mintime, final long maxtime, final float priority) {
         //derivation was successful and it was a judgment event
-
         final Stamp stamp = new Stamp(nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         //long serial = stamp.evidentialBase[0];
@@ -553,8 +576,6 @@ public class ConceptProcessing {
             mainSentence.punctuation,
             new TruthValue(0.0f, 0.0f),
             stamp);
-
-        //s.producedByTemporalInduction = true; //also here to not go into sequence buffer
         final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f), false); //Budget for one-time processing
         final Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
         if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
@@ -563,7 +584,6 @@ public class ConceptProcessing {
                 c.negConfirmationPriority = priority;
                 c.negConfirm_abort_maxtime = maxtime;
                 c.negConfirm_abort_mintime = mintime;
-                
                 if(c.negConfirmation.sentence.term instanceof Implication) {
                     final Implication imp = (Implication) c.negConfirmation.sentence.term;
                     final Concept ctarget = nal.memory.concept(imp.getPredicate());
@@ -571,28 +591,20 @@ public class ConceptProcessing {
                         ((Anticipate)c.memory.getOperator("^anticipate")).anticipationFeedback(imp.getPredicate(), null, c.memory);
                     }
                 }
-                
                 nal.memory.emit(OutputHandler.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
             }
        }
     }
 
     /**
-     * Entry point for all potentially executable tasks.
+     * Entry point for all potentially executable operation tasks.
      * Returns true if the Task has a Term which can be executed
      */
-    public static boolean executeDecision(final DerivationContext nal, final Task t) {
-        //if (isDesired()) 
-        if(!nal.memory.allowExecution) {
-            return false;
-        }
-            
+    public static boolean executeOperation(final DerivationContext nal, final Task t) {        
         final Term content = t.getTerm();
-
-        if(!(content instanceof Operation)) {
+        if(!(nal.memory.allowExecution) || !(content instanceof Operation)) {
             return false;
-        }
-
+        }  
         final Operation op=(Operation)content;
         final Operator oper = op.getOperator();
         final Product prod = (Product) op.getSubject();
@@ -619,16 +631,22 @@ public class ConceptProcessing {
         if (Parameters.DEBUG) {
             System.out.println(t.toStringLong());
         }
-        //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
         return true;
     }
 
+    /**
+     * Process outdated anticipations within the concept,
+     * these which are outdated generate negative feedback
+     * <p>
+     * called only in GeneralInferenceControl on concept selection
+     * 
+     * @param concept The concept which potentially outdated anticipations should be processed
+     */
     public static void maintainDisappointedAnticipations(final Concept concept) {
         //here we can check the expiration of the feedback:
         if(concept.negConfirmation == null || concept.memory.time() <= concept.negConfirm_abort_maxtime) {
             return;
         }
-
         //at first search beliefs for input tasks:
         boolean cancelled = false;
         for(final TaskLink tl : concept.taskLinks) { //search for input in tasklinks (beliefs alone can not take temporality into account as the eternals will win)
@@ -641,7 +659,6 @@ public class ConceptProcessing {
                 }
             }
         }
-
         if(cancelled) {
             concept.memory.emit(OutputHandler.CONFIRM.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
             concept.negConfirmation = null; //confirmed
@@ -661,6 +678,15 @@ public class ConceptProcessing {
         concept.negConfirmation = null;
     }
     
+    /**
+     * Recognize an added belief task as solution to what questions, those that contain query variable
+     * <p>
+     * called only in GeneralInferenceControl.insertTaskLink on concept selection
+     * 
+     * @param concept The concept which potentially outdated anticipations should be processed
+     * @paramt t The belief task
+     * @param nal The derivation context
+     */
     public static void ProcessWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal) {
         if(!t.sentence.term.hasVarQuery() && t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
             for(final TaskLink quess: concept.taskLinks) {
@@ -688,6 +714,15 @@ public class ConceptProcessing {
         }
     }
 
+     /**
+     * Recognize an existing belief task as solution to the what question task, which contains a query variable
+     * <p>
+     * called only in GeneralInferenceControl.insertTaskLink on concept selection
+     * 
+     * @param concept The concept which potentially outdated anticipations should be processed
+     * @paramt t The belief task
+     * @param nal The derivation context
+     */
     public static void ProcessWhatQuestion(final Concept concept, final Task ques, final DerivationContext nal) {
         if(!(ques.sentence.isJudgment()) && ques.getTerm().hasVarQuery()) { //ok query var, search
             boolean newAnswer = false;
