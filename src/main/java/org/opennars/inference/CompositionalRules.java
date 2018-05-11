@@ -363,139 +363,83 @@ public final class CompositionalRules {
         final Variable varInd2 = new Variable("$varInd2");
         
         Term term11dependent=null, term12dependent=null, term21dependent=null, term22dependent=null;
-        Term term11, term12, term21, term22, commonTerm = null;
-        final Map<Term, Term> subs = new HashMap<>();
+
+        Term term11 = index == 0 ? varInd1 : taskContent.getSubject();
+        Term term21 = index == 0 ? varInd1 : beliefContent.getSubject();
+        Term term12 = index == 0 ? taskContent.getPredicate() : varInd1;
+        Term term22 = index == 0 ? beliefContent.getPredicate() : varInd1;
+
         if (index == 0) {
-            term11 = varInd1;
-            term21 = varInd1;
-            term12 = taskContent.getPredicate();
-            term22 = beliefContent.getPredicate();
             term12dependent=term12;
             term22dependent=term22;
-            if (term12 instanceof ImageExt) {
+        } else {
+            term11dependent=term11;
+            term21dependent=term21;
+        }
 
-                if ((/*(ImageExt)*/term12).containsTermRecursively(term22)) {
-                    commonTerm = term22;
-                }
-                
-                if(commonTerm == null && term12 instanceof ImageExt) {
-                    commonTerm = ((ImageExt) term12).getTheOtherComponent();
-                    if(!(term22.containsTermRecursively(commonTerm))) {
-                        commonTerm=null;
-                    }
-                    if (term22 instanceof ImageExt && ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm))) {
-                        commonTerm = ((ImageExt) term22).getTheOtherComponent();
-                        if ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm)) {
-                            commonTerm = null;
-                        }
-                    }
-                }
-                
+        Term commonTerm = null;
+        final Map<Term, Term> subs = new HashMap<>();
+
+        // comment to firstIsImage and secondIsSameImage:
+        // Because if we have <{a} --> P> and <{a} --> C>
+        // then we want to introduce (&&,<{#1} -- P>,<{#1} --> C>).
+        // so we have to indeed check that
+        // they are equal set types (not seeing [a] and {a} as same)
+
+        // TODO< findCommonTermPredicate and findCommonSubject are actually symmetric to each other -> merge them with a enum >
+
+        if (index == 0) {
+            if (term12 instanceof ImageExt) {
+                boolean firstIsImage = term22 instanceof ImageExt;
+                boolean secondIsSameImage = true;
+
+                commonTerm = findCommonTermPredicate(term12, term22, commonTerm, firstIsImage, secondIsSameImage);
+
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term12 = ((CompoundTerm) term12).applySubstitute(subs);
-                    if(!(term22 instanceof CompoundTerm)) {
-                        term22 = varInd2;
-                    } else {
-                        term22 = ((CompoundTerm) term22).applySubstitute(subs);
-                    }
+                    term22 = applySubstituteIfCompoundTerm(varInd2, term22, subs);
                 }
             }
             if (commonTerm==null && term22 instanceof ImageExt) {
-                
-                if ((/*(ImageExt)*/term22).containsTermRecursively(term12)) {
-                    commonTerm = term12;
-                }
-                
-                if(commonTerm == null && term22 instanceof ImageExt) {
-                    commonTerm = ((ImageExt) term22).getTheOtherComponent();
-                    if(!(term12.containsTermRecursively(commonTerm))) {
-                        commonTerm=null;
-                    }
-                    if (term12 instanceof ImageExt && ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm))) {
-                        commonTerm = ((ImageExt) term12).getTheOtherComponent();
-                        if ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm)) {
-                            commonTerm = null;
-                        }
-                    }
-                }
+                boolean firstIsImage = term12 instanceof ImageExt;
+                boolean secondIsSameImage = true;
+
+                commonTerm = findCommonTermPredicate(term22, term12, commonTerm, firstIsImage, secondIsSameImage);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term22 = ((CompoundTerm) term22).applySubstitute(subs);
-                    if(!(term12 instanceof CompoundTerm)) {
-                        term12 = varInd2;
-                    } else {
-                        term12 = ((CompoundTerm) term12).applySubstitute(subs);
-                    }
+                    term12 = applySubstituteIfCompoundTerm(varInd2, term12, subs);
                 }
             }
         } else {
-            term11 = taskContent.getSubject();
-            term21 = beliefContent.getSubject();
-            term12 = varInd1;
-            term22 = varInd1;
-            term11dependent=term11;
-            term21dependent=term21;
             if (term21 instanceof ImageInt) {
-                
-                if ((/*(ImageInt)*/term21).containsTermRecursively(term11)) {
-                    commonTerm = term11;
-                }
-                
-                if(term11 instanceof ImageInt && commonTerm == null && term21 instanceof ImageInt) {
-                    commonTerm = ((ImageInt) term11).getTheOtherComponent();
-                    if(!(term21.containsTermRecursively(commonTerm))) {
-                        commonTerm=null;
-                    }
-                    if ((commonTerm == null) || !(term21).containsTermRecursively(commonTerm)) {
-                        commonTerm = ((ImageInt) term21).getTheOtherComponent();
-                        if ((commonTerm == null) || !(term11).containsTermRecursively(commonTerm)) {
-                            commonTerm = null;
-                        }
-                    }
-                }
+                boolean firstIsImage = true;
+                boolean secondIsSameImage = term11 instanceof ImageInt;
+
+                commonTerm = findCommonSubject(term11, term21, commonTerm, firstIsImage, secondIsSameImage);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term21 = ((CompoundTerm) term21).applySubstitute(subs);
-                    if(!(term11 instanceof CompoundTerm)) {
-                        term11 = varInd2;
-                    } else {
-                        term11 = ((CompoundTerm) term11).applySubstitute(subs);
-                    }
+                    term11 = applySubstituteIfCompoundTerm(varInd2, term11, subs);
                 }
             }
             if (commonTerm==null && term11 instanceof ImageInt) {
-                
-                if ((/*(ImageInt)*/term11).containsTermRecursively(term21)) {
-                    commonTerm = term21;
-                }
-                
-                if(term21 instanceof ImageInt && commonTerm == null && term11 instanceof ImageInt) {
-                    commonTerm = ((ImageInt) term21).getTheOtherComponent();
-                    if(!(term11.containsTermRecursively(commonTerm))) {
-                        commonTerm=null;
-                    }
-                    if ((commonTerm == null) || !(term11).containsTermRecursively(commonTerm)) {
-                        commonTerm = ((ImageInt) term11).getTheOtherComponent();
-                        if ((commonTerm == null) || !(term21).containsTermRecursively(commonTerm)) {
-                            commonTerm = null;
-                        }
-                    }
-                }
+                boolean firstIsImage = true;
+                boolean secondIsSameImage = term21 instanceof ImageInt;
+
+                commonTerm = findCommonSubject(term21, term11, commonTerm, firstIsImage, secondIsSameImage);
                 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
                     term11 = ((CompoundTerm) term11).applySubstitute(subs);
-                    if(!(term21 instanceof CompoundTerm)) {
-                        term21 = varInd2;
-                    } else {
-                        term21 = ((CompoundTerm) term21).applySubstitute(subs);
-                    }
+                    term21 = applySubstituteIfCompoundTerm(varInd2, term21, subs);
                 }
             }
         }
+
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
         Term content = Implication.make(state1, state2);
@@ -540,6 +484,51 @@ public final class CompositionalRules {
         truth = intersection(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false, false);
+    }
+
+    private static Term applySubstituteIfCompoundTerm(final Variable varInd2, final Term term22, Map<Term, Term> subs) {
+        return term22 instanceof CompoundTerm ? ((CompoundTerm)term22).applySubstitute(subs) : varInd2;
+    }
+
+    private static Term findCommonSubject(final Term containedTest, Term tested, final Term commonTerm, final boolean firstIsImage, final boolean secondIsSameImage) {
+        Term resultCommonTerm = commonTerm;
+
+        if (tested.containsTermRecursively(containedTest)) {
+            resultCommonTerm = containedTest;
+        }
+
+        if(secondIsSameImage && resultCommonTerm == null) {
+            resultCommonTerm = retCommonTerm(containedTest, tested, firstIsImage);
+        }
+        return resultCommonTerm;
+    }
+
+    private static Term findCommonTermPredicate(Term tested, Term containedTest, Term commonTerm, boolean firstIsImage, boolean secondIsSameImage) {
+        Term resultCommonTerm = commonTerm;
+
+        if (tested.containsTermRecursively(containedTest)) {
+            resultCommonTerm = containedTest;
+        }
+
+        if(secondIsSameImage && resultCommonTerm == null) {
+            resultCommonTerm = retCommonTerm(tested, containedTest, firstIsImage);
+        }
+        return resultCommonTerm;
+    }
+
+    private static Term retCommonTerm(Term term12, Term term22, boolean firstIsImage) {
+        Term commonTerm;
+        commonTerm = ((Image) term12).getTheOtherComponent();
+        if(!(term22.containsTermRecursively(commonTerm))) {
+            commonTerm=null;
+        }
+        if (firstIsImage && ((commonTerm == null) || !(term22).containsTermRecursively(commonTerm))) {
+            commonTerm = ((Image) term22).getTheOtherComponent();
+            if ((commonTerm == null) || !(term12).containsTermRecursively(commonTerm)) {
+                commonTerm = null;
+            }
+        }
+        return commonTerm;
     }
 
     /**
