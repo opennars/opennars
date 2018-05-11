@@ -18,6 +18,7 @@
  */
 package org.opennars.control;
 
+import org.opennars.control.concept.ProcessAnticipation;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
 import org.opennars.entity.TermLink;
@@ -36,7 +37,7 @@ public class GeneralInferenceControl {
         if (currentConcept==null) {
             return;
         }
-        ConceptProcessing.maintainDisappointedAnticipations(currentConcept);
+        ProcessAnticipation.maintainDisappointedAnticipations(currentConcept);
         if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
             mem.concepts.take(currentConcept.getTerm());
             mem.conceptRemoved(currentConcept);
