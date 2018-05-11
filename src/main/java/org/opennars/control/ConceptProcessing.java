@@ -130,7 +130,7 @@ public class ConceptProcessing {
      * @param nal The derivation context
      * @return Whether task is an executable precondition
      */
-    static boolean isExecutableHypothesis(Task task, final DerivationContext nal) {
+    protected static boolean isExecutableHypothesis(Task task, final DerivationContext nal) {
         final Term term = task.getTerm();
         if(!task.sentence.isEternal() ||
            !(term instanceof Implication) ||
@@ -150,13 +150,12 @@ public class ConceptProcessing {
             return false;
         }
         final Conjunction conj = (Conjunction) subj;
-        if (!conj.isSpatial && conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
-                conj.term.length >= 4 && conj.term.length%2 == 0 &&
-                conj.term[conj.term.length-1] instanceof Interval &&
-                conj.term[conj.term.length-2] instanceof Operation) {
-            return true;
-        }
-        return false;
+        boolean isInExecutableFormat = !conj.isSpatial && 
+                                        conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD &&
+                                        conj.term.length >= 4 && conj.term.length%2 == 0 &&
+                                        conj.term[conj.term.length-1] instanceof Interval &&
+                                        conj.term[conj.term.length-2] instanceof Operation;
+        return isInExecutableFormat;
     }
     
     /**
@@ -168,7 +167,7 @@ public class ConceptProcessing {
      * @param nal The derivation context
      * @param concept The concept of the task
      */
-    private static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept concept) {
+    protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept concept) {
         final Concept target_concept = nal.memory.concept(((Implication)task.getTerm()).getPredicate());
         //we do not add the target, instead the strongest belief in the target concept
         if (concept.beliefs.isEmpty()) {
@@ -353,7 +352,7 @@ public class ConceptProcessing {
      * @param oldGoalT The best goal in the goal table
      * @param Task The current goal task
      */
-    private static void processOperationGoal(final Sentence projectedGoal, final DerivationContext nal, final Concept concept, final Task oldGoalT, final Task task) {
+    protected static void processOperationGoal(final Sentence projectedGoal, final DerivationContext nal, final Concept concept, final Task oldGoalT, final Task task) {
         if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD && nal.memory.time() >= concept.memory.decisionBlock) {
             //see whether the goal evidence is fully included in the old goal, if yes don't execute
             //as execution for this reason already happened (or did not since there was evidence against it)
