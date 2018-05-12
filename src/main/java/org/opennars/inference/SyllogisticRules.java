@@ -20,16 +20,12 @@ import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.language.*;
 import org.opennars.main.Parameters;
-import org.opennars.util.StatementUtil;
 
 import java.util.List;
 import org.opennars.control.concept.ProcessAnticipation;
 
 import static org.opennars.inference.TemporalRules.*;
 import static org.opennars.language.Terms.reduceComponents;
-import static org.opennars.util.StatementUtil.retBySide;
-import static org.opennars.util.StatementUtil.retOppositeSide;
-
 
 /**
  * Syllogisms: Inference rules based on the transitivity of the relation.
@@ -514,9 +510,9 @@ public final class SyllogisticRules {
         final Term commonComponent;
         Term newComponent = null;
         if (side == 0 || side == 1) {
-            StatementUtil.EnumStatementSide sideOfCommonComponentAsEnum = side == 0 ? StatementUtil.EnumStatementSide.SUBJECT : StatementUtil.EnumStatementSide.PREDICATE;
-            commonComponent = retBySide((Statement)premise2, sideOfCommonComponentAsEnum);
-            newComponent = retBySide((Statement)premise2, retOppositeSide(sideOfCommonComponentAsEnum));
+            Statement.EnumStatementSide sideOfCommonComponentAsEnum = side == 0 ? Statement.EnumStatementSide.SUBJECT : Statement.EnumStatementSide.PREDICATE;
+            commonComponent = ((Statement)premise2).retBySide(sideOfCommonComponentAsEnum);
+            newComponent = ((Statement)premise2).retBySide(Statement.retOppositeSide(sideOfCommonComponentAsEnum));
         }else {
             commonComponent = premise2;
         }
