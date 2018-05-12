@@ -474,10 +474,11 @@ public class ConceptProcessing {
             if(!task.sentence.stamp.evidenceIsCyclic()) {
                 if(!executeDecision(nal, t)) { //this task is just used as dummy
                     concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
-                } else {
-                    concept.memory.decisionBlock = concept.memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
-                    generatePotentialNegConfirmation(nal, meta.executable_precond.sentence, meta.executable_precond.budget, meta.mintime, meta.maxtime, 2);
+                    return;
                 }
+
+                concept.memory.decisionBlock = concept.memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
+                generatePotentialNegConfirmation(nal, meta.executable_precond.sentence, meta.executable_precond.budget, meta.mintime, meta.maxtime, 2);
             }
         }
     }
