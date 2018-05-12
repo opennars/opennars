@@ -14,7 +14,7 @@
  */
 package org.opennars.entity;
 
-import org.opennars.control.ConceptProcessing;
+import org.opennars.control.concept.ProcessTask;
 import org.opennars.control.DerivationContext;
 import org.opennars.inference.LocalRules;
 import org.opennars.io.Symbols.NativeOperator;
@@ -32,6 +32,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.opennars.control.concept.ProcessAnticipation;
+import org.opennars.control.concept.ProcessQuestion;
 
 import static org.opennars.inference.BudgetFunctions.distributeAmongLinks;
 import static org.opennars.inference.BudgetFunctions.rankBelief;
@@ -297,11 +299,11 @@ public class Concept extends Item<Term> implements Serializable {
         
         //what question answering, question side:
         final Task ques = taskLink.getTarget();
-        ConceptProcessing.ProcessWhatQuestion(this, ques, nal);
+        ProcessQuestion.ProcessWhatQuestion(this, ques, nal);
         
         //what question answering, belief side:
         final Task t = taskLink.getTarget();
-        ConceptProcessing.ProcessWhatQuestionAnswer(this, t, nal);
+        ProcessQuestion.ProcessWhatQuestionAnswer(this, t, nal);
         
         //HANDLE MAX PER CONTENT
         //if taskLinks already contain a certain amount of tasks with same content then one has to go
@@ -544,7 +546,7 @@ public class Concept extends Item<Term> implements Serializable {
      * @return The selected TermLink
      */
     public TermLink selectTermLink(final TaskLink taskLink, final long time, final NarParameters narParameters) {
-        ConceptProcessing.maintainDisappointedAnticipations(this);
+        ProcessAnticipation.maintainDisappointedAnticipations(this);
 
         final int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {

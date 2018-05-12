@@ -14,7 +14,7 @@
  */
 package org.opennars.storage;
 
-import org.opennars.control.ConceptProcessing;
+import org.opennars.control.concept.ProcessTask;
 import org.opennars.control.DerivationContext;
 import org.opennars.control.GeneralInferenceControl;
 import org.opennars.control.TemporalInferenceControl;
@@ -340,7 +340,7 @@ public class Memory implements Serializable, Iterable<Concept> {
         cont.setCurrentTerm(task.getTerm());
         cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
         if (cont.getCurrentConcept() != null) {
-            final boolean processed = ConceptProcessing.processTask(cont.getCurrentConcept(), cont, task);
+            final boolean processed = ProcessTask.processTask(cont.getCurrentConcept(), cont, task);
             if (processed) {
                 event.emit(Events.ConceptDirectProcessedTask.class, task);
             }

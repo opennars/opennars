@@ -14,7 +14,6 @@
  */
 package org.opennars.inference;
 
-import org.opennars.control.ConceptProcessing;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
@@ -24,6 +23,7 @@ import org.opennars.main.Parameters;
 import org.opennars.util.StatementUtil;
 
 import java.util.List;
+import org.opennars.control.concept.ProcessAnticipation;
 
 import static org.opennars.inference.TemporalRules.*;
 import static org.opennars.language.Terms.reduceComponents;
@@ -650,7 +650,7 @@ public final class SyllogisticRules {
             if(predictedEvent && taskSentence.isJudgment() && truth != null && truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION &&
                     !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
                 premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
-                ConceptProcessing.generatePotentialNegConfirmation(nal, premise1Sentence, budget, mintime, maxtime, 1);
+                ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1);
             }
         }
     }
