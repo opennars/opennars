@@ -439,26 +439,58 @@ public class ConceptProcessing {
         }
     }
 
+    private static class BestOpWithMetainfo {
+        public Operation bestop = null;
+        public float bestop_truthexp = 0.0f;
+        public TruthValue bestop_truth = null;
+        public Task executable_precond = null;
+
+        public long mintime = -1;
+        public long maxtime = -1;
+    }
+
     /**
     * When a goal is processed, use the best memorized reaction
     * that is applicable to the current context (recent events) in case that it exists.
     * This is a special case of the choice rule and allows certain behaviors to be automated.
     */
     protected static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
-        Operation bestop = null;
-        float bestop_truthexp = 0.0f;
-        TruthValue bestop_truth = null;
-        Task executable_precond = null;
-        long mintime = -1;
-        long maxtime = -1;
+        BestOpWithMetainfo bestOpWithMeta = calcBestOpWithMeta(nal, concept, projectedGoal);
+
+        if(bestOpWithMeta.bestop != null && bestOpWithMeta.bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
+
+            final Sentence createdSentence = new Sentence(
+                    bestOpWithMeta.bestop,
+                    Symbols.JUDGMENT_MARK,
+                    bestOpWithMeta.bestop_truth,
+                    projectedGoal.stamp);
+
+            final Task t = new Task(createdSentence,
+                              new BudgetValue(1.0f,1.0f,1.0f),
+                              false);
+            //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
+            if(!task.sentence.stamp.evidenceIsCyclic()) {
+                if(!executeDecision(nal, t)) { //this task is just used as dummy
+                    concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
+                } else {
+                    concept.memory.decisionBlock = concept.memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
+                    generatePotentialNegConfirmation(nal, bestOpWithMeta.executable_precond.sentence, bestOpWithMeta.executable_precond.budget, bestOpWithMeta.mintime, bestOpWithMeta.maxtime, 2);
+                }
+            }
+        }
+    }
+
+    private static BestOpWithMetainfo calcBestOpWithMeta(final DerivationContext nal, final Concept concept, final Sentence projectedGoal) {
+        BestOpWithMetainfo result = new BestOpWithMetainfo();
+
         for(final Task t: concept.executable_preconditions) {
             final Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
             final Term[] newprec = new Term[prec.length-3];
             System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
 
             final long add_tolerance = (long) (((Interval)prec[prec.length-1]).time*Parameters.ANTICIPATION_TOLERANCE);
-            mintime = nal.memory.time();
-            maxtime = nal.memory.time() + add_tolerance;
+            result.mintime = nal.memory.time();
+            result.maxtime = nal.memory.time() + add_tolerance;
 
             final Operation op = (Operation) prec[prec.length-2];
             final Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
@@ -510,36 +542,16 @@ public class ConceptProcessing {
                 final TruthValue opdesire = TruthFunctions.desireDed(precon, leftside);
 
                 final float expecdesire = opdesire.getExpectation();
-                if(expecdesire > bestop_truthexp) {
-                    bestop = op;
-                    bestop_truthexp = expecdesire;
-                    bestop_truth = opdesire;
-                    executable_precond = t;
+                if(expecdesire > result.bestop_truthexp) {
+                    result.bestop = op;
+                    result.bestop_truthexp = expecdesire;
+                    result.bestop_truth = opdesire;
+                    result.executable_precond = t;
                 }
             }
         }
 
-        if(bestop != null && bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
-
-            final Sentence createdSentence = new Sentence(
-                    bestop,
-                    Symbols.JUDGMENT_MARK,
-                    bestop_truth,
-                    projectedGoal.stamp);
-
-            final Task t = new Task(createdSentence,
-                              new BudgetValue(1.0f,1.0f,1.0f),
-                              false);
-            //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
-            if(!task.sentence.stamp.evidenceIsCyclic()) {
-                if(!executeDecision(nal, t)) { //this task is just used as dummy
-                    concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
-                } else {
-                    concept.memory.decisionBlock = concept.memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
-                    generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
-                }
-            }
-        }
+        return result;
     }
 
     public static void generatePotentialNegConfirmation(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget, final long mintime, final long maxtime, final float priority) {
