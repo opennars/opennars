@@ -456,25 +456,27 @@ public class ConceptProcessing {
     */
     protected static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
         BestOpWithMetainfo bestOpWithMeta = calcBestOpWithMeta(nal, concept, projectedGoal);
+        calcBestReactionForMeta(nal, bestOpWithMeta, concept, projectedGoal, task);
+    }
 
-        if(bestOpWithMeta.bestop != null && bestOpWithMeta.bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
-
+    private static void calcBestReactionForMeta(final DerivationContext nal, BestOpWithMetainfo meta, final Concept concept, final Sentence projectedGoal, final Task task) {
+        if(meta.bestop != null && meta.bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
             final Sentence createdSentence = new Sentence(
-                    bestOpWithMeta.bestop,
-                    Symbols.JUDGMENT_MARK,
-                    bestOpWithMeta.bestop_truth,
-                    projectedGoal.stamp);
+                meta.bestop,
+                Symbols.JUDGMENT_MARK,
+                meta.bestop_truth,
+                projectedGoal.stamp);
 
             final Task t = new Task(createdSentence,
-                              new BudgetValue(1.0f,1.0f,1.0f),
-                              false);
+                new BudgetValue(1.0f,1.0f,1.0f),
+                false);
             //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
             if(!task.sentence.stamp.evidenceIsCyclic()) {
                 if(!executeDecision(nal, t)) { //this task is just used as dummy
                     concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
                 } else {
                     concept.memory.decisionBlock = concept.memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
-                    generatePotentialNegConfirmation(nal, bestOpWithMeta.executable_precond.sentence, bestOpWithMeta.executable_precond.budget, bestOpWithMeta.mintime, bestOpWithMeta.maxtime, 2);
+                    generatePotentialNegConfirmation(nal, meta.executable_precond.sentence, meta.executable_precond.budget, meta.mintime, meta.maxtime, 2);
                 }
             }
         }
