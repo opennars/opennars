@@ -501,56 +501,62 @@ public class ConceptProcessing {
             final Concept preconc = nal.memory.concept(precondition);
             long newesttime = -1;
             Task bestsofar = null;
-            if(preconc != null) { //ok we can look now how much it is fullfilled
 
-                //check recent events in event bag
-                for(final Task p : concept.memory.seq_current) {
-                    if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= concept.memory.time()) {
-                        newesttime = p.sentence.getOccurenceTime();
-                        bestsofar = p; //we use the newest for now
-                    }
-                }
-                if(bestsofar == null) {
-                    continue;
-                }
-                //ok now we can take the desire value:
-                final TruthValue A = projectedGoal.getTruth();
-                //and the truth of the hypothesis:
-                final TruthValue Hyp = t.sentence.truth;
-                //overlap will almost never happen, but to make sure
-                if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
-                    continue; //base overlap
-                }
-                if(Stamp.baseOverlap(bestsofar.sentence.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
-                    continue; //base overlap
-                }
-                if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, bestsofar.sentence.stamp.evidentialBase)) {
-                    continue; //base overlap
-                }
-                //and the truth of the precondition:
-                final Sentence projectedPrecon = bestsofar.sentence.projection(concept.memory.time() /*- distance*/, concept.memory.time());
+            if(preconc == null) {
+                continue;
+            }
 
-                if(projectedPrecon.isEternal()) {
-                    continue; //projection wasn't better than eternalization, too long in the past
-                }
-                //debug start
-                //long timeA = memory.time();
-                //long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
-                //long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
-                //debug end
-                final TruthValue precon = projectedPrecon.truth;
-                //and derive the conjunction of the left side:
-                final TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
-                //in order to derive the operator desire value:
-                final TruthValue opdesire = TruthFunctions.desireDed(precon, leftside);
+            //ok we can look now how much it is fullfilled
 
-                final float expecdesire = opdesire.getExpectation();
-                if(expecdesire > result.bestop_truthexp) {
-                    result.bestop = op;
-                    result.bestop_truthexp = expecdesire;
-                    result.bestop_truth = opdesire;
-                    result.executable_precond = t;
+            //check recent events in event bag
+            for(final Task p : concept.memory.seq_current) {
+                if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= concept.memory.time()) {
+                    newesttime = p.sentence.getOccurenceTime();
+                    bestsofar = p; //we use the newest for now
                 }
+            }
+
+            if(bestsofar == null) {
+                continue;
+            }
+
+            //ok now we can take the desire value:
+            final TruthValue A = projectedGoal.getTruth();
+            //and the truth of the hypothesis:
+            final TruthValue Hyp = t.sentence.truth;
+            //overlap will almost never happen, but to make sure
+            if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
+                continue; //base overlap
+            }
+            if(Stamp.baseOverlap(bestsofar.sentence.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
+                continue; //base overlap
+            }
+            if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, bestsofar.sentence.stamp.evidentialBase)) {
+                continue; //base overlap
+            }
+            //and the truth of the precondition:
+            final Sentence projectedPrecon = bestsofar.sentence.projection(concept.memory.time() /*- distance*/, concept.memory.time());
+
+            if(projectedPrecon.isEternal()) {
+                continue; //projection wasn't better than eternalization, too long in the past
+            }
+            //debug start
+            //long timeA = memory.time();
+            //long timeOLD = bestsofar.sentence.stamp.getOccurrenceTime();
+            //long timeNEW = projectedPrecon.stamp.getOccurrenceTime();
+            //debug end
+            final TruthValue precon = projectedPrecon.truth;
+            //and derive the conjunction of the left side:
+            final TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
+            //in order to derive the operator desire value:
+            final TruthValue opdesire = TruthFunctions.desireDed(precon, leftside);
+
+            final float expecdesire = opdesire.getExpectation();
+            if(expecdesire > result.bestop_truthexp) {
+                result.bestop = op;
+                result.bestop_truthexp = expecdesire;
+                result.bestop_truth = opdesire;
+                result.executable_precond = t;
             }
         }
 
