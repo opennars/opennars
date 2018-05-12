@@ -524,16 +524,16 @@ public class ConceptProcessing {
             final TruthValue A = projectedGoal.getTruth();
             //and the truth of the hypothesis:
             final TruthValue Hyp = t.sentence.truth;
+
             //overlap will almost never happen, but to make sure
-            if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
-                continue; //base overlap
+            if(
+                Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, t.sentence.stamp.evidentialBase) ||
+                Stamp.baseOverlap(bestsofar.sentence.stamp.evidentialBase, t.sentence.stamp.evidentialBase) ||
+                Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, bestsofar.sentence.stamp.evidentialBase)
+            ) {
+                continue;
             }
-            if(Stamp.baseOverlap(bestsofar.sentence.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
-                continue; //base overlap
-            }
-            if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, bestsofar.sentence.stamp.evidentialBase)) {
-                continue; //base overlap
-            }
+
             //and the truth of the precondition:
             final Sentence projectedPrecon = bestsofar.sentence.projection(concept.memory.time() /*- distance*/, concept.memory.time());
 
