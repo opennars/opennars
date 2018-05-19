@@ -439,7 +439,7 @@ public class ConceptProcessing {
         }
     }
 
-    private static class BestOpWithMetainfo {
+    private static class ExecutablePrecondition {
         public Operation bestop = null;
         public float bestop_truthexp = 0.0f;
         public TruthValue bestop_truth = null;
@@ -455,11 +455,11 @@ public class ConceptProcessing {
     * This is a special case of the choice rule and allows certain behaviors to be automated.
     */
     protected static void bestReactionForGoal(final Concept concept, final DerivationContext nal, final Sentence projectedGoal, final Task task) {
-        BestOpWithMetainfo bestOpWithMeta = calcBestOpWithMeta(nal, concept, projectedGoal);
-        calcBestReactionForMeta(nal, bestOpWithMeta, concept, projectedGoal, task);
+        ExecutablePrecondition bestOpWithMeta = calcBestExecutablePrecondition(nal, concept, projectedGoal);
+        executePrecondition(nal, bestOpWithMeta, concept, projectedGoal, task);
     }
 
-    private static void calcBestReactionForMeta(final DerivationContext nal, BestOpWithMetainfo meta, final Concept concept, final Sentence projectedGoal, final Task task) {
+    private static void executePrecondition(final DerivationContext nal, ExecutablePrecondition meta, final Concept concept, final Sentence projectedGoal, final Task task) {
         if(meta.bestop != null && meta.bestop_truthexp > nal.narParameters.DECISION_THRESHOLD /*&& Math.random() < bestop_truthexp */) {
             final Sentence createdSentence = new Sentence(
                 meta.bestop,
@@ -483,8 +483,8 @@ public class ConceptProcessing {
         }
     }
 
-    private static BestOpWithMetainfo calcBestOpWithMeta(final DerivationContext nal, final Concept concept, final Sentence projectedGoal) {
-        BestOpWithMetainfo result = new BestOpWithMetainfo();
+    private static ExecutablePrecondition calcBestExecutablePrecondition(final DerivationContext nal, final Concept concept, final Sentence projectedGoal) {
+        ExecutablePrecondition result = new ExecutablePrecondition();
 
         for(final Task t: concept.executable_preconditions) {
             final Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
