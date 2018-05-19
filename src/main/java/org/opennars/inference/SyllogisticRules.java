@@ -250,6 +250,13 @@ public final class SyllogisticRules {
             return;
         }
 
+        if (sentence.isGoal()) {
+            truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(taskTerm.isCommutative(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DESIRESTRONG, asym.truth, sym.truth);
+        }
+        else if( sentence.isJudgment() ) {
+            truth = TruthFunctions.analogy(asym.truth, sym.truth);
+        }
+
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (taskTerm.isCommutative()) {
                 budget = BudgetFunctions.backwardWeak(asym.truth, nal);
@@ -257,12 +264,6 @@ public final class SyllogisticRules {
                 budget = BudgetFunctions.backward(sym.truth, nal);
             }
         } else {
-            if (sentence.isGoal()) {
-                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(taskTerm.isCommutative(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DESIRESTRONG, asym.truth, sym.truth);
-            } else {
-                truth = TruthFunctions.analogy(asym.truth, sym.truth);
-            }
-            
             budget = BudgetFunctions.forward(truth, nal);
         }
         
