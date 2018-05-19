@@ -246,16 +246,8 @@ public final class SyllogisticRules {
         final Sentence sentence = nal.getCurrentTask().sentence;
         final CompoundTerm taskTerm = (CompoundTerm) sentence.term;
 
-        if (sentence.isQuestion() || sentence.isQuest()) {
-            if (taskTerm.isCommutative()) {
-                if(asym.truth==null) { //a question for example
-                    return;
-                }
-            } else {
-                if(sym.truth==null) { //a question for example
-                    return;
-                }
-            }
+        if ((sentence.isQuestion() || sentence.isQuest()) && asym.truth == null) {
+            return;
         }
 
         if (sentence.isQuestion() || sentence.isQuest()) {
