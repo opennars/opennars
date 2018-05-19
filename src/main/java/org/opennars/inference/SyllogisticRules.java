@@ -245,16 +245,23 @@ public final class SyllogisticRules {
         final BudgetValue budget;
         final Sentence sentence = nal.getCurrentTask().sentence;
         final CompoundTerm taskTerm = (CompoundTerm) sentence.term;
+
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (taskTerm.isCommutative()) {
                 if(asym.truth==null) { //a question for example
                     return;
                 }
-                budget = BudgetFunctions.backwardWeak(asym.truth, nal);
             } else {
                 if(sym.truth==null) { //a question for example
                     return;
                 }
+            }
+        }
+
+        if (sentence.isQuestion() || sentence.isQuest()) {
+            if (taskTerm.isCommutative()) {
+                budget = BudgetFunctions.backwardWeak(asym.truth, nal);
+            } else {
                 budget = BudgetFunctions.backward(sym.truth, nal);
             }
         } else {
