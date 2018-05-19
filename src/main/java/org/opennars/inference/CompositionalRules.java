@@ -123,7 +123,7 @@ public final class CompositionalRules {
      * @param subject Subject of contentInd
      * @param predicate Predicate of contentInd
      * @param truth TruthValue of the contentInd
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      */
     private static void processComposed(final Statement statement, final Term subject, final Term predicate, final int order, final TruthValue truth, final DerivationContext nal) {
         if ((subject == null) || (predicate == null)) {
