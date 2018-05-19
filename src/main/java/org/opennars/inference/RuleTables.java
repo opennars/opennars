@@ -836,28 +836,32 @@ public class RuleTables {
     public static void transformTask(final TaskLink tLink, final DerivationContext nal) {
         final CompoundTerm content = (CompoundTerm) nal.getCurrentTask().getTerm();
         final short[] indices = tLink.index;
-        Term inh = null;
-        if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>
-            inh = content;
-        } else if (indices.length == 3) {   // <<(*, term, #) --> #> ==> #>
-            inh = content.term[indices[0]];
-        } else if (indices.length == 4) {   // <(&&, <(*, term, #) --> #>, #) ==> #>
-            final Term component = content.term[indices[0]];
-            if ((component instanceof Conjunction) && (((content instanceof Implication) && (indices[0] == 0)) || (content instanceof Equivalence))) {
-                
-                final Term[] cterms = ((CompoundTerm) component).term;
-                if (indices[1] < cterms.length-1) {
-                    inh = cterms[indices[1]];
-                }
-                else {
+        Term expectedInheritanceTerm = null; // we store here the (dereferenced) term which we expect to be a inheritance
+
+        { // this block "dereferences" the term by the address which we are storing in "indices"
+            if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>
+                expectedInheritanceTerm = content;
+            } else if (indices.length == 3) {   // <<(*, term, #) --> #> ==> #>
+                expectedInheritanceTerm = content.term[indices[0]];
+            } else if (indices.length == 4) {   // <(&&, <(*, term, #) --> #>, #) ==> #>
+                final Term component = content.term[indices[0]];
+                if ((component instanceof Conjunction) && (((content instanceof Implication) && (indices[0] == 0)) || (content instanceof Equivalence))) {
+
+                    final Term[] cterms = ((CompoundTerm) component).term;
+                    if (indices[1] < cterms.length - 1) {
+                        expectedInheritanceTerm = cterms[indices[1]];
+                    } else {
+                        return;
+                    }
+                } else {
                     return;
                 }
-            } else {
-                return;
             }
         }
-        if (inh instanceof Inheritance) {
-            StructuralRules.transformProductImage((Inheritance) inh, content, indices, nal);
+
+        // it is not a fatal error if it is not a inheritance, we just ignore it in this case
+        if (expectedInheritanceTerm instanceof Inheritance) {
+            StructuralRules.transformProductImage((Inheritance) expectedInheritanceTerm, content, indices, nal);
         }
     }
 }
