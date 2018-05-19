@@ -84,14 +84,28 @@ public final class SyllogisticRules {
             budget2 = BudgetFunctions.forward(truth2, nal);
         }
 
+
+        InferenceCommands.Context context = InferenceCommands.Context.make();
+
+        // set registers to the input terms
+        context.termRegisters[0] = term1;
+        context.termRegisters[1] = term2;
+
         final Statement content = (Statement) sentence.term;
-        final Statement content1 = Statement.make(content, term1, term2, order);
-        final Statement content2 = Statement.make(content, term2, term1, reverseOrder(order));
-        
-        if ((content1 == null) || (content2 == null))
+
+        // make statements with the deprecated functionality which
+        // constructs the statement with a copula provided by another object
+        InferenceCommands.makeStatementWithOrderDeprecatedOrFail(context, 2, content, 0, 1, order);
+        InferenceCommands.makeStatementWithOrderDeprecatedOrFail(context, 3, content, 1, 0, reverseOrder(order));
+
+        if( !context.retSuccess() ) {
             return;
-        
+        }
+
+        final Term content1 = context.termRegisters[2];
         nal.doublePremiseTask(content1, truth1, budget1,false, false); //(allow overlap) but not needed here, isn't detachment
+
+        final Term content2 = context.termRegisters[3];
         nal.doublePremiseTask(content2, truth2, budget2,false, false);
     }
 
