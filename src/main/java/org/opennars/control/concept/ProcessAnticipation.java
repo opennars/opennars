@@ -36,6 +36,7 @@ import org.opennars.language.Negation;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
 import org.opennars.main.Parameters;
+import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;
 import org.opennars.plugin.mental.InternalExperience;
 
@@ -67,7 +68,10 @@ public class ProcessAnticipation {
                     final Implication imp = (Implication) c.negConfirmation.sentence.term;
                     final Concept ctarget = nal.memory.concept(imp.getPredicate());
                     if(ctarget != null && ctarget.getPriority()>=InternalExperience.MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION) {
-                        ((Anticipate)c.memory.getOperator("^anticipate")).anticipationFeedback(imp.getPredicate(), null, c.memory);
+                        Operator anticipate_op = ((Anticipate)c.memory.getOperator("^anticipate"));
+                        if(anticipate_op != null && anticipate_op instanceof Anticipate) {
+                            ((Anticipate)anticipate_op).anticipationFeedback(imp.getPredicate(), null, c.memory);
+                        }
                     }
                 }
                 nal.memory.emit(OutputHandler.ANTICIPATE.class,((Statement) c.negConfirmation.sentence.term).getPredicate()); //disappoint/confirm printed anyway
