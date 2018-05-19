@@ -299,6 +299,24 @@ public abstract class Statement extends CompoundTerm {
         return term[1];
     }
 
+    /**
+     * returns the subject (0) or predicate(1)
+     * @param statement statement for which the side has to be returned
+     * @param side subject(0) or predicate(1)
+     * @return the term of the side
+     */
+    public Term retBySide(final EnumStatementSide side) {
+        return side == EnumStatementSide.SUBJECT ? getSubject() : getPredicate();
+    }
+
+    public static EnumStatementSide retOppositeSide(final EnumStatementSide side) {
+        return side == EnumStatementSide.SUBJECT ? EnumStatementSide.PREDICATE : EnumStatementSide.SUBJECT;
+    }
+
+    public enum EnumStatementSide {
+        SUBJECT,
+        PREDICATE,
+    }
+
     @Override public abstract Statement clone();
-   
 }

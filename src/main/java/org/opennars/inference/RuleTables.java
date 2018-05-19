@@ -24,6 +24,7 @@ import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
 
 import static org.opennars.io.Symbols.*;
+import static org.opennars.language.Statement.retOppositeSide;
 import static org.opennars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
@@ -405,10 +406,10 @@ public class RuleTables {
         Term t2 = null;
         final Term[] u = new Term[] { taskStatement, beliefStatement };
 
-        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
-        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+        final Statement.EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final Statement.EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
-        if (!Variables.unify(VAR_INDEPENDENT, retBySide(taskStatement, figureLeft), retBySide(beliefStatement, figureRight), u)) {
+        if (!Variables.unify(VAR_INDEPENDENT, taskStatement.retBySide(figureLeft), beliefStatement.retBySide(figureRight), u)) {
             return;
         }
 
@@ -497,18 +498,18 @@ public class RuleTables {
         Statement asymSt = (Statement) asym.term;
         Statement symSt = (Statement) sym.term;
 
-        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
-        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+        final Statement.EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final Statement.EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
         final Term[] u = new Term[] { asymSt, symSt };
-        if (!Variables.unify(VAR_INDEPENDENT, retBySide(asymSt, figureLeft), retBySide(symSt, figureRight), u)) {
+        if (!Variables.unify(VAR_INDEPENDENT, asymSt.retBySide(figureLeft), symSt.retBySide(figureRight), u)) {
             return;
         }
 
         asymSt = (Statement) u[0];
         symSt = (Statement) u[1];
-        final Term t1 = retBySide(asymSt, retOppositeSide(figureLeft));
-        final Term t2 = retBySide(symSt, retOppositeSide(figureRight));
+        final Term t1 = asymSt.retBySide(retOppositeSide(figureLeft));
+        final Term t2 = symSt.retBySide(retOppositeSide(figureRight));
 
         if (Variables.unify(VAR_QUERY, t1, t2, u)) {
             LocalRules.matchAsymSym(asym, sym, figure, nal);
@@ -528,20 +529,6 @@ public class RuleTables {
     }
 
     /**
-     * returns the subject (0) or predicate(1)
-     * @param statement statement for which the side has to be returned
-     * @param side subject(0) or predicate(1)
-     * @return the term of the side
-     */
-    private static Term retBySide(Statement statement, EnumStatementSide side) {
-        return side == EnumStatementSide.SUBJECT ? statement.getSubject() : statement.getPredicate();
-    }
-
-    private static EnumStatementSide retOppositeSide(EnumStatementSide side) {
-        return side == EnumStatementSide.SUBJECT ? EnumStatementSide.PREDICATE : EnumStatementSide.SUBJECT;
-    }
-
-    /**
      * converts the side of a figure to a zero based index - which determines the side of the Statement
      *
      * a figure is a encoding for the sides
@@ -549,30 +536,25 @@ public class RuleTables {
      * @param sideOfFigure side
      * @return
      */
-    private static EnumStatementSide retSideFromFigure(int figure, EnumFigureSide sideOfFigure) {
+    private static Statement.EnumStatementSide retSideFromFigure(int figure, EnumFigureSide sideOfFigure) {
         if( sideOfFigure == EnumFigureSide.LEFT ) {
             switch(figure) {
-                case 11: return EnumStatementSide.SUBJECT;
-                case 12: return EnumStatementSide.SUBJECT;
-                case 21: return EnumStatementSide.PREDICATE;
-                case 22: return EnumStatementSide.PREDICATE;
+                case 11: return Statement.EnumStatementSide.SUBJECT;
+                case 12: return Statement.EnumStatementSide.SUBJECT;
+                case 21: return Statement.EnumStatementSide.PREDICATE;
+                case 22: return Statement.EnumStatementSide.PREDICATE;
             }
         }
         else {
             switch(figure) {
-                case 11: return EnumStatementSide.SUBJECT;
-                case 12: return EnumStatementSide.PREDICATE;
-                case 21: return EnumStatementSide.SUBJECT;
-                case 22: return EnumStatementSide.PREDICATE;
+                case 11: return Statement.EnumStatementSide.SUBJECT;
+                case 12: return Statement.EnumStatementSide.PREDICATE;
+                case 21: return Statement.EnumStatementSide.SUBJECT;
+                case 22: return Statement.EnumStatementSide.PREDICATE;
             }
         }
 
         throw new IllegalArgumentException("figure is invalid");
-    }
-
-    enum EnumStatementSide {
-        SUBJECT,
-        PREDICATE,
     }
 
     enum EnumFigureSide {
@@ -593,15 +575,15 @@ public class RuleTables {
         final Statement s1 = (Statement) belief.term;
         final Statement s2 = (Statement) taskSentence.term;
 
-        final EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
-        final EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
+        final Statement.EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
+        final Statement.EnumStatementSide figureRight = retSideFromFigure(figure, EnumFigureSide.RIGHT);
 
         //parameters for unify()
-        final Term ut1 = retBySide(s1, figureLeft);
-        final Term ut2 = retBySide(s2, figureRight);
+        final Term ut1 = s1.retBySide(figureLeft);
+        final Term ut2 = s2.retBySide(figureRight);
         //parameters for resemblance()
-        Term rt1 = retBySide(s1, retOppositeSide(figureLeft));
-        Term rt2 = retBySide(s2, retOppositeSide(figureRight));
+        Term rt1 = s1.retBySide(retOppositeSide(figureLeft));
+        Term rt2 = s2.retBySide(retOppositeSide(figureRight));
         
         final Term[] u = new Term[] { s1, s2 };
         if (Variables.unify(VAR_INDEPENDENT, ut1, ut2, u)) {

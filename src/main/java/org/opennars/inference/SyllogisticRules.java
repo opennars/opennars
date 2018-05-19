@@ -27,7 +27,6 @@ import org.opennars.control.concept.ProcessAnticipation;
 import static org.opennars.inference.TemporalRules.*;
 import static org.opennars.language.Terms.reduceComponents;
 
-
 /**
  * Syllogisms: Inference rules based on the transitivity of the relation.
  */
@@ -510,13 +509,11 @@ public final class SyllogisticRules {
         final boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term);
         final Term commonComponent;
         Term newComponent = null;
-        if (side == 0) {
-            commonComponent = ((Statement) premise2).getSubject();
-            newComponent = ((Statement) premise2).getPredicate();
-        } else if (side == 1) {
-            commonComponent = ((Statement) premise2).getPredicate();
-            newComponent = ((Statement) premise2).getSubject();
-        } else {
+        if (side == 0 || side == 1) {
+            Statement.EnumStatementSide sideOfCommonComponentAsEnum = side == 0 ? Statement.EnumStatementSide.SUBJECT : Statement.EnumStatementSide.PREDICATE;
+            commonComponent = ((Statement)premise2).retBySide(sideOfCommonComponentAsEnum);
+            newComponent = ((Statement)premise2).retBySide(Statement.retOppositeSide(sideOfCommonComponentAsEnum));
+        }else {
             commonComponent = premise2;
         }
         
