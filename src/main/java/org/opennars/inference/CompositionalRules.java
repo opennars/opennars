@@ -320,7 +320,7 @@ public final class CompositionalRules {
                 } else { // isJudgment
                     truth = reduceConjunction(v1, v2);
                 }
-            } else if (compound instanceof Disjunction) {
+            } else {
                 if (taskSentence.isGoal()) {
                     truth = reduceConjunction(v2, v1);
                 } else {  // isJudgment
