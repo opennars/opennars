@@ -169,22 +169,17 @@ public final class CompositionalRules {
         final Sentence sentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
         final Statement oldContent = (Statement) task.getTerm();
-        final TruthValue v1;
-        final TruthValue v2;
-        if (compoundTask) {
-            v1 = sentence.truth;
-            v2 = belief.truth;
-        } else {
-            v1 = belief.truth;
-            v2 = sentence.truth;
+
+        final TruthValue v1 = compoundTask ? sentence.truth : belief.truth;
+        final TruthValue v2 = compoundTask ? belief.truth : sentence.truth;
+
+        final Term content = Statement.make(oldContent, index == 0 ? term1 : term2, index == 0 ? term2 : term1, order);
+        if (content == null) {
+            return;
         }
+
         TruthValue truth = null;
-        final Term content;
         if (index == 0) {
-            content = Statement.make(oldContent, term1, term2, order);
-            if (content == null) {
-                return;
-            }
             if (oldContent instanceof Inheritance) {
                 truth = lookupTruthOrNull(v1, v2,
                     compound instanceof IntersectionExt,               EnumType.REDUCECONJUNCTION,
@@ -207,10 +202,6 @@ public final class CompositionalRules {
                 }
             }
         } else {
-            content = Statement.make(oldContent, term2, term1, order);
-            if (content == null) {
-                return;
-            }
             if (oldContent instanceof Inheritance) {
                 truth = lookupTruthOrNull(v1, v2,
                     compound instanceof IntersectionInt,               EnumType.REDUCECONJUNCTION,
