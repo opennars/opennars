@@ -335,27 +335,18 @@ public final class CompositionalRules {
 
             if (compound instanceof Conjunction) {
                 if (taskSentence.isGoal()) {
-                    if (compoundTask) {
-                        truth = intersection(v1, v2);
-                    } else {
-                        return;
-                    }
+                    truth = intersection(v1, v2);
                 } else { // isJudgment
                     truth = reduceConjunction(v1, v2);
                 }
             } else if (compound instanceof Disjunction) {
                 if (taskSentence.isGoal()) {
-                    if (compoundTask) {
-                        truth = reduceConjunction(v2, v1);
-                    } else {
-                        return;
-                    }
+                    truth = reduceConjunction(v2, v1);
                 } else {  // isJudgment
                     truth = reduceDisjunction(v1, v2);
                 }
-            } else {
-                return;
             }
+
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
         nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
