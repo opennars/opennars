@@ -35,6 +35,10 @@ public final class TruthFunctions extends UtilityFunctions {
         EXEMPLIFICATION,
         ABDUCTION,
         RESEMBLENCE,
+        REDUCECONJUNCTION,
+        REDUCEDISJUNCTION,
+        REDUCEDISJUNCTIONREV,
+        REDUCECONJUNCTIONNEG,
     }
 
     /**
@@ -57,6 +61,10 @@ public final class TruthFunctions extends UtilityFunctions {
             case EXEMPLIFICATION: return exemplification(a, b);
             case ABDUCTION: return abduction(a, b);
             case RESEMBLENCE: return resemblance(a, b);
+            case REDUCECONJUNCTION: return reduceConjunction(a, b);
+            case REDUCEDISJUNCTION: return reduceDisjunction(a, b);
+            case REDUCEDISJUNCTIONREV: return reduceDisjunction(b, a);
+            case REDUCECONJUNCTIONNEG: return reduceConjunctionNeg(a, b);
             default: throw new IllegalArgumentException("Encountered unimplemented case!"); // internal error
         }
     }
@@ -73,6 +81,27 @@ public final class TruthFunctions extends UtilityFunctions {
     public static TruthValue lookupTruthFunctionByBoolAndCompute(final boolean flag, final EnumType typeTrue, final EnumType typeFalse, final TruthValue a, final TruthValue b) {
         final EnumType type = flag ? typeTrue : typeFalse;
         return lookupTruthFunctionAndCompute(type, a, b);
+    }
+
+    /**
+     * lookup the truth function by the first boolean which is true or return null if no boolean is true
+     * @param values tuples of boolean conditional values and their corresponding truth function
+     * @param a truth value of the first premise
+     * @param b truth value of the second premise
+     * @return truth value as computed by the truth-function or null if no boolean value was true
+     */
+    public static TruthValue lookupTruthOrNull(final TruthValue a, final TruthValue b, final Object... values) {
+        final int numberOfTuples = (values.length) / 2;
+
+        for(int idx = 0; idx < numberOfTuples; idx++) {
+            final boolean v = (boolean)values[idx*2];
+            if( v ) {
+                final EnumType type = (EnumType)values[idx*2+1];
+                return lookupTruthFunctionAndCompute(type, a, b);
+            }
+        }
+
+        return null;
     }
 
 
