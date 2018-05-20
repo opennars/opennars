@@ -313,11 +313,7 @@ public final class CompositionalRules {
                 v2 = taskSentence.truth;
             }
 
-            if (compound instanceof Conjunction) {
-                if (taskSentence.isGoal() && !compoundTask) {
-                    return;
-                }
-            } else if (compound instanceof Disjunction) {
+            if (compound instanceof Conjunction || compound instanceof Disjunction) {
                 if (taskSentence.isGoal() && !compoundTask) {
                     return;
                 }
