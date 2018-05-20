@@ -312,6 +312,27 @@ public final class CompositionalRules {
                 v1 = belief.truth;
                 v2 = taskSentence.truth;
             }
+
+            if (compound instanceof Conjunction) {
+                if (taskSentence.isGoal()) {
+                    if (compoundTask) {
+                    } else {
+                        return;
+                    }
+                } else { // isJudgment
+                }
+            } else if (compound instanceof Disjunction) {
+                if (taskSentence.isGoal()) {
+                    if (compoundTask) {
+                    } else {
+                        return;
+                    }
+                } else {  // isJudgment
+                }
+            } else {
+                return;
+            }
+
             if (compound instanceof Conjunction) {
                 if (taskSentence.isGoal()) {
                     if (compoundTask) {
