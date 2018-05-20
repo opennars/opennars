@@ -314,16 +314,12 @@ public final class CompositionalRules {
             }
 
             if (compound instanceof Conjunction) {
-                if (taskSentence.isGoal()) {
-                    if (!compoundTask) {
-                        return;
-                    }
+                if (taskSentence.isGoal() && !compoundTask) {
+                    return;
                 }
             } else if (compound instanceof Disjunction) {
-                if (taskSentence.isGoal()) {
-                    if (!compoundTask) {
-                        return;
-                    }
+                if (taskSentence.isGoal() && !compoundTask) {
+                    return;
                 }
             } else {
                 return;
