@@ -303,15 +303,8 @@ public final class CompositionalRules {
                 nal.doublePremiseTask(conj, truth, budget, false, false);
             }
         } else {
-            final TruthValue v1;
-            final TruthValue v2;
-            if (compoundTask) {
-                v1 = taskSentence.truth;
-                v2 = belief.truth;
-            } else {
-                v1 = belief.truth;
-                v2 = taskSentence.truth;
-            }
+            final TruthValue v1 = compoundTask ? taskSentence.truth : belief.truth;
+            final TruthValue v2 = compoundTask ? belief.truth : taskSentence.truth;
 
             if (compound instanceof Conjunction || compound instanceof Disjunction) {
                 if (taskSentence.isGoal() && !compoundTask) {
