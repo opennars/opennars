@@ -315,19 +315,15 @@ public final class CompositionalRules {
 
             if (compound instanceof Conjunction) {
                 if (taskSentence.isGoal()) {
-                    if (compoundTask) {
-                    } else {
+                    if (!compoundTask) {
                         return;
                     }
-                } else { // isJudgment
                 }
             } else if (compound instanceof Disjunction) {
                 if (taskSentence.isGoal()) {
-                    if (compoundTask) {
-                    } else {
+                    if (!compoundTask) {
                         return;
                     }
-                } else {  // isJudgment
                 }
             } else {
                 return;
