@@ -196,24 +196,24 @@ public class Terms {
     /**
      * Try to remove a component from a compound
      *
-     * @param t1 The compound
-     * @param t2 The component
+     * @param compound The compound
+     * @param component The component
      * @param memory Reference to the memory
      * @return The new compound
      */
-    public static Term reduceComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
+    public static Term reduceComponents(final CompoundTerm compound, final Term component, final Memory memory) {
         final Term[] list;
-        if (t1.getClass() == t2.getClass()) {
-            list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
+        if (compound.getClass() == component.getClass()) {
+            list = compound.cloneTermsExcept(true, ((CompoundTerm) component).term);
         } else {
-            list = t1.cloneTermsExcept(true, new Term[] { t2 });
+            list = compound.cloneTermsExcept(true, new Term[] { component });
         }
         if (list != null) {
             if (list.length > 1) {
-                return term(t1, list);
+                return term(compound, list);
             }
             if (list.length == 1) {
-                if ((t1 instanceof Conjunction) || (t1 instanceof Disjunction) || (t1 instanceof IntersectionExt) || (t1 instanceof IntersectionInt) || (t1 instanceof DifferenceExt) || (t1 instanceof DifferenceInt)) {
+                if ((compound instanceof Conjunction) || (compound instanceof Disjunction) || (compound instanceof IntersectionExt) || (compound instanceof IntersectionInt) || (compound instanceof DifferenceExt) || (compound instanceof DifferenceInt)) {
                     return list[0];
                 }
             }
