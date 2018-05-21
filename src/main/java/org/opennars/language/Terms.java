@@ -134,13 +134,13 @@ public class Terms {
      * <p>
      * Called from StringParser
      *
-     * @param termOperator Term operator
+     * @param copula Term operator
      * @param componentList Component list
      * @return A term or null
      */
-    public static Term term(final Symbols.NativeOperator termOperator, final Term[] componentList) {
+    public static Term term(final Symbols.NativeOperator copula, final Term[] componentList) {
         
-        switch (termOperator) {
+        switch (copula) {
             
             case SET_EXT_OPENER:
                 return SetExt.make(componentList);
@@ -189,7 +189,7 @@ public class Terms {
             case EQUIVALENCE_AFTER:
                 return Equivalence.make(componentList[0], componentList[1], TemporalRules.ORDER_FORWARD);
         }
-        throw new IllegalStateException("Unknown Term operator: " + termOperator + " (" + termOperator.name() + ")");
+        throw new IllegalStateException("Unknown Term operator: " + copula + " (" + copula.name() + ")");
     }
     
     /**
