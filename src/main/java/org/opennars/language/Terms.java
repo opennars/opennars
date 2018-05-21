@@ -287,30 +287,10 @@ public class Terms {
             ta = subjA; sa = predA;
             tb = subjB; sb = predB;                
         }
-        //DUPLICATE?
-        /*if ((predA instanceof ImageExt) && (predB instanceof ImageExt)) {
-            ta = subjA; sa = predA;
-            tb = subjB; sb = predB;
-        }*/
         if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
             ta = predA; sa = subjA;
             tb = predB; sb = subjB;
         }
-        //ANOTHER DUPLICATE?
-        /*
-        if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
-                Set<Term> componentsA = new HashSet();
-                Set<Term> componentsB = new HashSet();
-                componentsA.add(predA);
-                componentsB.add(predB);
-                componentsA.addAll(Arrays.asList(((CompoundTerm) subjA).term));
-                componentsB.addAll(Arrays.asList(((CompoundTerm) subjB).term));
-                if (componentsA.containsAll(componentsB)) {
-                    return true;
-                }
-
-        }
-        */
         if ((predA instanceof Product) && (subjB instanceof ImageInt)) {
             ta = subjA; sa = predA;
             tb = predB; sb = subjB;                
