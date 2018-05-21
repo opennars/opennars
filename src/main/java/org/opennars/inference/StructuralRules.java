@@ -334,8 +334,7 @@ public final class StructuralRules {
      * @param inh An Inheritance statement
      * @param oldContent The whole content
      * @param indices The indices of the TaskLink
-     * @param task The task
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      */
     static void transformProductImage(final Inheritance inh, final CompoundTerm oldContent, final short[] indices, final DerivationContext nal) {
         final Memory memory = nal.mem();
@@ -829,7 +828,7 @@ public final class StructuralRules {
      * {<A ==> B>, A@(--, A)} |- <(--, B) ==> (--, A)>
      *
      * @param statement The premise
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      */
     protected static boolean contraposition(final Statement statement, final Sentence sentence, final DerivationContext nal) {
         final Memory memory = nal.mem();

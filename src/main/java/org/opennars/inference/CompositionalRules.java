@@ -123,7 +123,7 @@ public final class CompositionalRules {
      * @param subject Subject of contentInd
      * @param predicate Predicate of contentInd
      * @param truth TruthValue of the contentInd
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      */
     private static void processComposed(final Statement statement, final Term subject, final Term predicate, final int order, final TruthValue truth, final DerivationContext nal) {
         if ((subject == null) || (predicate == null)) {
@@ -169,32 +169,25 @@ public final class CompositionalRules {
         final Sentence sentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
         final Statement oldContent = (Statement) task.getTerm();
-        final TruthValue v1;
-        final TruthValue v2;
-        if (compoundTask) {
-            v1 = sentence.truth;
-            v2 = belief.truth;
-        } else {
-            v1 = belief.truth;
-            v2 = sentence.truth;
+
+        final TruthValue v1 = compoundTask ? sentence.truth : belief.truth;
+        final TruthValue v2 = compoundTask ? belief.truth : sentence.truth;
+
+        final Term content = Statement.make(oldContent, index == 0 ? term1 : term2, index == 0 ? term2 : term1, order);
+        if (content == null) {
+            return;
         }
+
         TruthValue truth = null;
-        final Term content;
         if (index == 0) {
-            content = Statement.make(oldContent, term1, term2, order);
-            if (content == null) {
-                return;
-            }
             if (oldContent instanceof Inheritance) {
-                if (compound instanceof IntersectionExt) {
-                    truth = reduceConjunction(v1, v2);
-                } else if (compound instanceof IntersectionInt) {
-                    truth = reduceDisjunction(v1, v2);
-                } else if ((compound instanceof SetInt) && (component instanceof SetInt)) {
-                    truth = reduceConjunction(v1, v2);
-                } else if ((compound instanceof SetExt) && (component instanceof SetExt)) {
-                    truth = reduceDisjunction(v1, v2);
-                } else if (compound instanceof DifferenceExt) {
+                truth = lookupTruthOrNull(v1, v2,
+                    compound instanceof IntersectionExt,               EnumType.REDUCECONJUNCTION,
+                    compound instanceof IntersectionInt,                       EnumType.REDUCEDISJUNCTION,
+                    compound instanceof SetInt && component instanceof SetInt, EnumType.REDUCECONJUNCTION,
+                    compound instanceof SetExt && component instanceof SetExt, EnumType.REDUCEDISJUNCTION);
+
+                if (truth == null && compound instanceof DifferenceExt) {
                     if (compound.term[0].equals(component)) {
                         truth = reduceDisjunction(v2, v1);
                     } else {
@@ -209,20 +202,14 @@ public final class CompositionalRules {
                 }
             }
         } else {
-            content = Statement.make(oldContent, term2, term1, order);
-            if (content == null) {
-                return;
-            }
             if (oldContent instanceof Inheritance) {
-                if (compound instanceof IntersectionInt) {
-                    truth = reduceConjunction(v1, v2);
-                } else if (compound instanceof IntersectionExt) {
-                    truth = reduceDisjunction(v1, v2);
-                } else if ((compound instanceof SetExt) && (component instanceof SetExt)) {
-                    truth = reduceConjunction(v1, v2);
-                } else if ((compound instanceof SetInt) && (component instanceof SetInt)) {
-                    truth = reduceDisjunction(v1, v2);
-                } else if (compound instanceof DifferenceInt) {
+                truth = lookupTruthOrNull(v1, v2,
+                    compound instanceof IntersectionInt,               EnumType.REDUCECONJUNCTION,
+                    compound instanceof IntersectionExt,                       EnumType.REDUCEDISJUNCTION,
+                    compound instanceof SetExt && component instanceof SetExt, EnumType.REDUCECONJUNCTION,
+                    compound instanceof SetInt && component instanceof SetInt, EnumType.REDUCEDISJUNCTION);
+
+                if( truth == null && compound instanceof DifferenceInt ) {
                     if (compound.term[1].equals(component)) {
                         truth = reduceDisjunction(v2, v1);
                     } else {
