@@ -188,8 +188,9 @@ public class Terms {
                 return Equivalence.make(componentList[0], componentList[1], TemporalRules.ORDER_CONCURRENT);
             case EQUIVALENCE_AFTER:
                 return Equivalence.make(componentList[0], componentList[1], TemporalRules.ORDER_FORWARD);
+            default:
+                throw new IllegalStateException("Unknown Term operator: " + copula + " (" + copula.name() + ")");
         }
-        throw new IllegalStateException("Unknown Term operator: " + copula + " (" + copula.name() + ")");
     }
     
     /**
