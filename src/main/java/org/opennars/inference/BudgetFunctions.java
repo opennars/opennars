@@ -249,7 +249,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * Backward inference with CompoundTerm conclusion, stronger case
      *
      * @param content The content of the conclusion
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      * @return The budget of the conclusion
      */
     public static BudgetValue compoundBackward(final Term content, final org.opennars.control.DerivationContext nal) {

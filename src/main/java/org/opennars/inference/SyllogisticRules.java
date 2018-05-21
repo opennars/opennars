@@ -752,7 +752,7 @@ public final class SyllogisticRules {
      *
      * @param cond1 The condition of the first premise
      * @param cond2 The condition of the second premise
-     * @param taskContent The first premise
+     * @param st1 The first premise
      * @param st2 The second premise
      * @param nal Reference to the memory
      * @return Whether there are derived tasks
