@@ -192,28 +192,28 @@ public class Terms {
         }
         throw new IllegalStateException("Unknown Term operator: " + op + " (" + op.name() + ")");
     }
-    
+
     /**
      * Try to remove a component from a compound
      *
-     * @param t1 The compound
-     * @param t2 The component
+     * @param compound The compound
+     * @param component The component
      * @param memory Reference to the memory
      * @return The new compound
      */
-    public static Term reduceComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
+    public static Term reduceComponents(final CompoundTerm compound, final Term component, final Memory memory) {
         final Term[] list;
-        if (t1.getClass() == t2.getClass()) {
-            list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
+        if (compound.getClass() == component.getClass()) {
+            list = compound.cloneTermsExcept(true, ((CompoundTerm) component).term);
         } else {
-            list = t1.cloneTermsExcept(true, new Term[] { t2 });
+            list = compound.cloneTermsExcept(true, new Term[] { component });
         }
         if (list != null) {
             if (list.length > 1) {
-                return term(t1, list);
+                return term(compound, list);
             }
             if (list.length == 1) {
-                if ((t1 instanceof Conjunction) || (t1 instanceof Disjunction) || (t1 instanceof IntersectionExt) || (t1 instanceof IntersectionInt) || (t1 instanceof DifferenceExt) || (t1 instanceof DifferenceInt)) {
+                if ((compound instanceof Conjunction) || (compound instanceof Disjunction) || (compound instanceof IntersectionExt) || (compound instanceof IntersectionInt) || (compound instanceof DifferenceExt) || (compound instanceof DifferenceInt)) {
                     return list[0];
                 }
             }
@@ -221,21 +221,21 @@ public class Terms {
         return null;
     }
 
-    public static Term reduceComponentOneLayer(final CompoundTerm t1, final Term t2, final Memory memory) {
+    public static Term reduceComponentOneLayer(final CompoundTerm compound, final Term component, final Memory memory) {
         final Term[] list;
-        if (t1.getClass() == t2.getClass()) {
-            list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
+        if (compound.getClass() == component.getClass()) {
+            list = compound.cloneTermsExcept(true, ((CompoundTerm) component).term);
         } else {
-            list = t1.cloneTermsExcept(true, new Term[] { t2 });
+            list = compound.cloneTermsExcept(true, new Term[] { component });
         }
         if (list != null) {
             if (list.length > 1) {
-                return term(t1, list);
+                return term(compound, list);
             } else if (list.length == 1) {
                 return list[0];
             }
         }
-        return t1;
+        return compound;
     }
 
 
@@ -287,30 +287,10 @@ public class Terms {
             ta = subjA; sa = predA;
             tb = subjB; sb = predB;                
         }
-        //DUPLICATE?
-        /*if ((predA instanceof ImageExt) && (predB instanceof ImageExt)) {
-            ta = subjA; sa = predA;
-            tb = subjB; sb = predB;
-        }*/
         if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
             ta = predA; sa = subjA;
             tb = predB; sb = subjB;
         }
-        //ANOTHER DUPLICATE?
-        /*
-        if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
-                Set<Term> componentsA = new HashSet();
-                Set<Term> componentsB = new HashSet();
-                componentsA.add(predA);
-                componentsB.add(predB);
-                componentsA.addAll(Arrays.asList(((CompoundTerm) subjA).term));
-                componentsB.addAll(Arrays.asList(((CompoundTerm) subjB).term));
-                if (componentsA.containsAll(componentsB)) {
-                    return true;
-                }
-
-        }
-        */
         if ((predA instanceof Product) && (subjB instanceof ImageInt)) {
             ta = subjA; sa = predA;
             tb = predB; sb = subjB;                
@@ -320,49 +300,49 @@ public class Terms {
             tb = subjB; sb = predB;
         }
 
-        if (ta!=null) {
-            final Term[] sat = ((CompoundTerm)sa).term;
-            final Term[] sbt = ((CompoundTerm)sb).term;
+        if (ta==null) {
+            return false;
+        }
 
-            if(sa instanceof Image && sb instanceof Image) {
-                final Image im1=(Image) sa;
-                final Image im2=(Image) sb;
-                if(im1.relationIndex != im2.relationIndex) {
-                    return false;
-                }
+        final Term[] sat = ((CompoundTerm)sa).term;
+        final Term[] sbt = ((CompoundTerm)sb).term;
+
+        if(sa instanceof Image && sb instanceof Image) {
+            final Image im1=(Image) sa;
+            final Image im2=(Image) sb;
+            if(im1.relationIndex != im2.relationIndex) {
+                return false;
             }
-            
-            final Set<Term> componentsA = new HashSet(1+sat.length);
-            final Set<Term> componentsB = new HashSet(1+sbt.length);
+        }
 
-            componentsA.add(ta);
-            Collections.addAll(componentsA, sat);
+        final Set<Term> componentsA = new HashSet(1+sat.length);
+        final Set<Term> componentsB = new HashSet(1+sbt.length);
 
-            componentsB.add(tb);
-            Collections.addAll(componentsB, sbt);
+        componentsA.add(ta);
+        Collections.addAll(componentsA, sat);
 
-            for(final Term sA : componentsA) {
-                boolean had=false;
-                for(final Term sB : componentsB) {
-                    if(sA instanceof Variable && sB instanceof Variable) {
-                        if(sA.name.equals(sB.name)) {
-                            had=true;
-            }
-                    } 
-                    else
-                    if(sA.equals(sB)) {
+        componentsB.add(tb);
+        Collections.addAll(componentsB, sbt);
+
+        for(final Term sA : componentsA) {
+            boolean had=false;
+            for(final Term sB : componentsB) {
+                if(sA instanceof Variable && sB instanceof Variable) {
+                    if(sA.name.equals(sB.name)) {
                         had=true;
-                    }
+        }
                 }
-                if(!had) {
-                    return false;
+                else
+                if(sA.equals(sB)) {
+                    had=true;
                 }
             }
-            
-            return true;
+            if(!had) {
+                return false;
+            }
         }
             
-        return false;
+        return true;
     }
 
     /**
