@@ -187,6 +187,33 @@ public class Conjunction extends CompoundTerm {
     }
     
     /**
+     * @param components The components
+     * @return The components sequence with summed intervals
+     * for transforming (&/,a,+1,+1) to (&/,a,+2)
+     */
+    public static Term[] collapseIntervals(Term[] components) {
+        List<Term> ret = new ArrayList<Term>();
+        for(int i=0;i<components.length;) {
+            if(!(components[i] instanceof Interval)) {
+                ret.add(components[i]);
+                i++;
+            }
+            else {
+                //add up next ones:
+                long ival = ((Interval)components[i]).time;
+                int k=1;
+                while(i+k<components.length && components[i+k] instanceof Interval) {
+                    ival += ((Interval)components[i+k]).time;
+                    k++;
+                }
+                ret.add(new Interval(ival));
+                i+=k;
+            }
+        }
+        return ret.toArray(new Term[0]);
+    }
+    
+    /**
      * Try to make a new compound from a list of term. Called by StringParser.
      *
      * @param temporalOrder The temporal order among term
@@ -208,7 +235,7 @@ public class Conjunction extends CompoundTerm {
         }                         // special case: single component
         
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            final Term[] newArgList = spatial ? argList : flatten(argList, temporalOrder, spatial);
+            final Term[] newArgList = spatial ? argList : collapseIntervals(flatten(argList, temporalOrder, spatial));
             
             if(newArgList.length == 1) {
                 return newArgList[0];
