@@ -495,7 +495,6 @@ public class RuleTables {
                 }
             }
         }
-
     }
 
     public static Map<Integer, RuleTableRule[]> rules = new HashMap<>();
