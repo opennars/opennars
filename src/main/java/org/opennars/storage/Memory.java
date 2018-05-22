@@ -20,6 +20,7 @@ import org.opennars.control.GeneralInferenceControl;
 import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.interfaces.Resettable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter;
 import org.opennars.io.events.Events;
@@ -60,7 +61,7 @@ import static org.opennars.inference.BudgetFunctions.truthToQuality;
  * 
  * Memory is serializable so it can be persisted and transported.
  */
-public class Memory implements Serializable, Iterable<Concept> {
+public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
     //emotion meter keeping track of global emotion
     public final Emotions emotion = new Emotions();   

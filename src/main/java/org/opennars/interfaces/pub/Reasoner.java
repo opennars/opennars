@@ -24,7 +24,7 @@ import org.opennars.io.events.AnswerHandler;
  */
 public interface Reasoner extends
     SensoryChannelConsumer,
-    Resetable,
+    Resettable,
     NarseseConsumer,
     InputFileConsumer,
     TaskConsumer<Reasoner>,
