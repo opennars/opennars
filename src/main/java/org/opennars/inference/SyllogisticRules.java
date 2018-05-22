@@ -794,36 +794,38 @@ public final class SyllogisticRules {
             Term term1InLoop = isFirstLoop ? term1 : term2;
             Term term2InLoop = isFirstLoop ? term2 : term1;
 
-            if (term1InLoop != null) {
-                Term content;
-                TruthValue truth = null;
-                BudgetValue budget;
-
-                if (term2InLoop != null) {
-                    content = Statement.make(isFirstLoop ? st2 : st1, term2InLoop, term1InLoop, isFirstLoop ? st2.getTemporalOrder() : st1.getTemporalOrder());
-                } else {
-                    content = term1InLoop;
-                    if(content.hasVarIndep()) {
-                        return false;
-                    }
-                }
-                if (sentence.isQuestion() || sentence.isQuest()) {
-                    budget = BudgetFunctions.backwardWeak(value2, nal);
-                } else {
-                    if (sentence.isGoal()) {
-                        truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(keepOrder, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, value1, value2);
-                    } else { // isJudgment
-                        if (isFirstLoop) {
-                            truth = TruthFunctions.abduction(value2, value1);
-                        }
-                        else {
-                            truth = TruthFunctions.abduction(value1, value2);
-                        }
-                    }
-                    budget = BudgetFunctions.forward(truth, nal);
-                }
-                nal.doublePremiseTask(content, truth, budget,false, false);
+            if (term1InLoop == null) {
+                continue;
             }
+            Term content;
+            TruthValue truth = null;
+            BudgetValue budget;
+
+            if (term2InLoop != null) {
+                content = Statement.make(isFirstLoop ? st2 : st1, term2InLoop, term1InLoop, isFirstLoop ? st2.getTemporalOrder() : st1.getTemporalOrder());
+            } else {
+                content = term1InLoop;
+                if(content.hasVarIndep()) {
+                    return false;
+                }
+            }
+
+            if (sentence.isQuestion() || sentence.isQuest()) {
+                budget = BudgetFunctions.backwardWeak(value2, nal);
+            } else {
+                if (sentence.isGoal()) {
+                    truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(keepOrder, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, value1, value2);
+                } else { // isJudgment
+                    if (isFirstLoop) {
+                        truth = TruthFunctions.abduction(value2, value1);
+                    }
+                    else {
+                        truth = TruthFunctions.abduction(value1, value2);
+                    }
+                }
+                budget = BudgetFunctions.forward(truth, nal);
+            }
+            nal.doublePremiseTask(content, truth, budget,false, false);
         }
         
         return true;
