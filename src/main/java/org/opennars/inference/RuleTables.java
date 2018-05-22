@@ -23,6 +23,9 @@ import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.opennars.io.Symbols.*;
 import static org.opennars.language.Statement.retOppositeSide;
 import static org.opennars.language.Terms.equalSubTermsInRespectToImageAndProduct;
@@ -108,131 +111,282 @@ public class RuleTables {
         applyRuleTable(tLink, bLink, nal, task, taskSentence, taskTerm, beliefTerm, belief);
     }
 
+    public abstract static class RuleTableRule {
+        abstract void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal);
+
+        boolean beliefMustBeNonnull() {
+            return false;
+        }
+    }
+
+
+    ///////////
+
+
+    public static class ComponentAndSelf extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            compoundAndSelf((CompoundTerm) taskTerm, beliefTerm, true, bIndex,  nal);
+        }
+    }
+
+    public static class CompoundAndSelf extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            compoundAndSelf((CompoundTerm) beliefTerm, taskTerm, false, bIndex, nal);
+        }
+    }
+
+    public static class ComponentStatementAndSelfDetachment extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            if (taskTerm instanceof Statement) {
+                SyllogisticRules.detachment(taskSentence, belief, bIndex, nal);
+            }
+        }
+
+        @Override
+        boolean beliefMustBeNonnull() {
+            return true;
+        }
+    }
+
+    public static class ComponentStatementAndSelfTransformNegation extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            if(taskSentence.term instanceof Inheritance || taskSentence.term instanceof Similarity) {
+                StructuralRules.transformNegation((CompoundTerm) Negation.make(taskSentence.term), nal);
+            }
+        }
+    }
+
+    //////////
+
+
+    public static class CompoundStatementAndCompoundCondition extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            if (taskTerm instanceof Implication) { // TODO maybe put instanceof test within conditionalDedIndWithVar()
+                final Term subj = ((Statement) taskTerm).getSubject();
+                if (subj instanceof Negation) {
+                    if (taskSentence.isJudgment()) {
+                        componentAndStatement((CompoundTerm) subj, bIndex, (Statement) taskTerm, tIndex, nal);
+                    } else {
+                        componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, nal);
+                    }
+                } else {
+                    conditionalDedIndWithVar(task.sentence, (Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, nal);
+                }
+            }
+        }
+
+        @Override
+        boolean beliefMustBeNonnull() {
+            return true;
+        }
+    }
+
+    public static class CompoundAndCompoundCondition extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            detachmentWithVar(taskSentence, belief, tIndex, nal);
+        }
+
+        @Override
+        boolean beliefMustBeNonnull() {
+            return true;
+        }
+    }
+
+    public static class CompoundConditionAndCompoundStatement extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            bIndex = bLink.getIndex(1);
+            if ((taskTerm instanceof Statement) && (beliefTerm instanceof Implication)) {
+                conditionalDedIndWithVar(belief, (Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
+            }
+        }
+
+        @Override
+        boolean beliefMustBeNonnull() {
+            return true;
+        }
+    }
+
+    public static class CompoundStatementAndCompoundStatement extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            syllogisms(tLink, bLink, taskTerm, beliefTerm, nal);
+        }
+
+        @Override
+        boolean beliefMustBeNonnull() {
+            return true;
+        }
+    }
+
+    public static class CompoundAndCompoundStatement extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            if (taskTerm instanceof Statement) {
+                compoundAndStatement((CompoundTerm) beliefTerm, bIndex, (Statement) taskTerm, tIndex, beliefTerm, nal);
+            }
+        }
+    }
+
+    public static class ComponentAndCompoundStatement extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            if (taskTerm instanceof Statement) {
+                componentAndStatement((CompoundTerm) nal.getCurrentTerm(), bIndex, (Statement) taskTerm, tIndex, nal);
+            }
+        }
+    }
+
+    public static class CompoundConditionAndCompound extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            if (beliefTerm instanceof Implication) {
+                final Term[] u = new Term[] { beliefTerm, taskTerm };
+                if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u, true)) { //only secure place that
+                    final Sentence newBelief = belief.clone(u[0]);                                                //allows partial match
+                    final Sentence newTaskSentence = taskSentence.clone(u[1]);
+                    detachmentWithVar(newBelief, newTaskSentence, bIndex, false, nal);
+                } else {
+                    SyllogisticRules.conditionalDedInd(belief, (Implication) beliefTerm, bIndex, taskTerm, -1, nal);
+                }
+
+            } else if (beliefTerm instanceof Equivalence) {
+                SyllogisticRules.conditionalAna((Equivalence) beliefTerm, bIndex, taskTerm, -1, nal);
+            }
+        }
+
+        @Override
+        boolean beliefMustBeNonnull() {
+            return true;
+        }
+    }
+
+    public static class CompoundStatementAndCompound extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            compoundAndStatement((CompoundTerm) taskTerm, tIndex, (Statement) beliefTerm, bIndex, beliefTerm, nal);
+        }
+    }
+
+
+    ////////
+
+    public static class CompoundAndCompound extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, tIndex, bIndex, nal);
+        }
+    }
+
+    public static class CompoundConditionAndSelf extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            if (taskTerm instanceof Implication && beliefTerm instanceof Implication) {
+                bIndex = bLink.getIndex(1);
+                SyllogisticRules.conditionalDedInd(belief,(Implication) beliefTerm, bIndex, taskTerm, tIndex, nal);
+            }
+        }
+
+        @Override
+        boolean beliefMustBeNonnull() {
+            return true;
+        }
+    }
+
+    public static class ComponentConditionAndSelf extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            if (taskTerm instanceof Implication) {
+                bIndex = bLink.getIndex(1);
+                SyllogisticRules.conditionalDedInd(task.sentence,(Implication) taskTerm, bIndex, beliefTerm, tIndex, nal);
+            }
+        }
+
+        @Override
+        boolean beliefMustBeNonnull() {
+            return true;
+        }
+    }
+
+    public static class CompoundStatementAndSelf extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            SyllogisticRules.detachment(belief, taskSentence, bIndex, nal);
+        }
+
+        @Override
+        boolean beliefMustBeNonnull() {
+            return true;
+        }
+    }
+
+
+
+
+    /////////
+    /////////
+
+    public static class GoalFromQuestion extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            goalFromQuestion(task, taskTerm, nal);
+        }
+    }
+
+    public static class GoalFromWantBelief extends RuleTableRule {
+        @Override
+        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+            if (taskTerm instanceof Statement) {
+                goalFromWantBelief(task, tIndex, bIndex, taskTerm, nal, beliefTerm);
+            }
+        }
+    }
+
+    public static Map<Integer, RuleTableRule[]> rules = new HashMap<>();
+
+    static {
+        rules.put(TermLink.SELF | TermLink.COMPONENT * 16, new RuleTableRule[]{new ComponentAndSelf()});
+        rules.put(TermLink.SELF | TermLink.COMPOUND * 16, new RuleTableRule[]{new CompoundAndSelf()});
+        rules.put(TermLink.SELF | TermLink.COMPONENT_STATEMENT * 16, new RuleTableRule[]{new ComponentStatementAndSelfDetachment(), new ComponentStatementAndSelfTransformNegation(), new GoalFromQuestion()});
+        rules.put(TermLink.SELF | TermLink.COMPOUND_STATEMENT * 16, new RuleTableRule[]{new CompoundStatementAndSelf()});
+        rules.put(TermLink.SELF | TermLink.COMPONENT_CONDITION * 16, new RuleTableRule[]{new ComponentConditionAndSelf()});
+        rules.put(TermLink.SELF | TermLink.COMPOUND_CONDITION * 16, new RuleTableRule[]{new CompoundConditionAndSelf()});
+
+
+        rules.put(TermLink.COMPOUND | TermLink.COMPOUND * 16, new RuleTableRule[]{new CompoundAndCompound()});
+        rules.put(TermLink.COMPOUND | TermLink.COMPOUND_STATEMENT * 16, new RuleTableRule[]{new CompoundStatementAndCompound()});
+        rules.put(TermLink.COMPOUND | TermLink.COMPOUND_CONDITION * 16, new RuleTableRule[]{new CompoundConditionAndCompound()});
+
+        rules.put(TermLink.COMPOUND_STATEMENT | TermLink.COMPONENT * 16, new RuleTableRule[]{new ComponentAndCompoundStatement(), new GoalFromWantBelief()});
+        rules.put(TermLink.COMPOUND_STATEMENT | TermLink.COMPOUND * 16, new RuleTableRule[]{new CompoundAndCompoundStatement()});
+        rules.put(TermLink.COMPOUND_STATEMENT | TermLink.COMPOUND_STATEMENT * 16, new RuleTableRule[]{new CompoundStatementAndCompoundStatement()});
+        rules.put(TermLink.COMPOUND_STATEMENT | TermLink.COMPOUND_CONDITION * 16, new RuleTableRule[]{new CompoundConditionAndCompoundStatement()});
+
+        rules.put(TermLink.COMPOUND_CONDITION | TermLink.COMPOUND * 16, new RuleTableRule[]{new CompoundAndCompoundCondition()});
+        rules.put(TermLink.COMPOUND_CONDITION | TermLink.COMPOUND_STATEMENT * 16, new RuleTableRule[]{new CompoundStatementAndCompoundCondition()});
+    }
+
     private static void applyRuleTable(TaskLink tLink, TermLink bLink, DerivationContext nal, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief) {
         final short tIndex = tLink.getIndex(0);
         short bIndex = bLink.getIndex(0);
-        switch (tLink.type) {          // dispatch first by TaskLink type
-            case TermLink.SELF:
-                switch (bLink.type) {
-                    case TermLink.COMPONENT:
-                        compoundAndSelf((CompoundTerm) taskTerm, beliefTerm, true, bIndex,  nal);
-                        break;
-                    case TermLink.COMPOUND:
-                        compoundAndSelf((CompoundTerm) beliefTerm, taskTerm, false, bIndex, nal);
-                        break;
-                    case TermLink.COMPONENT_STATEMENT:
-                        if (belief != null) {
-                            if (taskTerm instanceof Statement) {
-                                SyllogisticRules.detachment(taskSentence, belief, bIndex, nal);
-                            }
-                        } //else {
-                        if(taskSentence.term instanceof Inheritance || taskSentence.term instanceof Similarity) {
-                            StructuralRules.transformNegation((CompoundTerm) Negation.make(taskSentence.term), nal);
-                        }
-                        goalFromQuestion(task, taskTerm, nal);
-                        //}
-                        break;
-                    case TermLink.COMPOUND_STATEMENT:
-                        if (belief != null) {
-                            SyllogisticRules.detachment(belief, taskSentence, bIndex, nal);
-                        }
-                        break;
-                    case TermLink.COMPONENT_CONDITION:
-                        if ((belief != null) && (taskTerm instanceof Implication)) {
-                            bIndex = bLink.getIndex(1);
-                            SyllogisticRules.conditionalDedInd(task.sentence,(Implication) taskTerm, bIndex, beliefTerm, tIndex, nal);
-                        }
-                        break;
-                    case TermLink.COMPOUND_CONDITION:
-                        if ((belief != null) && (taskTerm instanceof Implication) && (beliefTerm instanceof Implication)) {
-                            bIndex = bLink.getIndex(1);
-                            SyllogisticRules.conditionalDedInd(belief,(Implication) beliefTerm, bIndex, taskTerm, tIndex, nal);
-                        }
-                        break;
-                }
-                break;
-            case TermLink.COMPOUND:
-                switch (bLink.type) {
-                    case TermLink.COMPOUND:
-                        compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, tIndex, bIndex, nal);
-                        break;
-                    case TermLink.COMPOUND_STATEMENT:
-                        compoundAndStatement((CompoundTerm) taskTerm, tIndex, (Statement) beliefTerm, bIndex, beliefTerm, nal);
-                        break;
-                    case TermLink.COMPOUND_CONDITION:
-                        if (belief != null) {
-                            if (beliefTerm instanceof Implication) {
-                                final Term[] u = new Term[] { beliefTerm, taskTerm };
-                                if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u, true)) { //only secure place that
-                                    final Sentence newBelief = belief.clone(u[0]);                                                //allows partial match
-                                    final Sentence newTaskSentence = taskSentence.clone(u[1]);
-                                    detachmentWithVar(newBelief, newTaskSentence, bIndex, false, nal);
-                                } else {
-                                    SyllogisticRules.conditionalDedInd(belief, (Implication) beliefTerm, bIndex, taskTerm, -1, nal);
-                                }
+        int hash = tLink.type | bLink.type * 16;
 
-                            } else if (beliefTerm instanceof Equivalence) {
-                                SyllogisticRules.conditionalAna((Equivalence) beliefTerm, bIndex, taskTerm, -1, nal);
-                            }
-                        }
-                        break;
-                }
-                break;
-            case TermLink.COMPOUND_STATEMENT:
-                switch (bLink.type) {
-                    case TermLink.COMPONENT:
-                        if (taskTerm instanceof Statement) {
-                            goalFromWantBelief(task, tIndex, bIndex, taskTerm, nal, beliefTerm);
-                            componentAndStatement((CompoundTerm) nal.getCurrentTerm(), bIndex, (Statement) taskTerm, tIndex, nal);
-                        }
-                        break;
-                    case TermLink.COMPOUND:
-                        if (taskTerm instanceof Statement) {
-                            compoundAndStatement((CompoundTerm) beliefTerm, bIndex, (Statement) taskTerm, tIndex, beliefTerm, nal);
-                        }
-                        break;
-                    case TermLink.COMPOUND_STATEMENT:
-                        if (belief != null) {
-                            syllogisms(tLink, bLink, taskTerm, beliefTerm, nal);
-                        }
-                        break;
-                    case TermLink.COMPOUND_CONDITION:
-                        if (belief != null) {
-                            bIndex = bLink.getIndex(1);
-                            if ((taskTerm instanceof Statement) && (beliefTerm instanceof Implication)) {
-                                conditionalDedIndWithVar(belief, (Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
-                            }
-                        }
-                        break;
-                }
-                break;
-            case TermLink.COMPOUND_CONDITION:
-                switch (bLink.type) {
-                      case TermLink.COMPOUND:
-                        if (belief != null) {
-                            detachmentWithVar(taskSentence, belief, tIndex, nal);
-                        }
-                        break;
+        if (!rules.containsKey(hash)) {
+            return;
+        }
 
-                    case TermLink.COMPOUND_STATEMENT:
-                        if (belief != null) {
-                            if (taskTerm instanceof Implication) // TODO maybe put instanceof test within conditionalDedIndWithVar()
-                            {
-                                final Term subj = ((Statement) taskTerm).getSubject();
-                                if (subj instanceof Negation) {
-                                    if (taskSentence.isJudgment()) {
-                                        componentAndStatement((CompoundTerm) subj, bIndex, (Statement) taskTerm, tIndex, nal);
-                                    } else {
-                                        componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, nal);
-                                    }
-                                } else {
-                                    conditionalDedIndWithVar(task.sentence, (Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, nal);
-                                }
-                            }
-                            break;
-                        }
-                        break;
-                }
+        for (RuleTableRule iRule : rules.get(hash)) {
+            if (iRule.beliefMustBeNonnull() && belief == null) {
+                continue;
+            }
+
+            iRule.dispatch(tLink, tIndex, bLink, bIndex, task, taskSentence, taskTerm, beliefTerm, belief, nal);
         }
     }
 
