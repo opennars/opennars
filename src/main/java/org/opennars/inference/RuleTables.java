@@ -223,6 +223,77 @@ public class RuleTables {
         boolean beliefMustBeNonnull() {
             return true;
         }
+
+        /**
+         * Meta-table of syllogistic rules, indexed by the content classes of the
+         * taskSentence and the belief
+         *
+         * @param tLink The link to task
+         * @param bLink The link to belief
+         * @param taskTerm The content of task
+         * @param beliefTerm The content of belief
+         * @param nal Reference to the memory
+         */
+        public static void syllogisms(final TaskLink tLink, final TermLink bLink, final Term taskTerm, final Term beliefTerm, final DerivationContext nal) {
+            final Sentence taskSentence = nal.getCurrentTask().sentence;
+            final Sentence belief = nal.getCurrentBelief();
+            final int figure;
+            if (taskTerm instanceof Inheritance) {
+                if (beliefTerm instanceof Inheritance) {
+                    figure = indexToFigure(tLink, bLink);
+                    asymmetricAsymmetric(taskSentence, belief, figure, nal);
+                } else if (beliefTerm instanceof Similarity) {
+                    figure = indexToFigure(tLink, bLink);
+                    asymmetricSymmetric(taskSentence, belief, figure, nal);
+                } else {
+                    detachmentWithVar(belief, taskSentence, bLink.getIndex(0), nal);
+                }
+            } else if (taskTerm instanceof Similarity) {
+                if (beliefTerm instanceof Inheritance) {
+                    figure = indexToFigure(bLink, tLink);
+                    asymmetricSymmetric(belief, taskSentence, figure, nal);
+                } else if (beliefTerm instanceof Similarity) {
+                    figure = indexToFigure(bLink, tLink);
+                    symmetricSymmetric(belief, taskSentence, figure, nal);
+                } else if (beliefTerm instanceof Implication) {
+                    //Bridge to higher order statements:
+                    figure = indexToFigure(tLink, bLink);
+                    asymmetricSymmetric(belief, taskSentence, figure, nal);
+                } else if (beliefTerm instanceof Equivalence) {
+                    //Bridge to higher order statements:
+                    figure = indexToFigure(tLink, bLink);
+                    symmetricSymmetric(belief, taskSentence, figure, nal);
+                }
+            } else if (taskTerm instanceof Implication) {
+                if (beliefTerm instanceof Implication) {
+                    figure = indexToFigure(tLink, bLink);
+                    asymmetricAsymmetric(taskSentence, belief, figure, nal);
+                } else if (beliefTerm instanceof Equivalence) {
+                    figure = indexToFigure(tLink, bLink);
+                    asymmetricSymmetric(taskSentence, belief, figure, nal);
+                } else if (beliefTerm instanceof Inheritance) {
+                    detachmentWithVar(taskSentence, belief, tLink.getIndex(0), nal);
+                } else if (beliefTerm instanceof Similarity) {
+                    //Bridge to higher order statements:
+                    figure = indexToFigure(tLink, bLink);
+                    asymmetricSymmetric(taskSentence, belief, figure, nal);
+                }
+            } else if (taskTerm instanceof Equivalence) {
+                if (beliefTerm instanceof Implication) {
+                    figure = indexToFigure(bLink, tLink);
+                    asymmetricSymmetric(belief, taskSentence, figure, nal);
+                } else if (beliefTerm instanceof Equivalence) {
+                    figure = indexToFigure(bLink, tLink);
+                    symmetricSymmetric(belief, taskSentence, figure, nal);
+                } else if (beliefTerm instanceof Inheritance) {
+                    detachmentWithVar(taskSentence, belief, tLink.getIndex(0), nal);
+                } else if (beliefTerm instanceof Similarity) {
+                    //Bridge to higher order statements:
+                    figure = indexToFigure(tLink, bLink);
+                    symmetricSymmetric(belief, taskSentence, figure, nal);
+                }
+            }
+        }
     }
 
     public static class CompoundAndCompoundStatement extends RuleTableRule {
@@ -337,6 +408,67 @@ public class RuleTables {
         void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             goalFromQuestion(task, taskTerm, nal);
         }
+
+        public static void goalFromQuestion(final Task task, final Term taskTerm, final DerivationContext nal) {
+            if(task.sentence.punctuation==Symbols.QUESTION_MARK && (taskTerm instanceof Implication || taskTerm instanceof Equivalence)) { //<a =/> b>? |- a!
+                Term goalterm=null;
+                Term goalterm2=null;
+                if(taskTerm instanceof Implication) {
+                    final Implication imp=(Implication)taskTerm;
+                    if(imp.getTemporalOrder()!=TemporalRules.ORDER_BACKWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation) {
+                            goalterm=imp.getSubject();
+                        }
+                        if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation)) {
+                            goalterm=imp.getPredicate(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
+                        }
+                    }
+                    else
+                    if(imp.getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
+                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation) {
+                            goalterm=imp.getPredicate();
+                        }
+                        if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation)) {
+                            goalterm=imp.getSubject(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
+                        }
+                    }
+                }
+                else
+                if(taskTerm instanceof Equivalence) {
+                    final Equivalence qu=(Equivalence)taskTerm;
+                    if(qu.getTemporalOrder()==TemporalRules.ORDER_FORWARD || qu.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getSubject() instanceof Operation) {
+                            goalterm=qu.getSubject();
+                        }
+                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getPredicate() instanceof Operation) {
+                            goalterm2=qu.getPredicate();
+                        }
+                    }
+                }
+                final TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE*Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL);
+                if(goalterm!=null && !(goalterm instanceof Variable) && goalterm instanceof CompoundTerm) {
+                    goalterm=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm);
+                    final Sentence sent=new Sentence(
+                        goalterm,
+                        Symbols.GOAL_MARK,
+                        truth,
+                        new Stamp(task.sentence.stamp,nal.memory.time()));
+
+                    nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
+                }
+                if(goalterm instanceof CompoundTerm && goalterm2!=null && !(goalterm2 instanceof Variable) && goalterm2 instanceof CompoundTerm) {
+                    goalterm2=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm2);
+                    final Sentence sent=new Sentence(
+                        goalterm2,
+                        Symbols.GOAL_MARK,
+                        truth.clone(),
+                        new Stamp(task.sentence.stamp,nal.memory.time()));
+
+                    nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
+                }
+            }
+        }
+
     }
 
     public static class GoalFromWantBelief extends RuleTableRule {
@@ -346,6 +478,17 @@ public class RuleTables {
                 goalFromWantBelief(task, tIndex, bIndex, taskTerm, nal, beliefTerm);
             }
         }
+
+        public static void goalFromWantBelief(final Task task, final short tIndex, final short bIndex, final Term taskTerm, final DerivationContext nal, final Term beliefTerm) {
+            if(task.sentence.isJudgment() && tIndex == 0 && bIndex == 1 && taskTerm instanceof Operation) {
+                final Operation op = (Operation) taskTerm;
+                if(op.getPredicate() == nal.memory.getOperator("^want")) {
+                    final TruthValue newTruth = TruthFunctions.deduction(task.sentence.truth, Parameters.reliance);
+                    nal.singlePremiseTask(((Operation)taskTerm).getArguments().term[1], Symbols.GOAL_MARK, newTruth, BudgetFunctions.forward(newTruth, nal));
+                }
+            }
+        }
+
     }
 
     public static Map<Integer, RuleTableRule[]> rules = new HashMap<>();
@@ -390,147 +533,8 @@ public class RuleTables {
         }
     }
 
-    public static void goalFromWantBelief(final Task task, final short tIndex, final short bIndex, final Term taskTerm, final DerivationContext nal, final Term beliefTerm) {
-        if(task.sentence.isJudgment() && tIndex == 0 && bIndex == 1 && taskTerm instanceof Operation) {
-            final Operation op = (Operation) taskTerm;
-            if(op.getPredicate() == nal.memory.getOperator("^want")) {
-                final TruthValue newTruth = TruthFunctions.deduction(task.sentence.truth, Parameters.reliance);
-                nal.singlePremiseTask(((Operation)taskTerm).getArguments().term[1], Symbols.GOAL_MARK, newTruth, BudgetFunctions.forward(newTruth, nal));
-            }
-        }
-    }
-
-    private static void goalFromQuestion(final Task task, final Term taskTerm, final DerivationContext nal) {
-        if(task.sentence.punctuation==Symbols.QUESTION_MARK && (taskTerm instanceof Implication || taskTerm instanceof Equivalence)) { //<a =/> b>? |- a!
-            Term goalterm=null;
-            Term goalterm2=null;
-            if(taskTerm instanceof Implication) {
-                final Implication imp=(Implication)taskTerm;
-                if(imp.getTemporalOrder()!=TemporalRules.ORDER_BACKWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                    if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation) {
-                        goalterm=imp.getSubject();
-                    }
-                    if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation)) {
-                        goalterm=imp.getPredicate(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
-                    }
-                }
-                else
-                    if(imp.getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
-                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation) {
-                            goalterm=imp.getPredicate();
-                        }
-                        if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation)) {
-                            goalterm=imp.getSubject(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
-                        }
-                    }
-            }
-            else
-                if(taskTerm instanceof Equivalence) {
-                    final Equivalence qu=(Equivalence)taskTerm;
-                    if(qu.getTemporalOrder()==TemporalRules.ORDER_FORWARD || qu.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getSubject() instanceof Operation) {
-                            goalterm=qu.getSubject();
-                        }
-                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getPredicate() instanceof Operation) {
-                            goalterm2=qu.getPredicate();
-                        }
-                    }
-                }
-            final TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE*Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL);
-            if(goalterm!=null && !(goalterm instanceof Variable) && goalterm instanceof CompoundTerm) {
-                goalterm=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm);
-                final Sentence sent=new Sentence(
-                    goalterm,
-                    Symbols.GOAL_MARK,
-                    truth,
-                    new Stamp(task.sentence.stamp,nal.memory.time()));
-
-                nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
-            }
-            if(goalterm instanceof CompoundTerm && goalterm2!=null && !(goalterm2 instanceof Variable) && goalterm2 instanceof CompoundTerm) {
-                goalterm2=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm2);
-                final Sentence sent=new Sentence(
-                    goalterm2,
-                    Symbols.GOAL_MARK,
-                    truth.clone(),
-                    new Stamp(task.sentence.stamp,nal.memory.time()));
-
-                nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
-            }
-        }
-    }
-
     /* ----- syllogistic inferences ----- */
-    /**
-     * Meta-table of syllogistic rules, indexed by the content classes of the
-     * taskSentence and the belief
-     *
-     * @param tLink The link to task
-     * @param bLink The link to belief
-     * @param taskTerm The content of task
-     * @param beliefTerm The content of belief
-     * @param nal Reference to the memory
-     */
-    private static void syllogisms(final TaskLink tLink, final TermLink bLink, final Term taskTerm, final Term beliefTerm, final DerivationContext nal) {
-        final Sentence taskSentence = nal.getCurrentTask().sentence;
-        final Sentence belief = nal.getCurrentBelief();
-        final int figure;
-        if (taskTerm instanceof Inheritance) {
-            if (beliefTerm instanceof Inheritance) {
-                figure = indexToFigure(tLink, bLink);
-                asymmetricAsymmetric(taskSentence, belief, figure, nal);
-            } else if (beliefTerm instanceof Similarity) {
-                figure = indexToFigure(tLink, bLink);
-                asymmetricSymmetric(taskSentence, belief, figure, nal);
-            } else {
-                detachmentWithVar(belief, taskSentence, bLink.getIndex(0), nal);
-            }
-        } else if (taskTerm instanceof Similarity) {
-            if (beliefTerm instanceof Inheritance) {
-                figure = indexToFigure(bLink, tLink);
-                asymmetricSymmetric(belief, taskSentence, figure, nal);
-            } else if (beliefTerm instanceof Similarity) {
-                figure = indexToFigure(bLink, tLink);
-                symmetricSymmetric(belief, taskSentence, figure, nal);
-            } else if (beliefTerm instanceof Implication) {
-                //Bridge to higher order statements:
-                figure = indexToFigure(tLink, bLink);
-                asymmetricSymmetric(belief, taskSentence, figure, nal);
-            } else if (beliefTerm instanceof Equivalence) {
-                //Bridge to higher order statements:
-                figure = indexToFigure(tLink, bLink);
-                symmetricSymmetric(belief, taskSentence, figure, nal);
-            }
-        } else if (taskTerm instanceof Implication) {
-            if (beliefTerm instanceof Implication) {
-                figure = indexToFigure(tLink, bLink);
-                asymmetricAsymmetric(taskSentence, belief, figure, nal);
-            } else if (beliefTerm instanceof Equivalence) {
-                figure = indexToFigure(tLink, bLink);
-                asymmetricSymmetric(taskSentence, belief, figure, nal);
-            } else if (beliefTerm instanceof Inheritance) {
-                detachmentWithVar(taskSentence, belief, tLink.getIndex(0), nal);
-            } else if (beliefTerm instanceof Similarity) {
-                //Bridge to higher order statements:
-                figure = indexToFigure(tLink, bLink);
-                asymmetricSymmetric(taskSentence, belief, figure, nal);
-            }
-        } else if (taskTerm instanceof Equivalence) {
-            if (beliefTerm instanceof Implication) {
-                figure = indexToFigure(bLink, tLink);
-                asymmetricSymmetric(belief, taskSentence, figure, nal);
-            } else if (beliefTerm instanceof Equivalence) {
-                figure = indexToFigure(bLink, tLink);
-                symmetricSymmetric(belief, taskSentence, figure, nal);
-            } else if (beliefTerm instanceof Inheritance) {
-                detachmentWithVar(taskSentence, belief, tLink.getIndex(0), nal);
-            } else if (beliefTerm instanceof Similarity) {
-                //Bridge to higher order statements:
-                figure = indexToFigure(tLink, bLink);
-                symmetricSymmetric(belief, taskSentence, figure, nal);
-            }
-        }
-    }
+
 
     /**
      * Decide the figure of syllogism according to the locations of the common
