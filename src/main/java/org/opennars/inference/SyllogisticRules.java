@@ -785,56 +785,45 @@ public final class SyllogisticRules {
         final Sentence belief = nal.getCurrentBelief();
         final TruthValue value1 = sentence.truth;
         final TruthValue value2 = belief.truth;
-        Term content;
-        
+
         final boolean keepOrder = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, st1, task.getTerm());
-        
-        TruthValue truth = null;
-        BudgetValue budget;
 
-        if (term1 != null) {
-            if (term2 != null) {
-                content = Statement.make(st2, term2, term1, st2.getTemporalOrder());
-            } else {
-                content = term1;
-                if(content.hasVarIndep()) {
-                    return false;
-                }
-            }
-            if (sentence.isQuestion() || sentence.isQuest()) {
-                budget = BudgetFunctions.backwardWeak(value2, nal);
-            } else {
-                if (sentence.isGoal()) {
-                    truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(keepOrder, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, value1, value2);
-                } else { // isJudgment
-                    truth = TruthFunctions.abduction(value2, value1);
-                }
-                budget = BudgetFunctions.forward(truth, nal);
-            }
-            nal.doublePremiseTask(content, truth, budget,false, false);
-        }
-        
-        if (term2 != null) {
-            if (term1 != null) {
-                content = Statement.make(st1, term1, term2, st1.getTemporalOrder());
-            } else {
-                content = term2;
-                if(content.hasVarIndep()) {
-                    return false;
-                }
-            }
-            if (sentence.isQuestion() || sentence.isQuest()) {
+        // we folded the logic to use loops for more compact code
+        for (int loop=0;loop<2;loop++) {
+            final boolean isFirstLoop = loop == 0;
+            Term term1InLoop = isFirstLoop ? term1 : term2;
+            Term term2InLoop = isFirstLoop ? term2 : term1;
 
-                budget = BudgetFunctions.backwardWeak(value2, nal);
-            } else {
-                if (sentence.isGoal()) {
-                    truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(keepOrder, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, value1, value2);
-                } else { // isJudgment
-                    truth = TruthFunctions.abduction(value1, value2);
+            if (term1InLoop != null) {
+                Term content;
+                TruthValue truth = null;
+                BudgetValue budget;
+
+                if (term2InLoop != null) {
+                    content = Statement.make(isFirstLoop ? st2 : st1, term2InLoop, term1InLoop, isFirstLoop ? st2.getTemporalOrder() : st1.getTemporalOrder());
+                } else {
+                    content = term1InLoop;
+                    if(content.hasVarIndep()) {
+                        return false;
+                    }
                 }
-                budget = BudgetFunctions.forward(truth, nal);
+                if (sentence.isQuestion() || sentence.isQuest()) {
+                    budget = BudgetFunctions.backwardWeak(value2, nal);
+                } else {
+                    if (sentence.isGoal()) {
+                        truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(keepOrder, TruthFunctions.EnumType.DESIREDED, TruthFunctions.EnumType.DESIREIND, value1, value2);
+                    } else { // isJudgment
+                        if (isFirstLoop) {
+                            truth = TruthFunctions.abduction(value2, value1);
+                        }
+                        else {
+                            truth = TruthFunctions.abduction(value1, value2);
+                        }
+                    }
+                    budget = BudgetFunctions.forward(truth, nal);
+                }
+                nal.doublePremiseTask(content, truth, budget,false, false);
             }
-            nal.doublePremiseTask(content, truth, budget,false, false);
         }
         
         return true;
