@@ -132,35 +132,35 @@ public class RuleTables {
 
     public static class ComponentAndSelf extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             compoundAndSelf((CompoundTerm) taskTerm, beliefTerm, true, bIndex,  nal);
         }
     }
 
     public static class CompoundAndSelf extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             compoundAndSelf((CompoundTerm) beliefTerm, taskTerm, false, bIndex, nal);
         }
     }
 
     public static class ComponentStatementAndSelfDetachment extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             if (taskTerm instanceof Statement) {
                 SyllogisticRules.detachment(taskSentence, belief, bIndex, nal);
             }
         }
 
         @Override
-        boolean beliefMustBeNonnull() {
+        public boolean beliefMustBeNonnull() {
             return true;
         }
     }
 
     public static class ComponentStatementAndSelfTransformNegation extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             if(taskSentence.term instanceof Inheritance || taskSentence.term instanceof Similarity) {
                 StructuralRules.transformNegation((CompoundTerm) Negation.make(taskSentence.term), nal);
             }
@@ -172,7 +172,7 @@ public class RuleTables {
 
     public static class CompoundStatementAndCompoundCondition extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             if (taskTerm instanceof Implication) { // TODO maybe put instanceof test within conditionalDedIndWithVar()
                 final Term subj = ((Statement) taskTerm).getSubject();
                 if (subj instanceof Negation) {
@@ -188,26 +188,26 @@ public class RuleTables {
         }
 
         @Override
-        boolean beliefMustBeNonnull() {
+        public boolean beliefMustBeNonnull() {
             return true;
         }
     }
 
     public static class CompoundAndCompoundCondition extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             detachmentWithVar(taskSentence, belief, tIndex, nal);
         }
 
         @Override
-        boolean beliefMustBeNonnull() {
+        public boolean beliefMustBeNonnull() {
             return true;
         }
     }
 
     public static class CompoundConditionAndCompoundStatement extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             bIndex = bLink.getIndex(1);
             if ((taskTerm instanceof Statement) && (beliefTerm instanceof Implication)) {
                 conditionalDedIndWithVar(belief, (Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
@@ -215,19 +215,19 @@ public class RuleTables {
         }
 
         @Override
-        boolean beliefMustBeNonnull() {
+        public boolean beliefMustBeNonnull() {
             return true;
         }
     }
 
     public static class CompoundStatementAndCompoundStatement extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             syllogisms(tLink, bLink, taskTerm, beliefTerm, nal);
         }
 
         @Override
-        boolean beliefMustBeNonnull() {
+        public boolean beliefMustBeNonnull() {
             return true;
         }
 
@@ -305,7 +305,7 @@ public class RuleTables {
 
     public static class CompoundAndCompoundStatement extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             if (taskTerm instanceof Statement) {
                 compoundAndStatement((CompoundTerm) beliefTerm, bIndex, (Statement) taskTerm, tIndex, beliefTerm, nal);
             }
@@ -314,7 +314,7 @@ public class RuleTables {
 
     public static class ComponentAndCompoundStatement extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             if (taskTerm instanceof Statement) {
                 componentAndStatement((CompoundTerm) nal.getCurrentTerm(), bIndex, (Statement) taskTerm, tIndex, nal);
             }
@@ -323,7 +323,7 @@ public class RuleTables {
 
     public static class CompoundConditionAndCompound extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             if (beliefTerm instanceof Implication) {
                 final Term[] u = new Term[] { beliefTerm, taskTerm };
                 if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u, true)) { //only secure place that
@@ -340,14 +340,14 @@ public class RuleTables {
         }
 
         @Override
-        boolean beliefMustBeNonnull() {
+        public boolean beliefMustBeNonnull() {
             return true;
         }
     }
 
     public static class CompoundStatementAndCompound extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             compoundAndStatement((CompoundTerm) taskTerm, tIndex, (Statement) beliefTerm, bIndex, beliefTerm, nal);
         }
     }
@@ -357,14 +357,14 @@ public class RuleTables {
 
     public static class CompoundAndCompound extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, tIndex, bIndex, nal);
         }
     }
 
     public static class CompoundConditionAndSelf extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             if (taskTerm instanceof Implication && beliefTerm instanceof Implication) {
                 bIndex = bLink.getIndex(1);
                 SyllogisticRules.conditionalDedInd(belief,(Implication) beliefTerm, bIndex, taskTerm, tIndex, nal);
@@ -372,14 +372,14 @@ public class RuleTables {
         }
 
         @Override
-        boolean beliefMustBeNonnull() {
+        public boolean beliefMustBeNonnull() {
             return true;
         }
     }
 
     public static class ComponentConditionAndSelf extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             if (taskTerm instanceof Implication) {
                 bIndex = bLink.getIndex(1);
                 SyllogisticRules.conditionalDedInd(task.sentence,(Implication) taskTerm, bIndex, beliefTerm, tIndex, nal);
@@ -387,19 +387,19 @@ public class RuleTables {
         }
 
         @Override
-        boolean beliefMustBeNonnull() {
+        public boolean beliefMustBeNonnull() {
             return true;
         }
     }
 
     public static class CompoundStatementAndSelf extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             SyllogisticRules.detachment(belief, taskSentence, bIndex, nal);
         }
 
         @Override
-        boolean beliefMustBeNonnull() {
+        public boolean beliefMustBeNonnull() {
             return true;
         }
     }
@@ -412,7 +412,7 @@ public class RuleTables {
 
     public static class GoalFromQuestion extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             goalFromQuestion(task, taskTerm, nal);
         }
 
@@ -480,7 +480,7 @@ public class RuleTables {
 
     public static class GoalFromWantBelief extends RuleTableRule {
         @Override
-        void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
+        public void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal) {
             if (taskTerm instanceof Statement) {
                 goalFromWantBelief(task, tIndex, bIndex, taskTerm, nal, beliefTerm);
             }
