@@ -115,13 +115,13 @@ public class RuleTables {
      * Used to dynamically dispatch rules based on types of links
      */
     public abstract static class RuleTableRule {
-        abstract void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal);
+        public abstract void dispatch(TaskLink tLink, short tIndex, TermLink bLink, short bIndex, Task task, Sentence taskSentence, Term taskTerm, Term beliefTerm, Sentence belief, DerivationContext nal);
 
         /**
          * dispatch() can only get triggered if the belief is nonnull?
          * @return true if the dispatch() method can only be triggered if the belief must not be null
          */
-        boolean beliefMustBeNonnull() {
+        public boolean beliefMustBeNonnull() {
             return false;
         }
     }
