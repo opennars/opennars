@@ -27,10 +27,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
- * a Stamp.
- * <p>
- * It is used as the premises and conclusions of all inference rules.
+ * A Sentence is used as the premises and conclusions of all inference rules.
  */
 public class Sentence<T extends Term> implements Cloneable, Serializable {
 
@@ -42,9 +39,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     public final T term;
     
     /**
-     * The punctuation also indicates the type of the Sentence: 
-     * Judgment, Question, Goal, or Quest.
-     * Represented by characters: '.', '?', '!', or '@'
+     * The punctuation indicates the type of the Sentence:
+     * Judgment '.', Question '?', Goal '!', or Quest '@'
      */
     public final char punctuation;
     
@@ -63,7 +59,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
      */
     private boolean revisible;
 
-    /** caches the 'getKey()' result */
+    /**
+     * caches the 'getKey()' result
+     */
     private CharSequence key;
 
     private final int hash;
@@ -376,19 +374,33 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     }
 
     /**
-     * Recognize a Judgment, question, goal, quest
-     *
+     * Recognize a Judgment
      * @return Whether the object is a Judgment
      */
     public boolean isJudgment() {
         return (punctuation == Symbols.JUDGMENT_MARK);
     }
+    
+    /**
+     * Recognize a Question
+     * @return Whether the object is a Question
+     */
     public boolean isQuestion() {
         return (punctuation == Symbols.QUESTION_MARK);
     }
+    
+    /**
+     * Recognize a Goal
+     * @return Whether the object is a Goal
+     */
     public boolean isGoal() {
         return (punctuation == Symbols.GOAL_MARK);
     }
+    
+    /**
+     * Recognize a Quest
+     * @return Whether the object is a Quest
+     */
     public boolean isQuest() {
         return (punctuation == Symbols.QUEST_MARK);
     }    
