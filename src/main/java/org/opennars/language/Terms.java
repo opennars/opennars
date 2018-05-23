@@ -287,30 +287,10 @@ public class Terms {
             ta = subjA; sa = predA;
             tb = subjB; sb = predB;                
         }
-        //DUPLICATE?
-        /*if ((predA instanceof ImageExt) && (predB instanceof ImageExt)) {
-            ta = subjA; sa = predA;
-            tb = subjB; sb = predB;
-        }*/
         if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
             ta = predA; sa = subjA;
             tb = predB; sb = subjB;
         }
-        //ANOTHER DUPLICATE?
-        /*
-        if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
-                Set<Term> componentsA = new HashSet();
-                Set<Term> componentsB = new HashSet();
-                componentsA.add(predA);
-                componentsB.add(predB);
-                componentsA.addAll(Arrays.asList(((CompoundTerm) subjA).term));
-                componentsB.addAll(Arrays.asList(((CompoundTerm) subjB).term));
-                if (componentsA.containsAll(componentsB)) {
-                    return true;
-                }
-
-        }
-        */
         if ((predA instanceof Product) && (subjB instanceof ImageInt)) {
             ta = subjA; sa = predA;
             tb = predB; sb = subjB;                
@@ -320,49 +300,49 @@ public class Terms {
             tb = subjB; sb = predB;
         }
 
-        if (ta!=null) {
-            final Term[] sat = ((CompoundTerm)sa).term;
-            final Term[] sbt = ((CompoundTerm)sb).term;
+        if (ta==null) {
+            return false;
+        }
 
-            if(sa instanceof Image && sb instanceof Image) {
-                final Image im1=(Image) sa;
-                final Image im2=(Image) sb;
-                if(im1.relationIndex != im2.relationIndex) {
-                    return false;
-                }
+        final Term[] sat = ((CompoundTerm)sa).term;
+        final Term[] sbt = ((CompoundTerm)sb).term;
+
+        if(sa instanceof Image && sb instanceof Image) {
+            final Image im1=(Image) sa;
+            final Image im2=(Image) sb;
+            if(im1.relationIndex != im2.relationIndex) {
+                return false;
             }
-            
-            final Set<Term> componentsA = new HashSet(1+sat.length);
-            final Set<Term> componentsB = new HashSet(1+sbt.length);
+        }
 
-            componentsA.add(ta);
-            Collections.addAll(componentsA, sat);
+        final Set<Term> componentsA = new HashSet(1+sat.length);
+        final Set<Term> componentsB = new HashSet(1+sbt.length);
 
-            componentsB.add(tb);
-            Collections.addAll(componentsB, sbt);
+        componentsA.add(ta);
+        Collections.addAll(componentsA, sat);
 
-            for(final Term sA : componentsA) {
-                boolean had=false;
-                for(final Term sB : componentsB) {
-                    if(sA instanceof Variable && sB instanceof Variable) {
-                        if(sA.name.equals(sB.name)) {
-                            had=true;
-            }
-                    } 
-                    else
-                    if(sA.equals(sB)) {
+        componentsB.add(tb);
+        Collections.addAll(componentsB, sbt);
+
+        for(final Term sA : componentsA) {
+            boolean had=false;
+            for(final Term sB : componentsB) {
+                if(sA instanceof Variable && sB instanceof Variable) {
+                    if(sA.name.equals(sB.name)) {
                         had=true;
-                    }
+        }
                 }
-                if(!had) {
-                    return false;
+                else
+                if(sA.equals(sB)) {
+                    had=true;
                 }
             }
-            
-            return true;
+            if(!had) {
+                return false;
+            }
         }
             
-        return false;
+        return true;
     }
 
     /**
