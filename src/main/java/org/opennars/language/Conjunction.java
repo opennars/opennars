@@ -194,20 +194,17 @@ public class Conjunction extends CompoundTerm {
     public static Term[] simplifyIntervals(Term[] components) {
         List<Term> ret = new ArrayList<Term>();
         for(int i=0;i<components.length;) {
-            if(!(components[i] instanceof Interval)) {
-                ret.add(components[i]);
-                i++;
-            }
-            else {
-                //add up next ones:
-                long ival = ((Interval)components[i]).time;
-                int k=1;
-                while(i+k<components.length && components[i+k] instanceof Interval) {
-                    ival += ((Interval)components[i+k]).time;
-                    k++;
+            if(components[i] instanceof Interval) {
+                // add up next ones
+                long ival = 0;
+                for(;i<components.length && components[i] instanceof Interval; i++) {
+                    ival += ((Interval)components[i]).time;
                 }
                 ret.add(new Interval(ival));
-                i+=k;
+            }
+            else {
+                ret.add(components[i]);
+                i++;
             }
         }
         return ret.toArray(new Term[0]);
