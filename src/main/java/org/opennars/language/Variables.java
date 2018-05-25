@@ -346,9 +346,13 @@ public class Variables {
         
         final boolean hasSubs = findSubstitute(type, t1, t2, map, allowPartial);
         if (hasSubs) {
-            final Term a = applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map[0]);
+            final Term a = (compound[0] instanceof Variable && map[0].containsKey(compound[0])) ? 
+                            map[0].get(compound[0]) : 
+                            applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map[0]);
             if (a == null) return false;
-            final Term b = applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map[1]);
+            final Term b = (compound[1] instanceof Variable && map[1].containsKey(compound[1])) ? 
+                            map[1].get(compound[1]) :
+                            applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map[1]);
             if (b == null) return false;
             //only set the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
             if(compound[0] instanceof Variable && compound[0].hasVarQuery() && (a.hasVarIndep() || a.hasVarIndep()) ) {

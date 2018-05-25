@@ -296,15 +296,10 @@ public class Concept extends Item<Term> implements Serializable {
      */
     protected boolean insertTaskLink(final TaskLink taskLink, final DerivationContext nal) {
         final Task target = taskLink.getTarget();
-        
         //what question answering, question side:
-        final Task ques = taskLink.getTarget();
-        ProcessQuestion.ProcessWhatQuestion(this, ques, nal);
-        
+        ProcessQuestion.ProcessWhatQuestion(this, target, nal);
         //what question answering, belief side:
-        final Task t = taskLink.getTarget();
-        ProcessQuestion.ProcessWhatQuestionAnswer(this, t, nal);
-        
+        ProcessQuestion.ProcessWhatQuestionAnswer(this, target, nal);
         //HANDLE MAX PER CONTENT
         //if taskLinks already contain a certain amount of tasks with same content then one has to go
         final boolean isEternal = target.sentence.isEternal();
@@ -327,10 +322,7 @@ public class Concept extends Item<Term> implements Serializable {
             }
         }
         //END HANDLE MAX PER CONTENT
-        
-        
-        final TaskLink removed = taskLinks.putIn(taskLink);
-        
+        final TaskLink removed = taskLinks.putIn(taskLink);      
         if (removed!=null) {
             if (removed == taskLink) {
                 memory.emit(TaskLinkRemove.class, taskLink, this);

@@ -258,14 +258,13 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     
     public void addInput(String text) {
         text = text.trim();
-        //Ignore any input that is just a comment
-        if(text.startsWith("\'") || text.startsWith("//") ||text.trim().length() <= 0)
-            return;
-
         final Narsese narsese = new Narsese(this);
         if(addMultiLineInput(text)) {
             return;
         }
+        //Ignore any input that is just a comment
+        if(text.startsWith("\'") || text.startsWith("//") ||text.trim().length() <= 0)
+            return;
         if(addCommand(text)) {
             return;
         }

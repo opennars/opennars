@@ -72,7 +72,6 @@ public class DerivationContext {
                                       task.sentence.term instanceof Equivalence)) {
             return false; //implication and equivalence goals and quests are not supported anymore
         }
-
         if (!task.budget.aboveThreshold()) {
             memory.removeTask(task, "Insufficient Budget");
             return false;
@@ -91,6 +90,12 @@ public class DerivationContext {
                 memory.removeTask(task, "Operation with variable as subject or predicate");
                 return false;
             }
+        }
+        if(task.sentence.term.cloneDeep() == null) {
+            //sorted subterm version leaded to a invalid term that remained undetected while the term was constructed optimistically
+            //example: (&,a,b) --> (&,b,a) which gets normalized to (&,a,b) --> (&,a,b) which is invalid.
+            memory.removeTask(task, "Wrong Format");
+            return false;
         }
 
         final Stamp stamp = task.sentence.stamp;
@@ -170,14 +175,9 @@ public class DerivationContext {
     public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, final boolean temporalInduction, final boolean overlapAllowed, final boolean addToMemory) {
         
         final List<Task> ret = new ArrayList<>();
-        if(newContent == null) {
+        if(newContent == null || !newBudget.aboveThreshold()) {
             return null;
         }
-        
-        if (!newBudget.aboveThreshold()) {
-            return null;
-        }
-        
         if ((newContent != null) && (!(newContent instanceof Interval)) && (!(newContent instanceof Variable))) {
             
             if(newContent.subjectOrPredicateIsIndependentVar()) {
@@ -249,8 +249,7 @@ public class DerivationContext {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public boolean singlePremiseTask(final Term newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
-        
+    public boolean singlePremiseTask( Term newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
         if (!newBudget.aboveThreshold())
             return false;
         

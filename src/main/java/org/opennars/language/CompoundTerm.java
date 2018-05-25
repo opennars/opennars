@@ -176,24 +176,22 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         final Term c = clone(cloneTermsDeep());
         if (c == null)
             return null;
-        
         if (c.getClass()!=getClass())
             throw new UnableToCloneException("cloneDeep resulted in different class: " + c + " from " + this);
         if (isNormalized())
             ((CompoundTerm)c).setNormalized(true);
-        
         return (CompoundTerm)c;
     }
     
-    protected void transformIndependentVariableToDependent(final Map<String,Variable> vars, final CompoundTerm T) { //a special instance of transformVariableTermsDeep in 1.7
+    public static void transformIndependentVariableToDependent(final CompoundTerm T) { //a special instance of transformVariableTermsDeep in 1.7
         final Term[] term=T.term;
         for (int i = 0; i < term.length; i++) {
             final Term t = term[i];
             if (t.hasVar()) {
                 if (t instanceof CompoundTerm) {
-                    transformIndependentVariableToDependent(vars, (CompoundTerm) t);
-                } else if (t instanceof Variable) {  /* it's a variable */
-                    term[i] = vars.get(t.toString());
+                    transformIndependentVariableToDependent((CompoundTerm) t);
+                } else if (t instanceof Variable && ((Variable)t).isIndependentVariable()) {  /* it's a variable */
+                    term[i] = new Variable(""+Symbols.VAR_DEPENDENT+t.name.subSequence(1, t.name.length())); // vars.get(t.toString());
                     assert term[i] != null;
                 }
             }
@@ -244,26 +242,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         }
         return ret;
     }
-
-    
-    public CompoundTerm transformIndependentVariableToDependentVar(CompoundTerm T) {
-        T=T.cloneDeep(); //we will operate on a copy
-        int counter = 0;
-        for(final char c : T.toString().toCharArray()) {
-            if(c==Symbols.VAR_INDEPENDENT) {
-                counter++;
-            }
-        }
-        if( counter == 0 )
-            return T;
-        final Map<String,Variable> vars = new HashMap<>();
-        for(int i=1;i<=counter;i++) {
-            vars.put(Symbols.VAR_INDEPENDENT+String.valueOf(i), new Variable(Symbols.VAR_DEPENDENT+String.valueOf(i)));
-        }
-        transformIndependentVariableToDependent(vars, T);
-        return T;
-    }
-
 
     public static class UnableToCloneException extends RuntimeException {
 
@@ -628,6 +606,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                 }
             }
         }
+        if(this.isCommutative()) {
+            Term[] ret = list.toArray(new Term[0]);
+            return Terms.term(this, ret);
+        }
         return Terms.term(this, list);
     }
 
@@ -703,7 +685,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         if (this.isCommutative()) {         
             Arrays.sort(tt);
         }        
-        
+
         return this.clone(tt);
     }
 

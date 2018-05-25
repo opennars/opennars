@@ -179,7 +179,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         //TODO move this to Concept method, like cloneNormalized()
         if ( newTerm != null && normalize && _content.hasVar() && (!((CompoundTerm)_content).isNormalized() ) ) {
             
-            this.term = (T)((CompoundTerm)_content).cloneDeepVariables();
+            this.term = newTerm;
             final CompoundTerm c = (CompoundTerm)term;
             final List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
 

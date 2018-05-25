@@ -90,6 +90,9 @@ public class ProcessQuestion {
                 final Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
                 if(!t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
                     final Concept c = nal.memory.concept(t.getTerm());
+                    if(c == null) {
+                        continue; //target concept is already gone
+                    }
                     final List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
                     if(c != null && answers.size() > 0) {
                         final Task taskAnswer = answers.get(0);
@@ -125,6 +128,9 @@ public class ProcessQuestion {
                     final Term[] u = new Term[] { ques.getTerm(), t.getTerm() };
                     if(ques.sentence.term.hasVarQuery() && !t.getTerm().hasVarQuery() && Variables.unify(Symbols.VAR_QUERY, u)) {
                         final Concept c = nal.memory.concept(t.getTerm());
+                        if(c == null) {
+                            continue; //target doesn't exist anymore
+                        }
                         final List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
                         if(c != null && answers.size() > 0) {
                             final Task taskAnswer = answers.get(0);

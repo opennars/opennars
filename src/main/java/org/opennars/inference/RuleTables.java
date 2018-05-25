@@ -284,7 +284,9 @@ public class RuleTables {
                 }
             final TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE*Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL);
             if(goalterm!=null && !(goalterm instanceof Variable) && goalterm instanceof CompoundTerm) {
-                goalterm=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm);
+                goalterm = goalterm.cloneDeep();
+                CompoundTerm.transformIndependentVariableToDependent((CompoundTerm) goalterm);
+                ((CompoundTerm)goalterm).invalidateName();
                 final Sentence sent=new Sentence(
                     goalterm,
                     Symbols.GOAL_MARK,
@@ -294,7 +296,9 @@ public class RuleTables {
                 nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
             }
             if(goalterm instanceof CompoundTerm && goalterm2!=null && !(goalterm2 instanceof Variable) && goalterm2 instanceof CompoundTerm) {
-                goalterm2=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm2);
+                goalterm2 = goalterm2.cloneDeep();
+                CompoundTerm.transformIndependentVariableToDependent((CompoundTerm) goalterm2);
+                ((CompoundTerm)goalterm2).invalidateName();
                 final Sentence sent=new Sentence(
                     goalterm2,
                     Symbols.GOAL_MARK,
@@ -763,7 +767,7 @@ public class RuleTables {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
                 final Conjunction conj = (Conjunction) compound;
                 final Term[] u = new Term[] { compound, statement };
-                if (Variables.unify(VAR_DEPENDENT, component, statement, u)) {
+                if (Variables.unify(VAR_DEPENDENT, component, statement, u) && u[0] instanceof Conjunction && u[1] instanceof Statement) {
                     compound = (Conjunction) u[0];
                     statement = (Statement) u[1];
                     if(conj.isSpatial || compound.getTemporalOrder() != TemporalRules.ORDER_FORWARD || //only allow dep var elimination
