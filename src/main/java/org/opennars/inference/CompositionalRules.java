@@ -90,8 +90,10 @@ public final class CompositionalRules {
                 termOr = Disjunction.make(componentT, componentB);
                 termAnd = Conjunction.make(componentT, componentB);
             }
-            processComposed(taskContent, componentCommon, termOr, order, truthOr, nal);
-            processComposed(taskContent, componentCommon, termAnd, order, truthAnd, nal);
+            if(!(componentT.cloneDeep().equals(componentB.cloneDeep()))) {
+                processComposed(taskContent, componentCommon, termOr, order, truthOr, nal);
+                processComposed(taskContent, componentCommon, termAnd, order, truthAnd, nal);
+            }
             processComposed(taskContent, componentCommon, termDif, order, truthDif, nal);
         } else {    // index == 1
             if (taskContent instanceof Inheritance) {
@@ -110,8 +112,11 @@ public final class CompositionalRules {
                 termOr = Conjunction.make(componentT, componentB);
                 termAnd = Disjunction.make(componentT, componentB);
             }
-            processComposed(taskContent, termOr, componentCommon, order, truthOr, nal);
-            processComposed(taskContent, termAnd, componentCommon, order, truthAnd, nal);
+            
+            if(!(componentT.cloneDeep().equals(componentB.cloneDeep()))) {
+                processComposed(taskContent, termOr, componentCommon, order, truthOr, nal);
+                processComposed(taskContent, termAnd, componentCommon, order, truthAnd, nal);
+            }
             processComposed(taskContent, termDif, componentCommon, order, truthDif, nal);
         }
     }
@@ -457,9 +462,12 @@ public final class CompositionalRules {
             state2 = Inheritance.make(term21dependent, varDep);
         }
         
-        if ((state1==null) || (state2 == null))
+        if ((state1==null) || (state2 == null)) {
             return;
-        
+        }
+        if(state1.cloneDeep().equals(state2.cloneDeep())) {
+            return;
+        }
         content = Conjunction.make(state1, state2);
         truth = intersection(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, nal);

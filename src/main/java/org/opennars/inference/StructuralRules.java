@@ -58,20 +58,23 @@ public final class StructuralRules {
         if (side == 0) {
             if (components.contains(sub)) {
                 sub = compound;
-                components.set(index, pred);
+                components.set(index, pred.cloneDeep());
                 pred = Terms.term(compound, components);
             }
         } else {
             if (components.contains(pred)) {
-                components.set(index, sub);
+                components.set(index, sub.cloneDeep());
                 sub = Terms.term(compound, components);
                 pred = compound;
             }
         }
         
-        if ((sub == null) || (pred == null))
+        if ((sub == null) || (pred == null)) {
             return;
-        
+        }
+        if(sub.cloneDeep().equals(pred.cloneDeep())) {
+            return;
+        }       
         final Statement content;
         final int order = statement.getTemporalOrder();
         if (switchOrder(compound, index)) {
@@ -80,8 +83,9 @@ public final class StructuralRules {
             content = Statement.make(statement, sub, pred, order);
         }
         
-        if (content == null)
+        if (content == null) {
             return;
+        }
         
         final Sentence sentence = nal.getCurrentTask().sentence;
         final TruthValue truth = TruthFunctions.deduction(sentence.truth, Parameters.reliance);

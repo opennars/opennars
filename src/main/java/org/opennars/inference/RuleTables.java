@@ -767,7 +767,7 @@ public class RuleTables {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
                 final Conjunction conj = (Conjunction) compound;
                 final Term[] u = new Term[] { compound, statement };
-                if (Variables.unify(VAR_DEPENDENT, component, statement, u)) {
+                if (Variables.unify(VAR_DEPENDENT, component, statement, u) && u[0] instanceof Conjunction && u[1] instanceof Statement) {
                     compound = (Conjunction) u[0];
                     statement = (Statement) u[1];
                     if(conj.isSpatial || compound.getTemporalOrder() != TemporalRules.ORDER_FORWARD || //only allow dep var elimination

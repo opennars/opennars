@@ -606,6 +606,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
                 }
             }
         }
+        if(this.isCommutative()) {
+            Term[] ret = list.toArray(new Term[0]);
+            return Terms.term(this, ret);
+        }
         return Terms.term(this, list);
     }
 
