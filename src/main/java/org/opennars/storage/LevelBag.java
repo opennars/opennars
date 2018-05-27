@@ -239,8 +239,17 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
     /** look for a non-empty level */
     protected void nextNonEmptyLevel() {
         int cl = currentLevel;
-        do {                        
-        } while (levelEmpty[cl = DISTRIBUTOR[(levelIndex++) % distributorLength]]);
+        
+        // we need to do this this way to avoid a overflow of levelIndex
+        do {
+            if( !levelEmpty[cl = DISTRIBUTOR[levelIndex % distributorLength]] ) {
+                levelIndex++;
+                break;
+            }
+
+            levelIndex = (levelIndex+1) % distributorLength;
+        } while (true);
+        
         currentLevel = cl;  
         if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
             currentCounter = 1;
