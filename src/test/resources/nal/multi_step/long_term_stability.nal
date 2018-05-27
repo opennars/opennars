@@ -69,3 +69,4 @@
 <<$1 --> [hardened]> =|> <$1 --> [unscrewing]>>.
 (&&,<#1 --> object>,<#1 --> [unscrewing]>)!
 2000000
+''outputMustContain('')
