@@ -97,6 +97,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
     /* System parameters that can be changed at runtime */
     public final RuntimeParameters param;
+
+    //Boolean localInferenceMutex = false;
     
     /* ---------- Constructor ---------- */
     /**
@@ -122,9 +124,13 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public void reset() {
         event.emit(ResetStart.class);
         decisionBlock = 0;
-        concepts.clear();
+        synchronized (concepts) {
+            concepts.clear();
+        }
         novelTasks.clear();
-        newTasks.clear();    
+        synchronized (newTasks) {
+            newTasks.clear();
+        }
         this.seq_current.clear();
         cycle = 0;
         emotion.resetEmotions();
@@ -147,7 +153,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * @return a Concept or null
      */
     public Concept concept(final Term t) {
-        return concepts.get(CompoundTerm.replaceIntervals(t));
+        synchronized (concepts) {
+            return concepts.get(CompoundTerm.replaceIntervals(t));
+        }
     }
 
     /**
@@ -169,25 +177,34 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             return null;
         }
         term = CompoundTerm.replaceIntervals(term);
-        //see if concept is active
-        Concept concept = concepts.take(term);
-        if (concept == null) {                            
-            //create new concept, with the applied budget
-            concept = new Concept(budget, term, this);
-            //if (memory.logic!=null)
-            //    memory.logic.CONCEPT_NEW.commit(term.getComplexity());
-            emit(Events.ConceptNew.class, concept);                
+
+        final Concept displaced;
+        Concept concept;
+
+        synchronized (concepts) {
+            concept = concepts.take(term);
+
+            //see if concept is active
+            if (concept == null) {
+                //create new concept, with the applied budget
+                concept = new Concept(budget, term, this);
+                //if (memory.logic!=null)
+                //    memory.logic.CONCEPT_NEW.commit(term.getComplexity());
+                emit(Events.ConceptNew.class, concept);
+            }
+            else if (concept!=null) {
+                //apply budget to existing concept
+                //memory.logic.CONCEPT_ACTIVATE.commit(term.getComplexity());
+                BudgetFunctions.activate(concept.budget, budget, BudgetFunctions.Activating.TaskLink);
+            }
+            else {
+                //unable to create, ex: has variables
+                return null;
+            }
+
+            displaced = concepts.putBack(concept, cycles(param.conceptForgetDurations), this);
         }
-        else if (concept!=null) {            
-            //apply budget to existing concept
-            //memory.logic.CONCEPT_ACTIVATE.commit(term.getComplexity());
-            BudgetFunctions.activate(concept.budget, budget, BudgetFunctions.Activating.TaskLink);            
-        }
-        else {
-            //unable to create, ex: has variables
-            return null;
-        }
-        final Concept displaced = concepts.putBack(concept, cycles(param.conceptForgetDurations), this);
+
         if (displaced == null) {
             //added without replacing anything
             return concept;
@@ -208,7 +225,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * add new task that waits to be processed in the next cycleMemory
      */
     public void addNewTask(final Task t, final String reason) {
-        newTasks.add(t);
+        synchronized (newTasks) {
+            newTasks.add(t);
+        }
       //  logic.TASK_ADD_NEW.commit(t.getPriority());
         emit(Events.TaskAdd.class, t, reason);
         output(t);
@@ -336,23 +355,25 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     }
     
     public void localInference(final Task task, NarParameters narParameters) {
-        final DerivationContext cont = new DerivationContext(this, narParameters);
-        cont.setCurrentTask(task);
-        cont.setCurrentTerm(task.getTerm());
-        cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
-        if (cont.getCurrentConcept() != null) {
-            final boolean processed = ProcessTask.processTask(cont.getCurrentConcept(), cont, task);
-            if (processed) {
-                event.emit(Events.ConceptDirectProcessedTask.class, task);
+        //synchronized (localInferenceMutex) {
+            final DerivationContext cont = new DerivationContext(this, narParameters);
+            cont.setCurrentTask(task);
+            cont.setCurrentTerm(task.getTerm());
+            cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
+            if (cont.getCurrentConcept() != null) {
+                final boolean processed = ProcessTask.processTask(cont.getCurrentConcept(), cont, task);
+                if (processed) {
+                    event.emit(Events.ConceptDirectProcessedTask.class, task);
+                }
             }
-        }
-        
-        if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
-            TemporalInferenceControl.eventInference(task, cont);
-        }
-        
-        //memory.logic.TASK_IMMEDIATE_PROCESS.commit();
-        emit(Events.TaskImmediateProcess.class, task, cont);
+
+            if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
+                TemporalInferenceControl.eventInference(task, cont);
+            }
+
+            //memory.logic.TASK_IMMEDIATE_PROCESS.commit();
+            emit(Events.TaskImmediateProcess.class, task, cont);
+        //}
     }
     
     /**
@@ -361,26 +382,28 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * buffer.
      */
     public void processNewTasks(NarParameters narParameters) {
-        Task task;
-        int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
-        while (counter-- > 0) {
-            task = newTasks.removeFirst();
-            final boolean enterDirect = true;
-            if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ enterDirect ||  task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
-                localInference(task, narParameters);
-            } else {
-                final Sentence s = task.sentence;
-                if (s.isJudgment() || s.isGoal()) {
-                    final double d = s.getTruth().getExpectation();
-                    if (s.isJudgment() && d > Parameters.DEFAULT_CREATION_EXPECTATION) {
-                        novelTasks.putIn(task);    // new concept formation
-                    } else 
-                    if(s.isGoal() && d > Parameters.DEFAULT_CREATION_EXPECTATION_GOAL) {
-                        novelTasks.putIn(task);    // new concept formation
-                    }
-                    else
-                    {
-                        removeTask(task, "Neglected");
+        synchronized (newTasks) {
+            Task task;
+            int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
+            while (counter-- > 0) {
+                task = newTasks.removeFirst();
+                final boolean enterDirect = true;
+                if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ enterDirect ||  task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
+                    localInference(task, narParameters);
+                } else {
+                    final Sentence s = task.sentence;
+                    if (s.isJudgment() || s.isGoal()) {
+                        final double d = s.getTruth().getExpectation();
+                        if (s.isJudgment() && d > Parameters.DEFAULT_CREATION_EXPECTATION) {
+                            novelTasks.putIn(task);    // new concept formation
+                        } else
+                        if(s.isGoal() && d > Parameters.DEFAULT_CREATION_EXPECTATION_GOAL) {
+                            novelTasks.putIn(task);    // new concept formation
+                        }
+                        else
+                        {
+                            removeTask(task, "Neglected");
+                        }
                     }
                 }
             }
