@@ -72,48 +72,15 @@ Development Requirements
 ------------------------
  * Maven
 
-History
--------
-Under the nars_java.0/ directory is the code Pei Wang originally moved into the project, which is still the base of his own programming. This is no active anymore, replaced by nars_java/ and nars_gui/ .
-
-Later Joe Geldart started the nars_java.geldart/ version of NARS, which contains many good ideas (many of which are accepted into 1.5), but it isn't fully consistent with Pei's plan, especially about the new layers (7,8,9), so Pei didn't continue on that code base.
-
-Jean-Marc Vanel continued work on this roadmap, mainly in GUI and software engineering tasks contributing a non-regression test suite and separating NARS into Core and GUI modules.
-
-
-Source Code status
-------------------
-See also http://code.google.com/p/open-nars/wiki/ProjectStatus
-
-Current version has been fully tested for single capability at a time; there may still be bugs when combining capabilities.
-
-
-
 Links
 -----
-Website:
- * http://opennars.github.io/opennars/
- 
-All downloads:
-*  https://drive.google.com/drive/folders/0B8Z4Yige07tBUk5LSUtxSGY0eVk?usp=sharing
-
-An (outdated) HTML user manual:
- * http://www.cis.temple.edu/~pwang/Implementation/NARS/NARS-GUI-Guide.html
-
-The project home page:
- * https://code.google.com/p/open-nars/
-
-This version was however developed on Github:
- * https://github.com/opennars/opennars
-
-Discussion Group:
- * https://groups.google.com/forum/?fromgroups#!forum/open-nars
- 
- IRC:
- * http://webchat.freenode.net?channels=nars
- 
- Try online:
- * http://91.203.212.130/NARS
+ * [Website](http://opennars.github.io/opennars/)
+ * [All downloads](https://drive.google.com/drive/folders/0B8Z4Yige07tBUk5LSUtxSGY0eVk?usp=sharing)
+ * [An (outdated) HTML user manual](http://www.cis.temple.edu/~pwang/Implementation/NARS/NARS-GUI-Guide.html)
+ * [The Project homepage](https://code.google.com/p/open-nars/)
+ * [google groups - Discussion Group](https://groups.google.com/forum/?fromgroups#!forum/open-nars)
+ * [IRC](http://webchat.freenode.net?channels=nars)
+ * [Try online](http://91.203.212.130/NARS)
 
 Credits:
 -------

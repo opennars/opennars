@@ -24,6 +24,7 @@ import org.opennars.language.*;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -671,50 +672,81 @@ public final class StructuralRules {
             return;
         }
 
-        final boolean hasLeft = index > 1;
-        final boolean hasRight = index < compound.size() - 2;
-        if(hasLeft) {
-            final int minIndex = Memory.randomNumber.nextInt(index-1); //if index-1 it would have length 1, no group
-            final Term[] newTermLeft = new Term[(index-minIndex)];
-            System.arraycopy(conjCompound.term, minIndex, newTermLeft, minIndex - minIndex, index - minIndex);
-            final Term contLeft  = Conjunction.make(newTermLeft,  conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-            final Term[] totalLeft =  new Term[conjCompound.size() - newTermLeft.length + 1];
-            //1. add left of min index
-            int k=0;
-            for(int i=0;i<minIndex;i++) {
-                totalLeft[k++] = conjCompound.term[i];
+        final boolean hasLeft = index >= 1; // result subsequence will have at least two elements
+        final boolean hasRight = index < (compound.size() - 1);
+
+        if (hasLeft) {
+            final int sliceStartIndexInclusive = Memory.randomNumber.nextInt(index - 1 + 1 /* inclusive */); //if index-1 it would have length 1, no group
+            final int sliceEndIndexInclusive = index;
+
+            final boolean allRange = sliceStartIndexInclusive == 0 && sliceEndIndexInclusive == (conjCompound.term.length - 1);
+            if( !allRange ) {
+                createSequenceTaskByRange(conjCompound, sliceStartIndexInclusive, sliceEndIndexInclusive, nal);
             }
-            //add formed group
-            totalLeft[k] = contLeft;
-            k+=newTermLeft.length-1;
-            //and add what is after
-            for(int i=index; i<conjCompound.size(); i++) {
-                totalLeft[k++] = conjCompound.term[i];
-            }
-            createSequenceTask(nal, conjCompound, totalLeft);
         }
 
-        if(hasRight) {
-            final int maxIndex = compound.term.length - 1 - (Memory.randomNumber.nextInt(1 + (compound.term.length - 1) - (index + 2)));
-            final Term[] newTermRight = new Term[maxIndex -index];
-            System.arraycopy(conjCompound.term, index + 1, newTermRight, index + 1 - (index + 1), maxIndex + 1 - (index + 1));
-            final Term contRight = Conjunction.make(newTermRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-            final Term[] totalRight = new Term[conjCompound.size() - newTermRight.length + 1];
+        if (hasRight) {
+            final int sliceStartIndexInclusive = index;
+            final int sliceEndIndexInclusive;
+            {
+                final int randminInclusive = index + 1;
+                final int randmaxInclusive = compound.size() - 1;
+                sliceEndIndexInclusive = Memory.randomNumber.nextInt(randmaxInclusive - randminInclusive + 1 /*inclusive*/) + randminInclusive;
+            }
 
-            //2. add left of index
-            int k=0;
-            for(int i=0; i<=index; i++) {
-                totalRight[k++] = conjCompound.term[i];
+            final boolean allRange = sliceStartIndexInclusive == 0 && sliceEndIndexInclusive == (conjCompound.term.length - 1);
+            if( !allRange ) {
+                createSequenceTaskByRange(conjCompound, sliceStartIndexInclusive, sliceEndIndexInclusive, nal);
             }
-            //add formed group
-            totalRight[k] = contRight;
-            k+=newTermRight.length-1-1;
-            //and add what is after
-            for(int i=maxIndex+1;i<conjCompound.size();i++) {
-                totalRight[k++] = conjCompound.term[i];
-            }
-            createSequenceTask(nal, conjCompound, totalRight);
         }
+    }
+
+    // creates a subsequence of a sequence based on a (inclusive) index range
+    private static void createSequenceTaskByRange(Conjunction sourceConjunction,  int inclusiveStartIndex, int inclusiveEndIndex, DerivationContext nal) {
+        if(false) System.out.println("sourceConjunction=" + sourceConjunction.toString());
+        if(false) System.out.println("inclusideStartIndex=" + Integer.toString(inclusiveStartIndex));
+        if(false) System.out.println("inclusiveEndIndex=" + Integer.toString(inclusiveEndIndex));
+
+        int subsequenceLength = inclusiveEndIndex - inclusiveStartIndex
+            + 1 /* because it are inclusive indices */;
+
+        final Term[] subsequence = new Term[subsequenceLength];
+
+        // copy subsequence from source to subsequence
+        for (int idxInSource=inclusiveStartIndex; idxInSource<=inclusiveEndIndex; idxInSource++) {
+            int idxInSubsequence = idxInSource - inclusiveStartIndex;
+            subsequence[idxInSubsequence] = sourceConjunction.term[idxInSource];
+        }
+
+
+        final Term[] destination = new Term[sourceConjunction.size() - subsequenceLength
+            + 1 /* because the subsequence requires one element too */
+        ];
+
+        // copy everything before the subsequence
+        int destinationIdx = 0;
+        for (int idx=0; idx<inclusiveStartIndex; idx++) {
+            destination[destinationIdx++] = sourceConjunction.term[idx];
+        }
+        assert destinationIdx == inclusiveStartIndex;
+
+        // followed by the subsequence
+        destination[destinationIdx++] = Conjunction.make(subsequence, sourceConjunction.getTemporalOrder(), sourceConjunction.getIsSpatial());
+
+        // followed by everything after the subsequence
+        for (int idxInSource=inclusiveEndIndex+1; idxInSource<sourceConjunction.size(); idxInSource++) {
+            if(false) System.out.println("destinationIdx=" + Integer.toString(destinationIdx));
+
+            destination[destinationIdx++] = sourceConjunction.term[idxInSource];
+        }
+        assert destinationIdx == destination.length;
+
+
+
+        if(false) System.out.println("destination=" + Arrays.toString(destination));
+
+        // we pass in sourceConjunction just to copy and check the temporal order and other attributes
+        createSequenceTask(nal, sourceConjunction, destination);
     }
 
     private static void createSequenceTask(DerivationContext nal, Conjunction conjCompound, Term[] total) {
