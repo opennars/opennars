@@ -77,7 +77,7 @@ public class Shell {
                 if(line!=null) {
                     try {
                         nar.addInput(line);
-                    } catch(IllegalStateException ex) {
+                    } catch(Exception ex) {
                         if(Parameters.DEBUG) {
                             throw new IllegalStateException("error parsing:" +line, ex);
                         }
