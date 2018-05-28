@@ -45,42 +45,17 @@ Beginners can start at the following online materials:
 
 Contents
 --------
- * **nars_core** - reasoning engine
- * **nars_gui** - java.swing GUI
- * **nars_web** - web server
- * **nars_lab** - experiments & demos
- * **nars_test** - unit tests
- * **nal** - examples
+ * **[core](https://github.com/opennars/opennars/tree/master/src/main/java/org/opennars)** - reasoning engine
+ * **[nal](https://github.com/opennars/opennars/tree/master/src/test/resources/nal)** - examples/unit tests
 
-In nars_core/ and nars_gui/ are the NARS core and the Swing GUI in Java. This is derived from the code of Pei Wang in nars_java.0/ directory.
+The core is derived from the code of Pei Wang.
 
-For an overview of reasoning features, see working examples explained in SingleStepTestingCases and MultiStepExamples.
+For an overview of reasoning features, see working examples explained in [SingleStepTestingCases](https://github.com/opennars/opennars/tree/master/src/test/resources/nal/single_step) and [MultiStepExamples](https://github.com/opennars/opennars/tree/master/src/test/resources/nal/multi_step).
 
 
 Run Requirements
 ----------------
  * Java 8+ (OpenJDK 10 recommended)
-
-
-Command Shell Usage
--------------------
-You can launch NARS in several ways from command window (shell):
-
-```
-- empty reasoner (reads from stdin and writes to stdout):
-    ./nars.sh
-
-- gui (Swing)
-    ./gui.sh [.nal input file]
-    
-- reasoner loaded from an experience file:
-    ./nars.sh Examples/Example-NAL1-edited.txt --silence 90
-
-- web server start for HTML GUI usage:
-    ./web.sh 9999 localhost 9100 1000
-     listen port^     ^IP    ^port ^time for each reasoning step in ms
-```
-
 
 Example Files
 -------------
@@ -95,9 +70,7 @@ Unit tests are in nal/test.
 
 Development Requirements
 ------------------------
- * ant or IDE
-   * To build a complete OpenNARS.jar: build.sh
-   * To run unit tests: ant test
+ * Maven
 
 Links
 -----
