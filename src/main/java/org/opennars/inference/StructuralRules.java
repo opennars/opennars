@@ -701,51 +701,36 @@ public final class StructuralRules {
         }
     }
 
-    // creates a subsequence of a sequence based on a (inclusive) index range
+    /* Derives a subsequence of a sequence based on a (inclusive) index range
+     * 
+     * @param sourceConjunction The conjunction we take out a certain part from
+     * @param inclusiveStartIndex The start index (inclusive)
+     * @param inclusiveEndIndex The end index (inclusive)
+     * @param nal The derivation contect
+     */
     private static void createSequenceTaskByRange(Conjunction sourceConjunction,  int inclusiveStartIndex, int inclusiveEndIndex, DerivationContext nal) {
-        if(false) System.out.println("sourceConjunction=" + sourceConjunction.toString());
-        if(false) System.out.println("inclusideStartIndex=" + Integer.toString(inclusiveStartIndex));
-        if(false) System.out.println("inclusiveEndIndex=" + Integer.toString(inclusiveEndIndex));
-
-        int subsequenceLength = inclusiveEndIndex - inclusiveStartIndex
-            + 1 /* because it are inclusive indices */;
-
+        int subsequenceLength = inclusiveEndIndex - inclusiveStartIndex + 1; //+1 because of all being inclusive indices
         final Term[] subsequence = new Term[subsequenceLength];
-
-        // copy subsequence from source to subsequence
+        //1. copy subsequence from source to subsequence:
         for (int idxInSource=inclusiveStartIndex; idxInSource<=inclusiveEndIndex; idxInSource++) {
             int idxInSubsequence = idxInSource - inclusiveStartIndex;
             subsequence[idxInSubsequence] = sourceConjunction.term[idxInSource];
         }
-
-
-        final Term[] destination = new Term[sourceConjunction.size() - subsequenceLength
-            + 1 /* because the subsequence requires one element too */
-        ];
-
-        // copy everything before the subsequence
+        final Term[] destination = new Term[sourceConjunction.size() - subsequenceLength + 1]; //+1 because the subsequence requires one element too
+        //2. copy everything before the subsequence:
         int destinationIdx = 0;
         for (int idx=0; idx<inclusiveStartIndex; idx++) {
             destination[destinationIdx++] = sourceConjunction.term[idx];
         }
         assert destinationIdx == inclusiveStartIndex;
-
-        // followed by the subsequence
+        //3. followed by the subsequence
         destination[destinationIdx++] = Conjunction.make(subsequence, sourceConjunction.getTemporalOrder(), sourceConjunction.getIsSpatial());
-
-        // followed by everything after the subsequence
+        //4. followed by everything after the subsequence
         for (int idxInSource=inclusiveEndIndex+1; idxInSource<sourceConjunction.size(); idxInSource++) {
-            if(false) System.out.println("destinationIdx=" + Integer.toString(destinationIdx));
-
             destination[destinationIdx++] = sourceConjunction.term[idxInSource];
         }
         assert destinationIdx == destination.length;
-
-
-
-        if(false) System.out.println("destination=" + Arrays.toString(destination));
-
-        // we pass in sourceConjunction just to copy and check the temporal order and other attributes
+        //5. derive sourceConjunction, inheriting the type of conjunction from sourceConjunction
         createSequenceTask(nal, sourceConjunction, destination);
     }
 
