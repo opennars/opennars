@@ -74,8 +74,17 @@ public class Shell {
         {
             try {
                 final String line=bufIn.readLine();
-                if(line!=null)
-                    nar.addInput(line);
+                if(line!=null) {
+                    try {
+                        nar.addInput(line);
+                    } catch(Exception ex) {
+                        if(Parameters.DEBUG) {
+                            throw new IllegalStateException("error parsing:" +line, ex);
+                        }
+                        System.out.println("parsing error");
+                    }
+                }
+                
             } catch (final IOException e) {
                 throw new IllegalStateException("Could not read line.", e);
             }
