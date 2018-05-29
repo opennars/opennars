@@ -711,26 +711,26 @@ public final class StructuralRules {
     private static void createSequenceTaskByRange(Conjunction sourceConjunction,  int inclusiveStartIndex, int inclusiveEndIndex, DerivationContext nal) {
         int subsequenceLength = inclusiveEndIndex - inclusiveStartIndex + 1; //+1 because of all being inclusive indices
         final Term[] subsequence = new Term[subsequenceLength];
-        //1. copy subsequence from source to subsequence:
+        // copy subsequence from source to subsequence:
         for (int idxInSource=inclusiveStartIndex; idxInSource<=inclusiveEndIndex; idxInSource++) {
             int idxInSubsequence = idxInSource - inclusiveStartIndex;
             subsequence[idxInSubsequence] = sourceConjunction.term[idxInSource];
         }
         final Term[] destination = new Term[sourceConjunction.size() - subsequenceLength + 1]; //+1 because the subsequence requires one element too
-        //2. copy everything before the subsequence:
+        // copy everything before the subsequence:
         int destinationIdx = 0;
         for (int idx=0; idx<inclusiveStartIndex; idx++) {
             destination[destinationIdx++] = sourceConjunction.term[idx];
         }
         assert destinationIdx == inclusiveStartIndex;
-        //3. followed by the subsequence
+        // followed by the subsequence
         destination[destinationIdx++] = Conjunction.make(subsequence, sourceConjunction.getTemporalOrder(), sourceConjunction.getIsSpatial());
-        //4. followed by everything after the subsequence
+        // followed by everything after the subsequence
         for (int idxInSource=inclusiveEndIndex+1; idxInSource<sourceConjunction.size(); idxInSource++) {
             destination[destinationIdx++] = sourceConjunction.term[idxInSource];
         }
         assert destinationIdx == destination.length;
-        //5. derive sourceConjunction, inheriting the type of conjunction from sourceConjunction
+        // derive sourceConjunction, inheriting the type of conjunction from sourceConjunction
         createSequenceTask(nal, sourceConjunction, destination);
     }
 
