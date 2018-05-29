@@ -426,11 +426,16 @@ public final class StructuralRules {
                 componentList = oldContent.cloneTerms();
                 componentList[indices[0]] = newInh;
                 if (oldContent instanceof Conjunction) {
+                    // ex: (&&,<(*,a,b) --> R>,...) |- (&&,<a --> (/,R,_,b)>,...)
+                    
                     final Term newContent = Terms.term(oldContent, componentList);
                     if (!(newContent instanceof CompoundTerm))
                         return;
                     content = (CompoundTerm)newContent;
-                } else if ((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) {
+                } else if (oldContentIsImplicationOrEquivalence) {
+                    // ex: <<(*,a,b) --> R> ==> C>. |- <<a --> (/,R,_,b)> ==> C>
+                    // ex: <<(*,a,b) --> R> <=> C>. |- <<a --> (/,R,_,b)> <=> C>
+                    
                     content = Statement.make((Statement) oldContent, componentList[0], componentList[1], oldContent.getTemporalOrder());
                 }
             }
