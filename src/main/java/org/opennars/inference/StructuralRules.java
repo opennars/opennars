@@ -618,7 +618,14 @@ public final class StructuralRules {
             System.arraycopy(conjCompound.term, 0, newTerm, 0, index);
             System.arraycopy(conjCompound.term, index + 1, newTerm, index, newTerm.length - index);
             final Term cont = Conjunction.make(newTerm, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-            final TruthValue truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, Parameters.reliance);
+            Sentence curS = nal.getCurrentTask().sentence;
+            TruthValue truth = null;
+            if(curS.isJudgment()) {
+                truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, Parameters.reliance);
+            }
+            if(curS.isGoal()) {
+                truth = TruthFunctions.desireStrong(nal.getCurrentTask().sentence.truth, new TruthValue(1.0f,Parameters.reliance));
+            }
             final BudgetValue budget = BudgetFunctions.forward(truth, nal);
             nal.singlePremiseTask(cont, truth, budget);
         }
@@ -644,12 +651,16 @@ public final class StructuralRules {
             }
             System.arraycopy(conjCompound.term, 0, newTermLeft, 0, newTermLeft.length);
             System.arraycopy(conjCompound.term, 0 + index, newTermRight, 0, newTermRight.length);
-            final Conjunction cont1 = (Conjunction) Conjunction.make(newTermLeft, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-            final Conjunction cont2 = (Conjunction) Conjunction.make(newTermRight, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-            final TruthValue truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, Parameters.reliance);
-            final BudgetValue budget = BudgetFunctions.forward(truth, nal);
-            nal.singlePremiseTask(cont1, truth,         budget);
-            nal.singlePremiseTask(cont2, truth.clone(), budget.clone());
+            final Sentence curS = nal.getCurrentTask().sentence;
+            TruthValue truth = null;
+            if(curS.isJudgment()) {
+                truth = TruthFunctions.deduction(curS.truth, Parameters.reliance);
+            }
+            if(curS.isGoal()) {
+                truth = TruthFunctions.desireStrong(curS.truth, new TruthValue(1.0f, Parameters.reliance));
+            }
+            deriveSequenceTask(nal, conjCompound, newTermLeft, truth);
+            deriveSequenceTask(nal, conjCompound, newTermRight, truth);
         }
     }
     
@@ -711,34 +722,44 @@ public final class StructuralRules {
     private static void createSequenceTaskByRange(Conjunction sourceConjunction,  int inclusiveStartIndex, int inclusiveEndIndex, DerivationContext nal) {
         int subsequenceLength = inclusiveEndIndex - inclusiveStartIndex + 1; //+1 because of all being inclusive indices
         final Term[] subsequence = new Term[subsequenceLength];
-        //1. copy subsequence from source to subsequence:
+        // copy subsequence from source to subsequence:
         for (int idxInSource=inclusiveStartIndex; idxInSource<=inclusiveEndIndex; idxInSource++) {
             int idxInSubsequence = idxInSource - inclusiveStartIndex;
             subsequence[idxInSubsequence] = sourceConjunction.term[idxInSource];
         }
         final Term[] destination = new Term[sourceConjunction.size() - subsequenceLength + 1]; //+1 because the subsequence requires one element too
-        //2. copy everything before the subsequence:
+        // copy everything before the subsequence:
         int destinationIdx = 0;
         for (int idx=0; idx<inclusiveStartIndex; idx++) {
             destination[destinationIdx++] = sourceConjunction.term[idx];
         }
         assert destinationIdx == inclusiveStartIndex;
-        //3. followed by the subsequence
+        // followed by the subsequence
         destination[destinationIdx++] = Conjunction.make(subsequence, sourceConjunction.getTemporalOrder(), sourceConjunction.getIsSpatial());
-        //4. followed by everything after the subsequence
+        // followed by everything after the subsequence
         for (int idxInSource=inclusiveEndIndex+1; idxInSource<sourceConjunction.size(); idxInSource++) {
             destination[destinationIdx++] = sourceConjunction.term[idxInSource];
         }
         assert destinationIdx == destination.length;
-        //5. derive sourceConjunction, inheriting the type of conjunction from sourceConjunction
-        createSequenceTask(nal, sourceConjunction, destination);
+        // derive sourceConjunction, inheriting the type of conjunction from sourceConjunction
+        Sentence curS = nal.getCurrentTask().sentence;
+        final TruthValue truth = curS.truth != null ? curS.truth.clone() : null;
+        deriveSequenceTask(nal, sourceConjunction, destination, truth);
     }
-
-    private static void createSequenceTask(DerivationContext nal, Conjunction conjCompound, Term[] total) {
-        final Term cont = Conjunction.make(total, conjCompound.getTemporalOrder(), conjCompound.getIsSpatial());
-        if(cont instanceof Conjunction && total.length != conjCompound.size()) {
-            final TruthValue truth = nal.getCurrentTask().sentence.truth.clone();
-            final BudgetValue budget = BudgetFunctions.forward(truth, nal);
+    
+    /***
+     * Derives a sequence task, inheriting properties from parentConj
+     * 
+     * @param nal The derivation context
+     * @param inheritPropertiesConj The parent conjunction type that should be used for the derivation too
+     * @param total The subterms the conjunction should be created from
+     * @param truth The truth value of the derivation
+     */
+    private static void deriveSequenceTask(DerivationContext nal, Conjunction parentConj, Term[] total, TruthValue truth) {
+        final Term cont = Conjunction.make(total, parentConj.getTemporalOrder(), parentConj.getIsSpatial());
+        if(cont instanceof Conjunction && total.length != parentConj.size()) {
+            final BudgetValue budget = truth != null ? BudgetFunctions.compoundForward(truth, cont, nal) : 
+                                                       BudgetFunctions.compoundBackward(cont, nal);
             nal.singlePremiseTask(cont, truth, budget);
         }
     }

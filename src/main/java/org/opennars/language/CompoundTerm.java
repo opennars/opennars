@@ -176,8 +176,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         final Term c = clone(cloneTermsDeep());
         if (c == null)
             return null;
-        if (c.getClass()!=getClass())
-            throw new UnableToCloneException("cloneDeep resulted in different class: " + c + " from " + this);
+        if (Parameters.DEBUG && c.getClass()!=getClass()) //debug relevant, while it is natural due to interval 
+                                                          //simplification to reduce to other term type,
+                                                          //other cases should not appear
+            System.out.println("cloneDeep resulted in different class: " + c + " from " + this);
         if (isNormalized())
             ((CompoundTerm)c).setNormalized(true);
         return (CompoundTerm)c;
@@ -200,6 +202,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
     static final Interval conceptival = new Interval(1);
     private static void ReplaceIntervals(final CompoundTerm comp) {
+        comp.invalidateName();
         for(int i=0; i<comp.term.length; i++) {
             final Term t = comp.term[i];
             if(t instanceof Interval) {
@@ -217,6 +220,9 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     public static Term replaceIntervals(Term T) {
         if(T instanceof CompoundTerm) {
             T=T.cloneDeep(); //we will operate on a copy
+            if(T == null) {
+                return null; //not a valid concept term
+            }
             ReplaceIntervals((CompoundTerm) T);
         }
         return T;
@@ -269,8 +275,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         if (c == null)
             return null;
         
-        if (c.getClass()!=getClass())
-            throw new UnableToCloneException("cloneDeepVariables resulted in different class: " + c + " from " + this);                
+        if (Parameters.DEBUG && c.getClass()!=getClass())
+            System.out.println("cloneDeepVariables resulted in different class: " + c + " from " + this);                
         
         final CompoundTerm cc = (CompoundTerm)c;
         cc.setNormalized(isNormalized());
