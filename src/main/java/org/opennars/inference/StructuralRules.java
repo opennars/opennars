@@ -746,10 +746,18 @@ public final class StructuralRules {
         final TruthValue truth = curS.truth != null ? curS.truth.clone() : null;
         deriveSequenceTask(nal, sourceConjunction, destination, truth);
     }
-
-    private static void deriveSequenceTask(DerivationContext nal, Conjunction inheritPropertiesCompound, Term[] total, TruthValue truth) {
-        final Term cont = Conjunction.make(total, inheritPropertiesCompound.getTemporalOrder(), inheritPropertiesCompound.getIsSpatial());
-        if(cont instanceof Conjunction && total.length != inheritPropertiesCompound.size()) {
+    
+    /***
+     * Derives a sequence task, inheriting properties from parentConj
+     * 
+     * @param nal The derivation context
+     * @param inheritPropertiesConj The parent conjunction type that should be used for the derivation too
+     * @param total The subterms the conjunction should be created from
+     * @param truth The truth value of the derivation
+     */
+    private static void deriveSequenceTask(DerivationContext nal, Conjunction parentConj, Term[] total, TruthValue truth) {
+        final Term cont = Conjunction.make(total, parentConj.getTemporalOrder(), parentConj.getIsSpatial());
+        if(cont instanceof Conjunction && total.length != parentConj.size()) {
             final BudgetValue budget = truth != null ? BudgetFunctions.compoundForward(truth, cont, nal) : 
                                                        BudgetFunctions.compoundBackward(cont, nal);
             nal.singlePremiseTask(cont, truth, budget);
