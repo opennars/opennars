@@ -412,7 +412,12 @@ public final class StructuralRules {
         } else {
             final Term[] componentList;
             final Term condition = oldContent.term[0];
-            if (((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) && (condition instanceof Conjunction)) {
+            
+            final boolean oldContentIsImplicationOrEquivalence = oldContent instanceof Implication || oldContent instanceof Equivalence;
+            if (condition instanceof Conjunction && oldContentIsImplicationOrEquivalence) {
+                // ex: <(&&,<(*,a,b) --> R>,...) ==> C>. |- <(&&,<a --> (/,R,_,b)>,...) ==> C>
+                // ex: <(&&,<(*,a,b) --> R>,...) <=> C>. |- <(&&,<a --> (/,R,_,b)>,...) <=> C>
+                
                 componentList = ((CompoundTerm) condition).cloneTerms();
                 componentList[indices[1]] = newInh;
                 final Term newCond = Terms.term((CompoundTerm) condition, componentList);
