@@ -412,7 +412,12 @@ public final class StructuralRules {
         } else {
             final Term[] componentList;
             final Term condition = oldContent.term[0];
-            if (((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) && (condition instanceof Conjunction)) {
+            
+            final boolean oldContentIsImplicationOrEquivalence = oldContent instanceof Implication || oldContent instanceof Equivalence;
+            if (condition instanceof Conjunction && oldContentIsImplicationOrEquivalence) {
+                // ex: <(&&,<(*,a,b) --> R>,...) ==> C>. |- <(&&,<a --> (/,R,_,b)>,...) ==> C>
+                // ex: <(&&,<(*,a,b) --> R>,...) <=> C>. |- <(&&,<a --> (/,R,_,b)>,...) <=> C>
+                
                 componentList = ((CompoundTerm) condition).cloneTerms();
                 componentList[indices[1]] = newInh;
                 final Term newCond = Terms.term((CompoundTerm) condition, componentList);
@@ -421,11 +426,16 @@ public final class StructuralRules {
                 componentList = oldContent.cloneTerms();
                 componentList[indices[0]] = newInh;
                 if (oldContent instanceof Conjunction) {
+                    // ex: (&&,<(*,a,b) --> R>,...) |- (&&,<a --> (/,R,_,b)>,...)
+                    
                     final Term newContent = Terms.term(oldContent, componentList);
                     if (!(newContent instanceof CompoundTerm))
                         return;
                     content = (CompoundTerm)newContent;
-                } else if ((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) {
+                } else if (oldContentIsImplicationOrEquivalence) {
+                    // ex: <<(*,a,b) --> R> ==> C>. |- <<a --> (/,R,_,b)> ==> C>
+                    // ex: <<(*,a,b) --> R> <=> C>. |- <<a --> (/,R,_,b)> <=> C>
+                    
                     content = Statement.make((Statement) oldContent, componentList[0], componentList[1], oldContent.getTemporalOrder());
                 }
             }
