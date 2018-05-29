@@ -1,0 +1,8 @@
+(#,a,b,c,d).
+300000
+''outputMustContain('(#,(#,a,b),c,d). %1.00;0.90%')
+''outputMustContain('(#,(#,a,b,c),d). %1.00;0.90%')
+''outputMustContain('(#,a,(#,b,c),d). %1.00;0.90%')
+''outputMustContain('(#,a,(#,b,c,d)). %1.00;0.90%')
+''outputMustContain('(#,a,b,c). %1.00;0.81%')
+''outputMustContain('(#,b,c,d). %1.00;0.81%')
