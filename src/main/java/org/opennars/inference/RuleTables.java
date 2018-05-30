@@ -154,7 +154,9 @@ public class RuleTables {
             case TermLink.COMPOUND:
                 switch (bLink.type) {
                     case TermLink.COMPOUND:
-                        compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, tIndex, bIndex, nal);
+                        if(taskTerm instanceof CompoundTerm && beliefTerm instanceof CompoundTerm) {
+                            compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, tIndex, bIndex, nal);
+                        }
                         break;
                     case TermLink.COMPOUND_STATEMENT:
                         compoundAndStatement((CompoundTerm) taskTerm, tIndex, (Statement) beliefTerm, bIndex, beliefTerm, nal);
@@ -187,7 +189,7 @@ public class RuleTables {
                         }
                         break;
                     case TermLink.COMPOUND:
-                        if (taskTerm instanceof Statement) {
+                        if (taskTerm instanceof Statement && beliefTerm instanceof CompoundTerm) {
                             compoundAndStatement((CompoundTerm) beliefTerm, bIndex, (Statement) taskTerm, tIndex, beliefTerm, nal);
                         }
                         break;
