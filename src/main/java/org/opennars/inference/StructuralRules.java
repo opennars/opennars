@@ -219,6 +219,9 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralDecompose1(final CompoundTerm compound, final short index, final Statement statement, final DerivationContext nal) {
+        RuleExecutive.executeByRuleName("structuralDecompose1", compound, index, statement, nal);
+
+        /*
         if(index >= compound.term.length) {
             return;
         }
@@ -263,7 +266,7 @@ public final class StructuralRules {
                     structuralStatement(subj, component, order, truthNDed, nal);
                 }
             }
-        }
+        }*/
     }
 
     /**

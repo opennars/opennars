@@ -32,7 +32,7 @@ class RuleExecutive {
     static {
         rules.put("structuralCompose1", new Rule(
             // precondition
-            nal -> nal.getCurrentTask().sentence.isJudgment(), // allow only forward inference
+            ctx -> ctx.nal.getCurrentTask().sentence.isJudgment(), // allow only forward inference
 
             // preamble
             (compound, index, nal, ctx) -> {
@@ -94,6 +94,72 @@ class RuleExecutive {
                 */
             }
         ));
+
+        rules.put("structuralDecompose1", new Rule(
+            // precondition
+            ctx -> ctx.index < ctx.compound.term.length,
+
+            // preamble
+            (compound, index, nal, ctx) -> {
+                ctx.component = compound.term[index];
+                //final Task task = nal.getCurrentTask();   implicit
+                //final Sentence sentence = task.sentence;   implicit
+                //ctx.order = sentence.getTemporalOrder();   implicit
+                //ctx.truth = sentence.truth;  implicit
+
+                final float reliance = Parameters.reliance;
+                ctx.truthDed = TruthFunctions.deduction(ctx.truth, reliance);
+                ctx.truthNDed = TruthFunctions.negation(ctx.truthDed);
+            },
+
+            // conclusions
+            new Conclusion[]{
+                // from structuralDecompose1() in legacy
+                //  {<(S|T) --> P>, S@(S|T)} |- <S --> P> {<S --> (P&T)>, P@(P&T)} |- <S --> P>
+
+                new Conclusion(
+                    ctx -> ctx.compound.equals(ctx.subject) && ctx.compound instanceof IntersectionInt,
+                    ctx -> ctx.assignStatementWithOldCopula(ctx.component, ctx.predicate, ctx.truthDed)
+                ),
+                new Conclusion(
+                    ctx -> ctx.compound.equals(ctx.subject) && ctx.compound instanceof SetExt && (ctx.compound.size() > 1),
+                    ctx -> {
+                        final Term[] t1 = new Term[]{ctx.component};
+                        ctx.assignStatementWithOldCopula(new SetExt(t1), ctx.predicate, ctx.truthDed);
+                    }
+                ),
+                new Conclusion(
+                    ctx -> ctx.compound.equals(ctx.subject) && ctx.compound instanceof DifferenceInt && ctx.index == 0,
+                    ctx -> ctx.assignStatementWithOldCopula(ctx.component, ctx.predicate, ctx.truthDed)
+                ),
+                new Conclusion(
+                    ctx -> ctx.compound.equals(ctx.subject) && ctx.compound instanceof DifferenceInt && ctx.index != 0,
+                    ctx -> ctx.assignStatementWithOldCopula(ctx.component, ctx.predicate, ctx.truthNDed)
+                ),
+
+                new Conclusion(
+                    ctx -> ctx.compound.equals(ctx.predicate) && ctx.compound instanceof IntersectionExt,
+                    ctx -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.component, ctx.truthDed)
+                ),
+                new Conclusion(
+                    ctx -> ctx.compound.equals(ctx.predicate) && (ctx.compound instanceof SetInt) && (ctx.compound.size() > 1),
+                    ctx -> ctx.assignStatementWithOldCopula(ctx.subject, new SetInt(ctx.component), ctx.truthDed)
+                ),
+                new Conclusion(
+                    ctx -> ctx.compound.equals(ctx.predicate) && ctx.compound instanceof DifferenceExt && ctx.index == 0,
+                    ctx -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.component, ctx.truthDed)
+                ),
+                new Conclusion(
+                    ctx -> ctx.compound.equals(ctx.predicate) && ctx.compound instanceof DifferenceExt && ctx.index != 0,
+                    ctx -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.component, ctx.truthNDed)
+                ),
+            },
+
+            // post-conclusion
+            ctx -> {
+                return null;
+            }
+        ));
     }
 
     public static void executeByRuleName(final String ruleName, final CompoundTerm compoundTerm, final int index, final Statement statement, final DerivationContext nal) {
@@ -101,17 +167,16 @@ class RuleExecutive {
     }
 
     public void execute(final Rule rule, final CompoundTerm compoundTerm, final int index, final Statement statement, final DerivationContext nal) {
-        if (!rule.precondition.test(nal)) {
-            // we ignore the rule if the precondition fails
-            return;
-        }
-
         Context ctx = new Context();
         ctx.nal = nal;
 
         ctx.index = index;
-
         ctx.compound = compoundTerm;
+
+        if (!rule.precondition.test(ctx)) {
+            // we ignore the rule if the precondition fails
+            return;
+        }
 
         // this is always the same functionality for all rules
         final Task task = nal.getCurrentTask();
@@ -166,7 +231,7 @@ class RuleExecutive {
         public int order; // temporal order
 
         public Term component;
-        public Term compound;
+        public CompoundTerm compound;
 
         public Term subject, predicate;
         public int index = -1; // -1 is invalid
@@ -223,7 +288,7 @@ class RuleExecutive {
     }
 
     interface CheckPrecondition {
-        boolean test(final DerivationContext nal);
+        boolean test(final Context ctx);
     }
 }
 
