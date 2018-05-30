@@ -299,7 +299,10 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void transformSetRelation(final CompoundTerm compound, final Statement statement, final short side, final DerivationContext nal) {
-        if (compound.size() > 1) {
+        RuleExecutive.executeByRuleName("transformSetRelation", compound, -1, statement, side, nal);
+
+
+        /*if (compound.size() > 1) {
             return;
         }
         if (statement instanceof Inheritance) {
@@ -332,7 +335,7 @@ public final class StructuralRules {
         } else {
             budget = BudgetFunctions.compoundBackward(content, nal);
         }
-        nal.singlePremiseTask(content, truth, budget);
+        nal.singlePremiseTask(content, truth, budget);*/
     }
 
     /* -------------------- products and images transform -------------------- */
