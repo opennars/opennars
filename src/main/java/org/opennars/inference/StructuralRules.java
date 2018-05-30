@@ -164,6 +164,9 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralCompose1(final CompoundTerm compound, final short index, final Statement statement, final DerivationContext nal) {
+        RuleExecutive.executeByRuleName("structuralCompose1", compound, index, statement, nal);
+
+        /*
         if (!nal.getCurrentTask().sentence.isJudgment()) {
             return;     // forward inference only
         }
@@ -204,7 +207,7 @@ public final class StructuralRules {
             } else if ((compound instanceof DifferenceInt) && (index == 0)) {
                 structuralStatement(subj, compound, order, truthDed, nal);
             }
-        }
+        }*/
     }
 
     /**
