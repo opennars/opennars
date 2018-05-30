@@ -31,6 +31,8 @@ class RuleExecutive {
 
     static {
         rules.put("structuralCompose1", new Rule(
+            new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND),
+
             // precondition
             ctx -> ctx.nal.getCurrentTask().sentence.isJudgment(), // allow only forward inference
 
@@ -54,28 +56,28 @@ class RuleExecutive {
 
                 new Conclusion(
                     ctx -> ctx.component.equals(ctx.subject) && (ctx.compound instanceof IntersectionExt),
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.compound, ctx.predicate, ctx.truthDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.compound, ctx.predicate, ctx.truthDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
                 new Conclusion(
                     ctx -> ctx.component.equals(ctx.subject) && ctx.compound instanceof DifferenceExt && ctx.index == 0,
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.compound, ctx.predicate, ctx.truthDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.compound, ctx.predicate, ctx.truthDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
                 new Conclusion(
                     ctx -> ctx.component.equals(ctx.subject) && ctx.compound instanceof DifferenceInt && ctx.index != 0,
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.compound, ctx.predicate, ctx.truthNDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.compound, ctx.predicate, ctx.truthNDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
 
                 new Conclusion(
                     ctx -> ctx.component.equals(ctx.predicate) && ctx.compound instanceof IntersectionInt,
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.compound, ctx.truthDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.compound, ctx.truthDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
                 new Conclusion(
                     ctx -> ctx.component.equals(ctx.predicate) && ctx.compound instanceof DifferenceExt && ctx.index != 0,
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.compound, ctx.truthNDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.compound, ctx.truthNDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
                 new Conclusion(
                     ctx -> ctx.component.equals(ctx.predicate) && ctx.compound instanceof DifferenceInt && ctx.index == 0,
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.compound, ctx.truthDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.compound, ctx.truthDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 )
             },
 
@@ -96,6 +98,8 @@ class RuleExecutive {
         ));
 
         rules.put("structuralDecompose1", new Rule(
+            new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND),
+
             // precondition
             ctx -> ctx.index < ctx.compound.term.length,
 
@@ -119,39 +123,39 @@ class RuleExecutive {
 
                 new Conclusion(
                     ctx -> ctx.compound.equals(ctx.subject) && ctx.compound instanceof IntersectionInt,
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.component, ctx.predicate, ctx.truthDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.component, ctx.predicate, ctx.truthDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
                 new Conclusion(
                     ctx -> ctx.compound.equals(ctx.subject) && ctx.compound instanceof SetExt && (ctx.compound.size() > 1),
-                    ctx -> {
+                    (ctx, budgeting) -> {
                         final Term[] t1 = new Term[]{ctx.component};
-                        ctx.assignStatementWithOldCopula(new SetExt(t1), ctx.predicate, ctx.truthDed);
+                        ctx.assignStatementWithOldCopula(new SetExt(t1), ctx.predicate, ctx.truthDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting);
                     }
                 ),
                 new Conclusion(
                     ctx -> ctx.compound.equals(ctx.subject) && ctx.compound instanceof DifferenceInt && ctx.index == 0,
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.component, ctx.predicate, ctx.truthDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.component, ctx.predicate, ctx.truthDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
                 new Conclusion(
                     ctx -> ctx.compound.equals(ctx.subject) && ctx.compound instanceof DifferenceInt && ctx.index != 0,
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.component, ctx.predicate, ctx.truthNDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.component, ctx.predicate, ctx.truthNDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
 
                 new Conclusion(
                     ctx -> ctx.compound.equals(ctx.predicate) && ctx.compound instanceof IntersectionExt,
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.component, ctx.truthDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.component, ctx.truthDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
                 new Conclusion(
                     ctx -> ctx.compound.equals(ctx.predicate) && (ctx.compound instanceof SetInt) && (ctx.compound.size() > 1),
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.subject, new SetInt(ctx.component), ctx.truthDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.subject, new SetInt(ctx.component), ctx.truthDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
                 new Conclusion(
                     ctx -> ctx.compound.equals(ctx.predicate) && ctx.compound instanceof DifferenceExt && ctx.index == 0,
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.component, ctx.truthDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.component, ctx.truthDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
                 new Conclusion(
                     ctx -> ctx.compound.equals(ctx.predicate) && ctx.compound instanceof DifferenceExt && ctx.index != 0,
-                    ctx -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.component, ctx.truthNDed)
+                    (ctx, budgeting) -> ctx.assignStatementWithOldCopula(ctx.subject, ctx.component, ctx.truthNDed, BudgetFunctions.EnumBudgetDirection.FORWARD, budgeting)
                 ),
             },
 
@@ -162,15 +166,16 @@ class RuleExecutive {
         ));
     }
 
-    public static void executeByRuleName(final String ruleName, final CompoundTerm compoundTerm, final int index, final Statement statement, final DerivationContext nal) {
-        new RuleExecutive().execute(rules.get(ruleName), compoundTerm, index, statement, nal);
+    public static void executeByRuleName(final String ruleName, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final DerivationContext nal) {
+        new RuleExecutive().execute(rules.get(ruleName), compoundTerm, index, statement, side, nal);
     }
 
-    public void execute(final Rule rule, final CompoundTerm compoundTerm, final int index, final Statement statement, final DerivationContext nal) {
+    public void execute(final Rule rule, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final DerivationContext nal) {
         Context ctx = new Context();
         ctx.nal = nal;
 
         ctx.index = index;
+        ctx.side = side;
         ctx.compound = compoundTerm;
 
         if (!rule.precondition.test(ctx)) {
@@ -197,7 +202,7 @@ class RuleExecutive {
         // we have to derive the conclusions if the preconditions of the conclusions are true
         for (final Conclusion iteratorConclusion : rule.conclusions) {
             if (iteratorConclusion.test.apply(ctx)) {
-                iteratorConclusion.action.apply(ctx);
+                iteratorConclusion.action.apply(ctx, rule.budgeting);
 
                 rule.postConclusion.apply(ctx);
                 return;
@@ -206,17 +211,23 @@ class RuleExecutive {
     }
 
     public static class Rule {
+        public final Budgeting budgeting;
+
         public final CheckPrecondition precondition;
         public final Preamble preamble;
         public final Conclusion[] conclusions;
         public final PostConclusion postConclusion;
 
         public Rule(
+            final Budgeting budgeting,
+
             final CheckPrecondition precondition,
             final Preamble preamble,
             final Conclusion[] conclusions,
             final PostConclusion postConclusion
         ) {
+            this.budgeting = budgeting;
+
             this.precondition = precondition;
             this.preamble = preamble;
             this.conclusions = conclusions;
@@ -235,6 +246,7 @@ class RuleExecutive {
 
         public Term subject, predicate;
         public int index = -1; // -1 is invalid
+        public int side = -1; // -1 is invalid
 
         // computed truths
         public TruthValue truthDed;
@@ -247,25 +259,24 @@ class RuleExecutive {
          * @param predicate the predicate of the new created Statement
          * @param truth the truth of the resultSentence
          */
-        public void assignStatementWithOldCopula(final Term subject, final Term predicate, final TruthValue truth) {
+        public void assignStatementWithOldCopula(final Term subject, final Term predicate, final TruthValue truth, BudgetFunctions.EnumBudgetDirection budgetingDirection, final Budgeting budgeting) {
             final Task task = nal.getCurrentTask();
             final Term oldContent = task.getTerm();
             if (oldContent instanceof Statement) {
                 final Statement content = Statement.make((Statement)oldContent, subject, predicate, order);
                 if (content != null) {
-                    final BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
+                    final BudgetValue budget = BudgetFunctions.compute(budgetingDirection, budgeting.budgetType, BudgetFunctions.EnumBudgetStrength.STRONG, truth, content, nal);
                     nal.singlePremiseTask(content, truth, budget);
                 }
-
             }
         }
     }
 
     public static class Conclusion {
         public ContextTest test;
-        public ApplyContext action;
+        public ApplyConclusion action;
 
-        public Conclusion(final ContextTest test, final ApplyContext action) {
+        public Conclusion(final ContextTest test, final ApplyConclusion action) {
             this.test = test;
             this.action = action;
         }
@@ -283,12 +294,20 @@ class RuleExecutive {
         Term apply(final Context ctx);
     }
 
-    interface ApplyContext {
-        void apply(final Context ctx);
+    interface ApplyConclusion {
+        void apply(final Context ctx, final Budgeting budgeting);
     }
 
     interface CheckPrecondition {
         boolean test(final Context ctx);
+    }
+
+    static public class Budgeting {
+        public final BudgetFunctions.EnumBudgetType budgetType;
+
+        public Budgeting(BudgetFunctions.EnumBudgetType budgetType) {
+            this.budgetType = budgetType;
+        }
     }
 }
 
