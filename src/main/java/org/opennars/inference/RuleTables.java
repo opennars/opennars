@@ -406,8 +406,7 @@ public class RuleTables {
         Statement taskStatement = (Statement) taskSentence.term;
         Statement beliefStatement = (Statement) belief.term;
         
-        Term t1 = null;
-        Term t2 = null;
+
         final Term[] u = new Term[] { taskStatement, beliefStatement };
 
         final Statement.EnumStatementSide figureLeft = retSideFromFigure(figure, EnumFigureSide.LEFT);
@@ -423,32 +422,14 @@ public class RuleTables {
             return;
         }
 
-        switch (figure) {
-            case 11: // induction
-            t1 = beliefStatement.getPredicate();
-            t2 = taskStatement.getPredicate();
-            break;
-
-            case 12: // deduction
-            t1 = beliefStatement.getSubject();
-            t2 = taskStatement.getPredicate();
-            break;
-
-            case 21: // exemplification
-            t1 = taskStatement.getSubject();
-            t2 = beliefStatement.getPredicate();
-            break;
-
-            case 22: // abduction
-            t1 = taskStatement.getSubject();
-            t2 = beliefStatement.getSubject();
-            break;
-        }
+        boolean isDeduction;
+        Term t1;
+        Term t2;
 
         switch (figure) {
             case 11: // induction
             {
-                final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                final boolean sensational = SyllogisticRules.abdIndCom(beliefStatement.getPredicate(), taskStatement.getPredicate(), taskSentence, belief, figure, nal);
                 if (sensational) {
                     return;
                 }
@@ -460,14 +441,13 @@ public class RuleTables {
             break;
             case 22: // abduction
             {
-                if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
-                    final boolean sensational = SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, nal);
+                if (!SyllogisticRules.conditionalAbd(taskStatement.getSubject(), beliefStatement.getSubject(), taskStatement, beliefStatement, nal)) {         // if conditional abduction, skip the following
+                    final boolean sensational = SyllogisticRules.abdIndCom(taskStatement.getSubject(), beliefStatement.getSubject(), taskSentence, belief, figure, nal);
                     if(sensational) {
                         return;
                     }
                     CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, nal);
                     CompositionalRules.introVarOuter(taskStatement, beliefStatement, 1, nal);// introVarImage(taskContent, beliefContent, index, memory);
-
                 }
 
                 CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,nal);
@@ -476,6 +456,11 @@ public class RuleTables {
 
             case 12: // deduction
             case 21: // exemplification
+
+            isDeduction = figure == 12;
+
+            t1 = isDeduction ? beliefStatement.getSubject() : taskStatement.getSubject();
+            t2 = isDeduction ? taskStatement.getPredicate() : beliefStatement.getPredicate();
 
             if (Variables.unify(VAR_QUERY, t1, t2, new Term[]{taskStatement, beliefStatement})) {
                 LocalRules.matchReverse(nal);
