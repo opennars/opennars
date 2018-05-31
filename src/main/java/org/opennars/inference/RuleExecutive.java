@@ -20,6 +20,7 @@ import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
+import org.opennars.io.Symbols;
 import org.opennars.language.*;
 import org.opennars.main.Parameters;
 
@@ -225,13 +226,72 @@ class RuleExecutive {
             // post-conclusion
             ctx -> null
         ));
+
+        /**
+         * from contraposition() in legacy
+         * {<A ==> B>, A@(--, A)} |- <(--, B) ==> (--, A)>
+         */
+        rules.put("contraposition", new Rule(
+            new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND),
+
+            // precondition
+            ctx -> true,
+
+            // preamble
+            (compound, index, nal, ctx) -> {},
+
+            // content
+            ctx ->
+                Statement.make(ctx.statement,
+                    Negation.make(ctx.predicate),
+                    Negation.make(ctx.subject),
+                    TemporalRules.reverseOrder(ctx.statement.getTemporalOrder())),
+
+            // conclusions
+            // TODO< abstract Budget function >
+            new Conclusion[]{
+                new Conclusion(
+                    ctx -> true,
+                    (content, ctx, budgeting) -> {
+                        final BudgetValue budget;
+                        if (ctx.sentence.isQuestion() || ctx.sentence.isQuest()) {
+                            if (content instanceof Implication) {
+                                budget = BudgetFunctions.compoundBackwardWeak(content, ctx.nal);
+                            } else {
+                                budget = BudgetFunctions.compoundBackward(content, ctx.nal);
+                            }
+                            ctx.nal.singlePremiseTask(content, Symbols.QUESTION_MARK, ctx.truth, budget);
+                        } else {
+                            if (content instanceof Implication) {
+                                ctx.truth = TruthFunctions.contraposition(ctx.truth);
+                            }
+                            budget = BudgetFunctions.compoundForward(ctx.truth, content, ctx.nal);
+                            ctx.nal.singlePremiseTask(content, Symbols.JUDGMENT_MARK, ctx.truth, budget);
+                        }
+                    }
+                )
+            },
+
+            // post-conclusion
+            ctx -> null
+        ));
     }
 
-    public static void executeByRuleName(final String ruleName, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final DerivationContext nal) {
-        new RuleExecutive().execute(rules.get(ruleName), compoundTerm, index, statement, side, nal);
+    public static void executeByRuleName(final String ruleName, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final Sentence sentence, final DerivationContext nal) {
+        new RuleExecutive().execute(rules.get(ruleName), compoundTerm, index, statement, side, sentence, nal);
     }
 
-    public void execute(final Rule rule, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final DerivationContext nal) {
+    /**
+     *
+     * @param rule
+     * @param compoundTerm
+     * @param index
+     * @param statement
+     * @param side
+     * @param sentence sentence to be passed into the inference rule - can be null if the rule doesn't need to pass it as a parameter - it will be fetched from the nal instead
+     * @param nal
+     */
+    public void execute(final Rule rule, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final Sentence sentence, final DerivationContext nal) {
         Context ctx = new Context();
         ctx.nal = nal;
 
@@ -247,10 +307,25 @@ class RuleExecutive {
 
         // this is always the same functionality for all rules
         final Task task = nal.getCurrentTask();
-        ctx.sentence = task.sentence;
-        ctx.order = ctx.sentence.getTemporalOrder();
+
+        // TODO< investigate if the source of the sentence parameter is always comming from task.sentence and remove this special handling here in this case >
+        /**
+         * Some rules need to pass a explicit sentence parameter
+         *
+         * The sentence has to be fetched from the task if no sentence parameter is passed
+         */
+        if( sentence != null ) {
+            ctx.sentence = sentence;
+        }
+        else {
+            ctx.sentence = task.sentence;
+            ctx.order = ctx.sentence.getTemporalOrder();
+        }
+
         ctx.truth = ctx.sentence.truth;
 
+        // ASK< is this really necessary? >
+        // some rules implemented this to prevent accessing null values
         if (ctx.truth == null) {
             return;
         }

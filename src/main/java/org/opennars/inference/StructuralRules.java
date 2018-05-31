@@ -164,7 +164,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralCompose1(final CompoundTerm compound, final short index, final Statement statement, final DerivationContext nal) {
-        RuleExecutive.executeByRuleName("structuralCompose1", compound, index, statement, -1, nal);
+        RuleExecutive.executeByRuleName("structuralCompose1", compound, index, statement, -1, null, nal);
 
         /*
         if (!nal.getCurrentTask().sentence.isJudgment()) {
@@ -219,7 +219,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralDecompose1(final CompoundTerm compound, final short index, final Statement statement, final DerivationContext nal) {
-        RuleExecutive.executeByRuleName("structuralDecompose1", compound, index, statement, -1, nal);
+        RuleExecutive.executeByRuleName("structuralDecompose1", compound, index, statement, -1, null, nal);
 
         /*
         if(index >= compound.term.length) {
@@ -299,7 +299,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void transformSetRelation(final CompoundTerm compound, final Statement statement, final short side, final DerivationContext nal) {
-        RuleExecutive.executeByRuleName("transformSetRelation", compound, -1, statement, side, nal);
+        RuleExecutive.executeByRuleName("transformSetRelation", compound, -1, statement, side, null, nal);
 
 
         /*if (compound.size() > 1) {
@@ -892,6 +892,10 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     protected static boolean contraposition(final Statement statement, final Sentence sentence, final DerivationContext nal) {
+        RuleExecutive.executeByRuleName("contraposition", null, -1, statement, -1, sentence, nal);
+        return true; // result is not used
+
+        /*
         final Memory memory = nal.mem();
         //memory.logic.CONTRAPOSITION.commit(statement.complexity);
         
@@ -921,5 +925,6 @@ public final class StructuralRules {
             budget = BudgetFunctions.compoundForward(truth, content, nal);
             return nal.singlePremiseTask(content, Symbols.JUDGMENT_MARK, truth, budget);
         }
+        */
     }
 }
