@@ -83,7 +83,9 @@ public class NALTest  {
     
     @Parameterized.Parameters
     public static Collection params() {
-        final Map<String, Object> et = ExampleFileInput.getUnitTests();
+        final String[] directories = new String[] { "/nal/single_step/", "/nal/multi_step/", "/nal/application/"  };
+
+        final Map<String, Object> et = ExampleFileInput.getUnitTests(directories);
         final Collection t = et.values();
         for (final String x : et.keySet()) addTest(x);
         return t;
