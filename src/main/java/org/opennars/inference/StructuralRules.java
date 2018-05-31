@@ -166,7 +166,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralCompose1(final CompoundTerm compound, final short index, final Statement statement, final DerivationContext nal) {
-        executeByRuleName("structuralCompose1", compound, index, statement, -1, null, nal);
+        executeByRuleName("structuralCompose1", compound, index, statement, -1, new Sentence[0], nal);
 
         /*
         if (!nal.getCurrentTask().sentence.isJudgment()) {
@@ -221,7 +221,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralDecompose1(final CompoundTerm compound, final short index, final Statement statement, final DerivationContext nal) {
-        executeByRuleName("structuralDecompose1", compound, index, statement, -1, null, nal);
+        executeByRuleName("structuralDecompose1", compound, index, statement, -1, new Sentence[0], nal);
 
         /*
         if(index >= compound.term.length) {
@@ -301,7 +301,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void transformSetRelation(final CompoundTerm compound, final Statement statement, final short side, final DerivationContext nal) {
-        executeByRuleName("transformSetRelation", compound, -1, statement, side, null, nal);
+        executeByRuleName("transformSetRelation", compound, -1, statement, side, new Sentence[0], nal);
 
 
         /*if (compound.size() > 1) {
@@ -872,7 +872,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     public static void transformNegation(final CompoundTerm content, final DerivationContext nal) {
-        executeByRuleName("transformNegation", content, -1, null, -1, null, nal);
+        executeByRuleName("transformNegation", content, -1, null, -1, new Sentence[0], nal);
 
 
         /*
@@ -899,7 +899,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     protected static boolean contraposition(final Statement statement, final Sentence sentence, final DerivationContext nal) {
-        executeByRuleName("contraposition", null, -1, statement, -1, sentence, nal);
+        executeByRuleName("contraposition", null, -1, statement, -1, new Sentence[]{sentence}, nal);
         return true; // result is not used
 
         /*

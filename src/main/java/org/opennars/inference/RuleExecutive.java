@@ -219,7 +219,7 @@ class RuleExecutive {
                     ctx -> true,
                     (content, ctx, budgeting) -> {
                         final BudgetValue budget;
-                        if (ctx.sentence.isJudgment()) {
+                        if (ctx.sentences[0].isJudgment()) {
                             budget = BudgetFunctions.compoundForward(ctx.truth, content, ctx.nal);
                         } else {
                             budget = BudgetFunctions.compoundBackward(content, ctx.nal);
@@ -262,7 +262,7 @@ class RuleExecutive {
                     ctx -> true,
                     (content, ctx, budgeting) -> {
                         final BudgetValue budget;
-                        if (ctx.sentence.isQuestion() || ctx.sentence.isQuest()) {
+                        if (ctx.sentences[0].isQuestion() || ctx.sentences[0].isQuest()) {
                             if (content instanceof Implication) {
                                 budget = BudgetFunctions.compoundBackwardWeak(content, ctx.nal);
                             } else {
@@ -305,7 +305,7 @@ class RuleExecutive {
                     (content, ctx, budgeting) -> {
                         final BudgetValue budget;
 
-                        if (ctx.sentence.isJudgment() || ctx.sentence.isGoal()) {
+                        if (ctx.sentences[0].isJudgment() || ctx.sentences[0].isGoal()) {
                             ctx.truth = TruthFunctions.negation(ctx.truth);
                             budget = BudgetFunctions.compoundForward(ctx.truth, content, ctx.nal);
                         } else {
@@ -322,8 +322,8 @@ class RuleExecutive {
         ));
     }
 
-    public static void executeByRuleName(final String ruleName, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final Sentence sentence, final DerivationContext nal) {
-        new RuleExecutive().execute(rules.get(ruleName), compoundTerm, index, statement, side, sentence, nal);
+    public static void executeByRuleName(final String ruleName, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final Sentence[] sentences, final DerivationContext nal) {
+        new RuleExecutive().execute(rules.get(ruleName), compoundTerm, index, statement, side, sentences, nal);
     }
 
     /**
@@ -333,10 +333,12 @@ class RuleExecutive {
      * @param index
      * @param statement
      * @param side
-     * @param sentence sentence to be passed into the inference rule - can be null if the rule doesn't need to pass it as a parameter - it will be fetched from the nal instead
+     * @param sentences sentence to be passed into the inference rule - can be empty if the rule doesn't need to pass it as a parameter - it will be fetched from the nal instead
      * @param nal
      */
-    public void execute(final Rule rule, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final Sentence sentence, final DerivationContext nal) {
+    public void execute(final Rule rule, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final Sentence[] sentences, final DerivationContext nal) {
+        assert sentences != null;
+
         Context ctx = new Context();
         ctx.nal = nal;
 
@@ -353,21 +355,21 @@ class RuleExecutive {
         // this is always the same functionality for all rules
         final Task task = nal.getCurrentTask();
 
-        // TODO< investigate if the source of the sentence parameter is always comming from task.sentence and remove this special handling here in this case >
         /**
          * Some rules need to pass a explicit sentence parameter
          *
          * The sentence has to be fetched from the task if no sentence parameter is passed
          */
-        if( sentence != null ) {
-            ctx.sentence = sentence;
+        // NOTE< the source of the sentence parameters is not coming from task.sentence, so we need this special handling here >
+        if (sentences.length != 0) {
+            ctx.sentences = sentences;
         }
         else {
-            ctx.sentence = task.sentence;
-            ctx.order = ctx.sentence.getTemporalOrder();
+            ctx.sentences = new Sentence[]{task.sentence};
         }
 
-        ctx.truth = ctx.sentence.truth;
+        // NOTE< we just compute the first truth because the rules which require te truth just require this one >
+        ctx.truth = ctx.sentences[0].truth;
 
         // ASK< is this really necessary? >
         // some rules implemented this to prevent accessing null values
@@ -443,7 +445,7 @@ class RuleExecutive {
         public CompoundTerm compound;
         public Statement statement;
 
-        public Sentence sentence;
+        public Sentence[] sentences;
 
         public Term subject, predicate;
         public int index = -1; // -1 is invalid
