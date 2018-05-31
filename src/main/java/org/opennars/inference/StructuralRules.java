@@ -910,6 +910,7 @@ public final class StructuralRules {
         if (content == null) return false;
         
         TruthValue truth = sentence.truth;
+
         final BudgetValue budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (content instanceof Implication) {

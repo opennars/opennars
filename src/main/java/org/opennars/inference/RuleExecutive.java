@@ -34,6 +34,8 @@ class RuleExecutive {
 
     static {
         rules.put("structuralCompose1", new Rule(
+            true,
+
             new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND),
 
             // precondition
@@ -104,6 +106,8 @@ class RuleExecutive {
         ));
 
         rules.put("structuralDecompose1", new Rule(
+            true,
+
             new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND),
 
             // precondition
@@ -177,6 +181,8 @@ class RuleExecutive {
          * {<S --> {P}>} |- <S <-> {P}>
          */
         rules.put("transformSetRelation", new Rule(
+            true,
+
             new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND),
 
             // precondition
@@ -232,6 +238,8 @@ class RuleExecutive {
          * {<A ==> B>, A@(--, A)} |- <(--, B) ==> (--, A)>
          */
         rules.put("contraposition", new Rule(
+            false,
+
             new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND),
 
             // precondition
@@ -326,7 +334,7 @@ class RuleExecutive {
 
         // ASK< is this really necessary? >
         // some rules implemented this to prevent accessing null values
-        if (ctx.truth == null) {
+        if (rule.checkNullTruth && ctx.truth == null) {
             return;
         }
 
@@ -352,6 +360,8 @@ class RuleExecutive {
     }
 
     public static class Rule {
+        public final boolean checkNullTruth;
+
         public final Budgeting budgeting;
 
         public final CheckPrecondition precondition;
@@ -361,6 +371,8 @@ class RuleExecutive {
         public final PostConclusion postConclusion;
 
         public Rule(
+            final boolean checkNullTruth,
+
             final Budgeting budgeting,
 
             final CheckPrecondition precondition,
@@ -369,6 +381,8 @@ class RuleExecutive {
             final Conclusion[] conclusions,
             final PostConclusion postConclusion
         ) {
+            this.checkNullTruth = checkNullTruth;
+
             this.budgeting = budgeting;
 
             this.precondition = precondition;
