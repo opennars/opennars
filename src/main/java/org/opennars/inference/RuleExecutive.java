@@ -353,9 +353,16 @@ class RuleExecutive {
                     return false;
                 }
 
+                final CompoundTerm taskTerm = (CompoundTerm)ctx.taskSentence.term;
                 if (ctx.taskSentence.isQuestion() || ctx.taskSentence.isQuest()) {
-                    if(asym.truth==null) { //a question for example
-                        return false;
+                    if (taskTerm.isCommutative()) {
+                        if(asym.truth==null) { // a question for example
+                            return false;
+                        }
+                    } else {
+                        if(sym.truth==null) { // a question for example
+                            return false;
+                        }
                     }
                 }
 
@@ -366,7 +373,7 @@ class RuleExecutive {
             (compound, index, nal, ctx) -> {},
 
             // content
-            ctx -> null,
+            ctx -> nullContent,
 
             // conclusions
             new Conclusion[]{
@@ -448,16 +455,17 @@ class RuleExecutive {
             ctx.predicate = statement.getPredicate();
         }
 
-        if (!rule.precondition.test(ctx)) {
-            // we ignore the rule if the precondition fails
-            return;
-        }
-
         // this is always the same functionality for all rules
         final Task task = nal.getCurrentTask();
         ctx.taskSentence = task.sentence;
 
         ctx.truth = ctx.taskSentence.truth;
+
+        if (!rule.precondition.test(ctx)) {
+            // we ignore the rule if the precondition fails
+            return;
+        }
+
 
         // ASK< is this really necessary? >
         // some rules implemented this to prevent accessing null values

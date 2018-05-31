@@ -231,6 +231,9 @@ public final class SyllogisticRules {
      * @param nal Reference to the memory
      */
     static void analogy(final Term subj, final Term pred, final Sentence asym, final Sentence sym, final int figure, final DerivationContext nal) {
+        RuleExecutive.executeByRuleName("analogy", null, -1, null, -1, new Sentence[]{asym, sym}, new Term[]{subj, pred}, figure, nal);
+
+        /*
         if (Statement.invalidStatement(subj, pred)) {
             return;
         }
@@ -269,6 +272,7 @@ public final class SyllogisticRules {
         
         //nal.mem().logic.ANALOGY.commit();
         nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,false, false); //(allow overlap) but not needed here, isn't detachment
+        //*/
     }
 
     /**
