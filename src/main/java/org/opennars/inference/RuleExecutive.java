@@ -284,6 +284,8 @@ class RuleExecutive {
             ctx -> null
         ));
 
+        // from transformNegation() in legacy
+        // {A, A@(--, A)} |- (--, A)
         rules.put("transformNegation", new Rule(
             false,
 
