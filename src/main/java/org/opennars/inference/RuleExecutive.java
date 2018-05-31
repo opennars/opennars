@@ -27,6 +27,9 @@ import org.opennars.main.Parameters;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.opennars.inference.TemporalRules.ORDER_INVALID;
+import static org.opennars.inference.TemporalRules.analogyOrder;
+
 class RuleExecutive {
     public static Map<String, Rule> rules = new HashMap<>();
 
@@ -219,7 +222,7 @@ class RuleExecutive {
                     ctx -> true,
                     (content, ctx, budgeting) -> {
                         final BudgetValue budget;
-                        if (ctx.sentences[0].isJudgment()) {
+                        if (ctx.taskSentence.isJudgment()) {
                             budget = BudgetFunctions.compoundForward(ctx.truth, content, ctx.nal);
                         } else {
                             budget = BudgetFunctions.compoundBackward(content, ctx.nal);
@@ -262,7 +265,7 @@ class RuleExecutive {
                     ctx -> true,
                     (content, ctx, budgeting) -> {
                         final BudgetValue budget;
-                        if (ctx.sentences[0].isQuestion() || ctx.sentences[0].isQuest()) {
+                        if (ctx.taskSentence.isQuestion() || ctx.taskSentence.isQuest()) {
                             if (content instanceof Implication) {
                                 budget = BudgetFunctions.compoundBackwardWeak(content, ctx.nal);
                             } else {
@@ -307,7 +310,7 @@ class RuleExecutive {
                     (content, ctx, budgeting) -> {
                         final BudgetValue budget;
 
-                        if (ctx.sentences[0].isJudgment() || ctx.sentences[0].isGoal()) {
+                        if (ctx.taskSentence.isJudgment() || ctx.taskSentence.isGoal()) {
                             ctx.truth = TruthFunctions.negation(ctx.truth);
                             budget = BudgetFunctions.compoundForward(ctx.truth, content, ctx.nal);
                         } else {
@@ -322,32 +325,128 @@ class RuleExecutive {
             // post-conclusion
             ctx -> null
         ));
+
+
+        // from analogy() in legacy
+        // {<S ==> P>, <M <=> P>} |- <S ==> P>
+        rules.put("analogy", new Rule(
+            false,
+
+            new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND), // TODO< change to non-compound >
+
+            // precondition
+            ctx -> {
+                final Term subject = ctx.termParameter[0];
+                final Term predicate = ctx.termParameter[1];
+
+                if (Statement.invalidStatement(subject, predicate)) {
+                    return false;
+                }
+
+                final Sentence asym = ctx.sentencesParameter[0];
+                final Sentence sym = ctx.sentencesParameter[1];
+
+                final int order1 = asym.term.getTemporalOrder();
+                final int order2 = sym.term.getTemporalOrder();
+                final int order = analogyOrder(order1, order2, ctx.figure);
+                if (order == ORDER_INVALID) {
+                    return false;
+                }
+
+                if (ctx.taskSentence.isQuestion() || ctx.taskSentence.isQuest()) {
+                    if(asym.truth==null) { //a question for example
+                        return false;
+                    }
+                }
+
+                return true;
+            },
+
+            // preamble
+            (compound, index, nal, ctx) -> {},
+
+            // content
+            ctx -> null,
+
+            // conclusions
+            new Conclusion[]{
+                new Conclusion(
+                    ctx -> true,
+                    (content, ctx, budgeting) -> {
+                        final Term subject = ctx.termParameter[0];
+                        final Term predicate = ctx.termParameter[1];
+
+                        final Sentence asym = ctx.sentencesParameter[0];
+                        final Sentence sym = ctx.sentencesParameter[1];
+
+                        final Statement st = (Statement) asym.term;
+                        TruthValue truth = null;
+                        final BudgetValue budget;
+                        //final Sentence sentence = ctx.nal.getCurrentTask().sentence;
+                        final CompoundTerm taskTerm = (CompoundTerm)ctx.taskSentence.term;
+                        if (ctx.taskSentence.isQuestion() || ctx.taskSentence.isQuest()) {
+                            if (taskTerm.isCommutative()) {
+                                budget = BudgetFunctions.backwardWeak(asym.truth, ctx.nal);
+                            } else {
+                                budget = BudgetFunctions.backward(sym.truth, ctx.nal);
+                            }
+                        } else {
+                            if (ctx.taskSentence.isGoal()) {
+                                truth = TruthFunctions.lookupTruthFunctionByBoolAndCompute(taskTerm.isCommutative(), TruthFunctions.EnumType.DESIREWEAK, TruthFunctions.EnumType.DESIRESTRONG, asym.truth, sym.truth);
+                            } else {
+                                truth = TruthFunctions.analogy(asym.truth, sym.truth);
+                            }
+
+                            budget = BudgetFunctions.forward(truth, ctx.nal);
+                        }
+
+                        final int order1 = asym.term.getTemporalOrder();
+                        final int order2 = sym.term.getTemporalOrder();
+                        final int order = analogyOrder(order1, order2, ctx.figure);
+
+                        final Term content2 = Statement.make(st, subject, predicate, order);
+                        ctx.nal.doublePremiseTask(content2, truth, budget,false, false); //(allow overlap) but not needed here, isn't detachment
+                    }
+
+                )
+            },
+
+            // post-conclusion
+            ctx -> null
+        ));
     }
 
-    public static void executeByRuleName(final String ruleName, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final Sentence[] sentences, final DerivationContext nal) {
-        new RuleExecutive().execute(rules.get(ruleName), compoundTerm, index, statement, side, sentences, nal);
+    public static void executeByRuleName(final String ruleName, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final Sentence[] sentencesParameter, final Term[] termParameter, final int figure, final DerivationContext nal) {
+        new RuleExecutive().execute(rules.get(ruleName), compoundTerm, index, statement, side, sentencesParameter, termParameter, figure, nal);
     }
 
+    // TODO< complete documentation >
     /**
      *
-     * @param rule
-     * @param compoundTerm
-     * @param index
-     * @param statement
-     * @param side
-     * @param sentences sentence to be passed into the inference rule - can be empty if the rule doesn't need to pass it as a parameter - it will be fetched from the nal instead
-     * @param nal
+     * @param sentencesParameter sentence to be passed into the inference rule - can be null if the rule doesn't need to pass it as a parameter - it will be fetched from the nal instead
+     * @param figure the configuration of the sides of the statements, can be -1 for invalid or 11 or 12 or 21 or 22
      */
-    public void execute(final Rule rule, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final Sentence[] sentences, final DerivationContext nal) {
-        assert sentences != null;
-
+    public void execute(final Rule rule, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final Sentence[] sentencesParameter, final Term[] termParameter, final int figure, final DerivationContext nal) {
         Context ctx = new Context();
         ctx.nal = nal;
 
+        ctx.figure = figure;
         ctx.index = index;
         ctx.side = side;
         ctx.compound = compoundTerm;
         ctx.statement = statement;
+
+        ctx.termParameter = termParameter;
+
+        // Some rules need to pass a explicit sentence parameter
+        // NOTE< the source of the sentence parameters is not coming from task.sentence, so we need this special handling here >
+        ctx.sentencesParameter = sentencesParameter;
+
+        // TODO< remove and pull into rules! >
+        if( statement != null ) { // we need to test for this special case because some rules don't have a statement
+            ctx.subject = statement.getSubject();
+            ctx.predicate = statement.getPredicate();
+        }
 
         if (!rule.precondition.test(ctx)) {
             // we ignore the rule if the precondition fails
@@ -356,22 +455,9 @@ class RuleExecutive {
 
         // this is always the same functionality for all rules
         final Task task = nal.getCurrentTask();
+        ctx.taskSentence = task.sentence;
 
-        /**
-         * Some rules need to pass a explicit sentence parameter
-         *
-         * The sentence has to be fetched from the task if no sentence parameter is passed
-         */
-        // NOTE< the source of the sentence parameters is not coming from task.sentence, so we need this special handling here >
-        if (sentences.length != 0) {
-            ctx.sentences = sentences;
-        }
-        else {
-            ctx.sentences = new Sentence[]{task.sentence};
-        }
-
-        // NOTE< we just compute the first truth because the rules which require te truth just require this one >
-        ctx.truth = ctx.sentences[0].truth;
+        ctx.truth = ctx.taskSentence.truth;
 
         // ASK< is this really necessary? >
         // some rules implemented this to prevent accessing null values
@@ -379,10 +465,7 @@ class RuleExecutive {
             return;
         }
 
-        if( statement != null ) { // we need to test for this special case because some rules don't have a statement
-            ctx.subject = statement.getSubject();
-            ctx.predicate = statement.getPredicate();
-        }
+
 
 
         // execute preamble to initialize variables for the rule
@@ -442,12 +525,15 @@ class RuleExecutive {
         public DerivationContext nal;
         public TruthValue truth;
         public int order; // temporal order
+        public int figure;
 
         public Term component;
         public CompoundTerm compound;
         public Statement statement;
 
-        public Sentence[] sentences;
+        public Term[] termParameter;
+        public Sentence[] sentencesParameter; // parameters of the rule
+        public Sentence taskSentence; // the sentence of the task
 
         public Term subject, predicate;
         public int index = -1; // -1 is invalid
