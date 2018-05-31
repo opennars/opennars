@@ -27,6 +27,8 @@ import org.opennars.storage.Memory;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.opennars.inference.RuleExecutive.executeByRuleName;
+
 /**
  * Single-premise inference rules involving compound terms. Input are one
  * sentence (the premise) and one TermLink (indicating a component)
@@ -164,7 +166,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralCompose1(final CompoundTerm compound, final short index, final Statement statement, final DerivationContext nal) {
-        RuleExecutive.executeByRuleName("structuralCompose1", compound, index, statement, -1, null, nal);
+        executeByRuleName("structuralCompose1", compound, index, statement, -1, null, nal);
 
         /*
         if (!nal.getCurrentTask().sentence.isJudgment()) {
@@ -219,7 +221,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralDecompose1(final CompoundTerm compound, final short index, final Statement statement, final DerivationContext nal) {
-        RuleExecutive.executeByRuleName("structuralDecompose1", compound, index, statement, -1, null, nal);
+        executeByRuleName("structuralDecompose1", compound, index, statement, -1, null, nal);
 
         /*
         if(index >= compound.term.length) {
@@ -299,7 +301,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void transformSetRelation(final CompoundTerm compound, final Statement statement, final short side, final DerivationContext nal) {
-        RuleExecutive.executeByRuleName("transformSetRelation", compound, -1, statement, side, null, nal);
+        executeByRuleName("transformSetRelation", compound, -1, statement, side, null, nal);
 
 
         /*if (compound.size() > 1) {
@@ -870,6 +872,10 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     public static void transformNegation(final CompoundTerm content, final DerivationContext nal) {
+        executeByRuleName("transformNegation", content, -1, null, -1, null, nal);
+
+
+        /*
         final Task task = nal.getCurrentTask();
         final Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
@@ -883,6 +889,7 @@ public final class StructuralRules {
             budget = BudgetFunctions.compoundBackward(content, nal);
         }
         nal.singlePremiseTask(content, truth, budget);
+        */
     }
 
     /**
@@ -892,7 +899,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     protected static boolean contraposition(final Statement statement, final Sentence sentence, final DerivationContext nal) {
-        RuleExecutive.executeByRuleName("contraposition", null, -1, statement, -1, sentence, nal);
+        executeByRuleName("contraposition", null, -1, statement, -1, sentence, nal);
         return true; // result is not used
 
         /*

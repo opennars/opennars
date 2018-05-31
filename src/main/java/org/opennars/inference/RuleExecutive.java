@@ -283,6 +283,43 @@ class RuleExecutive {
             // post-conclusion
             ctx -> null
         ));
+
+        rules.put("transformNegation", new Rule(
+            false,
+
+            new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND),
+
+            // precondition
+            ctx -> true,
+
+            // preamble
+            (compound, index, nal, ctx) -> {},
+
+            // content
+            ctx -> ctx.compound,
+
+            // conclusions
+            new Conclusion[]{
+                new Conclusion(
+                    ctx -> true,
+                    (content, ctx, budgeting) -> {
+                        final BudgetValue budget;
+
+                        if (ctx.sentence.isJudgment() || ctx.sentence.isGoal()) {
+                            ctx.truth = TruthFunctions.negation(ctx.truth);
+                            budget = BudgetFunctions.compoundForward(ctx.truth, content, ctx.nal);
+                        } else {
+                            budget = BudgetFunctions.compoundBackward(content, ctx.nal);
+                        }
+                        ctx.nal.singlePremiseTask(content, ctx.truth, budget);
+                    }
+
+                )
+            },
+
+            // post-conclusion
+            ctx -> null
+        ));
     }
 
     public static void executeByRuleName(final String ruleName, final CompoundTerm compoundTerm, final int index, final Statement statement, final int side, final Sentence sentence, final DerivationContext nal) {
@@ -338,8 +375,11 @@ class RuleExecutive {
             return;
         }
 
-        ctx.subject = statement.getSubject();
-        ctx.predicate = statement.getPredicate();
+        if( statement != null ) { // we need to test for this special case because some rules don't have a statement
+            ctx.subject = statement.getSubject();
+            ctx.predicate = statement.getPredicate();
+        }
+
 
         // execute preamble to initialize variables for the rule
         rule.preamble.apply(compoundTerm, index, nal, ctx);
