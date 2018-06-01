@@ -127,11 +127,13 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         synchronized (concepts) {
             concepts.clear();
         }
-        novelTasks.clear();
         synchronized (newTasks) {
             newTasks.clear();
+            novelTasks.clear();
         }
-        this.seq_current.clear();
+        synchronized(this.seq_current) {
+            this.seq_current.clear();
+        }
         cycle = 0;
         emotion.resetEmotions();
         this.lastDecision = null;
@@ -351,7 +353,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         event.emit(Events.CycleEnd.class);
         event.synch();
         
-        cycle++;
+        synchronized(this) {
+            cycle++;
+        }
     }
     
     public void localInference(final Task task, NarParameters narParameters) {
