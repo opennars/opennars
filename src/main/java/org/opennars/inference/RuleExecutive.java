@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.opennars.inference.TemporalRules.ORDER_INVALID;
+import static org.opennars.inference.TemporalRules.abdIndComOrder;
 import static org.opennars.inference.TemporalRules.analogyOrder;
 
 class RuleExecutive {
@@ -417,6 +418,278 @@ class RuleExecutive {
 
                 )
             },
+
+            // post-conclusion
+            ctx -> null
+        ));
+
+
+
+
+        rules.put("abd1", new Rule(
+            false,
+
+            new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND), // TODO< change to non-compound >
+
+            // precondition
+            ctx -> (
+                !(Statement.invalidStatement(ctx.termParameter[0], ctx.termParameter[1]) || Statement.invalidPair(ctx.termParameter[0], ctx.termParameter[1]))
+                && ctx.termParameter[0].imagination != null && ctx.termParameter[1].imagination != null
+            ),
+
+            // preamble
+            (compound, index, nal, ctx) -> {},
+
+            // content
+            ctx -> nullContent,
+
+            // conclusions
+            new Conclusion[]{
+                new Conclusion(
+                    ctx -> true,
+                    (content, ctx, budgeting) -> {
+                        Sentence sentence1 = ctx.sentencesParameter[0];
+                        Sentence sentence2 = ctx.sentencesParameter[1];
+                        Term term1 = ctx.termParameter[0];
+                        Term term2 = ctx.termParameter[1];
+
+                        final int order1 = sentence1.term.getTemporalOrder();
+                        final int order2 = sentence2.term.getTemporalOrder();
+                        final int order = abdIndComOrder(order1, order2);
+
+                        final Statement taskContent = (Statement) sentence1.term;
+                        TruthValue truth1 = null;
+                        TruthValue truth2 = null;
+                        TruthValue truth3 = null;
+                        final BudgetValue budget1;
+                        final BudgetValue budget2;
+                        final BudgetValue budget3;
+                        final TruthValue value1 = sentence1.truth;
+                        final TruthValue value2 = sentence2.truth;
+
+                        if (sentence1.isGoal()) {
+                            truth1 = TruthFunctions.desireStrong(value1, value2); //P --> S
+                            truth2 = TruthFunctions.desireWeak(value2, value1); //S --> P
+                            truth3 = TruthFunctions.desireStrong(value1, value2); //S <-> P
+                        } else if( sentence1.isJudgment() ) {
+                            truth1 = TruthFunctions.abduction(value1, value2); //P --> S
+                            truth2 = TruthFunctions.abduction(value2, value1); //S --> P
+                            truth3 = TruthFunctions.comparison(value1, value2); //S <-> P
+                        }
+
+                        if (sentence1.isQuestion()) {
+                            budget1 = BudgetFunctions.backward(value2, ctx.nal);
+                            budget2 = BudgetFunctions.backwardWeak(value2, ctx.nal);
+                            budget3 = BudgetFunctions.backward(value2, ctx.nal);
+                        } else if (sentence1.isQuest()) {
+                            budget1 = BudgetFunctions.backwardWeak(value2, ctx.nal);
+                            budget2 = BudgetFunctions.backward(value2, ctx.nal);
+                            budget3 = BudgetFunctions.backwardWeak(value2, ctx.nal);
+                        } else {
+                            budget1 = BudgetFunctions.forward(truth1, ctx.nal);
+                            budget2 = BudgetFunctions.forward(truth2, ctx.nal);
+                            budget3 = BudgetFunctions.forward(truth3, ctx.nal);
+                        }
+
+                        final TruthValue T = term1.imagination.AbductionOrComparisonTo(term2.imagination, true);
+                        ctx.nal.doublePremiseTask(
+                            Statement.make(Symbols.NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE),
+                            T, budget3.clone(), false, false);
+                    }
+                )
+            },
+
+
+            // post-conclusion
+            ctx -> null
+        ));
+
+        rules.put("ind1", new Rule(
+            false,
+
+            new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND), // TODO< change to non-compound >
+
+            // precondition
+            ctx -> (
+                !(Statement.invalidStatement(ctx.termParameter[0], ctx.termParameter[1]) || Statement.invalidPair(ctx.termParameter[0], ctx.termParameter[1]))
+                    && ctx.termParameter[0].imagination != null && ctx.termParameter[1].imagination != null
+            ),
+
+            // preamble
+            (compound, index, nal, ctx) -> {},
+
+            // content
+            ctx -> nullContent,
+
+            // conclusions
+            new Conclusion[]{
+                new Conclusion(
+                    ctx -> true,
+                    (content, ctx, budgeting) -> {
+                        Sentence sentence1 = ctx.sentencesParameter[0];
+                        Sentence sentence2 = ctx.sentencesParameter[1];
+                        Term term1 = ctx.termParameter[0];
+                        Term term2 = ctx.termParameter[1];
+
+                        final int order1 = sentence1.term.getTemporalOrder();
+                        final int order2 = sentence2.term.getTemporalOrder();
+                        final int order = abdIndComOrder(order1, order2);
+
+                        final Statement taskContent = (Statement) sentence1.term;
+                        TruthValue truth1 = null;
+                        TruthValue truth2 = null;
+                        TruthValue truth3 = null;
+                        final BudgetValue budget1;
+                        final BudgetValue budget2;
+                        final BudgetValue budget3;
+                        final TruthValue value1 = sentence1.truth;
+                        final TruthValue value2 = sentence2.truth;
+
+                        if (sentence1.isGoal()) {
+                            truth1 = TruthFunctions.desireStrong(value1, value2); //P --> S
+                            truth2 = TruthFunctions.desireWeak(value2, value1); //S --> P
+                            truth3 = TruthFunctions.desireStrong(value1, value2); //S <-> P
+                        } else if( sentence1.isJudgment() ) {
+                            truth1 = TruthFunctions.abduction(value1, value2); //P --> S
+                            truth2 = TruthFunctions.abduction(value2, value1); //S --> P
+                            truth3 = TruthFunctions.comparison(value1, value2); //S <-> P
+                        }
+
+                        if (sentence1.isQuestion()) {
+                            budget1 = BudgetFunctions.backward(value2, ctx.nal);
+                            budget2 = BudgetFunctions.backwardWeak(value2, ctx.nal);
+                            budget3 = BudgetFunctions.backward(value2, ctx.nal);
+                        } else if (sentence1.isQuest()) {
+                            budget1 = BudgetFunctions.backwardWeak(value2, ctx.nal);
+                            budget2 = BudgetFunctions.backward(value2, ctx.nal);
+                            budget3 = BudgetFunctions.backwardWeak(value2, ctx.nal);
+                        } else {
+                            budget1 = BudgetFunctions.forward(truth1, ctx.nal);
+                            budget2 = BudgetFunctions.forward(truth2, ctx.nal);
+                            budget3 = BudgetFunctions.forward(truth3, ctx.nal);
+                        }
+
+                        final TruthValue T2 = term1.imagination.AbductionOrComparisonTo(term2.imagination, false);
+                        ctx.nal.doublePremiseTask(
+                            Statement.make(Symbols.NativeOperator.INHERITANCE, term1, term2, TemporalRules.ORDER_NONE),
+                            T2, budget3.clone(),false, false);
+                    }
+                )
+            },
+
+
+            // post-conclusion
+            ctx -> null
+        ));
+
+        rules.put("com1", new Rule(
+            false,
+
+            new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND), // TODO< change to non-compound >
+
+            // precondition
+            ctx -> (
+                !(Statement.invalidStatement(ctx.termParameter[0], ctx.termParameter[1]) || Statement.invalidPair(ctx.termParameter[0], ctx.termParameter[1]))
+                    && ctx.termParameter[0].imagination != null && ctx.termParameter[1].imagination != null
+            ),
+
+            // preamble
+            (compound, index, nal, ctx) -> {},
+
+            // content
+            ctx -> nullContent,
+
+            // conclusions
+            new Conclusion[]{
+                new Conclusion(
+                    ctx -> true,
+                    (content, ctx, budgeting) -> {
+                        Sentence sentence1 = ctx.sentencesParameter[0];
+                        Sentence sentence2 = ctx.sentencesParameter[1];
+                        Term term1 = ctx.termParameter[0];
+                        Term term2 = ctx.termParameter[1];
+
+                        final int order1 = sentence1.term.getTemporalOrder();
+                        final int order2 = sentence2.term.getTemporalOrder();
+                        final int order = abdIndComOrder(order1, order2);
+
+                        final Statement taskContent = (Statement) sentence1.term;
+                        TruthValue truth1 = null;
+                        TruthValue truth2 = null;
+                        TruthValue truth3 = null;
+                        final BudgetValue budget1;
+                        final BudgetValue budget2;
+                        final BudgetValue budget3;
+                        final TruthValue value1 = sentence1.truth;
+                        final TruthValue value2 = sentence2.truth;
+
+                        if (sentence1.isGoal()) {
+                            truth1 = TruthFunctions.desireStrong(value1, value2); //P --> S
+                            truth2 = TruthFunctions.desireWeak(value2, value1); //S --> P
+                            truth3 = TruthFunctions.desireStrong(value1, value2); //S <-> P
+                        } else if( sentence1.isJudgment() ) {
+                            truth1 = TruthFunctions.abduction(value1, value2); //P --> S
+                            truth2 = TruthFunctions.abduction(value2, value1); //S --> P
+                            truth3 = TruthFunctions.comparison(value1, value2); //S <-> P
+                        }
+
+                        if (sentence1.isQuestion()) {
+                            budget1 = BudgetFunctions.backward(value2, ctx.nal);
+                            budget2 = BudgetFunctions.backwardWeak(value2, ctx.nal);
+                            budget3 = BudgetFunctions.backward(value2, ctx.nal);
+                        } else if (sentence1.isQuest()) {
+                            budget1 = BudgetFunctions.backwardWeak(value2, ctx.nal);
+                            budget2 = BudgetFunctions.backward(value2, ctx.nal);
+                            budget3 = BudgetFunctions.backwardWeak(value2, ctx.nal);
+                        } else {
+                            budget1 = BudgetFunctions.forward(truth1, ctx.nal);
+                            budget2 = BudgetFunctions.forward(truth2, ctx.nal);
+                            budget3 = BudgetFunctions.forward(truth3, ctx.nal);
+                        }
+
+                        final TruthValue T3 = term2.imagination.AbductionOrComparisonTo(term1.imagination, false);
+                        ctx.nal.doublePremiseTask(
+                            Statement.make(Symbols.NativeOperator.INHERITANCE, term2, term1, TemporalRules.ORDER_NONE),
+                            T3, budget3.clone(),false, false);
+                    }
+                )
+            },
+
+
+            // post-conclusion
+            ctx -> null
+        ));
+
+
+
+
+
+        rules.put("void", new Rule(
+            false,
+
+            new Budgeting(BudgetFunctions.EnumBudgetType.COMPOUND), // TODO< change to non-compound >
+
+            // precondition
+            ctx -> {
+                return true;
+            },
+
+            // preamble
+            (compound, index, nal, ctx) -> {},
+
+            // content
+            ctx -> nullContent,
+
+            // conclusions
+            new Conclusion[]{
+                new Conclusion(
+                    ctx -> true,
+                    (content, ctx, budgeting) -> {
+
+                    }
+                )
+            },
+
 
             // post-conclusion
             ctx -> null
