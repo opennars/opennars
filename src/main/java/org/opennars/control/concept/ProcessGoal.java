@@ -257,10 +257,12 @@ public class ProcessGoal {
             }
             //ok we can look now how much it is fullfilled
             //check recent events in event bag
-            for(final Task p : concept.memory.seq_current) {
-                if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= concept.memory.time()) {
-                    newesttime = p.sentence.getOccurenceTime();
-                    bestsofar = p; //we use the newest for now
+            synchronized(concept.memory.seq_current) {
+                for(final Task p : concept.memory.seq_current) {
+                    if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= concept.memory.time()) {
+                        newesttime = p.sentence.getOccurenceTime();
+                        bestsofar = p; //we use the newest for now
+                    }
                 }
             }
             if(bestsofar == null) {

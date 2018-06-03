@@ -37,24 +37,26 @@ public class ProcessTask {
      * @return whether it was processed
      */
     public static boolean processTask(final Concept concept, final DerivationContext nal, final Task task) {
-        concept.observable |= task.isInput();
-        final char type = task.sentence.punctuation;
-        switch (type) {
-            case Symbols.JUDGMENT_MARK:
-                ProcessJudgment.processJudgment(concept, nal, task);
-                break;
-            case Symbols.GOAL_MARK:
-                ProcessGoal.processGoal(concept, nal, task);
-                break;
-            case Symbols.QUESTION_MARK:
-            case Symbols.QUEST_MARK:
-                ProcessQuestion.processQuestion(concept, nal, task);
-                break;
-            default:
-                return false;
-        }
-        if (task.aboveThreshold()) {    // still need to be processed
-            concept.linkToTask(task,nal);
+        synchronized(concept) {
+            concept.observable |= task.isInput();
+            final char type = task.sentence.punctuation;
+            switch (type) {
+                case Symbols.JUDGMENT_MARK:
+                    ProcessJudgment.processJudgment(concept, nal, task);
+                    break;
+                case Symbols.GOAL_MARK:
+                    ProcessGoal.processGoal(concept, nal, task);
+                    break;
+                case Symbols.QUESTION_MARK:
+                case Symbols.QUEST_MARK:
+                    ProcessQuestion.processQuestion(concept, nal, task);
+                    break;
+                default:
+                    return false;
+            }
+            if (task.aboveThreshold()) {    // still need to be processed
+                concept.linkToTask(task,nal);
+            }
         }
         return true;
     }

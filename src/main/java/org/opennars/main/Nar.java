@@ -101,7 +101,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         return ret;
     }
 
-    private Thread thread = null;
+    private Thread[] threads = null;
     long minCyclePeriodMS;
 
     /**
@@ -142,6 +142,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     /*Nar Parameters which can be changed during runtime.*/
    public class RuntimeParameters implements Serializable {
        public RuntimeParameters() {    }
+       public final PortableInteger threadsAmount = new PortableInteger(1);
        public final PortableInteger noiseLevel = new PortableInteger(100);
        public final PortableDouble conceptForgetDurations = new PortableDouble(Parameters.CONCEPT_FORGET_DURATIONS);
        public final PortableDouble termLinkForgetDurations = new PortableDouble(Parameters.TERMLINK_FORGET_DURATIONS);
@@ -420,9 +421,12 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     public void start(final long minCyclePeriodMS) {
         this.minCyclePeriodMS = minCyclePeriodMS;
-        if (thread == null) {
-            thread = new Thread(this, "Inference");
-            thread.start();
+        if (threads == null) {
+            threads = new Thread[this.param.threadsAmount.get()];
+            for(int i=0;i<this.param.threadsAmount.get();i++) {
+                threads[i] = new Thread(this, "Inference"+i);
+                threads[i].start();
+            }
         }
         running = true;
     }
@@ -431,9 +435,11 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * Stop the inference process, killing its thread.
      */
     public void stop() {
-        if (thread!=null) {
-            thread.interrupt();
-            thread = null;
+        if (threads!=null) {
+            for(Thread thread : threads) {
+                thread.interrupt();
+            }
+            threads = null;
         }
         stopped = true;
         running = false;

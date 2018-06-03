@@ -204,25 +204,27 @@ public class ProcessJudgment {
         if (strongest_target == null) {
             return;
         }
-        //at first we have to remove the last one with same content from table
-        int i_delete = -1;
-        for(int i=0; i < target_concept.executable_preconditions.size(); i++) {
-            if(CompoundTerm.replaceIntervals(target_concept.executable_preconditions.get(i).getTerm()).equals(
-                    CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
-                i_delete = i; //even these with same term but different intervals are removed here
-                break;
+        synchronized(target_concept) {
+            //at first we have to remove the last one with same content from table
+            int i_delete = -1;
+            for(int i=0; i < target_concept.executable_preconditions.size(); i++) {
+                if(CompoundTerm.replaceIntervals(target_concept.executable_preconditions.get(i).getTerm()).equals(
+                        CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
+                    i_delete = i; //even these with same term but different intervals are removed here
+                    break;
+                }
             }
-        }
-        if(i_delete != -1) {
-            target_concept.executable_preconditions.remove(i_delete);
-        }
-        final Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
-        for (int i = 0; i<prec.length-2; i++) {
-            if (prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
-                return; //for now, these can be decomposed into smaller such statements anyway
+            if(i_delete != -1) {
+                target_concept.executable_preconditions.remove(i_delete);
             }
+            final Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
+            for (int i = 0; i<prec.length-2; i++) {
+                if (prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
+                    return; //for now, these can be decomposed into smaller such statements anyway
+                }
+            }
+            //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
+            target_concept.addToTable(strongest_target, true, target_concept.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
         }
-        //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-        target_concept.addToTable(strongest_target, true, target_concept.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
     }
 }
