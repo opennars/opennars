@@ -60,7 +60,7 @@ public class ProcessJudgment {
     public static void processJudgment(final Concept concept, final DerivationContext nal, final Task task) {
         handleOperationFeedback(task, nal);
         final Sentence judg = task.sentence;
-        confirmAnticipation(task, concept, nal);
+        ProcessAnticipation.confirmAnticipation(task, concept, nal);
         final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
@@ -93,27 +93,6 @@ public class ProcessJudgment {
         concept.addToTable(task, false, concept.beliefs, Parameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
         if(isExecutableHypothesis(task,nal)) {
             addToTargetConceptsPreconditions(task, nal, concept);
-        }
-    }
-    
-    /**
-     * Whether a processed judgement task satisfies the anticipation withon concept
-     * <p>
-     * called in processJudgment only
-     * 
-     * @param task The judgement task be checked
-     * @param concept The concept that is processed
-     * @param nal The derivation context
-     */
-    public static void confirmAnticipation(Task task, Concept concept, final DerivationContext nal) {
-        final boolean satisfiesAnticipation = task.isInput() && !task.sentence.isEternal() &&
-                                              concept.negConfirmation != null &&
-                                              task.sentence.getOccurenceTime() > concept.negConfirm_abort_mintime;
-        final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION;
-        if(satisfiesAnticipation && isExpectationAboveThreshold &&
-          ((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
-            nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
-            concept.negConfirmation = null; // confirmed
         }
     }
 
