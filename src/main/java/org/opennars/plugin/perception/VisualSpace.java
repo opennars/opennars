@@ -74,25 +74,38 @@ public class VisualSpace implements ImaginationSpace {
     }
 
     @Override
-    public TruthValue AbductionOrComparisonTo(final ImaginationSpace obj, final boolean comparison) {
+    public TruthValue AbductionOrComparisonTo(ImaginationSpace obj, boolean comparison) {
         if(!(obj instanceof VisualSpace)) {
-            return new TruthValue(0.5f, 0.01f);
+            return new TruthValue(1.0f,0.0f);
         }
-        final VisualSpace other = (VisualSpace) obj;
-        final double kh = ((float) other.height) / ((double) this.height);
-        final double kw = ((float) other.width)  / ((double) this.width);
-        TruthValue sim = new TruthValue(0.5f, 0.01f);
-        for(int i=0; i<this.height; i++) {
-            for(int j=0; j<this.width; j++) {
-                final int i2 = (int) (((double) i) * kh);
-                final int j2 = (int) (((double) j)  * kw);
-                final TruthValue t1 = new TruthValue(cropped[i][j], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                final TruthValue t2 = new TruthValue(other.cropped[i2][j2], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                final TruthValue t3 = comparison ? TruthFunctions.comparison(t1,t2) : TruthFunctions.abduction(t1,t2);
-                sim = TruthFunctions.revision(sim, t3);                
+        VisualSpace other = (VisualSpace) obj;
+        double kh = ((float) other.height) / ((double) this.height);
+        double kw = ((float) other.width)  / ((double) this.width);
+        TruthValue bestShiftTruth = new TruthValue(0.5f, 0.01f);
+        for(int oj=-this.height; oj<this.height; oj++) {
+            for(int oi=-this.width; oi<this.width; oi++) {
+                TruthValue sim = new TruthValue(0.5f, 0.01f);
+                for(int i=0; i<this.height; i++) {
+                    for(int j=0; j<this.width; j++) {
+                        int transi = i+oi;
+                        int transj = j+oj;
+                        if(transi >= this.width || transj >= this.height || transi < 0 || transj < 0) {
+                            continue;
+                        }
+                        int i2 = (int) (((double) i) * kh);
+                        int j2 = (int) (((double) j)  * kw);
+                        TruthValue t1 = new TruthValue(cropped[transi][transj], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                        TruthValue t2 = new TruthValue(other.cropped[i2][j2], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                        TruthValue t3 = comparison ? TruthFunctions.comparison(t1,t2) : TruthFunctions.abduction(t1,t2);
+                        sim = TruthFunctions.revision(sim, t3);                
+                    }
+                }
+                if(sim.getExpectation() > bestShiftTruth.getExpectation()) {
+                    bestShiftTruth = sim;
+                }
             }
         }
-        return sim;
+        return bestShiftTruth;
     }
 
     @Override

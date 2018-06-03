@@ -394,6 +394,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
 
     public void addPlugin(final Plugin p) {
+        if(p instanceof SensoryChannel) {
+            this.addSensoryChannel(((SensoryChannel) p).getName(), (SensoryChannel) p);
+        }
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
         }
@@ -407,6 +410,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             final Plugin p = ps.plugin;
             if (p instanceof Operator) {
                 memory.removeOperator((Operator)p);
+            }
+            if (p instanceof SensoryChannel) {
+                sensoryChannels.remove(p);
             }
             //TODO sensory channels can be plugins
             ps.setEnabled(false);
