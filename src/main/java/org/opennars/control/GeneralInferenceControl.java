@@ -107,7 +107,6 @@ public class GeneralInferenceControl {
                 if (termLink == null) {
                     break;
                 }
-                Concept res = nal.memory.concept(termLink.target);
                 fireTermlink(termLink, nal);
                 nal.currentConcept.returnTermLink(termLink);
                 termLinks--;
