@@ -24,24 +24,27 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.opennars.plugin.Plugin;
 
-public abstract class SensoryChannel implements Serializable {
+public abstract class SensoryChannel implements Plugin, Serializable {
     private Collection<SensoryChannel> reportResultsTo;
     public Nar nar; //for top-down influence of concept budgets
     public final List<Task> results = new ArrayList<>();
     public int height = 0; //1D channels have height 1
     public int width = 0;
     public int duration = -1;
+    private Term label;
     public SensoryChannel(){}
-    public SensoryChannel(final Nar nar, final Collection<SensoryChannel> reportResultsTo, final int width, final int height, final int duration) {
+    public SensoryChannel(final Nar nar, final Collection<SensoryChannel> reportResultsTo, final int width, final int height, final int duration, Term label) {
         this.reportResultsTo = reportResultsTo;
         this.nar = nar;
         this.width = width;
         this.height = height;
         this.duration = duration;
+        this.label = label;
     }
-    public SensoryChannel(final Nar nar, final SensoryChannel reportResultsTo, final int width, final int height, final int duration) {
-        this(nar, Collections.singletonList(reportResultsTo), width, height, duration);
+    public SensoryChannel(final Nar nar, final SensoryChannel reportResultsTo, final int width, final int height, final int duration, Term label) {
+        this(nar, Collections.singletonList(reportResultsTo), width, height, duration, label);
     }
     public void addInput(final String text) {
         try {
@@ -81,5 +84,15 @@ public abstract class SensoryChannel implements Serializable {
             }
         }
         return 0.0;
+    }
+    
+    public String getName() {
+        return label.toString();
+    }
+    
+    public void setName(String val) {
+        this.label = new Term(val);
+        this.nar.removePlugin(this.nar.new PluginState(this));
+        this.nar.addPlugin(this);
     }
 }

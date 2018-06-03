@@ -202,9 +202,11 @@ public class Concept extends Item<Term> implements Serializable {
                 final Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
 
                 if (componentConcept != null) {
-                    componentConcept.insertTaskLink(
-                        new TaskLink(task, termLink, subBudget, Parameters.TERM_LINK_RECORD_LENGTH), cont
-                    );
+                    synchronized(componentConcept) {
+                        componentConcept.insertTaskLink(
+                            new TaskLink(task, termLink, subBudget, Parameters.TERM_LINK_RECORD_LENGTH), cont
+                        );
+                    }
                 }
             }
 
@@ -538,8 +540,6 @@ public class Concept extends Item<Term> implements Serializable {
      * @return The selected TermLink
      */
     public TermLink selectTermLink(final TaskLink taskLink, final long time, final NarParameters narParameters) {
-        ProcessAnticipation.maintainDisappointedAnticipations(this);
-
         final int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
             

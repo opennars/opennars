@@ -60,7 +60,7 @@ public class ProcessJudgment {
     public static void processJudgment(final Concept concept, final DerivationContext nal, final Task task) {
         handleOperationFeedback(task, nal);
         final Sentence judg = task.sentence;
-        confirmAnticipation(task, concept, nal);
+        ProcessAnticipation.confirmAnticipation(task, concept, nal);
         final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
@@ -93,27 +93,6 @@ public class ProcessJudgment {
         concept.addToTable(task, false, concept.beliefs, Parameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
         if(isExecutableHypothesis(task,nal)) {
             addToTargetConceptsPreconditions(task, nal, concept);
-        }
-    }
-    
-    /**
-     * Whether a processed judgement task satisfies the anticipation withon concept
-     * <p>
-     * called in processJudgment only
-     * 
-     * @param task The judgement task be checked
-     * @param concept The concept that is processed
-     * @param nal The derivation context
-     */
-    public static void confirmAnticipation(Task task, Concept concept, final DerivationContext nal) {
-        final boolean satisfiesAnticipation = task.isInput() && !task.sentence.isEternal() &&
-                                              concept.negConfirmation != null &&
-                                              task.sentence.getOccurenceTime() > concept.negConfirm_abort_mintime;
-        final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION;
-        if(satisfiesAnticipation && isExpectationAboveThreshold &&
-          ((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
-            nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
-            concept.negConfirmation = null; // confirmed
         }
     }
 
@@ -204,25 +183,27 @@ public class ProcessJudgment {
         if (strongest_target == null) {
             return;
         }
-        //at first we have to remove the last one with same content from table
-        int i_delete = -1;
-        for(int i=0; i < target_concept.executable_preconditions.size(); i++) {
-            if(CompoundTerm.replaceIntervals(target_concept.executable_preconditions.get(i).getTerm()).equals(
-                    CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
-                i_delete = i; //even these with same term but different intervals are removed here
-                break;
+        synchronized(target_concept) {
+            //at first we have to remove the last one with same content from table
+            int i_delete = -1;
+            for(int i=0; i < target_concept.executable_preconditions.size(); i++) {
+                if(CompoundTerm.replaceIntervals(target_concept.executable_preconditions.get(i).getTerm()).equals(
+                        CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
+                    i_delete = i; //even these with same term but different intervals are removed here
+                    break;
+                }
             }
-        }
-        if(i_delete != -1) {
-            target_concept.executable_preconditions.remove(i_delete);
-        }
-        final Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
-        for (int i = 0; i<prec.length-2; i++) {
-            if (prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
-                return; //for now, these can be decomposed into smaller such statements anyway
+            if(i_delete != -1) {
+                target_concept.executable_preconditions.remove(i_delete);
             }
+            final Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
+            for (int i = 0; i<prec.length-2; i++) {
+                if (prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
+                    return; //for now, these can be decomposed into smaller such statements anyway
+                }
+            }
+            //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
+            target_concept.addToTable(strongest_target, true, target_concept.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
         }
-        //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-        target_concept.addToTable(strongest_target, true, target_concept.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
     }
 }

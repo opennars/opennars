@@ -122,4 +122,25 @@ public class ProcessAnticipation {
         concept.memory.emit(OutputHandler.DISAPPOINT.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
         concept.negConfirmation = null;
     }
+    
+    /**
+     * Whether a processed judgement task satisfies the anticipation withon concept
+     * <p>
+     * called in processJudgment only
+     * 
+     * @param task The judgement task be checked
+     * @param concept The concept that is processed
+     * @param nal The derivation context
+     */
+    public static void confirmAnticipation(Task task, Concept concept, final DerivationContext nal) {
+        final boolean satisfiesAnticipation = task.isInput() && !task.sentence.isEternal() &&
+                                              concept.negConfirmation != null &&
+                                              task.sentence.getOccurenceTime() > concept.negConfirm_abort_mintime;
+        final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION;
+        if(satisfiesAnticipation && isExpectationAboveThreshold &&
+          ((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
+            nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
+            concept.negConfirmation = null; // confirmed
+        }
+    }
 }

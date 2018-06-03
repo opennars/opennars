@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.opennars.core;
 
 import org.junit.Test;
@@ -33,11 +34,8 @@ import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
-
 @RunWith(Parameterized.class)
-public class NALTest  {
-        
-
+public class StabilityTest {
     static {
         Memory.randomNumber.setSeed(1);
         Parameters.DEBUG = false;
@@ -57,7 +55,7 @@ public class NALTest  {
     public static final Map<String, Boolean> tests = new HashMap();
     public static final Map<String, Double> scores = new HashMap();
     final String scriptPath;
-    
+
     public static String getExample(final String path) {
         try {
             String existing = examples.get(path);
@@ -72,26 +70,26 @@ public class NALTest  {
             throw new IllegalStateException("Could not load path", e);
         }
     }
-    
+
     public Nar newNAR() {
         return new Nar();
         //return Nar.build(Default.fromJSON("nal/build/pei1.fast.nar"));
         //return new ContinuousBagNARBuilder().build();
         //return new DiscretinuousBagNARBuilder().build();
     }
-    
-    
+
+
     @Parameterized.Parameters
     public static Collection params() {
-        final String[] directories = new String[] { "/nal/single_step/", "/nal/multi_step/", "/nal/application/"  };
+        final String[] directories = new String[] { "/nal/stability/" };
 
         final Map<String, Object> et = ExampleFileInput.getUnitTests(directories);
         final Collection t = et.values();
         for (final String x : et.keySet()) addTest(x);
         return t;
     }
-    
-    
+
+
     public static void addTest(String name) {
         name = name.substring(3, name.indexOf(".nal"));
         tests.put(name, true);
@@ -101,7 +99,7 @@ public class NALTest  {
 
         tests.clear();
         scores.clear();
-        
+
         if (waitForEnterKeyOnStart) {
             System.out.println("When ready, press enter");
             try {
@@ -110,21 +108,21 @@ public class NALTest  {
                 throw new IllegalStateException("Could not read user input.", ex);
             }
         }
-        
+
         //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
-        
+
         final Result result = JUnitCore.runClasses(new ParallelComputer(true, true), c);
-              
-        
+
+
         for (final Failure f : result.getFailures()) {
             final String test = f.getMessage().substring(f.getMessage().indexOf("/nal/single_step") + 8, f.getMessage().indexOf(".nal"));
-            
+
             tests.put(test, false);
         }
-        
+
         final int[] levelSuccess = new int[10];
         final int[] levelTotals = new int[10];
-        
+
         for (final Map.Entry<String, Boolean> e : tests.entrySet()) {
             final String name = e.getKey();
             int level = 0;
@@ -138,7 +136,7 @@ public class NALTest  {
         double totalScore = 0;
         for (final Double d : scores.values())
             totalScore += d;
-        
+
         if (showReport) {
             int totalSucceeded = 0, total = 0;
             for (int i = 0; i < 9; i++) {
@@ -155,25 +153,25 @@ public class NALTest  {
         }
         return totalScore;
     }
-    
+
     public static void main(final String[] args) {
-        runTests(NALTest.class);
+        runTests(org.opennars.core.NALTest.class);
     }
 
-    public NALTest(final String scriptPath) {
+    public StabilityTest(final String scriptPath) {
         this.scriptPath = scriptPath;
-        
+
     }
-    
-    public double run() {               
+
+    public double run() {
         return testNAL(scriptPath);
     }
-    
-    protected double testNAL(final String path) {               
+
+    protected double testNAL(final String path) {
         Memory.resetStatic();
-        
+
         final List<OutputCondition> expects = new ArrayList();
-        
+
         Nar n = null;
         final boolean error = false;
         n = newNAR();
@@ -192,10 +190,10 @@ public class NALTest  {
 
         n.addInputFile(path);
         n.cycles(minCycles);
-      
+
         System.err.flush();
         System.out.flush();
-        
+
         boolean success = expects.size() > 0 && (!error);
         for (final OutputCondition e: expects) {
             if (!e.succeeded) success = false;
@@ -208,7 +206,7 @@ public class NALTest  {
                 if (e.getTrueTime()!=-1) {
                     if (lastSuccess < e.getTrueTime())
                         lastSuccess = e.getTrueTime();
-                }                
+                }
             }
             if (lastSuccess!=-1) {
                 //score = 1.0 + 1.0 / (1+lastSuccess);
@@ -219,7 +217,7 @@ public class NALTest  {
         else {
             scores.put(path, Double.POSITIVE_INFINITY);
         }
-        
+
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
 
         if ((!success & showFail) || (success && showSuccess)) {
@@ -228,14 +226,14 @@ public class NALTest  {
                 System.err.println("  " + e);
             }
         }
-        
+
         //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
         if (requireSuccess)
             assertTrue(path, success);
-        
-        return score;  
+
+        return score;
     }
-    
+
     @Test
     public void test() {
         testNAL(scriptPath);

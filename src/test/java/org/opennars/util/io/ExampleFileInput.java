@@ -61,11 +61,9 @@ public class ExampleFileInput {
         return OutputCondition.getConditions(n, source, similarResultsToSave);
     }
     
-    public static Map<String,Object> getUnitTests() {
+    public static Map<String,Object> getUnitTests(final String[] directories) {
         final Map<String,Object> l = new TreeMap();
-        
-        final String[] directories = new String[] { "/nal/single_step/", "/nal/multi_step/", "/nal/application/"  };
-        
+
         for (final String dir : directories ) {
 
             File folder = null;

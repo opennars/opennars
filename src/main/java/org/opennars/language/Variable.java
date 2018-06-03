@@ -16,7 +16,6 @@ package org.opennars.language;
 
 import org.opennars.io.Texts;
 import org.opennars.main.Parameters;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.CharBuffer;
 
@@ -189,7 +188,7 @@ public class Variable extends Term {
             return superCmp;
 
         if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException("not implemented!");
         }
 
         if(!(that instanceof Variable))

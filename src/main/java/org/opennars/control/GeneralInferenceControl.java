@@ -34,11 +34,17 @@ public class GeneralInferenceControl {
     
     public static void selectConceptForInference(final Memory mem, final NarParameters narParameters) {
         final Concept currentConcept;
-        synchronized (mem.concepts) {
+        synchronized (mem.concepts) { //modify concept bag
             currentConcept = mem.concepts.takeNext();
             if (currentConcept==null) {
                 return;
             }
+        }
+
+        final DerivationContext nal = new DerivationContext(mem, narParameters);
+        boolean putBackConcept = false;
+        float forgetCycles = 0.0f;
+        synchronized(currentConcept) { //use current concept (current concept is the resource)  
             ProcessAnticipation.maintainDisappointedAnticipations(currentConcept);
             if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
                 mem.concepts.take(currentConcept.getTerm());
@@ -50,14 +56,14 @@ public class GeneralInferenceControl {
                 mem.conceptRemoved(currentConcept);
                 return;
             }
+            nal.setCurrentConcept(currentConcept);
+            putBackConcept = fireConcept(nal, 1);
+            if(putBackConcept) {
+                forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
+                nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
+            }
         }
-
-        final DerivationContext nal = new DerivationContext(mem, narParameters);
-        nal.setCurrentConcept(currentConcept);
-        final boolean putBackConcept = fireConcept(nal, 1);
-        if(putBackConcept) { // put back
-            final float forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
-            nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
+        if(putBackConcept) { // put back into bag (bag is the resource)
             synchronized (nal.memory.concepts) {
                 nal.memory.concepts.putBack(nal.currentConcept, forgetCycles, nal.memory);
             }

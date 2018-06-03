@@ -93,11 +93,13 @@ public class ProcessQuestion {
                     if(c == null) {
                         continue; //target concept is already gone
                     }
-                    final List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
-                    if(c != null && answers.size() > 0) {
-                        final Task taskAnswer = answers.get(0);
-                        if(taskAnswer!=null) {
-                            newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
+                    synchronized(c) { //changing target concept, lock it
+                        final List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
+                        if(c != null && answers.size() > 0) {
+                            final Task taskAnswer = answers.get(0);
+                            if(taskAnswer!=null) {
+                                newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
+                            }
                         }
                     }
                 }
@@ -131,11 +133,13 @@ public class ProcessQuestion {
                         if(c == null) {
                             continue; //target doesn't exist anymore
                         }
-                        final List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
-                        if(c != null && answers.size() > 0) {
-                            final Task taskAnswer = answers.get(0);
-                            if(taskAnswer!=null) {
-                                newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
+                        synchronized(c) { //changing target concept, lock it
+                            final List<Task> answers = ques.sentence.isQuest() ? c.desires : c.beliefs;
+                            if(c != null && answers.size() > 0) {
+                                final Task taskAnswer = answers.get(0);
+                                if(taskAnswer!=null) {
+                                    newAnswer |= trySolution(taskAnswer.sentence, ques, nal, false); //order important here
+                                }
                             }
                         }
                     }
