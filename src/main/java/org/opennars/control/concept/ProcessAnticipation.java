@@ -56,7 +56,12 @@ public class ProcessAnticipation {
             mainSentence.punctuation,
             new TruthValue(0.0f, 0.0f),
             stamp);
-        final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f), false); //Budget for one-time processing
+
+        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+        newTaskMakeInfo.sentence = s;
+        newTaskMakeInfo.budget = new BudgetValue(0.99f,0.1f,0.1f); //Budget for one-time processing
+        final Task t = Task.make(newTaskMakeInfo);
+
         final Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
         if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
@@ -115,8 +120,20 @@ public class ProcessAnticipation {
                         new Stamp(concept.memory));
         final Sentence s2 = new Sentence(Negation.make(T), Symbols.JUDGMENT_MARK, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
                         new Stamp(concept.memory));
-        final Task negated1 = new Task(s1,concept.negConfirmation.getBudget().clone(),true);
-        final Task negated2 = new Task(s2,concept.negConfirmation.getBudget().clone(),true);
+
+
+        Task.MakeInfo newTaskMakeInfo1 = new Task.MakeInfo();
+        newTaskMakeInfo1.sentence = s1;
+        newTaskMakeInfo1.budget = concept.negConfirmation.getBudget().clone();
+        newTaskMakeInfo1.isInput = true;
+        final Task negated1 = Task.make(newTaskMakeInfo1);
+
+        Task.MakeInfo newTaskMakeInfo2 = new Task.MakeInfo();
+        newTaskMakeInfo2.sentence = s2;
+        newTaskMakeInfo2.budget = concept.negConfirmation.getBudget().clone();
+        newTaskMakeInfo2.isInput = true;
+        final Task negated2 = Task.make(newTaskMakeInfo2);
+
         concept.memory.inputTask(negated1, false); //disappointed
         concept.memory.inputTask(negated2, false); //disappointed
         concept.memory.emit(OutputHandler.DISAPPOINT.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());

@@ -56,8 +56,14 @@ public class Believe extends Operator {
 
         final float quality = BudgetFunctions.truthToQuality(truth);
         final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
-        
-        return Lists.newArrayList( new Task(sentence, budget, true) );        
+
+        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+        newTaskMakeInfo.sentence = sentence;
+        newTaskMakeInfo.budget = budget;
+        newTaskMakeInfo.isInput = true;
+        final Task newTask = Task.make(newTaskMakeInfo);
+
+        return Lists.newArrayList(newTask);
 
     }
 }

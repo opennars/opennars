@@ -141,10 +141,16 @@ public class VisionChannel extends SensoryChannel  {
                                                    new TruthValue(1.0f,
                                                    DEFAULT_OUTPUT_CONFIDENCE), 
                                                    stamp);
-        final Task T = new Task(s, new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
-                                             Parameters.DEFAULT_JUDGMENT_DURABILITY,
-                                             BudgetFunctions.truthToQuality(s.truth)), true);
-        this.results.add(T);//feeds results into "upper" sensory channels:
+
+        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+        newTaskMakeInfo.sentence = s;
+        newTaskMakeInfo.budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
+            Parameters.DEFAULT_JUDGMENT_DURABILITY,
+            BudgetFunctions.truthToQuality(s.truth));
+        newTaskMakeInfo.isInput = true;
+        final Task newTask = Task.make(newTaskMakeInfo);
+
+        this.results.add(newTask);//feeds results into "upper" sensory channels:
         this.step_finished(); 
     }
     
