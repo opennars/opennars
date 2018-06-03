@@ -27,6 +27,8 @@ import org.opennars.storage.Memory;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.opennars.inference.RuleExecutive.executeByRuleName;
+
 /**
  * Single-premise inference rules involving compound terms. Input are one
  * sentence (the premise) and one TermLink (indicating a component)
@@ -164,6 +166,9 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralCompose1(final CompoundTerm compound, final short index, final Statement statement, final DerivationContext nal) {
+        executeByRuleName("structuralCompose1", compound, index, statement, -1, new Sentence[0], null, -1, nal);
+
+        /*
         if (!nal.getCurrentTask().sentence.isJudgment()) {
             return;     // forward inference only
         }
@@ -204,7 +209,7 @@ public final class StructuralRules {
             } else if ((compound instanceof DifferenceInt) && (index == 0)) {
                 structuralStatement(subj, compound, order, truthDed, nal);
             }
-        }
+        }*/
     }
 
     /**
@@ -216,6 +221,9 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralDecompose1(final CompoundTerm compound, final short index, final Statement statement, final DerivationContext nal) {
+        executeByRuleName("structuralDecompose1", compound, index, statement, -1, new Sentence[0], null, -1, nal);
+
+        /*
         if(index >= compound.term.length) {
             return;
         }
@@ -260,7 +268,7 @@ public final class StructuralRules {
                     structuralStatement(subj, component, order, truthNDed, nal);
                 }
             }
-        }
+        }*/
     }
 
     /**
@@ -293,7 +301,10 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void transformSetRelation(final CompoundTerm compound, final Statement statement, final short side, final DerivationContext nal) {
-        if (compound.size() > 1) {
+        executeByRuleName("transformSetRelation", compound, -1, statement, side, new Sentence[0], null, -1, nal);
+
+
+        /*if (compound.size() > 1) {
             return;
         }
         if (statement instanceof Inheritance) {
@@ -326,7 +337,7 @@ public final class StructuralRules {
         } else {
             budget = BudgetFunctions.compoundBackward(content, nal);
         }
-        nal.singlePremiseTask(content, truth, budget);
+        nal.singlePremiseTask(content, truth, budget);*/
     }
 
     /* -------------------- products and images transform -------------------- */
@@ -861,6 +872,10 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     public static void transformNegation(final CompoundTerm content, final DerivationContext nal) {
+        executeByRuleName("transformNegation", content, -1, null, -1, new Sentence[0], null, -1, nal);
+
+
+        /*
         final Task task = nal.getCurrentTask();
         final Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
@@ -874,6 +889,7 @@ public final class StructuralRules {
             budget = BudgetFunctions.compoundBackward(content, nal);
         }
         nal.singlePremiseTask(content, truth, budget);
+        */
     }
 
     /**
@@ -883,6 +899,10 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     protected static boolean contraposition(final Statement statement, final Sentence sentence, final DerivationContext nal) {
+        executeByRuleName("contraposition", null, -1, statement, -1, new Sentence[]{sentence}, null, -1, nal);
+        return true; // result is not used
+
+        /*
         final Memory memory = nal.mem();
         //memory.logic.CONTRAPOSITION.commit(statement.complexity);
         
@@ -897,6 +917,7 @@ public final class StructuralRules {
         if (content == null) return false;
         
         TruthValue truth = sentence.truth;
+
         final BudgetValue budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (content instanceof Implication) {
@@ -912,5 +933,6 @@ public final class StructuralRules {
             budget = BudgetFunctions.compoundForward(truth, content, nal);
             return nal.singlePremiseTask(content, Symbols.JUDGMENT_MARK, truth, budget);
         }
+        */
     }
 }

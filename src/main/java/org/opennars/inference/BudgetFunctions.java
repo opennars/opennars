@@ -14,6 +14,7 @@
  */
 package org.opennars.inference;
 
+import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.language.Term;
 import org.opennars.main.Parameters;
@@ -311,6 +312,41 @@ public final class BudgetFunctions extends UtilityFunctions {
 
     public static BudgetValue budgetTermLinkConcept(final Concept c, final BudgetValue taskBudget, final TermLink termLink) {
         return taskBudget.clone();
+    }
+
+
+
+    public enum EnumBudgetDirection {
+        FORWARD,
+        BACKWARD
+    }
+
+    public enum EnumBudgetType {
+        COMPOUND,
+    }
+
+    public enum EnumBudgetStrength {
+        STRONG,
+        WEAK
+    }
+
+    public static BudgetValue compute(final EnumBudgetDirection direction, final EnumBudgetType type, final EnumBudgetStrength strength,  final TruthValue truth, final Term content, final DerivationContext nal) {
+        if (type == EnumBudgetType.COMPOUND) {
+            if (direction == EnumBudgetDirection.FORWARD) {
+                return compoundForward(truth, content, nal);
+            }
+            else { // backward
+                if( strength == EnumBudgetStrength.STRONG ) {
+                    return compoundBackward(content, nal);
+                }
+                else {
+                    return compoundBackwardWeak(content, nal);
+                }
+            }
+        }
+        else {
+            throw new IllegalStateException("Moved to TemporalRules.java");
+        }
     }
 
 }

@@ -106,6 +106,11 @@ public final class SyllogisticRules {
      * @param nal Reference to the memory
      */
     static boolean abdIndCom(Term term1, Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final DerivationContext nal) {
+        RuleExecutive.executeByRuleName("abd1", null, -1, null, -1, new Sentence[]{sentence1, sentence2}, new Term[]{term1, term2}, figure, nal);
+        RuleExecutive.executeByRuleName("ind1", null, -1, null, -1, new Sentence[]{sentence1, sentence2}, new Term[]{term1, term2}, figure, nal);
+        RuleExecutive.executeByRuleName("com1", null, -1, null, -1, new Sentence[]{sentence1, sentence2}, new Term[]{term1, term2}, figure, nal);
+
+
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1, term2)) {
             return false;
         }
@@ -148,10 +153,16 @@ public final class SyllogisticRules {
         }
         
         if(term1.imagination != null && term2.imagination != null) {
+            /*
             final TruthValue T = term1.imagination.AbductionOrComparisonTo(term2.imagination, true);
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE), 
-                    T, budget3.clone(),false, false);   
+                    T, budget3.clone(),false, false);
+            */
+            //RuleExecutive.executeByRuleName("abd1", null, -1, null, -1, new Sentence[]{sentence1, sentence2}, new Term[]{term1, term2}, figure, nal);
+
+
+            /*
             final TruthValue T2 = term1.imagination.AbductionOrComparisonTo(term2.imagination, false);
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term1, term2, TemporalRules.ORDER_NONE), 
@@ -159,7 +170,9 @@ public final class SyllogisticRules {
             final TruthValue T3 = term2.imagination.AbductionOrComparisonTo(term1.imagination, false);
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term2, term1, TemporalRules.ORDER_NONE), 
-                    T3, budget3.clone(),false, false);   
+                    T3, budget3.clone(),false, false);
+            */
+
             return true; //no need for other syllogistic inference, it were sensational terms,
         }           //but it would not hurt to allow it either.. but why afford tasks that summarize
                     //so little evidence in comparison to the amount summarized by the array comparison.
@@ -231,6 +244,9 @@ public final class SyllogisticRules {
      * @param nal Reference to the memory
      */
     static void analogy(final Term subj, final Term pred, final Sentence asym, final Sentence sym, final int figure, final DerivationContext nal) {
+        RuleExecutive.executeByRuleName("analogy", null, -1, null, -1, new Sentence[]{asym, sym}, new Term[]{subj, pred}, figure, nal);
+
+        /*
         if (Statement.invalidStatement(subj, pred)) {
             return;
         }
@@ -269,6 +285,7 @@ public final class SyllogisticRules {
         
         //nal.mem().logic.ANALOGY.commit();
         nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,false, false); //(allow overlap) but not needed here, isn't detachment
+        //*/
     }
 
     /**
