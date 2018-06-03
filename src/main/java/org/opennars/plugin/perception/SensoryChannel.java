@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.opennars.plugin.Plugin;
 
 public abstract class SensoryChannel implements Plugin, Serializable {
     private Collection<SensoryChannel> reportResultsTo;
@@ -87,5 +88,11 @@ public abstract class SensoryChannel implements Plugin, Serializable {
     
     public String getName() {
         return label.toString();
+    }
+    
+    public void setName(String val) {
+        this.label = new Term(val);
+        this.nar.removePlugin(this.nar.new PluginState(this));
+        this.nar.addPlugin(this);
     }
 }

@@ -54,17 +54,21 @@ public class VisionChannel extends SensoryChannel  {
             }
             else
             if(ev == ResetEnd.class) {
-                inputs = new double[height][width];
-                updated = new boolean[height][width];
-                cnt_updated = 0;
-                px = 0;
-                py = 0;
-                termid = 0;
-                subj = "";
+                resetChannel();
             }
         };
         nar.memory.event.set(obs, true, Events.CycleEnd.class);
         nar.memory.event.set(obs, true, Events.ResetEnd.class);
+    }
+    
+    private void resetChannel() {
+        inputs = new double[height][width];
+        updated = new boolean[height][width];
+        cnt_updated = 0;
+        px = 0;
+        py = 0;
+        termid = 0;
+        subj = "";
     }
     
     String subj = ""; 
@@ -142,5 +146,20 @@ public class VisionChannel extends SensoryChannel  {
                                              BudgetFunctions.truthToQuality(s.truth)), true);
         this.results.add(T);//feeds results into "upper" sensory channels:
         this.step_finished(); 
+    }
+    
+    public double getWidth() {
+        return this.width;
+    }
+    public void setWidth(double val) {
+        this.width = (int) val;
+        this.resetChannel();
+    }
+    public double getHeight() {
+        return this.width;
+    }
+    public void setHeight(double val) {
+        this.height = (int) val;
+        this.resetChannel();
     }
 }
