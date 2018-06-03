@@ -82,20 +82,22 @@ public class TemporalInferenceControl {
         final Set<Task> already_attempted_ops = new HashSet<>();
         //Sequence formation:
         for(int i =0; i<Parameters.SEQUENCE_BAG_ATTEMPTS; i++) {
-            final Task takeout = nal.memory.seq_current.takeNext();
-            if(takeout == null) {
-                break; //there were no elements in the bag to try
-            }
+            synchronized(nal.memory.seq_current) {
+                final Task takeout = nal.memory.seq_current.takeNext();
+                if(takeout == null) {
+                    break; //there were no elements in the bag to try
+                }
 
-            if(already_attempted.contains(takeout) || 
-                    Stamp.baseOverlap(newEvent.sentence.stamp.evidentialBase,
-                            takeout.sentence.stamp.evidentialBase)) {
+                if(already_attempted.contains(takeout) || 
+                        Stamp.baseOverlap(newEvent.sentence.stamp.evidentialBase,
+                                takeout.sentence.stamp.evidentialBase)) {
+                    nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                    continue;
+                }
+                already_attempted.add(takeout);
+                proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
                 nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
-                continue;
             }
-            already_attempted.add(takeout);
-            proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
-            nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
         }
 
         //Conditioning:
@@ -162,42 +164,44 @@ public class TemporalInferenceControl {
     public static void addToSequenceTasks(final DerivationContext nal, final Task newEvent) {
         //multiple versions are necessary, but we do not allow duplicates
         final List<Task> removals = new LinkedList<>();
-        for(final Task s : nal.memory.seq_current) {
-            if(CompoundTerm.replaceIntervals(s.getTerm()).equals(
-                    CompoundTerm.replaceIntervals(newEvent.getTerm()))) {
-                    // && //-- new outcommented
-                    //s.sentence.stamp.equals(newEvent.sentence.stamp,false,true,true,false) ) {
-                //&& newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime() ) { 
-                //check term indices
-                if(s.getTerm().term_indices != null && newEvent.getTerm().term_indices != null) {
-                    boolean differentTermIndices = false;
-                    for(int i=0;i<s.getTerm().term_indices.length;i++) {
-                       if(s.getTerm().term_indices[i] != newEvent.getTerm().term_indices[i]) {
-                           differentTermIndices = true;
-                       }
+        synchronized(nal.memory.seq_current) {
+            for(final Task s : nal.memory.seq_current) {
+                if(CompoundTerm.replaceIntervals(s.getTerm()).equals(
+                        CompoundTerm.replaceIntervals(newEvent.getTerm()))) {
+                        // && //-- new outcommented
+                        //s.sentence.stamp.equals(newEvent.sentence.stamp,false,true,true,false) ) {
+                    //&& newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime() ) { 
+                    //check term indices
+                    if(s.getTerm().term_indices != null && newEvent.getTerm().term_indices != null) {
+                        boolean differentTermIndices = false;
+                        for(int i=0;i<s.getTerm().term_indices.length;i++) {
+                           if(s.getTerm().term_indices[i] != newEvent.getTerm().term_indices[i]) {
+                               differentTermIndices = true;
+                           }
+                        }
+                        if(differentTermIndices) {
+                            continue;
+                        }
                     }
-                    if(differentTermIndices) {
-                        continue;
-                    }
+                    removals.add(s);
+                    break;
                 }
-                removals.add(s);
-                break;
             }
-        }
-        for(final Task removal : removals) {
-            nal.memory.seq_current.take(removal);
-        }
-        //ok now add the new one:
-        //making sure we do not mess with budget of the task:
-        if(!(newEvent.sentence.getTerm() instanceof Operation)) {
-            final Concept c = nal.memory.concept(newEvent.getTerm());
-            final float event_quality = BudgetFunctions.truthToQuality(newEvent.sentence.truth);
-            float event_priority = event_quality;
-            if(c != null) {
-                event_priority = Math.max(event_quality, c.getPriority());
+            for(final Task removal : removals) {
+                nal.memory.seq_current.take(removal);
             }
-            final Task t2 = new Task(newEvent.sentence, new BudgetValue(event_priority, 1.0f/(float)newEvent.sentence.term.getComplexity(), event_quality), newEvent.getParentBelief(), newEvent.getBestSolution());
-            nal.memory.seq_current.putIn(t2);
+            //ok now add the new one:
+            //making sure we do not mess with budget of the task:
+            if(!(newEvent.sentence.getTerm() instanceof Operation)) {
+                final Concept c = nal.memory.concept(newEvent.getTerm());
+                final float event_quality = BudgetFunctions.truthToQuality(newEvent.sentence.truth);
+                float event_priority = event_quality;
+                if(c != null) {
+                    event_priority = Math.max(event_quality, c.getPriority());
+                }
+                final Task t2 = new Task(newEvent.sentence, new BudgetValue(event_priority, 1.0f/(float)newEvent.sentence.term.getComplexity(), event_quality), newEvent.getParentBelief(), newEvent.getBestSolution());
+                nal.memory.seq_current.putIn(t2);
+            }
         }
     }
     
@@ -217,16 +221,18 @@ public class TemporalInferenceControl {
         mem.recent_operations.putIn(task);                 //contributes to the current (enhancement)
         mem.lastDecision = task;
         final Concept c = mem.concept(task.getTerm());
-        if(c != null) {
-            if(c.seq_before == null) {
-                c.seq_before = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
-            }
-            for(final Task t : mem.seq_current) {
-                if(task.sentence.getOccurenceTime() > t.sentence.getOccurenceTime()) {
-                    c.seq_before.putIn(t);
+        synchronized(mem.seq_current) {
+            if(c != null) {
+                if(c.seq_before == null) {
+                    c.seq_before = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
+                }
+                for(final Task t : mem.seq_current) {
+                    if(task.sentence.getOccurenceTime() > t.sentence.getOccurenceTime()) {
+                        c.seq_before.putIn(t);
+                    }
                 }
             }
+            mem.seq_current.clear();
         }
-        mem.seq_current.clear();
     }
 }

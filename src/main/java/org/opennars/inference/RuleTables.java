@@ -56,7 +56,12 @@ public class RuleTables {
         
         final Concept beliefConcept = memory.concept(beliefTerm);
         
-        final Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task) : null;
+        Sentence belief = null;
+        if(beliefConcept != null) {
+            synchronized(beliefConcept) { //we only need the target concept to select a belief
+                belief = beliefConcept.getBelief(nal, task);
+            }
+        }
         
         nal.setCurrentBelief( belief );
         

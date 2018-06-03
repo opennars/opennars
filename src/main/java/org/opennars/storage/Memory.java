@@ -82,6 +82,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     /* InnateOperator registry. Containing all registered operators of the system */
     public final Map<CharSequence, Operator> operators;
     
+    /* a mutex for novel and new taskks*/
+    private final Object tasksMutex = new Object();
+    
     /* New tasks with novel composed terms, for delayed and selective processing*/
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
     
@@ -109,7 +112,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public Memory(final RuntimeParameters param, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
                   final Bag<Task<Term>,Sentence<Term>> seq_current,
                   final Bag<Task<Term>,Sentence<Term>> recent_operations) {
-
         this.param = param;
         this.event = new EventEmitter();
         this.concepts = concepts;
@@ -127,11 +129,13 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         synchronized (concepts) {
             concepts.clear();
         }
-        novelTasks.clear();
-        synchronized (newTasks) {
+        synchronized (tasksMutex) {
             newTasks.clear();
+            novelTasks.clear();
         }
-        this.seq_current.clear();
+        synchronized(this.seq_current) {
+            this.seq_current.clear();
+        }
         cycle = 0;
         emotion.resetEmotions();
         this.lastDecision = null;
@@ -225,7 +229,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * add new task that waits to be processed in the next cycleMemory
      */
     public void addNewTask(final Task t, final String reason) {
-        synchronized (newTasks) {
+        synchronized (tasksMutex) {
             newTasks.add(t);
         }
       //  logic.TASK_ADD_NEW.commit(t.getPriority());
@@ -273,9 +277,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             }
 
             if (task.budget.aboveThreshold()) {
-                
                 addNewTask(task, "Perceived");
-                
             } else {
                 removeTask(task, "Neglected");
             }
@@ -351,7 +353,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         event.emit(Events.CycleEnd.class);
         event.synch();
         
-        cycle++;
+        synchronized(this) {
+            cycle++;
+        }
     }
     
     public void localInference(final Task task, NarParameters narParameters) {
@@ -382,7 +386,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * buffer.
      */
     public void processNewTasks(NarParameters narParameters) {
-        synchronized (newTasks) {
+        synchronized (tasksMutex) {
             Task task;
             int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
             while (counter-- > 0) {
