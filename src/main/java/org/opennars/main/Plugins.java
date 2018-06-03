@@ -34,8 +34,7 @@ public class Plugins {
         //Add a vision channel:
         final int sensor_W = 5;
         final int sensor_H = 5;
-        n.addSensoryChannel(label.toString(),
-                            new VisionChannel(label, n, n, sensor_H, sensor_W, sensor_W*sensor_H));
+        n.addPlugin(new VisionChannel(label, n, n, sensor_H, sensor_W, sensor_W*sensor_H));
         //allow NAL9 capabilities:
         final boolean full_internal_experience = false;
         if(!full_internal_experience) {
