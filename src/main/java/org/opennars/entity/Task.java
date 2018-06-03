@@ -34,7 +34,38 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     public final  Sentence parentBelief;
     /* For Question and Goal: best solution found so far*/
     private Sentence bestSolution;
-    
+
+    public static class MakeInfo {
+        Sentence sentence = null;
+        BudgetValue budget;
+
+        /**
+         * The belief from which this new task is derived
+         */
+        Sentence parentBelief = null;
+
+        /**
+         * solution The belief to be used in future inference
+         */
+        Sentence solution = null;
+
+        boolean isInput = false;
+    }
+
+    public static Task make(MakeInfo info) {
+        return new Task(info);
+    }
+
+    protected Task(MakeInfo info) {
+        super(info.budget);
+
+        this.isInput = info.isInput;
+
+        this.sentence = info.sentence;
+        this.parentBelief = info.parentBelief;
+        this.bestSolution = info.solution;
+    }
+
     /**
      * Constructor for input task and single premise task
      *
@@ -49,6 +80,7 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     protected Task() {
         this(null, null, null, null);
     }
+
     
     private boolean partOfSequenceBuffer = false;
     private boolean observablePrediction = false;
