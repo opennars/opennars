@@ -75,7 +75,7 @@ public class UtilityFunctions {
         }
         
         if (arr.length == 2) {
-            return (float)sqrt(a*b);
+            return (float)sqrt(arr[0]*arr[1]);
         }
         return (float) pow(product, 1.00 / arr.length);
     }
