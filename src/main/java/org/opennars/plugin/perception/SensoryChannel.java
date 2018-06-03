@@ -33,7 +33,7 @@ public abstract class SensoryChannel implements Plugin, Serializable {
     public int height = 0; //1D channels have height 1
     public int width = 0;
     public int duration = -1;
-    Term label;
+    private Term label;
     public SensoryChannel(){}
     public SensoryChannel(final Nar nar, final Collection<SensoryChannel> reportResultsTo, final int width, final int height, final int duration, Term label) {
         this.reportResultsTo = reportResultsTo;
