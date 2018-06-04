@@ -35,6 +35,10 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     /* For Question and Goal: best solution found so far*/
     private Sentence bestSolution;
     
+    private boolean partOfSequenceBuffer = false;
+    private boolean observablePrediction = false;
+    private boolean isInput = false;
+    
     /**
      * Constructor for input task and single premise task
      *
@@ -49,10 +53,6 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     protected Task() {
         this(null, null, null, null);
     }
-    
-    private boolean partOfSequenceBuffer = false;
-    private boolean observablePrediction = false;
-    private boolean isInput = false;
     
     /**
      * Constructor for a derived task
