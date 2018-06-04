@@ -37,11 +37,6 @@ public class UtilityFunctions {
         return product;
     }
     
-    //may be more efficient than the for-loop version above, for 2 params
-    public final static float and(final float a, final float b) {
-        return a*b;
-    }
-    
     /**
      * A function where the output is disjunctively determined by the inputs
      * @param arr The inputs, each in [0, 1]
@@ -53,10 +48,6 @@ public class UtilityFunctions {
             product *= (1 - f);
         }
         return 1 - product;
-    }
-    
-    public final static float or(final float a, final float b) {
-        return 1f-((1f-a)*(1f-b));
     }
     
     /**
@@ -71,11 +62,6 @@ public class UtilityFunctions {
         }
         return sum / arr.length;
     }
-    
-    //may be more efficient than the for-loop version above, for 2 params
-    public final static float aveAri(final float a, final float b) {
-        return (a + b)/2f;
-    }
 
     /**
      * A function where the output is the geometric average the inputs
@@ -87,19 +73,13 @@ public class UtilityFunctions {
         for (final float f : arr) {
             product *= f;
         }
+        
+        if (arr.length == 2) {
+            return (float)sqrt(arr[0]*arr[1]);
+        }
         return (float) pow(product, 1.00 / arr.length);
     }
 
-    //may be more efficient than the for-loop version above, for 2 params
-    public final static float aveGeo(final float a, final float b) {
-        return (float)sqrt(a*b);
-    }
-    
-    //may be more efficient than the for-loop version above, for 3 params
-    public final static float aveGeo(final float a, final float b, final float c) {
-        return (float)pow(a*b*c, 1.0/3.0);
-    }    
-    
     /**
      * A function to convert weight to confidence
      * @param w Weight of evidence, a non-negative real number

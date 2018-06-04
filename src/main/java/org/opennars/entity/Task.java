@@ -34,6 +34,10 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     public final  Sentence parentBelief;
     /* For Question and Goal: best solution found so far*/
     private Sentence bestSolution;
+  
+    private boolean partOfSequenceBuffer = false;
+    private boolean observablePrediction = false;
+    private boolean isInput = false;
 
     public static class MakeInfo {
         public Sentence sentence = null;
@@ -77,11 +81,7 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
         this.isInput = isInput;
     }
     
-    private boolean partOfSequenceBuffer = false;
-    private boolean observablePrediction = false;
-    private boolean isInput = false;
-
-    private Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
+  private Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
         super(b);
         this.sentence = s;
         this.parentBelief = parentBelief;
