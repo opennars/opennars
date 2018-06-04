@@ -85,11 +85,7 @@ public class Abbreviation implements Plugin {
                     Parameters.DEFAULT_JUDGMENT_DURABILITY, 
                     quality);
 
-            Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-            newTaskMakeInfo.sentence = sentence;
-            newTaskMakeInfo.budget = budget;
-            newTaskMakeInfo.isInput = true;
-            final Task newTask = Task.make(newTaskMakeInfo);
+            final Task newTask = Task.make(sentence, budget, Task.EnumType.INPUT);
             return Lists.newArrayList(newTask);
 
         }

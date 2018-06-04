@@ -144,12 +144,7 @@ public class Narsese implements Serializable {
         //    sentence.setRevisible(false);
         //}
         final BudgetValue budget = parseBudget(budgetString, punc, truth);
-
-        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-        newTaskMakeInfo.sentence = sentence;
-        newTaskMakeInfo.budget = budget;
-        newTaskMakeInfo.isInput = true;
-        return Task.make(newTaskMakeInfo);
+        return Task.make(sentence, budget, Task.EnumType.INPUT);
     }
 
     /* ---------- react values ---------- */

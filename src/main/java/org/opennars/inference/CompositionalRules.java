@@ -287,10 +287,7 @@ public final class CompositionalRules {
                     return;
                 }
 
-                Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-                newTaskMakeInfo.sentence = contentBelief;
-                newTaskMakeInfo.budget = task.budget;
-                final Task contentTask = Task.make(newTaskMakeInfo);
+                final Task contentTask = Task.make(contentBelief, task.budget, Task.EnumType.DERIVED);
 
                 nal.setCurrentTask(contentTask);
                 final Term conj = Conjunction.make(component, content);
