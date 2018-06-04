@@ -326,21 +326,20 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
 
     public Nar ask(final String termString, final AnswerHandler answered) throws InvalidInputException {
+        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+        newTaskMakeInfo.sentence = new Sentence(
+            new Narsese(this).parseTerm(termString),
+            Symbols.QUESTION_MARK,
+            null,
+            new Stamp(memory, Tense.Eternal));
+        newTaskMakeInfo.budget = new BudgetValue(
+            Parameters.DEFAULT_QUESTION_PRIORITY,
+            Parameters.DEFAULT_QUESTION_DURABILITY,
+            1);
+        newTaskMakeInfo.isInput = false;
+        final Task t = Task.make(newTaskMakeInfo);
 
-        final Task t;
-        addInput(
-                t = new Task(
-                        new Sentence(
-                                new Narsese(this).parseTerm(termString),
-                                Symbols.QUESTION_MARK,
-                                null,
-                                new Stamp(memory, Tense.Eternal)),
-                        new BudgetValue(
-                                Parameters.DEFAULT_QUESTION_PRIORITY,
-                                Parameters.DEFAULT_QUESTION_DURABILITY,
-                                1),
-                        true)
-        );
+        addInput(t);
 
         if (answered!=null) {
             answered.start(t, this);
@@ -350,21 +349,20 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
 
     public Nar askNow(final String termString, final AnswerHandler answered) throws InvalidInputException {
+        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+        newTaskMakeInfo.sentence = new Sentence(
+            new Narsese(this).parseTerm(termString),
+            Symbols.QUESTION_MARK,
+            null,
+            new Stamp(memory, Tense.Present));
+        newTaskMakeInfo.budget = new BudgetValue(
+            Parameters.DEFAULT_QUESTION_PRIORITY,
+            Parameters.DEFAULT_QUESTION_DURABILITY,
+            1);
+        newTaskMakeInfo.isInput = true;
+        final Task t = Task.make(newTaskMakeInfo);
 
-        final Task t;
-        addInput(
-                t = new Task(
-                        new Sentence(
-                                new Narsese(this).parseTerm(termString),
-                                Symbols.QUESTION_MARK,
-                                null,
-                                new Stamp(memory, Tense.Present)),
-                        new BudgetValue(
-                                Parameters.DEFAULT_QUESTION_PRIORITY,
-                                Parameters.DEFAULT_QUESTION_DURABILITY,
-                                1),
-                        true)
-        );
+        addInput(t);
 
         if (answered!=null) {
             answered.start(t, this);

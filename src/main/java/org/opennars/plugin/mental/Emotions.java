@@ -92,7 +92,13 @@ public class Emotions implements Plugin {
             final TruthValue truth=new TruthValue(happy,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
             final Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
             s.stamp.setOccurrenceTime(nal.memory.time());
-            final Task t=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth)), true);
+
+            Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+            newTaskMakeInfo.sentence = s;
+            newTaskMakeInfo.budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth));
+            newTaskMakeInfo.isInput = true;
+            final Task t = Task.make(newTaskMakeInfo);
+
             nal.addTask(t, "emotion");
             /*if(Parameters.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
                 TruthValue truth2=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE);
@@ -164,11 +170,14 @@ public class Emotions implements Plugin {
                 truth,
                 new Stamp(nal.memory));
             s.stamp.setOccurrenceTime(nal.memory.time());
-            final Task t=new Task(s,
-                            new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
-                                            Parameters.DEFAULT_JUDGMENT_DURABILITY,
-                                            BudgetFunctions.truthToQuality(truth)),
-                            true);
+
+            Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+            newTaskMakeInfo.sentence = s;
+            newTaskMakeInfo.budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
+                Parameters.DEFAULT_JUDGMENT_DURABILITY,
+                BudgetFunctions.truthToQuality(truth));
+            newTaskMakeInfo.isInput = true;
+            final Task t = Task.make(newTaskMakeInfo);
             nal.addTask(t, "emotion");
         }
     }

@@ -83,7 +83,12 @@ public class Counting implements Plugin {
                                 truth,
                                 stampi);
                             final BudgetValue budg = task.budget.clone();
-                            final Task newTask = new Task(j, budg, true);
+
+                            Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+                            newTaskMakeInfo.sentence = j;
+                            newTaskMakeInfo.budget = budg;
+                            newTaskMakeInfo.isInput = true;
+                            final Task newTask = Task.make(newTaskMakeInfo);
 
                             memory.addNewTask(newTask, "Derived (Cardinality)");
                         }

@@ -34,7 +34,42 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     public final  Sentence parentBelief;
     /* For Question and Goal: best solution found so far*/
     private Sentence bestSolution;
-    
+  
+    private boolean partOfSequenceBuffer = false;
+    private boolean observablePrediction = false;
+    private boolean isInput = false;
+
+    public static class MakeInfo {
+        public Sentence sentence = null;
+        public BudgetValue budget;
+
+        /**
+         * The belief from which this new task is derived
+         */
+        public Sentence parentBelief = null;
+
+        /**
+         * solution The belief to be used in future inference
+         */
+        public Sentence solution = null;
+
+        public boolean isInput = false;
+    }
+
+    public static Task make(MakeInfo info) {
+        return new Task(info);
+    }
+
+    protected Task(MakeInfo info) {
+        super(info.budget);
+
+        this.isInput = info.isInput;
+
+        this.sentence = info.sentence;
+        this.parentBelief = info.parentBelief;
+        this.bestSolution = info.solution;
+    }
+
     /**
      * Constructor for input task and single premise task
      *
@@ -45,43 +80,12 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
         this(s, b, null, null);  
         this.isInput = isInput;
     }
-
-    protected Task() {
-        this(null, null, null, null);
-    }
     
-    private boolean partOfSequenceBuffer = false;
-    private boolean observablePrediction = false;
-    private boolean isInput = false;
-    
-    /**
-     * Constructor for a derived task
-     *
-     * @param s The sentence
-     * @param b The budget
-     * @param parentBelief The belief from which this new task is derived
-     */
-    public Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief) {
-        this(s, b, parentBelief, null);
-    }
-    public Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
+  private Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
         super(b);
         this.sentence = s;
         this.parentBelief = parentBelief;
         this.bestSolution = solution;   
-    }
-    
-    /**
-     * Constructor for an activated task
-     *
-     * @param s The sentence
-     * @param b The budget
-     * @param parentTask The task from which this new task is derived
-     * @param parentBelief The belief from which this new task is derived
-     * @param solution The belief to be used in future inference
-     */
-    public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
-        this(s, b, parentBelief, solution);
     }
     
     @Override public Sentence name() {
@@ -107,9 +111,12 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
         return make(s, b, parent, null);
     }
     
-    public static Task make(final Sentence s, final BudgetValue b, final Task parent, final Sentence belief) {
-        final Term t = s.term;
-        return new Task(s, b, belief);
+    public static Task make(final Sentence sentence, final BudgetValue budget, final Task parent, final Sentence parentBelief) {
+        MakeInfo makeInfo = new MakeInfo();
+        makeInfo.sentence = sentence;
+        makeInfo.budget = budget;
+        makeInfo.parentBelief = parentBelief;
+        return make(makeInfo);
     }
     
     /**

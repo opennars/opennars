@@ -177,8 +177,13 @@ public class InternalExperience implements Plugin, EventObserver {
     }
     
     public static void InternalExperienceFromBelief(final Memory memory, final Task task, final Sentence belief) {
-        final Task T=new Task(belief.clone(),task.budget.clone(),true);
-        InternalExperienceFromTask(memory,T,false);
+        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+        newTaskMakeInfo.sentence = belief.clone();
+        newTaskMakeInfo.budget = task.budget.clone();
+        newTaskMakeInfo.isInput = true;
+        final Task newTask = Task.make(newTaskMakeInfo);
+
+        InternalExperienceFromTask(memory, newTask, false);
     }
     
     public static void InternalExperienceFromTask(final Memory memory, final Task task, final boolean full) {
@@ -234,8 +239,13 @@ public class InternalExperience implements Plugin, EventObserver {
             newbudget.setPriority(task.getPriority()*INTERNAL_EXPERIENCE_PRIORITY_MUL);
             newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
         }
-        
-        final Task newTask = new Task(j, newbudget, true);
+
+        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+        newTaskMakeInfo.sentence = j;
+        newTaskMakeInfo.budget = newbudget;
+        newTaskMakeInfo.isInput = true;
+        final Task newTask = Task.make(newTaskMakeInfo);
+
         memory.addNewTask(newTask, "Reflected mental operation (Internal Experience)");
         return false;
     }
@@ -272,7 +282,12 @@ public class InternalExperience implements Plugin, EventObserver {
                     Parameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                     quality);
 
-                final Task newTask = new Task(sentence, budget, true);
+                Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+                newTaskMakeInfo.sentence = sentence;
+                newTaskMakeInfo.budget = budget;
+                newTaskMakeInfo.isInput = true;
+                final Task newTask = Task.make(newTaskMakeInfo);
+
                 nal.derivedTask(newTask, false, false, false);
             }
         }
@@ -319,7 +334,12 @@ public class InternalExperience implements Plugin, EventObserver {
                         Parameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                         quality);
 
-                    final Task newTask = new Task(sentence, budget, true);
+                    Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+                    newTaskMakeInfo.sentence = sentence;
+                    newTaskMakeInfo.budget = budget;
+                    newTaskMakeInfo.isInput = true;
+                    final Task newTask = Task.make(newTaskMakeInfo);
+
                     nal.derivedTask(newTask, false, false, false);
                 }
             }

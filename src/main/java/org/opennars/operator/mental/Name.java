@@ -55,7 +55,12 @@ public class Name extends Operator {
             new Stamp(memory));
         
         final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
-        
-        return Lists.newArrayList( new Task(sentence, budget, true) );        
+
+        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+        newTaskMakeInfo.sentence = sentence;
+        newTaskMakeInfo.budget = budget;
+        newTaskMakeInfo.isInput = true;
+        final Task newTask = Task.make(newTaskMakeInfo);
+        return Lists.newArrayList(newTask);
     }
 }
