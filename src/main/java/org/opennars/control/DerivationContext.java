@@ -155,7 +155,13 @@ public class DerivationContext {
             getCurrentTask().sentence.punctuation,
             newTruth,
             derived_stamp);
-        final Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
+
+        Task.MakeInfo newTaskInfo = new Task.MakeInfo();
+        newTaskInfo.sentence = newSentence;
+        newTaskInfo.budget = newBudget;
+        newTaskInfo.parentBelief = getCurrentBelief();
+        final Task newTask = Task.make(newTaskInfo);
+
         return derivedTask(newTask, true, false, true); //allows overlap since overlap was already checked on revisable( function
     }                                                               //which is not the case for other single premise tasks
 
@@ -289,7 +295,12 @@ public class DerivationContext {
         if (!newBudget.aboveThreshold()) {
             return false;
         }
-        final Task newTask = new Task(newSentence, newBudget, false);
+
+        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+        newTaskMakeInfo.sentence = newSentence;
+        newTaskMakeInfo.budget = newBudget;
+        final Task newTask = Task.make(newTaskMakeInfo);
+
         return derivedTask(newTask, false, true, false);
     }
 
@@ -446,8 +457,12 @@ public class DerivationContext {
      * forward/backward correspondence
      */
     public void addTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {        
-        addTask(new Task(sentence, budget, currentTask, sentence, candidateBelief),
-                "Activated");        
+        Task.MakeInfo newTaskInfo = new Task.MakeInfo();
+        newTaskInfo.sentence = sentence;
+        newTaskInfo.budget = budget;
+        newTaskInfo.parentBelief = sentence;
+        newTaskInfo.solution = candidateBelief;
+        addTask(Task.make(newTaskInfo), "Activated");
     }    
     
     @Override

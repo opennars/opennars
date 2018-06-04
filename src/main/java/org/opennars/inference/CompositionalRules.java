@@ -286,7 +286,12 @@ public final class CompositionalRules {
                 if (contentBelief == null) {
                     return;
                 }
-                final Task contentTask = new Task(contentBelief, task.budget, false);
+
+                Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+                newTaskMakeInfo.sentence = contentBelief;
+                newTaskMakeInfo.budget = task.budget;
+                final Task contentTask = Task.make(newTaskMakeInfo);
+
                 nal.setCurrentTask(contentTask);
                 final Term conj = Conjunction.make(component, content);
                 truth = intersection(contentBelief.truth, belief.truth);

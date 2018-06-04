@@ -55,7 +55,13 @@ public class Wonder extends Operator {
             new Stamp(memory));
 
         final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
-        return Lists.newArrayList( new Task(sentence, budget, true) );
+
+        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+        newTaskMakeInfo.sentence = sentence;
+        newTaskMakeInfo.budget = budget;
+        newTaskMakeInfo.isInput = true;
+        final Task newTask = Task.make(newTaskMakeInfo);
+        return Lists.newArrayList(newTask);
     }
         
 }

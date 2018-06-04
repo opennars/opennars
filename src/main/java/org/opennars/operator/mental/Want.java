@@ -54,7 +54,12 @@ public class Want extends Operator {
         
         final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, truth);
 
-        return Lists.newArrayList( new Task(sentence, budget, true) );        
+        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
+        newTaskMakeInfo.sentence = sentence;
+        newTaskMakeInfo.budget = budget;
+        newTaskMakeInfo.isInput = true;
+        final Task newTask = Task.make(newTaskMakeInfo);
+        return Lists.newArrayList(newTask);
     }
     
 }
