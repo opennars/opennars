@@ -240,14 +240,12 @@ public class Anticipate extends Operator implements EventObserver {
                     truth,
                     st);
 
-            Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-            newTaskMakeInfo.sentence = s;
-            newTaskMakeInfo.budget = new BudgetValue(
+            final BudgetValue budgetForNewTask = new BudgetValue(
                 Parameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
                 Parameters.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
                 BudgetFunctions.truthToQuality(truth));
-            newTaskMakeInfo.isInput = true;
-            final Task newTask = Task.make(newTaskMakeInfo);
+            final Task newTask = Task.make(s, budgetForNewTask, Task.EnumType.INPUT);
+
             memory.addNewTask(newTask, "Perceived (Internal Experience: Anticipation)");
         }
     }
@@ -268,11 +266,7 @@ public class Anticipate extends Operator implements EventObserver {
             truth,
             stamp);
 
-        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-        newTaskMakeInfo.sentence = S;
-        newTaskMakeInfo.budget = budget;
-        newTaskMakeInfo.isInput = true;
-        final Task task = Task.make(newTaskMakeInfo);
+        final Task task = Task.make(S, budget, Task.EnumType.INPUT);
 
         nal.derivedTask(task, false, true, false); 
         task.setElemOfSequenceBuffer(true);

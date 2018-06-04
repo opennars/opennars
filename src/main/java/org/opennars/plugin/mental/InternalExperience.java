@@ -177,11 +177,7 @@ public class InternalExperience implements Plugin, EventObserver {
     }
     
     public static void InternalExperienceFromBelief(final Memory memory, final Task task, final Sentence belief) {
-        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-        newTaskMakeInfo.sentence = belief.clone();
-        newTaskMakeInfo.budget = task.budget.clone();
-        newTaskMakeInfo.isInput = true;
-        final Task newTask = Task.make(newTaskMakeInfo);
+        final Task newTask = Task.make(belief.clone(), task.budget.clone(), Task.EnumType.INPUT);
 
         InternalExperienceFromTask(memory, newTask, false);
     }
@@ -240,11 +236,7 @@ public class InternalExperience implements Plugin, EventObserver {
             newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
         }
 
-        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-        newTaskMakeInfo.sentence = j;
-        newTaskMakeInfo.budget = newbudget;
-        newTaskMakeInfo.isInput = true;
-        final Task newTask = Task.make(newTaskMakeInfo);
+        final Task newTask = Task.make(j, newbudget, Task.EnumType.INPUT);
 
         memory.addNewTask(newTask, "Reflected mental operation (Internal Experience)");
         return false;
@@ -282,11 +274,7 @@ public class InternalExperience implements Plugin, EventObserver {
                     Parameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                     quality);
 
-                Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-                newTaskMakeInfo.sentence = sentence;
-                newTaskMakeInfo.budget = budget;
-                newTaskMakeInfo.isInput = true;
-                final Task newTask = Task.make(newTaskMakeInfo);
+                final Task newTask = Task.make(sentence, budget, Task.EnumType.INPUT);
 
                 nal.derivedTask(newTask, false, false, false);
             }
@@ -334,11 +322,7 @@ public class InternalExperience implements Plugin, EventObserver {
                         Parameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                         quality);
 
-                    Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-                    newTaskMakeInfo.sentence = sentence;
-                    newTaskMakeInfo.budget = budget;
-                    newTaskMakeInfo.isInput = true;
-                    final Task newTask = Task.make(newTaskMakeInfo);
+                    final Task newTask = Task.make(sentence, budget, Task.EnumType.INPUT);
 
                     nal.derivedTask(newTask, false, false, false);
                 }
