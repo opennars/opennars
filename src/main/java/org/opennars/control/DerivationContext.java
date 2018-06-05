@@ -296,11 +296,7 @@ public class DerivationContext {
             return false;
         }
 
-        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-        newTaskMakeInfo.sentence = newSentence;
-        newTaskMakeInfo.budget = newBudget;
-        final Task newTask = Task.make(newTaskMakeInfo);
-
+        final Task newTask = Task.make(newSentence, newBudget, Task.EnumType.DERIVED);
         return derivedTask(newTask, false, true, false);
     }
 

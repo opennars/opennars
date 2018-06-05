@@ -56,11 +56,28 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
         public boolean isInput = false;
     }
 
+    public static Task make(final Sentence sentence, final BudgetValue budget, final EnumType type) {
+        return new Task(sentence, budget, type == EnumType.INPUT);
+    }
+
+
+    public static Task make(final Sentence s, final BudgetValue b, final Task parent) {
+        return make(s, b, parent, null);
+    }
+
+    public static Task make(final Sentence sentence, final BudgetValue budget, final Task parent, final Sentence parentBelief) {
+        MakeInfo makeInfo = new MakeInfo();
+        makeInfo.sentence = sentence;
+        makeInfo.budget = budget;
+        makeInfo.parentBelief = parentBelief;
+        return make(makeInfo);
+    }
+
     public static Task make(MakeInfo info) {
         return new Task(info);
     }
 
-    protected Task(MakeInfo info) {
+    private Task(MakeInfo info) {
         super(info.budget);
 
         this.isInput = info.isInput;
@@ -76,12 +93,12 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
      * @param s The sentence
      * @param b The budget
      */ 
-    public Task(final Sentence<T> s, final BudgetValue b, final boolean isInput) {
+    private Task(final Sentence<T> s, final BudgetValue b, final boolean isInput) {
         this(s, b, null, null);  
         this.isInput = isInput;
     }
     
-  private Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
+    private Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
         super(b);
         this.sentence = s;
         this.parentBelief = parentBelief;
@@ -106,19 +123,7 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     public int hashCode() {
         return sentence.hashCode();
     }
-    
-    public static Task make(final Sentence s, final BudgetValue b, final Task parent) {
-        return make(s, b, parent, null);
-    }
-    
-    public static Task make(final Sentence sentence, final BudgetValue budget, final Task parent, final Sentence parentBelief) {
-        MakeInfo makeInfo = new MakeInfo();
-        makeInfo.sentence = sentence;
-        makeInfo.budget = budget;
-        makeInfo.parentBelief = parentBelief;
-        return make(makeInfo);
-    }
-    
+
     /**
      * Directly get the creation time of the sentence
      *
@@ -219,5 +224,10 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
 
     public T getTerm() {
         return sentence.getTerm();
+    }
+
+    public enum EnumType {
+        INPUT,
+        DERIVED,
     }
 }

@@ -326,18 +326,16 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
 
     public Nar ask(final String termString, final AnswerHandler answered) throws InvalidInputException {
-        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-        newTaskMakeInfo.sentence = new Sentence(
+        final Sentence sentenceForNewTask = new Sentence(
             new Narsese(this).parseTerm(termString),
             Symbols.QUESTION_MARK,
             null,
             new Stamp(memory, Tense.Eternal));
-        newTaskMakeInfo.budget = new BudgetValue(
+        final BudgetValue budget = new BudgetValue(
             Parameters.DEFAULT_QUESTION_PRIORITY,
             Parameters.DEFAULT_QUESTION_DURABILITY,
             1);
-        newTaskMakeInfo.isInput = false;
-        final Task t = Task.make(newTaskMakeInfo);
+        final Task t = Task.make(sentenceForNewTask, budget, Task.EnumType.INPUT);
 
         addInput(t);
 
@@ -349,18 +347,16 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
 
     public Nar askNow(final String termString, final AnswerHandler answered) throws InvalidInputException {
-        Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-        newTaskMakeInfo.sentence = new Sentence(
+        final Sentence sentenceForNewTask = new Sentence(
             new Narsese(this).parseTerm(termString),
             Symbols.QUESTION_MARK,
             null,
             new Stamp(memory, Tense.Present));
-        newTaskMakeInfo.budget = new BudgetValue(
+        final BudgetValue budgetForNewTask = new BudgetValue(
             Parameters.DEFAULT_QUESTION_PRIORITY,
             Parameters.DEFAULT_QUESTION_DURABILITY,
             1);
-        newTaskMakeInfo.isInput = true;
-        final Task t = Task.make(newTaskMakeInfo);
+        final Task t = Task.make(sentenceForNewTask, budgetForNewTask, Task.EnumType.INPUT);
 
         addInput(t);
 

@@ -93,11 +93,8 @@ public class Emotions implements Plugin {
             final Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
             s.stamp.setOccurrenceTime(nal.memory.time());
 
-            Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-            newTaskMakeInfo.sentence = s;
-            newTaskMakeInfo.budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth));
-            newTaskMakeInfo.isInput = true;
-            final Task t = Task.make(newTaskMakeInfo);
+            final BudgetValue budgetOfNewTask = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth));
+            final Task t = Task.make(s, budgetOfNewTask, Task.EnumType.INPUT);
 
             nal.addTask(t, "emotion");
             /*if(Parameters.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
@@ -171,13 +168,10 @@ public class Emotions implements Plugin {
                 new Stamp(nal.memory));
             s.stamp.setOccurrenceTime(nal.memory.time());
 
-            Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-            newTaskMakeInfo.sentence = s;
-            newTaskMakeInfo.budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
+            final BudgetValue budgetForNewTask = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
                 Parameters.DEFAULT_JUDGMENT_DURABILITY,
                 BudgetFunctions.truthToQuality(truth));
-            newTaskMakeInfo.isInput = true;
-            final Task t = Task.make(newTaskMakeInfo);
+            final Task t = Task.make(s, budgetForNewTask, Task.EnumType.INPUT);
             nal.addTask(t, "emotion");
         }
     }

@@ -114,13 +114,10 @@ public abstract class FunctionOperator extends Operator {
                                       new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
                                       new Stamp(m));
 
-            Task.MakeInfo newTaskMakeInfo = new Task.MakeInfo();
-            newTaskMakeInfo.sentence = s;
-            newTaskMakeInfo.budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
+            final BudgetValue budgetForNewTask = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
                 Parameters.DEFAULT_FEEDBACK_DURABILITY,
                 truthToQuality(s.getTruth()));
-            newTaskMakeInfo.isInput = true;
-            final Task newTask = Task.make(newTaskMakeInfo);
+            final Task newTask = Task.make(s, budgetForNewTask, Task.EnumType.INPUT);
 
             return Lists.newArrayList(newTask);
         }
