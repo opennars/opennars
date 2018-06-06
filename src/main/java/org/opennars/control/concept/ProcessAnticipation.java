@@ -50,20 +50,18 @@ public class ProcessAnticipation {
         //derivation was successful and it was a judgment event
         final Stamp stamp = new Stamp(nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
+        float eternalized_induction_confidence = 0.33f;
         //long serial = stamp.evidentialBase[0];
-        final Sentence sentence = new Sentence(
+        final Sentence s = new Sentence(
             mainSentence.term,
             mainSentence.punctuation,
-            new TruthValue(0.0f, 0.0f),
+            new TruthValue(0.0f, eternalized_induction_confidence),
             stamp);
-
-        final BudgetValue budgetForNewTask = new BudgetValue(0.99f,0.1f,0.1f); //Budget for one-time processing
-        final Task createdTask = Task.make(sentence, budgetForNewTask, Task.EnumType.DERIVED);
-
+        final Task t = Task.make(s, new BudgetValue(0.99f,0.1f,0.1f), Task.EnumType.DERIVED); //Budget for one-time processing
         final Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
         if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
-                c.negConfirmation = createdTask;
+                c.negConfirmation = t;
                 c.negConfirmationPriority = priority;
                 c.negConfirm_abort_maxtime = maxtime;
                 c.negConfirm_abort_mintime = mintime;
@@ -113,20 +111,7 @@ public class ProcessAnticipation {
             return;
         }
         
-        final Term T = ((Statement)concept.negConfirmation.getTerm()).getPredicate();
-        final Sentence s1 = new Sentence(T, Symbols.JUDGMENT_MARK, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
-                        new Stamp(concept.memory));
-        final Sentence s2 = new Sentence(Negation.make(T), Symbols.JUDGMENT_MARK, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
-                        new Stamp(concept.memory));
-
-        final BudgetValue budgetForNewTask1 = concept.negConfirmation.getBudget().clone();
-        final Task negated1 = Task.make(s1, budgetForNewTask1, Task.EnumType.INPUT);
-
-        final BudgetValue budgetForNewTask2 =  concept.negConfirmation.getBudget().clone();
-        final Task negated2 = Task.make(s2, budgetForNewTask2, Task.EnumType.INPUT);
-
-        concept.memory.inputTask(negated1, false); //disappointed
-        concept.memory.inputTask(negated2, false); //disappointed
+        concept.memory.inputTask(concept.negConfirmation, false);
         concept.memory.emit(OutputHandler.DISAPPOINT.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
         concept.negConfirmation = null;
     }
