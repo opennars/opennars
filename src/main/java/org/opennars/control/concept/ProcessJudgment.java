@@ -54,23 +54,22 @@ public class ProcessJudgment extends Task {
      * 
      * <p>
      * called only by ConceptProcessing.processTask
-     * 
-     * @param task The judgment task to be accepted
+     *
      * @param concept The concept of the judment task
      * @param nal The derivation context
      */
-    public static void processJudgment(final Concept concept, final DerivationContext nal, final Task task) {
-        handleOperationFeedback(task, nal);
-        final Sentence judg = task.sentence;
-        ProcessAnticipation.confirmAnticipation(task, concept, nal);
-        final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs);   // only revise with the strongest -- how about projection?
+    public void process(final Concept concept, final DerivationContext nal) {
+        handleOperationFeedback(this, nal);
+        final Sentence judg = sentence;
+        ProcessAnticipation.confirmAnticipation(this, concept, nal);
+        final Task oldBeliefT = concept.selectCandidate(this, concept.beliefs);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
             oldBelief = oldBeliefT.sentence;
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;       //when table is full, the latter check is especially important too
             if (newStamp.equals(oldStamp,false,false,true)) {
-                concept.memory.removeTask(task, "Duplicated");
+                concept.memory.removeTask(this, "Duplicated");
                 return;
             } else if (revisible(judg, oldBelief)) {
                 nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
@@ -81,7 +80,7 @@ public class ProcessJudgment extends Task {
                 }
             }
         }
-        if (!task.aboveThreshold()) {
+        if (!aboveThreshold()) {
             return;
         }
         final int nnq = concept.questions.size();
@@ -92,9 +91,9 @@ public class ProcessJudgment extends Task {
         for (int i = 0; i < nng; i++) {
             trySolution(judg, concept.desires.get(i), nal, true);
         }
-        concept.addToTable(task, false, concept.beliefs, Parameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
-        if(isExecutableHypothesis(task,nal)) {
-            addToTargetConceptsPreconditions(task, nal, concept);
+        concept.addToTable(this, false, concept.beliefs, Parameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
+        if(isExecutableHypothesis(this,nal)) {
+            addToTargetConceptsPreconditions(this, nal, concept);
         }
     }
 

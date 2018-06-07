@@ -63,9 +63,9 @@ public class ProcessGoal extends Task {
      * @param task The goal task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected static void processGoal(final Concept concept, final DerivationContext nal, final Task task) {
-        final Sentence goal = task.sentence;
-        final Task oldGoalT = concept.selectCandidate(task, concept.desires); // revise with the existing desire values
+    public void process(final Concept concept, final DerivationContext nal) {
+        final Sentence goal = sentence;
+        final Task oldGoalT = concept.selectCandidate(this, concept.desires); // revise with the existing desire values
         Sentence oldGoal = null;
         final Stamp newStamp = goal.stamp;
         if (oldGoalT != null) {
@@ -76,24 +76,24 @@ public class ProcessGoal extends Task {
             }
         }
         Task beliefT = null;
-        if(task.aboveThreshold()) {
-            beliefT = concept.selectCandidate(task, concept.beliefs); // check if the Goal is already satisfied
+        if(aboveThreshold()) {
+            beliefT = concept.selectCandidate(this, concept.beliefs); // check if the Goal is already satisfied
             final int nnq = concept.quests.size();
             for (int i = 0; i < nnq; i++) {
-                trySolution(task.sentence, concept.quests.get(i), nal, true);
+                trySolution(sentence, concept.quests.get(i), nal, true);
             }
             if (beliefT != null) { 
-                trySolution(beliefT.sentence, task, nal, true); // check if the Goal is already satisfied (manipulate budget)
+                trySolution(beliefT.sentence, this, nal, true); // check if the Goal is already satisfied (manipulate budget)
             }
         }
         if (oldGoalT != null) {
             if (revisible(goal, oldGoal)) {
                 final Stamp oldStamp = oldGoal.stamp;
                 nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
-                final Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime());
+                final Sentence projectedGoal = oldGoal.projection(sentence.getOccurenceTime(), newStamp.getOccurrenceTime());
                 if (projectedGoal!=null) {
                     nal.setCurrentBelief(projectedGoal);
-                    final boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
+                    final boolean successOfRevision=revision(sentence, projectedGoal, false, nal);
                     if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
                         return; // with higher/lower desire
                     } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
@@ -102,40 +102,40 @@ public class ProcessGoal extends Task {
         }
         final Stamp s2=goal.stamp.clone();
         s2.setOccurrenceTime(concept.memory.time());
-        if(s2.after(task.sentence.stamp, Parameters.DURATION)) { //this task is not up to date we have to project it first
-            final Sentence projGoal = task.sentence.projection(concept.memory.time(), Parameters.DURATION);
+        if(s2.after(sentence.stamp, Parameters.DURATION)) { //this task is not up to date we have to project it first
+            final Sentence projGoal = sentence.projection(concept.memory.time(), Parameters.DURATION);
             if(projGoal!=null && projGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD) {
-                nal.singlePremiseTask(projGoal, task.budget.clone()); //keep goal updated
+                nal.singlePremiseTask(projGoal, budget.clone()); //keep goal updated
                 // return false; //outcommented, allowing "roundtrips now", relevant for executing multiple steps of learned implication chains
             }
         }
-        if (task.aboveThreshold()) {
+        if (aboveThreshold()) {
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
                 final Sentence belief = beliefT.sentence;
-                final Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), Parameters.DURATION);
-                AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
+                final Sentence projectedBelief = belief.projection(sentence.getOccurenceTime(), Parameters.DURATION);
+                AntiSatisfaction = sentence.truth.getExpDifAbs(projectedBelief.truth);
             }
             final double Satisfaction=1.0-AntiSatisfaction;
-            task.setPriority(task.getPriority()* (float)AntiSatisfaction);
-            if (!task.aboveThreshold()) {
+            setPriority(getPriority()* (float)AntiSatisfaction);
+            if (!aboveThreshold()) {
                 return;
             }
             final TruthValue T=goal.truth.clone();
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
             final boolean fullfilled = AntiSatisfaction < Parameters.SATISFACTION_TRESHOLD;
             final Sentence projectedGoal = goal.projection(nal.memory.time(),nal.memory.time());
-            if (!(projectedGoal != null && task.aboveThreshold() && !fullfilled)) {
+            if (!(projectedGoal != null && aboveThreshold() && !fullfilled)) {
                 return;
             }
-            bestReactionForGoal(concept, nal, projectedGoal, task);
-            questionFromGoal(task, nal);
-            concept.addToTable(task, false, concept.desires, Parameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
-            InternalExperience.InternalExperienceFromTask(concept.memory,task,false);
-            if(!(task.sentence.getTerm() instanceof Operation)) {
+            bestReactionForGoal(concept, nal, projectedGoal, this);
+            questionFromGoal(this, nal);
+            concept.addToTable(this, false, concept.desires, Parameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
+            InternalExperience.InternalExperienceFromTask(concept.memory,this,false);
+            if(!(sentence.getTerm() instanceof Operation)) {
                 return;
             }
-            processOperationGoal(projectedGoal, nal, concept, oldGoalT, task);
+            processOperationGoal(projectedGoal, nal, concept, oldGoalT, this);
         }
     }
 

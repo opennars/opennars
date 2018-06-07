@@ -37,14 +37,12 @@ public class ProcessQuestion extends Task {
     /**
      * To answer a question by existing beliefs
      *
-     * @param task The task to be processed
-     * @return Whether to continue the processing of the task
      */
-    protected static void processQuestion(final Concept concept, final DerivationContext nal, final Task task) {
-        Task quesTask = task;
+    public void process(final Concept concept, final DerivationContext nal) {
+        Task quesTask = this;
         boolean newQuestion = true;
         List<Task> questions = concept.questions;
-        if(task.sentence.punctuation == Symbols.QUEST_MARK) {
+        if(sentence.punctuation == Symbols.QUEST_MARK) {
             questions = concept.quests;
         }
         for (final Task t : questions) {
@@ -60,8 +58,8 @@ public class ProcessQuestion extends Task {
                 concept.memory.event.emit(Events.ConceptQuestionRemove.class, concept, removed);
             }
 
-            questions.add(task);
-            concept.memory.event.emit(Events.ConceptQuestionAdd.class, concept, task);
+            questions.add(this);
+            concept.memory.event.emit(Events.ConceptQuestionAdd.class, concept, this);
         }
         final Sentence ques = quesTask.sentence;
         final Task newAnswerT = (ques.isQuestion())
@@ -69,9 +67,9 @@ public class ProcessQuestion extends Task {
                 : concept.selectCandidate(quesTask, concept.desires);
 
         if (newAnswerT != null) {
-            trySolution(newAnswerT.sentence, task, nal, true);
+            trySolution(newAnswerT.sentence, this, nal, true);
         }
-        else if(task.isInput() && !quesTask.getTerm().hasVarQuery() && quesTask.getBestSolution() != null) { // show previously found solution anyway in case of input
+        else if(isInput() && !quesTask.getTerm().hasVarQuery() && quesTask.getBestSolution() != null) { // show previously found solution anyway in case of input
             concept.memory.emit(Events.Answer.class, quesTask, quesTask.getBestSolution());
         }
     }
