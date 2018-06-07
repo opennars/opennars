@@ -12,10 +12,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.opennars.control.concept;
+package org.opennars.entity;
 
 import org.opennars.control.DerivationContext;
 import org.opennars.control.TemporalInferenceControl;
+import org.opennars.control.concept.ProcessAnticipation;
 import org.opennars.entity.*;
 
 import static org.opennars.inference.LocalRules.revisible;

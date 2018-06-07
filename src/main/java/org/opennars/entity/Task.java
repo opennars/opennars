@@ -15,9 +15,6 @@
 package org.opennars.entity;
 
 import org.opennars.control.DerivationContext;
-import org.opennars.control.concept.ProcessGoal;
-import org.opennars.control.concept.ProcessJudgment;
-import org.opennars.control.concept.ProcessQuestion;
 import org.opennars.language.Term;
 import org.opennars.plugin.mental.InternalExperience;
 import org.opennars.storage.Memory;

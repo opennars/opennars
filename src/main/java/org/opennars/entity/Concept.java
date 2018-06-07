@@ -14,7 +14,6 @@
  */
 package org.opennars.entity;
 
-import org.opennars.control.concept.ProcessTask;
 import org.opennars.control.DerivationContext;
 import org.opennars.inference.LocalRules;
 import org.opennars.io.Symbols.NativeOperator;
@@ -32,8 +31,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.opennars.control.concept.ProcessAnticipation;
-import org.opennars.control.concept.ProcessQuestion;
 
 import static org.opennars.inference.BudgetFunctions.distributeAmongLinks;
 import static org.opennars.inference.BudgetFunctions.rankBelief;
