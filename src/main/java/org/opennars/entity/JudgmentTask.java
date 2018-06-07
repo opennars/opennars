@@ -40,8 +40,8 @@ import org.opennars.operator.mental.Evaluate;
 import org.opennars.operator.mental.Want;
 import org.opennars.operator.mental.Wonder;
 
-public class ProcessJudgment extends Task {
-    public ProcessJudgment(final MakeInfo info) {
+public class JudgmentTask extends Task {
+    public JudgmentTask(final MakeInfo info) {
         super(info);
     }
 

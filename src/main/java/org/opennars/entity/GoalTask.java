@@ -50,8 +50,8 @@ import org.opennars.plugin.mental.InternalExperience;
  *
  * @author Patrick
  */
-public class ProcessGoal extends Task {
-    public ProcessGoal(final MakeInfo info) {
+public class GoalTask extends Task {
+    public GoalTask(final MakeInfo info) {
         super(info);
     }
 

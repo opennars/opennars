@@ -29,8 +29,8 @@ import org.opennars.main.Parameters;
  *
  * @author Patrick
  */
-public class ProcessQuestion extends Task {
-    public ProcessQuestion(final MakeInfo info) {
+public class QuestionOrQuestTask extends Task {
+    public QuestionOrQuestTask(final MakeInfo info) {
         super(info);
     }
 

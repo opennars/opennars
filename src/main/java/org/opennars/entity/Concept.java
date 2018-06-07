@@ -296,9 +296,9 @@ public class Concept extends Item<Term> implements Serializable {
     protected boolean insertTaskLink(final TaskLink taskLink, final DerivationContext nal) {
         final Task target = taskLink.getTarget();
         //what question answering, question side:
-        ProcessQuestion.ProcessWhatQuestion(this, target, nal);
+        QuestionOrQuestTask.ProcessWhatQuestion(this, target, nal);
         //what question answering, belief side:
-        ProcessQuestion.ProcessWhatQuestionAnswer(this, target, nal);
+        QuestionOrQuestTask.ProcessWhatQuestionAnswer(this, target, nal);
         //HANDLE MAX PER CONTENT
         //if taskLinks already contain a certain amount of tasks with same content then one has to go
         final boolean isEternal = target.sentence.isEternal();

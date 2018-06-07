@@ -80,13 +80,13 @@ public abstract class Task<T extends Term> extends Item<Sentence<T>> implements 
 
     public static Task make(MakeInfo info) {
         if (info.sentence.isGoal()) {
-            return new ProcessGoal(info);
+            return new GoalTask(info);
         }
         else if (info.sentence.isQuestion() || info.sentence.isQuest()) {
-            return new ProcessQuestion(info);
+            return new QuestionOrQuestTask(info);
         }
         else { // is judgment
-            return new ProcessJudgment(info);
+            return new JudgmentTask(info);
         }
     }
 
