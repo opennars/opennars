@@ -156,11 +156,7 @@ public class DerivationContext {
             newTruth,
             derived_stamp);
 
-        Task.MakeInfo newTaskInfo = new Task.MakeInfo();
-        newTaskInfo.sentence = newSentence;
-        newTaskInfo.budget = newBudget;
-        newTaskInfo.parentBelief = getCurrentBelief();
-        final Task newTask = Task.make(newTaskInfo);
+        final Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
 
         return derivedTask(newTask, true, false, true); //allows overlap since overlap was already checked on revisable( function
     }                                                               //which is not the case for other single premise tasks
@@ -199,7 +195,7 @@ public class DerivationContext {
                 derive_stamp);
 
             newSentence.producedByTemporalInduction=temporalInduction;
-            Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+            Task newTask = new Task(newSentence, newBudget, getCurrentBelief());
 
             if (newTask!=null) {
                 final boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
@@ -221,7 +217,7 @@ public class DerivationContext {
                     st);
 
                 newSentence.producedByTemporalInduction=temporalInduction;
-                newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                newTask = new Task(newSentence, newBudget, getCurrentBelief());
                 if (newTask!=null) {
                     final boolean added = derivedTask(newTask, false, false, overlapAllowed, addToMemory);
                     if(added) {
@@ -284,7 +280,7 @@ public class DerivationContext {
             newTruth,
             derive_stamp);
 
-        final Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
+        final Task newTask = new Task(newSentence, newBudget, Task.EnumType.DERIVED);
         if (newTask!=null) {
             return derivedTask(newTask, false, true, false);
         }
@@ -296,7 +292,7 @@ public class DerivationContext {
             return false;
         }
 
-        final Task newTask = Task.make(newSentence, newBudget, Task.EnumType.DERIVED);
+        final Task newTask = new Task(newSentence, newBudget, Task.EnumType.DERIVED);
         return derivedTask(newTask, false, true, false);
     }
 
@@ -452,13 +448,8 @@ public class DerivationContext {
      * @param candidateBelief The belief to be used in future inference, for
      * forward/backward correspondence
      */
-    public void addTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {        
-        Task.MakeInfo newTaskInfo = new Task.MakeInfo();
-        newTaskInfo.sentence = sentence;
-        newTaskInfo.budget = budget;
-        newTaskInfo.parentBelief = sentence;
-        newTaskInfo.solution = candidateBelief;
-        addTask(Task.make(newTaskInfo), "Activated");
+    public void addTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
+        addTask(new Task(sentence, budget, sentence, candidateBelief), "Activated");
     }    
     
     @Override

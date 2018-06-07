@@ -58,7 +58,7 @@ public class ProcessAnticipation {
             stamp);
 
         final BudgetValue budgetForNewTask = new BudgetValue(0.99f,0.1f,0.1f); //Budget for one-time processing
-        final Task createdTask = Task.make(sentence, budgetForNewTask, Task.EnumType.DERIVED);
+        final Task createdTask = new Task(sentence, budgetForNewTask, Task.EnumType.DERIVED);
 
         final Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
         if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
@@ -120,10 +120,10 @@ public class ProcessAnticipation {
                         new Stamp(concept.memory));
 
         final BudgetValue budgetForNewTask1 = concept.negConfirmation.getBudget().clone();
-        final Task negated1 = Task.make(s1, budgetForNewTask1, Task.EnumType.INPUT);
+        final Task negated1 = new Task(s1, budgetForNewTask1, Task.EnumType.INPUT);
 
         final BudgetValue budgetForNewTask2 =  concept.negConfirmation.getBudget().clone();
-        final Task negated2 = Task.make(s2, budgetForNewTask2, Task.EnumType.INPUT);
+        final Task negated2 = new Task(s2, budgetForNewTask2, Task.EnumType.INPUT);
 
         concept.memory.inputTask(negated1, false); //disappointed
         concept.memory.inputTask(negated2, false); //disappointed

@@ -287,7 +287,7 @@ public final class CompositionalRules {
                     return;
                 }
 
-                final Task contentTask = Task.make(contentBelief, task.budget, Task.EnumType.DERIVED);
+                final Task contentTask = new Task(contentBelief, task.budget, Task.EnumType.DERIVED);
 
                 nal.setCurrentTask(contentTask);
                 final Term conj = Conjunction.make(component, content);

@@ -145,7 +145,7 @@ public class VisionChannel extends SensoryChannel  {
         final BudgetValue budgetForNewTask = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
             Parameters.DEFAULT_JUDGMENT_DURABILITY,
             BudgetFunctions.truthToQuality(s.truth));
-        final Task newTask = Task.make(s, budgetForNewTask, Task.EnumType.INPUT);
+        final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
 
         this.results.add(newTask);//feeds results into "upper" sensory channels:
         this.step_finished(); 

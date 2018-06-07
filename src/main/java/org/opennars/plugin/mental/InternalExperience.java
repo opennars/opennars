@@ -177,7 +177,7 @@ public class InternalExperience implements Plugin, EventObserver {
     }
     
     public static void InternalExperienceFromBelief(final Memory memory, final Task task, final Sentence belief) {
-        final Task newTask = Task.make(belief.clone(), task.budget.clone(), Task.EnumType.INPUT);
+        final Task newTask = new Task(belief.clone(), task.budget.clone(), Task.EnumType.INPUT);
 
         InternalExperienceFromTask(memory, newTask, false);
     }
@@ -236,7 +236,7 @@ public class InternalExperience implements Plugin, EventObserver {
             newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
         }
 
-        final Task newTask = Task.make(j, newbudget, Task.EnumType.INPUT);
+        final Task newTask = new Task(j, newbudget, Task.EnumType.INPUT);
 
         memory.addNewTask(newTask, "Reflected mental operation (Internal Experience)");
         return false;
@@ -274,7 +274,7 @@ public class InternalExperience implements Plugin, EventObserver {
                     Parameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                     quality);
 
-                final Task newTask = Task.make(sentence, budget, Task.EnumType.INPUT);
+                final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
 
                 nal.derivedTask(newTask, false, false, false);
             }
@@ -322,7 +322,7 @@ public class InternalExperience implements Plugin, EventObserver {
                         Parameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                         quality);
 
-                    final Task newTask = Task.make(sentence, budget, Task.EnumType.INPUT);
+                    final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
 
                     nal.derivedTask(newTask, false, false, false);
                 }

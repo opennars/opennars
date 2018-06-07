@@ -34,71 +34,42 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     public final  Sentence parentBelief;
     /* For Question and Goal: best solution found so far*/
     private Sentence bestSolution;
-  
+    /* Whether the task should go into event bag or not*/
     private boolean partOfSequenceBuffer = false;
-    private boolean observablePrediction = false;
+    /* Whether it is an input task or not */
     private boolean isInput = false;
 
-    public static class MakeInfo {
-        public Sentence sentence = null;
-        public BudgetValue budget;
-
-        /**
-         * The belief from which this new task is derived
-         */
-        public Sentence parentBelief = null;
-
-        /**
-         * solution The belief to be used in future inference
-         */
-        public Sentence solution = null;
-
-        public boolean isInput = false;
-    }
-
-    public static Task make(final Sentence sentence, final BudgetValue budget, final EnumType type) {
-        return new Task(sentence, budget, type == EnumType.INPUT);
-    }
-
-
-    public static Task make(final Sentence s, final BudgetValue b, final Task parent) {
-        return make(s, b, parent, null);
-    }
-
-    public static Task make(final Sentence sentence, final BudgetValue budget, final Task parent, final Sentence parentBelief) {
-        MakeInfo makeInfo = new MakeInfo();
-        makeInfo.sentence = sentence;
-        makeInfo.budget = budget;
-        makeInfo.parentBelief = parentBelief;
-        return make(makeInfo);
-    }
-
-    public static Task make(MakeInfo info) {
-        return new Task(info);
-    }
-
-    private Task(MakeInfo info) {
-        super(info.budget);
-
-        this.isInput = info.isInput;
-
-        this.sentence = info.sentence;
-        this.parentBelief = info.parentBelief;
-        this.bestSolution = info.solution;
-    }
-
     /**
-     * Constructor for input task and single premise task
+     * Constructor for input task and single premise derived task
      *
      * @param s The sentence
      * @param b The budget
      */ 
-    private Task(final Sentence<T> s, final BudgetValue b, final boolean isInput) {
+    public Task(final Sentence<T> s, final BudgetValue b, EnumType type) {
         this(s, b, null, null);  
-        this.isInput = isInput;
+        this.isInput = type == EnumType.INPUT;
     }
     
-    private Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
+    /***
+     * Constructors for double premise derived task 
+     * 
+     * @param s The sentence
+     * @param b The budget
+     * @param parentBelief The belief used for deriving the task
+     */
+    public Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief) {
+        this(s, b, parentBelief, null);
+    }
+    
+    /***
+     * Constructors for solved double premise derived task 
+     * 
+     * @param s The sentence
+     * @param b The budget
+     * @param parentBelief The belief used for deriving the task 
+     * @param solution The solution to the task
+     */
+    public Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
         super(b);
         this.sentence = s;
         this.parentBelief = parentBelief;
@@ -212,14 +183,6 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
 
     public boolean isElemOfSequenceBuffer() {
         return !this.sentence.isEternal() && (this.isInput() || partOfSequenceBuffer);
-    }
-    
-    public void setObservablePrediction(final boolean b) {
-        this.observablePrediction = b;
-    }
-
-    public boolean isObservablePrediction() {
-        return this.observablePrediction;
     }
 
     public T getTerm() {

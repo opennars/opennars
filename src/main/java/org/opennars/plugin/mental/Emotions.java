@@ -94,7 +94,7 @@ public class Emotions implements Plugin {
             s.stamp.setOccurrenceTime(nal.memory.time());
 
             final BudgetValue budgetOfNewTask = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth));
-            final Task t = Task.make(s, budgetOfNewTask, Task.EnumType.INPUT);
+            final Task t = new Task(s, budgetOfNewTask, Task.EnumType.INPUT);
 
             nal.addTask(t, "emotion");
             /*if(Parameters.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
@@ -171,7 +171,7 @@ public class Emotions implements Plugin {
             final BudgetValue budgetForNewTask = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
                 Parameters.DEFAULT_JUDGMENT_DURABILITY,
                 BudgetFunctions.truthToQuality(truth));
-            final Task t = Task.make(s, budgetForNewTask, Task.EnumType.INPUT);
+            final Task t = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
             nal.addTask(t, "emotion");
         }
     }
