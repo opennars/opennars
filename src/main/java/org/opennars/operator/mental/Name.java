@@ -56,7 +56,7 @@ public class Name extends Operator {
         
         final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, truth);
 
-        final Task newTask = Task.make(sentence, budget, Task.EnumType.INPUT);
+        final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
         return Lists.newArrayList(newTask);
     }
 }

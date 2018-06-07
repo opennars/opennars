@@ -335,7 +335,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             Parameters.DEFAULT_QUESTION_PRIORITY,
             Parameters.DEFAULT_QUESTION_DURABILITY,
             1);
-        final Task t = Task.make(sentenceForNewTask, budget, Task.EnumType.INPUT);
+        final Task t = new Task(sentenceForNewTask, budget, Task.EnumType.INPUT);
 
         addInput(t);
 
@@ -356,7 +356,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             Parameters.DEFAULT_QUESTION_PRIORITY,
             Parameters.DEFAULT_QUESTION_DURABILITY,
             1);
-        final Task t = Task.make(sentenceForNewTask, budgetForNewTask, Task.EnumType.INPUT);
+        final Task t = new Task(sentenceForNewTask, budgetForNewTask, Task.EnumType.INPUT);
 
         addInput(t);
 

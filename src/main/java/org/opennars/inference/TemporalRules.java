@@ -314,25 +314,25 @@ public class TemporalRules {
              }
         }
         
-        final List<Task> success= new ArrayList<>();
+        final List<Task> derivations= new ArrayList<>();
         if (!deriveSequenceOnly ) {
             if (t11!=null && t22!=null) {
                 final Statement statement11 = Implication.make(t11, t22, order);
                 final Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
                 final Statement statement33 = Equivalence.make(t11, t22, order);
-                appendAndSetObservable(nal, truth1, budget1, statement11, success, false);
-                appendAndSetObservable(nal, truth2, budget2, statement22, success, false);
-                appendAndSetObservable(nal, truth3, budget3, statement33, success, false);
+                appendConclusion(nal, truth1, budget1, statement11, derivations);
+                appendConclusion(nal, truth2, budget2, statement22, derivations);
+                appendConclusion(nal, truth3, budget3, statement33, derivations);
             }
 
-            appendAndSetObservable(nal, truth1, budget1, statement1, success, true);
-            appendAndSetObservable(nal, truth2, budget2, statement2, success, true);
-            appendAndSetObservable(nal, truth3, budget3, statement3, success, true);
+            appendConclusion(nal, truth1, budget1, statement1, derivations);
+            appendConclusion(nal, truth2, budget2, statement2, derivations);
+            appendConclusion(nal, truth3, budget3, statement3, derivations);
         }
 
         if(!tooMuchTemporalStatements(statement4)) {
             if(!allowSequence) {
-                return success;
+                return derivations;
             }
             final List<Task> tl=nal.doublePremiseTask(statement4, truth4, budget4,true, false, addToMemory);
             if(tl!=null) {
@@ -347,25 +347,19 @@ public class TemporalRules {
                         TemporalInferenceControl.addToSequenceTasks(nal, t);
                     }
 
-                    success.add(t);
+                    derivations.add(t);
                 }
             }
         }
 
-        return success;
+        return derivations;
     }
 
-    private static void appendAndSetObservable(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success, boolean setObservablePrediction) {
+    private static void appendConclusion(DerivationContext nal, TruthValue truth1, BudgetValue budget1, Statement statement1, List<Task> success) {
         if(!tooMuchTemporalStatements(statement1)) {
-            final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1,true, false);
+            final List<Task> t=nal.doublePremiseTask(statement1, truth1, budget1, true, false);
             if(t!=null) {
                 success.addAll(t);
-
-                if(setObservablePrediction) {
-                    for(final Task task : t) {
-                        task.setObservablePrediction(true); //we assume here that this function is used for observable events currently
-                    }
-                }
             }
         }
     }

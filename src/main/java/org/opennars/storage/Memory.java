@@ -312,7 +312,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         final BudgetValue budgetForNewTask = new BudgetValue(Parameters.DEFAULT_FEEDBACK_PRIORITY,
             Parameters.DEFAULT_FEEDBACK_DURABILITY,
             truthToQuality(sentence.getTruth()));
-        final Task newTask = Task.make(sentence, budgetForNewTask, Task.EnumType.INPUT);
+        final Task newTask = new Task(sentence, budgetForNewTask, Task.EnumType.INPUT);
 
         newTask.setElemOfSequenceBuffer(true);
         addNewTask(newTask, "Executed");

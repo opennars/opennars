@@ -57,7 +57,7 @@ public class ProcessAnticipation {
             mainSentence.punctuation,
             new TruthValue(0.0f, eternalized_induction_confidence),
             stamp);
-        final Task t = Task.make(s, new BudgetValue(0.99f,0.1f,0.1f), Task.EnumType.DERIVED); //Budget for one-time processing
+        final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f), Task.EnumType.DERIVED); //Budget for one-time processing
         final Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
         if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
@@ -109,8 +109,7 @@ public class ProcessAnticipation {
             concept.memory.emit(OutputHandler.CONFIRM.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
             concept.negConfirmation = null; //confirmed
             return;
-        }
-        
+        }        
         concept.memory.inputTask(concept.negConfirmation, false);
         concept.memory.emit(OutputHandler.DISAPPOINT.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
         concept.negConfirmation = null;

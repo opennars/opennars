@@ -117,7 +117,7 @@ public abstract class FunctionOperator extends Operator {
             final BudgetValue budgetForNewTask = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
                 Parameters.DEFAULT_FEEDBACK_DURABILITY,
                 truthToQuality(s.getTruth()));
-            final Task newTask = Task.make(s, budgetForNewTask, Task.EnumType.INPUT);
+            final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
 
             return Lists.newArrayList(newTask);
         }

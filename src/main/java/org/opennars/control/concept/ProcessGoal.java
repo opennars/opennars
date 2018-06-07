@@ -306,9 +306,9 @@ public class ProcessGoal {
                 Symbols.JUDGMENT_MARK,
                 meta.bestop_truth,
                 projectedGoal.stamp);
-            final Task t = Task.make(createdSentence,
-                new BudgetValue(1.0f,1.0f,1.0f),
-                Task.EnumType.DERIVED);
+            final Task t = new Task(createdSentence,
+                                    new BudgetValue(1.0f,1.0f,1.0f),
+                                    Task.EnumType.DERIVED);
             //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
             if(!task.sentence.stamp.evidenceIsCyclic()) {
                 if(!executeOperation(nal, t)) { //this task is just used as dummy
