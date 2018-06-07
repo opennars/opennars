@@ -14,6 +14,7 @@
  */
 package org.opennars.entity;
 
+import org.opennars.control.DerivationContext;
 import org.opennars.control.concept.ProcessGoal;
 import org.opennars.control.concept.ProcessJudgment;
 import org.opennars.control.concept.ProcessQuestion;
@@ -240,6 +241,8 @@ public abstract class Task<T extends Term> extends Item<Sentence<T>> implements 
     public T getTerm() {
         return sentence.getTerm();
     }
+
+    public abstract void process(final Concept concept, final DerivationContext nal);
 
     public enum EnumType {
         INPUT,
