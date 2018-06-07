@@ -49,7 +49,11 @@ import org.opennars.plugin.mental.InternalExperience;
  *
  * @author Patrick
  */
-public class ProcessGoal {
+public class ProcessGoal extends Task {
+    public ProcessGoal(final MakeInfo info) {
+        super(info);
+    }
+
     /**
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it, potentially executing in case of an operation goal

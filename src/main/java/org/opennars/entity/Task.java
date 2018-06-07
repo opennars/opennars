@@ -14,6 +14,9 @@
  */
 package org.opennars.entity;
 
+import org.opennars.control.concept.ProcessGoal;
+import org.opennars.control.concept.ProcessJudgment;
+import org.opennars.control.concept.ProcessQuestion;
 import org.opennars.language.Term;
 import org.opennars.plugin.mental.InternalExperience;
 import org.opennars.storage.Memory;
@@ -26,7 +29,7 @@ import java.io.Serializable;
  * garbage collection process.  Otherwise, Task ancestry would grow unbounded,
  * violating the assumption of insufficient resources (AIKR).
  */
-public class Task<T extends Term> extends Item<Sentence<T>> implements Serializable  {
+public abstract class Task<T extends Term> extends Item<Sentence<T>> implements Serializable  {
 
     /* The sentence of the Task*/
     public final Sentence<T> sentence;
@@ -57,7 +60,11 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     }
 
     public static Task make(final Sentence sentence, final BudgetValue budget, final EnumType type) {
-        return new Task(sentence, budget, type == EnumType.INPUT);
+        MakeInfo makeInfo = new MakeInfo();
+        makeInfo.sentence = sentence;
+        makeInfo.budget = budget;
+        makeInfo.isInput = type == EnumType.INPUT;
+        return make(makeInfo);
     }
 
 
@@ -74,10 +81,18 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
     }
 
     public static Task make(MakeInfo info) {
-        return new Task(info);
+        if (info.sentence.isGoal()) {
+            return new ProcessGoal(info);
+        }
+        else if (info.sentence.isQuestion() || info.sentence.isQuest()) {
+            return new ProcessQuestion(info);
+        }
+        else { // is judgment
+            return new ProcessJudgment(info);
+        }
     }
 
-    private Task(MakeInfo info) {
+    protected Task(MakeInfo info) {
         super(info.budget);
 
         this.isInput = info.isInput;
@@ -93,12 +108,12 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
      * @param s The sentence
      * @param b The budget
      */ 
-    private Task(final Sentence<T> s, final BudgetValue b, final boolean isInput) {
+    protected Task(final Sentence<T> s, final BudgetValue b, final boolean isInput) {
         this(s, b, null, null);  
         this.isInput = isInput;
     }
-    
-    private Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
+
+    protected Task(final Sentence<T> s, final BudgetValue b, final Sentence parentBelief, final Sentence solution) {
         super(b);
         this.sentence = s;
         this.parentBelief = parentBelief;

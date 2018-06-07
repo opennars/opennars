@@ -16,10 +16,8 @@ package org.opennars.control.concept;
 
 import java.util.List;
 import org.opennars.control.DerivationContext;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Task;
-import org.opennars.entity.TaskLink;
+import org.opennars.entity.*;
+
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
@@ -31,7 +29,11 @@ import org.opennars.main.Parameters;
  *
  * @author Patrick
  */
-public class ProcessQuestion {
+public class ProcessQuestion extends Task {
+    public ProcessQuestion(final MakeInfo info) {
+        super(info);
+    }
+
     /**
      * To answer a question by existing beliefs
      *

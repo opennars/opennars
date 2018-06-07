@@ -16,10 +16,8 @@ package org.opennars.control.concept;
 
 import org.opennars.control.DerivationContext;
 import org.opennars.control.TemporalInferenceControl;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Sentence;
-import org.opennars.entity.Stamp;
-import org.opennars.entity.Task;
+import org.opennars.entity.*;
+
 import static org.opennars.inference.LocalRules.revisible;
 import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
@@ -41,7 +39,11 @@ import org.opennars.operator.mental.Evaluate;
 import org.opennars.operator.mental.Want;
 import org.opennars.operator.mental.Wonder;
 
-public class ProcessJudgment {
+public class ProcessJudgment extends Task {
+    public ProcessJudgment(final MakeInfo info) {
+        super(info);
+    }
+
     /**
      * To accept a new judgment as belief, and check for revisions and solutions.
      * Revisions will be processed as judgment tasks by themselves.
