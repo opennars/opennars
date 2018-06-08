@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.opennars.entity;
+package org.opennars.control.concept;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,8 +50,8 @@ import org.opennars.plugin.mental.InternalExperience;
  *
  * @author Patrick
  */
-public class GoalTask extends Task {
-    public GoalTask(final MakeInfo info) {
+public class ProcessGoalTask extends Task {
+    public ProcessGoalTask(final MakeInfo info) {
         super(info);
     }
 

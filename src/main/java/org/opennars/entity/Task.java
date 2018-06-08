@@ -15,6 +15,9 @@
 package org.opennars.entity;
 
 import org.opennars.control.DerivationContext;
+import org.opennars.control.concept.ProcessGoalTask;
+import org.opennars.control.concept.ProcessJudgmentTask;
+import org.opennars.control.concept.ProcessQuestionOrQuestTask;
 import org.opennars.language.Term;
 import org.opennars.plugin.mental.InternalExperience;
 import org.opennars.storage.Memory;
@@ -80,13 +83,13 @@ public abstract class Task<T extends Term> extends Item<Sentence<T>> implements 
 
     public static Task make(MakeInfo info) {
         if (info.sentence.isGoal()) {
-            return new GoalTask(info);
+            return new ProcessGoalTask(info);
         }
         else if (info.sentence.isQuestion() || info.sentence.isQuest()) {
-            return new QuestionOrQuestTask(info);
+            return new ProcessQuestionOrQuestTask(info);
         }
         else { // is judgment
-            return new JudgmentTask(info);
+            return new ProcessJudgmentTask(info);
         }
     }
 

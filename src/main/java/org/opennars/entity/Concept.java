@@ -15,6 +15,7 @@
 package org.opennars.entity;
 
 import org.opennars.control.DerivationContext;
+import org.opennars.control.concept.ProcessQuestionOrQuestTask;
 import org.opennars.inference.LocalRules;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.io.events.Events.*;
@@ -296,9 +297,9 @@ public class Concept extends Item<Term> implements Serializable {
     protected boolean insertTaskLink(final TaskLink taskLink, final DerivationContext nal) {
         final Task target = taskLink.getTarget();
         //what question answering, question side:
-        QuestionOrQuestTask.ProcessWhatQuestion(this, target, nal);
+        ProcessQuestionOrQuestTask.ProcessWhatQuestion(this, target, nal);
         //what question answering, belief side:
-        QuestionOrQuestTask.ProcessWhatQuestionAnswer(this, target, nal);
+        ProcessQuestionOrQuestTask.ProcessWhatQuestionAnswer(this, target, nal);
         //HANDLE MAX PER CONTENT
         //if taskLinks already contain a certain amount of tasks with same content then one has to go
         final boolean isEternal = target.sentence.isEternal();

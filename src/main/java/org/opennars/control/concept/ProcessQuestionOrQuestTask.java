@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.opennars.entity;
+package org.opennars.control.concept;
 
 import java.util.List;
 import org.opennars.control.DerivationContext;
@@ -29,8 +29,8 @@ import org.opennars.main.Parameters;
  *
  * @author Patrick
  */
-public class QuestionOrQuestTask extends Task {
-    public QuestionOrQuestTask(final MakeInfo info) {
+public class ProcessQuestionOrQuestTask extends Task {
+    public ProcessQuestionOrQuestTask(final MakeInfo info) {
         super(info);
     }
 

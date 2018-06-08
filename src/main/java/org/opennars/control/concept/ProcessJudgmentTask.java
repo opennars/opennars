@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.opennars.entity;
+package org.opennars.control.concept;
 
 import org.opennars.control.DerivationContext;
 import org.opennars.control.TemporalInferenceControl;
@@ -40,8 +40,8 @@ import org.opennars.operator.mental.Evaluate;
 import org.opennars.operator.mental.Want;
 import org.opennars.operator.mental.Wonder;
 
-public class JudgmentTask extends Task {
-    public JudgmentTask(final MakeInfo info) {
+public class ProcessJudgmentTask extends Task {
+    public ProcessJudgmentTask(final MakeInfo info) {
         super(info);
     }
 
