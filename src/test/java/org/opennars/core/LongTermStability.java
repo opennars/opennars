@@ -48,38 +48,45 @@ public class LongTermStability {
         int objectIdA = rng.nextInt(10000);
         int placeIdA = rng.nextInt(10000);
 
-        feedRelation2(consumer, rng.nextInt(10000), rng.nextInt(10000), "at");
-        feedRelation2(consumer, rng.nextInt(10000), rng.nextInt(10000), "from");
-        feedRelation2(consumer, rng.nextInt(10000), rng.nextInt(10000), "a2");
+        feedRelation2(consumer, rng.nextInt(10000), rng.nextInt(10000), "at", false);
+        feedRelation2(consumer, rng.nextInt(10000), rng.nextInt(10000), "from", false);
+        feedRelation2(consumer, rng.nextInt(10000), rng.nextInt(10000), "a2", false);
 
-        feedRelation2(consumer, objectIdA, placeIdA, "at");
-        feedRelation2(consumer, objectIdA, placeIdA, "from");
+        feedRelation2(consumer, objectIdA, placeIdA, "at", false);
+        feedRelation2(consumer, objectIdA, placeIdA, "from", false);
+
+        // feed questions
+        feedRelation2(consumer, rng.nextInt(3000), rng.nextInt(3000), "at", true);
+        feedRelation2(consumer, rng.nextInt(3000), rng.nextInt(3000), "from", true);
+        feedRelation2(consumer, rng.nextInt(3000), rng.nextInt(3000), "a2", true);
     }
 
-    public void feedRelation2(Reasoner consumer, long objectId, long placeId, String relation) {
+    public void feedRelation2(Reasoner consumer, long objectId, long placeId, String relation, boolean isQuestion) {
+        String taskType = isQuestion ? "?" : ".";
+
         // we feed a combination of forms
-        consumer.addInput(String.format("<(*, %d, %d)--> %s>. :|:", objectId, placeId, relation));
-        consumer.addInput(String.format("<(*, {%d}, %d)--> %s>. :|:", objectId, placeId, relation));
-        consumer.addInput(String.format("<(*, {%d}, {%d})--> %s>. :|:", objectId, placeId, relation));
-        consumer.addInput(String.format("<(*, %d, {%d})--> %s>. :|:", objectId, placeId, relation));
+        consumer.addInput(String.format("<(*, %d, %d)--> %s>%s :|:", objectId, placeId, relation, taskType));
+        consumer.addInput(String.format("<(*, {%d}, %d)--> %s>%s :|:", objectId, placeId, relation, taskType));
+        consumer.addInput(String.format("<(*, {%d}, {%d})--> %s>%s :|:", objectId, placeId, relation, taskType));
+        consumer.addInput(String.format("<(*, %d, {%d})--> %s>%s :|:", objectId, placeId, relation, taskType));
         // set
-        consumer.addInput(String.format("<(*, {%d, %d}, {%d})--> %s>. :|:", objectId, objectId + 500000, placeId, relation));
+        consumer.addInput(String.format("<(*, {%d, %d}, {%d})--> %s>%s :|:", objectId, objectId + 500000, placeId, relation, taskType));
 
         // duplicate set
-        consumer.addInput(String.format("<(*, {%d, %d}, {%d})--> %s>. :|:", objectId, objectId, placeId, relation));
+        consumer.addInput(String.format("<(*, {%d, %d}, {%d})--> %s>%s :|:", objectId, objectId, placeId, relation, taskType));
 
 
-        consumer.addInput(String.format("<%d --> (/, %s, _, %d)>. :|:", placeId, relation, objectId));
-        consumer.addInput(String.format("<%d --> (/, %s, %d, _)>. :|:", objectId, relation, placeId));
+        consumer.addInput(String.format("<%d --> (/, %s, _, %d)>%s :|:", placeId, relation, objectId, taskType));
+        consumer.addInput(String.format("<%d --> (/, %s, %d, _)>%s :|:", objectId, relation, placeId, taskType));
 
-        consumer.addInput(String.format("<{%d} --> (/, %s, _, %d)>. :|:", placeId, relation, objectId));
-        consumer.addInput(String.format("<%d --> (/, %s, {%d}, _)>. :|:", objectId, relation, placeId));
+        consumer.addInput(String.format("<{%d} --> (/, %s, _, %d)>%s :|:", placeId, relation, objectId, taskType));
+        consumer.addInput(String.format("<%d --> (/, %s, {%d}, _)>%s :|:", objectId, relation, placeId, taskType));
 
-        consumer.addInput(String.format("<{%d} --> (/, %s, _, {%d})>. :|:", placeId, relation, objectId));
-        consumer.addInput(String.format("<{%d} --> (/, %s, {%d}, _)>. :|:", objectId, relation, placeId));
+        consumer.addInput(String.format("<{%d} --> (/, %s, _, {%d})>%s :|:", placeId, relation, objectId, taskType));
+        consumer.addInput(String.format("<{%d} --> (/, %s, {%d}, _)>%s :|:", objectId, relation, placeId, taskType));
 
-        consumer.addInput(String.format("<{%d} --> (/, %s, _, {%d})>. :|:", placeId, relation, objectId));
-        consumer.addInput(String.format("<{%d} --> (/, %s, {%d}, _)>. :|:", objectId, relation, placeId));
+        consumer.addInput(String.format("<{%d} --> (/, %s, _, {%d})>%s :|:", placeId, relation, objectId, taskType));
+        consumer.addInput(String.format("<{%d} --> (/, %s, {%d}, _)>%s :|:", objectId, relation, placeId, taskType));
     }
 
     public static void main(String[] args) {
