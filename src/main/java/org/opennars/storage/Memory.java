@@ -64,7 +64,7 @@ import static org.opennars.inference.BudgetFunctions.truthToQuality;
  */
 public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
-    public long narID = 0;
+    public long narId = 0;
     //emotion meter keeping track of global emotion
     public final Emotions emotion = new Emotions();   
     public long decisionBlock = 0;
@@ -443,7 +443,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
 
     private long currentStampSerial = 0;
     public BaseEntry newStampSerial() {
-        return new BaseEntry(this.narID, currentStampSerial++);
+        return new BaseEntry(this.narId, currentStampSerial++);
     }   
 
     /** converts durations to cycles */
