@@ -33,12 +33,43 @@ public class ConfigReader {
         final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         final Document document = documentBuilder.parse(file);
 
-        final Element config = document.getElementById("config");
+        final NodeList config = document.getElementsByTagName("config").item(0).getChildNodes();
 
-        // transfer
+        for (int iterationConfigIdx = 0; iterationConfigIdx < config.getLength(); iterationConfigIdx++) {
+            final Node iConfig = config.item(iterationConfigIdx);
+
+            final String propertyName = iConfig.getNodeName();
+            if (propertyName.equals("#text")) {
+                continue;
+            }
+
+            String propertyValueAsString = iConfig.getAttributes().getNamedItem("value").getNodeValue();
+
+            try {
+                final Field fieldOfProperty = NarParameters.class.getField(propertyName);
+
+                if (fieldOfProperty.getType() == Integer.class) {
+                    fieldOfProperty.set(parameters, Integer.parseInt(propertyValueAsString));
+                }
+                else if (fieldOfProperty.getType() == Float.class) {
+                    fieldOfProperty.set(parameters, Float.parseFloat(propertyValueAsString));
+                }
+                else {
+                    throw new ParseException("Unknown type", 0);
+                }
+            }
+            catch (NoSuchFieldException e) {
+                // ignore
+            }
+        }
+
+        /*
         Field[] allFields = NarParameters.class.getDeclaredFields();
         for (final Field iField : allFields) {
-            String propertyValueAsString = config.getElementsByTagName(iField.getName()).item(0).getNodeValue();
+            String propertyName = config.item(0).getNodeName();
+            String propertyValueAsString = config.item(0).getAttributes().getNamedItem("value").getNodeValue();
+
+            //String propertyValueAsString = config.getElementsByTagName(iField.getName()).item(0).getNodeValue();
             if (iField.getType() == Integer.class) {
                 iField.set(parameters, Integer.parseInt(propertyValueAsString));
             }
@@ -49,8 +80,9 @@ public class ConfigReader {
                 throw new ParseException("Unknown type", 0);
             }
         }
+        */
 
-
+        /*
         allFields = Parameters.class.getFields();
         for (Field iField : allFields) {
             String propertyValueAsString = config.getElementsByTagName(iField.getName()).item(0).getNodeValue();
@@ -63,8 +95,9 @@ public class ConfigReader {
             else {
                 throw new ParseException("Unknown type", 0);
             }
-        }
+        }*/
 
+        // TODO< overhaul XML mess >
         // create plugins
         final Element plugins = document.getElementById("plugins");
 
@@ -76,6 +109,10 @@ public class ConfigReader {
             Plugin createdPlugin = createPluginByClassname(pluginClassPath);
             pluggable.addPlugin(createdPlugin);
         }
+    }
+
+    public static void main(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
+        loadFrom("../opennars/src/main/config/defaultConfig.xml", null, null);
     }
 
     private static Plugin createPluginByClassname(String className) throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
