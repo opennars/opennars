@@ -44,6 +44,7 @@ import org.opennars.plugin.mental.Emotions;
 
 import java.io.Serializable;
 import java.util.*;
+import org.opennars.entity.Stamp.BaseEntry;
 
 import static org.opennars.inference.BudgetFunctions.truthToQuality;
 
@@ -63,6 +64,7 @@ import static org.opennars.inference.BudgetFunctions.truthToQuality;
  */
 public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
+    public long narId = 0;
     //emotion meter keeping track of global emotion
     public final Emotions emotion = new Emotions();   
     public long decisionBlock = 0;
@@ -440,8 +442,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      }
 
     private long currentStampSerial = 0;
-    public long newStampSerial() {
-        return currentStampSerial++;
+    public BaseEntry newStampSerial() {
+        return new BaseEntry(this.narId, currentStampSerial++);
     }   
 
     /** converts durations to cycles */

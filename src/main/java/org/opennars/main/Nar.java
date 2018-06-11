@@ -113,7 +113,6 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      */
     public final Memory memory;
     
-    
     public static class Lock extends Object implements Serializable { }
     //Because AtomicInteger/Double ot supported by teavm
     public static class PortableInteger implements Serializable {
@@ -185,7 +184,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     private boolean stopped = false;
     private boolean threadYield;
 
-    public Nar() {
+    public Nar(long narId) {
         final Plugins b = new Plugins();
         final Memory m = new Memory(new RuntimeParameters(),
                 new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE),
@@ -193,10 +192,15 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                 new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE),
                 new LevelBag<>(Parameters.OPERATION_BAG_LEVELS, Parameters.OPERATION_BAG_SIZE));
         this.memory = m;
+        this.memory.narId = narId;
         this.param = m.param;
         for (final Operator o : Operators.get(this))
             this.memory.addOperator(o);
         new Plugins().init(this);
+    }
+    
+    public Nar() {
+        this(java.util.UUID.randomUUID().getLeastSignificantBits());
     }
 
     /**

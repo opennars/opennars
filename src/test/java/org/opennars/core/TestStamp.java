@@ -19,6 +19,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static junit.framework.TestCase.assertTrue;
+import org.opennars.entity.Stamp.BaseEntry;
 import static org.opennars.entity.Stamp.toSetArray;
 
 /**
@@ -28,22 +29,26 @@ import static org.opennars.entity.Stamp.toSetArray;
 
 
 public class TestStamp {
-
+    private long narid = 0;
+    BaseEntry entry(long inputId) {
+        return new BaseEntry(narid, inputId);
+    }
     @Test 
     public void testStampToSetArray() {
-        assertTrue(toSetArray(new long[] { 1, 2, 3 }).length == 3);        
-        assertTrue(toSetArray(new long[] { 1, 1, 3 }).length == 2);
-        assertTrue(toSetArray(new long[] { 1 }).length == 1);
-        assertTrue(toSetArray(new long[] {  }).length == 0);
+        
+        assertTrue(toSetArray(new BaseEntry[] { entry(1), entry(2), entry(3) }).length == 3);        
+        assertTrue(toSetArray(new BaseEntry[] { entry(1), entry(1), entry(3) }).length == 2);
+        assertTrue(toSetArray(new BaseEntry[] { entry(1) }).length == 1);
+        assertTrue(toSetArray(new BaseEntry[] {  }).length == 0);
         assertTrue(
-                Arrays.hashCode(toSetArray(new long[] { 3,2,1 }))
+                Arrays.hashCode(toSetArray(new BaseEntry[] { entry(3),entry(2),entry(1) }))
                 ==
-                Arrays.hashCode(toSetArray(new long[] { 2,3,1 }))
+                Arrays.hashCode(toSetArray(new BaseEntry[] { entry(2),entry(3),entry(1) }))
         );
         assertTrue(
-                Arrays.hashCode(toSetArray(new long[] { 1,2,3 }))
+                Arrays.hashCode(toSetArray(new BaseEntry[] { entry(1),entry(2),entry(3) }))
                 !=
-                Arrays.hashCode(toSetArray(new long[] { 1,1,3 }))
+                Arrays.hashCode(toSetArray(new BaseEntry[] { entry(1),entry(1),entry(3) }))
         );    
     }
 }
