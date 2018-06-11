@@ -113,6 +113,14 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      */
     public final Memory memory;
     
+    /***
+     * Set theID of the NAR as will be necessary in multiNAR over network use cases
+     * 
+     * @param id The id of the NAR
+     */
+    public void setID(long id) {
+        this.memory.narID = id;
+    }
     
     public static class Lock extends Object implements Serializable { }
     //Because AtomicInteger/Double ot supported by teavm
