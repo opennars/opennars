@@ -29,6 +29,7 @@ import org.opennars.storage.Memory;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.opennars.entity.Stamp.BaseEntry;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.
@@ -104,10 +105,10 @@ public class DerivationContext {
         if(!overlapAllowed) { //todo reconsider
             final int stampLength = stamp.baseLength;
             for (int i = 0; i < stampLength; i++) {
-                final long baseI = stamp.evidentialBase[i];
+                final BaseEntry baseI = stamp.evidentialBase[i];
                 for (int j = 0; j < stampLength; j++) {
                     //!single since the derivation shouldn't depend on whether there is a current belief or not!!
-                    if ((!single && this.evidentalOverlap) || ((i != j) && (baseI == stamp.evidentialBase[j]))) {
+                    if ((!single && this.evidentalOverlap) || ((i != j) && (baseI.equals(stamp.evidentialBase[j])))) {
                         memory.removeTask(task, "Overlapping Evidenctal Base");
                         //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
                         return false;

@@ -23,6 +23,7 @@ import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
+import org.opennars.entity.Stamp.BaseEntry;
 import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
 import static org.opennars.inference.LocalRules.revisible;
@@ -149,14 +150,14 @@ public class ProcessGoal {
         if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD && nal.memory.time() >= concept.memory.decisionBlock) {
             //see whether the goal evidence is fully included in the old goal, if yes don't execute
             //as execution for this reason already happened (or did not since there was evidence against it)
-            final Set<Long> oldEvidence = new HashSet<>();
+            final Set<BaseEntry> oldEvidence = new HashSet<>();
             boolean Subset=false;
             if(oldGoalT != null) {
                 Subset = true;
-                for(final Long l: oldGoalT.sentence.stamp.evidentialBase) {
+                for(final BaseEntry l: oldGoalT.sentence.stamp.evidentialBase) {
                     oldEvidence.add(l);
                 }
-                for(final Long l: task.sentence.stamp.evidentialBase) {
+                for(final BaseEntry l: task.sentence.stamp.evidentialBase) {
                     if(!oldEvidence.contains(l)) {
                         Subset = false;
                         break;
