@@ -34,7 +34,7 @@ public class Stamp implements Cloneable, Serializable {
     /**
      * Element of the evidental base of stamp
      */
-    public static class BaseEntry implements Comparable { 
+    public static class BaseEntry implements Comparable, Serializable { 
         public final long narId; //the NAR in which the input evidence was added
         public long getNarId() {
             return narId;
