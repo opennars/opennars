@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<config>
+    <!-- NarParameters -->
+    <conf name="NOVELTY_HORIZON" value="100000"/>
+    <conf name="DECISION_THRESHOLD" value="0.51"/>
+    <conf name="CONCEPT_BAG_SIZE" value="10000"/>
+    <conf name="CONCEPT_BAG_LEVELS" value="1000"/>
+
+    <!-- static parameters -->
+    <conf name="HORIZON" value="1.0"/>
+
+    <!-- plugins -->
+    <plugins>
+        <plugin classpath="org.opennars.plugin.mental.Emotions"/>
+    </plugins>
+</config>
+

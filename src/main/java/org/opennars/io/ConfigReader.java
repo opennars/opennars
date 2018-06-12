@@ -5,7 +5,6 @@ import org.opennars.main.NarParameters;
 import org.opennars.main.Parameters;
 import org.opennars.plugin.Plugin;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -33,86 +32,82 @@ public class ConfigReader {
         final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         final Document document = documentBuilder.parse(file);
 
+
+
+
         final NodeList config = document.getElementsByTagName("config").item(0).getChildNodes();
 
         for (int iterationConfigIdx = 0; iterationConfigIdx < config.getLength(); iterationConfigIdx++) {
             final Node iConfig = config.item(iterationConfigIdx);
 
-            final String propertyName = iConfig.getNodeName();
-            if (propertyName.equals("#text")) {
+            if (iConfig.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
 
-            String propertyValueAsString = iConfig.getAttributes().getNamedItem("value").getNodeValue();
+            final String nodeName = iConfig.getNodeName();
+            if( nodeName.equals("plugins") ) {
+                final NodeList plugins = iConfig.getChildNodes();
 
-            try {
-                final Field fieldOfProperty = NarParameters.class.getField(propertyName);
+                for (int iterationPluginIdx = 0; iterationPluginIdx < config.getLength(); iterationPluginIdx++) {
+                    final Node iPlugin = plugins.item(iterationPluginIdx);
 
-                if (fieldOfProperty.getType() == Integer.class) {
-                    fieldOfProperty.set(parameters, Integer.parseInt(propertyValueAsString));
+                    if (iPlugin.getNodeType() != Node.ELEMENT_NODE) {
+                        continue;
+                    }
+
+                    final String pluginClassPath = iPlugin.getAttributes().getNamedItem("classpath").getNodeValue();
+                    Plugin createdPlugin = createPluginByClassname(pluginClassPath);
+                    pluggable.addPlugin(createdPlugin);
                 }
-                else if (fieldOfProperty.getType() == Float.class) {
-                    fieldOfProperty.set(parameters, Float.parseFloat(propertyValueAsString));
-                }
-                else {
-                    throw new ParseException("Unknown type", 0);
-                }
-            }
-            catch (NoSuchFieldException e) {
-                // ignore
-            }
-        }
-
-        /*
-        Field[] allFields = NarParameters.class.getDeclaredFields();
-        for (final Field iField : allFields) {
-            String propertyName = config.item(0).getNodeName();
-            String propertyValueAsString = config.item(0).getAttributes().getNamedItem("value").getNodeValue();
-
-            //String propertyValueAsString = config.getElementsByTagName(iField.getName()).item(0).getNodeValue();
-            if (iField.getType() == Integer.class) {
-                iField.set(parameters, Integer.parseInt(propertyValueAsString));
-            }
-            else if (iField.getType() == Float.class) {
-                iField.set(parameters, Float.parseFloat(propertyValueAsString));
             }
             else {
-                throw new ParseException("Unknown type", 0);
-            }
-        }
-        */
 
-        /*
-        allFields = Parameters.class.getFields();
-        for (Field iField : allFields) {
-            String propertyValueAsString = config.getElementsByTagName(iField.getName()).item(0).getNodeValue();
-            if (iField.getType() == Integer.class) {
-                iField.set(Parameters.class, Integer.parseInt(propertyValueAsString));
-            }
-            else if (iField.getType() == Float.class) {
-                iField.set(Parameters.class, Float.parseFloat(propertyValueAsString));
-            }
-            else {
-                throw new ParseException("Unknown type", 0);
-            }
-        }*/
+                final String propertyName = iConfig.getAttributes().getNamedItem("name").getNodeValue();
+                final String propertyValueAsString = iConfig.getAttributes().getNamedItem("value").getNodeValue();
 
-        // TODO< overhaul XML mess >
-        // create plugins
-        final Element plugins = document.getElementById("plugins");
+                boolean wasConfigValueAssigned = false;
 
-        final NodeList pluginList = plugins.getElementsByTagName("plugin");
-        for (int pluginIdx = 0; pluginIdx < pluginList.getLength(); pluginIdx++) {
-            Node plugin = pluginList.item(pluginIdx);
+                try {
+                    final Field fieldOfProperty = NarParameters.class.getField(propertyName);
 
-            String pluginClassPath = plugin.getNodeValue();
-            Plugin createdPlugin = createPluginByClassname(pluginClassPath);
-            pluggable.addPlugin(createdPlugin);
+                    if (fieldOfProperty.getType() == int.class) {
+                        fieldOfProperty.set(parameters, Integer.parseInt(propertyValueAsString));
+                    } else if (fieldOfProperty.getType() == float.class) {
+                        fieldOfProperty.set(parameters, Float.parseFloat(propertyValueAsString));
+                    } else {
+                        throw new ParseException("Unknown type", 0);
+                    }
+
+                    wasConfigValueAssigned = true;
+                } catch (NoSuchFieldException e) {
+                    // ignore
+                }
+
+                if (!wasConfigValueAssigned) {
+                    try {
+                        final Field fieldOfProperty = Parameters.class.getDeclaredField(propertyName);
+
+                        if (fieldOfProperty.getType() == int.class) {
+                            fieldOfProperty.set(parameters, Integer.parseInt(propertyValueAsString));
+                        } else if (fieldOfProperty.getType() == float.class) {
+                            fieldOfProperty.set(parameters, Float.parseFloat(propertyValueAsString));
+                        } else {
+                            throw new ParseException("Unknown type", 0);
+                        }
+
+                        wasConfigValueAssigned = true;
+                    } catch (NoSuchFieldException e) {
+                        // ignore
+                    }
+                }
+            }
         }
     }
 
     public static void main(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
-        loadFrom("../opennars/src/main/config/defaultConfig.xml", null, null);
+        NarParameters params = new NarParameters();
+
+        loadFrom("../opennars/src/main/config/defaultConfig.xml", null, params);
     }
 
     private static Plugin createPluginByClassname(String className) throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
