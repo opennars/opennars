@@ -19,15 +19,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 
 public class ConfigReader {
-    public static void loadFrom(final String filepath, final Pluggable pluggable, final NarParameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
-        loadFromImpl(new File(filepath), pluggable, parameters);
+    public static void loadFrom(final String filepath, final Pluggable reasoner, final NarParameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+        loadFromImpl(new File(filepath), reasoner, parameters);
     }
 
-    public static void loadFrom(final File file, final Pluggable pluggable, final NarParameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
-        loadFromImpl(file, pluggable, parameters);
+    public static void loadFrom(final File file, final Pluggable reasoner, final NarParameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+        loadFromImpl(file, reasoner, parameters);
     }
 
-    private static void loadFromImpl(final File file, final Pluggable pluggable, final NarParameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+    private static void loadFromImpl(final File file, final Pluggable reasoner, final NarParameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         final Document document = documentBuilder.parse(file);
@@ -56,8 +56,10 @@ public class ConfigReader {
                     }
 
                     final String pluginClassPath = iPlugin.getAttributes().getNamedItem("classpath").getNodeValue();
-                    Plugin createdPlugin = createPluginByClassname(pluginClassPath);
-                    pluggable.addPlugin(createdPlugin);
+                    final String stringArg = iPlugin.getAttributes().getNamedItem("stringarg").getNodeValue();
+
+                    Plugin createdPlugin = createPluginByClassname(pluginClassPath, stringArg);
+                    reasoner.addPlugin(createdPlugin);
                 }
             }
             else {
@@ -110,9 +112,29 @@ public class ConfigReader {
         loadFrom("../opennars/src/main/config/defaultConfig.xml", null, params);
     }
 
-    private static Plugin createPluginByClassname(String className) throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
+    /**
+     *
+     * @param className classpath/classname of the class from which a instance should get constructed
+     * @param stringArg argument which is passed to the ctor, can be null if no string should be passed to the ctor
+     * @return constructed plugin/operator/etc
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     */
+    private static Plugin createPluginByClassname(final String className, final String stringArg) throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
         Class c = Class.forName(className);
-        Plugin createdPlugin = (Plugin)c.getConstructor().newInstance();
+
+        Plugin createdPlugin;
+
+        if (stringArg != null) {
+            createdPlugin = (Plugin)c.getConstructor(String.class).newInstance(stringArg);
+        }
+        else {
+            createdPlugin = (Plugin)c.getConstructor().newInstance();
+        }
+
         return createdPlugin;
     }
 }
