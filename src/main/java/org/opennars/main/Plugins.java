@@ -16,7 +16,6 @@ package org.opennars.main;
 
 import org.opennars.operator.mental.Anticipate;
 import org.opennars.plugin.mental.*;
-import org.opennars.plugin.misc.RuntimeNARSettings;
 import org.opennars.plugin.perception.VisionChannel;
 
 /**
@@ -25,7 +24,6 @@ import org.opennars.plugin.perception.VisionChannel;
 public class Plugins {
 
     public Nar init(final Nar n) {
-        n.addPlugin(new RuntimeNARSettings());
         n.addPlugin(new Emotions());
         n.addPlugin(new Anticipate());      // expect an event 
         final String label = "BRIGHT";
