@@ -26,6 +26,12 @@ import org.opennars.language.Term;
 import org.opennars.main.Nar;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -36,7 +42,32 @@ import static org.junit.Assert.assertTrue;
  */
 public class BagOperationsTest {
 
-    static final Nar nar = new Nar();
+    static Nar nar;
+
+    static {
+        try {
+            nar = new Nar();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     static Concept makeConcept(final String name, final float priority) {
         final BudgetValue budg = new BudgetValue(priority,priority,priority);
         final Concept s = new Concept(budg,new Term(name),nar.memory);

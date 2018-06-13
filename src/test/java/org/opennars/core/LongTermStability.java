@@ -16,7 +16,12 @@ package org.opennars.core;
 
 import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.main.Nar;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.Random;
 
 public class LongTermStability {
@@ -89,7 +94,7 @@ public class LongTermStability {
         consumer.addInput(String.format("<{%d} --> (/, %s, {%d}, _)>%s :|:", objectId, relation, placeId, taskType));
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         Reasoner reasonerUnderTest = new Nar();
         final LongTermStability test = new LongTermStability(reasonerUnderTest);
 

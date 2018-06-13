@@ -24,7 +24,12 @@ import org.opennars.io.events.EventHandler;
 import org.opennars.io.events.Events.Answer;
 import org.opennars.main.Nar;
 import org.opennars.util.test.OutputContainsCondition;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertTrue;
@@ -36,7 +41,10 @@ import static org.junit.Assert.assertTrue;
 public class VariableTest {
  
     final Nar n = new Nar();
-    
+
+    public VariableTest() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+    }
+
     @Before public void init() {
         n.addInput("<a --> 3>. :|:");
         n.addInput("<a --> 4>. :/:");        

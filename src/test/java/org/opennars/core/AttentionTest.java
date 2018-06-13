@@ -23,7 +23,12 @@ import com.google.common.collect.Iterables;
 import org.junit.Test;
 import org.opennars.entity.Concept;
 import org.opennars.main.Nar;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,7 +40,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class AttentionTest {
     
-    @Test public void testSampleNextConcept() {
+    @Test public void testSampleNextConcept() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         
         final int numConcepts = 32;
         final Nar n = new Nar();
