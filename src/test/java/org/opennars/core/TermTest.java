@@ -26,7 +26,12 @@ import org.opennars.language.Term;
 import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
@@ -41,8 +46,11 @@ public class TermTest {
     
     final Nar n = new Nar();
     final Narsese np = new Narsese(n);
-    
-    protected void assertEquivalent(final String term1String, final String term2String) {
+
+    public TermTest() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+    }
+
+    protected void assertEquivalent(final String term1String, final String term2String) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         final Nar n = new Nar();
 
         try {
@@ -62,7 +70,7 @@ public class TermTest {
     }
     
     @Test
-    public void testCommutativeCompoundTerm() {
+    public void testCommutativeCompoundTerm() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         final Nar n = new Nar();
 
         assertEquivalent("(&&,a,b)", "(&&,b,a)");
@@ -88,7 +96,7 @@ public class TermTest {
     }    
     
     @Test
-    public void testConjunctionTreeSet() throws Narsese.InvalidInputException {
+    public void testConjunctionTreeSet() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         final Nar n = new Nar();
         
         
@@ -145,7 +153,7 @@ public class TermTest {
     }
     
     @Test
-    public void testUnconceptualizedTermInstancing() throws Narsese.InvalidInputException {
+    public void testUnconceptualizedTermInstancing() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
        final Nar n = new Nar();
         
        final String term1String ="<a --> b>";
@@ -164,7 +172,7 @@ public class TermTest {
     }
     
     @Test
-    public void testConceptInstancing() throws Narsese.InvalidInputException {
+    public void testConceptInstancing() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
        final Nar n = new Nar();
         
        final String statement1 = "<a --> b>.";
@@ -227,7 +235,7 @@ public class TermTest {
     }
 
     @Test(expected = Narsese.InvalidInputException.class)
-    public void testInvalidInputThrowsException() throws Narsese.InvalidInputException {
+    public void testInvalidInputThrowsException() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         final String t = "<$1 --> (~,{place4},$1)>";
         final Nar n = new Nar();
         final Narsese p = new Narsese(n);
@@ -236,7 +244,7 @@ public class TermTest {
     }
 
     @Test
-    public void invalidTermIndep() throws Narsese.InvalidInputException {
+    public void invalidTermIndep() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         
         final String t = "<$1 --> (~,{place4},$1)>";
         final Nar n = new Nar();
@@ -268,7 +276,7 @@ public class TermTest {
     }
     
     
-    @Test public void testParseOperationInFunctionalForm() throws Narsese.InvalidInputException {
+    @Test public void testParseOperationInFunctionalForm() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         Parameters.FUNCTIONAL_OPERATIONAL_FORMAT = true;
         
         final Nar n = new Nar();

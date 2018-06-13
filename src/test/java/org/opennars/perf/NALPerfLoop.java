@@ -17,7 +17,12 @@ package org.opennars.perf;
 import org.opennars.core.NALTest;
 import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.Collection;
 
 import static org.opennars.perf.NALStressMeasure.perfNAL;
@@ -27,7 +32,7 @@ import static org.opennars.perf.NALStressMeasure.perfNAL;
  */
 public class NALPerfLoop {
     
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
        
         final int repeats = 2;
         final int warmups = 1;

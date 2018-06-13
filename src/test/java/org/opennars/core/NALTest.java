@@ -27,8 +27,12 @@ import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 import org.opennars.util.io.ExampleFileInput;
 import org.opennars.util.test.OutputCondition;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.*;
 
 import static org.junit.Assert.assertTrue;
@@ -73,7 +77,7 @@ public class NALTest  {
         }
     }
     
-    public Nar newNAR() {
+    public Nar newNAR() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         return new Nar();
         //return Nar.build(Default.fromJSON("nal/build/pei1.fast.nar"));
         //return new ContinuousBagNARBuilder().build();
@@ -165,11 +169,11 @@ public class NALTest  {
         
     }
     
-    public double run() {               
+    public double run() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         return testNAL(scriptPath);
     }
     
-    protected double testNAL(final String path) {               
+    protected double testNAL(final String path) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         Memory.resetStatic();
         
         final List<OutputCondition> expects = new ArrayList();
@@ -237,7 +241,7 @@ public class NALTest  {
     }
     
     @Test
-    public void test() {
+    public void test() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         testNAL(scriptPath);
     }
 }

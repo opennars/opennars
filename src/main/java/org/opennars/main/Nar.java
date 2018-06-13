@@ -17,6 +17,7 @@ package org.opennars.main;
 import org.apache.commons.lang3.StringUtils;
 import org.opennars.entity.*;
 import org.opennars.interfaces.pub.Reasoner;
+import org.opennars.io.ConfigReader;
 import org.opennars.io.Narsese;
 import org.opennars.io.Narsese.InvalidInputException;
 import org.opennars.io.Symbols;
@@ -37,8 +38,12 @@ import org.opennars.plugin.Plugin;
 import org.opennars.plugin.perception.SensoryChannel;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -97,7 +102,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         ret.plugins = new ArrayList<>(); 
         for (final Operator o : Operators.get(ret))
             ret.memory.addOperator(o);
-        new Plugins().init(ret);
+        //new Plugins().init(ret);
         return ret;
     }
 
@@ -184,7 +189,14 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     private boolean stopped = false;
     private boolean threadYield;
 
-    public Nar(long narId) {
+    public static final String DEFAULTCONFIG_FILEPATH = "../opennars/src/main/config/defaultConfig.xml";
+
+    public Nar(long narId) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+        this(narId, DEFAULTCONFIG_FILEPATH);
+    }
+
+    // constructs the NAR and loads a config from the filepath
+    public Nar(long narId, String configFilePath) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
         final Plugins b = new Plugins();
         final Memory m = new Memory(new RuntimeParameters(),
                 new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE),
@@ -196,11 +208,13 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         this.param = m.param;
         for (final Operator o : Operators.get(this))
             this.memory.addOperator(o);
-        new Plugins().init(this);
+
+        //new Plugins().init(this);
+        ConfigReader.loadFrom(configFilePath, this, this.narParameters);
     }
     
-    public Nar() {
-        this(java.util.UUID.randomUUID().getLeastSignificantBits());
+    public Nar() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+        this(java.util.UUID.randomUUID().getLeastSignificantBits(), DEFAULTCONFIG_FILEPATH);
     }
 
     /**

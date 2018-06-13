@@ -23,8 +23,13 @@ import org.opennars.main.Parameters;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -35,7 +40,32 @@ public class BagPerf {
     
     final int repeats = 8;
     final int warmups = 1;
-    final static PortableDouble forgetRate = (new Nar().param).conceptForgetDurations;
+    static PortableDouble forgetRate;
+
+    static {
+        try {
+            forgetRate = (new Nar().param).conceptForgetDurations;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     int randomAccesses;
     final double insertRatio = 0.9;
     

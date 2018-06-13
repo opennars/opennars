@@ -19,7 +19,12 @@ import org.opennars.io.Narsese;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +35,10 @@ public class ApplySubstituteTest {
     
     final Nar n = new Nar();
     final Narsese np = new Narsese(n);
-    
+
+    public ApplySubstituteTest() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+    }
+
     @Test
     public void testApplySubstitute() throws Narsese.InvalidInputException {
             
@@ -55,7 +63,7 @@ public class ApplySubstituteTest {
     }
     
     @Test
-    public void test2() throws Narsese.InvalidInputException {
+    public void test2() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         //substituting:  <(*,$1) --> num>.  with $1 ==> 0
         final Nar n = new Nar();
             

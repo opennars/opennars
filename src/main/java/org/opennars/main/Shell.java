@@ -15,8 +15,12 @@
 package org.opennars.main;
 
 import org.opennars.io.events.TextOutputHandler;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,7 +46,7 @@ public class Shell {
      * <p>
      * @param args optional argument used : one addInput file
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
                 
         final Shell nars = new Shell(new Nar());
         nars.nar.addInput("*volume=0");

@@ -26,6 +26,12 @@ import org.opennars.io.events.Events.Answer;
 import org.opennars.io.events.OutputHandler.OUT;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 
 /**
  *
@@ -76,7 +82,7 @@ public class TuneTuffy {
         
     }
     
-    public static void main(final String[] args) throws Narsese.InvalidInputException {
+    public static void main(final String[] args) throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
 
         
         final Nar n = new Nar();
