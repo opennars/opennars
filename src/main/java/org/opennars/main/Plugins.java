@@ -14,8 +14,6 @@
  */
 package org.opennars.main;
 
-import org.opennars.language.SetInt;
-import org.opennars.language.Term;
 import org.opennars.operator.mental.Anticipate;
 import org.opennars.plugin.mental.*;
 import org.opennars.plugin.misc.RuntimeNARSettings;
@@ -30,7 +28,7 @@ public class Plugins {
         n.addPlugin(new RuntimeNARSettings());
         n.addPlugin(new Emotions());
         n.addPlugin(new Anticipate());      // expect an event 
-        final Term label = SetInt.make(new Term("BRIGHT"));
+        final String label = "BRIGHT";
         //Add a vision channel:
         final int sensor_W = 5;
         final int sensor_H = 5;

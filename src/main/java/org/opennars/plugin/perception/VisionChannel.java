@@ -21,10 +21,7 @@ import org.opennars.io.events.EventEmitter;
 import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.CycleEnd;
 import org.opennars.io.events.Events.ResetEnd;
-import org.opennars.language.Inheritance;
-import org.opennars.language.SetExt;
-import org.opennars.language.Tense;
-import org.opennars.language.Term;
+import org.opennars.language.*;
 import org.opennars.main.Nar;
 import org.opennars.main.Parameters;
 
@@ -39,10 +36,12 @@ public class VisionChannel extends SensoryChannel  {
     final Nar nar;
     boolean HadNewInput = false; //only generate frames if at least something was input since last "commit to Nar"
     public final EventEmitter.EventObserver obs;
-    public VisionChannel(final Term label, final Nar nar, final SensoryChannel reportResultsTo, final int width, final int height, final int duration) {
-        super(nar,reportResultsTo, width, height, duration, label);
+
+    // legacy ctor
+    public VisionChannel(final String label, final Nar nar, final SensoryChannel reportResultsTo, final int width, final int height, final int duration) {
+        super(nar,reportResultsTo, width, height, duration, SetInt.make(new Term(label)));
         this.nar = nar;
-        this.label = label;
+        this.label = SetInt.make(new Term(label));
         inputs = new double[height][width];
         updated = new boolean[height][width];
         obs = (ev, a) -> {
