@@ -173,10 +173,4 @@ public class ConfigReader {
         Plugin createdPlugin = (Plugin)c.getConstructor(typesAsArr).newInstance(valuesAsArr);
         return createdPlugin;
     }
-
-    public static void main(String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
-        NarParameters params = new NarParameters();
-
-        loadFrom("../opennars/src/main/config/defaultConfig.xml", null, params);
-    }
 }
