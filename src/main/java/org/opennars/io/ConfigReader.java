@@ -56,9 +56,13 @@ public class ConfigReader {
                     }
 
                     final String pluginClassPath = iPlugin.getAttributes().getNamedItem("classpath").getNodeValue();
-                    final String stringArg = iPlugin.getAttributes().getNamedItem("stringarg").getNodeValue();
+                    final String arg0 = iPlugin.getAttributes().getNamedItem("arg0").getNodeValue();
+                    final String arg1 = iPlugin.getAttributes().getNamedItem("arg1").getNodeValue();
+                    final String arg2 = iPlugin.getAttributes().getNamedItem("arg2").getNodeValue();
+                    final String arg3 = iPlugin.getAttributes().getNamedItem("arg3").getNodeValue();
+                    final String arg4 = iPlugin.getAttributes().getNamedItem("arg4").getNodeValue();
 
-                    Plugin createdPlugin = createPluginByClassname(pluginClassPath, stringArg);
+                    Plugin createdPlugin = createPluginByClassname(pluginClassPath, arg0, arg1, arg2, arg3, arg4);
                     reasoner.addPlugin(createdPlugin);
                 }
             }
@@ -115,7 +119,11 @@ public class ConfigReader {
     /**
      *
      * @param className classpath/classname of the class from which a instance should get constructed
-     * @param stringArg argument which is passed to the ctor, can be null if no string should be passed to the ctor
+     * @param arg0 argument which is passed to the ctor, can be null if no string should be passed to the ctor
+     * @param arg1 argument which is passed to the ctor, can be null if no string should be passed to the ctor
+     * @param arg2 argument which is passed to the ctor, can be null if no string should be passed to the ctor
+     * @param arg3 argument which is passed to the ctor, can be null if no string should be passed to the ctor
+     * @param arg4 argument which is passed to the ctor, can be null if no string should be passed to the ctor
      * @return constructed plugin/operator/etc
      * @throws IllegalAccessException
      * @throws InstantiationException
@@ -123,13 +131,25 @@ public class ConfigReader {
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      */
-    private static Plugin createPluginByClassname(final String className, final String stringArg) throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
+    private static Plugin createPluginByClassname(final String className, final String arg0, final String arg1, final String arg2, final String arg3, final String arg4) throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
         Class c = Class.forName(className);
 
         Plugin createdPlugin;
 
-        if (stringArg != null) {
-            createdPlugin = (Plugin)c.getConstructor(String.class).newInstance(stringArg);
+        if (arg4 != null) {
+            createdPlugin = (Plugin)c.getConstructor(String.class, String.class, String.class, String.class, String.class).newInstance(arg0, arg1, arg2, arg3, arg4);
+        }
+        else if (arg3 != null) {
+            createdPlugin = (Plugin)c.getConstructor(String.class, String.class, String.class, String.class).newInstance(arg0, arg1, arg2, arg3);
+        }
+        else if (arg2 != null) {
+            createdPlugin = (Plugin)c.getConstructor(String.class, String.class, String.class).newInstance(arg0, arg1, arg2);
+        }
+        else if (arg1 != null) {
+            createdPlugin = (Plugin)c.getConstructor(String.class, String.class).newInstance(arg0, arg1);
+        }
+        else if (arg0 != null) {
+            createdPlugin = (Plugin)c.getConstructor(String.class).newInstance(arg0);
         }
         else {
             createdPlugin = (Plugin)c.getConstructor().newInstance();
