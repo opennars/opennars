@@ -117,7 +117,7 @@ public class ConfigReader {
 
                         wasConfigValueAssigned = true;
                     } catch (NoSuchFieldException e) {
-                        // ignore
+                        // ignore 
                     }
                 }
             }
