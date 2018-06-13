@@ -65,7 +65,7 @@ public class ConfigReader {
             if( nodeName.equals("plugins") ) {
                 final NodeList plugins = iConfig.getChildNodes();
 
-                for (int iterationPluginIdx = 0; iterationPluginIdx < config.getLength(); iterationPluginIdx++) {
+                for (int iterationPluginIdx = 0; iterationPluginIdx < plugins.getLength(); iterationPluginIdx++) {
                     final Node iPlugin = plugins.item(iterationPluginIdx);
 
                     if (iPlugin.getNodeType() != Node.ELEMENT_NODE) {

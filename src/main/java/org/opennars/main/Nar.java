@@ -94,15 +94,15 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         outStream.close();
     }
     
-    public static Nar LoadFromFile(final String name) throws IOException, ClassNotFoundException {
+    public static Nar LoadFromFile(final String name) throws IOException, ClassNotFoundException, 
+            IllegalAccessException, ParseException, ParserConfigurationException, SAXException, 
+            NoSuchMethodException, InstantiationException, InvocationTargetException {
         final FileInputStream inStream = new FileInputStream(name);
         final ObjectInputStream stream = new ObjectInputStream(inStream);
         final Nar ret = (Nar) stream.readObject();
         ret.memory.event = new EventEmitter();
-        ret.plugins = new ArrayList<>(); 
-        for (final Operator o : Operators.get(ret))
-            ret.memory.addOperator(o);
-        //new Plugins().init(ret);
+        ret.plugins = new ArrayList<>();
+        ConfigReader.loadFrom(ret.usedConfigFilePath, ret, ret.narParameters);
         return ret;
     }
 
@@ -191,13 +191,15 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     public static final String DEFAULTCONFIG_FILEPATH = "../opennars/src/main/config/defaultConfig.xml";
 
-    public Nar(long narId) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
+    public Nar(long narId) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
+            ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         this(narId, DEFAULTCONFIG_FILEPATH);
     }
 
+    public String usedConfigFilePath = "";
     // constructs the NAR and loads a config from the filepath
-    public Nar(long narId, String configFilePath) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
-        final Plugins b = new Plugins();
+    public Nar(long narId, String configFilePath) throws IOException, InstantiationException, InvocationTargetException, 
+            NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
         final Memory m = new Memory(new RuntimeParameters(),
                 new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE),
                 new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
@@ -206,10 +208,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         this.memory = m;
         this.memory.narId = narId;
         this.param = m.param;
-        for (final Operator o : Operators.get(this))
-            this.memory.addOperator(o);
-
-        //new Plugins().init(this);
+        this.usedConfigFilePath = configFilePath;
         ConfigReader.loadFrom(configFilePath, this, this.narParameters);
     }
     
