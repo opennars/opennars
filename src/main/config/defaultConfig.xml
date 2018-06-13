@@ -12,6 +12,20 @@
 
     <!-- plugins -->
     <plugins>
+        <!-- plugins -->
+        <plugin classpath="org.opennars.plugin.perception.VisionChannel">
+            <arg type="java.lang.String.class" value="BRIGHT"/>
+            <arg isReasoner=""/>
+            <arg isReasoner=""/>
+            <arg type="int.class" value="5"/>
+            <arg type="int.class" value="5"/>
+            <arg type="int.class" value="25"/>
+        </plugin>
+
+        <!-- outdated
+        <plugin classpath="org.opennars.operator.NullOperator" stringarg="^break"/>
+        -->
+
         <plugin classpath="org.opennars.plugin.mental.Emotions"/>
     </plugins>
 </config>
