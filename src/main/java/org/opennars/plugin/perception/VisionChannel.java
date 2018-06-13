@@ -16,6 +16,7 @@ package org.opennars.plugin.perception;
 
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter;
 import org.opennars.io.events.Events;
@@ -37,10 +38,9 @@ public class VisionChannel extends SensoryChannel  {
     boolean HadNewInput = false; //only generate frames if at least something was input since last "commit to Nar"
     public final EventEmitter.EventObserver obs;
 
-    // legacy ctor
-    public VisionChannel(final String label, final Nar nar, final SensoryChannel reportResultsTo, final int width, final int height, final int duration) {
-        super(nar,reportResultsTo, width, height, duration, SetInt.make(new Term(label)));
-        this.nar = nar;
+    public VisionChannel(final String label, final Reasoner nar, final Reasoner reportResultsTo, final int width, final int height, final int duration) {
+        super((Nar)nar,(SensoryChannel)reportResultsTo, width, height, duration, SetInt.make(new Term(label)));
+        this.nar = (Nar)nar;
         this.label = SetInt.make(new Term(label));
         inputs = new double[height][width];
         updated = new boolean[height][width];
@@ -56,8 +56,8 @@ public class VisionChannel extends SensoryChannel  {
                 resetChannel();
             }
         };
-        nar.memory.event.set(obs, true, Events.CycleEnd.class);
-        nar.memory.event.set(obs, true, Events.ResetEnd.class);
+        ((Nar)nar).memory.event.set(obs, true, Events.CycleEnd.class);
+        ((Nar)nar).memory.event.set(obs, true, Events.ResetEnd.class);
     }
     
     private void resetChannel() {
