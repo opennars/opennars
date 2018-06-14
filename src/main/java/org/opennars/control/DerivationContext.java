@@ -21,9 +21,8 @@ package org.opennars.control;
 import org.opennars.entity.*;
 import org.opennars.inference.TruthFunctions;
 import org.opennars.io.events.Events;
-import org.opennars.main.NarParameters;
-import org.opennars.language.*;
 import org.opennars.main.Parameters;
+import org.opennars.language.*;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
 
@@ -46,9 +45,9 @@ public class DerivationContext {
     protected Stamp newStamp;
     public StampBuilder newStampBuilder;
 
-    public NarParameters narParameters;
+    public Parameters narParameters;
     
-    public DerivationContext(final Memory mem, final NarParameters narParameters) {
+    public DerivationContext(final Memory mem, final Parameters narParameters) {
         super();
         this.memory = mem;
         this.narParameters = narParameters;
@@ -79,7 +78,7 @@ public class DerivationContext {
         } 
         if (task.sentence != null && task.sentence.truth != null) {
             final float conf = task.sentence.truth.getConfidence();
-            if (conf < Parameters.TRUTH_EPSILON) {
+            if (conf < narParameters.TRUTH_EPSILON) {
                 //no confidence - we can delete the wrongs out that way.
                 memory.removeTask(task, "Ignored (zero confidence)");
                 return false;
@@ -127,8 +126,8 @@ public class DerivationContext {
         
         task.setElemOfSequenceBuffer(false);
         if(!revised) {
-            task.getBudget().setDurability(task.getBudget().getDurability()*Parameters.DERIVATION_DURABILITY_LEAK);
-            task.getBudget().setPriority(task.getBudget().getPriority()*Parameters.DERIVATION_PRIORITY_LEAK);
+            task.getBudget().setDurability(task.getBudget().getDurability()*narParameters.DERIVATION_DURABILITY_LEAK);
+            task.getBudget().setPriority(task.getBudget().getPriority()*narParameters.DERIVATION_PRIORITY_LEAK);
         }
         memory.event.emit(Events.TaskDerive.class, task, revised, single);
         //memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
@@ -207,8 +206,8 @@ public class DerivationContext {
             
             
             //"Since in principle it is always valid to eternalize a tensed belief"
-            if(temporalInduction && Parameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
-                final TruthValue truthEt=TruthFunctions.eternalize(newTruth);
+            if(temporalInduction && narParameters.IMMEDIATE_ETERNALIZATION) { //temporal induction generated ones get eternalized directly
+                final TruthValue truthEt=TruthFunctions.eternalize(newTruth, this.narParameters);
                 final Stamp st=derive_stamp.clone();
                 st.setEternal();
                 newSentence = new Sentence(
@@ -362,7 +361,7 @@ public class DerivationContext {
     /** creates a lazy/deferred StampBuilder which only constructs the stamp if getTheNewStamp() is actually invoked */
     public void setTheNewStamp(final Stamp first, final Stamp second, final long time) {
         newStamp = null;
-        newStampBuilder = () -> new Stamp(first, second, time);
+        newStampBuilder = () -> new Stamp(first, second, time, this.narParameters);
     }
 
     /**

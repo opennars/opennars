@@ -19,7 +19,6 @@ import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.*;
-import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 
 import java.util.*;
@@ -223,7 +222,7 @@ public class TemporalRules {
             }
         }
 
-        final int durationCycles = Parameters.DURATION;
+        final int durationCycles = nal.narParameters.DURATION;
         final long time1 = s1.getOccurenceTime();
         final long time2 = s2.getOccurenceTime();
         final long timeDiff = time2 - time1;
@@ -250,20 +249,20 @@ public class TemporalRules {
         TruthValue givenTruth2 = s2.truth;
         
         //This code adds a penalty for large time distance (TODO probably revise)
-        final Sentence s3 = s2.projection(s1.getOccurenceTime(), nal.memory.time());
+        final Sentence s3 = s2.projection(s1.getOccurenceTime(), nal.memory.time(), nal.memory);
         givenTruth2 = s3.truth; 
         
         //Truth and priority calculations
-        final TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
-        final TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
-        final TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
-        final TruthValue truth4 = TruthFunctions.intersection(givenTruth1, givenTruth2);
+        final TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2, nal.narParameters);
+        final TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1, nal.narParameters);
+        final TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2, nal.narParameters);
+        final TruthValue truth4 = TruthFunctions.intersection(givenTruth1, givenTruth2, nal.narParameters);
         final BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
-        budget1.setPriority(budget1.getPriority() * Parameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
+        budget1.setPriority(budget1.getPriority() * nal.narParameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         final BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
-        budget2.setPriority(budget2.getPriority() * Parameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
+        budget2.setPriority(budget2.getPriority() * nal.narParameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         final BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
-        budget3.setPriority(budget3.getPriority() * Parameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
+        budget3.setPriority(budget3.getPriority() * nal.narParameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         final BudgetValue budget4 = BudgetFunctions.forward(truth4, nal); //this one is sequence in sequenceBag, no need to reduce here
         
         final Statement statement1 = Implication.make(t1, t2, order);

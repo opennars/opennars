@@ -24,7 +24,6 @@ import org.opennars.io.events.Events.CycleEnd;
 import org.opennars.io.events.Events.ResetEnd;
 import org.opennars.language.*;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
 
 public class VisionChannel extends SensoryChannel  {
     public final float DEFAULT_OUTPUT_CONFIDENCE = 0.1f;
@@ -56,8 +55,14 @@ public class VisionChannel extends SensoryChannel  {
                 resetChannel();
             }
         };
-        ((Nar)nar).memory.event.set(obs, true, Events.CycleEnd.class);
-        ((Nar)nar).memory.event.set(obs, true, Events.ResetEnd.class);
+        
+    }
+    
+    @Override
+    public boolean setEnabled(final Nar n, final boolean enabled) {
+        n.memory.event.set(obs, enabled, Events.CycleEnd.class);
+        n.memory.event.set(obs, enabled, Events.ResetEnd.class);
+        return true;
     }
     
     private void resetChannel() {
@@ -138,12 +143,12 @@ public class VisionChannel extends SensoryChannel  {
         final Sentence s = new Sentence(Inheritance.make(V, this.label),
                                                    Symbols.JUDGMENT_MARK, 
                                                    new TruthValue(1.0f,
-                                                   DEFAULT_OUTPUT_CONFIDENCE), 
+                                                   DEFAULT_OUTPUT_CONFIDENCE, nar.narParameters), 
                                                    stamp);
 
-        final BudgetValue budgetForNewTask = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
-            Parameters.DEFAULT_JUDGMENT_DURABILITY,
-            BudgetFunctions.truthToQuality(s.truth));
+        final BudgetValue budgetForNewTask = new BudgetValue(nar.narParameters.DEFAULT_JUDGMENT_PRIORITY,
+            nar.narParameters.DEFAULT_JUDGMENT_DURABILITY,
+            BudgetFunctions.truthToQuality(s.truth), nar.narParameters);
         final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
 
         this.results.add(newTask);//feeds results into "upper" sensory channels:

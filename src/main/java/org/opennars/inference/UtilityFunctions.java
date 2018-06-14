@@ -14,10 +14,9 @@
  */
 package org.opennars.inference;
 
-import org.opennars.main.Parameters;
-
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+import org.opennars.main.Parameters;
 
 /**
  * Common functions on real numbers, mostly in [0,1].
@@ -85,8 +84,8 @@ public class UtilityFunctions {
      * @param w Weight of evidence, a non-negative real number
      * @return The corresponding confidence, in [0, 1)
      */
-    public final static float w2c(final float w) {
-        return w / (w + Parameters.HORIZON);
+    public final static float w2c(final float w, Parameters narParameters) {
+        return w / (w + narParameters.HORIZON);
     }
 
     /**
@@ -94,8 +93,8 @@ public class UtilityFunctions {
      * @param c confidence, in [0, 1)
      * @return The corresponding weight of evidence, a non-negative real number
      */
-    public final static float c2w(final float c) {
-        return Parameters.HORIZON * c / (1 - c);
+    public final static float c2w(final float c, Parameters narParameters) {
+        return narParameters.HORIZON * c / (1 - c);
     }
 }
 

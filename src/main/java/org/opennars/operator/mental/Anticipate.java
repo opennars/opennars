@@ -29,7 +29,6 @@ import org.opennars.language.Interval;
 import org.opennars.language.Product;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
@@ -47,8 +46,8 @@ public class Anticipate extends Operator implements EventObserver {
     final Set<Term> newTasks = new LinkedHashSet();
     DerivationContext nal;
  
-    final static TruthValue expiredTruth = new TruthValue(0.0f, Parameters.ANTICIPATION_CONFIDENCE);
-    final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
+    private TruthValue expiredTruth = null;
+    private BudgetValue expiredBudget = null;
     
     public Anticipate() {
         super("^anticipate");        
@@ -57,6 +56,10 @@ public class Anticipate extends Operator implements EventObserver {
     @Override
     public boolean setEnabled(final Nar n, final boolean enabled) {
         n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.CycleEnd.class);
+        expiredTruth = new TruthValue(0.0f, n.narParameters.ANTICIPATION_CONFIDENCE, n.narParameters);
+        expiredBudget = new BudgetValue(n.narParameters.DEFAULT_JUDGMENT_PRIORITY, 
+                                                    n.narParameters.DEFAULT_JUDGMENT_DURABILITY, 
+                                                    BudgetFunctions.truthToQuality(expiredTruth), n.narParameters);
         return true;
     }
     
@@ -101,7 +104,7 @@ public class Anticipate extends Operator implements EventObserver {
             //ok we know the magnitude now, let's now construct a interval with magnitude one higher
             //(this we can skip because magnitudeToTime allows it without being explicitly constructed)
             //ok, and what predicted occurence time would that be? because only if now is bigger or equal, didnt happen is true
-            final double expiredate=predictionstarted+Int.time*Parameters.ANTICIPATION_TOLERANCE;
+            final double expiredate=predictionstarted+Int.time*nal.narParameters.ANTICIPATION_TOLERANCE;
             //
             
             final boolean didntHappen = (now>=expiredate);
@@ -153,7 +156,7 @@ public class Anticipate extends Operator implements EventObserver {
             final Task newEvent = (Task)args[0];
             this.nal= (DerivationContext)args[1];
             
-            if (newEvent.sentence.truth != null && newEvent.sentence.isJudgment() && newEvent.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION && !newEvent.sentence.isEternal()) {
+            if (newEvent.sentence.truth != null && newEvent.sentence.isJudgment() && newEvent.sentence.truth.getExpectation() > this.nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !newEvent.sentence.isEternal()) {
                 newTasks.add(newEvent.getTerm()); //new: always add but keep truth value in mind
             }
         }
@@ -176,7 +179,7 @@ public class Anticipate extends Operator implements EventObserver {
             return null; //not as mental operator but as fundamental principle
         }
         
-        anticipate(args[1],memory,memory.time()+Parameters.DURATION, null);
+        anticipate(args[1],memory,memory.time()+memory.narParameters.DURATION, null);
         
         return null;
     }
@@ -200,7 +203,7 @@ public class Anticipate extends Operator implements EventObserver {
             return;
         }*/
         
-        if(t!=null && t.sentence.truth.getExpectation() < Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
+        if(t!=null && t.sentence.truth.getExpectation() < memory.narParameters.DEFAULT_CONFIRMATION_EXPECTATION) {
             return;
         } 
         
@@ -225,7 +228,7 @@ public class Anticipate extends Operator implements EventObserver {
     public void anticipationFeedback(final Term content, final Task t, final Memory memory) {
         if(anticipationOperator) {
             final Operation op=(Operation) Operation.make(Product.make(Term.SELF,content), this);
-            final TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+            final TruthValue truth=new TruthValue(1.0f,memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters);
             final Stamp st;
             if(t==null) {
                 st=new Stamp(memory);
@@ -241,9 +244,9 @@ public class Anticipate extends Operator implements EventObserver {
                     st);
 
             final BudgetValue budgetForNewTask = new BudgetValue(
-                Parameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                Parameters.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
-                BudgetFunctions.truthToQuality(truth));
+                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                memory.narParameters.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                BudgetFunctions.truthToQuality(truth), memory.narParameters);
             final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
 
             memory.addNewTask(newTask, "Perceived (Internal Experience: Anticipation)");

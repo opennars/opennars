@@ -22,7 +22,6 @@ import org.opennars.language.Inheritance;
 import org.opennars.language.SetInt;
 import org.opennars.language.Tense;
 import org.opennars.language.Term;
-import org.opennars.main.Parameters;
 import org.opennars.operator.Operator;
 import org.opennars.storage.Memory;
 
@@ -52,7 +51,7 @@ public abstract class Feel extends Operator {
      */
     protected List<Task> feeling(final float value, final Memory memory) {
         final Stamp stamp = new Stamp(memory, Tense.Present);
-        final TruthValue truth = new TruthValue(value, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+        final TruthValue truth = new TruthValue(value, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters);
                 
         final Term predicate = new SetInt(feelingTerm);
         
@@ -64,7 +63,7 @@ public abstract class Feel extends Operator {
             stamp);
 
         final float quality = BudgetFunctions.truthToQuality(truth);
-        final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
+        final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_JUDGMENT_PRIORITY, memory.narParameters.DEFAULT_JUDGMENT_DURABILITY, quality, memory.narParameters);
 
         final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
         return Lists.newArrayList(newTask);

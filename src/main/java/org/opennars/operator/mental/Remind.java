@@ -20,7 +20,6 @@ import org.opennars.entity.Task;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.BudgetFunctions.Activating;
 import org.opennars.language.Term;
-import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.storage.Memory;
@@ -53,7 +52,7 @@ public class Remind extends Operator {
     protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
         final Term term = args[1];
         final Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
-        final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
+        final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_QUESTION_PRIORITY, memory.narParameters.DEFAULT_QUESTION_DURABILITY, 1, memory.narParameters);
         activate(memory, concept, budget, Activating.TaskLink);
         return null;
     }

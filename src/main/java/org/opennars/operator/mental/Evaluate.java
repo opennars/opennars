@@ -21,7 +21,6 @@ import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
 import org.opennars.io.Symbols;
 import org.opennars.language.Term;
-import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.storage.Memory;
@@ -53,7 +52,7 @@ public class Evaluate extends Operator {
             null,
             new Stamp(memory));
 
-        final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUEST_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
+        final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_QUEST_PRIORITY, memory.narParameters.DEFAULT_QUESTION_DURABILITY, 1, memory.narParameters);
 
         final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
         return Lists.newArrayList(newTask);

@@ -40,7 +40,7 @@ import org.opennars.language.Interval;
 import org.opennars.language.Product;
 import org.opennars.language.Term;
 import org.opennars.language.Variable;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.FunctionOperator;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -84,10 +84,10 @@ public class ProcessGoal {
             }
         }
         if (oldGoalT != null) {
-            if (revisible(goal, oldGoal)) {
+            if (revisible(goal, oldGoal, nal.narParameters)) {
                 final Stamp oldStamp = oldGoal.stamp;
                 nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
-                final Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime());
+                final Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime(), concept.memory);
                 if (projectedGoal!=null) {
                     nal.setCurrentBelief(projectedGoal);
                     final boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
@@ -99,8 +99,8 @@ public class ProcessGoal {
         }
         final Stamp s2=goal.stamp.clone();
         s2.setOccurrenceTime(concept.memory.time());
-        if(s2.after(task.sentence.stamp, Parameters.DURATION)) { //this task is not up to date we have to project it first
-            final Sentence projGoal = task.sentence.projection(concept.memory.time(), Parameters.DURATION);
+        if(s2.after(task.sentence.stamp, nal.narParameters.DURATION)) { //this task is not up to date we have to project it first
+            final Sentence projGoal = task.sentence.projection(concept.memory.time(), nal.narParameters.DURATION, nal.memory);
             if(projGoal!=null && projGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD) {
                 nal.singlePremiseTask(projGoal, task.budget.clone()); //keep goal updated
                 // return false; //outcommented, allowing "roundtrips now", relevant for executing multiple steps of learned implication chains
@@ -110,7 +110,7 @@ public class ProcessGoal {
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
                 final Sentence belief = beliefT.sentence;
-                final Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), Parameters.DURATION);
+                final Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.narParameters.DURATION, nal.memory);
                 AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
             }
             final double Satisfaction=1.0-AntiSatisfaction;
@@ -120,14 +120,14 @@ public class ProcessGoal {
             }
             final TruthValue T=goal.truth.clone();
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
-            final boolean fullfilled = AntiSatisfaction < Parameters.SATISFACTION_TRESHOLD;
-            final Sentence projectedGoal = goal.projection(nal.memory.time(),nal.memory.time());
+            final boolean fullfilled = AntiSatisfaction < nal.narParameters.SATISFACTION_TRESHOLD;
+            final Sentence projectedGoal = goal.projection(nal.memory.time(), nal.memory.time(), nal.memory);
             if (!(projectedGoal != null && task.aboveThreshold() && !fullfilled)) {
                 return;
             }
             bestReactionForGoal(concept, nal, projectedGoal, task);
             questionFromGoal(task, nal);
-            concept.addToTable(task, false, concept.desires, Parameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
+            concept.addToTable(task, false, concept.desires, nal.narParameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
             InternalExperience.InternalExperienceFromTask(concept.memory,task,false);
             if(!(task.sentence.getTerm() instanceof Operation)) {
                 return;
@@ -179,10 +179,10 @@ public class ProcessGoal {
      * @param nal The derivation context
      */    
     public static void questionFromGoal(final Task task, final DerivationContext nal) {
-        if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+        if(nal.narParameters.QUESTION_GENERATION_ON_DECISION_MAKING || nal.narParameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled
             final List<Term> qu= new ArrayList<>();
-            if(Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+            if(nal.narParameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
                 if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
                     final Variable how=new Variable("?how");
                     //Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
@@ -193,7 +193,7 @@ public class ProcessGoal {
                     }
                 }
             }
-            if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING) {
+            if(nal.narParameters.QUESTION_GENERATION_ON_DECISION_MAKING) {
                 qu.add(task.sentence.term);
             }
             for(final Term q : qu) {
@@ -207,7 +207,9 @@ public class ProcessGoal {
                         st);
 
                     if(s!=null) {
-                        final BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
+                        final BudgetValue budget=new BudgetValue(task.getPriority()*nal.narParameters.CURIOSITY_DESIRE_PRIORITY_MUL,
+                                                                 task.getDurability()*nal.narParameters.CURIOSITY_DESIRE_DURABILITY_MUL,
+                                                                 1, nal.narParameters);
                         nal.singlePremiseTask(s, budget);
                     }
                 }
@@ -245,7 +247,7 @@ public class ProcessGoal {
             final Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
             final Term[] newprec = new Term[prec.length-3];
             System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
-            final long add_tolerance = (long) (((Interval)prec[prec.length-1]).time*Parameters.ANTICIPATION_TOLERANCE);
+            final long add_tolerance = (long) (((Interval)prec[prec.length-1]).time*nal.narParameters.ANTICIPATION_TOLERANCE);
             result.mintime = nal.memory.time();
             result.maxtime = nal.memory.time() + add_tolerance;
             final Operation op = (Operation) prec[prec.length-2];
@@ -280,15 +282,15 @@ public class ProcessGoal {
                 continue;
             }
             //and the truth of the precondition:
-            final Sentence projectedPrecon = bestsofar.sentence.projection(concept.memory.time() /*- distance*/, concept.memory.time());
+            final Sentence projectedPrecon = bestsofar.sentence.projection(concept.memory.time() /*- distance*/, concept.memory.time(), concept.memory);
             if(projectedPrecon.isEternal()) {
                 continue; //projection wasn't better than eternalization, too long in the past
             }
             final TruthValue precon = projectedPrecon.truth;
             //and derive the conjunction of the left side:
-            final TruthValue leftside = TruthFunctions.desireDed(A, Hyp);
+            final TruthValue leftside = TruthFunctions.desireDed(A, Hyp, concept.memory.narParameters);
             //in order to derive the operator desire value:
-            final TruthValue opdesire = TruthFunctions.desireDed(precon, leftside);
+            final TruthValue opdesire = TruthFunctions.desireDed(precon, leftside, concept.memory.narParameters);
             final float expecdesire = opdesire.getExpectation();
             if(expecdesire > result.bestop_truthexp) {
                 result.bestop = op;
@@ -308,7 +310,7 @@ public class ProcessGoal {
                 meta.bestop_truth,
                 projectedGoal.stamp);
             final Task t = new Task(createdSentence,
-                                    new BudgetValue(1.0f,1.0f,1.0f),
+                                    new BudgetValue(1.0f,1.0f,1.0f, nal.narParameters),
                                     Task.EnumType.DERIVED);
             //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
             if(!task.sentence.stamp.evidenceIsCyclic()) {
@@ -316,7 +318,7 @@ public class ProcessGoal {
                     concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
                     return;
                 }
-                concept.memory.decisionBlock = concept.memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
+                concept.memory.decisionBlock = concept.memory.time() + nal.narParameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
                 ProcessAnticipation.anticipate(nal, meta.executable_precond.sentence, meta.executable_precond.budget, meta.mintime, meta.maxtime, 2);
             }
         }
@@ -357,7 +359,7 @@ public class ProcessGoal {
         if(!oper.call(op, nal.memory)) {
             return false;
         }
-        if (Parameters.DEBUG) {
+        if (MiscFlags.DEBUG) {
             System.out.println(t.toStringLong());
         }
         return true;

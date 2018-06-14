@@ -15,8 +15,8 @@
 package org.opennars.io;
 
 import org.opennars.interfaces.pub.Reasoner;
-import org.opennars.main.NarParameters;
 import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.plugin.Plugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -36,22 +36,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConfigReader {
-    public static void loadFrom(final String filepath, final Reasoner reasoner, final NarParameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
-        loadFromImpl(new File(filepath), reasoner, parameters);
-    }
 
-    public static void loadFrom(final File file, final Reasoner reasoner, final NarParameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
-        loadFromImpl(file, reasoner, parameters);
-    }
-
-    private static void loadFromImpl(final File file, final Reasoner reasoner, final NarParameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+    public static List<Plugin> loadParamsFromFileAndReturnPlugins(final String filepath, final Reasoner reasoner, final Parameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+        List<Plugin> ret = new ArrayList<Plugin>();
+        final File file = new File(filepath);
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         final Document document = documentBuilder.parse(file);
-
-
-
-
         final NodeList config = document.getElementsByTagName("config").item(0).getChildNodes();
 
         for (int iterationConfigIdx = 0; iterationConfigIdx < config.getLength(); iterationConfigIdx++) {
@@ -77,7 +68,7 @@ public class ConfigReader {
                     final NodeList arguments = iPlugin.getChildNodes();
 
                     Plugin createdPlugin = createPluginByClassnameAndArguments(pluginClassPath, arguments, reasoner);
-                    reasoner.addPlugin(createdPlugin);
+                    ret.add(createdPlugin);
                 }
             }
             else {
@@ -88,12 +79,16 @@ public class ConfigReader {
                 boolean wasConfigValueAssigned = false;
 
                 try {
-                    final Field fieldOfProperty = NarParameters.class.getField(propertyName);
+                    final Field fieldOfProperty = Parameters.class.getField(propertyName);
 
                     if (fieldOfProperty.getType() == int.class) {
                         fieldOfProperty.set(parameters, Integer.parseInt(propertyValueAsString));
                     } else if (fieldOfProperty.getType() == float.class) {
                         fieldOfProperty.set(parameters, Float.parseFloat(propertyValueAsString));
+                    } else if (fieldOfProperty.getType() == double.class) {
+                        fieldOfProperty.set(parameters, Double.parseDouble(propertyValueAsString));
+                    } else if (fieldOfProperty.getType() == boolean.class) {
+                        fieldOfProperty.set(parameters, Boolean.parseBoolean(propertyValueAsString));
                     } else {
                         throw new ParseException("Unknown type", 0);
                     }
@@ -105,12 +100,12 @@ public class ConfigReader {
 
                 if (!wasConfigValueAssigned) {
                     try {
-                        final Field fieldOfProperty = Parameters.class.getDeclaredField(propertyName);
+                        final Field fieldOfProperty = MiscFlags.class.getDeclaredField(propertyName);
 
                         if (fieldOfProperty.getType() == int.class) {
-                            fieldOfProperty.set(parameters, Integer.parseInt(propertyValueAsString));
+                            fieldOfProperty.set(null, Integer.parseInt(propertyValueAsString));
                         } else if (fieldOfProperty.getType() == float.class) {
-                            fieldOfProperty.set(parameters, Float.parseFloat(propertyValueAsString));
+                            fieldOfProperty.set(null, Float.parseFloat(propertyValueAsString));
                         } else {
                             throw new ParseException("Unknown type", 0);
                         }
@@ -122,6 +117,7 @@ public class ConfigReader {
                 }
             }
         }
+        return ret;
     }
 
     private static Plugin createPluginByClassnameAndArguments(String pluginClassPath, NodeList arguments, Reasoner reasoner) throws ParseException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {

@@ -14,6 +14,7 @@
  */
 package org.opennars.plugin.mental;
 
+import java.io.Serializable;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
@@ -22,11 +23,10 @@ import org.opennars.language.Inheritance;
 import org.opennars.language.SetInt;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
 import org.opennars.plugin.Plugin;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
-public class Emotions implements Plugin {
+public class Emotions implements Plugin, Serializable {
 
     /** average desire-value */
     private float happy;
@@ -75,10 +75,10 @@ public class Emotions implements Plugin {
         
         float frequency=-1;
         if(Math.abs(happy-lasthappy) > CHANGE_THRESHOLD && nal.memory.time()-last_happy_time > change_steps_demanded) {
-            if(happy>Parameters.HAPPY_EVENT_HIGHER_THRESHOLD && lasthappy<=Parameters.HAPPY_EVENT_HIGHER_THRESHOLD) {
+            if(happy>nal.narParameters.HAPPY_EVENT_HIGHER_THRESHOLD && lasthappy<=nal.narParameters.HAPPY_EVENT_HIGHER_THRESHOLD) {
                 frequency=1.0f;
             }
-            if(happy<Parameters.HAPPY_EVENT_LOWER_THRESHOLD && lasthappy>=Parameters.HAPPY_EVENT_LOWER_THRESHOLD) {
+            if(happy<nal.narParameters.HAPPY_EVENT_LOWER_THRESHOLD && lasthappy>=nal.narParameters.HAPPY_EVENT_LOWER_THRESHOLD) {
                 frequency=0.0f;
             }
             lasthappy=happy;
@@ -89,11 +89,14 @@ public class Emotions implements Plugin {
             final Term predicate=SetInt.make(new Term("satisfied"));
             final Term subject=Term.SELF;
             final Inheritance inh=Inheritance.make(subject, predicate);
-            final TruthValue truth=new TruthValue(happy,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+            final TruthValue truth=new TruthValue(happy,nal.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, nal.narParameters);
             final Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
             s.stamp.setOccurrenceTime(nal.memory.time());
 
-            final BudgetValue budgetOfNewTask = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth));
+            final BudgetValue budgetOfNewTask = new BudgetValue(nal.narParameters.DEFAULT_JUDGMENT_PRIORITY,
+                                                                nal.narParameters.DEFAULT_JUDGMENT_DURABILITY,
+                                                                BudgetFunctions.truthToQuality(truth),
+                                                                nal.narParameters);
             final Task t = new Task(s, budgetOfNewTask, Task.EnumType.INPUT);
 
             nal.addTask(t, "emotion");
@@ -146,10 +149,10 @@ public class Emotions implements Plugin {
         
         float frequency=-1;
         if(Math.abs(busy-lastbusy) > CHANGE_THRESHOLD && nal.memory.time()-last_busy_time > change_steps_demanded) {
-            if(busy>Parameters.BUSY_EVENT_HIGHER_THRESHOLD && lastbusy<=Parameters.BUSY_EVENT_HIGHER_THRESHOLD) {
+            if(busy>nal.narParameters.BUSY_EVENT_HIGHER_THRESHOLD && lastbusy<=nal.narParameters.BUSY_EVENT_HIGHER_THRESHOLD) {
                 frequency=1.0f;
             }
-            if(busy<Parameters.BUSY_EVENT_LOWER_THRESHOLD && lastbusy>=Parameters.BUSY_EVENT_LOWER_THRESHOLD) {
+            if(busy<nal.narParameters.BUSY_EVENT_LOWER_THRESHOLD && lastbusy>=nal.narParameters.BUSY_EVENT_LOWER_THRESHOLD) {
                 frequency=0.0f;
             }
             lastbusy=busy;
@@ -160,7 +163,7 @@ public class Emotions implements Plugin {
             final Term predicate=SetInt.make(new Term("busy"));
             final Term subject=new Term("SELF");
             final Inheritance inh=Inheritance.make(subject, predicate);
-            final TruthValue truth=new TruthValue(busy,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+            final TruthValue truth=new TruthValue(busy,nal.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, nal.narParameters);
             final Sentence s = new Sentence(
                 inh,
                 Symbols.JUDGMENT_MARK,
@@ -168,9 +171,9 @@ public class Emotions implements Plugin {
                 new Stamp(nal.memory));
             s.stamp.setOccurrenceTime(nal.memory.time());
 
-            final BudgetValue budgetForNewTask = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
-                Parameters.DEFAULT_JUDGMENT_DURABILITY,
-                BudgetFunctions.truthToQuality(truth));
+            final BudgetValue budgetForNewTask = new BudgetValue(nal.narParameters.DEFAULT_JUDGMENT_PRIORITY,
+                nal.narParameters.DEFAULT_JUDGMENT_DURABILITY,
+                BudgetFunctions.truthToQuality(truth), nal.narParameters);
             final Task t = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
             nal.addTask(t, "emotion");
         }

@@ -82,7 +82,7 @@ public class Shell {
                     try {
                         nar.addInput(line);
                     } catch(Exception ex) {
-                        if(Parameters.DEBUG) {
+                        if(MiscFlags.DEBUG) {
                             throw new IllegalStateException("error parsing:" +line, ex);
                         }
                         System.out.println("parsing error");

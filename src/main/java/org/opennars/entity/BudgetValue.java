@@ -17,13 +17,11 @@ package org.opennars.entity;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
-import org.opennars.main.Parameters;
 
 import java.io.Serializable;
 
 import static org.opennars.inference.UtilityFunctions.*;
-import static org.opennars.main.Parameters.TRUTH_EPSILON;
-
+import org.opennars.main.Parameters;
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).
  */
@@ -50,11 +48,11 @@ public class BudgetValue implements Cloneable, Serializable {
     private float quality;
 
     /** time at which this budget was last forgotten, for calculating accurate memory decay rates */
-    long lastForgetTime = -1;
+    private long lastForgetTime = -1;
     
-    
-    public BudgetValue(final float p, final float d, final TruthValue qualityFromTruth) {
-        this(p, d, BudgetFunctions.truthToQuality(qualityFromTruth));
+    private Parameters narParameters;
+    public BudgetValue(final float p, final float d, final TruthValue qualityFromTruth, Parameters narParameters) {
+        this(p, d, BudgetFunctions.truthToQuality(qualityFromTruth), narParameters);
     }
 
 
@@ -64,13 +62,14 @@ public class BudgetValue implements Cloneable, Serializable {
      * @param d Initial durability
      * @param q Initial quality
      */
-    public BudgetValue(final float p, final float d, final float q) {
+    public BudgetValue(final float p, final float d, final float q, Parameters narParameters) {
+        this.narParameters = narParameters;
         priority = p;
         durability = d;
         quality = q;
         
         if(d>=1.0) {
-            durability=(float) (1.0-TRUTH_EPSILON);
+            durability=(float) (1.0-narParameters.TRUTH_EPSILON);
             //throw new IllegalStateException("durability value above or equal 1");
         }
         if(p>1.0) {
@@ -84,7 +83,7 @@ public class BudgetValue implements Cloneable, Serializable {
      * @param v Budget value to be cloned
      */
     public BudgetValue(final BudgetValue v) {
-        this(v.getPriority(), v.getDurability(), v.getQuality());
+        this(v.getPriority(), v.getDurability(), v.getQuality(), v.narParameters);
     }
 
     /**
@@ -92,7 +91,7 @@ public class BudgetValue implements Cloneable, Serializable {
      */
     @Override
     public BudgetValue clone() {
-        return new BudgetValue(this.getPriority(), this.getDurability(), this.getQuality());
+        return new BudgetValue(this.getPriority(), this.getDurability(), this.getQuality(), this.narParameters);
     }
 
     /**
@@ -150,7 +149,7 @@ public class BudgetValue implements Cloneable, Serializable {
      */
     public void setDurability(float d) {
         if(d>=1.0f) {
-            d=1.0f-TRUTH_EPSILON;
+            d=1.0f-this.narParameters.TRUTH_EPSILON;
         }
         durability = d;
     }
@@ -162,7 +161,7 @@ public class BudgetValue implements Cloneable, Serializable {
     public void incDurability(final float v) {
         float durability2 = or(durability, v);
         if(durability2>=1.0f) {
-            durability2=1.0f-TRUTH_EPSILON; //put into allowed range
+            durability2=1.0f-this.narParameters.TRUTH_EPSILON; //put into allowed range
         }
         durability=durability2;
     }
@@ -222,9 +221,9 @@ public class BudgetValue implements Cloneable, Serializable {
      * @return 
      */
     public boolean greaterThan(final BudgetValue other) {
-        return (getPriority() - other.getPriority() > Parameters.BUDGET_THRESHOLD) &&
-                (getDurability()- other.getDurability()> Parameters.BUDGET_THRESHOLD) &&
-                (getQuality() - other.getQuality() > Parameters.BUDGET_THRESHOLD);
+        return (getPriority() - other.getPriority() > this.narParameters.BUDGET_THRESHOLD) &&
+                (getDurability()- other.getDurability()> this.narParameters.BUDGET_THRESHOLD) &&
+                (getQuality() - other.getQuality() > this.narParameters.BUDGET_THRESHOLD);
     }
 
     
@@ -241,11 +240,11 @@ public class BudgetValue implements Cloneable, Serializable {
         if (that instanceof BudgetValue) {
             final BudgetValue t = ((BudgetValue) that);
             final float dPrio = Math.abs(getPriority() - t.getPriority());
-            if (dPrio >= TRUTH_EPSILON) return false;
+            if (dPrio >= this.narParameters.TRUTH_EPSILON) return false;
             final float dDura = Math.abs(getDurability() - t.getDurability());
-            if (dDura >= TRUTH_EPSILON) return false;
+            if (dDura >= this.narParameters.TRUTH_EPSILON) return false;
             final float dQual = Math.abs(getQuality() - t.getQuality());
-            return !(dQual >= TRUTH_EPSILON);
+            return dQual < this.narParameters.TRUTH_EPSILON;
         }
         return false;
     }
@@ -258,7 +257,7 @@ public class BudgetValue implements Cloneable, Serializable {
      * @return The decision on whether to process the Item
      */
     public boolean aboveThreshold() {
-        return (summary() >= Parameters.BUDGET_THRESHOLD);
+        return (summary() >= this.narParameters.BUDGET_THRESHOLD);
     }
 
     /**

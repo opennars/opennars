@@ -24,7 +24,6 @@ import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
-import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
@@ -81,7 +80,7 @@ public class TemporalInferenceControl {
         final Set<Task> already_attempted = new HashSet<>();
         final Set<Task> already_attempted_ops = new HashSet<>();
         //Sequence formation:
-        for(int i =0; i<Parameters.SEQUENCE_BAG_ATTEMPTS; i++) {
+        for(int i =0; i<nal.narParameters.SEQUENCE_BAG_ATTEMPTS; i++) {
             synchronized(nal.memory.seq_current) {
                 final Task takeout = nal.memory.seq_current.takeNext();
                 if(takeout == null) {
@@ -103,7 +102,7 @@ public class TemporalInferenceControl {
         //Conditioning:
         if(nal.memory.lastDecision != null && newEvent != nal.memory.lastDecision) {
             already_attempted_ops.clear();
-            for(int k = 0; k<Parameters.OPERATION_SAMPLES;k++) {
+            for(int k = 0; k<nal.narParameters.OPERATION_SAMPLES;k++) {
                 already_attempted.clear(); //todo move into k loop
                 final Task Toperation = k == 0 ? nal.memory.lastDecision : nal.memory.recent_operations.takeNext();
                 if(Toperation == null) {
@@ -119,9 +118,9 @@ public class TemporalInferenceControl {
                 final Concept opc = nal.memory.concept(Toperation.getTerm());
                 if(opc != null) {
                     if(opc.seq_before == null) {
-                        opc.seq_before = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
+                        opc.seq_before = new LevelBag<>(nal.narParameters.SEQUENCE_BAG_LEVELS, nal.narParameters.SEQUENCE_BAG_SIZE, nal.narParameters);
                     }
-                    for(int i = 0; i<Parameters.CONDITION_BAG_ATTEMPTS; i++) {
+                    for(int i = 0; i<nal.narParameters.CONDITION_BAG_ATTEMPTS; i++) {
                         final Task takeout = opc.seq_before.takeNext();
                         if(takeout == null) {
                             break; //there were no elements in the bag to try
@@ -200,7 +199,7 @@ public class TemporalInferenceControl {
                     event_priority = Math.max(event_quality, c.getPriority());
                 }
                 final Task t2 = new Task(newEvent.sentence,
-                                         new BudgetValue(event_priority, 1.0f/(float)newEvent.sentence.term.getComplexity(), event_quality),
+                                         new BudgetValue(event_priority, 1.0f/(float)newEvent.sentence.term.getComplexity(), event_quality, nal.narParameters),
                                          newEvent.getParentBelief(),
                                          newEvent.getBestSolution());
                 nal.memory.seq_current.putIn(t2);
@@ -227,7 +226,7 @@ public class TemporalInferenceControl {
         synchronized(mem.seq_current) {
             if(c != null) {
                 if(c.seq_before == null) {
-                    c.seq_before = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
+                    c.seq_before = new LevelBag<>(mem.narParameters.SEQUENCE_BAG_LEVELS, mem.narParameters.SEQUENCE_BAG_SIZE, mem.narParameters);
                 }
                 for(final Task t : mem.seq_current) {
                     if(task.sentence.getOccurenceTime() > t.sentence.getOccurenceTime()) {

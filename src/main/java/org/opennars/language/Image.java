@@ -16,7 +16,7 @@ package org.opennars.language;
 
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.util.Objects;
 
@@ -47,7 +47,7 @@ abstract public class Image extends CompoundTerm {
     
     @Override
     public int hashCode() {
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY)
+        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY)
             return hash;        
         else
             return super.hashCode();

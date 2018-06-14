@@ -16,7 +16,7 @@ package org.opennars.language;
 
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.nio.CharBuffer;
 import java.util.Arrays;
@@ -49,7 +49,7 @@ public abstract class Statement extends CompoundTerm {
             throw new IllegalStateException("Null subject: " + this);
         if (t[1]==null)
             throw new IllegalStateException("Null predicate: " + this);
-        if (Parameters.DEBUG) {                
+        if (MiscFlags.DEBUG) {                
             if (isCommutative()) {
                 if (t[0].compareTo(t[1])==1) {
                     throw new IllegalStateException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));

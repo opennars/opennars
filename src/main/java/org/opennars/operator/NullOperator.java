@@ -16,7 +16,7 @@ package org.opennars.operator;
 
 import org.opennars.entity.Task;
 import org.opennars.language.Term;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public class NullOperator extends Operator {
     /** called from Operator */
     @Override 
     protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
-        if (Parameters.DEBUG) {
+        if (MiscFlags.DEBUG) {
             memory.emit(getClass(), args);
         }
         return null;

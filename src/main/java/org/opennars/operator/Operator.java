@@ -22,7 +22,6 @@ import org.opennars.language.Product;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
 import org.opennars.plugin.Plugin;
 import org.opennars.storage.Memory;
 
@@ -37,7 +36,7 @@ import java.util.List;
  */
 public abstract class Operator extends Term implements Plugin {
 
-    public static final float executionConfidence = Parameters.DEFAULT_JUDGMENT_CONFIDENCE; // 0.9999f;
+    public float executionConfidence;
     
     protected Operator() {   super();    }
     
@@ -52,6 +51,7 @@ public abstract class Operator extends Term implements Plugin {
     @Override
     public boolean setEnabled(final Nar n, final boolean enabled) {
         this.nar = n;
+        this.executionConfidence = n.narParameters.DEFAULT_JUDGMENT_CONFIDENCE;
         return true;
     }        
     
@@ -80,7 +80,7 @@ public abstract class Operator extends Term implements Plugin {
         final List<Task> feedback = execute(operation, args, memory);
 
         if(feedback == null || feedback.isEmpty()) { //null operator case
-            memory.executedTask(operation, new TruthValue(1f,executionConfidence));
+            memory.executedTask(operation, new TruthValue(1f,executionConfidence, memory.narParameters));
         }
 
         reportExecution(operation, args, feedback, memory);

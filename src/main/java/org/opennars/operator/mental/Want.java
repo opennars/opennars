@@ -18,7 +18,6 @@ import com.google.common.collect.Lists;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.Term;
-import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.storage.Memory;
@@ -45,14 +44,14 @@ public class Want extends Operator {
 
         final Term content = args[1];
         
-        final TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+        final TruthValue truth = new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters);
         final Sentence sentence = new Sentence(
             content,
             Symbols.GOAL_MARK,
             truth,
             new Stamp(memory));
         
-        final BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, truth);
+        final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_GOAL_PRIORITY, memory.narParameters.DEFAULT_GOAL_DURABILITY, truth, memory.narParameters);
 
         final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
         return Lists.newArrayList(newTask);

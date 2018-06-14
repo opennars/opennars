@@ -21,7 +21,6 @@ import org.opennars.io.events.Events.Answer;
 import org.opennars.io.events.Events.Unsolved;
 import org.opennars.io.events.OutputHandler;
 import org.opennars.language.*;
-import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 
 import java.util.List;
@@ -31,6 +30,7 @@ import static org.opennars.inference.TemporalRules.reverseOrder;
 import static org.opennars.inference.TruthFunctions.temporalProjection;
 import static org.opennars.language.CompoundTerm.extractIntervals;
 import static org.opennars.language.CompoundTerm.replaceIntervals;
+import org.opennars.main.Parameters;
 
 
 /**
@@ -59,7 +59,7 @@ public class LocalRules {
         final Sentence sentence = task.sentence;
         
         if (sentence.isJudgment()) {
-            if (revisible(sentence, belief)) {
+            if (revisible(sentence, belief, nal.narParameters)) {
                 return revision(sentence, belief, true, nal);
             }
         } else {
@@ -80,8 +80,8 @@ public class LocalRules {
      * @param s2 The second sentence
      * @return If revision is possible between the two sentences
      */
-    public static boolean revisible(final Sentence s1, final Sentence s2) {
-        if(!s1.isEternal() && !s2.isEternal() && Math.abs(s1.getOccurenceTime() - s2.getOccurenceTime()) > Parameters.REVISION_MAX_OCCURRENCE_DISTANCE) {
+    public static boolean revisible(final Sentence s1, final Sentence s2, Parameters narParameters) {
+        if(!s1.isEternal() && !s2.isEternal() && Math.abs(s1.getOccurenceTime() - s2.getOccurenceTime()) > narParameters.REVISION_MAX_OCCURRENCE_DISTANCE) {
             return false;
         }
         if(s1.term.term_indices != null && s2.term.term_indices != null) {
@@ -129,7 +129,7 @@ public class LocalRules {
             final List<Long> ivalNew = extractIntervals(nal.memory, newBelief.getTerm());
             for(int i=0;i<ivalNew.size();i++) {
                 final float Inbetween = (c.recent_intervals.get(i)+ivalNew.get(i)) / 2.0f; //vote as one new entry, turtle style
-                final float speed = 1.0f / (Parameters.INTERVAL_ADAPT_SPEED*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower
+                final float speed = 1.0f / (nal.narParameters.INTERVAL_ADAPT_SPEED*(1.0f-newBelief.getTruth().getExpectation())); //less truth expectation, slower
                 c.recent_intervals.set(i,c.recent_intervals.get(i)+speed*(Inbetween - c.recent_intervals.get(i)));
             }
             long AbsDiffSumNew = 0;
@@ -144,7 +144,7 @@ public class LocalRules {
             for(int i=0;i<ivalNew.size();i++) {
                 AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
             }
-            final float a = temporalProjection(0, AbsDiffSum, 0); //re-project, and it's safe:
+            final float a = temporalProjection(0, AbsDiffSum, 0, nal.memory.param); //re-project, and it's safe:
                                                             //we won't count more confidence than
                                                             //when the second premise would have been shifted
                                                             //to the necessary time in the first place
@@ -153,7 +153,7 @@ public class LocalRules {
             useNewBeliefTerm = AbsDiffSumNew < AbsDiffSumOld;
         }
         
-        final TruthValue truth = TruthFunctions.revision(newTruth, oldTruth);
+        final TruthValue truth = TruthFunctions.revision(newTruth, oldTruth, nal.narParameters);
         final BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
         
         if (budget.aboveThreshold()) {
@@ -230,14 +230,14 @@ public class LocalRules {
         
         TruthValue truth = solution.truth;
         if (problem.getOccurenceTime()!=solution.getOccurenceTime()) {
-            truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time());            
+            truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time(), memory);            
         }
         
         //when the solutions are comparable, we have to use confidence!! else truth expectation.
         //this way negative evidence can update the solution instead of getting ignored due to lower truth expectation.
         //so the previous handling to let whether the problem has query vars decide was wrong.
         if (!rateByConfidence) {
-            return (float) (truth.getExpectation() / Math.sqrt(Math.sqrt(Math.sqrt(solution.term.getComplexity()*Parameters.COMPLEXITY_UNIT))));
+            return (float) (truth.getExpectation() / Math.sqrt(Math.sqrt(Math.sqrt(solution.term.getComplexity()*memory.narParameters.COMPLEXITY_UNIT))));
         } else {
             return truth.getConfidence();
         }
@@ -278,7 +278,7 @@ public class LocalRules {
             task.incPriority(quality);
         } else {
             final float taskPriority = task.getPriority(); //+goal satisfication is a matter of degree - https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M
-            budget = new BudgetValue(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.truth));
+            budget = new BudgetValue(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.truth), nal.narParameters);
             task.setPriority(Math.min(1 - quality, taskPriority));
         }
         if (feedbackToLinks) {
@@ -347,7 +347,7 @@ public class LocalRules {
         }
         final TruthValue value1 = judgment1.truth;
         final TruthValue value2 = judgment2.truth;
-        final TruthValue truth = TruthFunctions.intersection(value1, value2);
+        final TruthValue truth = TruthFunctions.intersection(value1, value2, nal.narParameters);
         final BudgetValue budget = BudgetFunctions.forward(truth, nal);
         nal.doublePremiseTask(content, truth, budget,false, false); //(allow overlap) but not needed here, isn't detachment
     }
@@ -368,7 +368,7 @@ public class LocalRules {
         final Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
         if (content == null) return;
         
-        final TruthValue truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
+        final TruthValue truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth, nal.narParameters);
         final BudgetValue budget = BudgetFunctions.forward(truth, nal);
         nal.doublePremiseTask(content, truth, budget,false, false);
     }
@@ -381,7 +381,7 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     private static void conversion(final DerivationContext nal) {
-        final TruthValue truth = TruthFunctions.conversion(nal.getCurrentBelief().truth);
+        final TruthValue truth = TruthFunctions.conversion(nal.getCurrentBelief().truth, nal.narParameters);
         final BudgetValue budget = BudgetFunctions.forward(truth, nal);
         convertedJudgment(truth, budget, nal);
     }
@@ -395,9 +395,9 @@ public class LocalRules {
     private static void convertRelation(final DerivationContext nal) {
         TruthValue truth = nal.getCurrentBelief().truth;
         if (((CompoundTerm) nal.getCurrentTask().getTerm()).isCommutative()) {
-            truth = TruthFunctions.abduction(truth, 1.0f);
+            truth = TruthFunctions.abduction(truth, 1.0f, nal.narParameters);
         } else {
-            truth = TruthFunctions.deduction(truth, 1.0f);
+            truth = TruthFunctions.deduction(truth, 1.0f, nal.narParameters);
         }
         final BudgetValue budget = BudgetFunctions.forward(truth, nal);
         convertedJudgment(truth, budget, nal);

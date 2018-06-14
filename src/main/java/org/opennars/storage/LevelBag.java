@@ -15,10 +15,11 @@
 package org.opennars.storage;
 
 import org.opennars.entity.Item;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.io.Serializable;
 import java.util.*;
+import org.opennars.main.Parameters;
 
 /**
  * Original Bag implementation which distributes items into
@@ -74,8 +75,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
     final boolean[] levelEmpty;
     
     
-    public LevelBag(final int levels, final int capacity) {
-        this(levels, capacity, (int) (Parameters.BAG_THRESHOLD * levels));
+    public LevelBag(final int levels, final int capacity, Parameters narParameters) {
+        this(levels, capacity, (int) (narParameters.BAG_THRESHOLD * levels));
     }
 
     /** thresholdLevel = 0 disables "fire level completely" threshold effect */
@@ -186,7 +187,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
     @Override
     public int size() {
         final int in = nameTable.size();
-        if (Parameters.DEBUG_BAG && (Parameters.DEBUG)) {
+        if (MiscFlags.DEBUG_BAG && (MiscFlags.DEBUG)) {
             final int is = sizeItems();
             if (Math.abs(is-in) > 1 ) {                
                 throw new IllegalStateException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());
@@ -321,7 +322,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> implements Serializa
         }
         //If it wasn't found, it probably was removed already.  So this check is probably not necessary
             //search other levels for this item because it's not where we thought it was according to getLevel()
-        if (Parameters.DEBUG) {
+        if (MiscFlags.DEBUG) {
             final int ns = nameTable.size();
             final int is = sizeItems();
             if (ns == is)
