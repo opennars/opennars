@@ -25,7 +25,6 @@ import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.events.Events;
-import org.opennars.io.events.OutputHandler;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Implication;

@@ -14,9 +14,6 @@
  */
 package org.opennars.main;
 
-import org.opennars.main.Nar.PortableDouble;
-
-
 /**
  * Nar operating parameters.
  * All static values will be removed so that this is an entirely dynamic class.

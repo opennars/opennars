@@ -19,7 +19,6 @@ import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Item;
 import org.opennars.main.Nar;
 import org.opennars.main.Nar.PortableDouble;
-import org.opennars.main.MiscFlags;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
@@ -41,6 +40,7 @@ import org.opennars.main.Parameters;
  */
 public class BagPerf {
     
+    private static Parameters narParameters;
     final int repeats = 8;
     final int warmups = 1;
     static PortableDouble forgetRate;
@@ -260,7 +260,6 @@ public class BagPerf {
         out.println(line.toString());
     }
     
-    static Parameters narParameters;
     public static void main(final String[] args) throws Exception {
         narParameters = new Nar().narParameters;
         final int itemsPerLevel = 10;

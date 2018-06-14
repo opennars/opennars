@@ -139,7 +139,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v1 Truth value of the premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue contraposition(final TruthValue v1, Parameters narParameters) {
+    public static final TruthValue contraposition(final TruthValue v1, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float c1 = v1.getConfidence();
         final float w = and(1 - f1, c1);
@@ -158,7 +158,7 @@ public final class TruthFunctions extends UtilityFunctions {
         return revision(v1, v2, new TruthValue(narParameters), narParameters);
     }
     
-    static final TruthValue revision(final TruthValue v1, final TruthValue v2, final TruthValue result, Parameters narParameters) {
+    private static final TruthValue revision(final TruthValue v1, final TruthValue v2, final TruthValue result, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float w1 = c2w( v1.getConfidence(), narParameters );
@@ -337,7 +337,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue desireWeak(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
+    public static final TruthValue desireWeak(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float c1 = v1.getConfidence();
@@ -418,7 +418,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue reduceDisjunction(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
+    public static final TruthValue reduceDisjunction(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final TruthValue v0 = intersection(v1, negation(v2, narParameters), narParameters);
         return deduction(v0, 1f, narParameters);
     }
@@ -429,7 +429,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue reduceConjunction(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
+    public static final TruthValue reduceConjunction(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final TruthValue v0 = intersection(negation(v1, narParameters), v2, narParameters);
         return negation(deduction(v0, 1f, narParameters), narParameters);
     }
@@ -440,7 +440,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue reduceConjunctionNeg(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
+    public static final TruthValue reduceConjunctionNeg(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         return reduceConjunction(v1, negation(v2, narParameters), narParameters);
     }
 
@@ -450,7 +450,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue anonymousAnalogy(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
+    public static final TruthValue anonymousAnalogy(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float c1 = v1.getConfidence();
         final TruthValue v0 = new TruthValue(f1, w2c(c1, narParameters), narParameters);

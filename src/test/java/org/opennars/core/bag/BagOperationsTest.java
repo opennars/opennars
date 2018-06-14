@@ -43,6 +43,7 @@ import org.opennars.main.Parameters;
  */
 public class BagOperationsTest {
 
+    private static Parameters narParameters;
     static Nar nar;
 
     static {
@@ -75,7 +76,6 @@ public class BagOperationsTest {
         return s;
     }  
     
-    static Parameters narParameters;
     @Test
     public void testConcept() throws Exception {
         Nar nar = new Nar();

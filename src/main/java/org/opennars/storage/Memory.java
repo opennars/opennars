@@ -64,6 +64,9 @@ import static org.opennars.inference.BudgetFunctions.truthToQuality;
  */
 public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
+     /* Nar parameters */
+    public final Parameters narParameters;
+    
     public long narId = 0;
     //emotion meter keeping track of global emotion
     public final Emotions emotion = new Emotions();   
@@ -102,9 +105,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
     /* System parameters that can be changed at runtime */
     public final RuntimeParameters param;
-    
-    /* other Nar parameters */
-    public final Parameters narParameters;
     
     //Boolean localInferenceMutex = false;
     

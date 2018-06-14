@@ -19,7 +19,6 @@ import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.*;
-import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 
 import java.util.*;

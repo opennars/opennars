@@ -16,7 +16,6 @@ package org.opennars.inference;
 
 import org.opennars.entity.*;
 import org.opennars.language.Term;
-import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
 
 import static java.lang.Math.*;
@@ -113,7 +112,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param bTruth Truth value of the previous belief
      * @return Budget value of the updating task
      */
-    static BudgetValue update(final Task task, final TruthValue bTruth, Parameters narParameters) {
+    public static BudgetValue update(final Task task, final TruthValue bTruth, Parameters narParameters) {
         final TruthValue tTruth = task.sentence.truth;
         final float dif = tTruth.getExpDifAbs(bTruth);
         final float priority = or(dif, task.getPriority());

@@ -17,7 +17,6 @@ package org.opennars.entity;
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
 import org.opennars.language.Term;
-import org.opennars.main.MiscFlags;
 
 import java.io.Serializable;
 import org.opennars.main.Parameters;
@@ -51,7 +50,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      */
     private boolean analytic = false;
     
-    Parameters narParameters;
+    private Parameters narParameters;
 
     public TruthValue(Parameters narParameters) {
         this(0,0, narParameters);

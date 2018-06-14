@@ -14,14 +14,12 @@
  */
 package org.opennars.entity;
 
-import org.opennars.control.concept.ProcessTask;
 import org.opennars.control.DerivationContext;
 import org.opennars.inference.LocalRules;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.io.events.Events.*;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
-import org.opennars.main.MiscFlags;
 import org.opennars.main.Shell;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Bag;
@@ -32,7 +30,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.opennars.control.concept.ProcessAnticipation;
 import org.opennars.control.concept.ProcessQuestion;
 
 import static org.opennars.inference.BudgetFunctions.distributeAmongLinks;

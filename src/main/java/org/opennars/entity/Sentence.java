@@ -25,7 +25,6 @@ import org.opennars.main.MiscFlags;
 
 import java.io.Serializable;
 import java.util.*;
-import org.opennars.control.DerivationContext;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 

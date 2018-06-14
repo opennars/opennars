@@ -148,7 +148,6 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
     /*Nar Parameters which can be changed during runtime.*/
    public class RuntimeParameters implements Serializable {
-       public RuntimeParameters(Parameters narParameters) {    }
        public final PortableInteger threadsAmount = new PortableInteger(1);
        public final PortableInteger noiseLevel = new PortableInteger(100);
        public final PortableDouble conceptForgetDurations = new PortableDouble(narParameters.CONCEPT_FORGET_DURATIONS);
@@ -156,6 +155,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
        public final PortableDouble taskLinkForgetDurations = new PortableDouble(narParameters.TASKLINK_FORGET_DURATIONS);
        public final PortableDouble eventForgetDurations = new PortableDouble(narParameters.EVENT_FORGET_DURATIONS);
        public final PortableDouble projectionDecay = new PortableDouble(narParameters.PROJECTION_DECAY);
+       public RuntimeParameters() {    }
    }
     public final RuntimeParameters param;
 
@@ -205,7 +205,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     public Nar(long narId, String configFilePath) throws IOException, InstantiationException, InvocationTargetException, 
             NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(configFilePath, this, this.narParameters);
-        final Memory m = new Memory(this.narParameters, new RuntimeParameters(this.narParameters),
+        final Memory m = new Memory(this.narParameters, new RuntimeParameters(),
                 new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
                 new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
                 new LevelBag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),

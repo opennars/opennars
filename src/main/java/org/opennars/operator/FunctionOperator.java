@@ -20,7 +20,6 @@ import org.opennars.io.Symbols;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
 import org.opennars.language.Variable;
-import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
 
 import java.util.List;

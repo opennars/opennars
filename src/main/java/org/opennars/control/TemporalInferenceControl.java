@@ -24,7 +24,6 @@ import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
-import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;

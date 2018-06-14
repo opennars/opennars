@@ -21,7 +21,6 @@ import org.opennars.io.events.Events.Answer;
 import org.opennars.io.events.Events.Unsolved;
 import org.opennars.io.events.OutputHandler;
 import org.opennars.language.*;
-import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
 
 import java.util.List;

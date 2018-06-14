@@ -16,7 +16,6 @@ package org.opennars.storage;
 
 import org.opennars.entity.Item;
 import org.opennars.inference.BudgetFunctions;
-import org.opennars.main.MiscFlags;
 
 import java.util.Iterator;
 import java.util.Set;

@@ -21,10 +21,8 @@ import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
 import org.opennars.io.Symbols;
 import org.opennars.language.*;
-import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
