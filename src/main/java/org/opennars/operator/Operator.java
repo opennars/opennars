@@ -22,7 +22,6 @@ import org.opennars.language.Product;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.MiscFlags;
 import org.opennars.plugin.Plugin;
 import org.opennars.storage.Memory;
 

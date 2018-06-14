@@ -76,7 +76,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                     "    Github website:  http://github.com/opennars/ \n" +
                     "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";
 
-
+    private transient Thread[] threads = null;
     protected transient Map<Term,SensoryChannel> sensoryChannels = new HashMap<>();
     public void addSensoryChannel(final String term, final SensoryChannel channel) {
         try {
@@ -110,7 +110,6 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         return ret;
     }
 
-    private transient Thread[] threads = null;
     long minCyclePeriodMS;
 
     /**

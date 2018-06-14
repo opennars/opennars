@@ -25,7 +25,6 @@ import org.opennars.language.Term;
 import org.opennars.main.Nar;
 import org.opennars.main.Nar.PortableDouble;
 import org.opennars.main.Nar.PortableInteger;
-import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.Plugin;

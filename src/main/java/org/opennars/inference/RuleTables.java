@@ -19,7 +19,6 @@ import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.*;
-import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
 

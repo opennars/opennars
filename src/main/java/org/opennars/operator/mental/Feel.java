@@ -22,7 +22,6 @@ import org.opennars.language.Inheritance;
 import org.opennars.language.SetInt;
 import org.opennars.language.Tense;
 import org.opennars.language.Term;
-import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operator;
 import org.opennars.storage.Memory;
 

@@ -641,12 +641,10 @@ public final class SyllogisticRules {
         
         nal.getTheNewStamp().setOccurrenceTime(occurrence_time);
         final List<Task> ret = nal.doublePremiseTask(content, truth, budget,false, taskSentence.isJudgment() && deduction); //(allow overlap) when deduction on judgment
-        if(!nal.evidentalOverlap && ret != null && ret.size() > 0) {
-            if(predictedEvent && taskSentence.isJudgment() && truth != null && truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION &&
-                    !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
-                premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
-                ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1);
-            }
+        if(!nal.evidentalOverlap && ret != null && ret.size() > 0 && predictedEvent && taskSentence.isJudgment() && truth != null && 
+            truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION && !premise1Sentence.stamp.alreadyAnticipatedNegConfirmation) {
+            premise1Sentence.stamp.alreadyAnticipatedNegConfirmation = true;
+            ProcessAnticipation.anticipate(nal, premise1Sentence, budget, mintime, maxtime, 1);
         }
     }
 

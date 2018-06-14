@@ -15,10 +15,8 @@
 package org.opennars.inference;
 
 import org.opennars.entity.TruthValue;
-import org.opennars.main.MiscFlags;
 
 import static java.lang.Math.abs;
-import org.opennars.control.DerivationContext;
 import org.opennars.main.Nar.RuntimeParameters;
 import org.opennars.main.Parameters;
 
@@ -205,7 +203,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue analogy(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
+    public static final TruthValue analogy(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float c1 = v1.getConfidence();
@@ -283,7 +281,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue exemplification(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
+    public static final TruthValue exemplification(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         if (v1.getAnalytic() || v2.getAnalytic()) {
             return new TruthValue(0.5f, 0f, narParameters);
         }
@@ -369,7 +367,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue desireInd(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
+    public static final TruthValue desireInd(final TruthValue v1, final TruthValue v2, Parameters narParameters) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float c1 = v1.getConfidence();

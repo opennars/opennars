@@ -75,7 +75,7 @@ public class BagIteratorTest {
     public void testBags() throws Exception {
         Nar nar = new Nar();
         testBagIterator(new LevelBag(L, L*2, nar.narParameters));
-        
+        assert(true);
     }
     
 }

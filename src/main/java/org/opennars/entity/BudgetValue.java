@@ -244,7 +244,7 @@ public class BudgetValue implements Cloneable, Serializable {
             final float dDura = Math.abs(getDurability() - t.getDurability());
             if (dDura >= this.narParameters.TRUTH_EPSILON) return false;
             final float dQual = Math.abs(getQuality() - t.getQuality());
-            return !(dQual >= this.narParameters.TRUTH_EPSILON);
+            return dQual < this.narParameters.TRUTH_EPSILON;
         }
         return false;
     }

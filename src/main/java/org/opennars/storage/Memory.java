@@ -75,9 +75,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
 
     public static final long randomSeed = 1;
     public static final Random randomNumber = new Random(randomSeed);
-    public static void resetStatic() {
-        randomNumber.setSeed(randomSeed);    
-    }
     
     //todo make sense of this class and de-obfuscate
     public final Bag<Concept,Term> concepts;
@@ -87,7 +84,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public final Map<CharSequence, Operator> operators;
     
     /* a mutex for novel and new taskks*/
-    private final Boolean tasksMutex = new Boolean(true);
+    private final Boolean tasksMutex = Boolean.TRUE;
     
     /* New tasks with novel composed terms, for delayed and selective processing*/
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
@@ -106,6 +103,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public final RuntimeParameters param;
     
     //Boolean localInferenceMutex = false;
+    
+    public static void resetStatic() {
+        randomNumber.setSeed(randomSeed);    
+    }
     
     /* ---------- Constructor ---------- */
     /**

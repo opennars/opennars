@@ -30,8 +30,6 @@ public class SaveLoadMemoryTest {
         nar.SaveToFile(fname);
         Nar nar2 = Nar.LoadFromFile(fname);
         Concept c2 = nar2.concept("<a --> b>");
-        if(c2 == null) {
-            throw new IllegalStateException("test failed");
-        }
+        assert(c2 != null);
     }
 }
