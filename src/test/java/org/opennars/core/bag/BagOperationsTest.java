@@ -35,6 +35,7 @@ import java.text.ParseException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.opennars.main.Parameters;
 
 /**
  *
@@ -69,14 +70,17 @@ public class BagOperationsTest {
     }
 
     static Concept makeConcept(final String name, final float priority) {
-        final BudgetValue budg = new BudgetValue(priority,priority,priority);
+        final BudgetValue budg = new BudgetValue(priority,priority,priority,narParameters);
         final Concept s = new Concept(budg,new Term(name),nar.memory);
         return s;
     }  
     
+    static Parameters narParameters;
     @Test
-    public void testConcept() {
-        testBagSequence(new LevelBag(2, 2));    
+    public void testConcept() throws Exception {
+        Nar nar = new Nar();
+        this.narParameters = nar.narParameters;
+        testBagSequence(new LevelBag(2, 2, nar.narParameters));    
     }
     
     public static void testBagSequence(final Bag b) {

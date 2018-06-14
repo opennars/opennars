@@ -17,7 +17,7 @@ package org.opennars.entity;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.language.Tense;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
 
 import java.io.Serializable;
@@ -28,6 +28,7 @@ import java.util.Set;
 
 import static org.opennars.inference.TemporalRules.*;
 import static org.opennars.language.Tense.*;
+import org.opennars.main.Parameters;
 
 public class Stamp implements Cloneable, Serializable {
     
@@ -189,12 +190,12 @@ public class Stamp implements Cloneable, Serializable {
      * @param first The first Stamp
      * @param second The second Stamp
      */
-    public Stamp(final Stamp first, final Stamp second, final long time) {
+    public Stamp(final Stamp first, final Stamp second, final long time, Parameters narParameters) {
         //TODO use iterators instead of repeated first and second .get's?
         
         int i1, i2, j;
         i1 = i2 = j = 0;
-        this.baseLength = Math.min(first.baseLength + second.baseLength, Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
+        this.baseLength = Math.min(first.baseLength + second.baseLength, narParameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
         this.evidentialBase = new BaseEntry[baseLength];
 
         final BaseEntry[] firstBase = first.evidentialBase;
@@ -217,7 +218,7 @@ public class Stamp implements Cloneable, Serializable {
     }
 
     public Stamp(final Memory memory, final Tense tense) {
-        this(memory.time(), tense, memory.newStampSerial(), Parameters.DURATION);
+        this(memory.time(), tense, memory.newStampSerial(), memory.narParameters.DURATION);
     }
 
     /** creates a stamp with default Present tense */
@@ -257,7 +258,7 @@ public class Stamp implements Cloneable, Serializable {
     public boolean isEternal() {
         final boolean eternalOccurrence = occurrenceTime == ETERNAL;
         
-        if (Parameters.DEBUG) {
+        if (MiscFlags.DEBUG) {
             if (eternalOccurrence && tense!=Tense.Eternal) {
                 throw new IllegalStateException("Stamp has inconsistent tense and eternal ocurrenceTime: tense=" + tense);
             }

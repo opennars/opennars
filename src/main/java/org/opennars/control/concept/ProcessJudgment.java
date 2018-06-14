@@ -32,7 +32,7 @@ import org.opennars.language.Implication;
 import org.opennars.language.Interval;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;
@@ -70,9 +70,9 @@ public class ProcessJudgment {
             if (newStamp.equals(oldStamp,false,false,true)) {
                 concept.memory.removeTask(task, "Duplicated");
                 return;
-            } else if (revisible(judg, oldBelief)) {
+            } else if (revisible(judg, oldBelief, nal.narParameters)) {
                 nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
-                final Sentence projectedBelief = oldBelief.projection(concept.memory.time(), newStamp.getOccurrenceTime());
+                final Sentence projectedBelief = oldBelief.projection(concept.memory.time(), newStamp.getOccurrenceTime(), concept.memory);
                 if (projectedBelief!=null) {
                     nal.setCurrentBelief(projectedBelief);
                     revision(judg, projectedBelief, false, nal);
@@ -90,7 +90,7 @@ public class ProcessJudgment {
         for (int i = 0; i < nng; i++) {
             trySolution(judg, concept.desires.get(i), nal, true);
         }
-        concept.addToTable(task, false, concept.beliefs, Parameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
+        concept.addToTable(task, false, concept.beliefs, concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
         if(isExecutableHypothesis(task,nal)) {
             addToTargetConceptsPreconditions(task, nal, concept);
         }
@@ -203,7 +203,7 @@ public class ProcessJudgment {
                 }
             }
             //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-            target_concept.addToTable(strongest_target, true, target_concept.executable_preconditions, Parameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+            target_concept.addToTable(strongest_target, true, target_concept.executable_preconditions, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
         }
     }
 }

@@ -19,7 +19,7 @@ import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.*;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
 
@@ -247,7 +247,7 @@ public class RuleTables {
         if(task.sentence.isJudgment() && tIndex == 0 && bIndex == 1 && taskTerm instanceof Operation) {
             final Operation op = (Operation) taskTerm;
             if(op.getPredicate() == nal.memory.getOperator("^want")) {
-                final TruthValue newTruth = TruthFunctions.deduction(task.sentence.truth, Parameters.reliance);
+                final TruthValue newTruth = TruthFunctions.deduction(task.sentence.truth, nal.narParameters.reliance, nal.narParameters);
                 nal.singlePremiseTask(((Operation)taskTerm).getArguments().term[1], Symbols.GOAL_MARK, newTruth, BudgetFunctions.forward(newTruth, nal));
             }
         }
@@ -260,19 +260,19 @@ public class RuleTables {
             if(taskTerm instanceof Implication) {
                 final Implication imp=(Implication)taskTerm;
                 if(imp.getTemporalOrder()!=TemporalRules.ORDER_BACKWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                    if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation) {
+                    if(!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation) {
                         goalterm=imp.getSubject();
                     }
-                    if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation)) {
+                    if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation)) {
                         goalterm=imp.getPredicate(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
                     }
                 }
                 else
                     if(imp.getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
-                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation) {
+                        if(!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation) {
                             goalterm=imp.getPredicate();
                         }
-                        if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation)) {
+                        if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation)) {
                             goalterm=imp.getSubject(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
                         }
                     }
@@ -281,15 +281,15 @@ public class RuleTables {
                 if(taskTerm instanceof Equivalence) {
                     final Equivalence qu=(Equivalence)taskTerm;
                     if(qu.getTemporalOrder()==TemporalRules.ORDER_FORWARD || qu.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getSubject() instanceof Operation) {
+                        if(!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getSubject() instanceof Operation) {
                             goalterm=qu.getSubject();
                         }
-                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getPredicate() instanceof Operation) {
+                        if(!nal.narParameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getPredicate() instanceof Operation) {
                             goalterm2=qu.getPredicate();
                         }
                     }
                 }
-            final TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE*Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL);
+            final TruthValue truth=new TruthValue(1.0f,nal.narParameters.DEFAULT_GOAL_CONFIDENCE*nal.narParameters.CURIOSITY_DESIRE_CONFIDENCE_MUL, nal.narParameters);
             if(goalterm!=null && !(goalterm instanceof Variable) && goalterm instanceof CompoundTerm) {
                 goalterm = goalterm.cloneDeep();
                 CompoundTerm.transformIndependentVariableToDependent((CompoundTerm) goalterm);
@@ -300,7 +300,9 @@ public class RuleTables {
                     truth,
                     new Stamp(task.sentence.stamp,nal.memory.time()));
 
-                nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
+                nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*nal.narParameters.CURIOSITY_DESIRE_PRIORITY_MUL,
+                                                            task.getDurability()*nal.narParameters.CURIOSITY_DESIRE_DURABILITY_MUL,
+                                                            BudgetFunctions.truthToQuality(truth), nal.narParameters));
             }
             if(goalterm instanceof CompoundTerm && goalterm2!=null && !(goalterm2 instanceof Variable) && goalterm2 instanceof CompoundTerm) {
                 goalterm2 = goalterm2.cloneDeep();
@@ -312,7 +314,9 @@ public class RuleTables {
                     truth.clone(),
                     new Stamp(task.sentence.stamp,nal.memory.time()));
 
-                nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
+                nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*nal.narParameters.CURIOSITY_DESIRE_PRIORITY_MUL,
+                                                            task.getDurability()*nal.narParameters.CURIOSITY_DESIRE_DURABILITY_MUL,
+                                                            BudgetFunctions.truthToQuality(truth), nal.narParameters));
             }
         }
     }

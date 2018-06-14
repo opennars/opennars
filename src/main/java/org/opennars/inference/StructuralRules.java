@@ -21,7 +21,7 @@ import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
 import org.opennars.io.Symbols;
 import org.opennars.language.*;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
 
 import java.util.Arrays;
@@ -89,7 +89,7 @@ public final class StructuralRules {
         }
         
         final Sentence sentence = nal.getCurrentTask().sentence;
-        final TruthValue truth = TruthFunctions.deduction(sentence.truth, Parameters.reliance);
+        final TruthValue truth = TruthFunctions.deduction(sentence.truth, nal.narParameters.reliance, nal.narParameters);
         final BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.singlePremiseTask(content, truth, budget);
     }
@@ -173,9 +173,9 @@ public final class StructuralRules {
         final int order = sentence.getTemporalOrder();
         final TruthValue truth = sentence.truth;
         
-        final float reliance = Parameters.reliance;
-        final TruthValue truthDed = TruthFunctions.deduction(truth, reliance);
-        final TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
+        final float reliance = nal.narParameters.reliance;
+        final TruthValue truthDed = TruthFunctions.deduction(truth, reliance, nal.narParameters);
+        final TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance, nal.narParameters), nal.narParameters);
         
         final Term subj = statement.getSubject();
         final Term pred = statement.getPredicate();
@@ -229,9 +229,9 @@ public final class StructuralRules {
             return;
         }
         
-        final float reliance = Parameters.reliance;
-        final TruthValue truthDed = TruthFunctions.deduction(truth, reliance);
-        final TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
+        final float reliance = nal.narParameters.reliance;
+        final TruthValue truthDed = TruthFunctions.deduction(truth, reliance, nal.narParameters);
+        final TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance, nal.narParameters), nal.narParameters);
         
         final Term subj = statement.getSubject();
         final Term pred = statement.getPredicate();
@@ -631,10 +631,10 @@ public final class StructuralRules {
             Sentence curS = nal.getCurrentTask().sentence;
             TruthValue truth = null;
             if(curS.isJudgment()) {
-                truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, Parameters.reliance);
+                truth = TruthFunctions.deduction(nal.getCurrentTask().sentence.truth, nal.narParameters.reliance, nal.narParameters);
             }
             if(curS.isGoal()) {
-                truth = TruthFunctions.desireStrong(nal.getCurrentTask().sentence.truth, new TruthValue(1.0f,Parameters.reliance));
+                truth = TruthFunctions.desireStrong(nal.getCurrentTask().sentence.truth, new TruthValue(1.0f,nal.narParameters.reliance, nal.narParameters), nal.narParameters);
             }
             final BudgetValue budget = BudgetFunctions.forward(truth, nal);
             nal.singlePremiseTask(cont, truth, budget);
@@ -664,10 +664,10 @@ public final class StructuralRules {
             final Sentence curS = nal.getCurrentTask().sentence;
             TruthValue truth = null;
             if(curS.isJudgment()) {
-                truth = TruthFunctions.deduction(curS.truth, Parameters.reliance);
+                truth = TruthFunctions.deduction(curS.truth, nal.narParameters.reliance, nal.narParameters);
             }
             if(curS.isGoal()) {
-                truth = TruthFunctions.desireStrong(curS.truth, new TruthValue(1.0f, Parameters.reliance));
+                truth = TruthFunctions.desireStrong(curS.truth, new TruthValue(1.0f, nal.narParameters.reliance, nal.narParameters), nal.narParameters);
             }
             deriveSequenceTask(nal, conjCompound, newTermLeft, truth);
             deriveSequenceTask(nal, conjCompound, newTermRight, truth);
@@ -826,7 +826,7 @@ public final class StructuralRules {
         final Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
 
-        final float reliance = Parameters.reliance;
+        final float reliance = nal.narParameters.reliance;
 
         final BudgetValue budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
@@ -840,13 +840,13 @@ public final class StructuralRules {
             if ((sentence.isJudgment() || sentence.isGoal()) && 
                 ((!compoundTask && compound instanceof Disjunction) ||
                 (compoundTask && compound instanceof Conjunction))) {
-                truth = TruthFunctions.deduction(truth, reliance);
+                truth = TruthFunctions.deduction(truth, reliance, nal.narParameters);
             }else {
                 final TruthValue v1;
                 final TruthValue v2;
-                v1 = TruthFunctions.negation(truth);
-                v2 = TruthFunctions.deduction(v1, reliance);
-                truth = TruthFunctions.negation(v2);
+                v1 = TruthFunctions.negation(truth, nal.narParameters);
+                v2 = TruthFunctions.deduction(v1, reliance, nal.narParameters);
+                truth = TruthFunctions.negation(v2, nal.narParameters);
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
@@ -868,7 +868,7 @@ public final class StructuralRules {
         final BudgetValue budget;
         
         if (sentence.isJudgment() || sentence.isGoal()) {
-            truth = TruthFunctions.negation(truth);
+            truth = TruthFunctions.negation(truth, nal.narParameters);
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         } else {
             budget = BudgetFunctions.compoundBackward(content, nal);
@@ -907,7 +907,7 @@ public final class StructuralRules {
             return nal.singlePremiseTask(content, Symbols.QUESTION_MARK, truth, budget);
         } else {
             if (content instanceof Implication) {
-                truth = TruthFunctions.contraposition(truth);
+                truth = TruthFunctions.contraposition(truth, nal.narParameters);
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
             return nal.singlePremiseTask(content, Symbols.JUDGMENT_MARK, truth, budget);

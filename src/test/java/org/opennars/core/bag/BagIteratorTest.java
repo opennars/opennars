@@ -22,6 +22,8 @@ import org.opennars.storage.LevelBag;
 import java.util.Iterator;
 
 import static org.junit.Assert.assertTrue;
+import org.opennars.interfaces.pub.Reasoner;
+import org.opennars.main.Nar;
 
 
 
@@ -75,8 +77,9 @@ public class BagIteratorTest {
     }
     
     @Test
-    public void testBags() {
-        testBagIterator(new LevelBag(L, L*2));
+    public void testBags() throws Exception {
+        Nar nar = new Nar();
+        testBagIterator(new LevelBag(L, L*2, nar.narParameters));
         
     }
     

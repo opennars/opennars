@@ -25,7 +25,7 @@ import org.opennars.language.Term;
 import org.opennars.main.Nar;
 import org.opennars.main.Nar.PortableDouble;
 import org.opennars.main.Nar.PortableInteger;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.Plugin;
@@ -75,15 +75,15 @@ public class Abbreviation implements Plugin {
             final Sentence sentence = new Sentence(
                     Similarity.make(compound, atomic), 
                     Symbols.JUDGMENT_MARK, 
-                    new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                    new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
                     new Stamp(memory));
             
             final float quality = BudgetFunctions.truthToQuality(sentence.truth);
             
             final BudgetValue budget = new BudgetValue(
-                    Parameters.DEFAULT_JUDGMENT_PRIORITY, 
-                    Parameters.DEFAULT_JUDGMENT_DURABILITY, 
-                    quality);
+                    memory.narParameters.DEFAULT_JUDGMENT_PRIORITY, 
+                    memory.narParameters.DEFAULT_JUDGMENT_DURABILITY, 
+                    quality, memory.narParameters);
 
             final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
             return Lists.newArrayList(newTask);

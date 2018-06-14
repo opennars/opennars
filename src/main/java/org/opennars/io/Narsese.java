@@ -18,7 +18,7 @@ import org.opennars.entity.*;
 import org.opennars.io.Symbols.*;
 import org.opennars.language.*;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.storage.Memory;
@@ -128,7 +128,7 @@ public class Narsese implements Serializable {
         final char punc = str.charAt(last);
         
         final Stamp stamp = new Stamp(-1 /* if -1, will be set right before the Task is input */,
-                tense, memory.newStampSerial(), Parameters.DURATION);
+                tense, memory.newStampSerial(), this.memory.narParameters.DURATION);
 
         final TruthValue truth = parseTruth(truthString, punc);
         final Term content = parseTerm(str.substring(0, last));
@@ -205,14 +205,14 @@ public class Narsese implements Serializable {
      * @param type Task type
      * @return the addInput TruthValue
      */
-    private static TruthValue parseTruth(final String s, final char type) {
+    private TruthValue parseTruth(final String s, final char type) {
         if ((type == QUESTION_MARK) || (type == QUEST_MARK)) {
             return null;
         }
         float frequency = 1.0f;
-        float confidence = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
+        float confidence = memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE;
         if(type==GOAL_MARK) {
-            confidence = Parameters.DEFAULT_GOAL_CONFIDENCE;
+            confidence = memory.narParameters.DEFAULT_GOAL_CONFIDENCE;
         }
         if (s != null) {
             final int i = s.indexOf(VALUE_SEPARATOR);
@@ -223,7 +223,7 @@ public class Narsese implements Serializable {
                 confidence = parseFloat(s.substring(i + 1));
             }
         }
-        return new TruthValue(frequency, confidence);
+        return new TruthValue(frequency, confidence, memory.narParameters);
     }
 
     /**
@@ -236,24 +236,24 @@ public class Narsese implements Serializable {
      * @throws org.opennars.io.StringParser.InvalidInputException If the String cannot
      * be parsed into a BudgetValue
      */
-    private static BudgetValue parseBudget(final String s, final char punctuation, final TruthValue truth) throws InvalidInputException {
+    private BudgetValue parseBudget(final String s, final char punctuation, final TruthValue truth) throws InvalidInputException {
         float priority, durability;
         switch (punctuation) {
             case JUDGMENT_MARK:
-                priority = Parameters.DEFAULT_JUDGMENT_PRIORITY;
-                durability = Parameters.DEFAULT_JUDGMENT_DURABILITY;
+                priority = memory.narParameters.DEFAULT_JUDGMENT_PRIORITY;
+                durability = memory.narParameters.DEFAULT_JUDGMENT_DURABILITY;
                 break;
             case QUESTION_MARK:
-                priority = Parameters.DEFAULT_QUESTION_PRIORITY;
-                durability = Parameters.DEFAULT_QUESTION_DURABILITY;
+                priority = memory.narParameters.DEFAULT_QUESTION_PRIORITY;
+                durability = memory.narParameters.DEFAULT_QUESTION_DURABILITY;
                 break;
             case GOAL_MARK:
-                priority = Parameters.DEFAULT_GOAL_PRIORITY;
-                durability = Parameters.DEFAULT_GOAL_DURABILITY;
+                priority = memory.narParameters.DEFAULT_GOAL_PRIORITY;
+                durability = memory.narParameters.DEFAULT_GOAL_DURABILITY;
                 break;
             case QUEST_MARK:
-                priority = Parameters.DEFAULT_QUEST_PRIORITY;
-                durability = Parameters.DEFAULT_QUEST_DURABILITY;
+                priority = memory.narParameters.DEFAULT_QUEST_PRIORITY;
+                durability = memory.narParameters.DEFAULT_QUEST_DURABILITY;
                 break;                
             default:
                 throw new InvalidInputException("unknown punctuation: '" + punctuation + "'");
@@ -271,7 +271,7 @@ public class Narsese implements Serializable {
             }
         }
         final float quality = (truth == null) ? 1 : truthToQuality(truth);
-        return new BudgetValue(priority, durability, quality);
+        return new BudgetValue(priority, durability, quality, memory.narParameters);
     }
 
     /**
@@ -343,7 +343,7 @@ public class Narsese implements Serializable {
                     }
             }
         }
-        else if (Parameters.FUNCTIONAL_OPERATIONAL_FORMAT) {
+        else if (MiscFlags.FUNCTIONAL_OPERATIONAL_FORMAT) {
             
             //parse functional operation:
             //  function()

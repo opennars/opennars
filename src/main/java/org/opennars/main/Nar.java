@@ -60,7 +60,7 @@ import java.util.logging.Logger;
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
 public class Nar extends SensoryChannel implements Reasoner, Serializable, Runnable {
-    public NarParameters narParameters = new NarParameters();
+    public transient Parameters narParameters = new Parameters();
 
     /**
      * The information about the version and date of the project.
@@ -102,7 +102,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         final Nar ret = (Nar) stream.readObject();
         ret.memory.event = new EventEmitter();
         ret.plugins = new ArrayList<>();
-        ConfigReader.loadFrom(ret.usedConfigFilePath, ret, ret.narParameters);
+        List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(ret.usedConfigFilePath, ret, ret.narParameters);
+        for(Plugin p : pluginsToAdd) {
+            ret.addPlugin(p);
+        }
         return ret;
     }
 
@@ -145,13 +148,14 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
     /*Nar Parameters which can be changed during runtime.*/
    public class RuntimeParameters implements Serializable {
-       public RuntimeParameters() {    }
+       public RuntimeParameters(Parameters narParameters) {    }
        public final PortableInteger threadsAmount = new PortableInteger(1);
        public final PortableInteger noiseLevel = new PortableInteger(100);
-       public final PortableDouble conceptForgetDurations = new PortableDouble(Parameters.CONCEPT_FORGET_DURATIONS);
-       public final PortableDouble termLinkForgetDurations = new PortableDouble(Parameters.TERMLINK_FORGET_DURATIONS);
-       public final PortableDouble taskLinkForgetDurations = new PortableDouble(Parameters.TASKLINK_FORGET_DURATIONS);
-       public final PortableDouble eventForgetDurations = new PortableDouble(Parameters.EVENT_FORGET_DURATIONS);
+       public final PortableDouble conceptForgetDurations = new PortableDouble(narParameters.CONCEPT_FORGET_DURATIONS);
+       public final PortableDouble termLinkForgetDurations = new PortableDouble(narParameters.TERMLINK_FORGET_DURATIONS);
+       public final PortableDouble taskLinkForgetDurations = new PortableDouble(narParameters.TASKLINK_FORGET_DURATIONS);
+       public final PortableDouble eventForgetDurations = new PortableDouble(narParameters.EVENT_FORGET_DURATIONS);
+       public final PortableDouble projectionDecay = new PortableDouble(narParameters.PROJECTION_DECAY);
    }
     public final RuntimeParameters param;
 
@@ -200,16 +204,19 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     // constructs the NAR and loads a config from the filepath
     public Nar(long narId, String configFilePath) throws IOException, InstantiationException, InvocationTargetException, 
             NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
-        final Memory m = new Memory(new RuntimeParameters(),
-                new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE),
-                new LevelBag<>(Parameters.NOVEL_TASK_BAG_LEVELS, Parameters.NOVEL_TASK_BAG_SIZE),
-                new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE),
-                new LevelBag<>(Parameters.OPERATION_BAG_LEVELS, Parameters.OPERATION_BAG_SIZE));
+        List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(configFilePath, this, this.narParameters);
+        final Memory m = new Memory(this.narParameters, new RuntimeParameters(this.narParameters),
+                new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
+                new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
+                new LevelBag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
+                new LevelBag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
         this.param = m.param;
         this.usedConfigFilePath = configFilePath;
-        ConfigReader.loadFrom(configFilePath, this, this.narParameters);
+        for(Plugin p : pluginsToAdd) { //adding after memory is constructed, as memory depends on the loaded params!!
+            this.addPlugin(p);
+        }
     }
     
     public Nar() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
@@ -349,9 +356,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             null,
             new Stamp(memory, Tense.Eternal));
         final BudgetValue budget = new BudgetValue(
-            Parameters.DEFAULT_QUESTION_PRIORITY,
-            Parameters.DEFAULT_QUESTION_DURABILITY,
-            1);
+            narParameters.DEFAULT_QUESTION_PRIORITY,
+            narParameters.DEFAULT_QUESTION_DURABILITY,
+            1, narParameters);
         final Task t = new Task(sentenceForNewTask, budget, Task.EnumType.INPUT);
 
         addInput(t);
@@ -370,9 +377,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             null,
             new Stamp(memory, Tense.Present));
         final BudgetValue budgetForNewTask = new BudgetValue(
-            Parameters.DEFAULT_QUESTION_PRIORITY,
-            Parameters.DEFAULT_QUESTION_DURABILITY,
-            1);
+            narParameters.DEFAULT_QUESTION_PRIORITY,
+            narParameters.DEFAULT_QUESTION_DURABILITY,
+            1, narParameters);
         final Task t = new Task(sentenceForNewTask, budgetForNewTask, Task.EnumType.INPUT);
 
         addInput(t);
@@ -509,7 +516,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             memory.cycle(this);
         }
         catch (final Exception e) {
-            if(Parameters.SHOW_REASONING_ERRORS) {
+            if(MiscFlags.SHOW_REASONING_ERRORS) {
                 emit(ERR.class, e);
             }
             throw e;

@@ -25,7 +25,7 @@ import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.Term;
 import org.opennars.language.Variables;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 /**
  *
@@ -53,7 +53,7 @@ public class ProcessQuestion {
             }
         }
         if (newQuestion) {
-            if (questions.size() + 1 > Parameters.CONCEPT_QUESTIONS_MAX) {
+            if (questions.size() + 1 > concept.memory.narParameters.CONCEPT_QUESTIONS_MAX) {
                 final Task removed = questions.remove(0);    // FIFO
                 concept.memory.event.emit(Events.ConceptQuestionRemove.class, concept, removed);
             }

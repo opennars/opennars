@@ -20,7 +20,7 @@ import org.opennars.io.Symbols;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
 import org.opennars.language.Variable;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
 
 import java.util.List;
@@ -107,16 +107,16 @@ public abstract class FunctionOperator extends Operator {
                 ((CompoundTerm)operation.getSubject()).setComponent(
                         numArgs, y, m), m); 
 
-        final float confidence = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
+        final float confidence = m.narParameters.DEFAULT_JUDGMENT_CONFIDENCE;
         if (variable) {
             final Sentence s = new Sentence(operation,
                                       Symbols.JUDGMENT_MARK,
-                                      new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),
+                                      new TruthValue(1.0f, m.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, m.narParameters),
                                       new Stamp(m));
 
-            final BudgetValue budgetForNewTask = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,
-                Parameters.DEFAULT_FEEDBACK_DURABILITY,
-                truthToQuality(s.getTruth()));
+            final BudgetValue budgetForNewTask = new BudgetValue(m.narParameters.DEFAULT_JUDGMENT_PRIORITY,
+                m.narParameters.DEFAULT_FEEDBACK_DURABILITY,
+                truthToQuality(s.getTruth()), m.narParameters);
             final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
 
             return Lists.newArrayList(newTask);

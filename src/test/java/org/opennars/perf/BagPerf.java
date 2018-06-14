@@ -19,7 +19,7 @@ import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Item;
 import org.opennars.main.Nar;
 import org.opennars.main.Nar.PortableDouble;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
@@ -31,6 +31,9 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.opennars.main.Parameters;
 
 /**
  *
@@ -85,7 +88,29 @@ public class BagPerf {
 
             @Override
             public void run(final boolean warmup) {
-                final LevelBag<NullItem,CharSequence> b = new LevelBag(levels, capacity) {
+                Nar nar = null;
+                try {
+                    nar = new Nar();
+                } catch (IOException ex) {
+                    Logger.getLogger(BagPerf.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InstantiationException ex) {
+                    Logger.getLogger(BagPerf.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InvocationTargetException ex) {
+                    Logger.getLogger(BagPerf.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NoSuchMethodException ex) {
+                    Logger.getLogger(BagPerf.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ParserConfigurationException ex) {
+                    Logger.getLogger(BagPerf.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalAccessException ex) {
+                    Logger.getLogger(BagPerf.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SAXException ex) {
+                    Logger.getLogger(BagPerf.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(BagPerf.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ParseException ex) {
+                    Logger.getLogger(BagPerf.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                final LevelBag<NullItem,CharSequence> b = new LevelBag(levels, capacity, nar.narParameters) {
 
 //                    @Override
 //                    protected ArrayDeque<NullItem> newLevel() {
@@ -126,11 +151,11 @@ public class BagPerf {
         public final String key;
     
         public NullItem() {
-            this(Memory.randomNumber.nextFloat() * (1.0f - Parameters.TRUTH_EPSILON));
+            this(Memory.randomNumber.nextFloat() * (1.0f - narParameters.TRUTH_EPSILON));
         }
 
         public NullItem(final float priority) {
-            super(new BudgetValue(priority, priority, priority));
+            super(new BudgetValue(priority, priority, priority, narParameters));
             this.key = "" + (itemID++);
         }
 
@@ -235,9 +260,9 @@ public class BagPerf {
         out.println(line.toString());
     }
     
-    
-    public static void main(final String[] args) {
-        
+    static Parameters narParameters;
+    public static void main(final String[] args) throws Exception {
+        narParameters = new Nar().narParameters;
         final int itemsPerLevel = 10;
         final int repeats = 10;
         final int warmups = 1;
@@ -254,9 +279,9 @@ public class BagPerf {
                 final int iterations = iterationsPerItem * items;
                 final int randomAccesses = accessesPerItem * items;
                         
-                final Bag[] bags = new Bag[] {
-                    new LevelBag(levels, items)                        
-                };
+                final Bag[] bags = new LevelBag[1];
+                bags[0] = new LevelBag(levels, items, narParameters);                       
+    
                 
                 final Map<Bag, Double> t = BagPerf.compare(
                     iterations, randomAccesses, insertRatio, repeats, warmups,

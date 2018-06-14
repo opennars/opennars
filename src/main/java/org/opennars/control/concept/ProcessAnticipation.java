@@ -35,7 +35,7 @@ import org.opennars.language.Implication;
 import org.opennars.language.Negation;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;
 import org.opennars.plugin.mental.InternalExperience;
@@ -55,9 +55,9 @@ public class ProcessAnticipation {
         final Sentence s = new Sentence(
             mainSentence.term,
             mainSentence.punctuation,
-            new TruthValue(0.0f, eternalized_induction_confidence),
+            new TruthValue(0.0f, eternalized_induction_confidence, nal.narParameters),
             stamp);
-        final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f), Task.EnumType.DERIVED); //Budget for one-time processing
+        final Task t = new Task(s, new BudgetValue(0.99f,0.1f,0.1f, nal.narParameters), Task.EnumType.DERIVED); //Budget for one-time processing
         final Concept c = nal.memory.concept(((Statement) mainSentence.term).getPredicate()); //put into consequence concept
         if(c != null /*&& mintime > nal.memory.time()*/ && c.observable && mainSentence.getTerm() instanceof Statement && mainSentence.getTerm().getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
             if(c.negConfirmation == null || priority > c.negConfirmationPriority /*|| t.getPriority() > c.negConfirmation.getPriority() */) {
@@ -97,7 +97,7 @@ public class ProcessAnticipation {
         boolean cancelled = false;
         for(final TaskLink tl : concept.taskLinks) { //search for input in tasklinks (beliefs alone can not take temporality into account as the eternals will win)
             final Task t = tl.targetTask;
-            if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && t.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION &&
+            if(t!= null && t.sentence.isJudgment() && t.isInput() && !t.sentence.isEternal() && t.sentence.truth.getExpectation() > concept.memory.narParameters.DEFAULT_CONFIRMATION_EXPECTATION &&
                     CompoundTerm.replaceIntervals(t.sentence.term).equals(CompoundTerm.replaceIntervals(concept.getTerm()))) {
                 if(t.sentence.getOccurenceTime() >= concept.negConfirm_abort_mintime && t.sentence.getOccurenceTime() <= concept.negConfirm_abort_maxtime) {
                     cancelled = true;
@@ -128,7 +128,7 @@ public class ProcessAnticipation {
         final boolean satisfiesAnticipation = task.isInput() && !task.sentence.isEternal() &&
                                               concept.negConfirmation != null &&
                                               task.sentence.getOccurenceTime() > concept.negConfirm_abort_mintime;
-        final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION;
+        final boolean isExpectationAboveThreshold = task.sentence.truth.getExpectation() > nal.narParameters.DEFAULT_CONFIRMATION_EXPECTATION;
         if(satisfiesAnticipation && isExpectationAboveThreshold &&
           ((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
             nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());

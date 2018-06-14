@@ -21,10 +21,13 @@ import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
 import org.opennars.language.*;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.io.Serializable;
 import java.util.*;
+import org.opennars.control.DerivationContext;
+import org.opennars.main.Parameters;
+import org.opennars.storage.Memory;
 
 /**
  * A Sentence is used as the premises and conclusions of all inference rules.
@@ -137,7 +140,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
                     truth.setConfidence(0.0f); //TODO:
             } else if (_content instanceof Interval && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-                if (Parameters.DEBUG)
+                if (MiscFlags.DEBUG)
                     throw new IllegalStateException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
             }
 
@@ -147,14 +150,14 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
 
             if (_content.subjectOrPredicateIsIndependentVar() && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
-                if (Parameters.DEBUG)
+                if (MiscFlags.DEBUG)
                     throw new IllegalStateException("A statement sentence is not allowed to have a independent variable as subj or pred");
             }
 
-            if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
+            if (MiscFlags.DEBUG && MiscFlags.DEBUG_INVALID_SENTENCES && punctuation != Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
                 if (!Term.valid(_content)) {
                     truth.setConfidence(0.0f);
-                    if (Parameters.DEBUG) {
+                    if (MiscFlags.DEBUG) {
                         System.err.println("Invalid Sentence term: " + _content);
                         Thread.dumpStack();
                     }
@@ -211,7 +214,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             if (renamed) {
                 c.invalidateName();
 
-                if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
+                if (MiscFlags.DEBUG && MiscFlags.DEBUG_INVALID_SENTENCES) {
                     if (!Term.valid(c)) {
                         final CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid term discovered after normalization: " + c + " ; prior to normalization: " + _content);
                         ntc.printStackTrace();
@@ -324,9 +327,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
       * @param currentTime The current time as a reference
       * @return The projected belief
       */    
-    public Sentence projection(final long targetTime, final long currentTime) {
+    public Sentence projection(final long targetTime, final long currentTime, Memory mem) {
             
-        final TruthValue newTruth = projectionTruth(targetTime, currentTime);
+        final TruthValue newTruth = projectionTruth(targetTime, currentTime, mem);
         final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
                 
         final Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) :
@@ -341,17 +344,17 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     }
 
     
-    public TruthValue projectionTruth(final long targetTime, final long currentTime) {
+    public TruthValue projectionTruth(final long targetTime, final long currentTime, Memory mem) {
         TruthValue newTruth = null;
                         
         if (!stamp.isEternal()) {
-            newTruth = TruthFunctions.eternalize(truth);
+            newTruth = TruthFunctions.eternalize(truth, mem.narParameters);
             if (targetTime != Stamp.ETERNAL) {
                 final long occurrenceTime = stamp.getOccurrenceTime();
-                final float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
+                final float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime, mem.param);
                 final float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
-                    newTruth = new TruthValue(truth.getFrequency(), projectedConfidence);
+                    newTruth = new TruthValue(truth.getFrequency(), projectedConfidence, mem.narParameters);
                 }
             }
         }
@@ -488,7 +491,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         final long diffabs = Math.abs(diff);
         
         String timediff = "";
-        if(diffabs < Parameters.DURATION) {
+        if(diffabs < nar.narParameters.DURATION) {
             timediff = "|";
         }
         else {
@@ -496,7 +499,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             timediff = diff>0 ? "+"+String.valueOf(Int) : "-"+String.valueOf(Int);
         }
         
-        if(Parameters.TEST_RUNNING) {
+        if(MiscFlags.TEST_RUNNING) {
             timediff = "!"+String.valueOf(stamp.getOccurrenceTime());
         }
         
@@ -546,8 +549,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
      *
      * @return Truth value, null for question
      */
-    public void discountConfidence() {
-        truth.setConfidence(truth.getConfidence() * Parameters.DISCOUNT_RATE).setAnalytic(false);
+    public void discountConfidence(Parameters narParameters) {
+        truth.setConfidence(truth.getConfidence() * narParameters.DISCOUNT_RATE).setAnalytic(false);
     }
 
     public boolean isEternal() {

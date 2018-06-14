@@ -17,11 +17,10 @@ package org.opennars.entity;
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
 import org.opennars.language.Term;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.io.Serializable;
-
-import static org.opennars.main.Parameters.TRUTH_EPSILON;
+import org.opennars.main.Parameters;
 
 
 public class TruthValue implements Cloneable, Serializable { // implements Cloneable {
@@ -51,9 +50,11 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * Whether the truth value is derived from a definition
      */
     private boolean analytic = false;
+    
+    Parameters narParameters;
 
-    public TruthValue() {
-        this(0,0);
+    public TruthValue(Parameters narParameters) {
+        this(0,0, narParameters);
     }
     
     /**
@@ -62,8 +63,8 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * @param f The frequency value
      * @param c The confidence value
      */
-    public TruthValue(final float f, final float c) {
-        this(f, c, false);
+    public TruthValue(final float f, final float c, Parameters narParameters) {
+        this(f, c, false, narParameters);
     }
 
     /**
@@ -73,7 +74,8 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * @param c The confidence value
      *
      */
-    public TruthValue(final float f, final float c, final boolean b) {
+    public TruthValue(final float f, final float c, final boolean b, Parameters narParameters) {
+        this.narParameters = narParameters;
         setFrequency(f);                
         setConfidence(c);        
         setAnalytic(b);
@@ -85,6 +87,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      * @param v The truth value to be cloned
      */
     public TruthValue(final TruthValue v) {
+        narParameters = v.narParameters;
         frequency = v.getFrequency();
         confidence = v.getConfidence();
         analytic = v.getAnalytic();
@@ -116,7 +119,8 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     }
     
     public TruthValue setConfidence(final float c) {
-        this.confidence = (c < Parameters.MAX_CONFIDENCE) ? c : Parameters.MAX_CONFIDENCE;
+        float max_confidence = 1.0f - this.narParameters.TRUTH_EPSILON;
+        this.confidence = (c < max_confidence) ? c : max_confidence;
         return this;
     }
     
@@ -181,8 +185,8 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
         if (that instanceof TruthValue) {
             final TruthValue t = (TruthValue)that;
             return
-                isEqual(getFrequency(), t.getFrequency(), TRUTH_EPSILON) &&
-                isEqual(getConfidence(), t.getConfidence(), TRUTH_EPSILON);
+                isEqual(getFrequency(), t.getFrequency(), this.narParameters.TRUTH_EPSILON) &&
+                isEqual(getConfidence(), t.getConfidence(), this.narParameters.TRUTH_EPSILON);
         }
         return false;
     }
@@ -199,7 +203,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
 
     @Override
     public TruthValue clone() {
-        return new TruthValue(frequency, confidence, getAnalytic());
+        return new TruthValue(frequency, confidence, getAnalytic(), this.narParameters);
     }
     
     
@@ -246,7 +250,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     
     public Term toWordTerm() {
         final float e = getExpectation();
-        final float t = Parameters.DEFAULT_CREATION_EXPECTATION;
+        final float t = this.narParameters.DEFAULT_CREATION_EXPECTATION;
         if (e > t) {
             return Truth_TRUE;
         }

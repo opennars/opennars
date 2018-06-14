@@ -36,8 +36,8 @@ import org.opennars.language.Term;
 import org.opennars.main.Nar;
 import org.opennars.main.Nar.PortableDouble;
 import org.opennars.main.Nar.RuntimeParameters;
-import org.opennars.main.NarParameters;
 import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.Emotions;
@@ -102,7 +102,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
     /* System parameters that can be changed at runtime */
     public final RuntimeParameters param;
-
+    
+    /* other Nar parameters */
+    public final Parameters narParameters;
+    
     //Boolean localInferenceMutex = false;
     
     /* ---------- Constructor ---------- */
@@ -111,10 +114,11 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(final RuntimeParameters param, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
+    public Memory(final Parameters narParameters, final RuntimeParameters param, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
                   final Bag<Task<Term>,Sentence<Term>> seq_current,
                   final Bag<Task<Term>,Sentence<Term>> recent_operations) {
         this.param = param;
+        this.narParameters = narParameters;
         this.event = new EventEmitter();
         this.concepts = concepts;
         this.novelTasks = novelTasks;                
@@ -272,7 +276,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             final Task task = t;
             final Stamp s = task.sentence.stamp;
             if (s.getCreationTime()==-1)
-                s.setCreationTime(time(), Parameters.DURATION);
+                s.setCreationTime(time(), narParameters.DURATION);
 
             if(emitIn) {
                 emit(IN.class, task);
@@ -311,9 +315,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             truth,
             stamp);
 
-        final BudgetValue budgetForNewTask = new BudgetValue(Parameters.DEFAULT_FEEDBACK_PRIORITY,
-            Parameters.DEFAULT_FEEDBACK_DURABILITY,
-            truthToQuality(sentence.getTruth()));
+        final BudgetValue budgetForNewTask = new BudgetValue(narParameters.DEFAULT_FEEDBACK_PRIORITY,
+            narParameters.DEFAULT_FEEDBACK_DURABILITY,
+            truthToQuality(sentence.getTruth()), narParameters);
         final Task newTask = new Task(sentence, budgetForNewTask, Task.EnumType.INPUT);
 
         newTask.setElemOfSequenceBuffer(true);
@@ -360,7 +364,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         }
     }
     
-    public void localInference(final Task task, NarParameters narParameters) {
+    public void localInference(final Task task, Parameters narParameters) {
         //synchronized (localInferenceMutex) {
             final DerivationContext cont = new DerivationContext(this, narParameters);
             cont.setCurrentTask(task);
@@ -387,7 +391,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * ones and those that corresponding to existing concepts, plus one from the
      * buffer.
      */
-    public void processNewTasks(NarParameters narParameters) {
+    public void processNewTasks(Parameters narParameters) {
         synchronized (tasksMutex) {
             Task task;
             int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
@@ -400,10 +404,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
                     final Sentence s = task.sentence;
                     if (s.isJudgment() || s.isGoal()) {
                         final double d = s.getTruth().getExpectation();
-                        if (s.isJudgment() && d > Parameters.DEFAULT_CREATION_EXPECTATION) {
+                        if (s.isJudgment() && d > narParameters.DEFAULT_CREATION_EXPECTATION) {
                             novelTasks.putIn(task);    // new concept formation
                         } else
-                        if(s.isGoal() && d > Parameters.DEFAULT_CREATION_EXPECTATION_GOAL) {
+                        if(s.isGoal() && d > narParameters.DEFAULT_CREATION_EXPECTATION_GOAL) {
                             novelTasks.putIn(task);    // new concept formation
                         }
                         else
@@ -421,7 +425,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * Select a novel task to process.
      * @return whether a task was processed
      */
-    public void processNovelTask(NarParameters narParameters) {
+    public void processNovelTask(Parameters narParameters) {
         final Task task = novelTasks.takeNext();
         if (task != null) {            
             localInference(task, narParameters);
@@ -448,7 +452,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
 
     /** converts durations to cycles */
     public final float cycles(final PortableDouble durations) {
-        return Parameters.DURATION * durations.floatValue();
+        return narParameters.DURATION * durations.floatValue();
     }
 
     @Override

@@ -20,7 +20,7 @@ import org.opennars.inference.TruthFunctions;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.ImaginationSpace;
 import org.opennars.operator.NullOperator;
 import org.opennars.operator.Operation;
@@ -76,15 +76,15 @@ public class VisualSpace implements ImaginationSpace {
     @Override
     public TruthValue AbductionOrComparisonTo(ImaginationSpace obj, boolean comparison) {
         if(!(obj instanceof VisualSpace)) {
-            return new TruthValue(1.0f,0.0f);
+            return new TruthValue(1.0f,0.0f, nar.narParameters);
         }
         VisualSpace other = (VisualSpace) obj;
         double kh = ((float) other.height) / ((double) this.height);
         double kw = ((float) other.width)  / ((double) this.width);
-        TruthValue bestShiftTruth = new TruthValue(0.5f, 0.01f);
+        TruthValue bestShiftTruth = new TruthValue(0.5f, 0.01f, nar.narParameters);
         for(int oj=-this.height; oj<this.height; oj++) {
             for(int oi=-this.width; oi<this.width; oi++) {
-                TruthValue sim = new TruthValue(0.5f, 0.01f);
+                TruthValue sim = new TruthValue(0.5f, 0.01f, nar.narParameters);
                 for(int i=0; i<this.height; i++) {
                     for(int j=0; j<this.width; j++) {
                         int transi = i+oi;
@@ -94,10 +94,10 @@ public class VisualSpace implements ImaginationSpace {
                         }
                         int i2 = (int) (((double) i) * kh);
                         int j2 = (int) (((double) j)  * kw);
-                        TruthValue t1 = new TruthValue(cropped[transi][transj], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                        TruthValue t2 = new TruthValue(other.cropped[i2][j2], Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                        TruthValue t3 = comparison ? TruthFunctions.comparison(t1,t2) : TruthFunctions.abduction(t1,t2);
-                        sim = TruthFunctions.revision(sim, t3);                
+                        TruthValue t1 = new TruthValue(cropped[transi][transj], nar.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, nar.narParameters);
+                        TruthValue t2 = new TruthValue(other.cropped[i2][j2], nar.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, nar.narParameters);
+                        TruthValue t3 = comparison ? TruthFunctions.comparison(t1,t2, nar.narParameters) : TruthFunctions.abduction(t1,t2, nar.narParameters);
+                        sim = TruthFunctions.revision(sim, t3, nar.narParameters);                
                     }
                 }
                 if(sim.getExpectation() > bestShiftTruth.getExpectation()) {

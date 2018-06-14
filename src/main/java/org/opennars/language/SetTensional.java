@@ -15,7 +15,7 @@
 package org.opennars.language;
 
 import org.opennars.io.Symbols;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.nio.CharBuffer;
 
@@ -34,7 +34,7 @@ abstract public class SetTensional extends CompoundTerm {
         if (arg.length == 0)
             throw new IllegalStateException("0-arg empty set");
         
-        if (Parameters.DEBUG) { Terms.verifySortedAndUnique(arg, true); }
+        if (MiscFlags.DEBUG) { Terms.verifySortedAndUnique(arg, true); }
         
         init(arg);
     }

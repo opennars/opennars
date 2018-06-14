@@ -23,7 +23,7 @@ import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.language.*;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.Plugin;
@@ -143,7 +143,7 @@ public class InternalExperience implements Plugin, EventObserver {
         arg[0]=Term.SELF;
         arg[1]=s.getTerm();
         if (s.truth != null) {
-            arg[2] = s.projection(mem.time(), mem.time()).truth.toWordTerm();            
+            arg[2] = s.projection(mem.time(), mem.time(), mem).truth.toWordTerm();            
         }
         
         //Operation.make ?
@@ -213,7 +213,7 @@ public class InternalExperience implements Plugin, EventObserver {
             return true;
         }
         final Sentence sentence = task.sentence;
-        final TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+        final TruthValue truth = new TruthValue(1.0f, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters);
         final Stamp stamp = task.sentence.stamp.clone();
         stamp.setOccurrenceTime(memory.time());
         final Term ret=toTerm(sentence, memory);
@@ -227,9 +227,9 @@ public class InternalExperience implements Plugin, EventObserver {
             stamp);
 
         final BudgetValue newbudget=new BudgetValue(
-                Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
-                BudgetFunctions.truthToQuality(truth));
+                memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                BudgetFunctions.truthToQuality(truth), memory.narParameters);
         
         if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
             newbudget.setPriority(task.getPriority()*INTERNAL_EXPERIENCE_PRIORITY_MUL);
@@ -265,14 +265,14 @@ public class InternalExperience implements Plugin, EventObserver {
                 final Sentence sentence = new Sentence(
                     new_term,
                     Symbols.GOAL_MARK,
-                    new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                    new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
                     new Stamp(memory));
                 
                 final float quality = BudgetFunctions.truthToQuality(sentence.truth);
                 final BudgetValue budget = new BudgetValue(
-                    Parameters.DEFAULT_GOAL_PRIORITY*INTERNAL_EXPERIENCE_PRIORITY_MUL, 
-                    Parameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
-                    quality);
+                    memory.narParameters.DEFAULT_GOAL_PRIORITY*INTERNAL_EXPERIENCE_PRIORITY_MUL, 
+                    memory.narParameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
+                    quality, memory.narParameters);
 
                 final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
 
@@ -313,14 +313,14 @@ public class InternalExperience implements Plugin, EventObserver {
                     final Sentence sentence = new Sentence(
                         new_term,
                         Symbols.GOAL_MARK,
-                        new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                        new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
                         new Stamp(memory));
 
                     final float quality = BudgetFunctions.truthToQuality(sentence.truth);
                     final BudgetValue budget = new BudgetValue(
-                        Parameters.DEFAULT_GOAL_PRIORITY*INTERNAL_EXPERIENCE_PRIORITY_MUL, 
-                        Parameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
-                        quality);
+                        memory.narParameters.DEFAULT_GOAL_PRIORITY*INTERNAL_EXPERIENCE_PRIORITY_MUL, 
+                        memory.narParameters.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
+                        quality, memory.narParameters);
 
                     final Task newTask = new Task(sentence, budget, Task.EnumType.INPUT);
 

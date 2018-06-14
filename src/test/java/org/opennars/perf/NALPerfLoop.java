@@ -16,7 +16,7 @@ package org.opennars.perf;
 
 import org.opennars.core.NALTest;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -52,7 +52,7 @@ public class NALPerfLoop {
         while (true) {
             for (final Object o : c) {
                 final String examplePath = (String)((Object[])o)[0];
-                Parameters.DEBUG = false;
+                MiscFlags.DEBUG = false;
                 
                 perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,true);
             }

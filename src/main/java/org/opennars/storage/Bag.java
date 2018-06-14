@@ -16,7 +16,7 @@ package org.opennars.storage;
 
 import org.opennars.entity.Item;
 import org.opennars.inference.BudgetFunctions;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -156,7 +156,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @return the item which was removed, or null if none removed
      */    
     public E putBack(final E oldItem, final float forgetCycles, final Memory m) {
-        final float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
+        final float relativeThreshold = m.narParameters.FORGET_QUALITY_RELATIVE;
         BudgetFunctions.applyForgetting(oldItem.budget, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
         return putIn(oldItem);
     }

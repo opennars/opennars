@@ -24,7 +24,7 @@ import org.opennars.language.Inheritance;
 import org.opennars.language.Statement;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.xml.sax.SAXException;
 
@@ -277,9 +277,9 @@ public class TermTest {
     
     
     @Test public void testParseOperationInFunctionalForm() throws Narsese.InvalidInputException, IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        Parameters.FUNCTIONAL_OPERATIONAL_FORMAT = true;
         
         final Nar n = new Nar();
+        MiscFlags.FUNCTIONAL_OPERATIONAL_FORMAT = true;
         final Narsese p = new Narsese(n);
 
         final Term x = p.parseTerm("wonder(a,b)");

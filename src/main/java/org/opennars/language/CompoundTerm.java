@@ -19,7 +19,7 @@ import org.opennars.entity.TermLink;
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
 
 import java.nio.CharBuffer;
@@ -176,7 +176,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         final Term c = clone(cloneTermsDeep());
         if (c == null)
             return null;
-        if (Parameters.DEBUG && c.getClass()!=getClass()) //debug relevant, while it is natural due to interval 
+        if (MiscFlags.DEBUG && c.getClass()!=getClass()) //debug relevant, while it is natural due to interval 
                                                           //simplification to reduce to other term type,
                                                           //other cases should not appear
             System.out.println("cloneDeep resulted in different class: " + c + " from " + this);
@@ -257,7 +257,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
         @Override
         public synchronized Throwable fillInStackTrace() {
-            if (Parameters.DEBUG) {
+            if (MiscFlags.DEBUG) {
                 return super.fillInStackTrace();
             }
             else {
@@ -275,7 +275,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         if (c == null)
             return null;
         
-        if (Parameters.DEBUG && c.getClass()!=getClass())
+        if (MiscFlags.DEBUG && c.getClass()!=getClass())
             System.out.println("cloneDeepVariables resulted in different class: " + c + " from " + this);                
         
         final CompoundTerm cc = (CompoundTerm)c;
@@ -729,7 +729,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     @Override
     public int hashCode() {
-        if (!Parameters.TERM_ELEMENT_EQUIVALENCY) {
+        if (!MiscFlags.TERM_ELEMENT_EQUIVALENCY) {
             return name().hashCode();
         }
         else {
@@ -741,7 +741,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     public int compareTo(final AbstractTerm that) {
         if (that==this) return 0;
         
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
+        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY) {
             if (that instanceof CompoundTerm) {
                 final CompoundTerm t = (CompoundTerm)that;
 
@@ -773,7 +773,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         if (that==this) return true;                
         if (!(that instanceof Term))
             return false;
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY)
+        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY)
             return equalsByTerm(that);
         return name().equals(((Term)that).name());
     }

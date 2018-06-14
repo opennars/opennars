@@ -15,7 +15,7 @@
 package org.opennars.language;
 
 import org.opennars.io.Texts;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.nio.CharBuffer;
 
@@ -126,7 +126,7 @@ public class Variable extends Term {
             return false;
 
                 
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
+        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY) {
             return equalsTerm(that);
         }
         else {
@@ -187,7 +187,7 @@ public class Variable extends Term {
         if(superCmp != 0)
             return superCmp;
 
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
+        if (MiscFlags.TERM_ELEMENT_EQUIVALENCY) {
             throw new UnsupportedOperationException("not implemented!");
         }
 

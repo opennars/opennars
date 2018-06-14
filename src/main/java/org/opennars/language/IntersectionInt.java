@@ -16,7 +16,7 @@ package org.opennars.language;
 
 import com.google.common.collect.ObjectArrays;
 import org.opennars.io.Symbols.NativeOperator;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class IntersectionInt extends CompoundTerm {
     private IntersectionInt(final Term[] arg) {
         super( arg );
         
-        if (Parameters.DEBUG) { Terms.verifySortedAndUnique(arg, false); }        
+        if (MiscFlags.DEBUG) { Terms.verifySortedAndUnique(arg, false); }        
         
         init(arg);
     }

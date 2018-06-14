@@ -24,7 +24,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
 import org.opennars.io.events.TextOutputHandler;
 import org.opennars.main.Nar;
-import org.opennars.main.Parameters;
+import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
 import org.opennars.util.io.ExampleFileInput;
 import org.opennars.util.test.OutputCondition;
@@ -42,8 +42,8 @@ import static org.junit.Assert.assertTrue;
 public class StabilityTest {
     static {
         Memory.randomNumber.setSeed(1);
-        Parameters.DEBUG = false;
-        Parameters.TEST_RUNNING = true;
+        MiscFlags.DEBUG = false;
+        MiscFlags.TEST_RUNNING = true;
     }
 
     final int minCycles = 1550; //TODO reduce this to one or zero to avoid wasting any extra time during tests

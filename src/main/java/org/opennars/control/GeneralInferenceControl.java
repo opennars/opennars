@@ -25,14 +25,14 @@ import org.opennars.entity.TermLink;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.RuleTables;
 import org.opennars.io.events.Events;
+import org.opennars.main.MiscFlags;
 import org.opennars.main.Parameters;
-import org.opennars.main.NarParameters;
 import org.opennars.storage.Memory;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 public class GeneralInferenceControl {
     
-    public static void selectConceptForInference(final Memory mem, final NarParameters narParameters) {
+    public static void selectConceptForInference(final Memory mem, final Parameters narParameters) {
         final Concept currentConcept;
         synchronized (mem.concepts) { //modify concept bag
             currentConcept = mem.concepts.takeNext();
@@ -81,7 +81,7 @@ public class GeneralInferenceControl {
                 return false;
             }
             if (nal.currentTaskLink.budget.aboveThreshold()) {
-                fireTaskLink(nal, Parameters.TERMLINK_MAX_REASONED);                    
+                fireTaskLink(nal, nal.memory.narParameters.TERMLINK_MAX_REASONED);                    
             }
             nal.currentConcept.taskLinks.putBack(nal.currentTaskLink, nal.memory.cycles(nal.memory.param.taskLinkForgetDurations), nal.memory);
         }
