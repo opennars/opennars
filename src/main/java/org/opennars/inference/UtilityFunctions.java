@@ -14,8 +14,6 @@
  */
 package org.opennars.inference;
 
-import org.opennars.main.MiscFlags;
-
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import org.opennars.main.Parameters;

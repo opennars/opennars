@@ -60,7 +60,7 @@ import java.util.logging.Logger;
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
 public class Nar extends SensoryChannel implements Reasoner, Serializable, Runnable {
-    public transient Parameters narParameters = new Parameters();
+    public Parameters narParameters = new Parameters();
 
     /**
      * The information about the version and date of the project.
@@ -77,7 +77,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                     "    IRC:  http://webchat.freenode.net/?channels=org.opennars \n";
 
 
-    final Map<Term,SensoryChannel> sensoryChannels = new HashMap<>();
+    protected transient Map<Term,SensoryChannel> sensoryChannels = new HashMap<>();
     public void addSensoryChannel(final String term, final SensoryChannel channel) {
         try {
             sensoryChannels.put(new Narsese(this).parseTerm(term), channel);
@@ -102,6 +102,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         final Nar ret = (Nar) stream.readObject();
         ret.memory.event = new EventEmitter();
         ret.plugins = new ArrayList<>();
+        ret.sensoryChannels = new HashMap<>();
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(ret.usedConfigFilePath, ret, ret.narParameters);
         for(Plugin p : pluginsToAdd) {
             ret.addPlugin(p);
@@ -109,7 +110,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         return ret;
     }
 
-    private Thread[] threads = null;
+    private transient Thread[] threads = null;
     long minCyclePeriodMS;
 
     /**

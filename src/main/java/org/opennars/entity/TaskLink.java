@@ -15,7 +15,6 @@
 package org.opennars.entity;
 
 import org.opennars.language.Term;
-import org.opennars.main.MiscFlags;
 import org.opennars.main.Parameters;
 
 import java.io.Serializable;

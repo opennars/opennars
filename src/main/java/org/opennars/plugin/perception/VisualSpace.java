@@ -20,7 +20,6 @@ import org.opennars.inference.TruthFunctions;
 import org.opennars.language.Conjunction;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.MiscFlags;
 import org.opennars.operator.ImaginationSpace;
 import org.opennars.operator.NullOperator;
 import org.opennars.operator.Operation;

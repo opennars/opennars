@@ -18,7 +18,6 @@ import com.google.common.collect.Lists;
 import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.language.Term;
-import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.storage.Memory;

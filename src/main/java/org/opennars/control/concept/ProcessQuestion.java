@@ -25,7 +25,6 @@ import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.Term;
 import org.opennars.language.Variables;
-import org.opennars.main.MiscFlags;
 
 /**
  *

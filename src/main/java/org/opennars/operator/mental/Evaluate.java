@@ -21,7 +21,6 @@ import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
 import org.opennars.io.Symbols;
 import org.opennars.language.Term;
-import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.storage.Memory;

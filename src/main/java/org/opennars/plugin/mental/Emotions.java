@@ -14,6 +14,7 @@
  */
 package org.opennars.plugin.mental;
 
+import java.io.Serializable;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
@@ -22,11 +23,10 @@ import org.opennars.language.Inheritance;
 import org.opennars.language.SetInt;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.MiscFlags;
 import org.opennars.plugin.Plugin;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
-public class Emotions implements Plugin {
+public class Emotions implements Plugin, Serializable {
 
     /** average desire-value */
     private float happy;

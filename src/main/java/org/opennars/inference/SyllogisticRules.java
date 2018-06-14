@@ -19,7 +19,6 @@ import org.opennars.entity.*;
 import org.opennars.io.Symbols;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.language.*;
-import org.opennars.main.MiscFlags;
 
 import java.util.List;
 import org.opennars.control.concept.ProcessAnticipation;

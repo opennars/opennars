@@ -37,7 +37,6 @@ import org.opennars.main.Nar;
 import org.opennars.main.Nar.PortableDouble;
 import org.opennars.main.Nar.RuntimeParameters;
 import org.opennars.main.Parameters;
-import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.Emotions;
@@ -88,7 +87,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public final Map<CharSequence, Operator> operators;
     
     /* a mutex for novel and new taskks*/
-    private final Object tasksMutex = new Object();
+    private final Boolean tasksMutex = new Boolean(true);
     
     /* New tasks with novel composed terms, for delayed and selective processing*/
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;

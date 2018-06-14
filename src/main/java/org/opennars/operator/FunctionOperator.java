@@ -110,7 +110,7 @@ public abstract class FunctionOperator extends Operator {
         if (variable) {
             final Sentence s = new Sentence(operation,
                                       Symbols.JUDGMENT_MARK,
-                                      new TruthValue(1.0f, m.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, m.narParameters),
+                                      new TruthValue(1.0f, confidence, m.narParameters),
                                       new Stamp(m));
 
             final BudgetValue budgetForNewTask = new BudgetValue(m.narParameters.DEFAULT_JUDGMENT_PRIORITY,

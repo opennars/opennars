@@ -17,7 +17,6 @@ package org.opennars.entity;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.io.Symbols;
 import org.opennars.io.Texts;
-import org.opennars.main.MiscFlags;
 
 import java.io.Serializable;
 
@@ -49,9 +48,9 @@ public class BudgetValue implements Cloneable, Serializable {
     private float quality;
 
     /** time at which this budget was last forgotten, for calculating accurate memory decay rates */
-    long lastForgetTime = -1;
+    private long lastForgetTime = -1;
     
-    Parameters narParameters;
+    private Parameters narParameters;
     public BudgetValue(final float p, final float d, final TruthValue qualityFromTruth, Parameters narParameters) {
         this(p, d, BudgetFunctions.truthToQuality(qualityFromTruth), narParameters);
     }

@@ -18,13 +18,8 @@ import org.junit.Test;
 import org.opennars.perf.BagPerf.NullItem;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
-
-import java.util.Iterator;
-
 import static org.junit.Assert.assertTrue;
-import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.main.Nar;
-
 
 
 public class BagIteratorTest {

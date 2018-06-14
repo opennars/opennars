@@ -25,7 +25,6 @@ import org.opennars.entity.TermLink;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.RuleTables;
 import org.opennars.io.events.Events;
-import org.opennars.main.MiscFlags;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
 

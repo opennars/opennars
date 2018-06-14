@@ -29,7 +29,6 @@ import org.opennars.language.Interval;
 import org.opennars.language.Product;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.MiscFlags;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.mental.InternalExperience;
@@ -47,8 +46,8 @@ public class Anticipate extends Operator implements EventObserver {
     final Set<Term> newTasks = new LinkedHashSet();
     DerivationContext nal;
  
-    TruthValue expiredTruth = null;
-    BudgetValue expiredBudget = null;
+    private TruthValue expiredTruth = null;
+    private BudgetValue expiredBudget = null;
     
     public Anticipate() {
         super("^anticipate");        
@@ -57,8 +56,8 @@ public class Anticipate extends Operator implements EventObserver {
     @Override
     public boolean setEnabled(final Nar n, final boolean enabled) {
         n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.CycleEnd.class);
-        TruthValue expiredTruth = new TruthValue(0.0f, n.narParameters.ANTICIPATION_CONFIDENCE, n.narParameters);
-        BudgetValue expiredBudget = new BudgetValue(n.narParameters.DEFAULT_JUDGMENT_PRIORITY, 
+        expiredTruth = new TruthValue(0.0f, n.narParameters.ANTICIPATION_CONFIDENCE, n.narParameters);
+        expiredBudget = new BudgetValue(n.narParameters.DEFAULT_JUDGMENT_PRIORITY, 
                                                     n.narParameters.DEFAULT_JUDGMENT_DURABILITY, 
                                                     BudgetFunctions.truthToQuality(expiredTruth), n.narParameters);
         return true;
