@@ -20,6 +20,7 @@ package org.opennars.control;
 
 import org.opennars.entity.*;
 import org.opennars.inference.TruthFunctions;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.events.Events;
 import org.opennars.main.Parameters;
 import org.opennars.language.*;
@@ -46,11 +47,14 @@ public class DerivationContext {
     public StampBuilder newStampBuilder;
 
     public Parameters narParameters;
+
+    public Timable time;
     
-    public DerivationContext(final Memory mem, final Parameters narParameters) {
+    public DerivationContext(final Memory mem, final Parameters narParameters, final Timable time) {
         super();
         this.memory = mem;
         this.narParameters = narParameters;
+        this.time = time;
     }
    
     public void emit(final Class c, final Object... o) {
@@ -297,7 +301,7 @@ public class DerivationContext {
     }
 
     public long getTime() {
-        return memory.time();
+        return time.time();
     }
 
     public Stamp getNewStamp() {

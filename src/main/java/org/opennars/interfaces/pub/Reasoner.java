@@ -30,7 +30,8 @@ public interface Reasoner extends
     TaskConsumer<Reasoner>,
     Eventable,
     Pluggable,
-    Multistepable
+    Multistepable,
+    Timable
 {
     /**
      * ask reasoner a eternal question

@@ -16,6 +16,7 @@ package org.opennars.operator;
 
 import com.google.common.collect.Lists;
 import org.opennars.entity.*;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Term;
@@ -51,7 +52,7 @@ public abstract class FunctionOperator extends Operator {
     //abstract protected int getMaxArity();
     
     @Override
-    protected List<Task> execute(Operation operation, final Term[] args, final Memory m) {
+    protected List<Task> execute(Operation operation, final Term[] args, final Memory m, final Timable time) {
         //TODO make memory access optional by constructor argument
         //TODO allow access to Nar instance?
         final int numArgs = args.length -1;
@@ -111,7 +112,7 @@ public abstract class FunctionOperator extends Operator {
             final Sentence s = new Sentence(operation,
                                       Symbols.JUDGMENT_MARK,
                                       new TruthValue(1.0f, confidence, m.narParameters),
-                                      new Stamp(m));
+                                      new Stamp(time, m));
 
             final BudgetValue budgetForNewTask = new BudgetValue(m.narParameters.DEFAULT_JUDGMENT_PRIORITY,
                 m.narParameters.DEFAULT_FEEDBACK_DURABILITY,
