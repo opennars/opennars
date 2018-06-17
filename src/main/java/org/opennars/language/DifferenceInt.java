@@ -27,7 +27,6 @@ public class DifferenceInt extends CompoundTerm {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      */
     private DifferenceInt(final Term[] arg) {
@@ -65,7 +64,6 @@ public class DifferenceInt extends CompoundTerm {
      * Try to make a new DifferenceExt. Called by StringParser.
      * @return the Term generated from the arguments
      * @param arg The list of term
-     * @param memory Reference to the memory
      */
     public static Term make(final Term[] arg) {
         if (arg.length == 1) { // special case from CompoundTerm.reduceComponent
@@ -93,7 +91,6 @@ public class DifferenceInt extends CompoundTerm {
      * Try to make a new compound from two term. Called by the inference rules.
      * @param t1 The first component
      * @param t2 The second component
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term t1, final Term t2) {

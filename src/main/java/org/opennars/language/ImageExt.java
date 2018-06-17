@@ -30,7 +30,6 @@ public class ImageExt extends Image {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
@@ -61,7 +60,6 @@ public class ImageExt extends Image {
      * Try to make a new ImageExt. Called by StringParser.
      * @return the Term generated from the arguments
      * @param argList The list of term
-     * @param memory Reference to the memory
      */
     public static Term make(final Term[] argList) {
         if (argList.length < 2) {

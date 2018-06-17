@@ -176,11 +176,11 @@ public class Concept extends Item<Term> implements Serializable {
      * @param task The task to be linked
      * @param content The content of the task
      */
-    public void linkToTask(final Task task, final DerivationContext cont) {
+    public void linkToTask(final Task task, final DerivationContext content) {
         final BudgetValue taskBudget = task.budget;
 
         insertTaskLink(new TaskLink(task, null, taskBudget,
-                cont.narParameters.TERM_LINK_RECORD_LENGTH), cont);  // link type: SELF
+            content.narParameters.TERM_LINK_RECORD_LENGTH), content);  // link type: SELF
 
         if (!(term instanceof CompoundTerm)) {
             return;
@@ -189,7 +189,7 @@ public class Concept extends Item<Term> implements Serializable {
             return;
         }
                 
-        final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size(), cont.narParameters);
+        final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size(), content.narParameters);
         if (subBudget.aboveThreshold()) {
 
             for (final TermLink termLink : termLinkTemplates) {
@@ -201,13 +201,13 @@ public class Concept extends Item<Term> implements Serializable {
 
                 if (componentConcept != null) {
                     synchronized(componentConcept) {
-                        componentConcept.insertTaskLink(new TaskLink(task, termLink, subBudget, cont.narParameters.TERM_LINK_RECORD_LENGTH), cont
+                        componentConcept.insertTaskLink(new TaskLink(task, termLink, subBudget, content.narParameters.TERM_LINK_RECORD_LENGTH), content
                         );
                     }
                 }
             }
 
-            buildTermLinks(taskBudget, cont.narParameters);  // recursively insert TermLink
+            buildTermLinks(taskBudget, content.narParameters);  // recursively insert TermLink
         }
     }
 
@@ -215,7 +215,6 @@ public class Concept extends Item<Term> implements Serializable {
      * Add a new belief (or goal) into the table Sort the beliefs/desires by
      * rank, and remove redundant or low rank one
      *
-     * @param newSentence The judgment to be processed
      * @param table The table to be revised
      * @param capacity The capacity of the table
      * @return whether table was modified

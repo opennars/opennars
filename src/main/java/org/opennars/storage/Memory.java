@@ -109,8 +109,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     /* ---------- Constructor ---------- */
     /**
      * Create a new memory
-     *
-     * @param initialOperators - initial set of available operators; more may be added during runtime
      */
     public Memory(final Parameters narParameters, final RuntimeParameters param, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
                   final Bag<Task<Term>,Sentence<Term>> seq_current,

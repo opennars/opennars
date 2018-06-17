@@ -30,7 +30,6 @@ public class SetExt extends SetTensional {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term - args must be unique and sorted
      */
     public SetExt(final Term... arg) {

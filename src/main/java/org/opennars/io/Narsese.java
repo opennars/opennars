@@ -74,8 +74,6 @@ public class Narsese implements Serializable {
      * called from ExperienceIO.loadLine
      *
      * @param buffer The line to be parsed
-     * @param memory Reference to the memory
-     * @param time The current time
      * @return An experienced task
      */
     public Task parseNarsese(final StringBuilder buffer) throws InvalidInputException {
@@ -113,8 +111,6 @@ public class Narsese implements Serializable {
      * locally.
      *
      * @param s the single-line addInput String
-     * @param memory Reference to the memory
-     * @param time The current time
      * @return An experienced task
      */    
     public Task parseTask(final String s) throws InvalidInputException {
@@ -153,8 +149,7 @@ public class Narsese implements Serializable {
      *
      * @param s the addInput in a StringBuilder
      * @return a String containing a BudgetValue
-     * @throws org.opennars.io.StringParser.InvalidInputException if the addInput cannot be
- parsed into a BudgetValue
+     * @throws InvalidInputException if the addInput cannot be parsed into a BudgetValue
      */
     private static String getBudgetString(final StringBuilder s) throws InvalidInputException {
         if (s.length() == 0 || s.charAt(0) != BUDGET_VALUE_MARK) {
@@ -177,8 +172,7 @@ public class Narsese implements Serializable {
      *
      * @return a String containing a TruthValue
      * @param s the addInput in a StringBuilder
-     * @throws org.opennars.io.StringParser.InvalidInputException if the addInput cannot be
- parsed into a TruthValue
+     * @throws InvalidInputException if the addInput cannot be parsed into a TruthValue
      */
     private static String getTruthString(final StringBuilder s) throws InvalidInputException {
         final int last = s.length() - 1;
@@ -233,8 +227,7 @@ public class Narsese implements Serializable {
      * @param s addInput String
      * @param punctuation Task punctuation
      * @return the addInput BudgetValue
-     * @throws org.opennars.io.StringParser.InvalidInputException If the String cannot
-     * be parsed into a BudgetValue
+     * @throws InvalidInputException If the String cannot be parsed into a BudgetValue
      */
     private BudgetValue parseBudget(final String s, final char punctuation, final TruthValue truth) throws InvalidInputException {
         float priority, durability;
@@ -301,8 +294,7 @@ public class Narsese implements Serializable {
  SetInt; 4. <T1 Re T2> is a Statement (including higher-order Statement);
      * 5. otherwise it is a simple term.
      *
-     * @param s0 the String to be parsed
-     * @param memory Reference to the memory
+     * @param s the String to be parsed
      * @return the Term generated from the String
      */
     public Term parseTerm(String s) throws InvalidInputException {
@@ -397,8 +389,7 @@ public class Narsese implements Serializable {
      * The Term can be a constant or a variable.
      *
      * @param s0 the String to be parsed
-     * @throws org.opennars.io.StringParser.InvalidInputException the String cannot be
-     * parsed into a Term
+     * @throws InvalidInputException the String cannot be parsed into a Term
      * @return the Term generated from the String
      */
     private Term parseAtomicTerm(final String s0) throws InvalidInputException {
@@ -433,8 +424,7 @@ public class Narsese implements Serializable {
      *
      * @return the Statement generated from the String
      * @param s0 The addInput String to be parsed
-     * @throws org.opennars.io.StringParser.InvalidInputException the String cannot be
-     * parsed into a Term
+     * @throws InvalidInputException the String cannot be parsed into a Term
      */
     private Statement parseStatement(final String s0) throws InvalidInputException {
         final String s = s0.trim();
@@ -457,8 +447,7 @@ public class Narsese implements Serializable {
      *
      * @return the Term generated from the String
      * @param s0 The String to be parsed
-     * @throws org.opennars.io.StringParser.InvalidInputException the String cannot be
-     * parsed into a Term
+     * @throws InvalidInputException the String cannot be parsed into a Term
      */
     private Term parseCompoundTerm(final String s0) throws InvalidInputException {
         final String s = s0.trim();
@@ -503,8 +492,7 @@ public class Narsese implements Serializable {
      *
      * @return the arguments in an List
      * @param s0 The String to be parsed
-     * @throws org.opennars.io.StringParser.InvalidInputException the String cannot be
-     * parsed into an argument get
+     * @throws InvalidInputException the String cannot be parsed into an argument get
      */
     private List<Term> parseArguments(final String s0) throws InvalidInputException {
         final String s = s0.trim();

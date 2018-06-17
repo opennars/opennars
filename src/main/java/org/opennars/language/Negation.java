@@ -59,7 +59,6 @@ public class Negation extends CompoundTerm {
      * Try to make a Negation of one component. Called by the inference rules.
      *
      * @param t The component
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term t) {
@@ -75,7 +74,6 @@ public class Negation extends CompoundTerm {
      *
      * @return the Term generated from the arguments
      * @param argument The list of term
-     * @param memory Reference to the memory
      */
     public static Term make(final Term[] argument) {
         if (argument.length != 1)

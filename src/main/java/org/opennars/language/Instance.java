@@ -26,7 +26,6 @@ public abstract class Instance /*extends Statement*/ {
      *  A {-- B becomes {A} --> B
      * @param subject The first component
      * @param predicate The second component
-     * @param memory Reference to the memory
      * @return A compound generated or null
      */
     public static Inheritance make(final Term subject, final Term predicate) {        

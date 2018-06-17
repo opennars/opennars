@@ -54,7 +54,6 @@ public class LocalRules {
      *
      * @param task The task
      * @param belief The belief
-     * @param memory Reference to the memory
      */
     public static boolean match(final Task task, final Sentence belief, final DerivationContext nal) {
         final Sentence sentence = task.sentence;
@@ -106,7 +105,6 @@ public class LocalRules {
      * @param newBelief The new belief in task
      * @param oldBelief The previous belief with the same content
      * @param feedbackToLinks Whether to send feedback to the links
-     * @param memory Reference to the memory
      */
     public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final DerivationContext nal) {
         if (newBelief.term==null) { 
@@ -170,7 +168,6 @@ public class LocalRules {
      *
      * @param belief The proposed answer
      * @param task The task to be processed
-     * @param memory Reference to the memory
      */
     public static boolean trySolution(final Sentence belief, final Task task, final DerivationContext nal, final boolean report) {
         final Sentence problem = task.sentence;
@@ -218,7 +215,7 @@ public class LocalRules {
     /**
      * Evaluate the quality of the judgment as a solution to a problem
      *
-     * @param problem A goal or question
+     * @param probT A goal or question
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
@@ -409,8 +406,8 @@ public class LocalRules {
      * <p>
      * called in MatchingRules
      *
-     * @param budget The budget value of the new task
-     * @param truth The truth value of the new task
+     * @param newBudget The budget value of the new task
+     * @param newTruth The truth value of the new task
      * @param nal Reference to the memory
      */
     private static void convertedJudgment(final TruthValue newTruth, final BudgetValue newBudget, final DerivationContext nal) {

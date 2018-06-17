@@ -98,7 +98,6 @@ public class TextOutputHandler extends OutputHandler implements Serializable {
     /**
      * Process the next chunk of output data
      *
-     * @param lines The text to be displayed
      */
     @Override
     public void event(final Class channel, final Object... oo) {

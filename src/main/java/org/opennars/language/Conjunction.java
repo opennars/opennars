@@ -108,7 +108,6 @@ public class Conjunction extends CompoundTerm {
      *
      * @return the Term generated from the arguments
      * @param argList the list of arguments
-     * @param memory Reference to the memory
      */
     final public static Term make(final Term[] argList) {
         return make(argList, TemporalRules.ORDER_NONE);
@@ -215,7 +214,6 @@ public class Conjunction extends CompoundTerm {
      *
      * @param temporalOrder The temporal order among term
      * @param argList the list of arguments
-     * @param memory Reference to the memory
      * @return the Term generated from the arguments, or null if not possible
      */
     final public static Term make(final Term[] argList, final int temporalOrder) {
@@ -288,7 +286,6 @@ public class Conjunction extends CompoundTerm {
     /**    
      *
      * @param set a set of Term as term
-     * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
     final private static Term make(final Collection<Term> set, final int temporalOrder, final boolean spatial) {
@@ -308,7 +305,6 @@ public class Conjunction extends CompoundTerm {
      *
      * @param term1 The first component
      * @param term2 The second component
-     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     final public static Term make(final Term term1, final Term term2) {

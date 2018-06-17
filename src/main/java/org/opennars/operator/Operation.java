@@ -33,8 +33,6 @@ public class Operation extends Inheritance {
     /**
      * Constructor with partial values, called by make
      *
-     * @param n The name of the term
-     * @param arg The component list of the term
      */
     protected Operation(final Term argProduct, final Term operator) {
         super(argProduct, operator);
@@ -59,7 +57,6 @@ public class Operation extends Inheritance {
      * Try to make a new compound from two components. Called by the inference
      * rules.
      *
-     * @param memory Reference to the memory
      * @param addSelf include SELF term at end of product terms
      * @return A compound generated or null
      */

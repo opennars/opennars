@@ -228,8 +228,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
 
     /**
-     * Reset the system with an empty memory and reset clock. Called locally and
-     * from {@link NARControls}.
+     * Reset the system with an empty memory and reset clock. Called locally.
      */
     public void reset() {
         memory.reset();
