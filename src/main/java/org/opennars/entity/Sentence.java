@@ -484,9 +484,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     
         final CharSequence contentName = term.name();
         
-        final long t = nar.memory.time();
+        final long t = nar.time();
 
-        final long diff=stamp.getOccurrenceTime()-nar.memory.time();
+        final long diff=stamp.getOccurrenceTime()-nar.time();
         final long diffabs = Math.abs(diff);
         
         String timediff = "";

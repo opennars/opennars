@@ -53,7 +53,7 @@ public class TemporalInferenceControl {
         if(newEvent.punctuation!=Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
             return null; //temporal inductions for judgements only
         
-        nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, nal.memory.time());
+        nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, nal.time.time());
         nal.setCurrentTask(controllerTask);
 
         final Sentence previousBelief = stmLast;

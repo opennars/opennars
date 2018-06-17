@@ -24,6 +24,7 @@ import org.opennars.entity.Task;
 import org.opennars.entity.TermLink;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.RuleTables;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.events.Events;
 import org.opennars.main.Parameters;
 import org.opennars.storage.Memory;
@@ -31,7 +32,7 @@ import org.opennars.storage.Memory;
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 public class GeneralInferenceControl {
     
-    public static void selectConceptForInference(final Memory mem, final Parameters narParameters) {
+    public static void selectConceptForInference(final Memory mem, final Parameters narParameters, final Timable time) {
         final Concept currentConcept;
         synchronized (mem.concepts) { //modify concept bag
             currentConcept = mem.concepts.takeNext();
@@ -40,11 +41,11 @@ public class GeneralInferenceControl {
             }
         }
 
-        final DerivationContext nal = new DerivationContext(mem, narParameters);
+        final DerivationContext nal = new DerivationContext(mem, narParameters, time);
         boolean putBackConcept = false;
         float forgetCycles = 0.0f;
         synchronized(currentConcept) { //use current concept (current concept is the resource)  
-            ProcessAnticipation.maintainDisappointedAnticipations(currentConcept);
+            ProcessAnticipation.maintainDisappointedAnticipations(currentConcept, time);
             if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
                 mem.concepts.take(currentConcept.getTerm());
                 mem.conceptRemoved(currentConcept);
@@ -102,7 +103,7 @@ public class GeneralInferenceControl {
             //}
         } else {            
             while (termLinks > 0) {
-                final TermLink termLink = nal.currentConcept.selectTermLink(nal.currentTaskLink, nal.memory.time(), nal.narParameters);
+                final TermLink termLink = nal.currentConcept.selectTermLink(nal.currentTaskLink, nal.time.time(), nal.narParameters);
                 if (termLink == null) {
                     break;
                 }

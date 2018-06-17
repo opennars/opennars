@@ -18,6 +18,7 @@ import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.TemporalRules;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
@@ -98,9 +99,12 @@ public class InternalExperience implements Plugin, EventObserver {
     }
     
     public static boolean enabled=false;
+
+    private Nar nar;
     
     @Override public boolean setEnabled(final Nar n, final boolean enable) {
         memory = n.memory;
+        this.nar = n;
         
         memory.event.set(this, enable, Events.ConceptDirectProcessedTask.class);
         
@@ -112,7 +116,7 @@ public class InternalExperience implements Plugin, EventObserver {
         return true;
     }
     
-        public static Term toTerm(final Sentence s, final Memory mem) {
+        public static Term toTerm(final Sentence s, final Memory mem, final Timable time) {
         final String opName;
         switch (s.punctuation) {
             case Symbols.JUDGMENT_MARK:
@@ -142,7 +146,7 @@ public class InternalExperience implements Plugin, EventObserver {
         arg[0]=Term.SELF;
         arg[1]=s.getTerm();
         if (s.truth != null) {
-            arg[2] = s.projection(mem.time(), mem.time(), mem).truth.toWordTerm();            
+            arg[2] = s.projection(time.time(), time.time(), mem).truth.toWordTerm();
         }
         
         //Operation.make ?
@@ -162,7 +166,7 @@ public class InternalExperience implements Plugin, EventObserver {
             
             //old strategy always, new strategy only for QUESTION and QUEST:
             if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK))) {
-                InternalExperienceFromTaskInternal(memory,task,isFull());
+                InternalExperienceFromTaskInternal(memory,task,isFull(), nar);
             }
         }
         else if (event == Events.BeliefReason.class) {
@@ -175,19 +179,19 @@ public class InternalExperience implements Plugin, EventObserver {
         }
     }
     
-    public static void InternalExperienceFromBelief(final Memory memory, final Task task, final Sentence belief) {
+    public static void InternalExperienceFromBelief(final Memory memory, final Task task, final Sentence belief, final Timable time) {
         final Task newTask = new Task(belief.clone(), task.budget.clone(), Task.EnumType.INPUT);
 
-        InternalExperienceFromTask(memory, newTask, false);
+        InternalExperienceFromTask(memory, newTask, false, time);
     }
     
-    public static void InternalExperienceFromTask(final Memory memory, final Task task, final boolean full) {
+    public static void InternalExperienceFromTask(final Memory memory, final Task task, final boolean full, final Timable time) {
         if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
-            InternalExperienceFromTaskInternal(memory,task,full);
+            InternalExperienceFromTaskInternal(memory, task, full, time);
         }
     }
 
-    public static boolean InternalExperienceFromTaskInternal(final Memory memory, final Task task, final boolean full) {
+    public static boolean InternalExperienceFromTaskInternal(final Memory memory, final Task task, final boolean full, final Timable time) {
         if(!enabled) {
             return false;
         }
@@ -214,8 +218,8 @@ public class InternalExperience implements Plugin, EventObserver {
         final Sentence sentence = task.sentence;
         final TruthValue truth = new TruthValue(1.0f, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters);
         final Stamp stamp = task.sentence.stamp.clone();
-        stamp.setOccurrenceTime(memory.time());
-        final Term ret=toTerm(sentence, memory);
+        stamp.setOccurrenceTime(time.time());
+        final Term ret=toTerm(sentence, memory, time);
         if (ret==null) {
             return true;
         }
@@ -265,7 +269,7 @@ public class InternalExperience implements Plugin, EventObserver {
                     new_term,
                     Symbols.GOAL_MARK,
                     new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
-                    new Stamp(memory));
+                    new Stamp(nal.time, memory));
                 
                 final float quality = BudgetFunctions.truthToQuality(sentence.truth);
                 final BudgetValue budget = new BudgetValue(
@@ -313,7 +317,7 @@ public class InternalExperience implements Plugin, EventObserver {
                         new_term,
                         Symbols.GOAL_MARK,
                         new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
-                        new Stamp(memory));
+                        new Stamp(nal.time, memory));
 
                     final float quality = BudgetFunctions.truthToQuality(sentence.truth);
                     final BudgetValue budget = new BudgetValue(

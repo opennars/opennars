@@ -15,6 +15,7 @@
 package org.opennars.operator.mental;
 
 import org.opennars.entity.Task;
+import org.opennars.interfaces.Timable;
 import org.opennars.language.Term;
 import org.opennars.operator.NullOperator;
 import org.opennars.operator.Operation;
@@ -39,7 +40,7 @@ public class Register extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
         final Operator op=new NullOperator(args[1].toString());
         memory.addOperator(op);  // add error checking
         return null;

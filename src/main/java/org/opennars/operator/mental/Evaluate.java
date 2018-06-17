@@ -19,6 +19,7 @@ import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.language.Term;
 import org.opennars.operator.Operation;
@@ -43,14 +44,14 @@ public class Evaluate extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
         final Term content = args[1];
         
         final Sentence sentence = new Sentence(
             content,
             Symbols.QUEST_MARK,
             null,
-            new Stamp(memory));
+            new Stamp(time, memory));
 
         final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_QUEST_PRIORITY, memory.narParameters.DEFAULT_QUESTION_DURABILITY, 1, memory.narParameters);
 
