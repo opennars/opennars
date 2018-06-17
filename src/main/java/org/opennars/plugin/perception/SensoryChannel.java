@@ -16,6 +16,7 @@ package org.opennars.plugin.perception;
 
 import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Narsese;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
@@ -46,21 +47,21 @@ public abstract class SensoryChannel implements Plugin, Serializable {
     public SensoryChannel(final Nar nar, final SensoryChannel reportResultsTo, final int width, final int height, final int duration, Term label) {
         this(nar, Collections.singletonList(reportResultsTo), width, height, duration, label);
     }
-    public void addInput(final String text) {
+    public void addInput(final String text, final Timable time) {
         try {
             final Task t = new Narsese(nar).parseTask(text);
-            this.addInput(t);
+            this.addInput(t, time);
         } catch (final Narsese.InvalidInputException ex) {
             Logger.getLogger(SensoryChannel.class.getName()).log(Level.SEVERE, null, ex);
             throw new IllegalStateException("Could not parse input", ex);
         }
     }
-    public abstract Nar addInput(final Task t);
-    public void step_start(){} //needs to put results into results and call step_finished when ready
-    public void step_finished() {
+    public abstract Nar addInput(final Task t, final Timable time);
+    public void step_start(final Timable time){} //needs to put results into results and call step_finished when ready
+    public void step_finished(final Timable time) {
         for(final SensoryChannel ch : reportResultsTo) {
             for(final Task t : results) {
-                ch.addInput(t);
+                ch.addInput(t, time);
             }
         }
         results.clear();

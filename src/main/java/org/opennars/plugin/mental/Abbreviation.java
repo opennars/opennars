@@ -17,6 +17,7 @@ package org.opennars.plugin.mental;
 import com.google.common.collect.Lists;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events.TaskDerive;
@@ -65,7 +66,7 @@ public class Abbreviation implements Plugin {
          * @return Immediate results as Tasks
          */
         @Override
-        protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+        protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
             
             final Term compound = args[0];
             
@@ -75,7 +76,7 @@ public class Abbreviation implements Plugin {
                     Similarity.make(compound, atomic), 
                     Symbols.JUDGMENT_MARK, 
                     new TruthValue(1, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters),  // a naming convension
-                    new Stamp(memory));
+                    new Stamp(time, memory));
             
             final float quality = BudgetFunctions.truthToQuality(sentence.truth);
             
@@ -133,7 +134,7 @@ public class Abbreviation implements Plugin {
 
                     operation.setTask(task);
 
-                    abbreviate.call(operation, memory);
+                    abbreviate.call(operation, memory, n);
                 }
 
             };

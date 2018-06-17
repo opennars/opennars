@@ -54,7 +54,7 @@ public class NALStressMeasure  {
                 n.cycles(1);
                 n.cycles(extraCycles);
                 
-                totalCycles += n.memory.time();
+                totalCycles += n.time();
             }
                         
 

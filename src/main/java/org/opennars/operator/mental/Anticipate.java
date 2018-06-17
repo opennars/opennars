@@ -18,6 +18,7 @@ package org.opennars.operator.mental;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
@@ -76,7 +77,7 @@ public class Anticipate extends Operator implements EventObserver {
 
         if (anticipations.isEmpty()) return;
 
-        final long now=nal.memory.time();
+        final long now=nal.time.time();
                 
         //share stamps created by tasks in this cycle
         
@@ -122,7 +123,7 @@ public class Anticipate extends Operator implements EventObserver {
                 boolean remove = false;
                 
                 if (didntHappen) {
-                    deriveDidntHappen(aTerm,aTime);                                
+                    deriveDidntHappen(aTerm,aTime);
                     remove = true;
                 }
 
@@ -174,12 +175,12 @@ public class Anticipate extends Operator implements EventObserver {
    // * @return Immediate results as Tasks
    //  *
     @Override
-    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
-        if(operation==null) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
+        if (operation==null) {
             return null; //not as mental operator but as fundamental principle
         }
         
-        anticipate(args[1],memory,memory.time()+memory.narParameters.DURATION, null);
+        anticipate(args[1], memory, time.time()+memory.narParameters.DURATION, null, time);
         
         return null;
     }
@@ -195,7 +196,7 @@ public class Anticipate extends Operator implements EventObserver {
         anticipationOperator=val;
     }
     
-    public void anticipate(final Term content, final Memory memory, final long occurenceTime, final Task t) {
+    public void anticipate(final Term content, final Memory memory, final long occurenceTime, final Task t, final Timable time) {
         //if(true)
         //    return;
         
@@ -219,22 +220,22 @@ public class Anticipate extends Operator implements EventObserver {
        }
         
         final LinkedHashSet<Term> ae = new LinkedHashSet();
-        anticipations.put(new Vector2Int(memory.time(),occurenceTime), ae);
+        anticipations.put(new Vector2Int(time.time(),occurenceTime), ae);
 
         ae.add(content);
-        anticipationFeedback(content, t, memory);
+        anticipationFeedback(content, t, memory, time);
     }
 
-    public void anticipationFeedback(final Term content, final Task t, final Memory memory) {
+    public void anticipationFeedback(final Term content, final Task t, final Memory memory, final Timable time) {
         if(anticipationOperator) {
             final Operation op=(Operation) Operation.make(Product.make(Term.SELF,content), this);
             final TruthValue truth=new TruthValue(1.0f,memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters);
             final Stamp st;
             if(t==null) {
-                st=new Stamp(memory);
+                st=new Stamp(time, memory);
             } else {
                 st=t.sentence.stamp.clone();
-                st.setOccurrenceTime(memory.time());
+                st.setOccurrenceTime(time.time());
             }
 
             final Sentence s=new Sentence(
@@ -254,11 +255,11 @@ public class Anticipate extends Operator implements EventObserver {
     }
 
     protected void deriveDidntHappen(final Term aTerm, final long expectedOccurenceTime) {
-                
+
         final TruthValue truth = expiredTruth;
         final BudgetValue budget = expiredBudget;
 
-        final Stamp stamp = new Stamp(nal.memory);
+        final Stamp stamp = new Stamp(nal.time, nal.memory);
         //stamp.setOccurrenceTime(nal.memory.time());
         stamp.setOccurrenceTime(expectedOccurenceTime); //it did not happen, so the time of when it did not 
         //happen is exactly the time it was expected

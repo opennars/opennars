@@ -227,7 +227,7 @@ public class NALTest  {
         //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
 
         if ((!success & showFail) || (success && showSuccess)) {
-            System.err.println('\n' + path + " @" + n.memory.time());
+            System.err.println('\n' + path + " @" + n.time());
             for (final OutputCondition e: expects) {
                 System.err.println("  " + e);
             }

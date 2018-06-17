@@ -16,6 +16,7 @@ package org.opennars.main;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opennars.entity.*;
+import org.opennars.interfaces.Timable;
 import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.ConfigReader;
 import org.opennars.io.Narsese;
@@ -61,6 +62,9 @@ import java.util.logging.Logger;
  */
 public class Nar extends SensoryChannel implements Reasoner, Serializable, Runnable {
     public Parameters narParameters = new Parameters();
+
+    /* System clock, relatively defined to guarantee the repeatability of behaviors */
+    private Long cycle = new Long(0);
 
     /**
      * The information about the version and date of the project.
@@ -321,12 +325,12 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                     this.addInput(newInput);
                     return;
                 }
-                this.sensoryChannels.get(predicate).addInput(task);
+                this.sensoryChannels.get(predicate).addInput(task, this);
                 return;
             }
         }
         //else input into NARS directly:
-        this.memory.inputTask(task);
+        this.memory.inputTask(this, task);
     }
     
     public void addInputFile(final String s) {
@@ -354,14 +358,14 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             new Narsese(this).parseTerm(termString),
             Symbols.QUESTION_MARK,
             null,
-            new Stamp(memory, Tense.Eternal));
+            new Stamp(this, memory, Tense.Eternal));
         final BudgetValue budget = new BudgetValue(
             narParameters.DEFAULT_QUESTION_PRIORITY,
             narParameters.DEFAULT_QUESTION_DURABILITY,
             1, narParameters);
         final Task t = new Task(sentenceForNewTask, budget, Task.EnumType.INPUT);
 
-        addInput(t);
+        addInput(t, this);
 
         if (answered!=null) {
             answered.start(t, this);
@@ -375,14 +379,14 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             new Narsese(this).parseTerm(termString),
             Symbols.QUESTION_MARK,
             null,
-            new Stamp(memory, Tense.Present));
+            new Stamp(this, memory, Tense.Present));
         final BudgetValue budgetForNewTask = new BudgetValue(
             narParameters.DEFAULT_QUESTION_PRIORITY,
             narParameters.DEFAULT_QUESTION_DURABILITY,
             1, narParameters);
         final Task t = new Task(sentenceForNewTask, budgetForNewTask, Task.EnumType.INPUT);
 
-        addInput(t);
+        addInput(t, this);
 
         if (answered!=null) {
             answered.start(t, this);
@@ -391,8 +395,8 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     }
 
-    public Nar addInput(final Task t) {
-        this.memory.inputTask(t);
+    public Nar addInput(final Task t, final Timable time) {
+        this.memory.inputTask(this, t);
         return this;
     }
 
@@ -512,6 +516,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * A frame, consisting of one or more Nar memory cycles
      */
     public void cycle() {
+        synchronized (cycle) {
+            cycle++;
+        }
+
         try {
             memory.cycle(this);
         }
@@ -530,7 +538,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
 
     public long time() {
-        return memory.time();
+        return cycle;
     }
 
     public boolean isRunning() {
