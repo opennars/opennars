@@ -167,9 +167,8 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
     }*/
 
     
-    /**
+    /*
      * Set the key of the link
-     * @param suffix optional suffix, may be null
      */    
     /*protected final void setKey(final CharSequence suffix) {
         this.key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,

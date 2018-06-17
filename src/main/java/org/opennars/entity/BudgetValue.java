@@ -145,7 +145,7 @@ public class BudgetValue implements Cloneable, Serializable {
 
     /**
      * Change durability value
-     * @param v The new durability
+     * @param d The new durability
      */
     public void setDurability(float d) {
         if(d>=1.0f) {

@@ -203,7 +203,7 @@ public class Symbols {
     /**
      * Check Statement getRelation symbol, called in StringPaser
      *
-     * @param s0 The String to be checked
+     * @param s The String to be checked
      * @return if the given String is a getRelation symbol
      */
     public static boolean isRelation(final String s) {

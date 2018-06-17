@@ -169,7 +169,7 @@ public class Stamp implements Cloneable, Serializable {
      * For single-premise rules
      *
      * @param old The stamp of the single premise
-     * @param creationTim The current time
+     * @param creationTime The current time
      */
     public Stamp(final Stamp old, final long creationTime) {
         this(old, creationTime, old);
@@ -348,7 +348,7 @@ public class Stamp implements Cloneable, Serializable {
     /**
      * Check if two stamps contains the same types of content
      *
-     * @param that The Stamp to be compared
+     * @param s The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
     public boolean equals(final Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase) {

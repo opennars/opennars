@@ -144,7 +144,6 @@ public class ProcessGoal {
      * @param nal The derivation context
      * @param concept The concept of the current goal
      * @param oldGoalT The best goal in the goal table
-     * @param Task The current goal task
      */
     protected static void processOperationGoal(final Sentence projectedGoal, final DerivationContext nal, final Concept concept, final Task oldGoalT, final Task task) {
         if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD && nal.memory.time() >= concept.memory.decisionBlock) {
@@ -174,8 +173,7 @@ public class ProcessGoal {
     /**
      * Generate <?how =/> g>? question for g! goal.
      * only called by processGoal
-     * 
-     * @param Task The current goal task
+     *
      * @param nal The derivation context
      */    
     public static void questionFromGoal(final Task task, final DerivationContext nal) {

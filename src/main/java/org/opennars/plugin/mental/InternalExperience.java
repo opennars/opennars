@@ -34,7 +34,6 @@ import java.util.Arrays;
  * To rememberAction an internal action as an operation
  * <p>
  * called from Concept
- * @param task The task processed
  */
 public class InternalExperience implements Plugin, EventObserver {
         

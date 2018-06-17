@@ -71,7 +71,7 @@ public abstract class Operator extends Term implements Plugin {
     * The standard way to carry out an operation, which invokes the execute
     * method defined for the operator, and handles feedback tasks as input
     *
-    * @param op The operator to be executed
+    * @param operation The operator to be executed
     * @param args The arguments to be taken by the operator
     * @param memory The memory on which the operation is executed
     * @return true if successful, false if an error occurred

@@ -759,7 +759,6 @@ public final class StructuralRules {
      * Derives a sequence task, inheriting properties from parentConj
      * 
      * @param nal The derivation context
-     * @param inheritPropertiesConj The parent conjunction type that should be used for the derivation too
      * @param total The subterms the conjunction should be created from
      * @param truth The truth value of the derivation
      */

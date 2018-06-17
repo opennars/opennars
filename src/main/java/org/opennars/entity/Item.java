@@ -50,7 +50,6 @@ public abstract class Item<K> implements Serializable {
           
     /**
      * Constructor with initial budget
-     * @param key The key value
      * @param budget The initial budget
      */
     protected Item(final BudgetValue budget) {

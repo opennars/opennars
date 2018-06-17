@@ -76,7 +76,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     /**
      * Create a Sentence with the given fields
      *
-     * @param content The Term that forms the content of the sentence
+     * @param _content The Term that forms the content of the sentence
      * @param punctuation The punctuation indicating the type of the sentence
      * @param truth The truth value of the sentence, null for question
      * @param stamp The stamp of the sentence indicating its derivation time and
