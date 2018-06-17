@@ -196,28 +196,17 @@ public class Anticipate extends Operator implements EventObserver {
     }
     
     public void anticipate(final Term content, final Memory memory, final long occurenceTime, final Task t) {
-        //if(true)
-        //    return;
-        
-        /*if(content instanceof Conjunction && ((Conjunction)content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-            return;
-        }*/
-        
+
         if(t!=null && t.sentence.truth.getExpectation() < memory.narParameters.DEFAULT_CONFIRMATION_EXPECTATION) {
             return;
-        } 
-        
-       // Concept c = memory.concept(t.getTerm());
-       /* if(!c.observable) {
-            return;
-        }*/
-        
+        }
+
        if(t != null) {
            memory.emit(ANTICIPATE.class, t);
        } else  {
           memory.emit(ANTICIPATE.class, content);
        }
-        
+
         final LinkedHashSet<Term> ae = new LinkedHashSet();
         anticipations.put(new Vector2Int(memory.time(),occurenceTime), ae);
 
