@@ -21,6 +21,8 @@ import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.interfaces.Resettable;
+import org.opennars.interfaces.Timable;
+import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter;
 import org.opennars.io.events.Events;
@@ -51,7 +53,6 @@ import static org.opennars.inference.BudgetFunctions.truthToQuality;
 /**
  * Memory consists of the run-time state of a Nar, including:
  *   * term and concept memory
- *   * clock
  *   * reasoner state
  *   * etc.
  * 
@@ -96,9 +97,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
     
-    /* System clock, relatively defined to guarantee the repeatability of behaviors */
-    private long cycle;
-    
     /* System parameters that can be changed at runtime */
     public final RuntimeParameters param;
     
@@ -140,15 +138,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         synchronized(this.seq_current) {
             this.seq_current.clear();
         }
-        cycle = 0;
         emotion.resetEmotions();
         this.lastDecision = null;
         resetStatic();
         event.emit(ResetEnd.class);
-    }
-
-    public long time() {
-        return cycle;
     }
 
     /* ---------- conversion utilities ---------- */
@@ -265,7 +258,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      *
      * @param t The addInput task
      */
-    public void inputTask(final Task t, final boolean emitIn) {
+    public void inputTask(final Timable time, final Task t, final boolean emitIn) {
         if(!checked) {
             checked=true;
             isjUnit=isJUnitTest();
@@ -274,7 +267,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             final Task task = t;
             final Stamp s = task.sentence.stamp;
             if (s.getCreationTime()==-1)
-                s.setCreationTime(time(), narParameters.DURATION);
+                s.setCreationTime(time.time(), narParameters.DURATION);
 
             if(emitIn) {
                 emit(IN.class, task);
@@ -288,8 +281,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         }
     }
     
-    public void inputTask(final Task t) {
-        inputTask(t, true);
+    public void inputTask(final Timable time, final Task t) {
+        inputTask(time, t, true);
     }
 
     public void removeTask(final Task task, final String reason) {        
@@ -302,11 +295,11 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      *
      * @param operation The operation just executed
      */
-    public void executedTask(final Operation operation, final TruthValue truth) {
+    public void executedTask(final Timable time, final Operation operation, final TruthValue truth) {
         final Task opTask = operation.getTask();
        // logic.TASK_EXECUTED.commit(opTask.budget.getPriority());
                 
-        final Stamp stamp = new Stamp(this, Tense.Present);
+        final Stamp stamp = new Stamp(time, this, Tense.Present);
         final Sentence sentence = new Sentence(
             operation,
             Symbols.JUDGMENT_MARK,
@@ -348,23 +341,19 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
         event.emit(Events.CycleStart.class);
         
-        this.processNewTasks(inputs.narParameters);
+        this.processNewTasks(inputs.narParameters, inputs);
     //if(noResult()) //newTasks empty
-        this.processNovelTask(inputs.narParameters);
+        this.processNovelTask(inputs.narParameters, inputs);
     //if(noResult()) //newTasks empty
-        GeneralInferenceControl.selectConceptForInference(this, inputs.narParameters);
+        GeneralInferenceControl.selectConceptForInference(this, inputs.narParameters, inputs);
         
         event.emit(Events.CycleEnd.class);
         event.synch();
-        
-        synchronized(this) {
-            cycle++;
-        }
     }
     
-    public void localInference(final Task task, Parameters narParameters) {
+    public void localInference(final Task task, Parameters narParameters, final Timable time) {
         //synchronized (localInferenceMutex) {
-            final DerivationContext cont = new DerivationContext(this, narParameters);
+            final DerivationContext cont = new DerivationContext(this, narParameters, time);
             cont.setCurrentTask(task);
             cont.setCurrentTerm(task.getTerm());
             cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
@@ -389,7 +378,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * ones and those that corresponding to existing concepts, plus one from the
      * buffer.
      */
-    public void processNewTasks(Parameters narParameters) {
+    public void processNewTasks(Parameters narParameters, final Timable time) {
         synchronized (tasksMutex) {
             Task task;
             int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
@@ -397,7 +386,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
                 task = newTasks.removeFirst();
                 final boolean enterDirect = true;
                 if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ enterDirect ||  task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
-                    localInference(task, narParameters);
+                    localInference(task, narParameters, time);
                 } else {
                     final Sentence s = task.sentence;
                     if (s.isJudgment() || s.isGoal()) {
@@ -423,10 +412,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * Select a novel task to process.
      * @return whether a task was processed
      */
-    public void processNovelTask(Parameters narParameters) {
+    public void processNovelTask(Parameters narParameters, final Timable time) {
         final Task task = novelTasks.takeNext();
         if (task != null) {            
-            localInference(task, narParameters);
+            localInference(task, narParameters, time);
         }
     }
 

@@ -62,7 +62,7 @@ public class ProcessGoal {
      */
     protected static void processGoal(final Concept concept, final DerivationContext nal, final Task task) {
         final Sentence goal = task.sentence;
-        final Task oldGoalT = concept.selectCandidate(task, concept.desires); // revise with the existing desire values
+        final Task oldGoalT = concept.selectCandidate(task, concept.desires, nal.time); // revise with the existing desire values
         Sentence oldGoal = null;
         final Stamp newStamp = goal.stamp;
         if (oldGoalT != null) {
@@ -74,7 +74,7 @@ public class ProcessGoal {
         }
         Task beliefT = null;
         if(task.aboveThreshold()) {
-            beliefT = concept.selectCandidate(task, concept.beliefs); // check if the Goal is already satisfied
+            beliefT = concept.selectCandidate(task, concept.beliefs, nal.time); // check if the Goal is already satisfied
             final int nnq = concept.quests.size();
             for (int i = 0; i < nnq; i++) {
                 trySolution(task.sentence, concept.quests.get(i), nal, true);
@@ -86,7 +86,7 @@ public class ProcessGoal {
         if (oldGoalT != null) {
             if (revisible(goal, oldGoal, nal.narParameters)) {
                 final Stamp oldStamp = oldGoal.stamp;
-                nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
+                nal.setTheNewStamp(newStamp, oldStamp, nal.time.time());
                 final Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime(), concept.memory);
                 if (projectedGoal!=null) {
                     nal.setCurrentBelief(projectedGoal);
@@ -98,9 +98,9 @@ public class ProcessGoal {
             }
         }
         final Stamp s2=goal.stamp.clone();
-        s2.setOccurrenceTime(concept.memory.time());
+        s2.setOccurrenceTime(nal.time.time());
         if(s2.after(task.sentence.stamp, nal.narParameters.DURATION)) { //this task is not up to date we have to project it first
-            final Sentence projGoal = task.sentence.projection(concept.memory.time(), nal.narParameters.DURATION, nal.memory);
+            final Sentence projGoal = task.sentence.projection(nal.time.time(), nal.narParameters.DURATION, nal.memory);
             if(projGoal!=null && projGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD) {
                 nal.singlePremiseTask(projGoal, task.budget.clone()); //keep goal updated
                 // return false; //outcommented, allowing "roundtrips now", relevant for executing multiple steps of learned implication chains
@@ -121,14 +121,14 @@ public class ProcessGoal {
             final TruthValue T=goal.truth.clone();
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
             final boolean fullfilled = AntiSatisfaction < nal.narParameters.SATISFACTION_TRESHOLD;
-            final Sentence projectedGoal = goal.projection(nal.memory.time(), nal.memory.time(), nal.memory);
+            final Sentence projectedGoal = goal.projection(nal.time.time(), nal.time.time(), nal.memory);
             if (!(projectedGoal != null && task.aboveThreshold() && !fullfilled)) {
                 return;
             }
             bestReactionForGoal(concept, nal, projectedGoal, task);
             questionFromGoal(task, nal);
             concept.addToTable(task, false, concept.desires, nal.narParameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
-            InternalExperience.InternalExperienceFromTask(concept.memory,task,false);
+            InternalExperience.InternalExperienceFromTask(concept.memory, task, false, nal.time);
             if(!(task.sentence.getTerm() instanceof Operation)) {
                 return;
             }
@@ -146,7 +146,7 @@ public class ProcessGoal {
      * @param oldGoalT The best goal in the goal table
      */
     protected static void processOperationGoal(final Sentence projectedGoal, final DerivationContext nal, final Concept concept, final Task oldGoalT, final Task task) {
-        if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD && nal.memory.time() >= concept.memory.decisionBlock) {
+        if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD && nal.time.time() >= concept.memory.decisionBlock) {
             //see whether the goal evidence is fully included in the old goal, if yes don't execute
             //as execution for this reason already happened (or did not since there was evidence against it)
             final Set<BaseEntry> oldEvidence = new HashSet<>();
@@ -196,7 +196,7 @@ public class ProcessGoal {
             }
             for(final Term q : qu) {
                 if(q!=null) {
-                    final Stamp st = new Stamp(task.sentence.stamp,nal.memory.time());
+                    final Stamp st = new Stamp(task.sentence.stamp, nal.time.time());
                     st.setOccurrenceTime(task.sentence.getOccurenceTime()); //set tense of question to goal tense
                     final Sentence s = new Sentence(
                         q,
@@ -246,8 +246,8 @@ public class ProcessGoal {
             final Term[] newprec = new Term[prec.length-3];
             System.arraycopy(prec, 0, newprec, 0, prec.length - 3);
             final long add_tolerance = (long) (((Interval)prec[prec.length-1]).time*nal.narParameters.ANTICIPATION_TOLERANCE);
-            result.mintime = nal.memory.time();
-            result.maxtime = nal.memory.time() + add_tolerance;
+            result.mintime = nal.time.time();
+            result.maxtime = nal.time.time() + add_tolerance;
             final Operation op = (Operation) prec[prec.length-2];
             final Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
             final Concept preconc = nal.memory.concept(precondition);
@@ -260,7 +260,7 @@ public class ProcessGoal {
             //check recent events in event bag
             synchronized(concept.memory.seq_current) {
                 for(final Task p : concept.memory.seq_current) {
-                    if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= concept.memory.time()) {
+                    if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= nal.time.time()) {
                         newesttime = p.sentence.getOccurenceTime();
                         bestsofar = p; //we use the newest for now
                     }
@@ -280,7 +280,7 @@ public class ProcessGoal {
                 continue;
             }
             //and the truth of the precondition:
-            final Sentence projectedPrecon = bestsofar.sentence.projection(concept.memory.time() /*- distance*/, concept.memory.time(), concept.memory);
+            final Sentence projectedPrecon = bestsofar.sentence.projection(nal.time.time() /*- distance*/, nal.time.time(), concept.memory);
             if(projectedPrecon.isEternal()) {
                 continue; //projection wasn't better than eternalization, too long in the past
             }
@@ -316,7 +316,7 @@ public class ProcessGoal {
                     concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
                     return;
                 }
-                concept.memory.decisionBlock = concept.memory.time() + nal.narParameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
+                concept.memory.decisionBlock = nal.time.time() + nal.narParameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
                 ProcessAnticipation.anticipate(nal, meta.executable_precond.sentence, meta.executable_precond.budget, meta.mintime, meta.maxtime, 2);
             }
         }
@@ -354,7 +354,7 @@ public class ProcessGoal {
         }
 
         op.setTask(t);
-        if(!oper.call(op, nal.memory)) {
+        if(!oper.call(op, nal.memory, nal.time)) {
             return false;
         }
         if (MiscFlags.DEBUG) {

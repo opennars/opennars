@@ -15,6 +15,7 @@
 package org.opennars.entity;
 
 import org.opennars.inference.TemporalRules;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.language.Tense;
 import org.opennars.main.MiscFlags;
@@ -217,13 +218,13 @@ public class Stamp implements Cloneable, Serializable {
         }
     }
 
-    public Stamp(final Memory memory, final Tense tense) {
-        this(memory.time(), tense, memory.newStampSerial(), memory.narParameters.DURATION);
+    public Stamp(final Timable time, final Memory memory, final Tense tense) {
+        this(time.time(), tense, memory.newStampSerial(), memory.narParameters.DURATION);
     }
 
     /** creates a stamp with default Present tense */
-    public Stamp(final Memory memory) {
-        this(memory, Tense.Present);
+    public Stamp(final Timable time, final Memory memory) {
+        this(time, memory, Tense.Present);
     }
     
     /** Detects evidental base overlaps **/

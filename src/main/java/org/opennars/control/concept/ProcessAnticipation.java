@@ -28,6 +28,7 @@ import org.opennars.entity.Task;
 import org.opennars.entity.TaskLink;
 import org.opennars.entity.TruthValue;
 import org.opennars.inference.TemporalRules;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.events.OutputHandler;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Implication;
@@ -44,7 +45,7 @@ public class ProcessAnticipation {
 
     public static void anticipate(final DerivationContext nal, final Sentence mainSentence, final BudgetValue budget, final long mintime, final long maxtime, final float priority) {
         //derivation was successful and it was a judgment event
-        final Stamp stamp = new Stamp(nal.memory);
+        final Stamp stamp = new Stamp(nal.time, nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
         float eternalized_induction_confidence = 0.33f;
         //long serial = stamp.evidentialBase[0];
@@ -67,7 +68,7 @@ public class ProcessAnticipation {
                     if(ctarget != null && ctarget.getPriority()>=InternalExperience.MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION) {
                         Operator anticipate_op = ((Anticipate)c.memory.getOperator("^anticipate"));
                         if(anticipate_op != null && anticipate_op instanceof Anticipate) {
-                            ((Anticipate)anticipate_op).anticipationFeedback(imp.getPredicate(), null, c.memory);
+                            ((Anticipate)anticipate_op).anticipationFeedback(imp.getPredicate(), null, c.memory, nal.time);
                         }
                     }
                 }
@@ -84,9 +85,9 @@ public class ProcessAnticipation {
      * 
      * @param concept The concept which potentially outdated anticipations should be processed
      */
-    public static void maintainDisappointedAnticipations(final Concept concept) {
+    public static void maintainDisappointedAnticipations(final Concept concept, final Timable time) {
         //here we can check the expiration of the feedback:
-        if(concept.negConfirmation == null || concept.memory.time() <= concept.negConfirm_abort_maxtime) {
+        if(concept.negConfirmation == null || time.time() <= concept.negConfirm_abort_maxtime) {
             return;
         }
         //at first search beliefs for input tasks:
@@ -106,7 +107,7 @@ public class ProcessAnticipation {
             concept.negConfirmation = null; //confirmed
             return;
         }        
-        concept.memory.inputTask(concept.negConfirmation, false);
+        concept.memory.inputTask(time, concept.negConfirmation, false);
         concept.memory.emit(OutputHandler.DISAPPOINT.class,((Statement) concept.negConfirmation.sentence.term).getPredicate());
         concept.negConfirmation = null;
     }

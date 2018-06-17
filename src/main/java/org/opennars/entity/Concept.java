@@ -16,6 +16,7 @@ package org.opennars.entity;
 
 import org.opennars.control.DerivationContext;
 import org.opennars.inference.LocalRules;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols.NativeOperator;
 import org.opennars.io.events.Events.*;
 import org.opennars.language.CompoundTerm;
@@ -257,7 +258,7 @@ public class Concept extends Item<Term> implements Serializable {
      * @param list The list of beliefs or desires to be used
      * @return The best candidate selected
      */
-    public Task selectCandidate(final Task query, final List<Task> list) {
+    public Task selectCandidate(final Task query, final List<Task> list, final Timable time) {
  //        if (list == null) {
         //            return null;
         //        }
@@ -268,7 +269,7 @@ public class Concept extends Item<Term> implements Serializable {
         synchronized (list) {
             for (final Task judgT : list) {
                 final Sentence judg = judgT.sentence;
-                beliefQuality = LocalRules.solutionQuality(rateByConfidence, query, judg, memory); //makes revision explicitly search for 
+                beliefQuality = LocalRules.solutionQuality(rateByConfidence, query, judg, memory, time); //makes revision explicitly search for
                 if (beliefQuality > currentBest /*&& (!forRevision || judgT.sentence.equalsContent(query)) */ /*&& (!forRevision || !Stamp.baseOverlap(query.stamp.evidentialBase, judg.stamp.evidentialBase)) */) {
                     currentBest = beliefQuality;
                     candidate = judgT;
@@ -482,14 +483,14 @@ public class Concept extends Item<Term> implements Serializable {
      */
     public Sentence getBelief(final DerivationContext nal, final Task task) {
         final Stamp taskStamp = task.sentence.stamp;
-        final long currentTime = memory.time();
+        final long currentTime = nal.time.time();
 
         for (final Task beliefT : beliefs) {  
             final Sentence belief = beliefT.sentence;
             nal.emit(BeliefSelect.class, belief);
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
             
-            final Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time(), nal.memory);
+            final Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), nal.time.time(), nal.memory);
             /*if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
                nal.singlePremiseTask(projectedBelief, task.budget);
             }*/

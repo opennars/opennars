@@ -17,6 +17,7 @@ package org.opennars.operator;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Task;
 import org.opennars.entity.TruthValue;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.events.OutputHandler.EXE;
 import org.opennars.language.Product;
 import org.opennars.language.Statement;
@@ -65,7 +66,7 @@ public abstract class Operator extends Term implements Plugin {
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    protected abstract List<Task> execute(Operation operation, Term[] args, Memory memory);
+    protected abstract List<Task> execute(Operation operation, Term[] args, Memory memory, final Timable time);
 
     /**
     * The standard way to carry out an operation, which invokes the execute
@@ -74,13 +75,14 @@ public abstract class Operator extends Term implements Plugin {
     * @param operation The operator to be executed
     * @param args The arguments to be taken by the operator
     * @param memory The memory on which the operation is executed
+    * @param time used to retrieve the time
     * @return true if successful, false if an error occurred
     */
-    public final boolean call(final Operation operation, final Term[] args, final Memory memory) {
-        final List<Task> feedback = execute(operation, args, memory);
+    public final boolean call(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
+        final List<Task> feedback = execute(operation, args, memory, time);
 
         if(feedback == null || feedback.isEmpty()) { //null operator case
-            memory.executedTask(operation, new TruthValue(1f,executionConfidence, memory.narParameters));
+            memory.executedTask(time, operation, new TruthValue(1f,executionConfidence, memory.narParameters));
         }
 
         reportExecution(operation, args, feedback, memory);
@@ -88,7 +90,7 @@ public abstract class Operator extends Term implements Plugin {
 
         if (feedback!=null) {
             for (final Task t : feedback) {
-                memory.inputTask(t);
+                memory.inputTask(time, t);
             }
         }
 
@@ -187,12 +189,12 @@ public abstract class Operator extends Term implements Plugin {
         
     }
 
-    public final boolean call(final Operation op, final Memory memory) {
+    public final boolean call(final Operation op, final Memory memory, final Timable time) {
         if(!op.isExecutable(memory)) {
             return false;
         }
         final Product args = op.getArguments();
-        return call(op, args.term, memory);
+        return call(op, args.term, memory, time);
     }
     
 

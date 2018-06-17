@@ -296,7 +296,7 @@ public class RuleTables {
                     goalterm,
                     Symbols.GOAL_MARK,
                     truth,
-                    new Stamp(task.sentence.stamp,nal.memory.time()));
+                    new Stamp(task.sentence.stamp,nal.time.time()));
 
                 nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*nal.narParameters.CURIOSITY_DESIRE_PRIORITY_MUL,
                                                             task.getDurability()*nal.narParameters.CURIOSITY_DESIRE_DURABILITY_MUL,
@@ -310,7 +310,7 @@ public class RuleTables {
                     goalterm2,
                     Symbols.GOAL_MARK,
                     truth.clone(),
-                    new Stamp(task.sentence.stamp,nal.memory.time()));
+                    new Stamp(task.sentence.stamp,nal.time.time()));
 
                 nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*nal.narParameters.CURIOSITY_DESIRE_PRIORITY_MUL,
                                                             task.getDurability()*nal.narParameters.CURIOSITY_DESIRE_DURABILITY_MUL,
