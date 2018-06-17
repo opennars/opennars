@@ -89,7 +89,6 @@ public abstract class Statement extends CompoundTerm {
      * @param o The relation String
      * @param subject The first component
      * @param predicate The second component
-     * @param memory Reference to the memory
      * @return The Statement built
      */
     final public static Statement make(final NativeOperator o, final Term subject, final Term predicate, final boolean customOrder, final int order) {
@@ -135,8 +134,6 @@ public abstract class Statement extends CompoundTerm {
      * @return The Statement built
      * @param subj The first component
      * @param pred The second component
-     * @param statement A sample statement providing the class type
-     * @param memory Reference to the memory
      */
     final public static Statement make(final NativeOperator op, final Term subj, final Term pred, final int order) {
 
@@ -156,7 +153,6 @@ public abstract class Statement extends CompoundTerm {
      * @param subj The first component
      * @param pred The second component
      * @param order The temporal order
-     * @param memory Reference to the memory
      * @return The Statement built
      */
     final public static Statement makeSym(final Statement statement, final Term subj, final Term pred, final int order) {
@@ -301,7 +297,6 @@ public abstract class Statement extends CompoundTerm {
 
     /**
      * returns the subject (0) or predicate(1)
-     * @param statement statement for which the side has to be returned
      * @param side subject(0) or predicate(1)
      * @return the term of the side
      */

@@ -29,7 +29,6 @@ public class IntersectionInt extends CompoundTerm {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      */
     private IntersectionInt(final Term[] arg) {
@@ -58,9 +57,8 @@ public class IntersectionInt extends CompoundTerm {
 
     /**
      * Try to make a new compound from two term. Called by the inference rules.
-     * @param term1 The first compoment
-     * @param term2 The first compoment
-     * @param memory Reference to the memory
+     * @param term1 The first component
+     * @param term2 The second component
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term term1, final Term term2) {
@@ -127,8 +125,8 @@ public class IntersectionInt extends CompoundTerm {
     }
 
     /**
-     * Check if the compound is communitative.
-     * @return true for communitative
+     * Check if the compound is commutative.
+     * @return true for commutative
      */
     @Override
     public boolean isCommutative() {

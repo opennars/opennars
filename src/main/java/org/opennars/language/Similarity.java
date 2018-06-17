@@ -23,7 +23,6 @@ public class Similarity extends Statement {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      */
     public Similarity(final Term[] arg) {
@@ -64,7 +63,6 @@ public class Similarity extends Statement {
      * Try to make a new compound from two term. Called by the inference rules.
      * @param subject The first component
      * @param predicate The second component
-     * @param memory Reference to the memory
      * @return A compound generated or null
      */
     public static Similarity make(final Term subject, final Term predicate) {

@@ -28,7 +28,6 @@ public class Inheritance extends Statement {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      */
     protected Inheritance(final Term[] arg) {
@@ -65,9 +64,8 @@ public class Inheritance extends Statement {
 
     /**
      * Try to make a new compound from two term. Called by the inference rules.
-     * @param subject The first compoment
-     * @param predicate The second compoment
-     * @param memory Reference to the memory
+     * @param subject The first component
+     * @param predicate The second component
      * @return A compound generated or null
      */
     public static Inheritance make(final Term subject, final Term predicate) {

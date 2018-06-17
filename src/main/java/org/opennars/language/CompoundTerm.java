@@ -592,7 +592,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     /**
      * Try to replace a component in a compound at a given index by another one
      *
-     * @param compound The compound
      * @param index The location of replacement
      * @param t The new component
      * @param memory Reference to the memory

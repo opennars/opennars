@@ -25,7 +25,6 @@ import java.nio.CharBuffer;
 abstract public class SetTensional extends CompoundTerm {
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      */
     protected SetTensional(final Term[] arg) {

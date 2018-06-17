@@ -71,7 +71,6 @@ public class Equivalence extends Statement {
      *
      * @param subject The first component
      * @param predicate The second component
-     * @param memory Reference to the memory
      * @return A compound generated or null
      */
     public static Equivalence make(final Term subject, final Term predicate) {  // to be extended to check if subject is Conjunction

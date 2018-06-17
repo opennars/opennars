@@ -27,7 +27,6 @@ public class Disjunction extends CompoundTerm {
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      */
     private Disjunction(final Term[] arg) {
@@ -57,7 +56,6 @@ public class Disjunction extends CompoundTerm {
      * Try to make a new Disjunction from two term. Called by the inference rules.
      * @param term1 The first component
      * @param term2 The first component
-     * @param memory Reference to the memory
      * @return A Disjunction generated or a Term it reduced to
      */
     public static Term make(final Term term1, final Term term2) {
