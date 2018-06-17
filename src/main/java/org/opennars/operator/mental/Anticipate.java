@@ -36,9 +36,9 @@ import org.opennars.storage.Memory;
 
 import java.util.*;
 
-//**
-//* Operator that creates a judgment with a given statement
- //*
+/**
+ * Operator that creates a judgment with a given statement
+ */
 public class Anticipate extends Operator implements EventObserver {
 
     public final Map<Vector2Int,LinkedHashSet<Term>> anticipations = new LinkedHashMap();
@@ -167,12 +167,7 @@ public class Anticipate extends Operator implements EventObserver {
     }
     
 
-    //*
-    // * To create a judgment with a given statement
-    // * @param args Arguments, a Statement followed by an optional tense
-    // * @param memory The memory in which the operation is executed
-   // * @return Immediate results as Tasks
-   //  *
+    // to create a judgment with a given statement
     @Override
     protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
         if(operation==null) {
