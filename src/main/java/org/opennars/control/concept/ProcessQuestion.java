@@ -62,8 +62,8 @@ public class ProcessQuestion {
         }
         final Sentence ques = quesTask.sentence;
         final Task newAnswerT = (ques.isQuestion())
-                ? concept.selectCandidate(quesTask, concept.beliefs)
-                : concept.selectCandidate(quesTask, concept.desires);
+                ? concept.selectCandidate(quesTask, concept.beliefs, nal.time)
+                : concept.selectCandidate(quesTask, concept.desires, nal.time);
 
         if (newAnswerT != null) {
             trySolution(newAnswerT.sentence, task, nal, true);

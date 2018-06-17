@@ -15,6 +15,7 @@
 package org.opennars.operator.mental;
 
 import org.opennars.entity.Task;
+import org.opennars.interfaces.Timable;
 import org.opennars.language.Term;
 import org.opennars.operator.Operation;
 import org.opennars.storage.Memory;
@@ -37,7 +38,7 @@ public class FeelSatisfied extends Feel {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
-        return feeling(memory.emotion.happy(), memory);
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
+        return feeling(memory.emotion.happy(), memory, time);
     }    
 }

@@ -16,6 +16,7 @@ package org.opennars.operator.mental;
 
 import com.google.common.collect.Lists;
 import org.opennars.entity.*;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.language.Similarity;
 import org.opennars.language.Term;
@@ -41,7 +42,7 @@ public class Name extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
         final Term compound = args[1];
         final Term atomic = args[2];
         final Similarity content = Similarity.make(compound, atomic);
@@ -51,7 +52,7 @@ public class Name extends Operator {
             content,
             Symbols.JUDGMENT_MARK,
             truth,
-            new Stamp(memory));
+            new Stamp(time, memory));
         
         final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_JUDGMENT_PRIORITY, memory.narParameters.DEFAULT_JUDGMENT_DURABILITY, truth, memory.narParameters);
 

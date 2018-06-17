@@ -15,6 +15,7 @@
 package org.opennars.operator;
 
 import org.opennars.entity.Task;
+import org.opennars.interfaces.Timable;
 import org.opennars.language.Term;
 import org.opennars.main.MiscFlags;
 import org.opennars.storage.Memory;
@@ -37,7 +38,7 @@ public class NullOperator extends Operator {
 
     /** called from Operator */
     @Override 
-    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
         if (MiscFlags.DEBUG) {
             memory.emit(getClass(), args);
         }
