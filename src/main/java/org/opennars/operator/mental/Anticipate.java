@@ -42,7 +42,7 @@ import java.util.*;
  */
 public class Anticipate extends Operator implements EventObserver {
 
-    public final Map<Vector2Int,LinkedHashSet<Term>> anticipations = new LinkedHashMap();
+    public final Map<Prediction,LinkedHashSet<Term>> anticipations = new LinkedHashMap();
             
     final Set<Term> newTasks = new LinkedHashSet();
     DerivationContext nal;
@@ -63,16 +63,7 @@ public class Anticipate extends Operator implements EventObserver {
                                                     BudgetFunctions.truthToQuality(expiredTruth), n.narParameters);
         return true;
     }
-    
-    class Vector2Int {
-        public final long predictionCreationTime; //2014 and this is still the best way to define a data structure that simple?
-        public final long predictedOccurenceTime;
-        public Vector2Int(final long predictionCreationTime, final long predictedOccurenceTime) { //rest of the crap:
-            this.predictionCreationTime=predictionCreationTime; //when the prediction happened
-            this.predictedOccurenceTime=predictedOccurenceTime; //when the event is expected
-        }
-    }
-    
+
     public void updateAnticipations() {
 
         if (anticipations.isEmpty()) return;
@@ -83,10 +74,10 @@ public class Anticipate extends Operator implements EventObserver {
         
         boolean hasNewTasks = !newTasks.isEmpty();
         
-        final Iterator<Map.Entry<Vector2Int, LinkedHashSet<Term>>> aei = anticipations.entrySet().iterator();
+        final Iterator<Map.Entry<Prediction, LinkedHashSet<Term>>> aei = anticipations.entrySet().iterator();
         while (aei.hasNext()) {
             
-            final Map.Entry<Vector2Int, LinkedHashSet<Term>> ae = aei.next();
+            final Map.Entry<Prediction, LinkedHashSet<Term>> ae = aei.next();
             
             final long aTime = ae.getKey().predictedOccurenceTime;
             final long predictionstarted=ae.getKey().predictionCreationTime;
@@ -215,7 +206,7 @@ public class Anticipate extends Operator implements EventObserver {
        }
         
         final LinkedHashSet<Term> ae = new LinkedHashSet();
-        anticipations.put(new Vector2Int(time.time(),occurenceTime), ae);
+        anticipations.put(new Prediction(time.time(),occurenceTime), ae);
 
         ae.add(content);
         anticipationFeedback(content, t, memory, time);
@@ -270,5 +261,14 @@ public class Anticipate extends Operator implements EventObserver {
         nal.derivedTask(task, false, true, false); 
         task.setElemOfSequenceBuffer(true);
         nal.memory.emit(DISAPPOINT.class, task);
+    }
+
+    class Prediction {
+        public final long predictionCreationTime; //2014 and this is still the best way to define a data structure that simple?
+        public final long predictedOccurenceTime;
+        public Prediction(final long predictionCreationTime, final long predictedOccurenceTime) { //rest of the crap:
+            this.predictionCreationTime=predictionCreationTime; //when the prediction happened
+            this.predictedOccurenceTime=predictedOccurenceTime; //when the event is expected
+        }
     }
 }
