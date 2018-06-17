@@ -17,6 +17,7 @@ package org.opennars.operator.mental;
 import com.google.common.collect.Lists;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.language.Inheritance;
 import org.opennars.language.SetInt;
@@ -49,8 +50,8 @@ public abstract class Feel extends Operator {
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
-    protected List<Task> feeling(final float value, final Memory memory) {
-        final Stamp stamp = new Stamp(memory, Tense.Present);
+    protected List<Task> feeling(final float value, final Memory memory, final Timable time) {
+        final Stamp stamp = new Stamp(time, memory, Tense.Present);
         final TruthValue truth = new TruthValue(value, memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, memory.narParameters);
                 
         final Term predicate = new SetInt(feelingTerm);

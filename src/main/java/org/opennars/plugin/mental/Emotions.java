@@ -74,7 +74,7 @@ public class Emotions implements Plugin, Serializable {
         }
         
         float frequency=-1;
-        if(Math.abs(happy-lasthappy) > CHANGE_THRESHOLD && nal.memory.time()-last_happy_time > change_steps_demanded) {
+        if(Math.abs(happy-lasthappy) > CHANGE_THRESHOLD && nal.time.time()-last_happy_time > change_steps_demanded) {
             if(happy>nal.narParameters.HAPPY_EVENT_HIGHER_THRESHOLD && lasthappy<=nal.narParameters.HAPPY_EVENT_HIGHER_THRESHOLD) {
                 frequency=1.0f;
             }
@@ -82,7 +82,7 @@ public class Emotions implements Plugin, Serializable {
                 frequency=0.0f;
             }
             lasthappy=happy;
-            last_happy_time = nal.memory.time();
+            last_happy_time = nal.time.time();
         }
         
         if(frequency!=-1) { //ok lets add an event now
@@ -90,8 +90,8 @@ public class Emotions implements Plugin, Serializable {
             final Term subject=Term.SELF;
             final Inheritance inh=Inheritance.make(subject, predicate);
             final TruthValue truth=new TruthValue(happy,nal.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, nal.narParameters);
-            final Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
-            s.stamp.setOccurrenceTime(nal.memory.time());
+            final Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.time, nal.memory));
+            s.stamp.setOccurrenceTime(nal.time.time());
 
             final BudgetValue budgetOfNewTask = new BudgetValue(nal.narParameters.DEFAULT_JUDGMENT_PRIORITY,
                                                                 nal.narParameters.DEFAULT_JUDGMENT_DURABILITY,
@@ -148,7 +148,7 @@ public class Emotions implements Plugin, Serializable {
         }
         
         float frequency=-1;
-        if(Math.abs(busy-lastbusy) > CHANGE_THRESHOLD && nal.memory.time()-last_busy_time > change_steps_demanded) {
+        if(Math.abs(busy-lastbusy) > CHANGE_THRESHOLD && nal.time.time()-last_busy_time > change_steps_demanded) {
             if(busy>nal.narParameters.BUSY_EVENT_HIGHER_THRESHOLD && lastbusy<=nal.narParameters.BUSY_EVENT_HIGHER_THRESHOLD) {
                 frequency=1.0f;
             }
@@ -156,7 +156,7 @@ public class Emotions implements Plugin, Serializable {
                 frequency=0.0f;
             }
             lastbusy=busy;
-            last_busy_time = nal.memory.time();
+            last_busy_time = nal.time.time();
         }
         
         if(frequency!=-1) { //ok lets add an event now
@@ -168,8 +168,8 @@ public class Emotions implements Plugin, Serializable {
                 inh,
                 Symbols.JUDGMENT_MARK,
                 truth,
-                new Stamp(nal.memory));
-            s.stamp.setOccurrenceTime(nal.memory.time());
+                new Stamp(nal.time, nal.memory));
+            s.stamp.setOccurrenceTime(nal.time.time());
 
             final BudgetValue budgetForNewTask = new BudgetValue(nal.narParameters.DEFAULT_JUDGMENT_PRIORITY,
                 nal.narParameters.DEFAULT_JUDGMENT_DURABILITY,

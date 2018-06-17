@@ -16,6 +16,7 @@ package org.opennars.inference;
 
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events.Answer;
 import org.opennars.io.events.Events.Unsolved;
@@ -178,17 +179,17 @@ public class LocalRules {
         
         if (oldBest != null) {
             final boolean rateByConfidence = oldBest.getTerm().equals(belief.getTerm());
-            final float newQ = solutionQuality(rateByConfidence, task, belief, memory);
-            final float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory);
+            final float newQ = solutionQuality(rateByConfidence, task, belief, memory, nal.time);
+            final float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory, nal.time);
             if (oldQ >= newQ) {
                 if (problem.isGoal()) {
-                    memory.emotion.adjustSatisfaction(oldQ, task.getPriority(),nal);
+                    memory.emotion.adjustSatisfaction(oldQ, task.getPriority(), nal);
                 }
                 memory.emit(Unsolved.class, task, belief, "Lower quality");               
                 return false;
             }
         }
-        task.setBestSolution(memory,belief);
+        task.setBestSolution(memory, belief, nal.time);
         //memory.logic.SOLUTION_BEST.commit(task.getPriority());
         
         final BudgetValue budget = solutionEval(task, belief, task, nal);
@@ -221,7 +222,7 @@ public class LocalRules {
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
-    public static float solutionQuality(final boolean rateByConfidence, final Task probT, final Sentence solution, final Memory memory) {
+    public static float solutionQuality(final boolean rateByConfidence, final Task probT, final Sentence solution, final Memory memory, final Timable time) {
         final Sentence problem = probT.sentence;
         
         if ((probT.sentence.punctuation != solution.punctuation && solution.term.hasVarQuery()) || !matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
@@ -230,7 +231,7 @@ public class LocalRules {
         
         TruthValue truth = solution.truth;
         if (problem.getOccurenceTime()!=solution.getOccurenceTime()) {
-            truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time(), memory);            
+            truth = solution.projectionTruth(problem.getOccurenceTime(), time.time(), memory);
         }
         
         //when the solutions are comparable, we have to use confidence!! else truth expectation.
@@ -268,7 +269,7 @@ public class LocalRules {
         }
         final boolean judgmentTask = task.sentence.isJudgment();
         final boolean rateByConfidence = problem.getTerm().hasVarQuery(); //here its whether its a what or where question for budget adjustment
-        final float quality = solutionQuality(rateByConfidence, problem, solution, nal.mem());
+        final float quality = solutionQuality(rateByConfidence, problem, solution, nal.mem(), nal.time);
         
         if (problem.sentence.isGoal()) {
             nal.memory.emotion.adjustSatisfaction(quality, task.getPriority(), nal);

@@ -16,6 +16,7 @@ package org.opennars.plugin.perception;
 
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.interfaces.Timable;
 import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter;
@@ -47,7 +48,7 @@ public class VisionChannel extends SensoryChannel  {
             if(HadNewInput && ev == CycleEnd.class) {
                 empty_cycles++;
                 if(empty_cycles > duration) { //a deadline, pixels can't appear more than duration after each other
-                    step_start(); //so we know we can input, not only when all pixels were re-set.
+                    step_start(nar); //so we know we can input, not only when all pixels were re-set.
                 }
             }
             else
@@ -77,12 +78,12 @@ public class VisionChannel extends SensoryChannel  {
     
     String subj = ""; 
     int empty_cycles = 0;
-    public boolean AddToMatrix(final Task t) {
+    public boolean AddToMatrix(final Task t, final Timable time) {
         final Inheritance inh = (Inheritance) t.getTerm(); //channels receive inheritances
         final String cur_subj = ((SetExt)inh.getSubject()).term[0].index_variable;
         if(!cur_subj.equals(subj)) { //when subject changes, we start to collect from scratch,
             if(!subj.isEmpty()) { //but only if subj isn't empty
-                step_start(); //flush to upper level what we so far had
+                step_start(time); //flush to upper level what we so far had
             }
             cnt_updated = 0; //this way multiple matrices can be processed by the same vision channel
             updated = new boolean[height][width];
@@ -105,16 +106,16 @@ public class VisionChannel extends SensoryChannel  {
     
     boolean isEternal = false; //don't use increasing ID if eternal
     @Override
-    public Nar addInput(final Task t) {
+    public Nar addInput(final Task t, final Timable time) {
         isEternal = t.sentence.isEternal();
-        if(AddToMatrix(t)) //new data complete
-            step_start();
+        if(AddToMatrix(t, time)) //new data complete
+            step_start(time);
         return nar;
     }
     
     int termid=0;
     @Override
-    public void step_start()
+    public void step_start(final Timable time)
     {
         cnt_updated = 0;
         HadNewInput = false;
@@ -138,7 +139,7 @@ public class VisionChannel extends SensoryChannel  {
         final VisualSpace vspace = new VisualSpace(nar, cpy, py, px, height, width);
         //attach sensation to term:
         V.imagination = vspace;
-        final Stamp stamp = isEternal ? new Stamp(nar.memory, Tense.Eternal) : new Stamp(nar.memory);
+        final Stamp stamp = isEternal ? new Stamp(time, nar.memory, Tense.Eternal) : new Stamp(time, nar.memory);
         
         final Sentence s = new Sentence(Inheritance.make(V, this.label),
                                                    Symbols.JUDGMENT_MARK, 
@@ -152,7 +153,7 @@ public class VisionChannel extends SensoryChannel  {
         final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
 
         this.results.add(newTask);//feeds results into "upper" sensory channels:
-        this.step_finished(); 
+        this.step_finished(time);
     }
     
     public double getWidth() {

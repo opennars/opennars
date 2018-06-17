@@ -19,6 +19,7 @@ import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.inference.BudgetFunctions.Activating;
+import org.opennars.interfaces.Timable;
 import org.opennars.language.Term;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -49,7 +50,7 @@ public class Remind extends Operator {
      * @return Immediate results as Tasks
      */
     @Override    
-    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
         final Term term = args[1];
         final Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_QUESTION_PRIORITY, memory.narParameters.DEFAULT_QUESTION_DURABILITY, 1, memory.narParameters);

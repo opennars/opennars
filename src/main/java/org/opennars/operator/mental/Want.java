@@ -16,6 +16,7 @@ package org.opennars.operator.mental;
 
 import com.google.common.collect.Lists;
 import org.opennars.entity.*;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 import org.opennars.language.Term;
 import org.opennars.operator.Operation;
@@ -40,7 +41,7 @@ public class Want extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory) {
+    protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
 
         final Term content = args[1];
         
@@ -49,7 +50,7 @@ public class Want extends Operator {
             content,
             Symbols.GOAL_MARK,
             truth,
-            new Stamp(memory));
+            new Stamp(time, memory));
         
         final BudgetValue budget = new BudgetValue(memory.narParameters.DEFAULT_GOAL_PRIORITY, memory.narParameters.DEFAULT_GOAL_DURABILITY, truth, memory.narParameters);
 

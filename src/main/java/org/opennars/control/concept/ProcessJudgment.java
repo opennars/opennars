@@ -58,7 +58,7 @@ public class ProcessJudgment {
         handleOperationFeedback(task, nal);
         final Sentence judg = task.sentence;
         ProcessAnticipation.confirmAnticipation(task, concept, nal);
-        final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs);   // only revise with the strongest -- how about projection?
+        final Task oldBeliefT = concept.selectCandidate(task, concept.beliefs, nal.time);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
             oldBelief = oldBeliefT.sentence;
@@ -68,8 +68,8 @@ public class ProcessJudgment {
                 concept.memory.removeTask(task, "Duplicated");
                 return;
             } else if (revisible(judg, oldBelief, nal.narParameters)) {
-                nal.setTheNewStamp(newStamp, oldStamp, concept.memory.time());
-                final Sentence projectedBelief = oldBelief.projection(concept.memory.time(), newStamp.getOccurrenceTime(), concept.memory);
+                nal.setTheNewStamp(newStamp, oldStamp, nal.time.time());
+                final Sentence projectedBelief = oldBelief.projection(nal.time.time(), newStamp.getOccurrenceTime(), concept.memory);
                 if (projectedBelief!=null) {
                     nal.setCurrentBelief(projectedBelief);
                     revision(judg, projectedBelief, false, nal);
