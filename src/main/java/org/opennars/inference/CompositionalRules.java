@@ -40,8 +40,8 @@ public final class CompositionalRules {
      * M>,
      * <(P-S) ==> M>}
      *
-     * @param taskSentence The first premise
-     * @param belief The second premise
+     * @param taskContent The first premise
+     * @param beliefContent The second premise
      * @param index The location of the shared term
      * @param nal Reference to the memory
      */
@@ -124,7 +124,7 @@ public final class CompositionalRules {
     /**
      * Finish composing implication term
      *
-     * @param premise1 Type of the contentInd
+     * @param statement Type of the contentInd
      * @param subject Subject of contentInd
      * @param predicate Predicate of contentInd
      * @param truth TruthValue of the contentInd
@@ -145,8 +145,6 @@ public final class CompositionalRules {
     /**
      * {<(S|P) ==> M>, <P ==> M>} |- <S ==> M>
      *
-     * @param implication The implication term to be decomposed
-     * @param componentCommon The part of the implication to be removed
      * @param term1 The other term in the contentInd
      * @param index The location of the shared term: 0 for subject, 1 for
      * predicate
@@ -245,8 +243,6 @@ public final class CompositionalRules {
     /**
      * {(||, S, P), P} |- S {(&&, S, P), P} |- S
      *
-     * @param implication The implication term to be decomposed
-     * @param componentCommon The part of the implication to be removed
      * @param compoundTask Whether the implication comes from the task
      * @param nal Reference to the memory
      */
@@ -525,10 +521,6 @@ public final class CompositionalRules {
      * {<M --> S>, <C ==> <M --> P>>} |- <(&&, <#x --> S>, C) ==> <#x --> P>>
      * {<M --> S>, (&&, C, <M --> P>)} |- (&&, C, <<#x --> S> ==> <#x --> P>>)
      *
-     * @param taskContent The first premise directly used in internal induction,
-     * <M --> S>
-     * @param beliefContent The componentCommon to be used as a premise in
-     * internal induction, <M --> P>
      * @param oldCompound The whole contentInd of the first premise, Implication
      * or Conjunction
      * @param nal Reference to the memory
