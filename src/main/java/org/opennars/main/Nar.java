@@ -516,12 +516,12 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * A frame, consisting of one or more Nar memory cycles
      */
     public void cycle() {
-        synchronized (cycle) {
-            cycle++;
-        }
-
         try {
             memory.cycle(this);
+
+            synchronized (cycle) {
+                cycle++;
+            }
         }
         catch (final Exception e) {
             if(MiscFlags.SHOW_REASONING_ERRORS) {
