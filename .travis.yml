@@ -12,3 +12,26 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
   - mvn site
   - java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r target/site/jacoco/jacoco.xml
+
+install:
+  - mvn --settings .travis/settings.xml install -DskipTests=true -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
+before_install:
+  - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import; fi
+  - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
+deploy:
+  -
+    provider: script
+    script: .travis/deploy.sh
+    skip_cleanup: true
+    on:
+      repo: ExampleOrg/my-library
+      branch: master
+      jdk: oraclejdk8
+  -
+    provider: script
+    script: .travis/deploy.sh
+    skip_cleanup: true
+    on:
+      repo: ExampleOrg/my-library
+      tags: true
+      jdk: oraclejdk8
