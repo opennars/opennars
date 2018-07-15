@@ -117,8 +117,8 @@ public class LocalRules {
         boolean useNewBeliefTerm = false;
         
         if(newBelief.getTerm().hasInterval()) {
-            final Term cterm = replaceIntervals(newBelief.getTerm());
-            final Concept c = nal.memory.concept(cterm);
+            final Term cterm = replaceIntervals(oldBelief.getTerm()); //oldBelief since concept <a --> b> might not exist
+            final Concept c = nal.memory.concept(cterm);              //and localRules.match might have task <a --> b> from concept b
             final List<Long> ivalOld = extractIntervals(nal.memory, oldBelief.getTerm());
             if(c.recent_intervals.size() == 0) {
                 for(final Long l : ivalOld) {
