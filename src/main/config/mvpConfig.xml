@@ -92,7 +92,7 @@
     <conf name="BREAK_NAL_HOL_BOUNDARY" value="false"/>
     
     <conf name="QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
-    <conf name="HOW_QUESTION_GENERATION_ON_DECISION_MAKING" value="true"/>
+    <conf name="HOW_QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
     
     <conf name="ANTICIPATION_CONFIDENCE" value="0.9"/>
     <conf name="ANTICIPATION_TOLERANCE" value="50.0"/>
