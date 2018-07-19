@@ -217,7 +217,7 @@ public class Parameters implements Serializable {
     public boolean BREAK_NAL_HOL_BOUNDARY=false;
 
     public boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
-    public boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=true;
+    public boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=false;
 
     public float ANTICIPATION_CONFIDENCE = 0.90f;
 

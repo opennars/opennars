@@ -9,6 +9,6 @@
 <(&/,<$1 --> [pliable]>,(^reshape,{SELF},$1)) =/> <$1 --> [hardened]>>.
 <<$1 --> [hardened]> =|> <$1 --> [unscrewing]>>.
 (&&,<#1 --> object>,<#1 --> [unscrewing]>)!
-50000
+20000
 ''outputMustContain('(^lighter,{SELF},cup)! %1.00;0.39%')
-''outputMustContain('(^reshape,{SELF},cup)! %1.00;0.26%')
+''outputMustContain('(^reshape,{SELF},cup)! %1.00;0.20%')
