@@ -129,6 +129,8 @@
             <arg type="int.class" value="5"/>
             <arg type="int.class" value="5"/>
             <arg type="int.class" value="25"/>
+            <arg type="float.class" value="0.5"/>
+            <arg type="int.class" value="0"/>
         </plugin>
 
         <!-- example Operators -->

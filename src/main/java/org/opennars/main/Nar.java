@@ -320,7 +320,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                     final String ev = task.sentence.isEternal() ? " " : " :|: ";
                     final String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" +
                                       task.sentence.punctuation + ev + task.sentence.truth.toString();
-                    this.emit(OutputHandler.IN.class, task);
+                    //this.emit(OutputHandler.IN.class, task); too expensive to print each input task :)
                     this.addInput(newInput);
                     return;
                 }

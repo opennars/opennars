@@ -14,6 +14,7 @@
  */
 package org.opennars.plugin.perception;
 
+import java.util.HashMap;
 import org.opennars.entity.TruthValue;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
@@ -38,15 +39,15 @@ public class VisualSpace implements ImaginationSpace {
     public final float[][] cropped; //all elements assumed to be in [0,1] range
     public final int height;
     public final int width;
-    public final int px = 0;
-    public final int py = 0;
+    public int px = 0;
+    public int py = 0;
     
     //those are the same for each instance:
     static final NullOperator right = new NullOperator("^right");
     static final NullOperator left = new NullOperator("^left");
     static final NullOperator up = new NullOperator("^up");
     static final NullOperator down = new NullOperator("^down");
-    final Set<Operator> ops = new HashSet<>();
+    final HashMap<String,Operator> ops = new HashMap<String,Operator>();
     final Nar nar;
     
     public VisualSpace(final Nar nar, final float[][] source, final int py, final int px, final int height, final int width) {
@@ -55,21 +56,25 @@ public class VisualSpace implements ImaginationSpace {
         this.width = width;    
         this.cropped = new float[height][width];
         this.source = new float[source.length][source[0].length];
+        this.py = py;
+        this.px = px;
         for(int i=0;i<source.length;i++) { //"snapshot" from source
             System.arraycopy(source[i], 0, this.source[i], 0, source[0].length);
         }
         //now copy into data
         for(int i=0; i<height; i++) {
-            System.arraycopy(source[py + i], px + 0, cropped[i], 0, width);
+            int relIndexY = 0; //was py, px but sensory device already does the shifting
+            int relIndexX = 0; 
+            System.arraycopy(source[relIndexY + i], relIndexX + 0, cropped[i], 0, width);
         }
         nar.addPlugin(right);
         nar.addPlugin(left);
         nar.addPlugin(up);
         nar.addPlugin(down);
-        ops.add(right);
-        ops.add(left);
-        ops.add(up);
-        ops.add(down);
+        ops.put("right",right);
+        ops.put("left",left);
+        ops.put("up",up);
+        ops.put("down",down);
     }
 
     @Override
@@ -150,7 +155,7 @@ public class VisualSpace implements ImaginationSpace {
     
     public boolean IsOperationInSpace(final Operation oper) {
         final Operator op = (Operator) oper.getPredicate();
-        return ops.contains(op);
+        return ops.values().contains(op);
     }
     
     //Needs to be resolved:
