@@ -146,7 +146,7 @@ public class ProcessGoal {
      * @param oldGoalT The best goal in the goal table
      */
     protected static void processOperationGoal(final Sentence projectedGoal, final DerivationContext nal, final Concept concept, final Task oldGoalT, final Task task) {
-        if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD && nal.time.time() >= concept.memory.decisionBlock) {
+        if(projectedGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD) {
             //see whether the goal evidence is fully included in the old goal, if yes don't execute
             //as execution for this reason already happened (or did not since there was evidence against it)
             final Set<BaseEntry> oldEvidence = new HashSet<>();
@@ -316,7 +316,6 @@ public class ProcessGoal {
                     concept.memory.emit(Events.UnexecutableGoal.class, task, concept, nal);
                     return;
                 }
-                concept.memory.decisionBlock = nal.time.time() + nal.narParameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
                 ProcessAnticipation.anticipate(nal, meta.executable_precond.sentence, meta.executable_precond.budget, meta.mintime, meta.maxtime, 2);
             }
         }

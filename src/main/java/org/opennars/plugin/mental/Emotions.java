@@ -18,6 +18,7 @@ import java.io.Serializable;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
+import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.Symbols;
 import org.opennars.language.Inheritance;
 import org.opennars.language.SetInt;
@@ -28,6 +29,11 @@ import org.opennars.plugin.Plugin;
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
 public class Emotions implements Plugin, Serializable {
 
+    public float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
+    public float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;
+    public float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
+    public float BUSY_EVENT_LOWER_THRESHOLD=0.1f;
+    
     /** average desire-value */
     private float happy;
     /** average priority */
@@ -40,10 +46,13 @@ public class Emotions implements Plugin, Serializable {
         this.lasthappy = 0.5f;
     }
     
-    public Emotions() {}
-
-    public Emotions(final float happy, final float busy) {
-        set(happy, busy);
+    public Emotions(float HAPPY_EVENT_LOWER_THRESHOLD, float HAPPY_EVENT_HIGHER_THRESHOLD,
+                    float BUSY_EVENT_LOWER_THRESHOLD, float BUSY_EVENT_HIGHER_THRESHOLD, int CHANGE_STEPS_DEMANDED) {
+        this.BUSY_EVENT_LOWER_THRESHOLD = BUSY_EVENT_LOWER_THRESHOLD;
+        this.BUSY_EVENT_HIGHER_THRESHOLD = BUSY_EVENT_HIGHER_THRESHOLD;
+        this.HAPPY_EVENT_LOWER_THRESHOLD = HAPPY_EVENT_LOWER_THRESHOLD;
+        this.HAPPY_EVENT_HIGHER_THRESHOLD = HAPPY_EVENT_HIGHER_THRESHOLD;
+        this.CHANGE_STEPS_DEMANDED = CHANGE_STEPS_DEMANDED;
     }
 
     public void set(final float happy, final float busy) {
@@ -62,7 +71,7 @@ public class Emotions implements Plugin, Serializable {
     public double lasthappy=0.5;
     public long last_happy_time = 0;
     public long last_busy_time = 0;
-    public final long change_steps_demanded = 1000;
+    public int CHANGE_STEPS_DEMANDED = 1000;
     public void adjustSatisfaction(final float newValue, final float weight, final DerivationContext nal) {
         
         //        float oldV = happyValue;
@@ -74,11 +83,11 @@ public class Emotions implements Plugin, Serializable {
         }
         
         float frequency=-1;
-        if(Math.abs(happy-lasthappy) > CHANGE_THRESHOLD && nal.time.time()-last_happy_time > change_steps_demanded) {
-            if(happy>nal.narParameters.HAPPY_EVENT_HIGHER_THRESHOLD && lasthappy<=nal.narParameters.HAPPY_EVENT_HIGHER_THRESHOLD) {
+        if(Math.abs(happy-lasthappy) > CHANGE_THRESHOLD && nal.time.time()-last_happy_time > CHANGE_STEPS_DEMANDED) {
+            if(happy > HAPPY_EVENT_HIGHER_THRESHOLD && lasthappy <= HAPPY_EVENT_HIGHER_THRESHOLD) {
                 frequency=1.0f;
             }
-            if(happy<nal.narParameters.HAPPY_EVENT_LOWER_THRESHOLD && lasthappy>=nal.narParameters.HAPPY_EVENT_LOWER_THRESHOLD) {
+            if(happy < HAPPY_EVENT_LOWER_THRESHOLD && lasthappy >= HAPPY_EVENT_LOWER_THRESHOLD) {
                 frequency=0.0f;
             }
             lasthappy=happy;
@@ -148,11 +157,11 @@ public class Emotions implements Plugin, Serializable {
         }
         
         float frequency=-1;
-        if(Math.abs(busy-lastbusy) > CHANGE_THRESHOLD && nal.time.time()-last_busy_time > change_steps_demanded) {
-            if(busy>nal.narParameters.BUSY_EVENT_HIGHER_THRESHOLD && lastbusy<=nal.narParameters.BUSY_EVENT_HIGHER_THRESHOLD) {
+        if(Math.abs(busy-lastbusy) > CHANGE_THRESHOLD && nal.time.time()-last_busy_time > CHANGE_STEPS_DEMANDED) {
+            if(busy > BUSY_EVENT_HIGHER_THRESHOLD && lastbusy <= BUSY_EVENT_HIGHER_THRESHOLD) {
                 frequency=1.0f;
             }
-            if(busy<nal.narParameters.BUSY_EVENT_LOWER_THRESHOLD && lastbusy>=nal.narParameters.BUSY_EVENT_LOWER_THRESHOLD) {
+            if(busy < BUSY_EVENT_LOWER_THRESHOLD && lastbusy >= BUSY_EVENT_LOWER_THRESHOLD) {
                 frequency=0.0f;
             }
             lastbusy=busy;

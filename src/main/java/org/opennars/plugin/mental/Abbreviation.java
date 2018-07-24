@@ -40,7 +40,7 @@ import static org.opennars.language.CompoundTerm.termArray;
  */
 public class Abbreviation implements Plugin {
 
-    private final double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
+    private final double abbreviationProbability = 0.0001f;
     
     /**
     * Operator that give a CompoundTerm an atomic name

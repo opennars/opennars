@@ -176,7 +176,7 @@ public class LocalRules {
             final float newQ = solutionQuality(rateByConfidence, task, belief, memory, nal.time);
             final float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory, nal.time);
             if (oldQ >= newQ) {
-                if (problem.isGoal()) {
+                if (problem.isGoal() && memory.emotion != null) {
                     memory.emotion.adjustSatisfaction(oldQ, task.getPriority(), nal);
                 }
                 memory.emit(Unsolved.class, task, belief, "Lower quality");               
@@ -265,7 +265,7 @@ public class LocalRules {
         final boolean rateByConfidence = problem.getTerm().hasVarQuery(); //here its whether its a what or where question for budget adjustment
         final float quality = solutionQuality(rateByConfidence, problem, solution, nal.mem(), nal.time);
         
-        if (problem.sentence.isGoal()) {
+        if (problem.sentence.isGoal() && nal.memory.emotion != null) {
             nal.memory.emotion.adjustSatisfaction(quality, task.getPriority(), nal);
         }
         

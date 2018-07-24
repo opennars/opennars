@@ -47,6 +47,7 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.opennars.plugin.mental.Emotions;
 
 
 /**
@@ -68,7 +69,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     /**
      * The information about the version and date of the project.
      */
-    public static final String VERSION = "Open-NARS v1.6.6pre2";
+    public static final String VERSION = "Open-NARS v1.6.6pre3";
 
     /**
      * The project web sites.
@@ -414,6 +415,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
+        }
+        if(p instanceof Emotions) {
+            memory.emotion = (Emotions) p;
         }
         final PluginState ps = new PluginState(p);
         plugins.add(ps);

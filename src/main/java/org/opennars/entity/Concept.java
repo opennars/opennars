@@ -452,7 +452,7 @@ public class Concept extends Item<Term> implements Serializable {
     @Override
     public float getQuality() {
         final float linkPriority = termLinks.getAveragePriority();
-        final float termComplexityFactor = 1.0f / term.getComplexity()*memory.narParameters.COMPLEXITY_UNIT;
+        final float termComplexityFactor = 1.0f / (term.getComplexity()*memory.narParameters.COMPLEXITY_UNIT);
         final float result = or(linkPriority, termComplexityFactor);
         if (result < 0) {
             throw new IllegalStateException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size());

@@ -60,7 +60,9 @@ public class GeneralInferenceControl {
             putBackConcept = fireConcept(nal, 1);
             if(putBackConcept) {
                 forgetCycles = nal.memory.cycles(nal.memory.narParameters.CONCEPT_FORGET_DURATIONS);
-                nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
+                if(nal.memory.emotion != null) {
+                    nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
+                }
             }
         }
         if(putBackConcept) { // put back into bag (bag is the resource)
@@ -94,7 +96,9 @@ public class GeneralInferenceControl {
         nal.setCurrentTaskLink(nal.currentTaskLink);
         nal.setCurrentBeliefLink(null);
         nal.setCurrentTask(task); // one of the two places where this variable is set
-        nal.memory.emotion.adjustBusy(nal.currentTaskLink.getPriority(),nal.currentTaskLink.getDurability(),nal);
+        if(nal.memory.emotion != null) {
+            nal.memory.emotion.adjustBusy(nal.currentTaskLink.getPriority(),nal.currentTaskLink.getDurability(),nal);
+        }
         if (nal.currentTaskLink.type == TermLink.TRANSFORM) {
             nal.setCurrentBelief(null);
             //TermLink tasklink_as_termlink = new TermLink(nal.currentTaskLink.getTerm(), TermLink.TRANSFORM, nal.getCurrentTaskLink().index);
