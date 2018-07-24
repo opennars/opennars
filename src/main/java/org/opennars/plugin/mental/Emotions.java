@@ -192,6 +192,9 @@ public class Emotions implements Plugin, Serializable {
     @Override
     public boolean setEnabled(final Nar n, final boolean enabled) {
         this.enabled = enabled;
+        if(this.enabled) {
+            resetEmotions();
+        }
         return enabled;
     }
 }
