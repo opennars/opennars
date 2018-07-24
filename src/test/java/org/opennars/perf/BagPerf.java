@@ -18,7 +18,6 @@ import com.google.common.collect.Lists;
 import org.opennars.entity.BudgetValue;
 import org.opennars.entity.Item;
 import org.opennars.main.Nar;
-import org.opennars.main.Nar.PortableDouble;
 import org.opennars.storage.Bag;
 import org.opennars.storage.LevelBag;
 import org.opennars.storage.Memory;
@@ -43,11 +42,11 @@ public class BagPerf {
     private static Parameters narParameters;
     final int repeats = 8;
     final int warmups = 1;
-    static PortableDouble forgetRate;
+    static float forgetRate;
 
     static {
         try {
-            forgetRate = (new Nar().param).conceptForgetDurations;
+            forgetRate = (new Nar().narParameters).CONCEPT_FORGET_DURATIONS;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
@@ -76,7 +75,7 @@ public class BagPerf {
     
     public float totalPriority, totalMass, totalMinItemsPerLevel, totalMaxItemsPerLevel;
 
-    public void testBag(final boolean List, final int levels, final int capacity, final PortableDouble forgetRate) {
+    public void testBag(final boolean List, final int levels, final int capacity, final float forgetRate) {
         
         totalPriority = 0;
         totalMass = 0;

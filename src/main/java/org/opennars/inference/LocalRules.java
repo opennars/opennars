@@ -23,16 +23,13 @@ import org.opennars.io.events.Events.Unsolved;
 import org.opennars.io.events.OutputHandler;
 import org.opennars.language.*;
 import org.opennars.storage.Memory;
-
 import java.util.List;
-
 import static org.opennars.inference.TemporalRules.matchingOrder;
 import static org.opennars.inference.TemporalRules.reverseOrder;
 import static org.opennars.inference.TruthFunctions.temporalProjection;
 import static org.opennars.language.CompoundTerm.extractIntervals;
 import static org.opennars.language.CompoundTerm.replaceIntervals;
 import org.opennars.main.Parameters;
-
 
 /**
  * Directly process a task by a oldBelief, with only two Terms in both. In
@@ -143,7 +140,7 @@ public class LocalRules {
             for(int i=0;i<ivalNew.size();i++) {
                 AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
             }
-            final float a = temporalProjection(0, AbsDiffSum, 0, nal.memory.param); //re-project, and it's safe:
+            final float a = temporalProjection(0, AbsDiffSum, 0, nal.memory.narParameters); //re-project, and it's safe:
                                                             //we won't count more confidence than
                                                             //when the second premise would have been shifted
                                                             //to the necessary time in the first place

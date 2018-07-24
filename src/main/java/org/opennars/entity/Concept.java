@@ -555,7 +555,7 @@ public class Concept extends Item<Term> implements Serializable {
     }
 
     public void returnTermLink(final TermLink termLink) {
-        termLinks.putBack(termLink, memory.cycles(memory.param.termLinkForgetDurations), memory);
+        termLinks.putBack(termLink, memory.cycles(memory.narParameters.TERMLINK_FORGET_DURATIONS), memory);
     }
 
     /**

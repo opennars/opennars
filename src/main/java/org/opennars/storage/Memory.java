@@ -36,7 +36,6 @@ import org.opennars.language.Interval;
 import org.opennars.language.Tense;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Nar.PortableDouble;
 import org.opennars.main.Nar.RuntimeParameters;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
@@ -203,7 +202,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
                 return null;
             }
 
-            displaced = concepts.putBack(concept, cycles(param.conceptForgetDurations), this);
+            displaced = concepts.putBack(concept, cycles(narParameters.CONCEPT_FORGET_DURATIONS), this);
         }
 
         if (displaced == null) {
@@ -438,8 +437,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     }   
 
     /** converts durations to cycles */
-    public final float cycles(final PortableDouble durations) {
-        return narParameters.DURATION * durations.floatValue();
+    public final float cycles(final float durations) {
+        return narParameters.DURATION * durations;
     }
 
     @Override

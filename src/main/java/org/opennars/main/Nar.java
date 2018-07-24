@@ -28,7 +28,6 @@ import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.CyclesEnd;
 import org.opennars.io.events.Events.CyclesStart;
-import org.opennars.io.events.OutputHandler;
 import org.opennars.io.events.OutputHandler.ERR;
 import org.opennars.language.Inheritance;
 import org.opennars.language.SetExt;
@@ -150,15 +149,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         public float doubleValue() {return (float)this.VAL;}
         public int intValue() {return (int)this.VAL;}
     }
-    /*Nar Parameters which can be changed during runtime.*/
+    /*Nar Parameters which can be changed during runtime but don't affect system behavior.*/
    public class RuntimeParameters implements Serializable {
        public final PortableInteger threadsAmount = new PortableInteger(1);
        public final PortableInteger noiseLevel = new PortableInteger(100);
-       public final PortableDouble conceptForgetDurations = new PortableDouble(narParameters.CONCEPT_FORGET_DURATIONS);
-       public final PortableDouble termLinkForgetDurations = new PortableDouble(narParameters.TERMLINK_FORGET_DURATIONS);
-       public final PortableDouble taskLinkForgetDurations = new PortableDouble(narParameters.TASKLINK_FORGET_DURATIONS);
-       public final PortableDouble eventForgetDurations = new PortableDouble(narParameters.EVENT_FORGET_DURATIONS);
-       public final PortableDouble projectionDecay = new PortableDouble(narParameters.PROJECTION_DECAY);
        public RuntimeParameters() {    }
    }
     public final RuntimeParameters param;

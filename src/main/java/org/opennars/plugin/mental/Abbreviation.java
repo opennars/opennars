@@ -24,7 +24,6 @@ import org.opennars.io.events.Events.TaskDerive;
 import org.opennars.language.Similarity;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Nar.PortableDouble;
 import org.opennars.main.Nar.PortableInteger;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -92,8 +91,8 @@ public class Abbreviation implements Plugin {
 
     }
     
-    public final PortableInteger abbreviationComplexityMin = new PortableInteger(20);
-    public final PortableDouble abbreviationQualityMin = new PortableDouble(0.95f);
+    public int abbreviationComplexityMin = 20;
+    public double abbreviationQualityMin = 0.95f;
     public EventObserver obs;
     
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
@@ -101,8 +100,8 @@ public class Abbreviation implements Plugin {
     
     public boolean canAbbreviate(final Task task) {
         return !(task.sentence.term instanceof Operation) && 
-                (task.sentence.term.getComplexity() > abbreviationComplexityMin.get()) &&
-                (task.budget.getQuality() > abbreviationQualityMin.get());
+                (task.sentence.term.getComplexity() > abbreviationComplexityMin) &&
+                (task.budget.getQuality() > abbreviationQualityMin);
     }
     
     @Override

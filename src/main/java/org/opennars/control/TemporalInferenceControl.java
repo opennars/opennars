@@ -90,12 +90,12 @@ public class TemporalInferenceControl {
                 if(already_attempted.contains(takeout) || 
                         Stamp.baseOverlap(newEvent.sentence.stamp.evidentialBase,
                                 takeout.sentence.stamp.evidentialBase)) {
-                    nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                    nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                     continue;
                 }
                 already_attempted.add(takeout);
                 proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true, true, true);
-                nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                nal.memory.seq_current.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
             }
         }
 
@@ -111,7 +111,7 @@ public class TemporalInferenceControl {
                 if(already_attempted_ops.contains(Toperation)) {
                     //put opc back into bag
                     //(k>0 holds here):
-                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                     continue;
                 }
                 already_attempted_ops.add(Toperation);
@@ -126,7 +126,7 @@ public class TemporalInferenceControl {
                             break; //there were no elements in the bag to try
                         }
                         if(already_attempted.contains(takeout)) {
-                            opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                            opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                             continue;
                         }
                         already_attempted.add(takeout);
@@ -146,12 +146,12 @@ public class TemporalInferenceControl {
                             }
                         }
 
-                        opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                        opc.seq_before.putBack(takeout, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                     }
                 }
                 //put Toperation back into bag if it was taken out
                 if(k > 0) {
-                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.param.eventForgetDurations), nal.memory);
+                    nal.memory.recent_operations.putBack(Toperation, nal.memory.cycles(nal.memory.narParameters.EVENT_FORGET_DURATIONS), nal.memory);
                 }
             }
         }

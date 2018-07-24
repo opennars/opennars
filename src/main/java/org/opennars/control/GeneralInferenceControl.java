@@ -59,7 +59,7 @@ public class GeneralInferenceControl {
             nal.setCurrentConcept(currentConcept);
             putBackConcept = fireConcept(nal, 1);
             if(putBackConcept) {
-                forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
+                forgetCycles = nal.memory.cycles(nal.memory.narParameters.CONCEPT_FORGET_DURATIONS);
                 nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
             }
         }
@@ -83,7 +83,7 @@ public class GeneralInferenceControl {
             if (nal.currentTaskLink.budget.aboveThreshold()) {
                 fireTaskLink(nal, nal.memory.narParameters.TERMLINK_MAX_REASONED);                    
             }
-            nal.currentConcept.taskLinks.putBack(nal.currentTaskLink, nal.memory.cycles(nal.memory.param.taskLinkForgetDurations), nal.memory);
+            nal.currentConcept.taskLinks.putBack(nal.currentTaskLink, nal.memory.cycles(nal.memory.narParameters.TASKLINK_FORGET_DURATIONS), nal.memory);
         }
         return true;
     }

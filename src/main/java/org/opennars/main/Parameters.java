@@ -255,4 +255,5 @@ public class Parameters implements Serializable {
 
     /** Sequence bag forget durations **/
     public float EVENT_FORGET_DURATIONS = 4.0f;
+    
 }
