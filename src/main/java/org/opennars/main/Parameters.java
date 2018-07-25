@@ -242,4 +242,16 @@ public class Parameters implements Serializable {
     /** Sequence bag forget durations **/
     public float EVENT_FORGET_DURATIONS = 4.0f;
     
+    
+    /* Default threads amount at startup */
+    public int THREADS_AMOUNT = 1;
+    
+    /* Default volume at startup */
+    public int VOLUME = 0;
+    
+    /* Default miliseconds per step at startup */
+    public int MILLISECONDS = 0;
+    
+    /* Timing mode, steps or real time */
+    public boolean STEPS_CLOCK = true;
 }

@@ -107,7 +107,11 @@
     <conf name="TASKLINK_FORGET_DURATIONS" value="4.0"/>
     <conf name="EVENT_FORGET_DURATIONS" value="4.0"/>
     
-
+    <conf name="THREADS_AMOUNT" value="1"/>
+    <conf name="VOLUME" value="100"/>
+    <conf name="MILLISECONDS" value="0"/>
+    <conf name="STEPS_CLOCK" value="true"/>  
+    
     <!-- plugins -->
     <plugins>
         <!-- plugins -->

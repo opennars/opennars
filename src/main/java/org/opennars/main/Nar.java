@@ -114,7 +114,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         return ret;
     }
 
-    long minCyclePeriodMS;
+    volatile long minCyclePeriodMS;
 
     /**
      * The name of the reasoner
@@ -152,8 +152,8 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
     /*Nar Parameters which can be changed during runtime but don't affect system behavior.*/
    public class RuntimeParameters implements Serializable {
-       public final PortableInteger threadsAmount = new PortableInteger(1);
-       public final PortableInteger noiseLevel = new PortableInteger(100);
+       public final PortableInteger threadsAmount = new PortableInteger(narParameters.THREADS_AMOUNT);
+       public final PortableInteger noiseLevel = new PortableInteger(narParameters.VOLUME);
        public RuntimeParameters() {    }
    }
     public final RuntimeParameters param;
@@ -255,7 +255,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             return true;
         }
         else
-        if(text.startsWith("*decisionthreshold=")) {
+        if(text.startsWith("*decisionthreshold=")) { //TODO use reflection for narParameters, allow to set others too
             final Double value = Double.valueOf(text.split("decisionthreshold=")[1]);
             narParameters.DECISION_THRESHOLD = value.floatValue();
             return true;
@@ -266,6 +266,19 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
             param.noiseLevel.set(value);
             return true;
         }
+        else
+        if(text.startsWith("*threads=")) {
+            final Integer value = Integer.valueOf(text.split("*threads=")[1]);
+            this.param.threadsAmount.set(value);
+            return true;
+        }
+        else
+        if(text.startsWith("*speed=")) {
+            final Integer value = Integer.valueOf(text.split("*speed")[1]);
+            this.minCyclePeriodMS = value;
+            return true;
+        }
+        else
         if(StringUtils.isNumeric(text)) {
             final Integer retVal = Integer.parseInt(text);
             if(!running) {
@@ -455,6 +468,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
         running = true;
     }
+    public void start() {
+        start(narParameters.MILLISECONDS);
+    }
 
     /**
      * Stop the inference process, killing its thread.
@@ -535,7 +551,11 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
 
     public long time() {
-        return cycle;
+        if(narParameters.STEPS_CLOCK) {
+            return cycle;
+        } else {
+            return System.currentTimeMillis();
+        }
     }
 
     public boolean isRunning() {
