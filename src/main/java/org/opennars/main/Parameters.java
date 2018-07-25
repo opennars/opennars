@@ -211,7 +211,7 @@ public class Parameters implements Serializable {
     public boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
     public boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=false;
 
-    public float ANTICIPATION_CONFIDENCE = 0.90f;
+    public float ANTICIPATION_CONFIDENCE = 0.33f; //eternalized induction confidence to revise A =/> B beliefs
 
     public float ANTICIPATION_TOLERANCE = 50.0f;
     

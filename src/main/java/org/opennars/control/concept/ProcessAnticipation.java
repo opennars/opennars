@@ -47,7 +47,7 @@ public class ProcessAnticipation {
         //derivation was successful and it was a judgment event
         final Stamp stamp = new Stamp(nal.time, nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
-        float eternalized_induction_confidence = 0.33f;
+        float eternalized_induction_confidence = nal.memory.narParameters.ANTICIPATION_CONFIDENCE;
         //long serial = stamp.evidentialBase[0];
         final Sentence s = new Sentence(
             mainSentence.term,

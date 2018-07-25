@@ -60,7 +60,7 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
     public boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
     
     public boolean FULL_REFLECTION = false;
-    
+    public InternalExperience() {}
     public InternalExperience(float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC,
             float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE,
             float INTERNAL_EXPERIENCE_PROBABILITY,

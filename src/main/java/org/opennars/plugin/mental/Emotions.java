@@ -46,6 +46,7 @@ public class Emotions implements Plugin, Serializable {
         this.lasthappy = 0.5f;
     }
     
+    public Emotions(){}
     public Emotions(float HAPPY_EVENT_LOWER_THRESHOLD, float HAPPY_EVENT_HIGHER_THRESHOLD,
                     float BUSY_EVENT_LOWER_THRESHOLD, float BUSY_EVENT_HIGHER_THRESHOLD, int CHANGE_STEPS_DEMANDED) {
         this.BUSY_EVENT_LOWER_THRESHOLD = BUSY_EVENT_LOWER_THRESHOLD;
