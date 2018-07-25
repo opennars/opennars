@@ -152,7 +152,11 @@ public class ConfigReader {
                 types.add(float.class);
                 values.add(Float.parseFloat(valueString));
             }
-            else if (typeString.equals("java.lang.String.class")) {
+            else if (typeString.equals("boolean.class")) {
+                types.add(boolean.class);
+                values.add(Boolean.parseBoolean(valueString));
+            }
+            else if (typeString.equals("String.class")) {
                 types.add(java.lang.String.class);
                 values.add(valueString);
             }

@@ -48,6 +48,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opennars.plugin.mental.Emotions;
+import org.opennars.plugin.mental.InternalExperience;
 
 
 /**
@@ -426,11 +427,17 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         if(p instanceof SensoryChannel) {
             this.addSensoryChannel(((SensoryChannel) p).getName(), (SensoryChannel) p);
         }
+        else
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
         }
+        else
         if(p instanceof Emotions) {
             memory.emotion = (Emotions) p;
+        }
+        else
+        if(p instanceof InternalExperience) {
+            memory.internalExperience = (InternalExperience) p;
         }
         final PluginState ps = new PluginState(p);
         plugins.add(ps);

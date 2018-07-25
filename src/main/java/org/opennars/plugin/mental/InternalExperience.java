@@ -14,6 +14,7 @@
  */
 package org.opennars.plugin.mental;
 
+import java.io.Serializable;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
@@ -36,30 +37,50 @@ import java.util.Arrays;
  * <p>
  * called from Concept
  */
-public class InternalExperience implements Plugin, EventObserver {
+public class InternalExperience implements Plugin, EventObserver, Serializable {
     
         
-    public static float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC=0.3f;
-    public static float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=0.3f;
-    public static final float MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION=0.01f;
+    public float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC=0.3f;
+    public float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=0.3f;
     
     //internal experience has less durability?
-    public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
+    public float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
     
     //less probable form
-    public static final float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 0.000025f;
+    public float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 0.000025f;
     
     //internal experience has less durability?
-    public static final float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f; //0.1
+    public float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f; //0.1
     //internal experience has less priority?
-    public static final float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
+    public float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
     
     //dont use internal experience for want and believe if this setting is true
-    public static boolean ALLOW_WANT_BELIEF=true; 
+    public boolean ALLOW_WANT_BELIEF=true;
     
-    //
-    public static boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
-     
+    public boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
+    
+    public boolean FULL_REFLECTION = false;
+    
+    public InternalExperience(float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC,
+            float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE,
+            float INTERNAL_EXPERIENCE_PROBABILITY,
+            float INTERNAL_EXPERIENCE_RARE_PROBABILITY,
+            float INTERNAL_EXPERIENCE_DURABILITY_MUL,
+            float INTERNAL_EXPERIENCE_PRIORITY_MUL,
+            boolean ALLOW_WANT_BELIEF,
+            boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY,
+            boolean FULL_REFLECTION) {
+        this.MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC = MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC;
+        this.MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE = MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE;
+        this.INTERNAL_EXPERIENCE_PROBABILITY = INTERNAL_EXPERIENCE_PROBABILITY;
+        this.INTERNAL_EXPERIENCE_RARE_PROBABILITY = INTERNAL_EXPERIENCE_RARE_PROBABILITY;
+        this.INTERNAL_EXPERIENCE_DURABILITY_MUL = INTERNAL_EXPERIENCE_DURABILITY_MUL;
+        this.INTERNAL_EXPERIENCE_PRIORITY_MUL = INTERNAL_EXPERIENCE_PRIORITY_MUL;
+        this.ALLOW_WANT_BELIEF = ALLOW_WANT_BELIEF;
+        this.OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY = OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
+        this.FULL_REFLECTION = FULL_REFLECTION;
+    }
+                
     public boolean isAllowNewStrategy() {
         return !OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
     }
@@ -94,7 +115,7 @@ public class InternalExperience implements Plugin, EventObserver {
 
     /** whether it is full internal experience, or minimal (false) */
     public boolean isFull() {
-        return false;
+        return FULL_REFLECTION;
     }
     
     public static boolean enabled=false;
@@ -120,13 +141,13 @@ public class InternalExperience implements Plugin, EventObserver {
         switch (s.punctuation) {
             case Symbols.JUDGMENT_MARK:
                 opName = "^believe";
-                if(!ALLOW_WANT_BELIEF) {
+                if(!mem.internalExperience.ALLOW_WANT_BELIEF) {
                     return null;
                 }
                 break;
             case Symbols.GOAL_MARK:
                 opName = "^want";
-                if(!ALLOW_WANT_BELIEF) {
+                if(!mem.internalExperience.ALLOW_WANT_BELIEF) {
                     return null;
                 }
                 break;
@@ -185,7 +206,7 @@ public class InternalExperience implements Plugin, EventObserver {
     }
     
     public static void InternalExperienceFromTask(final Memory memory, final Task task, final boolean full, final Timable time) {
-        if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
+        if(!memory.internalExperience.OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
             InternalExperienceFromTaskInternal(memory, task, full, time);
         }
     }
@@ -199,12 +220,12 @@ public class InternalExperience implements Plugin, EventObserver {
        //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK))) {
         {
             if(task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK) {
-                if(task.getPriority()<MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE) {
+                if(task.getPriority()<memory.internalExperience.MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE) {
                     return false;
                 }
             }
             else
-            if(task.getPriority()<MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC) {
+            if(task.getPriority()<memory.internalExperience.MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC) {
                 return false;
             }
         }
@@ -229,13 +250,13 @@ public class InternalExperience implements Plugin, EventObserver {
             stamp);
 
         final BudgetValue newbudget=new BudgetValue(
-                memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                memory.narParameters.DEFAULT_JUDGMENT_CONFIDENCE*memory.internalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY*memory.internalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
                 BudgetFunctions.truthToQuality(truth), memory.narParameters);
         
-        if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
-            newbudget.setPriority(task.getPriority()*INTERNAL_EXPERIENCE_PRIORITY_MUL);
-            newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
+        if(!memory.internalExperience.OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
+            newbudget.setPriority(task.getPriority()*memory.internalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL);
+            newbudget.setDurability(task.getDurability()*memory.internalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL);
         }
 
         final Task newTask = new Task(j, newbudget, Task.EnumType.INPUT);

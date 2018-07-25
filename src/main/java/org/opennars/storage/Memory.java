@@ -46,6 +46,7 @@ import java.util.*;
 import org.opennars.entity.Stamp.BaseEntry;
 
 import static org.opennars.inference.BudgetFunctions.truthToQuality;
+import org.opennars.plugin.mental.InternalExperience;
 
 
 /**
@@ -68,6 +69,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public long narId = 0;
     //emotion meter keeping track of global emotion
     public Emotions emotion = null;   
+    public InternalExperience internalExperience = null;
     public Task lastDecision = null;
     public boolean allowExecution = true;
 

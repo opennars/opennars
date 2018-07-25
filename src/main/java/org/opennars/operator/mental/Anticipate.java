@@ -219,8 +219,8 @@ public class Anticipate extends Operator implements EventObserver {
                     st);
 
             final BudgetValue budgetForNewTask = new BudgetValue(
-                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                memory.narParameters.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY*memory.internalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                memory.narParameters.DEFAULT_JUDGMENT_DURABILITY*memory.internalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
                 BudgetFunctions.truthToQuality(truth), memory.narParameters);
             final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
 
