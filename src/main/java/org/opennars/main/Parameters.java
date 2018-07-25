@@ -56,8 +56,10 @@ public class Parameters implements Serializable {
     public float BUDGET_THRESHOLD = (float) 0.01;
 
     /* ---------- default input values ---------- */
-    /** Default expectation for confirmation. */
+    /** Default expectation for confirmation on anticipation. */
     public float DEFAULT_CONFIRMATION_EXPECTATION = (float) 0.6;
+    /** Ignore expectation for creation of concept. */
+    public boolean ALWAYS_CREATE_CONCEPT = true;
     /** Default expectation for creation of concept. */
     public float DEFAULT_CREATION_EXPECTATION = (float) 0.66; //0.66
     /** Default expectation for creation of concept for goals. */
@@ -93,7 +95,7 @@ public class Parameters implements Serializable {
     public float BAG_THRESHOLD = 1.0f;
 
     /** (see its use in budgetfunctions iterative forgetting) */
-    public float FORGET_QUALITY_RELATIVE = 0.1f;
+    public float QUALITY_RESCALED = 0.1f;
 
     public int REVISION_MAX_OCCURRENCE_DISTANCE = 10;
 
@@ -187,7 +189,7 @@ public class Parameters implements Serializable {
      * Optimal value to be determined.
      */
 
-    //temporary parameter for setting #threads to use, globally
+    //whether eternalization should happen on every derivation
     public boolean IMMEDIATE_ETERNALIZATION=true;
 
 
@@ -199,21 +201,11 @@ public class Parameters implements Serializable {
 
     public float DERIVATION_DURABILITY_LEAK = 0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
 
-    public float CURIOSITY_BUSINESS_THRESHOLD=0.18f; //dont be curious if business is above
-    public float CURIOSITY_PRIORITY_THRESHOLD=0.3f; //0.3f in 1.6.3
-    public float CURIOSITY_CONFIDENCE_THRESHOLD=0.8f;
     public float CURIOSITY_DESIRE_CONFIDENCE_MUL=0.1f; //how much risk is the system allowed to take just to fullfill its hunger for knowledge?
     public float CURIOSITY_DESIRE_PRIORITY_MUL=0.1f; //how much priority should curiosity have?
     public float CURIOSITY_DESIRE_DURABILITY_MUL=0.3f; //how much durability should curiosity have?
     public boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all <a =/> b> statement, so that a has to be an operator
-    public boolean CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=false;
 
-    public float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
-    public float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;
-    public float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
-    public float BUSY_EVENT_LOWER_THRESHOLD=0.1f;
-
-    public boolean CONSIDER_REMIND=false;
     public boolean BREAK_NAL_HOL_BOUNDARY=false;
 
     public boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
@@ -223,12 +215,6 @@ public class Parameters implements Serializable {
 
     public float ANTICIPATION_TOLERANCE = 50.0f;
     
-    public float CONSIDER_NEW_OPERATION_BIAS = 0.05f; //depriorizes older operation-related events in temporal inference
-    
-    public float TEMPORAL_INDUCTION_PRIORITY_PENALTY = 1.0f; //was 0.1
-    
-    public int AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES = 500;
-    
     public float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
     
     public float COMPLEXITY_UNIT=1.0f; //1.0 - oo
@@ -237,9 +223,9 @@ public class Parameters implements Serializable {
  
     public int TASKLINK_PER_CONTENT = 4; //eternal/event are also seen extra
     
-    /** Default priority of exection feedback */
+    /** Default priority of execution feedback */
     public float DEFAULT_FEEDBACK_PRIORITY = (float) 0.9;
-    /** Default durability of exection feedback */
+    /** Default durability of execution feedback */
     public float DEFAULT_FEEDBACK_DURABILITY = (float) 0.5; //was 0.8 in 1.5.5; 0.5 after
 
     /** Concept decay rate in ConceptBag, in [1, 99].  originally: CONCEPT_FORGETTING_CYCLE
@@ -255,4 +241,5 @@ public class Parameters implements Serializable {
 
     /** Sequence bag forget durations **/
     public float EVENT_FORGET_DURATIONS = 4.0f;
+    
 }

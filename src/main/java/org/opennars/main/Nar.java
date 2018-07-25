@@ -28,7 +28,6 @@ import org.opennars.io.events.EventEmitter.EventObserver;
 import org.opennars.io.events.Events;
 import org.opennars.io.events.Events.CyclesEnd;
 import org.opennars.io.events.Events.CyclesStart;
-import org.opennars.io.events.OutputHandler;
 import org.opennars.io.events.OutputHandler.ERR;
 import org.opennars.language.Inheritance;
 import org.opennars.language.SetExt;
@@ -48,6 +47,7 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.opennars.plugin.mental.Emotions;
 
 
 /**
@@ -69,7 +69,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     /**
      * The information about the version and date of the project.
      */
-    public static final String VERSION = "Open-NARS v1.6.6pre2";
+    public static final String VERSION = "Open-NARS v1.6.6pre3";
 
     /**
      * The project web sites.
@@ -150,15 +150,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         public float doubleValue() {return (float)this.VAL;}
         public int intValue() {return (int)this.VAL;}
     }
-    /*Nar Parameters which can be changed during runtime.*/
+    /*Nar Parameters which can be changed during runtime but don't affect system behavior.*/
    public class RuntimeParameters implements Serializable {
        public final PortableInteger threadsAmount = new PortableInteger(1);
        public final PortableInteger noiseLevel = new PortableInteger(100);
-       public final PortableDouble conceptForgetDurations = new PortableDouble(narParameters.CONCEPT_FORGET_DURATIONS);
-       public final PortableDouble termLinkForgetDurations = new PortableDouble(narParameters.TERMLINK_FORGET_DURATIONS);
-       public final PortableDouble taskLinkForgetDurations = new PortableDouble(narParameters.TASKLINK_FORGET_DURATIONS);
-       public final PortableDouble eventForgetDurations = new PortableDouble(narParameters.EVENT_FORGET_DURATIONS);
-       public final PortableDouble projectionDecay = new PortableDouble(narParameters.PROJECTION_DECAY);
        public RuntimeParameters() {    }
    }
     public final RuntimeParameters param;
@@ -320,7 +315,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
                     final String ev = task.sentence.isEternal() ? " " : " :|: ";
                     final String newInput = "<"+variable+"["+hval+","+wval+"]} --> " + predicate + ">" +
                                       task.sentence.punctuation + ev + task.sentence.truth.toString();
-                    this.emit(OutputHandler.IN.class, task);
+                    //this.emit(OutputHandler.IN.class, task); too expensive to print each input task :)
                     this.addInput(newInput);
                     return;
                 }
@@ -420,6 +415,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
         if (p instanceof Operator) {
             memory.addOperator((Operator)p);
+        }
+        if(p instanceof Emotions) {
+            memory.emotion = (Emotions) p;
         }
         final PluginState ps = new PluginState(p);
         plugins.add(ps);

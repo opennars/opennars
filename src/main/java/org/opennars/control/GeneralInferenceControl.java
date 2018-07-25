@@ -59,8 +59,10 @@ public class GeneralInferenceControl {
             nal.setCurrentConcept(currentConcept);
             putBackConcept = fireConcept(nal, 1);
             if(putBackConcept) {
-                forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
-                nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
+                forgetCycles = nal.memory.cycles(nal.memory.narParameters.CONCEPT_FORGET_DURATIONS);
+                if(nal.memory.emotion != null) {
+                    nal.currentConcept.setQuality(BudgetFunctions.or(nal.currentConcept.getQuality(),nal.memory.emotion.happy()));
+                }
             }
         }
         if(putBackConcept) { // put back into bag (bag is the resource)
@@ -83,7 +85,7 @@ public class GeneralInferenceControl {
             if (nal.currentTaskLink.budget.aboveThreshold()) {
                 fireTaskLink(nal, nal.memory.narParameters.TERMLINK_MAX_REASONED);                    
             }
-            nal.currentConcept.taskLinks.putBack(nal.currentTaskLink, nal.memory.cycles(nal.memory.param.taskLinkForgetDurations), nal.memory);
+            nal.currentConcept.taskLinks.putBack(nal.currentTaskLink, nal.memory.cycles(nal.memory.narParameters.TASKLINK_FORGET_DURATIONS), nal.memory);
         }
         return true;
     }
@@ -94,7 +96,9 @@ public class GeneralInferenceControl {
         nal.setCurrentTaskLink(nal.currentTaskLink);
         nal.setCurrentBeliefLink(null);
         nal.setCurrentTask(task); // one of the two places where this variable is set
-        nal.memory.emotion.adjustBusy(nal.currentTaskLink.getPriority(),nal.currentTaskLink.getDurability(),nal);
+        if(nal.memory.emotion != null) {
+            nal.memory.emotion.adjustBusy(nal.currentTaskLink.getPriority(),nal.currentTaskLink.getDurability(),nal);
+        }
         if (nal.currentTaskLink.type == TermLink.TRANSFORM) {
             nal.setCurrentBelief(null);
             //TermLink tasklink_as_termlink = new TermLink(nal.currentTaskLink.getTerm(), TermLink.TRANSFORM, nal.getCurrentTaskLink().index);

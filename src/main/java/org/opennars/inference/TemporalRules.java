@@ -258,11 +258,8 @@ public class TemporalRules {
         final TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2, nal.narParameters);
         final TruthValue truth4 = TruthFunctions.intersection(givenTruth1, givenTruth2, nal.narParameters);
         final BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
-        budget1.setPriority(budget1.getPriority() * nal.narParameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         final BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
-        budget2.setPriority(budget2.getPriority() * nal.narParameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         final BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
-        budget3.setPriority(budget3.getPriority() * nal.narParameters.TEMPORAL_INDUCTION_PRIORITY_PENALTY);
         final BudgetValue budget4 = BudgetFunctions.forward(truth4, nal); //this one is sequence in sequenceBag, no need to reduce here
         
         final Statement statement1 = Implication.make(t1, t2, order);

@@ -37,6 +37,7 @@ import java.util.Arrays;
  * called from Concept
  */
 public class InternalExperience implements Plugin, EventObserver {
+    
         
     public static float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC=0.3f;
     public static float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=0.3f;
@@ -46,8 +47,7 @@ public class InternalExperience implements Plugin, EventObserver {
     public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
     
     //less probable form
-    public static final float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 
-            INTERNAL_EXPERIENCE_PROBABILITY/4f;
+    public static final float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 0.000025f;
     
     //internal experience has less durability?
     public static final float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f; //0.1
@@ -55,11 +55,11 @@ public class InternalExperience implements Plugin, EventObserver {
     public static final float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
     
     //dont use internal experience for want and believe if this setting is true
-    public static boolean AllowWantBelieve=true; 
+    public static boolean ALLOW_WANT_BELIEF=true; 
     
     //
     public static boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
-    
+     
     public boolean isAllowNewStrategy() {
         return !OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
     }
@@ -68,10 +68,10 @@ public class InternalExperience implements Plugin, EventObserver {
     }
     
     public boolean isAllowWantBelieve() {
-        return AllowWantBelieve;
+        return ALLOW_WANT_BELIEF;
     }
     public void setAllowWantBelieve(final boolean val) {
-        AllowWantBelieve=val;
+        ALLOW_WANT_BELIEF=val;
     }
 
     
@@ -120,13 +120,13 @@ public class InternalExperience implements Plugin, EventObserver {
         switch (s.punctuation) {
             case Symbols.JUDGMENT_MARK:
                 opName = "^believe";
-                if(!AllowWantBelieve) {
+                if(!ALLOW_WANT_BELIEF) {
                     return null;
                 }
                 break;
             case Symbols.GOAL_MARK:
                 opName = "^want";
-                if(!AllowWantBelieve) {
+                if(!ALLOW_WANT_BELIEF) {
                     return null;
                 }
                 break;

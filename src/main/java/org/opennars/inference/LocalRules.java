@@ -23,16 +23,13 @@ import org.opennars.io.events.Events.Unsolved;
 import org.opennars.io.events.OutputHandler;
 import org.opennars.language.*;
 import org.opennars.storage.Memory;
-
 import java.util.List;
-
 import static org.opennars.inference.TemporalRules.matchingOrder;
 import static org.opennars.inference.TemporalRules.reverseOrder;
 import static org.opennars.inference.TruthFunctions.temporalProjection;
 import static org.opennars.language.CompoundTerm.extractIntervals;
 import static org.opennars.language.CompoundTerm.replaceIntervals;
 import org.opennars.main.Parameters;
-
 
 /**
  * Directly process a task by a oldBelief, with only two Terms in both. In
@@ -143,7 +140,7 @@ public class LocalRules {
             for(int i=0;i<ivalNew.size();i++) {
                 AbsDiffSum += Math.abs(ivalNew.get(i) - ivalOld.get(i));
             }
-            final float a = temporalProjection(0, AbsDiffSum, 0, nal.memory.param); //re-project, and it's safe:
+            final float a = temporalProjection(0, AbsDiffSum, 0, nal.memory.narParameters); //re-project, and it's safe:
                                                             //we won't count more confidence than
                                                             //when the second premise would have been shifted
                                                             //to the necessary time in the first place
@@ -179,7 +176,7 @@ public class LocalRules {
             final float newQ = solutionQuality(rateByConfidence, task, belief, memory, nal.time);
             final float oldQ = solutionQuality(rateByConfidence, task, oldBest, memory, nal.time);
             if (oldQ >= newQ) {
-                if (problem.isGoal()) {
+                if (problem.isGoal() && memory.emotion != null) {
                     memory.emotion.adjustSatisfaction(oldQ, task.getPriority(), nal);
                 }
                 memory.emit(Unsolved.class, task, belief, "Lower quality");               
@@ -268,7 +265,7 @@ public class LocalRules {
         final boolean rateByConfidence = problem.getTerm().hasVarQuery(); //here its whether its a what or where question for budget adjustment
         final float quality = solutionQuality(rateByConfidence, problem, solution, nal.mem(), nal.time);
         
-        if (problem.sentence.isGoal()) {
+        if (problem.sentence.isGoal() && nal.memory.emotion != null) {
             nal.memory.emotion.adjustSatisfaction(quality, task.getPriority(), nal);
         }
         

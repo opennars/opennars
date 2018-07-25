@@ -35,16 +35,13 @@ public class Reflect extends FunctionOperator {
     
     public Reflect() {
         super("^reflect");
-    }
-
-    final static String requireMessage = "Requires 1 Term argument";    
-    
+    } 
     
     @Override
     protected Term function(final Memory memory, final Term[] x) {
         
         if (x.length!=1) {
-            throw new IllegalStateException(requireMessage);
+            throw new IllegalStateException("Requires 1 Term argument");
         }
 
         final Term content = x[0];

@@ -22,7 +22,6 @@ import org.opennars.entity.*;
 import org.opennars.inference.BudgetFunctions;
 import org.opennars.interfaces.Resettable;
 import org.opennars.interfaces.Timable;
-import org.opennars.interfaces.pub.Reasoner;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.EventEmitter;
 import org.opennars.io.events.Events;
@@ -36,7 +35,6 @@ import org.opennars.language.Interval;
 import org.opennars.language.Tense;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Nar.PortableDouble;
 import org.opennars.main.Nar.RuntimeParameters;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
@@ -69,8 +67,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
     public long narId = 0;
     //emotion meter keeping track of global emotion
-    public final Emotions emotion = new Emotions();   
-    public long decisionBlock = 0;
+    public Emotions emotion = null;   
     public Task lastDecision = null;
     public boolean allowExecution = true;
 
@@ -127,7 +124,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
     public void reset() {
         event.emit(ResetStart.class);
-        decisionBlock = 0;
         synchronized (concepts) {
             concepts.clear();
         }
@@ -138,7 +134,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         synchronized(this.seq_current) {
             this.seq_current.clear();
         }
-        emotion.resetEmotions();
+        if(emotion != null) {
+            emotion.resetEmotions();
+        }
         this.lastDecision = null;
         resetStatic();
         event.emit(ResetEnd.class);
@@ -203,7 +201,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
                 return null;
             }
 
-            displaced = concepts.putBack(concept, cycles(param.conceptForgetDurations), this);
+            displaced = concepts.putBack(concept, cycles(narParameters.CONCEPT_FORGET_DURATIONS), this);
         }
 
         if (displaced == null) {
@@ -384,8 +382,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
             while (counter-- > 0) {
                 task = newTasks.removeFirst();
-                final boolean enterDirect = true;
-                if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ enterDirect ||  task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
+                if (/*task.isElemOfSequenceBuffer() || task.isObservablePrediction() || */ narParameters.ALWAYS_CREATE_CONCEPT ||  
+                        task.isInput() || task.sentence.isQuest() || task.sentence.isQuestion() || concept(task.sentence.term)!=null) { // new input or existing concept
                     localInference(task, narParameters, time);
                 } else {
                     final Sentence s = task.sentence;
@@ -438,8 +436,8 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     }   
 
     /** converts durations to cycles */
-    public final float cycles(final PortableDouble durations) {
-        return narParameters.DURATION * durations.floatValue();
+    public final float cycles(final double durations) {
+        return narParameters.DURATION * (float) durations;
     }
 
     @Override

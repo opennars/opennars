@@ -155,7 +155,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @return the item which was removed, or null if none removed
      */    
     public E putBack(final E oldItem, final float forgetCycles, final Memory m) {
-        final float relativeThreshold = m.narParameters.FORGET_QUALITY_RELATIVE;
+        final float relativeThreshold = m.narParameters.QUALITY_RESCALED;
         BudgetFunctions.applyForgetting(oldItem.budget, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
         return putIn(oldItem);
     }

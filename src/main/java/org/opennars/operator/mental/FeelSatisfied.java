@@ -39,6 +39,9 @@ public class FeelSatisfied extends Feel {
      */
     @Override
     protected List<Task> execute(final Operation operation, final Term[] args, final Memory memory, final Timable time) {
+        if(memory.emotion == null) {
+            return null;
+        }
         return feeling(memory.emotion.happy(), memory, time);
     }    
 }
