@@ -33,7 +33,7 @@ import org.opennars.operator.NullOperator;
 import org.opennars.operator.Operator;
 
 public class VisionChannel extends SensoryChannel  {
-    public float defaultOutputConfidence = 0.5f;
+    public volatile float defaultOutputConfidence = 0.5f;
     public int nPrototypes = 0;
     public ArrayList<Prototype> prototypes;
     class Prototype {

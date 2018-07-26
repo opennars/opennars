@@ -34,7 +34,7 @@ public class Counting implements Plugin {
     public EventObserver obs;
     
     final static Term CARDINALITY = Term.get("CARDINALITY");
-    public float MINIMUM_PRIORITY=0.3f;
+    public volatile float MINIMUM_PRIORITY=0.3f;
     
     public Counting(){}
     public Counting(float MINIMUM_PRIORITY) {

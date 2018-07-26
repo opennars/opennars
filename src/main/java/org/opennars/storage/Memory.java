@@ -35,7 +35,6 @@ import org.opennars.language.Interval;
 import org.opennars.language.Tense;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Nar.RuntimeParameters;
 import org.opennars.main.Parameters;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
@@ -96,9 +95,6 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
     
-    /* System parameters that can be changed at runtime */
-    public final RuntimeParameters param;
-    
     //Boolean localInferenceMutex = false;
     
     public static void resetStatic() {
@@ -109,10 +105,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     /**
      * Create a new memory
      */
-    public Memory(final Parameters narParameters, final RuntimeParameters param, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
+    public Memory(final Parameters narParameters, final Bag<Concept,Term> concepts, final Bag<Task<Term>,Sentence<Term>> novelTasks,
                   final Bag<Task<Term>,Sentence<Term>> seq_current,
                   final Bag<Task<Term>,Sentence<Term>> recent_operations) {
-        this.param = param;
         this.narParameters = narParameters;
         this.event = new EventEmitter();
         this.concepts = concepts;
@@ -318,7 +313,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     public void output(final Task t) {
         
         final float budget = t.budget.summary();
-        final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
+        final float noiseLevel = 1.0f - (narParameters.VOLUME / 100.0f);
         
         if (budget >= noiseLevel) {  // only report significant derived Tasks
             emit(OUT.class, t);

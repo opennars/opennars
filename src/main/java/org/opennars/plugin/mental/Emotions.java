@@ -29,10 +29,10 @@ import org.opennars.plugin.Plugin;
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
 public class Emotions implements Plugin, Serializable {
 
-    public float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
-    public float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;
-    public float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
-    public float BUSY_EVENT_LOWER_THRESHOLD=0.1f;
+    public volatile float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
+    public volatile float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;
+    public volatile float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
+    public volatile float BUSY_EVENT_LOWER_THRESHOLD=0.1f;
     
     /** average desire-value */
     private float happy;
@@ -72,7 +72,7 @@ public class Emotions implements Plugin, Serializable {
     public double lasthappy=0.5;
     public long last_happy_time = 0;
     public long last_busy_time = 0;
-    public int CHANGE_STEPS_DEMANDED = 1000;
+    public volatile int CHANGE_STEPS_DEMANDED = 1000;
     public void adjustSatisfaction(final float newValue, final float weight, final DerivationContext nal) {
         
         //        float oldV = happyValue;

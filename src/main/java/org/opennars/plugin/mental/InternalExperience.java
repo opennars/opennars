@@ -40,26 +40,26 @@ import java.util.Arrays;
 public class InternalExperience implements Plugin, EventObserver, Serializable {
     
         
-    public float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC=0.3f;
-    public float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=0.3f;
+    public volatile float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC=0.3f;
+    public volatile float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=0.3f;
     
     //internal experience has less durability?
-    public float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
+    public volatile float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
     
     //less probable form
-    public float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 0.000025f;
+    public volatile float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 0.000025f;
     
     //internal experience has less durability?
-    public float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f; //0.1
+    public volatile float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f; //0.1
     //internal experience has less priority?
-    public float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
+    public volatile float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
     
     //dont use internal experience for want and believe if this setting is true
-    public boolean ALLOW_WANT_BELIEF=true;
+    public volatile boolean ALLOW_WANT_BELIEF=true;
     
-    public boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
+    public volatile boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
     
-    public boolean FULL_REFLECTION = false;
+    public volatile boolean FULL_REFLECTION = false;
     public InternalExperience() {}
     public InternalExperience(float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC,
             float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE,
@@ -80,43 +80,8 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
         this.OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY = OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
         this.FULL_REFLECTION = FULL_REFLECTION;
     }
-                
-    public boolean isAllowNewStrategy() {
-        return !OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
-    }
-    public void setAllowNewStrategy(final boolean val) {
-        OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=!val;
-    }
-    
-    public boolean isAllowWantBelieve() {
-        return ALLOW_WANT_BELIEF;
-    }
-    public void setAllowWantBelieve(final boolean val) {
-        ALLOW_WANT_BELIEF=val;
-    }
-
-    
-    public double getMinCreationBudgetSummary() {
-        return MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC;
-    }
-    public void setMinCreationBudgetSummary(final double val) {
-        MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC=(float) val;
-    }
-    
-    public double getMinCreationBudgetSummaryWonderEvaluate() {
-        return MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE;
-    }
-    public void setMinCreationBudgetSummaryWonderEvaluate(final double val) {
-        MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=(float) val;
-    }
     
     private Memory memory;
-
-
-    /** whether it is full internal experience, or minimal (false) */
-    public boolean isFull() {
-        return FULL_REFLECTION;
-    }
     
     public static boolean enabled=false;
 
@@ -128,7 +93,7 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
         
         memory.event.set(this, enable, Events.ConceptDirectProcessedTask.class);
         
-        if (isFull())
+        if (FULL_REFLECTION)
             memory.event.set(this, enable, Events.BeliefReason.class);
         
         enabled=enable;
@@ -186,7 +151,7 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
             
             //old strategy always, new strategy only for QUESTION and QUEST:
             if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK))) {
-                InternalExperienceFromTaskInternal(memory,task,isFull(), nar);
+                InternalExperienceFromTaskInternal(memory,task, FULL_REFLECTION, nar);
             }
         }
         else if (event == Events.BeliefReason.class) {

@@ -24,7 +24,6 @@ import org.opennars.io.events.Events.TaskDerive;
 import org.opennars.language.Similarity;
 import org.opennars.language.Term;
 import org.opennars.main.Nar;
-import org.opennars.main.Nar.PortableInteger;
 import org.opennars.operator.Operation;
 import org.opennars.operator.Operator;
 import org.opennars.plugin.Plugin;
@@ -40,10 +39,12 @@ import static org.opennars.language.CompoundTerm.termArray;
  */
 public class Abbreviation implements Plugin {
 
-    private double abbreviationProbability = 0.0001f;
+    public volatile double abbreviationProbability = 0.0001f;
+    public volatile int abbreviationComplexityMin = 20;
+    public volatile double abbreviationQualityMin = 0.95f;
     
     public Abbreviation(){}
-    public Abbreviation(double abbreviationProbability) {
+    public Abbreviation(double abbreviationProbability, int abbreviationComplexityMin, double abbreviationQualityMin) {
         this.abbreviationProbability = abbreviationProbability;
     }
     
@@ -56,10 +57,12 @@ public class Abbreviation implements Plugin {
             super("^abbreviate");
         }
 
-        private static final PortableInteger currentTermSerial = new PortableInteger(1);
-
+        private static Integer currentTermSerial = 1;
         public Term newSerialTerm(final char prefix) {
-            return new Term(prefix + String.valueOf(currentTermSerial.incrementAndGet()));
+            synchronized(currentTermSerial) {
+                currentTermSerial++;
+            }
+            return new Term(prefix + String.valueOf(currentTermSerial));
         }
 
 
@@ -96,8 +99,6 @@ public class Abbreviation implements Plugin {
 
     }
     
-    public int abbreviationComplexityMin = 20;
-    public double abbreviationQualityMin = 0.95f;
     public EventObserver obs;
     
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
