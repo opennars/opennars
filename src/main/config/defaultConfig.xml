@@ -90,7 +90,7 @@
     <conf name="QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
     <conf name="HOW_QUESTION_GENERATION_ON_DECISION_MAKING" value="false"/>
     
-    <conf name="ANTICIPATION_CONFIDENCE" value="0.9"/>
+    <conf name="ANTICIPATION_CONFIDENCE" value="0.33"/>
     <conf name="ANTICIPATION_TOLERANCE" value="50.0"/>
     
     <conf name="SATISFACTION_TRESHOLD" value="0.0"/>
@@ -107,7 +107,11 @@
     <conf name="TASKLINK_FORGET_DURATIONS" value="4.0"/>
     <conf name="EVENT_FORGET_DURATIONS" value="4.0"/>
     
-
+    <conf name="THREADS_AMOUNT" value="1"/>
+    <conf name="VOLUME" value="100"/>
+    <conf name="MILLISECONDS" value="0"/>
+    <conf name="STEPS_CLOCK" value="true"/>  
+    
     <!-- plugins -->
     <plugins>
         <!-- plugins -->
@@ -118,11 +122,24 @@
             <arg type="float.class" value="0.9" name="BUSY_EVENT_HIGHER_THRESHOLD"/>
             <arg type="int.class" value="1000" name="CHANGE_STEPS_DEMANDED"/>
         </plugin>
-        <plugin classpath="org.opennars.operator.mental.Anticipate"/>
-        <plugin classpath="org.opennars.plugin.mental.InternalExperience"/>
+        <plugin classpath="org.opennars.operator.mental.Anticipate">
+            <arg type="float.class" value="0.1" name="ANTICIPATION_DURABILITY_MUL"/>
+            <arg type="float.class" value="0.1" name="ANTICIPATION_PRIORITY_MUL"/>
+        </plugin>
+        <plugin classpath="org.opennars.plugin.mental.InternalExperience">
+            <arg type="float.class" value="0.3" name="MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC"/>
+            <arg type="float.class" value="0.3" name="MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE"/>
+            <arg type="float.class" value="0.0001" name="INTERNAL_EXPERIENCE_PROBABILITY"/>
+            <arg type="float.class" value="0.000025" name="INTERNAL_EXPERIENCE_RARE_PROBABILITY"/>
+            <arg type="float.class" value="0.1" name="INTERNAL_EXPERIENCE_DURABILITY_MUL"/>
+            <arg type="float.class" value="0.1" name="INTERNAL_EXPERIENCE_PRIORITY_MUL"/>
+            <arg type="boolean.class" value="true" name="ALLOW_WANT_BELIEF"/>
+            <arg type="boolean.class" value="false" name="OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY"/>
+            <arg type="boolean.class" value="false" name="FULL_REFLECTION"/>
+        </plugin>
 
         <plugin classpath="org.opennars.plugin.perception.VisionChannel">
-            <arg type="java.lang.String.class" value="BRIGHT" name="label"/>
+            <arg type="String.class" value="BRIGHT" name="label"/>
             <arg isReasoner="nar" name="Nar instance"/>
             <arg isReasoner="nar" name="reportResultsTo"/>
             <arg type="int.class" value="5" name="width"/>
@@ -134,55 +151,55 @@
 
         <!-- example Operators -->
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^break"/>
+            <arg type="String.class" value="^break"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^drop"/>
+            <arg type="String.class" value="^drop"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^go-to"/>
+            <arg type="String.class" value="^go-to"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^open"/>
+            <arg type="String.class" value="^open"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^pick"/>
+            <arg type="String.class" value="^pick"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^strike"/>
+            <arg type="String.class" value="^strike"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^throw"/>
+            <arg type="String.class" value="^throw"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^activate"/>
+            <arg type="String.class" value="^activate"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^deactivate"/>
+            <arg type="String.class" value="^deactivate"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^lighter"/>
+            <arg type="String.class" value="^lighter"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^reshape"/>
+            <arg type="String.class" value="^reshape"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^escape"/>
+            <arg type="String.class" value="^escape"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^say"/>
+            <arg type="String.class" value="^say"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^right"/>
+            <arg type="String.class" value="^right"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^left"/>
+            <arg type="String.class" value="^left"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^run"/>
+            <arg type="String.class" value="^run"/>
         </plugin>
         <plugin classpath="org.opennars.operator.NullOperator">
-            <arg type="java.lang.String.class" value="^feel"/>
+            <arg type="String.class" value="^feel"/>
         </plugin>
 
         <plugin classpath="org.opennars.operator.NullOperator"/>

@@ -40,7 +40,12 @@ import static org.opennars.language.CompoundTerm.termArray;
  */
 public class Abbreviation implements Plugin {
 
-    private final double abbreviationProbability = 0.0001f;
+    private double abbreviationProbability = 0.0001f;
+    
+    public Abbreviation(){}
+    public Abbreviation(double abbreviationProbability) {
+        this.abbreviationProbability = abbreviationProbability;
+    }
     
     /**
     * Operator that give a CompoundTerm an atomic name

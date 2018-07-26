@@ -34,6 +34,12 @@ public class Counting implements Plugin {
     public EventObserver obs;
     
     final static Term CARDINALITY = Term.get("CARDINALITY");
+    public float MINIMUM_PRIORITY=0.3f;
+    
+    public Counting(){}
+    public Counting(float MINIMUM_PRIORITY) {
+        this.MINIMUM_PRIORITY = MINIMUM_PRIORITY;
+    }
     
     @Override public boolean setEnabled(final Nar n, final boolean enabled) {
         final Memory memory = n.memory;
@@ -45,7 +51,7 @@ public class Counting implements Plugin {
                     return;
 
                 final Task task = (Task)a[0];
-                if(task.getPriority() < InternalExperience.MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC) {
+                if(task.getPriority() < MINIMUM_PRIORITY) {
                     return;
                 }
 

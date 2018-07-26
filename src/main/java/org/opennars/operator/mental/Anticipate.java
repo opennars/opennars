@@ -50,14 +50,24 @@ public class Anticipate extends Operator implements EventObserver {
     private TruthValue expiredTruth = null;
     private BudgetValue expiredBudget = null;
     
+     //internal experience has less durability?
+    public float ANTICIPATION_DURABILITY_MUL=0.1f; //0.1
+    //internal experience has less priority?
+    public float ANTICIPATION_PRIORITY_MUL=0.1f; //0.1
+    
     public Anticipate() {
         super("^anticipate");        
+    }
+    public Anticipate(float ANTICIPATION_DURABILITY_MUL, float ANTICIPATION_PRIORITY_MUL) {
+        this();
+        this.ANTICIPATION_DURABILITY_MUL = ANTICIPATION_DURABILITY_MUL;
+        this.ANTICIPATION_PRIORITY_MUL = ANTICIPATION_PRIORITY_MUL;
     }
 
     @Override
     public boolean setEnabled(final Nar n, final boolean enabled) {
         n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.CycleEnd.class);
-        expiredTruth = new TruthValue(0.0f, n.narParameters.ANTICIPATION_CONFIDENCE, n.narParameters);
+        expiredTruth = new TruthValue(0.0f, n.narParameters.DEFAULT_JUDGMENT_CONFIDENCE, n.narParameters);
         expiredBudget = new BudgetValue(n.narParameters.DEFAULT_JUDGMENT_PRIORITY, 
                                                     n.narParameters.DEFAULT_JUDGMENT_DURABILITY, 
                                                     BudgetFunctions.truthToQuality(expiredTruth), n.narParameters);
@@ -219,8 +229,8 @@ public class Anticipate extends Operator implements EventObserver {
                     st);
 
             final BudgetValue budgetForNewTask = new BudgetValue(
-                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                memory.narParameters.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                memory.narParameters.DEFAULT_JUDGMENT_PRIORITY*ANTICIPATION_PRIORITY_MUL,
+                memory.narParameters.DEFAULT_JUDGMENT_DURABILITY*ANTICIPATION_DURABILITY_MUL,
                 BudgetFunctions.truthToQuality(truth), memory.narParameters);
             final Task newTask = new Task(s, budgetForNewTask, Task.EnumType.INPUT);
 

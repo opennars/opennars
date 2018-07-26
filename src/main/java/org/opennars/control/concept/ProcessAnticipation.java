@@ -47,7 +47,7 @@ public class ProcessAnticipation {
         //derivation was successful and it was a judgment event
         final Stamp stamp = new Stamp(nal.time, nal.memory);
         stamp.setOccurrenceTime(Stamp.ETERNAL);
-        float eternalized_induction_confidence = 0.33f;
+        float eternalized_induction_confidence = nal.memory.narParameters.ANTICIPATION_CONFIDENCE;
         //long serial = stamp.evidentialBase[0];
         final Sentence s = new Sentence(
             mainSentence.term,
@@ -65,7 +65,7 @@ public class ProcessAnticipation {
                 if(c.negConfirmation.sentence.term instanceof Implication) {
                     final Implication imp = (Implication) c.negConfirmation.sentence.term;
                     final Concept ctarget = nal.memory.concept(imp.getPredicate());
-                    if(ctarget != null && ctarget.getPriority()>=InternalExperience.MINIMUM_CONCEPT_PRIORITY_TO_CREATE_ANTICIPATION) {
+                    if(ctarget != null) {
                         Operator anticipate_op = ((Anticipate)c.memory.getOperator("^anticipate"));
                         if(anticipate_op != null && anticipate_op instanceof Anticipate) {
                             ((Anticipate)anticipate_op).anticipationFeedback(imp.getPredicate(), null, c.memory, nal.time);

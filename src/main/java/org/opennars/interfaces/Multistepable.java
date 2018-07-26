@@ -19,6 +19,7 @@ package org.opennars.interfaces;
  */
 public interface Multistepable {
     void start(final long minCyclePeriodMS);
+    void start();
     void stop();
     void cycles(final int cycles);
     void cycle();

@@ -148,7 +148,9 @@ public class Task<T extends Term> extends Item<Sentence<T>> implements Serializa
      * @param judg The solution to be remembered
      */
     public void setBestSolution(final Memory memory,final Sentence judg, final Timable time) {
-        InternalExperience.InternalExperienceFromBelief(memory, this, judg, time);
+        if(memory.internalExperience != null) {
+            InternalExperience.InternalExperienceFromBelief(memory, this, judg, time);
+        }
         bestSolution = judg;
     }
 
