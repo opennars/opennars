@@ -29,7 +29,6 @@ import org.opennars.io.events.Events.CycleEnd;
 import org.opennars.io.events.Events.ResetEnd;
 import org.opennars.language.*;
 import org.opennars.main.Nar;
-import org.opennars.operator.NullOperator;
 import org.opennars.operator.Operator;
 
 public class VisionChannel extends SensoryChannel  {

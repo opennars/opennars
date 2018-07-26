@@ -46,6 +46,8 @@ public class Abbreviation implements Plugin {
     public Abbreviation(){}
     public Abbreviation(double abbreviationProbability, int abbreviationComplexityMin, double abbreviationQualityMin) {
         this.abbreviationProbability = abbreviationProbability;
+        this.abbreviationComplexityMin = abbreviationComplexityMin;
+        this.abbreviationQualityMin = abbreviationQualityMin;
     }
     
     /**
