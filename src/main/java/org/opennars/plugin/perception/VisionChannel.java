@@ -91,7 +91,8 @@ public class VisionChannel extends SensoryChannel  {
         return true;
     }
     
-    private void resetChannel() {
+    @Override
+    public void resetChannel() {
         inputs = new double[height][width];
         updated = new boolean[height][width];
         cnt_updated = 0;
@@ -280,21 +281,6 @@ public class VisionChannel extends SensoryChannel  {
     }
     
     Prototype lastPrototype = null;
-    
-    public double getWidth() {
-        return this.width;
-    }
-    public void setWidth(double val) {
-        this.width = (int) val;
-        this.resetChannel();
-    }
-    public double getHeight() {
-        return this.width;
-    }
-    public void setHeight(double val) {
-        this.height = (int) val;
-        this.resetChannel();
-    }
     
     public void setFocus(int px, int py) {
         this.px = px;

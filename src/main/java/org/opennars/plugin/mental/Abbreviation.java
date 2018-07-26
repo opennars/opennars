@@ -40,8 +40,27 @@ import static org.opennars.language.CompoundTerm.termArray;
 public class Abbreviation implements Plugin {
 
     public volatile double abbreviationProbability = 0.0001f;
+    public void setAbbreviationProbability(double val) {
+        this.abbreviationProbability = val;
+    }
+    public double getAbbreviationProbability() {
+        return abbreviationProbability;
+    }
+    
     public volatile int abbreviationComplexityMin = 20;
+    public void setAbbreviationComplexityMin(double val) {
+        this.abbreviationComplexityMin = (int) val;
+    }
+    public double getAbbreviationComplexityMin() {
+        return abbreviationComplexityMin;
+    }
     public volatile double abbreviationQualityMin = 0.95f;
+    public void setAbbreviationQualityMin(double val) {
+        this.abbreviationQualityMin = val;
+    }
+    public double getAbbreviationQualityMin() {
+        return abbreviationQualityMin;
+    }
     
     public Abbreviation(){}
     public Abbreviation(double abbreviationProbability, int abbreviationComplexityMin, double abbreviationQualityMin) {

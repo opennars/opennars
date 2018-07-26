@@ -35,6 +35,12 @@ public class Counting implements Plugin {
     
     final static Term CARDINALITY = Term.get("CARDINALITY");
     public volatile float MINIMUM_PRIORITY=0.3f;
+    public void setMINIMUM_PRIORITY(double val) {
+        this.MINIMUM_PRIORITY = (float) val;
+    }
+    public double getMINIMUM_PRIORITY() {
+        return MINIMUM_PRIORITY;
+    }
     
     public Counting(){}
     public Counting(float MINIMUM_PRIORITY) {

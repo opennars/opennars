@@ -31,10 +31,38 @@ public abstract class SensoryChannel implements Plugin, Serializable {
     private Collection<SensoryChannel> reportResultsTo;
     public Nar nar; //for top-down influence of concept budgets
     public final List<Task> results = new ArrayList<>();
-    public int height = 0; //1D channels have height 1
-    public int width = 0;
-    public int duration = -1;
-    private Term label;
+    public volatile int height = 0; //1D channels have height 1
+    public volatile int width = 0;
+    public volatile int duration = -1;
+    private volatile Term label;
+    
+    public void resetChannel() {}
+    
+    public double getHeight() {
+        return height;
+    }
+    
+    public void setHeight(double val) {
+        this.height = (int) val;
+        resetChannel();
+    }
+    
+    public double getWidth() {
+        return width;
+    }
+    
+    public void setWidth(double val) {
+        this.width = (int) val;
+    }
+    
+    public double getDuration() {
+        return duration;
+    }
+    
+    public void setDuration(double val) {
+        this.duration = (int) val;
+    }
+    
     public SensoryChannel(){}
     public SensoryChannel(final Nar nar, final Collection<SensoryChannel> reportResultsTo, final int width, final int height, final int duration, Term label) {
         this.reportResultsTo = reportResultsTo;
