@@ -101,15 +101,19 @@ public class Shell {
         output.setErrorStackTrace(true);
         final InputThread it;
         
-        if (args.length > 0 && !args[0].equals("null")) {
+        final boolean hasInputFile = args.length > 0 && !args[0].equals("null");
+        final boolean hasNumberOfSteps = args.length > 1 && !args[1].equals("null");
+        
+        if (hasInputFile) {
             nar.addInputFile(args[0]);
         }  
         it=new InputThread(System.in,nar);
         it.start();
+        
+        final int numberOfSteps = hasNumberOfSteps ? Integer.parseInt(args[1]) : -1;
 
-        if(args.length > 1 && !args[1].equals("null")) {
-            int steps = Integer.parseInt(args[1]);
-            nar.cycles(steps);
+        if (hasNumberOfSteps) {
+            nar.cycles(numberOfSteps);
             System.exit(0);
         } else {
             nar.start();
