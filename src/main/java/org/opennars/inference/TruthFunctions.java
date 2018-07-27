@@ -17,7 +17,6 @@ package org.opennars.inference;
 import org.opennars.entity.TruthValue;
 
 import static java.lang.Math.abs;
-import org.opennars.main.Nar.RuntimeParameters;
 import org.opennars.main.Parameters;
 
 /**

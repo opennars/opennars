@@ -125,39 +125,6 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
      * The memory of the reasoner
      */
     public final Memory memory;
-    
-    public static class Lock extends Object implements Serializable { }
-    //Because AtomicInteger/Double ot supported by teavm
-    public static class PortableInteger implements Serializable {
-        public PortableInteger(){}
-        final Lock lock = new Lock();
-        int VAL = 0;
-        public PortableInteger(final int VAL){synchronized(lock){this.VAL = VAL;}}
-        public void set(final int VAL){synchronized(lock){this.VAL = VAL;}}
-        public int get() {return this.VAL;}
-        public float floatValue() {return (float)this.VAL;}
-        public float doubleValue() {return (float)this.VAL;}
-        public int intValue() {return this.VAL;}
-        public int incrementAndGet(){int ret = 0; synchronized(lock){this.VAL++; ret=this.VAL;} return ret;}
-    }
-    public static class PortableDouble implements Serializable {
-        final Lock lock = new Lock();
-        public PortableDouble(){}
-        double VAL = 0;
-        public PortableDouble(final double VAL){synchronized(lock){this.VAL = VAL;}}
-        public void set(final double VAL){synchronized(lock){this.VAL = VAL;}}
-        public double get() {return this.VAL;}
-        public float floatValue() {return (float)this.VAL;}
-        public float doubleValue() {return (float)this.VAL;}
-        public int intValue() {return (int)this.VAL;}
-    }
-    /*Nar Parameters which can be changed during runtime but don't affect system behavior.*/
-   public class RuntimeParameters implements Serializable {
-       public final PortableInteger threadsAmount = new PortableInteger(narParameters.THREADS_AMOUNT);
-       public final PortableInteger noiseLevel = new PortableInteger(narParameters.VOLUME);
-       public RuntimeParameters() {    }
-   }
-    public final RuntimeParameters param;
 
     public class PluginState implements Serializable {
         final public Plugin plugin;
@@ -205,14 +172,13 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     public Nar(long narId, String configFilePath) throws IOException, InstantiationException, InvocationTargetException, 
             NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(configFilePath, this, this.narParameters);
-        final Memory m = new Memory(this.narParameters, new RuntimeParameters(),
+        final Memory m = new Memory(this.narParameters,
                 new LevelBag(narParameters.CONCEPT_BAG_LEVELS, narParameters.CONCEPT_BAG_SIZE, this.narParameters),
                 new LevelBag<>(narParameters.NOVEL_TASK_BAG_LEVELS, narParameters.NOVEL_TASK_BAG_SIZE, this.narParameters),
                 new LevelBag<>(narParameters.SEQUENCE_BAG_LEVELS, narParameters.SEQUENCE_BAG_SIZE, this.narParameters),
                 new LevelBag<>(narParameters.OPERATION_BAG_LEVELS, narParameters.OPERATION_BAG_SIZE, this.narParameters));
         this.memory = m;
         this.memory.narId = narId;
-        this.param = m.param;
         this.usedConfigFilePath = configFilePath;
         for(Plugin p : pluginsToAdd) { //adding after memory is constructed, as memory depends on the loaded params!!
             this.addPlugin(p);
@@ -264,13 +230,13 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         else
         if(text.startsWith("*volume=")) {
             final Integer value = Integer.valueOf(text.split("volume=")[1]);
-            param.noiseLevel.set(value);
+            narParameters.VOLUME = value;
             return true;
         }
         else
         if(text.startsWith("*threads=")) {
             final Integer value = Integer.valueOf(text.split("*threads=")[1]);
-            this.param.threadsAmount.set(value);
+            narParameters.THREADS_AMOUNT = value;
             return true;
         }
         else
@@ -467,8 +433,9 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     public void start(final long minCyclePeriodMS) {
         this.minCyclePeriodMS = minCyclePeriodMS;
         if (threads == null) {
-            threads = new Thread[this.param.threadsAmount.get()];
-            for(int i=0;i<this.param.threadsAmount.get();i++) {
+            int n_threads = narParameters.THREADS_AMOUNT;
+            threads = new Thread[n_threads];
+            for(int i=0;i<n_threads;i++) {
                 threads[i] = new Thread(this, "Inference"+i);
                 threads[i].start();
             }
@@ -476,7 +443,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         running = true;
     }
     public void start() {
-        start(narParameters.MILLISECONDS);
+        start(narParameters.MILLISECONDS_PER_STEP);
     }
 
     /**

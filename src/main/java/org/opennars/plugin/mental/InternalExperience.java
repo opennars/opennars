@@ -40,26 +40,80 @@ import java.util.Arrays;
 public class InternalExperience implements Plugin, EventObserver, Serializable {
     
         
-    public float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC=0.3f;
-    public float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=0.3f;
+    public volatile float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC=0.3f;
+    public void setMINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC(double val) {
+        this.MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC = (float) val;
+    }
+    public double getMINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC() {
+        return MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC;
+    }
+    public volatile float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=0.3f;
+    public void setMINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE(double val) {
+        this.MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE = (float) val;
+    }
+    public double getMINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE() {
+        return MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE;
+    }
     
     //internal experience has less durability?
-    public float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
+    public volatile float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
+    public void setINTERNAL_EXPERIENCE_PROBABILITY(double val) {
+        this.INTERNAL_EXPERIENCE_PROBABILITY = (float) val;
+    }
+    public double getINTERNAL_EXPERIENCE_PROBABILITY() {
+        return INTERNAL_EXPERIENCE_PROBABILITY;
+    }
     
     //less probable form
-    public float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 0.000025f;
+    public volatile float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 0.000025f;
+    public void setINTERNAL_EXPERIENCE_RARE_PROBABILITY(double val) {
+        this.INTERNAL_EXPERIENCE_RARE_PROBABILITY = (float) val;
+    }
+    public double getINTERNAL_EXPERIENCE_RARE_PROBABILITY() {
+        return INTERNAL_EXPERIENCE_RARE_PROBABILITY;
+    }
     
     //internal experience has less durability?
-    public float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f; //0.1
+    public volatile float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f; //0.1
+    public void setINTERNAL_EXPERIENCE_DURABILITY_MUL(double val) {
+        this.INTERNAL_EXPERIENCE_DURABILITY_MUL = (float) val;
+    }
+    public double getINTERNAL_EXPERIENCE_DURABILITY_MUL() {
+        return INTERNAL_EXPERIENCE_DURABILITY_MUL;
+    }
     //internal experience has less priority?
-    public float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
+    public volatile float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
+    public void setINTERNAL_EXPERIENCE_PRIORITY_MUL(double val) {
+        this.INTERNAL_EXPERIENCE_PRIORITY_MUL = (float) val;
+    }
+    public double getINTERNAL_EXPERIENCE_PRIORITY_MUL() {
+        return INTERNAL_EXPERIENCE_PRIORITY_MUL;
+    }
     
     //dont use internal experience for want and believe if this setting is true
-    public boolean ALLOW_WANT_BELIEF=true;
+    public volatile boolean ALLOW_WANT_BELIEF=true;
+    public boolean isALLOW_WANT_BELIEF() {
+        return ALLOW_WANT_BELIEF;
+    }
+    public void setALLOW_WANT_BELIEF(final boolean val) {
+        ALLOW_WANT_BELIEF=val;
+    }
     
-    public boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
+    public volatile boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
+    public boolean isOLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY() {
+        return OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
+    }
+    public void setOLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY(final boolean val) {
+        OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=val;
+    }
     
-    public boolean FULL_REFLECTION = false;
+    public volatile boolean FULL_REFLECTION = false;
+    public boolean isFULL_REFLECTION() {
+        return FULL_REFLECTION;
+    }
+    public void setFULL_REFLECTION(final boolean val) {
+        FULL_REFLECTION=val;
+    }
     public InternalExperience() {}
     public InternalExperience(float MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC,
             float MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE,
@@ -80,43 +134,8 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
         this.OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY = OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
         this.FULL_REFLECTION = FULL_REFLECTION;
     }
-                
-    public boolean isAllowNewStrategy() {
-        return !OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
-    }
-    public void setAllowNewStrategy(final boolean val) {
-        OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=!val;
-    }
-    
-    public boolean isAllowWantBelieve() {
-        return ALLOW_WANT_BELIEF;
-    }
-    public void setAllowWantBelieve(final boolean val) {
-        ALLOW_WANT_BELIEF=val;
-    }
-
-    
-    public double getMinCreationBudgetSummary() {
-        return MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC;
-    }
-    public void setMinCreationBudgetSummary(final double val) {
-        MINIMUM_PRIORITY_TO_CREATE_WANT_BELIEVE_ETC=(float) val;
-    }
-    
-    public double getMinCreationBudgetSummaryWonderEvaluate() {
-        return MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE;
-    }
-    public void setMinCreationBudgetSummaryWonderEvaluate(final double val) {
-        MINIMUM_PRIORITY_TO_CREATE_WONDER_EVALUATE=(float) val;
-    }
     
     private Memory memory;
-
-
-    /** whether it is full internal experience, or minimal (false) */
-    public boolean isFull() {
-        return FULL_REFLECTION;
-    }
     
     public static boolean enabled=false;
 
@@ -128,7 +147,7 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
         
         memory.event.set(this, enable, Events.ConceptDirectProcessedTask.class);
         
-        if (isFull())
+        if (FULL_REFLECTION)
             memory.event.set(this, enable, Events.BeliefReason.class);
         
         enabled=enable;
@@ -186,7 +205,7 @@ public class InternalExperience implements Plugin, EventObserver, Serializable {
             
             //old strategy always, new strategy only for QUESTION and QUEST:
             if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK))) {
-                InternalExperienceFromTaskInternal(memory,task,isFull(), nar);
+                InternalExperienceFromTaskInternal(memory,task, FULL_REFLECTION, nar);
             }
         }
         else if (event == Events.BeliefReason.class) {
