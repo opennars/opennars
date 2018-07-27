@@ -35,10 +35,7 @@ import java.util.logging.Logger;
 public class Shell {
 
     private final Nar nar;
-
-    private boolean logging;
     private PrintStream out = System.out;
-    private final boolean dumpLastState = true;
     final int maxTime = 0;
 
     /**
@@ -46,17 +43,9 @@ public class Shell {
      * <p>
      * @param args optional argument used : one addInput file
      */
-    public static void main(final String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-                
+    public static void main(final String[] args) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {      
         final Shell nars = new Shell(new Nar());
-        nars.nar.addInput("*volume=0");
         nars.run(args);
-        
-        // TODO only if single finish ( no reset in between )
-        if (nars.dumpLastState) {
-            System.out.println("\n==== Dump Last State ====\n"
-                    + nars.nar.toString());
-        }
     }
 
     public Shell(final Nar n) {
@@ -111,55 +100,23 @@ public class Shell {
         output.setErrors(true);
         output.setErrorStackTrace(true);
         final InputThread it;
-        final int sleep = -1;
-        final boolean noFile = false;
         
-        if (args.length > 0) {
+        if (args.length > 0 && !args[0].equals("null")) {
             nar.addInputFile(args[0]);
+        }  
+        it=new InputThread(System.in,nar);
+        it.start();
+
+        if(args.length > 1 && !args[1].equals("null")) {
+            int steps = Integer.parseInt(args[1]);
+            nar.cycles(steps);
+            System.exit(0);
+        } else {
+            nar.start();
         }
-        if(args.length == 0 || noFile) {   
-            it=new InputThread(System.in,nar);
-            it.start();
-            //nar.addInput(new TextInput(new BufferedReader(new InputStreamReader(System.in))));
-        }
-               while (true) {
-            if (logging)
-                log("NARSBatch.run():"
-                        + " step " + nar.time());
-            
-            nar.cycles(1);
-            try {
-                if(sleep > -1) {
-                    Thread.sleep(sleep);
-                }
-            } catch (final InterruptedException ex) {
-                Logger.getLogger(Shell.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            //System.out.println("step");
-            //System.out.println("step");
-            
-            
-            if (logging)
-                log("NARSBatch.run(): after tick"
-                        + " step " + nar.time());
-            
-            if (maxTime > 0) {
-                if (nar.time() == maxTime) {
-                    break;
-                }
-            }
-        }
-               
-        System.exit(0);
     }
 
     public void setPrintStream(final PrintStream out) {
         this.out = out;
-    }
-
-    private void log(final String mess) {
-        if (logging) {
-            System.out.println("/ " + mess);
-        }
     }
 }
