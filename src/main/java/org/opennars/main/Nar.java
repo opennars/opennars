@@ -160,7 +160,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     private boolean stopped = false;
     private boolean threadYield;
 
-    public static final String DEFAULTCONFIG_FILEPATH = "../opennars/src/main/config/defaultConfig.xml";
+    public static final String DEFAULTCONFIG_FILEPATH = "../opennars/config/defaultConfig.xml";
 
     public Nar(long narId) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
             ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
