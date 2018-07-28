@@ -1,0 +1,13 @@
+'********** conditional abduction
+
+'If robin is has wings and chirps, then robin is a bird
+<(&&,<robin --> [with-wings]>,<robin --> [chirping]>) ==> <robin --> bird>>. 
+
+'If robin can fly, has wings, and chirps, then robin is a bird
+<(&&,<robin --> [flying]>,<robin --> [with-wings]>,<robin --> [chirping]>) ==> <robin --> bird>>. 
+
+5
+
+'I guess that robin can fly.
+''outputMustContain('<robin --> [flying]>. %1.00;0.45%')
+

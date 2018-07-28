@@ -1,0 +1,72 @@
+'the detective claims that tim lives in graz
+'<{tim} --> (/,livingIn,_,{graz})>.
+'and lawyer claims that this is not the case
+<{tim} --> (/,livingIn,_,{graz})>. %0%
+100
+'the first deponent, a psychologist,
+'claims that people with sunglasses are more aggressive
+<<(*,$1,sunglasses) --> own> ==> <$1 --> [aggressive]>>.
+'the third deponent claims, that he has seen tom with sunglasses on:
+<(*,{tom},sunglasses) --> own>.
+'the teacher claims, that people who are aggressive tend to be murders
+<<$1 --> [aggressive]> ==> <$1 --> murder>>.
+'the second deponent claims, that if the person lives in Graz, he is surely the murder
+<<$1 --> (/,livingIn,_,{graz})> ==> <$1 --> murder>>.
+'who is the murder?
+<{?who} --> murder>?
+'the detective claims that tim lives in graz
+<{tim} --> (/,livingIn,_,{graz})>.
+'the lawyer claims that this is not the case
+<{tim} --> (/,livingIn,_,{graz})>. %0%
+100
+'the first deponent, a psychologist,
+'claims that people with sunglasses are more aggressive
+<<(*,$1,sunglasses) --> own> ==> <$1 --> [aggressive]>>.
+'the third deponent claims, that he has seen tom with black glasses on:
+<(*,{tom},(&,[black],glasses)) --> own>.
+'the teacher claims, that people who are aggressive tend to be murders
+<<$1 --> [aggressive]> ==> <$1 --> murder>>.
+'the second deponent claims, that if the person lives in Graz, he is surely the murder
+<<$1 --> (/,livingIn,_,{graz})> ==> <$1 --> murder>>.
+'the system knows that sunglasses are a special case of black glasses
+<sunglasses --> (&,[black],glasses)>.
+'who is the murder?
+<{?who} --> murder>?
+<(*,toothbrush,plastic) --> made_of>.
+<(&/,<(*,$1,plastic) --> made_of>,(^lighter,{SELF},$1)) =/> <$1 --> [heated]>>.
+<<$1 --> [heated]> =/> <$1 --> [melted]>>.
+<<$1 --> [melted]> <|> <$1 --> [pliable]>>.
+<(&/,<$1 --> [pliable]>,(^reshape,{SELF},$1)) =/> <$1 --> [hardened]>>.
+<<$1 --> [hardened]> =|> <$1 --> [unscrewing]>>.
+<toothbrush --> object>.
+(&&,<#1 --> object>,<#1 --> [unscrewing]>)!
+<{SELF} --> [hurt]>! %0%
+<{SELF} --> [hurt]>. :|: %0%
+<(&/,<(*,{SELF},wolf) --> close_to>,+1000) =/> <{SELF} --> [hurt]>>.
+<(*,{SELF},wolf) --> close_to>. :|:
+<(&|,(^want,{SELF},$1,FALSE),(^anticipate,{SELF},$1)) =|> <(*,{SELF},$1) --> afraid_of>>.
+<(*,{SELF},?what) --> afraid_of>?
+<a --> A>. :|: %1.00;0.90%
+8
+<b --> B>. :|: %1.00;0.90%
+8
+<c --> C>. :|: %1.00;0.90%
+8
+<a --> A>. :|: %1.00;0.90%
+100
+<b --> B>. :|: %1.00;0.90%
+100
+<?1 =/> <c --> C>>?
+<(*,cup,plastic) --> made_of>.
+<cup --> object>.
+<cup --> [bendable]>.
+<toothbrush --> [bendable]>.
+<toothbrush --> object>.
+<(&/,<(*,$1,plastic) --> made_of>,(^lighter,{SELF},$1)) =/> <$1 --> [heated]>>.
+<<$1 --> [heated]> =/> <$1 --> [melted]>>.
+<<$1 --> [melted]> <|> <$1 --> [pliable]>>.
+<(&/,<$1 --> [pliable]>,(^reshape,{SELF},$1)) =/> <$1 --> [hardened]>>.
+<<$1 --> [hardened]> =|> <$1 --> [unscrewing]>>.
+(&&,<#1 --> object>,<#1 --> [unscrewing]>)!
+2000000
+''outputMustContain('')
