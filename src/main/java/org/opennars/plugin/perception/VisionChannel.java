@@ -35,20 +35,6 @@ public class VisionChannel extends SensoryChannel  {
     public volatile float defaultOutputConfidence = 0.5f;
     public int nPrototypes = 0;
     public ArrayList<Prototype> prototypes;
-    class Prototype {
-        int observationCount;
-        Task task;
-        public Prototype(Task t) {
-            this.observationCount = 1; //as the task itself is a case
-            this.task = t;
-        }
-        public void incrementObservationCount() {
-            this.observationCount++;
-        }
-        public int getObservationCount() {
-            return this.observationCount;
-        }
-    }
     double[][] inputs;
     boolean[][] updated;
     int cnt_updated = 0;
@@ -288,5 +274,20 @@ public class VisionChannel extends SensoryChannel  {
     public void setFocus(int px, int py) {
         this.px = px;
         this.py = py;
+    }
+    
+    class Prototype {
+        int observationCount;
+        Task task;
+        public Prototype(Task t) {
+            this.observationCount = 1; //as the task itself is a case
+            this.task = t;
+        }
+        public void incrementObservationCount() {
+            this.observationCount++;
+        }
+        public int getObservationCount() {
+            return this.observationCount;
+        }
     }
 }
