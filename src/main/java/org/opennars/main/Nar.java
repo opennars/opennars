@@ -160,7 +160,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     private boolean stopped = false;
     private boolean threadYield;
 
-    public static final String DEFAULTCONFIG_FILEPATH = "/config/defaultConfig.xml";
+    public static final String DEFAULTCONFIG_FILEPATH = "./config/defaultConfig.xml";
 
     public Nar(long narId) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
             ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
@@ -193,7 +193,7 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     }
     
     public Nar() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
-        this(java.util.UUID.randomUUID().getLeastSignificantBits(), DEFAULTCONFIG_FILEPATH);
+        this(java.util.UUID.randomUUID().getLeastSignificantBits(), true, DEFAULTCONFIG_FILEPATH);
     }
 
     /**
