@@ -35,7 +35,20 @@ public class VisionChannel extends SensoryChannel  {
     public volatile float defaultOutputConfidence = 0.5f;
     public int nPrototypes = 0;
     public ArrayList<Prototype> prototypes;
-    
+    class Prototype {
+        int observationCount;
+        Task task;
+        public Prototype(Task t) {
+            this.observationCount = 1; //as the task itself is a case
+            this.task = t;
+        }
+        public void incrementObservationCount() {
+            this.observationCount++;
+        }
+        public int getObservationCount() {
+            return this.observationCount;
+        }
+    }
     double[][] inputs;
     boolean[][] updated;
     int cnt_updated = 0;
@@ -177,13 +190,16 @@ public class VisionChannel extends SensoryChannel  {
             } else {
                 //1. determine the most similar prototype
                 float similarity = 0;
+                TruthValue bestTruth = null;
                 Prototype best = null;
                 for(Prototype p : prototypes) {
                     Inheritance inh = (Inheritance) p.task.getTerm();
-                    float simCur = inh.getSubject().imagination.AbductionOrComparisonTo(vspace, true).getExpectation();
-                    if(simCur > similarity) {
+                    TruthValue simCur = inh.getSubject().imagination.AbductionOrComparisonTo(vspace, true);
+                    float simCurExp = simCur.getExpectation();
+                    if(simCurExp > similarity) {
                         best = p;
-                        similarity = simCur;
+                        similarity = simCurExp;
+                        bestTruth = simCur;
                     }
                 }
                 //2. replace the rarest seen prototype with the new prototype when full
@@ -254,7 +270,7 @@ public class VisionChannel extends SensoryChannel  {
                 //but with current time stamp
                 Sentence bestSentence = new Sentence(best.task.getTerm(),
                                                      best.task.sentence.punctuation,
-                                                     best.task.sentence.truth.clone(),
+                                                     bestTruth,
                                                      stamp.clone());
                 final Task bestTask = new Task(bestSentence, best.task.budget.clone(), Task.EnumType.INPUT);
                 bestTask.setElemOfSequenceBuffer(true);
@@ -272,20 +288,5 @@ public class VisionChannel extends SensoryChannel  {
     public void setFocus(int px, int py) {
         this.px = px;
         this.py = py;
-    }
-    
-    class Prototype {
-        int observationCount;
-        Task task;
-        public Prototype(Task t) {
-            this.observationCount = 1; //as the task itself is a case
-            this.task = t;
-        }
-        public void incrementObservationCount() {
-            this.observationCount++;
-        }
-        public int getObservationCount() {
-            return this.observationCount;
-        }
     }
 }
