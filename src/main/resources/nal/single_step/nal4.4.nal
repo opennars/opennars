@@ -1,0 +1,13 @@
+'********** structural transformation
+
+'Something that can neutralize a base is an acid.
+<(\,neutralization,_,base) --> acid>.
+
+2
+
+'Neutralization is a relation between an acid and a base. 
+''outputMustContain('<neutralization --> (*,acid,base)>. %1.00;0.90%')
+
+'Something that can be neutralized by an acid is a base.
+''outputMustContain('<(\,neutralization,acid,_) --> base>. %1.00;0.90%')
+

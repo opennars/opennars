@@ -1,0 +1,6 @@
+
+********** [05 + 01 -> 06]:
+<(^pick,key001) =/> <(*,Self,key001) --> hold>>. :|:  
+<(*,Self,key001) --> hold>!  
+8
+''outputMustContain('(^pick,key001)! %1.00;0.43%') 

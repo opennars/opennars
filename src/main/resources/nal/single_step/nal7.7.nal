@@ -1,0 +1,18 @@
+'********** induction on events 
+
+<(*,John,key_101) --> hold>. :|:  %1.0000;0.9000% 
+
+6 
+
+' irrelevant   outputMustContain('<John --> (/,hold,_,key_101)>. :\: %1.00;0.90%') 
+' irrelevant  'outputMustContain('<key_101 --> (/,hold,John,_)>. :\: %1.00;0.90%') 
+' irrelevant  'outputMustContain('<John --> (/,hold,_,key_101)>. :\: %1.00;0.90%') 
+' irrelevant  'outputMustContain('<key_101 --> (/,hold,John,_)>. :\: %1.00;0.90%')
+
+<<(*,John,door_101) --> open> =/> <(*,John,room_101) --> enter>>. :|:  %1.0000;0.9000% 
+
+20 
+
+''outputMustContain('<(&/,<(*,John,key_101) --> hold>,+6,<(*,John,door_101) --> open>) =/> <(*,John,room_101) --> enter>>. :!6: %1.00;0.45%')
+'changed fomr +2 to +4 due to changes in interval calculations
+'this one is working, just throwing exception

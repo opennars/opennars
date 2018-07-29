@@ -1,0 +1,6 @@
+<tim --> (/,uncle,_,tom)>. %1.00;0.90%
+<tim --> (/,uncle,tom,_)>. %0.00;0.90%
+10
+''outputMustContain('<<$1 --> (/,uncle,_,$2)> ==> <$1 --> (/,uncle,$2,_)>>. %0.00;0.45%')
+'would be a strange variable introduction when it would be allowed to use ImageExt and not just looking at <SUB --> PRED>
+'this is a strange example I added..

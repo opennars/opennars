@@ -1,0 +1,12 @@
+'********** conditional induction
+
+'If robin can fly and robin chirps, then robin is a bird
+<(&&,<robin --> [chirping]>,<robin --> [flying]>) ==> <robin --> bird>>. 
+
+'If robin can fly then usually robin has a beak.
+<<robin --> [flying]> ==> <robin --> [with-beak]>>. %0.90%  
+
+18
+
+'I guess that if robin chirps and robin has a beak, then robin is a bird.
+''outputMustContain('<(&&,<robin --> [chirping]>,<robin --> [with-beak]>) ==> <robin --> bird>>. %1.00;0.42%')
