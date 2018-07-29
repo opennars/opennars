@@ -85,11 +85,9 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
         if (type == TermLink.COMPOUND_CONDITION) {  // the first index is 0 by default
             
             index = new short[indices.length + 1];
-            //index[0] = 0; //first index is zero, but not necessary to set since index[] was just created
+            index[0] = 0;
             
             System.arraycopy(indices, 0, index, 1, indices.length);
-            /* for (int i = 0; i < indices.length; i++)
-                index[i + 1] = (short) indices[i]; */
         } else {
             index = indices;            
         }
@@ -110,7 +108,7 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
         super(v);
         target = t;
         type = (template.target.equals(t)) 
-                ? (short)(template.type - 1) //// point to component
+                ? (short)(template.type - 1) // point to component
                 : template.type;
         index = template.index;
         hash = init();
@@ -118,13 +116,6 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
 
     @Override public TermLink name() { return this; }
     
-//    @Override
-//    public CharSequence name() {
-//        if (key == null)
-//            setKey();
-//        return key;
-//    }
-
     @Override
     public int hashCode() { return hash;     }
 
@@ -161,23 +152,6 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
         final int h = Objects.hash(target, type, Arrays.hashCode(index));
         return h;
     }
-    
-    /*protected final void setKey() {
-        setKey(null);        
-    }*/
-
-    
-    /*
-     * Set the key of the link
-     */    
-    /*protected final void setKey(final CharSequence suffix) {
-        this.key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
-                        newKeyPrefix(), 
-                        target!=null ? target.name() : null, 
-                        suffix);        
-    }*/
-       
-    
     
     @Override
     public String toString() {
