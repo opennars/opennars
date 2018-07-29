@@ -1,0 +1,22 @@
+'********** variable introduction
+
+'A gull is a swimmer.
+<gull --> swimmer>. 
+
+'Usually, a swan is a swimmer.
+<swan --> swimmer>. %0.80% 
+
+3
+
+'I guess what can be said about gull usually can also be said about swan.
+''outputMustContain('<<gull --> $1> ==> <swan --> $1>>. %0.80;0.45%')
+
+'I guess what can be said about swan can also be said about gull.
+''outputMustContain('<<swan --> $1> ==> <gull --> $1>>. %1.00;0.39%')
+
+'I guess gull and swan share most properties.
+''outputMustContain('<<gull --> $1> <=> <swan --> $1>>. %0.80;0.45%')
+
+'Gull and swan have some common property.
+''outputMustContain('(&&,<gull --> #1>,<swan --> #1>). %0.80;0.81%')
+

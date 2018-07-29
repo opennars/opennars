@@ -1,0 +1,12 @@
+'********** temporal induction/comparison 
+
+<<(*, $x, door_101) --> open> =/> <(*, $x, room_101) --> enter>>. %0.9%  
+
+<<(*, $y, door_101) --> open> =\> <(*, $y, key_101) --> hold>>. %0.8% 
+
+100
+
+''outputMustContain('<<(*,$1,key_101) --> hold> =/> <(*,$1,room_101) --> enter>>. %0.90;0.39%')  
+''outputMustContain('<<(*,$1,room_101) --> enter> =\> <(*,$1,key_101) --> hold>>. %0.80;0.42%') 
+''outputMustContain('<<(*,$1,key_101) --> hold> </> <(*,$1,room_101) --> enter>>. %0.73;0.44%')
+

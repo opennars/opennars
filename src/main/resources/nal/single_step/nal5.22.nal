@@ -1,0 +1,14 @@
+'********** contraposition
+
+'It is unlikely that if robin is not a type of bird then robin can fly. 
+<(--,<robin --> bird>) ==> <robin --> [flying]>>. %0.1%
+
+'If robin cannot fly then is robin a type of bird?
+<(--,<robin --> [flying]>) ==> <robin --> bird>>?
+
+29
+
+'I guess it is unlikely that if robin cannot fly then robin is a type of bird.
+''outputMustContain('<(--,<robin --> [flying]>) ==> <robin --> bird>>. %0.00;0.45%')
+
+561

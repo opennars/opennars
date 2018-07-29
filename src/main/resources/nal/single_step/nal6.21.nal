@@ -1,0 +1,16 @@
+'********** multiple variables introduction
+
+'Lock-1 can be opened by some key.
+(&&,<#x --> key>,<{lock1} --> (/,open,#x,_)>).  
+
+'Lock-1 is a lock.
+<{lock1} --> lock>. 
+
+17
+
+'There is a key that can open some lock.
+''outputMustContain('(&&,<#1 --> key>,<#2 --> (/,open,#1,_)>,<#2 --> lock>). %1.00;0.81%')
+
+'I guess every lock can be opened by some key.
+''outputMustContain('<<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>. %1.00;0.45%')
+

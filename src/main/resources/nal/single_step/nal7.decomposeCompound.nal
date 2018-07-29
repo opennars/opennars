@@ -1,0 +1,5 @@
+'********** hit temporal handling of CompositionalRules.decomposeCompound()
+<(&/, (||, S, P), +5) =/> M>. %0.9%
+<S =/> M>. %0.9%
+100
+''outputMustContain('<P =/> M>. %0.19;0.05%')

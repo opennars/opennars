@@ -1,0 +1,21 @@
+'********** induction on events 
+
+<(*,John,door_101) --> open>. :|: 
+
+11
+
+<(*,John,room_101) --> enter>. :|: %0% 
+
+10
+
+''outputMustContain('<(&/,<(*,John,door_101) --> open>,+11) =/> <(*,John,room_101) --> enter>>. :!11: %0.00;0.45%') 
+''outputMustContain('<(&/,<(*,John,door_101) --> open>,+11) </> <(*,John,room_101) --> enter>>. :!11: %0.00;0.45%')
+'adjusted +3 to +4
+
+'original output (1.3.3): 
+' OUT: <<(*,John,room_101) --> enter>=\><(*,John,door_101) --> open>>. :\: %1.00;0.45%  
+' OUT: <<(*,John,door_101) --> open>=/><(*,John,room_101) --> enter>>. :\: %1.00;0.45%   
+' OUT: <<(*,John,door_101) --> open></><(*,John,room_101) --> enter>>. :\: %1.00;0.45%   
+' OUT: <<(*,John,room_101) --> enter>=\><(*,John,door_101) --> open>>. %1.00;0.45%   
+' OUT: <<(*,John,door_101) --> open>=/><(*,John,room_101) --> enter>>. %1.00;0.45%   
+' OUT: <<(*,John,door_101) --> open></><(*,John,room_101) --> enter>>. %1.00;0.45%   

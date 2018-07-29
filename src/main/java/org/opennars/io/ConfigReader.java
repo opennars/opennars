@@ -31,15 +31,29 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConfigReader {
 
-    public static List<Plugin> loadParamsFromFileAndReturnPlugins(final String filepath, final Reasoner reasoner, final Parameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+    public static List<Plugin> loadParamsFromFileAndReturnPlugins(boolean loadFromResources, final String filepath, final Reasoner reasoner, final Parameters parameters) throws IOException, IllegalAccessException, ParseException, ParserConfigurationException, SAXException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
         List<Plugin> ret = new ArrayList<Plugin>();
-        final File file = new File(filepath);
+        File file = null;
+        if(loadFromResources) {
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            try {
+                file = new File(classloader.getResource(filepath).toURI());
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(ConfigReader.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else {
+            file = new File(filepath);
+        }
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         final Document document = documentBuilder.parse(file);

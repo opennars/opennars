@@ -1,0 +1,13 @@
+'********** variable unification
+
+'If something is a bird, then it is a flyer.
+<<$x --> bird> ==> <$x --> flyer>>.
+
+'If something is a bird, then it is not a flyer. 
+<<$y --> bird> ==> <$y --> flyer>>. %0.00;0.70% 
+
+1
+
+'If something is a bird, then usually, it is a flyer. 
+''outputMustContain('<<$1 --> bird> ==> <$1 --> flyer>>. %0.79;0.92%')
+
