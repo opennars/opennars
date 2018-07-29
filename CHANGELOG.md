@@ -1,8 +1,12 @@
 # OpenNARS Changelog
 
-## 3.0.0
+## 3.0.0 (major release)
 
 * Mavenized project
 * Pulled this project out into its own seperately versioned repository.
 * Refactored root package from nars to org.opennars
-* Completely revamped exception handling system. Exceptions are no longer suppressed and all exceptions are fixed that were exposed.
+* Exceptions from the internal inference are fixed for a lot of inference rules.
+* (interface:API) : changed external and internal API
+* (interface:commandline) : added (commandline) shell
+* (test) : added long term tests
+* (interface:API, interaction) : System parameters are now represented in a XML file and loaded into the system and plugins.
