@@ -26,6 +26,6 @@ deploy:
     script: .travis/deploy.sh
     skip_cleanup: true
     on:
-      repo: https://oss.sonatype.org/content/repositories/snapshots/org/opennars/opennars/
+      repo: opennars/opennars
       branch: master
       jdk: oraclejdk8
