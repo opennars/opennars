@@ -438,7 +438,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
 
             int stringLength = 0;
             if (truth != null) {
-                stringLength += (showOcurrenceTime ? 8 : 0) + truthString.length();
+                stringLength += (showOcurrenceTime ? 8 : 0) + 11 /*truthString.length()*/;
             }
 
             String conv = "";
