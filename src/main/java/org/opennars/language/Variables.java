@@ -54,7 +54,7 @@ public class Variables {
         return false;
     }
     
-    /** map is a 2-element array of Map<Term,Term>. it may be null, in which case
+    /** map is a 2-element array of Map&lt;Term,Term&gt;. it may be null, in which case
      * the maps will be instantiated as necessary.  
      * this is to delay the instantiation of the 2 Map until necessary to avoid
      * wasting them if they are not used.
@@ -391,11 +391,11 @@ public class Variables {
     } //but it is an allowed rename like $1 -> #1 then the second type should be used
     
     /**
-     * Check whether a term is using an
+     * examines whether a term is using an
      * independent variable in an invalid way
      *
-     * @param n The string name to be checked
-     * @return Whether the name contains an independent variable
+     * @param T term to be examined
+     * @return Whether the term contains an independent variable
      */
     public static boolean indepVarUsedInvalid(final Term T) {
         

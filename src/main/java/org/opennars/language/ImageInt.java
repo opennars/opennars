@@ -21,7 +21,7 @@ import java.util.Arrays;
 /**
  * An intension image.
  * <p>
- * (\,P,A,_)) --> B iff P --> (*,A,B)
+ * (\,P,A,_)) --&gt; B iff P --&gt; (*,A,B)
  * <p>
  * Internally, it is actually (\,A,P)_1, with an index.
  */

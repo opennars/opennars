@@ -288,7 +288,12 @@ public class BudgetValue implements Cloneable, Serializable {
             .toString();                
     }
 
-    /** returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime */
+    /**
+     * computes the period and sets the current time to the period
+     *
+     * @return period in time: currentTime - lastForgetTime
+     */
+    // TODO< split this into two methods >
     public long setLastForgetTime(final long currentTime) {
         final long period;
         if (this.lastForgetTime == -1)            

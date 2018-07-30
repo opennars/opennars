@@ -102,7 +102,6 @@ public class ProcessJudgment {
      * 
      * @param task The judgement task be checked
      * @param nal The derivation context
-     * @return Whether to continue the processing of the task
      */
     public static void handleOperationFeedback(Task task, DerivationContext nal) {
         if(task.isInput() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {

@@ -171,9 +171,10 @@ public class ProcessGoal {
     }
     
     /**
-     * Generate <?how =/> g>? question for g! goal.
+     * Generate &lt;?how =/&gt; g&gt;? question for g! goal.
      * only called by processGoal
      *
+     * @param task the task for which the question should be processed
      * @param nal The derivation context
      */    
     public static void questionFromGoal(final Task task, final DerivationContext nal) {

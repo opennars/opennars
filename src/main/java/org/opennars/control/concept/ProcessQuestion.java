@@ -79,7 +79,7 @@ public class ProcessQuestion {
      * called only in GeneralInferenceControl.insertTaskLink on concept selection
      * 
      * @param concept The concept which potentially outdated anticipations should be processed
-     * @paramt t The belief task
+     * @param ques The belief task
      * @param nal The derivation context
      */
     public static void ProcessWhatQuestion(final Concept concept, final Task ques, final DerivationContext nal) {
@@ -115,7 +115,7 @@ public class ProcessQuestion {
      * called only in GeneralInferenceControl.insertTaskLink on concept selection
      * 
      * @param concept The concept which potentially outdated anticipations should be processed
-     * @paramt t The belief task
+     * @param t The belief task
      * @param nal The derivation context
      */
     public static void ProcessWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal) {

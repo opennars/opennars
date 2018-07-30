@@ -38,19 +38,19 @@ public class TermLink extends Item<TermLink> implements TLink<Term>, Serializabl
     
     /** At C, point to C; TaskLink only */
     public static final short SELF = 0;
-    /** At (&&, A, C), point to C */
+    /** At (&amp;&amp;, A, C), point to C */
     public static final short COMPONENT = 1;
-    /** At C, point to (&&, A, C) */
+    /** At C, point to (&amp;&amp;, A, C) */
     public static final short COMPOUND = 2;
-    /** At <C --> A>, point to C */
+    /** At &lt;C --&gt; A&gt;, point to C */
     public static final short COMPONENT_STATEMENT = 3;
-    /** At C, point to <C --> A> */
+    /** At C, point to &lt;C --&gt; A&gt; */
     public static final short COMPOUND_STATEMENT = 4;
-    /** At <(&&, C, B) ==> A>, point to C */
+    /** At &lt;(&amp;&amp;, C, B) ==&gt; A&gt;, point to C */
     public static final short COMPONENT_CONDITION = 5;
-    /** At C, point to <(&&, C, B) ==> A> */
+    /** At C, point to &lt;(&amp;&amp;, C, B) ==&gt; A&gt; */
     public static final short COMPOUND_CONDITION = 6;
-    /** At C, point to <(*, C, B) --> A>; TaskLink only */
+    /** At C, point to &lt;(*, C, B) --&gt; A&gt;; TaskLink only */
     public static final short TRANSFORM = 8;
     /** At C, point to B, potentially without common subterm term */
     public static final short TEMPORAL = 9;

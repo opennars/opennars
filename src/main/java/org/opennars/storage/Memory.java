@@ -53,11 +53,11 @@ import org.opennars.plugin.mental.InternalExperience;
  *   * term and concept memory
  *   * reasoner state
  *   * etc.
- * 
+ * <br>
  * Excluding input/output channels which are managed by a Nar.
- * 
+ * <br>
  * A memory is controlled by zero or one Nar's at a given time.
- * 
+ * <br>
  * Memory is serializable so it can be persisted and transported.
  */
 public class Memory implements Serializable, Iterable<Concept>, Resettable {
@@ -251,6 +251,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
  tasks with low priority are ignored, and the others are put into task
  buffer.
      *
+     * @param time indirection to retrieve time
      * @param t The addInput task
      */
     public void inputTask(final Timable time, final Task t, final boolean emitIn) {
@@ -275,7 +276,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             }
         }
     }
-    
+
+    /**
+     * @param time indirection to retrieve time
+     */
     public void inputTask(final Timable time, final Task t) {
         inputTask(time, t, true);
     }
@@ -289,6 +293,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * ExecutedTask called in Operator.call
      *
      * @param operation The operation just executed
+     * @param time indirection to retrieve time
      */
     public void executedTask(final Timable time, final Operation operation, final TruthValue truth) {
         final Task opTask = operation.getTask();
@@ -345,7 +350,13 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
         event.emit(Events.CycleEnd.class);
         event.synch();
     }
-    
+
+    /**
+     *
+     * @param task task to be processed
+     * @param narParameters parameters for the Reasoner instance
+     * @param time indirection to retrieve time
+     */
     public void localInference(final Task task, Parameters narParameters, final Timable time) {
         //synchronized (localInferenceMutex) {
             final DerivationContext cont = new DerivationContext(this, narParameters, time);
@@ -372,6 +383,9 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
      * Process the newTasks accumulated in the previous workCycle, accept input
      * ones and those that corresponding to existing concepts, plus one from the
      * buffer.
+     *
+     * @param narParameters parameters for the Reasoner instance
+     * @param time indirection to retrieve time
      */
     public void processNewTasks(Parameters narParameters, final Timable time) {
         synchronized (tasksMutex) {
@@ -404,8 +418,10 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
     
 
     /**
-     * Select a novel task to process.
-     * @return whether a task was processed
+     * Select a novel task to process
+     *
+     * @param narParameters parameters for the Reasoner instance
+     * @param time indirection to retrieve time
      */
     public void processNovelTask(Parameters narParameters, final Timable time) {
         final Task task = novelTasks.takeNext();

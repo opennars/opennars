@@ -55,14 +55,18 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     abstract public float getMass();
 
     /**
-     * Choose an Item according to distribution policy and take it out of the Bag
-     * @return The selected Item, or null if this bag is empty
+     * Choose an Item according to distribution policy
+     * @return a item with taking it from the bag or null if this bag is empty
      */
     abstract public E takeNext();
-    
 
-    /** gets the next value without removing changing it or removing it from any index.  however
-     the bag is cycled so that subsequent elements are different. */    
+    /**
+     * Choose an Item according to distribution policy
+     * @return a item without taking it from the bag or null if the bag is empty
+     */
+    /* gets the next value without removing changing it or removing it from any index.
+     * however the bag is cycled so that subsequent elements are different.
+     */
     abstract public E peekNext();
     
     
@@ -111,9 +115,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
     
     /**
-     * The number of items in the bag
-     *
-     * @return The number of items
+     * @return The number of items in the bag
      */
     public abstract int size();
     
@@ -123,11 +125,20 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
             System.out.println("  " + e + "\n");
         }
     }
-    
+
+    /**
+     * @return all values which are accessible with a iterator
+     */
     abstract public Iterable<E> values();
 
+    /**
+     * @return average of the priority of all items
+     */
     public abstract float getAveragePriority();
 
+    /**
+     * @return sum of the priority of all items
+     */
     public float getTotalPriority() {
         final int size = size();
         if (size == 0) {
@@ -137,7 +148,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         return getAveragePriority() * size();
     }
 
-    /** iterates all items in (approximately) descending priority */
+    /**
+     * @return iterator for all items in (approximately) descending priority
+     */
     @Override public abstract Iterator<E> iterator();
     
     /** allows adjusting forgetting rate in subclasses */    
@@ -152,6 +165,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * The only place where the forgetting rate is applied
      *
      * @param oldItem The Item to put back
+     * @param m related memory
      * @return the item which was removed, or null if none removed
      */    
     public E putBack(final E oldItem, final float forgetCycles, final Memory m) {
@@ -162,8 +176,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
     
     /** x = takeOut(), then putBack(x)
-     *  @forgetCycles forgetting time in cycles
-     *  @return the variable that was updated, or null if none was taken out
+     * @param forgetCycles forgetting time in cycles
+     * @param m related memory
+     * @return the variable that was updated, or null if none was taken out
      */
     public E processNext(final float forgetCycles, final Memory m) {
                 
@@ -199,8 +214,11 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     public String toString() {
         return getClass().getSimpleName();// + "(" + size() + "/" + getCapacity() +")";
     }
-    
-    /** slow, probably want to override in subclasses */
+
+    /**
+     * @return minimum priority of all items
+     */
+    /* slow, probably want to override in subclasses */
     public float getMinPriority() {
         float min = 1.0f;
         for (final Item e : this) {
@@ -209,8 +227,11 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         }
         return min;            
     }
-    
-    /** slow, probably want to override in subclasses */
+
+    /**
+     * @return maximum priority of all items
+     */
+    /* slow, probably want to override in subclasses */
     public float getMaxPriority() {
         float max = 0.0f;
         for (final Item e : this) {
