@@ -46,7 +46,6 @@ public class ProcessJudgment {
      * the will become the top entries in the belief table.
      * Additionally, judgements can themselves be the solution to existing questions
      * and goals, which is also processed here.
-     * 
      * <p>
      * called only by ConceptProcessing.processTask
      * 
@@ -94,7 +93,8 @@ public class ProcessJudgment {
     }
 
     /**
-     * Handle the feedback of the operation that was processed as a judgment
+     * Handle the feedback of the operation that was processed as a judgment.
+     * <br>
      * The purpose is to start a new operation frame which makes the operation concept 
      * interpret current events as preconditions and future events as postconditions to the invoked operation.
      * <p>
@@ -117,7 +117,7 @@ public class ProcessJudgment {
     
     /**
      * Check whether the task is an executable hypothesis of the form
-     * <(&/,a,op()) =/> b>.
+     * &lt;(&amp;/,a,op()) =/&gt; b&gt;.
      * <p>
      * called in processJudgment only
      * 
@@ -154,7 +154,7 @@ public class ProcessJudgment {
     }
     
     /**
-     * Add <(&/,a,op()) =/> b> beliefs to preconditions in concept b
+     * Add &lt;(&amp;/,a,op()) =/&gt; b&gt; beliefs to preconditions in concept b
      * <p>
      * called in processJudgment only
      * 

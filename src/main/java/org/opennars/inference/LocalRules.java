@@ -36,22 +36,21 @@ import org.opennars.main.Parameters;
  * matching, the new task is compared with an existing direct Task in that
  * Concept, to carry out:
  * <p>
- *   revision: between judgments or goals on non-overlapping evidence; 
- *   satisfy: between a Sentence and a Question/Goal; 
- *   merge: between items of the same type and stamp; 
- *   conversion: between different inheritance relations.
+ *   revision: between judgments or goals on non-overlapping evidence;<br>
+ *   satisfy: between a Sentence and a Question/Goal; <br>
+ *   merge: between items of the same type and stamp; <br>
+ *   conversion: between different inheritance relations.<br>
  */
 public class LocalRules {
 
     /* -------------------- same contents -------------------- */
     /**
      * The task and belief have the same content
-     * <p>
-     * called in RuleTables.reason
      *
      * @param task The task
      * @param belief The belief
      */
+    // called in RuleTables.reason
     public static boolean match(final Task task, final Sentence belief, final DerivationContext nal) {
         final Sentence sentence = task.sentence;
         
@@ -96,13 +95,12 @@ public class LocalRules {
 
     /**
      * Belief revision
-     * <p>
-     * called from Concept.reviseTable and match
      *
      * @param newBelief The new belief in task
      * @param oldBelief The previous belief with the same content
      * @param feedbackToLinks Whether to send feedback to the links
      */
+    // called from Concept.reviseTable and match
     public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final DerivationContext nal) {
         if (newBelief.term==null) { 
             return false;
@@ -246,10 +244,8 @@ public class LocalRules {
      *
      * @param problem The problem (question or goal) to be solved
      * @param solution The belief as solution
-     * @param task The task to be immediately processed, or null for continued
-     * process
-     * @return The budget for the new task which is the belief activated, if
-     * necessary
+     * @param task The task to be immediately processed, or null for continued process
+     * @return The budget for the new task which is the belief activated, if necessary
      */
     public static BudgetValue solutionEval(final Task problem, final Sentence solution, Task task, final org.opennars.control.DerivationContext nal) {
         if(problem.sentence.punctuation != solution.punctuation && solution.term.hasVarQuery()) {
@@ -323,8 +319,9 @@ public class LocalRules {
 
     /* -------------------- two-premise inference rules -------------------- */
     /**
-     * {<S --> P>, <P --> S} |- <S <-> p> Produce Similarity/Equivalence from a
-     * pair of reversed Inheritance/Implication
+     * Produce Similarity/Equivalence from a pair of reversed Inheritance/Implication
+     * <br>
+     * {&lt;S --&gt; P&gt;, &lt;P --&gt; S} |- &lt;S &lt;-&gt; p&gt;
      *
      * @param judgment1 The first premise
      * @param judgment2 The second premise
@@ -348,8 +345,9 @@ public class LocalRules {
     }
 
     /**
-     * {<S <-> P>, <P --> S>} |- <S --> P> Produce an Inheritance/Implication
-     * from a Similarity/Equivalence and a reversed Inheritance/Implication
+     * Produce an Inheritance/Implication from a Similarity/Equivalence and a reversed Inheritance/Implication
+     * <br>
+     * {&lt;S &lt;-&gt; P&gt;, &lt;P --&gt; S&gt;} |- &lt;S --&gt; P&gt;
      *
      * @param asym The asymmetric premise
      * @param sym The symmetric premise
@@ -370,8 +368,9 @@ public class LocalRules {
 
     /* -------------------- one-premise inference rules -------------------- */
     /**
-     * {<P --> S>} |- <S --> P> Produce an Inheritance/Implication from a
-     * reversed Inheritance/Implication
+     * Produce an Inheritance/Implication from a reversed Inheritance/Implication
+     * <br>
+     * {&lt;P --&gt; S&gt;} |- &lt;S --&gt; P&gt;
      *
      * @param nal Reference to the memory
      */
@@ -382,8 +381,9 @@ public class LocalRules {
     }
 
     /**
-     * {<S --> P>} |- <S <-> P> {<S <-> P>} |- <S --> P> Switch between
-     * Inheritance/Implication and Similarity/Equivalence
+     * Switch between Inheritance/Implication and Similarity/Equivalence
+     * <br>
+     * {&lt;S --&gt; P&gt;} |- &lt;S &lt;-&gt; P&gt; {&lt;S &lt;-&gt; P&gt;} |- &lt;S --&gt; P&gt;
      *
      * @param nal Reference to the memory
      */

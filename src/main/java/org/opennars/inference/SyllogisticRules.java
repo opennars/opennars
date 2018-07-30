@@ -34,7 +34,7 @@ public final class SyllogisticRules {
     /* --------------- rules used in both first-tense inference and higher-tense inference --------------- */
     /**
      * <pre>
-     * {<S ==> M>, <M ==> P>} |- {<S ==> P>, <P ==> S>}
+     * {&lt;S ==&gt; M&gt;, &lt;M ==&gt; P&gt;} |- {&lt;S ==&gt; P&gt;, &lt;P ==&gt; S&gt;}
      * </pre>
      *
      * @param term1 Subject of the first new task
@@ -94,7 +94,7 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {<M ==> S>, <M ==> P>} |- {<S ==> P>, <P ==> S>, <S <=> P>}
+     * {&lt;M ==&gt; S&gt;, &lt;M ==&gt; P&gt;} |- {&lt;S ==&gt; P&gt;, &lt;P ==&gt; S&gt;, &lt;S &lt;=&gt; P&gt;}
      *
      * @param term1 Subject of the first new task
      * @param term2 Predicate of the first new task
@@ -220,7 +220,7 @@ public final class SyllogisticRules {
     
 
     /**
-     * {<S ==> P>, <M <=> P>} |- <S ==> P>
+     * {&lt;S ==&gt; P&gt;, &lt;M &lt;=&gt; P&gt;} |- &lt;S ==&gt; P&gt;
      *
      * @param subj Subject of the new task
      * @param pred Predicate of the new task
@@ -271,7 +271,7 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {<S <=> M>, <M <=> P>} |- <S <=> P>
+     * {&lt;S &lt;=&gt; M&gt;, &lt;&lt; &lt;=&gt; P&gt;} |- &lt;S &lt;=&gt; P&gt;
      *
      * @param term1 Subject of the new task
      * @param term2 Predicate of the new task
@@ -378,9 +378,13 @@ public final class SyllogisticRules {
 
     /* --------------- rules used only in conditional inference --------------- */
     /**
-     * {<<M --> S> ==> <M --> P>>, <M --> S>} |- <M --> P> {<<M --> S> ==> <M
-     * --> P>>, <M --> P>} |- <M --> S> {<<M --> S> <=> <M --> P>>, <M --> S>}
-     * |- <M --> P> {<<M --> S> <=> <M --> P>>, <M --> P>} |- <M --> S>
+     * {&lt;&lt;M --&gt; S&gt; ==&gt; &lt;M --&gt; P&gt;&gt;, &lt;M --&gt; S&gt;} |- &lt;M --&gt; P&gt;
+     * <br>
+     * {&lt;&lt;M --&gt; S&gt; ==&gt; &lt;M --&gt; P&gt;&gt;, &lt;M --&gt; P&gt;} |- &lt;M --&gt; S&gt;
+     * <br>
+     * {&lt;&lt;M --&gt; S&gt; &lt;=&gt; &lt;M --&gt; P&gt;&gt;, &lt;M --&gt; S&gt;} |- &lt;M --&gt; P&gt;
+     * <br>
+     * {&lt;&lt;M --&gt; S&gt; &lt;=&gt; &lt;M --&gt; P&gt;&gt;, &lt;M --&gt; P&gt;} |- &lt;M --&gt; S&gt;
      *
      * @param mainSentence The implication/equivalence premise
      * @param subSentence The premise on part of s1
@@ -488,9 +492,11 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {<(&&, S1, S2, S3) ==> P>, S1} |- <(&&, S2, S3) ==> P> {<(&&, S2, S3) ==>
-     * P>, <S1 ==> S2>} |- <(&&, S1, S3) ==> P> {<(&&, S1, S3) ==> P>, <S1 ==>
-     * S2>} |- <(&&, S2, S3) ==> P>
+     * {&lt;(&amp;&amp;, S1, S2, S3) ==&gt; P&gt;, S1} |- &lt;(&amp;&amp;, S2, S3) ==&gt; P&gt;
+     * <br>
+     * {&lt;(&amp;&amp;, S2, S3) ==&gt; P&gt;, &lt;S1 ==&gt; S2&gt;} |- &lt;(&amp;&amp;, S1, S3) ==&gt; P&gt;
+     * <br>
+     * {&lt;(&amp;&amp;, S1, S3) ==&gt; P&gt;, &lt;S1 ==&gt; S2&gt;} |- &lt;(&amp;&amp;, S2, S3) ==&gt; P&gt;
      *
      * @param premise1 The conditional premise
      * @param index The location of the shared term in the condition of premise1
@@ -649,15 +655,16 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {<(&&, S1, S2, S3) <=> P>, S1} |- <(&&, S2, S3) <=> P> {<(&&, S2, S3) <=> P>,
-     * <S1 ==> S2>} |- <(&&, S1, S3) <=> P> {<(&&, S1, S3) <=> P>, <S1 ==>
+     * {&lt;(&amp;&amp;, S1, S2, S3) &lt;=&gt; P&gt;, S1} |- &lt;(&amp;&amp;, S2, S3) &lt;=&gt; P&gt;
+     * <br>
+     * {&lt;(&amp;&amp;, S2, S3) &lt;=&gt; P&gt;, &lt;S1 ==&gt; S2&gt;} |- &lt;(&amp;&amp;, S1, S3) &lt;=&gt; P&gt;
+     * <br>
+     * {&lt;(&amp;&amp;, S1, S3) &lt;=&gt; P&gt;, &lt;S1 ==&gt;
      *
      * @param premise1 The equivalence premise
      * @param index The location of the shared term in the condition of premise1
-     * @param premise2 The premise which, or part of which, appears in the
-     * condition of premise1
-     * @param side The location of the shared term in premise2: 0 for subject, 1
-     * for predicate, -1 for the whole term
+     * @param premise2 The premise which, or part of which, appears in the condition of premise1
+     * @param side The location of the shared term in premise2: 0 for subject, 1 for predicate, -1 for the whole term
      * @param nal Reference to the memory
      */
     static void conditionalAna(Equivalence premise1, final short index, Term premise2, final int side, final DerivationContext nal) {
@@ -745,7 +752,7 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {<(&&, S2, S3) ==> P>, <(&&, S1, S3) ==> P>} |- <S1 ==> S2>
+     * {&lt;(&amp;&amp;, S2, S3) ==&gt; P&gt;, &lt;(&amp;&amp;, S1, S3) ==&gt; P&gt;} |- &lt;S1 ==&gt; S2&gt;
      *
      * @param cond1 The condition of the first premise
      * @param cond2 The condition of the second premise
@@ -829,7 +836,7 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {(&&, <#x() --> S>, <#x() --> P>>, <M --> P>} |- <M --> S>
+     * {(&amp;&amp;, &lt;#x() --&gt; S&gt;, &lt;#x() --&gt; P&gt;&gt;, &lt;M --&gt; P&gt;} |- &lt;M --&gt; S&gt;
      *
      * @param compound The compound term to be decomposed
      * @param component The part of the compound to be removed

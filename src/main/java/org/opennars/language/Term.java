@@ -249,17 +249,16 @@ public class Term implements AbstractTerm, Serializable {
     }
          
     /**
-     * The syntactic complexity, for constant atomic Term, is 1.
-     *
      * @return The complexity of the term, an integer
      */
+    // the syntactic complexity, for constant atomic Term, is 1
     public short getComplexity() {
         return 1;
     }
 
-    /** only method that should modify Term.name. also caches hashcode 
-     * @return whether the name was changed
+    /** set the name
      */
+    // only method that should modify Term.name
     protected void setName(final CharSequence newName) {
         this.name = newName;
     }
