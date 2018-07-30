@@ -327,11 +327,11 @@ public final class CompositionalRules {
     
     /* --------------- rules used for variable introduction --------------- */
     /**
-     * Introduce a dependent variable in an outer-layer conjunction {<S --> P1>,
-     * <S --> P2>} |- (&&, <#x --> P1>, <#x --> P2>)
+     * Introduce a dependent variable in an outer-layer conjunction {&lt;S --&gt; P1&gt;,
+     * &lt;S --&gt; P2&gt;} |- (&amp;&amp;, &lt;#x --&gt; P1&gt;, &lt;#x --&gt; P2&gt;)
      *
-     * @param taskContent The first premise <M --> S>
-     * @param beliefContent The second premise <M --> P>
+     * @param taskContent The first premise &lt;M --&gt; S&gt;
+     * @param beliefContent The second premise &lt;M --&gt; P&gt;
      * @param index The location of the shared term: 0 for subject, 1 for
      * predicate
      * @param nal Reference to the memory
@@ -518,8 +518,8 @@ public final class CompositionalRules {
     }
 
     /**
-     * {<M --> S>, <C ==> <M --> P>>} |- <(&&, <#x --> S>, C) ==> <#x --> P>>
-     * {<M --> S>, (&&, C, <M --> P>)} |- (&&, C, <<#x --> S> ==> <#x --> P>>)
+     * {&lt;M --&gt; S&gt;, &lt;C ==&gt; &lt;M --&gt; P&gt;&gt;} |- &lt;(&amp;&amp;, &lt;#x --&gt; S&gt;, C) ==&gt; &lt;#x --&gt; P&gt;&gt;
+     * {&lt;M --&gt; S&gt;, (&amp;&amp;, C, &ltM --&gt; P&gt;)} |- (&amp;&amp;, C, &lt;&lt;#x --&gt; S&gt; ==&gt; &lt;#x --&gt; P&gt;&gt;)
      *
      * @param oldCompound The whole contentInd of the first premise, Implication
      * or Conjunction

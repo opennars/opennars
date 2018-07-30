@@ -28,25 +28,25 @@
  *                         | &lt;variable&gt;
  *                         | &lt;compound-term&gt;
  *                         | &lt;statement&gt;
- *            &lt;relation&gt; ::= -->    // Inheritance
- *                         | <->    // Similarity
+ *            &lt;relation&gt; ::= --&gt;    // Inheritance
+ *                         | &lt;-&gt;    // Similarity
  *                         | {--    // Instance
  *                         | --]    // Property
  *                         | {-]    // InstanceProperty
- *                         | ==>    // Implication
- *                         | <=>    // Equivalence
+ *                         | ==&gt;    // Implication
+ *                         | &lt;=&gt;    // Equivalence
  *  &lt;compound-statement&gt; ::= (-- &lt;statement&gt;)                 // Negation
- *                         | (|| &lt;statement&gt; &lt;statement&gt;<sup>+</sup>)    // Disjunction
- *                         | (&& &lt;statement&gt; &lt;statement&gt;<sup>+</sup>)    // Conjunction
- *       &lt;compound-term&gt; ::= {&lt;term&gt;<sup>+</sup>}    // SetExt
- *                         | [&lt;term&gt;<sup>+</sup>]    // SetInt
- *                         | (& &lt;term&gt; &lt;term&gt;<sup>+</sup>)    // IntersectionExt
- *                         | (| &lt;term&gt; &lt;term&gt;<sup>+</sup>)    // IntersectionInt
+ *                         | (|| &lt;statement&gt; &lt;statement&gt;+)    // Disjunction
+ *                         | (&amp;&amp; &lt;statement&gt; &lt;statement&gt;+)    // Conjunction
+ *       &lt;compound-term&gt; ::= {&lt;term&gt;+}    // SetExt
+ *                         | [&lt;term&gt;+]    // SetInt
+ *                         | (&amp; &lt;term&gt; &lt;term&gt;+)    // IntersectionExt
+ *                         | (| &lt;term&gt; &lt;term&gt;+)    // IntersectionInt
  *                         | (- &lt;term&gt; &lt;term&gt;)     // DifferenceExt
  *                         | (~ &lt;term&gt; &lt;term&gt;)     // DifferenceInt
- *                         | (* &lt;term&gt; &lt;term&gt;<sup>+</sup>)    // Product
- *                         | (/ &lt;term&gt;<sup>+</sup> _ &lt;term&gt;<sup>*</sup>)    // ImageExt
- *                         | (\ &lt;term&gt;<sup>+</sup> _ &lt;term&gt;<sup>*</sup>)    // ImageInt
+ *                         | (* &lt;term&gt; &lt;term&gt;+)    // Product
+ *                         | (/ &lt;term&gt;+ _ &lt;term&gt;*)    // ImageExt
+ *                         | (\ &lt;term&gt;+ _ &lt;term&gt;*)    // ImageInt
  *            &lt;variable&gt; ::= &lt;independent-var&gt;
  *                         | &lt;dependent-var&gt;
  *                         | &lt;query-var&gt;

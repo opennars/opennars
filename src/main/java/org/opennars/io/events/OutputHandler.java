@@ -30,7 +30,7 @@ public abstract class OutputHandler extends EventHandler {
     /** conversational (judgments, questions, etc...) output */
     public interface OUT  { }
     
-    /** warnings, errors & exceptions */
+    /** warnings, errors &amp; exceptions */
     public interface ERR { }
     
     /** explicitly repeated input (repetition of the content of input ECHO commands) */

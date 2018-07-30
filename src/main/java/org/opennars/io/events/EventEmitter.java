@@ -97,7 +97,6 @@ public class EventEmitter {
     /**
      * @param event
      * @param o
-     * @return  whether it was removed
      */
     public void off(final Class<?> event, final EventObserver o) {
         if (null == event || null == o)

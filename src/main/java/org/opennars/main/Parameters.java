@@ -39,7 +39,7 @@ public class Parameters implements Serializable {
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered.
-     * Must be >=1.0, usually 1 .. 2, not changeable at runtime as evidence measurement would change
+     * Must be &gt;=1.0, usually 1 .. 2, not changeable at runtime as evidence measurement would change
      */
     public float HORIZON = 1;
 
@@ -111,10 +111,10 @@ public class Parameters implements Serializable {
     /** Size of Novel Task Buffer */
     public int NOVEL_TASK_BAG_SIZE = 100;
     public int NOVEL_TASK_BAG_LEVELS = 10;
-    /*  Size of derived sequence and input event bag */
+    /**  Size of derived sequence and input event bag */
     public int SEQUENCE_BAG_SIZE = 30;
     public int SEQUENCE_BAG_LEVELS = 10;
-    /*  Size of remembered last operation tasks */
+    /**  Size of remembered last operation tasks */
     public int OPERATION_BAG_SIZE = 10;
     public int OPERATION_BAG_LEVELS = 10;
     public volatile int OPERATION_SAMPLES = 6; //should be at least 2 to not only consider last decision
@@ -166,14 +166,14 @@ public class Parameters implements Serializable {
 
     //RUNTIME PERFORMANCE (should not affect logic): ----------------------------------
 
-    /**
+    /*
      * max length of a Term name for which it can be storedally via String.intern().
      * set to zero to disable this feature.
      * The problem with indiscriminate use of intern() is that interned strings can not be garbage collected (i.e. permgen) - possible a memory leak if terms disappear.
      */
     //public int INTERNED_TERM_NAME_MAXLEN = 0;
 
-    /**
+    /*
      * Determines when TermLink and TaskLink should use Rope implementation for its Key,
      * rather than String/StringBuilder.
      *
@@ -190,7 +190,7 @@ public class Parameters implements Serializable {
      * Optimal value to be determined.
      */
 
-    //whether eternalization should happen on every derivation
+    /** whether eternalization should happen on every derivation */
     public volatile boolean IMMEDIATE_ETERNALIZATION=true;
 
 
@@ -202,17 +202,26 @@ public class Parameters implements Serializable {
 
     public volatile float DERIVATION_DURABILITY_LEAK = 0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
 
-    public volatile float CURIOSITY_DESIRE_CONFIDENCE_MUL=0.1f; //how much risk is the system allowed to take just to fullfill its hunger for knowledge?
-    public volatile float CURIOSITY_DESIRE_PRIORITY_MUL=0.1f; //how much priority should curiosity have?
-    public volatile float CURIOSITY_DESIRE_DURABILITY_MUL=0.3f; //how much durability should curiosity have?
-    public volatile boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all <a =/> b> statement, so that a has to be an operator
+    /** how much risk is the system allowed to take just to fullfill its hunger for knowledge? */
+    public volatile float CURIOSITY_DESIRE_CONFIDENCE_MUL=0.1f;
+
+    /** how much priority should curiosity have? */
+    public volatile float CURIOSITY_DESIRE_PRIORITY_MUL=0.1f;
+
+    /** how much durability should curiosity have? */
+    public volatile float CURIOSITY_DESIRE_DURABILITY_MUL=0.3f;
+
+
+    public volatile boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all &lt;a =/&gt; b&gt; statement, so that a has to be an operator
 
     public volatile boolean BREAK_NAL_HOL_BOUNDARY=false;
 
     public volatile boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
+
     public volatile boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=false;
 
-    public volatile float ANTICIPATION_CONFIDENCE = 0.33f; //eternalized induction confidence to revise A =/> B beliefs
+    /** eternalized induction confidence to revise A =/&gt; B beliefs */
+    public volatile float ANTICIPATION_CONFIDENCE = 0.33f;
 
     public volatile float ANTICIPATION_TOLERANCE = 50.0f;
     
@@ -244,15 +253,15 @@ public class Parameters implements Serializable {
     public volatile float EVENT_FORGET_DURATIONS = 4.0f;
     
     
-    /* Default threads amount at startup */
+    /** Default threads amount at startup */
     public volatile int THREADS_AMOUNT = 1;
     
-    /* Default volume at startup */
+    /** Default volume at startup */
     public volatile int VOLUME = 0;
     
-    /* Default miliseconds per step at startup */
+    /** Default miliseconds per step at startup */
     public volatile int MILLISECONDS_PER_STEP = 0;
     
-    /* Timing mode, steps or real time */
+    /** Timing mode, steps or real time */
     public volatile boolean STEPS_CLOCK = true;
 }

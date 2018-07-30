@@ -33,15 +33,15 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
     /**
      * list of (direct) term
-     * TODO make final again
+     *
      */
+    // TODO make final again
     public final Term[] term;
     
     /**
-     * syntactic complexity of the compound, the sum of those of its term
- plus 1
-        TODO make final again
+     * syntactic complexity of the compound, the sum of those of its term plus 1
      */
+    // TODO make final again
     public short complexity;
     
     
@@ -54,20 +54,20 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
 
     /**
-     * Abstract method to get the operator of the compound
+     * method to get the operator of the compound
      */
     @Override public abstract NativeOperator operator();
 
     /**
-     * Abstract clone method
+     * clone method
      *
      * @return A clone of the compound term
      */
     @Override public abstract CompoundTerm clone();
 
     
-    /** subclasses should be sure to call init() in their constructors; it is not done here
-     to allow subclass constructors to set data before calling init() */
+    /** subclasses should be sure to call init() in their constructors;
+     * it is not done here to allow subclass constructors to set data before calling init() */
     public CompoundTerm(final Term[] components) {
         super();
         this.term = components;
@@ -544,11 +544,17 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
 
     /**
      * Check whether the compound contains a certain component
-     * Also matches variables, ex: (&&,<a --> b>,<b --> c>) also contains <a --> #1>
-     *  ^^^ is this right? if so then try containsVariablesAsWildcard
-     * 
+     * Also matches variables, ex: (&amp;&amp;,&lt;a --&gt; b&gt;,&lt;b --&gt; c&gt;) also contains &lt;a --&gt; #1&gt;
+     *
      * @param t The component to be checked
      * @return Whether the component is in the compound
+     */
+    /*
+     * extra comment because it is a Implementation detail - question:
+     *
+     * Check whether the compound contains a certain component
+     * Also matches variables, ex: (&amp;&amp;,&lt;a --&gt; b&gt;,&lt;b --&gt; c&gt;) also contains &lt;a --&gt; #1&gt;
+     *  ^^^ is this right? if so then try containsVariablesAsWildcard
      */
     @Override
     public boolean containsTerm(final Term t) {        
