@@ -52,6 +52,9 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     
     private Parameters narParameters;
 
+    /**
+     * @param narParameters parameters of the reasoner
+     */
     public TruthValue(Parameters narParameters) {
         this(0,0, narParameters);
     }
@@ -61,6 +64,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      *
      * @param f The frequency value
      * @param c The confidence value
+     * @param narParameters parameters of the reasoner
      */
     public TruthValue(final float f, final float c, Parameters narParameters) {
         this(f, c, false, narParameters);
@@ -71,13 +75,14 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
      *
      * @param f The frequency value
      * @param c The confidence value
-     *
+     * @param isAnalytic is the truth value an analytic one?
+     * @param narParameters parameters of the reasoner
      */
-    public TruthValue(final float f, final float c, final boolean b, Parameters narParameters) {
+    public TruthValue(final float f, final float c, final boolean isAnalytic, Parameters narParameters) {
         this.narParameters = narParameters;
         setFrequency(f);                
         setConfidence(c);        
-        setAnalytic(b);
+        setAnalytic(isAnalytic);
     }
 
     /**
@@ -124,16 +129,14 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     }
     
     /**
-     * Get the isAnalytic flag
-     *
-     * @return The isAnalytic value
+     * @return is it a analytic truth value?
      */
     public boolean getAnalytic() {
         return analytic;
     }
 
     /**
-     * Set the isAnalytic flag
+     * Set it to analytic truth
      */
     public void setAnalytic() {
         analytic = true;
@@ -162,7 +165,7 @@ public class TruthValue implements Cloneable, Serializable { // implements Clone
     /**
      * Check if the truth value is negative
      *
-     * @return True if the frequence is less than 1/2
+     * @return True if the frequency is less than 1/2
      */
     public boolean isNegative() {
         return getFrequency() < 0.5;

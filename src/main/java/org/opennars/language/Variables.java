@@ -333,9 +333,9 @@ public class Variables {
      * To unify two terms
      *
      * @param type The type of variable that can be substituted
-     * @param compound1 The compound containing the first term, possibly modified
-     * @param compound2 The compound containing the second term, possibly modified
-     * @param t The first and second term as an array, which will have been modified upon returning true
+     * @param t1 The compound containing the first term, possibly modified
+     * @param t2 The compound containing the second term, possibly modified
+     * @param compound The first and second term as an array, which will have been modified upon returning true
      * @return Whether the unification is possible.  't' will refer to the unified terms
      */
     public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound) { 
