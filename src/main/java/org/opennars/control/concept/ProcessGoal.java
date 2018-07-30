@@ -58,7 +58,6 @@ public class ProcessGoal {
      * @param concept The concept of the goal
      * @param nal The derivation context
      * @param task The goal task to be processed
-     * @return Whether to continue the processing of the task
      */
     protected static void processGoal(final Concept concept, final DerivationContext nal, final Task task) {
         final Sentence goal = task.sentence;

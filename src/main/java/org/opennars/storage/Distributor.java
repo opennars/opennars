@@ -39,7 +39,7 @@ public final class Distributor {
     }
     
     /**
-     * For any number N < range, there is N+1 copies of it in the array, distributed as evenly as possible
+     * For any number N &lt; range, there is N+1 copies of it in the array, distributed as evenly as possible
      * @param range Range of valid numbers
      */
     protected Distributor(final int range) {
