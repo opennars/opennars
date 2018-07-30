@@ -32,21 +32,19 @@ import static org.opennars.io.Texts.unescape;
 
 /**
  * Parses an expression string to terms
- * @see https://github.com/encog/encog-java-core/blob/master/src/test/java/org/encog/ml/prg/TestProgramClone.java
+ * @see <a href="https://github.com/encog/encog-java-core/blob/master/src/test/java/org/encog/ml/prg/TestProgramClone.java"></a>
  */
 public class MathExpression  extends FunctionOperator {
 
     static EncogProgramContext context;
 
-    
-    public MathExpression() {
-        super("^math");
-    }
-
     final static String requireMessage = "Requires 1 string argument";
     
     final static Term exp = Term.get("math");
-    
+
+    public MathExpression() {
+        super("^math");
+    }
     
     @Override
     protected Term function(final Memory memory, final Term[] x) {

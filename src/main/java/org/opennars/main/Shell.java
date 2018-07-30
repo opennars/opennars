@@ -27,11 +27,11 @@ import java.util.logging.Logger;
 /**
  * Run Reasoner
  * <p>
- Runs a Nar with addInput. useful for command line or batch functionality;
- TODO check duplicated code with {@link org.opennars.main.NARS}
+ * Runs a Nar with addInput. Useful for command line or batch functionality.
  * <p>
  * Manage the internal working thread. Communicate with Reasoner only.
  */
+/* TODO check duplicated code with {@link org.opennars.main.Nar} */
 public class Shell {
 
     private final Nar nar;
