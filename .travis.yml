@@ -18,7 +18,7 @@ after_success:
   - java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r target/site/jacoco/jacoco.xml
 
 install:
-  - mvn --settings .travis/settings.xml install -DskipTests=true -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
+  - mvn --settings .travis/settings.xml install -DskipTests=true -Dgpg.skip -B -V
   
 deploy:
   -
