@@ -149,6 +149,7 @@ public class Narsese implements Serializable {
      *
      * @param s the addInput in a StringBuilder
      * @return a String containing a BudgetValue
+     *
      * @throws InvalidInputException if the addInput cannot be parsed into a BudgetValue
      */
     private static String getBudgetString(final StringBuilder s) throws InvalidInputException {
@@ -172,6 +173,7 @@ public class Narsese implements Serializable {
      *
      * @return a String containing a TruthValue
      * @param s the addInput in a StringBuilder
+     *
      * @throws InvalidInputException if the addInput cannot be parsed into a TruthValue
      */
     private static String getTruthString(final StringBuilder s) throws InvalidInputException {
@@ -286,16 +288,17 @@ public class Narsese implements Serializable {
     
     /* ---------- react String into term ---------- */
     /**
-     * Top-level method that react a Term in general, which may recursively call
- itself.
+     * Top-level method that react a Term in general, which may recursively call itself.
      * <p>
- There are 5 valid cases: 1. (Op, A1, ..., An) is a CompoundTerm if Op is
- a built-in getOperator 2. {A1, ..., An} is an SetExt; 3. [A1, ..., An] is an
- SetInt; 4. <T1 Re T2> is a Statement (including higher-order Statement);
+     * There are 5 valid cases: 1. (Op, A1, ..., An) is a CompoundTerm if Op is
+     * a built-in getOperator 2. {A1, ..., An} is an SetExt; 3. [A1, ..., An] is an
+     * SetInt; 4. &lt;T1 Re T2&gt; is a Statement (including higher-order Statement);
      * 5. otherwise it is a simple term.
      *
      * @param s the String to be parsed
      * @return the Term generated from the String
+     *
+     * @throws InvalidInputException if the String couldn't get parsed to a term
      */
     public Term parseTerm(String s) throws InvalidInputException {
         s = s.trim();
@@ -384,13 +387,14 @@ public class Narsese implements Serializable {
 //				40000, TemporaryFrame.WARNING );
 //    }
     /**
-     * Parse a Term that has no internal structure.
+     * Parse a term that has no internal structure.
      * <p>
-     * The Term can be a constant or a variable.
+     * The term can be a constant or a variable.
      *
      * @param s0 the String to be parsed
-     * @throws InvalidInputException the String cannot be parsed into a Term
      * @return the Term generated from the String
+     *
+     * @throws InvalidInputException if the String couldn't get parsed to a term
      */
     private Term parseAtomicTerm(final String s0) throws InvalidInputException {
         final String s = s0.trim();
@@ -420,11 +424,12 @@ public class Narsese implements Serializable {
     }
 
     /**
-     * Parse a String to create a Statement.
+     * Parse a string to create a statement.
      *
-     * @return the Statement generated from the String
+     * @return the statement generated from the string
      * @param s0 The addInput String to be parsed
-     * @throws InvalidInputException the String cannot be parsed into a Term
+     *
+     * @throws InvalidInputException if the String couldn't get parsed to a term
      */
     private Statement parseStatement(final String s0) throws InvalidInputException {
         final String s = s0.trim();
@@ -447,7 +452,8 @@ public class Narsese implements Serializable {
      *
      * @return the Term generated from the String
      * @param s0 The String to be parsed
-     * @throws InvalidInputException the String cannot be parsed into a Term
+     *
+     * @throws InvalidInputException if the String couldn't get parsed to a term
      */
     private Term parseCompoundTerm(final String s0) throws InvalidInputException {
         final String s = s0.trim();
@@ -492,7 +498,8 @@ public class Narsese implements Serializable {
      *
      * @return the arguments in an List
      * @param s0 The String to be parsed
-     * @throws InvalidInputException the String cannot be parsed into an argument get
+     *
+     * @throws InvalidInputException if the String couldn't get parsed to a term
      */
     private List<Term> parseArguments(final String s0) throws InvalidInputException {
         final String s = s0.trim();
@@ -598,9 +605,11 @@ public class Narsese implements Serializable {
         return i < 2 || !isRelation(s.substring(i - 2, i + 1));
     }
 
+    /**
+     * @param s string to get checked if it may be narsese
+     * @return returns if the string may be narsese
+     */
     public static boolean possiblyNarsese(final String s) {
         return !s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">");
     }
-            
-    
 }

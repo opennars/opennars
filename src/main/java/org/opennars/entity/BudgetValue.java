@@ -215,15 +215,14 @@ public class BudgetValue implements Cloneable, Serializable {
     }
     
     /**
-     * returns true if this budget is greater in all quantities than another budget,
-     * used to prevent a merge that would have no consequence
-     * @param other
-     * @return 
+     * @param rhs compared truth value
+     * @return if this budget is greater in all quantities than another budget,
      */
-    public boolean greaterThan(final BudgetValue other) {
-        return (getPriority() - other.getPriority() > this.narParameters.BUDGET_THRESHOLD) &&
-                (getDurability()- other.getDurability()> this.narParameters.BUDGET_THRESHOLD) &&
-                (getQuality() - other.getQuality() > this.narParameters.BUDGET_THRESHOLD);
+    // used to prevent a merge that would have no consequence
+    public boolean greaterThan(final BudgetValue rhs) {
+        return (getPriority() - rhs.getPriority() > this.narParameters.BUDGET_THRESHOLD) &&
+                (getDurability()- rhs.getDurability()> this.narParameters.BUDGET_THRESHOLD) &&
+                (getQuality() - rhs.getQuality() > this.narParameters.BUDGET_THRESHOLD);
     }
 
     
