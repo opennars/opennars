@@ -29,3 +29,11 @@ deploy:
       repo: opennars/opennars
       branch: master
       jdk: oraclejdk8
+  -
+    provider: script
+    script: .travis/deploy.sh
+    skip_cleanup: true
+    on:
+      repo: opennars/opennar
+      tags: true
+      jdk: oraclejdk8
