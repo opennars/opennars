@@ -5,7 +5,7 @@ import org.opennars.entity.Concept;
 import org.opennars.entity.Task;
 
 /**
- * Used to override the (internal) question processing
+ * Used to implement the (internal) question processing
  */
 public interface ProcessQuestion extends Process {
     /*
