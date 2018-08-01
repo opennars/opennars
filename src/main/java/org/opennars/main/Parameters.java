@@ -14,6 +14,8 @@
  */
 package org.opennars.main;
 
+import java.io.Serializable;
+
 import org.opennars.control.concept.DefaultProcessGoal;
 import org.opennars.control.concept.DefaultProcessJudgment;
 import org.opennars.control.concept.DefaultProcessQuestion;
