@@ -74,11 +74,12 @@ public class ProcessGoal {
         Task beliefT = null;
         if(task.aboveThreshold()) {
             beliefT = concept.selectCandidate(task, concept.beliefs, nal.time); // check if the Goal is already satisfied
-            for (final Task iQuest : concept.quests ) {
-                trySolution(task.sentence, iQuest, nal, true);
-            }
             if (beliefT != null) { 
                 trySolution(beliefT.sentence, task, nal, true); // check if the Goal is already satisfied (manipulate budget)
+            }
+
+            for (final Task iQuest : concept.quests ) {
+                trySolution(task.sentence, iQuest, nal, true);
             }
         }
         if (oldGoalT != null) {
