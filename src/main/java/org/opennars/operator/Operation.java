@@ -61,20 +61,6 @@ public class Operation extends Inheritance {
      * @return A compound generated or null
      */
     public static Operation make(final Operator oper, final Term[] arg, final boolean addSelf) {
-
-//        if (Variables.containVar(arg)) {
-//            throw new IllegalStateException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
-//        }
-        /*//new cleaner  policy: should be added by the example already
-        if(addSelf && !Term.isSelf(arg[arg.length-1])) {
-            Term[] arg2=new Term[arg.length+1];
-            for(int i=0;i<arg.length;i++) {
-                arg2[i]=arg[i];
-            }
-            arg2[arg.length] = Term.SELF;
-            arg=arg2;
-        }*/
-        
         return new Operation( new Product(arg), oper  );        
     }
 
@@ -96,9 +82,6 @@ public class Operation extends Inheritance {
         
         int n=0;
         for (final Term t : arg) {
-            /*if(n==arg.length-1) {
-                break;
-            }*/
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             nameBuilder.append(t.name());
             n++;
