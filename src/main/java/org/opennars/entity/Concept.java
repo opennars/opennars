@@ -176,17 +176,17 @@ public class Concept extends Item<Term> implements Serializable {
      * @param task The task to be linked
      * @param content The content of the task
      */
-    public void linkToTask(final Task task, final DerivationContext content) {
+    public TaskLink linkToTask(final Task task, final DerivationContext content) {
         final BudgetValue taskBudget = task.budget;
 
-        insertTaskLink(new TaskLink(task, null, taskBudget,
-            content.narParameters.TERM_LINK_RECORD_LENGTH), content);  // link type: SELF
+        TaskLink retLink = new TaskLink(task, null, taskBudget, content.narParameters.TERM_LINK_RECORD_LENGTH);
+        insertTaskLink(retLink, content);  // link type: SELF
 
         if (!(term instanceof CompoundTerm)) {
-            return;
+            return retLink;
         }
         if (termLinkTemplates.isEmpty()) {
-            return;
+            return retLink;
         }
                 
         final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size(), content.narParameters);
@@ -209,6 +209,7 @@ public class Concept extends Item<Term> implements Serializable {
 
             buildTermLinks(taskBudget, content.narParameters);  // recursively insert TermLink
         }
+        return retLink;
     }
 
     /**
@@ -442,7 +443,7 @@ public class Concept extends Item<Term> implements Serializable {
         return new StringBuilder(2 + title.length() + itemString.length() + 1).
                 append(" ").append(title).append(':').append(itemString).toString();
     }
-
+    
     /**
      * Recalculate the quality of the concept [to be refined to show
      * extension/intension balance]
