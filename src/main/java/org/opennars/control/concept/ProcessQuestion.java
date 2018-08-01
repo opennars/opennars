@@ -25,6 +25,7 @@ import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.Term;
 import org.opennars.language.Variables;
+import org.opennars.util.ListUtil;
 
 /**
  *
@@ -43,11 +44,11 @@ public class ProcessQuestion {
             questions = concept.quests;
         }
         if(task.sentence.isEternal()) {
-            for (final Task t : questions) {
-                if (t.sentence.isEternal()) { //one eternal question suffices, so add the existing one
-                    quesTask = t;
-                    break;
-                }
+            final Task eternalQuestionTask = ListUtil.findAny(questions, iQuestionTask -> iQuestionTask.sentence.isEternal());
+
+            // we can override the question task with the eternal question task if any was found
+            if(eternalQuestionTask!=null) {
+                quesTask = eternalQuestionTask;
             }
         }
         if (questions.size() + 1 > concept.memory.narParameters.CONCEPT_QUESTIONS_MAX) {
