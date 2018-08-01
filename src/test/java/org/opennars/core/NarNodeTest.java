@@ -65,5 +65,7 @@ public class NarNodeTest {
             }
         }
         assert(true);
+        nar1.nar.stop();
+        nar2.nar.stop();
     }
 }
