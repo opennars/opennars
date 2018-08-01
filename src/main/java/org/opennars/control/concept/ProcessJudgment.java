@@ -37,6 +37,7 @@ import org.opennars.operator.mental.Believe;
 import org.opennars.operator.mental.Evaluate;
 import org.opennars.operator.mental.Want;
 import org.opennars.operator.mental.Wonder;
+import org.opennars.util.ListUtil;
 
 public class ProcessJudgment {
     /**
@@ -164,21 +165,14 @@ public class ProcessJudgment {
      */
     protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept concept) {
         final Concept target_concept = nal.memory.concept(((Implication)task.getTerm()).getPredicate());
-        //we do not add the target, instead the strongest belief in the target concept
-        if (concept.beliefs.isEmpty()) {
-            return;
-        }
-        Task strongest_target = null;
-        //get the first eternal. the highest confident one (due to the sorted order):
-        for(final Task t : concept.beliefs) {
-            if(t.sentence.isEternal()) {
-                strongest_target = t;
-                break;
-            }
-        }
+        // we do not add the target, instead the strongest belief in the target concept
+
+        // get the first eternal. the highest confident one (due to the sorted order):
+        Task strongest_target = ListUtil.findAny(concept.beliefs, iTask -> iTask.sentence.isEternal());
         if (strongest_target == null) {
             return;
         }
+
         synchronized(target_concept) {
             //at first we have to remove the last one with same content from table
             int i_delete = -1;
