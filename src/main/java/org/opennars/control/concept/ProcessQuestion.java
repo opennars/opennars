@@ -15,11 +15,15 @@
 package org.opennars.control.concept;
 
 import java.util.List;
+
+import com.google.common.base.Optional;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
 import org.opennars.entity.TaskLink;
+
+import static com.google.common.collect.Iterables.tryFind;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
@@ -43,11 +47,11 @@ public class ProcessQuestion {
             questions = concept.quests;
         }
         if(task.sentence.isEternal()) {
-            for (final Task t : questions) {
-                if (t.sentence.isEternal()) { //one eternal question suffices, so add the existing one
-                    quesTask = t;
-                    break;
-                }
+            final Optional<Task> eternalQuestionTask = tryFind(questions, iQuestionTask -> iQuestionTask.sentence.isEternal());
+
+            // we can override the question task with the eternal question task if any was found
+            if(eternalQuestionTask.isPresent()) {
+                quesTask = eternalQuestionTask.get();
             }
         }
         if (questions.size() + 1 > concept.memory.narParameters.CONCEPT_QUESTIONS_MAX) {

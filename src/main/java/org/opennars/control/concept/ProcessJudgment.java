@@ -14,15 +14,19 @@
  */
 package org.opennars.control.concept;
 
+import com.google.common.base.Optional;
 import org.opennars.control.DerivationContext;
 import org.opennars.control.TemporalInferenceControl;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
+
+import static com.google.common.collect.Iterables.tryFind;
 import static org.opennars.inference.LocalRules.revisible;
 import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
+
 import org.opennars.inference.TemporalRules;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
@@ -164,27 +168,20 @@ public class ProcessJudgment {
      */
     protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept concept) {
         final Concept target_concept = nal.memory.concept(((Implication)task.getTerm()).getPredicate());
-        //we do not add the target, instead the strongest belief in the target concept
-        if (concept.beliefs.isEmpty()) {
+        // we do not add the target, instead the strongest belief in the target concept
+
+        // get the first eternal. the highest confident one (due to the sorted order):
+        Optional<Task> strongest_target = tryFind(concept.beliefs, iTask -> iTask.sentence.isEternal());
+        if (!strongest_target.isPresent()) {
             return;
         }
-        Task strongest_target = null;
-        //get the first eternal. the highest confident one (due to the sorted order):
-        for(final Task t : concept.beliefs) {
-            if(t.sentence.isEternal()) {
-                strongest_target = t;
-                break;
-            }
-        }
-        if (strongest_target == null) {
-            return;
-        }
+
         synchronized(target_concept) {
             //at first we have to remove the last one with same content from table
             int i_delete = -1;
             for(int i=0; i < target_concept.executable_preconditions.size(); i++) {
                 if(CompoundTerm.replaceIntervals(target_concept.executable_preconditions.get(i).getTerm()).equals(
-                        CompoundTerm.replaceIntervals(strongest_target.getTerm()))) {
+                        CompoundTerm.replaceIntervals(strongest_target.get().getTerm()))) {
                     i_delete = i; //even these with same term but different intervals are removed here
                     break;
                 }
@@ -192,14 +189,14 @@ public class ProcessJudgment {
             if(i_delete != -1) {
                 target_concept.executable_preconditions.remove(i_delete);
             }
-            final Term[] prec = ((Conjunction) ((Implication) strongest_target.getTerm()).getSubject()).term;
+            final Term[] prec = ((Conjunction) ((Implication) strongest_target.get().getTerm()).getSubject()).term;
             for (int i = 0; i<prec.length-2; i++) {
                 if (prec[i] instanceof Operation) { //don't react to precondition with an operation before the last
                     return; //for now, these can be decomposed into smaller such statements anyway
                 }
             }
             //this way the strongest confident result of this content is put into table but the table ranked according to truth expectation
-            target_concept.addToTable(strongest_target, true, target_concept.executable_preconditions, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
+            target_concept.addToTable(strongest_target.get(), true, target_concept.executable_preconditions, target_concept.memory.narParameters.CONCEPT_BELIEFS_MAX, Events.EnactableExplainationAdd.class, Events.EnactableExplainationRemove.class);
         }
     }
 }
