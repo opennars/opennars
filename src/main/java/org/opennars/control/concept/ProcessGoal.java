@@ -125,7 +125,7 @@ public class ProcessGoal {
 
         if (!task.aboveThreshold()) {
             return;
-        }
+        } 
 
         double AntiSatisfaction = 0.5f; // we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
         if (beliefT != null) {
