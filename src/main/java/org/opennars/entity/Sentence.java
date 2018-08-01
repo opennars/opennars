@@ -283,7 +283,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     /**
      * To produce the hashcode of a sentence
      *
-     * @return A hashcode
+     * @return a hashcode
      */
     @Override
     public int hashCode() {
@@ -293,7 +293,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     /**
      * Clone the Sentence
      *
-     * @return The clone
+     * @return The cloned Sentence
      */
     @Override
     public Sentence clone() {
@@ -309,7 +309,12 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         return clon;
     }
 
-    /** Clone with a different Term */    
+    /**
+     * clone with a different term
+     *
+     * @param t term which has to get cloned
+     * @return sentence with the cloned term as a property
+     */
     public final Sentence clone(final Term t) {
         return new Sentence(
             t,
@@ -363,39 +368,35 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     }
 
     /**
-     * Recognize a Judgment
-     * @return Whether the object is a Judgment
+     * @return property, whether the object is a judgment
      */
     public boolean isJudgment() {
         return (punctuation == Symbols.JUDGMENT_MARK);
     }
     
     /**
-     * Recognize a Question
-     * @return Whether the object is a Question
+     * @return property, whether the object is a question
      */
     public boolean isQuestion() {
         return (punctuation == Symbols.QUESTION_MARK);
     }
     
     /**
-     * Recognize a Goal
-     * @return Whether the object is a Goal
+     * @return property, whether the sentence is a goal
      */
     public boolean isGoal() {
         return (punctuation == Symbols.GOAL_MARK);
     }
     
     /**
-     * Recognize a Quest
-     * @return Whether the object is a Quest
+     * @return property, whether the sentence is a quest
      */
     public boolean isQuest() {
         return (punctuation == Symbols.QUEST_MARK);
     }    
 
     /**
-     * Revisible?
+     * @return property of the ability to revise the sentence
      */
     public boolean getRevisible() {
         return revisible;
@@ -470,9 +471,9 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     }
 
     /**
-     * Get a String representation of the sentence for display purpose
-     *
-     * @return The String
+     * @param nar Reasoner instance
+     * @param showStamp must the stamp get appended to the string?
+     * @return textural representation of the sentence for humans
      */
     public CharSequence toString(final Nar nar, final boolean showStamp) {
     
@@ -538,22 +539,33 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
     
    
     /**
-     * Get the truth value (or desire value) of the sentence
+     * discounts the truth value of the sentence
      *
-     * @return Truth value, null for question
      */
     public void discountConfidence(Parameters narParameters) {
         truth.setConfidence(truth.getConfidence() * narParameters.DISCOUNT_RATE).setAnalytic(false);
     }
 
+    /**
+     *
+     * @return classification if the sentence is true for ever
+     */
     public boolean isEternal() {
         return stamp.isEternal();
     }
-    
+
+    /**
+     *
+     * @return term of the sentence, terms are properties of sentences
+     */
     public T getTerm() {
         return term;
     }
 
+    /**
+     *
+     * @return truth of the sentence, truths are properties of sentences
+     */
     public TruthValue getTruth() {
         return truth;
     }

@@ -209,7 +209,7 @@ public class Variable extends Term {
         return String.valueOf(this.getScope().name).compareTo(String.valueOf(thatVar.getScope().name));
     }
 
-    /**
+    /*
      * variable terms are listed first alphabetically
      *
      * @param that The Term to be compared with the current Term
@@ -304,7 +304,5 @@ public class Variable extends Term {
             cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
         } while (index != 0);
         return cb.compact().toString();
-
     }
-    
 }

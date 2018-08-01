@@ -82,6 +82,7 @@ public class UtilityFunctions {
     /**
      * A function to convert weight to confidence
      * @param w Weight of evidence, a non-negative real number
+     * @param narParameters parameters of the reasoner
      * @return The corresponding confidence, in [0, 1)
      */
     public final static float w2c(final float w, Parameters narParameters) {
@@ -91,6 +92,7 @@ public class UtilityFunctions {
     /**
      * A function to convert confidence to weight
      * @param c confidence, in [0, 1)
+     * @param narParameters parameters of the reasoner
      * @return The corresponding weight of evidence, a non-negative real number
      */
     public final static float c2w(final float c, Parameters narParameters) {

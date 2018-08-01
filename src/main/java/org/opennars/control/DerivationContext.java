@@ -330,10 +330,12 @@ public class DerivationContext {
         this.currentConcept = currentConcept;
     }
 
-    /**
-     * @return the newStamp
-     */
+
     private long original_time = 0;
+
+    /**
+     * @return the created stamp
+     */
     public Stamp getTheNewStamp() {
         if (newStamp == null) {
             //if newStamp==null then newStampBuilder must be available. cache it's return value as newStamp

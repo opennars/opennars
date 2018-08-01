@@ -21,7 +21,7 @@ import java.util.Arrays;
 /**
  * An extension image.
  * <p>
- * B --> (/,P,A,_)) iff (*,A,B) --> P
+ * B --&gt; (/,P,A,_)) iff (*,A,B) --$gt; P
  * <p>
  * Internally, it is actually (/,A,P)_1, with an index.
  */

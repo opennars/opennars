@@ -58,7 +58,6 @@ public class ProcessGoal {
      * @param concept The concept of the goal
      * @param nal The derivation context
      * @param task The goal task to be processed
-     * @return Whether to continue the processing of the task
      */
     protected static void processGoal(final Concept concept, final DerivationContext nal, final Task task) {
         final Sentence goal = task.sentence;
@@ -171,9 +170,10 @@ public class ProcessGoal {
     }
     
     /**
-     * Generate <?how =/> g>? question for g! goal.
+     * Generate &lt;?how =/&gt; g&gt;? question for g! goal.
      * only called by processGoal
      *
+     * @param task the task for which the question should be processed
      * @param nal The derivation context
      */    
     public static void questionFromGoal(final Task task, final DerivationContext nal) {

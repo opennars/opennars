@@ -52,17 +52,23 @@ public class Reflect extends FunctionOperator {
 
 
     /**
-     * <(*,subject,object) --> predicate>
+     * &lt;(*,subject,object) --&gt; predicate&gt;
+     * @param subject the subject of the relation
+     * @param object the object for the relation
+     * @param predicate the predicate of the relation
      */
     public static Term sop(final Term subject, final Term object, final Term predicate) {
         return Inheritance.make(Product.make(getMetaTerm(subject),getMetaTerm(object)), predicate);
     }
+
     public static Term sop(final Statement s, final String operatorName) {
         return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), Term.get(operatorName));
     }
+
     public static Term sop(final Statement s, final Term predicate) {
         return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), predicate);
     }
+
     public static Term sop(final String operatorName, final Term... t) {
         final Term[] m = new Term[t.length];
         int i = 0;

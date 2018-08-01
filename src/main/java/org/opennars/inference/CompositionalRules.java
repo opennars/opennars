@@ -36,9 +36,8 @@ public final class CompositionalRules {
 
     /* -------------------- intersections and differences -------------------- */
     /**
-     * {<S ==> M>, <P ==> M>} |- {<(S|P) ==> M>, <(S&P) ==> M>, <(S-P) ==>
-     * M>,
-     * <(P-S) ==> M>}
+     * {&lt;S ==&gt; M&gt;, &lt;P ==&gt; M&gt;} |- <br>
+     * {&lt;(S|P) ==&gt; M&gt;, &lt;(S&amp;P) ==&gt; M&gt;, &lt;(S-P) ==&gt; M&gt;, &lt;(P-S) ==&gt; M&gt;}
      *
      * @param taskContent The first premise
      * @param beliefContent The second premise
@@ -143,11 +142,10 @@ public final class CompositionalRules {
     }
 
     /**
-     * {<(S|P) ==> M>, <P ==> M>} |- <S ==> M>
+     * {&lt;(S|P) ==&gt; M&gt;, &lt;P ==&gt; M&gt;} |- &lt;S ==&gt; M&gt;
      *
      * @param term1 The other term in the contentInd
-     * @param index The location of the shared term: 0 for subject, 1 for
-     * predicate
+     * @param index The location of the shared term: 0 for subject, 1 for predicate
      * @param compoundTask Whether the implication comes from the task
      * @param nal Reference to the memory
      */
@@ -241,7 +239,7 @@ public final class CompositionalRules {
     }
 
     /**
-     * {(||, S, P), P} |- S {(&&, S, P), P} |- S
+     * {(||, S, P), P} |- S {(&amp;&amp;, S, P), P} |- S
      *
      * @param compoundTask Whether the implication comes from the task
      * @param nal Reference to the memory
@@ -327,11 +325,12 @@ public final class CompositionalRules {
     
     /* --------------- rules used for variable introduction --------------- */
     /**
-     * Introduce a dependent variable in an outer-layer conjunction {<S --> P1>,
-     * <S --> P2>} |- (&&, <#x --> P1>, <#x --> P2>)
+     * Introduce a dependent variable in an outer-layer conjunction
+     * <br>
+     * {&lt;S --&gt; P1&gt;, &lt;S --&gt; P2&gt;} |- (&amp;&amp;, &lt;#x --&gt; P1&gt;, &lt;#x --&gt; P2&gt;)
      *
-     * @param taskContent The first premise <M --> S>
-     * @param beliefContent The second premise <M --> P>
+     * @param taskContent The first premise &lt;M --&gt; S&gt;
+     * @param beliefContent The second premise &lt;M --&gt; P&gt;
      * @param index The location of the shared term: 0 for subject, 1 for
      * predicate
      * @param nal Reference to the memory
@@ -518,8 +517,9 @@ public final class CompositionalRules {
     }
 
     /**
-     * {<M --> S>, <C ==> <M --> P>>} |- <(&&, <#x --> S>, C) ==> <#x --> P>>
-     * {<M --> S>, (&&, C, <M --> P>)} |- (&&, C, <<#x --> S> ==> <#x --> P>>)
+     * {&lt;M --&gt; S&gt;, &lt;C ==&gt; &lt;M --&gt; P&gt;&gt;} |- &lt;(&amp;&amp;, &lt;#x --&gt; S&gt;, C) ==&gt; &lt;#x --&gt; P&gt;&gt;
+     * <br>
+     * {&lt;M --&gt; S&gt;, (&amp;&amp;, C, &lt;M --&gt; P&gt;)} |- (&amp;&amp;, C, &lt;&lt;#x --&gt; S&gt; ==&gt; &lt;#x --&gt; P&gt;&gt;)
      *
      * @param oldCompound The whole contentInd of the first premise, Implication
      * or Conjunction
@@ -642,12 +642,12 @@ public final class CompositionalRules {
     }
 
     /*
-    The other inversion (abduction) should also be studied:
- IN: <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>.
- IN: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
-OUT: <lock1 --> lock>.
-    http://code.google.com/p/open-nars/issues/detail?id=40&can=1
-    */
+     * The other inversion (abduction) should also be studied:
+     * IN: <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>.
+     * IN: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
+     * OUT: <lock1 --> lock>.
+     * http://code.google.com/p/open-nars/issues/detail?id=40&can=1
+     */
     public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final DerivationContext nal) {
         Statement T1 = (Statement) sentence.term;
         Statement T2 = (Statement) belief.term;

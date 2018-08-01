@@ -35,31 +35,29 @@ public class ProcessQuestion {
      * To answer a question by existing beliefs
      *
      * @param task The task to be processed
-     * @return Whether to continue the processing of the task
      */
     protected static void processQuestion(final Concept concept, final DerivationContext nal, final Task task) {
         Task quesTask = task;
-        boolean newQuestion = true;
         List<Task> questions = concept.questions;
         if(task.sentence.punctuation == Symbols.QUEST_MARK) {
             questions = concept.quests;
         }
-        for (final Task t : questions) {
-            if (t.sentence.term.equals(quesTask.sentence.term)) {
-                quesTask = t;
-                newQuestion = false;
-                break;
+        if(task.sentence.isEternal()) {
+            for (final Task t : questions) {
+                if (t.sentence.isEternal()) { //one eternal question suffices, so add the existing one
+                    quesTask = t;
+                    break;
+                }
             }
         }
-        if (newQuestion) {
-            if (questions.size() + 1 > concept.memory.narParameters.CONCEPT_QUESTIONS_MAX) {
-                final Task removed = questions.remove(0);    // FIFO
-                concept.memory.event.emit(Events.ConceptQuestionRemove.class, concept, removed);
-            }
+        if (questions.size() + 1 > concept.memory.narParameters.CONCEPT_QUESTIONS_MAX) {
+            final Task removed = questions.remove(0);    // FIFO
+            concept.memory.event.emit(Events.ConceptQuestionRemove.class, concept, removed);
+        }
 
-            questions.add(task);
-            concept.memory.event.emit(Events.ConceptQuestionAdd.class, concept, task);
-        }
+        questions.add(quesTask);
+        concept.memory.event.emit(Events.ConceptQuestionAdd.class, concept, task);
+            
         final Sentence ques = quesTask.sentence;
         final Task newAnswerT = (ques.isQuestion())
                 ? concept.selectCandidate(quesTask, concept.beliefs, nal.time)
@@ -79,7 +77,7 @@ public class ProcessQuestion {
      * called only in GeneralInferenceControl.insertTaskLink on concept selection
      * 
      * @param concept The concept which potentially outdated anticipations should be processed
-     * @paramt t The belief task
+     * @param ques The belief task
      * @param nal The derivation context
      */
     public static void ProcessWhatQuestion(final Concept concept, final Task ques, final DerivationContext nal) {
@@ -115,7 +113,7 @@ public class ProcessQuestion {
      * called only in GeneralInferenceControl.insertTaskLink on concept selection
      * 
      * @param concept The concept which potentially outdated anticipations should be processed
-     * @paramt t The belief task
+     * @param t The belief task
      * @param nal The derivation context
      */
     public static void ProcessWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal) {

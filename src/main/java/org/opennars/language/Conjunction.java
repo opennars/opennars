@@ -51,7 +51,7 @@ public class Conjunction extends CompoundTerm {
         this.isSpatial = spatial;
         temporalOrder = order;
         init(this.term);
-        //update imagination space if it exsists (also type checking the operations):
+        //update imagination space if it exists (also type checking the operations):
         if(arg[0].imagination != null) {
             this.imagination=arg[0].imagination.ConstructSpace(this);
         }
@@ -188,7 +188,7 @@ public class Conjunction extends CompoundTerm {
     /**
      * @param components The components
      * @return The components sequence with summed intervals
-     * for transforming (&/,a,+1,+1) to (&/,a,+2)
+     * for transforming (&amp;/,a,+1,+1) to (&amp;/,a,+2)
      */
     public static Term[] simplifyIntervals(Term[] components) {
         List<Term> ret = new ArrayList<Term>();
