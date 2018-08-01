@@ -26,13 +26,18 @@ import org.opennars.entity.Sentence;
 import org.opennars.entity.Stamp;
 import org.opennars.entity.Task;
 import org.opennars.entity.TaskLink;
+import org.opennars.entity.TermLink;
 import org.opennars.entity.TruthValue;
+import org.opennars.inference.RuleTables;
 import org.opennars.inference.TemporalRules;
 import org.opennars.interfaces.Timable;
 import org.opennars.io.events.OutputHandler;
 import org.opennars.language.CompoundTerm;
+import org.opennars.language.Conjunction;
 import org.opennars.language.Implication;
+import org.opennars.language.Interval;
 import org.opennars.language.Statement;
+import org.opennars.language.Term;
 import org.opennars.operator.Operator;
 import org.opennars.operator.mental.Anticipate;
 import org.opennars.plugin.mental.InternalExperience;
@@ -130,6 +135,49 @@ public class ProcessAnticipation {
           ((Statement) concept.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
             nal.memory.emit(OutputHandler.CONFIRM.class, ((Statement)concept.negConfirmation.sentence.term).getPredicate());
             concept.negConfirmation = null; // confirmed
+        }
+    }
+    
+    /**
+     * Fire predictictive inference based on beliefs that are known to the concept's neighbours
+     * <p>
+     * called in processTask only
+     * 
+     * @param task The judgement task
+     * @param concept The concept that is processed
+     * @param nal The derivation context
+     * @param time The timable
+     * @param taskl The tasklink
+     */
+    public static void firePredictions(final Task task, final Concept concept, final DerivationContext nal, Timable time, TaskLink taskl) {
+        if(!task.sentence.isEternal() && task.isInput() && task.sentence.isJudgment()) {
+            for(TermLink tl : concept.termLinks) {
+                Term term = tl.getTarget();
+                Concept tc = nal.memory.concept(term);
+                if(tc != null && !tc.beliefs.isEmpty() && term instanceof Implication) {
+                    Implication imp = (Implication) term;
+                    if(imp.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                        Term precon = imp.getSubject();
+                        Term component = precon;
+                        if(precon instanceof Conjunction) {
+                            Conjunction conj = (Conjunction) imp.getSubject();
+                            if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD && conj.term.length == 2 && conj.term[1] instanceof Interval) {
+                                component = conj.term[0]; //(&/,a,+i), so use a
+                            }
+                        }
+                        if(CompoundTerm.replaceIntervals(concept.getTerm()).equals(CompoundTerm.replaceIntervals(component))) {
+                            //trigger inference of the task with the belief
+                            DerivationContext cont = new DerivationContext(nal.memory, nal.narParameters, time);
+                            cont.setCurrentTask(task); //a
+                            cont.setCurrentBeliefLink(tl); // a =/> b
+                            cont.setCurrentTaskLink(taskl); // a
+                            cont.setCurrentConcept(concept); //a
+                            cont.setCurrentTerm(concept.getTerm()); //a
+                            RuleTables.reason(taskl, tl, cont); //generate b
+                        }
+                    }
+                }
+            }
         }
     }
 }

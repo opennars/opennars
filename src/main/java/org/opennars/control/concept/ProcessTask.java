@@ -14,8 +14,11 @@
  */
 package org.opennars.control.concept;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.*;
+import org.opennars.interfaces.Timable;
 import org.opennars.io.Symbols;
 
 public class ProcessTask {
@@ -36,7 +39,7 @@ public class ProcessTask {
      * @param task The task to be processed
      * @return whether it was processed
      */
-    public static boolean processTask(final Concept concept, final DerivationContext nal, final Task task) {
+    public static boolean processTask(final Concept concept, final DerivationContext nal, final Task task, Timable time) {
         synchronized(concept) {
             concept.observable |= task.isInput();
             final char type = task.sentence.punctuation;
@@ -54,11 +57,12 @@ public class ProcessTask {
                 default:
                     return false;
             }
+            List<TermLink> relink = new ArrayList<TermLink>();
             if (task.aboveThreshold()) {    // still need to be processed
-                concept.linkToTask(task,nal);
+                TaskLink taskl = concept.linkToTask(task,nal);                       
+                ProcessAnticipation.firePredictions(task, concept, nal, time, taskl);
             }
         }
         return true;
-    }
-     
+    }     
 }
