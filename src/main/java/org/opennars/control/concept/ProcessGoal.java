@@ -105,34 +105,38 @@ public class ProcessGoal {
                 // return false; //outcommented, allowing "roundtrips now", relevant for executing multiple steps of learned implication chains
             }
         }
-        if (task.aboveThreshold()) {
-            double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
-            if (beliefT != null) {
-                final Sentence belief = beliefT.sentence;
-                final Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.narParameters.DURATION, nal.memory);
-                AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
-            }
-            final double Satisfaction=1.0-AntiSatisfaction;
-            task.setPriority(task.getPriority()* (float)AntiSatisfaction);
-            if (!task.aboveThreshold()) {
-                return;
-            }
-            final TruthValue T=goal.truth.clone();
-            T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
-            final boolean fullfilled = AntiSatisfaction < nal.narParameters.SATISFACTION_TRESHOLD;
-            final Sentence projectedGoal = goal.projection(nal.time.time(), nal.time.time(), nal.memory);
-            if (!(projectedGoal != null && task.aboveThreshold() && !fullfilled)) {
-                return;
-            }
-            bestReactionForGoal(concept, nal, projectedGoal, task);
-            questionFromGoal(task, nal);
-            concept.addToTable(task, false, concept.desires, nal.narParameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
-            InternalExperience.InternalExperienceFromTask(concept.memory, task, false, nal.time);
-            if(!(task.sentence.getTerm() instanceof Operation)) {
-                return;
-            }
-            processOperationGoal(projectedGoal, nal, concept, oldGoalT, task);
+
+
+        if (!task.aboveThreshold()) {
+            return;
         }
+
+        double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
+        if (beliefT != null) {
+            final Sentence belief = beliefT.sentence;
+            final Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.narParameters.DURATION, nal.memory);
+            AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
+        }
+        final double Satisfaction=1.0-AntiSatisfaction;
+        task.setPriority(task.getPriority()* (float)AntiSatisfaction);
+        if (!task.aboveThreshold()) {
+            return;
+        }
+        final TruthValue T=goal.truth.clone();
+        T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
+        final boolean fullfilled = AntiSatisfaction < nal.narParameters.SATISFACTION_TRESHOLD;
+        final Sentence projectedGoal = goal.projection(nal.time.time(), nal.time.time(), nal.memory);
+        if (!(projectedGoal != null && task.aboveThreshold() && !fullfilled)) {
+            return;
+        }
+        bestReactionForGoal(concept, nal, projectedGoal, task);
+        questionFromGoal(task, nal);
+        concept.addToTable(task, false, concept.desires, nal.narParameters.CONCEPT_GOALS_MAX, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class);
+        InternalExperience.InternalExperienceFromTask(concept.memory, task, false, nal.time);
+        if(!(task.sentence.getTerm() instanceof Operation)) {
+            return;
+        }
+        processOperationGoal(projectedGoal, nal, concept, oldGoalT, task);
     }
 
     /**
