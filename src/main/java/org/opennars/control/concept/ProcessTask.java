@@ -45,7 +45,7 @@ public class ProcessTask {
                     nal.narParameters.processJudgment.processJudgment(concept, nal, task);
                     break;
                 case Symbols.GOAL_MARK:
-                    ProcessGoal.processGoal(concept, nal, task);
+                    nal.narParameters.processGoal.processGoal(concept, nal, task);
                     break;
                 case Symbols.QUESTION_MARK:
                 case Symbols.QUEST_MARK:

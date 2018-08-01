@@ -31,6 +31,7 @@ import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
+import org.opennars.interfaces.conceptProcessing.ProcessGoal;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.Conjunction;
@@ -50,16 +51,8 @@ import org.opennars.plugin.mental.InternalExperience;
  *
  * @author Patrick
  */
-public class ProcessGoal {
-    /**
-     * To accept a new goal, and check for revisions and realization, then
-     * decide whether to actively pursue it, potentially executing in case of an operation goal
-     *
-     * @param concept The concept of the goal
-     * @param nal The derivation context
-     * @param task The goal task to be processed
-     */
-    protected static void processGoal(final Concept concept, final DerivationContext nal, final Task task) {
+public class DefaultProcessGoal implements ProcessGoal {
+    public void processGoal(final Concept concept, final DerivationContext nal, final Task task) {
         final Sentence goal = task.sentence;
         final Task oldGoalT = concept.selectCandidate(task, concept.desires, nal.time); // revise with the existing desire values
         Sentence oldGoal = null;
