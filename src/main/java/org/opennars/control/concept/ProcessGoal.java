@@ -74,9 +74,12 @@ public class ProcessGoal {
 
         Task beliefT = null;
         if(task.aboveThreshold()) {
-            beliefT = concept.selectCandidate(task, concept.beliefs, nal.time); // check if the Goal is already satisfied
+            beliefT = concept.selectCandidate(task, concept.beliefs, nal.time);
+
+            // check if the Goal is already satisfied
             if (beliefT != null) {
-                trySolution(beliefT.sentence, task, nal, true); // check if the Goal is already satisfied (manipulate budget)
+                // check if the Goal is already satisfied (manipulate budget)
+                trySolution(beliefT.sentence, task, nal, true);
             }
         }
 
@@ -92,20 +95,30 @@ public class ProcessGoal {
             final Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime(), concept.memory);
             if (projectedGoal!=null) {
                 nal.setCurrentBelief(projectedGoal);
-                final boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
-                if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
-                    return; // with higher/lower desire
-                } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
+                final boolean wasRevised = revision(task.sentence, projectedGoal, false, nal);
+                if (wasRevised) {
+                    /* It was revised, so there is a new task for which this method will be called
+                     * with higher/lower desire.
+                     * We return because it is not allowed to go on directly due to decision making.
+                     * see https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
+                     */
+                    return;
+                }
             }
         }
 
         final Stamp s2=goal.stamp.clone();
         s2.setOccurrenceTime(nal.time.time());
-        if(s2.after(task.sentence.stamp, nal.narParameters.DURATION)) { //this task is not up to date we have to project it first
+        if(s2.after(task.sentence.stamp, nal.narParameters.DURATION)) {
+            // this task is not up to date we have to project it first
+
             final Sentence projGoal = task.sentence.projection(nal.time.time(), nal.narParameters.DURATION, nal.memory);
             if(projGoal!=null && projGoal.truth.getExpectation() > nal.narParameters.DECISION_THRESHOLD) {
-                nal.singlePremiseTask(projGoal, task.budget.clone()); //keep goal updated
-                // return false; //outcommented, allowing "roundtrips now", relevant for executing multiple steps of learned implication chains
+
+                // keep goal updated
+                nal.singlePremiseTask(projGoal, task.budget.clone());
+
+                // we don't return here, allowing "roundtrips now", relevant for executing multiple steps of learned implication chains
             }
         }
 
@@ -114,22 +127,24 @@ public class ProcessGoal {
             return;
         }
 
-        double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
+        double AntiSatisfaction = 0.5f; // we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
         if (beliefT != null) {
             final Sentence belief = beliefT.sentence;
             final Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.narParameters.DURATION, nal.memory);
             AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
         }
-        final double Satisfaction=1.0-AntiSatisfaction;
+
         task.setPriority(task.getPriority()* (float)AntiSatisfaction);
         if (!task.aboveThreshold()) {
             return;
         }
+
         final TruthValue T=goal.truth.clone();
+        final double Satisfaction=1.0-AntiSatisfaction;
         T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
-        final boolean fullfilled = AntiSatisfaction < nal.narParameters.SATISFACTION_TRESHOLD;
+        final boolean isFullfilled = AntiSatisfaction < nal.narParameters.SATISFACTION_TRESHOLD;
         final Sentence projectedGoal = goal.projection(nal.time.time(), nal.time.time(), nal.memory);
-        if (!(projectedGoal != null && task.aboveThreshold() && !fullfilled)) {
+        if (!(projectedGoal != null && task.aboveThreshold() && !isFullfilled)) {
             return;
         }
         bestReactionForGoal(concept, nal, projectedGoal, task);
