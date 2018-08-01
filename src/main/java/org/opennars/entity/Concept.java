@@ -31,7 +31,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.opennars.control.concept.DefaultProcessQuestion;
 
 import static org.opennars.inference.BudgetFunctions.distributeAmongLinks;
 import static org.opennars.inference.BudgetFunctions.rankBelief;
@@ -295,9 +294,9 @@ public class Concept extends Item<Term> implements Serializable {
     protected boolean insertTaskLink(final TaskLink taskLink, final DerivationContext nal) {
         final Task target = taskLink.getTarget();
         //what question answering, question side:
-        nal.narParameters.processQuestion.ProcessWhatQuestion(this, target, nal);
+        nal.narParameters.processQuestion.processWhatQuestion(this, target, nal);
         //what question answering, belief side:
-        nal.narParameters.processQuestion.ProcessWhatQuestionAnswer(this, target, nal);
+        nal.narParameters.processQuestion.processWhatQuestionAnswer(this, target, nal);
         //HANDLE MAX PER CONTENT
         //if taskLinks already contain a certain amount of tasks with same content then one has to go
         final boolean isEternal = target.sentence.isEternal();

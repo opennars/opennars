@@ -31,7 +31,7 @@ import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.inference.TemporalRules;
 import org.opennars.inference.TruthFunctions;
-import org.opennars.interfaces.conceptProcessing.ProcessGoal;
+import org.opennars.interfaces.conceptprocessing.ProcessGoal;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.Conjunction;

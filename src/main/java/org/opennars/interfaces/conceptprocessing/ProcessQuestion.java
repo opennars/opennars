@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.opennars.interfaces.conceptProcessing;
+package org.opennars.interfaces.conceptprocessing;
 
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.Concept;
@@ -40,7 +40,7 @@ public interface ProcessQuestion extends Process, Serializable {
      * @param ques The belief task
      * @param nal The derivation context
      */
-    void ProcessWhatQuestion(final Concept concept, final Task ques, final DerivationContext nal);
+    void processWhatQuestion(final Concept concept, final Task ques, final DerivationContext nal);
 
     /**
      * Recognize an added belief task as solution to what questions, those that contain query variable
@@ -51,5 +51,5 @@ public interface ProcessQuestion extends Process, Serializable {
      * @param t The belief task
      * @param nal The derivation context
      */
-    void ProcessWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal);
+    void processWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal);
 }

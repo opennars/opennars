@@ -12,27 +12,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.opennars.interfaces.conceptProcessing;
+package org.opennars.interfaces.conceptprocessing;
 
 import java.io.Serializable;
 
 /**
- * Used to implement the (internal) judgment processing
+ * Used to implement the (internal) goal processing
  */
-public interface ProcessJudgment extends Process, Serializable {
+public interface ProcessGoal extends Process, Serializable {
     /*
-     * To accept a new judgment as belief, and check for revisions and solutions.
-     * Revisions will be processed as judgment tasks by themselves.
-     * Due to their higher confidence, summarizing more evidence,
-     * the will become the top entries in the belief table.
-     * Additionally, judgements can themselves be the solution to existing questions
-     * and goals, which is also processed here.
-     * <p>
-     * called only by ConceptProcessing.processTask
+     * To accept a new goal, and check for revisions and realization, then
+     * decide whether to actively pursue it, potentially executing in case of an operation goal
      *
-     * @param task The judgment task to be accepted
-     * @param concept The concept of the judment task
+     * @param concept The concept of the goal
      * @param nal The derivation context
+     * @param task The goal task to be processed
      */
     //void processTask(final Concept concept, final DerivationContext nal, final Task task);
 }

@@ -24,7 +24,7 @@ import static org.opennars.inference.LocalRules.revisible;
 import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.inference.TemporalRules;
-import org.opennars.interfaces.conceptProcessing.ProcessJudgment;
+import org.opennars.interfaces.conceptprocessing.ProcessJudgment;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Conjunction;

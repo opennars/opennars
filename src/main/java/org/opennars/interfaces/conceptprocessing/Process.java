@@ -12,21 +12,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.opennars.interfaces.conceptProcessing;
+package org.opennars.interfaces.conceptprocessing;
 
-import java.io.Serializable;
+import org.opennars.control.DerivationContext;
+import org.opennars.entity.Concept;
+import org.opennars.entity.Task;
 
 /**
- * Used to implement the (internal) goal processing
+ * Used to implement the (internal) task processing
  */
-public interface ProcessGoal extends Process, Serializable {
-    /*
-     * To accept a new goal, and check for revisions and realization, then
-     * decide whether to actively pursue it, potentially executing in case of an operation goal
+public interface Process {
+    /**
+     * process the task
      *
-     * @param concept The concept of the goal
+     * @param task The judgment task to be accepted
+     * @param concept The concept of the judment task
      * @param nal The derivation context
-     * @param task The goal task to be processed
      */
-    //void processTask(final Concept concept, final DerivationContext nal, final Task task);
+    void processTask(final Concept concept, final DerivationContext nal, final Task task);
 }

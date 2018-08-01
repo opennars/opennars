@@ -22,7 +22,7 @@ import org.opennars.entity.Task;
 import org.opennars.entity.TaskLink;
 import static org.opennars.inference.LocalRules.trySolution;
 
-import org.opennars.interfaces.conceptProcessing.ProcessQuestion;
+import org.opennars.interfaces.conceptprocessing.ProcessQuestion;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.Term;
@@ -69,7 +69,7 @@ public class DefaultProcessQuestion implements ProcessQuestion {
         }
     }
 
-    public void ProcessWhatQuestion(final Concept concept, final Task ques, final DerivationContext nal) {
+    public void processWhatQuestion(final Concept concept, final Task ques, final DerivationContext nal) {
         if(!(ques.sentence.isJudgment()) && ques.getTerm().hasVarQuery()) { //ok query var, search
             boolean newAnswer = false;
             for(final TaskLink t : concept.taskLinks) {
@@ -96,7 +96,7 @@ public class DefaultProcessQuestion implements ProcessQuestion {
         }
     }
 
-    public void ProcessWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal) {
+    public void processWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal) {
         if(!t.sentence.term.hasVarQuery() && t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
             for(final TaskLink quess: concept.taskLinks) {
                 final Task ques = quess.getTarget();
