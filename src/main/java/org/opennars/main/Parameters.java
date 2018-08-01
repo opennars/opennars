@@ -14,7 +14,9 @@
  */
 package org.opennars.main;
 
+import org.opennars.control.concept.DefaultProcessJudgment;
 import org.opennars.control.concept.DefaultProcessQuestion;
+import org.opennars.interfaces.conceptProcessing.ProcessJudgment;
 import org.opennars.interfaces.conceptProcessing.ProcessQuestion;
 
 public class Parameters {
@@ -268,4 +270,5 @@ public class Parameters {
 
 
     public ProcessQuestion processQuestion = new DefaultProcessQuestion();
+    public ProcessJudgment processJudgment = new DefaultProcessJudgment();
 }

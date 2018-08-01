@@ -24,6 +24,7 @@ import static org.opennars.inference.LocalRules.revisible;
 import static org.opennars.inference.LocalRules.revision;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.inference.TemporalRules;
+import org.opennars.interfaces.conceptProcessing.ProcessJudgment;
 import org.opennars.io.events.Events;
 import org.opennars.language.CompoundTerm;
 import org.opennars.language.Conjunction;
@@ -38,22 +39,8 @@ import org.opennars.operator.mental.Evaluate;
 import org.opennars.operator.mental.Want;
 import org.opennars.operator.mental.Wonder;
 
-public class ProcessJudgment {
-    /**
-     * To accept a new judgment as belief, and check for revisions and solutions.
-     * Revisions will be processed as judgment tasks by themselves.
-     * Due to their higher confidence, summarizing more evidence,
-     * the will become the top entries in the belief table.
-     * Additionally, judgements can themselves be the solution to existing questions
-     * and goals, which is also processed here.
-     * <p>
-     * called only by ConceptProcessing.processTask
-     * 
-     * @param task The judgment task to be accepted
-     * @param concept The concept of the judment task
-     * @param nal The derivation context
-     */
-    public static void processJudgment(final Concept concept, final DerivationContext nal, final Task task) {
+public class DefaultProcessJudgment implements ProcessJudgment {
+    public void processJudgment(final Concept concept, final DerivationContext nal, final Task task) {
         handleOperationFeedback(task, nal);
         final Sentence judg = task.sentence;
         ProcessAnticipation.confirmAnticipation(task, concept, nal);
@@ -103,7 +90,7 @@ public class ProcessJudgment {
      * @param task The judgement task be checked
      * @param nal The derivation context
      */
-    public static void handleOperationFeedback(Task task, DerivationContext nal) {
+    private static void handleOperationFeedback(Task task, DerivationContext nal) {
         if(task.isInput() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
             final Operation op = (Operation) task.sentence.term;
             final Operator o = (Operator) op.getPredicate();
@@ -125,7 +112,7 @@ public class ProcessJudgment {
      * @param nal The derivation context
      * @return Whether task is an executable precondition
      */
-    protected static boolean isExecutableHypothesis(Task task, final DerivationContext nal) {
+    private static boolean isExecutableHypothesis(Task task, final DerivationContext nal) {
         final Term term = task.getTerm();
         if(!task.sentence.isEternal() ||
            !(term instanceof Implication) ||
@@ -162,7 +149,7 @@ public class ProcessJudgment {
      * @param nal The derivation context
      * @param concept The concept of the task
      */
-    protected static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept concept) {
+    private static void addToTargetConceptsPreconditions(final Task task, final DerivationContext nal, final Concept concept) {
         final Concept target_concept = nal.memory.concept(((Implication)task.getTerm()).getPredicate());
         //we do not add the target, instead the strongest belief in the target concept
         if (concept.beliefs.isEmpty()) {
