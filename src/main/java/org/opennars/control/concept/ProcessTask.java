@@ -49,7 +49,7 @@ public class ProcessTask {
                     break;
                 case Symbols.QUESTION_MARK:
                 case Symbols.QUEST_MARK:
-                    ProcessQuestion.processQuestion(concept, nal, task);
+                    nal.narParameters.processQuestion.processQuestion(concept, nal, task);
                     break;
                 default:
                     return false;

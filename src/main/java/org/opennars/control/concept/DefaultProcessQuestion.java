@@ -21,22 +21,20 @@ import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
 import org.opennars.entity.TaskLink;
 import static org.opennars.inference.LocalRules.trySolution;
+
+import org.opennars.interfaces.conceptProcessing.ProcessQuestion;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.Term;
 import org.opennars.language.Variables;
 
 /**
+ * Default implementation for question processing
  *
  * @author Patrick
  */
-public class ProcessQuestion {
-    /**
-     * To answer a question by existing beliefs
-     *
-     * @param task The task to be processed
-     */
-    protected static void processQuestion(final Concept concept, final DerivationContext nal, final Task task) {
+public class DefaultProcessQuestion implements ProcessQuestion {
+    public void processQuestion(final Concept concept, final DerivationContext nal, final Task task) {
         Task quesTask = task;
         List<Task> questions = concept.questions;
         if(task.sentence.punctuation == Symbols.QUEST_MARK) {
@@ -70,17 +68,8 @@ public class ProcessQuestion {
             concept.memory.emit(Events.Answer.class, quesTask, quesTask.getBestSolution());
         }
     }
-    
-    /**
-     * Recognize an existing belief task as solution to the what question task, which contains a query variable
-     * <p>
-     * called only in GeneralInferenceControl.insertTaskLink on concept selection
-     * 
-     * @param concept The concept which potentially outdated anticipations should be processed
-     * @param ques The belief task
-     * @param nal The derivation context
-     */
-    public static void ProcessWhatQuestion(final Concept concept, final Task ques, final DerivationContext nal) {
+
+    public void ProcessWhatQuestion(final Concept concept, final Task ques, final DerivationContext nal) {
         if(!(ques.sentence.isJudgment()) && ques.getTerm().hasVarQuery()) { //ok query var, search
             boolean newAnswer = false;
             for(final TaskLink t : concept.taskLinks) {
@@ -106,17 +95,8 @@ public class ProcessQuestion {
             }
         }
     }
-    
-    /**
-     * Recognize an added belief task as solution to what questions, those that contain query variable
-     * <p>
-     * called only in GeneralInferenceControl.insertTaskLink on concept selection
-     * 
-     * @param concept The concept which potentially outdated anticipations should be processed
-     * @param t The belief task
-     * @param nal The derivation context
-     */
-    public static void ProcessWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal) {
+
+    public void ProcessWhatQuestionAnswer(final Concept concept, final Task t, final DerivationContext nal) {
         if(!t.sentence.term.hasVarQuery() && t.sentence.isJudgment() || t.sentence.isGoal()) { //ok query var, search
             for(final TaskLink quess: concept.taskLinks) {
                 final Task ques = quess.getTarget();
