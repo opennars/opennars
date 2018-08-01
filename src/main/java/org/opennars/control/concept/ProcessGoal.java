@@ -71,17 +71,21 @@ public class ProcessGoal {
                 return; // duplicate
             }
         }
+
         Task beliefT = null;
         if(task.aboveThreshold()) {
             beliefT = concept.selectCandidate(task, concept.beliefs, nal.time); // check if the Goal is already satisfied
-            if (beliefT != null) { 
+            if (beliefT != null) {
                 trySolution(beliefT.sentence, task, nal, true); // check if the Goal is already satisfied (manipulate budget)
             }
+        }
 
+        if(task.aboveThreshold()) {
             for (final Task iQuest : concept.quests ) {
                 trySolution(task.sentence, iQuest, nal, true);
             }
         }
+
         if (oldGoalT != null) {
             if (revisible(goal, oldGoal, nal.narParameters)) {
                 final Stamp oldStamp = oldGoal.stamp;
