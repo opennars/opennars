@@ -162,7 +162,7 @@ public class TemporalInferenceControl {
     
     public static void addToSequenceTasks(final DerivationContext nal, final Task newEvent) {
         //multiple versions are necessary, but we do not allow duplicates
-        final List<Task> removals = new LinkedList<>();
+        Task removal = null;
         synchronized(nal.memory.seq_current) {
             for(final Task s : nal.memory.seq_current) {
                 if(CompoundTerm.replaceIntervals(s.getTerm()).equals(
@@ -182,13 +182,14 @@ public class TemporalInferenceControl {
                             continue;
                         }
                     }
-                    removals.add(s);
+                    removal = s;
                     break;
                 }
             }
-            for(final Task removal : removals) {
+            if (removal != null) {
                 nal.memory.seq_current.take(removal);
             }
+
             //ok now add the new one:
             //making sure we do not mess with budget of the task:
             if(!(newEvent.sentence.getTerm() instanceof Operation)) {
