@@ -161,12 +161,21 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
     private boolean threadYield;
 
     public static final String DEFAULTCONFIG_FILEPATH = "./config/defaultConfig.xml";
-
+    
+    /** constructs the NAR and loads a config from the default filepath
+     *
+     * @param narId inter NARS id of this NARS instance
+     */
     public Nar(long narId) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
             ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         this(narId, true, DEFAULTCONFIG_FILEPATH);
     }
     
+    /** constructs the NAR and loads a config from the filepath
+     *
+     * @param narId inter NARS id of this NARS instance
+     * @param configFilePath (relative) path of the XML encoded config file
+     */
     public Nar(long narId, String configFilePath) throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, 
             ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         this(narId, false, configFilePath);
@@ -174,7 +183,12 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
 
     public String usedConfigFilePath = "";
     public boolean loadedFromResources = false;
-    // constructs the NAR and loads a config from the filepath
+    /** constructs the NAR and loads a config from the filepath
+     *
+     * @param narId inter NARS id of this NARS instance
+     * @param loadFromResources
+     * @param configFilePath (relative) path of the XML encoded config file
+     */
     public Nar(long narId, boolean loadFromResources, String configFilePath) throws IOException, InstantiationException, InvocationTargetException, 
             NoSuchMethodException, ParserConfigurationException, SAXException, IllegalAccessException, ParseException, ClassNotFoundException {
         List<Plugin> pluginsToAdd = ConfigReader.loadParamsFromFileAndReturnPlugins(loadFromResources, configFilePath, this, this.narParameters);
@@ -192,6 +206,10 @@ public class Nar extends SensoryChannel implements Reasoner, Serializable, Runna
         }
     }
     
+    /** constructs the NAR and loads a config from the default filepath
+     *
+     * Assigns a random id to the instance
+     */
     public Nar() throws IOException, InstantiationException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, IllegalAccessException, SAXException, ClassNotFoundException, ParseException {
         this(java.util.UUID.randomUUID().getLeastSignificantBits(), true, DEFAULTCONFIG_FILEPATH);
     }

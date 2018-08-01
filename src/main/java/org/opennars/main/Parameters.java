@@ -14,6 +14,8 @@
  */
 package org.opennars.main;
 
+import java.io.Serializable;
+
 import org.opennars.control.concept.DefaultProcessGoal;
 import org.opennars.control.concept.DefaultProcessJudgment;
 import org.opennars.control.concept.DefaultProcessQuestion;
@@ -21,7 +23,7 @@ import org.opennars.interfaces.conceptProcessing.ProcessGoal;
 import org.opennars.interfaces.conceptProcessing.ProcessJudgment;
 import org.opennars.interfaces.conceptProcessing.ProcessQuestion;
 
-public class Parameters {
+public class Parameters implements Serializable {
     /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle */
     public volatile int NOVELTY_HORIZON = 100000;
 
@@ -271,7 +273,7 @@ public class Parameters {
     public volatile boolean STEPS_CLOCK = true;
 
 
-    public ProcessQuestion processQuestion = new DefaultProcessQuestion();
-    public ProcessJudgment processJudgment = new DefaultProcessJudgment();
-    public ProcessGoal processGoal = new DefaultProcessGoal();
+    public transient ProcessQuestion processQuestion = new DefaultProcessQuestion();
+    public transient ProcessJudgment processJudgment = new DefaultProcessJudgment();
+    public transient ProcessGoal processGoal = new DefaultProcessGoal();
 }
