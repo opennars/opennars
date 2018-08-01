@@ -40,7 +40,7 @@ import org.opennars.operator.mental.Want;
 import org.opennars.operator.mental.Wonder;
 
 public class DefaultProcessJudgment implements ProcessJudgment {
-    public void processJudgment(final Concept concept, final DerivationContext nal, final Task task) {
+    public void processTask(final Concept concept, final DerivationContext nal, final Task task) {
         handleOperationFeedback(task, nal);
         final Sentence judg = task.sentence;
         ProcessAnticipation.confirmAnticipation(task, concept, nal);

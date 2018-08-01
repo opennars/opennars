@@ -1,14 +1,10 @@
 package org.opennars.interfaces.conceptProcessing;
 
-import org.opennars.control.DerivationContext;
-import org.opennars.entity.Concept;
-import org.opennars.entity.Task;
-
 /**
  * Used to implement the (internal) judgment processing
  */
-public interface ProcessJudgment {
-    /**
+public interface ProcessJudgment extends Process {
+    /*
      * To accept a new judgment as belief, and check for revisions and solutions.
      * Revisions will be processed as judgment tasks by themselves.
      * Due to their higher confidence, summarizing more evidence,
@@ -22,5 +18,5 @@ public interface ProcessJudgment {
      * @param concept The concept of the judment task
      * @param nal The derivation context
      */
-    void processJudgment(final Concept concept, final DerivationContext nal, final Task task);
+    //void processTask(final Concept concept, final DerivationContext nal, final Task task);
 }

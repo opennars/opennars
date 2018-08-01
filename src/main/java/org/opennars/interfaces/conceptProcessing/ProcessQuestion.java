@@ -7,13 +7,13 @@ import org.opennars.entity.Task;
 /**
  * Used to override the (internal) question processing
  */
-public interface ProcessQuestion {
-    /**
+public interface ProcessQuestion extends Process {
+    /*
      * To answer a question by existing beliefs
      *
      * @param task The task to be processed
      */
-    void processQuestion(final Concept concept, final DerivationContext nal, final Task task);
+    //void processTask(final Concept concept, final DerivationContext nal, final Task task);
 
     /**
      * Recognize an existing belief task as solution to the what question task, which contains a query variable

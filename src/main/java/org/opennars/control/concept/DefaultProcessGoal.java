@@ -52,7 +52,7 @@ import org.opennars.plugin.mental.InternalExperience;
  * @author Patrick
  */
 public class DefaultProcessGoal implements ProcessGoal {
-    public void processGoal(final Concept concept, final DerivationContext nal, final Task task) {
+    public void processTask(final Concept concept, final DerivationContext nal, final Task task) {
         final Sentence goal = task.sentence;
         final Task oldGoalT = concept.selectCandidate(task, concept.desires, nal.time); // revise with the existing desire values
         Sentence oldGoal = null;

@@ -42,14 +42,14 @@ public class ProcessTask {
             final char type = task.sentence.punctuation;
             switch (type) {
                 case Symbols.JUDGMENT_MARK:
-                    nal.narParameters.processJudgment.processJudgment(concept, nal, task);
+                    nal.narParameters.processJudgment.processTask(concept, nal, task);
                     break;
                 case Symbols.GOAL_MARK:
-                    nal.narParameters.processGoal.processGoal(concept, nal, task);
+                    nal.narParameters.processGoal.processTask(concept, nal, task);
                     break;
                 case Symbols.QUESTION_MARK:
                 case Symbols.QUEST_MARK:
-                    nal.narParameters.processQuestion.processQuestion(concept, nal, task);
+                    nal.narParameters.processQuestion.processTask(concept, nal, task);
                     break;
                 default:
                     return false;

@@ -34,7 +34,7 @@ import org.opennars.language.Variables;
  * @author Patrick
  */
 public class DefaultProcessQuestion implements ProcessQuestion {
-    public void processQuestion(final Concept concept, final DerivationContext nal, final Task task) {
+    public void processTask(final Concept concept, final DerivationContext nal, final Task task) {
         Task quesTask = task;
         List<Task> questions = concept.questions;
         if(task.sentence.punctuation == Symbols.QUEST_MARK) {
