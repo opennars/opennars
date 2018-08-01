@@ -364,7 +364,7 @@ public class Memory implements Serializable, Iterable<Concept>, Resettable {
             cont.setCurrentTerm(task.getTerm());
             cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
             if (cont.getCurrentConcept() != null) {
-                final boolean processed = ProcessTask.processTask(cont.getCurrentConcept(), cont, task);
+                final boolean processed = ProcessTask.processTask(cont.getCurrentConcept(), cont, task, time);
                 if (processed) {
                     event.emit(Events.ConceptDirectProcessedTask.class, task);
                 }
