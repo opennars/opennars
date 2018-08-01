@@ -15,17 +15,20 @@
 package org.opennars.control.concept;
 
 import java.util.List;
+
+import com.google.common.base.Optional;
 import org.opennars.control.DerivationContext;
 import org.opennars.entity.Concept;
 import org.opennars.entity.Sentence;
 import org.opennars.entity.Task;
 import org.opennars.entity.TaskLink;
+
+import static com.google.common.collect.Iterables.tryFind;
 import static org.opennars.inference.LocalRules.trySolution;
 import org.opennars.io.Symbols;
 import org.opennars.io.events.Events;
 import org.opennars.language.Term;
 import org.opennars.language.Variables;
-import org.opennars.util.ListUtil;
 
 /**
  *
@@ -44,11 +47,11 @@ public class ProcessQuestion {
             questions = concept.quests;
         }
         if(task.sentence.isEternal()) {
-            final Task eternalQuestionTask = ListUtil.findAny(questions, iQuestionTask -> iQuestionTask.sentence.isEternal());
+            final Optional<Task> eternalQuestionTask = tryFind(questions, iQuestionTask -> iQuestionTask.sentence.isEternal());
 
             // we can override the question task with the eternal question task if any was found
-            if(eternalQuestionTask!=null) {
-                quesTask = eternalQuestionTask;
+            if(eternalQuestionTask.isPresent()) {
+                quesTask = eternalQuestionTask.get();
             }
         }
         if (questions.size() + 1 > concept.memory.narParameters.CONCEPT_QUESTIONS_MAX) {
