@@ -58,7 +58,7 @@ public class NarNodeTest {
         nar1.nar.addInput("<{task1} --> [great]>.");
         while(true) {
             synchronized(a) {
-                if(a == 2) {
+                if(a >= 2) {
                     System.out.println("success");
                     break;
                 }
