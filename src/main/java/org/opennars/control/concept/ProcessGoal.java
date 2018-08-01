@@ -86,20 +86,19 @@ public class ProcessGoal {
             }
         }
 
-        if (oldGoalT != null) {
-            if (revisible(goal, oldGoal, nal.narParameters)) {
-                final Stamp oldStamp = oldGoal.stamp;
-                nal.setTheNewStamp(newStamp, oldStamp, nal.time.time());
-                final Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime(), concept.memory);
-                if (projectedGoal!=null) {
-                    nal.setCurrentBelief(projectedGoal);
-                    final boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
-                    if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
-                        return; // with higher/lower desire
-                    } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
-                }
+        if (oldGoalT != null && revisible(goal, oldGoal, nal.narParameters)) {
+            final Stamp oldStamp = oldGoal.stamp;
+            nal.setTheNewStamp(newStamp, oldStamp, nal.time.time());
+            final Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime(), concept.memory);
+            if (projectedGoal!=null) {
+                nal.setCurrentBelief(projectedGoal);
+                final boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
+                if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
+                    return; // with higher/lower desire
+                } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
             }
         }
+
         final Stamp s2=goal.stamp.clone();
         s2.setOccurrenceTime(nal.time.time());
         if(s2.after(task.sentence.stamp, nal.narParameters.DURATION)) { //this task is not up to date we have to project it first
