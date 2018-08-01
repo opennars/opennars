@@ -249,7 +249,6 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
         if (this == that) return true;
         if (that instanceof Sentence) {
             final Sentence t = (Sentence) that;
-            //return getKey().equals(t.getKey());
             
             if (hash!=t.hash) return false;
             
@@ -437,11 +436,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             final CharSequence contentName = term.name();
             
             final boolean showOcurrenceTime = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
-            //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
-            
-            //final CharSequence truthString = truth != null ? truth.name() : null;
 
-            int stringLength = 0; //contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
+            int stringLength = 0;
             if (truth != null) {
                 stringLength += (showOcurrenceTime ? 8 : 0) + 11 /*truthString.length()*/;
             }
@@ -468,10 +464,8 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             }
 
             key = Texts.yarn( 
-                    contentName,//.toString(), 
-                    suffix); //.toString());
-            //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
-
+                    contentName,
+                    suffix);
         }
         return key;
     }
@@ -503,7 +497,7 @@ public class Sentence<T extends Term> implements Cloneable, Serializable {
             timediff = "!"+String.valueOf(stamp.getOccurrenceTime());
         }
         
-        String tenseString = ":"+timediff+":"; //stamp.getTense(t, nar.memory.getDuration());
+        String tenseString = ":"+timediff+":";
         if(stamp.getOccurrenceTime() == Stamp.ETERNAL)
             tenseString="";
         
