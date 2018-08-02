@@ -61,7 +61,7 @@ public class ProcessTask {
                 default:
                     return false;
             }
-            List<TermLink> relink = new ArrayList<TermLink>();
+            
             if (task.aboveThreshold()) {    // still need to be processed
                 TaskLink taskl = concept.linkToTask(task,nal);                       
                 ProcessAnticipation.firePredictions(task, concept, nal, time, taskl);
